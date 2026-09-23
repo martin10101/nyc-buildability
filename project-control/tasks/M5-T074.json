@@ -1,0 +1,67 @@
+{
+  "task_id": "M5-T074",
+  "title": "DB-045(c) outline-bridge server-branch proof: the (500, internal_error) rows exercised LIVE incl. the ring_crs_mismatch seam - bounded generic body, no leak, correlation header (test-only)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close DB-045(c) (M5-T065 wave G4-gap2): the outline-bridge documented (500, internal_error) matrix rows are asserted only by frozenset membership, never by a live response. Drive each server-side 500 branch (outline_bridge.py :713 registry/internal raise, :716-717 ring_crs_mismatch seam, :824 tail guard) through the mounted route with a live TestClient, asserting the fixed generic body, ZERO exception/type/traceback leak, and the X-Correlation-ID header - mirroring the accepted T068 DB-046(d)/(e) pattern exactly.",
+  "business_reason": "The bridge mount seam (DB-045 cluster) must not expose an untyped or leaking 500; proving the branches now de-risks the mount packet that T073's validation verdict will shape.",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest, never fake it.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands run from the worktree root, so the scoped pytest may be [BLOCKED] for you - route it to harvest exactly as T067/T069 did.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-045 row item (c) (M5-T065 G4-gap2, verbatim in the row); the branch anchors: services/api/app/api/v1/outline_bridge.py :605 (_internal_error_500 helper), :713 (registry/internal raise), :716-717 (ring_crs_mismatch seam - logged then generic 500), :824 (tail guard). PATTERN SOURCE (mirror exactly): the accepted T068 DB-046(d)/(e) tests in services/api/tests/api/test_max_envelope_api.py (:363-384 class - live TestClient with raise_server_exceptions=False, monkeypatched failure injection, fixed generic body, secret-sentinel leak-absence asserts WITH the `# secretscan:allow` inline pragma kept UNDER ruff's 100-char line limit, X-Correlation-ID identity).",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at the seq-126 seam): outline_bridge.py imports mappluto_geometry_arcgis (:264) and is consumed by the api router mount only; the change is TEST-ONLY in tests/api/test_outline_bridge.py - production outline_bridge.py and both connectors are FORBIDDEN.",
+    "BEHAVIOR PRESERVATION (binding): ZERO production edits; every existing assertion byte-unchanged; additions only (new test functions + any tiny shared fixture inside the same file). Anything more is out of scope - STOP and report."
+  ],
+  "outputs": [
+    "Live-response proofs for every documented outline-bridge (500, internal_error) server branch incl. the ring_crs_mismatch seam, in services/api/tests/api/test_outline_bridge.py",
+    "project-control/reports/M5-T074-producer-report.md (one concise evidence pass; digest-bound)"
+  ],
+  "dependencies": [
+    "M5-T065"
+  ],
+  "allowed_paths": [
+    "services/api/tests/api/test_outline_bridge.py",
+    "project-control/reports/M5-T074-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-1 (live 500 rows): each server-side branch that returns _internal_error_500 (:713 internal raise, :716-717 ring_crs_mismatch, :824 tail guard) is driven through the mounted route with TestClient(raise_server_exceptions=False) and asserts status 500, state internal_error, the FIXED generic message, and (500, internal_error) membership in the documented matrix.",
+    "AS-2 (leak absence): each 500 test injects a secret-sentinel exception message and asserts the sentinel, the exception type name, and any traceback marker are ABSENT from the response text; the sentinel line carries the `# secretscan:allow` pragma and stays under the 100-char ruff limit.",
+    "AS-3 (correlation): X-Correlation-ID header present and equal to the body's correlation_id on every injected 500.",
+    "AS-4 (no scope creep): additions only in the one allowed test file; the full scoped suite (tests/api/test_outline_bridge.py) green; ruff clean; zero production edits."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "qa-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "backend-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-23T04:53:45.646427+00:00",
+  "updated_at": "2026-09-23T04:53:45.980438+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-084",
+      "requirement_ids": [
+        "D-084-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-23T04:53:45.646427+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/api/test_outline_bridge.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
