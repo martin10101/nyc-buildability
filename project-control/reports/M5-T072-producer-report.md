@@ -189,3 +189,29 @@ never regenerated (HEAD already carries the T069-accepted unified store.py). Do 
 worktree-root runs as acceptance evidence; do not mark gates accepted.
 
 --- END OF REPORT ---
+
+---
+
+## [ORCH-HARVEST] Authorized-orchestrator harvest transcript (2026-09-23, cwd services/api, wt-m5t072)
+
+All commands run at cwd `services/api` in wt-m5t072 at the harvested material (in-wt commit
+cherry-picked to ecb6a13f, LF-normalized MATCH x2).
+
+1. **Lint [OBSERVED]:** `python -m ruff check .` → **All checks passed!** (exit 0).
+2. **Scoped suite [OBSERVED]:** `python -m pytest tests/site_definition
+   tests/api/test_site_definition_api.py -q` → **77 passed** (the T069 baseline +0, as predicted).
+3. **AS-2 both-branch revoke-only mutant [OBSERVED]:**
+   - (a) mutant applied at exactly `store.py:428` and `:441` (script-verified those two lines and
+     no other; the three supersede sites untouched).
+   - (b) WITHOUT the pin (line temporarily deleted): `tests/site_definition` → **43 passed** —
+     the both-branch fork is INVISIBLE pre-pin. Exit 0 recorded. Exactly the A2 gap.
+   - (c) WITH the pin restored: the revoke test **FAILED at the pin**, first failing assertion
+     `assert str(missing.value) == _UNIFIED_NOT_FOUND_TEXT` with
+     `AssertionError: assert 'revoke-only ...ot-found text' == 'no site-defi... request path'` —
+     the pin is the SOLE catcher of a revoke-only both-branch fork.
+   - (d-e) `git checkout -- app/site_definition/store.py`; final working tree CLEAN (the material
+     is the in-wt commit; `git diff --stat` empty; store.py at the T069-accepted state).
+   - (f) restored-candidate re-run → **77 passed**.
+
+Every [BROKER-LIMIT→harvest] row above is hereby elevated to OBSERVED. CI on the pushed head is
+the remaining backstop.
