@@ -1,0 +1,41 @@
+{
+ "task_id": "M5-T070",
+ "material_commit": "51ffc5cb (increment 1: five source files + four unit suites; loop-3 runs 15+16, provenance corroborated vs scratchpad/t070_run15_partial.diff at harvest) + 075e9149 (increment 2: AS-5 e2e journey + AS-6 entry additive assertions + report; run-17 cycle_closed, in-wt 6c5ac675 cherry-picked ALL-MATCH x3) + the disclosed orchestrator peer touches at c0b71938 (cluster B: ONE doc-comment line in MaxEnvelopePanel.tsx reworded because it quoted the banned literal its own copy wall greps; cluster C: proposal-editor.test.tsx M5-T065 adoption test types finite coords - a T071-contract consumer fix, not T070 behavior). CI proof: run 35820079349 SUCCESS at 86971988 (secret-scan + context-budget green at the same sha).",
+ "produced_at": "2026-09-23T05:45:00+00:00",
+ "producer": "frontend-engineer (loop-3, run lineage persistent3-local-15/16/17: run-15 authored the production source, run-16 verified it against the contract and wrote the four unit suites - both closed missing-checkpoint AFTER validated checkpoints, the harvest class - and run-17 closed cycle_closed after delivering the named increment-2 gap. The producer's report discloses the inherited-uncommitted provenance and routes production-code provenance confirmation to the orchestrator/DCV; the orchestrator corroborated it against the run-15 snapshot at the increment-1 harvest seam.)",
+ "requirements": {
+  "D-082-R001": [
+   "The post-B3 continuation's (a) maximum-envelope-first capability is now SURFACED: the answer-first Preliminary-development-limits panel over the typed max-envelope client (max-envelope-api.ts mirroring the exact documented (status,state) matrix, size-bounded parse, bounded reflections), composed additively above the accepted editor; the (b) map-drawing slice is untouched by this packet (it rode T066/T071). CI green at 86971988."
+  ],
+  "D-082-R003": [
+   "Max-renders-FIRST: the panel leads with the computed limits and the Generated building option, degrades to a typed card on null/loading/failed fetch (never a dead surface, never a fabricated limit), and the AS-5 e2e journey drives the REAL profile route with the stubbed unmounted max-envelope endpoint end-to-end (proposal-editor.spec.ts, green in web-e2e run 35820079349)."
+  ],
+  "D-083-R001": [
+   "Claim-class vocabulary enforced in copy AND by a mutation-sensitive copy wall: heading class 'Preliminary development limits' (MaxEnvelopePanel.tsx:223), 'Generated building option' as the ONLY building-shaped claim (:154), no per-dimension ceiling presented as one permitted building, and the AS-2 source grep asserting no changed panel/lib source carries an unqualified maximum-allowed-building or demonstrated-maximum claim. The wall proved its own teeth at the first completed CI run: it flagged the producer's doc comment QUOTING the banned literal; the orchestrator reworded that one comment line (c0b71938 cluster B, disclosed) and the wall stands with the literal absent."
+  ],
+  "D-083-R002": [
+   "Answer-first flow: the panel presents the answer (limits + the checked option) before inputs; maxEnvelopeRequestForProfile (:506) assembles the request from the resolved profile and sends NO client geometry; no ingestion internals surface to the analyst."
+  ],
+  "D-083-R003": [
+   "No unrestricted green aggregate: while ANY gap or conflict advisory is present the aggregate stays VISIBLY INCOMPLETE (envelopeAggregateIsComplete :538; panel state :134); advisories are surfaced verbatim and never resolved client-side."
+  ],
+  "D-083-R004": [
+   "The incomplete-aggregate predicate and the adoption gate are both implemented and mutation-tested: candidateIsAdoptable (:545) disables/absents one-action adoption unless the server FITTED a contained candidate; the AS-3 mutation on data-complete reddens the suite; malformed candidates are dropped, never seeded."
+  ],
+  "D-066-R001": [
+   "The packet carried the graph-derived navigation block at its contract seam; the AS-6 entry additive-composition assertions (entry.test.tsx, increment 2) prove the accepted editor/entry surface composes UNCHANGED beside the new panel - the consumer-sweep duty for the composition seam, green in CI at 86971988."
+  ],
+  "D-076-R001": [
+   "A proposed building stays a third input class: draftFromCandidate (proposal-draft.ts:393) seeds the ONE draft model verbatim with provenance labeled PROPOSED; the server disclosure renders VERBATIM; no client CRS math, no LLM-derived value, nothing presented as a city record."
+  ],
+  "D-076-R002": [
+   "Every proposal-derived number remains a labeled proposed scenario: adoption flows through the accepted single draft model (adoptedDraft replaces the working draft; manual entry unchanged), so the D-073-R006 record-labeling regime downstream is preserved untouched."
+  ],
+  "D-077-R002": [
+   "Lane discipline: this is the lane-3 in-regime packet across runs 15/16/17 with finished-seam harvests at 51ffc5cb/a9148091/075e9149, honest not-submittable checkpoints until the named gap closed, and the D-070 harvest drill (ALL-MATCH digests, stale asks denied from piped JSON) at every close."
+  ],
+  "D-077-R003": [
+   "Scope stays inside the released, non-held queue: the max-envelope route remains UNMOUNTED (the e2e journey stubs it and says so); no phase-C/D import surface, no held expansion item, no master-plan change; the packet is the D-082-R003 released surfacing increment only."
+  ]
+ }
+}
