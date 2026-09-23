@@ -10,7 +10,7 @@ HEAD = this handoff commit (pushed once CI run 35824199742 at 2b8963d9 completed
 own-push rule; every commit after 2b8963d9 is reports/gates/docs only, material identical).
 Origin github.com/martin10101/nyc-buildability.git.
 
-## State: still 252 accepted — #253 and #254 are STAGED, one DCV each from done
+## State: 253 accepted (T071 ACCEPTED post-handoff — its DCV returned alive with PASS 5/5) — #254 (T070) one DCV from done
 
 - **D-084 CAPTURED** (owner: "run 3 codex loops"; project-control/directives/D-084-run-three-codex-loops/).
   Three lanes ran ALL session. R001 evidenced by T072 (delivered→submitted) then T075
@@ -63,8 +63,7 @@ stale asks from piped JSON (never retype ids), in-wt commit, cherry-pick ALL-MAT
 1. Verify CI run **35824199742** at 2b8963d9 concluded SUCCESS (`gh run view`) — it proves
    the SEC-F1 guard + AS-1 restore specs. (This handoff was pushed only after it completed;
    the newest branch-head run is the resilient pointer.)
-2. Dispatch **both DCVs in parallel** (fresh agents; ≤3 reviewers while loops live):
-   T071-DCV (5 ids) and T070-DCV (12 ids). BOTH prompts: request blob-SHA restamp predicates
+2. ~~T071-DCV~~ DONE post-handoff (the original DCV returned alive; report M5-T071-DCV.md; ACCEPTED #253 at 9b7c30a5). Dispatch the **T070-DCV** (12 ids). BOTH prompts: request blob-SHA restamp predicates
    + disjoint-peer tolerance UP FRONT; END-OF-REPORT markers + proactive short-part
    splitting; on a mid-report truncation resume from the EXACT cut phrase, micro-chunks
    (≤150 words) if streams are flaky.

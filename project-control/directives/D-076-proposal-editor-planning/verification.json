@@ -3,7 +3,7 @@
  "directive_id": "D-076",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-076-BOOTSTRAP at capture; phase-B packets are bound by applicability append at contract time. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-21T06:26:00+00:00",
+ "verified_at": "2026-09-23T06:55:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-076",
@@ -309,6 +309,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: third-input-class honesty preserved and improved - HJ-1 copy describes the interaction that exists; proposed-not-a-record labels retained; NO client CRS math (grep-proven); keyboard parity complete (click is an addition); DB-043(a) focus remedy intact; HJ-4 persistent min-hint; report M5-T066-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T071",
+   "applicable_requirement_ids": [
+    "D-076-R002"
+   ],
+   "reviewed_sha": "9b7c30a5c982f253cd3812ca944b4b346553ceba",
+   "reviewed_manifest_sha256": "7b6d66fde9942249b213216f6cbb6dcca41bf0d30f10715d22bc42bb5ab38e2c",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T06:55:00+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 2): proposed-not-record labeling survives verbatim; the finiteness work is an input gate, not a calculation (no client measurement added; conversion stays server-side through the untouched bridge client); announced count == overlay count via finitePointCount; the count-only-enablement revert tooth reproduced; the mixed finite/untyped silent-drop found independently, judged a routed disclosure gap (DB-049(a)), not an R002 violation."
      ]
     }
    ]

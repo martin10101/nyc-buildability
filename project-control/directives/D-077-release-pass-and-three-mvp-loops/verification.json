@@ -3,7 +3,7 @@
  "directive_id": "D-077",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-077-BOOTSTRAP at capture; R002/R003/R004 re-bind to the contracted lane packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-22T21:47:00+00:00",
+ "verified_at": "2026-09-23T06:55:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-077",
@@ -489,6 +489,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: released scope only - exactly the 4 allowed_paths; no forbidden path; zero dependency changes; report M5-T069-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T071",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "9b7c30a5c982f253cd3812ca944b4b346553ceba",
+   "reviewed_manifest_sha256": "7b6d66fde9942249b213216f6cbb6dcca41bf0d30f10715d22bc42bb5ab38e2c",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T06:55:00+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 3): the full lane drill reproduced as git/ledger objects (one-commit contract seam w/ c14-safe binds, evaluate_task_refs ok cited==applicable, G0 at the contract head, FULL-path claim, worktree at/past the claim seam blob-identical to the cherry-pick, no placeholder debt); three lanes cycling at verification time; the run-id counted as prose only, the row rests on git objects."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 3): selection from the released queue only (DB-047(d)/(e) + DB-048 riders of the accepted T066 wave); no new scope, no dependency/lockfile/plan change, holds intact; all four gates PASS with the reviews pinned to the independently computed blob identity; the DB-048 file-wide residual stated conservatively and carried as DB-049(h)."
      ]
     }
    ]

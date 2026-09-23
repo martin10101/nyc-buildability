@@ -3,7 +3,7 @@
  "directive_id": "D-082",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-082-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-22T22:00:00+00:00",
+ "verified_at": "2026-09-23T06:55:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-082",
@@ -113,6 +113,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (fresh dispatch at frozen 141007c3; disjoint-peer tolerance verified; addendum: validator direct exit 0): the six DB-046 a-f closures harden exactly the R002 proof surface - seven mutation-sensitive tests reproduced GREEN by the DCV itself (63 passed at frozen content) against confirmed non-vacuous production invariants (fail-closed raise :919-925, drift guard :113, conflict advisory :513-527, bounds gap :798-805, route candidate.*->500 split :314-323); G4 independently OBSERVED 3 mutants red->green incl. the fail-closed raise engine+route; report M5-T068-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T071",
+   "applicable_requirement_ids": [
+    "D-082-R001"
+   ],
+   "reviewed_sha": "9b7c30a5c982f253cd3812ca944b4b346553ceba",
+   "reviewed_manifest_sha256": "7b6d66fde9942249b213216f6cbb6dcca41bf0d30f10715d22bc42bb5ab38e2c",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T06:55:00+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (report project-control/reports/M5-T071-DCV.md, Part 2): the (b) map-drawing release hardened in place - tri-state copy gate verified against the REAL leaf signals (LotOutlineMap.tsx:646/:632), five typed-fallback teeth + the fixed-bbl observer walk reproduced non-tautological; boundary clauses proven on the diffs (2396a000 + 0014ad8f = five web files + report only; no persistence/API/contracts/3D/plan); the HJ B1/B2 closures reproduced at 0014ad8f. Blob-SHA restamp predicate stated in Part 1."
      ]
     }
    ]

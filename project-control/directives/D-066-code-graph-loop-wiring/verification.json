@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-22T21:47:00+00:00",
+ "verified_at": "2026-09-23T06:55:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -885,6 +885,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: packet carries the 793/16728/7304 seam navigation block naming store.py consumers (routes + condo_records FORBIDDEN); consumer sweep reproduced (no old supersede literal survives in code/tests outside the out-of-scope get()); exactly the 4 allowed_paths changed; report M5-T069-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T071",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "9b7c30a5c982f253cd3812ca944b4b346553ceba",
+   "reviewed_manifest_sha256": "7b6d66fde9942249b213216f6cbb6dcca41bf0d30f10715d22bc42bb5ab38e2c",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T06:55:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED with a recorded non-blocking sub-clause gap (Part 2): navigation block present and its conclusions re-derived true in actual source; regeneration corroborated-by-control-record (the artifact lives outside the repo by design); the disclosed consumer-sweep miss honestly stated and closed per the CODING_RULES routing (c0b71938 cluster C), the DCV's own full-surface re-sweep found no unswept consumer. GAP: the packet omits the query.py --no-regen consultation sentence (drift since M5-T066) - orchestrator-side authoring, fix in the next packet."
      ]
     }
    ]
