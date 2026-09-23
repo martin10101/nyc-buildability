@@ -1,0 +1,103 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-084",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-23T04:10:00+00:00",
+ "requirements": [
+  {
+   "id": "D-084-R001",
+   "text": "RUN LANE 1 ('run 3 codex loops'): feed and launch codex loop lane 1 (SupervisorController) on a contracted, claimed, in-regime ledger packet under the normal gated process and the D-070 finished-seam standard (packet contracted+claimed+pushed, worktree at/past the claim seam, launcher pointed, fresh run-id, stale asks denied in BOTH stores first). This authorizes lane-1 occupancy NOW: it supersedes the seq-125 handoff's 'loop-1 re-feeds after the T071 accept' sequencing for lane occupancy only; the M5-T071 submit/accept itself still follows its own gates unchanged.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-084-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-23"
+   },
+   "dependencies": [],
+   "required_harness": "Lane-1 packet contract seam recorded in the ledger (new-task, binds, G0, claim); launch journal shows a healthy fresh run on that packet.",
+   "required_evidence": "Ledger task files + claim seam commit + the lane-1 run journal/launch record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; the concrete lane-1 packet id binds via applicability.task_ids at its contract seam.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-084-R002",
+   "text": "RUN LANE 2 ('run 3 codex loops'): feed and launch codex loop lane 2 (SupervisorController2) on a contracted, claimed, in-regime ledger packet under the same normal gated process and D-070 finished-seam standard as R001 (the seq-125 handoff already permitted loop-2 re-feed 'anytime'; named candidates: DB-045(a) real-parcel bridge-mount validation, T069-G3-A2 revoke-text pin — candidate choice stays the orchestrator's).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-084-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-23"
+   },
+   "dependencies": [],
+   "required_harness": "Lane-2 packet contract seam recorded in the ledger (new-task, binds, G0, claim); launch journal shows a healthy fresh run on that packet.",
+   "required_evidence": "Ledger task files + claim seam commit + the lane-2 run journal/launch record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; the concrete lane-2 packet id binds via applicability.task_ids at its contract seam.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-084-R003",
+   "text": "KEEP LANE 3 RUNNING ('run 3 codex loops'): codex loop lane 3 (SupervisorController3) stays live on its current M5-T070 increment-2 run (persistent3-local-17); do not restart or displace it on this directive. On its natural close, harvest per the recorded drill and re-feed the lane so three lanes stay concurrently occupied while in-regime work remains available. The satisfied state is all three lanes live (or a lane momentarily between harvest and re-feed at a seam).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-084-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-23"
+   },
+   "dependencies": [],
+   "required_harness": "Loop-3 watcher armed; run journal shows the live run undisturbed; at close, the harvest + re-feed seam recorded in the ledger.",
+   "required_evidence": "Run journal for persistent3-local-17 + the harvest/re-feed seam commits.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; loop-3 already live and undisturbed at capture. Sentinel-bound only: lane occupancy is an operational duty evidenced by the run journal, never a work-content obligation of the M5-T070 packet (which predates this directive and stays untouched mid-run).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

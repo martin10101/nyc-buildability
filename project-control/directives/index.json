@@ -1084,7 +1084,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-083-architect-lens-product-assessment/manifest.json"
+  },
+  {
+   "directive_id": "D-084",
+   "slug": "run-three-codex-loops",
+   "title": "Owner 2026-09-23 ('run 3 codex loops'): run all three codex loop lanes concurrently - feed and launch lane 1 (superseding the seq-125 'after the T071 accept' lane-occupancy sequencing) and lane 2 on contracted, claimed, in-regime packets under the normal gated process (D-070 finished-seam standard), keep lane 3 live on its current M5-T070 increment-2 run and re-feed it at its natural close; lane occupancy only - no hold lifted, no gate changed",
+   "status": "active",
+   "issued_at": "2026-09-23",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-084-run-three-codex-loops/manifest.json"
   }
  ],
- "updated_at": "2026-09-21T06:22:00+00:00"
+ "updated_at": "2026-09-23T04:10:00+00:00"
 }

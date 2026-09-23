@@ -1,0 +1,8 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-084",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-084-BOOTSTRAP at capture; R001/R002 bind the concrete lane packets via applicability.task_ids at their contract seams, R003 already binds M5-T070 (the live loop-3 packet). This directive authorizes lane occupancy only: it lifts no hold, changes no gate, and every packet still passes the normal contract/claim/gate process. No completion claim exists at capture time.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": []
+}
