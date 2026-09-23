@@ -1,0 +1,75 @@
+{
+  "task_id": "M5-T076",
+  "title": "DB-050(a) geometry-threading pre-mount packet: server-side derivation of authoritative 2263 lot-line segments from the accepted MapPLUTO connector by BBL - the fitted-candidate path becomes production-reachable; fail-closed, engine byte-untouched",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close DB-050(a) (the T070 wave's load-bearing rider): when a max-envelope request carries NO lot_line_segments and a resolvable BBL, the ROUTE derives authoritative EPSG:2263 lot-line segments server-side from mappluto_geometry_arcgis's canonical exterior ring (recorded fixtures; display 4326 NEVER measured), in a NEW module wired at the route layer - max_envelope.py stays BYTE-UNTOUCHED (it sits at the 998-line hard modularity threshold). Requests that carry segments behave byte-identically; any derivation failure keeps today's honest lot_geometry_unsupported gap with the failure reason in detail - never a fabricated rectangle. The route stays UNMOUNTED (exposure remains the DB-045(b)/B-001 mount-seam decision).",
+  "business_reason": "Both T070 reviewers proved one-action adoption is production-unreachable because the geometry-free client request can never elicit a fitted candidate; this packet makes the real engine servable for the real request BEFORE the mount, with the design direction both reviews endorsed (server-side derivation by BBL, never client-sent display geometry).",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest, never fake it.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-050 item (a) (verbatim in the row) + the T070 G3-F2/G4-F1 proof chain (project-control/reports/M5-T070-G3.md / -G4.md): max-envelope-api.ts:538-547 sends lot_line_segments: [] -> max_envelope.py:632-637 refuses to fit -> :795-800 returns lot_geometry_unsupported with NO candidate. Your job is the server side of the cure: derive the segments by BBL at the ROUTE layer.",
+    "HARD MODULARITY BOUND (binding): services/api/app/scenario/max_envelope.py is 998 SLOC - AT the 1000-line hard threshold. It must stay BYTE-UNTOUCHED. ALL new logic lives in the new module services/api/app/scenario/lot_geometry_derivation.py; the ONLY production wiring edit is in services/api/app/api/v1/max_envelope_api.py (342 lines; the request parse/LotContext seam around :201). Run python tools/modularity_check.py --check before the checkpoint.",
+    "GEOMETRY CONTRACT (binding; exact sources - never guess): the authoritative ring comes from app/connectors/mappluto_geometry_arcgis.py (EPSG:2263 US survey feet, measurement-grade, analyze_lot_geometry -> canonical_geometry exterior ring). NEVER derive from mappluto_lot_outline (4326, display only, never measured). The lot_line_segments shape = whatever the route already validates at max_envelope_api.py:201-206 and LotContext (app/scenario/derivation.py:255) consumes - mirror the committed shape, respect the route existing entry cap, and carry the provenance quintuple (source id, BBL, retrieved_at, dataset version, digest) on the derived facts.",
+    "FAIL-CLOSED (binding, D-051 discipline): every derivation failure class (no feature for BBL / multiple features / invalid or unusable geometry / connector fault) keeps the honest current behavior - the engine still receives empty segments and returns the lot_geometry_unsupported gap - with the derivation failure reason carried into the placement detail. NEVER a fabricated or partial rectangle, NEVER a silent fallback. Requests that DO carry client segments are byte-identical to today (no derivation call).",
+    "TESTS (binding): offline only, on the recorded mappluto_geometry fixture packs (tests/fixtures/mappluto_geometry/...; the F01 single-lot class gives the fitted-candidate-reachable proof). Route-level proof in tests/api/test_max_envelope_api.py (additions only): with-segments byte-identity, derived-path fitted candidate, each failure class honest. Unit tests for the new module in tests/scenario/test_lot_geometry_derivation.py. No network in any test.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at the seq-126 seam): mappluto_geometry_arcgis is imported by outline_bridge.py:264, spatial/*, and mappluto_lot_outline.py:57 - consume it READ-ONLY; the connector, the engine (max_envelope.py), derivation.py, and every web file are FORBIDDEN paths."
+  ],
+  "outputs": [
+    "services/api/app/scenario/lot_geometry_derivation.py - the derivation module (ring -> segments, provenance, typed failure classes)",
+    "Route wiring in services/api/app/api/v1/max_envelope_api.py (derive only when segments absent and BBL resolvable; fail-closed)",
+    "Offline unit + route test suites proving reachability, byte-identity, and every failure class",
+    "project-control/reports/M5-T076-producer-report.md (one concise evidence pass; digest-bound)"
+  ],
+  "dependencies": [
+    "M5-T070"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/lot_geometry_derivation.py",
+    "services/api/app/api/v1/max_envelope_api.py",
+    "services/api/tests/scenario/test_lot_geometry_derivation.py",
+    "services/api/tests/api/test_max_envelope_api.py",
+    "project-control/reports/M5-T076-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-1 (derivation correctness): from a recorded F01-class fixture, the canonical EPSG:2263 exterior ring becomes lot_line_segments in exactly the shape the route already validates and LotContext consumes, with the provenance quintuple carried; the display 4326 ring is never touched (mutation: swapping the source to the display connector reddens a named test).",
+    "AS-2 (reachability): a geometry-free request with a resolvable BBL now yields a FITTED contained candidate from the real engine on the F01-class fixture - the exact state the T070 web fixtures model - proven at the route level with TestClient; the response passes the engine's own generator-checker consistency proof unchanged.",
+    "AS-3 (byte-identity + fail-closed): a request that carries client segments produces a byte-identical response to today (no derivation call - asserted); EACH derivation failure class (no feature, multiple features, invalid geometry, connector fault) returns the honest lot_geometry_unsupported gap with the failure reason in the placement detail; dropping the fail-closed branch reddens a named test.",
+    "AS-4 (modularity + scope): max_envelope.py BYTE-UNTOUCHED (assert by blob comparison in the report); all new logic in the new module; modularity check exit 0; ruff clean; no new dependency; the route stays unmounted."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-23T05:42:11.092850+00:00",
+  "updated_at": "2026-09-23T05:42:11.578742+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-084",
+      "requirement_ids": [
+        "D-084-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-23T05:42:11.092850+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/scenario/test_lot_geometry_derivation.py tests/api/test_max_envelope_api.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
