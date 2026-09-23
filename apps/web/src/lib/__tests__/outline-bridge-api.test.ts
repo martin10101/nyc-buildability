@@ -3,6 +3,7 @@ import {
   announcementForOutlineBridge,
   fetchOutlineBridge,
   isDocumentedBridgePair,
+  MAX_RESPONSE_BYTES,
   outlineBridgeOutcomeIsRecoverable,
   type OutlineBridgeOutcome,
 } from "@/lib/outline-bridge-api";
@@ -256,5 +257,147 @@ describe("bridge outcome helpers", () => {
     const res = announcementForOutlineBridge({ kind: "residual_too_high", rmsResidualFt: 9, residualBoundFt: 2, message: "", correlationId: null });
     expect(nbr).not.toBe(res);
     expect(nbr).toContain("outside");
+  });
+});
+
+/**
+ * Task M5-T075 (D-084-R001), DB-045(i) — the client's BROWSER-FAULT branches.
+ * M5-T065's G4 review found these typed but untested: a network TypeError, a
+ * timeout-driven AbortError, a caller-driven abort (both the pre-flight and the
+ * mid-flight path), and an over-budget response. Each is driven through
+ * fetchOutlineBridge and asserted to yield its EXACT typed outcome and the
+ * bounded user-facing announcement. AS-2 (load-bearing): no fault class is ever
+ * laundered into a typed refusal or a bridged coordinate — a fault is a fault,
+ * never a result. The refusal/bridged kinds a fault must never become are held in
+ * REFUSAL_OR_BRIDGED_KINDS so every fault case asserts the negative directly.
+ */
+
+/** The outcome kinds a browser fault must NEVER be classified as: a bridged
+ * coordinate or any of the typed server refusals. */
+const REFUSAL_OR_BRIDGED_KINDS: ReadonlySet<OutlineBridgeOutcome["kind"]> = new Set<OutlineBridgeOutcome["kind"]>([
+  "bridged",
+  "feature_unavailable",
+  "payload_too_large",
+  "invalid_request",
+  "out_of_neighborhood",
+  "correspondence_unavailable",
+  "residual_too_high",
+]);
+
+/** A fetchImpl that rejects — models fetch's network TypeError ("Failed to
+ * fetch") with no signal aborted and no timeout elapsed. */
+function rejectingFetch(error: unknown): typeof fetch {
+  return (async () => {
+    throw error;
+  }) as typeof fetch;
+}
+
+/** A fetchImpl that never settles on its own and rejects with an AbortError only
+ * once its signal aborts — models a real in-flight request cancelled either by
+ * the client's timeout controller or by the caller's external signal. The client
+ * keys its fault decision off the signal/timeout state, not the error object. */
+function abortAwareFetch(): typeof fetch {
+  return ((_input: unknown, init?: RequestInit) =>
+    new Promise<Response>((_resolve, reject) => {
+      const signal = init?.signal ?? undefined;
+      if (signal?.aborted) {
+        reject(new DOMException("Aborted", "AbortError"));
+        return;
+      }
+      signal?.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")));
+    })) as typeof fetch;
+}
+
+async function runWith(options: Parameters<typeof fetchOutlineBridge>[1]): Promise<OutlineBridgeOutcome> {
+  return fetchOutlineBridge(
+    { bbl: BBL, drawn_vertices: [[-73.9998, 40.7001], [-73.9992, 40.7001], [-73.9992, 40.7003]] },
+    options,
+  );
+}
+
+describe("fetchOutlineBridge — browser-fault branches (DB-045(i))", () => {
+  it("types a fetch network TypeError as network_error, never a refusal or bridged", async () => {
+    const outcome = await runWith({ fetchImpl: rejectingFetch(new TypeError("Failed to fetch")) });
+    expect(outcome.kind).toBe("network_error");
+    // AS-2: not laundered into a refusal or a bridged coordinate.
+    expect(REFUSAL_OR_BRIDGED_KINDS.has(outcome.kind)).toBe(false);
+    // A network fault is recoverable (a Retry is meaningful) with bounded copy.
+    expect(outlineBridgeOutcomeIsRecoverable(outcome)).toBe(true);
+    // Complete expected bounded copy — the literal string from the client's
+    // network_error announcement arm (outline-bridge-api.ts), not just a substring
+    // and not a value re-derived from production at runtime.
+    expect(announcementForOutlineBridge(outcome)).toContain("could not be reached");
+    expect(announcementForOutlineBridge(outcome)).toBe(
+      "Outline not converted: the bridge service could not be reached.",
+    );
+  });
+
+  it("types a timeout-driven AbortError as client_timeout carrying the budget, never a refusal or bridged", async () => {
+    // The internal timer fires (nothing else settles the never-resolving fetch),
+    // so timedOut is true when the AbortError surfaces: client_timeout, not
+    // network_error and not aborted.
+    const outcome = await runWith({ fetchImpl: abortAwareFetch(), timeoutMs: 10 });
+    expect(outcome.kind).toBe("client_timeout");
+    if (outcome.kind === "client_timeout") expect(outcome.timeoutMs).toBe(10);
+    expect(REFUSAL_OR_BRIDGED_KINDS.has(outcome.kind)).toBe(false);
+    expect(outlineBridgeOutcomeIsRecoverable(outcome)).toBe(true);
+    // Complete expected bounded copy — the literal client_timeout announcement.
+    expect(announcementForOutlineBridge(outcome)).toContain("took too long");
+    expect(announcementForOutlineBridge(outcome)).toBe(
+      "Outline not converted: the request took too long and was cancelled.",
+    );
+  });
+
+  it("types a pre-aborted caller signal as aborted before the request leaves the client, announcing nothing", async () => {
+    const controller = new AbortController();
+    controller.abort();
+    let fetchCalls = 0;
+    const countingFetch = (async () => {
+      fetchCalls += 1;
+      return new Response("{}", { status: 200 });
+    }) as typeof fetch;
+    const outcome = await runWith({ fetchImpl: countingFetch, signal: controller.signal });
+    expect(outcome.kind).toBe("aborted");
+    // A superseded request never leaves the client; fetch is not called.
+    expect(fetchCalls).toBe(0);
+    expect(REFUSAL_OR_BRIDGED_KINDS.has(outcome.kind)).toBe(false);
+    // A superseded request announces nothing (no user-facing noise on abort).
+    expect(announcementForOutlineBridge(outcome)).toBe("");
+  });
+
+  it("types a mid-flight caller abort as aborted, distinct from a timeout, never a refusal or bridged", async () => {
+    const controller = new AbortController();
+    // Large budget so the timeout timer never fires: the ONLY cancellation is the
+    // caller's abort, which must classify as aborted (timedOut stays false). The
+    // caller abort propagates into the client's INTERNAL controller (onExternalAbort),
+    // so controller.signal.aborted is ALSO true here; the whole `aborted` guard is the
+    // load-bearing mutation target — removing either operand alone leaves this fixture
+    // green (see producer report AS-3 #4).
+    const pending = runWith({ fetchImpl: abortAwareFetch(), signal: controller.signal, timeoutMs: 30_000 });
+    controller.abort();
+    const outcome = await pending;
+    expect(outcome.kind).toBe("aborted");
+    expect(REFUSAL_OR_BRIDGED_KINDS.has(outcome.kind)).toBe(false);
+    expect(announcementForOutlineBridge(outcome)).toBe("");
+  });
+
+  it("types an over-budget Content-Length as unexpected_response BEFORE parsing, never a refusal or bridged", async () => {
+    // A well-formed 200 body whose DECLARED size exceeds MAX_RESPONSE_BYTES must
+    // fail closed before the body is parsed/walked — never a bridged render.
+    const response = bridgeResponse(bridgedBody(), 200);
+    response.headers.set("Content-Length", String(MAX_RESPONSE_BYTES + 1));
+    const outcome = await run(response);
+    expect(outcome.kind).toBe("unexpected_response");
+    if (outcome.kind === "unexpected_response") {
+      expect(outcome.httpStatus).toBe(200);
+      expect(outcome.receivedState).toBeNull();
+      expect(outcome.correlationId).toBe("cid");
+    }
+    expect(REFUSAL_OR_BRIDGED_KINDS.has(outcome.kind)).toBe(false);
+    // Complete expected bounded copy — the literal unexpected_response announcement.
+    expect(announcementForOutlineBridge(outcome)).toContain("unexpected response");
+    expect(announcementForOutlineBridge(outcome)).toBe(
+      "Outline not converted: unexpected response from the platform API.",
+    );
   });
 });
