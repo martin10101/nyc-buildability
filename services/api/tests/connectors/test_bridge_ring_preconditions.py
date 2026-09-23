@@ -178,10 +178,10 @@ def display_ring_from_geojson_body(body: str, bbl: str, *, retrieved_at: str) ->
     ``f=geojson&outSR=4326`` response body (the lot-outline connector's raw
     output), through the connector's real parse + contract validation."""
     normalized = normalize_bbl(bbl)
-    url = build_outline_query_url(normalized.canonical)
-    doc = build_lot_outline(
+    url = outline.build_outline_query_url(normalized.canonical)
+    doc = outline.build_lot_outline(
         normalized.canonical,
-        fetch=lambda *_: LotOutlineTransport(
+        fetch=lambda *_: outline.LotOutlineTransport(
             url=url, status=200, body=body, retrieved_at=retrieved_at
         ),
     )
@@ -194,7 +194,7 @@ def display_ring_from_geojson_body(body: str, bbl: str, *, retrieved_at: str) ->
     return ParcelRing(
         points=_open_ring(ring),
         crs="EPSG:4326",
-        source_id=OUTLINE_SOURCE_ID,
+        source_id=outline.SOURCE_ID,
         source_detail={"representation": "lot_outline_display", "dataset_version": version},
     )
 
@@ -208,12 +208,12 @@ def authoritative_ring_from_query_body(body: str, bbl: str) -> ParcelRing:
     geometry, which is produced solely by ``analyze_lot_geometry``)."""
     doc = json.loads(body)
     sr = doc.get("spatialReference") or {}
-    require_authoritative_crs({"wkid": sr.get("wkid"), "latest_wkid": sr.get("latestWkid")})
+    geom.require_authoritative_crs({"wkid": sr.get("wkid"), "latest_wkid": sr.get("latestWkid")})
     features = doc.get("features") or []
     if len(features) != 1:
         raise AssertionError(f"{bbl}: expected exactly one feature, got {len(features)}")
     esri_geometry = features[0].get("geometry")
-    assessment = analyze_lot_geometry(esri_geometry, crs=dict(CRS_STAMP))
+    assessment = geom.analyze_lot_geometry(esri_geometry, crs=dict(geom.CRS_STAMP))
     if not assessment.canonical_geometry:
         raise AssertionError(
             f"{bbl}: no canonical geometry (assessment status {assessment.status!r})"
@@ -223,7 +223,7 @@ def authoritative_ring_from_query_body(body: str, bbl: str) -> ParcelRing:
     return ParcelRing(
         points=_open_ring(ring),
         crs="EPSG:2263",
-        source_id=GEOM_SOURCE_ID,
+        source_id=geom.SOURCE_ID,
         source_detail={
             "representation": "lot_geometry_authoritative",
             "normalized_digest": assessment.normalized_digest,
@@ -248,8 +248,24 @@ def load_pairs() -> list[dict]:
     return json.loads(PAIRS_MANIFEST.read_text(encoding="utf-8")).get("pairs", [])
 
 
+# Fixture roots, tried in order: the accepted connector packs live under
+# tests/fixtures (P01-P04: mappluto_lot_outline/ + mappluto_geometry/); the
+# net-new harvested pairs live under tests/connectors/fixtures/bridge_ring_pairs
+# (P05-P08, referenced as bridge_ring_pairs/<pair>/...). A manifest
+# source_fixture is resolved against the first root that holds it, so both
+# verbatim byte sources are read OFFLINE with no path duplication.
+_FIXTURE_ROOTS = (FIXTURES, PAIRS_DIR.parent)
+
+
 def _read_body(rel_path: str) -> str:
-    return (FIXTURES / rel_path).read_text(encoding="utf-8")
+    for root in _FIXTURE_ROOTS:
+        candidate = root / rel_path
+        if candidate.exists():
+            return candidate.read_text(encoding="utf-8")
+    raise FileNotFoundError(
+        f"fixture {rel_path!r} not found under any of "
+        f"{[str(root) for root in _FIXTURE_ROOTS]}"
+    )
 
 
 def _auth_response_body(rel_path: str, kind: str = "provenance_envelope.response_body_raw") -> str:
