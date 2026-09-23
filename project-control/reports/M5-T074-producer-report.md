@@ -269,3 +269,12 @@ G4 reviewer (backend-engineer): run `python -m pytest tests/api/test_outline_bri
 DB-046 precedent — confirm leak-absence with an independent body-widening mutant: adding any field to
 `_internal_error_500` breaks `set(body) == {"state","message","correlation_id"}` in all four tests.
 The task remains pending until the harvest and gates PASS.
+
+---
+
+## [ORCH-HARVEST] Authorized-orchestrator harvest transcript (2026-09-23, cwd services/api, wt-m5t074)
+
+- `python -m ruff check .` → **All checks passed!** (exit 0).
+- `python -m pytest tests/api/test_outline_bridge.py -q` → **42 passed** (the four live-500
+  proofs green among them). Identity: in-wt commit cherry-picked, MATCH x2 (LF-normalized).
+  11 stale asks denied from piped JSON at harvest. CI on the pushed head is the backstop.

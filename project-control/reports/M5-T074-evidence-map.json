@@ -1,0 +1,11 @@
+{
+ "task_id": "M5-T074",
+ "material_commit": "the wt-m5t074 in-wt commit cherry-picked onto the seq-126 chain (2 files, MATCH x2 LF-normalized; +381/-4, test file additions-only). CI backstop rides the next push.",
+ "produced_at": "2026-09-23T06:25:00+00:00",
+ "producer": "qa-engineer (loop-3 worker, run persistent3-local-18-m5t074; cycle_closed clean close; 11 stale asks denied at harvest; the orchestrator ran the scoped commands - ruff clean, 42 passed)",
+ "requirements": {
+  "D-084-R003": [
+   "Lane-3 re-fed and ran after the T070 increment-2 harvest exactly per the directive: the DB-045(c) unit drove every documented outline-bridge (500, internal_error) server branch LIVE (fetch-stage internal defect, BOTH ring_crs_mismatch halves, the strict-JSON tail guard) through the mounted-in-test route, with one shared oracle pinning the EXACT three-key generic body, correlation identity, no-coordinates, and per-branch leak-absence sentinels (ruff-safe secretscan pragmas); additions-only, zero production edits."
+  ]
+ }
+}
