@@ -1,0 +1,65 @@
+{
+  "task_id": "M5-T075",
+  "title": "DB-045(i) outline-bridge client browser-fault branches: network_error / client_timeout / aborted / over-budget proven in the typed client (web test-only)",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Close DB-045(i) (M5-T065 wave G4-gap1 MODERATE): the outline-bridge web client's browser-fault branches are typed but untested - drive each fault class (network TypeError, AbortError/timeout, aborted-by-caller, response-over-budget) through fetchOutlineBridge and assert the exact typed outcome, the bounded user-facing announcement, and that NO fault class is ever laundered into a refusal or a bridged result. Test-only additions in the existing suite.",
+  "business_reason": "The drawing surface is released; a browser fault mis-typed as a refusal (or worse, a bridged result) would misinform the analyst exactly when the network is flaky. The branches exist and are typed - they need teeth before the mount seam.",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest, never fake it.",
+    "THIN CLIENT (binding): web tests prove ONLY in CI on the pushed head - NEVER run or document npm/npx/node locally; author the specs, self-review them statically, and route the run to the seam-push CI. An empty .test.ts placeholder fails vitest - the suite already exists and is non-empty.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-045 item (i) (M5-T065 wave G4-gap1, verbatim in the row). Target: apps/web/src/lib/outline-bridge-api.ts - the typed client (BridgedOutcome union; the documented (status,state) matrix at :229; the fault-never-laundered rule at :183 comments) and its suite apps/web/src/lib/__tests__/outline-bridge-api.test.ts (mirror its existing bridgeResponse/run idioms exactly). Fault classes to drive: fetch rejecting with a network TypeError; an AbortError (both timeout-driven and caller-driven if the client distinguishes them); a response whose Content-Length/body exceeds the documented budget. Assert the EXACT typed outcome kind per class, the bounded announcement copy, and that no fault ever yields kind refusal/bridged.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at the seq-126 seam): outline-bridge-api.ts is consumed by ProposalOutlineDraw (T071 lane, FROZEN awaiting accept) - production outline-bridge-api.ts is READ-ONLY here and NOTHING outside the one test file may change; a needed production fix is a FINDING routed to the orchestrator, never an edit.",
+    "BEHAVIOR PRESERVATION (binding): additions only in the one allowed test file; every existing assertion byte-unchanged; zero production edits."
+  ],
+  "outputs": [
+    "Typed-outcome proofs for every client browser-fault branch in apps/web/src/lib/__tests__/outline-bridge-api.test.ts",
+    "project-control/reports/M5-T075-producer-report.md (one concise evidence pass; digest-bound)"
+  ],
+  "dependencies": [
+    "M5-T065"
+  ],
+  "allowed_paths": [
+    "apps/web/src/lib/__tests__/outline-bridge-api.test.ts",
+    "project-control/reports/M5-T075-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-1 (fault typing): each fault class (network TypeError; timeout AbortError; caller-abort if distinct; over-budget response) driven through fetchOutlineBridge with the suite's existing stub idioms, asserting the exact typed outcome kind and its user-facing announcement copy.",
+    "AS-2 (never laundered): for every fault class, assert the outcome kind is NEITHER a refusal class NOR bridged - the fault-never-laundered rule the client documents.",
+    "AS-3 (mutation sensitivity): identify for each new spec the single client mutation that reddens it (e.g. mapping network TypeError to the refusal path) and record the prediction in the report - run nothing locally; CI proves the green side.",
+    "AS-4 (no scope creep): additions only in the one allowed test file; zero production edits; every existing assertion byte-unchanged."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "qa-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-23T05:12:03.967574+00:00",
+  "updated_at": "2026-09-23T05:12:05.183459+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-084",
+      "requirement_ids": [
+        "D-084-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-23T05:12:03.968347+00:00",
+  "documented_test_commands": [
+    "python tools/modularity_check.py --check"
+  ]
+}
