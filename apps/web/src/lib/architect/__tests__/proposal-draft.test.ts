@@ -5,6 +5,7 @@ import {
   addWall,
   adoptOutlineVertices,
   danglingWallIds,
+  draftFromCandidate,
   draftIsRunnable,
   emptyDraft,
   MIRROR_MAX_LABEL_LEN,
@@ -17,6 +18,7 @@ import {
   toProposalCheckRequest,
   updateVertex,
   validateDraft,
+  type CandidateSeed,
   type ProposalDraft,
 } from "@/lib/architect/proposal-draft";
 
@@ -221,5 +223,68 @@ describe("draft helpers", () => {
     expect(danglingWallIds([{ id: "W-bad", start_vertex_index: -1, end_vertex_index: 0 }], 5)).toEqual([
       "W-bad",
     ]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Task M5-T070 (D-083-R002 / AS-4): seed THIS one draft model from a Generated
+// building option candidate. The candidate's 2263 outline + levels + walls pass
+// through VERBATIM (no math, no CRS transform) and land as PROPOSED input, and
+// the adopted draft is immediately runnable against the check route.
+// ---------------------------------------------------------------------------
+describe("draftFromCandidate — adoption seeding of the Generated building option", () => {
+  const candidate: CandidateSeed = {
+    outline: {
+      vertices: [
+        [1000000, 200000],
+        [1000100, 200000],
+        [1000100, 200050],
+        [1000000, 200050],
+      ],
+    },
+    levels: [{ level_index: 0, floor_count: 5, floor_to_floor_ft: 10 }],
+    exterior_walls: [
+      { id: "W-S", start_vertex_index: 0, end_vertex_index: 1 },
+      { id: "W-E", start_vertex_index: 1, end_vertex_index: 2 },
+    ],
+  };
+
+  it("passes the candidate outline/levels/walls through VERBATIM (no math, no CRS transform)", () => {
+    const draft = draftFromCandidate(candidate);
+    expect(draft.vertices).toEqual([
+      { x: 1000000, y: 200000 },
+      { x: 1000100, y: 200000 },
+      { x: 1000100, y: 200050 },
+      { x: 1000000, y: 200050 },
+    ]);
+    expect(draft.levels).toEqual([{ level_index: 0, floor_count: 5, floor_to_floor_ft: 10 }]);
+    expect(draft.exterior_walls).toEqual(candidate.exterior_walls);
+  });
+
+  it("labels the draft the D-083 claim class by default and marks the provenance PROPOSED, not a city record", () => {
+    const draft = draftFromCandidate(candidate);
+    expect(draft.scenario_label).toBe("Generated building option");
+    expect(draft.area_provenance_note).toContain("proposed input, not a city record");
+    // proposal_id is blank (the analyst names their own scenario), and no lot geometry is fabricated.
+    expect(draft.proposal_id).toBe("");
+    expect(draft.lot_line_segments).toEqual([]);
+    expect(draft.street_lines).toEqual([]);
+  });
+
+  it("threads the SAME max-envelope request lot context (area/zoning) so the adopted draft is immediately runnable", () => {
+    const draft = draftFromCandidate(candidate, {
+      lot_area_sq_ft: 8000,
+      zoning_district: "R6",
+      street_width_class: "wide",
+    });
+    expect(draft.lot_area_sq_ft).toBe(8000);
+    expect(draft.zoning_district).toBe("R6");
+    expect(draft.street_width_class).toBe("wide");
+    // With ≥3 vertices and no mirror problems the seeded draft is runnable at once.
+    expect(draftIsRunnable(draft)).toBe(true);
+  });
+
+  it("honors an explicit label override", () => {
+    expect(draftFromCandidate(candidate, { label: "Option A" }).scenario_label).toBe("Option A");
   });
 });

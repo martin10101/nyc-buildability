@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { announcementForRuleEvaluation } from "@/lib/rule-evaluation";
 import { validateBblInput } from "@/lib/bbl";
 import { announcementForOutcome } from "@/lib/announce";
@@ -28,7 +28,27 @@ import { EvidenceInspector } from "./EvidenceInspector";
 import { ScenarioWorkspace } from "./ScenarioWorkspace";
 import { ReportView } from "./ReportView";
 import { ProposalEditor } from "./ProposalEditor";
+import { MaxEnvelopePanel } from "./MaxEnvelopePanel";
+import { maxEnvelopeRequestForProfile } from "@/lib/architect/max-envelope-api";
+import { type ProposalDraft } from "@/lib/architect/proposal-draft";
 import { IncompleteEvaluationNotice } from "./DevelopmentLimits";
+
+/**
+ * The architect design surface (task M5-T070, D-082-R003 + D-083): the
+ * Preliminary-development-limits panel renders FIRST (answer-first, from the
+ * lot context alone, before any designer input), then the accepted proposal
+ * editor. Adopting the Generated building option seeds the editor's ONE draft
+ * model; manual entry stays fully available and unchanged. The panel is
+ * ADDITIVE — its absence/loading/failure leaves the editor untouched.
+ */
+function ProposalSurface({ bbl, profile }: { bbl: string; profile: PropertyProfile }) {
+    const request = useMemo(() => maxEnvelopeRequestForProfile(profile), [profile]);
+    const [adoptedDraft, setAdoptedDraft] = useState<ProposalDraft | null>(null);
+    return <>
+    <MaxEnvelopePanel request={request} onAdopt={setAdoptedDraft}/>
+    <ProposalEditor bbl={bbl} adoptedDraft={adoptedDraft}/>
+  </>;
+}
 function PropertySearch() {
     const router = useRouter();
     const [bbl, setBbl] = useState("");
@@ -140,7 +160,7 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
             content = <ReportView profile={profile} evaluation={returnedEvaluation} scenario={returnedScenario} label={label}/>;
             break;
         case "proposal":
-            content = <ProposalEditor bbl={bbl}/>;
+            content = <ProposalSurface bbl={bbl} profile={profile}/>;
             break;
         default: content = <PlannedView label={VIEW_LABELS[view]}/>;
     }

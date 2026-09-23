@@ -355,6 +355,69 @@ export function emptyDraft(): ProposalDraft {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Adoption seeding (task M5-T070, D-083-R002 / AS-4): seed THIS one draft model
+// from the "Generated building option" candidate the max-envelope engine emitted.
+// The candidate block is the server's rules-derived rectangle-prism (2263 outline
+// + levels + walls); it lands here EXACTLY as if typed — the numeric table stays
+// the visible, editable authority (manual entry remains fully available). Every
+// value is PROPOSED input by nature of this model (never a city record, never a
+// rule allowance). No math, no CRS transform: coordinates pass through verbatim.
+// ---------------------------------------------------------------------------
+
+/** The minimal structural shape adoption reads from an emitted candidate. The
+ * max-envelope client's `EnvelopeCandidateView` is structurally compatible; the
+ * seam is kept structural so this module never imports the API client (no cycle). */
+export interface CandidateSeed {
+  outline: { vertices: Array<[number, number]> };
+  levels: Array<{ level_index: number; floor_count: number; floor_to_floor_ft: number }>;
+  exterior_walls: Array<{ id: string; start_vertex_index: number; end_vertex_index: number }>;
+}
+
+export interface CandidateSeedContext {
+  /** Draft label; defaults to the D-083 claim-class name for the emitted option. */
+  label?: string;
+  lot_area_sq_ft?: number | null;
+  zoning_district?: string;
+  street_width_class?: "" | "wide" | "narrow";
+}
+
+/**
+ * Build a proposed draft from a Generated building option (task M5-T070). Pure
+ * and immutable: the candidate's 2263 outline vertices become the draft outline,
+ * its levels and exterior walls carry over unchanged, and the caller's lot context
+ * (area/zoning from the same max-envelope request) seeds the lot inputs so the
+ * adopted draft is immediately runnable against the check route. Nothing here is a
+ * survey or a city record — it is the analyst's proposed starting point.
+ */
+export function draftFromCandidate(
+  candidate: CandidateSeed,
+  context: CandidateSeedContext = {},
+): ProposalDraft {
+  return {
+    scenario_label: context.label ?? "Generated building option",
+    proposal_id: "",
+    vertices: candidate.outline.vertices.map(([x, y]) => ({ x, y })),
+    levels: candidate.levels.map((l) => ({
+      level_index: l.level_index,
+      floor_count: l.floor_count,
+      floor_to_floor_ft: l.floor_to_floor_ft,
+    })),
+    exterior_walls: candidate.exterior_walls.map((w) => ({
+      id: w.id,
+      start_vertex_index: w.start_vertex_index,
+      end_vertex_index: w.end_vertex_index,
+    })),
+    lot_area_sq_ft: context.lot_area_sq_ft ?? null,
+    area_provenance_note:
+      "seeded from the Generated building option (a rules-derived estimate; proposed input, not a city record)",
+    lot_line_segments: [],
+    street_lines: [],
+    zoning_district: context.zoning_district ?? "",
+    street_width_class: context.street_width_class ?? "",
+  };
+}
+
 /** The accepted M5-T054 rectangle case as an editable draft (100 ft x 50 ft, 3
  * floors, 8000 sq ft R5 lot). Seeding it makes the editor immediately
  * meaningful; run against the accepted route it reproduces the AS-1 arithmetic

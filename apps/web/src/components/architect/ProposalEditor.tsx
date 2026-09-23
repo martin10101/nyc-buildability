@@ -57,7 +57,19 @@ function parseNum(raw: string): number {
   return raw.trim() === "" ? Number.NaN : Number(raw);
 }
 
-export function ProposalEditor({ bbl, fetchImpl }: { bbl?: string | null; fetchImpl?: typeof fetch }) {
+export function ProposalEditor({
+  bbl,
+  fetchImpl,
+  adoptedDraft,
+}: {
+  bbl?: string | null;
+  fetchImpl?: typeof fetch;
+  /** A draft adopted from the Generated building option (task M5-T070, D-083-R002).
+   * When it changes to a new non-null draft it REPLACES the working draft as the
+   * proposed starting point; the numeric table stays the editable authority and
+   * manual entry is unchanged. */
+  adoptedDraft?: ProposalDraft | null;
+}) {
   const [draft, setDraft] = useState<ProposalDraft>(() => rectangleSampleDraft());
   const [outcome, setOutcome] = useState<ProposalCheckOutcome | null>(null);
   const [checking, setChecking] = useState(false);
@@ -71,6 +83,24 @@ export function ProposalEditor({ bbl, fetchImpl }: { bbl?: string | null; fetchI
   useEffect(() => {
     draftRef.current = draft;
   }, [draft]);
+
+  // Adopt the Generated building option (task M5-T070, D-083-R002 / AS-4): when a
+  // NEW adopted draft arrives, seed THIS draft model from it and clear stale
+  // results — the numeric table stays the visible, editable authority and manual
+  // entry (numeric table + the T066 drawing) remains fully available afterwards.
+  const lastAdoptedRef = useRef<ProposalDraft | null>(null);
+  useEffect(() => {
+    if (!adoptedDraft || adoptedDraft === lastAdoptedRef.current) return;
+    lastAdoptedRef.current = adoptedDraft;
+    setDraft(adoptedDraft);
+    setDraftProblems([]);
+    setOutcome(null);
+    setActiveId(null);
+    setAnnouncement(
+      "Adopted the Generated building option as a proposed starting draft. Every value here is " +
+        "proposed — edit it in the table, or keep entering your own; run the check when ready.",
+    );
+  }, [adoptedDraft]);
 
   const runCheck = useCallback(async () => {
     const problems = validateDraft(draft);

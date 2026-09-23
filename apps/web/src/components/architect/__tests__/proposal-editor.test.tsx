@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import { ProposalEditor } from "../ProposalEditor";
+import { draftFromCandidate } from "@/lib/architect/proposal-draft";
 import { attestedReportBody, checkResponse, stubFetch } from "@/test-support/proposal-check-fixtures";
 
 /**
@@ -159,6 +160,38 @@ describe("ProposalEditor", () => {
     expect(xs).toHaveLength(3);
     expect(xs[0].value).toBe("1000020");
     expect((screen.getByLabelText("Vertex 2 Y coordinate") as HTMLInputElement).value).toBe("200030");
+  });
+
+  it("adopts a Generated building option as the proposed starting draft, seeding the numeric authority (M5-T070, AS-4)", () => {
+    const adopted = draftFromCandidate(
+      {
+        outline: {
+          vertices: [
+            [1000000, 200000],
+            [1000100, 200000],
+            [1000100, 200050],
+            [1000000, 200050],
+          ],
+        },
+        levels: [{ level_index: 0, floor_count: 5, floor_to_floor_ft: 10 }],
+        exterior_walls: [{ id: "W-S", start_vertex_index: 0, end_vertex_index: 1 }],
+      },
+      { lot_area_sq_ft: 8000, zoning_district: "R6" },
+    );
+    const { rerender } = render(<ProposalEditor bbl={null} fetchImpl={stub()} adoptedDraft={null} />);
+    // The editor starts on the rectangle seed (5 numeric vertices).
+    expect(screen.getAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(5);
+
+    // A NEW adopted draft REPLACES the working draft as the proposed starting point.
+    rerender(<ProposalEditor bbl={null} fetchImpl={stub()} adoptedDraft={adopted} />);
+    const xs = screen.getAllByLabelText(/^Vertex \d+ X coordinate$/) as HTMLInputElement[];
+    expect(xs).toHaveLength(4);
+    expect(xs[0].value).toBe("1000000");
+    expect((screen.getByLabelText("Vertex 2 Y coordinate") as HTMLInputElement).value).toBe("200050");
+    // Announced honestly as PROPOSED, and manual entry stays fully available afterwards.
+    expect(screen.getByTestId("proposal-check-announcer")).toHaveTextContent("Adopted the Generated building option");
+    expect(screen.getByTestId("proposal-check-announcer")).toHaveTextContent("Every value here is proposed");
+    expect(screen.getByRole("button", { name: "Add vertex" })).toBeInTheDocument();
   });
 
   it("carries no dangerouslySetInnerHTML and no scenario contract_version token in the packet source", () => {
