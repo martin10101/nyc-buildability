@@ -105,21 +105,49 @@ function addPoints(n: number): void {
   for (let i = 0; i < n; i += 1) fireEvent.click(addBtn);
 }
 
+/** Type finite coordinates into an existing drawn-point row. */
+function fillPoint(i: number, lng: number, lat: number): void {
+  fireEvent.change(screen.getByLabelText(`Drawn point ${i} longitude`), { target: { value: String(lng) } });
+  fireEvent.change(screen.getByLabelText(`Drawn point ${i} latitude`), { target: { value: String(lat) } });
+}
+
+/** Add n rows AND fill each with distinct finite coordinates, so Convert is
+ * genuinely enabled (DB-047(e) requires >= 3 FINITE points, not row count). */
+function addFinitePoints(n: number): void {
+  addPoints(n);
+  for (let i = 0; i < n; i += 1) fillPoint(i, -73.999 + i * 0.0003, 40.7 + i * 0.0002);
+}
+
 afterEach(() => {
   cleanup();
   lastLotMapProps = null;
 });
 
 describe("ProposalOutlineDraw", () => {
-  it("labels the drawn shape as proposed input and gates convert until 3 points exist", () => {
+  it("labels the drawn shape as proposed input and gates convert on 3 FINITE points, not row count (DB-047(e))", () => {
     render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={stub(bridged200())} />);
     expect(screen.getByTestId("outline-draw-honesty")).toHaveTextContent("not a city record");
     const convert = screen.getByTestId("outline-draw-convert");
     expect(convert).toBeDisabled();
-    addPoints(2);
+
+    // Three rows ADDED but not yet typed (NaN/NaN). A count-only gate would
+    // enable Convert here and launch a doomed bridge round-trip; the finiteness
+    // gate keeps it DISABLED and explains why. Reverting the gate reddens this.
+    addPoints(3);
     expect(convert).toBeDisabled();
-    addPoints(1);
+    expect(screen.getByTestId("outline-draw-min-hint")).toHaveTextContent("coordinates filled in");
+    // The overlay/status draw nothing yet — no finite points to render.
+    expect(pointFeatureCount()).toBe(0);
+
+    // Type finite coordinates; Convert enables only when 3 finite points exist.
+    fillPoint(0, -73.9998, 40.7001);
+    fillPoint(1, -73.9992, 40.7001);
+    expect(convert).toBeDisabled(); // only 2 finite so far
+    fillPoint(2, -73.9992, 40.7003);
     expect(convert).toBeEnabled();
+    expect(screen.queryByTestId("outline-draw-min-hint")).toBeNull();
+    // The overlay now draws exactly the 3 finite points (status matches).
+    expect(pointFeatureCount()).toBe(3);
   });
 
   it("places and edits drawn points by keyboard-operable inputs, then adopts bridged 2263 vertices", async () => {
@@ -175,7 +203,7 @@ describe("ProposalOutlineDraw", () => {
       422,
     );
     render(<ProposalOutlineDraw bbl={BBL} onAdopt={onAdopt} fetchImpl={stub(response)} />);
-    addPoints(3);
+    addFinitePoints(3);
     fireEvent.click(screen.getByTestId("outline-draw-convert"));
     await screen.findByTestId("outline-draw-residual-too-high");
     expect(onAdopt).not.toHaveBeenCalled();
@@ -187,7 +215,7 @@ describe("ProposalOutlineDraw", () => {
     const onAdopt = vi.fn();
     const response = bridgeResponse({ state: "out_of_neighborhood", message: "outside the lot" }, 422);
     render(<ProposalOutlineDraw bbl={BBL} onAdopt={onAdopt} fetchImpl={stub(response)} />);
-    addPoints(3);
+    addFinitePoints(3);
     fireEvent.click(screen.getByTestId("outline-draw-convert"));
     await waitFor(() => expect(screen.getByTestId("outline-draw-status")).toBeInTheDocument());
     expect(screen.getByTestId("outline-draw-status")).toHaveAttribute("data-outcome-kind", "out_of_neighborhood");

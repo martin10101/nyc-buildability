@@ -53,11 +53,19 @@ const mocks = vi.hoisted(() => {
     clickListeners: [] as Array<(event?: unknown) => void>,
     overlayHit: [] as Array<{ properties?: Record<string, unknown> | null }>,
     sources: {} as Record<string, { setData: ReturnType<typeof vi.fn> }>,
+    // M5-T071 (DB-048): every constructed map, each carrying its OWN per-source
+    // creation counts. The AS-1 sync spec asserts on these to detect a DUPLICATE
+    // source added within a single live map (the real defect) while tolerating a
+    // legitimate whole-map rebuild — a fresh instance that adds the source once
+    // more. A module-wide addSource tally cannot tell those two apart.
+    mapInstances: [] as Array<{ sourceAddCounts: Record<string, number> }>,
   };
 
   class MockMap {
+    sourceAddCounts: Record<string, number> = {};
     constructor(options: unknown) {
       mapCtor(options);
+      state.mapInstances.push(this);
     }
     isStyleLoaded() {
       return state.styleAlreadyLoaded;
@@ -101,6 +109,7 @@ const mocks = vi.hoisted(() => {
       return state.sources[id];
     }
     addSource(id: string, source: unknown) {
+      this.sourceAddCounts[id] = (this.sourceAddCounts[id] ?? 0) + 1;
       state.sources[id] = { setData: vi.fn() };
       addSource(id, source);
     }
@@ -211,6 +220,7 @@ afterEach(() => {
   mocks.state.clickListeners.length = 0;
   mocks.state.overlayHit.length = 0;
   for (const key of Object.keys(mocks.state.sources)) delete mocks.state.sources[key];
+  mocks.state.mapInstances.length = 0;
   mocks.state.autoRender = true;
   mocks.state.sourceLoaded = true;
   vi.useRealTimers();
@@ -596,6 +606,27 @@ describe("LotOutlineMap — additive map-CLICK interaction (M5-T066)", () => {
   });
 
   it("AS-1 sync: renders the drawn overlay as its own source + 2 layers, then updates it in place via setData (never a second source)", async () => {
+    // DB-048 hardening: this spec previously asserted the EXACT cross-render
+    // addLayer tally (`toHaveBeenCalledTimes(4)`), which flaked "expected 4, got
+    // 6" — a fresh fetchImpl on each render changed the fetched geometry
+    // identity and rebuilt the map, re-adding the two lot-outline layers between
+    // the overlay install and the assertion. The teeth that matter are now pinned
+    // by two defect-specific assertions that stay deterministic under extra effect
+    // passes AND under a legitimate whole-map rebuild:
+    //   • DUPLICATE-SOURCE defect (dropping the component's `getSource(id) ?
+    //     setData : addSource` guard so an update re-adds the source on the SAME
+    //     live map): the offending map instance's own overlay-source creation
+    //     count climbs past 1 → the per-instance `every(n <= 1)` assertion reds.
+    //     Checked PER INSTANCE (not a module-wide tally), so a fresh rebuilt map
+    //     legitimately creating the source once more does NOT false-fail.
+    //   • STALE-FINAL-PAYLOAD defect (the in-place update calls setData with an
+    //     outdated collection — e.g. a captured/previous value — so the map's
+    //     last drawn state is stale): `toHaveBeenLastCalledWith(overlay2)` reds.
+    //     A plain `toHaveBeenCalledWith(overlay2)` would NOT — overlay2 still sits
+    //     somewhere earlier in the call history — which is why we assert the FINAL
+    //     payload, not mere presence in history.
+    // A STABLE fetchImpl (fresh Response per call, one identity) also removes the
+    // rebuild churn at the root, so the happy path builds exactly one instance.
     const overlay2 = {
       type: "FeatureCollection" as const,
       features: [
@@ -606,31 +637,60 @@ describe("LotOutlineMap — additive map-CLICK interaction (M5-T066)", () => {
         },
       ],
     };
+    const stableFetch = vi.fn(() =>
+      Promise.resolve(jsonResponse(fixture("single_lot_polygon"))),
+    ) as unknown as typeof fetch;
     const { rerender } = render(
       <LotOutlineMap
         bbl="1008350041"
-        fetchImpl={singleLot()}
+        fetchImpl={stableFetch}
         onOutlineMapClick={vi.fn()}
         onDrawnVertexClick={vi.fn()}
         drawnOverlay={emptyOverlay}
       />,
     );
     await screen.findByTestId("lot-outline-map");
-    await waitFor(() => expect(mocks.addLayer).toHaveBeenCalledTimes(4));
+    // Final state: the overlay source exists with BOTH its layers installed
+    // (presence, not an exact cross-render total).
+    await waitFor(() => expect(mocks.state.sources["proposal-drawn-outline"]).toBeDefined());
+    const overlayLayerIds = mocks.addLayer.mock.calls
+      .map(([layer]) => (layer as { id: string }).id)
+      .filter((id) => id === "proposal-drawn-outline-line" || id === "proposal-drawn-outline-points");
+    expect(overlayLayerIds).toContain("proposal-drawn-outline-line");
+    expect(overlayLayerIds).toContain("proposal-drawn-outline-points");
     expect(mocks.addSource).toHaveBeenCalledWith("proposal-drawn-outline", expect.anything());
-    const overlaySource = mocks.state.sources["proposal-drawn-outline"];
-    expect(overlaySource).toBeDefined();
+
     rerender(
       <LotOutlineMap
         bbl="1008350041"
-        fetchImpl={singleLot()}
+        fetchImpl={stableFetch}
         onOutlineMapClick={vi.fn()}
         onDrawnVertexClick={vi.fn()}
         drawnOverlay={overlay2}
       />,
     );
-    await waitFor(() => expect(overlaySource.setData).toHaveBeenCalledWith(overlay2));
-    expect(mocks.addLayer).toHaveBeenCalledTimes(4);
+    // FINAL setData payload (not merely "overlay2 appeared in the call history").
+    // The overlay updates IN PLACE, so the LIVE source's LAST setData call must
+    // carry the fresh collection. Read the source fresh at assert time so the
+    // assertion follows the live map even if any rebuild replaced the object.
+    await waitFor(() =>
+      expect(
+        mocks.state.sources["proposal-drawn-outline"].setData,
+      ).toHaveBeenLastCalledWith(overlay2),
+    );
+    // NEVER a duplicate source WITHIN a live map instance: the overlay source is
+    // created once per map and every later change goes through setData. Asserted
+    // on PER-INSTANCE creation counts, not a module-wide addSource tally: a
+    // legitimate setup pass (a whole-map rebuild) spins up a fresh instance that
+    // adds the source once more, which a module-wide tally would wrongly read as a
+    // duplicate. A real duplicate-source defect drives one instance's count past 1.
+    const overlayAddsPerInstance = mocks.state.mapInstances.map(
+      (m) => m.sourceAddCounts["proposal-drawn-outline"] ?? 0,
+    );
+    // The overlay source WAS created (the interactive overlay really installed) …
+    expect(overlayAddsPerInstance.some((n) => n === 1)).toBe(true);
+    // … and NO single map instance created it more than once.
+    expect(overlayAddsPerInstance.every((n) => n <= 1)).toBe(true);
   });
 });
 

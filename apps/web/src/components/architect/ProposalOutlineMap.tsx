@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { LotOutlineMap, type DrawnOverlayData } from "@/components/address/LotOutlineMap";
 
 /**
@@ -22,11 +22,37 @@ import { LotOutlineMap, type DrawnOverlayData } from "@/components/address/LotOu
  * live in LotOutlineMap. Keyboard operability is complete in the composing
  * table (add/select/adjust/delete), so this surface adds pointer convenience
  * without removing any keyboard path (the accepted a11y bar).
+ *
+ * COPY HONESTY (DB-047(d)): the instruction lead must describe only interactions
+ * that EXIST. The leaf LotOutlineMap renders an interactive, clickable map
+ * surface ONLY on the drawable path (a single_lot outline with usable geometry
+ * AND WebGL, not render-failed); in every typed-fallback state (condo unit lot,
+ * multiple_features, invalid_geometry, no-WebGL, post-construction render error)
+ * it renders a keyboard-only fallback with NO clickable map. LotOutlineMap is an
+ * accepted, forbidden-to-edit surface that exposes no readiness callback, so we
+ * OBSERVE whether its interactive map surface is present in our subtree (by its
+ * semantic aria-label) and only then invite a map gesture. This adds NO fetch —
+ * every finite-value flow is byte-identical to the accepted behavior.
+ *
+ * POINT COUNT HONESTY (DB-047(e)): the screen-reader status reports the FINITE
+ * point count — exactly what the overlay renders — never a raw row count that
+ * would announce not-yet-typed keyboard rows the map does not draw.
  */
+
+/** Mirrors the aria-label LotOutlineMap puts on its interactive map container
+ * (the accepted, forbidden-to-edit display surface). Its presence in our subtree
+ * is the single honest signal that a clickable map actually rendered. */
+const INTERACTIVE_MAP_LABEL = "Interactive approximate lot outline map";
 
 export interface DrawnPoint {
   lng: number;
   lat: number;
+}
+
+/** Count the points the overlay actually draws: both ordinates finite. A fresh
+ * keyboard row (NaN/NaN, not yet typed) is not drawn and must not be announced. */
+export function finitePointCount(points: DrawnPoint[]): number {
+  return points.filter((p) => Number.isFinite(p.lng) && Number.isFinite(p.lat)).length;
 }
 
 /**
@@ -78,6 +104,31 @@ export function ProposalOutlineMap({
 }) {
   const overlay = useMemo(() => drawnOverlayData(points, selectedIndex), [points, selectedIndex]);
   const hasSelection = selectedIndex !== null;
+  // The count the overlay renders (finite points only) — what the status must
+  // announce, never the raw row count (DB-047(e)).
+  const drawnCount = useMemo(() => finitePointCount(points), [points]);
+
+  // DB-047(d): true only while the leaf's interactive map surface is actually
+  // present in our subtree. We cannot edit the accepted LotOutlineMap or read a
+  // readiness callback from it, so we observe its rendered output (the semantic
+  // aria-label of its map container) and let the copy follow what really exists.
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [mapRendered, setMapRendered] = useState(false);
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const sync = () => {
+      const present = root.querySelector(`[aria-label="${INTERACTIVE_MAP_LABEL}"]`) !== null;
+      setMapRendered((prev) => (prev === present ? prev : present));
+    };
+    sync();
+    // The leaf transitions asynchronously (loading -> drawable, or -> a typed
+    // fallback / render error) without re-rendering this wrapper, so observe the
+    // subtree and re-evaluate whenever its rendered content changes.
+    const observer = new MutationObserver(sync);
+    observer.observe(root, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [bbl]);
 
   // A map click MOVES the selected point when one is selected, else PLACES a new
   // point. A click that lands on a drawn vertex SELECTS it (LotOutlineMap
@@ -89,11 +140,13 @@ export function ProposalOutlineMap({
   };
 
   return (
-    <div className="proposal-outline-map" data-testid="proposal-outline-map">
+    <div className="proposal-outline-map" data-testid="proposal-outline-map" ref={rootRef}>
       <p className="section-note" data-testid="proposal-outline-map-instructions">
-        {hasSelection
-          ? `Point ${selectedIndex} is selected — click the map to move it, or edit it in the table below. Click the point again to deselect.`
-          : "Click the lot map to place a proposed outline point, or add points by keyboard in the table below. Click a placed point to select it."}
+        {mapRendered
+          ? hasSelection
+            ? `Point ${selectedIndex} is selected — click the map to move it, or edit it in the table below. Click the point again to deselect.`
+            : "Click the lot map to place a proposed outline point, or add points by keyboard in the table below. Click a placed point to select it."
+          : "Add proposed outline points by keyboard in the table below — enter each point's longitude and latitude. The reference map on this lot has no interactive drawing surface."}
       </p>
       <LotOutlineMap
         bbl={bbl}
@@ -104,9 +157,9 @@ export function ProposalOutlineMap({
         drawnOverlay={overlay}
       />
       <p className="visually-hidden" role="status" data-testid="proposal-outline-map-status">
-        {points.length === 0
+        {drawnCount === 0
           ? "No points drawn yet."
-          : `${points.length} point${points.length === 1 ? "" : "s"} drawn.${
+          : `${drawnCount} point${drawnCount === 1 ? "" : "s"} drawn.${
               hasSelection ? ` Point ${selectedIndex} selected.` : ""
             }`}
       </p>

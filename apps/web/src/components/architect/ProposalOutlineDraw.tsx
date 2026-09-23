@@ -145,10 +145,23 @@ export function ProposalOutlineDraw({
   }, []);
 
   const drawnCount = points.length;
-  const canConvert = drawnCount >= MIN_DRAWN_VERTICES && !converting;
+  // DB-047(e): Convert gates on the count of FINITE points (both ordinates a
+  // finite number), never the raw row count. A freshly added keyboard row is
+  // NaN/NaN until typed, so a count-only gate would launch a doomed bridge
+  // round-trip on rows the overlay does not even draw. incompleteCount is the
+  // number of added-but-not-yet-typed rows, used only to explain the disable.
+  const finiteCount = points.filter(
+    (p) => Number.isFinite(p.lng) && Number.isFinite(p.lat),
+  ).length;
+  const incompleteCount = drawnCount - finiteCount;
+  const canConvert = finiteCount >= MIN_DRAWN_VERTICES && !converting;
 
   const convert = useCallback(async () => {
-    const drawn = points.map((p) => [p.lng, p.lat] as [number, number]);
+    // Send only the finite points — a stray not-yet-typed row is never posted.
+    // For an all-finite outline this is byte-identical to the accepted payload.
+    const drawn = points
+      .filter((p) => Number.isFinite(p.lng) && Number.isFinite(p.lat))
+      .map((p) => [p.lng, p.lat] as [number, number]);
     setConverting(true);
     setAnnouncement("");
     const result = await fetchOutlineBridge({ bbl, drawn_vertices: drawn }, { fetchImpl });
@@ -265,12 +278,19 @@ export function ProposalOutlineDraw({
         </button>
       </div>
 
-      {drawnCount > 0 && drawnCount < MIN_DRAWN_VERTICES ? (
-        // HJ-4 (DB-045(g)): a persistent hint while Convert stays disabled with
-        // 1-2 points — an outline needs at least a triangle.
+      {drawnCount > 0 && finiteCount < MIN_DRAWN_VERTICES ? (
+        // A persistent hint explaining why Convert is disabled. Two reasons can
+        // apply: not enough points yet (HJ-4, DB-045(g)), or rows added but not
+        // yet typed (DB-047(e)). The finite count is what actually counts toward
+        // conversion, so the hint speaks to it, never the raw row count.
         <p className="section-note" role="status" data-testid="outline-draw-min-hint">
-          Add {MIN_DRAWN_VERTICES - drawnCount} more point{MIN_DRAWN_VERTICES - drawnCount === 1 ? "" : "s"} to
-          convert — an outline needs at least {MIN_DRAWN_VERTICES} points (you have {drawnCount}).
+          {incompleteCount > 0
+            ? `Convert needs at least ${MIN_DRAWN_VERTICES} points with both coordinates filled in. ` +
+              `${incompleteCount} row${incompleteCount === 1 ? "" : "s"} still ` +
+              `need${incompleteCount === 1 ? "s" : ""} a longitude and latitude — fill ` +
+              `${incompleteCount === 1 ? "it" : "them"} in or delete ` +
+              `${incompleteCount === 1 ? "it" : "them"} (${finiteCount} of ${MIN_DRAWN_VERTICES} ready).`
+            : `Add ${MIN_DRAWN_VERTICES - finiteCount} more point${MIN_DRAWN_VERTICES - finiteCount === 1 ? "" : "s"} to convert — an outline needs at least ${MIN_DRAWN_VERTICES} points (you have ${finiteCount}).`}
         </p>
       ) : null}
 
