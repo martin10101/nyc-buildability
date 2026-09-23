@@ -366,7 +366,7 @@ def test_500_registry_unavailable_is_a_bounded_generic_error(mounted_app, monkey
     leaked, and the X-Correlation-ID header present. Previously this matrix row was asserted only
     by frozenset membership, never by a live response."""
     _enable(monkeypatch)
-    secret = "boom-secret-detail-should-never-leak"
+    secret = "boom-secret-detail-should-never-leak"  # secretscan:allow fake leak-absence sentinel
 
     def _raise():
         raise RuntimeError(secret)

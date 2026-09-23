@@ -151,6 +151,17 @@ describe("ProposalEditor", () => {
     fireEvent.click(addDrawn);
     fireEvent.click(addDrawn);
     fireEvent.click(addDrawn);
+    // DB-047(e): a freshly added row is NaN/NaN and Convert gates on FINITE
+    // points — type display coordinates first, exactly as the keyboard path does.
+    const drawnCoords: Array<[number, number]> = [
+      [-73.9998, 40.7001],
+      [-73.9992, 40.7001],
+      [-73.9992, 40.7003],
+    ];
+    drawnCoords.forEach(([lng, lat], i) => {
+      fireEvent.change(screen.getByLabelText(`Drawn point ${i} longitude`), { target: { value: String(lng) } });
+      fireEvent.change(screen.getByLabelText(`Drawn point ${i} latitude`), { target: { value: String(lat) } });
+    });
     fireEvent.click(screen.getByTestId("outline-draw-convert"));
     await screen.findByTestId("outline-draw-bridged");
 

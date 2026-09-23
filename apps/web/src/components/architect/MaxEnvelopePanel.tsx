@@ -30,7 +30,7 @@ import { draftFromCandidate, type ProposalDraft } from "@/lib/architect/proposal
  * OPTION); no per-dimension ceiling is ever presented as one permitted building;
  * and while ANY gap or conflict advisory is present the aggregate stays VISIBLY
  * INCOMPLETE — there is no unrestricted green/complete aggregate state, and the
- * copy never asserts an unqualified "maximum allowed building".
+ * copy never asserts an unqualified maximum-allowed-building claim.
  *
  * One action adopts the Generated building option as the starting draft in the
  * accepted editor (through the ONE draft model, proposal-draft.ts); it is
