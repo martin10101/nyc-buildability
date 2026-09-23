@@ -40,15 +40,16 @@
   "producer_agent": "qa-engineer",
   "reviewer_agents": [
     "code-reviewer",
+    "backend-engineer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "in_progress",
+  "progress_percent": 94,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-23T05:12:03.967574+00:00",
-  "updated_at": "2026-09-23T05:40:17.936172+00:00",
+  "updated_at": "2026-09-23T05:40:54.115960+00:00",
   "directive_refs": [
     {
       "directive_id": "D-084",
@@ -77,6 +78,20 @@
       "percent": 95,
       "status": "claimed",
       "message": "Unit harvested (7d225e2f MATCH x2; COMPLETE/decision_complete close); five fault-branch specs additions-only; submitting - CI on the seam push is the web proof"
+    },
+    {
+      "at": "2026-09-23T05:40:53.476856+00:00",
+      "agent": "qa-engineer",
+      "percent": 94,
+      "status": "rework",
+      "message": "Roster amendment needed BEFORE any review pins: producer=qa-engineer requires backend-engineer ADDED as the independent QA-gate reviewer (T068 structural rule); walking the re-freeze"
+    },
+    {
+      "at": "2026-09-23T05:40:54.115960+00:00",
+      "agent": "qa-engineer",
+      "percent": 94,
+      "status": "in_progress",
+      "message": "Amending reviewer_agents (+backend-engineer); G0/G2 re-record at the corrected head; resubmit re-freezes"
     }
   ]
 }
