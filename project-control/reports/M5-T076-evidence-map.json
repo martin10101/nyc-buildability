@@ -1,0 +1,11 @@
+{
+ "task_id": "M5-T076",
+ "material_commit": "b8dc1044 (cherry-pick of the wt-m5t076 in-wt commit; 5 files, ALL-MATCH x5 LF-normalized; +909/-11; max_envelope.py byte-untouched per the AS-4 hard bound). CI backstop rides the next push.",
+ "produced_at": "2026-09-23T06:15:00+00:00",
+ "producer": "backend-engineer (loop-1 worker, run persistent-local-71-m5t076; closed PAUSED_RECOVERY unsafe_condition with the unit DELIVERED uncommitted + the scoped pytest routed to harvest; 2 stale asks denied from piped JSON; the orchestrator ran the routed commands - ruff clean, 40 passed - elevating every predicted row to OBSERVED)",
+ "requirements": {
+  "D-084-R001": [
+   "Lane-1 ran its third consecutive contracted, claimed, in-regime packet under the D-070 standard. The unit delivered DB-050(a) exactly: a pure derivation module (typed six-outcome classification, fail-closed per class with segments=None and honest detail, provenance quintuple with never-guessed dataset_version, display connector never imported - mutation-guarded by the 2263-magnitude assertions), route-layer-only wiring (test-injectable provider, derive only when segments absent AND BBL present, threadpool dispatch, derivation outcome attached machine-readably, failure reasons carried into the placement detail), and 40 passing offline tests incl. the AS-2 reachability proof (a geometry-free request now yields a FITTED contained candidate from the real engine on the fixture lot) and the AS-3 byte-identity + per-failure-class honesty proofs."
+  ]
+ }
+}

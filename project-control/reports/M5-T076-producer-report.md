@@ -93,3 +93,14 @@ paths + this report.
   fail-closed `bbl_unresolvable` gap and never reaches the provider.
 
 END-OF-REPORT
+
+---
+
+## [ORCH-HARVEST] Authorized-orchestrator harvest transcript (2026-09-23, cwd services/api, wt-m5t076)
+
+- `python -m ruff check .` → **All checks passed!** (exit 0).
+- `python -m pytest tests/scenario/test_lot_geometry_derivation.py tests/api/test_max_envelope_api.py -q`
+  → **40 passed** — every [PREDICTED PASS — pytest harvest below] row above is hereby elevated
+  to OBSERVED. Identity: in-wt commit cherry-picked to b8dc1044, ALL-MATCH x5 (LF-normalized).
+  CI on the pushed head is the remaining backstop; max_envelope.py byte-untouched (its blob is
+  unchanged across the material — the AS-4 bound held).
