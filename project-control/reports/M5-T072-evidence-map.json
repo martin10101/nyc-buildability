@@ -1,0 +1,11 @@
+{
+ "task_id": "M5-T072",
+ "material_commit": "ecb6a13f (cherry-pick of the wt-m5t072 in-wt commit; 2 files, MATCH x2 LF-normalized) + abc574a8 (the [ORCH-HARVEST] transcript appended to the report). CI backstop rides the next push of this chain.",
+ "produced_at": "2026-09-23T05:25:00+00:00",
+ "producer": "qa-engineer (loop-1 worker, run persistent-local-69-m5t072; closed PAUSED_RECOVERY unsafe_condition with the unit DELIVERED uncommitted + an exact [BROKER-LIMIT->harvest] recipe; 6 stale asks denied from piped JSON at harvest; the orchestrator executed the recipe at cwd services/api and elevated every routed row to OBSERVED)",
+ "requirements": {
+  "D-084-R001": [
+   "Lane-1 ran on a contracted, claimed, in-regime packet under the D-070 finished-seam standard: contract+claim seams 5670a916/f31abde4 (G0 PASS recorded), worktree wt-m5t072 at the claim seam, fresh run-id persistent-local-69-m5t072, stale asks denied in the lane store before launch and again at harvest. The unit delivered the packet exactly: the T069-G3-A2 cross-op pin (+1 assert +1 comment, nothing else - AS-1/AS-3), proven mutation-sensitive by the harvested both-branch mutant matrix (GREEN without the pin, FAIL at :842 with it - AS-2), scoped suite 77 passed, ruff clean, modularity exit 0."
+  ]
+ }
+}
