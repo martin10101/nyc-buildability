@@ -30,3 +30,7 @@
 - DON'T match focus by `activeElement.textContent` without excluding body/documentElement -
   a Tab wrap parks focus on `<body>` whose textContent is the WHOLE page, so any textContains
   false-matches with nothing focused (e2e tabUntil trap, fixed a3173987).
+- DO check stubbed-route fixtures against the server's real enum vocabulary AND confirm the
+  asserted request can actually elicit the stubbed response from the real engine - CI green
+  surfaces neither (T070 G3/G4 wave: invented no_fit + a fitted candidate the geometry-free
+  request can never produce).
