@@ -838,6 +838,8 @@ def test_revoke_not_found_message_is_identical_for_missing_and_foreign_ids():
     # And the unified text echoes NEITHER probed id (it discloses no existence).
     assert "does-not-exist" not in str(missing.value)
     assert record.record_id not in str(foreign.value)
+    # [M5-T072 / T069 G3-A2] cross-op pin: revoke text == the shared unified constant.
+    assert str(missing.value) == _UNIFIED_NOT_FOUND_TEXT
 
 
 # ---------------------------------------------------------------------------
