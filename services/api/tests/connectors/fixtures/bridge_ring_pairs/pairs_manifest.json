@@ -7,7 +7,7 @@
   "byte_source_note": "The verbatim response bodies are stored once, in the accepted M5-T020 (display 4326) and M2-T009 (authoritative 2263) fixture packs, and are referenced here by path + recorded sha256 (single source of truth, no duplication, no CRLF drift). The harness reads them offline and re-hashes the authoritative response_body_raw against response_body_sha256 (same byte basis, no embedded newlines).",
   "display_source_pack": "services/api/tests/fixtures/mappluto_lot_outline (M5-T020, D-040-R001; f=geojson&outSR=4326)",
   "authoritative_source_pack": "services/api/tests/fixtures/mappluto_geometry (M2-T009; f=json, EPSG:2263 wkid 102718/latestWkid 2263)",
-  "sample_bound": "4 real single-lot pairs across 2 boroughs (Manhattan, Queens) and 4 geometry classes. The packet's >=8 pairs / >=3 boroughs / regular-small-lot coverage requires more live captures and is ROUTED TO HARVEST in HARVEST_SPEC.md.",
+  "sample_bound": "4 real single-lot pairs across 2 boroughs (Manhattan, Queens) and 4 geometry classes. The packet's >=8 pairs / >=3 boroughs / regular-small-lot coverage requires more live captures and is ROUTED TO HARVEST in HARVEST_SPEC.md. | EXTENDED 2026-09-23: +4 net-new orchestrator-captured pairs (P05-P08) per HARVEST_SPEC.md - >=8 pairs, 5 boroughs",
   "pairs": [
     {
       "pair_id": "P01_regular_block_1008350041",
@@ -95,6 +95,94 @@
         "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D4142600001&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
         "retrieved_at": "2026-07-20T05:30:59Z",
         "response_body_sha256": "sha256:77055f215f8f9fe42e058c44feed16d36b0e7194fceeb73b0606799a5b159f3a"
+      }
+    },
+    {
+      "pair_id": "P05_regular_small_bronx_2022610022",
+      "bbl": "2022610022",
+      "borough": "Bronx",
+      "borough_code": 2,
+      "geometry_class": "regular_small_residential_lot",
+      "notes": "5-point single exterior ring, 2500 sq ft row-house-scale lot (discovery-verified); net-new orchestrator egress capture per HARVEST_SPEC.md",
+      "display": {
+        "source_fixture": "bridge_ring_pairs/P05_regular_small_bronx_2022610022/display_4326.json",
+        "kind": "raw_geojson_body",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D2022610022&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=geojson&outSR=4326",
+        "retrieved_at": "2026-09-23T04:58:15+00:00",
+        "source_file_sha256": "sha256:06c101a93daed36d3a8dd3d944f3873649e853eb4b157317e6806c472b1641c3"
+      },
+      "authoritative": {
+        "source_fixture": "bridge_ring_pairs/P05_regular_small_bronx_2022610022/authoritative_2263.json",
+        "kind": "raw_esri_body",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D2022610022&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+        "retrieved_at": "2026-09-23T04:58:15+00:00",
+        "response_body_sha256": "sha256:9b455aed0ebbc45a81e40fcc06d2b661332e7b86f7b60b34afd092c08906835e"
+      }
+    },
+    {
+      "pair_id": "P06_regular_small_brooklyn_3000350007",
+      "bbl": "3000350007",
+      "borough": "Brooklyn",
+      "borough_code": 3,
+      "geometry_class": "regular_small_residential_lot",
+      "notes": "5-point single exterior ring, 2038 sq ft row-house-scale lot (discovery-verified); net-new orchestrator egress capture per HARVEST_SPEC.md",
+      "display": {
+        "source_fixture": "bridge_ring_pairs/P06_regular_small_brooklyn_3000350007/display_4326.json",
+        "kind": "raw_geojson_body",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D3000350007&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=geojson&outSR=4326",
+        "retrieved_at": "2026-09-23T04:58:15+00:00",
+        "source_file_sha256": "sha256:743c5340d04c60af58585fb20e8a1e9b011238ce86f4bdf5a06f362eb8e30fb7"
+      },
+      "authoritative": {
+        "source_fixture": "bridge_ring_pairs/P06_regular_small_brooklyn_3000350007/authoritative_2263.json",
+        "kind": "raw_esri_body",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D3000350007&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+        "retrieved_at": "2026-09-23T04:58:16+00:00",
+        "response_body_sha256": "sha256:538723098211411893be3e78ace3e79e0b78208708f8dabfe52c1b9a0d3d35c4"
+      }
+    },
+    {
+      "pair_id": "P07_irregular_corner_si_5000050039",
+      "bbl": "5000050039",
+      "borough": "Staten Island",
+      "borough_code": 5,
+      "geometry_class": "irregular_corner_lot",
+      "notes": "7-point single exterior ring, 5000 sq ft non-rectangular lot (discovery-verified); net-new orchestrator egress capture per HARVEST_SPEC.md",
+      "display": {
+        "source_fixture": "bridge_ring_pairs/P07_irregular_corner_si_5000050039/display_4326.json",
+        "kind": "raw_geojson_body",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D5000050039&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=geojson&outSR=4326",
+        "retrieved_at": "2026-09-23T04:58:16+00:00",
+        "source_file_sha256": "sha256:8aa60a6ce8f44f9daaedf58533b4c2acbfccee9b5e89c57d2619cf208c203c31"
+      },
+      "authoritative": {
+        "source_fixture": "bridge_ring_pairs/P07_irregular_corner_si_5000050039/authoritative_2263.json",
+        "kind": "raw_esri_body",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D5000050039&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+        "retrieved_at": "2026-09-23T04:58:16+00:00",
+        "response_body_sha256": "sha256:770d676346b56276798cdd29f91852f6e5aa8c7d3424af1f8ea929114f74407c"
+      }
+    },
+    {
+      "pair_id": "P08_curved_manyvertex_si_5000040010",
+      "bbl": "5000040010",
+      "borough": "Staten Island",
+      "borough_code": 5,
+      "geometry_class": "curved_edge_densification_stress",
+      "notes": "31-point single exterior ring, 3300 sq ft curved-boundary lot - densification stress (discovery-verified); net-new orchestrator egress capture per HARVEST_SPEC.md",
+      "display": {
+        "source_fixture": "bridge_ring_pairs/P08_curved_manyvertex_si_5000040010/display_4326.json",
+        "kind": "raw_geojson_body",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D5000040010&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=geojson&outSR=4326",
+        "retrieved_at": "2026-09-23T04:58:16+00:00",
+        "source_file_sha256": "sha256:266f8f0862b2eb64e8c7ce778e6ecfe696ad33895f429607672a87629a87f39b"
+      },
+      "authoritative": {
+        "source_fixture": "bridge_ring_pairs/P08_curved_manyvertex_si_5000040010/authoritative_2263.json",
+        "kind": "raw_esri_body",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D5000040010&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+        "retrieved_at": "2026-09-23T04:58:17+00:00",
+        "response_body_sha256": "sha256:64adbaef614dbac38338e457f9e0a2c70c6ce84eb1033e872e55b0f748cdd3f4"
       }
     }
   ]

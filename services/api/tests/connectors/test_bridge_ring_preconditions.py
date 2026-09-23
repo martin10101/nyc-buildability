@@ -252,9 +252,13 @@ def _read_body(rel_path: str) -> str:
     return (FIXTURES / rel_path).read_text(encoding="utf-8")
 
 
-def _auth_response_body(rel_path: str) -> str:
-    """The verbatim esri body lives under ``response_body_raw`` in the
-    MapPLUTO-geometry provenance envelope."""
+def _auth_response_body(rel_path: str, kind: str = "provenance_envelope.response_body_raw") -> str:
+    """The verbatim esri body: unwrapped from ``response_body_raw`` for a
+    provenance-envelope fixture; returned verbatim for ``raw_esri_body`` (a
+    directly-stored capture). [ORCH per HARVEST_SPEC.md - the one-branch
+    extension the producer routed to the orchestrator.]"""
+    if kind == "raw_esri_body":
+        return _read_body(rel_path)
     envelope = json.loads(_read_body(rel_path))
     return envelope["response_body_raw"]
 
@@ -264,7 +268,9 @@ def measure_pair(pair: dict) -> tuple[PairVerdict, dict]:
     disp_spec = pair["display"]
     auth_spec = pair["authoritative"]
     disp_body = _read_body(disp_spec["source_fixture"])
-    auth_body = _auth_response_body(auth_spec["source_fixture"])
+    auth_body = _auth_response_body(
+        auth_spec["source_fixture"], auth_spec.get("kind", "provenance_envelope.response_body_raw")
+    )
     display = display_ring_from_geojson_body(
         disp_body, pair["bbl"], retrieved_at=disp_spec["retrieved_at"]
     )
