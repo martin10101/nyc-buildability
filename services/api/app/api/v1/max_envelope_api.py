@@ -73,13 +73,23 @@ from app.config import internal_rule_eval_enabled
 from app.rules.proposal_checks import ProposalCheckError
 from app.rules.registry import RuleRegistry
 from app.scenario.derivation import ProposalDerivationError
-from app.scenario.max_envelope import MaxEnvelopeError, derive_max_envelope
+from app.scenario.lot_geometry_derivation import (
+    DerivedLotGeometry,
+    derive_lot_line_segments,
+    production_lot_geometry_provider,
+)
+from app.scenario.max_envelope import (
+    CandidatePlacementStatus,
+    MaxEnvelopeError,
+    derive_max_envelope,
+)
 from app.scenario.proposal import ProposedMassingError
 
 __all__ = [
     "MAX_BODY_BYTES",
     "MAX_FIELD_LEN",
     "MAX_ENVELOPE_STATUS_STATE_MATRIX",
+    "get_lot_geometry_provider",
     "get_max_envelope_registry",
     "router",
 ]
@@ -129,6 +139,37 @@ def _effective_registry() -> RuleRegistry:
     if _PRODUCTION_REGISTRY is None:
         _PRODUCTION_REGISTRY = RuleRegistry().load()
     return _PRODUCTION_REGISTRY
+
+
+def get_lot_geometry_provider():
+    """The lot-geometry provider used for server-side derivation (DB-050(a)) when a request carries
+    a BBL but NO lot-line geometry. Returns ``None`` so the route uses the production MapPLUTO
+    provider (:func:`app.scenario.lot_geometry_derivation.production_lot_geometry_provider`); tests
+    monkeypatch this module attribute to inject an OFFLINE fixture-backed provider. NOT a
+    client-controlled input - it has no request binding."""
+    return None
+
+
+def _effective_lot_geometry_provider():
+    """The provider server-side derivation uses: the test-injected one when
+    :func:`get_lot_geometry_provider` supplies it, else the production MapPLUTO provider."""
+    injected = get_lot_geometry_provider()
+    if injected is not None:
+        return injected
+    return production_lot_geometry_provider()
+
+
+def _should_derive_lot_geometry(lot: dict) -> bool:
+    """DB-050(a): derive server-side ONLY when the caller supplied NO lot-line geometry AND a
+    non-empty BBL. A request that carries any lot-line segment is served byte-identically to today
+    (no derivation call)."""
+    segments = lot.get("lot_line_segments")
+    if isinstance(segments, list) and len(segments) > 0:
+        return False
+    bbl = lot.get("bbl")
+    if isinstance(bbl, str):
+        return bbl.strip() != ""
+    return isinstance(bbl, int | float) and not isinstance(bbl, bool)
 
 
 def _json(status_code: int, body: dict, correlation_id: str) -> JSONResponse:
@@ -293,6 +334,34 @@ async def post_max_envelope(request: Request) -> JSONResponse:
         return _internal_error_500(correlation_id)
     try:
         _validate_lot_rule_fact_domains(lot_rule_facts, registry)
+    except _FieldRefusal as exc:
+        logger.info("max_envelope_v1 domain_refused field=%s correlation_id=%s",
+                    _bounded_field(exc.field), correlation_id)
+        return _validation_error(exc.message, correlation_id, field=exc.field)
+
+    # DB-050(a): when the caller supplies NO lot-line geometry but a BBL, derive authoritative
+    # EPSG:2263 lot-line segments server-side from the official MapPLUTO connector so the fitted
+    # candidate path is reachable. Fail-closed - any derivation failure leaves the segments empty,
+    # so the engine keeps today's honest lot_geometry_unsupported gap (never a fabricated
+    # rectangle) and the reason is surfaced below. Requests that DO carry segments skip derivation
+    # entirely and are byte-identical to today. The provider does I/O + shapely work OFF the event
+    # loop.
+    derived: DerivedLotGeometry | None = None
+    if _should_derive_lot_geometry(lot):
+        provider = _effective_lot_geometry_provider()
+        derived = await run_in_threadpool(
+            functools.partial(
+                derive_lot_line_segments,
+                lot.get("bbl"),
+                provider=provider,
+                max_segments=ROUTE_MAX_LOT_LINE_SEGMENTS,
+                correlation_id=correlation_id,
+            )
+        )
+        if derived.ok and derived.segments is not None:
+            lot = {**lot, "lot_line_segments": list(derived.segments)}
+
+    try:
         lot_context = _build_lot_context(lot)
     except _FieldRefusal as exc:
         logger.info("max_envelope_v1 lot_refused field=%s correlation_id=%s",
@@ -334,6 +403,23 @@ async def post_max_envelope(request: Request) -> JSONResponse:
 
     document: dict[str, Any] = envelope.as_dict()
     document["correlation_id"] = correlation_id
+    # DB-050(a): when a derivation was attempted, surface its outcome + provenance machine-readably.
+    # On a fail-closed outcome the engine has already returned the honest lot_geometry_unsupported
+    # gap on empty segments; carry the derivation reason into that placement detail so the caller
+    # sees WHY no geometry was available (never a fabricated placement).
+    if derived is not None:
+        document["derived_lot_geometry"] = derived.as_response_block()
+        if not derived.ok:
+            placement = document.get("candidate_placement")
+            if (
+                isinstance(placement, dict)
+                and placement.get("status")
+                == CandidatePlacementStatus.LOT_GEOMETRY_UNSUPPORTED.value
+            ):
+                placement["detail"] = (
+                    f"{placement['detail']} | server-side lot-geometry derivation "
+                    f"({derived.outcome.value}): {derived.detail}"
+                )
     try:  # defense in depth: the body was already proven strict-JSON above
         json.dumps(document, ensure_ascii=False, allow_nan=False).encode("utf-8")
     except Exception:
