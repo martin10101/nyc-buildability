@@ -52,7 +52,7 @@
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-23T04:22:02.693300+00:00",
-  "updated_at": "2026-09-23T15:19:40.848945+00:00",
+  "updated_at": "2026-09-24T05:29:32.444606+00:00",
   "directive_refs": [
     {
       "directive_id": "D-084",
@@ -83,6 +83,20 @@
       "percent": 95,
       "status": "claimed",
       "message": "All three wt commits harvested ALL-MATCH; routed capture executed (ruff clean, 14 passed); verdict table OBSERVED (counts equal on all 8; 3/8 pass; capacity+ambiguity classes routed to the mount seam); submitting"
+    },
+    {
+      "at": "2026-09-24T05:29:28.916244+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "rework",
+      "message": "G3 PASS w/ required correction F1 (+ recommended F2-F5): all five applied as one [ORCH-CORRECTED] cluster; walking rework->in_progress->resubmit to re-freeze, then delta re-attestation with the same reviewer."
+    },
+    {
+      "at": "2026-09-24T05:29:29.673662+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Corrections committed; resubmitting at this head."
     }
   ]
 }
