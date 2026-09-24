@@ -15,10 +15,12 @@
     "depage:test": "node --test scripts/tests/*.test.mjs"
   },
   "dependencies": {
+    "@react-three/fiber": "9.7.0",
     "maplibre-gl": "6.7.0",
     "next": "15.5.24",
     "react": "19.1.2",
-    "react-dom": "19.1.2"
+    "react-dom": "19.1.2",
+    "three": "0.186.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.6",
