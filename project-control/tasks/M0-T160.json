@@ -63,12 +63,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T15:34:45.826847+00:00",
-  "updated_at": "2026-09-24T20:11:39.341866+00:00",
+  "updated_at": "2026-09-24T20:35:54.406076+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -116,6 +116,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "Re-scoped to the 3-file lockstep at edafaad2 (DB-063); G0 re-recorded; worktree C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t160 re-based on the claim-seam commit with 28878be2 re-applied; round-2 rework producer follows."
+    },
+    {
+      "at": "2026-09-24T20:35:44.246855+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Harvested: 4e40eefa + 777e6b81 cherry-picked to 83fdb5bd (4 files MATCH); orchestrator-run PS suite 7/7 green; evidence map + G2 written; submitting."
     }
   ]
 }
