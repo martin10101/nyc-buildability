@@ -11,6 +11,7 @@ of a recorded body, built in-memory here.
 import ast
 import hashlib
 import json
+import logging
 import re
 import urllib.parse
 from datetime import UTC, datetime
@@ -832,3 +833,134 @@ def test_as5_recorded_replay_never_reaches_the_network(monkeypatch):
     monkeypatch.setattr("app.resilience.transport.DEFAULT_OPENER.open", no_network)
     result, transport = run(SUBJECT_ROUTES, envelope=SUBJECT_ENVELOPE, page_size=2)
     assert result.status == "ok" and transport.unexpected == []
+
+
+# ---------------------------------------------------------------------------
+# M5-T100 riders (DB-058 e, h, l, m): findable-but-non-leaky internal errors, an
+# end-to-end missing-geometry test, the one-half-wrong CRS pages, and the zero-year value.
+# Every page below is SYNTHETIC (built in-memory here); no recorded fixture is added or
+# changed, no new dependency is introduced, and nothing reaches the network.
+# ---------------------------------------------------------------------------
+
+LOGGER_NAME = "app.connectors.building_footprints_arcgis"
+
+
+def _broken_transport(exc):
+    """A transport that raises ``exc`` (an UNEXPECTED, non-transport error) on first call, so
+    it propagates to the connector's catch-all internal_error branch."""
+    def transport(url, headers, timeout):
+        raise exc
+    return transport
+
+
+def _error_records(caplog):
+    return [r for r in caplog.records
+            if r.levelno == logging.ERROR and r.name == LOGGER_NAME]
+
+
+def test_t100_internal_error_is_findable_and_logs_no_upstream_text(caplog):
+    """AS-1 (DB-058 e): an UNEXPECTED exception whose MESSAGE echoes upstream body text is
+    findable at error level (exception class + a sanitized bounded message + correlation id)
+    while the returned refusal still carries ONLY the class name and the log leaks no
+    upstream body text. Mutation guard: logging str(exc) (the raw message) reddens the
+    absence assertions; downgrading/removing the log reddens the findability assertion."""
+    upstream = 'UPSTREAM_BODY {"secret":"AdminSecret123"}\nFORGED: fake second log line'
+    with caplog.at_level(logging.ERROR, logger=LOGGER_NAME):
+        result = fetch_context_buildings(
+            envelope=SUBJECT_ENVELOPE, transport=_broken_transport(RuntimeError(upstream)),
+            clock=FIXED_CLOCK, correlation_id="t-cid")
+    # The returned refusal is unchanged: class-name-only, never the exception message (G5-safe).
+    refusal = refused(result, "internal_error")
+    assert refusal.detail == {"exception": "RuntimeError"}
+    records = _error_records(caplog)
+    assert len(records) == 1, [r.getMessage() for r in records]
+    line = records[0].getMessage()
+    # Findable: the exception class, the sanitized message, and the correlation id are present.
+    assert "class=RuntimeError" in line
+    assert "unexpected internal failure - no data returned" in line
+    assert "correlation_id=t-cid" in line
+    # No upstream body text, embedded secret, or forged newline reaches the log.
+    assert "AdminSecret123" not in line and "UPSTREAM_BODY" not in line
+    assert "FORGED" not in line and "\n" not in line
+
+
+def test_t100_internal_error_log_sanitizes_and_bounds_a_hostile_class_name(caplog):
+    """AS-1 (DB-058 e): the exception CLASS is the only exception-derived field logged; a
+    hostile class name (embedded control character, over-long) is neutralized by the shared
+    transport sanitizer and length-bounded before it reaches the log, so it can neither forge
+    a log line nor dump an unbounded value. Mutation guard: dropping the sanitizer leaves a
+    raw newline; dropping the length bound drops the truncation marker."""
+    hostile = type("Bad\nFORGED " + "Z" * 400, (Exception,), {})
+    with caplog.at_level(logging.ERROR, logger=LOGGER_NAME):
+        result = fetch_context_buildings(
+            envelope=SUBJECT_ENVELOPE, transport=_broken_transport(hostile("boom")),
+            clock=FIXED_CLOCK, correlation_id="t-cid")
+    refused(result, "internal_error")
+    records = _error_records(caplog)
+    assert len(records) == 1
+    line = records[0].getMessage()
+    assert "\n" not in line  # the control character is repr-escaped, not a forged log line
+    assert "...(truncated)" in line  # the over-long class name is length-bounded
+    assert "ZZZZZZZZZZ" not in line[line.index("...(truncated)"):]  # bounded, not the full name
+
+
+def test_t100_sanitized_bounded_neutralizes_control_chars_and_bounds_length():
+    """AS-1 (DB-058 e): the shared-transport-sanitizer helper escapes control characters (no
+    forged log line) and bounds length (no unbounded dump); an allowlist-safe short value
+    passes through verbatim."""
+    assert bf._sanitized_bounded("RuntimeError") == "RuntimeError"
+    escaped = bf._sanitized_bounded("line1\nline2")
+    assert "\n" not in escaped
+    bounded = bf._sanitized_bounded("Z" * 500)
+    assert bounded.endswith("...(truncated)")
+    assert len(bounded) <= bf._LOG_FIELD_MAX + len("...(truncated)")
+
+
+def test_t100_missing_geometry_key_is_typed_null_geometry_end_to_end():
+    """AS-2 (DB-058 h): a feature that LACKS its 'geometry' key flows through the whole fetch
+    to a typed invalid / null_geometry record - never an untyped error and never dropped.
+    Mutation guard: removing the null_geometry guard in parse_footprint_geometry reddens the
+    findings assertion (the finding becomes not_a_polygon_geometry)."""
+    def mutate(page):
+        del page["features"][1]["geometry"]
+    result, _ = run({**SUBJECT_ROUTES, P1_URL: ok(synthetic_page(mutate))},
+                    envelope=SUBJECT_ENVELOPE, page_size=2)
+    assert result.status == "ok" and len(result.buildings) == 3
+    subject = by_oid(result)[229537]
+    assert subject.geometry_status == "invalid"
+    assert subject.geometry_findings == ["null_geometry"]
+    assert subject.parts == [] and subject.footprint_area_sq_ft is None
+    assert subject.query_relation is None and subject.original_geometry is None
+
+
+@pytest.mark.parametrize(
+    "spatial_reference",
+    [
+        {"wkid": 102718, "latestWkid": 9999},  # kills MY1b (a gate that checks only wkid)
+        {"wkid": 3857, "latestWkid": 2263},    # kills MY1a (a gate that checks only latestWkid)
+    ],
+)
+def test_t100_crs_page_gate_requires_both_wkid_and_latest_wkid(spatial_reference):
+    """AS-3 (DB-058 l): a page whose spatialReference has only ONE half of wkid 102718 /
+    latestWkid 2263 is refused wrong_crs - the gate requires BOTH halves. Mutation guard:
+    simplifying the gate to either half (G4 MY1a/MY1b) lets one of these pages through and
+    reddens the wrong_crs refusal assertion."""
+    def mutate(page):
+        page["spatialReference"] = spatial_reference
+    result, _ = run({**SUBJECT_ROUTES, P1_URL: ok(synthetic_page(mutate))},
+                    envelope=SUBJECT_ENVELOPE, page_size=2)
+    refusal = refused(result, "wrong_crs")
+    assert refusal.request_url == P1_URL
+
+
+def test_t100_zero_construction_year_nulls_the_value_not_only_the_gap():
+    """AS-4 (DB-058 m): CONSTRUCTION_YEAR 0 yields construction_year None (the displaced
+    value) AND the zero_not_available gap - never a false 'year 0'. Mutation guard: keeping
+    year == 0 (G4 MY7, drop the `year = None`) reddens the None assertion."""
+    def mutate(page):
+        page["features"][1]["attributes"]["CONSTRUCTION_YEAR"] = 0
+    result, _ = run({**SUBJECT_ROUTES, P1_URL: ok(synthetic_page(mutate))},
+                    envelope=SUBJECT_ENVELOPE, page_size=2)
+    subject = by_oid(result)[229537]
+    assert subject.construction_year is None
+    assert ("CONSTRUCTION_YEAR", "zero_not_available") in gap_codes(subject)

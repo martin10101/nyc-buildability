@@ -78,6 +78,7 @@ from app.resilience.transport import (
     Transport,
     jittered_retry_after_delay,
     request_with_retry,
+    sanitize_retry_after,
     standard_retry_hooks,
     urllib_transport,
 )
@@ -400,6 +401,23 @@ def _safe_repr(value: object, limit: int = 200) -> str:
     except (ValueError, RecursionError):
         return f"<unrepresentable {type(value).__name__}>"
     return text if len(text) <= limit else text[:limit] + "...(truncated)"
+
+
+# DB-058(e) / M5-T089 G3-A1: fields for the findable-but-non-leaky internal-error log.
+# The message is a FIXED string (never ``str(exc)``, whose text can echo an upstream body);
+# only the exception CLASS - not its message - joins it, and both are neutralized with the
+# shared transport sanitizer and length-bounded before they reach the log.
+_INTERNAL_ERROR_LOG_MESSAGE = "unexpected internal failure - no data returned"
+_LOG_FIELD_MAX = 200
+
+
+def _sanitized_bounded(text: str, limit: int = _LOG_FIELD_MAX) -> str:
+    """Neutralize an untrusted string for a log line with the shared transport sanitizer
+    (:func:`app.resilience.transport.sanitize_retry_after`: an allowlist passthrough,
+    otherwise ``repr`` - which escapes control characters so a newline cannot forge a log
+    line), then bound its length so a hostile value cannot dump an unbounded body."""
+    safe = sanitize_retry_after(text)
+    return safe if len(safe) <= limit else safe[:limit] + "...(truncated)"
 
 
 def _is_real(value: object) -> bool:
@@ -1063,10 +1081,24 @@ def fetch_context_buildings(
         ]
         return result
     except Exception as exc:  # fail closed: every failure becomes a typed refusal
-        error = exc if isinstance(exc, BuildingFootprintConnectorError) else (
-            BuildingFootprintConnectorError(
+        if isinstance(exc, BuildingFootprintConnectorError):
+            error = exc
+        else:
+            # DB-058(e) / G3-A1: an UNEXPECTED (non-typed) exception is a genuine bug.
+            # Make it findable in production at error level - the exception class and a
+            # length-bounded sanitized message (the shared transport's sanitizer), plus
+            # the correlation id - WITHOUT ever rendering str(exc): the exception message
+            # can echo upstream body text, so only the class name is logged (the returned
+            # refusal still carries only that class name - the G5-safe non-disclosure
+            # choice). No upstream body text reaches the log and a control character
+            # cannot forge a log line.
+            logger.error(
+                "building_footprints internal_error class=%s message=%s correlation_id=%s",
+                _sanitized_bounded(type(exc).__name__),
+                _sanitized_bounded(_INTERNAL_ERROR_LOG_MESSAGE), cid)
+            error = BuildingFootprintConnectorError(
                 "unexpected internal failure; no data is returned", correlation_id=cid,
-                detail={"exception": type(exc).__name__}))
+                detail={"exception": type(exc).__name__})
         result.status, result.buildings = "refused", []
         result.refusal = FootprintRefusal(
             error_type=error.error_type, message=error.message, correlation_id=cid,
