@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T21:33:43+00:00",
+ "verified_at": "2026-09-24T21:45:20+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1435,6 +1435,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t095): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 821 files / 17652 nodes / 7589 edges) naming every proposal.py consumer as forbidden, with the query.py --no-regen instruction and the advisory clause; the producer verified the removed helpers unused in source. Blob-level restamp predicate re-verified by the orchestrator at the accept head 442b2dd2 (proposal.py d00b1728, test_proposal_validation_budget.py e25d19bb, M5-T095-producer-report.md eeb81b3a; identity d51ff82d; evaluate_task_refs ok); report M5-T095-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T098",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "2aeeafc56934be35b5a9550c53cb634b7624f885",
+   "reviewed_manifest_sha256": "8b3db9569628fc0ba0a31d41006e431e5c412e0fac7e2249cf9410ed065c0b8d",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:45:20+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t098): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 825 files / 17656 nodes / 7589 edges) naming the only consumer (its test), the read-only proposal.py dependency being changed in parallel by M5-T095, the forbidden scenario neighbours, and the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head 2aeeafc5 (massing_model.py 7c693f51, test_massing_model.py b5bffe2a, M5-T098-producer-report.md 4b8a58bd; identity 8b3db956; evaluate_task_refs ok); report M5-T098-DCV.md."
      ]
     }
    ]

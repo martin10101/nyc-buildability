@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T21:33:43+00:00",
+ "verified_at": "2026-09-24T21:45:20+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1051,6 +1051,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies (shapely already admitted; no requirements change); no route, main.py or web change; the max-envelope route stays unmounted; the route-level cancellable job + deadline + rate limit (DB-061 (i)) stays recorded as REQUIRED at exposure, not claimed closed; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 442b2dd2 (proposal.py d00b1728, test_proposal_validation_budget.py e25d19bb, M5-T095-producer-report.md eeb81b3a; identity d51ff82d; evaluate_task_refs ok); report M5-T095-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T098",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "2aeeafc56934be35b5a9550c53cb634b7624f885",
+   "reviewed_manifest_sha256": "8b3db9569628fc0ba0a31d41006e431e5c412e0fac7e2249cf9410ed065c0b8d",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:45:20+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contracted at G0 64fce622, claimed at 2e0b2351 with the full worktree path, the full gate set G0/G2/G3/G4/G5 recorded PASS; run concurrently with disjoint packets; no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head 2aeeafc5 (massing_model.py 7c693f51, test_massing_model.py b5bffe2a, M5-T098-producer-report.md 4b8a58bd; identity 8b3db956; evaluate_task_refs ok); report M5-T098-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs every active neighbour incl. M5-T095 (proposal.py); one isolated worktree wt-m5t098; material 4b25c60c touches exactly the 3 allowed paths; proposal.py absent from it and its NYC_2263_* constants byte-identical after M5-T095's acceptance. Blob-level restamp predicate re-verified by the orchestrator at the accept head 2aeeafc5 (massing_model.py 7c693f51, test_massing_model.py b5bffe2a, M5-T098-producer-report.md 4b8a58bd; identity 8b3db956; evaluate_task_refs ok); report M5-T098-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the massing truth object's pre-wiring guards - a lot-ring NYC EPSG:2263 range check (inclusive, reusing the B0 constants) before any Polygon, so a 4326/metric lot refuses lot_ring_out_of_nyc_bounds instead of mislabelling; GEOSException mapped to a typed geometry_engine_error on every build path; charge-before-scan; both accepted goldens byte-identical; the one forced M5-T088 test edit is disclosed and genuinely forced (only the latent wrong-CRS-lot acceptance retired; magnitude inclusivity still covered). Blob-level restamp predicate re-verified by the orchestrator at the accept head 2aeeafc5 (massing_model.py 7c693f51, test_massing_model.py b5bffe2a, M5-T098-producer-report.md 4b8a58bd; identity 8b3db956; evaluate_task_refs ok); report M5-T098-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies (functools stdlib; GEOSException from admitted shapely; NYC_2263_* in-repo); unwired (no production importer); no route, main.py, cad or web change; the max-envelope route stays unmounted; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 2aeeafc5 (massing_model.py 7c693f51, test_massing_model.py b5bffe2a, M5-T098-producer-report.md 4b8a58bd; identity 8b3db956; evaluate_task_refs ok); report M5-T098-DCV.md."
      ]
     }
    ]
