@@ -63,12 +63,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T09:39:45.679200+00:00",
-  "updated_at": "2026-09-24T09:39:46.959335+00:00",
+  "updated_at": "2026-09-24T09:47:21.055570+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -92,5 +92,15 @@
     "python -m ruff check .",
     "python -m pytest tests/cad/test_pdf_sheet_writer.py -q",
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t091",
+  "progress_log": [
+    {
+      "at": "2026-09-24T09:47:21.048614+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Claimed at the wave-2 claim seam; orchestrator-dispatched subagent producer in the isolated worktree C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t091 (created at the claim-seam commit)."
+    }
   ]
 }
