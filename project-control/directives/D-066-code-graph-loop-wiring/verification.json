@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T14:55:24+00:00",
+ "verified_at": "2026-09-24T15:10:18+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1105,6 +1105,50 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: tasks/M5-T086.json inputs[7] carries the navigation block (graph regenerated at the seam; 'nothing imports dxf_reader yet'; forbidden siblings sheet_reader/sheet_primitives; query.py --no-regen impact; advisory); verifier recount 817 graph inputs matches the seam commit and evidence map (the G0 text's 815 is DCV F4, DB-057 (o)); restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T086-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T091",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "f00a47452705f16378c08649e3dd863374d60861",
+   "reviewed_manifest_sha256": "f2d6b1a770af944574859c6c801735577a484746d1de063fadfeb9a4709be6c9",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:10:18+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: tasks/M5-T091.json inputs[16] carries the navigation block (no importer of pdf_sheet_writer; forbidden siblings dxf/glb; documents reader read-only; query.py --no-regen impact); graph regenerated at the seam (817 files / 17386 nodes / 7525 edges); restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T091-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T092",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "f00a47452705f16378c08649e3dd863374d60861",
+   "reviewed_manifest_sha256": "d912b914e495b31c9b3c0a24b9dd123e23f2e05b7cf564b04ff50169d59d58ff",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:10:18+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: tasks/M5-T092.json inputs[16] carries the navigation block (app/cad seeded by the orchestrator; forbidden siblings dxf/pdf; 'nothing imports glb_writer yet'; query.py --no-regen); graph regenerated at the seam (817 files / 17386 nodes); restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T092-DCV.md."
      ]
     }
    ]

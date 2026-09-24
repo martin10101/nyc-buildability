@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T14:55:24+00:00",
+ "verified_at": "2026-09-24T15:10:18+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -385,6 +385,106 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: 719d96f8 touches only the 3 allowed paths - no dependency, route, main.py or web change; only its own test imports the reader; max-envelope route unmounted; CI green at 33662211 with identical blobs; PR #241 untouched; restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T086-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T091",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R005",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "f00a47452705f16378c08649e3dd863374d60861",
+   "reviewed_manifest_sha256": "f2d6b1a770af944574859c6c801735577a484746d1de063fadfeb9a4709be6c9",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:10:18+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-w2, joint T091/T092): complete in-regime packet; G0/G2/G3/G4/G5 PASS at identity f2d6b1a7; producer backend-engineer in wt-m5t091; claim-seam log; no state or gate skipped; restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T091-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: allowed_paths (pdf_sheet_writer.py, its test, the report) disjoint from T092's GLB trio and every live/frozen neighbour (G0 table EMPTY overlap); material d0919de6 touches exactly the 3 allowed files; restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T091-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for this task's share (PDF blueprint WRITING hardened): _validate_ring/_coerce_vertex return typed SitePlanRefusal, never raise; _num finite guard; caller text screened for claim-class words before drawing; one paren escaper; H-1..H-4 mutation-sensitive tests incl. an unbalanced-paren round trip through the real in-repo strict reader; honesty stamp 'PROPOSED - NOT A CITY RECORD'; G4 reproduced 13/13 producer mutants red; restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T091-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: stdlib + the internal dxf claim-word import only; zero requirements change; unwired (no production importer; __init__ untouched); no api/main/apps/packages change; accepted golden c38360f9 unchanged; restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T091-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T092",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R006",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "f00a47452705f16378c08649e3dd863374d60861",
+   "reviewed_manifest_sha256": "d912b914e495b31c9b3c0a24b9dd123e23f2e05b7cf564b04ff50169d59d58ff",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:10:18+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-w2, joint): complete in-regime packet; G0/G1/G2/G3/G4/G5 PASS at identity d912b914; producer backend-engineer in wt-m5t092; restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T092-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: GLB trio disjoint from T091 and every neighbour (G0 EMPTY overlap); material 706ae62a touches exactly the 3 allowed files; restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T092-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for this task's share: glb_writer.py is a deterministic glTF 2.0 GLB writer taking EPSG:2263-aligned local-frame triangle meshes in US survey feet and converting to glTF metres through a declared axis map (G1 verified det +1, winding preserved) - the runtime 3D format the architecture names; wiring/display is a later packet; restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T092-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for this task's share (export through an OPEN format): glTF 2.0 GLB (Khronos, royalty-free) written with zero dependencies; offline structural tests via a spec-derived parser + golden sha256 30d79d80 + AS-2 round trip; the official Khronos validator was not run (non-blocking, DB-059 (f)); G1 reproduced the golden with its own parser; restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T092-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: stdlib-only imports (AST test); 706ae62a touches only 3 files; zero requirements change; unwired (test_as5_not_wired + grep); honesty label emitted and pinned; restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T092-DCV.md."
      ]
     }
    ]
