@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T22:04:10+00:00",
+ "verified_at": "2026-09-24T22:38:50+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1173,6 +1173,60 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: a contracted, claimed, gated capacity unit whose round-1 NEEDS_SPLIT was handled by a recorded re-scope (G0 re-recorded at edafaad2 with history kept; round-1 evidence preserved on branch task/M0-T160-round1; root cause DB-063), not by skipping a state or a gate; G0/G2/G3/G5 PASS with independent reviewers. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf4fd224 (source_binding.json 4f6fdfdb, CONTROLLER_UPDATE_RUNBOOK.md 4ee5a21b, test_runbook_parse.ps1 2288cb62, M0-T160-producer-report.md 94f62afc; identity f63172da; evaluate_task_refs ok); report M0-T160-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T102",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R004",
+    "D-087-R006",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "95bb73bdcefd95a73b2f5c412f4511b11b0ce3af",
+   "reviewed_manifest_sha256": "14376b051093ae5713c801e506c7bf564fc1eafc0ed61ad205939d9032e8fca2",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T22:38:50+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 at the wave-7 seam 40169b9c, claimed at 442b2dd2 with the full worktree path, the full gate ladder G0/G2/G3/G4/G5 PASS, produced concurrently with the disjoint M5-T101; no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs all 20 active neighbours incl. M5-T101; one worktree wt-m5t102; the cherry-pick touches exactly the 9 allowed paths. Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the AutoCAD-openable DXF output is byte-identical for valid input (the committed owner samples and the round-trip suite untouched and green); only separator-variant claim words newly refuse. Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the three CAD writers share one claim-word module; AST tests prove no writer keeps its own literal or matcher; dxf/pdf aliases are identity-equal; a hardcoded by-value drift pin reddens on any list edit; all three goldens unchanged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: stdlib-only (re, numbers); no requirements, main.py, route, web, apps, packages or app/cad/__init__.py change; unwired; the max-envelope route stays unmounted; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
      ]
     }
    ]

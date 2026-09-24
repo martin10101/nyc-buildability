@@ -3,7 +3,7 @@
  "directive_id": "D-083",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All thirteen requirements bind the non-ledger sentinel D-083-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. R011 (owner return item) is discharged by the owner-facing reply and audited here. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T21:04:35+00:00",
+ "verified_at": "2026-09-24T22:38:50+00:00",
  "task_verifications": [
   {
    "directive_id": "D-083",
@@ -115,6 +115,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: the export and scene contracts keep regulatory limit / generated building option / demonstrated maximum distinct, with the demonstrated maximum WITHHELD (plan section 7 item 6) until its evidence standard is met. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T102",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R002"
+   ],
+   "reviewed_sha": "95bb73bdcefd95a73b2f5c412f4511b11b0ce3af",
+   "reviewed_manifest_sha256": "14376b051093ae5713c801e506c7bf564fc1eafc0ed61ad205939d9032e8fca2",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T22:38:50+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: one canonical CLAIM_CLASS_WORDS tuple + a separator-collapsing claim_key + one contains_claim_word screen, called by all three writers (DXF caller strings, GLB mesh/node names, PDF title-block address/bbl in raw and ASCII-sanitised forms); separator variants refused in every writer, each with a reddening consuming-namespace mutant. Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: no writer can emit a barred claim word from caller text into an exported file (a refused write yields no output; the PDF title-block screen is load-bearing); the PDF refusal does not echo caller text, and the GLB/DXF refusal-message echo is the disclosed DB-059 (h) deferral that never reaches an exported file. Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
      ]
     }
    ]

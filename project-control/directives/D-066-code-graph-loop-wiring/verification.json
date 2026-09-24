@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T22:04:10+00:00",
+ "verified_at": "2026-09-24T22:38:50+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1501,6 +1501,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: the packet's navigation block names the binding's readers (update_controller_from_candidate.ps1 Read-SourceBinding; test_runbook_parse.ps1 + test_source_binding.ps1) and the query.py --no-regen instruction, advisory. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf4fd224 (source_binding.json 4f6fdfdb, CONTROLLER_UPDATE_RUNBOOK.md 4ee5a21b, test_runbook_parse.ps1 2288cb62, M0-T160-producer-report.md 94f62afc; identity f63172da; evaluate_task_refs ok); report M0-T160-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T102",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "95bb73bdcefd95a73b2f5c412f4511b11b0ce3af",
+   "reviewed_manifest_sha256": "14376b051093ae5713c801e506c7bf564fc1eafc0ed61ad205939d9032e8fca2",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T22:38:50+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t102): the packet carries the graph-derived navigation block (regenerated at the contract seam, 827 files / 17839 nodes / 7656 edges) naming pdf_sheet_writer.py:54 CLAIM_CLASS_WORDS, the writer tests, test_cad_owner_samples.py and test_dxf_roundtrip.py, with the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
      ]
     }
    ]
