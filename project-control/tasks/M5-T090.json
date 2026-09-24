@@ -50,12 +50,12 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T09:39:41.432427+00:00",
-  "updated_at": "2026-09-24T10:41:16.367258+00:00",
+  "updated_at": "2026-09-24T15:32:32.208061+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -93,5 +93,7 @@
       "status": "in_progress",
       "message": "Harvested: 0d6cc897 + the generate-lockfile bot commit 82d2e54d (run 35985974452 SUCCESS) cherry-picked to 80f17a86 + 2e444920, every file MATCH; lock resolves three 0.186.0 + fiber 9.7.0 with the reported integrity; 13 new packages, none changed or removed."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-24T15:32:32.208061+00:00"
 }

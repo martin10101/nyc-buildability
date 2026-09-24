@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T15:28:44+00:00",
+ "verified_at": "2026-09-24T15:32:29+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -705,6 +705,60 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED for this task's share (the B-026 loop-lane remedy): fully gated packet - G0 at 125efaa1, claimed with the full worktree path on the certified base, G2/G3/G4 PASS through a proper PASS-with-required-corrections rework and re-freeze; scoped to tools/agent_supervisor + its reports; B-026 stays OPEN until the owner-typed commissioning; identity-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (_task_git_identity == 3ccb0c5e == the frozen stamp over the 12 allowed paths; evaluate_task_refs ok); report M0-T159-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T090",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R009",
+    "D-087-R011"
+   ],
+   "reviewed_sha": "9c44b68da0bfe806dc6453494594b85208995fd3",
+   "reviewed_manifest_sha256": "f53b0781a63ffe2341f53cf3f592415a55e0cd108bcc1da37055c30d726d9cbb",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:32:29+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contracted/claimed/gated packet (G0/G2/G4/G5 PASS at identity f53b0781) produced by a subagent in wt-m5t090; the lock was generated only by the generate-lockfile workflow on the task branch; nothing skipped; blob-level restamp predicate re-verified by the orchestrator at the accept head 9c44b68d (package.json 19328b65, package-lock.json a8398ec5, report 4a7752c4 unchanged; identity f53b0781; evaluate_task_refs ok); report M5-T090-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: allowed_paths = apps/web/package.json, package-lock.json and the report, disjoint from every live packet; one producer in wt-m5t090; blob-level restamp predicate re-verified by the orchestrator at the accept head 9c44b68d (package.json 19328b65, package-lock.json a8398ec5, report 4a7752c4 unchanged; identity f53b0781; evaluate_task_refs ok); report M5-T090-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for this task's share (the released 3D family's web runtime): three 0.186.0 and @react-three/fiber 9.7.0 admitted as the rendering libraries the 3D architecture names; no viewer code yet; blob-level restamp predicate re-verified by the orchestrator at the accept head 9c44b68d (package.json 19328b65, package-lock.json a8398ec5, report 4a7752c4 unchanged; identity f53b0781; evaluate_task_refs ok); report M5-T090-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: boundaries unchanged - full dependency-security policy applied with no waiver (exact pins, >=604800-s age, zero advisories at every severity, registry integrity, G5 section-5 provenance review, bot-generated lockfile); no route/api/main.py change; PR #241 unmerged; blob-level restamp predicate re-verified by the orchestrator at the accept head 9c44b68d (package.json 19328b65, package-lock.json a8398ec5, report 4a7752c4 unchanged; identity f53b0781; evaluate_task_refs ok); report M5-T090-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R011",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the owner's 'Go' (D-087 source-002) authorized this 3D web library admission with NO waiver of dependency security; the admission followed every gate of the policy; blob-level restamp predicate re-verified by the orchestrator at the accept head 9c44b68d (package.json 19328b65, package-lock.json a8398ec5, report 4a7752c4 unchanged; identity f53b0781; evaluate_task_refs ok); report M5-T090-DCV.md."
      ]
     }
    ]
