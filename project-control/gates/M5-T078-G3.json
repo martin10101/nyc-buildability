@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T078",
+  "gate_id": "G3",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "FAIL",
+  "report_file": "project-control/reports/M5-T078-G3.md",
+  "reviewed_at": "2026-09-24T09:56:15.878531+00:00",
+  "content_manifest_sha256": "789da9d92315d493ffcc2fa0d59a076da923a507341a6917732c01a40af97e73",
+  "reviewed_sha": "114e5e56e158d6f263e58a314c383ea62ee7eff4",
+  "updated_at": "2026-09-24T09:56:21.691850+00:00"
+}

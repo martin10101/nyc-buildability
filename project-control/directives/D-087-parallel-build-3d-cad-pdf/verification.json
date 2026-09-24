@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T09:12:00+00:00",
+ "verified_at": "2026-09-24T09:44:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -193,6 +193,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: max_envelope.py byte-identical (f0abf884); no route/main.py/web/dependency file touched; zero new deps (stdlib + already-admitted shapely/numpy; CI lock-verify, dependency-security and pip-audit green); route unmounted; PR #241 open and unmerged; honesty labels present, no permitted/as-of-right/maximum-allowed/approved/entitled wording; modularity green; report M5-T082-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T077",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002"
+   ],
+   "reviewed_sha": "114e5e56e158d6f263e58a314c383ea62ee7eff4",
+   "reviewed_manifest_sha256": "457a17155812843eb2c495aee6ed182b114a1ffe750718c849774b1529388369",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T09:44:00+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t077) for this task's share: contracted at f57fccd5 (G0 PASS), claimed b56f3d5b with the full worktree path; after the B-026 lane refusal produced by an orchestrator-dispatched subagent in the SAME claimed worktree wt-m5t077 concurrently with the D-087 units (disclosed in the progress_log, B-026 workaround and the D-084 unbind note); no state or gate skipped. The loop-lane share of R001 stays open under B-026 (verifier F3) and is not discharged by this row; restamp predicate re-verified at the accept head (five blobs unchanged, identity 457a1715, evaluate_task_refs ok); report M5-T077-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: one writer / one worktree (wt-m5t077, only af332042 on the task branch); f63cfad1 the only commit on the five paths since the seam; recomputed disjointness over 45 packets EMPTY against every concurrent packet (only two dormant pre-regime July packets overlap by declared glob - verifier F1 advisory on the G0 table); M5-T076 on the same files accepted before the contract; B-026 neither names nor gates this task; restamp predicate re-verified at the accept head (five blobs unchanged, identity 457a1715, evaluate_task_refs ok); report M5-T077-DCV.md."
      ]
     }
    ]

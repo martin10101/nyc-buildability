@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T09:12:00+00:00",
+ "verified_at": "2026-09-24T09:44:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1017,6 +1017,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: tasks/M5-T082.json inputs carry the CODE-GRAPH NAVIGATION BLOCK (graph regenerated, 815 files; max_envelope FORBIDDEN; proposal/contract/mappluto read-only; impact set; query.py --no-regen instruction); the producer stayed in scope (3-path diff); report M5-T082-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T077",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "114e5e56e158d6f263e58a314c383ea62ee7eff4",
+   "reviewed_manifest_sha256": "457a17155812843eb2c495aee6ed182b114a1ffe750718c849774b1529388369",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T09:44:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: navigation block byte-present in tasks/M5-T077.json since the contract seam; graph regenerated at the seam (817 files / 17027 nodes / 7441 edges, graph_sha256 re-hashes); block accuracy checked in source (max_envelope_api imported only by its test; lot_geometry_derivation by max_envelope_api + its test; app/main.py has no max_envelope - route unmounted); producer stayed in scope (five paths; max_envelope.py f0abf884 unchanged); report M5-T077-DCV.md."
      ]
     }
    ]
