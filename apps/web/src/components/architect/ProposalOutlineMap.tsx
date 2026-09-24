@@ -49,10 +49,21 @@ export interface DrawnPoint {
   lat: number;
 }
 
+/** The ONE finiteness predicate for a drawn point: BOTH ordinates a finite
+ * number (M5-T071 G3 F6). A fresh keyboard row (NaN/NaN, not yet typed) is not
+ * finite, so the overlay does not draw it, the status does not count it, and
+ * Convert does not send it. Exported so every site shares this single definition
+ * — the overlay builder and finitePointCount below, and ProposalOutlineDraw's
+ * finite gate + convert filter — with no duplicated `Number.isFinite` pair-check
+ * anywhere else (AS-5 grep-provable). */
+export function isDrawnPointFinite(p: DrawnPoint): boolean {
+  return Number.isFinite(p.lng) && Number.isFinite(p.lat);
+}
+
 /** Count the points the overlay actually draws: both ordinates finite. A fresh
  * keyboard row (NaN/NaN, not yet typed) is not drawn and must not be announced. */
 export function finitePointCount(points: DrawnPoint[]): number {
-  return points.filter((p) => Number.isFinite(p.lng) && Number.isFinite(p.lat)).length;
+  return points.filter(isDrawnPointFinite).length;
 }
 
 /**
@@ -66,7 +77,7 @@ export function finitePointCount(points: DrawnPoint[]): number {
 export function drawnOverlayData(points: DrawnPoint[], selectedIndex: number | null): DrawnOverlayData {
   const finite = points
     .map((p, index) => ({ p, index }))
-    .filter(({ p }) => Number.isFinite(p.lng) && Number.isFinite(p.lat));
+    .filter(({ p }) => isDrawnPointFinite(p));
   const features: DrawnOverlayData["features"] = finite.map(({ p, index }) => ({
     type: "Feature",
     properties: { index, selected: index === selectedIndex },
@@ -104,6 +115,11 @@ export function ProposalOutlineMap({
 }) {
   const overlay = useMemo(() => drawnOverlayData(points, selectedIndex), [points, selectedIndex]);
   const hasSelection = selectedIndex !== null;
+  // (d) Is the SELECTED row actually drawn on the map? An untyped selected row
+  // (NaN/NaN) is not on the map, so a click PLACES it, not MOVES it — the copy
+  // and status must say so. Uses the ONE shared finiteness predicate (F6).
+  const selectedPoint = selectedIndex !== null ? points[selectedIndex] : undefined;
+  const selectedIsFinite = selectedPoint !== undefined && isDrawnPointFinite(selectedPoint);
   // The count the overlay renders (finite points only) — what the status must
   // announce, never the raw row count (DB-047(e)).
   const drawnCount = useMemo(() => finitePointCount(points), [points]);
@@ -135,6 +151,13 @@ export function ProposalOutlineMap({
     const observer = new MutationObserver(sync);
     observer.observe(root, { childList: true, subtree: true });
     return () => observer.disconnect();
+    // [bbl] is a RESET KEY, not a value read in this effect body (M5-T071 G3
+    // F8). A new lot mounts a fresh leaf subtree, so the observer and its
+    // initial sync must be torn down and rebuilt when bbl changes. Do NOT let an
+    // exhaustive-deps autofix "simplify" this to [] — that silently freezes the
+    // observer against the first lot and breaks the loading->drawable re-sync
+    // (both the MutationObserver-transition and the loading-copy specs rest on
+    // this key). Keep [bbl].
   }, [bbl]);
 
   // A map click MOVES the selected point when one is selected, else PLACES a new
@@ -151,7 +174,11 @@ export function ProposalOutlineMap({
       <p className="section-note" data-testid="proposal-outline-map-instructions">
         {mapSurface === "present"
           ? hasSelection
-            ? `Point ${selectedIndex} is selected — click the map to move it, or edit it in the table below. Click the point again to deselect.`
+            ? selectedIsFinite
+              ? `Point ${selectedIndex} is selected — click the map to move it, or edit it in the table below. Click the point again to deselect.`
+              : // (d) An untyped selected row is not on the map, so a click PLACES
+                // it (never moves a point that isn't drawn). Say "place", not "move".
+                `Point ${selectedIndex} is selected but has no coordinates yet — click the map to place it, or type its longitude and latitude in the table below. Click the point again to deselect.`
             : "Click the lot map to place a proposed outline point, or add points by keyboard in the table below. Click a placed point to select it."
           : mapSurface === "unknown"
             ? "Preparing the reference map — you can start adding points by keyboard in the table below; enter each point's longitude and latitude."
@@ -165,12 +192,18 @@ export function ProposalOutlineMap({
         onDrawnVertexClick={onSelect}
         drawnOverlay={overlay}
       />
+      {/* (c) The map-ready change is announced through THIS one existing status
+          region — never a new live region (adding aria-live/role=status/role=alert
+          is forbidden). When the leaf's interactive surface appears (mapSurface
+          flips to "present") this text changes and the single region speaks.
+          (d) The selection is named even at zero finite points (an untyped
+          selected row used to drop the selection clause entirely). */}
       <p className="visually-hidden" role="status" data-testid="proposal-outline-map-status">
-        {drawnCount === 0
-          ? "No points drawn yet."
-          : `${drawnCount} point${drawnCount === 1 ? "" : "s"} drawn.${
-              hasSelection ? ` Point ${selectedIndex} selected.` : ""
-            }`}
+        {`${drawnCount === 0 ? "No points drawn yet." : `${drawnCount} point${drawnCount === 1 ? "" : "s"} drawn.`}${
+          hasSelection
+            ? ` Point ${selectedIndex} selected${selectedIsFinite ? "" : " — it has no coordinates yet, so a map click will place it"}.`
+            : ""
+        }${mapSurface === "present" ? " The lot map is ready to draw on — click it to place points." : ""}`}
       </p>
     </div>
   );

@@ -128,13 +128,15 @@ describe("ProposalOutlineDraw", () => {
     render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={stub(bridged200())} />);
     expect(screen.getByTestId("outline-draw-honesty")).toHaveTextContent("not a city record");
     const convert = screen.getByTestId("outline-draw-convert");
-    expect(convert).toBeDisabled();
+    // (e) Convert is aria-disabled (never the `disabled` attribute) so it stays
+    // in the tab order while not convertible.
+    expect(convert).toHaveAttribute("aria-disabled", "true");
 
     // Three rows ADDED but not yet typed (NaN/NaN). A count-only gate would
     // enable Convert here and launch a doomed bridge round-trip; the finiteness
-    // gate keeps it DISABLED and explains why. Reverting the gate reddens this.
+    // gate keeps it not-convertible and explains why. Reverting the gate reddens this.
     addPoints(3);
-    expect(convert).toBeDisabled();
+    expect(convert).toHaveAttribute("aria-disabled", "true");
     expect(screen.getByTestId("outline-draw-min-hint")).toHaveTextContent("coordinates filled in");
     // The overlay/status draw nothing yet — no finite points to render.
     expect(pointFeatureCount()).toBe(0);
@@ -142,9 +144,9 @@ describe("ProposalOutlineDraw", () => {
     // Type finite coordinates; Convert enables only when 3 finite points exist.
     fillPoint(0, -73.9998, 40.7001);
     fillPoint(1, -73.9992, 40.7001);
-    expect(convert).toBeDisabled(); // only 2 finite so far
+    expect(convert).toHaveAttribute("aria-disabled", "true"); // only 2 finite so far
     fillPoint(2, -73.9992, 40.7003);
-    expect(convert).toBeEnabled();
+    expect(convert).toHaveAttribute("aria-disabled", "false");
     expect(screen.queryByTestId("outline-draw-min-hint")).toBeNull();
     // The overlay now draws exactly the 3 finite points (status matches).
     expect(pointFeatureCount()).toBe(3);
@@ -268,7 +270,7 @@ describe("ProposalOutlineDraw — shared pointer/keyboard state (M5-T066)", () =
     expect((screen.getByLabelText("Drawn point 1 longitude") as HTMLInputElement).value).toBe("-73.9992");
     expect((screen.getByLabelText("Drawn point 2 latitude") as HTMLInputElement).value).toBe("40.7003");
     // Convert enables at 3 points; the map overlay renders all three points.
-    expect(screen.getByTestId("outline-draw-convert")).toBeEnabled();
+    expect(screen.getByTestId("outline-draw-convert")).toHaveAttribute("aria-disabled", "false");
     expect(pointFeatureCount()).toBe(3);
   });
 
@@ -330,6 +332,99 @@ describe("ProposalOutlineDraw — shared pointer/keyboard state (M5-T066)", () =
 
     mapClick({ lng: -73.9992, lat: 40.7003 }); // 3 points → hint gone, convert enabled
     expect(screen.queryByTestId("outline-draw-min-hint")).toBeNull();
-    expect(screen.getByTestId("outline-draw-convert")).toBeEnabled();
+    expect(screen.getByTestId("outline-draw-convert")).toHaveAttribute("aria-disabled", "false");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Task M5-T078 (DB-049) — drawing-surface disclosure + a11y cluster:
+// (a) omission never silent, (b)/(F7) row-level incomplete markers naming the
+// exact missing ordinate, (e) keyboard-reachable aria-disabled Convert that
+// announces the reason and makes NO bridge call.
+// ---------------------------------------------------------------------------
+describe("ProposalOutlineDraw — DB-049 omission disclosure + row markers + keyboard Convert (M5-T078)", () => {
+  it("AS-1 (a): 4 rows / 3 finite — Convert is ready, the hint at the point of action names the 1 omitted row, and the post-convert status names converted AND omitted counts", async () => {
+    const onAdopt = vi.fn();
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={onAdopt} fetchImpl={stub(bridged200())} />);
+    addFinitePoints(3); // rows 0-2 finite
+    addPoints(1); // row 3 added, never typed (NaN/NaN)
+
+    // Convert is READY (3 finite points) yet the omission hint STILL renders —
+    // independent of enablement — and states how many rows Convert will omit.
+    // MUTATION: re-gating the hint on `finiteCount < MIN` (the old condition)
+    // suppresses it here (finiteCount is 3), throwing on getByTestId → red.
+    const convert = screen.getByTestId("outline-draw-convert");
+    expect(convert).toHaveAttribute("aria-disabled", "false");
+    const hint = screen.getByTestId("outline-draw-min-hint");
+    expect(hint).toHaveTextContent("Convert will include 3 points");
+    expect(hint).toHaveTextContent("1 row");
+    expect(hint).toHaveTextContent("will not be included");
+
+    fireEvent.click(convert);
+    await screen.findByTestId("outline-draw-bridged");
+    // Post-convert status NAMES both counts — the omission is never silent.
+    const counts = screen.getByTestId("outline-draw-convert-counts");
+    expect(counts).toHaveTextContent("3 points converted");
+    expect(counts).toHaveTextContent("1 row");
+    expect(counts).toHaveTextContent("not included");
+    // Only the 3 finite points were adopted (the untyped row was never sent).
+    expect(onAdopt).toHaveBeenCalledTimes(1);
+    expect(onAdopt.mock.calls[0][0]).toHaveLength(3);
+  });
+
+  it("AS-2 (b/F7): each incomplete row carries aria-invalid + a visible marker naming the EXACT missing ordinate; a complete row carries neither", () => {
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={stub(bridged200())} />);
+    addPoints(3);
+    fillPoint(0, -73.9998, 40.7001); // row 0 complete
+    // Row 1 gets ONLY a longitude (latitude still missing); row 2 stays NaN/NaN.
+    fireEvent.change(screen.getByLabelText("Drawn point 1 longitude"), { target: { value: "-73.9992" } });
+
+    // Complete row: no marker, no aria-invalid on either input.
+    expect(screen.queryByTestId("outline-draw-row-incomplete-0")).toBeNull();
+    expect(screen.getByLabelText("Drawn point 0 longitude")).not.toHaveAttribute("aria-invalid");
+    expect(screen.getByLabelText("Drawn point 0 latitude")).not.toHaveAttribute("aria-invalid");
+
+    // Row 1 missing ONLY latitude: marker says "latitude" (never the blanket
+    // "longitude and latitude" — F7), and only the latitude input is aria-invalid.
+    const row1 = screen.getByTestId("outline-draw-row-incomplete-1");
+    expect(row1).toHaveTextContent("Needs latitude");
+    expect(row1).not.toHaveTextContent("longitude and latitude");
+    expect(screen.getByLabelText("Drawn point 1 longitude")).not.toHaveAttribute("aria-invalid");
+    // MUTATION: dropping aria-invalid on the missing ordinate reddens here.
+    expect(screen.getByLabelText("Drawn point 1 latitude")).toHaveAttribute("aria-invalid", "true");
+
+    // Row 2 missing BOTH: marker names both, both inputs aria-invalid.
+    expect(screen.getByTestId("outline-draw-row-incomplete-2")).toHaveTextContent("Needs longitude and latitude");
+    expect(screen.getByLabelText("Drawn point 2 longitude")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByLabelText("Drawn point 2 latitude")).toHaveAttribute("aria-invalid", "true");
+  });
+
+  it("F7: the omission hint names the exact missing ordinate for a single half-typed row (not a blanket 'longitude and latitude')", () => {
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={stub(bridged200())} />);
+    addFinitePoints(3);
+    addPoints(1); // row 3
+    // Row 3: longitude only → latitude missing, one incomplete row.
+    fireEvent.change(screen.getByLabelText("Drawn point 3 longitude"), { target: { value: "-73.9990" } });
+    const hint = screen.getByTestId("outline-draw-min-hint");
+    expect(hint).toHaveTextContent("without a latitude");
+    expect(hint).not.toHaveTextContent("longitude and latitude");
+    expect(screen.getByTestId("outline-draw-row-incomplete-3")).toHaveTextContent("Needs latitude");
+  });
+
+  it("AS-4 (e): a not-convertible Convert is aria-disabled and keyboard-reachable; activating it announces the reason and makes NO bridge call", () => {
+    const fetchSpy = vi.fn(async () => bridged200()) as unknown as typeof fetch;
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={fetchSpy} />);
+    addFinitePoints(2); // only 2 finite → not convertible
+
+    const convert = screen.getByTestId("outline-draw-convert");
+    expect(convert).toHaveAttribute("aria-disabled", "true");
+    // NOT the `disabled` attribute → it stays in the tab order (A7 remedy).
+    expect(convert).not.toBeDisabled();
+
+    fireEvent.click(convert);
+    // No conversion/bridge call was made …
+    expect(fetchSpy).not.toHaveBeenCalled();
+    // … and the reason is announced through the EXISTING announcer region.
+    expect(screen.getByTestId("outline-draw-announcer")).toHaveTextContent("Add 1 more point to convert");
   });
 });

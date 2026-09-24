@@ -210,6 +210,16 @@ function disableWebgl() {
   );
 }
 
+/** The layer IDs the map installed, in order. DB-049(h): every check on
+ * `addLayer` uses layer-ID PRESENCE (this helper), never an exact cross-render
+ * `toHaveBeenCalledTimes` tally — that exact-count form is the DB-048 flake
+ * class, red "expected 2, got 4" whenever a legitimate whole-map rebuild re-adds
+ * the two lot-outline layers between an effect pass and the assertion. Presence
+ * still reddens the real defect (a dropped layer). */
+function addedLayerIds(): string[] {
+  return mocks.addLayer.mock.calls.map(([layer]) => (layer as { id?: string }).id ?? "");
+}
+
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
@@ -244,8 +254,11 @@ describe("LotOutlineMap — single_lot with WebGL", () => {
     const [, source] = mocks.addSource.mock.calls[0] as [string, { data: { geometry: unknown } }];
     // The geometry handed to MapLibre EQUALS the fixture geometry — untouched.
     expect(source.data.geometry).toEqual(fx.geometry);
-    // A fill + a line layer, camera framed, attribution control added.
-    expect(mocks.addLayer).toHaveBeenCalledTimes(2);
+    // A fill + a line layer are installed (presence, not an exact tally — DB-049 h),
+    // camera framed, attribution control added.
+    const s1LayerIds = addedLayerIds();
+    expect(s1LayerIds).toContain("lot-outline-fill");
+    expect(s1LayerIds).toContain("lot-outline-line");
     expect(mocks.fitBounds).toHaveBeenCalled();
     // D-056-R002 framing fix: the raised maxZoom cap is what actually reaches
     // fitBounds (not just "called with something").
@@ -527,7 +540,14 @@ describe("LotOutlineMap — additive map-CLICK interaction (M5-T066)", () => {
     render(<LotOutlineMap bbl="1008350041" fetchImpl={singleLot()} />);
     await screen.findByTestId("lot-outline-map");
     await waitFor(() => expect(mocks.addSource).toHaveBeenCalled());
-    expect(mocks.addLayer).toHaveBeenCalledTimes(2);
+    // Byte-equivalence: the two lot-outline layers install and NO drawn-overlay
+    // layer is added when no interaction props are passed. DB-049(h): asserted by
+    // layer-ID presence (and presence-negative), never an exact cross-render tally.
+    const ids = addedLayerIds();
+    expect(ids).toContain("lot-outline-fill");
+    expect(ids).toContain("lot-outline-line");
+    expect(ids).not.toContain("proposal-drawn-outline-line");
+    expect(ids).not.toContain("proposal-drawn-outline-points");
     expect(mocks.state.clickListeners).toHaveLength(0);
   });
 
@@ -711,6 +731,12 @@ describe("LotOutlineMap — additive map-CLICK interaction (M5-T066)", () => {
     expect(overlayAddsPerInstance.some((n) => n === 1)).toBe(true);
     // … and NO single map instance created it more than once.
     expect(overlayAddsPerInstance.every((n) => n <= 1)).toBe(true);
+    // (g)/(G4 finding 2) With a STABLE fetchImpl the happy path builds EXACTLY
+    // ONE map instance — so this spec now also proves the overlay updated IN
+    // PLACE, WITHOUT a whole-map rebuild (the dimension the removed cross-render
+    // addLayer tally used to cover). A rebuild would push a second instance and
+    // red this.
+    expect(mocks.state.mapInstances).toHaveLength(1);
   });
 });
 
@@ -738,7 +764,11 @@ describe("LotOutlineMap — root-cause regression: style already loaded before w
     );
     expect(await screen.findByTestId("lot-outline-map")).toBeInTheDocument();
     await waitFor(() => expect(mocks.addSource).toHaveBeenCalled());
-    expect(mocks.addLayer).toHaveBeenCalledTimes(2);
+    // The draw step ran: both lot-outline layers installed (DB-049 h: presence,
+    // not an exact tally).
+    const ids = addedLayerIds();
+    expect(ids).toContain("lot-outline-fill");
+    expect(ids).toContain("lot-outline-line");
     expect(mocks.fitBounds).toHaveBeenCalled();
   });
 });
@@ -782,7 +812,13 @@ describe("M5-T029 source-backed street context", () => {
     mocks.state.autoRender = false;
     mocks.state.sourceLoaded = false;
     render(<LotOutlineMap bbl="1008350041" context fetchImpl={fetchReturning(jsonResponse(fixture("single_lot_polygon")))} />);
-    await waitFor(() => expect(mocks.addLayer).toHaveBeenCalledTimes(2));
+    // Wait until both lot-outline layers are installed (DB-049 h: presence, not an
+    // exact cross-render tally) — then prove the outline is NOT yet announced.
+    await waitFor(() => {
+      const ids = addedLayerIds();
+      expect(ids).toContain("lot-outline-fill");
+      expect(ids).toContain("lot-outline-line");
+    });
     expect(screen.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "loading");
     expect(screen.getByTestId("lot-outline-summary")).toHaveTextContent("Loading the selected parcel outline");
     act(() => mocks.state.renderListeners.forEach(listener => listener()));

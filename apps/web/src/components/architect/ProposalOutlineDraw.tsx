@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { OutcomeAnnouncer } from "@/components/property/OutcomeAnnouncer";
-import { ProposalOutlineMap } from "./ProposalOutlineMap";
+import { ProposalOutlineMap, isDrawnPointFinite } from "./ProposalOutlineMap";
 import type { DraftVertex } from "@/lib/architect/proposal-draft";
 import {
   announcementForOutlineBridge,
@@ -51,6 +51,18 @@ function numInputValue(n: number): string {
   return Number.isFinite(n) ? String(n) : "";
 }
 
+/** Name the ordinate(s) a row is still missing (b)/(F7). Single-ordinate checks
+ * — which one is absent — are a DIFFERENT question from the shared pair predicate
+ * `isDrawnPointFinite` that gates conversion, so a half-typed row is described
+ * exactly ("latitude") instead of the old blanket "longitude and latitude". A
+ * complete row returns "". */
+function missingOrdinateLabel(lngFinite: boolean, latFinite: boolean): string {
+  if (!lngFinite && !latFinite) return "longitude and latitude";
+  if (!lngFinite) return "longitude";
+  if (!latFinite) return "latitude";
+  return "";
+}
+
 function refusalTestId(outcome: OutlineBridgeOutcome): string {
   return `outline-draw-${outcome.kind.replace(/_/g, "-")}`;
 }
@@ -68,6 +80,10 @@ export function ProposalOutlineDraw({
   const [converting, setConverting] = useState(false);
   const [outcome, setOutcome] = useState<OutlineBridgeOutcome | null>(null);
   const [announcement, setAnnouncement] = useState("");
+  // (a) How many not-yet-typed rows the LAST conversion left out, captured at
+  // convert time so the post-convert status can name the omitted count truthfully
+  // (never a silent drop). The converted count comes from the server report.
+  const [omittedOnConvert, setOmittedOnConvert] = useState(0);
   // The point selected on the map (or via the table's Select control). A
   // selected point is what a map click MOVES; selecting also drives the map
   // highlight and the selected-row styling. null = nothing selected (a map
@@ -150,18 +166,54 @@ export function ProposalOutlineDraw({
   // NaN/NaN until typed, so a count-only gate would launch a doomed bridge
   // round-trip on rows the overlay does not even draw. incompleteCount is the
   // number of added-but-not-yet-typed rows, used only to explain the disable.
-  const finiteCount = points.filter(
-    (p) => Number.isFinite(p.lng) && Number.isFinite(p.lat),
-  ).length;
+  const finiteCount = points.filter(isDrawnPointFinite).length;
   const incompleteCount = drawnCount - finiteCount;
   const canConvert = finiteCount >= MIN_DRAWN_VERTICES && !converting;
+
+  // (b)/(F7) When a single row is incomplete, name its exact missing ordinate in
+  // the aggregate hint; for several, stay generic ("their coordinates") rather
+  // than assert a specific ordinate that may not apply to every row.
+  const firstIncomplete = points.find((p) => !isDrawnPointFinite(p)) ?? null;
+  const oneMissingPhrase = firstIncomplete
+    ? missingOrdinateLabel(Number.isFinite(firstIncomplete.lng), Number.isFinite(firstIncomplete.lat))
+    : "";
+  const incompleteOrdinatePhrase = incompleteCount === 1 ? `a ${oneMissingPhrase}` : "their coordinates";
+
+  // The single convert hint, shown INDEPENDENT of Convert enablement whenever a
+  // row is incomplete or too few points exist (a). Three honest cases:
+  //  • too few finite points AND untyped rows remain — fill or delete them;
+  //  • too few finite points, all typed — add more;
+  //  • enough to convert BUT untyped rows remain — state exactly how many Convert
+  //    will OMIT, at the point of action, so omission is never silent.
+  let convertHint: string;
+  if (finiteCount < MIN_DRAWN_VERTICES) {
+    convertHint =
+      incompleteCount > 0
+        ? `Convert needs at least ${MIN_DRAWN_VERTICES} points with both coordinates filled in. ` +
+          `${incompleteCount} row${incompleteCount === 1 ? "" : "s"} still ` +
+          `need${incompleteCount === 1 ? "s" : ""} ${incompleteOrdinatePhrase} — fill ` +
+          `${incompleteCount === 1 ? "it" : "them"} in or delete ` +
+          `${incompleteCount === 1 ? "it" : "them"} (${finiteCount} of ${MIN_DRAWN_VERTICES} ready).`
+        : `Add ${MIN_DRAWN_VERTICES - finiteCount} more point${MIN_DRAWN_VERTICES - finiteCount === 1 ? "" : "s"} to convert — an outline needs at least ${MIN_DRAWN_VERTICES} points (you have ${finiteCount}).`;
+  } else {
+    convertHint =
+      `Convert will include ${finiteCount} point${finiteCount === 1 ? "" : "s"}. ` +
+      `${incompleteCount} row${incompleteCount === 1 ? "" : "s"} without ${incompleteOrdinatePhrase} ` +
+      `${incompleteCount === 1 ? "is" : "are"} not filled in and will not be included — fill ` +
+      `${incompleteCount === 1 ? "it" : "them"} in or delete ${incompleteCount === 1 ? "it" : "them"} to include ${incompleteCount === 1 ? "it" : "them"}.`;
+  }
+  // (e) The reason a not-convertible Convert announces when activated.
+  const convertBlockedReason = converting ? "Conversion is already in progress." : convertHint;
 
   const convert = useCallback(async () => {
     // Send only the finite points — a stray not-yet-typed row is never posted.
     // For an all-finite outline this is byte-identical to the accepted payload.
     const drawn = points
-      .filter((p) => Number.isFinite(p.lng) && Number.isFinite(p.lat))
+      .filter(isDrawnPointFinite)
       .map((p) => [p.lng, p.lat] as [number, number]);
+    // (a) Record how many rows are being left out so the post-convert status can
+    // name the omitted count — never a silent drop.
+    setOmittedOnConvert(points.length - drawn.length);
     setConverting(true);
     setAnnouncement("");
     const result = await fetchOutlineBridge({ bbl, drawn_vertices: drawn }, { fetchImpl });
@@ -172,6 +224,17 @@ export function ProposalOutlineDraw({
       onAdopt(result.report.vertices.map((v) => ({ x: v.x, y: v.y })));
     }
   }, [points, bbl, fetchImpl, onAdopt]);
+
+  // (e) Convert is aria-disabled (not `disabled`) while not convertible, so it
+  // stays in the tab order (A7). Activating it in that state announces WHY
+  // through the existing announcer region and makes NO bridge call.
+  const onConvertActivate = useCallback(() => {
+    if (!canConvert) {
+      setAnnouncement(convertBlockedReason);
+      return;
+    }
+    void convert();
+  }, [canConvert, convert, convertBlockedReason]);
 
   return (
     <section className="proposal-outline-draw" data-testid="proposal-outline-draw" aria-label="Draw the building outline">
@@ -217,13 +280,29 @@ export function ProposalOutlineDraw({
           </tr>
         </thead>
         <tbody ref={listRef}>
-          {points.map((p, i) => (
+          {points.map((p, i) => {
+            // (b)/(F7) Per-ordinate presence — mark the exact missing coordinate,
+            // never color alone, and never claim a filled ordinate is missing.
+            const lngFinite = Number.isFinite(p.lng);
+            const latFinite = Number.isFinite(p.lat);
+            const rowComplete = lngFinite && latFinite;
+            const rowMissing = missingOrdinateLabel(lngFinite, latFinite);
+            return (
             <tr key={i} data-selected={i === selectedIndex} className={i === selectedIndex ? "is-selected" : undefined}>
-              <th scope="row">{i}</th>
+              <th scope="row">
+                {i}
+                {!rowComplete ? (
+                  <span className="row-incomplete-marker" data-testid={`outline-draw-row-incomplete-${i}`}>
+                    {" "}
+                    Needs {rowMissing}
+                  </span>
+                ) : null}
+              </th>
               <td>
                 <input
                   type="number"
                   aria-label={`Drawn point ${i} longitude`}
+                  aria-invalid={lngFinite ? undefined : "true"}
                   value={numInputValue(p.lng)}
                   onChange={(e) => updatePoint(i, { lng: parseNum(e.target.value) })}
                 />
@@ -232,6 +311,7 @@ export function ProposalOutlineDraw({
                 <input
                   type="number"
                   aria-label={`Drawn point ${i} latitude`}
+                  aria-invalid={latFinite ? undefined : "true"}
                   value={numInputValue(p.lat)}
                   onChange={(e) => updatePoint(i, { lat: parseNum(e.target.value) })}
                 />
@@ -256,7 +336,8 @@ export function ProposalOutlineDraw({
                 </button>
               </td>
             </tr>
-          ))}
+            );
+          })}
           {points.length === 0 ? (
             <tr>
               <td colSpan={4} className="section-note" data-testid="outline-draw-empty">
@@ -275,26 +356,21 @@ export function ProposalOutlineDraw({
           type="button"
           className="primary-button"
           data-testid="outline-draw-convert"
-          onClick={convert}
-          disabled={!canConvert}
+          onClick={onConvertActivate}
+          aria-disabled={!canConvert}
         >
           {converting ? "Converting…" : "Convert to numeric outline"}
         </button>
       </div>
 
-      {drawnCount > 0 && finiteCount < MIN_DRAWN_VERTICES ? (
-        // A persistent hint explaining why Convert is disabled. Two reasons can
-        // apply: not enough points yet (HJ-4, DB-045(g)), or rows added but not
-        // yet typed (DB-047(e)). The finite count is what actually counts toward
-        // conversion, so the hint speaks to it, never the raw row count.
+      {drawnCount > 0 && (finiteCount < MIN_DRAWN_VERTICES || incompleteCount > 0) ? (
+        // A persistent hint at the point of action. It renders INDEPENDENT of
+        // Convert enablement (a): while too few finite points exist it explains
+        // the disable (HJ-4 / DB-047(e)); once enough exist BUT untyped rows
+        // remain, it states exactly how many rows Convert will OMIT — so omission
+        // is never silent. `convertHint` carries the exact-ordinate wording (F7).
         <p className="section-note" role="status" data-testid="outline-draw-min-hint">
-          {incompleteCount > 0
-            ? `Convert needs at least ${MIN_DRAWN_VERTICES} points with both coordinates filled in. ` +
-              `${incompleteCount} row${incompleteCount === 1 ? "" : "s"} still ` +
-              `need${incompleteCount === 1 ? "s" : ""} a longitude and latitude — fill ` +
-              `${incompleteCount === 1 ? "it" : "them"} in or delete ` +
-              `${incompleteCount === 1 ? "it" : "them"} (${finiteCount} of ${MIN_DRAWN_VERTICES} ready).`
-            : `Add ${MIN_DRAWN_VERTICES - finiteCount} more point${MIN_DRAWN_VERTICES - finiteCount === 1 ? "" : "s"} to convert — an outline needs at least ${MIN_DRAWN_VERTICES} points (you have ${finiteCount}).`}
+          {convertHint}
         </p>
       ) : null}
 
@@ -308,6 +384,15 @@ export function ProposalOutlineDraw({
           {outcome.kind === "bridged" ? (
             <div data-testid={refusalTestId(outcome)}>
               <strong>Outline converted to numeric coordinates</strong>
+              {/* (a) Name the converted count (from the server report) AND the
+                  omitted count (rows without both coordinates, captured at convert
+                  time) — never a silent omission. */}
+              <p data-testid="outline-draw-convert-counts">
+                {`${outcome.report.vertices.length} point${outcome.report.vertices.length === 1 ? "" : "s"} converted to numeric coordinates`}
+                {omittedOnConvert > 0
+                  ? `; ${omittedOnConvert} row${omittedOnConvert === 1 ? "" : "s"} without both coordinates ${omittedOnConvert === 1 ? "was" : "were"} not included.`
+                  : "."}
+              </p>
               <p>{outcome.report.disclosure}</p>
               <dl className="outline-draw-provenance">
                 <dt>Fit residual (RMS)</dt>

@@ -341,3 +341,76 @@ describe("finitePointCount / status — announces only drawn (finite) points (DB
     expect(screen.getByTestId("proposal-outline-map-status")).not.toHaveTextContent("2 points drawn");
   });
 });
+
+// ---------------------------------------------------------------------------
+// Task M5-T078 (DB-049 c) — the map-ready copy flip is announced through the
+// wrapper's ONE existing status region; no new live region is added.
+// ---------------------------------------------------------------------------
+describe("ProposalOutlineMap — map-ready announced via the one existing status region (DB-049 c)", () => {
+  const props = {
+    bbl: "1000010010",
+    points: [{ lng: -73.99, lat: 40.7 }],
+    selectedIndex: null as number | null,
+    onPlace: vi.fn(),
+    onSelect: vi.fn(),
+    onMoveSelected: vi.fn(),
+  };
+  function liveRegionCount(container: HTMLElement): number {
+    return container.querySelectorAll<HTMLElement>('[role="status"], [role="alert"], [aria-live]').length;
+  }
+
+  it("AS-3: the loading→ready flip is announced through the existing status region, and the live-region count stays at the accepted baseline of 1", async () => {
+    lotMock.variant = "lot-outline-loading"; // leaf still loading → mapSurface unknown
+    const { container, rerender } = render(<ProposalOutlineMap {...props} selectedIndex={null} />);
+    const status = await screen.findByTestId("proposal-outline-map-status");
+    // Baseline: exactly ONE live region in the drawing wrapper while loading, and
+    // no premature readiness claim.
+    expect(liveRegionCount(container)).toBe(1);
+    expect(status).not.toHaveTextContent("The lot map is ready");
+
+    // The leaf's interactive surface appears (same bbl → only the MutationObserver
+    // can re-sync). The readiness change lands in the SAME region.
+    lotMock.variant = "interactive";
+    rerender(<ProposalOutlineMap {...props} selectedIndex={null} />);
+    await waitFor(() => expect(status).toHaveTextContent("The lot map is ready"));
+    // MUTATION: adding a new live region for this announcement makes the count 2
+    // and reds; folding it anywhere but the status region reds the text check.
+    expect(liveRegionCount(container)).toBe(1);
+    expect(screen.getByTestId("proposal-outline-map-status")).toBe(status);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Task M5-T078 (DB-049 d) — a selected UNTYPED row is described truthfully: the
+// status names the selection (even at zero finite points) and the instruction
+// says to PLACE the point, never MOVE a point that is not on the map.
+// ---------------------------------------------------------------------------
+describe("ProposalOutlineMap — an untyped selected row is described truthfully (DB-049 d)", () => {
+  const base = { bbl: "1000010010", onPlace: vi.fn(), onSelect: vi.fn(), onMoveSelected: vi.fn() };
+
+  it("AS-4: selecting an UNTYPED row names the selection in the status and instructs to PLACE (not move) the point", async () => {
+    render(<ProposalOutlineMap {...base} points={[{ lng: Number.NaN, lat: Number.NaN }]} selectedIndex={0} />);
+    const instr = await screen.findByTestId("proposal-outline-map-instructions");
+    await waitFor(() => expect(instr).toHaveTextContent("click the map to place it"));
+    // MUTATION: dropping the selectedIsFinite branch surfaces "move it" for a
+    // point that is not drawn — reddens here.
+    expect(instr).not.toHaveTextContent("click the map to move it");
+    // The status NAMES the selection even at zero finite points (the selection
+    // clause used to live only in the non-zero branch and was dropped here).
+    const status = screen.getByTestId("proposal-outline-map-status");
+    expect(status).toHaveTextContent("No points drawn yet.");
+    expect(status).toHaveTextContent("Point 0 selected");
+  });
+
+  it("AS-4 (finite selection unchanged): a selected FINITE row still says move it", async () => {
+    render(
+      <ProposalOutlineMap
+        {...base}
+        points={[{ lng: -73.99, lat: 40.7 }, { lng: -73.98, lat: 40.7 }]}
+        selectedIndex={1}
+      />,
+    );
+    const instr = await screen.findByTestId("proposal-outline-map-instructions");
+    await waitFor(() => expect(instr).toHaveTextContent("click the map to move it"));
+  });
+});
