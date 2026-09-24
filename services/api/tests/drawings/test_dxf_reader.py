@@ -7,6 +7,11 @@ honesty, the disclose-or-refuse rule, every fail-closed bound, and the two named
 
 from __future__ import annotations
 
+import tracemalloc
+
+import pytest
+
+from app.drawings import dxf_reader as _reader_mod
 from app.drawings.dxf_reader import (
     DEFAULT_LIMITS,
     DxfDocument,
@@ -436,10 +441,388 @@ def test_mutation_entity_count_bound_reddens() -> None:
 
 
 def test_mutation_pair_parity_check_reddens() -> None:
-    """MUTATION #2: deleting the odd-line-count guard in `_to_pairs` makes the pairing
-    loop read past the final line (IndexError -> MALFORMED_STRUCTURE), so the reason is no
-    longer ODD_PAIR_COUNT -> this assertion reddens."""
+    """MUTATION #2: the odd-line-count guard in `_to_pairs` (now a leftover unpaired code
+    line after the streaming scan) turns an odd total line count into ODD_PAIR_COUNT;
+    dropping it would silently ignore the trailing line, so this assertion reddens."""
     src = _full_drawing() + "0\n"  # single extra line -> odd total line count
     result = read_dxf(src)
     assert isinstance(result, DxfRefusal)
     assert result.reason is DxfRefusalReason.ODD_PAIR_COUNT
+
+
+# ===================================================================================
+# M5-T097 (D-087 CAD-3) reader hardening + closed G4 probe gaps. New cases only; every
+# test above is unchanged. Packet acceptance scenarios AS-1 (line splitting), AS-2
+# (bounds), AS-3 (probe gaps). Named/required mutations are proved in-process by
+# rebinding the CONSUMED module global (per the mutate-the-consuming-namespace rule).
+# ===================================================================================
+
+
+# --------------------------------------------------------- T097 AS-1: CR/LF-only splitting
+
+
+def test_t097_as1_cr_lf_crlf_parse_identically() -> None:
+    """CR, LF and CRLF line endings yield byte-identical primitives (the splitter treats
+    all three, and only those three, as line terminators)."""
+    codes: list[str] = []
+    for code, value in (
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "LINE"), (8, "A"), (10, 1.0), (20, 2.0), (11, 3.0), (21, 4.0),
+        (0, "ENDSEC"), (0, "EOF"),
+    ):
+        codes.append(str(code))
+        codes.append(str(value))
+    lf = read_dxf("\n".join(codes) + "\n")
+    cr = read_dxf("\r".join(codes) + "\r")
+    crlf = read_dxf("\r\n".join(codes) + "\r\n")
+    assert isinstance(lf, DxfDocument)
+    assert isinstance(cr, DxfDocument)
+    assert isinstance(crlf, DxfDocument)
+    assert lf.primitives == cr.primitives == crlf.primitives
+    assert lf.primitives[0].start == (1.0, 2.0, 0.0)
+
+
+def test_t097_as1_control_char_in_value_kept_verbatim() -> None:
+    """DESIGN CHOICE (declared): a control char that ``str.splitlines`` WOULD split on
+    (\\x0b \\x0c \\x1c-\\x1e) is kept VERBATIM inside the value, never used to break a line,
+    so it cannot shift the (code, value) pairing. Here a form-feed inside a TEXT value
+    survives the round trip; the drawing still parses."""
+    for ctrl in ("\x0b", "\x0c", "\x1c", "\x1d", "\x1e"):
+        src = _dxf(
+            (0, "SECTION"), (2, "ENTITIES"),
+            (0, "TEXT"), (8, "N"), (10, 0.0), (20, 0.0), (1, f"A{ctrl}B"),
+            (0, "ENDSEC"), (0, "EOF"),
+        )
+        result = read_dxf(src)
+        assert isinstance(result, DxfDocument), f"ctrl {ctrl!r} broke the parse: {result!r}"
+        note = result.primitives[0]
+        assert isinstance(note, TextPrimitive)
+        assert note.text == f"A{ctrl}B"
+
+
+def test_t097_as1_mutation_restoring_splitlines_reddens() -> None:
+    """NAMED MUTATION (AS-1): restoring ``str.splitlines()`` splits a value on its embedded
+    form-feed, shifting pairing, so the clean verbatim parse above no longer holds."""
+    src = _dxf(
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "TEXT"), (8, "N"), (10, 0.0), (20, 0.0), (1, "A\x0cB"),
+        (0, "ENDSEC"), (0, "EOF"),
+    )
+    good = read_dxf(src)
+    assert isinstance(good, DxfDocument)
+    assert good.primitives[0].text == "A\x0cB"
+
+    original = _reader_mod._iter_dxf_lines
+
+    def _splitlines_mutant(text, limits):  # type: ignore[no-untyped-def]
+        yield from text.splitlines()
+
+    try:
+        _reader_mod._iter_dxf_lines = _splitlines_mutant  # type: ignore[assignment]
+        mutated = read_dxf(src)
+    finally:
+        _reader_mod._iter_dxf_lines = original
+    # Under splitlines the form-feed forges an extra line -> not the clean "A\x0cB" document.
+    assert not (
+        isinstance(mutated, DxfDocument)
+        and mutated.primitives
+        and getattr(mutated.primitives[0], "text", None) == "A\x0cB"
+    )
+
+
+# -------------------------------------------------------------------- T097 AS-2: bounds
+
+
+def test_t097_as2_max_lines_refused() -> None:
+    """A line count over ``max_lines`` is a typed refusal VALUE (no existing test pinned
+    the too-many-lines refusal itself)."""
+    result = read_dxf("0\n" * 50, limits=DxfLimits(max_lines=10))
+    assert isinstance(result, DxfRefusal)
+    assert result.reason is DxfRefusalReason.TOO_MANY_LINES
+
+
+def test_t097_as2_max_lines_enforced_before_full_list_allocation_probe() -> None:
+    """WORK/ALLOCATION PROBE (AS-2): ``max_lines`` is enforced WHILE scanning, so the full
+    line list is never materialised. On a ~2 MB, one-million-line input capped at 1000 lines
+    the streaming splitter's peak allocation is a small fraction of a ``splitlines``-based
+    splitter that builds the whole list up front (the AS-2 mutation for this guard)."""
+    text = "0\n" * 1_000_000
+    limits = DxfLimits(max_lines=1000)
+
+    def _run() -> None:
+        assert isinstance(read_dxf(text, limits=limits), DxfRefusal)
+
+    tracemalloc.start()
+    try:
+        _run()
+        _cur, real_peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+
+    result = read_dxf(text, limits=limits)
+    assert isinstance(result, DxfRefusal)
+    assert result.reason is DxfRefusalReason.TOO_MANY_LINES
+
+    original = _reader_mod._iter_dxf_lines
+
+    def _materialising_mutant(t, lim):  # type: ignore[no-untyped-def]
+        lines = t.splitlines()  # builds the ENTIRE million-line list up front
+        for i, line in enumerate(lines):
+            if i + 1 > lim.max_lines:
+                raise _reader_mod._Refuse(DxfRefusalReason.TOO_MANY_LINES, "over")
+            yield line
+
+    tracemalloc.start()
+    try:
+        _reader_mod._iter_dxf_lines = _materialising_mutant  # type: ignore[assignment]
+        read_dxf(text, limits=limits)
+        _cur, mutant_peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+        _reader_mod._iter_dxf_lines = original
+
+    assert real_peak < 2_000_000, f"streaming peak {real_peak} should stay small"
+    assert mutant_peak > real_peak * 3, (
+        f"materialising mutant peak {mutant_peak} should dwarf streaming {real_peak}"
+    )
+
+
+def test_t097_as2_limits_clamped_above_ceiling() -> None:
+    """A caller cannot disable a protection: a bound above its hard ceiling is clamped down."""
+    over = DxfLimits(
+        max_bytes=10**18,
+        max_lines=10**18,
+        max_line_chars=10**12,
+        max_entities=10**15,
+        max_vertices=10**15,
+    )
+    assert over.max_bytes == 64 * 1024 * 1024
+    assert over.max_lines == 8_000_000
+    assert over.max_line_chars == 65_536
+    assert over.max_entities == 2_000_000
+    assert over.max_vertices == 1_000_000
+
+
+def test_t097_as2_limit_ceilings_are_reviewed_constants() -> None:
+    """Drift guard for the hard ceilings (mirrors the DEFAULT_LIMITS drift guard)."""
+    assert _reader_mod._LIMIT_CEILINGS == {
+        "max_bytes": 64 * 1024 * 1024,
+        "max_lines": 8_000_000,
+        "max_line_chars": 65_536,
+        "max_entities": 2_000_000,
+        "max_vertices": 1_000_000,
+    }
+
+
+def test_t097_as2_below_one_limit_still_raises() -> None:
+    """The pre-existing lower-bound guard (< 1) still raises, for every field."""
+    for field in ("max_bytes", "max_lines", "max_line_chars", "max_entities", "max_vertices"):
+        with pytest.raises(ValueError):
+            DxfLimits(**{field: 0})
+
+
+def test_t097_as2_mutation_clamp_reddens() -> None:
+    """MUTATION (AS-2, clamp guard): raising the ceiling so the clamp no longer bites lets
+    the raw permissive value pass through -> the protection is disabled."""
+    assert DxfLimits(max_bytes=10**18).max_bytes == 64 * 1024 * 1024
+
+    original = dict(_reader_mod._LIMIT_CEILINGS)
+    try:
+        _reader_mod._LIMIT_CEILINGS["max_bytes"] = 10**30
+        leaked = DxfLimits(max_bytes=10**18).max_bytes
+    finally:
+        _reader_mod._LIMIT_CEILINGS.clear()
+        _reader_mod._LIMIT_CEILINGS.update(original)
+    assert leaked == 10**18  # clamp defeated -> the ceiling/clamp is load-bearing
+
+
+def test_t097_as2_str_non_ascii_refused() -> None:
+    """DESIGN CHOICE (declared): a ``str`` input is CHECKED (not refused outright and not
+    passed through leniently) - it goes through the same non-ASCII check as ``bytes``."""
+    result = read_dxf("0\nSECTION\n2\nENTITIES\n0\nTEXT\n1\ncaf\xe9\n0\nEOF\n")
+    assert isinstance(result, DxfRefusal)
+    assert result.reason is DxfRefusalReason.NON_ASCII
+
+
+def test_t097_as2_str_binary_sentinel_refused() -> None:
+    """A ``str`` beginning with the binary-DXF sentinel is refused (previously only the
+    bytes path checked it, G5-A3)."""
+    result = read_dxf("AutoCAD Binary DXF\r\n\x1a\x00garbage")
+    assert isinstance(result, DxfRefusal)
+    assert result.reason is DxfRefusalReason.BINARY_DXF
+
+
+def test_t097_as2_unsupported_input_type_refused() -> None:
+    """Neither bytes nor str -> a typed refusal VALUE, never a raised TypeError."""
+    result = read_dxf(12345)  # type: ignore[arg-type]
+    assert isinstance(result, DxfRefusal)
+    assert result.reason is DxfRefusalReason.MALFORMED_STRUCTURE
+
+
+def test_t097_as2_mutation_str_check_reddens() -> None:
+    """MUTATION (AS-2, str-check guard): a lenient str path (the pre-hardening behaviour)
+    passes a non-ASCII str straight through, so the NON_ASCII refusal disappears."""
+    src = (
+        "0\nSECTION\n2\nENTITIES\n0\nTEXT\n8\nN\n10\n0.0\n20\n0.0\n"
+        "1\ncaf\xe9\n0\nENDSEC\n0\nEOF\n"
+    )
+    assert read_dxf(src).reason is DxfRefusalReason.NON_ASCII  # correct code refuses
+
+    original = _reader_mod._decode
+
+    def _lenient_decode(data, limits):  # type: ignore[no-untyped-def]
+        if isinstance(data, bytes):
+            return original(data, limits)
+        return data  # OLD behaviour: str passes through unchecked
+
+    try:
+        _reader_mod._decode = _lenient_decode  # type: ignore[assignment]
+        mutated = read_dxf(src)
+    finally:
+        _reader_mod._decode = original
+    assert not (isinstance(mutated, DxfRefusal) and mutated.reason is DxfRefusalReason.NON_ASCII)
+
+
+# ----------------------------------------------------------------- T097 AS-3: probe gaps
+
+
+def test_t097_as3_nan_coordinate_refused() -> None:
+    """Finiteness was pinned only for ``inf`` (G4-F1); a ``nan`` coordinate is equally
+    refused. This kills the M3 survivor (``not isfinite`` -> ``isinf``)."""
+    src = _dxf(
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "LINE"), (8, "A"), (10, "nan"), (20, 0.0), (11, 1.0), (21, 1.0),
+        (0, "ENDSEC"), (0, "EOF"),
+    )
+    result = read_dxf(src)
+    assert isinstance(result, DxfRefusal)
+    assert result.reason is DxfRefusalReason.BAD_COORDINATE
+
+
+def test_t097_as3_nan_probe_kills_finiteness_half_guard() -> None:
+    """Teeth for the nan probe: an ``isinf``-only finiteness check (M3) would let nan reach
+    a primitive, so the refusal above vanishes."""
+    src = _dxf(
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "LINE"), (8, "A"), (10, "nan"), (20, 0.0), (11, 1.0), (21, 1.0),
+        (0, "ENDSEC"), (0, "EOF"),
+    )
+    import math as _math
+
+    original = _reader_mod._to_float
+
+    def _half_guard(value):  # type: ignore[no-untyped-def]
+        parsed = float(value)
+        if _math.isinf(parsed):  # M3: only inf, not nan
+            raise _reader_mod._Refuse(DxfRefusalReason.BAD_COORDINATE, "non-finite")
+        return parsed
+
+    try:
+        _reader_mod._to_float = _half_guard  # type: ignore[assignment]
+        mutated = read_dxf(src)
+    finally:
+        _reader_mod._to_float = original
+    reddened = isinstance(mutated, DxfRefusal) and mutated.reason is DxfRefusalReason.BAD_COORDINATE
+    assert not reddened
+
+
+def test_t097_as3_negative_lwpolyline_bulge_refused() -> None:
+    """A NEGATIVE bulge is just as much an arc as a positive one (G4-F2); refused. This
+    kills the M4a survivor (``!= 0`` -> ``> 0``)."""
+    src = _dxf(
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "LWPOLYLINE"), (8, "LOT"), (90, 2), (70, 1),
+        (10, 0.0), (20, 0.0), (42, -0.5),
+        (10, 10.0), (20, 0.0),
+        (0, "ENDSEC"), (0, "EOF"),
+    )
+    result = read_dxf(src)
+    assert isinstance(result, DxfRefusal)
+    assert result.reason is DxfRefusalReason.UNSUPPORTED_BULGE
+
+
+def test_t097_as3_negative_vertex_bulge_refused() -> None:
+    """The old-style POLYLINE/VERTEX bulge path had NO test at all (G4-F2); a negative
+    VERTEX bulge is refused. This kills the M4b survivor."""
+    src = _dxf(
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "POLYLINE"), (8, "B"), (70, 1),
+        (0, "VERTEX"), (8, "B"), (10, 0.0), (20, 0.0), (42, -0.3),
+        (0, "VERTEX"), (8, "B"), (10, 10.0), (20, 0.0),
+        (0, "SEQEND"), (8, "B"),
+        (0, "ENDSEC"), (0, "EOF"),
+    )
+    result = read_dxf(src)
+    assert isinstance(result, DxfRefusal)
+    assert result.reason is DxfRefusalReason.UNSUPPORTED_BULGE
+
+
+def test_t097_as3_closed_flag_128_is_open() -> None:
+    """Only bit 1 of the 70 flags means closed (G4-F3); flag 128 (bit 7) is NOT closed.
+    This kills the M5 survivor (``& 1`` -> ``bool(flags)``)."""
+    src = _dxf(
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "LWPOLYLINE"), (8, "LOT"), (90, 2), (70, 128),
+        (10, 0.0), (20, 0.0),
+        (10, 10.0), (20, 0.0),
+        (0, "ENDSEC"), (0, "EOF"),
+    )
+    result = read_dxf(src)
+    assert isinstance(result, DxfDocument)
+    poly = result.primitives[0]
+    assert isinstance(poly, PolylinePrimitive)
+    assert poly.closed is False
+
+
+def test_t097_as3_closed_flag_129_is_closed() -> None:
+    """Flag 129 (bit 7 + bit 1) IS closed - bit 1 is set."""
+    src = _dxf(
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "LWPOLYLINE"), (8, "LOT"), (90, 2), (70, 129),
+        (10, 0.0), (20, 0.0),
+        (10, 10.0), (20, 0.0),
+        (0, "ENDSEC"), (0, "EOF"),
+    )
+    result = read_dxf(src)
+    assert isinstance(result, DxfDocument)
+    poly = result.primitives[0]
+    assert isinstance(poly, PolylinePrimitive)
+    assert poly.closed is True
+
+
+def test_t097_as3_insunits_survey_inch_yard_mile_reported() -> None:
+    """The official US survey inch/yard/mile codes 22/23/24 are now reported as named units
+    instead of ``unknown_insunits_N`` (G1 advisory / DB-057 (n))."""
+    for code, name in ((22, "us_survey_inches"), (23, "us_survey_yards"), (24, "us_survey_miles")):
+        src = _dxf(
+            (0, "SECTION"), (2, "HEADER"), (9, "$INSUNITS"), (70, code), (0, "ENDSEC"),
+            (0, "SECTION"), (2, "ENTITIES"),
+            (0, "LINE"), (10, 0.0), (20, 0.0), (11, 1.0), (21, 1.0),
+            (0, "ENDSEC"), (0, "EOF"),
+        )
+        result = read_dxf(src)
+        assert isinstance(result, DxfDocument)
+        assert result.units.code == code
+        assert result.units.name == name
+
+
+def test_t097_as3_mutation_insunits_codes_reddens() -> None:
+    """MUTATION: removing 22/23/24 from the unit map returns them to
+    ``unknown_insunits_N`` -> the named-unit assertion above reddens."""
+    src = _dxf(
+        (0, "SECTION"), (2, "HEADER"), (9, "$INSUNITS"), (70, 22), (0, "ENDSEC"),
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "LINE"), (10, 0.0), (20, 0.0), (11, 1.0), (21, 1.0),
+        (0, "ENDSEC"), (0, "EOF"),
+    )
+    assert read_dxf(src).units.name == "us_survey_inches"  # correct map
+
+    original = dict(_reader_mod._INSUNITS_NAMES)
+    try:
+        for code in (22, 23, 24):
+            _reader_mod._INSUNITS_NAMES.pop(code, None)
+        mutated = read_dxf(src)
+    finally:
+        _reader_mod._INSUNITS_NAMES.clear()
+        _reader_mod._INSUNITS_NAMES.update(original)
+    assert mutated.units.name == "unknown_insunits_22"

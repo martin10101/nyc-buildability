@@ -47,17 +47,26 @@ variable with the Autodesk unit code; a file that carries no ``$INSUNITS`` is re
 is also ``unitless`` but with ``source="header:$INSUNITS"``, so the caller can tell
 "declared unitless" from "no units declared".
 
+Line splitting / input: the stream is split on the three real DXF terminators ONLY (CR, LF,
+CRLF); ``str.splitlines`` also breaks on ``\\x0b \\x0c \\x1c-\\x1e`` and would shift pairing,
+so such a control char is kept VERBATIM in the value (one in a coordinate still fails closed
+at :func:`_to_float`). ``bytes`` is preferred; a ``str`` gets the SAME binary-sentinel and
+non-ASCII checks (no lenient bypass); any other type is a typed refusal, not a ``TypeError``.
+
 Failure model: no exception ever escapes :func:`read_dxf`. Structural problems raise a
 private marker that the public boundary converts to a :class:`DxfRefusal`; a final
 defensive guard turns any unexpected error into a refusal value as well. All bounds are
-named, reviewed initial constants (:class:`DxfLimits`), injectable for tests, never tuned
-silently.
+named, reviewed constants (:class:`DxfLimits`), injectable for tests, never tuned silently,
+and hard-ceilinged (:data:`_LIMIT_CEILINGS`) so a permissive caller cannot disable a
+protection (a bound above its ceiling is clamped down; below 1 is a caller bug that raises).
+``max_lines`` / ``max_line_chars`` are enforced WHILE scanning, before the full line list exists.
 """
 
 from __future__ import annotations
 
 import enum
 import math
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 
 __all__ = [
@@ -107,9 +116,18 @@ _SECTION_ENTITIES = "ENTITIES"
 # \r\n\x1a\x00) [recalled - verify]. Detected on the raw bytes, before ASCII decode, so the
 # refusal is specific (BINARY_DXF) rather than a generic non-ASCII decode failure.
 _BINARY_SENTINEL = b"AutoCAD Binary DXF"
+# ASCII text form of the same sentinel, for the ``str`` input path (which never went through
+# the raw-bytes check). Derived from the bytes constant so the two can never drift apart.
+_BINARY_SENTINEL_STR = _BINARY_SENTINEL.decode("ascii")
 
 # Autodesk $INSUNITS unit codes -> reported name [recalled - verify]. A code outside this
 # map is reported verbatim as ``unknown_insunits_<code>`` - never coerced to a known unit.
+# Codes 0-21 were confirmed against the live official reference in M5-T081-G1.md
+# (INSUNITS values 0-24, cloudhelp/2025 GUID-A58A87BB-482B-4042-A00A-EEF55A2B4FD8).
+# Codes 22/23/24 (US Survey Inch/Yard/Mile) are ADDED here from that same reference range,
+# marked ``[recalled - verify]`` because this producer could not re-open the live page; the
+# G1 report already verified the 0-24 range exists. Reported names follow the existing
+# lowercase-plural convention (21 = ``us_survey_feet``), so 22/23/24 mirror it.
 _INSUNITS_NAMES: dict[int, str] = {
     0: "unitless",
     1: "inches",
@@ -133,6 +151,9 @@ _INSUNITS_NAMES: dict[int, str] = {
     19: "light_years",
     20: "parsecs",
     21: "us_survey_feet",
+    22: "us_survey_inches",  # [recalled - verify] Autodesk INSUNITS 22 = US Survey Inch
+    23: "us_survey_yards",  # [recalled - verify] Autodesk INSUNITS 23 = US Survey Yard
+    24: "us_survey_miles",  # [recalled - verify] Autodesk INSUNITS 24 = US Survey Mile
 }
 
 
@@ -153,6 +174,20 @@ class DxfRefusalReason(enum.Enum):
     MALFORMED_STRUCTURE = "malformed_structure"
 
 
+# Hard fail-safe ceilings on every bound (G5-A1: DxfLimits is a public keyword param, so a
+# caller could otherwise pass a permissive instance and effectively DISABLE the size/line/
+# entity/vertex protections). A field ABOVE its ceiling is CLAMPED DOWN to the ceiling in
+# __post_init__ (a fail-safe reduction of capability, never a raise), so the protections can
+# never be turned off no matter what a caller passes. Ceilings sit well above the reviewed
+# production DEFAULT_LIMITS, so any legitimate limit passes through unchanged; only an attempt
+# to disable a bound is clamped. A field BELOW 1 is a caller bug and still raises (unchanged).
+# These are reviewed safety constants, pinned by test like DEFAULT_LIMITS; change by review only.
+_LIMIT_CEILINGS: dict[str, int] = {
+    "max_bytes": 64 * 1024 * 1024, "max_lines": 8_000_000, "max_line_chars": 65_536,
+    "max_entities": 2_000_000, "max_vertices": 1_000_000,
+}
+
+
 @dataclass(frozen=True)
 class DxfLimits:
     """Named, reviewed initial bounds on untrusted DXF input; injectable for tests.
@@ -160,7 +195,9 @@ class DxfLimits:
     Production callers use :data:`DEFAULT_LIMITS`. Tests construct small instances to prove
     each bound at its exact edge without allocating huge fixtures; doing so never changes
     the reviewed production defaults, which the suite asserts verbatim. Bounds change only
-    through review, never silently and never set by AI.
+    through review, never silently and never set by AI. A field below 1 is a caller bug and
+    raises; a field above its hard ceiling in :data:`_LIMIT_CEILINGS` is clamped down
+    (fail-safe, never a raise) so a permissive caller can never disable a protection.
     """
 
     max_bytes: int = 8 * 1024 * 1024
@@ -170,9 +207,13 @@ class DxfLimits:
     max_vertices: int = 100_000
 
     def __post_init__(self) -> None:
-        for name in ("max_bytes", "max_lines", "max_line_chars", "max_entities", "max_vertices"):
-            if getattr(self, name) < 1:
+        for name, ceiling in _LIMIT_CEILINGS.items():
+            value = getattr(self, name)
+            if value < 1:
                 raise ValueError(f"{name} must be >= 1")
+            if value > ceiling:
+                # frozen dataclass -> clamp via object.__setattr__ (fail-safe reduction).
+                object.__setattr__(self, name, ceiling)
 
 
 DEFAULT_LIMITS = DxfLimits()
@@ -466,35 +507,91 @@ def _decode(data: bytes | str, limits: DxfLimits) -> str:
             raise _Refuse(
                 DxfRefusalReason.NON_ASCII, "non-ASCII byte; this reader is ASCII-DXF only"
             ) from None
-    if len(data) > limits.max_bytes:
-        raise _Refuse(DxfRefusalReason.FILE_TOO_LARGE, f"over {limits.max_bytes} chars")
-    return data
+    if isinstance(data, str):
+        # STR path (test convenience and any str caller). It re-applies the SAME
+        # binary-sentinel and ASCII checks as the bytes path (closing G5-A3, where the
+        # str branch skipped both); a str is otherwise treated as already-decoded ASCII.
+        if data[: len(_BINARY_SENTINEL_STR)] == _BINARY_SENTINEL_STR:
+            raise _Refuse(DxfRefusalReason.BINARY_DXF, "binary DXF sentinel present")
+        if len(data) > limits.max_bytes:
+            raise _Refuse(DxfRefusalReason.FILE_TOO_LARGE, f"over {limits.max_bytes} chars")
+        if not data.isascii():
+            raise _Refuse(
+                DxfRefusalReason.NON_ASCII, "non-ASCII char; this reader is ASCII-DXF only"
+            )
+        return data
+    # Neither bytes nor str -> a typed refusal VALUE, never a raised TypeError.
+    raise _Refuse(
+        DxfRefusalReason.MALFORMED_STRUCTURE,
+        f"unsupported input type {type(data).__name__}; expected bytes or str",
+    )
 
 
-def _to_pairs(text: str, limits: DxfLimits) -> list[tuple[int, str]]:
-    lines = text.splitlines()
-    if len(lines) > limits.max_lines:
-        raise _Refuse(DxfRefusalReason.TOO_MANY_LINES, f"over {limits.max_lines} lines")
-    for line in lines:
+def _iter_dxf_lines(text: str, limits: DxfLimits) -> Iterator[str]:
+    """Yield DXF lines splitting on CR, LF or CRLF ONLY, one line at a time.
+
+    ``str.splitlines()`` also splits on ``\\x0b \\x0c \\x1c \\x1d \\x1e`` (all ASCII, so they
+    survive the ASCII decode); a group value literally containing one of those would then be
+    cut in two and SHIFT the (code, value) pairing (G3-F1 / G5-A2). This splitter recognises
+    only the three real DXF line terminators, so such a control character stays VERBATIM
+    inside the value (declared design choice: keep, not refuse); a control char that lands in
+    a coordinate is still caught downstream by :func:`_to_float` (BAD_COORDINATE).
+
+    It is a GENERATOR: ``max_lines`` and ``max_line_chars`` are enforced WHILE scanning, as
+    each line is produced, so an over-``max_lines`` file refuses without the full line list
+    ever being materialised (G5-A4). ``str.find`` locates each terminator at C speed. A
+    trailing terminator does NOT yield an extra empty final line (matching ``splitlines``);
+    a blank line between two terminators does.
+    """
+    n = len(text)
+    pos = 0
+    count = 0
+    while pos < n:
+        nl = text.find("\n", pos)
+        cr = text.find("\r", pos)
+        if nl == -1 and cr == -1:
+            end = nxt = n
+        elif cr == -1 or (nl != -1 and nl < cr):
+            end, nxt = nl, nl + 1
+        else:  # CR is the earliest terminator; absorb a following LF as one CRLF break.
+            end = cr
+            nxt = cr + 2 if (cr + 1 < n and text[cr + 1] == "\n") else cr + 1
+        line = text[pos:end]
+        count += 1
+        if count > limits.max_lines:
+            raise _Refuse(DxfRefusalReason.TOO_MANY_LINES, f"over {limits.max_lines} lines")
         if len(line) > limits.max_line_chars:
             raise _Refuse(
                 DxfRefusalReason.LINE_TOO_LONG, f"line over {limits.max_line_chars} chars"
             )
-    # PAIR-PARITY: every group code line is followed by a value line -> even line count.
-    if len(lines) % 2 != 0:
-        raise _Refuse(
-            DxfRefusalReason.ODD_PAIR_COUNT, f"odd group-code/value line count {len(lines)}"
-        )
+        yield line
+        pos = nxt
+
+
+def _to_pairs(text: str, limits: DxfLimits) -> list[tuple[int, str]]:
     pairs: list[tuple[int, str]] = []
-    for idx in range(0, len(lines), 2):
-        code_text = lines[idx].strip()
+    code_line: str | None = None
+    total = 0
+    for line in _iter_dxf_lines(text, limits):
+        total += 1
+        if code_line is None:
+            code_line = line
+            continue
+        code_text = code_line.strip()
         try:
             code = int(code_text)
         except ValueError:
             raise _Refuse(
                 DxfRefusalReason.BAD_GROUP_CODE, f"non-integer group code {code_text!r}"
             ) from None
-        pairs.append((code, lines[idx + 1].strip()))
+        pairs.append((code, line.strip()))
+        code_line = None
+    # PAIR-PARITY: every group code line must be followed by a value line -> even line count.
+    # A leftover unpaired code line means an odd total line count.
+    if code_line is not None:
+        raise _Refuse(
+            DxfRefusalReason.ODD_PAIR_COUNT, f"odd group-code/value line count {total}"
+        )
     return pairs
 
 
