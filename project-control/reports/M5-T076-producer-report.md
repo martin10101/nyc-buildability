@@ -267,3 +267,16 @@ never imported — now asserted directly. `git diff --numstat` touches exactly t
   level rather than end to end.
 
 END-OF-REPORT (rework)
+
+---
+
+## [ORCH-HARVEST] Rework harvest (2026-09-24, orchestrator, primary checkout)
+
+In-worktree rework commit 93a2a667 cherry-picked to eed2350a; all five files ALL-MATCH x5
+(LF-normalized) between the worktree and the primary checkout. Primary-checkout verification:
+`python -m ruff check .` (cwd services/api) -> All checks passed!; scoped pytest -> **55 passed**;
+`git diff 672c5743 HEAD -- services/api/app/scenario/max_envelope.py` EMPTY (AS-4 bound held
+through the rework). The producer's wider `tests/api tests/scenario` regression (1320 passed)
+and per-fix mutation matrix are recorded in its return, saved in the Rework section above.
+Evidence-map corrections ([ORCH-CORRECTED per G3 F5-map-precedent / F6 / F3]) applied by the
+orchestrator outside allowed_paths.
