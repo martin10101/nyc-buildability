@@ -3,7 +3,7 @@
  "directive_id": "D-076",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-076-BOOTSTRAP at capture; phase-B packets are bound by applicability append at contract time. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T15:23:20+00:00",
+ "verified_at": "2026-09-24T21:33:43+00:00",
  "task_verifications": [
   {
    "directive_id": "D-076",
@@ -405,6 +405,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: adopt seeds 'Generated building option' and every value stays labelled proposed; street width server-determined, never client-inferred; could-not-check distinct from a value; no passing subset shown as whole-building approval; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T095",
+   "applicable_requirement_ids": [
+    "D-076-R002"
+   ],
+   "reviewed_sha": "442b2dd263be079393d776d9d53f830d881cc1e3",
+   "reviewed_manifest_sha256": "d51ff82d96bbdc6ffd7907911d32059e187b002e6ca38bf6c4d51177545e4827",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:33:43+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: validate_proposed_massing stays a pure deterministic validator (no derivation, no allowance); refusals stay typed and field-named; decision identity proven by the producer's 360k probe + committed 24,159-ring corpus and independently by G3 (520k adversarial, EPSG:2263 magnitudes) and G5 (30k fuzz) - 0 disagreements; nothing is labelled a city record or approval. Blob-level restamp predicate re-verified by the orchestrator at the accept head 442b2dd2 (proposal.py d00b1728, test_proposal_validation_budget.py e25d19bb, M5-T095-producer-report.md eeb81b3a; identity d51ff82d; evaluate_task_refs ok); report M5-T095-DCV.md."
      ]
     }
    ]

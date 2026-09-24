@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T21:26:50+00:00",
+ "verified_at": "2026-09-24T21:33:43+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1413,6 +1413,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t096): the packet carries the graph-derived navigation block (graph regenerated at the contract seam; consumers incl. pdf_sheet_writer.py:54 CLAIM_CLASS_WORDS; the query.py --no-regen instruction, advisory); no public name changed and the consumer suites stay green. Blob-level restamp predicate re-verified by the orchestrator at the accept head 75e75e55 (dxf_writer.py 6f57cdc4, test_dxf_writer.py 79ad39af, test_cad_owner_samples.py c0383c49, .gitattributes ab95c38b, README.md c3e98f73, example-massing.glb 21c1e306, example-site-plan.dxf 2c80881b, example-site-plan.pdf d7220466, M5-T096-producer-report.md e2efa4df; identity 8db12f2a; evaluate_task_refs ok); report M5-T096-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T095",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "442b2dd263be079393d776d9d53f830d881cc1e3",
+   "reviewed_manifest_sha256": "d51ff82d96bbdc6ffd7907911d32059e187b002e6ca38bf6c4d51177545e4827",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:33:43+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t095): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 821 files / 17652 nodes / 7589 edges) naming every proposal.py consumer as forbidden, with the query.py --no-regen instruction and the advisory clause; the producer verified the removed helpers unused in source. Blob-level restamp predicate re-verified by the orchestrator at the accept head 442b2dd2 (proposal.py d00b1728, test_proposal_validation_budget.py e25d19bb, M5-T095-producer-report.md eeb81b3a; identity d51ff82d; evaluate_task_refs ok); report M5-T095-DCV.md."
      ]
     }
    ]

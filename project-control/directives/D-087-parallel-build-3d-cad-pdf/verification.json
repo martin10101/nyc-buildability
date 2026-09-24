@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T21:26:50+00:00",
+ "verified_at": "2026-09-24T21:33:43+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1005,6 +1005,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies (no requirements change; the lock-verify, production-install and web dependency-security jobs green); no route, main.py or web change; the max-envelope route stays unmounted; the .gitattributes binary marking is scoped to docs/samples/cad; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 75e75e55 (dxf_writer.py 6f57cdc4, test_dxf_writer.py 79ad39af, test_cad_owner_samples.py c0383c49, .gitattributes ab95c38b, README.md c3e98f73, example-massing.glb 21c1e306, example-site-plan.dxf 2c80881b, example-site-plan.pdf d7220466, M5-T096-producer-report.md e2efa4df; identity 8db12f2a; evaluate_task_refs ok); report M5-T096-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T095",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "442b2dd263be079393d776d9d53f830d881cc1e3",
+   "reviewed_manifest_sha256": "d51ff82d96bbdc6ffd7907911d32059e187b002e6ca38bf6c4d51177545e4827",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:33:43+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full lifecycle with no skip - G0 at 5cb3ca94, claim at a749d995 with the full worktree path, submit at a2dcc60f, G2/G3/G4/G5 PASS; an orchestrator-dispatched subagent producer run concurrently as a disjoint gated unit. Blob-level restamp predicate re-verified by the orchestrator at the accept head 442b2dd2 (proposal.py d00b1728, test_proposal_validation_budget.py e25d19bb, M5-T095-producer-report.md eeb81b3a; identity d51ff82d; evaluate_task_refs ok); report M5-T095-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: one isolated worktree wt-m5t095; G0 disjointness EMPTY vs every active task; material a2dcc60f touches exactly the 3 allowed paths; no peer commit touched them. Blob-level restamp predicate re-verified by the orchestrator at the accept head 442b2dd2 (proposal.py d00b1728, test_proposal_validation_budget.py e25d19bb, M5-T095-producer-report.md eeb81b3a; identity d51ff82d; evaluate_task_refs ok); report M5-T095-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the massing input contract stays deterministic and fail-closed - a request-level MAX_TOTAL_OUTLINE_POSITIONS=20000 charged before any geometry, O(n) conditions kept byte-identical, non-adjacent self-intersection via GEOS validity, GEOS errors fail closed to a typed refusal; the worst validator-valid request fell from ~597 s to <=119 ms (M5-T088 F-HIGH-1 closed in-process). Blob-level restamp predicate re-verified by the orchestrator at the accept head 442b2dd2 (proposal.py d00b1728, test_proposal_validation_budget.py e25d19bb, M5-T095-producer-report.md eeb81b3a; identity d51ff82d; evaluate_task_refs ok); report M5-T095-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies (shapely already admitted; no requirements change); no route, main.py or web change; the max-envelope route stays unmounted; the route-level cancellable job + deadline + rate limit (DB-061 (i)) stays recorded as REQUIRED at exposure, not claimed closed; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 442b2dd2 (proposal.py d00b1728, test_proposal_validation_budget.py e25d19bb, M5-T095-producer-report.md eeb81b3a; identity d51ff82d; evaluate_task_refs ok); report M5-T095-DCV.md."
      ]
     }
    ]
