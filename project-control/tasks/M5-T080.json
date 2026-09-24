@@ -56,12 +56,12 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T07:42:01.190404+00:00",
-  "updated_at": "2026-09-24T15:33:24.621505+00:00",
+  "updated_at": "2026-09-24T16:01:10.213499+00:00",
   "directive_refs": [
     {
       "directive_id": "D-086",
@@ -115,5 +115,7 @@
       "status": "in_progress",
       "message": "Rework harvested: A 8a9a9f38 -> 6644f93f, B 6190e69c -> d5209b4e (every file MATCH); [ORCH-HARVEST] d8df2674; cross-file check re-passes; resubmitting."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-24T16:01:10.213499+00:00"
 }

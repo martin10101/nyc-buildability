@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T15:32:29+00:00",
+ "verified_at": "2026-09-24T16:01:06+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1303,6 +1303,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t090): the packet carries the navigation block for the apps/web dependency seam (no source consumer yet; the viewer is a later packet); blob-level restamp predicate re-verified by the orchestrator at the accept head 9c44b68d (package.json 19328b65, package-lock.json a8398ec5, report 4a7752c4 unchanged; identity f53b0781; evaluate_task_refs ok); report M5-T090-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T080",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "952f324b8a779bcd0a3c09de4dd9c3ed599e2372",
+   "reviewed_manifest_sha256": "12da09494b8112b13a000d9e198c4aa25df3d730034887eaf8290b2b53f4b147",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T16:01:06+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the packet's navigation block (graph regenerated 817 files / 17027 nodes / 7441 edges; page.tsx routes + ArchitectEntry; query.py --no-regen; advisory) is present and the route/state map is source-grounded; blob-level restamp predicate re-verified by the orchestrator at the accept head 952f324b (P0-RECONCILIATION.md b0e24e50, disclosure-ledger-a.json a106788d, disclosure-ledger-b.json 07775443, producer report 23ed9dc1; identity 12da0949; evaluate_task_refs ok); report M5-T080-DCV.md."
      ]
     }
    ]
