@@ -1,0 +1,80 @@
+{
+  "task_id": "M5-T093",
+  "title": "D-087 PDF-1b: real-corpus trial of the accepted architect-sheet reader - run the committed corpus note's public drawings (by URL + sha256, downloaded to scratch only) through read_sheet and record per-file results (xref streams, shading, inline images, pages, refusals); no reader change (the DB-055 (g)+(h) precondition)",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "The accepted M5-T083 sheet reader was proven only on synthetic PDFs; its DCV recorded that D-087-R005's real-file harness is NOT discharged (DB-055 (h)) and that cross-reference STREAMS (PDF 1.5+) and the `sh` shading operator are refused, so the corpus's vector items may not read at all (DB-055 (g)). Run the public drawings recorded in docs/research/architect-drawing-corpus-2026-09.md (items 1-6) through app.drawings.sheet_reader.read_sheet WITHOUT changing the reader: download each file from its recorded URL into the session scratchpad only (never commit a drawing), verify its sha256 against the note, record whether it uses an xref stream / object streams, shading, inline images, its page count and producing application, and the reader's exact result (ok with primitive counts per page, or the typed refusal reason). Write the findings as a research note that states which DB-055 (g) blockers are real for real files and what the next reader packet (C1) must support first, in priority order.",
+  "business_reason": "The owner asked for architect PDF reading (D-087-R005). Before anyone tells the owner real architect PDFs can be read, the reader must be tried on real public drawings; this trial is the honest gate for the next reader packet.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "CWD + LOCAL PYTHON (binding): run Python from services/api with a copy of the outside-repo bare-package shim technique (register bare app / app.documents / app.documents.extraction packages so the 3.12-only units.py is never imported under local 3.11) - write any helper ONLY under your own subfolder of the session scratchpad (never a file named like a stdlib module at a scratch root). Downloads go to that subfolder too and are deleted at the end; NOTHING from the corpus is committed (licensing - see the corpus note section 4).",
+    "HONESTY (binding): record every file's result exactly, including download failures and sha256 mismatches; never extrapolate from these files to 'architect PDFs in general'; say what each result implies for the C1 scope. The reader and every app/** file stay byte-untouched.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001): read-only consumers only - app/drawings/sheet_reader.py and sheet_primitives.py (accepted M5-T083), app/documents/extraction/* (strict reader, used read-only by the profile). Nothing is edited under services/. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "docs/research/architect-corpus-reader-trial-2026-09.md - per-file results table + conclusions for C1",
+    "project-control/reports/M5-T093-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T083"
+  ],
+  "allowed_paths": [
+    "docs/research/architect-corpus-reader-trial-2026-09.md",
+    "project-control/reports/M5-T093-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/",
+    "apps/",
+    "packages/",
+    "tools/",
+    ".github/",
+    "docs/research/architect-drawing-corpus-2026-09.md"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (provenance): each corpus item 1-6 is fetched from its recorded URL; its sha256 is compared with the note (match / mismatch / fetch failure recorded verbatim with the HTTP status); retrieved_at recorded.",
+    "AS-2 (per-file facts): for each file - PDF version, producing application, page count, xref table vs xref STREAM, object streams, shading (sh / Shading resources), inline images (BI/ID/EI), encryption - each established by an independent byte scan, not by the reader.",
+    "AS-3 (reader result): read_sheet's exact outcome per file (ok with per-page polyline/text/image counts, or the typed refusal feature/detail), reproduced by a second run with identical output.",
+    "AS-4 (conclusions): which DB-055 (g) limits block real files, which do not, and a prioritized scope for the next reader packet; no claim beyond these files.",
+    "AS-5 (scope): docs only - exactly the two allowed paths change; no corpus file, script or fixture is committed; the reader and all app/** files byte-untouched."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T10:38:22.921860+00:00",
+  "updated_at": "2026-09-24T10:38:24.658294+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R005",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T10:38:22.921860+00:00",
+  "documented_test_commands": []
+}
