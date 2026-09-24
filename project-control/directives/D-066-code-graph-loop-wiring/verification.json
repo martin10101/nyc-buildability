@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T09:44:00+00:00",
+ "verified_at": "2026-09-24T10:22:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1039,6 +1039,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: navigation block byte-present in tasks/M5-T077.json since the contract seam; graph regenerated at the seam (817 files / 17027 nodes / 7441 edges, graph_sha256 re-hashes); block accuracy checked in source (max_envelope_api imported only by its test; lot_geometry_derivation by max_envelope_api + its test; app/main.py has no max_envelope - route unmounted); producer stayed in scope (five paths; max_envelope.py f0abf884 unchanged); report M5-T077-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T083",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "023294ec6e98a50a55c2d5e04e2a1891ed4ed4b8",
+   "reviewed_manifest_sha256": "86661a1ac1114f4463b2d3ce21d71d1660cea6d8788adfa0dd9250fc6a68607e",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T10:22:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: navigation block present in tasks/M5-T083.json (graph regenerated at the seam, 815 files by generate.py's own include rules; strict modules consumed by vector_pdf_decoder / survey_pipeline / routing FORBIDDEN - consumer claims checked in source; query.py --no-regen impact instruction; graph advisory); producer stayed in the 4 allowed paths; report M5-T083-DCV.md."
      ]
     }
    ]

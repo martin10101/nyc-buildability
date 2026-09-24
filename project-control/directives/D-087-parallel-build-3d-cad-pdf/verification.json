@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T09:44:00+00:00",
+ "verified_at": "2026-09-24T10:22:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -223,6 +223,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: one writer / one worktree (wt-m5t077, only af332042 on the task branch); f63cfad1 the only commit on the five paths since the seam; recomputed disjointness over 45 packets EMPTY against every concurrent packet (only two dormant pre-regime July packets overlap by declared glob - verifier F1 advisory on the G0 table); M5-T076 on the same files accepted before the contract; B-026 neither names nor gates this task; restamp predicate re-verified at the accept head (five blobs unchanged, identity 457a1715, evaluate_task_refs ok); report M5-T077-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T083",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R005",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "023294ec6e98a50a55c2d5e04e2a1891ed4ed4b8",
+   "reviewed_manifest_sha256": "86661a1ac1114f4463b2d3ce21d71d1660cea6d8788adfa0dd9250fc6a68607e",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T10:22:00+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t083): G0 at 5e704eeb, claimed f9bfd54d, submitted, G5 FAIL -> rework -> in_progress -> resubmit at 10def4ef -> G1/G3/G4/G5 re-rulings PASS; orchestrator-dispatched subagent concurrent with T081/T082/T084/T085; no state skipped; B-026 does not cover it; restamp predicate re-verified at the accept head (four blobs + app/documents tree c14c65ff unchanged, identity 86661a1a, main.py unmounted, evaluate_task_refs ok); report M5-T083-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: recomputed overlap EMPTY vs every non-terminal packet at 5e704eeb/f9bfd54d/5467318e/f4b4ef28 and the live tree (only the accepted M0-T024 glob ever overlaps); one worktree wt-m5t083; shared __init__ files unchanged; restamp predicate re-verified at the accept head (four blobs + app/documents tree c14c65ff unchanged, identity 86661a1a, main.py unmounted, evaluate_task_refs ok); report M5-T083-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED - SCOPE-LIMITED: synthetic tests only; R005's real-file reader harness NOT discharged - the F1/F2 riders (DB-055 (g)+(h)) bind the next reader packet. Within scope: a SEPARATE architect-sheet profile reusing the strict reader's lexer/objects/xref read-only (app/documents tree c14c65ff byte-untouched since f9bfd54d), declared-tolerance budget-bounded curve flattening, full affine CTM, q/Q (128), forms (depth 8, cycles refused), images counted never decoded, every refusal a returned value; output stays in PDF user space (user_unit recorded, never applied); 37 tests pass (CI api job green at f4b4ef28 and 114e5e56); report M5-T083-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: stdlib + app.* imports only; no manifest/lockfile/route/main.py/web change in the two T083 commits; main.py mounts no max-envelope router; module unwired; PR #241 open and unmerged; not on main; report M5-T083-DCV.md."
      ]
     }
    ]
