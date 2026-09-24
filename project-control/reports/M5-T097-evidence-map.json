@@ -1,0 +1,26 @@
+{
+ "task_id": "M5-T097",
+ "material_commit": "9a281517 (cherry-pick of wt-m5t097 45e34106; 4 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T16:11:48+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m5t097)",
+ "requirements": {
+  "D-066-R001": [
+   "The navigation block recorded that dxf_reader.py has no production importer (only its test), that app/cad/dxf_writer.py is used READ-ONLY by the new round-trip test (M5-T096 owns it) and that the sheet_* modules are FORBIDDEN (M5-T094 owns the split); the material touches exactly the 4 allowed paths. [ORCH-HARVEST] at the cherry-picked head 9a281517 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/drawings/test_dxf_reader.py tests/drawings/test_dxf_roundtrip.py tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 95 passed in 0.94s."
+  ],
+  "D-087-R001": [
+   "Wave-5 capacity unit: contracted at 64fce622 (G0), claimed at 2e0b2351 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with M5-T096/T098/T099/T100 and M0-T160; no state or gate skipped. [ORCH-HARVEST] at the cherry-picked head 9a281517 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/drawings/test_dxf_reader.py tests/drawings/test_dxf_roundtrip.py tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 95 passed in 0.94s."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task; one worktree wt-m5t097; material touches exactly the 4 allowed paths, every file MATCH by blob; the round trip reads the writer read-only and deliberately does not pin the TABLES section that M5-T096 changed in parallel - the harvest check runs it against the M5-T096 writer already integrated at this head. [ORCH-HARVEST] at the cherry-picked head 9a281517 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/drawings/test_dxf_reader.py tests/drawings/test_dxf_roundtrip.py tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 95 passed in 0.94s."
+  ],
+  "D-087-R006": [
+   "Reading/importing through the open format made safe and permanently round-trip-tested (DB-057 h-n): CR/LF/CRLF-only streaming line split (control characters kept verbatim, so pairing can no longer shift); max_lines / max_line_chars enforced while scanning; DxfLimits clamped to hard ceilings; str input put through the same binary-sentinel + non-ASCII checks as bytes, other types a typed MALFORMED_STRUCTURE; $INSUNITS 22/23/24 = US survey inches/yards/miles; G4 probe gaps closed (nan, negative LWPOLYLINE and VERTEX bulge, flags 128/129); test_dxf_roundtrip.py reads the accepted writer's site plan back - rings exact and closed, units 21 US survey feet from the header, AC1009, layers, entity counts, honesty texts - with a vertex-perturbation mutation; read_dxf / DxfLimits / DxfDocument / DxfRefusalReason unchanged; all 28 pre-existing tests pass. [ORCH-HARVEST] at the cherry-picked head 9a281517 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/drawings/test_dxf_reader.py tests/drawings/test_dxf_roundtrip.py tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 95 passed in 0.94s."
+  ],
+  "D-087-R007": [
+   "Native DWG untouched; the reader stays a stdlib-only DXF subset parser (no DWG library, no new import). [ORCH-HARVEST] at the cherry-picked head 9a281517 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/drawings/test_dxf_reader.py tests/drawings/test_dxf_roundtrip.py tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 95 passed in 0.94s."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies; unwired (no route, main.py or web change); the max-envelope route stays unmounted. [ORCH-HARVEST] at the cherry-picked head 9a281517 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/drawings/test_dxf_reader.py tests/drawings/test_dxf_roundtrip.py tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 95 passed in 0.94s."
+  ]
+ }
+}
