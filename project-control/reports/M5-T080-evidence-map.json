@@ -1,0 +1,29 @@
+{
+ "task_id": "M5-T080",
+ "material_commit": "5aadf182 (PART A cherry-pick of wt-m5t080 91785882) + 170b942c (PART B cherry-pick of wt-m5t080b b51cba02), every file MATCH by git blob identity; plus the orchestrator's [ORCH-HARVEST] append of PART B's verbatim return and the cross-file completeness check to the producer report (pre-submit)",
+ "produced_at": "2026-09-24T08:55:00+00:00",
+ "producer": "frontend-engineer x2 (orchestrator-dispatched subagents, disjoint files: PART A wt-m5t080 commit 91785882, PART B wt-m5t080b commit b51cba02)",
+ "requirements": {
+  "D-086-R001": [
+   "The assessment (docs/UI_DEEP_DIVE_ASSESSMENT.md, sha256 c6d1b257 LF-normalized) is used strictly as INPUT: the ledger transcribes its inventory rows and destinations, marks every assessment-silent field 'P0-proposed:', invents no authority, and P0-RECONCILIATION.md records that its phase labels are report-local; no hold was lifted and nothing in the 19-task pack was started."
+  ],
+  "D-086-R002": [
+   "P0 - the first contracted design-cleanup packet - delivers exactly the assessment's P0 row: the per-cited-file drift table (apps/web byte-identical dc5a763e..b56f3d5b), the reachable route/state map, the latest DISCOVERY_BACKLOG dispositions, the D-040/D-076/D-082/D-087 boundary check, a Section-13 verification matrix naming fixture/steps and the owning later slice per finding (the proposal-freshness and sample-attribution High findings routed to bounded behavior tasks before P4 polish), and ONE disclosure-migration ledger covering all 381 inventory rows."
+  ],
+  "D-086-R003": [
+   "Preservation discipline: every L-marked row (344) carries a non-empty always-visible cue (primary_state), expanded destination, accessibility path, print destination and proof owner; zero rows deleted; the only consolidations (LS-C08->LS-C24, LS-C23->LS-C22, LS-C27->LS-C06, SR27->SR12) name resolving survivors; no mark weakened; no source/test/copy change (docs-only diff)."
+  ],
+  "D-086-R004": [
+   "Contracted at f57fccd5 AFTER accepts #257 (T074), #258 (T075), #259 (T073) closed the T072-T076 waves and after the D-085 restart seam - the owner-confirmed ordering."
+  ],
+  "D-066-R001": [
+   "The packet's navigation block (graph regenerated at the contract seam) pointed the route/state map at apps/web/src/app/**/page.tsx and ArchitectEntry.tsx with the query.py --no-regen instruction; the producers' route map is source-grounded."
+  ],
+  "D-087-R001": [
+   "One of the seq-128 capacity units: two concurrent subagent producers on disjoint files within one gated packet (contract f57fccd5, claim b56f3d5b), alongside the other D-087 units."
+  ],
+  "D-087-R002": [
+   "Non-interference: PART A and PART B wrote disjoint files in separate worktrees (wt-m5t080, wt-m5t080b); the packet's allowed_paths were EMPTY-overlap vs every live packet at G0; rows touching surfaces then in flight (M5-T078/M5-T079) are flagged in-flight rather than edited."
+  ]
+ }
+}

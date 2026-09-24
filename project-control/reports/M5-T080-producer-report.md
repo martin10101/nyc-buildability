@@ -156,3 +156,68 @@ recorded harvest obligation.
 *(The orchestrator appends the PART B producer return verbatim below at harvest.)*
 
 END-OF-REPORT
+
+---
+
+## [ORCH-HARVEST] PART B return (verbatim) + cross-file completeness check
+
+Per the packet's SPLIT input, PART B (worktree wt-m5t080b, commit b51cba02, cherry-picked with blob MATCH) returned its evidence as its final message; the orchestrator appends it here byte-for-byte (extracted from the producer's own transcript), followed by the cross-file check the packet assigned to harvest.
+
+### PART B return (verbatim)
+
+M5-T080 PART B — producer report (DOCS ONLY; ledger sections 7-9)
+
+PRECONDITION CHECK
+- Worktree HEAD at start: b56f3d5b40171bcb6b760f97eb0eef574995f8ae on task/M5-T080-p0-reconcile-b — MATCHES the required pin. Proceeded.
+- Spec drift: `git diff --stat dc5a763e b56f3d5b -- apps/web` = EMPTY (apps/web byte-identical). The assessment file itself did not exist at dc5a763e under that path (added later); its content at my head equals the packet's cited sha256 c6d1b257 (via `git show b56f3d5b:...`; the working-tree sha ed94df52 is only the CRLF smudge). Because apps/web — the tree every source anchor points into — is byte-identical dc5a763e..b56f3d5b, every anchor remains valid at my head.
+
+FILE PRODUCED (only one, in scope): docs/design/ui-cleanup/disclosure-ledger-b.json — 226 objects, each with EXACTLY the packet's 18 keys. PART A files (P0-RECONCILIATION.md, disclosure-ledger-a.json, producer report) untouched.
+
+ENUMERATION COMMAND (run from C:\Users\MLFLL\Downloads\nyc-zoning\wt-m5t080b):
+  sed -n '417,923p' docs/UI_DEEP_DIVE_ASSESSMENT.md | grep -oE '^\| (LS-[PCEFT][0-9]{2}|[ACEFR][0-9]{2}|SR[0-9]{2}|DB[0-9]{2})' | sed 's/^| //'
+  -> 226 ids, 0 duplicates.
+
+PER-FAMILY COUNTS (spec enumeration == ledger, both 226):
+  Section 7: A=15, C=11, F=8, E=16, R=5  (55)
+  Section 8: LS-P=16, LS-C=28, LS-E=11, LS-F=17, LS-T=15  (87)
+  Section 9 (survey SR + 9.8 dashboard DB): SR=62, DB=22  (84)
+
+AS-1 (completeness) — independent re-enumeration: LF-normalized `diff spec_ids ledger_ids` = EXACT MATCH (every enumerated id appears exactly once); `uniq -d` empty. (The raw diff first showed a false 1,226c1,226 purely from CRLF `\r` on the checkout-sed output vs LF from Python — resolved by `tr -d '\r'`.)
+
+AS-2 (no-loss) — L-ROW COVERAGE CHECK: an in-script validator asserted, over all 226 rows: (a) unique ids; (b) every row has the full 18-key set; (c) every row whose mark contains "L" (all L / L->V / L+V / L; ... rows) has non-empty primary_state, progressive_destination, accessibility, print_destination, proof_owner; (d) every consolidate/retire row has a replacement_ref that resolves to an existing ledger id. Result: PASS, 0 failures. Consolidate rows and refs: LS-C08->LS-C24, LS-C23->LS-C22, LS-C27->LS-C06, SR27->SR12 (all resolve). No mark was weakened vs the assessment; where the assessment is silent on a migration field the value is prefixed "P0-proposed:" and no authority was invented.
+
+AS-3 (current truth): drift="unchanged" and current_source==assessed_source for all 226 rows, justified by tree-level byte-identity PLUS 14 spans spot-checked in actual source at the head across every family (A05, C04, E11, R01, LS-P01, LS-C04, LS-E10, SR22, DB07, and 5 more) — all matched the assessment's cited text exactly. authority cells cite only head-verified anchors: 15 test files + lib/coverage.ts/disclaimer.ts/format.ts/surveyReview/* were all confirmed present (existence-checked). authority vocabulary is restricted to the packet's allowed set (PRD <section> only where section 11 maps one; returned contract <name>; reviewer finding <B-001/DB-025/DB-030>; exact-copy test <file:line>; implementation-only prose).
+
+AS-5 (scope): `python -m json.tool docs/design/ui-cleanup/disclosure-ledger-b.json` -> VALID JSON. `git status --short` shows ONLY docs/design/ui-cleanup/disclosure-ledger-b.json. No source/test/copy/rule/assessment edit. Nothing under ctl24 touched. Working tree clean after commit.
+
+PHASE MAPPING (from assessment section 14): A/C/F->P3, E/R->P5, LS-P/LS-C/LS-E/LS-F/LS-T->P3, SR/DB->P6.
+
+CONCURRENT-LANE NOTE (M5-T078 drawing / M5-T079 limits): none of my sections 7-9 source anchors reference ProposalOutlineDraw/Map/MaxEnvelopePanel/max-envelope-api, so no rows needed an "in-flight" flag; recorded drift at my pinned head only.
+
+COMMIT: b51cba02c436d3d19c12c371e3f6f500d3768718 on task/M5-T080-p0-reconcile-b — "M5-T080 part B (ledger sections 7-9)"; 1 file changed (+4522/-1); gitleaks scanned, no leaks; working tree clean. (Git warned "LF will be replaced by CRLF" on checkout — cosmetic autocrlf, committed content is LF.)
+
+OPEN QUESTIONS (carried in per-row open_question fields, not fixed in-packet):
+- Section 8 legacy routes have no dedicated phase in section 14. I assigned LS-P/LS-C/LS-E/LS-F/LS-T -> P3 by closest fit (P3's named guards — numeric-promotion, fingerprint, condo, source-link — ARE the section-8 property/compare guards). Orchestrator may want an explicit phase/scope decision for the flag-off property/compare/rule-evaluation routes.
+- LS-E10 (RuleEvaluationResult.tsx:279-280): null end-date rendered "in effect ... to present" — confirmed at head; compare sibling rejects this. Corrective = reviewed semantic task (assessment 13, Medium).
+- LS-C10 (NoScenarioBlock intro): "simultaneously in effect" unsupported legal-effect assertion — correct transparently under a reviewed task, do not preserve as old copy.
+- SR11/SR27 (assessment 9.1/13): verify the "All material facts are resolved" fallback cannot imply completion for an unprocessed/zero-fact document, and add an explicit preview-unavailable cue beside a null-imageRef DocumentOverlay canvas; verify actual upload availability.
+- LS-P13: check the absolute "Every value ... official-source fact" wording against mixed-status fixtures before carrying it forward.
+- Cross-row method duplication SR19<->SR31 and SR12<->SR27 (SR27 consolidated to SR12) — collapse to one shared Source without dropping unique content.
+
+DEVIATIONS (judgment calls for the reviewer):
+- LS-T (test copy-wall) rows are test invariants, not user-visible states. To honor "never weaken a mark" I marked them "L (test invariant / copy-wall)" and filled the five migration fields with "P0-proposed:" content framed for a test row (invariant remains provable; locked strings survive in the related row's named tier; assertion targets accessible/visible text; print parity where the related row prints), proof_owner = the test file itself. If the reviewer prefers these carried as V/reference rows, that is a one-line mark change.
+- Line spans written with ASCII hyphen "-" rather than the assessment's en-dash; span numbers preserved verbatim and spot-checkable.
+
+DISCOVERIES (D-069, for the reconciliation/backlog — I did not edit DISCOVERY_BACKLOG.md):
+- No section-14 phase exists for the legacy flag-off property/compare/rule-evaluation routes as distinct from the architect surface (see open questions).
+- Confirmed at head (not merely from the assessment): RuleEvaluationResult.tsx:279-280 "to present" / "in effect" for null end dates; this is real source drift a reviewed P3/P4 semantic-correction task should own.
+
+END-OF-REPORT
+
+### Cross-file completeness check (orchestrator, at the harvested head)
+
+- Enumeration over docs/UI_DEEP_DIVE_ASSESSMENT.md lines 57-923 (every table row whose first cell starts with an inventory id): 381 ids, 381 unique.
+- disclosure-ledger-a.json (155) + disclosure-ledger-b.json (226) = 381 rows, 381 unique; missing from the ledgers: none; extra in the ledgers: none (exact bijection).
+- Every row carries exactly the packet's 18 keys; both files pass `python -m json.tool`.
+- 344 L-marked rows: none missing primary_state / progressive_destination / accessibility / print_destination / proof_owner.
+- consolidate/retire rows with an unresolved replacement_ref: none (PART B's four consolidations resolve).
