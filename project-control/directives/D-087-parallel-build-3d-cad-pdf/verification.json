@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T21:48:51+00:00",
+ "verified_at": "2026-09-24T22:04:10+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1151,6 +1151,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies; unwired (no production importer of dxf_reader); no route, main.py or web change; the max-envelope route stays unmounted; PR #241 open and unmerged; all gates enforced; modularity and control-plane CI green. Blob-level restamp predicate re-verified by the orchestrator at the accept head ec2c00c3 (dxf_reader.py 94895927, test_dxf_reader.py 78b4a278, test_dxf_roundtrip.py f301eed4, M5-T097-producer-report.md e6816ad0; identity 88431c2d; evaluate_task_refs ok); report M5-T097-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M0-T160",
+   "applicable_requirement_ids": [
+    "D-087-R001"
+   ],
+   "reviewed_sha": "cf4fd2242807a4d4f19453b0d05a240801bdf803",
+   "reviewed_manifest_sha256": "f63172da573da8f55479ce78d9a77b48b760f56b3a07a6243c5a4e62418f24dc",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T22:04:10+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a contracted, claimed, gated capacity unit whose round-1 NEEDS_SPLIT was handled by a recorded re-scope (G0 re-recorded at edafaad2 with history kept; round-1 evidence preserved on branch task/M0-T160-round1; root cause DB-063), not by skipping a state or a gate; G0/G2/G3/G5 PASS with independent reviewers. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf4fd224 (source_binding.json 4f6fdfdb, CONTROLLER_UPDATE_RUNBOOK.md 4ee5a21b, test_runbook_parse.ps1 2288cb62, M0-T160-producer-report.md 94f62afc; identity f63172da; evaluate_task_refs ok); report M0-T160-DCV.md."
      ]
     }
    ]

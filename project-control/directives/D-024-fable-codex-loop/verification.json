@@ -12322,9 +12322,31 @@
      ]
     }
    ]
+  },
+  {
+   "directive_id": "D-024",
+   "task_id": "M0-T160",
+   "applicable_requirement_ids": [
+    "D-024-R287"
+   ],
+   "reviewed_sha": "cf4fd2242807a4d4f19453b0d05a240801bdf803",
+   "reviewed_manifest_sha256": "f63172da573da8f55479ce78d9a77b48b760f56b3a07a6243c5a4e62418f24dc",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T22:04:10+00:00",
+   "requirements": [
+    {
+     "id": "D-024-R287",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-m0t160): the deliberate-admission order holds - M0-T159 (the Claude Code 2.1.281 admission + recertification, 3662 passed / 2 skipped / 0 failed) was accepted BEFORE this repin; the binding pins the git-plumbing values of the FROZEN recertified candidate a3f24ff3 (tree 82432361, subtree 9c0b14ea, 204 files), NOT the integrated ledger tree cfc3d22c (subtree 11d43515, which carries uncertified supervisor code); 12/12 required_modules exist at a3f24ff3; the runbook section 4 and the runbook-parse test move in lockstep (the offline controller_update suite 7/7 green at the producer head, RED before); nothing is installed - the owner's commissioning (recertification section 5) follows and B-026 stays open until then. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf4fd224 (source_binding.json 4f6fdfdb, CONTROLLER_UPDATE_RUNBOOK.md 4ee5a21b, test_runbook_parse.ps1 2288cb62, M0-T160-producer-report.md 94f62afc; identity f63172da; evaluate_task_refs ok); report M0-T160-DCV.md."
+     ]
+    }
+   ]
   }
  ],
  "updated_at": "2026-09-04T20:06:24+00:00",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T15:28:44+00:00"
+ "verified_at": "2026-09-24T22:04:10+00:00"
 }
