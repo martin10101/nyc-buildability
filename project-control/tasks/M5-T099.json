@@ -55,12 +55,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
+  "status": "awaiting_gate",
   "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T15:44:04.203614+00:00",
-  "updated_at": "2026-09-24T20:17:14.576883+00:00",
+  "updated_at": "2026-09-24T20:22:23.200632+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -107,6 +107,13 @@
       "percent": 90,
       "status": "in_progress",
       "message": "Harvested: d322458f cherry-picked to cd04fddb (2 files MATCH); harvest checks green; evidence map + G2 written; submitting."
+    },
+    {
+      "at": "2026-09-24T20:22:14.530331+00:00",
+      "agent": "cloud-architect",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "[ORCH-CORRECTED] plan edits at 78eb0269 per G3 B1 + G5 F1-F4; evidence map + G2 updated; resubmitting."
     }
   ]
 }
