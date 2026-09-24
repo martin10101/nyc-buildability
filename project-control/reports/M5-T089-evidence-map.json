@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T089",
+ "material_commit": "fe254eee (cherry-pick of wt-m5t089 5fb4c99e; 16 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T11:20:00+00:00",
+ "producer": "geospatial-engineer (orchestrator-dispatched subagent; worktree wt-m5t089)",
+ "requirements": {
+  "D-066-R001": [
+   "Navigation block at the contract seam named the consumers-to-be (massing_model context layer, MapPLUTO condo conventions read-only) and that nothing imports the new connector; the material touches exactly the allowed paths (connector, its test, the fixtures folder, the report); test:801 enforces that nothing in app/ references the module."
+  ],
+  "D-087-R001": [
+   "Wave-2 capacity unit: contracted at 5e9dbd07 (G0), claimed at 114e5e56 with the full worktree path, produced by an orchestrator-dispatched subagent (geospatial-engineer) concurrently with T088/T090/T091/T092; no state or gate skipped."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every live packet; one worktree wt-m5t089; material fe254eee (cherry-pick of 5fb4c99e) touches only the allowed paths, 16 files MATCH by blob."
+  ],
+  "D-087-R003": [
+   "3D context buildings from the OFFICIAL source: the OTI BUILDING_view connector queries footprints intersecting an EPSG:2263 envelope or lot polygon with outSR=2263 and the LONG field names (checked against live layer metadata first), pages under maxRecordCount, and returns typed ContextBuilding records - verbatim 2263 parts and holes under a written multipart/holes policy, roof height above ground (feet kept as the RQ-1 INFERENCE label; no official unit tag found), ground elevation as published (NAVD88 per the City dictionary with the RQ-2 caveat), relative_base_z = ground - site_ground (typed gap when no site ground), condo billing-lot and placeholder flags, and the provenance quintuple; zero/missing heights are typed gaps, never defaults; every transport/schema/CRS failure is a typed refusal; 11 small recorded fixtures (38.6 KB total, sha256-pinned, provenance in MANIFEST + README); 16 producer mutants all RED; [ORCH-HARVEST] at the cherry-picked head fe254eee (Python 3.11.9, cwd services/api): `python -m ruff check .` -> All checks passed!; `python -m pytest tests/connectors/test_building_footprints_arcgis.py -q` -> 110 passed; repo root modularity exit 0 (the connector is 891 SLOC with 49 top-level symbols - above the justification threshold, below the 1000 hard limit; cohesion justification in the producer report)."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies (stdlib + already-admitted shapely + app.*; the shared bounded-retry transport); keyless requests with only an Accept header; offline tests only; not wired to any route; no requirements or lockfile change."
+  ]
+ }
+}

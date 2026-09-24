@@ -57,17 +57,18 @@
   "producer_agent": "geospatial-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
+    "code-reviewer",
     "geospatial-engineer",
     "qa-engineer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T09:39:37.760151+00:00",
-  "updated_at": "2026-09-24T09:47:13.231895+00:00",
+  "updated_at": "2026-09-24T14:33:53.676704+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -100,6 +101,20 @@
       "percent": 20,
       "status": "claimed",
       "message": "Claimed at the wave-2 claim seam; orchestrator-dispatched subagent producer in the isolated worktree C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t089 (created at the claim-seam commit)."
+    },
+    {
+      "at": "2026-09-24T11:01:50.424127+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "claimed",
+      "message": "ROSTER AMENDMENT: code-reviewer added to reviewer_agents as the independent G3 reviewer (producer geospatial-engineer cannot review its own work); G0 re-recorded; re-claim with the same FULL worktree path follows."
+    },
+    {
+      "at": "2026-09-24T14:33:48.746706+00:00",
+      "agent": "geospatial-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Harvested: 5fb4c99e cherry-picked to fe254eee (16 files MATCH); ruff clean, 110 passed, modularity exit 0; evidence map + G2 written; submitting."
     }
   ]
 }

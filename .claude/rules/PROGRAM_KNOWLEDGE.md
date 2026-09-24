@@ -176,6 +176,11 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   then join verbatim at that point with the transmission history noted in the record header.
 - Loop WAIT_FOR_OWNER (tier_ask_blocking) after all asks denied needs `resume-after-answer`
   (WAIT_FOR_OWNER -> PREFLIGHT); `clear-recovery` only exits PAUSED_RECOVERY.
+- Re-recording G0 (e.g. after a scope correction) resets a task in `rework` to `ready`:
+  re-`claim` it (same FULL worktree path) before `submit` (seq 128 T078).
+- Python with Windows paths goes through the Write tool, never a Bash heredoc (a backslash-U
+  becomes a unicodeescape SyntaxError; a claim silently did not run). Agents keep scratch .py files
+  in a SUBFOLDER: a root `inspect.py` in the shared scratchpad shadowed the stdlib, broke pytest.
 - NEVER pass `model:` on an Agent dispatch: it OVERRIDES the agent file's claude-opus-4-8 xhigh
   pin (owner: "sub agent stays 4.8", D-085 src-003); "opus" = Opus 5.5 - 20 seq-128 spawns
   drifted (report D-085-subagent-model-deviation-2026-09-24.md). Verify via subagent transcripts.
