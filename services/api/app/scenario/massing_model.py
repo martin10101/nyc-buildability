@@ -1,4 +1,724 @@
-"""M5-T082 placeholder - the producer authors the massing truth object here.
+"""M5-T082 (D-087 3D-1): the deterministic massing truth object.
 
-Seeded at the contract seam so the allowed path carries a tracked file; no importable
-surface yet by design."""
+The canonical scenario-geometry object of ``docs/3D_MASSING_ENGINE_ARCHITECTURE.md``
+(sections 2-4 and 10, subset). It is the SERVER-SIDE truth every 3D view and the
+CAD export consume; a renderer draws it and never invents it (section 2). Nothing
+here is a rule and nothing is a city record.
+
+Honesty (D-076-R002 / D-083 vocabulary): a building derived from an architect
+proposal is ``proposed`` ("Proposed - not a city record"); a building derived from
+the max-envelope generator is a ``generated_option`` ("Generated building option").
+No output is ever labelled a city record, a rule, or an achievable / legal value,
+and no legal conclusion is drawn. The two source labels are the ONLY building
+labels this module emits.
+
+What it builds, from (a) the canonical EPSG:2263 lot ring, (b) a proposal footprint
+ring + floor stack read through the accepted B0 proposal contract
+(:mod:`app.scenario.proposal`, read-only), and optionally (c) a generated building
+option in the max-envelope engine's ``as_dict`` shape:
+
+* a declared coordinate frame - CRS, horizontal + vertical unit, axis order, a
+  stable local origin near the parcel centroid and its exact world->local transform,
+  and a precision grid (section 3);
+* layers ``parcel`` and one of ``proposed_massing`` / ``generated_option`` (section 5
+  subset);
+* closed, outward-oriented triangulated prisms per floor band - a bottom cap, a top
+  cap (ear-clipping triangulation that handles concave rings) and side walls, with
+  consistent winding so the signed volume is positive and every directed edge
+  appears exactly once (section 4 "Mesh construction" + section 10 mesh gate);
+* per-floor plates with areas from the authoritative 2263 ring (shapely), gross floor
+  area and total height metrics (section 10 reconciliation);
+* provenance - the input digests, the passed-through proposal provenance and the
+  ``generator_version`` ``massing-1.0.0`` (section 2).
+
+Every section-10 quality gate that this slice can enforce is a TYPED refusal
+(:class:`MassingModelError` with a machine-readable ``reason``): a footprint not
+within the lot is ``footprint_outside_lot`` and is NEVER clipped or repaired; a lot
+with holes, a self-intersecting ring, a non-finite value, an over-cap vertex count,
+a non-positive floor height, or an empty floor stack each fail closed.
+
+Deterministic and offline: standard library + the admitted ``shapely`` (validity,
+area, containment) and ``numpy`` (mesh volume / area reductions). No network, no new
+dependency, no route, no web. ``content_hash`` pins a golden sha256.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import math
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+from typing import Any
+
+import numpy as np
+from shapely.geometry import Polygon
+
+from .proposal import (
+    MAX_OUTLINE_VERTICES,
+    ProposedMassingError,
+    validate_proposed_massing,
+)
+
+__all__ = [
+    "MassingModelError",
+    "MassingModel",
+    "build_massing_model",
+    "build_from_generated_option",
+    "GENERATOR_VERSION",
+    "GEOMETRY_VERSION",
+    "SOURCE_PROPOSED",
+    "SOURCE_GENERATED_OPTION",
+]
+
+# --- versioning -----------------------------------------------------------
+GENERATOR_VERSION = "massing-1.0.0"
+GEOMETRY_VERSION = 1
+
+# --- declared coordinate frame (section 3) --------------------------------
+CRS_CODE = "EPSG:2263"
+CRS_AUTHORITY = "EPSG:2263 (NAD83 / New York Long Island, US survey feet)"
+HORIZONTAL_UNIT = "us_survey_foot"
+VERTICAL_UNIT = "us_survey_foot"
+AXIS_ORDER = "easting_northing"  # x = easting, y = northing
+#: The grid a renderer should snap to; emitted coordinates are quantised to it so
+#: the golden serialization is stable. Metadata, never a legal precision claim.
+PRECISION_GRID_FT = 1e-6
+_QUANT_DECIMALS = 6  # round(ft, 6) == PRECISION_GRID_FT
+
+# --- source labels (the ONLY building labels; honesty vocabulary) ---------
+SOURCE_PROPOSED = "proposed"
+SOURCE_GENERATED_OPTION = "generated_option"
+LAYER_PARCEL = "parcel"
+_LAYER_FOR_SOURCE = {
+    SOURCE_PROPOSED: "proposed_massing",
+    SOURCE_GENERATED_OPTION: "generated_option",
+}
+_DISCLOSURE_FOR_SOURCE = {
+    SOURCE_PROPOSED: "Proposed - not a city record",
+    SOURCE_GENERATED_OPTION: "Generated building option",
+}
+
+# --- fail-closed ceilings -------------------------------------------------
+#: Total expanded floors across the stack (a paste / generation error above this).
+MAX_TOTAL_FLOORS = 2000
+#: A footprint may sit at most this far outside the lot line (survey noise) before
+#: it is refused ``footprint_outside_lot``. It is NEVER clipped to fit.
+FOOTPRINT_OUTSIDE_LOT_TOL_FT = 1e-6
+
+_Point = tuple[float, float]
+
+
+class MassingModelError(ValueError):
+    """A massing input failed a section-10 quality gate. Carries a machine-readable
+    ``reason`` and, where a specific field is implicated, the dotted ``field`` path.
+    A subclass of :class:`ValueError` so a caller may catch broadly, but every
+    refusal is typed and nothing is silently clipped or repaired."""
+
+    def __init__(self, message: str, *, reason: str, field: str | None = None) -> None:
+        super().__init__(message)
+        self.reason = reason
+        self.field = field
+
+
+# ---------------------------------------------------------------------------
+# Numeric helpers (deterministic).
+# ---------------------------------------------------------------------------
+
+
+def _q(value: float) -> float:
+    """Quantise a coordinate to the declared precision grid (deterministic)."""
+    return round(float(value), _QUANT_DECIMALS)
+
+
+def _is_finite_number(value: object) -> bool:
+    """True for a finite int/float that is not a bool (JSON booleans are ints in
+    Python and must never pass a numeric check)."""
+    return (
+        not isinstance(value, bool)
+        and isinstance(value, (int, float))
+        and math.isfinite(value)
+    )
+
+
+def _signed_area(ring: Sequence[_Point]) -> float:
+    """Shoelace signed area of a distinct-vertex ring; > 0 for counter-clockwise."""
+    total = 0.0
+    n = len(ring)
+    for i in range(n):
+        x0, y0 = ring[i]
+        x1, y1 = ring[(i + 1) % n]
+        total += x0 * y1 - x1 * y0
+    return total / 2.0
+
+
+def _cross3(a: _Point, b: _Point, c: _Point) -> float:
+    """Signed area term of triangle ``a b c``; > 0 for a left (CCW) turn at ``b``."""
+    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+
+def _point_in_triangle(p: _Point, a: _Point, b: _Point, c: _Point) -> bool:
+    """True when ``p`` is inside or on the boundary of CCW triangle ``a b c``.
+    Boundary-inclusive so a vertex touching an ear edge disqualifies the ear."""
+    d1 = _cross3(a, b, p)
+    d2 = _cross3(b, c, p)
+    d3 = _cross3(c, a, p)
+    has_neg = d1 < 0 or d2 < 0 or d3 < 0
+    has_pos = d1 > 0 or d2 > 0 or d3 > 0
+    return not (has_neg and has_pos)
+
+
+# ---------------------------------------------------------------------------
+# Ring preparation + ear-clipping triangulation.
+# ---------------------------------------------------------------------------
+
+
+def _prepare_ring(points: Sequence[Sequence[float]], field: str) -> list[_Point]:
+    """Normalise a 2263 ring to distinct, non-collinear, CCW vertices.
+
+    Accepts an open or explicitly-closed ring, drops the closing duplicate, and
+    collapses collinear straight vertices (redundant corners on one edge) so ear
+    clipping finds a strict-convex ear at every step and the caps and side walls
+    share the SAME boundary. Fails closed on a non-finite coordinate, an over-cap
+    count, a duplicate vertex, or fewer than three distinct corners."""
+    if not isinstance(points, (list, tuple)):
+        raise MassingModelError(f"{field} must be a list of [x, y] points",
+                                reason="invalid_source", field=field)
+    if len(points) > MAX_OUTLINE_VERTICES:
+        raise MassingModelError(
+            f"{field} has {len(points)} vertices, over the cap {MAX_OUTLINE_VERTICES}",
+            reason="over_cap_vertices", field=field)
+
+    parsed: list[_Point] = []
+    for idx, pt in enumerate(points):
+        if not isinstance(pt, (list, tuple)) or len(pt) != 2:
+            raise MassingModelError(f"{field}[{idx}] must be an [x, y] pair",
+                                    reason="invalid_source", field=f"{field}[{idx}]")
+        x, y = pt[0], pt[1]
+        if not _is_finite_number(x) or not _is_finite_number(y):
+            raise MassingModelError(
+                f"{field}[{idx}] must be a finite [x, y] pair; got {pt!r}",
+                reason="non_finite", field=f"{field}[{idx}]")
+        parsed.append((_q(x), _q(y)))
+
+    if len(parsed) >= 2 and parsed[0] == parsed[-1]:
+        parsed = parsed[:-1]  # drop the explicit closing duplicate
+    if len(set(parsed)) != len(parsed):
+        raise MassingModelError(
+            f"{field} has a duplicate vertex other than the closing vertex",
+            reason="self_intersection", field=field)
+    if len(parsed) < 3:
+        raise MassingModelError(
+            f"{field} needs at least 3 distinct vertices; got {len(parsed)}",
+            reason="invalid_source", field=field)
+
+    # Orient CCW so triangulation winds toward +z.
+    if _signed_area(parsed) < 0:
+        parsed.reverse()
+
+    # Collapse collinear straight vertices (redundant on a straight edge).
+    ring: list[_Point] = []
+    n = len(parsed)
+    for i in range(n):
+        prev_pt = parsed[(i - 1) % n]
+        cur = parsed[i]
+        nxt = parsed[(i + 1) % n]
+        if _cross3(prev_pt, cur, nxt) == 0.0:
+            continue
+        ring.append(cur)
+    if len(ring) < 3:
+        raise MassingModelError(
+            f"{field} collapses to fewer than 3 non-collinear corners",
+            reason="invalid_source", field=field)
+    return ring
+
+
+def _triangulate(ring: Sequence[_Point], field: str) -> list[tuple[int, int, int]]:
+    """Ear-clipping triangulation of a simple CCW ring (concave-safe).
+
+    Returns index triples into ``ring``, each wound CCW (so a +z-facing cap normal).
+    A simple polygon always has an ear (two-ears theorem); a stall means the ring is
+    not simple and fails closed as ``self_intersection``."""
+    n = len(ring)
+    if n < 3:
+        raise MassingModelError(f"{field} needs at least 3 vertices to triangulate",
+                                reason="invalid_source", field=field)
+    if n == 3:
+        return [(0, 1, 2)]
+
+    remaining = list(range(n))
+    triangles: list[tuple[int, int, int]] = []
+    guard = 0
+    guard_max = 2 * n * n + 8
+    while len(remaining) > 3 and guard < guard_max:
+        guard += 1
+        m = len(remaining)
+        clipped = False
+        for pos in range(m):
+            i_prev = remaining[(pos - 1) % m]
+            i_cur = remaining[pos]
+            i_next = remaining[(pos + 1) % m]
+            a, b, c = ring[i_prev], ring[i_cur], ring[i_next]
+            if _cross3(a, b, c) <= 0.0:  # reflex or collinear -> not an ear tip
+                continue
+            if any(
+                _point_in_triangle(ring[j], a, b, c)
+                for j in remaining
+                if j not in (i_prev, i_cur, i_next)
+            ):
+                continue
+            triangles.append((i_prev, i_cur, i_next))
+            del remaining[pos]
+            clipped = True
+            break
+        if not clipped:
+            break
+    if len(remaining) != 3:
+        raise MassingModelError(
+            f"{field} could not be triangulated; the ring is not a simple polygon",
+            reason="self_intersection", field=field)
+    triangles.append((remaining[0], remaining[1], remaining[2]))
+    return triangles
+
+
+# ---------------------------------------------------------------------------
+# Prism mesh construction.
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class _PrismMesh:
+    floor_index: int
+    level_index: int
+    z_bottom_ft: float
+    z_top_ft: float
+    vertices: tuple[tuple[float, float, float], ...]
+    triangles: tuple[tuple[int, int, int], ...]
+    plate_area_sq_ft: float
+    signed_volume_cu_ft: float
+
+    def as_dict(self) -> dict:
+        return {
+            "floor_index": self.floor_index,
+            "level_index": self.level_index,
+            "z_bottom_ft": self.z_bottom_ft,
+            "z_top_ft": self.z_top_ft,
+            "vertices": [list(v) for v in self.vertices],
+            "triangles": [list(t) for t in self.triangles],
+            "plate_area_sq_ft": self.plate_area_sq_ft,
+            "signed_volume_cu_ft": self.signed_volume_cu_ft,
+        }
+
+
+def _build_prism(
+    ring: Sequence[_Point],
+    cap: Sequence[tuple[int, int, int]],
+    z_bottom: float,
+    z_top: float,
+    floor_index: int,
+    level_index: int,
+    local_origin: _Point,
+) -> _PrismMesh:
+    """A single closed, outward-oriented prism over ``ring`` between two elevations.
+
+    Bottom + top caps (top from the CCW ``cap`` triangulation, bottom reversed) and
+    one outward-wound side quad per ring edge. Vertices are stored in authoritative
+    world 2263 coordinates; the signed volume is reduced in LOCAL coordinates (origin
+    subtracted) so the closed-mesh volume is well conditioned at NYC magnitudes."""
+    n = len(ring)
+    zb, zt = _q(z_bottom), _q(z_top)
+    verts: list[tuple[float, float, float]] = [(x, y, zb) for x, y in ring]  # 0..n-1
+    verts += [(x, y, zt) for x, y in ring]  # n..2n-1
+    tris: list[tuple[int, int, int]] = []
+    # Top cap: CCW from above -> +z outward normal.
+    for a, b, c in cap:
+        tris.append((a + n, b + n, c + n))
+    # Bottom cap: reversed -> -z outward normal.
+    for a, b, c in cap:
+        tris.append((a, c, b))
+    # Side walls: for CCW ring edge i->j, outward-wound quad (bi,bj,tj)+(bi,tj,ti).
+    for i in range(n):
+        j = (i + 1) % n
+        bi, bj = i, j
+        ti, tj = i + n, j + n
+        tris.append((bi, bj, tj))
+        tris.append((bi, tj, ti))
+
+    ox, oy = local_origin
+    local = np.array(
+        [[vx - ox, vy - oy, vz] for vx, vy, vz in verts], dtype=np.float64
+    )
+    idx = np.array(tris, dtype=np.int64)
+    v0 = local[idx[:, 0]]
+    v1 = local[idx[:, 1]]
+    v2 = local[idx[:, 2]]
+    signed_volume = float(np.sum(np.einsum("ij,ij->i", v0, np.cross(v1, v2))) / 6.0)
+
+    plate_area = float(Polygon([(x, y) for x, y in ring]).area)
+    return _PrismMesh(
+        floor_index=floor_index,
+        level_index=level_index,
+        z_bottom_ft=zb,
+        z_top_ft=zt,
+        vertices=tuple(verts),
+        triangles=tuple(tris),
+        plate_area_sq_ft=round(plate_area, _QUANT_DECIMALS),
+        signed_volume_cu_ft=round(signed_volume, _QUANT_DECIMALS),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Provenance digests.
+# ---------------------------------------------------------------------------
+
+
+def _digest(payload: Any) -> str:
+    """A deterministic sha256 over a canonical JSON encoding of ``payload``."""
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    return "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+# ---------------------------------------------------------------------------
+# The truth object.
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class MassingModel:
+    """The versioned scenario-geometry truth object (section 2). Renderer-agnostic
+    JSON; a viewer draws it and never becomes its source."""
+
+    source: str
+    disclosure: str
+    coordinate_reference_system: dict
+    parcel: dict
+    building_layer: dict
+    meshes: tuple[_PrismMesh, ...]
+    plates: tuple[dict, ...]
+    metrics: dict
+    provenance: dict
+
+    def as_dict(self) -> dict:
+        return {
+            "generator_version": GENERATOR_VERSION,
+            "geometry_version": GEOMETRY_VERSION,
+            "source": self.source,
+            "disclosure": self.disclosure,
+            "coverage_status": "conditional",
+            "coordinate_reference_system": self.coordinate_reference_system,
+            "layers": [LAYER_PARCEL, self.building_layer["layer"]],
+            "parcel": self.parcel,
+            "building_layer": self.building_layer,
+            "meshes": [m.as_dict() for m in self.meshes],
+            "plates": [dict(p) for p in self.plates],
+            "metrics": self.metrics,
+            "provenance": self.provenance,
+        }
+
+    def to_json(self) -> str:
+        """Deterministic, strict (no NaN/Infinity) JSON encoding."""
+        return json.dumps(
+            self.as_dict(), sort_keys=True, separators=(",", ":"), allow_nan=False
+        )
+
+    def content_hash(self) -> str:
+        """A golden sha256 over :meth:`to_json` - stable for identical inputs."""
+        return "sha256:" + hashlib.sha256(self.to_json().encode("utf-8")).hexdigest()
+
+
+# ---------------------------------------------------------------------------
+# Floor-stack adapter (B0 levels -> expanded per-floor bands).
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class _Floor:
+    floor_index: int
+    level_index: int
+    height_ft: float
+    z_bottom: float
+    z_top: float
+    ring: list[_Point]
+    cap: list[tuple[int, int, int]]
+
+
+def _expand_floor_stack(
+    block: Mapping[str, Any], default_ring: list[_Point], default_cap
+) -> list[_Floor]:
+    """Adapter: expand the B0 ``levels`` (each ``floor_count`` identical floors of
+    ``floor_to_floor_ft``) into an explicit per-floor band stack, stacking z from 0.
+
+    The B0 contract DOES carry per-floor heights this way, so no separate floor-stack
+    input is needed. A level may carry its own ``outline`` (a setback / tower band);
+    that footprint is prepared and triangulated for its floors, else the top-level
+    footprint is reused. Fails closed on a non-positive height or an empty stack."""
+    levels = block.get("levels")
+    if not isinstance(levels, list) or not levels:
+        raise MassingModelError("proposed_massing.levels must be a non-empty array",
+                                reason="invalid_source", field="proposed_massing.levels")
+
+    ring_cache: dict[int, tuple[list[_Point], list[tuple[int, int, int]]]] = {}
+    floors: list[_Floor] = []
+    z = 0.0
+    floor_index = 0
+    for lvl in sorted(levels, key=lambda item: item.get("level_index", 0)):
+        level_index = lvl.get("level_index", 0)
+        height = lvl.get("floor_to_floor_ft")
+        count = lvl.get("floor_count")
+        if not _is_finite_number(height) or height <= 0:
+            raise MassingModelError(
+                f"level {level_index} floor_to_floor_ft must be finite and > 0; "
+                f"got {height!r}",
+                reason="non_positive_height",
+                field=f"proposed_massing.levels[{level_index}].floor_to_floor_ft")
+        if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+            raise MassingModelError(
+                f"level {level_index} floor_count must be an integer >= 1; got {count!r}",
+                reason="invalid_source",
+                field=f"proposed_massing.levels[{level_index}].floor_count")
+
+        if lvl.get("outline") is not None:
+            if level_index not in ring_cache:
+                lvl_ring = _prepare_ring(
+                    lvl["outline"].get("vertices", []),
+                    f"proposed_massing.levels[{level_index}].outline.vertices")
+                ring_cache[level_index] = (
+                    lvl_ring,
+                    _triangulate(
+                        lvl_ring,
+                        f"proposed_massing.levels[{level_index}].outline"),
+                )
+            ring, cap = ring_cache[level_index]
+        else:
+            ring, cap = default_ring, default_cap
+
+        for _ in range(count):
+            floors.append(_Floor(
+                floor_index=floor_index, level_index=level_index,
+                height_ft=_q(height), z_bottom=_q(z), z_top=_q(z + height),
+                ring=ring, cap=cap))
+            z += height
+            floor_index += 1
+            if floor_index > MAX_TOTAL_FLOORS:
+                raise MassingModelError(
+                    f"the expanded floor stack exceeds the cap {MAX_TOTAL_FLOORS}",
+                    reason="over_cap_vertices", field="proposed_massing.levels")
+    return floors
+
+
+# ---------------------------------------------------------------------------
+# Builders.
+# ---------------------------------------------------------------------------
+
+
+def _lot_polygon(lot_ring: Sequence[Sequence[float]]) -> tuple[Polygon, list[_Point]]:
+    """Validate the canonical lot ring and return its shapely polygon + prepared ring.
+    Refuses a self-intersecting lot or a lot with holes (a single ring has none, but
+    an invalid ring geometry fails closed)."""
+    ring = _prepare_ring(lot_ring, "lot_ring")
+    poly = Polygon([(x, y) for x, y in ring])
+    if poly.interiors:
+        raise MassingModelError("lot_ring encloses a hole; a massing lot must be a "
+                                "single simple ring", reason="lot_has_holes",
+                                field="lot_ring")
+    if not poly.is_valid:
+        raise MassingModelError("lot_ring is not a valid simple polygon",
+                                reason="self_intersection", field="lot_ring")
+    return poly, ring
+
+
+def _local_origin(lot_ring: Sequence[_Point]) -> _Point:
+    """A stable local origin near the parcel centroid (section 3, step 1)."""
+    centroid = Polygon([(x, y) for x, y in lot_ring]).centroid
+    return (_q(centroid.x), _q(centroid.y))
+
+
+def _crs_frame(origin: _Point) -> dict:
+    """The declared coordinate frame with the exact world->local transform (section 3)."""
+    ox, oy = origin
+    return {
+        "crs": CRS_CODE,
+        "authority": CRS_AUTHORITY,
+        "horizontal_unit": HORIZONTAL_UNIT,
+        "vertical_unit": VERTICAL_UNIT,
+        "axis_order": AXIS_ORDER,
+        "storage": "authoritative_world_2263",
+        "local_origin": [ox, oy, 0.0],
+        "world_to_local": {
+            "operation": "subtract_local_origin",
+            "offset": [-ox, -oy, 0.0],
+        },
+        "precision_grid_ft": PRECISION_GRID_FT,
+    }
+
+
+def build_massing_model(
+    *,
+    lot_ring: Sequence[Sequence[float]],
+    proposed_massing: Mapping[str, Any],
+    source: str = SOURCE_PROPOSED,
+    scenario_id: str | None = None,
+    property_geometry_version_id: str | None = None,
+    rule_release_id: str | None = None,
+) -> MassingModel:
+    """Build the massing truth object from a canonical 2263 lot ring and a B0
+    ``proposed_massing`` block (validated read-only through :mod:`app.scenario.proposal`).
+
+    ``source`` selects the honest building label (``proposed`` or ``generated_option``);
+    the optional ids are carried through provenance verbatim. Every failure is a typed
+    :class:`MassingModelError`; nothing is clipped or repaired."""
+    if source not in _LAYER_FOR_SOURCE:
+        raise MassingModelError(
+            f"source must be one of {sorted(_LAYER_FOR_SOURCE)}; got {source!r}",
+            reason="invalid_source", field="source")
+
+    # Fail-closed B0 validation of the proposed building (translated to a typed refusal).
+    try:
+        validate_proposed_massing(proposed_massing)
+    except ProposedMassingError as exc:
+        raise MassingModelError(
+            f"proposed_massing failed B0 contract validation: {exc}",
+            reason="invalid_source", field=exc.field) from exc
+
+    lot_poly, lot_prepared = _lot_polygon(lot_ring)
+    origin = _local_origin(lot_prepared)
+
+    footprint_ring = _prepare_ring(
+        proposed_massing["outline"].get("vertices", []),
+        "proposed_massing.outline.vertices")
+    footprint_cap = _triangulate(footprint_ring, "proposed_massing.outline")
+    floors = _expand_floor_stack(proposed_massing, footprint_ring, footprint_cap)
+
+    # Fail-closed containment: every floor footprint within the lot (never clipped).
+    lot_guard = lot_poly.buffer(FOOTPRINT_OUTSIDE_LOT_TOL_FT)
+    checked: set[int] = set()
+    for floor in floors:
+        key = id(floor.ring)
+        if key in checked:
+            continue
+        checked.add(key)
+        floor_poly = Polygon([(x, y) for x, y in floor.ring])
+        if not lot_guard.contains(floor_poly):
+            raise MassingModelError(
+                f"level {floor.level_index} footprint lies outside the lot beyond "
+                f"{FOOTPRINT_OUTSIDE_LOT_TOL_FT} ft; it is refused, never clipped",
+                reason="footprint_outside_lot",
+                field=f"proposed_massing.levels[{floor.level_index}].outline")
+
+    meshes = tuple(
+        _build_prism(floor.ring, floor.cap, floor.z_bottom, floor.z_top,
+                     floor.floor_index, floor.level_index, origin)
+        for floor in floors
+    )
+
+    plates = tuple({
+        "floor_index": m.floor_index,
+        "level_index": m.level_index,
+        "elevation_ft": m.z_bottom_ft,
+        "height_ft": round(m.z_top_ft - m.z_bottom_ft, _QUANT_DECIMALS),
+        "area_sq_ft": m.plate_area_sq_ft,
+    } for m in meshes)
+
+    gross_floor_area = round(sum(p["area_sq_ft"] for p in plates), _QUANT_DECIMALS)
+    total_height = round(sum(p["height_ft"] for p in plates), _QUANT_DECIMALS)
+
+    parcel = {
+        "layer": LAYER_PARCEL,
+        "ring": [[x, y] for x, y in lot_prepared],
+        "area_sq_ft": round(float(lot_poly.area), _QUANT_DECIMALS),
+        "elevation_ft": 0.0,
+    }
+    building_layer = {
+        "layer": _LAYER_FOR_SOURCE[source],
+        "disclosure": _DISCLOSURE_FOR_SOURCE[source],
+        "floor_count": len(floors),
+    }
+
+    provenance = {
+        "generator_version": GENERATOR_VERSION,
+        "source": source,
+        "scenario_id": scenario_id,
+        "property_geometry_version_id": property_geometry_version_id,
+        "rule_release_id": rule_release_id,
+        "input_digests": {
+            "lot_ring": _digest([[x, y] for x, y in lot_prepared]),
+            "proposed_massing": _digest(_canonical_block(proposed_massing)),
+            "local_origin": _digest(list(origin)),
+        },
+        "proposal_provenance": _passthrough_provenance(proposed_massing),
+    }
+
+    return MassingModel(
+        source=source,
+        disclosure=_DISCLOSURE_FOR_SOURCE[source],
+        coordinate_reference_system=_crs_frame(origin),
+        parcel=parcel,
+        building_layer=building_layer,
+        meshes=meshes,
+        plates=plates,
+        metrics={
+            "gross_floor_area_sq_ft": gross_floor_area,
+            "total_height_ft": total_height,
+            "floor_count": len(floors),
+            "lot_area_sq_ft": parcel["area_sq_ft"],
+        },
+        provenance=provenance,
+    )
+
+
+def build_from_generated_option(
+    *,
+    lot_ring: Sequence[Sequence[float]],
+    max_envelope: Mapping[str, Any],
+    scenario_id: str | None = None,
+    property_geometry_version_id: str | None = None,
+    rule_release_id: str | None = None,
+) -> MassingModel:
+    """Build the truth object from a generated building option in the max-envelope
+    engine's exact ``as_dict`` shape. The candidate is the engine's ``candidate`` field
+    (a B0 ``proposed_massing`` draft); when it is ``None`` the engine emitted an explicit
+    typed placement gap and no massing can be built - a typed refusal, never a fabricated
+    building. The result is labelled ``generated_option`` ("Generated building option")."""
+    if not isinstance(max_envelope, Mapping) or "candidate" not in max_envelope:
+        raise MassingModelError(
+            "max_envelope must be the engine's as_dict shape carrying a 'candidate' key",
+            reason="invalid_source", field="max_envelope")
+    candidate = max_envelope.get("candidate")
+    if candidate is None:
+        placement = max_envelope.get("candidate_placement") or {}
+        detail = placement.get("detail") if isinstance(placement, Mapping) else None
+        raise MassingModelError(
+            "max_envelope emitted no candidate footprint (an explicit typed placement "
+            f"gap); no generated option can be built. {detail or ''}".strip(),
+            reason="no_generated_candidate", field="max_envelope.candidate")
+    return build_massing_model(
+        lot_ring=lot_ring,
+        proposed_massing=candidate,
+        source=SOURCE_GENERATED_OPTION,
+        scenario_id=scenario_id,
+        property_geometry_version_id=property_geometry_version_id,
+        rule_release_id=rule_release_id,
+    )
+
+
+def _canonical_block(block: Mapping[str, Any]) -> dict:
+    """The digest-relevant subset of a proposed_massing block (outline + levels)."""
+    return {
+        "outline": block.get("outline"),
+        "levels": block.get("levels"),
+        "exterior_walls": block.get("exterior_walls"),
+    }
+
+
+def _passthrough_provenance(block: Mapping[str, Any]) -> dict:
+    """Carry the proposal's own provenance through verbatim (author / editor_version /
+    kind), so the truth object records where its footprint came from."""
+    prov = block.get("provenance")
+    if not isinstance(prov, Mapping):
+        return {}
+    return {
+        "author": prov.get("author"),
+        "editor_version": prov.get("editor_version"),
+        "kind": prov.get("kind"),
+        "parent_scenario_id": prov.get("parent_scenario_id"),
+    }
