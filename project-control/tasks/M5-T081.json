@@ -62,12 +62,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
-  "progress_percent": 85,
+  "status": "in_progress",
+  "progress_percent": 60,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T07:24:29.162367+00:00",
-  "updated_at": "2026-09-24T08:17:59.813916+00:00",
+  "updated_at": "2026-09-24T08:25:49.075477+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -109,6 +109,13 @@
       "percent": 95,
       "status": "claimed",
       "message": "Unit harvested (cherry-pick MATCH by blob identity; orchestrator primary re-run recorded in the G2 report); submitting for the independent wave"
+    },
+    {
+      "at": "2026-09-24T08:25:49.073466+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Rework (G3 FAIL F1 + G4 FAIL F1, one correction cluster with the G1/G5 advisories): $INSUNITS 21 US survey feet + comment + golden re-anchor + literal unit assertion; hardcoded honesty-label assertions; sanitizer non-CR/LF param test; load-bearing claim-word guard test; builder bounds before materialization + coordinate magnitude guard"
     }
   ]
 }
