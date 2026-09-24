@@ -70,30 +70,63 @@ def point_line_distance(p: Point, a: Point, b: Point) -> float:
 
 
 def cubic_flat(p0: Point, p1: Point, p2: Point, p3: Point, tol: float) -> bool:
-    """A cubic segment is flat when both control points lie within ``tol`` of the chord —
-    a conservative upper bound on the true curve deviation (§8.5.2.2 [recalled - verify])."""
+    """A cubic segment is flat when BOTH control points lie within ``tol`` of the chord.
+
+    The bound is on the curve's PERPENDICULAR / cross-track deviation from the chord line
+    (§8.5.2.2 [recalled - verify]): projecting the error onto the chord normal, the control
+    points' along-chord offsets cancel, so ``max(dist(p1), dist(p2)) <= tol`` bounds the
+    perpendicular error. It is NOT a guaranteed bound on distance-to-SEGMENT when a control
+    point projects outside the chord endpoints (along-chord overshoot on S-curves/cusps);
+    midpoint de Casteljau subdivision is exact, and the ``and`` (both control points) — not
+    ``or`` — is what makes the guarantee hold on ASYMMETRIC curves.
+    """
     return (
         point_line_distance(p1, p0, p3) <= tol
         and point_line_distance(p2, p0, p3) <= tol
     )
 
 
+def is_finite_point(p: Point) -> bool:
+    """True when both components of ``p`` are finite (no ``inf`` / ``nan``)."""
+    return math.isfinite(p[0]) and math.isfinite(p[1])
+
+
 def flatten_cubic(
-    p0: Point, p1: Point, p2: Point, p3: Point, tol: float, out: list[Point], depth: int
-) -> None:
-    """Adaptive de Casteljau flattening: subdivide until flat within ``tol`` (or the depth
-    cap), appending every point AFTER ``p0`` up to and including ``p3`` to ``out``."""
+    p0: Point,
+    p1: Point,
+    p2: Point,
+    p3: Point,
+    tol: float,
+    out: list[Point],
+    depth: int,
+    budget: int,
+) -> bool:
+    """Adaptive de Casteljau flattening under a HARD point ``budget``.
+
+    Subdivide until flat within ``tol`` (or the depth cap), appending every point AFTER
+    ``p0`` up to and including ``p3`` to ``out`` — but NEVER letting ``out`` grow beyond
+    ``budget`` points. Returns ``True`` when the whole curve was flattened within budget,
+    and ``False`` the moment the budget would be exceeded (the caller must then refuse).
+
+    Threading the caller's remaining page-point budget bounds a SINGLE curve's transient
+    allocation to ``budget`` points, so a valid-but-degenerate curve (huge control
+    coordinates that never satisfy ``cubic_flat``) cannot first materialize the full
+    ``2**MAX_FLATTEN_DEPTH`` leaf list before the reader charges its page-wide point budget.
+    """
+    if len(out) >= budget:
+        return False
     if depth >= MAX_FLATTEN_DEPTH or cubic_flat(p0, p1, p2, p3, tol):
         out.append(p3)
-        return
+        return True
     p01 = _mid(p0, p1)
     p12 = _mid(p1, p2)
     p23 = _mid(p2, p3)
     p012 = _mid(p01, p12)
     p123 = _mid(p12, p23)
     pm = _mid(p012, p123)
-    flatten_cubic(p0, p01, p012, pm, tol, out, depth + 1)
-    flatten_cubic(pm, p123, p23, p3, tol, out, depth + 1)
+    if not flatten_cubic(p0, p01, p012, pm, tol, out, depth + 1, budget):
+        return False
+    return flatten_cubic(pm, p123, p23, p3, tol, out, depth + 1, budget)
 
 
 @dataclass(frozen=True)
@@ -121,7 +154,11 @@ class SheetTextRun:
     (the survey profile refuses rotated text; this profile keeps it). ``matrix`` is the
     composed text-rendering matrix (text space -> user space) so a consumer can recover
     the run's angle and scale; ``font_size`` is the nominal ``Tf`` size (glyph metrics
-    and text advance are not modelled — a documented simplification).
+    and text advance are not modelled — a documented simplification). Because advance is
+    not modelled, ``x`` / ``y`` are EXACT only for the FIRST show after each positioning
+    operator (``Td`` / ``TD`` / ``Tm`` / ``T*`` / ``'`` / ``"``); a second ``Tj`` / ``TJ``
+    on the same line without an intervening positioning op is reported at the un-advanced
+    origin. Individually positioned drawing-sheet labels (the common case) are exact.
     """
 
     text: str

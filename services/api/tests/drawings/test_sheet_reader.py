@@ -19,12 +19,18 @@ tests/documents is imported or edited). Coverage maps to the packet's acceptance
 from __future__ import annotations
 
 import math
+import tracemalloc
 import zlib
 
 import pytest
 
 from app.drawings import sheet_reader
-from app.drawings.sheet_primitives import SheetDocument, SheetImage, SheetRefusal
+from app.drawings.sheet_primitives import (
+    SheetDocument,
+    SheetImage,
+    SheetRefusal,
+    flatten_cubic,
+)
 from app.drawings.sheet_reader import read_sheet, sheet_refusal
 
 
@@ -133,8 +139,9 @@ def test_as1_mutation_skipping_subdivision_reddens(monkeypatch):
     above the declared tolerance, so the AS-1 assertion would fail."""
     radius, tolerance = 200.0, 0.5
 
-    def _no_subdivision(p0, p1, p2, p3, tol, out, depth):
+    def _no_subdivision(p0, p1, p2, p3, tol, out, depth, budget):
         out.append(p3)
+        return True
 
     monkeypatch.setattr(sheet_reader, "_flatten_cubic", _no_subdivision)
     doc = read_sheet(_one_page(_quarter_circle_content(radius)), flatten_tolerance=tolerance)
@@ -384,3 +391,238 @@ def test_rotated_text_run_is_placed_and_not_refused():
     assert (runs[0].x, runs[0].y) == pytest.approx((100.0, 200.0), abs=1e-9)
     assert runs[0].font_size == 12.0
     assert runs[0].matrix[1] == pytest.approx(_SIN)  # rotation preserved in the matrix
+
+
+# =============================================================== rework: G5 F1 cluster (D-087)
+# Item 1 (G5 F1, BLOCKING): the per-page point budget bounds Bezier flattening WHILE it
+# subdivides, so a single degenerate curve can never materialize 2**MAX_FLATTEN_DEPTH points.
+def test_flatten_cubic_stops_at_the_point_budget():
+    """Direct: a curve whose huge control coords never satisfy cubic_flat fills ONLY up to
+    the remaining budget and reports incompletion (never 2**MAX_FLATTEN_DEPTH points)."""
+    p0, p1, p2, p3 = (0.0, 0.0), (1e18, 1e18), (2e18, -1e18), (3e18, 0.0)
+    out: list[tuple[float, float]] = []
+    completed = flatten_cubic(p0, p1, p2, p3, 0.25, out, 0, 1000)
+    assert completed is False        # hit the budget before flattening finished
+    assert len(out) <= 1000          # bounded to the remaining budget, not 2**24 (~16.8M)
+
+
+def _big_curve_pdf() -> bytes:
+    # huge control coords as plain-decimal tokens (<= 64 bytes, no exponent) that never
+    # satisfy the flatness test; a naive flattener would emit 2**MAX_FLATTEN_DEPTH points.
+    content = (
+        b"0 0 m "
+        b"1000000000000000000 1000000000000000000 "
+        b"2000000000000000000 -1000000000000000000 "
+        b"3000000000000000000 0 c S"
+    )
+    return _one_page(content)
+
+
+def test_single_curve_refuses_within_bounded_memory(monkeypatch):
+    """Integration: one `c` op with 1e18 control coords refuses with the path-points refusal
+    and bounded transient memory (the fix caps it at the remaining budget, not ~1.9 GB)."""
+    monkeypatch.setattr(sheet_reader, "MAX_PATH_POINTS", 5000)
+    tracemalloc.start()
+    try:
+        refusal = sheet_refusal(read_sheet(_big_curve_pdf()))
+        _, peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    assert refusal is not None
+    assert refusal.feature == "path points"
+    assert peak < 16 * 1024 * 1024   # bounded; G5 measured ~120 MiB / ~1.9 GB without the fix
+
+
+# Item 2 (G5 F3): each page's primitives are only that page's (fresh per-page output lists).
+def test_each_page_has_only_its_own_primitives():
+    page0 = _stream(b"0 0 m 10 10 l S")
+    page1 = _stream(b"20 20 m 30 30 l S")
+    pdf = _pdf(
+        [
+            b"<< /Type /Catalog /Pages 2 0 R >>",
+            b"<< /Type /Pages /Kids [3 0 R 5 0 R] /Count 2 >>",
+            b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 800 600] /Contents 4 0 R >>",
+            page0,
+            b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 800 600] /Contents 6 0 R >>",
+            page1,
+        ]
+    )
+    doc = read_sheet(pdf)
+    assert isinstance(doc, SheetDocument)
+    assert len(doc.pages) == 2
+    assert len(doc.pages[0].polylines) == 1
+    assert len(doc.pages[1].polylines) == 1          # NOT 2 (page 0's line must not leak in)
+    p0_pts = _flat(doc.pages[0].polylines[0].points)
+    p1_pts = _flat(doc.pages[1].polylines[0].points)
+    assert p0_pts == pytest.approx([0.0, 0.0, 10.0, 10.0])
+    assert p1_pts == pytest.approx([20.0, 20.0, 30.0, 30.0])
+
+
+# Item 3 (G5 F2): Form content is decoded once per (number, generation) and the document-wide
+# decoded-bytes budget is charged by every decode.
+def _flate_form(content: bytes, extra: bytes = b"") -> bytes:
+    return _flate(content, b" /Type /XObject /Subtype /Form /BBox [0 0 1 1]%s" % extra)
+
+
+def test_form_flate_content_decoded_once_when_placed_many_times(monkeypatch):
+    calls = {"n": 0}
+    real_decode = sheet_reader._decode_stream
+
+    def counting(table, stream, interp):
+        calls["n"] += 1
+        return real_decode(table, stream, interp)
+
+    monkeypatch.setattr(sheet_reader, "_decode_stream", counting)
+    pdf = _one_page(
+        b" ".join([b"/Fm0 Do"] * 10),
+        resources=b"<< /XObject << /Fm0 5 0 R >> >>",
+        extra_objects=(_flate_form(_FORM_LINE),),
+    )
+    doc = read_sheet(pdf)
+    assert isinstance(doc, SheetDocument)
+    assert len(doc.pages[0].polylines) == 10    # each of the 10 placements is interpreted
+    assert calls["n"] == 2                       # page content once + form ONCE (not 11)
+
+
+def test_document_decoded_bytes_budget_is_refused(monkeypatch):
+    monkeypatch.setattr(sheet_reader, "MAX_TOTAL_DECODED_BYTES", 4)
+    refusal = sheet_refusal(read_sheet(_one_page(b"5 7 m 9 3 l S")))
+    assert refusal is not None
+    assert refusal.feature == "decoded bytes budget"
+
+
+# Item 4 (G5 F4): a top-level backstop turns any unexpected exception into a typed refusal.
+def test_top_level_backstop_converts_unexpected_exception_to_refusal(monkeypatch):
+    def _boom(_table):
+        raise RuntimeError("internal boom with attacker detail")
+
+    monkeypatch.setattr(sheet_reader, "_catalog_pages_root", _boom)
+    refusal = sheet_refusal(read_sheet(_one_page(b"5 7 m 9 3 l S")))
+    assert refusal is not None
+    assert refusal.feature == "unexpected error"
+    assert "RuntimeError" in refusal.detail                 # only the exception TYPE
+    assert "attacker detail" not in refusal.detail          # no content/message leak
+
+
+# Item 5 (G5 F5): attacker-derived tokens are truncated in the refusal detail.
+def test_unsupported_operator_detail_is_truncated():
+    refusal = sheet_refusal(read_sheet(_one_page(b"Z" * 100_000)))
+    assert refusal is not None
+    assert refusal.feature == "unsupported operator"
+    assert len(refusal.detail) < 200                        # bounded, not ~100k
+    assert "...(truncated)" in refusal.detail
+
+
+# Item 6 (G5 F6): a non-finite coordinate after CTM math is refused (typed).
+def test_non_finite_coordinate_after_ctm_is_refused():
+    huge = b"1" + b"0" * 39                                  # 1e39, plain decimal (<64 bytes)
+    scale = b"%s 0 0 %s 0 0 cm" % (huge, huge)
+    content = b" ".join([scale] * 10) + b" 1 1 m 2 2 l S"    # CTM overflows to inf
+    refusal = sheet_refusal(read_sheet(_one_page(content)))
+    assert refusal is not None
+    assert refusal.feature == "non-finite coordinate"
+
+
+# Item 7 (G1 F3 / G3 F2): q/Q save+restore text state; a Form inherits the caller's text state.
+def test_q_q_saves_and_restores_font_size():
+    content = b"/F1 10 Tf q /F1 30 Tf BT (A) Tj ET Q BT (B) Tj ET"
+    doc = read_sheet(_one_page(content, resources=b"<< /Font << /F1 << >> >> >>"))
+    assert isinstance(doc, SheetDocument)
+    runs = doc.pages[0].text_runs
+    assert [r.font_size for r in runs] == [30.0, 10.0]      # A at 30 (in q), B at 10 (restored)
+
+
+def test_form_inherits_caller_text_state():
+    form = _form_obj(b"BT (X) Tj ET")                        # form has NO Tf of its own
+    pdf = _one_page(
+        b"/F1 14 Tf /Fm0 Do",
+        resources=b"<< /Font << /F1 << >> >> /XObject << /Fm0 5 0 R >> >>",
+        extra_objects=(form,),
+    )
+    doc = read_sheet(pdf)
+    assert isinstance(doc, SheetDocument)                    # not refused as "text before Tf"
+    runs = doc.pages[0].text_runs
+    assert len(runs) == 1
+    assert runs[0].text == "X"
+    assert runs[0].font_size == 14.0                         # inherited from the caller
+
+
+# Item 8 (G1 F5): after h/close, a segment op with no intervening m begins a new subpath.
+def test_segment_after_close_begins_new_subpath():
+    content = b"0 0 m 10 0 l 10 10 l h 20 20 l S"
+    doc = read_sheet(_one_page(content))
+    assert isinstance(doc, SheetDocument)                    # not refused
+    polylines = doc.pages[0].polylines
+    assert len(polylines) == 2                               # closed triangle + reopened line
+    closed = [p for p in polylines if p.closed]
+    reopened = [p for p in polylines if not p.closed]
+    assert len(closed) == 1 and len(reopened) == 1
+    assert reopened[0].points[0] == pytest.approx((0.0, 0.0))   # begins at the subpath start
+    assert reopened[0].points[1] == pytest.approx((20.0, 20.0))
+
+
+# Item 9 (G1 F6 / G3 F3): the current point is device space, so a mid-path cm cannot
+# re-derive a wrong curve start.
+def test_mid_path_cm_does_not_corrupt_curve_start():
+    content = b"10 10 m 2 0 0 2 0 0 cm 10 10 20 10 20 20 c S"
+    doc = read_sheet(_one_page(content))
+    assert isinstance(doc, SheetDocument)
+    points = doc.pages[0].polylines[0].points
+    assert points[0] == pytest.approx((10.0, 10.0))         # true previous point, not (20,20)
+    assert points[-1] == pytest.approx((40.0, 40.0))        # end = apply(scale2, (20,20))
+
+
+# Item 11 (QA F4): an asymmetric Bezier probe that reddens cubic_flat's `and`->`or` weakening.
+def _bezier_point(p0, p1, p2, p3, t):
+    mt = 1.0 - t
+    return (
+        mt * mt * mt * p0[0] + 3 * mt * mt * t * p1[0]
+        + 3 * mt * t * t * p2[0] + t * t * t * p3[0],
+        mt * mt * mt * p0[1] + 3 * mt * mt * t * p1[1]
+        + 3 * mt * t * t * p2[1] + t * t * t * p3[1],
+    )
+
+
+def _dist_point_to_segment(p, a, b):
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    seg2 = dx * dx + dy * dy
+    if seg2 == 0.0:
+        return math.hypot(p[0] - a[0], p[1] - a[1])
+    t = max(0.0, min(1.0, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / seg2))
+    return math.hypot(p[0] - (a[0] + t * dx), p[1] - (a[1] + t * dy))
+
+
+def _max_curve_deviation_from_polyline(p0, p1, p2, p3, points, samples=400):
+    worst = 0.0
+    for i in range(samples + 1):
+        cp = _bezier_point(p0, p1, p2, p3, i / samples)
+        best = min(
+            _dist_point_to_segment(cp, points[j], points[j + 1])
+            for j in range(len(points) - 1)
+        )
+        worst = max(worst, best)
+    return worst
+
+
+def test_asymmetric_bezier_respects_declared_tolerance():
+    p0, p1, p2, p3 = (0.0, 0.0), (1.0, 0.0), (50.0, 40.0), (100.0, 0.0)
+    tol = 0.5
+    doc = read_sheet(_one_page(b"0 0 m 1 0 50 40 100 0 c S"), flatten_tolerance=tol)
+    assert isinstance(doc, SheetDocument)
+    points = doc.pages[0].polylines[0].points
+    dev = _max_curve_deviation_from_polyline(p0, p1, p2, p3, points)
+    # real `and` subdivides and hugs the curve; a weakened `or` would emit the straight chord
+    # whose deviation from the true curve is ~17.8 (36x the tolerance).
+    assert dev <= tol * 1.5
+
+
+# Item 11 (QA F5): a multi-hop A->B->A Form cycle is refused as an xobject cycle.
+def test_multi_hop_form_cycle_is_refused():
+    pdf = _one_page(
+        b"/FmA Do",
+        resources=b"<< /XObject << /FmA 5 0 R /FmB 6 0 R >> >>",
+        extra_objects=(_form_obj(b"/FmB Do"), _form_obj(b"/FmA Do")),
+    )
+    refusal = sheet_refusal(read_sheet(pdf))
+    assert refusal is not None
+    assert refusal.feature == "xobject cycle"                # not merely the depth bound

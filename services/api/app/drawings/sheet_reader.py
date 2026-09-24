@@ -25,10 +25,18 @@ data-contract review):
   depth <= ``MAX_XOBJECT_DEPTH`` and cycle refusal; image XObjects COUNTED and disclosed
   (name, placement, declared dimensions) but NEVER decoded.
 
-Doctrine (inherited from the strict reader): refusal is a VALUE, never an exception; a
+Clipping is NOT modelled: ``W`` / ``W*`` clip operators and a Form XObject's ``/BBox`` are
+deliberately NOT applied, so surfaced geometry may INCLUDE content a clip would have removed
+(over-inclusion by design — a drawing-sheet reader prefers to disclose more geometry than to
+silently drop it). A later consumer that needs true clipped extents adds clip-region tracking.
+
+Doctrine (inherited from the strict reader): refusal is a VALUE, never an exception (a
+top-level backstop in :func:`read_sheet` turns any unexpected error into a refusal too); a
 refusal on any page fails the whole document (all-or-nothing, no partial); untrusted input
-is bounded on stream size, operator count, path points, ``q`` depth, XObject recursion, and
-Bezier subdivision; no byte is executed and no network is touched.
+is bounded on stream size, per-document decoded bytes, operator count, path points (bounded
+DURING Bezier flattening, not after), ``q`` depth, XObject recursion, and Bezier subdivision;
+each page's primitives are isolated to that page; no byte is executed and no network is
+touched.
 
 The emitted coordinates are page-scoped PDF USER SPACE (the page's default user space after
 CTM concatenation), never auto-trusted as world coordinates — each page also carries its
@@ -65,6 +73,7 @@ from app.drawings.sheet_primitives import (
 from app.drawings.sheet_primitives import apply_matrix as _apply_matrix
 from app.drawings.sheet_primitives import concat_matrix as _concat_matrix
 from app.drawings.sheet_primitives import flatten_cubic as _flatten_cubic
+from app.drawings.sheet_primitives import is_finite_point as _is_finite_point
 
 __all__ = [
     "DEFAULT_FLATTEN_TOLERANCE",
@@ -72,6 +81,7 @@ __all__ = [
     "MAX_DECODED_STREAM_BYTES",
     "MAX_PATH_POINTS",
     "MAX_Q_DEPTH",
+    "MAX_TOTAL_DECODED_BYTES",
     "MAX_XOBJECT_DEPTH",
     "read_sheet",
     "sheet_refusal",
@@ -82,8 +92,10 @@ MAX_CONTENT_OPERATORS = 200_000   # executed operators, summed across all nested
 MAX_PATH_POINTS = 500_000         # flattened path points emitted, summed across the page
 MAX_Q_DEPTH = 128                 # saved graphics states in one content stream
 MAX_XOBJECT_DEPTH = 8             # Form XObject recursion depth (page content is depth 0)
-MAX_DECODED_STREAM_BYTES = 8_388_608  # decoded content/form-stream byte cap
+MAX_DECODED_STREAM_BYTES = 8_388_608  # decoded content/form-stream byte cap (per stream)
+MAX_TOTAL_DECODED_BYTES = 134_217_728  # decoded bytes charged across the whole document
 DEFAULT_FLATTEN_TOLERANCE = 0.25  # declared maximum chord error, user-space units
+_DETAIL_PREVIEW_CHARS = 64        # attacker-derived tokens are truncated to this in a detail
 
 _IDENTITY: Matrix = (1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
 
@@ -175,6 +187,14 @@ def _refuse(feature: str, detail: str) -> SheetRefusal:
     )
 
 
+def _preview(token: str) -> str:
+    """Bound an attacker-derived token to a short preview for a refusal detail, so a
+    hostile input cannot inflate ``detail`` to the full decoded-stream size (§ G5 F5)."""
+    if len(token) <= _DETAIL_PREVIEW_CHARS:
+        return token
+    return token[:_DETAIL_PREVIEW_CHARS] + "...(truncated)"
+
+
 def sheet_refusal(result: object) -> SheetRefusal | None:
     """Return the :class:`SheetRefusal` carried by a :func:`read_sheet` result, else None."""
     return result if isinstance(result, SheetRefusal) else None
@@ -206,10 +226,14 @@ def _resolved_int(table: PdfObjectTable, value: object) -> int | None:
     return resolved if isinstance(resolved, int) and not isinstance(resolved, bool) else None
 
 
-def _decode_stream(table: PdfObjectTable, stream: PdfStream) -> bytes | SheetRefusal:
+def _decode_stream(
+    table: PdfObjectTable, stream: PdfStream, interp: _SheetInterpreter
+) -> bytes | SheetRefusal:
     """Decode a content/form stream under the strict single-``/FlateDecode`` subset;
     refuse ``/DecodeParms``, filter arrays, other filters, corrupt deflate, or over-cap
-    output. Mirrors the container's decode doctrine without mutating it."""
+    output. Mirrors the container's decode doctrine without mutating it. EVERY decode charges
+    the document-wide decoded-bytes budget (``interp.charge_decoded``), so many small decodes
+    (e.g. repeated Form ``Do``) cannot amplify total decompression without bound."""
     dictionary = stream.dictionary
     if _DECODE_PARMS_KEY in dictionary:
         return _refuse("decode parameters", "stream carries /DecodeParms (unsupported)")
@@ -217,7 +241,8 @@ def _decode_stream(table: PdfObjectTable, stream: PdfStream) -> bytes | SheetRef
         raw = stream.raw_data
         if len(raw) > MAX_DECODED_STREAM_BYTES:
             return _refuse("stream size", f"raw stream over {MAX_DECODED_STREAM_BYTES} bytes")
-        return raw
+        charged = interp.charge_decoded(len(raw))
+        return charged if charged is not None else raw
     filter_value = _resolve(table, dictionary[_FILTER_KEY])
     if isinstance(filter_value, SheetRefusal):
         return filter_value
@@ -233,10 +258,13 @@ def _decode_stream(table: PdfObjectTable, stream: PdfStream) -> bytes | SheetRef
         return _refuse("corrupt flate stream", f"zlib refused the stream: {error}")
     if decompressor.unconsumed_tail or not decompressor.eof:
         return _refuse("flate output bound", f"flate output over {MAX_DECODED_STREAM_BYTES} bytes")
-    return decoded
+    charged = interp.charge_decoded(len(decoded))
+    return charged if charged is not None else decoded
 
 
-def _decode_contents(table: PdfObjectTable, node: dict) -> bytes | SheetRefusal:
+def _decode_contents(
+    table: PdfObjectTable, node: dict, interp: _SheetInterpreter
+) -> bytes | SheetRefusal:
     """Decode a leaf page's ``/Contents``: absent -> ``b''``; one stream or an array of
     streams (concatenated with a newline)."""
     if _CONTENTS_KEY not in node:
@@ -245,7 +273,7 @@ def _decode_contents(table: PdfObjectTable, node: dict) -> bytes | SheetRefusal:
     if isinstance(contents, SheetRefusal):
         return contents
     if isinstance(contents, PdfStream):
-        return _decode_stream(table, contents)
+        return _decode_stream(table, contents, interp)
     if isinstance(contents, list):
         parts: list[bytes] = []
         for element in contents:
@@ -254,7 +282,7 @@ def _decode_contents(table: PdfObjectTable, node: dict) -> bytes | SheetRefusal:
                 return stream
             if not isinstance(stream, PdfStream):
                 return _refuse("contents array", "a /Contents array element is not a stream")
-            decoded = _decode_stream(table, stream)
+            decoded = _decode_stream(table, stream, interp)
             if isinstance(decoded, SheetRefusal):
                 return decoded
             parts.append(decoded)
@@ -313,7 +341,23 @@ def read_sheet(
     All-or-nothing per document: a refusal on any page fails the whole read and no partial
     document is produced. ``flatten_tolerance`` is the DECLARED maximum chord error (user
     units) used to flatten Bezier curves; it is recorded on every page and the document.
+
+    A top-level backstop (mirroring the sibling DXF reader) converts ANY unexpected
+    exception from a helper into a typed :class:`SheetRefusal`, so "refusal is a VALUE" holds
+    even on an unforeseen edge; the detail carries only the exception TYPE, never attacker
+    content.
     """
+    try:
+        return _read_sheet(data, flatten_tolerance=flatten_tolerance)
+    except Exception as error:  # noqa: BLE001 - fail-closed backstop; refusal is a VALUE
+        return _refuse("unexpected error", f"unexpected {type(error).__name__} during read")
+
+
+def _read_sheet(
+    data: bytes | bytearray | memoryview,
+    *,
+    flatten_tolerance: float,
+) -> SheetDocument | SheetRefusal:
     if not isinstance(data, (bytes, bytearray, memoryview)):
         return _refuse("input", f"expected raw bytes, got {type(data).__name__}")
     if (
@@ -400,7 +444,7 @@ def _build_page(
     resources = _ABSENT if own_res is _ABSENT else _resolve(table, own_res)
     if isinstance(resources, SheetRefusal):
         return resources
-    content = _decode_contents(table, node)
+    content = _decode_contents(table, node, interpreter)
     if isinstance(content, SheetRefusal):
         return content
     result = interpreter.interpret(content, resources, _IDENTITY, 0, frozenset())
@@ -422,8 +466,11 @@ def _build_page(
 
 
 class _SheetInterpreter:
-    """Page-wide interpretation state: the object table, the declared tolerance, and the
-    output/budget counters that are SHARED across nested Form XObject recursion."""
+    """Document interpretation state. The object table and tolerance are constant; the
+    ``op_count`` / ``point_count`` / ``decoded_bytes`` counters and the Form-decode cache are
+    DOCUMENT-WIDE (shared across pages AND nested Form recursion) so untrusted work is bounded
+    for the whole read; the output lists are PER-PAGE (reset at each depth-0 ``interpret``) so
+    one page's geometry never leaks into another's :class:`SheetPage`."""
 
     def __init__(self, table: PdfObjectTable, tolerance: float) -> None:
         self.table = table
@@ -431,8 +478,36 @@ class _SheetInterpreter:
         self.polylines: list[SheetPolyline] = []
         self.text_runs: list[SheetTextRun] = []
         self.images: list[SheetImage] = []
-        self.op_count = 0
-        self.point_count = 0
+        self.op_count = 0            # document-wide
+        self.point_count = 0         # document-wide
+        self.decoded_bytes = 0       # document-wide
+        self.form_cache: dict[tuple[int, int], bytes] = {}  # decoded Form content by ref key
+
+    def charge_decoded(self, count: int) -> SheetRefusal | None:
+        """Charge ``count`` bytes against the document-wide decoded-bytes budget; refuse
+        once the running total would exceed :data:`MAX_TOTAL_DECODED_BYTES`."""
+        self.decoded_bytes += count
+        if self.decoded_bytes > MAX_TOTAL_DECODED_BYTES:
+            return _refuse(
+                "decoded bytes budget",
+                f"over {MAX_TOTAL_DECODED_BYTES} decoded bytes across the document",
+            )
+        return None
+
+    def decode_form(
+        self, stream: PdfStream, ref_key: tuple[int, int] | None
+    ) -> bytes | SheetRefusal:
+        """Decode a Form XObject stream, MEMOIZED per ``(number, generation)`` for the
+        document: a form placed N times decodes (and charges the byte budget) ONCE; later
+        placements reuse the cached bytes. A form with no stable ref key is not cached."""
+        if ref_key is not None and ref_key in self.form_cache:
+            return self.form_cache[ref_key]
+        decoded = _decode_stream(self.table, stream, self)
+        if isinstance(decoded, SheetRefusal):
+            return decoded
+        if ref_key is not None:
+            self.form_cache[ref_key] = decoded
+        return decoded
 
     def interpret(
         self,
@@ -441,13 +516,26 @@ class _SheetInterpreter:
         ctm: Matrix,
         depth: int,
         xobject_stack: frozenset[tuple[int, int]],
+        *,
+        font_size: float | None = None,
+        leading: float = 0.0,
     ) -> tuple[
         tuple[SheetPolyline, ...], tuple[SheetTextRun, ...], tuple[SheetImage, ...]
     ] | SheetRefusal:
         """Interpret one content stream (page or form) and, at depth 0, return the frozen
         page primitives; a nested form returns an empty tuple triple on success (its
-        primitives are already appended to the shared output)."""
-        error = _StreamRun(self, content, resources, ctm, depth, xobject_stack).run()
+        primitives are already appended to the current page's output).
+
+        At depth 0 the per-page output lists are RESET first, so each :class:`SheetPage`
+        carries only its own primitives. A nested form inherits the caller's text state
+        (``font_size`` / ``leading``) per ISO 32000-1 graphics-state semantics."""
+        if depth == 0:
+            self.polylines = []
+            self.text_runs = []
+            self.images = []
+        error = _StreamRun(
+            self, content, resources, ctm, depth, xobject_stack, font_size, leading
+        ).run()
         if isinstance(error, SheetRefusal):
             return error
         if depth == 0:
@@ -467,6 +555,8 @@ class _StreamRun:
         ctm: Matrix,
         depth: int,
         xobject_stack: frozenset[tuple[int, int]],
+        font_size: float | None = None,
+        leading: float = 0.0,
     ) -> None:
         self._interp = interp
         self._data = content
@@ -476,18 +566,21 @@ class _StreamRun:
         self._stack = xobject_stack
         self._pos = 0
         self._operands: list[object] = []
-        self._ctm_stack: list[Matrix] = []
-        # path state (current point kept in user space; subpaths in user space post-CTM)
+        # graphics-state save stack: (CTM, font_size, leading) restored by Q
+        self._gs_stack: list[tuple[Matrix, float | None, float]] = []
+        # path state — the current point and subpath start are kept in DEVICE space
+        # (post-CTM), so a mid-path cm/Q cannot re-derive a wrong curve start (G1 F6/G3 F3).
         self._current: Point | None = None
         self._subpath_start: Point | None = None
         self._subpaths: list[tuple[list[Point], bool]] = []
         self._cur_points: list[Point] | None = None
-        # text state
+        # text state — inherited from the caller (a Form inherits the placing stream's
+        # font/leading per ISO 32000-1 graphics state; G1 F3/G3 F2).
         self._in_text = False
         self._tm: Matrix = _IDENTITY
         self._tlm: Matrix = _IDENTITY
-        self._leading = 0.0
-        self._font_size: float | None = None
+        self._leading = leading
+        self._font_size: float | None = font_size
 
     # -- scan loop --------------------------------------------------------------------
     def run(self) -> SheetRefusal | None:
@@ -527,8 +620,8 @@ class _StreamRun:
             return _refuse("dangling operands", f"{len(self._operands)} unconsumed operand(s)")
         if self._in_text:
             return _refuse("unclosed text", "content ends inside an open BT..ET")
-        if self._ctm_stack:
-            return _refuse("unbalanced q", f"{len(self._ctm_stack)} unrestored q save(s)")
+        if self._gs_stack:
+            return _refuse("unbalanced q", f"{len(self._gs_stack)} unrestored q save(s)")
         return None
 
     def _skip_ws(self) -> None:
@@ -586,37 +679,82 @@ class _StreamRun:
             self._subpaths.append((self._cur_points, False))
         self._cur_points = None
 
-    def _moveto(self, x: float, y: float) -> None:
+    def _map(self, x: float, y: float) -> Point | SheetRefusal:
+        """Map user point ``(x, y)`` through the current CTM into device space; refuse a
+        non-finite result (CTM overflow to inf/nan — G5 F6)."""
+        point = _apply_matrix(self._ctm, x, y)
+        if not _is_finite_point(point):
+            return _refuse("non-finite coordinate", "a coordinate is not finite after CTM math")
+        return point
+
+    def _open_after_close(self) -> None:
+        """After ``h`` / ``re`` / a paint's close, a segment op with no intervening ``m``
+        begins a NEW subpath at the current point (device space), per ISO 32000-1 Table 59
+        (G1 F5), rather than being refused."""
+        self._cur_points = [self._current]  # type: ignore[list-item]
+        self._subpath_start = self._current
+
+    def _moveto(self, x: float, y: float) -> SheetRefusal | None:
         self._flush_open()
-        self._cur_points = [_apply_matrix(self._ctm, x, y)]
-        self._current = (x, y)
-        self._subpath_start = (x, y)
+        point = self._map(x, y)
+        if isinstance(point, SheetRefusal):
+            return point
+        self._cur_points = [point]
+        self._current = point          # device space (post-CTM)
+        self._subpath_start = point
+        return None
 
     def _lineto(self, x: float, y: float) -> SheetRefusal | None:
-        if self._current is None or self._cur_points is None:
+        if self._current is None:
             return _refuse("path", "'l' with no current point")
-        self._cur_points.append(_apply_matrix(self._ctm, x, y))
-        self._current = (x, y)
+        point = self._map(x, y)
+        if isinstance(point, SheetRefusal):
+            return point
+        if self._cur_points is None:
+            self._open_after_close()
+        self._cur_points.append(point)  # type: ignore[union-attr]
+        self._current = point
         return self._charge_points(1)
 
-    def _curveto(self, ctrl1: Point, ctrl2: Point, end: Point) -> SheetRefusal | None:
-        if self._current is None or self._cur_points is None:
+    def _curveto(
+        self, ctrl1: Point, ctrl2: Point, end: Point, *, ctrl1_is_current: bool = False
+    ) -> SheetRefusal | None:
+        if self._current is None:
             return _refuse("path", "curve with no current point")
-        p0 = _apply_matrix(self._ctm, *self._current)
-        p1 = _apply_matrix(self._ctm, *ctrl1)
-        p2 = _apply_matrix(self._ctm, *ctrl2)
-        p3 = _apply_matrix(self._ctm, *end)
+        p0 = self._current                       # device space; a mid-path cm cannot move it
+        p1: Point | SheetRefusal = p0 if ctrl1_is_current else self._map(*ctrl1)
+        if isinstance(p1, SheetRefusal):
+            return p1
+        p2 = self._map(*ctrl2)
+        if isinstance(p2, SheetRefusal):
+            return p2
+        p3 = self._map(*end)
+        if isinstance(p3, SheetRefusal):
+            return p3
+        if self._cur_points is None:
+            self._open_after_close()
+        remaining = MAX_PATH_POINTS - self._interp.point_count
+        if remaining < 0:
+            remaining = 0
         out: list[Point] = []
-        _flatten_cubic(p0, p1, p2, p3, self._interp.tolerance, out, 0)
-        self._cur_points.extend(out)
-        self._current = end
+        # Thread the page's REMAINING point budget INTO flattening: a degenerate curve stops
+        # and refuses at the budget instead of first materializing 2**MAX_FLATTEN_DEPTH points
+        # (G5 F1 / G3 F1).
+        completed = _flatten_cubic(p0, p1, p2, p3, self._interp.tolerance, out, 0, remaining)
+        if not completed:
+            return _refuse("path points", f"over {MAX_PATH_POINTS} flattened points")
+        for point in out:                        # de Casteljau midpoints can overflow to inf
+            if not _is_finite_point(point):
+                return _refuse("non-finite coordinate", "a flattened point is not finite")
+        self._cur_points.extend(out)  # type: ignore[union-attr]
+        self._current = p3
         return self._charge_points(len(out))
 
     def _close(self) -> None:
         if self._cur_points is not None and self._subpath_start is not None:
             self._subpaths.append((self._cur_points, True))
             self._cur_points = None
-            self._current = self._subpath_start
+            self._current = self._subpath_start   # device space
 
     def _charge_points(self, count: int) -> SheetRefusal | None:
         self._interp.point_count += count
@@ -651,15 +789,17 @@ class _StreamRun:
         if word in _TEXT_STATE_OR_OBJECT:
             return self._text(word, offset)
         if word == "q":
-            if len(self._ctm_stack) >= MAX_Q_DEPTH:
+            if len(self._gs_stack) >= MAX_Q_DEPTH:
                 return _refuse("q depth", f"graphics-state nesting over {MAX_Q_DEPTH}")
-            self._ctm_stack.append(self._ctm)
+            # Save the CTM AND the persistent text state (font size, leading), which are all
+            # part of the graphics state per ISO 32000-1 Table 52 (G1 F3/G3 F2).
+            self._gs_stack.append((self._ctm, self._font_size, self._leading))
             self._operands.clear()
             return None
         if word == "Q":
-            if not self._ctm_stack:
+            if not self._gs_stack:
                 return _refuse("unbalanced Q", "Q with no matching q")
-            self._ctm = self._ctm_stack.pop()
+            self._ctm, self._font_size, self._leading = self._gs_stack.pop()
             self._operands.clear()
             return None
         if word == "cm":
@@ -675,7 +815,7 @@ class _StreamRun:
             return None
         return _refuse(
             "unsupported operator",
-            f"operator '{word}' at offset {offset} is outside the architect-sheet subset",
+            f"operator '{_preview(word)}' at offset {offset} is outside the architect-sheet subset",
         )
 
     # -- path operators ---------------------------------------------------------------
@@ -683,8 +823,7 @@ class _StreamRun:
         values = self._take("nn")
         if values is None:
             return _refuse("m", "m needs 2 numbers")
-        self._moveto(float(values[0]), float(values[1]))
-        return None
+        return self._moveto(float(values[0]), float(values[1]))
 
     def _op_l(self) -> SheetRefusal | None:
         values = self._take("nn")
@@ -704,7 +843,8 @@ class _StreamRun:
         if values is None or self._current is None:
             return _refuse("v", "v needs 4 numbers and a current point")
         v = [float(x) for x in values]
-        return self._curveto(self._current, (v[0], v[1]), (v[2], v[3]))
+        # 'v': the first control point coincides with the current point (device space).
+        return self._curveto((0.0, 0.0), (v[0], v[1]), (v[2], v[3]), ctrl1_is_current=True)
 
     def _op_y(self) -> SheetRefusal | None:
         values = self._take("nnnn")
@@ -724,7 +864,9 @@ class _StreamRun:
         if values is None:
             return _refuse("re", "re needs 4 numbers")
         x, y, w, h = (float(v) for v in values)
-        self._moveto(x, y)
+        move_err = self._moveto(x, y)
+        if move_err is not None:
+            return move_err
         for err in (self._lineto(x + w, y), self._lineto(x + w, y + h), self._lineto(x, y + h)):
             if err is not None:
                 return err
@@ -819,11 +961,22 @@ class _StreamRun:
         if self._font_size is None:
             return _refuse("text", "text shown before any Tf")
         trm = _concat_matrix(self._tm, self._ctm)
-        x, y = _apply_matrix(trm, 0.0, 0.0)
+        origin = self._map_via(trm)
+        if isinstance(origin, SheetRefusal):
+            return origin
+        x, y = origin
         self._interp.text_runs.append(
             SheetTextRun(raw.decode("latin-1", errors="replace"), x, y, self._font_size, trm)
         )
         return None
+
+    def _map_via(self, matrix: Matrix) -> Point | SheetRefusal:
+        """Map the text-space origin ``(0, 0)`` through ``matrix``; refuse a non-finite text
+        origin (CTM/text-matrix overflow — G5 F6)."""
+        point = _apply_matrix(matrix, 0.0, 0.0)
+        if not _is_finite_point(point):
+            return _refuse("non-finite coordinate", "text origin is not finite after CTM math")
+        return point
 
     # -- XObjects ---------------------------------------------------------------------
     def _op_do(self) -> SheetRefusal | None:
@@ -877,12 +1030,16 @@ class _StreamRun:
     def _place_form(
         self, name: str, stream: PdfStream, ref_key: tuple[int, int] | None
     ) -> SheetRefusal | None:
+        """Re-interpret a Form XObject under its placement CTM. The form's ``/BBox`` clip is
+        NOT applied (over-inclusion by design — see the module docstring); the decoded content
+        is memoized per ref key; and the form inherits the placing stream's text state
+        (font size, leading)."""
         if self._depth + 1 > MAX_XOBJECT_DEPTH:
             return _refuse("xobject recursion", f"form nesting over depth {MAX_XOBJECT_DEPTH}")
         if ref_key is not None and ref_key in self._stack:
-            return _refuse("xobject cycle", f"form /{name} references itself (cycle)")
+            return _refuse("xobject cycle", f"form /{name} references an ancestor (cycle)")
         table = self._interp.table
-        content = _decode_stream(table, stream)
+        content = self._interp.decode_form(stream, ref_key)
         if isinstance(content, SheetRefusal):
             return content
         form_matrix = _IDENTITY
@@ -904,7 +1061,15 @@ class _StreamRun:
         if form_res is _ABSENT:
             form_res = self._resources
         new_stack = self._stack | ({ref_key} if ref_key is not None else set())
-        result = self._interp.interpret(content, form_res, form_ctm, self._depth + 1, new_stack)
+        result = self._interp.interpret(
+            content,
+            form_res,
+            form_ctm,
+            self._depth + 1,
+            new_stack,
+            font_size=self._font_size,
+            leading=self._leading,
+        )
         return result if isinstance(result, SheetRefusal) else None
 
 
