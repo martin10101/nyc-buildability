@@ -51,11 +51,11 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T15:34:45.826847+00:00",
-  "updated_at": "2026-09-24T15:35:13.098286+00:00",
+  "updated_at": "2026-09-24T15:56:02.856207+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -89,6 +89,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Claimed at the wave-5 contract seam 64fce622; worktree C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t160 created at the claim-seam commit; orchestrator-dispatched subagent producer follows."
+    },
+    {
+      "at": "2026-09-24T15:56:02.856207+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Producer returned NEEDS_SPLIT: commit 28878be2 on task/M0-T160-source-binding-repin (wt-m0t160; parent 2e0b2351) re-pins source_binding.json to a3f24ff3 (3 identity fields + 1 authority clause, git-plumbing verified) - NOT harvested. AS-3 is unsatisfiable in scope: test_runbook_parse.ps1 hardcodes pinnedSha 3f4cee86 and the runbook section 4 names 3f4cee86; the test is already RED at HEAD (orchestrator-observed: 1 assertion failure, DB-063). Successor: re-scope to the 3-file lockstep (G0 re-record + re-claim), rework producer, run run_ps_tests.ps1 from the main session at harvest."
     }
   ]
 }
