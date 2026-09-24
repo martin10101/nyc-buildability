@@ -1,6 +1,6 @@
 {
  "task_id": "M5-T074",
- "material_commit": "the wt-m5t074 in-wt commit cherry-picked onto the seq-126 chain (2 files, MATCH x2 LF-normalized; +381/-4, test file additions-only). CI backstop rides the next push.",
+ "material_commit": "ea2cdb65dfb2fa64c5312042f742a0abc73b23b4 [ORCH-CORRECTED per M5-T074-G3 F5: literal sha replaces prose - was 'the wt-m5t074 in-wt commit cherry-picked onto the seq-126 chain (2 files, MATCH x2 LF-normalized; +381/-4, test file additions-only). CI backstop rides the next push.']",
  "produced_at": "2026-09-23T06:25:00+00:00",
  "producer": "qa-engineer (loop-3 worker, run persistent3-local-18-m5t074; cycle_closed clean close; 11 stale asks denied at harvest; the orchestrator ran the scoped commands - ruff clean, 42 passed)",
  "requirements": {
