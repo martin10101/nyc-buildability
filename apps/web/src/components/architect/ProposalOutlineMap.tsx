@@ -66,6 +66,32 @@ export function finitePointCount(points: DrawnPoint[]): number {
   return points.filter(isDrawnPointFinite).length;
 }
 
+/** Name the ordinate(s) a drawn point still lacks: "longitude", "latitude",
+ * "longitude and latitude", or "" when both are present (M5-T071 G3 F7, HJ-7).
+ * This answers WHICH ordinate is absent — a different question from the pair
+ * predicate `isDrawnPointFinite`, which alone decides whether a row is complete
+ * (drawn, counted, sent). Shared by the row markers, the convert hint and the
+ * selection copy so a half-typed row is described exactly everywhere. */
+export function missingOrdinateLabel(p: DrawnPoint): string {
+  return [Number.isFinite(p.lng) ? "" : "longitude", Number.isFinite(p.lat) ? "" : "latitude"]
+    .filter((part) => part !== "")
+    .join(" and ");
+}
+
+type MapSurface = "unknown" | "present" | "absent";
+
+/** (c) Map-readiness announcement lifecycle for the ONE status region: armed
+ * ("pending") on each transition of the observed surface, "showing" from the
+ * first status at which a click would PLACE a new point, "done" at the next
+ * status change — so readiness is spoken once, never re-appended to every update. */
+interface ReadyAnnouncement {
+  surface: MapSurface;
+  phase: "pending" | "showing" | "done";
+  base: string;
+}
+
+const READY_SENTENCE = " The lot map is ready to draw on — click it to place points.";
+
 /**
  * Build the map overlay for the drawn points (pure — unit-tested without WebGL).
  * Each rendered Point feature keeps its ORIGINAL point index (so a click hit
@@ -134,7 +160,7 @@ export function ProposalOutlineMap({
   // loading node (lot-outline-loading); anything else is a typed fallback state,
   // where the definite keyboard-only copy is the honest one.
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const [mapSurface, setMapSurface] = useState<"unknown" | "present" | "absent">("unknown");
+  const [mapSurface, setMapSurface] = useState<MapSurface>("unknown");
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
@@ -169,20 +195,60 @@ export function ProposalOutlineMap({
     else onPlace(lngLat);
   };
 
+  // (d)/HJ-7 What a selected, not-yet-drawn row lacks — exact for a half-typed
+  // row ("no latitude yet"), "coordinates" only when both ordinates are missing.
+  const selectedMissing = (selectedPoint ? missingOrdinateLabel(selectedPoint) : "") || "longitude and latitude";
+  const selectedMissingNoun = selectedMissing === "longitude and latitude" ? "coordinates" : selectedMissing;
+
+  // Every clause below is gated on the SAME mapSurface x selection x
+  // selectedIsFinite state (G3-F2 / DB-047(d)): a map gesture is described only
+  // when a clickable map is present, and only the gesture a click would perform.
+  const instructions =
+    mapSurface === "present"
+      ? hasSelection
+        ? selectedIsFinite
+          ? `Point ${selectedIndex} is selected — click the map to move it, or edit it in the table below. Click the point again to deselect.`
+          : // (d) An untyped selected row is not on the map, so a click PLACES it
+            // (never moves a point that isn't drawn), and there is no drawn point
+            // to click again — deselecting happens in the table only.
+            `Point ${selectedIndex} is selected but has no ${selectedMissingNoun} yet — click the map to place it, or type its ${selectedMissing} in the table below. Use its Deselect button in the table to clear the selection.`
+        : "Click the lot map to place a proposed outline point, or add points by keyboard in the table below. Click a placed point to select it."
+      : mapSurface === "unknown"
+        ? "Preparing the reference map — you can start adding points by keyboard in the table below; enter each point's longitude and latitude."
+        : "Add proposed outline points by keyboard in the table below — enter each point's longitude and latitude. The reference map on this lot has no interactive drawing surface.";
+
+  const countSentence =
+    drawnCount === 0 ? "No points drawn yet." : `${drawnCount} point${drawnCount === 1 ? "" : "s"} drawn.`;
+  const selectionSentence = !hasSelection
+    ? ""
+    : selectedIsFinite
+      ? ` Point ${selectedIndex} selected.`
+      : mapSurface === "present"
+        ? ` Point ${selectedIndex} selected — it has no ${selectedMissingNoun} yet, so a map click will place it.`
+        : ` Point ${selectedIndex} selected — it has no ${selectedMissingNoun} yet; type its ${selectedMissing} in the table.`;
+  const statusBase = `${countSentence}${selectionSentence}`;
+
+  // (c) Readiness is announced ONCE per transition to "present" (G3-A7 /
+  // HJ-3(c)), and only where a click would PLACE a new point — never while a
+  // selected point would be MOVED (G3-F2(ii)). State is adjusted during render
+  // (React's "store information from previous renders" pattern); each branch
+  // lands in a state the others do not re-enter, so this converges at once.
+  const readyApplicable = mapSurface === "present" && !hasSelection;
+  const [ready, setReady] = useState<ReadyAnnouncement>({ surface: "unknown", phase: "pending", base: "" });
+  if (ready.surface !== mapSurface) {
+    setReady({ surface: mapSurface, phase: "pending", base: "" });
+  } else if (ready.phase === "pending" && readyApplicable) {
+    setReady({ surface: mapSurface, phase: "showing", base: statusBase });
+  } else if (ready.phase === "showing" && ready.base !== statusBase) {
+    setReady({ surface: mapSurface, phase: "done", base: "" });
+  }
+  const showReady =
+    readyApplicable && ready.surface === mapSurface && ready.phase === "showing" && ready.base === statusBase;
+
   return (
     <div className="proposal-outline-map" data-testid="proposal-outline-map" ref={rootRef}>
       <p className="section-note" data-testid="proposal-outline-map-instructions">
-        {mapSurface === "present"
-          ? hasSelection
-            ? selectedIsFinite
-              ? `Point ${selectedIndex} is selected — click the map to move it, or edit it in the table below. Click the point again to deselect.`
-              : // (d) An untyped selected row is not on the map, so a click PLACES
-                // it (never moves a point that isn't drawn). Say "place", not "move".
-                `Point ${selectedIndex} is selected but has no coordinates yet — click the map to place it, or type its longitude and latitude in the table below. Click the point again to deselect.`
-            : "Click the lot map to place a proposed outline point, or add points by keyboard in the table below. Click a placed point to select it."
-          : mapSurface === "unknown"
-            ? "Preparing the reference map — you can start adding points by keyboard in the table below; enter each point's longitude and latitude."
-            : "Add proposed outline points by keyboard in the table below — enter each point's longitude and latitude. The reference map on this lot has no interactive drawing surface."}
+        {instructions}
       </p>
       <LotOutlineMap
         bbl={bbl}
@@ -195,15 +261,11 @@ export function ProposalOutlineMap({
       {/* (c) The map-ready change is announced through THIS one existing status
           region — never a new live region (adding aria-live/role=status/role=alert
           is forbidden). When the leaf's interactive surface appears (mapSurface
-          flips to "present") this text changes and the single region speaks.
+          flips to "present") this text changes once and the single region speaks.
           (d) The selection is named even at zero finite points (an untyped
           selected row used to drop the selection clause entirely). */}
       <p className="visually-hidden" role="status" data-testid="proposal-outline-map-status">
-        {`${drawnCount === 0 ? "No points drawn yet." : `${drawnCount} point${drawnCount === 1 ? "" : "s"} drawn.`}${
-          hasSelection
-            ? ` Point ${selectedIndex} selected${selectedIsFinite ? "" : " — it has no coordinates yet, so a map click will place it"}.`
-            : ""
-        }${mapSurface === "present" ? " The lot map is ready to draw on — click it to place points." : ""}`}
+        {`${statusBase}${showReady ? READY_SENTENCE : ""}`}
       </p>
     </div>
   );

@@ -29,9 +29,24 @@ interface CapturedLotMapProps {
 }
 let lastLotMapProps: CapturedLotMapProps | null = null;
 
+// M5-T078 rework (G3-A5 / G4-A1): the leaf's rendered surface is switchable so
+// the WHOLE drawing section's live-region count can be taken across the
+// loading -> interactive flip. "plain" (the default every earlier spec uses) is
+// the original output: no interactive aria-label and no loading node, so the
+// wrapper classifies it as a typed fallback ("absent").
+const drawLotMock = vi.hoisted(() => ({ variant: "plain" as "plain" | "loading" | "interactive" }));
+
 vi.mock("@/components/address/LotOutlineMap", () => ({
   LotOutlineMap: (props: CapturedLotMapProps) => {
     lastLotMapProps = props;
+    if (drawLotMock.variant === "loading") return <p data-testid="lot-outline-loading">Loading the lot map</p>;
+    if (drawLotMock.variant === "interactive") {
+      return (
+        <div data-testid="mock-lot-map" aria-label="Interactive approximate lot outline map">
+          map {props.bbl}
+        </div>
+      );
+    }
     return <div data-testid="mock-lot-map">map {props.bbl}</div>;
   },
 }));
@@ -121,6 +136,7 @@ function addFinitePoints(n: number): void {
 afterEach(() => {
   cleanup();
   lastLotMapProps = null;
+  drawLotMock.variant = "plain";
 });
 
 describe("ProposalOutlineDraw", () => {
@@ -356,9 +372,14 @@ describe("ProposalOutlineDraw — DB-049 omission disclosure + row markers + key
     const convert = screen.getByTestId("outline-draw-convert");
     expect(convert).toHaveAttribute("aria-disabled", "false");
     const hint = screen.getByTestId("outline-draw-min-hint");
-    expect(hint).toHaveTextContent("Convert will include 3 points");
-    expect(hint).toHaveTextContent("1 row");
-    expect(hint).toHaveTextContent("will not be included");
+    // [M5-T078 rework G3-A2 / HJ-4] plain copy: no "delete it to include it".
+    const omissionHint =
+      "Convert will include 3 points. 1 row is missing its longitude and latitude and will be left out — fill it in to include it, or delete it.";
+    expect(hint.textContent).toBe(omissionHint);
+    // [G3-A4 / HJ-5] a screen-reader user on Convert hears how many rows will be
+    // left out: Convert is described by the hint. MUTATION: dropping
+    // aria-describedby leaves the description "" and reddens here.
+    expect(convert).toHaveAccessibleDescription(omissionHint);
 
     fireEvent.click(convert);
     await screen.findByTestId("outline-draw-bridged");
@@ -367,6 +388,12 @@ describe("ProposalOutlineDraw — DB-049 omission disclosure + row markers + key
     expect(counts).toHaveTextContent("3 points converted");
     expect(counts).toHaveTextContent("1 row");
     expect(counts).toHaveTextContent("not included");
+    // [G3-A4 / HJ-5] the omitted-row clause also joins the announcement (the
+    // result card is not reliably spoken when it mounts). MUTATION: announcing
+    // the bare bridge text reddens here.
+    const announcer = screen.getByTestId("outline-draw-announcer");
+    expect(announcer).toHaveTextContent("Outline converted: 3 points placed in the numeric table");
+    expect(announcer).toHaveTextContent("1 row without both coordinates was not included.");
     // Only the 3 finite points were adopted (the untyped row was never sent).
     expect(onAdopt).toHaveBeenCalledTimes(1);
     expect(onAdopt.mock.calls[0][0]).toHaveLength(3);
@@ -406,12 +433,30 @@ describe("ProposalOutlineDraw — DB-049 omission disclosure + row markers + key
     // Row 3: longitude only → latitude missing, one incomplete row.
     fireEvent.change(screen.getByLabelText("Drawn point 3 longitude"), { target: { value: "-73.9990" } });
     const hint = screen.getByTestId("outline-draw-min-hint");
-    expect(hint).toHaveTextContent("without a latitude");
+    expect(hint.textContent).toBe(
+      "Convert will include 3 points. 1 row is missing its latitude and will be left out — fill it in to include it, or delete it.",
+    );
     expect(hint).not.toHaveTextContent("longitude and latitude");
     expect(screen.getByTestId("outline-draw-row-incomplete-3")).toHaveTextContent("Needs latitude");
   });
 
-  it("AS-4 (e): a not-convertible Convert is aria-disabled and keyboard-reachable; activating it announces the reason and makes NO bridge call", () => {
+  it("G4-F1 (F7 at its ORIGINAL site): the too-few arm names the exact missing ordinate for one half-typed row", () => {
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={stub(bridged200())} />);
+    addFinitePoints(2); // rows 0-1 finite
+    addPoints(1); // row 2
+    // Row 2: longitude only → latitude missing; 2 finite < 3, so the TOO-FEW arm
+    // speaks (the arm M5-T071 G3 F7 found saying "a longitude and latitude").
+    fireEvent.change(screen.getByLabelText("Drawn point 2 longitude"), { target: { value: "-73.9990" } });
+    const hint = screen.getByTestId("outline-draw-min-hint");
+    // MUTATION (G4 S1): the pre-fix blanket "needs a longitude and latitude" reddens both.
+    expect(hint).toHaveTextContent("1 row still needs a latitude");
+    expect(hint).not.toHaveTextContent("longitude and latitude");
+    expect(hint.textContent).toBe(
+      "Convert needs at least 3 points with both coordinates filled in. 1 row still needs a latitude — fill it in or delete it (2 of 3 ready).",
+    );
+  });
+
+  it("AS-4 (e): a not-convertible Convert is aria-disabled and keyboard-reachable; activating it announces the reason and makes NO bridge call", async () => {
     const fetchSpy = vi.fn(async () => bridged200()) as unknown as typeof fetch;
     render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={fetchSpy} />);
     addFinitePoints(2); // only 2 finite → not convertible
@@ -424,7 +469,172 @@ describe("ProposalOutlineDraw — DB-049 omission disclosure + row markers + key
     fireEvent.click(convert);
     // No conversion/bridge call was made …
     expect(fetchSpy).not.toHaveBeenCalled();
-    // … and the reason is announced through the EXISTING announcer region.
-    expect(screen.getByTestId("outline-draw-announcer")).toHaveTextContent("Add 1 more point to convert");
+    // … and the reason is announced through the EXISTING announcer region (set
+    // on a later task after a clear — the G3-A3 clear-then-set).
+    await waitFor(() =>
+      expect(screen.getByTestId("outline-draw-announcer")).toHaveTextContent("Add 1 more point to convert"),
+    );
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("G3-A3 / HJ-6: a REPEATED blocked press re-announces the same reason (clear, then set)", async () => {
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={stub(bridged200())} />);
+    addFinitePoints(2);
+    const convert = screen.getByTestId("outline-draw-convert");
+    const announcer = screen.getByTestId("outline-draw-announcer");
+    const reason = "Add 1 more point to convert — an outline needs at least 3 points (you have 2).";
+    fireEvent.click(convert);
+    await waitFor(() => expect(announcer.textContent).toBe(reason));
+
+    // Record every text the region takes on during the SECOND press.
+    const seen: string[] = [];
+    const observer = new MutationObserver(() => seen.push(announcer.textContent ?? ""));
+    observer.observe(announcer, { childList: true, characterData: true, subtree: true });
+    fireEvent.click(convert);
+    // MUTATION: setting the same string again (no clear) changes nothing in the
+    // DOM, so `seen` stays empty and this wait reddens.
+    await waitFor(() => expect(seen).toContain(reason));
+    observer.disconnect();
+    expect(seen[0]).toBe("");
+  });
+
+  it("AS-3 (whole drawing section, G3-A5 / G4-A1): the map-ready flip speaks through the existing status region and the section's live-region count stays at its baseline", async () => {
+    drawLotMock.variant = "loading";
+    const onAdopt = vi.fn();
+    const fetchImpl = stub(bridged200());
+    const { rerender } = render(<ProposalOutlineDraw bbl={BBL} onAdopt={onAdopt} fetchImpl={fetchImpl} />);
+    const section = screen.getByTestId("proposal-outline-draw");
+    const status = screen.getByTestId("proposal-outline-map-status");
+    const liveRegions = () =>
+      section.querySelectorAll<HTMLElement>('[role="status"], [role="alert"], [aria-live]').length;
+    // Baseline at 0 points (no hint, no outcome card): the announcer + the
+    // wrapper's status region = 2. No premature readiness claim while loading.
+    expect(liveRegions()).toBe(2);
+    expect(status).not.toHaveTextContent("The lot map is ready");
+
+    drawLotMock.variant = "interactive";
+    rerender(<ProposalOutlineDraw bbl={BBL} onAdopt={onAdopt} fetchImpl={fetchImpl} />);
+    await waitFor(() => expect(status).toHaveTextContent("The lot map is ready"));
+    // MUTATION (G4 S6): any new live region anywhere in the section → 3, red.
+    expect(liveRegions()).toBe(2);
+    expect(screen.getByTestId("proposal-outline-map-status")).toBe(status);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// M5-T078 rework (G3-F1 = HJ-1, G4-A3): a blocked Convert press speaks ONLY
+// through the announcer — the outcome card's text comes from the outcome itself,
+// so a press that sent no request can never rewrite the server's refusal — and
+// a press while a conversion is pending never starts a second one.
+// ---------------------------------------------------------------------------
+describe("ProposalOutlineDraw — blocked presses never rewrite the outcome card (M5-T078 rework)", () => {
+  it.each([
+    {
+      kind: "out_of_neighborhood",
+      body: { state: "out_of_neighborhood", message: "outside the lot" },
+      status: 422,
+      testid: "outline-draw-out-of-neighborhood",
+      reason: "a drawn point fell outside the shown lot",
+    },
+    {
+      kind: "feature_unavailable",
+      body: { detail: "Not Found" },
+      status: 404,
+      testid: "outline-draw-feature-unavailable",
+      reason: "Map-drawing conversion is not available in this environment",
+    },
+  ])(
+    "$kind refusal, then delete a point and press Convert: the card keeps the refusal, zero new fetches, the announcer holds the reason",
+    async ({ body, status, testid, reason }) => {
+      const fetchSpy = vi.fn(async () => bridgeResponse(body, status));
+      const onAdopt = vi.fn();
+      render(<ProposalOutlineDraw bbl={BBL} onAdopt={onAdopt} fetchImpl={fetchSpy as unknown as typeof fetch} />);
+      addFinitePoints(3);
+      fireEvent.click(screen.getByTestId("outline-draw-convert"));
+      await screen.findByTestId(testid);
+      const card = screen.getByTestId("outline-draw-status");
+      expect(card).toHaveTextContent(reason);
+      const cardText = card.textContent;
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+      // 2 finite points left → not convertible; the press is blocked.
+      fireEvent.click(screen.getByLabelText("Delete drawn point 2"));
+      const convert = screen.getByTestId("outline-draw-convert");
+      expect(convert).toHaveAttribute("aria-disabled", "true");
+      fireEvent.click(convert);
+
+      // The blocked reason speaks through the announcer …
+      await waitFor(() =>
+        expect(screen.getByTestId("outline-draw-announcer")).toHaveTextContent("Add 1 more point to convert"),
+      );
+      // … zero new fetches …
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      // … and the refusal card is byte-unchanged. MUTATION: the pre-fix card
+      // rendered the shared announcer state, so it read "Add 1 more point…" here.
+      expect(screen.getByTestId("outline-draw-status").textContent).toBe(cardText);
+      expect(screen.getByTestId("outline-draw-status")).not.toHaveTextContent("Add 1 more point");
+      expect(onAdopt).not.toHaveBeenCalled();
+    },
+  );
+
+  it("G4-A3: two clicks while a conversion is pending make exactly ONE fetch and announce 'Conversion is already in progress.'", async () => {
+    let release: (r: Response) => void = () => {};
+    const fetchSpy = vi.fn(() => new Promise<Response>((resolve) => { release = resolve; }));
+    const onAdopt = vi.fn();
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={onAdopt} fetchImpl={fetchSpy as unknown as typeof fetch} />);
+    addFinitePoints(3);
+    const convert = screen.getByTestId("outline-draw-convert");
+
+    fireEvent.click(convert); // starts the conversion (fetch is called before the first await)
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(convert).toHaveTextContent("Converting…");
+    expect(convert).toHaveAttribute("aria-disabled", "true");
+
+    fireEvent.click(convert); // pending → blocked
+    // MUTATION (G4 S4): dropping `&& !converting` from canConvert starts a second
+    // conversion here — two fetches, and this assertion reddens.
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    await waitFor(() =>
+      expect(screen.getByTestId("outline-draw-announcer")).toHaveTextContent("Conversion is already in progress."),
+    );
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      release(bridged200());
+    });
+    await screen.findByTestId("outline-draw-bridged");
+    expect(onAdopt).toHaveBeenCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("G3-F1: a press during a NEW conversion after a refusal leaves the refusal card's text unchanged", async () => {
+    let release: (r: Response) => void = () => {};
+    const fetchSpy = vi
+      .fn()
+      .mockImplementationOnce(async () => bridgeResponse({ detail: "Not Found" }, 404))
+      .mockImplementationOnce(() => new Promise<Response>((resolve) => { release = resolve; }));
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={fetchSpy as unknown as typeof fetch} />);
+    addFinitePoints(3);
+    const convert = screen.getByTestId("outline-draw-convert");
+    fireEvent.click(convert);
+    await screen.findByTestId("outline-draw-feature-unavailable");
+    const cardText = screen.getByTestId("outline-draw-status").textContent;
+    expect(cardText).toContain("Map-drawing conversion is not available in this environment");
+
+    fireEvent.click(convert); // a retry — pending
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    fireEvent.click(convert); // blocked: already in progress
+    await waitFor(() =>
+      expect(screen.getByTestId("outline-draw-announcer")).toHaveTextContent("Conversion is already in progress."),
+    );
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    // MUTATION: the pre-fix card showed the announcer state — blank once the
+    // retry began, then "Conversion is already in progress." — so this reddens.
+    expect(screen.getByTestId("outline-draw-status").textContent).toBe(cardText);
+
+    await act(async () => {
+      release(bridged200());
+    });
+    await screen.findByTestId("outline-draw-bridged");
   });
 });

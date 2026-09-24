@@ -414,3 +414,113 @@ describe("ProposalOutlineMap — an untyped selected row is described truthfully
     await waitFor(() => expect(instr).toHaveTextContent("click the map to move it"));
   });
 });
+
+// ---------------------------------------------------------------------------
+// M5-T078 rework (G3-F2 = G4-F2 = HJ-3 = HJ-7): every status and instruction
+// clause is gated on the SAME mapSurface x selection x selectedIsFinite state —
+// no map gesture is described where no clickable map exists, the readiness
+// sentence never claims a click PLACES while it would MOVE the selected point,
+// readiness is spoken once, and a half-typed row is described exactly.
+// ---------------------------------------------------------------------------
+describe("ProposalOutlineMap — status and instructions gate on map x selection (M5-T078 rework)", () => {
+  const base = { bbl: "1000010010", onPlace: vi.fn(), onSelect: vi.fn(), onMoveSelected: vi.fn() };
+  const FINITE_A = { lng: -73.99, lat: 40.7 };
+  const FINITE_B = { lng: -73.98, lat: 40.7 };
+  const UNTYPED = { lng: Number.NaN, lat: Number.NaN };
+
+  it.each([...FALLBACK_STATES, { key: "loading", testid: "lot-outline-loading" }])(
+    "the $key state: the status never promises a map click or readiness, and an untyped selection gets keyboard wording",
+    async ({ testid }) => {
+      lotMock.variant = testid;
+      const points = [FINITE_A, UNTYPED];
+      const { rerender } = render(<ProposalOutlineMap {...base} points={points} selectedIndex={null} />);
+      const status = await screen.findByTestId("proposal-outline-map-status");
+      await Promise.resolve();
+      // Nothing selected. MUTATION (G4 S3): readiness gated on
+      // `mapSurface !== "unknown"` speaks here in every fallback state → red.
+      expect(status.textContent).toBe("1 point drawn.");
+      expect(status).not.toHaveTextContent("The lot map is ready");
+
+      // The untyped row selected via the table. MUTATION (G3-F2(i)): the pre-fix
+      // ungated " — it has no coordinates yet, so a map click will place it"
+      // clause reddens both the exact text and the "click" negative.
+      rerender(<ProposalOutlineMap {...base} points={points} selectedIndex={1} />);
+      await Promise.resolve();
+      expect(status.textContent).toBe(
+        "1 point drawn. Point 1 selected — it has no coordinates yet; type its longitude and latitude in the table.",
+      );
+      expect(status).not.toHaveTextContent(/click/i);
+      expect(screen.getByTestId("proposal-outline-map-instructions")).not.toHaveTextContent(/click/i);
+    },
+  );
+
+  it("map present + a FINITE point selected: no 'click it to place points' readiness (a click would MOVE it); readiness speaks once a click would place", async () => {
+    const points = [FINITE_A, FINITE_B];
+    const { rerender } = render(<ProposalOutlineMap {...base} points={points} selectedIndex={1} />);
+    const instr = await screen.findByTestId("proposal-outline-map-instructions");
+    await waitFor(() => expect(instr).toHaveTextContent("click the map to move it")); // the map is present
+    const status = screen.getByTestId("proposal-outline-map-status");
+    // MUTATION (G3-F2(ii)): the pre-fix status appended the place-points
+    // readiness sentence here, where a click MOVES point 1 → red.
+    expect(status.textContent).toBe("2 points drawn. Point 1 selected.");
+
+    // Deselected: a click would now PLACE, so readiness is announced (once).
+    rerender(<ProposalOutlineMap {...base} points={points} selectedIndex={null} />);
+    expect(status.textContent).toBe("2 points drawn. The lot map is ready to draw on — click it to place points.");
+  });
+
+  it("G3-A7 / HJ-3(c): readiness is announced ONCE, on the transition — not re-appended to every later status", async () => {
+    const { rerender } = render(<ProposalOutlineMap {...base} points={[FINITE_A]} selectedIndex={null} />);
+    const status = await screen.findByTestId("proposal-outline-map-status");
+    await waitFor(() =>
+      expect(status.textContent).toBe("1 point drawn. The lot map is ready to draw on — click it to place points."),
+    );
+    // MUTATION: the pre-fix suffix rode on every update ("2 points drawn. The lot
+    // map is ready …") → red.
+    rerender(<ProposalOutlineMap {...base} points={[FINITE_A, FINITE_B]} selectedIndex={null} />);
+    expect(status.textContent).toBe("2 points drawn.");
+    // Returning to the earlier text does not re-announce readiness.
+    rerender(<ProposalOutlineMap {...base} points={[FINITE_A]} selectedIndex={null} />);
+    expect(status.textContent).toBe("1 point drawn.");
+
+    // A NEW transition (the surface lost, then back) re-arms it exactly once.
+    lotMock.variant = "lot-outline-render-error";
+    rerender(<ProposalOutlineMap {...base} points={[FINITE_A]} selectedIndex={null} />);
+    await waitFor(() =>
+      expect(screen.getByTestId("proposal-outline-map-instructions")).toHaveTextContent("no interactive drawing surface"),
+    );
+    expect(status.textContent).toBe("1 point drawn.");
+    lotMock.variant = "interactive";
+    rerender(<ProposalOutlineMap {...base} points={[FINITE_A]} selectedIndex={null} />);
+    await waitFor(() =>
+      expect(status.textContent).toBe("1 point drawn. The lot map is ready to draw on — click it to place points."),
+    );
+  });
+
+  it("HJ-7 / G3-F2(iii): an untyped selected row on a present map offers no map-click deselect — the point is not on the map", async () => {
+    render(<ProposalOutlineMap {...base} points={[UNTYPED]} selectedIndex={0} />);
+    const instr = await screen.findByTestId("proposal-outline-map-instructions");
+    await waitFor(() => expect(instr).toHaveTextContent("click the map to place it"));
+    // MUTATION: the pre-fix "Click the point again to deselect." reddens here.
+    expect(instr).not.toHaveTextContent("Click the point again");
+    expect(instr).toHaveTextContent("Use its Deselect button in the table to clear the selection.");
+    expect(screen.getByTestId("proposal-outline-map-status").textContent).toBe(
+      "No points drawn yet. Point 0 selected — it has no coordinates yet, so a map click will place it.",
+    );
+  });
+
+  it("HJ-7: a HALF-typed selected row is described exactly ('no latitude yet'), never 'no coordinates yet'", async () => {
+    render(<ProposalOutlineMap {...base} points={[{ lng: -73.99, lat: Number.NaN }]} selectedIndex={0} />);
+    const instr = await screen.findByTestId("proposal-outline-map-instructions");
+    await waitFor(() => expect(instr).toHaveTextContent("click the map to place it"));
+    // MUTATION: the pre-fix blanket "has no coordinates yet … type its longitude
+    // and latitude" reddens every assertion below.
+    expect(instr.textContent).toBe(
+      "Point 0 is selected but has no latitude yet — click the map to place it, or type its latitude in the table below. Use its Deselect button in the table to clear the selection.",
+    );
+    expect(instr).not.toHaveTextContent("no coordinates yet");
+    expect(screen.getByTestId("proposal-outline-map-status").textContent).toBe(
+      "No points drawn yet. Point 0 selected — it has no latitude yet, so a map click will place it.",
+    );
+  });
+});

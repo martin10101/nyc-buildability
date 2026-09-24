@@ -542,10 +542,12 @@ describe("LotOutlineMap — additive map-CLICK interaction (M5-T066)", () => {
     await waitFor(() => expect(mocks.addSource).toHaveBeenCalled());
     // Byte-equivalence: the two lot-outline layers install and NO drawn-overlay
     // layer is added when no interaction props are passed. DB-049(h): asserted by
-    // layer-ID presence (and presence-negative), never an exact cross-render tally.
+    // layer-ID SET equality (and presence-negative), never an exact cross-render
+    // tally. [M5-T078 rework G4-A5] The set keeps the title's "only": a stray
+    // extra layer of any id reddens, while a legitimate whole-map rebuild (which
+    // re-adds the same two ids) still passes.
     const ids = addedLayerIds();
-    expect(ids).toContain("lot-outline-fill");
-    expect(ids).toContain("lot-outline-line");
+    expect(new Set(ids)).toEqual(new Set(["lot-outline-fill", "lot-outline-line"]));
     expect(ids).not.toContain("proposal-drawn-outline-line");
     expect(ids).not.toContain("proposal-drawn-outline-points");
     expect(mocks.state.clickListeners).toHaveLength(0);
