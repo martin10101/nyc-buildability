@@ -51,12 +51,12 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T10:38:22.921860+00:00",
-  "updated_at": "2026-09-24T10:42:02.034774+00:00",
+  "updated_at": "2026-09-24T10:43:47.586389+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -76,5 +76,15 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-09-24T10:38:22.921860+00:00",
-  "documented_test_commands": []
+  "documented_test_commands": [],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t093",
+  "progress_log": [
+    {
+      "at": "2026-09-24T10:43:47.586389+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Claimed at the wave-3 claim seam (the claim itself is recorded one commit after bfe60461, whose message said 'claimed' before the claim ran - a scripting error, corrected here); orchestrator-dispatched subagent producer in the isolated worktree C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t093."
+    }
+  ]
 }
