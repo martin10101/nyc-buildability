@@ -5,11 +5,14 @@ import { OutcomeAnnouncer } from "@/components/property/OutcomeAnnouncer";
 import {
   announcementForMaxEnvelope,
   candidateIsAdoptable,
+  dimensionRowKind,
   envelopeAggregateIsComplete,
   envelopeHasConflictAdvisory,
+  envelopeHasContractViolation,
   fetchMaxEnvelope,
   maxEnvelopeOutcomeIsRecoverable,
   type EnvelopeDimensionView,
+  type EnvelopeGapReason,
   type EnvelopeView,
   type MaxEnvelopeOutcome,
   type MaxEnvelopeRequest,
@@ -48,31 +51,40 @@ function dimensionValueLabel(d: EnvelopeDimensionView): string {
   return d.unit && d.unit !== "" ? `${d.bindingValue} ${d.unit}` : `${d.bindingValue}`;
 }
 
-// [ORCH-CORRECTED per T070 G3-F3/G4-F3] The server emits gap_reason as one of four
-// machine tokens (EnvelopeGapReason, max_envelope.py:132-146); the analyst-facing
-// headline maps each to plain copy. An unrecognized token renders verbatim
-// (fail-honest — never invented copy); the server's human-prose `detail` stays
-// rendered below unchanged.
-const GAP_REASON_COPY: Record<string, string> = {
+// [ORCH-CORRECTED per T070 G3-F3/G4-F3; DB-050(m)] The server emits gap_reason as
+// one of the four EnvelopeGapReason machine tokens (max_envelope.py:132-146); the
+// analyst-facing headline maps each to plain copy. Typed as an EXHAUSTIVE
+// `Record<EnvelopeGapReason, string>`, so if the server enum ever grows a token,
+// this literal fails to compile until its analyst copy is added — the map can never
+// silently drift out of the server vocabulary. An unrecognized RUNTIME token (a
+// malformed/hostile server) renders verbatim (fail-honest — never invented copy);
+// the server's human-prose `detail` stays rendered below unchanged.
+export const GAP_REASON_COPY: Record<EnvelopeGapReason, string> = {
   no_applicable_rule: "no applicable rule was found for this dimension",
   allowance_unresolved: "the governing allowance could not be resolved",
   family_unsupported: "this rule family is not supported by the engine yet",
   non_commensurable_with_massing: "the rule does not translate to this massing dimension",
 };
 
-function gapReasonCopy(token: string | null): string {
+// [ORCH-CORRECTED per SEC F1] Own-property guard: a hostile/corrupt server token
+// like "__proto__" or "constructor" must render as its literal text (fail-honest),
+// never resolve through Object.prototype into a non-string React child that crashes
+// the whole property page through the route error boundary. hasOwnProperty is false
+// for prototype keys, so the guard narrows to a REAL EnvelopeGapReason key.
+function isKnownGapReason(token: string): token is EnvelopeGapReason {
+  return Object.prototype.hasOwnProperty.call(GAP_REASON_COPY, token);
+}
+
+export function gapReasonCopy(token: string | null): string {
   if (token === null || token === "") return "the reason was not stated";
-  // [ORCH-CORRECTED per SEC F1] Own-property guard: a hostile/corrupt server token
-  // like "__proto__" or "constructor" must render as its literal text (fail-honest),
-  // never resolve through Object.prototype into a non-string React child that
-  // crashes the whole property page through the route error boundary.
-  return Object.prototype.hasOwnProperty.call(GAP_REASON_COPY, token)
-    ? GAP_REASON_COPY[token]
-    : token;
+  return isKnownGapReason(token) ? GAP_REASON_COPY[token] : token;
 }
 
 function DimensionRow({ dimension }: { dimension: EnvelopeDimensionView }) {
-  const isGap = dimension.gapReason !== null;
+  // D-083-R004 XOR: a row is a clean value, an honest gap, or — if the server
+  // response carries BOTH or NEITHER of binding_value/gap_reason — a typed
+  // contract violation that NEVER renders a value (DB-050(d)).
+  const kind = dimensionRowKind(dimension);
   // The ACTUAL server-provided binding-rule citations (section references), not
   // only their count — load-bearing provenance the analyst reads directly.
   const citationSections = dimension.citations
@@ -80,25 +92,32 @@ function DimensionRow({ dimension }: { dimension: EnvelopeDimensionView }) {
     .filter((section): section is string => section !== null && section !== "");
   return (
     <li
-      className={`envelope-dimension${isGap ? " envelope-dimension-gap" : ""}`}
+      className={`envelope-dimension${kind === "value" ? "" : " envelope-dimension-gap"}`}
       data-testid={`envelope-dimension-${dimension.dimensionId}`}
-      data-gap={isGap ? "true" : "false"}
+      data-gap={kind === "gap" ? "true" : "false"}
+      data-row-kind={kind}
     >
       <div className="envelope-dimension-head">
         <span className="envelope-dimension-label">{dimension.label}</span>
-        {isGap ? (
+        {kind === "value" ? (
+          <span className="envelope-dimension-value" data-testid={`envelope-value-${dimension.dimensionId}`}>
+            {dimensionValueLabel(dimension)}
+          </span>
+        ) : kind === "gap" ? (
           <span className="envelope-dimension-gap-reason" data-testid={`envelope-gap-${dimension.dimensionId}`}>
             Could not check — {gapReasonCopy(dimension.gapReason)}
           </span>
         ) : (
-          <span className="envelope-dimension-value" data-testid={`envelope-value-${dimension.dimensionId}`}>
-            {dimensionValueLabel(dimension)}
+          <span
+            className="envelope-dimension-contract-failure"
+            data-testid={`envelope-contract-violation-${dimension.dimensionId}`}
+          >
+            Could not check — this development limit&rsquo;s response broke the binding-or-gap data
+            contract and was withheld.
           </span>
         )}
       </div>
-      {isGap ? (
-        <p className="envelope-dimension-detail">{dimension.detail}</p>
-      ) : (
+      {kind === "value" ? (
         <>
           <p className="envelope-dimension-provenance" data-testid={`envelope-binding-${dimension.dimensionId}`}>
             Binding rule {dimension.bindingRuleId ?? "unknown"}
@@ -116,6 +135,15 @@ function DimensionRow({ dimension }: { dimension: EnvelopeDimensionView }) {
             </p>
           ) : null}
         </>
+      ) : kind === "gap" ? (
+        <p className="envelope-dimension-detail">{dimension.detail}</p>
+      ) : (
+        <p className="envelope-dimension-detail" data-testid={`envelope-contract-detail-${dimension.dimensionId}`}>
+          The engine must return exactly one of a binding value or a typed gap reason for each
+          development limit; this response returned{" "}
+          {dimension.bindingValue !== null ? "both" : "neither"}, so the value is withheld and this
+          preliminary picture stays incomplete.
+        </p>
       )}
       {dimension.conflictAdvisory ? (
         <p
@@ -145,16 +173,20 @@ function EnvelopeBody({
 }) {
   const complete = envelopeAggregateIsComplete(envelope);
   const hasAdvisory = envelopeHasConflictAdvisory(envelope);
+  const hasViolation = envelopeHasContractViolation(envelope);
   const adoptable = candidateIsAdoptable(envelope);
 
   const adopt = useCallback(() => {
     if (!envelope.candidate || !onAdopt) return;
-    const streetWidth = request.lot_rule_facts.street_width_class;
     const draft = draftFromCandidate(envelope.candidate, {
       label: "Generated building option",
       lot_area_sq_ft: request.lot.area_sq_ft,
       zoning_district: request.lot_rule_facts.zoning_district,
-      street_width_class: streetWidth === "wide" || streetWidth === "narrow" ? streetWidth : "",
+      // DB-050(j): street width is SERVER-determined and never inferred in the
+      // client (the answer-first request sends no street width), so the adoption
+      // seed records "not provided" — an unconditional "" here, byte-identical to
+      // the prior always-"" value now that the dead lot_rule_facts read is gone.
+      street_width_class: "",
     });
     onAdopt(draft);
     onAdopted(
@@ -180,6 +212,9 @@ function EnvelopeBody({
             `estimate requiring professional review.`
           : `Could not check ${envelope.summary.gap} of ${envelope.summary.total} development limits` +
             (hasAdvisory ? ", and a rule conflict needs professional review" : "") +
+            (hasViolation
+              ? ", and a development limit response broke the binding-or-gap data contract and was withheld"
+              : "") +
             `. This preliminary picture is incomplete.`}
       </p>
 
@@ -244,7 +279,13 @@ export function MaxEnvelopePanel({ request, fetchImpl, onAdopt }: MaxEnvelopePan
     setLoading(true);
     setAnnouncement("");
     fetchMaxEnvelope(request, { fetchImpl, signal: controller.signal }).then((result) => {
-      if (activeRef.current !== token) return; // superseded
+      if (activeRef.current !== token) return; // superseded by a newer request
+      // DB-050(c): an `aborted` outcome means this request was cancelled (a
+      // supersession or an unmount), never a real result. It must NEVER be stored
+      // as the panel's state — otherwise a request cleared and then re-set would
+      // flash a reasonless failure card (aborted announces ""). The latest
+      // request's own state stays until a REAL outcome replaces it.
+      if (result.kind === "aborted") return;
       setOutcome(result);
       setLoading(false);
       setAnnouncement(announcementForMaxEnvelope(result));

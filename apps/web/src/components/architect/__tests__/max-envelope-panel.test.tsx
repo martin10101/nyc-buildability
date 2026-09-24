@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { readFileSync } from "node:fs";
-import { MaxEnvelopePanel } from "../MaxEnvelopePanel";
-import type { MaxEnvelopeRequest } from "@/lib/architect/max-envelope-api";
+import { GAP_REASON_COPY, MaxEnvelopePanel, gapReasonCopy } from "../MaxEnvelopePanel";
+import { ENVELOPE_GAP_REASONS, type MaxEnvelopeRequest } from "@/lib/architect/max-envelope-api";
 
 /**
  * Task M5-T070 (D-082-R003 + D-083), Preliminary-development-limits panel. The
@@ -271,8 +271,31 @@ describe("MaxEnvelopePanel — additive degradation (AS-6): never a dead surface
   });
 });
 
-describe("MaxEnvelopePanel — claim-class copy wall (AS-2, source grep across the changed web files)", () => {
-  it("no changed panel/lib source asserts an unqualified 'maximum allowed building' or 'demonstrated maximum'", () => {
+/**
+ * DB-050(l): the claim-class copy wall must catch case/hyphen/space variants of the
+ * banned claims (e.g. "Maximum-allowed building"), not only the exact lowercase
+ * phrase. It scans RENDERED copy, so comments (which legitimately DISCUSS the banned
+ * phrases to say the copy never uses them — MaxEnvelopePanel.tsx:33,
+ * max-envelope-api.ts:576) are stripped first; otherwise a negation comment would
+ * false-positive. The strengthened wall still passes on the accepted copy.
+ */
+function strippedSource(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, " ") // block / JSDoc comments
+    .replace(/\/\/[^\n]*/g, " "); // line comments
+}
+function containsBannedClaim(source: string): boolean {
+  // Strip comments, lowercase, then collapse runs of hyphens/whitespace to one space,
+  // so "Maximum-allowed  building" and "maximum allowed building" both normalize to a
+  // single canonical form.
+  const normalized = strippedSource(source).toLowerCase().replace(/[-\s]+/g, " ");
+  return (
+    normalized.includes("maximum allowed building") || normalized.includes("demonstrated maximum")
+  );
+}
+
+describe("MaxEnvelopePanel — claim-class copy wall (AS-2/AS-3, DB-050(l): case/hyphen/space-proof)", () => {
+  it("no changed panel/lib RENDERED copy asserts an unqualified 'maximum allowed building' / 'demonstrated maximum'", () => {
     const files = [
       "../MaxEnvelopePanel.tsx",
       "../../../lib/architect/max-envelope-api.ts",
@@ -283,9 +306,156 @@ describe("MaxEnvelopePanel — claim-class copy wall (AS-2, source grep across t
       "../ProposalEditor.tsx",
     ];
     for (const rel of files) {
-      const source = readFileSync(new URL(rel, import.meta.url), "utf8").toLowerCase();
-      expect(source, rel).not.toContain("maximum allowed building");
-      expect(source, rel).not.toContain("demonstrated maximum");
+      const source = readFileSync(new URL(rel, import.meta.url), "utf8");
+      expect(containsBannedClaim(source), rel).toBe(false);
     }
+  });
+
+  it("HAS TEETH: rejects injected case/hyphen/space variants and comment-free banned copy", () => {
+    // Case + spacing variants and the hyphenated form the old exact-match wall missed.
+    expect(containsBannedClaim("<p>This is the Maximum-allowed building for this lot</p>")).toBe(true);
+    expect(containsBannedClaim("MAXIMUM ALLOWED BUILDING")).toBe(true);
+    expect(containsBannedClaim("the demonstrated   maximum envelope")).toBe(true);
+    expect(containsBannedClaim("the demonstrated-maximum envelope")).toBe(true);
+  });
+
+  it("does NOT flag the accepted claim-class copy, or the phrases when they appear only in comments", () => {
+    // The accepted, honest copy stays clean.
+    expect(containsBannedClaim("Preliminary development limits")).toBe(false);
+    expect(containsBannedClaim("Generated building option")).toBe(false);
+    expect(containsBannedClaim("not a maximum permitted building")).toBe(false);
+    // A negation ABOUT the banned phrase, in a comment, is not rendered copy — exempt.
+    expect(containsBannedClaim("// copy never asserts a maximum-allowed-building claim")).toBe(false);
+    expect(containsBannedClaim("/** never a maximum allowed building */")).toBe(false);
+  });
+});
+
+describe("MaxEnvelopePanel — gap-reason copy map (AS-3, DB-050(m): exhaustive over the server union)", () => {
+  it("maps EVERY server gap-reason token to plain analyst copy (never the raw token)", () => {
+    for (const token of ENVELOPE_GAP_REASONS) {
+      const copy = GAP_REASON_COPY[token];
+      expect(copy, token).toBeTruthy();
+      // The analyst copy is prose, never the raw snake_case machine token.
+      expect(copy, token).not.toBe(token);
+      expect(copy, token).not.toContain("_");
+      // gapReasonCopy resolves the known token to that same copy.
+      expect(gapReasonCopy(token)).toBe(copy);
+    }
+    // Every documented key of the copy map is a known server token (no stray copy).
+    expect(Object.keys(GAP_REASON_COPY).sort()).toEqual([...ENVELOPE_GAP_REASONS].sort());
+  });
+
+  it("renders an UNKNOWN runtime token verbatim (fail-honest) and a missing reason as a stated fallback", () => {
+    expect(gapReasonCopy("some_unmapped_token")).toBe("some_unmapped_token");
+    expect(gapReasonCopy(null)).toBe("the reason was not stated");
+    expect(gapReasonCopy("")).toBe("the reason was not stated");
+  });
+});
+
+describe("MaxEnvelopePanel — binding-or-gap XOR fail-closed (AS-2, DB-050(d), mutation-sensitive)", () => {
+  it("a row carrying BOTH binding_value and gap_reason NEVER renders a value; aggregate stays incomplete", async () => {
+    const body = envelopeBody({
+      dimensions: [
+        // binding_value 20000 AND gap_reason set: a server XOR violation.
+        bindingDimension({ gap_reason: "allowance_unresolved" }),
+        bindingDimension({ dimension_id: "max_height_ft", label: "Maximum height", unit: "ft", binding_value: 60 }),
+      ],
+      summary: { binding: 2, gap: 0, saturating_binding: 0, total: 2 },
+    });
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(body))} />);
+    // The violating row surfaces as a typed contract failure, NEVER a limit value.
+    expect(await screen.findByTestId("envelope-contract-violation-max_far_floor_area")).toHaveTextContent(
+      "broke the binding-or-gap data contract",
+    );
+    expect(screen.queryByTestId("envelope-value-max_far_floor_area")).toBeNull();
+    expect(screen.getByTestId("envelope-contract-detail-max_far_floor_area")).toHaveTextContent("returned both");
+    // The aggregate stays visibly INCOMPLETE even though the server's gap count is 0.
+    const aggregate = screen.getByTestId("envelope-aggregate");
+    expect(aggregate).toHaveAttribute("data-complete", "false");
+    expect(aggregate).toHaveTextContent("binding-or-gap data contract");
+  });
+
+  it("a row carrying NEITHER binding_value nor gap_reason NEVER renders 'null' as a value", async () => {
+    const body = envelopeBody({
+      dimensions: [
+        gapDimension({ gap_reason: null }), // binding_value null AND gap_reason null: NEITHER
+        bindingDimension({ dimension_id: "max_far_floor_area", binding_value: 20000 }),
+      ],
+      summary: { binding: 1, gap: 0, saturating_binding: 0, total: 2 },
+    });
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(body))} />);
+    const violation = await screen.findByTestId("envelope-contract-violation-max_height_ft");
+    expect(violation).toBeInTheDocument();
+    expect(screen.queryByTestId("envelope-value-max_height_ft")).toBeNull();
+    expect(screen.getByTestId("envelope-contract-detail-max_height_ft")).toHaveTextContent("returned neither");
+    expect(screen.getByTestId("envelope-aggregate")).toHaveAttribute("data-complete", "false");
+  });
+});
+
+describe("MaxEnvelopePanel — loading / retry / superseded (AS-1, DB-050(c)/(i))", () => {
+  it("shows the loading card (role=status, aria-busy) while the request is in flight", async () => {
+    // Stays pending until its signal aborts (on unmount), so the panel holds the
+    // loading card during the test and the client's timeout timer is cleared cleanly
+    // on teardown (no dangling timer).
+    const fetchImpl = ((_url: string, init?: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener("abort", () => reject(new DOMException("aborted", "AbortError")));
+      })) as unknown as typeof fetch;
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={fetchImpl} />);
+    const loading = await screen.findByTestId("envelope-loading");
+    expect(loading).toHaveAttribute("aria-busy", "true");
+    expect(loading).toHaveTextContent("Computing the preliminary development limits");
+    expect(screen.queryByTestId("envelope-disclosure")).toBeNull();
+    expect(screen.queryByTestId("envelope-failure")).toBeNull();
+  });
+
+  it("Retry issues EXACTLY ONE new request per click (the reloadNonce guard)", async () => {
+    let calls = 0;
+    const fetchImpl = (async () => {
+      calls += 1;
+      return response({ state: "internal_error", message: "boom" }, 500);
+    }) as unknown as typeof fetch;
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={fetchImpl} />);
+    const retry = await screen.findByTestId("envelope-retry");
+    expect(calls).toBe(1); // the initial request
+    fireEvent.click(retry);
+    await screen.findByTestId("envelope-retry");
+    expect(calls).toBe(2); // exactly one MORE
+    fireEvent.click(await screen.findByTestId("envelope-retry"));
+    await screen.findByTestId("envelope-retry");
+    expect(calls).toBe(3); // one more still — never a double-fetch per click
+  });
+
+  it("a superseded request never overwrites the latest state, and no reasonless card appears (superseded guard)", async () => {
+    let resolveFirst: (r: Response) => void = () => {};
+    const first = new Promise<Response>((res) => {
+      resolveFirst = res;
+    });
+    const queued: Array<Promise<Response>> = [first, Promise.resolve(response(completeBody()))];
+    let i = 0;
+    const fetchImpl = (async () => queued[i++]) as unknown as typeof fetch;
+    const { rerender } = render(<MaxEnvelopePanel request={REQUEST} fetchImpl={fetchImpl} />);
+    // Supersede the still-pending first request with a second that resolves complete.
+    rerender(<MaxEnvelopePanel request={{ ...REQUEST, label: "second request" }} fetchImpl={fetchImpl} />);
+    const aggregate = await screen.findByTestId("envelope-aggregate");
+    expect(aggregate).toHaveAttribute("data-complete", "true");
+    // Now the STALE first request resolves to a 500 failure — it must NOT overwrite
+    // the latest (complete) state, and must not flash a reasonless failure card.
+    await act(async () => {
+      resolveFirst(response({ state: "internal_error", message: "boom" }, 500));
+      // Flush the stale request's remaining hops (json parse + classify + the
+      // panel's .then); the superseded guard drops it, so no state update occurs.
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(screen.queryByTestId("envelope-failure")).toBeNull();
+    expect(screen.getByTestId("envelope-aggregate")).toHaveAttribute("data-complete", "true");
+  });
+
+  it("the failure card always carries a NON-EMPTY reason (never a reasonless card, DB-050(c))", async () => {
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response({ state: "internal_error", message: "boom" }, 500))} />);
+    const failure = await screen.findByTestId("envelope-failure");
+    const reason = failure.querySelector<HTMLParagraphElement>("p");
+    expect(reason).not.toBeNull();
+    expect(reason!.textContent?.trim().length ?? 0).toBeGreaterThan(0);
   });
 });

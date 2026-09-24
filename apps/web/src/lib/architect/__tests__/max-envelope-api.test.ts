@@ -1,14 +1,19 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import {
+  ENVELOPE_GAP_REASONS,
   MAX_ENVELOPE_ROUTE,
   announcementForMaxEnvelope,
   candidateIsAdoptable,
+  dimensionRowKind,
   envelopeAggregateIsComplete,
   envelopeHasConflictAdvisory,
+  envelopeHasContractViolation,
   fetchMaxEnvelope,
   isDocumentedMaxEnvelopePair,
   maxEnvelopeOutcomeIsRecoverable,
   maxEnvelopeRequestForProfile,
+  type EnvelopeDimensionView,
   type EnvelopeView,
   type MaxEnvelopeOutcome,
 } from "@/lib/architect/max-envelope-api";
@@ -400,6 +405,139 @@ describe("maxEnvelopeRequestForProfile — answer-first request assembly (D-083-
   it("returns NULL (degrade to a typed card, never a fabricated limit) when no usable lot area is recorded", () => {
     expect(maxEnvelopeRequestForProfile(profile({ lot_facts: { lotarea: { value: 0 } } }))).toBeNull();
     expect(maxEnvelopeRequestForProfile(profile({ lot_facts: {} }))).toBeNull();
+  });
+});
+
+describe("fetchMaxEnvelope — browser-level modes (DB-050(i): client_timeout, aborted)", () => {
+  it("returns client_timeout when the request exceeds the budget (never a hang, never `aborted`)", async () => {
+    // A fetch that only settles when its signal aborts: the internal timeout fires,
+    // aborts the controller, and the timed-out branch classifies it as client_timeout.
+    const fetchImpl = ((_url: string, init?: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener("abort", () => reject(new DOMException("aborted", "AbortError")));
+      })) as unknown as typeof fetch;
+    const outcome = await fetchMaxEnvelope(
+      { lot: { area_sq_ft: 8000, area_provenance: { source_id: "x" }, lot_line_segments: [], street_lines: [] }, lot_rule_facts: {} },
+      { fetchImpl, timeoutMs: 5 },
+    );
+    // MUTATION: dropping the `if (timedOut)` branch reddens this — it would misclassify
+    // a timeout as `aborted`.
+    expect(outcome).toEqual({ kind: "client_timeout", timeoutMs: 5 });
+  });
+
+  it("returns `aborted` WITHOUT any fetch when the caller signal is already aborted (a superseded request)", async () => {
+    const controller = new AbortController();
+    controller.abort();
+    let called = false;
+    const fetchImpl = (async () => {
+      called = true;
+      return envelopeResponse(envelopeBody(), 200);
+    }) as unknown as typeof fetch;
+    const outcome = await fetchMaxEnvelope(
+      { lot: { area_sq_ft: 8000, area_provenance: { source_id: "x" }, lot_line_segments: [], street_lines: [] }, lot_rule_facts: {} },
+      { fetchImpl, signal: controller.signal },
+    );
+    // MUTATION: dropping the pre-flight `externalSignal.aborted` check reddens this —
+    // it would fire a network request for an already-superseded panel state.
+    expect(outcome).toEqual({ kind: "aborted" });
+    expect(called).toBe(false);
+  });
+});
+
+describe("dimensionRowKind — binding-or-gap XOR classifier (D-083-R004, DB-050(d), mutation-sensitive)", () => {
+  function dimOf(bindingValue: number | null, gapReason: string | null): EnvelopeDimensionView {
+    // A deliberate minimal shape: dimensionRowKind reads only these two fields.
+    return { bindingValue, gapReason } as unknown as EnvelopeDimensionView;
+  }
+
+  it("classifies a value-only row as `value` and a gap-only row as `gap`", () => {
+    expect(dimensionRowKind(dimOf(20000, null))).toBe("value");
+    expect(dimensionRowKind(dimOf(null, "allowance_unresolved"))).toBe("gap");
+  });
+
+  it("classifies BOTH-set and NEITHER-set rows as `contract_violation` (never a value)", () => {
+    // MUTATION: removing the `hasValue === hasGap` XOR branch collapses both of these
+    // to "value"/"gap" and reddens this spec — a null would then render as a limit.
+    expect(dimensionRowKind(dimOf(20000, "allowance_unresolved"))).toBe("contract_violation");
+    expect(dimensionRowKind(dimOf(null, null))).toBe("contract_violation");
+  });
+
+  it("a BOTH/NEITHER row keeps the aggregate INCOMPLETE even with the server's gap count 0", async () => {
+    const both = envelopeOf(
+      await run(
+        envelopeResponse(
+          completeBody({
+            dimensions: [
+              // binding_value AND gap_reason both set: a server XOR violation.
+              bindingDimension({ gap_reason: "allowance_unresolved" }),
+              bindingDimension({ dimension_id: "max_height_ft", label: "Maximum height", unit: "ft", binding_value: 60 }),
+            ],
+            summary: { binding: 2, gap: 0, saturating_binding: 0, total: 2 },
+          }),
+          200,
+        ),
+      ),
+    );
+    expect(both.summary.gap).toBe(0);
+    expect(envelopeHasContractViolation(both)).toBe(true);
+    // MUTATION: dropping the violation term from envelopeAggregateIsComplete reddens
+    // this — gap 0 + no advisory would falsely read as complete.
+    expect(envelopeAggregateIsComplete(both)).toBe(false);
+
+    const neither = envelopeOf(
+      await run(
+        envelopeResponse(
+          completeBody({
+            dimensions: [
+              gapDimension({ gap_reason: null }), // binding_value null AND gap_reason null: NEITHER
+              bindingDimension({ dimension_id: "max_height_ft", label: "Maximum height", unit: "ft", binding_value: 60 }),
+            ],
+            summary: { binding: 1, gap: 0, saturating_binding: 0, total: 2 },
+          }),
+          200,
+        ),
+      ),
+    );
+    expect(envelopeHasContractViolation(neither)).toBe(true);
+    expect(envelopeAggregateIsComplete(neither)).toBe(false);
+  });
+});
+
+describe("no client-side CRS math in the panel and client modules (DB-050(f), AS-3)", () => {
+  const files = [
+    "../../../components/architect/MaxEnvelopePanel.tsx",
+    "../max-envelope-api.ts",
+    "../proposal-draft.ts",
+  ];
+  // Import-/call-level markers of an ACTUAL coordinate-reference transform. Deliberately
+  // NOT the bare word "transform" (these modules' own comments state a transform must
+  // NOT exist), so the guard is comment-safe and reddens ONLY when a real projection
+  // library or transform call is injected (AS-3).
+  const bannedMarkers: Array<[string, RegExp]> = [
+    ["proj4", /\bproj4\b/i],
+    ["reproject", /reproject/i],
+    ["fromLonLat(", /\bfromLonLat\s*\(/],
+    ["toLonLat(", /\btoLonLat\s*\(/],
+    ["@turf/", /@turf\//],
+    ["ol/proj import", /["']ol\/proj["']/],
+    ["transformCoordinates", /transformCoordinates/i],
+  ];
+  it.each(files)("%s imports no projection library and defines no CRS transform", (rel) => {
+    const source = readFileSync(new URL(rel, import.meta.url), "utf8");
+    for (const [name, marker] of bannedMarkers) {
+      expect(marker.test(source), `${rel} must contain no CRS transform (${name})`).toBe(false);
+    }
+  });
+});
+
+describe("gap-reason vocabulary mirror (DB-050(m))", () => {
+  it("carries exactly the four server EnvelopeGapReason tokens, in the mirror set", () => {
+    expect([...ENVELOPE_GAP_REASONS]).toEqual([
+      "no_applicable_rule",
+      "allowance_unresolved",
+      "family_unsupported",
+      "non_commensurable_with_massing",
+    ]);
   });
 });
 

@@ -542,34 +542,19 @@ interface SerializedMaxEnvelope {
 }
 
 test("AS-5: the preliminary-development-limits panel leads from the lot context (no geometry sent) and adopts the option into the editor", async ({ page }) => {
-  // Task M5-T070 (D-082-R003 + D-083). The stub asserts the FULL request contract
-  // BEFORE returning the canned as_dict() envelope: a POST carrying the recorded
-  // lot AREA but NO geometry (the answer-first surface sends no lot lines /
-  // street lines and does no client CRS math), so a wrong or missing request can
-  // never be papered over by the response. The route stays UNMOUNTED in the app;
-  // this stub is the T065/T066 contract-proof precedent applied to it.
+  // Task M5-T070 (D-082-R003 + D-083). DB-050(g): the stub CAPTURES the request and
+  // ALWAYS fulfills, then the FULL request contract is asserted EXPLICITLY below —
+  // after the panel consumed the canned as_dict() envelope. A wrong or missing body
+  // therefore fails with a precise assertion diff, NEVER a timeout-only failure (the
+  // former assert-inside-the-handler pattern threw before fulfilling, hanging the page
+  // until the panel wait timed out and masking the real contract mismatch). The route
+  // stays UNMOUNTED in the app; this is the T065/T066 contract-proof precedent applied
+  // to it, hardened so the failure mode is explicit.
+  let capturedMethod: string | null = null;
+  let capturedBody: SerializedMaxEnvelope | null = null;
   await page.route("**/api/v1/max-envelope", async (route) => {
-    const request = route.request();
-    const body = request.postDataJSON() as SerializedMaxEnvelope;
-    expect(request.method(), "the max-envelope must be POSTed").toBe("POST");
-    // The COMPLETE request body, asserted EXACTLY. BBL 1000010100 is served
-    // through the REAL profile builder over the committed official F01 fixture
-    // (services/api/tests/fixtures/pluto/F01_single_lot_normal.json: lotarea
-    // "23121" -> 23121; single zonedist1 "R3-2"), so the answer-first request
-    // carries that exact recorded lot AREA, the fixed provenance source id, the
-    // single-district lot_rule_facts, the BBL label, and NO geometry (display CRS
-    // is never measured; no client CRS math). toEqual is deep + strict, so it also
-    // proves the ABSENCE of any unexpected field, at the top level and inside lot.
-    expect(body).toEqual({
-      lot: {
-        area_sq_ft: 23121,
-        area_provenance: { source_id: "architect_surface_lot_context" },
-        lot_line_segments: [],
-        street_lines: [],
-      },
-      lot_rule_facts: { zoning_district: "R3-2" },
-      label: "BBL 1000010100 preliminary development limits",
-    });
+    capturedMethod = route.request().method();
+    capturedBody = route.request().postDataJSON() as SerializedMaxEnvelope;
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -586,6 +571,30 @@ test("AS-5: the preliminary-development-limits panel leads from the lot context 
   const panel = page.getByTestId("max-envelope-panel");
   await expect(panel.getByRole("heading", { name: "Preliminary development limits" })).toBeVisible();
   await expect(page.getByTestId("envelope-disclosure")).toHaveText(ENVELOPE_DISCLOSURE);
+
+  // The COMPLETE request contract, asserted EXPLICITLY now that the panel has consumed
+  // the response. BBL 1000010100 is served through the REAL profile builder over the
+  // committed official F01 fixture (services/api/tests/fixtures/pluto/
+  // F01_single_lot_normal.json: lotarea "23121" -> 23121; single zonedist1 "R3-2"), so
+  // the answer-first request carries that exact recorded lot AREA, the fixed provenance
+  // source id, the single-district lot_rule_facts, the BBL label, and NO geometry
+  // (display CRS is never measured; no client CRS math). toEqual is deep + strict, so it
+  // also proves the ABSENCE of any unexpected field, at the top level and inside lot. A
+  // mismatch fails HERE with an explicit diff, never a timeout (DB-050(g)).
+  expect(capturedMethod, "the max-envelope must be POSTed").toBe("POST");
+  expect(
+    capturedBody,
+    "the answer-first max-envelope request must match the recorded-lot contract exactly (no geometry, no client CRS math)",
+  ).toEqual({
+    lot: {
+      area_sq_ft: 23121,
+      area_provenance: { source_id: "architect_surface_lot_context" },
+      lot_line_segments: [],
+      street_lines: [],
+    },
+    lot_rule_facts: { zoning_district: "R3-2" },
+    label: "BBL 1000010100 preliminary development limits",
+  });
 
   // Explicit answer-first ORDERING: the limits panel precedes the proposal editor
   // in document order (not merely both present) — the computed limits lead the

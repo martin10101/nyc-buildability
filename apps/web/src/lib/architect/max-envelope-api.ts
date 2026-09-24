@@ -59,6 +59,23 @@ export interface MaxEnvelopeRequest {
 }
 
 // ---------------------------------------------------------------------------
+// Gap-reason vocabulary — the EXACT machine tokens the server's EnvelopeGapReason
+// enum emits (services/api/app/scenario/max_envelope.py :132-146, read-only). Kept
+// here as a CLOSED union so the panel's analyst-copy map is exhaustive AT COMPILE
+// TIME (a `Record<EnvelopeGapReason, string>` fails to compile if a token is added
+// and left uncopied). A server token OUTSIDE this set is never invented copy: the
+// panel renders it verbatim (fail-honest). This is a contract mirror — never
+// guessed; if the server enum grows, this tuple and the copy map move together.
+// ---------------------------------------------------------------------------
+export const ENVELOPE_GAP_REASONS = [
+  "no_applicable_rule",
+  "allowance_unresolved",
+  "family_unsupported",
+  "non_commensurable_with_massing",
+] as const;
+export type EnvelopeGapReason = (typeof ENVELOPE_GAP_REASONS)[number];
+
+// ---------------------------------------------------------------------------
 // Bounded view models — what the panel reads. Every string is already bounded;
 // numbers are verbatim server values (the binding allowance is load-bearing and
 // must NOT be rounded/laundered here).
@@ -556,8 +573,41 @@ export function maxEnvelopeRequestForProfile(profile: PropertyProfile): MaxEnvel
 export function envelopeHasConflictAdvisory(envelope: EnvelopeView): boolean {
   return envelope.dimensions.some((d) => d.conflictAdvisory !== null);
 }
+
+/** The three mutually-exclusive presentation states of one dimension row. */
+export type DimensionRowKind = "value" | "gap" | "contract_violation";
+
+/**
+ * Classify a dimension row under the D-083-R004 BINDING-OR-GAP XOR invariant. The
+ * server contract (max_envelope.py EnvelopeDimensionResult: "Exactly one of
+ * binding_value and gap_reason is set") guarantees exactly one of `bindingValue`
+ * and `gapReason` is present. A row that carries BOTH or NEITHER breaks that
+ * invariant — it MUST NEVER render as a limit value (a NEITHER row would otherwise
+ * render `null` as a number; a BOTH row would launder an untrustworthy value). It
+ * surfaces instead as a typed `contract_violation` that keeps the aggregate visibly
+ * incomplete. This is the mutation-sensitive predicate the panel and its tests key
+ * on: removing the XOR check reddens the both/neither specs.
+ */
+export function dimensionRowKind(d: EnvelopeDimensionView): DimensionRowKind {
+  const hasValue = d.bindingValue !== null;
+  const hasGap = d.gapReason !== null;
+  if (hasValue === hasGap) return "contract_violation"; // both set, or neither set
+  return hasValue ? "value" : "gap";
+}
+
+/** True when ANY dimension breaks the binding-or-gap XOR invariant (D-083-R004).
+ * A contract violation forces the aggregate to stay visibly INCOMPLETE, exactly
+ * like an honest gap or a conflict advisory — no unrestricted "complete" state. */
+export function envelopeHasContractViolation(envelope: EnvelopeView): boolean {
+  return envelope.dimensions.some((d) => dimensionRowKind(d) === "contract_violation");
+}
+
 export function envelopeAggregateIsComplete(envelope: EnvelopeView): boolean {
-  return envelope.summary.gap === 0 && !envelopeHasConflictAdvisory(envelope);
+  return (
+    envelope.summary.gap === 0 &&
+    !envelopeHasConflictAdvisory(envelope) &&
+    !envelopeHasContractViolation(envelope)
+  );
 }
 
 /** Adoption (D-083-R002/AS-4) is offered ONLY for a server-emitted candidate that

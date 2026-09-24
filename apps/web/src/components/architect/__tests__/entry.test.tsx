@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fieldLabel } from "@/lib/format";
 import { baseProfile } from "@/test-support/fixtures";
@@ -14,7 +14,22 @@ vi.mock("next/navigation", () => ({ useSearchParams: () => state.params, useRout
 vi.mock("@/lib/architect/use-property", () => ({ useProperty: () => ({ loading: false, outcome: state.profile ? { kind: "profile", profile: state.profile } : null, retry: vi.fn() }) }));
 vi.mock("@/lib/architect/use-analysis", () => ({ useAnalysis: () => ({ scenario: state.scenario ? { kind: "scenario", document: state.scenario } : null, evaluation: state.evaluation ? { kind: "evaluation", document: state.evaluation } : null, retryScenario: vi.fn(), retryEvaluation: vi.fn() }) }));
 vi.mock("@/components/address/LotOutlineMap", () => ({ LotOutlineMap: () => <div>Map presentation seam</div> }));
-beforeEach(() => { state.profile = baseProfile(); state.evaluation = null; state.scenario = null; state.params = new URLSearchParams(`bbl=${state.profile.identity.bbl}&view=facts`); sessionStorage.clear(); vi.clearAllMocks(); });
+
+// DB-050(h): the Preliminary-development-limits panel mounts on the proposal view and
+// fetches the UNMOUNTED max-envelope route from the lot context. A DEFAULT stub is
+// installed so no test makes an unstubbed max-envelope network call (which added ~5s of
+// suite-time creep and a floating state update); the additive-panel block below overrides
+// it per test. The default returns the real production shape for the unmounted route: a
+// generic 404 → the panel degrades to its typed feature-unavailable card.
+let maxEnvelopeFetch: ReturnType<typeof vi.fn>;
+function featureUnavailableResponse(): Response {
+  // The generic 404 the UNMOUNTED route serves; an explicit numeric Content-Length so
+  // the client's size-bound-before-parse branch runs deterministically (matching the
+  // panel/api suites' own fixtures) and the outcome classifies as feature_unavailable.
+  const text = JSON.stringify({ detail: "Not Found" });
+  return new Response(text, { status: 404, headers: { "Content-Type": "application/json", "Content-Length": String(new TextEncoder().encode(text).length) } });
+}
+beforeEach(() => { state.profile = baseProfile(); state.evaluation = null; state.scenario = null; state.params = new URLSearchParams(`bbl=${state.profile.identity.bbl}&view=facts`); sessionStorage.clear(); vi.clearAllMocks(); maxEnvelopeFetch = vi.fn(async () => featureUnavailableResponse()); vi.stubGlobal("fetch", maxEnvelopeFetch); });
 
 describe("V3 connected report audit", () => {
   it.each(["malformed evaluation", "evaluation mismatch", "evaluation missing BBL", "scenario mismatch", "scenario missing BBL", "both mismatched", "malformed mismatched evaluation"])("prints and restores original evidence for %s", kind => {
@@ -180,12 +195,26 @@ describe("connected architect entry", () => {
     expect(screen.getByRole("heading", { name: "Units is not available in this version" })).toBeInTheDocument();
     expect(screen.queryByTestId("architect-cap")).not.toBeInTheDocument();
   });
-  it("renders the additive proposal-editor view inside the gated architect tree", () => {
+  it("renders the additive proposal-editor view inside the gated architect tree", async () => {
     state.params.set("view", "proposal");
     render(<ArchitectEntry />);
     expect(screen.getByTestId("proposal-editor")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Proposal editor" })).toBeInTheDocument();
     expect(screen.getByTestId("editor-honesty")).toHaveTextContent("not a city record");
+    // The max-envelope panel mounts here; let its STUBBED fetch settle to the typed
+    // feature-unavailable card so there is no floating unstubbed network call (DB-050(h)).
+    await screen.findByTestId("envelope-failure");
+  });
+
+  it("mounts the max-envelope panel through the STUBBED fetch — never an unstubbed network call (DB-050(h))", async () => {
+    state.params.set("view", "proposal");
+    render(<ArchitectEntry />);
+    expect(screen.getByTestId("proposal-editor")).toBeInTheDocument();
+    // The panel's fetch went to the injected stub (not real network), targeting the
+    // max-envelope route; settle the outcome to avoid a floating state update.
+    await waitFor(() => expect(maxEnvelopeFetch).toHaveBeenCalled());
+    expect(String(maxEnvelopeFetch.mock.calls[0][0])).toContain("/api/v1/max-envelope");
+    await screen.findByTestId("envelope-failure");
   });
 });
 
