@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T21:45:20+00:00",
+ "verified_at": "2026-09-24T21:48:51+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1097,6 +1097,60 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies (functools stdlib; GEOSException from admitted shapely; NYC_2263_* in-repo); unwired (no production importer); no route, main.py, cad or web change; the max-envelope route stays unmounted; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 2aeeafc5 (massing_model.py 7c693f51, test_massing_model.py b5bffe2a, M5-T098-producer-report.md 4b8a58bd; identity 8b3db956; evaluate_task_refs ok); report M5-T098-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T097",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R006",
+    "D-087-R007",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "ec2c00c3764ceae10750af24dff3bd01bb4ec904",
+   "reviewed_manifest_sha256": "88431c2d5bd5fe8db88e987e1831f2dd3edd82ca1652a5a1528be329f8eb5a08",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:48:51+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contracted at 64fce622, claimed at 2e0b2351 with the full worktree path; all five required gates recorded; the round-1 G3/G5 FAIL (one root cause: an O(n^2) splitter) went through a recorded rework -> re-freeze -> same-reviewer delta cycle, not a skipped gate. Blob-level restamp predicate re-verified by the orchestrator at the accept head ec2c00c3 (dxf_reader.py 94895927, test_dxf_reader.py 78b4a278, test_dxf_roundtrip.py f301eed4, M5-T097-producer-report.md e6816ad0; identity 88431c2d; evaluate_task_refs ok); report M5-T097-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs every active task; one isolated worktree wt-m5t097; both producer commits touch only the allowed paths (round 2 left the round-trip test unchanged); the M5-T096-owned writer untouched. Blob-level restamp predicate re-verified by the orchestrator at the accept head ec2c00c3 (dxf_reader.py 94895927, test_dxf_reader.py 78b4a278, test_dxf_roundtrip.py f301eed4, M5-T097-producer-report.md e6816ad0; identity 88431c2d; evaluate_task_refs ok); report M5-T097-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the DXF in-path is hardened - a single-pass linear CR/LF/CRLF splitter (ReDoS-free), streaming max_lines/max_line_chars, clamp-down hard ceilings, str-path sentinel + non-ASCII checks, finiteness, bulge and closed-flag rules, INSUNITS 22/23/24 - and the committed writer->reader round trip (the missing R006 harness) reads the accepted writer's site plan back exactly (rings exact and closed, units 21, layers, entity counts, honesty texts). Blob-level restamp predicate re-verified by the orchestrator at the accept head ec2c00c3 (dxf_reader.py 94895927, test_dxf_reader.py 78b4a278, test_dxf_roundtrip.py f301eed4, M5-T097-producer-report.md e6816ad0; identity 88431c2d; evaluate_task_refs ok); report M5-T097-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R007",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (hold honoured): stdlib-only imports; the module docstring keeps native DWG an owner decision; no DWG library, no lockfile change. Blob-level restamp predicate re-verified by the orchestrator at the accept head ec2c00c3 (dxf_reader.py 94895927, test_dxf_reader.py 78b4a278, test_dxf_roundtrip.py f301eed4, M5-T097-producer-report.md e6816ad0; identity 88431c2d; evaluate_task_refs ok); report M5-T097-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies; unwired (no production importer of dxf_reader); no route, main.py or web change; the max-envelope route stays unmounted; PR #241 open and unmerged; all gates enforced; modularity and control-plane CI green. Blob-level restamp predicate re-verified by the orchestrator at the accept head ec2c00c3 (dxf_reader.py 94895927, test_dxf_reader.py 78b4a278, test_dxf_roundtrip.py f301eed4, M5-T097-producer-report.md e6816ad0; identity 88431c2d; evaluate_task_refs ok); report M5-T097-DCV.md."
      ]
     }
    ]

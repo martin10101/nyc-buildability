@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T21:45:20+00:00",
+ "verified_at": "2026-09-24T21:48:51+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1457,6 +1457,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t098): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 825 files / 17656 nodes / 7589 edges) naming the only consumer (its test), the read-only proposal.py dependency being changed in parallel by M5-T095, the forbidden scenario neighbours, and the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head 2aeeafc5 (massing_model.py 7c693f51, test_massing_model.py b5bffe2a, M5-T098-producer-report.md 4b8a58bd; identity 8b3db956; evaluate_task_refs ok); report M5-T098-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T097",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "ec2c00c3764ceae10750af24dff3bd01bb4ec904",
+   "reviewed_manifest_sha256": "88431c2d5bd5fe8db88e987e1831f2dd3edd82ca1652a5a1528be329f8eb5a08",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:48:51+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t097): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 825 files / 17656 nodes / 7589 edges) naming the reader's only consumer (its test), the read-only writer owned by M5-T096 and the sheet_* files owned by M5-T094, and the query.py --no-regen instruction; the verifier reproduced the no-production-importer fact. Blob-level restamp predicate re-verified by the orchestrator at the accept head ec2c00c3 (dxf_reader.py 94895927, test_dxf_reader.py 78b4a278, test_dxf_roundtrip.py f301eed4, M5-T097-producer-report.md e6816ad0; identity 88431c2d; evaluate_task_refs ok); report M5-T097-DCV.md."
      ]
     }
    ]

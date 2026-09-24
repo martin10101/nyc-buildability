@@ -69,12 +69,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T15:34:43.225421+00:00",
-  "updated_at": "2026-09-24T21:23:44.764444+00:00",
+  "updated_at": "2026-09-24T21:48:59.544075+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -123,5 +123,7 @@
       "status": "in_progress",
       "message": "Rework harvested: 218ff7ce cherry-picked to e04c2b5b (3 files MATCH); checks green; resubmitting."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-24T21:48:59.544075+00:00"
 }
