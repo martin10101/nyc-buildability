@@ -22,7 +22,7 @@ from tools.agent_supervisor import native_runtime as nr
 from tools.agent_supervisor import runtime_backend as rb
 
 FIXTURES = Path(__file__).parent / "agent_supervisor" / "fixtures"
-DETECTION_FIXTURE = FIXTURES / "native_runtime_detection_2026-09-01_m0t132.json"
+DETECTION_FIXTURE = FIXTURES / "native_runtime_detection_2026-09-24_m0t159.json"
 AGENTS_FIXTURE = FIXTURES / "agents_listing_2026-08-27_m0t104.json"
 AGENTS_ALL_FIXTURE = FIXTURES / "agents_listing_all_2026-08-27_m0t104.json"
 
@@ -663,12 +663,13 @@ def agents_all_listing() -> dict:
 
 
 def test_committed_detection_fixture_shape(detection):
-    # M0-T132 re-capture (D-024 Amendment 34): deliberate 2.1.252 admission
-    # re-probed live; every flag/verb classification identical to 2.1.251
-    # (benign patch bump); the m0t118 (2.1.251) fixture stays committed as history.
+    # M0-T159 re-capture (B-026 remedy; runbook section 13 / R287): deliberate
+    # 2.1.281 admission (the D-085-R002 CLI update) re-probed live; every flag/verb
+    # classification identical to 2.1.252 (version-only drift); the m0t132 (2.1.252)
+    # fixture stays committed as history.
     assert detection["schema"] == "native_runtime_detection/v1"
-    assert detection["task"] == "M0-T132"          # G3 ADV-1
-    assert detection["claude_version"] == "2.1.252 (Claude Code)"
+    assert detection["task"] == "M0-T159"          # G3 ADV-1
+    assert detection["claude_version"] == "2.1.281 (Claude Code)"
     assert detection["background_gaps"] == []
     for verb in nr.BACKGROUND_VERBS:
         assert detection["verbs"][verb] == "supported"
