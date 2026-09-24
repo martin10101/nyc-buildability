@@ -190,11 +190,18 @@ downloadable DXF, PDF site plan, or GLB, via the accepted writers. Built in two 
   enum ∈ {`dxf`,`pdf`,`glb`}. Geometry is validated against the writer whose caps are tightest for that
   format (PDF ring 1024 < DXF 10_000; the service refuses over the applicable cap, never silently
   truncates). Floors ≤ 2000. Every caller text field (address, bbl, generator_version) is length-capped
-  BEFORE it reaches a writer (DB-059 (a); DB-053 (c) title-block screen).
+  BEFORE it reaches a writer (DB-059 (a); DB-053 (c) title-block screen). The writer-side DB-059 (a) fix
+  itself lands in PKT-B1; this service cap is defense in depth [ORCH-CORRECTED per M5-T099 G3 advisory 2].
 - **Response types + Content-Disposition.** DXF: `Content-Type: image/vnd.dxf`,
-  `Content-Disposition: attachment; filename="site-plan-<bbl>-<generated_at>.dxf"`, body = ASCII DXF text.
+  `Content-Disposition: attachment; filename="site-plan-<token>.dxf"`, body = ASCII DXF text.
   PDF: `application/pdf`, attachment `.pdf`. GLB: `model/gltf-binary` (`glb_writer.GLB_MEDIA_TYPE`),
   attachment `.glb`. Every non-disabled response carries a server-generated `X-Correlation-ID`.
+- **Filename safety — MANDATORY PKT-D acceptance criterion [ORCH-CORRECTED per M5-T099 G5 F1].** `<token>`
+  is built SERVER-SIDE from an allowlist: only `[A-Za-z0-9._-]` survives (every CR/LF, quote, `;` and any
+  other character is dropped), length-capped, derived from the validated bbl and the deterministic
+  `generated_at`. Raw caller text NEVER reaches a response-header value. Any non-ASCII rendering uses the
+  RFC 6266 / RFC 5987 `filename*=UTF-8''…` form alongside the ASCII `filename`. A test proves that a
+  caller value carrying `"`, `;`, CR/LF or non-ASCII cannot break, split or spoof the header.
 - **Typed refusals.** One uniform refusal JSON `{reject_code, detail}` at the service boundary that
   surfaces each writer's own code: DXF `DxfValidationError.code`, PDF `SitePlanRefusal.reject_code`, GLB
   `REFUSAL_CODES`. The service RECONCILES the GLB writer (raises) against the PDF writer (returns a value)
@@ -209,7 +216,9 @@ downloadable DXF, PDF site plan, or GLB, via the accepted writers. Built in two 
   building" / "demonstrated maximum". The shared claim-word screen (PKT-A) bars those words in any
   caller-supplied name or title-block string, using a separator-collapsing key so `As_of_right` /
   `Maximum_allowed` cannot slip through (DB-059 (b)).
-- **Time & size budgets.** A per-request wall-clock deadline; output caps enforced by the writers
+- **Time & size budgets.** A per-request wall-clock deadline, enforced by running the writer OFF the event
+  loop in a cancellable job, plus a per-caller RATE LIMIT at the route — DB-061 (i), the M5-T088 G5 fix (b),
+  still REQUIRED even with the in-process bounds [ORCH-CORRECTED per M5-T099 G3 B1]; output caps enforced by the writers
   (DXF `MAX_ENTITIES` 50_000; GLB 500_000 verts / 1_500_000 indices / uint32 total; PDF ring 1024).
   Over budget -> a typed refusal, never a partial file. Cap the RAW caller input length before
   normalization (DB-057 (d); `dxf_writer._normalize_ring` coerces to a list before the edge cap) and
@@ -236,12 +245,13 @@ payload the web viewer draws and never becomes the source of.
   `massing_model._local_origin` / `_crs_frame` (`world_to_local = subtract_local_origin`). The GLB path
   is already in local metres via `glb_writer.AXIS_MAPPING` + `US_SURVEY_FOOT_TO_METRE = 1200/3937`. Make
   the vertical unit explicit in the payload (DB-054 (k)).
-- **Refusals / honesty / logging / escaping.** Same discipline as §2. MultiPolygon footprints with
+- **Refusals / honesty / logging / escaping.** Same discipline as §2, including the off-event-loop
+  cancellable job, the per-request deadline and the rate limit (DB-061 (i)) [ORCH-CORRECTED per M5-T099 G3 B1]. MultiPolygon footprints with
   courtyard holes are DISCLOSED or REFUSED, never silently dropped (DB-053 (g); the massing prism builder
   takes one ring). Coincident stacked-prism interface caps are deduped or disclosed for GLB export
   (DB-054 (m)).
 - **No live exposure.** Both route modules ship UNMOUNTED (asserted absent from OpenAPI); nothing here
-  reaches `app/main.py` until PKT-F.
+  reaches `app/main.py` until PKT-H (the mount packet) [label ORCH-CORRECTED per M5-T099 G5 F4].
 
 ---
 
@@ -266,6 +276,12 @@ separation and visual/math/perf/a11y/human-journey evidence are G3/G4 evidence (
 - **Non-visual text alternative.** A keyboard-accessible, announced text panel listing the SAME numbers
   the model shows — parcel bbl, building-option label, floor count, floor-to-floor heights, footprint
   area, context-building count — so the 3D canvas is not the only source of the facts.
+- **CSP + external resources [ORCH-CORRECTED per M5-T099 G5 F3].** PKT-I names the viewer route's
+  Content-Security-Policy (`script-src`, `worker-src`, and a `connect-src` limited to the app's own API
+  origin). Server GLBs are self-contained (one embedded binary buffer; no external buffer or texture URIs),
+  and the viewer configures `GLTFLoader` so it never fetches an external resource. Option 1 in §3.1 brings a
+  WASM physics engine whose use would need a `wasm-unsafe-eval` CSP relaxation — an input to the PKT-G
+  owner decision.
 - **Print behaviour.** A WebGL canvas does not print reliably; the print path shows the text alternative
   plus the accepted PDF site plan (from the export route), not a blank canvas.
 - **CI-only web testing.** No local npm/npx/node (thin client; `.claude/rules/CODING_RULES.md`). vitest +
@@ -287,7 +303,8 @@ separation and visual/math/perf/a11y/human-journey evidence are G3/G4 evidence (
   - CON: it pulls about six runtime dependencies INCLUDING a WASM physics engine
     (`@dimforge/rapier3d-compat`) that our use does not need (DB-062 (a)); larger supply-chain surface;
     every lock regeneration must re-verify the floating `@types/webxr '*'` range through the age gate
-    and audit (DB-062 (d)).
+    and audit (DB-062 (d)); if that WASM were ever loaded it would need a `wasm-unsafe-eval` CSP
+    relaxation (§3) [ORCH-CORRECTED per M5-T099 G5 F3].
 - **Option 2 — a reviewed LOCAL declaration file** (`.d.ts`) covering ONLY the three API surface we use
   (Scene, PerspectiveCamera, WebGLRenderer, BufferGeometry, Mesh, GLTFLoader, a few materials).
   - PRO: zero new dependencies; no WASM; minimal supply-chain surface; exact-scoped to what we import.
@@ -306,12 +323,20 @@ The orchestrator records the owner's ruling in PKT-G, then contracts either the 
   reading of R008. The owner-openable sample DXF/PDF/GLB + plain-English README (in-flight M5-T096) is the
   documented AutoCAD-open check that closes D-087-R004's owner-check requirement; the committed
   writer->reader round trip (in-flight M5-T097) closes D-087-R006's round-trip requirement.
-- **Import side (FUTURE — PKT-E).** An architect's DXF -> `read_dxf` (accepted; hardened by M5-T097) reads
-  the strict subset (LINE / LWPOLYLINE / POLYLINE / 3DFACE / TEXT) -> PKT-E maps closed rings to a
+- **Import side (FUTURE — PKT-F) [label ORCH-CORRECTED per M5-T099 G5 F4].** An architect's DXF -> `read_dxf` (accepted; hardened by M5-T097) reads
+  the strict subset (LINE / LWPOLYLINE / POLYLINE / 3DFACE / TEXT) -> PKT-F maps closed rings to a
   `proposed_massing` DRAFT and runs it through the SAME `validate_proposed_massing` contract. C-track
   honesty binds (D-087-R005): the USER confirms which polylines are building outline / property line /
   street frontage; units are confirmed against a known dimension; discrepancies are shown, never
   auto-reconciled; nothing is labelled a city record.
+- **Import parse-time controls — PKT-F acceptance criteria [ORCH-CORRECTED per M5-T099 G5 F2(b)-(e)].**
+  (b) A raw HTTP upload ceiling enforced by the accepted T053 bounded-streaming primitives BEFORE the body is
+  materialized (the `DxfLimits` clamp fires only inside `read_dxf`, after buffering). (c) The parse runs OFF
+  the event loop in a cancellable job under a per-request wall-clock deadline, with the route's rate limit
+  (DB-061 (i)). (d) A content-type + magic-byte check on the upload (ASCII DXF only; the binary-DXF sentinel
+  refused). (e) The import path persists NOTHING: it maps to an in-memory proposal DRAFT (no storage, no RLS
+  surface); if persistence is ever added, it comes in its own gated packet with a private bucket, tenant RLS
+  and a size cap.
 - **What stays later:** native DWG read/write (D-087-R007, owner licensing/payment decision — STOPPED,
   Tier D — until the owner rules; DXF is the path meanwhile); curved/arc/spline entities beyond the strict
   subset; block/xref resolution.
@@ -333,19 +358,26 @@ packets so route-registration serializes on that one hot file.
 | PKT-A shared claim-word module | `app/cad/claim_words.py` (new), `app/cad/dxf_writer.py`, `app/cad/glb_writer.py`, `app/cad/pdf_sheet_writer.py`, `tests/cad/test_claim_words.py`, `tests/cad/test_dxf_writer.py`, `tests/cad/test_glb_writer.py`, `tests/cad/test_pdf_sheet_writer.py` | M5-T096 (dxf_writer/test_dxf_writer) | G0,G2,G3,G4,G5 | DB-059 (b),(c); DB-053 (c) (screen adopts the shared key) |
 | PKT-B1 PDF writer wiring-hardening | `app/cad/pdf_sheet_writer.py`, `tests/cad/test_pdf_sheet_writer.py` | PKT-A (same file → sequences after A) | G0,G2,G3,G4,G5 | DB-053 (a),(b),(d); DB-059 (a),(d) |
 | PKT-C connector wiring-hardening + source_registry | `app/connectors/building_footprints_arcgis.py`, `tests/connectors/test_building_footprints_arcgis.py`, the `source_registry` record | M5-T100 (same file) | G0,G2,G3,G4,G5 | DB-058 (a),(b),(c),(d),(f),(g); DB-053 (e-resolved note),(f),(h) |
-| PKT-K (C1) real-file PDF resolver | `app/drawings/pdf_object_streams.py` (new; does NOT widen `read_object_table`), `app/drawings/sheet_reader.py` (facade wiring), `tests/drawings/test_sheet_reader.py`, `tests/drawings/test_pdf_object_streams.py` | M5-T094 (split) + M5-T097 | G0,G2,G3,G4,G5 | DB-055 (g),(k),(l),(a),(e),(i) |
+| PKT-K (C1) real-file PDF resolver | `app/drawings/pdf_object_streams.py` (new; does NOT widen `read_object_table`), `app/drawings/sheet_reader.py` (facade wiring), `tests/drawings/test_sheet_reader.py`, `tests/drawings/test_pdf_object_streams.py` | M5-T094 (split) + M5-T097 | G0,G2,G3,G4,G5 | DB-055 (g),(k),(l),(a),(e),(i),(f) |
 
 PKT-A and PKT-B1 both touch `pdf_sheet_writer.py`/`test_pdf_sheet_writer.py`, so they SERIALIZE (A then
 B1); PKT-A/PKT-C/PKT-K are pairwise file-disjoint and run in parallel. (If the orchestrator prefers, the
 PKT-A rewire of `pdf_sheet_writer` can be folded into PKT-B1 to shorten the chain.)
 
+**Mandatory PKT-K acceptance criterion [ORCH-CORRECTED per M5-T099 G5 F2(a)].** Widening the reader to
+PDF 1.5+ object and cross-reference streams adds zlib inflation of attacker-controlled streams. PKT-K must
+carry an ABSOLUTE inflated-bytes cap AND an inflate-ratio guard on every object/xref stream, charged before
+the inflated bytes are materialized and sharing the document-wide decoded-bytes budget, each with a
+mutation that reddens. It also truncates the XObject `/name` echo in refusal details with `_preview`
+(DB-055 (f); the M5-T094 G5 advisory A1).
+
 ### Batch 2 — export & scene services + UNMOUNTED routes (parallel; file-disjoint)
 
 | Pkt | Files (allowed_paths) | Depends on | Gates | Riders closed |
 |---|---|---|---|---|
-| PKT-D export service + route (unmounted) | `app/cad/export_service.py` (new), `app/api/v1/export_api.py` (new), `tests/cad/test_export_service.py`, `tests/api/v1/test_export_api.py` | PKT-A, PKT-B1 | G0,G2,G3,G4,G5 | DB-057 (d),(k); DB-059 (e),(h); DB-054 (m) (export dedupe/disclose) |
-| PKT-E scene assembler + route (unmounted) | `app/scenario/scene_assembler.py` (new), `app/api/v1/scene_api.py` (new), `tests/scenario/test_scene_assembler.py`, `tests/api/v1/test_scene_api.py` | PKT-C, M5-T098 | G0,G2,G3,G4,G5 | DB-054 (k),(l),(n),(o); DB-058 (a) |
-| PKT-F DXF import service + route (unmounted) | `app/drawings/dxf_import.py` (new), `app/api/v1/dxf_import_api.py` (new), `tests/drawings/test_dxf_import.py`, `tests/api/v1/test_dxf_import_api.py` | M5-T097 | G0,G2,G3,G4,G5 | DB-057 (k) (import DxfLimits clamp) |
+| PKT-D export service + route (unmounted) | `app/cad/export_service.py` (new), `app/api/v1/export_api.py` (new), `tests/cad/test_export_service.py`, `tests/api/v1/test_export_api.py` | PKT-A, PKT-B1 | G0,G2,G3,G4,G5 | DB-057 (d),(k); DB-059 (e),(h); DB-054 (m) (export dedupe/disclose); DB-061 (i) (job + deadline + rate limit); the §2 filename-safety criterion (mandatory, G5 F1) [ORCH-CORRECTED per M5-T099 G3 B1 / G5 F1] |
+| PKT-E scene assembler + route (unmounted) | `app/scenario/scene_assembler.py` (new), `app/api/v1/scene_api.py` (new), `tests/scenario/test_scene_assembler.py`, `tests/api/v1/test_scene_api.py` | PKT-C, M5-T098 | G0,G2,G3,G4,G5 | DB-054 (k),(l),(n),(o); DB-058 (a); DB-061 (i) (job + deadline + rate limit) [ORCH-CORRECTED per M5-T099 G3 B1] |
+| PKT-F DXF import service + route (unmounted) | `app/drawings/dxf_import.py` (new), `app/api/v1/dxf_import_api.py` (new), `tests/drawings/test_dxf_import.py`, `tests/api/v1/test_dxf_import_api.py` | M5-T097 | G0,G2,G3,G4,G5 | DB-057 (k) (import DxfLimits clamp); DB-061 (i); the §4 import parse-time controls (b)-(e) [ORCH-CORRECTED per M5-T099 G3 B1 / G5 F2] |
 
 All three are file-disjoint (new modules + own tests) and run in parallel.
 
@@ -354,7 +386,7 @@ All three are file-disjoint (new modules + own tests) and run in parallel.
 | Pkt | Files (allowed_paths) | Depends on | Gates | Riders closed |
 |---|---|---|---|---|
 | PKT-G `@types/three` OWNER decision → admission OR local .d.ts | decision record; then either the lockfile-admission packet or `apps/web/src/types/three.d.ts` + its use | owner ruling | G0,G2,G5 (dep-security G5 if Option 1) | DB-062 (a) |
-| PKT-H product mount packet | `app/main.py` ONLY (include_router export/scene/import behind the flags) | PKT-D, PKT-E, PKT-F | G0,G2,G3,G4,G5 | — (exposure seam) |
+| PKT-H product mount packet | `app/main.py` ONLY (include_router export/scene/import behind the flags) | PKT-D, PKT-E, PKT-F | G0,G2,G3,G4,G5 | — (exposure seam; verifies DB-061 (i) on every route before mounting) [ORCH-CORRECTED per M5-T099 G3 B1] |
 | PKT-I web 3D viewer | `apps/web/src/components/.../MassingViewer.tsx` + its `__tests__`, viewer lib under `apps/web/src/lib/` | PKT-H (mounted scene route) + PKT-G | G0,G2,G3(HJ),G4,G5 | DB-062 (f) |
 
 PKT-H edits `app/main.py`; PKT-J (§7) also edits it — the two mount packets SERIALIZE on `main.py`.
@@ -378,6 +410,8 @@ PKT-H edits `app/main.py`; PKT-J (§7) also edits it — the two mount packets S
 | DB-053 (a),(b),(c),(d) | (a),(b),(d) PKT-B1; (c) PKT-A/export screen (§2) |
 | DB-053 (e) | DISCHARGED by M5-T089 (connector uses live FeatureServer field names) — by note |
 | DB-053 (f),(g),(h) | (f) PKT-C/PKT-E vertical-datum rule; (g) PKT-E holes disclose/refuse; (h) by note (INFERENCE, restated DB-058 (j)) |
+| DB-053 (i) | PKT-G, Option 1 only: the admission packet argues necessity (dependency-security policy section 5) and gives a maintainer-change assessment covering all six provenance fields; moot under Option 2 [ORCH-CORRECTED per M5-T099 G3 B1] |
+| DB-053 (j),(k) | by note: (j) contingent — ezdxf is not proposed; any future proposal, even as test tooling, is a NEW package with full G5 admission; (k) moot — every writer targets R12/AC1009 (no OBJECTS section); G1 re-verification only if a writer ever emits R2000+ [ORCH-CORRECTED per M5-T099 G3 B1] |
 | DB-054 (a)-(j) | DISCHARGED by M5-T088 (massing hardening, accepted) — by note |
 | DB-054 (k),(l),(n),(o) | PKT-E (scene/massing wiring) |
 | DB-054 (m) | PKT-D (export dedupe/disclose coincident caps) |
@@ -387,6 +421,8 @@ PKT-H edits `app/main.py`; PKT-J (§7) also edits it — the two mount packets S
 | DB-055 (g),(k),(l) | PKT-K (C1 xref/object-stream resolver) |
 | DB-055 (h) | DISCHARGED by M5-T093 (negative real-corpus result) — by note |
 | DB-055 (n) | by note (sharpen at next reader touch) |
+| DB-055 (f) | PKT-K (truncate the XObject `/name` echo in refusal details with `_preview`; the §5 PKT-K note) [ORCH-CORRECTED per M5-T099 G3 B1] |
+| DB-055 (j) | by note (LOW wording nit in the M5-T083 evidence map; no code step) [ORCH-CORRECTED per M5-T099 G3 B1] |
 | DB-056 (a),(b),(c) | PKT-J (max-envelope mount) |
 | DB-056 (d) | by note (next control-plane tooling touch; outside D-087 product scope) |
 | DB-057 (a),(b),(f) | in-flight M5-T096 |
@@ -407,6 +443,8 @@ PKT-H edits `app/main.py`; PKT-J (§7) also edits it — the two mount packets S
 | DB-061 (a),(b),(c),(d),(f) | in-flight M5-T098 |
 | DB-061 (e) | by note (the scene/UX packet PKT-E must know resource-bound precedence is check-order) |
 | DB-061 (g) | in-flight M5-T095 |
+| DB-061 (h) | a derivation packet outside this plan's batches (derivation.py adopts the shared GEOS-backed simplicity check; bounded today by re-validated input) — referenced, not created here [ORCH-CORRECTED per M5-T099 G3 B1] |
+| DB-061 (i) | SAFETY: PKT-D, PKT-E and PKT-F each run their work off the event loop in a cancellable job under the per-request deadline with a per-caller rate limit; PKT-H verifies it on every route before mounting [ORCH-CORRECTED per M5-T099 G3 B1] |
 | DB-062 (a) | PKT-G (owner decision) → PKT-I (viewer) |
 | DB-062 (f) | PKT-I (exact-version pin test) |
 | DB-062 (b),(c),(d),(e),(g) | by note (any later web dependency change) |
