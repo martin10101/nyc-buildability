@@ -561,14 +561,23 @@ def test_segment_after_close_begins_new_subpath():
     assert reopened[0].points[1] == pytest.approx((20.0, 20.0))
 
 
-# Item 9 (G1 F6 / G3 F3): the current point is device space, so a mid-path cm cannot
-# re-derive a wrong curve start.
+# Item 9 (G1 F6 / G3 F3; DB-055 a): the current point is device space, so a mid-path cm cannot
+# re-derive a wrong curve start. The regression guard MUST pin the value the bug displaces: the
+# curve's FIRST INTERIOR flattened point (points[1]). points[0] (the separately-stored moveto
+# point) and points[-1] (= map(*end)) are INVARIANT under the pre-fix revert, so asserting only
+# those is vacuous (G4-rework F6 / DCV F3). Under the literal pre-fix revert
+# `p0 = _apply_matrix(self._ctm, *self._current)` the curve start jumps and points[1] moves from
+# (14.160156, 13.339844) to (23.125, 20.3125) — a real discontinuity that this assertion reddens
+# (mutant recorded in the M5-T104 producer report; the production code below is correct).
 def test_mid_path_cm_does_not_corrupt_curve_start():
     content = b"10 10 m 2 0 0 2 0 0 cm 10 10 20 10 20 20 c S"
     doc = read_sheet(_one_page(content))
     assert isinstance(doc, SheetDocument)
     points = doc.pages[0].polylines[0].points
     assert points[0] == pytest.approx((10.0, 10.0))         # true previous point, not (20,20)
+    # the reopened curve's first INTERIOR point is continuous with the moveto point (device
+    # space); the pre-fix revert displaces it to ~(23.12, 20.31) (the value the bug moves).
+    assert points[1] == pytest.approx((14.160156, 13.339844), abs=1e-4)
     assert points[-1] == pytest.approx((40.0, 40.0))        # end = apply(scale2, (20,20))
 
 
@@ -626,3 +635,168 @@ def test_multi_hop_form_cycle_is_refused():
     refusal = sheet_refusal(read_sheet(pdf))
     assert refusal is not None
     assert refusal.feature == "xobject cycle"                # not merely the depth bound
+
+
+# ========================================================= M5-T104: operator coverage (DB-055 i)
+# Every operator DB-055 (i) lists (re, v, y, s, f, F, f*, B*, b, b*, n, W, W*, TL, Td, TD, T*, TJ,
+# ' and ") is now executed by a test with an asserted outcome, and the packet's original "rotated
+# rectangle" (which was really a rotated LINE) is replaced by a TRUE four-edge rectangle under a
+# rotated CTM, asserted vertex by vertex. Each test pins a field that a targeted consuming-namespace
+# mutant displaces; the mutants and their verbatim red runs are recorded in the M5-T104 producer
+# report (project-control/reports/M5-T104-producer-report.md). The committed assertions are the
+# durable regression guards; production behaviour is unchanged by this packet.
+
+
+def test_rotated_rectangle_via_re_maps_each_vertex():
+    """A GENUINE rectangle (`re` -> 4 corners + close) under a 30-degree rotation CTM, asserted
+    vertex by vertex. Mutant (report): `sheet_interpreter._apply_matrix` = identity drops the
+    rotation and every vertex reddens."""
+    rot = b"%s %s %s %s 0 0 cm" % (_num(_COS), _num(_SIN), _num(-_SIN), _num(_COS))
+    doc = read_sheet(_one_page(b"q %s 10 20 30 15 re S Q" % rot))
+    assert isinstance(doc, SheetDocument)
+    poly = doc.pages[0].polylines[0]
+    assert poly.closed and poly.stroked and not poly.filled
+    assert len(poly.points) == 4                              # four corners (NOT a 2-point line)
+    corners = ((10.0, 20.0), (40.0, 20.0), (40.0, 35.0), (10.0, 35.0))  # (x,y),(x+w,y),(+h),(...)
+    for got, (cx, cy) in zip(poly.points, corners, strict=True):
+        assert got == pytest.approx(_rotate_then_translate(cx, cy, 0.0, 0.0), abs=1e-9)
+
+
+def test_v_curve_first_control_is_the_current_point():
+    """`x2 y2 x3 y3 v`: the FIRST Bezier control point coincides with the current point. Mutant
+    (report): dispatching `v` with ctrl1_is_current=False moves the first interior point from
+    (21.718750, 19.257812) to ~(17.15, 16.49)."""
+    doc = read_sheet(_one_page(b"20 20 m 60 0 60 60 v S"))
+    assert isinstance(doc, SheetDocument)
+    points = doc.pages[0].polylines[0].points
+    assert points[0] == pytest.approx((20.0, 20.0))          # starts at the current point
+    assert points[1] == pytest.approx((21.718750, 19.257812), abs=1e-4)  # bows from the current pt
+    assert points[-1] == pytest.approx((60.0, 60.0))         # ends at (x3, y3)
+
+
+def test_y_curve_last_control_is_the_endpoint():
+    """`x1 y1 x3 y3 y`: the LAST Bezier control point coincides with the endpoint. Mutant (report):
+    dispatching `y` with the second control != endpoint moves the first interior point from
+    (4.194336, 7.041016) to ~(6.72, 13.20)."""
+    doc = read_sheet(_one_page(b"0 0 m 20 40 80 40 y S"))
+    assert isinstance(doc, SheetDocument)
+    points = doc.pages[0].polylines[0].points
+    assert points[0] == pytest.approx((0.0, 0.0))
+    assert points[1] == pytest.approx((4.194336, 7.041016), abs=1e-4)
+    assert points[-1] == pytest.approx((80.0, 40.0))         # ends at (x3, y3)
+
+
+# (stroked, filled, closed) expected for path `0 0 m 10 0 l 10 10 l <word>` (no explicit h).
+_PAINT_FLAGS = {
+    "S": (True, False, False),
+    "s": (True, False, True),       # s = close + stroke
+    "f": (False, True, False),
+    "F": (False, True, False),      # F is a deprecated alias of f
+    "f*": (False, True, False),     # even-odd fill
+    "B*": (True, True, False),      # fill + stroke (even-odd)
+    "b": (True, True, True),        # close + fill + stroke
+    "b*": (True, True, True),       # close + fill + stroke (even-odd)
+    "n": (False, False, False),     # no paint (clip/no-op) but geometry is still surfaced
+}
+
+
+def test_all_paint_operators_set_expected_flags():
+    """Each accepted painting operator is executed and its (stroked, filled, closed) outcome is
+    asserted. Mutants (report): emptying `_PAINT_STROKE` / `_PAINT_FILL` / `_PAINT_CLOSE_FIRST`
+    each reddens the stroked / filled / closed facet respectively."""
+    for word, (stroked, filled, closed) in _PAINT_FLAGS.items():
+        doc = read_sheet(_one_page(b"0 0 m 10 0 l 10 10 l " + word.encode("ascii")))
+        assert isinstance(doc, SheetDocument), word
+        poly = doc.pages[0].polylines[0]
+        assert (poly.stroked, poly.filled, poly.closed) == (stroked, filled, closed), word
+        assert _flat(poly.points) == pytest.approx([0.0, 0.0, 10.0, 0.0, 10.0, 10.0]), word
+
+
+def test_clip_operators_are_ignored_and_keep_the_path():
+    """`W` / `W*` are consumed (clipping is not modelled) and DO NOT clear or refuse the path; the
+    following paint op still surfaces the geometry. Mutant (report): removing W/W* from `_IGNORED`
+    turns each into an 'unsupported operator' refusal."""
+    for clip in (b"W", b"W*"):
+        doc = read_sheet(_one_page(b"0 0 m 10 0 l 10 10 l " + clip + b" n"))
+        assert isinstance(doc, SheetDocument), clip
+        polylines = doc.pages[0].polylines
+        assert len(polylines) == 1, clip
+        assert _flat(polylines[0].points) == pytest.approx([0.0, 0.0, 10.0, 0.0, 10.0, 10.0]), clip
+
+
+def test_text_line_moves_place_runs_with_leading():
+    """Td / TD / T* / TL are executed and each run's origin is asserted (CTM identity). TD sets the
+    leading from -ty; TL sets it explicitly; T* moves down by the current leading. Mutant (report):
+    `sheet_reader._concat_matrix` = (lambda m, ctm: m) drops the accumulated text line matrix, so
+    every run after the first reddens."""
+    content = b"BT /F1 12 Tf 100 700 Td (A) Tj 0 -20 TD (B) Tj T* (C) Tj 14 TL T* (D) Tj ET"
+    doc = read_sheet(_one_page(content, resources=b"<< /Font << /F1 << >> >> >>"))
+    assert isinstance(doc, SheetDocument)
+    runs = doc.pages[0].text_runs
+    assert [(r.text, r.x, r.y) for r in runs] == [
+        ("A", pytest.approx(100.0), pytest.approx(700.0)),   # Td 100 700
+        ("B", pytest.approx(100.0), pytest.approx(680.0)),   # TD 0 -20 (leading := 20)
+        ("C", pytest.approx(100.0), pytest.approx(660.0)),   # T* down by leading 20
+        ("D", pytest.approx(100.0), pytest.approx(646.0)),   # TL 14 then T* down by 14
+    ]
+
+
+def test_text_show_TJ_quote_and_dquote_operators():
+    """TJ (array show, numeric kerning ignored for the modelled origin), ' (next line + show) and
+    " (aw ac string, next line + show) are executed with asserted text and origins. Mutant (report):
+    `sheet_reader._concat_matrix` = (lambda m, ctm: m) reddens the moved origins."""
+    content = b"BT /F1 10 Tf 10 TL 50 500 Td 0 -30 Td [(X) -250 (Y)] TJ (P) ' 1 2 (Q) \" ET"
+    doc = read_sheet(_one_page(content, resources=b"<< /Font << /F1 << >> >> >>"))
+    assert isinstance(doc, SheetDocument)
+    runs = doc.pages[0].text_runs
+    assert [(r.text, r.x, r.y) for r in runs] == [
+        ("XY", pytest.approx(50.0), pytest.approx(470.0)),   # TJ joins pieces, skips the -250
+        ("P", pytest.approx(50.0), pytest.approx(460.0)),    # ' = T* (down 10) + show
+        ("Q", pytest.approx(50.0), pytest.approx(450.0)),    # " = T* (down 10) + show (aw/ac skip)
+    ]
+
+
+# ============================================================= M5-T104: budget semantics (DB-064)
+def test_two_distinct_form_xobjects_decode_and_place():
+    """DB-064 (a): two DISTINCT Form XObjects both decode and place correctly, so a wrong-key form
+    memo (two forms sharing one decoded body) is detectable. Mutant (report): memoizing
+    `_StreamDecoder.decode_form` under a CONSTANT key makes FmB reuse FmA's bytes, so the second
+    polyline becomes (100,0)->(105,0) instead of (100,0)->(100,9)."""
+    pdf = _pdf(
+        [
+            b"<< /Type /Catalog /Pages 2 0 R >>",
+            b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+            b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 800 600]"
+            b" /Resources << /XObject << /FmA 5 0 R /FmB 6 0 R >> >> /Contents 4 0 R >>",
+            _stream(b"q /FmA Do Q q 1 0 0 1 100 0 cm /FmB Do Q"),
+            _form_obj(b"0 0 m 5 0 l S"),      # FmA: horizontal segment to (5, 0)
+            _form_obj(b"0 0 m 0 9 l S"),      # FmB: vertical segment to (0, 9)
+        ]
+    )
+    doc = read_sheet(pdf)
+    assert isinstance(doc, SheetDocument)
+    polylines = doc.pages[0].polylines
+    assert len(polylines) == 2
+    assert _flat(polylines[0].points) == pytest.approx([0.0, 0.0, 5.0, 0.0])       # FmA at origin
+    assert _flat(polylines[1].points) == pytest.approx([100.0, 0.0, 100.0, 9.0])   # FmB, DISTINCT
+
+
+def test_multi_stream_document_decoded_bytes_budget_is_per_document(monkeypatch):
+    """DB-064 (b): a /Contents array of streams that are EACH under the per-stream cap but whose
+    decoded bytes SUM over the (patched) document total is refused, exercising the per-DOCUMENT
+    accumulation. Mutant (report): charging `_StreamDecoder.charge_decoded` per-stream (each 13 <
+    20) never refuses, so no SheetRefusal is produced."""
+    monkeypatch.setattr(sheet_reader, "MAX_TOTAL_DECODED_BYTES", 20)  # each stream 13 B; sum 26 B
+    stream = _stream(b"5 7 m 9 3 l S")                                # 13 raw bytes, no /Filter
+    pdf = _pdf(
+        [
+            b"<< /Type /Catalog /Pages 2 0 R >>",
+            b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+            b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 800 600] /Contents [4 0 R 5 0 R] >>",
+            stream,
+            stream,
+        ]
+    )
+    refusal = sheet_refusal(read_sheet(pdf))
+    assert refusal is not None
+    assert refusal.feature == "decoded bytes budget"

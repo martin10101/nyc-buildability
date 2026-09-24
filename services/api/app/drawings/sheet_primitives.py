@@ -49,7 +49,7 @@ def concat_matrix(m: Matrix, ctm: Matrix) -> Matrix:
 
 
 def apply_matrix(m: Matrix, x: float, y: float) -> Point:
-    """Map user point ``(x, y)`` through ``m`` (row-vector convention, §8.3.3)."""
+    """Map user point ``(x, y)`` through ``m`` (row-vector convention, §8.3.4)."""
     a, b, c, d, e, f = m
     return (a * x + c * y + e, b * x + d * y + f)
 
