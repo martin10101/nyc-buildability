@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 783,
  "producer": "orchestrator",
- "updated_at": "2026-09-24T08:30:00+00:00",
+ "updated_at": "2026-09-24T15:40:00+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -10142,7 +10142,8 @@
    "applicability": {
     "task_ids": [
      "M0-T117",
-     "M0-T159"
+     "M0-T159",
+     "M0-T160"
     ],
     "task_types": [],
     "milestones": [],

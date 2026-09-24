@@ -1,0 +1,84 @@
+{
+  "task_id": "M0-T160",
+  "title": "B-026 remedy step 5.0: re-pin the controller install source (tools/controller_update/source_binding.json) to the recertified candidate a3f24ff3 (M0-T159 accepted 275th) - a reviewed contract commit; NO install, NO machine change",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Change exactly three identity fields of tools/controller_update/source_binding.json from the certified a5886dab to the recertified candidate that M0-T159 produced and that its DCV and gates accepted: commit_sha a3f24ff3825c126c038f59b1ea6d2352f29d724a, commit_tree_sha 82432361540c3c2a11c55ffa3d6d485426cd45f7, subtree_tree_sha 9c0b14eaa56ce32d241c77f789266035b584380c (subtree_path tools/agent_supervisor unchanged), and append one sentence to the authority field recording the re-pin (D-024-R287 admission of Claude Code 2.1.281; task M0-T160; M0-T159 accepted 275th; superseding a5886dab as the install source; recertification report project-control/reports/M0-T159-recertification.md). Every other field stays byte-identical. Verify each value with git plumbing before writing it, verify every required_modules path exists at a3f24ff3, and run the offline PowerShell contract tests that read the binding. Nothing is installed: the owner types the commissioning commands (recertification section 5) after this is accepted.",
+  "business_reason": "The three background loop lanes stay refused (B-026) until the controller is reinstalled from the recertified candidate; the installer only accepts the source this reviewed contract names, so the re-pin is the last repository step before the owner's commissioning.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "NO MACHINE CHANGE (binding): never run update_controller_from_candidate.ps1 in any install/record/verify mode against C:\\SupervisorController*, never run doctor --live, launch, start, repin-cli-identity, or any supervisor verb; never touch C:\\SupervisorController*, C:\\SupervisorBackup, C:\\Program Files\\SupervisorConfig, %LOCALAPPDATA%\\NYCBuildabilitySupervisor or wt-controller-src. Read-only git plumbing and the offline PowerShell contract tests under tools/controller_update/ps_tests are the only commands.",
+    "SPEC SOURCE (binding): project-control/reports/M0-T159-recertification.md sections 1, 5.0 and 5.2-5.4 (the admitted candidate and its stop conditions), M0-T159-DCV.md, M0-T159-G3-corrections.md. The candidate lives on origin/task/M0-T159-cli-2-1-281-admission; its parent is a5886dab. Verify: `git rev-parse a3f24ff3^{commit}`, `git rev-parse a3f24ff3^{tree}`, `git rev-parse a3f24ff3:tools/agent_supervisor`, `git ls-tree -r a3f24ff3 -- tools/agent_supervisor | wc -l` (204 files), `git cat-file -e a3f24ff3:<path>` for every required_modules path, and `git diff --stat a5886dab a3f24ff3` (only the M0-T159 fixture/test/event_drift paths).",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001): source_binding.json is read by tools/controller_update/update_controller_from_candidate.ps1 (Read-SourceBinding) and by the contract tests tools/controller_update/ps_tests/test_runbook_parse.ps1 and test_source_binding.ps1 - all READ-ONLY here; no Python module imports it. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source."
+  ],
+  "outputs": [
+    "tools/controller_update/source_binding.json - three identity fields re-pinned + one authority sentence",
+    "project-control/reports/M0-T160-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T159"
+  ],
+  "allowed_paths": [
+    "tools/controller_update/source_binding.json",
+    "project-control/reports/M0-T160-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/controller_update/update_controller_from_candidate.ps1",
+    "tools/controller_update/ps_tests/",
+    "tools/agent_supervisor/",
+    "services/",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (identity): commit_sha, commit_tree_sha and subtree_tree_sha equal the git-plumbing values of a3f24ff3 (recorded verbatim in the report); a3f24ff3 exists on origin; every required_modules path exists at a3f24ff3.",
+    "AS-2 (nothing else moved): `git diff` of source_binding.json shows only the three identity values and the one appended authority sentence; the schema stays controller_update_source_binding/v2; every transaction key is byte-identical.",
+    "AS-3 (contract tests): the offline PowerShell contract suite that parses the binding passes (record the exact command, cwd and output); a deliberately wrong tree sha in a scratch COPY is refused by the installer's binding validation (run against the copy only, never the live controller).",
+    "AS-4 (no machine change + scope): no command touched the controller, backup, config or runtime directories; exactly the two allowed paths changed."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T15:34:45.826847+00:00",
+  "updated_at": "2026-09-24T15:34:46.285428+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": [
+        "D-024-R287"
+      ]
+    },
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T15:34:45.827869+00:00",
+  "documented_test_commands": [
+    "powershell -NoProfile -ExecutionPolicy Bypass -File tools/controller_update/ps_tests/run_ps_tests.ps1"
+  ]
+}

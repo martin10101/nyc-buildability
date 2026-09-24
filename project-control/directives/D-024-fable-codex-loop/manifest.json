@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-09-24T08:30:00+00:00",
+ "updated_at": "2026-09-24T15:40:00+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -1396,7 +1396,7 @@
   "D-024-R783"
  ],
  "requirements_id_digest_sha256": "6fc07a7bfe0bd87c963fed8b3525ec8825d5b98b0d42248379336a308d66f6ca",
- "requirements_content_digest_sha256": "fd9d80d8da238d7c76e9566f9ae37794d604a62c8e64f3ccccf3055ccf9c36e2",
+ "requirements_content_digest_sha256": "f39ac8a7a45060d0ab882023a1d8d83b95280836fda61dd6585f96e2cf223ec0",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -1726,6 +1726,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "Seq-128 B-026 remedy contract seam (M0-T159 Claude Code 2.1.281 admission + recertification): bound D-024-R287 <- M0-T159; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-24T15:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "wave-5 contract seam (M5-T096/T097/T098 + M0-T160): bound D-024-R287 <- M0-T160; requirements digest resynced in the same commit."
   }
  ]
 }

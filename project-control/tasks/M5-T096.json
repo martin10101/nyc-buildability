@@ -1,0 +1,108 @@
+{
+  "task_id": "M5-T096",
+  "title": "D-087 CAD-2: owner-openable sample files + plain-English AutoCAD opening checklist (closes the R004 owner-check gap, DB-057 a) and DXF writer STYLE/VPORT tables (DB-057 b) with a stdlib-allowlist import test (DB-057 f)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "(1) Extend services/api/app/cad/dxf_writer.py's TABLES section with a STYLE table defining the STANDARD text style that every TEXT entity uses, and a VPORT table with an *ACTIVE viewport framing the drawing extents, following the Autodesk DXF Reference for R12/AC1009 exactly. Keep $ACADVER AC1009, $INSUNITS 21 (US survey feet), the layer set, every refusal and the honesty labels unchanged; re-pin the golden. (2) Widen the stdlib-only import test into an ALLOWLIST (only __future__, math, collections.abc, dataclasses and the module's own names may be imported). (3) Commit owner-openable sample files under docs/samples/cad/: a site-plan DXF from the accepted writer, the matching PDF site plan from the accepted pdf_sheet_writer and a GLB massing from the accepted glb_writer, all built from ONE clearly labelled synthetic example lot + building (never presented as a real property), plus a README.md written in plain English: how to open each file (AutoCAD: Open, choose the DXF file type, expected layers, expected units, what the owner should see; the PDF in any PDF viewer; the GLB in Windows 3D Viewer or any glTF viewer), what to report back, and the sha256 of every file. (4) A test regenerates every sample in memory and asserts it is byte-identical to the committed file, so the samples can never drift from the writers.",
+  "business_reason": "The owner asked for buildings that import into AutoCAD (D-087-R004); the DXF writer is accepted but nobody can run AutoCAD here, so the owner needs a real file to open and a short checklist - that owner check is the missing part of R004 and the evidence the owner needs for the R008 'DXF as the middleman' decision.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-057 (a), (b), (c), (f); project-control/reports/M5-T081-G1.md (A1/A2: the STYLE/VPORT gap and the INSUNITS 21 reading), M5-T081-DCV.md (F1: the owner-runnable AutoCAD-open check R004 requires), docs/research/dxf-format-reference-2026-09.md (the official R12 notes). FORMAT AUTHORITY: every new table, group code and value follows the Autodesk DXF Reference; cite the section beside each constant and mark anything recalled rather than checked as '[recalled - verify]' for the G1 verifier.",
+    "SAMPLE HONESTY (binding): the sample lot and building are SYNTHETIC and labelled 'Example lot - not a real property' in every file and in the README; every file keeps 'PROPOSED - NOT A CITY RECORD'; the README tells the owner in plain words that the file proves the export opens, not that any building is allowed. Coordinates stay in EPSG:2263 US survey feet inside the NYC range. The samples are small (each file well under 200 KB).",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 825 files / 17656 nodes / 7589 edges): dxf_writer.py is imported by app/cad/pdf_sheet_writer.py (CLAIM_CLASS_WORDS, L54) and by tests/cad/test_dxf_writer.py and test_pdf_sheet_writer.py; CLAIM_CLASS_WORDS and every public name must stay byte-for-byte compatible (the PDF writer and its accepted golden depend on them). pdf_sheet_writer.py, glb_writer.py, app/cad/__init__.py and every app/drawings module are FORBIDDEN (read-only use for the samples is fine). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/cad/dxf_writer.py - STYLE (STANDARD) + VPORT (*ACTIVE) tables; golden re-pinned",
+    "services/api/tests/cad/test_dxf_writer.py - table structure tests, import allowlist, re-pinned golden",
+    "services/api/tests/cad/test_cad_owner_samples.py - regenerates every committed sample byte-identically",
+    "docs/samples/cad/README.md + example-site-plan.dxf + example-site-plan.pdf + example-massing.glb",
+    "project-control/reports/M5-T096-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T081"
+  ],
+  "allowed_paths": [
+    "services/api/app/cad/dxf_writer.py",
+    "services/api/tests/cad/test_dxf_writer.py",
+    "services/api/tests/cad/test_cad_owner_samples.py",
+    "docs/samples/cad/**",
+    "project-control/reports/M5-T096-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/cad/pdf_sheet_writer.py",
+    "services/api/app/cad/glb_writer.py",
+    "services/api/app/cad/__init__.py",
+    "services/api/tests/cad/test_pdf_sheet_writer.py",
+    "services/api/tests/cad/test_glb_writer.py",
+    "services/api/app/drawings/",
+    "services/api/tests/drawings/",
+    "services/api/app/scenario/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (tables): the DXF carries LTYPE, LAYER, STYLE (STANDARD) and VPORT (*ACTIVE) tables in the order and with the group codes the DXF Reference gives for R12; every TEXT resolves to a defined style; the viewport frames the extents; mutation - dropping the STYLE table or its STANDARD entry reddens a test.",
+    "AS-2 (compatibility kept): $ACADVER AC1009, $INSUNITS 21, the layer set, every typed refusal, the honesty texts and CLAIM_CLASS_WORDS are unchanged; the PDF writer's accepted golden is unaffected (test_pdf_sheet_writer.py passes unchanged); the DXF golden is re-pinned with the reason recorded.",
+    "AS-3 (samples): the three sample files exist under docs/samples/cad/, each labelled synthetic + proposed, each regenerated byte-identically by test_cad_owner_samples.py; the README gives a plain-English opening checklist per file with expected layers/units and the sha256 of each file; mutation - changing any writer output reddens the sample test.",
+    "AS-4 (import allowlist): the allowlist test fails if dxf_writer.py imports anything outside the allowlist (mutation - add `import json` reddens).",
+    "AS-5 (scope + boundaries): zero new dependencies; no route/main.py/web change; native DWG untouched (R007); exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T15:34:42.032567+00:00",
+  "updated_at": "2026-09-24T15:34:42.632271+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R004",
+        "D-087-R006",
+        "D-087-R007",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T15:34:42.032567+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py tests/cad/test_pdf_sheet_writer.py tests/cad/test_glb_writer.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

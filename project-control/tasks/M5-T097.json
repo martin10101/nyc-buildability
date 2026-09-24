@@ -1,0 +1,103 @@
+{
+  "task_id": "M5-T097",
+  "title": "D-087 CAD-3: DXF reader hardening (DB-057 i-n) + a committed writer-to-reader round-trip test (DB-057 h, the missing R006 harness)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Harden services/api/app/drawings/dxf_reader.py before any user DXF can reach it: (1) split lines on CR/LF/CRLF ONLY (str.splitlines also splits on \\x0b \\x0c \\x1c-\\x1e and shifts group pairing); (2) enforce max_lines while scanning, before materialising the full line list; (3) clamp DxfLimits to hard ceilings so a caller cannot disable the size/line/entity bounds; (4) make the input bytes-only or re-apply the binary-sentinel and non-ASCII checks to str input; (5) add the official $INSUNITS codes 22/23/24 (US survey inch/yard/mile) to the unit map, citing the DXF Reference. Close the G4 probe gaps (nan coordinates; negative LWPOLYLINE bulge and VERTEX bulge refusals; closed-flag mask with flags 128 and 129). Add tests/drawings/test_dxf_roundtrip.py: the accepted writer's site-plan output read back by the reader - lot and building rings exact and closed, units 21 read from the header, layer names and entity counts as written, the honesty texts present.",
+  "business_reason": "DXF import is how the owner's AutoCAD work comes back into the product (D-087-R006); the reader must be safe on hostile files and its round trip with our own writer must be a permanent test, not an ad-hoc check.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-057 (h)-(n); project-control/reports/M5-T086-G3.md (F1 splitlines), M5-T086-G4.md (F1-F3 probe gaps), M5-T086-G5.md (A1-A4), M5-T081-G1.md (the INSUNITS 22-24 advisory), M5-T081-DCV.md (F2: the round trip is proven only ad hoc). Every refusal stays a typed RETURNED value (never raised); keep the public API (read_dxf, DxfLimits, DxfDocument, the refusal reasons) source-compatible - a behaviour change for a VALID file is a defect.",
+    "ROUND-TRIP NOTE: a parallel packet (M5-T096) adds STYLE and VPORT tables to the writer. The reader skips the whole TABLES section (recorded in skipped_sections), so the round trip must assert on HEADER + ENTITIES content and must not pin the exact TABLES contents or the writer's golden digest.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 825 files / 17656 nodes / 7589 edges): dxf_reader.py has no production importer (only tests/drawings/test_dxf_reader.py); app/cad/dxf_writer.py is used READ-ONLY by the new round-trip test and is FORBIDDEN to edit (M5-T096 owns it); sheet_reader/sheet_primitives/sheet_objects/sheet_interpreter are FORBIDDEN (M5-T094 owns the split). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/drawings/dxf_reader.py - CR/LF-only split, streaming line cap, clamped limits, bytes-only, INSUNITS 22-24",
+    "services/api/tests/drawings/test_dxf_reader.py - the probe gaps + each new guard with a mutation",
+    "services/api/tests/drawings/test_dxf_roundtrip.py - committed writer->reader round trip",
+    "project-control/reports/M5-T097-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T086"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/dxf_reader.py",
+    "services/api/tests/drawings/test_dxf_reader.py",
+    "services/api/tests/drawings/test_dxf_roundtrip.py",
+    "project-control/reports/M5-T097-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/cad/",
+    "services/api/tests/cad/",
+    "services/api/app/drawings/__init__.py",
+    "services/api/app/drawings/sheet_reader.py",
+    "services/api/app/drawings/sheet_primitives.py",
+    "services/api/app/drawings/sheet_objects.py",
+    "services/api/app/drawings/sheet_interpreter.py",
+    "services/api/tests/drawings/test_sheet_reader.py",
+    "services/api/app/documents/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (line splitting): a group value containing \\x0b, \\x0c or \\x1c-\\x1e no longer shifts pairing (it is either kept verbatim in the value or refused with a typed reason - declare which); CR, LF and CRLF files parse identically; mutation - restoring str.splitlines() reddens.",
+    "AS-2 (bounds): max_lines is enforced before the full line list exists (a work/allocation probe proves it); DxfLimits above the hard ceilings is clamped or refused (declare which); str input either refused or put through the same sentinel + non-ASCII checks as bytes; one mutation per guard reddens.",
+    "AS-3 (probe gaps): nan and inf coordinates refused; negative LWPOLYLINE bulge and VERTEX bulge refused; flags 128 -> open and 129 -> closed; INSUNITS 22/23/24 reported as the official US survey inch/yard/mile units.",
+    "AS-4 (round trip): the accepted writer's site plan read back gives the same lot and building rings (exact, closed), units 21 from the header, the written layers and entity counts, and the honesty texts; mutation - perturbing a ring vertex in the writer output reddens.",
+    "AS-5 (compatibility + scope): every existing test in test_dxf_reader.py still passes (edits only ADD cases or tighten a probe with the reason recorded); zero new dependencies; unwired; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T15:34:43.225421+00:00",
+  "updated_at": "2026-09-24T15:34:43.629799+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R006",
+        "D-087-R007",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T15:34:43.225421+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/drawings/test_dxf_reader.py tests/drawings/test_dxf_roundtrip.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

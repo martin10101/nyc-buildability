@@ -1,0 +1,97 @@
+{
+  "task_id": "M5-T098",
+  "title": "D-087 3D-1c: massing truth-object pre-wiring hardening (DB-061 a-d): y-axis magnitude probe, lot-ring NYC EPSG:2263 range check, typed wrap of shapely GEOS errors, scan-charge ordering pin",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the before-wiring riders on services/api/app/scenario/massing_model.py: (1) a y-only coordinate-magnitude test (production already checks x OR y; the suite must prove it); (2) give the LOT ring the same NYC EPSG:2263 range check the proposal footprint has (a 4326 or wrong-CRS lot must refuse with a typed MassingModelError naming the field, never be mislabelled); (3) wrap shapely GEOSException at the module boundary so no untyped error can escape; (4) pin that scan units are charged BEFORE the inner scan (the ME mutant must redden); (5) document in the module that output size checks intentionally do not content-dedupe (DB-061 f). Same outputs for every valid input; the accepted goldens stay byte-identical.",
+  "business_reason": "The 3D massing truth object (D-087-R003) will soon take real lot geometry from MapPLUTO and user drawings; these are the last guards the reviewers asked for before that wiring.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-061 (a)-(f) and DB-054 (k)-(o) (read-only context; (m)-(o) belong to the export/wiring packets, not here); project-control/reports/M5-T088-G3.md (A1-A3), M5-T088-G4.md (ADVISORY-1 MD, ADVISORY-2 ME), M5-T088-G5.md (F-LOW-2, F-LOW-3). The NYC_2263 range constants already in massing_model.py (L72-75) are the ones to reuse for the lot ring.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 825 files / 17656 nodes / 7589 edges): massing_model.py has no production importer (only tests/scenario/test_massing_model.py); it imports app/scenario/proposal.py READ-ONLY, and proposal.py is being changed in parallel by M5-T095 (a validation time budget with an unchanged public surface) - never edit proposal.py or rely on its private helpers. max_envelope.py and every other scenario module are FORBIDDEN. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/scenario/massing_model.py - lot-ring NYC 2263 check, GEOS wrap, documented no-dedupe",
+    "services/api/tests/scenario/test_massing_model.py - y-only probe, lot CRS refusals, GEOS wrap, charge ordering",
+    "project-control/reports/M5-T098-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T088"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/massing_model.py",
+    "services/api/tests/scenario/test_massing_model.py",
+    "project-control/reports/M5-T098-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/proposal.py",
+    "services/api/app/scenario/max_envelope.py",
+    "services/api/app/scenario/derivation.py",
+    "services/api/app/scenario/contract.py",
+    "services/api/app/scenario/proposal_input_gate.py",
+    "services/api/app/cad/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (y-axis bound): a lot or footprint violating the magnitude bound on Y alone is refused coordinate_out_of_range; mutation MD (drop the y clause) reddens.",
+    "AS-2 (lot CRS range): a lot ring outside the NYC EPSG:2263 range (e.g. 4326 degrees, or metres) refuses with a typed MassingModelError naming lot_ring; an in-range lot is unaffected; mutation - removing the check reddens.",
+    "AS-3 (typed errors): a geometry that makes shapely raise GEOSException surfaces as MassingModelError (spy or monkeypatched shapely proves the wrap); no untyped exception escapes build paths.",
+    "AS-4 (charge ordering): a work-budget probe proves scan units are charged before the scan runs; mutation ME reddens.",
+    "AS-5 (no behaviour change + scope): every existing test and golden passes byte-identical; zero new dependencies; unwired; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "3d-massing-engineer",
+  "reviewer_agents": [
+    "geospatial-engineer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T15:34:44.735353+00:00",
+  "updated_at": "2026-09-24T15:34:45.215123+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T15:34:44.736867+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/scenario/test_massing_model.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
