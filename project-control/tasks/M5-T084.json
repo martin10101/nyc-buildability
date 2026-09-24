@@ -53,11 +53,11 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 95,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T07:24:32.504404+00:00",
-  "updated_at": "2026-09-24T07:25:40.691379+00:00",
+  "updated_at": "2026-09-24T08:05:08.403345+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -88,6 +88,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contract seam complete: G0 PASS; D-087 wave-1 (orchestrator-dispatched subagent producer); worktree wt-m5t084 at the claim-seam commit; dispatch next"
+    },
+    {
+      "at": "2026-09-24T08:05:08.403345+00:00",
+      "agent": "official-source-researcher",
+      "percent": 95,
+      "status": "claimed",
+      "message": "Unit harvested (cherry-pick MATCH by blob identity; orchestrator primary re-run recorded in the G2 report); submitting for the independent wave"
     }
   ]
 }

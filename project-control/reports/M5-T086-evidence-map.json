@@ -1,0 +1,26 @@
+{
+ "task_id": "M5-T086",
+ "material_commit": "719d96f8 (cherry-pick of the wt-m5t086 in-worktree commit 496fd6f9; every file MATCH by git blob identity)",
+ "produced_at": "2026-09-24T08:20:00+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent, D-087 wave; worktree wt-m5t086)",
+ "requirements": {
+  "D-066-R001": [
+   "D-066-R001: the packet's CODE-GRAPH NAVIGATION BLOCK was embedded at the contract seam (graph regenerated: 817 files) naming consumers, forbidden neighbours and the `query.py --no-regen impact` instruction; the producer stayed inside the named scope (no forbidden neighbour touched - the cherry-pick diff lists only the allowed paths)."
+  ],
+  "D-087-R001": [
+   "D-087-R001: this packet is one of the seq-128 capacity-ramp units - contracted, claimed and gated like any ledger packet (G0 PASS at 86e2f98b, claim seam 46cc1e6a); produced by an orchestrator-dispatched subagent in its own worktree (wt-m5t086) concurrently with the other D-087 units; no state or gate skipped."
+  ],
+  "D-087-R002": [
+   "D-087-R002: pairwise-disjoint allowed_paths recorded at G0 (EMPTY overlap vs every live packet); one isolated worktree (wt-m5t086); the in-worktree commit 496fd6f9 touches exactly the allowed paths (git diff --name-only 496fd6f9^ 496fd6f9); the shared package __init__ files stayed orchestrator-owned and untouched."
+  ],
+  "D-087-R006": [
+   "CAD editing needs READING: services/api/app/drawings/dxf_reader.py parses ASCII DXF into typed, layer-tagged primitives (LINE, LWPOLYLINE, POLYLINE/VERTEX/SEQEND, 3DFACE, TEXT) with units REPORTED from $INSUNITS (absent -> 'unitless', never assumed feet); a written disclose-or-refuse rule for everything outside the subset; bounded, all-or-nothing, refusal is a value (never an exception). Not wired to any route."
+  ],
+  "D-087-R007": [
+   "No DWG parser/library: stdlib only (enum, math, dataclasses); binary DXF refused by sentinel; DWG stays behind the owner's licensing decision."
+  ],
+  "D-087-R009": [
+   "D-087-R009: zero new dependencies (stdlib only; no requirements/lockfile change), no route/main.py/web change, max-envelope route still unmounted, no Tier D action, PR #241 untouched; ruff + modularity clean at the harvested head."
+  ]
+ }
+}

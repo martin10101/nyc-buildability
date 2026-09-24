@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T083",
+ "material_commit": "7acb3359 (cherry-pick of the wt-m5t083 in-worktree commit 641f097c; every file MATCH by git blob identity)",
+ "produced_at": "2026-09-24T08:20:00+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent, D-087 wave; worktree wt-m5t083)",
+ "requirements": {
+  "D-066-R001": [
+   "D-066-R001: the packet's CODE-GRAPH NAVIGATION BLOCK was embedded at the contract seam (graph regenerated: 815 files) naming consumers, forbidden neighbours and the `query.py --no-regen impact` instruction; the producer stayed inside the named scope (no forbidden neighbour touched - the cherry-pick diff lists only the allowed paths)."
+  ],
+  "D-087-R001": [
+   "D-087-R001: this packet is one of the seq-128 capacity-ramp units - contracted, claimed and gated like any ledger packet (G0 PASS at 5e704eeb, claim seam f9bfd54d); produced by an orchestrator-dispatched subagent in its own worktree (wt-m5t083) concurrently with the other D-087 units; no state or gate skipped."
+  ],
+  "D-087-R002": [
+   "D-087-R002: pairwise-disjoint allowed_paths recorded at G0 (EMPTY overlap vs every live packet); one isolated worktree (wt-m5t083); the in-worktree commit 641f097c touches exactly the allowed paths (git diff --name-only 641f097c^ 641f097c); the shared package __init__ files stayed orchestrator-owned and untouched."
+  ],
+  "D-087-R005": [
+   "PDF blueprint READING improvement released by R005: services/api/app/drawings/sheet_reader.py (+ sheet_primitives.py) is a SEPARATE architect-sheet profile that reuses the strict reader's lexer/objects/xref read-only (read_object_table) and interprets content with Bezier flattening under a DECLARED tolerance recorded in the output, the full affine CTM (rotation/shear, which the survey profile refuses), a depth-bounded q/Q stack, Form XObjects with recursion <= 8 + cycle refusal, and image XObjects counted-never-decoded; refusal is a value, all-or-nothing per document; every app/documents module byte-untouched (git diff f9bfd54d.. empty); outputs stay in PDF user space (units/scale confirmed by the user in a later C2 packet)."
+  ],
+  "D-087-R009": [
+   "D-087-R009: zero new dependencies (stdlib + zlib only; no requirements/lockfile change), no route/main.py/web change, max-envelope route still unmounted, no Tier D action, PR #241 untouched; ruff + modularity clean at the harvested head."
+  ]
+ }
+}
