@@ -51,12 +51,12 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
-  "progress_percent": 70,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-23T05:42:11.092850+00:00",
-  "updated_at": "2026-09-24T03:02:45.981064+00:00",
+  "updated_at": "2026-09-24T03:23:44.702267+00:00",
   "directive_refs": [
     {
       "directive_id": "D-084",
@@ -94,6 +94,13 @@
       "percent": 70,
       "status": "rework",
       "message": "G3 FAIL (code-reviewer): five required corrections before resubmission - F1 unguarded derivation hop escapes the status matrix (reproduced untyped 500, no correlation header); F2 non-list lot_line_segments silently replaced instead of typed-refused (reproduced 200-fitted); F3 binding TESTS clause unmet (recorded MPG02/MPG06/MPG07 fixtures unused; derived-but-unfittable dominant path untested; deviation undisclosed); F4 over-cap conflated with invalid_geometry against valid official data; F5 threadpool-side lazy client construction race (DB-039(i) class). F6/F7/F8 advisory. Producer rework dispatched."
+    },
+    {
+      "at": "2026-09-24T03:23:30.438098+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Rework applied: producer commit 93a2a667 cherry-picked to eed2350a (F1-F5 + F7, mutation-verified per fix); harvest verified in primary (ruff clean, 55 passed, engine blob unchanged); evidence map corrected (fixture-conditional AS-2 + literal shas). Resubmitting at this head."
     }
   ]
 }

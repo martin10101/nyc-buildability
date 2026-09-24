@@ -1,14 +1,14 @@
 {
   "task_id": "M5-T076",
-  "producer_agent": "backend-engineer",
+  "producer_agent": "orchestrator",
   "report_file": "project-control/reports/M5-T076-producer-report.md",
-  "submitted_at": "2026-09-23T06:06:28.296781+00:00",
+  "submitted_at": "2026-09-24T03:23:42.654426+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M5-T076-evidence-map.json",
-  "content_manifest_sha256": "cdf2fa33f8edd81a24a3b159101633fb274d33ecd09616279a32c2faa31e03a1",
-  "reviewed_sha": "64662b3821e29cdff53754fccb0c2cf65fadf5fb",
+  "content_manifest_sha256": "1550af011b4fc71fcbfea91517107db14a6faa4fa6ce07d24b3b52b9492ee378",
+  "reviewed_sha": "50bf44480096e5d5fabd0f99f17e75d7efcd147a",
   "applicable_requirements": [
     "D-084-R001"
   ],
-  "updated_at": "2026-09-23T06:06:33.049804+00:00"
+  "updated_at": "2026-09-24T03:23:44.696231+00:00"
 }
