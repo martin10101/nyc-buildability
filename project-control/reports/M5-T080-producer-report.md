@@ -434,3 +434,121 @@ destinations, obligations and gaps.
 
 `awaiting_gate` — delta check of the rows and sections in the closure table (G3 cr-p0; HJ hj-p0 for the
 PART A print/accessibility cells), once producer B's PART B rework is harvested.
+
+---
+
+## [ORCH-HARVEST] Rework round: PART B return (verbatim) + cross-file completeness check
+
+Rework producer A (wt-m5t080, commit 8a9a9f38) wrote its rework section above; its commit is cherry-picked as 6644f93f. Rework producer B (wt-m5t080b, commit 6190e69c, one file) is cherry-picked as d5209b4e. Every file is a MATCH by git blob identity. PART B returned its evidence as its final message; the orchestrator appends it here byte-for-byte, extracted from the producer's own transcript. The cross-file check the packet assigns to harvest follows it.
+
+### Rework PART B return (verbatim)
+
+M5-T080 rework, producer B (Part B ledger). Requested status: awaiting_gate.
+
+COMMIT
+- The commit is 6190e69c70ff6f89e9d8112d785b913938406bc2. Its parent is a57bb8dec34129a86e5c9bfe6ea2d2be1f5dfc1d.
+- Branch task/M5-T080-p0-reconcile-b, in worktree C:\Users\MLFLL\Downloads\nyc-zoning\wt-m5t080b. Not pushed.
+- The commit changes one file: docs/design/ui-cleanup/disclosure-ledger-b.json (1016 lines added, 1016 removed). The committed blob is 077754438f479327c53f05fad10fdd0bdfb1bf14.
+- The gitleaks pre-commit hook reported no leaks. After the commit the worktree is clean.
+- Start checks: the toplevel was wt-m5t080b, HEAD was a57bb8de and the tree was clean.
+- Pin: every Part B source file has zero diff between dc5a763e and a57bb8de. The only apps/web changes in that range are the M5-T078/T079 files, which Part B does not cite.
+
+CLOSURE LIST
+- G3-F1: fixed the paths in SR11, SR52, SR53, SR54, SR55, SR56, SR58, SR59, SR60 and SR61, in both assessed_source and current_source, to apps/web/src/lib/surveyReview/{model,labels,errorCopy}.ts. SR11's second path is now a full path too. I read every span at HEAD and each one shows the stated text.
+- G3-F2: I checked every anchor at HEAD before writing it.
+  - R01: workspace.test.tsx:56-85 and e2e architect-workspace.spec.ts:185-213. Gap recorded: no test pins the BBL/generated line or "not saved automatically".
+  - R03: source-links.test.tsx:35, used for the report appendix through :60-68.
+  - C01: condo-resolution-display.test.tsx:410-419, 548-563 and 781-792.
+  - C10: condo-resolution-display.test.tsx:435-455.
+  - E08: now "implementation-only prose" plus a named gap. No test covers the evidence index.
+  - E13: now carries the workspace.test.tsx:36-50 pin.
+  - LS-C03: compare-entry.test.tsx:42-76 and e2e compare-journey.spec.ts:147-150.
+- HJ-1: the 16 rows (LS-P03 to LS-P15, LS-C17, LS-C18, LS-C19) now say "Prints in the property brief today; must stay in default print. Shared primitive (architect + legacy)". Each names its ReportView mount line and is routed to the P5 print gate.
+  - LS-P10: the grouped fields sit behind a button that print hides, so paper shows neither the fields nor the "Show n more" cue.
+  - LS-P15: the nested JSON disclosures are not raw, so the full JSON prints by default.
+  - The false "legacy route, no print" line is corrected on all 72 LS rows:
+    - LS-P01 is in the architect shell but hidden in print.
+    - LS-C09 to C14 and C20 to C23 are shared with the architect scenarios view but not printed.
+    - LS-E03 to E11 are shared with the architect zoning view.
+    - LS-F cards print above the brief on the report view.
+    - Legacy-only rows keep an accurate legacy-only line.
+- HJ-2 (touches Part B): A01 and A03 now say "not printed today" and each opens a P5 decision. E10 is linked to the SH-08 identity-alias decision.
+- HJ-3 (E12): the reason (CalculationEvidence.tsx:43) and fallback_direction_note (:45) stay in the readable tier, which prints by default. Only internal IDs and the CapturedRecord go to raw. The proof owner is report-view.test.tsx:146-187 and :214-276, both CalculationEvidence tests. A gap is recorded: no test proves the note stays in the default printout.
+- HJ-4:
+  - LS-C06 keeps both flags beside the value.
+  - LS-C27's replacement_ref is now "LS-C06 + LS-C05", with professional_review_required mapped to a visible state.
+  - A06's primary state names the readable per-cap status (DevelopmentLimits.tsx:15-21, :39).
+- HJ-5: every Part B row now has an accessibility cell describing that row. For each L row whose state changes, it names the speaking region, alert or status, and the focus rule. Static rows say plainly that nothing speaks and focus does not move. Existing alerts are kept and named:
+  - AnalysisIdentityNotice:72 (A15)
+  - CorrectionForm:90, :146, :151
+  - ReasonForm:67, :72
+  - FocusedItem:166
+  - ConfirmDocumentPanel:180
+  - app/property/error.tsx:37 (LS-T15)
+  - app/dashboard/error.tsx:19 (DB21)
+- HJ-9: survivors are named.
+  - A03: SH-01 footer plus the per-result status. The nav footnote is ruled out.
+  - A15: first paragraph as the alert, with the second paragraph's clauses moving into the Why detail.
+  - E03: A04 for staleness; E11 and SH-01 for the review line.
+  - LS-C22 now keeps the "missing (n)" count, the named blockers and the empty state from LS-C23.
+- HJ-11: every proof_owner has line anchors, or a named gap with its later phase. All 206 L rows carry a visibility obligation. SH-01 is left to Part A.
+- G3-A3:
+  - Every authority cell now uses exactly one class: 145 exact-copy test, 47 returned contract, 28 implementation-only prose, 6 PRD.
+  - Every returned contract names a real schema or type.
+  - B-001 is no longer called a reviewer finding (A01, LS-P01, DB01).
+  - The UI-only copy rows DB09, DB21, SR21, SR47 and SR57 were reclassified.
+  - A05 now uses :457-466 and LS-C05 uses :125-133.
+  - SR24 is now a named gap.
+- G3-A4: all spans use full paths. The disjoint spans for LS-T02, LS-T04 and LS-T06 are restored. The LS-F rows, LS-T11, DB05 and DB08 are normalized.
+
+COUNTS AND SELF-CHECK OUTPUT
+- Enumeration: python selfcheck.py (scratchpad) takes every table row in assessment lines 417-923 whose first cell starts with an id.
+  - enumerated 226 unique 226
+  - per family: A 15, C 11, DB 22, E 16, F 8, LS-C 28, LS-E 11, LS-F 17, LS-P 16, LS-T 15, R 5, SR 62
+  - ledger-b rows 226 unique 226; missing from b []; extra in b []; dup in b []; overlap with a []
+  - all rows exact key list True
+  - L rows 206; empty L fields []
+  - consolidate/retire: LS-C08->LS-C24, LS-C23->LS-C22, LS-C27->"LS-C06 + LS-C05" (both ids resolve), SR27->SR12
+  - replacement_ref on other rows []
+  - mark, disposition, phase, section and drift changed: [] for each
+  - non-ascii chars 0
+  - fields changed: authority 225; accessibility, print_destination and proof_owner 226 each; assessed_source and current_source 33 each; trigger 16; progressive_destination 10; open_question 10; primary_state 7; protected_meaning 3; replacement_ref 1
+- json.tool: `python -m json.tool docs/design/ui-cleanup/disclosure-ledger-b.json` exited 0, run before and after the commit (cwd wt-m5t080b).
+- Reference checker (merge.py): 2003 path:line references across all cells, 0 bad. It checks that each path resolves to one file at HEAD and each line is inside the file. It does not check content.
+- Span content check (spancheck.py): 213 of 226 current_source spans matched an assessment text probe automatically. I read the other 13 by hand and they are correct: C05, C06, C09, C10, C11, LS-P03, LS-P16, LS-F16, LS-F17, LS-T07, SR52, SR53, SR57.
+
+NOT CLOSED, OR JUDGEMENT CALLS
+- The HJ-1 rows keep phase P3 for the screen work. The print duty is routed to P5 in print_destination and proof_owner. Change phase to P5 if you prefer.
+- replacement_ref "LS-C06 + LS-C05" uses a " + " separator. Any checker has to split on "+".
+- Short ":NN" references inside prose were checked by reading, not by script.
+- The 62 SR rows share one print sentence, and the 14 LS-F rows share one accessibility description per surface. In both cases the fact is the same for every row.
+- Web tests were not run (thin client). Every claim comes from reading source at a57bb8de.
+- Out of my scope and left to producer A: SH-02, PE-07, AD15, M07, SH-01's print note, and P0-RECONCILIATION.md.
+
+DISCOVERIES (for DISCOVERY_BACKLOG; none fixed)
+1. In the architect workspace a scenario failure is never announced. Only the rule-eval announcer (ArchitectEntry.tsx:168) and the property announcer (:220) exist, and scenario failures render at :190.
+2. When a property fails in the architect workspace, focus does not move to the failure heading (ArchitectEntry.tsx:239-242).
+3. On the report view, analysis failure cards and their Retry buttons print above the brief. They sit outside .architect-report (:190-191), and architect.css:140 only hides buttons inside it.
+4. Full JSON prints by default for every fact in the brief (ProvenanceDisclosure.tsx:101-110).
+5. The grouped missing fields and their cue disappear on paper (MissingInputsSection.tsx:76-90).
+6. The spatial evidence (F04) and the exact rule-evaluation server disclaimer (LS-E05) are not in the default printout.
+7. An identity mismatch is spoken twice: once by the alert and once by the rule-eval announcer (ArchitectEntry.tsx:95-96).
+8. An incomplete evaluation uses two status regions (DevelopmentLimits.tsx:25 and ArchitectEntry.tsx:97).
+9. The dashboard drawer does not return focus to its opener on close (DashboardApp.tsx:101).
+10. The survey inbox never focuses its failure heading (ReviewInbox.tsx:89).
+11. The "not authoritative" meaning of the AI-drafted label is in a tooltip only (FactRow.tsx:43).
+12. The legacy compare announcement leaves out an identity mismatch (scenario-api.ts:438-445).
+13. Several L rows have no pinning test. Each is marked "gap" in its proof_owner, for example A04, A12, E08, LS-P12, LS-P13, SR05 and DB21.
+
+MEMORY
+I added one project-memory note, project_architect-print-and-a11y-facts.md, with a MEMORY.md pointer in the frontend-engineer agent-memory directory of my harness worktree. It holds stable print and accessibility facts only, no task status.
+
+END-OF-REPORT
+
+### Cross-file completeness check (orchestrator, at the harvested head)
+
+- Enumeration over docs/UI_DEEP_DIVE_ASSESSMENT.md lines 57-923 (every table row whose first cell starts with an inventory id): 381 ids, 381 unique.
+- disclosure-ledger-a.json (155) + disclosure-ledger-b.json (226) = 381 rows, 381 unique; missing from the ledgers: none; extra in the ledgers: none; duplicates: none.
+- Every row carries exactly the same 18 keys: True.
+- 344 L-marked rows; missing primary_state / progressive_destination / accessibility / print_destination / proof_owner: none.
+- consolidate/retire rows with an unresolved replacement_ref (split on '+'): none.
