@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-087",
  "version": 1,
- "requirement_count": 10,
+ "requirement_count": 12,
  "producer": "orchestrator",
- "updated_at": "2026-09-24T08:30:00+00:00",
+ "updated_at": "2026-09-24T08:50:00+00:00",
  "requirements": [
   {
    "id": "D-087-R001",
@@ -364,6 +364,73 @@
    "status": "pending",
    "status_reason": "Time-sensitive; informs sequencing only.",
    "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-087-R011",
+   "text": "GO FOR THE 3D WEB LIBRARY ADMISSION (source-002 message 2, answering the orchestrator's 'Say \"go\" if that's fine'): lifts ONLY the orchestrator's self-imposed pause on adding the 3D web libraries (three.js + @react-three/fiber at the >=7-day versions the M5-T084 pre-screen names). The admission proceeds as its own gated packet under the UNCHANGED dependency-security policy - exact pins, the 604800-s age floor, advisory-free at every severity, registry-integrity match, G5 provenance review, lockfile generated only by the GitHub workflow, audits on every change - with no waiver of any kind; D-087-R007 (no DWG library) and every other R009 boundary stand.",
+   "source_ref": "source-002-amendment.md#verbatim-owner-2026-09-24-message-2",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-087-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [
+    "D-087-R003",
+    "D-087-R009"
+   ],
+   "required_harness": "The admission packet's G5 record + the dependency-security CI gates at its head.",
+   "required_evidence": "Lockfile diff limited to the admitted packages and their transitive set; G5 provenance report; green dependency-audit + age-gate CI.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Bound when the admission packet is contracted.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-087-R012",
+   "text": "RUNDOWN + LIBRARY-SECURITY ANSWER BEFORE CONTINUING (source-002 message 1): the owner asked, before work continued, for a plain rundown of what is being built and how, and whether security procedures for libraries are followed. Answered in chat (simple English, D-064) before any further dispatch; the substance is recorded in this amendment's Context section. The same library rules remain binding on every later dependency change (R009/R011).",
+   "source_ref": "source-002-amendment.md#verbatim-owner-2026-09-24-message-1",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-087-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [],
+   "required_harness": "None beyond the recorded answer.",
+   "required_evidence": "source-002-amendment.md Context section (the answer's substance and its closing pause line).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Answered in chat at 08:4xZ; recorded here for provenance.",
+   "evidence_paths": [
+    "project-control/directives/D-087-parallel-build-3d-cad-pdf/source-002-amendment.md"
+   ],
    "reviewed_sha": null,
    "maps_to": {
     "files": [],
