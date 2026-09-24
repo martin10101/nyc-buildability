@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T21:04:35+00:00",
+ "verified_at": "2026-09-24T21:15:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1369,6 +1369,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t099): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 827 files / 17658 nodes / 7589 edges; consumers, forbidden neighbours, the query.py --no-regen instruction, advisory); the producer verified consumers in source by grep when the cached graph was stale on the reset worktree, as the advisory graph permits. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T100",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "851c4e63197f50c572ccfc42ef6e71b9e8264a0f",
+   "reviewed_manifest_sha256": "384daa2432b91cf5e1668496843bb3b1b0b3c87f7b9ceb6aea89781a26c26284",
+   "producer": "geospatial-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:15:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t100): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 827 files / 17658 nodes / 7589 edges; the connector imported only by its test; transport + MapPLUTO modules read-only; the query.py --no-regen instruction, advisory); the verifier independently confirmed zero app importers. Blob-level restamp predicate re-verified by the orchestrator at the accept head 851c4e63 (building_footprints_arcgis.py 9f8b9c4c, test_building_footprints_arcgis.py ea748f18, M5-T100-producer-report.md 9d2098c2; identity 384daa24; evaluate_task_refs ok); report M5-T100-DCV.md."
      ]
     }
    ]

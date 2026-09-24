@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T21:04:35+00:00",
+ "verified_at": "2026-09-24T21:15:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -897,6 +897,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: docs only; every route module is proposed UNMOUNTED; the max-envelope preconditions are quoted verbatim and not relaxed; the @types/three choice is left to the owner under the full dependency-security policy with no waiver; the safety riders DB-061 (i) and the PKT-K inflated-bytes cap are carried forward as mandatory; nothing claims a capability that does not exist (the sheet reader reads 0 of 6 real drawings). Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T100",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "851c4e63197f50c572ccfc42ef6e71b9e8264a0f",
+   "reviewed_manifest_sha256": "384daa2432b91cf5e1668496843bb3b1b0b3c87f7b9ceb6aea89781a26c26284",
+   "producer": "geospatial-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:15:00+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contracted at the G0 seam d7a843d6, claimed at 2957e40d with the full worktree path, produced by an orchestrator-dispatched subagent (geospatial-engineer) in wt-m5t100; G0/G2/G3/G4/G5 all recorded PASS; no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head 851c4e63 (building_footprints_arcgis.py 9f8b9c4c, test_building_footprints_arcgis.py ea748f18, M5-T100-producer-report.md 9d2098c2; identity 384daa24; evaluate_task_refs ok); report M5-T100-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs all 23 active tasks; one isolated worktree wt-m5t100; material 2624adec touches exactly the 3 allowed paths; no forbidden path (fixtures, app/resilience, MapPLUTO, routes, main.py, requirements, apps, packages) appears in the commit. Blob-level restamp predicate re-verified by the orchestrator at the accept head 851c4e63 (building_footprints_arcgis.py 9f8b9c4c, test_building_footprints_arcgis.py ea748f18, M5-T100-producer-report.md 9d2098c2; identity 384daa24; evaluate_task_refs ok); report M5-T100-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the only production change is rider (e) - unexpected exceptions log class + a fixed sanitized bounded message + the correlation id, never str(exc), with the returned refusal byte-identical; riders (h)/(l)/(m) lock the existing typed-gap behaviour end to end (null_geometry kept typed; the CRS gate needs wkid AND latestWkid; CONSTRUCTION_YEAR 0 -> None + gap); the recorded fixtures are byte-identical and no geometry math moved. Blob-level restamp predicate re-verified by the orchestrator at the accept head 851c4e63 (building_footprints_arcgis.py 9f8b9c4c, test_building_footprints_arcgis.py ea748f18, M5-T100-producer-report.md 9d2098c2; identity 384daa24; evaluate_task_refs ok); report M5-T100-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new packages (the only new import is from the already-imported app.resilience.transport); no requirements or lockfile change; unwired (no importer in app); no route/main.py/web change; the max-envelope route untouched; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 851c4e63 (building_footprints_arcgis.py 9f8b9c4c, test_building_footprints_arcgis.py ea748f18, M5-T100-producer-report.md 9d2098c2; identity 384daa24; evaluate_task_refs ok); report M5-T100-DCV.md."
      ]
     }
    ]
