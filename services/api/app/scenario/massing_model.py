@@ -33,9 +33,21 @@ option in the max-envelope engine's ``as_dict`` shape:
 
 Every section-10 quality gate that this slice can enforce is a TYPED refusal
 (:class:`MassingModelError` with a machine-readable ``reason``): a footprint not
-within the lot is ``footprint_outside_lot`` and is NEVER clipped or repaired; a lot
-with holes, a self-intersecting ring, a non-finite value, an over-cap vertex count,
-a non-positive floor height, or an empty floor stack each fail closed.
+within the lot is ``footprint_outside_lot`` and is NEVER clipped or repaired; a
+self-intersecting or self-touching ring (a single ring cannot carry a hole - one
+that pinches a hole off by revisiting a vertex is ``self_intersection``), a
+non-finite value, an over-cap vertex count, a non-positive floor height, or an
+empty floor stack each fail closed.
+
+M5-T088 (DB-054 a-j) resource bounds, each a typed refusal raised BEFORE the heavy
+work it guards: a coordinate beyond :data:`MAX_COORD_ABS` (``coordinate_out_of_range``,
+so no lot area / centroid can overflow into a non-JSON value), more than
+:data:`MAX_TOTAL_FLOORS` floors (``over_cap_floors``, before any ring is prepared),
+more than :data:`MAX_TOTAL_MESH_VERTICES` output vertices (``over_cap_output_vertices``,
+before any triangulation or mesh), and ear-clipping work beyond
+:data:`MAX_TRIANGULATION_WORK` (``triangulation_budget_exceeded`` - refused up front
+when the least possible work already exceeds it, else metered so the worst-case
+O(n^3) scan cannot run away). Identical outlines are triangulated once.
 
 Deterministic and offline: standard library + the admitted ``shapely`` (validity,
 area, containment) and ``numpy`` (mesh volume / area reductions). No network, no new
@@ -99,12 +111,22 @@ _DISCLOSURE_FOR_SOURCE = {
     SOURCE_GENERATED_OPTION: "Generated building option",
 }
 
-# --- fail-closed ceilings -------------------------------------------------
+# --- fail-closed ceilings (resource bounds, never legal values) ------------
 #: Total expanded floors across the stack (a paste / generation error above this).
 MAX_TOTAL_FLOORS = 2000
 #: A footprint may sit at most this far outside the lot line (survey noise) before
 #: it is refused ``footprint_outside_lot``. It is NEVER clipped to fit.
 FOOTPRINT_OUTSIDE_LOT_TOL_FT = 1e-6
+#: Coordinate-magnitude bound (absolute value, US survey feet) on EVERY ring - the
+#: lot ring is not B0-bounded, and a finite ~1e154 value overflows shapely's area /
+#: centroid to inf/NaN. Mirrors the DXF / PDF writers' 1e8 (far outside NYC 2263).
+MAX_COORD_ABS = 1e8
+#: Total emitted mesh vertices (2 x ring size per floor band) - bounds the payload a
+#: viewer / exporter receives (~6.5 MB of JSON at the ceiling).
+MAX_TOTAL_MESH_VERTICES = 100_000
+#: Per-request ear-clipping work, in units that upper-bound point-in-triangle tests
+#: (a convex 999-vertex ring costs 497,502). Shared by every distinct ring.
+MAX_TRIANGULATION_WORK = 2_000_000
 
 _Point = tuple[float, float]
 
@@ -179,8 +201,9 @@ def _prepare_ring(points: Sequence[Sequence[float]], field: str) -> list[_Point]
     Accepts an open or explicitly-closed ring, drops the closing duplicate, and
     collapses collinear straight vertices (redundant corners on one edge) so ear
     clipping finds a strict-convex ear at every step and the caps and side walls
-    share the SAME boundary. Fails closed on a non-finite coordinate, an over-cap
-    count, a duplicate vertex, or fewer than three distinct corners."""
+    share the SAME boundary. Fails closed on a non-finite or over-magnitude
+    coordinate, an over-cap count, a duplicate vertex, or fewer than three distinct
+    corners."""
     if not isinstance(points, (list, tuple)):
         raise MassingModelError(f"{field} must be a list of [x, y] points",
                                 reason="invalid_source", field=field)
@@ -199,6 +222,11 @@ def _prepare_ring(points: Sequence[Sequence[float]], field: str) -> list[_Point]
             raise MassingModelError(
                 f"{field}[{idx}] must be a finite [x, y] pair; got {pt!r}",
                 reason="non_finite", field=f"{field}[{idx}]")
+        if abs(x) > MAX_COORD_ABS or abs(y) > MAX_COORD_ABS:
+            raise MassingModelError(
+                f"{field}[{idx}] exceeds the coordinate magnitude bound "
+                f"{MAX_COORD_ABS:.0f} ft",
+                reason="coordinate_out_of_range", field=f"{field}[{idx}]")
         parsed.append((_q(x), _q(y)))
 
     if len(parsed) >= 2 and parsed[0] == parsed[-1]:
@@ -233,18 +261,51 @@ def _prepare_ring(points: Sequence[Sequence[float]], field: str) -> list[_Point]
     return ring
 
 
-def _triangulate(ring: Sequence[_Point], field: str) -> list[tuple[int, int, int]]:
+class _WorkBudget:
+    """A per-request ear-clipping work meter. Units upper-bound point-in-triangle
+    tests; overspending is a typed ``triangulation_budget_exceeded`` refusal."""
+
+    __slots__ = ("limit", "remaining")
+
+    def __init__(self, units: int) -> None:
+        self.limit = units
+        self.remaining = units
+
+    def charge(self, units: int, field: str) -> None:
+        self.remaining -= units
+        if self.remaining < 0:
+            raise MassingModelError(
+                f"{field} triangulation exceeds the work budget of {self.limit} units; "
+                "refused before the ear scan runs away",
+                reason="triangulation_budget_exceeded", field=field)
+
+
+def _min_ear_clip_work(n: int) -> int:
+    """The least :func:`_triangulate` can charge for an ``n``-vertex ring: each of the
+    n-3 clips (m = n..4 remaining) examines at least one candidate (1 unit) and scans
+    it fully (m-3 units), so sum(m-2) = (n-2)(n-1)/2 - 1. Exact, never an estimate."""
+    return (n - 2) * (n - 1) // 2 - 1 if n > 3 else 0
+
+
+def _triangulate(
+    ring: Sequence[_Point], field: str, budget: _WorkBudget | None = None
+) -> list[tuple[int, int, int]]:
     """Ear-clipping triangulation of a simple CCW ring (concave-safe).
 
     Returns index triples into ``ring``, each wound CCW (so a +z-facing cap normal).
     A simple polygon always has an ear (two-ears theorem); a stall means the ring is
-    not simple and fails closed as ``self_intersection``."""
+    not simple and fails closed as ``self_intersection``. Work is metered by
+    ``budget`` (a fresh :data:`MAX_TRIANGULATION_WORK` budget when omitted): one unit
+    per candidate, and each convex candidate's worst-case containment scan (m-3
+    units) is charged BEFORE that scan runs."""
     n = len(ring)
     if n < 3:
         raise MassingModelError(f"{field} needs at least 3 vertices to triangulate",
                                 reason="invalid_source", field=field)
     if n == 3:
         return [(0, 1, 2)]
+    if budget is None:
+        budget = _WorkBudget(MAX_TRIANGULATION_WORK)
 
     remaining = list(range(n))
     triangles: list[tuple[int, int, int]] = []
@@ -255,12 +316,14 @@ def _triangulate(ring: Sequence[_Point], field: str) -> list[tuple[int, int, int
         m = len(remaining)
         clipped = False
         for pos in range(m):
+            budget.charge(1, field)
             i_prev = remaining[(pos - 1) % m]
             i_cur = remaining[pos]
             i_next = remaining[(pos + 1) % m]
             a, b, c = ring[i_prev], ring[i_cur], ring[i_next]
             if _cross3(a, b, c) <= 0.0:  # reflex or collinear -> not an ear tip
                 continue
+            budget.charge(m - 3, field)
             if any(
                 _point_in_triangle(ring[j], a, b, c)
                 for j in remaining
@@ -438,26 +501,41 @@ class _Floor:
     height_ft: float
     z_bottom: float
     z_top: float
-    ring: list[_Point]
-    cap: list[tuple[int, int, int]]
+    ring: tuple[_Point, ...]  # the prepared ring; also its content-dedupe key
+    ring_field: str
+
+
+def _check_floor_cap(levels: Sequence[Any]) -> None:
+    """Refuse an over-tall stack from the B0 level counts alone, BEFORE any ring is
+    prepared, triangulated or meshed (``over_cap_floors``)."""
+    total = sum(
+        lvl.get("floor_count", 0) for lvl in levels
+        if isinstance(lvl, Mapping) and isinstance(lvl.get("floor_count"), int)
+    )
+    if total > MAX_TOTAL_FLOORS:
+        raise MassingModelError(
+            f"the floor stack has {total} floors, over the cap of {MAX_TOTAL_FLOORS} "
+            "floors", reason="over_cap_floors", field="proposed_massing.levels")
 
 
 def _expand_floor_stack(
-    block: Mapping[str, Any], default_ring: list[_Point], default_cap
+    block: Mapping[str, Any], default_ring: tuple[_Point, ...]
 ) -> list[_Floor]:
     """Adapter: expand the B0 ``levels`` (each ``floor_count`` identical floors of
     ``floor_to_floor_ft``) into an explicit per-floor band stack, stacking z from 0.
 
     The B0 contract DOES carry per-floor heights this way, so no separate floor-stack
     input is needed. A level may carry its own ``outline`` (a setback / tower band);
-    that footprint is prepared and triangulated for its floors, else the top-level
-    footprint is reused. Fails closed on a non-positive height or an empty stack."""
+    that footprint is prepared for its floors (identical content shares one ring),
+    else the top-level footprint is reused. No triangulation happens here. Fails
+    closed on a non-positive height or an empty stack."""
     levels = block.get("levels")
     if not isinstance(levels, list) or not levels:
         raise MassingModelError("proposed_massing.levels must be a non-empty array",
                                 reason="invalid_source", field="proposed_massing.levels")
 
-    ring_cache: dict[int, tuple[list[_Point], list[tuple[int, int, int]]]] = {}
+    field_by_ring: dict[tuple[_Point, ...], str] = {
+        default_ring: "proposed_massing.outline"}
     floors: list[_Floor] = []
     z = 0.0
     floor_index = 0
@@ -477,33 +555,53 @@ def _expand_floor_stack(
                 reason="invalid_source",
                 field=f"proposed_massing.levels[{level_index}].floor_count")
 
+        ring = default_ring
         if lvl.get("outline") is not None:
-            if level_index not in ring_cache:
-                lvl_ring = _prepare_ring(
-                    lvl["outline"].get("vertices", []),
-                    f"proposed_massing.levels[{level_index}].outline.vertices")
-                ring_cache[level_index] = (
-                    lvl_ring,
-                    _triangulate(
-                        lvl_ring,
-                        f"proposed_massing.levels[{level_index}].outline"),
-                )
-            ring, cap = ring_cache[level_index]
-        else:
-            ring, cap = default_ring, default_cap
+            ring = tuple(_prepare_ring(
+                lvl["outline"].get("vertices", []),
+                f"proposed_massing.levels[{level_index}].outline.vertices"))
+            field_by_ring.setdefault(
+                ring, f"proposed_massing.levels[{level_index}].outline")
+        ring_field = field_by_ring[ring]
 
         for _ in range(count):
             floors.append(_Floor(
                 floor_index=floor_index, level_index=level_index,
                 height_ft=_q(height), z_bottom=_q(z), z_top=_q(z + height),
-                ring=ring, cap=cap))
+                ring=ring, ring_field=ring_field))
             z += height
             floor_index += 1
-            if floor_index > MAX_TOTAL_FLOORS:
-                raise MassingModelError(
-                    f"the expanded floor stack exceeds the cap {MAX_TOTAL_FLOORS}",
-                    reason="over_cap_vertices", field="proposed_massing.levels")
     return floors
+
+
+def _check_output_size(floors: Sequence[_Floor]) -> None:
+    """Refuse an over-large mesh from ring sizes alone, BEFORE any triangulation or
+    prism is built (``over_cap_output_vertices``)."""
+    total = sum(2 * len(floor.ring) for floor in floors)
+    if total > MAX_TOTAL_MESH_VERTICES:
+        raise MassingModelError(
+            f"the massing would emit {total} mesh vertices, over the cap of "
+            f"{MAX_TOTAL_MESH_VERTICES}", reason="over_cap_output_vertices",
+            field="proposed_massing.levels")
+
+
+def _triangulate_distinct(
+    floors: Sequence[_Floor],
+) -> dict[tuple[_Point, ...], list[tuple[int, int, int]]]:
+    """Triangulate each DISTINCT ring once under ONE shared per-request budget.
+    Refuses up front when the least possible work (:func:`_min_ear_clip_work`) of the
+    distinct rings already exceeds :data:`MAX_TRIANGULATION_WORK`."""
+    distinct: dict[tuple[_Point, ...], str] = {}
+    for floor in floors:
+        distinct.setdefault(floor.ring, floor.ring_field)
+    least = sum(_min_ear_clip_work(len(ring)) for ring in distinct)
+    if least > MAX_TRIANGULATION_WORK:
+        raise MassingModelError(
+            f"triangulating {len(distinct)} distinct outline(s) needs at least {least} "
+            f"work units, over the budget of {MAX_TRIANGULATION_WORK}",
+            reason="triangulation_budget_exceeded", field="proposed_massing.levels")
+    budget = _WorkBudget(MAX_TRIANGULATION_WORK)
+    return {ring: _triangulate(ring, field, budget) for ring, field in distinct.items()}
 
 
 # ---------------------------------------------------------------------------
@@ -513,11 +611,12 @@ def _expand_floor_stack(
 
 def _lot_polygon(lot_ring: Sequence[Sequence[float]]) -> tuple[Polygon, list[_Point]]:
     """Validate the canonical lot ring and return its shapely polygon + prepared ring.
-    Refuses a self-intersecting lot or a lot with holes (a single ring has none, but
-    an invalid ring geometry fails closed)."""
+    Refuses a self-intersecting or self-touching lot. One ring cannot carry a hole: a
+    keyhole ring that pinches one off by revisiting a vertex is refused
+    ``self_intersection`` in :func:`_prepare_ring`."""
     ring = _prepare_ring(lot_ring, "lot_ring")
     poly = Polygon([(x, y) for x, y in ring])
-    if poly.interiors:
+    if poly.interiors:  # defensive: unreachable from one ring (DB-054 f)
         raise MassingModelError("lot_ring encloses a hole; a massing lot must be a "
                                 "single simple ring", reason="lot_has_holes",
                                 field="lot_ring")
@@ -580,23 +679,24 @@ def build_massing_model(
             f"proposed_massing failed B0 contract validation: {exc}",
             reason="invalid_source", field=exc.field) from exc
 
+    # Cheap bounds first: nothing below runs for an over-tall stack.
+    _check_floor_cap(proposed_massing["levels"])
     lot_poly, lot_prepared = _lot_polygon(lot_ring)
     origin = _local_origin(lot_prepared)
 
-    footprint_ring = _prepare_ring(
+    footprint_ring = tuple(_prepare_ring(
         proposed_massing["outline"].get("vertices", []),
-        "proposed_massing.outline.vertices")
-    footprint_cap = _triangulate(footprint_ring, "proposed_massing.outline")
-    floors = _expand_floor_stack(proposed_massing, footprint_ring, footprint_cap)
+        "proposed_massing.outline.vertices"))
+    floors = _expand_floor_stack(proposed_massing, footprint_ring)
+    _check_output_size(floors)
 
     # Fail-closed containment: every floor footprint within the lot (never clipped).
     lot_guard = lot_poly.buffer(FOOTPRINT_OUTSIDE_LOT_TOL_FT)
-    checked: set[int] = set()
+    checked: set[tuple[_Point, ...]] = set()
     for floor in floors:
-        key = id(floor.ring)
-        if key in checked:
+        if floor.ring in checked:
             continue
-        checked.add(key)
+        checked.add(floor.ring)
         floor_poly = Polygon([(x, y) for x, y in floor.ring])
         if not lot_guard.contains(floor_poly):
             raise MassingModelError(
@@ -605,8 +705,9 @@ def build_massing_model(
                 reason="footprint_outside_lot",
                 field=f"proposed_massing.levels[{floor.level_index}].outline")
 
+    caps = _triangulate_distinct(floors)
     meshes = tuple(
-        _build_prism(floor.ring, floor.cap, floor.z_bottom, floor.z_top,
+        _build_prism(floor.ring, caps[floor.ring], floor.z_bottom, floor.z_top,
                      floor.floor_index, floor.level_index, origin)
         for floor in floors
     )
