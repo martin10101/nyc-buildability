@@ -181,6 +181,14 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - Python with Windows paths goes through the Write tool, never a Bash heredoc (a backslash-U
   becomes a unicodeescape SyntaxError; a claim silently did not run). Agents keep scratch .py files
   in a SUBFOLDER: a root `inspect.py` in the shared scratchpad shadowed the stdlib, broke pytest.
+- Seam scripts run `python -u`, never under a `timeout` shorter than the tool limit (or use
+  run_in_background): a kill loses the buffered log MID-SEAM (wave-4: both commits landed, the
+  worktrees did not). After any silent exit check `git log` + task status before re-running.
+- Agent `isolation: worktree` needs the session cwd inside a git repo (cd ctl24 first; from the
+  scratchpad it fails "not in a git repository"); from ctl24 it fails transiently ("could not
+  read git config" / "metadata could not be resolved") - retry once, one dispatch per call.
+- DCVs pre-authorize restamps well: ask for a blob-level predicate + broad disjoint-peer
+  tolerance UP FRONT; then 9 accepts landed in one session with zero re-reviews (seq 128).
 - NEVER pass `model:` on an Agent dispatch: it OVERRIDES the agent file's claude-opus-4-8 xhigh
   pin (owner: "sub agent stays 4.8", D-085 src-003); "opus" = Opus 5.5 - 20 seq-128 spawns
   drifted (report D-085-subagent-model-deviation-2026-09-24.md). Verify via subagent transcripts.
