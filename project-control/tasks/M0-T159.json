@@ -1,0 +1,94 @@
+{
+  "task_id": "M0-T159",
+  "title": "B-026 remedy: Claude Code 2.1.281 admission + recertification on the CERTIFIED controller tree a5886dab (runbook section 13 / R287; M0-T132 precedent) - recapture the live fixture pack, re-point the drift teeth, whole-suite recert, manifest bound to the current config in a TEMP path; commissioning steps stay owner-typed",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Admit the Claude Code CLI 2.1.281 (installed under D-085-R002) to the certified supervisor controller so the three codex loop lanes can launch again (B-026). Work on a candidate branch cut from the CERTIFIED controller commit a5886dab (NOT ctl24 HEAD - the accepted-but-uncertified M0-T149/M0-T152 supervisor changes stay out of this admission): (1) preflight - claude --version and the executable identity via tools/agent_supervisor/process.py executable_identity; (2) recapture the live fixture pack at 2.1.281 with the M0-T132 instruments: capability-probe live record, hook-event catalog (official hooks docs re-fetched; diff vs the 2.1.252 33-event catalog), native-runtime detection, and shell-routing evidence measured live on the approved worker model claude-opus-5-5 (adapt project-control/reports/M0-T132-routing-capture.py into this task's own capture script); older fixtures kept append-only; (3) re-point the version drift teeth (event_drift.py catalog pointer + the fixture-consuming tests); (4) ONE recertification at the final frozen candidate: golden pack + the re-pointed packs + the WHOLE tools/test_agent_supervisor_*.py suite in one process (baseline = the a5886dab tree's own count; no test removed), record-manifest with --out in a TEMP directory binding C:\\Program Files\\SupervisorConfig\\config.toml, verify-controller against that temp manifest, non-live doctor. The stored activation-manifest overwrite, the controller re-point to the admitted commit, and the per-launch --repin-cli-identity stay OWNER-TYPED commissioning steps (runbook section 12 / the M0-T132 section-5 precedent) and are presented, not run.",
+  "business_reason": "The owner updated the CLI and asked for the loops to run on Opus 5.5 (D-085) and for maximum parallel capacity today (D-087-R001); the controller refuses every lane launch until the new CLI is admitted per R287 - 'never repin first; never silently accept version drift'.",
+  "inputs": [
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "SAFETY - LIVE CONTROLLER UNTOUCHED (binding): NEVER write to C:\\SupervisorController, C:\\SupervisorController2, C:\\SupervisorController3, C:\\Program Files\\SupervisorConfig, C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-controller-src, or anything under %LOCALAPPDATA%\\NYCBuildabilitySupervisor (reading is fine). NEVER run the supervisor verbs start, clear-recovery, deny, approve-once, revoke-all, pause/resume, stop, emergency-stop, owner-restart, doctor --live, or record-manifest without an --out inside your own temp dir. Every lane journal stays byte-untouched (prove by recording each journal file's size+mtime before and after).",
+    "PROCEDURE AUTHORITY (binding): docs/CONTROLLER_UPDATE_RUNBOOK.md section 13 (R287 ordered admission) and sections 5-7; precedent reports project-control/reports/M0-T132-{admission-evidence,recertification,G2-self-check}.md and the M0-T132 packet's fixture set; the recovery probes in tools/agent_supervisor/recovery_probes.py (probe_cli_capability_manifest, probe_shell_routing_evidence, record_routing_evidence) and tools/agent_supervisor/start_gate.py live_revalidation (shell_routing is ANDed into cli_capability_manifest). Fixture file names follow the existing *_2_1_252 / *_2026-09-01_m0t132 conventions with 2_1_281 / 2026-09-24_m0t159.",
+    "CANDIDATE TREE (binding): your worktree is cut from a5886dab on branch task/M0-T159-cli-2-1-281-admission; commit the fixtures, the re-pointed teeth/tests and your reports there as ONE commit. The ledger packet itself lives in the primary checkout (read it there, read-only).",
+    "EVIDENCE (binding): the recertification report records the frozen candidate identity (commit, tools/agent_supervisor manifest digest from the temp manifest, admitted CLI version + executable digest), every pack's pass/skip/fail counts with wall time, the baseline reconciliation, the live-probe verdicts, verify-controller/doctor results, and the exact owner-typed commissioning commands (controller re-point, activation-manifest re-record, the per-lane relaunch with --repin-cli-identity).",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam): consumers of the fixture pack = tools/agent_supervisor/{capability_probe,event_drift,native_runtime,recovery_probes,start_gate}.py and tools/test_agent_supervisor_{capability_probe,event_bus,native_adapter,routing_probe}.py. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "Four 2.1.281 fixtures under tools/agent_supervisor/fixtures/ (capability probe, hook-event catalog, native-runtime detection, shell routing)",
+    "Re-pointed drift teeth: tools/agent_supervisor/event_drift.py + the fixture-consuming test packs",
+    "project-control/reports/M0-T159-producer-report.md + M0-T159-recertification.md + M0-T159-routing-capture.py"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/fixtures/capability_probe_live_2026-09-24_m0t159_2_1_281.json",
+    "tools/agent_supervisor/fixtures/hook_event_catalog_2_1_281.json",
+    "tools/agent_supervisor/fixtures/native_runtime_detection_2026-09-24_m0t159.json",
+    "tools/agent_supervisor/fixtures/shell_routing_2026-09-24_m0t159_2_1_281.json",
+    "tools/agent_supervisor/event_drift.py",
+    "tools/test_agent_supervisor_event_bus.py",
+    "tools/test_agent_supervisor_capability_probe.py",
+    "tools/test_agent_supervisor_native_adapter.py",
+    "tools/test_agent_supervisor_routing_probe.py",
+    "project-control/reports/M0-T159-producer-report.md",
+    "project-control/reports/M0-T159-recertification.md",
+    "project-control/reports/M0-T159-routing-capture.py"
+  ],
+  "forbidden_paths": [
+    "apps/",
+    "services/",
+    "packages/",
+    ".claude/",
+    "project-control/tasks/",
+    "project-control/directives/",
+    "project-control/gates/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (preflight): claude --version = 2.1.281 and its executable identity (digest, size, path) recorded with the exact instrument; the old 2.1.252 identity e713c5a6 named as retired.",
+    "AS-2 (fixture pack): four 2.1.281 fixtures captured LIVE with the precedent instruments; each diff vs its 2.1.252 predecessor stated (version-only vs substantive); shell routing measured on claude-opus-5-5 with its verdict; older fixtures untouched.",
+    "AS-3 (teeth): the version drift teeth are re-pointed and GREEN at 2.1.281, and removal-sensitive (pointing a tooth back at 2.1.252 reddens it - run recorded).",
+    "AS-4 (recertification): golden pack + re-pointed packs + the WHOLE supervisor suite pass at ONE frozen candidate with counts reconciled to the a5886dab baseline (no test removed); record-manifest into a TEMP dir binds the current config.toml; verify-controller PASS against it; non-live doctor result recorded.",
+    "AS-5 (safety + scope): every lane journal byte-untouched (before/after size+mtime); nothing written outside the worktree and a temp dir; exactly the allowed_paths change; the owner-typed commissioning commands are presented, never run."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T08:14:06.319330+00:00",
+  "updated_at": "2026-09-24T08:14:07.001561+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": [
+        "D-024-R287"
+      ]
+    },
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T08:14:06.319330+00:00",
+  "documented_test_commands": []
+}
