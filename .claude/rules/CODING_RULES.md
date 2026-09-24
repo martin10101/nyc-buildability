@@ -34,3 +34,5 @@
   asserted request can actually elicit the stubbed response from the real engine - CI green
   surfaces neither (T070 G3/G4 wave: invented no_fit + a fitted candidate the geometry-free
   request can never produce).
+- DO make a "fix does not corrupt X" test assert the field the bug displaces: revert to the
+  literal pre-fix code and confirm the asserted value moves (M5-T083 G4-F6: points[0] was invariant).

@@ -4,9 +4,18 @@
   "reviewer": "qa-engineer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M5-T083-G4.md",
-  "reviewed_at": "2026-09-24T08:33:45.699734+00:00",
-  "content_manifest_sha256": "e550d721c2e0a0cdb6f7ae771077a847b9bb885b67614b04d4153a982e7a6d7c",
-  "reviewed_sha": "8e5976fe86b446486d0da16958f57a1ca7485a09",
-  "updated_at": "2026-09-24T08:33:48.014132+00:00"
+  "report_file": "project-control/reports/M5-T083-G4-rework.md",
+  "reviewed_at": "2026-09-24T09:31:25.832315+00:00",
+  "content_manifest_sha256": "86661a1ac1114f4463b2d3ce21d71d1660cea6d8788adfa0dd9250fc6a68607e",
+  "reviewed_sha": "4de4f5ec94f7aed4bc47ee2ed1c7ad8e3c9c8906",
+  "history": [
+    {
+      "reviewer": "qa-engineer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T083-G4.md",
+      "reviewed_at": "2026-09-24T08:33:45.699734+00:00"
+    }
+  ],
+  "updated_at": "2026-09-24T09:31:36.571977+00:00"
 }
