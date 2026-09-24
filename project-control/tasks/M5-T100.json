@@ -1,0 +1,94 @@
+{
+  "task_id": "M5-T100",
+  "title": "D-087 3D-2b: building-footprint connector riders (DB-058 e, h, l, m) - findable internal errors without leaking upstream text, an end-to-end missing-geometry test, a one-half-wrong CRS page test, and the zero-construction-year value assertion",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "On services/api/app/connectors/building_footprints_arcgis.py and its test: (e) make the catch-all internal_error findable in production - log the exception class, a length-bounded sanitized message (the shared transport's sanitizer) and the correlation id at error level - while the RETURNED refusal keeps carrying only the class name, and prove no upstream body text can reach the log; (h) an end-to-end fetch test where one feature lacks its geometry key (a typed gap or refusal, declared); (l) a synthetic page whose spatialReference is {wkid:102718, latestWkid:9999} (and the mirror case) refused wrong_crs; (m) assert construction_year is None when CONSTRUCTION_YEAR is 0. Every other behaviour and every recorded fixture stays byte-identical.",
+  "business_reason": "The official footprint connector (D-087-R003) feeds the 3D context buildings; these are the review riders that do not depend on wiring and make its failures findable and its tests discriminating before it is wired.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-058 (e), (h), (l), (m) (and (a)-(d), (f), (g) as context for the later wiring packet - NOT in scope); project-control/reports/M5-T089-G3.md (A1, A4), M5-T089-G4.md (A1, A2), M5-T089-G5.md (part 2: the class-name-only refusal is the SAFE choice and must stay). Fixtures under tests/fixtures/building_footprints/ are byte-frozen (sha256-pinned in MANIFEST.json); synthetic pages for new tests are built in the test module, never added as recorded fixtures.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 827 files / 17658 nodes / 7589 edges): the connector is imported only by tests/connectors/test_building_footprints_arcgis.py; app/resilience/transport.py (shared by every connector) and mappluto_geometry_arcgis.py are READ-ONLY here - reuse the transport's sanitizer, never edit it. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/connectors/building_footprints_arcgis.py - findable internal errors (sanitized, bounded)",
+    "services/api/tests/connectors/test_building_footprints_arcgis.py - DB-058 (h), (l), (m) + the no-leak log test",
+    "project-control/reports/M5-T100-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T089"
+  ],
+  "allowed_paths": [
+    "services/api/app/connectors/building_footprints_arcgis.py",
+    "services/api/tests/connectors/test_building_footprints_arcgis.py",
+    "project-control/reports/M5-T100-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/tests/fixtures/building_footprints/",
+    "services/api/app/resilience/",
+    "services/api/app/connectors/mappluto_geometry_arcgis.py",
+    "services/api/app/scenario/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (findable, not leaky): an unexpected exception inside fetch logs class + sanitized bounded message + correlation id at error level; the returned refusal still carries only the class name; a test injects an exception whose message contains upstream-looking text and proves the log line is sanitized and bounded; mutation - logging the raw message reddens.",
+    "AS-2 (missing geometry end to end): a page with one feature lacking 'geometry' yields the declared typed outcome through fetch_context_buildings (never an untyped error); mutation - removing the guard reddens.",
+    "AS-3 (CRS halves): {wkid:102718, latestWkid:9999} and {wkid:3857, latestWkid:2263} pages are each refused wrong_crs; mutations MY1a/MY1b from the G4 review now redden.",
+    "AS-4 (zero year): CONSTRUCTION_YEAR 0 gives construction_year None plus the zero_not_available gap; mutant MY7 now reddens.",
+    "AS-5 (no drift + scope): all 110 existing tests pass; fixtures byte-identical; zero new dependencies; unwired; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "geospatial-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T15:44:06.146962+00:00",
+  "updated_at": "2026-09-24T15:44:06.729211+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T15:44:06.146962+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/connectors/test_building_footprints_arcgis.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "task_id": "M5-T099",
+  "title": "D-087 PLAN-1: the wiring plan for CAD/3D export and the 3D viewer - one design note that turns the accepted, unwired D-087 building blocks into an ordered, parallel-safe packet sequence (docs only)",
+  "task_type": "infrastructure",
+  "milestone_id": "M5",
+  "objective": "Write docs/design/d087-export-and-3d-viewer-plan.md: the design the orchestrator will contract the next D-087 packets from. (1) Inventory every accepted, unwired D-087 block with its public API and limits (app/cad dxf_writer / pdf_sheet_writer / glb_writer, app/drawings dxf_reader / sheet_reader, app/scenario massing_model, app/connectors building_footprints_arcgis) and map the open riders (DB-053..DB-062) to the step that must close each. (2) Propose the API contract for export (DXF, PDF site plan, GLB) and for a 3D scene payload (massing + lot + context buildings): flag-gating, request bounds, response types and Content-Disposition, size caps, time budgets, typed refusals, provenance and the honesty labels, logging with server-generated correlation ids, escaping of source text. (3) Design the web 3D viewer on the admitted three 0.186.0 + @react-three/fiber 9.7.0: data path, coordinate frames (EPSG:2263 feet -> local metres), performance limits, a non-visual text alternative, print behaviour, the @types/three decision laid out for the owner (package with its WASM physics dependency vs a reviewed local declaration file), and CI-only web testing. (4) The AutoCAD round trip: what importing an architect's DXF into the proposal editor would mean and what stays later. (5) An ordered packet breakdown with allowed paths, dependencies, gates, the riders each closes, and a disjointness plan for parallel builders. (6) The owner decisions still open (R008 DXF middleman confirmation, R007 DWG licensing, @types/three, real architect PDFs).",
+  "business_reason": "The owner asked for 3D handling of buildings and lots and for AutoCAD import/export (D-087-R003/R004/R006); the building blocks are accepted but unwired, and a reviewed plan lets several builders wire them in parallel without colliding or skipping a safety rider.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "DOCS ONLY (binding): the only files you write are docs/design/d087-export-and-3d-viewer-plan.md and your producer report; no code, test, route, dependency or web change. The plan PROPOSES; it authorizes nothing - every packet it lists is contracted later by the orchestrator under the normal gates. It must not claim any capability that does not exist today (for example: the architect-sheet PDF reader reads 0 of 6 real drawings; nothing is wired to a route).",
+    "SPEC SOURCES (binding, read-only): project-control/directives/D-087-parallel-build-3d-cad-pdf/ (requirements R001-R012), D-083 (claim-class vocabulary), .claude/rules/expansion-agent-dispatch-hold.md section 2.3 (what D-087 released), docs/3D_MASSING_ENGINE_ARCHITECTURE.md and docs/3D_VISUAL_ACCEPTANCE_STANDARD.md (reference input only), docs/DISCOVERY_BACKLOG.md DB-053..DB-062, docs/research/dxf-format-reference-2026-09.md, docs/research/building-footprints-source-2026-09.md, docs/research/architect-corpus-reader-trial-2026-09.md, the accepted modules and their tests, services/api/app/main.py and the existing flag-gated proposal routes, .claude/rules/backend-api.md and the apps/web rules. The max-envelope route stays UNMOUNTED; its mount preconditions are unchanged and must be listed, not relaxed.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 827 files / 17658 nodes / 7589 edges): run `python tools/code_graph/query.py --no-regen impact <path>` for each block you inventory and record its consumers (today every D-087 block is imported only by its own test, except pdf_sheet_writer -> dxf_writer CLAIM_CLASS_WORDS). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "docs/design/d087-export-and-3d-viewer-plan.md - the wiring + viewer plan (inventory, contracts, viewer design, packet breakdown, owner decisions)",
+    "project-control/reports/M5-T099-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T092"
+  ],
+  "allowed_paths": [
+    "docs/design/d087-export-and-3d-viewer-plan.md",
+    "project-control/reports/M5-T099-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/",
+    "apps/",
+    "packages/",
+    "tools/",
+    ".github/",
+    "docs/DISCOVERY_BACKLOG.md",
+    "docs/3D_MASSING_ENGINE_ARCHITECTURE.md",
+    "docs/3D_VISUAL_ACCEPTANCE_STANDARD.md"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (inventory truth): every block's public API, limits and consumers are quoted from source with file:line; every open rider DB-053..DB-062 is mapped to exactly one future step (or marked 'by note').",
+    "AS-2 (contracts): the export and scene contracts name flag, bounds, types, headers, refusals, provenance and honesty labels; security points (size caps, time budgets, escaping, correlation ids, no upstream text in logs) are explicit.",
+    "AS-3 (viewer): data path, frames, limits, non-visual alternative, print behaviour and the @types/three decision (both options with trade-offs, no default chosen for the owner) are specified; web proof is CI-only.",
+    "AS-4 (packet breakdown): an ordered, dependency-correct list with allowed paths that are pairwise disjoint within each parallel batch, gates per packet, and the riders each closes.",
+    "AS-5 (honesty + scope): no capability is claimed that does not exist; D-083 claim classes used; docs only, exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "cloud-architect",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T15:44:04.203614+00:00",
+  "updated_at": "2026-09-24T15:44:04.934164+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003",
+        "D-087-R004",
+        "D-087-R006",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-083",
+      "requirement_ids": [
+        "D-083-R001",
+        "D-083-R002"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T15:44:04.203614+00:00",
+  "documented_test_commands": [
+    "python tools/modularity_check.py --check"
+  ]
+}

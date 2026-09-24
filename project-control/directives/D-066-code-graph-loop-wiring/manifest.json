@@ -10,7 +10,7 @@
  "issued_at": "2026-09-17",
  "captured_at": "2026-09-17T05:32:23.029143+00:00",
  "created_at": "2026-09-17T05:32:23.029143+00:00",
- "updated_at": "2026-09-24T15:40:00+00:00",
+ "updated_at": "2026-09-24T15:50:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "7525cadf448b785895ed47a592b48a4a6de5f97f",
@@ -27,7 +27,7 @@
   "D-066-R003",
   "D-066-R004"
  ],
- "requirements_content_digest_sha256": "4a665b49c4b0e8dc3981341dd6a2964b650d0c51b6f469f380e3db166747bd9a",
+ "requirements_content_digest_sha256": "bbfa25a4ad7ab401c07099dbf832a740fa65a104647f6429265bec3905405cae",
  "sources": [
   {
    "file": "source-001.md",
@@ -292,6 +292,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "wave-5 contract seam (M5-T096/T097/T098 + M0-T160): bound D-066-R001 <- M5-T096, M5-T097, M5-T098, M0-T160; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-24T15:50:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "wave-6 contract seam (M5-T099 plan + M5-T100 footprint riders): bound D-066-R001 <- M5-T099, M5-T100; requirements digest resynced in the same commit."
   }
  ]
 }

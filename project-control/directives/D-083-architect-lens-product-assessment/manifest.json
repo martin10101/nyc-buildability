@@ -10,7 +10,7 @@
  "issued_at": "2026-09-21",
  "captured_at": "2026-09-21T06:22:00+00:00",
  "created_at": "2026-09-21T06:22:00+00:00",
- "updated_at": "2026-09-24T08:05:00+00:00",
+ "updated_at": "2026-09-24T15:50:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "defe301382459db82e27265feefd333615de26f9",
  "capture_head_sha": null,
@@ -36,7 +36,7 @@
   "D-083-R012",
   "D-083-R013"
  ],
- "requirements_content_digest_sha256": "675c8f1f24486ec1327115623ec64ea30a79012a1acba6aefdd82e46d89d76c1",
+ "requirements_content_digest_sha256": "2de9408131ae1262748f015560ed475601bb74b4a8a653ddc69812c87caa409b",
  "sources": [
   {
    "file": "source-001.md",
@@ -85,6 +85,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "Seq-128 lane re-feed + D-086 P0 contract seam (after accepts #257-#259): bound D-083-R001 <- M5-T079; D-083-R002 <- M5-T079; D-083-R004 <- M5-T079; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-24T15:50:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "wave-6 contract seam (M5-T099 plan + M5-T100 footprint riders): bound D-083-R001 <- M5-T099; D-083-R002 <- M5-T099; requirements digest resynced in the same commit."
   }
  ]
 }

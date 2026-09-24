@@ -10,7 +10,7 @@
  "issued_at": "2026-09-24",
  "captured_at": "2026-09-24T07:20:00+00:00",
  "created_at": "2026-09-24T07:20:00+00:00",
- "updated_at": "2026-09-24T15:40:00+00:00",
+ "updated_at": "2026-09-24T15:50:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "ed49b2d8af5fb4783cc3e456e29f78152e921baf",
  "capture_head_sha": null,
@@ -35,7 +35,7 @@
   "D-087-R011",
   "D-087-R012"
  ],
- "requirements_content_digest_sha256": "1ce296bc337fb6b76908d16f604f31e9aa02eb71b1739ea9048840ce29666955",
+ "requirements_content_digest_sha256": "ca5ba8eb7bd1f6a20c59ef127181a1f7341b8e84554fae20cd6cbd446d467835",
  "sources": [
   {
    "file": "source-001.md",
@@ -130,6 +130,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "wave-5 contract seam (M5-T096/T097/T098 + M0-T160): bound D-087-R001 <- M5-T096, M5-T097, M5-T098, M0-T160; D-087-R002 <- M5-T096, M5-T097, M5-T098; D-087-R003 <- M5-T098; D-087-R004 <- M5-T096; D-087-R006 <- M5-T096, M5-T097; D-087-R007 <- M5-T096, M5-T097; D-087-R009 <- M5-T096, M5-T097, M5-T098; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-24T15:50:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "wave-6 contract seam (M5-T099 plan + M5-T100 footprint riders): bound D-087-R001 <- M5-T099, M5-T100; D-087-R002 <- M5-T099, M5-T100; D-087-R003 <- M5-T099, M5-T100; D-087-R004 <- M5-T099; D-087-R006 <- M5-T099; D-087-R009 <- M5-T099, M5-T100; requirements digest resynced in the same commit."
   }
  ]
 }
