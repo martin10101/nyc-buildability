@@ -19,10 +19,10 @@ Design commitments:
   ``mappluto_lot_outline`` is NEVER read here - it is not measurement-grade.
 * FAIL-CLOSED (D-051 discipline). Every failure class - the BBL is not resolvable, the service
   returns no feature, it returns multiple features (review required), the official geometry is
-  unusable, or the connector faults - yields a typed :class:`DerivedLotGeometry` with
-  ``segments = None`` and a plain reason. The caller (the route) then keeps today's honest
-  ``lot_geometry_unsupported`` gap. NEVER a fabricated or partial rectangle, NEVER a silent
-  fallback.
+  unusable, the official geometry is VALID but exceeds OUR OWN segment cap, or the connector
+  faults - yields a typed :class:`DerivedLotGeometry` with ``segments = None`` and a plain reason.
+  The caller (the route) then keeps today's honest ``lot_geometry_unsupported`` gap. NEVER a
+  fabricated or partial rectangle, NEVER a truncated ring, NEVER a silent fallback.
 * PROVENANCE. A successful derivation carries the provenance quintuple (source id, BBL,
   retrieved-at, dataset version, geometry digest) so the derived facts retain their lineage.
 
@@ -68,9 +68,9 @@ logger = logging.getLogger("app.scenario.lot_geometry_derivation")
 #: offline fixture-backed callable.
 LotGeometryProvider = Callable[[str], LotGeometryResult]
 
-#: Default ceiling on the number of derived lot-line segments. The route passes its own tighter
-#: entry cap (``ROUTE_MAX_LOT_LINE_SEGMENTS``); a ring above the cap is an honest fail-closed gap,
-#: never a truncated geometry.
+#: Default ceiling on the number of derived lot-line segments. The route passes its own entry cap
+#: (``ROUTE_MAX_LOT_LINE_SEGMENTS``); a ring above the cap is an honest fail-closed gap typed
+#: ``GEOMETRY_OVER_CAP`` (OUR constraint, not bad official data), never a truncated geometry.
 DEFAULT_MAX_DERIVED_SEGMENTS = 800
 
 
@@ -89,9 +89,14 @@ class LotGeometryDerivationOutcome(str, Enum):
     #: The official service returned multiple features for one BBL (review required); the
     #: connector never silently picks one, so no geometry is derived.
     MULTIPLE_FEATURES = "multiple_features"
-    #: The official geometry is unusable (invalid/review-required assessment, degenerate ring, or a
-    #: ring above the derived-segment cap); no lot geometry is derived without review.
+    #: The official geometry is unusable (invalid/review-required assessment, or a degenerate
+    #: exterior ring); no lot geometry is derived without review.
     INVALID_GEOMETRY = "invalid_geometry"
+    #: The official geometry is VALID but its exterior ring(s) yield more segments than OUR cap
+    #: allows. Deliberately distinct from ``INVALID_GEOMETRY``: the City's data is not at fault -
+    #: the route's own ``ROUTE_MAX_LOT_LINE_SEGMENTS`` ceiling is the binding constraint (a real
+    #: recorded lot, the MPG07 multipolygon, hits it). Never a truncated ring.
+    GEOMETRY_OVER_CAP = "geometry_over_cap"
     #: The official source could not be reached or returned a typed connector error.
     CONNECTOR_FAULT = "connector_fault"
 
@@ -128,24 +133,36 @@ def _fail(outcome: LotGeometryDerivationOutcome, detail: str) -> DerivedLotGeome
     return DerivedLotGeometry(outcome=outcome, detail=detail)
 
 
+#: Why no segments could be cut from an otherwise-present canonical geometry. The two causes are
+#: kept APART because they say opposite things about the official source: ``_RING_DEGENERATE`` is a
+#: problem with the City's geometry, ``_RING_OVER_CAP`` is a problem with OUR ceiling (the data is
+#: valid). Conflating them would tell a caller the official data is bad when it is not.
+_RING_DEGENERATE = "degenerate"
+_RING_OVER_CAP = "over_cap"
+
+
 def _exterior_ring_segments(
     canonical_geometry: list, *, max_segments: int
-) -> tuple[dict, ...] | None:
+) -> tuple[tuple[dict, ...] | None, str | None]:
     """Turn the connector's canonical geometry (a list of polygons; each polygon's FIRST ring is
     its exterior, remaining rings are holes) into lot-line segments over the exterior ring(s) only.
 
     Each canonical ring is an OPEN cycle of ``[x, y]`` coordinate string pairs; consecutive
     vertices (wrapping the last back to the first) become one axis-agnostic segment. Holes are NOT
-    lot lines and are excluded. Returns ``None`` (fail-closed) when a ring is degenerate (< 3
-    vertices) or the total segment count would exceed ``max_segments``."""
+    lot lines and are excluded.
+
+    Returns ``(segments, None)`` on success, else ``(None, reason)`` (fail-closed) where the reason
+    is :data:`_RING_DEGENERATE` (an empty polygon or a ring with < 3 vertices - the official
+    geometry is unusable) or :data:`_RING_OVER_CAP` (a well-formed ring whose segment count would
+    exceed ``max_segments`` - OUR cap binds, never a truncated ring)."""
     segments: list[dict] = []
     for polygon in canonical_geometry:
         if not polygon:
-            return None
+            return None, _RING_DEGENERATE
         exterior = polygon[0]
         points = [(float(x), float(y)) for x, y in exterior]
         if len(points) < 3:
-            return None
+            return None, _RING_DEGENERATE
         count = len(points)
         for index in range(count):
             start_x, start_y = points[index]
@@ -158,8 +175,10 @@ def _exterior_ring_segments(
                 }
             )
             if len(segments) > max_segments:
-                return None
-    return tuple(segments) if segments else None
+                return None, _RING_OVER_CAP
+    if not segments:
+        return None, _RING_DEGENERATE
+    return tuple(segments), None
 
 
 def _provenance_quintuple(result: LotGeometryResult, assessment: GeometryAssessment) -> dict:
@@ -251,12 +270,24 @@ def derive_lot_line_segments(
             f"{status!r}); no lot geometry is derived (never a fabricated rectangle)",
         )
 
-    segments = _exterior_ring_segments(assessment.canonical_geometry, max_segments=max_segments)
+    segments, ring_refusal = _exterior_ring_segments(
+        assessment.canonical_geometry, max_segments=max_segments
+    )
     if segments is None:
+        if ring_refusal == _RING_OVER_CAP:
+            # PROVENANCE HONESTY (permanent principle 4): the City's geometry is valid here; our
+            # own ceiling is what blocks the derivation. Say so, and never truncate the ring.
+            return _fail(
+                LotGeometryDerivationOutcome.GEOMETRY_OVER_CAP,
+                "the official MapPLUTO geometry for this BBL is valid, but its exterior ring(s) "
+                f"yield more lot-line segments than this route's cap allows ({max_segments}); the "
+                "official data is not at fault - our own cap is the binding constraint - so no lot "
+                "geometry is derived (never a truncated ring)",
+            )
         return _fail(
             LotGeometryDerivationOutcome.INVALID_GEOMETRY,
-            "the official MapPLUTO exterior ring is degenerate or exceeds the derived-segment cap "
-            f"({max_segments}); no lot geometry is derived",
+            "the official MapPLUTO exterior ring is degenerate (an empty polygon or fewer than 3 "
+            "vertices); no lot geometry is derived",
         )
 
     return DerivedLotGeometry(
@@ -270,20 +301,28 @@ def derive_lot_line_segments(
     )
 
 
-#: Lazily-constructed production MapPLUTO client (cache + circuit breaker + last-known-good). The
-#: max-envelope route ships UNMOUNTED, so this performs network I/O only once the route is mounted
-#: at a later seam.
+#: Lazily-constructed, cached production MapPLUTO client (cache + circuit breaker + last-known-good
+#: + metrics). Constructing it is pure in-process state; the max-envelope route ships UNMOUNTED, so
+#: network I/O happens only once the route is mounted at a later seam.
 _PRODUCTION_CLIENT: ResilientMapPlutoGeometryClient | None = None
 
 
 def production_lot_geometry_provider() -> LotGeometryProvider:
     """The production provider: resolves lot geometry from the official MapPLUTO ArcGIS connector
-    via the resilient client. Injected by the route only when no test provider is set."""
+    via the resilient client. Injected by the route only when no test provider is set.
+
+    DB-039(i) (mirrors :func:`app.api.v1.proposal_checks_api._effective_registry`'s doctrine): the
+    lazy client global is resolved HERE, and the route calls this ON THE EVENT LOOP - it MUST NOT
+    be called inside a :func:`run_in_threadpool` hop. The returned closure therefore constructs
+    NOTHING: a first-touch race between concurrent worker threads could otherwise build two
+    clients, splitting the response cache, circuit-breaker state, last-known-good store, and
+    resilience metrics between them."""
+    global _PRODUCTION_CLIENT
+    if _PRODUCTION_CLIENT is None:
+        _PRODUCTION_CLIENT = ResilientMapPlutoGeometryClient()
+    client = _PRODUCTION_CLIENT
 
     def _provider(canonical_bbl: str) -> LotGeometryResult:
-        global _PRODUCTION_CLIENT
-        if _PRODUCTION_CLIENT is None:
-            _PRODUCTION_CLIENT = ResilientMapPlutoGeometryClient()
-        return _PRODUCTION_CLIENT.fetch_lot_geometry(canonical_bbl)
+        return client.fetch_lot_geometry(canonical_bbl)
 
     return _provider

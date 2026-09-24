@@ -15,6 +15,7 @@ asserts the route is ABSENT from the real app. It is feature-flag gated OFF by d
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -408,8 +409,10 @@ _RECT_ESRI = {
 
 
 def _rect_result(*, outcome: str | None = None, esri: object | None = _RECT_ESRI,
-                 review_required: bool = False, bbl: str = "1008350041"):
-    """A LotGeometryResult for one BBL from an inline esri geometry (offline)."""
+                 review_required: bool = False, bbl: str = "1008350041",
+                 version: str = "26v1"):
+    """A LotGeometryResult for one BBL from an esri geometry (offline) - the inline SYNTHETIC
+    rectangle by default, or a RECORDED fixture ring via :func:`_recorded_result`."""
     from app.connectors.mappluto_geometry_arcgis import (
         CRS_STAMP,
         OUTCOME_SINGLE,
@@ -426,7 +429,7 @@ def _rect_result(*, outcome: str | None = None, esri: object | None = _RECT_ESRI
         borough=1, block=835, lot=41,
         condo={"classification": "standard_lot", "condo_no": None, "note": None},
         identifier_conflicts=[],
-        attributes={"BBL": int(bbl), "Version": "26v1"},
+        attributes={"BBL": int(bbl), "Version": version},
         features=[],
         geometry=assessment,
         area_sq_ft=(assessment.area_sq_ft if assessment is not None else None),
@@ -448,8 +451,45 @@ def _rect_result(*, outcome: str | None = None, esri: object | None = _RECT_ESRI
     )
 
 
+#: The accepted M2-T009 RECORDED fixture pack (live captures of the official keyless ArcGIS
+#: service). These carry the real City geometry classes the mounted route will meet first.
+_MPG_FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "mappluto_geometry"
+
+
+def _recorded_feature(fixture_name: str) -> dict:
+    """The single feature of a RECORDED fixture, asserted to still be a raw live capture."""
+    fixture = json.loads((_MPG_FIXTURES / fixture_name).read_text(encoding="utf-8"))
+    assert fixture["classification"] == "raw"
+    assert fixture["capture_method"].startswith("live ")
+    features = json.loads(fixture["response_body_raw"])["features"]
+    assert len(features) == 1
+    return features[0]
+
+
+def _recorded_result(fixture_name: str):
+    """A LotGeometryResult whose geometry, BBL and dataset version come from a RECORDED fixture."""
+    feature = _recorded_feature(fixture_name)
+    attributes = feature["attributes"]
+    return _rect_result(
+        esri=feature["geometry"],
+        bbl=str(attributes["BBL"]),
+        version=attributes["Version"],
+    )
+
+
 def _inject_provider(monkeypatch, provider) -> None:
     monkeypatch.setattr(mod, "get_lot_geometry_provider", lambda: provider)
+
+
+def _inject_provider_recording_resolution(monkeypatch, provider, resolutions: list[str]) -> None:
+    """Inject a provider through a getter that RECORDS each resolution, so a test can prove the
+    provider was never even resolved (not merely never called)."""
+
+    def _get():
+        resolutions.append("resolved")
+        return provider
+
+    monkeypatch.setattr(mod, "get_lot_geometry_provider", _get)
 
 
 def _recording_provider(calls: list[str]):
@@ -464,8 +504,16 @@ def _recording_provider(calls: list[str]):
 
 def test_derived_path_yields_fitted_candidate(client, monkeypatch):
     """AS-2: a geometry-free request with a resolvable BBL now yields a FITTED contained candidate
-    from the REAL engine on the rectangular-lot fixture - the exact state the T070 web fixtures
-    model - proven through the route. The derived provenance quintuple rides the response."""
+    from the REAL engine, proven through the route, with the derived provenance quintuple on the
+    response.
+
+    FIXTURE-CONDITIONAL, stated plainly: the lot geometry here is the SYNTHETIC axis-aligned
+    rectangle ``_RECT_ESRI``, because that is the only class the accepted engine can currently fit
+    (``_lot_rectangle`` requires an axis-aligned ring whose bbox area matches the recorded area).
+    A RECORDED City lot of the same BBL does NOT fit - see
+    ``test_recorded_single_lot_derives_but_is_honestly_unfittable``, which asserts that outcome
+    rather than hiding it. So this proves the derivation-to-fitted PATH works, not that real NYC
+    lots generally fit."""
     _inject_provider(monkeypatch, lambda canonical_bbl: _rect_result())
     resp = client.post(_URL, json=_body(lot={**_LOT, "lot_line_segments": [], "bbl": "1008350041"}))
     assert resp.status_code == 200
@@ -492,15 +540,18 @@ def test_derived_path_yields_fitted_candidate(client, monkeypatch):
 
 def test_with_segments_is_byte_identical_and_never_derives(client, monkeypatch):
     """AS-3 (byte-identity): a request that carries client segments is served byte-identically to
-    today - the derivation provider is NEVER resolved or called, and no derived_lot_geometry block
-    appears. A mutant that derived unconditionally would trip the spy and add the key."""
+    today - the derivation provider is NEVER RESOLVED and never called, and no derived_lot_geometry
+    block appears. Both claims are asserted: the getter itself is a spy (so a mutant that resolved
+    the provider and then discarded it still reddens this), and the provider records invocations."""
     calls: list[str] = []
-    _inject_provider(monkeypatch, _recording_provider(calls))
+    resolutions: list[str] = []
+    _inject_provider_recording_resolution(monkeypatch, _recording_provider(calls), resolutions)
 
     # _body() carries the full _LOT rectangle segments AND a bbl - segments-present must win.
     resp = client.post(_URL, json=_body(lot={**_LOT, "bbl": "1008350041"}))
     assert resp.status_code == 200
     doc = resp.json()
+    assert resolutions == []  # the provider is never even resolved
     assert calls == []  # no derivation call
     assert "derived_lot_geometry" not in doc
     # today's behavior: the supplied rectangle fits a candidate.
@@ -580,3 +631,163 @@ def test_no_bbl_and_no_segments_does_not_derive(client, monkeypatch):
     assert calls == []
     assert "derived_lot_geometry" not in doc
     assert doc["candidate_placement"]["status"] == "lot_geometry_unsupported"
+
+
+# ---------------------------------------------------------------------------
+# G3 rework: the derivation hop obeys the documented status/state matrix (F1), a malformed
+# lot_line_segments is never silently replaced (F2), and the RECORDED City fixtures are exercised
+# end to end (F3/F4).
+# ---------------------------------------------------------------------------
+
+
+def test_500_when_the_lot_geometry_provider_raises_unexpectedly(client, monkeypatch):
+    """F1: the derivation hop is the route's only external call, and an UNEXPECTED provider defect
+    (anything the derivation does not type - here a ValueError) must land on the documented
+    (500, internal_error) pair with an X-Correlation-ID, exactly like the registry and engine
+    guards. Without the guard this escapes to Starlette's bare 500 - plain-text body, no state, no
+    correlation id - so this test is a direct red/green witness for the fix."""
+    leak_probe = "provider-defect-detail-should-never-leak"  # secretscan:allow leak-absence probe
+
+    def _raising(canonical_bbl: str):
+        raise ValueError(leak_probe)
+
+    _inject_provider(monkeypatch, _raising)
+    resp = client.post(_URL, json=_body(lot={**_LOT, "lot_line_segments": [], "bbl": "1008350041"}))
+
+    assert resp.status_code == 500
+    assert _pair(resp) == (500, "internal_error")
+    assert _pair(resp) in MAX_ENVELOPE_STATUS_STATE_MATRIX
+    body = resp.json()
+    assert body["message"] == "unexpected internal error; see server logs by correlation id"
+    assert leak_probe not in resp.text  # no exception message leaked
+    assert "ValueError" not in resp.text  # no exception type / traceback leaked
+    assert resp.headers.get("X-Correlation-ID")
+    assert body["correlation_id"] == resp.headers["X-Correlation-ID"]
+
+
+@pytest.mark.parametrize("malformed", ["abc", 42, {"id": "L-S"}, True])
+def test_malformed_segments_refuse_identically_with_and_without_a_bbl(
+    client, monkeypatch, malformed
+):
+    """F2: a malformed ``lot.lot_line_segments`` is a documented typed 422 today. Adding a BBL must
+    NOT turn it into a 200 by substituting derived geometry - the caller's malformed field stays on
+    the typed-refusal path, byte-for-byte the same refusal as without the BBL, and the provider is
+    never resolved or called."""
+    calls: list[str] = []
+    resolutions: list[str] = []
+    _inject_provider_recording_resolution(monkeypatch, _recording_provider(calls), resolutions)
+
+    without_bbl = client.post(_URL, json=_body(lot={**_LOT, "lot_line_segments": malformed}))
+    with_bbl = client.post(
+        _URL, json=_body(lot={**_LOT, "lot_line_segments": malformed, "bbl": "1008350041"})
+    )
+
+    assert _pair(without_bbl) == (422, "validation_error")
+    assert _pair(with_bbl) == (422, "validation_error")
+    without_body = without_bbl.json()
+    with_body = with_bbl.json()
+    assert with_body["field"] == without_body["field"] == "lot.lot_line_segments"
+    # Identical refusals modulo the per-request correlation id.
+    without_body.pop("correlation_id")
+    with_body.pop("correlation_id")
+    assert with_body == without_body
+    assert resolutions == [] and calls == []
+
+
+def test_absent_or_null_segments_with_a_bbl_still_derive(client, monkeypatch):
+    """F2 (the other direction): tightening the guard must not break the derive path. The three
+    shapes that mean "no geometry supplied" - the field ABSENT, ``None``, or an EMPTY LIST - all
+    still derive and fit."""
+    _inject_provider(monkeypatch, lambda _bbl: _rect_result())
+    base = {k: v for k, v in _LOT.items() if k != "lot_line_segments"}
+
+    for lot in (
+        {**base, "bbl": "1008350041"},                              # absent
+        {**base, "lot_line_segments": None, "bbl": "1008350041"},   # null
+        {**base, "lot_line_segments": [], "bbl": "1008350041"},     # empty list
+    ):
+        resp = client.post(_URL, json=_body(lot=lot))
+        assert resp.status_code == 200, lot
+        doc = resp.json()
+        assert doc["derived_lot_geometry"]["outcome"] == "derived", lot
+        assert doc["candidate_placement"]["status"] == "fitted", lot
+
+
+def test_recorded_single_lot_derives_but_is_honestly_unfittable(client, monkeypatch):
+    """F3, on the RECORDED MPG02 capture (Empire State Building, BBL 1008350041) - the packet's own
+    named "fitted-candidate-reachable" fixture. Run through the real route, the real connector
+    analyzer and the real engine, the truth is: the derivation SUCCEEDS (the City's 6-vertex
+    exterior ring becomes 6 authoritative segments with recorded provenance), and the ENGINE then
+    honestly refuses to place a candidate, because that real ring is not axis-aligned - the
+    accepted engine's only supported class.
+
+    The assertion is NAMED, not "some unsupported status": the placement detail must be the
+    engine's OWN verbatim reason, with NO derivation reason appended (there was no derivation
+    failure to report). This is the dominant real-world outcome for NYC lots - the street grid is
+    rotated in EPSG:2263 - and it is asserted here rather than left uncovered."""
+    _inject_provider(
+        monkeypatch, lambda _bbl: _recorded_result("MPG02_lot_single_1008350041.json")
+    )
+    recorded_lot = {
+        # The recorded Shape__Area attribute of the same capture (sq ft), not a synthetic number.
+        "area_sq_ft": 97113.6875,
+        "area_provenance": {"source_id": "nyc-dcp-mappluto-arcgis"},
+        "lot_line_segments": [],
+        "street_lines": [],
+        "bbl": "1008350041",
+    }
+    resp = client.post(_URL, json=_body(lot=recorded_lot))
+    assert resp.status_code == 200
+    doc = resp.json()
+
+    derived = doc["derived_lot_geometry"]
+    assert derived["outcome"] == "derived"  # the official DATA was fine
+    assert derived["provenance"]["source_id"] == "nyc-dcp-mappluto-arcgis"
+    assert derived["provenance"]["bbl"] == "1008350041"
+    assert derived["provenance"]["dataset_version"] == "26v1"
+
+    placement = doc["candidate_placement"]
+    assert placement["status"] == "lot_geometry_unsupported"
+    assert placement["detail"] == (
+        "the lot-line geometry is not an axis-aligned rectangle (a diagonal or zero-length "
+        "segment); unsupported for candidate placement in slice 1"
+    )
+    assert "server-side lot-geometry derivation" not in placement["detail"]
+    assert doc["candidate"] is None
+    assert doc["candidate_consistency"] is None
+    # The envelope's binding values still stand - only the PLACEMENT is gapped.
+    dims = {d["dimension_id"]: d for d in doc["dimensions"]}
+    assert dims["max_building_height"]["binding_value"] == pytest.approx(60.0)
+
+
+def test_recorded_multipolygon_is_reported_over_cap_not_invalid(client, monkeypatch):
+    """F3/F4, on the RECORDED MPG07 capture (Queens, shoreline-clipped true multipolygon): its
+    3130-vertex exterior rings exceed the route's own ROUTE_MAX_LOT_LINE_SEGMENTS (800). The
+    response must classify that as ``geometry_over_cap`` and say our cap is the binding constraint
+    - NOT ``invalid_geometry``, which would tell a caller the City's valid data is bad."""
+    _inject_provider(
+        monkeypatch, lambda _bbl: _recorded_result("MPG07_lot_multipolygon_4142600001.json")
+    )
+    recorded_lot = {
+        "area_sq_ft": 174572369.0070343,  # the recorded Shape__Area attribute (sq ft)
+        "area_provenance": {"source_id": "nyc-dcp-mappluto-arcgis"},
+        "lot_line_segments": [],
+        "street_lines": [],
+        "bbl": "4142600001",
+    }
+    resp = client.post(_URL, json=_body(lot=recorded_lot))
+    assert resp.status_code == 200
+    doc = resp.json()
+
+    derived = doc["derived_lot_geometry"]
+    assert derived["outcome"] == "geometry_over_cap"
+    assert derived["outcome"] != "invalid_geometry"
+    assert derived["provenance"] is None
+    assert "is valid" in derived["detail"] and "not at fault" in derived["detail"]
+    assert "800" in derived["detail"]  # the route's own cap, named
+
+    placement = doc["candidate_placement"]
+    assert placement["status"] == "lot_geometry_unsupported"
+    assert "geometry_over_cap" in placement["detail"]
+    assert "our own cap is the binding constraint" in placement["detail"]
+    assert doc["candidate"] is None

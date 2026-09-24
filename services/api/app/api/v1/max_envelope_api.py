@@ -162,10 +162,18 @@ def _effective_lot_geometry_provider():
 def _should_derive_lot_geometry(lot: dict) -> bool:
     """DB-050(a): derive server-side ONLY when the caller supplied NO lot-line geometry AND a
     non-empty BBL. A request that carries any lot-line segment is served byte-identically to today
-    (no derivation call)."""
-    segments = lot.get("lot_line_segments")
-    if isinstance(segments, list) and len(segments) > 0:
-        return False
+    (no derivation call).
+
+    "No lot-line geometry" means the field is ABSENT, ``None``, or an EMPTY LIST - nothing else. A
+    malformed ``lot_line_segments`` (a string, a number, an object) is NOT an invitation to
+    substitute derived geometry: it stays on the typed-refusal path so ``_build_lot_context``'s
+    ``lot.lot_line_segments must be an array`` 422 survives unchanged, with or without a BBL.
+    Silently replacing a caller's malformed field would turn a documented refusal into a 200."""
+    if "lot_line_segments" in lot:
+        segments = lot["lot_line_segments"]
+        supplied_none = segments is None or (isinstance(segments, list) and not segments)
+        if not supplied_none:
+            return False
     bbl = lot.get("bbl")
     if isinstance(bbl, str):
         return bbl.strip() != ""
@@ -346,18 +354,32 @@ async def post_max_envelope(request: Request) -> JSONResponse:
     # rectangle) and the reason is surfaced below. Requests that DO carry segments skip derivation
     # entirely and are byte-identical to today. The provider does I/O + shapely work OFF the event
     # loop.
+    # The derivation itself types every EXPECTED failure (unresolvable BBL, no/multiple features,
+    # unusable geometry, over-cap ring, connector fault); an UNEXPECTED provider defect propagates
+    # by contract, so it is caught here and mapped to the documented generic 500 - the same guard
+    # the registry resolution and the engine call carry, so no path escapes the status/state matrix.
     derived: DerivedLotGeometry | None = None
     if _should_derive_lot_geometry(lot):
-        provider = _effective_lot_geometry_provider()
-        derived = await run_in_threadpool(
-            functools.partial(
-                derive_lot_line_segments,
-                lot.get("bbl"),
-                provider=provider,
-                max_segments=ROUTE_MAX_LOT_LINE_SEGMENTS,
-                correlation_id=correlation_id,
+        try:
+            # Resolved ON THE EVENT LOOP (never inside the threadpool hop) so the production
+            # client's lazy global cannot be first-touch raced - see DB-039(i) in
+            # production_lot_geometry_provider.
+            provider = _effective_lot_geometry_provider()
+            derived = await run_in_threadpool(
+                functools.partial(
+                    derive_lot_line_segments,
+                    lot.get("bbl"),
+                    provider=provider,
+                    max_segments=ROUTE_MAX_LOT_LINE_SEGMENTS,
+                    correlation_id=correlation_id,
+                )
             )
-        )
+        except Exception:
+            logger.error(
+                "max_envelope_v1 unexpected_error stage=derive_lot_geometry correlation_id=%s",
+                correlation_id,
+            )
+            return _internal_error_500(correlation_id)
         if derived.ok and derived.segments is not None:
             lot = {**lot, "lot_line_segments": list(derived.segments)}
 
