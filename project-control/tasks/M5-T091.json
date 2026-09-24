@@ -63,12 +63,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T09:39:45.679200+00:00",
-  "updated_at": "2026-09-24T09:47:21.055570+00:00",
+  "updated_at": "2026-09-24T10:30:32.061614+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -101,6 +101,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Claimed at the wave-2 claim seam; orchestrator-dispatched subagent producer in the isolated worktree C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t091 (created at the claim-seam commit)."
+    },
+    {
+      "at": "2026-09-24T10:30:03.362261+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Harvested at the wave-2 seam: material cherry-picked with every file MATCH by blob; ruff clean, tests/cad 262 passed, modularity exit 0; evidence map + G2 written; submitting."
     }
   ]
 }

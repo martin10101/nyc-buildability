@@ -1,0 +1,26 @@
+{
+ "task_id": "M5-T092",
+ "material_commit": "706ae62a (cherry-pick of wt-m5t092 856f987c; 3 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T10:30:00+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m5t092)",
+ "requirements": {
+  "D-066-R001": [
+   "Navigation block at the contract seam named app/cad as orchestrator-seeded, dxf_writer.py and pdf_sheet_writer.py FORBIDDEN and glb_writer as unimported; the material touches exactly the 3 allowed paths; AS-5 test pins that nothing imports the module."
+  ],
+  "D-087-R001": [
+   "Wave-2 capacity unit: contracted at 5e9dbd07 (G0), claimed at 114e5e56 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with T088/T089/T090/T091; no state or gate skipped."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every live packet; one worktree wt-m5t092; the pdf sibling hardened concurrently in wt-m5t091 on a disjoint file; the material touches only the 3 allowed paths."
+  ],
+  "D-087-R003": [
+   "3D building handling: a deterministic glTF 2.0 binary (GLB) writer for named triangle meshes - the runtime format the 3D architecture names for browser viewers and downloads - with exact accessor min/max, 4-byte chunk alignment with the specified padding, one material per colour, the US-survey-foot factor 1200/3937 and the EPSG:2263 -> glTF (+Y up) axis map declared and recorded with the CRS/local-origin note and 'Proposed - not a city record' in asset/extras; every constant cited to the fetched Khronos spec v2.0.1."
+  ],
+  "D-087-R006": [
+   "CAD/3D export through an OPEN interchange format (glTF 2.0 GLB), zero-dependency and validated by an in-test parser (header, alignment, padding, JSON essentials, accessor bounds, BIN round-trip after the declared mapping, golden sha256); 13 producer mutants all RED; [ORCH-HARVEST] at the cherry-picked head (Python 3.11.9, cwd services/api): `python -m ruff check .` -> All checks passed!; `python -m pytest tests/cad -q` -> 262 passed (dxf 24 + pdf 180 + glb 58); repo root `python tools/modularity_check.py --check` -> exit 0 (selected 486; failures 0; warnings 23, none on app/cad). The official Khronos glTF-Validator (an npm/browser tool) was not run on this PC - recorded as a harvest item for the G1 verifier."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies (stdlib json/math/numbers/struct/dataclasses/collections.abc); no route, main.py, web, requirements or lockfile change; module unwired (AS-5 test)."
+  ]
+ }
+}
