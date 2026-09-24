@@ -964,3 +964,197 @@ def test_t100_zero_construction_year_nulls_the_value_not_only_the_gap():
     subject = by_oid(result)[229537]
     assert subject.construction_year is None
     assert ("CONSTRUCTION_YEAR", "zero_not_available") in gap_codes(subject)
+
+
+# ---------------------------------------------------------------------------
+# M5-T101 PKT-C riders: the split (AS-1), memory + time bounds (AS-2), log
+# safety (AS-3), datum + untrusted text (AS-4), the source_registry draft (AS-5).
+# Every page/geometry below is SYNTHETIC or a monkeypatched config; no recorded
+# fixture is added or changed and nothing reaches the network.
+# ---------------------------------------------------------------------------
+
+
+def test_pktc_geometry_split_is_reexported_and_acyclic():
+    """AS-1: the ring/geometry helpers live in the geometry module; the connector re-exports
+    the SAME objects, imports FROM it (one-way), and the geometry module imports nothing back -
+    the import graph stays acyclic."""
+    import app.connectors.building_footprints_geometry as geo
+    assert bf.parse_footprint_geometry is geo.parse_footprint_geometry
+    assert bf.classify_query_relation is geo.classify_query_relation
+    assert bf.FootprintPart is geo.FootprintPart
+    geo_src = Path(geo.__file__).read_text(encoding="utf-8")
+    tree = ast.parse(geo_src)
+    modules = {n.module for n in ast.walk(tree) if isinstance(n, ast.ImportFrom) and n.module}
+    modules |= {a.name for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names}
+    assert not any("building_footprints_arcgis" in m for m in modules)
+
+
+def test_pktc_geometry_vertex_cap_refuses_before_retention(monkeypatch):
+    """AS-2 (DB-058 b): one geometry above the vertex cap is refused resource_exhausted before
+    it is retained. Mutation guard: raising MAX_GEOMETRY_VERTICES lets the query succeed."""
+    monkeypatch.setattr(bf, "MAX_GEOMETRY_VERTICES", 4)  # real footprint rings carry more
+    result, _ = run(SUBJECT_ROUTES, envelope=SUBJECT_ENVELOPE, page_size=2)
+    refusal = refused(result, "resource_exhausted")
+    assert refusal.detail["reason"] == "geometry_vertex_cap"
+    assert refusal.detail["max_vertices"] == 4
+
+
+def test_pktc_cumulative_bytes_ceiling_refuses_before_retention(monkeypatch):
+    """AS-2 (DB-058 b): once cumulative decoded page bytes exceed the ceiling paging is refused
+    resource_exhausted. Mutation guard: raising MAX_TOTAL_DECODED_BYTES lets the query run."""
+    monkeypatch.setattr(bf, "MAX_TOTAL_DECODED_BYTES", 10)  # smaller than any real page body
+    result, _ = run(SUBJECT_ROUTES, envelope=SUBJECT_ENVELOPE, page_size=2)
+    refusal = refused(result, "resource_exhausted")
+    assert refusal.detail["reason"] == "cumulative_bytes_ceiling"
+
+
+def test_pktc_wall_clock_deadline_stops_paging_typed():
+    """AS-2 (DB-058 c): a caller deadline already past stops paging with a typed
+    deadline_exceeded refusal before any query page. A future deadline does not refuse.
+    Mutation guard: a no-op _check_deadline lets paging complete."""
+    past = datetime(2026, 9, 24, 11, 0, 0, tzinfo=UTC)  # before FIXED_CLOCK 12:00
+    result, transport = run(SUBJECT_ROUTES, envelope=SUBJECT_ENVELOPE, page_size=2,
+                            deadline=past)
+    refusal = refused(result, "deadline_exceeded")
+    assert refusal.detail["reason"] == "deadline_exceeded"
+    assert transport.calls == [build_metadata_url()]  # no query page fetched
+    future = datetime(2026, 9, 24, 13, 0, 0, tzinfo=UTC)
+    ok_result, _ = run(SUBJECT_ROUTES, envelope=SUBJECT_ENVELOPE, page_size=2, deadline=future)
+    assert ok_result.status == "ok"
+
+
+def test_pktc_interactive_caps_max_attempts_fail_fast():
+    """AS-2 (DB-058 c): interactive=True caps attempts at INTERACTIVE_MAX_ATTEMPTS, so a
+    transient 500 that a 3-attempt call retries past becomes an immediate refusal. Mutation
+    guard: raising INTERACTIVE_MAX_ATTEMPTS restores the retry and the fetch succeeds."""
+    p1 = ok(body("subject_2033800084_envelope_p1.json"))
+    p2 = ok(body("subject_2033800084_envelope_p2.json"))
+    routes = {**META, P1_URL: [TransportResponse(500, "busy"), p1], P2_URL: p2}
+    ok_result, _ = run(routes, envelope=SUBJECT_ENVELOPE, page_size=2)
+    assert ok_result.status == "ok", ok_result.refusal
+    inter, _ = run(routes, envelope=SUBJECT_ENVELOPE, page_size=2, interactive=True)
+    refused(inter, "upstream_error")
+
+
+def test_pktc_safe_correlation_id_strips_control_and_falls_back():
+    """AS-3 (DB-058 d / DB-066 b): the correlation-id sanitizer keeps a safe id verbatim,
+    strips CR/LF and control characters, and falls back to a server-generated id when the
+    input is missing, non-string, or emptied after stripping."""
+    assert bf._safe_correlation_id("t-cid") == "t-cid"
+    assert bf._safe_correlation_id("a\r\nb\x00c") == "abc"
+    assert bf._safe_correlation_id(None) and bf._safe_correlation_id(None) != ""
+    assert bf._safe_correlation_id("\r\n") != "" and "\n" not in bf._safe_correlation_id("x\ny")
+
+
+def test_pktc_hostile_correlation_id_never_reaches_a_log_raw(caplog):
+    """AS-3 (DB-058 d / DB-066 b): a caller correlation id carrying CR/LF/NUL is stripped at
+    entry, so no raw control character reaches EITHER log site (this connector or the shared
+    transport, which reads the same io.cid); the refusal carries the stripped id. Mutation
+    guard: an identity _safe_correlation_id lets the raw newline forge a log line."""
+    hostile = "abc\r\ndef\x00ghi\nFORGED"
+    with caplog.at_level(logging.ERROR, logger=LOGGER_NAME):
+        result = fetch_context_buildings(
+            envelope=SUBJECT_ENVELOPE, transport=_broken_transport(RuntimeError("boom")),
+            clock=FIXED_CLOCK, correlation_id=hostile)
+    line = _error_records(caplog)[0].getMessage()
+    assert "\n" not in line and "\r" not in line and "\x00" not in line
+    assert "correlation_id=abcdefghiFORGED" in line
+    assert result.correlation_id == "abcdefghiFORGED"
+    assert result.refusal.correlation_id == "abcdefghiFORGED"
+
+
+def test_pktc_trailing_newline_in_log_field_is_stripped_not_forged():
+    """AS-3 (DB-066 a): the shared allowlist regex ends in `$`, which matches BEFORE a trailing
+    newline - so 'Foo\\n' would pass through raw. PKT-C strips CR/LF outright first. Mutation
+    guard: emptying _CONTROL_CHAR_DELETE lets the trailing newline survive."""
+    assert bf._sanitized_bounded("Foo\n") == "Foo"
+    assert "\n" not in bf._sanitized_bounded("Foo\r\n") and "\r" not in bf._sanitized_bounded("a\r")
+
+
+def test_pktc_class_name_trailing_newline_is_stripped_end_to_end(caplog):
+    """AS-3 (DB-066 a): a class __name__ that ENDS in a newline is logged without a raw newline
+    (the real allowlist `$`-before-trailing-newline case). Mutation guard: emptying
+    _CONTROL_CHAR_DELETE reddens the no-newline assertion."""
+    hostile = type("EvilError\n", (Exception,), {})
+    with caplog.at_level(logging.ERROR, logger=LOGGER_NAME):
+        result = fetch_context_buildings(
+            envelope=SUBJECT_ENVELOPE, transport=_broken_transport(hostile("x")),
+            clock=FIXED_CLOCK, correlation_id="t-cid")
+    refused(result, "internal_error")
+    line = _error_records(caplog)[0].getMessage()
+    assert "\n" not in line and "class=EvilError" in line
+
+
+def test_pktc_short_alphanumeric_secret_in_message_never_logged(caplog):
+    """AS-3 (DB-066 c): a BARE alphanumeric secret (which the shared allowlist would pass
+    VERBATIM) in an exception message never reaches the log - the internal_error site logs a
+    fixed message + the class name only, never str(exc). The paired passthrough assertion
+    shows the sanitizer alone would NOT catch it, so message-omission is the guard. Mutation:
+    logging str(exc) would leak the secret."""
+    secret = "AdminSecret123"
+    with caplog.at_level(logging.ERROR, logger=LOGGER_NAME):
+        result = fetch_context_buildings(
+            envelope=SUBJECT_ENVELOPE, transport=_broken_transport(RuntimeError(secret)),
+            clock=FIXED_CLOCK, correlation_id="t-cid")
+    refused(result, "internal_error")
+    line = _error_records(caplog)[0].getMessage()
+    assert secret not in line
+    assert bf._sanitized_bounded(secret) == secret  # allowlist passthrough: omission is the guard
+
+
+def test_pktc_typed_refusal_emits_no_error_record(caplog):
+    """AS-3 (DB-066 d): a TYPED refusal (an upstream 500 and a disallowed_request) emits NO
+    ERROR record - only the genuine internal_error branch logs at ERROR. Mutation guard: an
+    ERROR log added to the typed refusal path would make this list non-empty (a double log)."""
+    with caplog.at_level(logging.ERROR, logger=LOGGER_NAME):
+        r1, _ = run({**META, P1_URL: [TransportResponse(500, "x")] * 3},
+                    envelope=SUBJECT_ENVELOPE, page_size=2)
+        r2, _ = run(META, envelope=(5, 5, 1, 9))
+    refused(r1, "upstream_error")
+    refused(r2, "disallowed_request")
+    assert _error_records(caplog) == []
+
+
+def test_pktc_datum_disclosure_and_untrusted_text_are_on_the_record():
+    """AS-4 (DB-058 f, a): each record discloses BOTH ground-elevation definitions (none
+    silently chosen), keeps NAVD88 as published, and lists the untrusted verbatim source-text
+    fields consumers must escape on render."""
+    result, _ = run(SUBJECT_ROUTES, envelope=SUBJECT_ENVELOPE, page_size=2)
+    b = result.buildings[0]
+    assert b.ground_datum == "NAVD88"
+    assert "lowest elevation at building ground level" in b.ground_datum_basis
+    assert "centroid" in b.ground_datum_basis
+    assert "neither is chosen" in b.ground_datum_basis
+    assert b.untrusted_text_fields == ("attributes", "geom_source", "last_status_type")
+    assert "escape" in b.untrusted_text_notice.lower()
+
+
+def test_pktc_zero_ground_elevation_is_a_typed_unverified_value_not_a_default():
+    """AS-4 (DB-058 f): a zero GROUND_ELEVATION stays a real 0.0 flagged unverified - never
+    None, never replaced by the site ground. Mutation guard: an _ground_attr that nulls a zero
+    (mutate the consuming namespace) reddens the 0.0 assertion."""
+    def mutate(page):
+        page["features"][1]["attributes"]["GROUND_ELEVATION"] = 0
+    result, _ = run({**SUBJECT_ROUTES, P1_URL: ok(synthetic_page(mutate))},
+                    envelope=SUBJECT_ENVELOPE, page_size=2, site_ground_elevation_ft=197)
+    subject = by_oid(result)[229537]
+    assert subject.ground_elevation_ft == 0.0
+    assert "ground_elevation_zero_unverified" in subject.flags
+
+
+def test_pktc_source_registry_draft_matches_connector_identity():
+    """AS-5 (DB-058 g): the source_registry draft mirrors the existing drafts, its primary
+    source_id equals the connector SOURCE_ID, and the height-unit + datum inferences stay
+    listed as open questions."""
+    repo_root = API_ROOT.parents[1]
+    draft = json.loads(
+        (repo_root / "docs" / "research" / "source-registry-drafts"
+         / "building-footprints.json").read_text(encoding="utf-8"))
+    assert isinstance(draft, list) and draft
+    primary = draft[0]
+    assert primary["source_id"] == SOURCE_ID
+    for key in ("agency", "official_url", "fields_available", "known_limitations",
+                "open_questions"):
+        assert key in primary
+    blob = json.dumps(primary)
+    assert "RQ-1" in blob and "RQ-2" in blob  # height-unit + datum inferences stay open

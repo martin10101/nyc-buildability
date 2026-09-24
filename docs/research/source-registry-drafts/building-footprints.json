@@ -1,1 +1,103 @@
-[]
+[
+  {
+    "draft_status": "NON-FINAL RESEARCH DRAFT, connector IMPLEMENTED (M5-T087 recon, M5-T089 connector build + M5-T100/M5-T101 wiring-hardening, D-087-R003). NOT yet an applied source_registry record and NOT wired to any route or scene assembler (that is a later gated packet, PKT-E). Every field meaning, unit, datum and cadence below is quoted or paraphrased from an official publisher (City of New York metadata dictionary, OTI ArcGIS REST service JSON, or NYC Open Data SODA metadata) per docs/research/building-footprints-source-2026-09.md (M5-T087, accepted); inferences are labelled and residuals listed under open_questions. The height unit (RQ-1) and the ground-elevation datum + definition conflict (RQ-2) are OPEN and are NOT reconciled by the connector.",
+    "source_id": "nyc-oti-building-footprints-arcgis",
+    "self_declared_source_id": "SOURCE_ID = \"nyc-oti-building-footprints-arcgis\" (services/api/app/connectors/building_footprints_arcgis.py) - matches this record's source_id exactly.",
+    "agency": "NYC Office of Technology and Innovation (OTI) (formerly DOITT)",
+    "name": "Building Footprints (dataset \"BUILDING\") - official OTI ArcGIS feature service BUILDING_view/FeatureServer/0 - RECOMMENDED PRIMARY channel for footprint geometry + roof/ground heights for 3D context massing",
+    "official_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer",
+    "source_type": "official_arcgis_feature_service",
+    "api_dataset_identifier": "BUILDING_view/FeatureServer layer 0 (owner OTI/DOF NYCMaps hub org services6.arcgis.com/yG5s3afENB5iO9fj - the SAME ArcGIS org as the DOF Digital Tax Map; recon M5-T087 section 1). NYC Open Data companion id 5zhs-2jue. Official data dictionary https://raw.githubusercontent.com/CityOfNewYork/nyc-geo-metadata/main/Metadata/Metadata_BuildingFootprints.md (M5-T087 section 1).",
+    "authentication": {
+      "required": false,
+      "notes": "Keyless public feature service (anonymous HTTP 200 verified live on all M5-T087 probes; no credential is sent or stored - none to leak). A key requirement would be routed to the owner boundary; none exists here."
+    },
+    "rate_limits": {
+      "published_limit": null,
+      "notes": "No published numeric limit (same posture as the sibling DTM ArcGIS channel). maxRecordCount=2000 bounds every response, so deterministic resultOffset paging honoring exceededTransferLimit is MANDATORY on any area query (M5-T087 section 4; the neighbours probe returned exceededTransferLimit=true at only 5 rows). RQ-4: the x-esri-org-request-units-per-min header was not captured this session (M5-T087 section 7).",
+      "throttle_signal": "HTTP 429"
+    },
+    "update_frequency": "Weekly public release of daily internal edits (record honestly, M5-T087 section 6): the City dictionary states both 'Last Update: Weekly' and 'Features are updated daily by OTI staff'; the Socrata custom field says 'Weekly'. Observed live 2026-09-24: ArcGIS editingInfo.dataLastEditDate = 2026-09-20T02:16:01Z; schemaLastEditDate = 2025-10-10T16:10:42Z; SODA rowsUpdatedAt = 2026-09-21T06:40:23Z. dataLastEditDate is per-fetch source-freshness provenance only (never a transport-staleness signal - owner two-staleness rule). No cache / last-known-good exists in the connector, so no transport-staleness state exists.",
+    "geographic_coverage": "Citywide, all five boroughs. Completeness threshold (M5-T087 section 6): captured = 'All buildings >400 sq. feet and taller than 12 feet' plus others with BINs - small/short structures are excluded, so the footprint set is not every physical structure. Placeholder triangles (FEATURE_CODE 1003) mark permitted-but-not-yet-built lots.",
+    "fields_available": {
+      "note": "The connector requests the 12 LONG ArcGIS field names below (never '*'); short shapefile/SODA names (HEIGHTROOF, GROUNDELEV, MPLUTO_BBL, ...) are REJECTED by the live service (returns HTTP 200 carrying an ArcGIS error object, code 400 'outFields parameter is invalid' - M5-T089 G1 finding F1). Field meanings are the City dictionary's; the SODA/ArcGIS metadata leave the height/BBL fields WITHOUT a description (M5-T087 section 2). Geometry esriGeometryPolygon; publication CRS wkid 102100/3857 (Web Mercator), but the connector requests outSR=2263 so every page must return wkid 102718 / latestWkid 2263 (EPSG:2263, NAD83 New York-Long Island, US survey feet) or it is refused before any coordinate is read. Coordinates are the service's reprojection of a Web-Mercator publication: DISPLAY/MASSING grade, not survey grade - MapPLUTO stays the measurement channel (M5-T087 section 3).",
+      "field_definitions_from_dictionary_M5_T087_section_2": {
+        "OBJECTID": "esriFieldTypeOID. 'Synthetic key populated by internal software.' NOT a stable per-building key - use DOITT_ID (dictionary).",
+        "DOITT_ID": "esriFieldTypeInteger. 'Consistent unique identifier assigned by OTI (formerly DOITT).' The stable per-footprint identity (dictionary; BIN is NOT unique).",
+        "BIN": "esriFieldTypeInteger. Building Identification Number; first digit = borough. 'Million BINs' (1000000, 2000000, ...) mark an unassigned/unknown BIN. Dictionary note: NOT unique (duplicated across split geometries).",
+        "BASE_BBL": "esriFieldTypeString. 'Borough, block, and lot number for the tax lot that the footprint is physically located within.' Occasionally off-lot (agency sync) - surface disagreements, never silently trust. 10-digit digits-only.",
+        "MAPPLUTO_BBL": "esriFieldTypeString. 'Borough, block, and lot number to be used for joining the building footprints to DCP's MapPLUTO data, which aggregates condominium buildings using DOF's billing BBL.' Non-condo: == BASE_BBL. Condo: the DOF billing BBL (lot 7501-7599), shared across multiple physical BASE_BBLs. The correct/only key to reach a condo's MapPLUTO geometry (M5-T087 section 5).",
+        "HEIGHT_ROOF": "esriFieldTypeDouble. 'The height of the roof above the ground elevation, NOT height above sea level.' Zero or NULL means the information was not available - a typed gap, never a zero-height box (M5-T087 section 6 limit 1). Unit = feet (INFERENCE RQ-1, see open_questions).",
+        "GROUND_ELEVATION": "esriFieldTypeInteger. City dictionary: 'Lowest Elevation at the building ground level. Calculated from LiDAR or photogrammetrically.' The service FGDC metadata instead defines it as a LiDAR bare-earth value interpolated at the building CENTROID. BOTH definitions stay DISCLOSED; the connector reconciles NEITHER. Datum NAVD88 'when collected photogrammetrically or from modern sources'; older/other-source datum unstated (RQ-2). A zero is kept as a real 0.0 flagged ground_elevation_zero_unverified, never guessed. Unit = feet (INFERENCE RQ-1).",
+        "CONSTRUCTION_YEAR": "esriFieldTypeInteger. 'The year construction of the building was completed.' Zero/NULL => not available (typed gap; the connector nulls a zero year).",
+        "FEATURE_CODE": "esriFieldTypeSmallInteger. Type of building. Documented domain: 1000 Parking, 1001 Gas Station Canopy, 1002 Storage Tank, 1003 Placeholder, 1004 Auxiliary Structure, 1005 Temporary Structure, 1006 Cantilevered Building, 2100 Building, 2110 Skybridge, 5100 Building Under Construction, 5110 Garage. Undocumented codes are flagged, never dropped.",
+        "GEOM_SOURCE": "esriFieldTypeString. 'Photogrammetric' (stereo-compilation, most accurate, ~+/- 2 ft ASPRS) vs 'Other (Manual)' (less accurate). UNTRUSTED verbatim text - consumers must escape on render.",
+        "LAST_EDITED_DATE": "esriFieldTypeDate. 'Feature last modified date' (epoch ms).",
+        "LAST_STATUS_TYPE": "esriFieldTypeString. 'Feature last status type' (Demolition, Alteration, Geometry, Initialization, Correction, Marked for Construction, Marked For Demolition, Constructed). UNTRUSTED verbatim text - consumers must escape on render.",
+        "deliberately_not_requested": "NAME ('not actively maintained since original creation'); SHAPE_AREA / SHAPE_LENGTH / Shape__Area / Shape__Length ('Do not use' - auto-generated in Web Mercator, not area/length preserving); GLOBALID is ABSENT from this channel (RQ-6) - use DOITT_ID."
+      }
+    },
+    "terms_usage_notes": "SODA license = none set (licenseId null; M5-T087 section 6). Governing terms are the NYC Open Data Terms of Use (https://opendata.cityofnewyork.us/overview/#termsofuse), which the City dictionary names under Use Limitations; Access Rights = Public. No permanence/pricing/SLA promised (governance rule 2). No prohibition on automated API access on the Socrata/ArcGIS channels. Provenance tier: official City agency data (OTI) - controlling machine provenance. Attribution to NYC OTI expected on any display or derived output.",
+    "connector_implementation": "IMPLEMENTED, UNWIRED. services/api/app/connectors/building_footprints_arcgis.py (SOURCE_ID self-declaration matches this record) + the extracted geometry helpers in services/api/app/connectors/building_footprints_geometry.py (M5-T101 PKT-C split). fetch_context_buildings queries footprints intersecting a validated EPSG:2263 envelope or closed polygon (esriSpatialRelIntersects, inSR/outSR=2263, LONG-name outFields allowlist, orderByFields=OBJECTID ASC + deterministic resultOffset paging honoring exceededTransferLimit with typed paging_pathology loop-safety); CRS-gates every non-empty page on wkid 102718 AND latestWkid 2263 BEFORE any coordinate is read; HTTP-200 ArcGIS-error-object trap; schema-drift/malformed/wrong-CRS/timeout/429/network all become a typed FootprintRefusal (never raises). Geometry policy (FOOTPRINT_GEOMETRY_POLICY): esri rings read verbatim, multipart/holes preserved, within/partial_overlap/boundary_touch/disjoint_locally classified (a party-wall touch is never an overlap), unusable geometry typed but the record never dropped. Typed gaps/flags (never defaults) for zero/NULL heights, null/zero ground, placeholder 1003, million-BINs, condo billing-lot joins, off-lot BASE_BBL. M5-T101 wiring-hardening riders: per-geometry vertex cap + cumulative decoded-bytes ceiling (typed resource_exhausted), optional wall-clock deadline + interactive fail-fast max_attempts (typed deadline_exceeded), correlation-id + log-field control-character stripping, ground-datum disclosure, untrusted-text field declaration. Recorded offline fixtures under services/api/tests/fixtures/building_footprints/ (byte-frozen, sha256-pinned); contract tests services/api/tests/connectors/test_building_footprints_arcgis.py. NOT in scope: route/scene wiring (PKT-E), the SODA channel connector, citywide bulk import.",
+    "last_successful_ingestion": null,
+    "latest_source_version": "No YYYYMM version label on the ArcGIS channel; provenance pins use editingInfo.dataLastEditDate (2026-09-20T02:16:01Z observed 2026-09-24) + schemaLastEditDate (2025-10-10T16:10:42Z) + the per-fetch retrieval timestamp and raw-body digest. currentVersion=12.",
+    "health_status": "verified_live_2026-09-24 (M5-T087 recon: 8 metadata/sample probes, all HTTP 200; M5-T089 connector implemented with recorded fixtures + offline contract tests passing; M5-T100/M5-T101 hardening). No production ingestion job exists yet - this is a queryable, unwired connector only.",
+    "known_limitations": [
+      "HEIGHT_ROOF unit (US survey feet) is an INFERENCE (RQ-1): no per-field unit tag exists in the City dictionary or SODA metadata; the connector carries HEIGHT_UNIT_BASIS saying so. Do not treat as a tagged unit.",
+      "GROUND_ELEVATION has TWO conflicting official definitions (City dictionary lowest-ground vs FGDC centroid-interpolated bare-earth) and NAVD88 is stated only by the dictionary for modern/photogrammetric sources (RQ-2). Both stay disclosed; a massing consumer must choose the ground datum knowingly. A zero is a real 0.0 flagged unverified.",
+      "HEIGHT_ROOF 0 or NULL = 'not available': a typed gap, never a zero-height box.",
+      "Coordinates are a reprojection of a Web-Mercator publication (outSR=2263), so DISPLAY/MASSING grade, not survey grade; SHAPE_AREA/SHAPE_LENGTH are 'Do not use'; recompute area in EPSG:2263 if needed. Photogrammetric features ~+/- 2 ft; 'Other (Manual)' less accurate.",
+      "BIN is NOT unique (million-BINs + split-geometry duplication) - use DOITT_ID; BASE_BBL occasionally off-lot (agency sync).",
+      "Completeness threshold excludes buildings <400 sq ft or <12 ft tall - the footprint set is not every physical structure.",
+      "maxRecordCount=2000 rules this out as a citywide bulk mirror; per-lot/per-area queries only (thin client).",
+      "GEOM_SOURCE, LAST_STATUS_TYPE and the verbatim attributes dict are UNTRUSTED source text - consumers must escape on render (escaping is a render concern, PKT-E/PKT-I)."
+    ],
+    "fallback_source": "NYC Open Data SODA channel nyc-oti-building-footprints-soda (dataset 5zhs-2jue) - secondary/verification channel, geometry in EPSG:4326 (reproject before any overlay), observed ~1 day different freshness (M5-T087 section 7 RQ-3). Bulk shapefile/geojson/FileGDB via the NYCMaps hub / NYC Open Data export is a future cloud-worker task (thin-client policy), URLs behind a bot-wall (RQ-5, never guessed).",
+    "open_questions": [
+      "RQ-1: confirm an explicit HEIGHT_ROOF / GROUND_ELEVATION unit tag (feet is well-supported INFERENCE from the US-foot CRS + foot-denominated prose + foot-scale samples); resolve against the NYCMaps hub item page or an OTI planimetrics spec.",
+      "RQ-2: vertical-datum coverage - NAVD88 is stated only for modern/photogrammetric GROUND_ELEVATION; older/other-source datum unstated. AND the two conflicting official GROUND_ELEVATION definitions (lowest-ground vs centroid-interpolated bare-earth) must be reconciled with OTI before any absolute-elevation use.",
+      "RQ-3: SODA (5zhs-2jue) sync semantics vs the ArcGIS service (live mirror vs periodic snapshot; ~1 day observed drift) - prefer ArcGIS for freshest edits + outSR=2263.",
+      "RQ-4: capture the ArcGIS rate-limit header (x-esri-org-request-units-per-min) at a live re-check.",
+      "RQ-5: exact NYCMaps-hub / nyc.gov bulk FileGDB/shapefile download URLs (behind a bot-wall; browser capture needed; never guessed).",
+      "RQ-6: GLOBALID is absent from this channel - confirmed use DOITT_ID as the stable key."
+    ]
+  },
+  {
+    "draft_status": "NON-FINAL RESEARCH DRAFT (M5-T087). Secondary / verification channel for the ArcGIS primary above; NO connector, NO fixtures.",
+    "source_id": "nyc-oti-building-footprints-soda",
+    "agency": "NYC Office of Technology and Innovation (OTI)",
+    "name": "Building Footprints (dataset \"BUILDING\") - NYC Open Data tabular+geometry (Socrata SODA)",
+    "official_url": "https://data.cityofnewyork.us/api/views/5zhs-2jue.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "5zhs-2jue (NYC Open Data; data endpoint https://data.cityofnewyork.us/resource/5zhs-2jue.json; metadata fetched live 2026-09-24, M5-T087 section 1)",
+    "authentication": {
+      "required": false,
+      "recommended": "Socrata application token (X-App-Token header) to leave the shared-IP throttle pool; keyless queries verified live 2026-09-24 (M5-T087). Header only, never logged.",
+      "notes": "A token is a rate-limit optimization, not an access requirement."
+    },
+    "rate_limits": {
+      "published_limit": null,
+      "notes": "Socrata platform baseline: no numeric published quota; without a token, throttled by IP in a shared pool. SODA omits null fields per record - infer schema from the api/views columns array, never from record keys.",
+      "throttle_signal": "HTTP 429"
+    },
+    "update_frequency": "Socrata custom Update Frequency = Weekly (M5-T087 section 6). Observed live 2026-09-24: rowsUpdatedAt = 2026-09-21T06:40:23Z (~1 day behind the ArcGIS dataLastEditDate 2026-09-20T02:16:01Z; RQ-3). Prefer the ArcGIS channel for currency + outSR=2263.",
+    "geographic_coverage": "Citywide, all five boroughs. the_geom served as GeoJSON MultiPolygon in EPSG:4326 (WGS84 lon/lat) - the CRS differs from the ArcGIS native EPSG:2263; reproject to a feet CRS before any overlay/measurement (M5-T087 section 3).",
+    "fields_available": {
+      "note": "Same building semantics as the ArcGIS record's field definitions, but SODA fieldNames are the SHORT/lowercased forms (height_roof, ground_elevation, mappluto_bbl, base_bbl, bin, doitt_id, construction_year, feature_code, geom_source, last_edited_date, last_status_type, the_geom). Map from the live channel schema, never assume names across channels. SODA omits blank fields per record."
+    },
+    "terms_usage_notes": "Same NYC Open Data Terms of Use and OTI provenance as the ArcGIS record (M5-T087 section 6).",
+    "connector_implementation": "PLAN ONLY (no connector). Usable as a corroboration / geoJSON-native tabular read and a freshness cross-check; NOT the currency-authoritative source (prefer ArcGIS). If used, poll rowsUpdatedAt as the freshness signal and reproject 4326 -> 2263 before overlay.",
+    "last_successful_ingestion": null,
+    "latest_source_version": "No version string; freshness signal rowsUpdatedAt = 2026-09-21T06:40:23Z (M5-T087 section 4).",
+    "health_status": "verified_live_2026-09-24 (metadata + sample records); no connector, no fixtures",
+    "known_limitations": [
+      "the_geom is EPSG:4326 here vs EPSG:2263 native on ArcGIS - never mix CRS; measurement must use a feet CRS.",
+      "Field names short/lowercased vs the ArcGIS LONG names - do not assume names across channels.",
+      "Observed ~1 day staler than the ArcGIS channel (RQ-3); SODA omits null fields per record."
+    ],
+    "fallback_source": "Primary is the ArcGIS record nyc-oti-building-footprints-arcgis; bulk shapefile/geojson via the NYCMaps hub / NYC Open Data export (Render worker only).",
+    "open_questions": [
+      "Shares RQ-1..RQ-6 with the ArcGIS record (height unit, datum + definition conflict, sync semantics, rate-limit header, bulk URLs, GLOBALID)."
+    ]
+  }
+]

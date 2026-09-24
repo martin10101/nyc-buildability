@@ -53,7 +53,6 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
-import math
 import time
 import urllib.parse
 import uuid
@@ -64,10 +63,16 @@ from random import Random
 
 from shapely.geometry import Polygon, box
 from shapely.geometry.base import BaseGeometry
-from shapely.ops import unary_union
-from shapely.validation import explain_validity
 
 from app.connectors.bbl import BBLValidationError, normalize_bbl
+from app.connectors.building_footprints_geometry import (
+    COORD_ABS_MAX_FT,
+    FootprintPart,
+    _finite,
+    _safe_repr,
+    classify_query_relation,
+    parse_footprint_geometry,
+)
 from app.connectors.mappluto_geometry_arcgis import (
     CONDO_BILLING_LOT_MAX,
     CONDO_BILLING_LOT_MIN,
@@ -181,18 +186,33 @@ FOOTPRINT_GEOMETRY_POLICY = (
     "silently dropped."
 )
 
-GEOMETRY_VALID = "valid"
-GEOMETRY_INVALID = "invalid"
-GEOMETRY_REVIEW_REQUIRED = "review_required"
-
 # Connector safety policy (engineering bounds, not source facts): a lot-plus-neighbours
-# context query stays small. COORD_ABS_MAX_FT mirrors the accepted DCM envelope bound.
-COORD_ABS_MAX_FT = 5_000_000.0
+# context query stays small. COORD_ABS_MAX_FT (imported from the geometry module) mirrors
+# the accepted DCM envelope bound.
 MAX_QUERY_SPAN_FT = 5_000.0
 MAX_QUERY_POLYGON_VERTICES = 200
 MAX_PAGE_SIZE = 2000  # the live layer's maxRecordCount; also capped by the fetched metadata
 HARD_MAX_PAGES = 50
 MAX_CONTEXT_BUILDINGS = 2000  # beyond this the query is refused, never truncated
+
+# DB-058(b) retention bounds against a hostile/broken official host (G5-A2): a
+# lot-plus-neighbours context geometry is tiny, so a single runaway geometry and the
+# cumulative page payload are both capped WELL below MAX_RESPONSE_BYTES x HARD_MAX_PAGES.
+# Each is a typed ResourceBoundError refusal, raised before the value is retained.
+MAX_GEOMETRY_VERTICES = 50_000  # total vertices across ONE feature's rings
+MAX_TOTAL_DECODED_BYTES = 64 * 1024 * 1024  # cumulative decoded page bodies across paging
+
+# DB-058(c) interactive posture (G5-A3): an interactive caller may cap upstream attempts
+# (fail fast) and pass a wall-clock ``deadline`` checked before each page.
+INTERACTIVE_MAX_ATTEMPTS = 1
+
+# DB-058(a) / G5-A1: these record fields are VERBATIM official source text and are NOT
+# escaped here (escaping is a render concern - PKT-E/PKT-I). Consumers MUST escape them.
+UNTRUSTED_TEXT_FIELDS = ("attributes", "geom_source", "last_status_type")
+UNTRUSTED_TEXT_NOTICE = (
+    "Verbatim official source text kept for provenance; NOT sanitized or escaped here. "
+    "Every report / 3D / web consumer MUST escape these fields on render (PKT-E/PKT-I)."
+)
 
 
 # ---------------------------------------------------------------------------
@@ -260,20 +280,23 @@ class PagingPathologyError(BuildingFootprintConnectorError):
     error_type = "paging_pathology"
 
 
+class ResourceBoundError(BuildingFootprintConnectorError):
+    """A single geometry exceeds the vertex cap, or the cumulative decoded page bytes
+    exceed the ceiling: refused before unbounded retention (DB-058 b / G5-A2)."""
+
+    error_type = "resource_exhausted"
+
+
+class DeadlineExceededError(BuildingFootprintConnectorError):
+    """The caller-supplied wall-clock deadline elapsed before the next page (DB-058 c /
+    G5-A3). Caller-side, distinct from an upstream ``timeout``."""
+
+    error_type = "deadline_exceeded"
+
+
 # ---------------------------------------------------------------------------
 # Result contracts
 # ---------------------------------------------------------------------------
-
-
-@dataclass
-class FootprintPart:
-    """One exterior ring and its holes, closed and verbatim (exterior clockwise, holes
-    counterclockwise, as published). ``area_sq_ft`` is planar EPSG:2263 area net of holes:
-    display grade, never a measurement of record."""
-
-    exterior: list[list[float]]
-    holes: list[list[list[float]]]
-    area_sq_ft: float
 
 
 @dataclass
@@ -313,6 +336,9 @@ class ContextBuilding:
     height_reference: str = HEIGHT_REFERENCE
     ground_datum: str = GROUND_DATUM
     ground_datum_basis: str = GROUND_DATUM_BASIS
+    # DB-058(a) / G5-A1: consumers MUST escape these verbatim source-text fields on render.
+    untrusted_text_fields: tuple[str, ...] = UNTRUSTED_TEXT_FIELDS
+    untrusted_text_notice: str = UNTRUSTED_TEXT_NOTICE
 
 
 @dataclass
@@ -395,14 +421,6 @@ def raw_body_digest(body: str) -> str:
     return "sha256:" + hashlib.sha256(body.encode("utf-8")).hexdigest()
 
 
-def _safe_repr(value: object, limit: int = 200) -> str:
-    try:
-        text = repr(value)
-    except (ValueError, RecursionError):
-        return f"<unrepresentable {type(value).__name__}>"
-    return text if len(text) <= limit else text[:limit] + "...(truncated)"
-
-
 # DB-058(e) / M5-T089 G3-A1: fields for the findable-but-non-leaky internal-error log.
 # The message is a FIXED string (never ``str(exc)``, whose text can echo an upstream body);
 # only the exception CLASS - not its message - joins it, and both are neutralized with the
@@ -410,29 +428,31 @@ def _safe_repr(value: object, limit: int = 200) -> str:
 _INTERNAL_ERROR_LOG_MESSAGE = "unexpected internal failure - no data returned"
 _LOG_FIELD_MAX = 200
 
+# DB-066(a): strip CR/LF and every C0/C1 control character + DEL OUTRIGHT before the shared
+# allowlist runs. The allowlist regex ends in ``$``, which in Python matches BEFORE a trailing
+# newline, so a value like ``"Foo\n"`` would otherwise pass through raw and forge a log line.
+# (No ``import re`` - the AS-5 import allowlist forbids it - a str.translate table does it.)
+_CONTROL_CHAR_DELETE = {c: None for c in [*range(0x20), 0x7F, *range(0x80, 0xA0)]}
+
 
 def _sanitized_bounded(text: str, limit: int = _LOG_FIELD_MAX) -> str:
-    """Neutralize an untrusted string for a log line with the shared transport sanitizer
+    """Neutralize an untrusted string for a log line: strip CR/LF and control characters
+    outright (DB-066 a), then apply the shared transport sanitizer
     (:func:`app.resilience.transport.sanitize_retry_after`: an allowlist passthrough,
-    otherwise ``repr`` - which escapes control characters so a newline cannot forge a log
-    line), then bound its length so a hostile value cannot dump an unbounded body."""
-    safe = sanitize_retry_after(text)
+    otherwise ``repr``), then bound the length so a hostile value cannot dump an unbounded
+    body. Stripping first closes the allowlist ``$``-before-trailing-newline gap."""
+    safe = sanitize_retry_after(text.translate(_CONTROL_CHAR_DELETE))
     return safe if len(safe) <= limit else safe[:limit] + "...(truncated)"
 
 
-def _is_real(value: object) -> bool:
-    return isinstance(value, int | float) and not isinstance(value, bool)
-
-
-def _finite(value: object) -> float | None:
-    """A finite float, or None for bools, non-numbers, overflowing ints, inf and NaN."""
-    if not _is_real(value):
-        return None
-    try:
-        number = float(value)  # type: ignore[arg-type]
-    except OverflowError:
-        return None
-    return number if math.isfinite(number) else None
+def _safe_correlation_id(raw: object) -> str:
+    """DB-058(d) / DB-066(b): a caller correlation id is UNTRUSTED. Strip CR/LF and control
+    characters so it can never forge a log line at EITHER log site (this connector or the
+    shared transport, which logs it too). A missing / non-string / emptied-after-strip id
+    becomes a server-generated uuid4 hex - so no raw caller value ever reaches a log."""
+    if not isinstance(raw, str):
+        return uuid.uuid4().hex
+    return raw.translate(_CONTROL_CHAR_DELETE) or uuid.uuid4().hex
 
 
 def _refusal_time(io: _Io) -> str:
@@ -440,13 +460,6 @@ def _refusal_time(io: _Io) -> str:
         return _rfc3339(io.clock())
     except Exception:  # an injected clock must not break the fail-closed path
         return _rfc3339(_utc_now())
-
-
-def _signed_area(ring: list[list[float]]) -> float:
-    """Shoelace area of a CLOSED ring (positive = counterclockwise)."""
-    return sum(
-        ring[i][0] * ring[i + 1][1] - ring[i + 1][0] * ring[i][1] for i in range(len(ring) - 1)
-    ) / 2.0
 
 
 # ---------------------------------------------------------------------------
@@ -574,6 +587,8 @@ class _Io:
     clock: Callable[[], datetime]
     budget: AnalysisBudget | None
     cid: str
+    # DB-058(c): optional caller wall-clock deadline, checked before each page.
+    deadline: datetime | None = None
     # Provenance of the request in flight (read by the refusal path).
     url: str | None = None
     retrieved_at: str | None = None
@@ -689,6 +704,28 @@ def _fetch_layer_metadata(io: _Io, result: ContextBuildingsResult) -> int:
     return max_records
 
 
+def _geometry_vertex_count(esri: object) -> int:
+    """DB-058(b): total vertices across all rings of an esri polygon geometry. A
+    non-polygon / malformed shape counts 0 - it carries no retention risk and is typed
+    downstream as an invalid geometry, never a resource refusal."""
+    if not isinstance(esri, dict):
+        return 0
+    rings = esri.get("rings")
+    if not isinstance(rings, list):
+        return 0
+    return sum(len(r) for r in rings if isinstance(r, list))
+
+
+def _check_deadline(io: _Io) -> None:
+    """DB-058(c): stop paging with a typed refusal once the caller wall-clock deadline is
+    reached. A missing deadline never refuses. The injected clock is authoritative."""
+    if io.deadline is not None and io.clock() >= io.deadline:
+        raise DeadlineExceededError(
+            "caller wall-clock deadline reached before the next page",
+            correlation_id=io.cid, detail={"reason": "deadline_exceeded",
+                                           "deadline": _rfc3339(io.deadline)})
+
+
 def _parse_page(body: str, *, url: str, cid: str, page_size: int,
                 drift_signals: list[str]) -> tuple[list[tuple[int, dict]], bool]:
     doc = _parse_json_object(body, url=url, cid=cid)
@@ -724,110 +761,19 @@ def _parse_page(body: str, *, url: str, cid: str, page_size: int,
             raise MalformedResponseError("feature lacks an attributes map with integer OBJECTID",
                                          correlation_id=cid,
                                          detail={"url": url, "feature_index": index})
+        vertices = _geometry_vertex_count(feature.get("geometry"))
+        if vertices > MAX_GEOMETRY_VERTICES:  # DB-058(b): before the geometry is retained
+            raise ResourceBoundError(
+                "a single footprint geometry exceeds the vertex cap; refused before retention",
+                correlation_id=cid,
+                detail={"url": url, "reason": "geometry_vertex_cap", "vertices": vertices,
+                        "max_vertices": MAX_GEOMETRY_VERTICES})
         for name in attrs:
             signal = f"unknown_attribute:{_safe_repr(name, 64)}"
             if name not in REQUIRED_FIELDS and signal not in drift_signals:
                 drift_signals.append(signal)
         page.append((oid, feature))
     return page, doc.get("exceededTransferLimit") is True
-
-
-# ---------------------------------------------------------------------------
-# Geometry policy (FOOTPRINT_GEOMETRY_POLICY) + relation to the query geometry
-# ---------------------------------------------------------------------------
-
-
-def _ring(raw: object) -> list[list[float]] | str:
-    """A verbatim closed ring, or the finding code that disqualifies it."""
-    if not isinstance(raw, list) or len(raw) < 4:
-        return "malformed_ring"
-    ring: list[list[float]] = []
-    for vertex in raw:
-        if not (isinstance(vertex, list) and len(vertex) == 2 and all(map(_is_real, vertex))):
-            return "malformed_ring"
-        x, y = _finite(vertex[0]), _finite(vertex[1])
-        if x is None or y is None:
-            return "nonfinite_coordinate"
-        if max(abs(x), abs(y)) > COORD_ABS_MAX_FT:
-            return "coordinate_out_of_bounds"
-        ring.append([x, y])
-    if ring[0] != ring[-1]:
-        return "unclosed_ring"
-    if len({(x, y) for x, y in ring}) < 3:
-        return "degenerate_ring"
-    if _signed_area(ring) == 0.0:
-        # Zero signed area: collinear (degenerate) or a self-crossing ring whose lobes cancel.
-        extent = Polygon(ring).convex_hull.area
-        return "self_intersecting_ring" if extent > 0.0 else "degenerate_ring"
-    return ring
-
-
-def parse_footprint_geometry(
-    esri: object,
-) -> tuple[str, list[str], list[FootprintPart], list[str]]:
-    """Apply FOOTPRINT_GEOMETRY_POLICY: (status, findings, parts, flags)."""
-    if esri is None:
-        return GEOMETRY_INVALID, ["null_geometry"], [], []
-    rings_raw = esri.get("rings") if isinstance(esri, dict) else None
-    if not isinstance(rings_raw, list):
-        return GEOMETRY_INVALID, ["not_a_polygon_geometry"], [], []
-    if not rings_raw:
-        return GEOMETRY_INVALID, ["empty_geometry"], [], []
-    checked = [_ring(raw) for raw in rings_raw]
-    bad = sorted({r for r in checked if isinstance(r, str)})
-    if bad:
-        return GEOMETRY_INVALID, bad, [], []
-    rings = [r for r in checked if not isinstance(r, str)]
-    exteriors = [r for r in rings if _signed_area(r) < 0.0]
-    holes = [r for r in rings if _signed_area(r) > 0.0]
-    if not exteriors:
-        return GEOMETRY_REVIEW_REQUIRED, ["no_clockwise_exterior_ring"], [], []
-    shells = [Polygon(r) for r in exteriors]
-    owned: list[list[list[list[float]]]] = [[] for _ in exteriors]
-    for hole in holes:
-        point = Polygon(hole).representative_point()
-        containing = [i for i, shell in enumerate(shells) if shell.contains(point)]
-        if not containing:
-            return GEOMETRY_REVIEW_REQUIRED, ["hole_outside_every_exterior"], [], []
-        owned[min(containing, key=lambda i: shells[i].area)].append(hole)
-    polygons = [Polygon(ext, owned[i]) for i, ext in enumerate(exteriors)]
-    findings: list[str] = []
-    for index, poly in enumerate(polygons):
-        if not poly.is_valid:
-            findings.append(f"invalid_part:{index}:{_safe_repr(explain_validity(poly), 120)}")
-    if findings:
-        return GEOMETRY_INVALID, findings, [], []
-    flags: list[str] = []
-    for i in range(len(polygons)):
-        for j in range(i + 1, len(polygons)):
-            if polygons[i].intersection(polygons[j]).area > 0.0:
-                return GEOMETRY_REVIEW_REQUIRED, [f"parts_overlap:{i}:{j}"], [], []
-            if polygons[i].intersects(polygons[j]) and "parts_touch" not in flags:
-                flags.append("parts_touch")
-    if len(polygons) > 1:
-        flags.append("multipart")
-    if holes:
-        flags.append("has_holes")
-    parts = [FootprintPart(exteriors[i], owned[i], float(p.area)) for i, p in enumerate(polygons)]
-    return GEOMETRY_VALID, [], parts, flags
-
-
-def classify_query_relation(
-    parts: list[FootprintPart], query_shape: BaseGeometry
-) -> tuple[str, float]:
-    """Exact planar relation of a footprint to the query geometry (no tolerance):
-    ``within`` | ``partial_overlap`` (positive-area intersection) | ``boundary_touch``
-    (shares only boundary points - e.g. a party wall on the lot line) | ``disjoint_locally``
-    (the service matched it, the local 2263 test does not; kept and flagged)."""
-    footprint = unary_union([Polygon(p.exterior, p.holes) for p in parts])
-    overlap = float(footprint.intersection(query_shape).area)
-    if overlap > 0.0 and footprint.within(query_shape):
-        return "within", overlap
-    if overlap > 0.0:
-        return "partial_overlap", overlap
-    if footprint.intersects(query_shape):
-        return "boundary_touch", 0.0
-    return "disjoint_locally", 0.0
 
 
 # ---------------------------------------------------------------------------
@@ -959,7 +905,8 @@ def _build_building(oid: int, feature: dict, *, query: _Query, site_ground: floa
         footprint_area_sq_ft=sum(p.area_sq_ft for p in parts) if parts else None,
         query_relation=relation, query_overlap_area_sq_ft=overlap, flags=flags, gaps=gaps,
         attributes=dict(attrs), original_geometry=esri,
-        original_geometry_digest=canonical_json_digest(esri))
+        original_geometry_digest=canonical_json_digest(esri),
+        untrusted_text_fields=UNTRUSTED_TEXT_FIELDS)
 
 
 # ---------------------------------------------------------------------------
@@ -1000,7 +947,9 @@ def _collect_pages(io: _Io, query: _Query, size: int,
     ceiling, or more footprints than MAX_CONTEXT_BUILDINGS - never truncation)."""
     collected: list[tuple[int, dict]] = []
     seen: set[int] = set()
+    decoded_bytes = 0
     while True:
+        _check_deadline(io)  # DB-058(c): caller wall-clock deadline, before each page
         if result.pages_fetched >= HARD_MAX_PAGES:
             raise PagingPathologyError("page ceiling reached; refusing to loop further",
                                        correlation_id=io.cid,
@@ -1012,6 +961,13 @@ def _collect_pages(io: _Io, query: _Query, size: int,
         result.request_urls.append(url)
         result.raw_digests.append(raw_body_digest(body))
         result.retrieved_at = io.retrieved_at
+        decoded_bytes += len(body.encode("utf-8"))  # DB-058(b): cumulative retention bound
+        if decoded_bytes > MAX_TOTAL_DECODED_BYTES:
+            raise ResourceBoundError(
+                "cumulative decoded page bytes exceed the ceiling; refused before retention",
+                correlation_id=io.cid,
+                detail={"url": url, "reason": "cumulative_bytes_ceiling",
+                        "decoded_bytes": decoded_bytes, "max_bytes": MAX_TOTAL_DECODED_BYTES})
         page, exceeded = _parse_page(body, url=url, cid=io.cid, page_size=size,
                                      drift_signals=result.drift_signals)
         oids = [oid for oid, _ in page]
@@ -1042,6 +998,8 @@ def fetch_context_buildings(
     transport: Transport = urllib_transport,
     timeout: float = 30.0,
     max_attempts: int = 3,
+    interactive: bool = False,
+    deadline: datetime | None = None,
     backoff_base: float = 0.5,
     backoff_cap: float = 30.0,
     retry_after_cap: float = 120.0,
@@ -1055,10 +1013,18 @@ def fetch_context_buildings(
     ``polygon`` ring, as typed context buildings on the relative datum of
     ``site_ground_elevation_ft``. ``subject_bbl`` (optional) marks MapPLUTO joins. Input is
     validated before any I/O; metadata is fetched and validated before any page. Returns
-    status ``ok`` or ``refused``; never raises."""
-    cid = correlation_id or uuid.uuid4().hex
-    io = _Io(transport, timeout, max_attempts, backoff_base, backoff_cap, retry_after_cap,
-             rng or Random(), sleep, clock, budget, cid)
+    status ``ok`` or ``refused``; never raises.
+
+    Interactive callers pass ``interactive=True`` to cap upstream attempts at
+    ``INTERACTIVE_MAX_ATTEMPTS`` (fail fast, DB-058 c) and may pass a tz-aware wall-clock
+    ``deadline`` (``datetime``) that stops paging with a typed ``deadline_exceeded`` refusal,
+    checked against ``clock`` before each page. ``correlation_id`` is untrusted: CR/LF and
+    control characters are stripped (DB-058 d / DB-066 b) before it reaches any log site."""
+    cid = _safe_correlation_id(correlation_id)
+    effective_attempts = (
+        min(max_attempts, INTERACTIVE_MAX_ATTEMPTS) if interactive else max_attempts)
+    io = _Io(transport, timeout, effective_attempts, backoff_base, backoff_cap, retry_after_cap,
+             rng or Random(), sleep, clock, budget, cid, deadline=deadline)
     result = ContextBuildingsResult(
         status="ok", buildings=[], refusal=None, correlation_id=cid, query=None,
         site_ground_elevation_ft=None, subject_bbl=None, metadata_request_url=None,
