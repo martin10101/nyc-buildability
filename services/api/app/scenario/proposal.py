@@ -13,9 +13,13 @@ What is validated (each failure a :class:`ProposedMassingError` naming the exact
 * **closed ring** - the outline is an EXPLICITLY closed EPSG:2263 ring
   (``vertices[0] == vertices[-1]``);
 * **simple ring** - no zero-length edge, no 180-degree spike (a collinear
-  reversal at a shared vertex), and no two NON-adjacent edges share any point; a
-  deterministic, dependency-free segment-intersection test (predicate documented
-  on :func:`_ring_is_simple`);
+  reversal at a shared vertex), and no two NON-adjacent edges share any point.
+  The zero-length-edge and reversal-spike conditions are cheap ``O(n)`` scans;
+  the non-adjacent-intersection condition is decided by shapely/GEOS polygon
+  validity (a sweepline, about ``O(n log n)``) instead of the former hand-rolled
+  all-pairs ``O(n^2)`` test, so a large outline cannot dominate validation wall
+  time (predicate documented on :func:`_ring_is_simple`; M5-T095 closing the
+  M5-T088 F-HIGH-1 finding);
 * **unit sanity** - every coordinate is a finite number inside generous NYC
   EPSG:2263 (US survey feet) bounds; a value outside is a wrong-unit / wrong-CRS
   mistake and fails closed;
@@ -27,7 +31,10 @@ What is validated (each failure a :class:`ProposedMassingError` naming the exact
   vertex indices are in range and distinct;
 * **bounded ceilings** - the DB-013 fail-closed pattern:
   :data:`MAX_OUTLINE_VERTICES`, :data:`MAX_LEVELS`, :data:`MAX_FLOOR_COUNT`,
-  :data:`MAX_EXTERIOR_WALLS`.
+  :data:`MAX_EXTERIOR_WALLS`, and the request-level
+  :data:`MAX_TOTAL_OUTLINE_POSITIONS` (the footprint plus every per-level
+  outline), refused BEFORE any per-outline geometry check runs (M5-T088
+  F-HIGH-1).
 
 The schema (``scenario.schema.json`` ``proposed_massing`` $def) fixes the
 structural shape. This module owns the semantic invariants, of two kinds. Some a
@@ -38,13 +45,17 @@ Schema COULD express (per-coordinate NYC bounds, the sane floor-to-floor upper
 bound, the DB-013 count ceilings) but are enforced here BY DESIGN so each refusal
 is a typed field-named error and the numeric bounds live once as constants;
 strict positivity is expressed in the schema (``exclusiveMinimum: 0``) and
-re-checked here as defense in depth. It is deterministic and offline: no network,
-no dependency beyond the standard library.
+re-checked here as defense in depth. It is deterministic and offline: no network
+and no I/O. Non-adjacent edge self-intersection is decided by the already-admitted
+shapely/GEOS library (M5-T095); every other check is standard-library only.
 """
 
 from __future__ import annotations
 
 import math
+
+from shapely.errors import GEOSException
+from shapely.geometry import Polygon
 
 __all__ = [
     "ProposedMassingError",
@@ -54,6 +65,7 @@ __all__ = [
     "MAX_FLOOR_COUNT",
     "MAX_EXTERIOR_WALLS",
     "MAX_FLOOR_TO_FLOOR_FT",
+    "MAX_TOTAL_OUTLINE_POSITIONS",
 ]
 
 # --- DB-013 bounded ceilings (fail-closed) ---------------------------------
@@ -63,6 +75,18 @@ MAX_OUTLINE_VERTICES = 1000  # positions, INCLUDING the repeated closing vertex
 MAX_LEVELS = 500
 MAX_FLOOR_COUNT = 500  # identical floors a single level record may represent
 MAX_EXTERIOR_WALLS = 4000
+
+# --- request-level total-positions bound (M5-T088 F-HIGH-1) ----------------
+# A single validator-valid request may carry a footprint outline PLUS one outline
+# per level (up to :data:`MAX_LEVELS`), each up to :data:`MAX_OUTLINE_VERTICES`.
+# With no request-level total, the summed per-outline geometry work could reach
+# minutes of CPU for one request (measured in the M5-T088 G5 review) - an
+# availability / denial-of-service axis the moment editor geometry is wired. This
+# bound caps the SUM of positions across the footprint and every per-level
+# outline and is checked BEFORE any per-outline geometry check runs, so worst-case
+# validation wall time is bounded. It sits far above any real hand-authored
+# proposal and below the runaway region.
+MAX_TOTAL_OUTLINE_POSITIONS = 20000
 
 # --- unit-sanity bounds ----------------------------------------------------
 # Generous EPSG:2263 (NAD83 / New York Long Island, US survey feet) bounds that
@@ -98,59 +122,51 @@ class ProposedMassingError(ValueError):
 
 
 # ---------------------------------------------------------------------------
-# Geometry primitives (deterministic, dependency-free)
+# Geometry primitives (deterministic)
 # ---------------------------------------------------------------------------
 
 
-def _orientation(a: _Point, b: _Point, c: _Point) -> float:
-    """Signed area term ``(b-a) x (c-a)``: >0 left turn, <0 right turn, 0
-    collinear."""
-    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+def _ring_boundary_is_simple(ring: list[_Point]) -> bool:
+    """True when the closed ring's boundary has no self-intersection between
+    NON-adjacent edges (a proper crossing, a T-touch, or a collinear overlap).
 
+    Decided by shapely/GEOS polygon validity - a sweepline bounded to about
+    ``O(n log n)`` in the vertex count - replacing the former hand-rolled
+    all-pairs ``O(n^2)`` edge-intersection scan (M5-T095, closing the M5-T088
+    F-HIGH-1 finding). A valid single ring is exactly one whose boundary does not
+    cross or touch itself, which is what shapely ``Polygon.is_valid`` decides (the
+    same predicate the massing builder already trusts for the lot). The decision
+    is identical to the former all-pairs test on every ring reaching it (proved by
+    the fuzz-equivalence corpus in ``test_proposal_validation_budget.py``).
 
-def _on_segment(a: _Point, b: _Point, p: _Point) -> bool:
-    """True when a point ``p`` known to be collinear with ``a``-``b`` lies within
-    that segment's closed bounding box (i.e. on the segment)."""
-    return min(a[0], b[0]) <= p[0] <= max(a[0], b[0]) and min(a[1], b[1]) <= p[1] <= max(
-        a[1], b[1]
-    )
-
-
-def _segments_intersect(p1: _Point, p2: _Point, p3: _Point, p4: _Point) -> bool:
-    """True when segment ``p1``-``p2`` and segment ``p3``-``p4`` share ANY point
-    (a proper crossing, a T-touch, or a collinear overlap), by the standard
-    four-orientation test. Touching at an endpoint counts as sharing a point;
-    callers exclude legitimately-adjacent polygon edges before calling."""
-    d1 = _orientation(p3, p4, p1)
-    d2 = _orientation(p3, p4, p2)
-    d3 = _orientation(p1, p2, p3)
-    d4 = _orientation(p1, p2, p4)
-    if ((d1 > 0 and d2 < 0) or (d1 < 0 and d2 > 0)) and (
-        (d3 > 0 and d4 < 0) or (d3 < 0 and d4 > 0)
-    ):
-        return True
-    if d1 == 0 and _on_segment(p3, p4, p1):
-        return True
-    if d2 == 0 and _on_segment(p3, p4, p2):
-        return True
-    if d3 == 0 and _on_segment(p1, p2, p3):
-        return True
-    if d4 == 0 and _on_segment(p1, p2, p4):
-        return True
-    return False
+    ``shapely`` / ``GEOS`` errors on this already-bounds-checked ring never escape
+    untyped: a ring GEOS cannot process fails closed to "not simple", so the caller
+    raises the typed self-intersecting refusal. The ring is passed with its closing
+    vertex restored so GEOS sees a closed boundary.
+    """
+    try:
+        return bool(Polygon([*ring, ring[0]]).is_valid)
+    except (GEOSException, ValueError):
+        return False
 
 
 def _ring_is_simple(ring: list[_Point]) -> bool:
     """True when ``ring`` (the DISTINCT vertices, closing duplicate already
     removed) is a simple polygon.
 
-    Predicate: the ring is simple iff (1) no edge is zero-length, (2) no vertex
-    is a 180-degree reversal spike (its two incident edges are collinear and
-    point in opposing directions, so they overlap beyond the shared vertex), and
-    (3) no two NON-adjacent edges share any point. Adjacent edges legitimately
-    meet at their single shared vertex and are excluded from (3); condition (2)
-    is what still forbids them from overlapping. O(n^2) in the vertex count,
-    which is bounded by :data:`MAX_OUTLINE_VERTICES`.
+    Predicate (unchanged from phase B0): the ring is simple iff (1) no edge is
+    zero-length, (2) no vertex is a 180-degree reversal spike (its two incident
+    edges are collinear and point in opposing directions, so they overlap beyond
+    the shared vertex), and (3) no two NON-adjacent edges share any point.
+    Adjacent edges legitimately meet at their single shared vertex and are
+    excluded from (3); condition (2) is what still forbids them from overlapping.
+
+    Conditions (1) and (2) are cheap ``O(n)`` scans decided here; condition (3) is
+    delegated to :func:`_ring_boundary_is_simple` (shapely/GEOS, about
+    ``O(n log n)``), replacing the former all-pairs ``O(n^2)`` test so a large
+    outline cannot dominate validation wall time (M5-T095 / M5-T088 F-HIGH-1). The
+    overall decision is byte-for-byte identical to the former test on every ring
+    the validator can produce.
     """
     n = len(ring)
     if n < 3:
@@ -170,17 +186,8 @@ def _ring_is_simple(ring: list[_Point]) -> bool:
         if cross == 0 and dot < 0:  # collinear reversal -> spike / overlap
             return False
 
-    # (3): non-adjacent edge intersections.
-    for i in range(n):
-        a, b = ring[i], ring[(i + 1) % n]
-        for j in range(i + 1, n):
-            # edges i and j are adjacent when they share a vertex.
-            if j == i + 1 or (i == 0 and j == n - 1):
-                continue
-            c, d = ring[j], ring[(j + 1) % n]
-            if _segments_intersect(a, b, c, d):
-                return False
-    return True
+    # (3): non-adjacent edge intersections, via shapely (bounded ~O(n log n)).
+    return _ring_boundary_is_simple(ring)
 
 
 # ---------------------------------------------------------------------------
@@ -455,6 +462,48 @@ def _validate_provenance(provenance: object, field: str) -> None:
         )
 
 
+def _outline_position_count(outline: object) -> int:
+    """Number of positions in an outline's ``vertices`` array, or 0 when the
+    outline is not a well-formed vertex list.
+
+    Used ONLY to sum a request's total geometry size for the request-level bound.
+    It NEVER raises and never validates: a malformed outline counts as 0 and is
+    left for :func:`_validate_outline` to refuse with its exact typed field error,
+    so the aggregate bound cannot mask or change any existing per-field decision.
+    """
+    if isinstance(outline, dict):
+        vertices = outline.get("vertices")
+        if isinstance(vertices, list):
+            return len(vertices)
+    return 0
+
+
+def _check_total_positions(block: dict) -> None:
+    """Refuse a request whose footprint plus every per-level outline together
+    exceed :data:`MAX_TOTAL_OUTLINE_POSITIONS`, BEFORE any per-outline geometry
+    check runs (M5-T088 F-HIGH-1).
+
+    Counting is purely structural and never raises, so this bound fires ONLY on a
+    genuinely oversized request; every other malformed input still reaches its
+    exact typed field error downstream in :func:`_validate_outline` /
+    :func:`_validate_levels`.
+    """
+    total = _outline_position_count(block.get("outline"))
+    levels = block.get("levels")
+    if isinstance(levels, list):
+        for level in levels:
+            if isinstance(level, dict):
+                total += _outline_position_count(level.get("outline"))
+    if total > MAX_TOTAL_OUTLINE_POSITIONS:
+        raise ProposedMassingError(
+            f"proposed_massing total outline positions ({total}) exceeds "
+            f"MAX_TOTAL_OUTLINE_POSITIONS ({MAX_TOTAL_OUTLINE_POSITIONS}); the "
+            "footprint plus every per-level outline together are bounded so a single "
+            "request cannot dominate validation wall time (M5-T088 F-HIGH-1)",
+            field="proposed_massing",
+        )
+
+
 def validate_proposed_massing(block: object) -> None:
     """Validate a parsed ``proposed_massing`` block. Returns ``None`` when the
     block is valid; raises :class:`ProposedMassingError` naming the exact field
@@ -463,6 +512,10 @@ def validate_proposed_massing(block: object) -> None:
         raise ProposedMassingError(
             "proposed_massing must be an object", field="proposed_massing"
         )
+
+    # Request-level total-positions bound BEFORE any per-outline geometry check
+    # (M5-T088 F-HIGH-1); an oversized request is refused without walking geometry.
+    _check_total_positions(block)
 
     outline_vertices = _validate_outline(
         block.get("outline"), "proposed_massing.outline"
