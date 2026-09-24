@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T15:23:20+00:00",
+ "verified_at": "2026-09-24T15:28:44+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -591,6 +591,120 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: requirements byte-identical; no lockfile change; the material touches none of the forbidden paths; max_envelope.py byte-untouched; module unwired; PR #241 unmerged; blob-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (massing_model.py 42545728, test c55e2cd7, report b4c1b025, max_envelope.py f0abf884, requirements 7da554cf/bf38a09e unchanged; no production importer; identity 327ef492); report M5-T088-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T089",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "cd58a3486fcb14632f239f4ea4e607b2bc3f3f88",
+   "reviewed_manifest_sha256": "e9b3e9664201a134cf195f3fc700eb10174c0189953dfc4dbe68d9c5b9c06d35",
+   "producer": "geospatial-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:28:05+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full ledger packet, G0-G5 all PASS; claimed at wt-m5t089, roster amendment (code-reviewer added as the independent G3 reviewer; G0 re-recorded; same full worktree path) and harvest recorded; dispatched concurrently with T088/T090/T091/T092; nothing skipped; identity-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (_task_git_identity == e9b3e966 == the frozen stamp; evaluate_task_refs ok); report M5-T089-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: task-private allowed_paths with forbidden fences around mappluto_geometry_arcgis.py, app/scenario, app/api, main.py, requirements, apps, packages; isolated worktree wt-m5t089; material fe254eee touches exactly the 16 in-scope files, blob-identical to 5fb4c99e; identity-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (_task_git_identity == e9b3e966 == the frozen stamp; evaluate_task_refs ok); report M5-T089-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for this task's share (3D context buildings from the OFFICIAL source): OTI BUILDING_view FeatureServer/0, keyless read-only; pinned long field names with an explicit out-field allowlist; inSR/outSR 2263 with every non-empty page CRS-gated (102718/2263) else refused; typed ContextBuilding where every None has a matching gap and nothing is defaulted; relative_base_z from ground minus site ground, never guessed; condo billing-lot join via the MapPLUTO constants; provenance quintuple; fail-closed FootprintRefusal (fetch never raises); G1 re-fetched metadata and all 8 recorded queries byte-identical; G4 16/16 producer mutants red; identity-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (_task_git_identity == e9b3e966 == the frozen stamp; evaluate_task_refs ok); report M5-T089-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: stdlib + shapely + app.* imports only (AST test); no requirements/lockfile change; unwired (route/module scan test); keyless Accept-only requests; offline replay; fixtures small and sha256-pinned; max-envelope route unmounted; PR #241 unmerged; identity-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (_task_git_identity == e9b3e966 == the frozen stamp; evaluate_task_refs ok); report M5-T089-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T093",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R005",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "cd58a3486fcb14632f239f4ea4e607b2bc3f3f88",
+   "reviewed_manifest_sha256": "9f5a0cff2bdc095e3b7eceb50fe714a453ac27aaca6e6834ef2e0fcacf51fb07",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:28:05+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contract seam a14fb775 (G0), claim proven from git objects at the correction commit 6cc93092 (the earlier bfe60461 message was wrong - the task file there was still 'ready'), submit, G1/G2/G3 PASS; subagent producer concurrent with the wave; blob-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (56db26ad / d56349ec unchanged; identity 9f5a0cff; evaluate_task_refs ok); report M5-T093-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness table EMPTY overlap across 19 neighbours; allowed_paths = the 2 docs paths; material ab2a6730 touches exactly those, blob-identical to b12a0d0d; worktree wt-m5t093; corpus downloads stayed in scratch and were deleted; blob-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (56db26ad / d56349ec unchanged; identity 9f5a0cff; evaluate_task_refs ok); report M5-T093-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED - SCOPE-LIMITED: this task's share is the DB-055 (g)+(h) real-file precondition, discharged with an honest NEGATIVE result (6/6 public drawings fetched with sha256 MATCH; read_sheet refuses all six at the cross-reference-stream stage, deterministic across two runs) plus a prioritised C1 scope (xref + object streams; inline images + shading; an honest scan-only refusal). DIRECTIVE-LEVEL R005 IS NOT SATISFIED: real architect PDFs cannot be read yet; the note forbids telling the owner otherwise; blob-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (56db26ad / d56349ec unchanged; identity 9f5a0cff; evaluate_task_refs ok); report M5-T093-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: docs only - material = 2 docs blobs; no reader/app/dependency/route/web change; no corpus file, script or fixture committed; blob-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (56db26ad / d56349ec unchanged; identity 9f5a0cff; evaluate_task_refs ok); report M5-T093-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M0-T159",
+   "applicable_requirement_ids": [
+    "D-087-R001"
+   ],
+   "reviewed_sha": "cd58a3486fcb14632f239f4ea4e607b2bc3f3f88",
+   "reviewed_manifest_sha256": "3ccb0c5e6ca10b82b9edf8dec9b70cc9a1c9aabb944f615e781e594abe19d4aa",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:28:44+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for this task's share (the B-026 loop-lane remedy): fully gated packet - G0 at 125efaa1, claimed with the full worktree path on the certified base, G2/G3/G4 PASS through a proper PASS-with-required-corrections rework and re-freeze; scoped to tools/agent_supervisor + its reports; B-026 stays OPEN until the owner-typed commissioning; identity-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (_task_git_identity == 3ccb0c5e == the frozen stamp over the 12 allowed paths; evaluate_task_refs ok); report M0-T159-DCV.md."
      ]
     }
    ]

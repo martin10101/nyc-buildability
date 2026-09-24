@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T15:23:20+00:00",
+ "verified_at": "2026-09-24T15:28:44+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1215,6 +1215,72 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t088): the packet's navigation block names massing_model.py's only importer (its test), forbids max_envelope.py and every scenario module, names the GLB writer as the later consumer, instructs query.py --no-regen impact; verified in source that no production module imports massing_model; blob-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (massing_model.py 42545728, test c55e2cd7, report b4c1b025, max_envelope.py f0abf884, requirements 7da554cf/bf38a09e unchanged; no production importer; identity 327ef492); report M5-T088-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T089",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cd58a3486fcb14632f239f4ea4e607b2bc3f3f88",
+   "reviewed_manifest_sha256": "e9b3e9664201a134cf195f3fc700eb10174c0189953dfc4dbe68d9c5b9c06d35",
+   "producer": "geospatial-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:28:05+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t089): tasks/M5-T089.json inputs[6] carries the navigation block (consumers-to-be massing_model context layer; MapPLUTO condo constants read-only; nothing imports the connector; query.py --no-regen; advisory); identity-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (_task_git_identity == e9b3e966 == the frozen stamp; evaluate_task_refs ok); report M5-T089-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T093",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cd58a3486fcb14632f239f4ea4e607b2bc3f3f88",
+   "reviewed_manifest_sha256": "9f5a0cff2bdc095e3b7eceb50fe714a453ac27aaca6e6834ef2e0fcacf51fb07",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:28:05+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t093): tasks/M5-T093.json inputs[4] carries the navigation block (read-only consumers sheet_reader/sheet_primitives/app/documents/extraction; query.py --no-regen; advisory); graph regenerated at the seam; blob-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (56db26ad / d56349ec unchanged; identity 9f5a0cff; evaluate_task_refs ok); report M5-T093-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M0-T159",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cd58a3486fcb14632f239f4ea4e607b2bc3f3f88",
+   "reviewed_manifest_sha256": "3ccb0c5e6ca10b82b9edf8dec9b70cc9a1c9aabb944f615e781e594abe19d4aa",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:28:44+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: tasks/M0-T159.json inputs[4] carries the navigation block (fixture-pack consumers capability_probe / event_drift / native_runtime / recovery_probes / start_gate and the four test packs; query.py --no-regen; advisory); identity-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (_task_git_identity == 3ccb0c5e == the frozen stamp over the 12 allowed paths; evaluate_task_refs ok); report M0-T159-DCV.md."
      ]
     }
    ]

@@ -62,12 +62,12 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T08:14:06.319330+00:00",
-  "updated_at": "2026-09-24T14:57:54.215503+00:00",
+  "updated_at": "2026-09-24T15:28:47.151087+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -128,5 +128,7 @@
       "message": "Correction harvested: 2 report files MATCH by blob; tools/ unchanged vs the recertified candidate; resubmitting."
     }
   ],
-  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t159"
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t159",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-24T15:28:47.151087+00:00"
 }
