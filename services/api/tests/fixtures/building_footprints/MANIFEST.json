@@ -1,0 +1,112 @@
+{
+  "manifest_version": 1,
+  "task": "M5-T089",
+  "source_id": "nyc-oti-building-footprints-arcgis",
+  "open_data_id": "5zhs-2jue",
+  "layer_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0",
+  "authentication": "none (keyless official service; no credential material exists in this pack)",
+  "capture_method": "curl -sS GET, one request per file, 2026-09-24 UTC, by the M5-T089 producer; bodies stored byte-for-byte as returned (single-line JSON, no newline)",
+  "retrieved_at_basis": "the HTTP Date response header of each capture",
+  "digest_algorithm": "sha256 hex over the exact file bytes (= the response body bytes)",
+  "files": [
+    {
+      "file": "layer_metadata.json",
+      "request_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0?f=json",
+      "http_status": 200,
+      "retrieved_at": "2026-09-24T10:17:08Z",
+      "bytes": 10897,
+      "sha256": "bba7e9f9261324daaa275aee3cff5d5b642c54778e1b98a92a53dbbe28810374",
+      "purpose": "layer 0 metadata: long field names and types, maxRecordCount 2000, pagination/orderBy capabilities, publication CRS 102100/3857, editingInfo.dataLastEditDate (2026-09-20T02:16:01Z)"
+    },
+    {
+      "file": "subject_2033800084_envelope_p1.json",
+      "request_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0/query?where=1%3D1&geometry=1020160.0000%2C267240.0000%2C1020230.0000%2C267325.0000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID%2CDOITT_ID%2CBIN%2CBASE_BBL%2CMAPPLUTO_BBL%2CHEIGHT_ROOF%2CGROUND_ELEVATION%2CCONSTRUCTION_YEAR%2CFEATURE_CODE%2CGEOM_SOURCE%2CLAST_EDITED_DATE%2CLAST_STATUS_TYPE&returnGeometry=true&outSR=2263&orderByFields=OBJECTID%20ASC&resultRecordCount=2&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieved_at": "2026-09-24T10:18:29Z",
+      "bytes": 4291,
+      "sha256": "57540d8f53e34319ac434ae6b1162e7ceb7610f6146e7e599bd5f7a004b40adb",
+      "purpose": "research sample lot 2033800084 plus neighbours, page 1 of 2 (page size 2): OBJECTIDs 29471, 229537; exceededTransferLimit=true"
+    },
+    {
+      "file": "subject_2033800084_envelope_p2.json",
+      "request_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0/query?where=1%3D1&geometry=1020160.0000%2C267240.0000%2C1020230.0000%2C267325.0000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID%2CDOITT_ID%2CBIN%2CBASE_BBL%2CMAPPLUTO_BBL%2CHEIGHT_ROOF%2CGROUND_ELEVATION%2CCONSTRUCTION_YEAR%2CFEATURE_CODE%2CGEOM_SOURCE%2CLAST_EDITED_DATE%2CLAST_STATUS_TYPE&returnGeometry=true&outSR=2263&orderByFields=OBJECTID%20ASC&resultRecordCount=2&resultOffset=2&f=json",
+      "http_status": 200,
+      "retrieved_at": "2026-09-24T10:19:44Z",
+      "bytes": 2680,
+      "sha256": "3d69ea840ef87c96adaa3aaaab86e605d2f554a4d55cbe6f38f798e062a95f89",
+      "purpose": "page 2 of 2: OBJECTID 794314 (ground 195 vs subject 197); no exceededTransferLimit"
+    },
+    {
+      "file": "subject_2033800084_lot_polygon.json",
+      "request_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0/query?where=1%3D1&geometry=%7B%22rings%22%3A%5B%5B%5B1020218.7847%2C267251.1703%5D%2C%5B1020179.1873%2C267245.5000%5D%2C%5B1020165.6489%2C267345.8843%5D%2C%5B1020184.1624%2C267348.5175%5D%2C%5B1020205.2516%2C267351.5159%5D%2C%5B1020218.7847%2C267251.1703%5D%5D%5D%7D&geometryType=esriGeometryPolygon&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID%2CDOITT_ID%2CBIN%2CBASE_BBL%2CMAPPLUTO_BBL%2CHEIGHT_ROOF%2CGROUND_ELEVATION%2CCONSTRUCTION_YEAR%2CFEATURE_CODE%2CGEOM_SOURCE%2CLAST_EDITED_DATE%2CLAST_STATUS_TYPE&returnGeometry=true&outSR=2263&orderByFields=OBJECTID%20ASC&resultRecordCount=2000&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieved_at": "2026-09-24T10:20:22Z",
+      "bytes": 3539,
+      "sha256": "80da5f892a6c638c90153390f4a736bd9a7fbfc62de76c76f4a18311f56e1d5e",
+      "purpose": "polygon-intersects query with the MapPLUTO 26v2 lot ring of 2033800084 (fetched from the DCP_GIS MAPPLUTO service 2026-09-24; ring pinned in the tests): only the subject footprint 229537 is returned"
+    },
+    {
+      "file": "condo_4068157501_envelope.json",
+      "request_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0/query?where=1%3D1&geometry=1036960.0000%2C202070.0000%2C1037030.0000%2C202130.0000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID%2CDOITT_ID%2CBIN%2CBASE_BBL%2CMAPPLUTO_BBL%2CHEIGHT_ROOF%2CGROUND_ELEVATION%2CCONSTRUCTION_YEAR%2CFEATURE_CODE%2CGEOM_SOURCE%2CLAST_EDITED_DATE%2CLAST_STATUS_TYPE&returnGeometry=true&outSR=2263&orderByFields=OBJECTID%20ASC&resultRecordCount=2000&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieved_at": "2026-09-24T10:21:13Z",
+      "bytes": 3757,
+      "sha256": "561fc888b846dc4440a0494d70af353fc75ca23d4bc89cfbcccea54ec2af031d",
+      "purpose": "condominium case from the recon's condo proof: three buildings on BASE_BBL 4068150020 sharing billing MAPPLUTO_BBL 4068157501 (lot 7501)"
+    },
+    {
+      "file": "courtyard_hole_1011250025_envelope.json",
+      "request_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0/query?where=1%3D1&geometry=990980.0000%2C222312.0000%2C990990.0000%2C222322.0000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID%2CDOITT_ID%2CBIN%2CBASE_BBL%2CMAPPLUTO_BBL%2CHEIGHT_ROOF%2CGROUND_ELEVATION%2CCONSTRUCTION_YEAR%2CFEATURE_CODE%2CGEOM_SOURCE%2CLAST_EDITED_DATE%2CLAST_STATUS_TYPE&returnGeometry=true&outSR=2263&orderByFields=OBJECTID%20ASC&resultRecordCount=2000&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieved_at": "2026-09-24T10:22:04Z",
+      "bytes": 3609,
+      "sha256": "5a610e063bd66f4e98e6cc5431fa1b1881cb91a84ffe500f69b2578c48854214",
+      "purpose": "real footprint with a courtyard hole (BIN 1028637, BBL 1011250025): one clockwise exterior (17 vertices) and one counterclockwise hole (18 vertices)"
+    },
+    {
+      "file": "placeholder_zero_height_null_ground_envelope.json",
+      "request_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0/query?where=1%3D1&geometry=992333.0000%2C215590.0000%2C992341.0000%2C215598.0000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID%2CDOITT_ID%2CBIN%2CBASE_BBL%2CMAPPLUTO_BBL%2CHEIGHT_ROOF%2CGROUND_ELEVATION%2CCONSTRUCTION_YEAR%2CFEATURE_CODE%2CGEOM_SOURCE%2CLAST_EDITED_DATE%2CLAST_STATUS_TYPE&returnGeometry=true&outSR=2263&orderByFields=OBJECTID%20ASC&resultRecordCount=2000&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieved_at": "2026-09-24T10:22:41Z",
+      "bytes": 2477,
+      "sha256": "9a1e8357f80a49fea0fd952ef06b1ab533fc4901c0c1d4dbb76928cc661762cd",
+      "purpose": "placeholder triangle (FEATURE_CODE 1003) with HEIGHT_ROOF 0, GROUND_ELEVATION null, CONSTRUCTION_YEAR null, GEOM_SOURCE null, LAST_STATUS_TYPE null, BBL 1201359999"
+    },
+    {
+      "file": "zero_height_condo_2059447501_envelope.json",
+      "request_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0/query?where=1%3D1&geometry=1009525.0000%2C266530.0000%2C1009540.0000%2C266545.0000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID%2CDOITT_ID%2CBIN%2CBASE_BBL%2CMAPPLUTO_BBL%2CHEIGHT_ROOF%2CGROUND_ELEVATION%2CCONSTRUCTION_YEAR%2CFEATURE_CODE%2CGEOM_SOURCE%2CLAST_EDITED_DATE%2CLAST_STATUS_TYPE&returnGeometry=true&outSR=2263&orderByFields=OBJECTID%20ASC&resultRecordCount=2000&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieved_at": "2026-09-24T10:24:16Z",
+      "bytes": 2602,
+      "sha256": "363497c3c69c9fa3d3891134827bd445ef2a0430e1a25e01551ebdd1b450fb97",
+      "purpose": "missing-height case on a regular building (FEATURE_CODE 2100, HEIGHT_ROOF 0, ground 201) that is also a condo billing-lot join (BASE_BBL 2059440110 -> MAPPLUTO_BBL 2059447501)"
+    },
+    {
+      "file": "empty_result_envelope.json",
+      "request_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0/query?where=1%3D1&geometry=990975.0000%2C222270.0000%2C990985.0000%2C222280.0000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID%2CDOITT_ID%2CBIN%2CBASE_BBL%2CMAPPLUTO_BBL%2CHEIGHT_ROOF%2CGROUND_ELEVATION%2CCONSTRUCTION_YEAR%2CFEATURE_CODE%2CGEOM_SOURCE%2CLAST_EDITED_DATE%2CLAST_STATUS_TYPE&returnGeometry=true&outSR=2263&orderByFields=OBJECTID%20ASC&resultRecordCount=2000&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieved_at": "2026-09-24T10:24:28Z",
+      "bytes": 249,
+      "sha256": "d4c55ec3f7eb63f18cc24133fe664a027e07721fc7d050682096000a7c576c59",
+      "purpose": "well-formed empty result (an envelope inside the courtyard hole of 1011250025): features [], no spatialReference key"
+    },
+    {
+      "file": "subject_2033800084_no_outsr_web_mercator.json",
+      "request_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0/query?where=1%3D1&geometry=1020160.0000%2C267240.0000%2C1020230.0000%2C267325.0000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID%2CDOITT_ID%2CBIN%2CBASE_BBL%2CMAPPLUTO_BBL%2CHEIGHT_ROOF%2CGROUND_ELEVATION%2CCONSTRUCTION_YEAR%2CFEATURE_CODE%2CGEOM_SOURCE%2CLAST_EDITED_DATE%2CLAST_STATUS_TYPE&returnGeometry=true&orderByFields=OBJECTID%20ASC&resultRecordCount=2&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieved_at": "2026-09-24T10:25:11Z",
+      "bytes": 4331,
+      "sha256": "4481b86e5743c5617393fcdae0506cf622e34a7264532fe750faebe578d67d0b",
+      "purpose": "the page-1 request WITHOUT outSR: the service answers in its publication CRS wkid 102100/3857. The connector never emits this URL; tests replay this real body against the connector's page-1 URL to prove the wrong-CRS refusal"
+    },
+    {
+      "file": "short_field_names_error_object.json",
+      "request_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0/query?where=1%3D1&geometry=1020160.0000%2C267240.0000%2C1020230.0000%2C267325.0000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID%2CDOITT_ID%2CBIN%2CBASE_BBL%2CMAPPLUTO_BBL%2CHEIGHTROOF%2CGROUNDELEV%2CCONSTRUCTION_YEAR%2CFEATURE_CODE%2CGEOM_SOURCE%2CLAST_EDITED_DATE%2CLAST_STATUS_TYPE&returnGeometry=true&outSR=2263&orderByFields=OBJECTID%20ASC&resultRecordCount=2&resultOffset=0&f=json",
+      "http_status": 200,
+      "retrieved_at": "2026-09-24T10:25:59Z",
+      "bytes": 129,
+      "sha256": "4b24b6dd1224f463d44f751c89ddcc902759f00650ba8371c1e128801a5ebd30",
+      "purpose": "the page-1 request with the SHAPEFILE short names HEIGHTROOF / GROUNDELEV: HTTP 200 carrying an ArcGIS error object (code 400, 'outFields' parameter is invalid). The connector never emits short names; tests replay this real body to prove the error-object refusal"
+    }
+  ]
+}
