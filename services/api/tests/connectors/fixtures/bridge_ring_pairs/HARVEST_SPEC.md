@@ -1,3 +1,10 @@
+# [ORCH-CORRECTED per M5-T073 data-contract review F2, 2026-09-24]: EXECUTED on
+# 2026-09-23 (commit 06e3e72d) - pairs P05-P08 registered in pairs_manifest.json with
+# kind raw_esri_body / raw_geojson_body; the _auth_response_body branch this spec asks
+# for exists in the harness (kind == "raw_esri_body" returns the body verbatim). This
+# file remains the re-run recipe; the stored layout is <pair_id>/<label>.json (the
+# registration section's naming note covers the difference).
+
 # HARVEST_SPEC — net-new real bridge-ring pairs (M5-T073, DB-045(a))
 
 The offline worker measured the 4 real pairs available from the accepted fixture

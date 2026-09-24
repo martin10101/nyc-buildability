@@ -9,6 +9,24 @@ binds the SAME BBL's two accepted representations:
 - **authoritative ring** — EPSG:2263 US survey feet, `mappluto_geometry_arcgis`
   (`f=json`, wkid 102718 / latestWkid 2263).
 
+> **[ORCH-CORRECTED per M5-T073 data-contract review F1, 2026-09-24]: this file's two
+> sections below describe the PRE-HARVEST state and apply to P01–P04 ONLY.** The harvest
+> WAS executed on 2026-09-23 (commit 06e3e72d): pairs **P05–P08** are net-new
+> orchestrator-captured pairs whose raw bodies are stored DIRECTLY in this directory
+> (`P05…/P08…/{display_4326.json, authoritative_2263.json}`), captured through the two
+> accepted connectors' own query builders over the official NYC DCP MapPLUTO ArcGIS
+> endpoint per the recipe in `HARVEST_SPEC.md` (keyless GET, `Accept: application/json`,
+> raw body bytes written verbatim, sha256 over the exact UTF-8 body bytes, recorded as
+> `kind: raw_esri_body` / `raw_geojson_body` in the manifest). Dataset-release split,
+> body-verified per side: **P01–P04 pair a 26v2 display ring against a 26v1 authoritative
+> ring** (cross-release, captures ~54 days apart); **P05–P08 are 26v2/26v2** (same-second
+> captures). The live sample is **8 pairs / 5 boroughs / 7 geometry classes**; the
+> per-pair area figures in the manifest `notes` are PLUTO **LotArea** values (not the
+> geometry's `Shape__Area`). The authoritative account of every pair is
+> `pairs_manifest.json` (per-side `dataset_version`, digests, expected verdicts) plus the
+> producer report's `[ORCH-HARVEST]` section; the original text below is preserved
+> verbatim per the report-preservation convention.
+
 ## Byte source (single source of truth, no fabrication, no drift)
 
 The verbatim response bodies are **already stored** as VERBATIM live-captured
