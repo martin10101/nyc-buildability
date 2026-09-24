@@ -1,0 +1,69 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-087",
+ "version": 1,
+ "slug": "parallel-build-3d-cad-pdf",
+ "title": "Owner 2026-09-24 (seq 128, 'use up the tokens before today's reset'): maximize concurrent build capacity (about ten builders: three loop lanes + orchestrator-dispatched subagents) on pairwise-disjoint gated packets; RELEASES deferred feature work - 3D building-and-lot massing (expansion section-2 hold released for it), AutoCAD-openable CAD export (working reading DXF, owner confirmation pending), phase-C PDF blueprint reading improvement + blueprint writing, CAD write/edit/export; native DWG libraries stay an owner licensing decision; every gate, dependency-security rule, Tier D stop, PR #241, the unmounted route and D-086 boundaries unchanged",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-24",
+ "captured_at": "2026-09-24T07:20:00+00:00",
+ "created_at": "2026-09-24T07:20:00+00:00",
+ "updated_at": "2026-09-24T07:20:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "ed49b2d8af5fb4783cc3e456e29f78152e921baf",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "The owner's own message authorizes the capacity ramp and releases the named deferred feature families (3D, CAD export/import, PDF blueprints). It releases the expansion section-2 hold ONLY for those families, changes no gate, and leaves native-DWG licensing as an explicit owner decision."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-087-R001",
+  "D-087-R002",
+  "D-087-R003",
+  "D-087-R004",
+  "D-087-R005",
+  "D-087-R006",
+  "D-087-R007",
+  "D-087-R008",
+  "D-087-R009",
+  "D-087-R010"
+ ],
+ "requirements_content_digest_sha256": "4324d3b5f28eb23e450698df0fc63dd8303ba9fe52c2603a16bd1174e6ba05ec",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-24T07:20:00+00:00",
+   "content_digest_sha256": "34c3dd64eb9b87d671076559020dad7e619162b10d68b8d67c2f983b80146518"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "capacity_and_scoped_hold_release",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "running about ten disjoint gated packets concurrently (three loop lanes + subagent producers/reviewers); contracting orchestrator-designed packets for 3D building/lot massing, CAD interchange export (DXF), phase-C PDF reading improvement and blueprint writing, CAD write/edit/export via open formats",
+  "forbidden": "overlapping writable scopes between concurrent workers; skipping any state or gate; adopting a native-DWG library without the owner's licensing decision; new packages outside the dependency-security admission; merging PR #241; mounting the max-envelope route outside its own packet; reviving the 19-task pack/9 contracts/GDS P1-P8 wholesale; any Tier D action"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-24T07:20:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured mid-turn while the T073/T074/T075 DCVs ran (their validator runs had completed; their predicates tolerate new directive captures). At capture: 256 accepted; three lanes idle pending re-feed. The hold notice gains a D-087 scoped-release subsection (+ the missing D-082 release pointer) in the SAME commit."
+  }
+ ]
+}

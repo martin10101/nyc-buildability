@@ -24,6 +24,16 @@ on their instruction. This notice supersedes those passages by owner directive 2
 Accepted work stands at the ledger's count; nothing in the expansion pack alters accepted
 tasks.
 
+### 2.3 Scoped release — 3D, CAD export, PDF blueprints (owner directive D-087, 2026-09-24)
+
+The owner released this hold for these feature families: 3D building-and-lot massing, CAD
+export AutoCAD opens (DXF; native-DWG libraries stay an owner licensing decision), phase-C
+PDF blueprint reading + blueprint writing, CAD write/edit/export. Built as
+orchestrator-designed `M<x>-T<n>` packets under the normal gates, citing `D-087`. The
+19-task pack, 9 contracts and GDS P1–P8 are reference input only. (D-082, 2026-09-20, also
+released max-envelope-first + map drawing; phase D beyond D-087's families stays held.)
+Record: `project-control/directives/D-087-parallel-build-3d-cad-pdf/`.
+
 ### 2.2 Scoped release — proposal-editor planning + phase-B increments (owner directive D-076, 2026-09-19)
 
 The owner released this hold for the PROPOSAL-EDITOR slice: (a) authoring the phased plan

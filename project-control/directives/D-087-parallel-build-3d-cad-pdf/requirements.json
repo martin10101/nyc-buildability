@@ -1,0 +1,334 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-087",
+ "version": 1,
+ "requirement_count": 10,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-24T07:20:00+00:00",
+ "requirements": [
+  {
+   "id": "D-087-R001",
+   "text": "USE TODAY'S CAPACITY ('launch as many loops and subagents as possible to get more done'; 'you can run like 10 loops in one shot'): maximize concurrent build capacity now - the three codex loop lanes stay occupied and orchestrator-dispatched subagent producers and reviewers run in parallel, targeting about ten concurrent builders - with every unit still a contracted, claimed, gated ledger packet (the normal gated process is unchanged; capacity is added by running more disjoint packets at once, never by skipping a state or a gate).",
+   "source_ref": "source-001.md#verbatim-owner-2026-09-24",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-087-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [
+    "D-087-R002"
+   ],
+   "required_harness": "Contract seams binding each concurrently-run packet to this requirement via applicability.task_ids.",
+   "required_evidence": "Ledger task files citing D-087-R001 + their G0 disjointness records + dispatch/launch evidence.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Capacity ramps from the seq-128 capture seam.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-087-R002",
+   "text": "NO INTERFERENCE ('of course not interfering with each other'; 'As long as they don't interfere with each other'): concurrent workers never share writable files - every concurrently-run packet's allowed_paths are pairwise disjoint from every other live or frozen packet (recorded at its G0), each writer works in its own isolated worktree, and a packet whose scope would overlap an in-flight one waits until that one is accepted.",
+   "source_ref": "source-001.md#verbatim-owner-2026-09-24",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-087-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [],
+   "required_harness": "G0 pairwise-disjointness tables at every contract seam; worktree isolation per writer.",
+   "required_evidence": "Each bound packet's G0 report + worktree/launcher records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing prohibition carried into every packet bound under R001.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-087-R003",
+   "text": "3D RELEASED ('you can even give them to build features that we pushed over later, like 3D. An amazing ... 3D handling on buildings and lap size'): the expansion section-2 hold (.claude/rules/expansion-agent-dispatch-hold.md) is RELEASED for 3D building-and-lot handling (reading 'lap size' as lot size): massing of the lot and of buildings (proposal draft, generated building option, existing context where sourced) built from the deterministic geometry contracts (canonical EPSG:2263 lot geometry server-side; display CRS only for rendering) and shown in the product - contracted as orchestrator-designed M<x>-T<n> packets under the normal gates. The July 3D/UI integration report and its pack are reference input only.",
+   "source_ref": "source-001.md#verbatim-owner-2026-09-24",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-087-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [
+    "D-087-R009"
+   ],
+   "required_harness": "Orchestrator-designed 3D packets bound here at their contract seams, each under full gates.",
+   "required_evidence": "Ledger task files citing D-087-R003; accepted 3D increments with their gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Release effective at capture.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-087-R004",
+   "text": "AUTOCAD IMPORT ('buildings being able to import into autocat. Through that special problem that we discussed forgot the name of it that basically is like the middleman'): the product exports the lot and building data (lot outline, building outline, floors/heights, massing) as a CAD interchange file that AutoCAD opens directly. Working reading of 'the middleman' = DXF (the Autodesk Drawing Exchange Format; AutoCAD opens it natively and can save it as DWG) - confirmation requested from the owner (R008).",
+   "source_ref": "source-001.md#verbatim-owner-2026-09-24",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-087-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [
+    "D-087-R008",
+    "D-087-R009"
+   ],
+   "required_harness": "Offline tests on the exporter's output structure (layers, entities, units) + a documented AutoCAD-open check the owner can perform.",
+   "required_evidence": "Ledger task files citing D-087-R004; the exporter module + its tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Release effective at capture; format name awaiting owner confirmation (R008).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-087-R005",
+   "text": "PDF BLUEPRINTS ('Writing blueprint, reading PDF Friday. I think we did that writing. But it can be probably improved'): phase C (assisted PDF drawing import, docs/PROPOSAL_EDITOR_PHASED_PLAN.md) is RELEASED - improve the existing in-repo PDF reading path (the strict-subset vector PDF reader under services/api/app/documents/extraction/, built for surveys) toward architect drawing sheets - and blueprint WRITING (drawing-sheet output of the lot + proposal) is released. The C-track honesty rules still bind: units/scale confirmed by the user against a known dimension; the user confirms which lines are building outline / property line / street frontage; discrepancies shown, never auto-reconciled; imported geometry enters the SAME proposal contract; supported drawing classes defined from REAL files (a fixture-corpus capture precedes the C1 reader widening).",
+   "source_ref": "source-001.md#verbatim-owner-2026-09-24",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-087-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [
+    "D-087-R009"
+   ],
+   "required_harness": "Offline reader tests on a real-file fixture corpus; C-track flow tests; the sheet writer's structural tests.",
+   "required_evidence": "Ledger task files citing D-087-R005; the corpus capture record; accepted increments.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Release effective at capture; the real-file corpus is the first dependency.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-087-R006",
+   "text": "CAD FILES ('Writing editing exporting cat files dwgs all that stuff'): writing, editing and exporting CAD files is released as product work, through open interchange formats first (DXF out; the DXF/vector-PDF in-path per docs/SURVEY_DOCUMENT_FORMAT_POLICY.md) - native DWG stays behind R007.",
+   "source_ref": "source-001.md#verbatim-owner-2026-09-24",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-087-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [
+    "D-087-R007",
+    "D-087-R009"
+   ],
+   "required_harness": "Offline structural tests per format; round-trip tests where both directions exist.",
+   "required_evidence": "Ledger task files citing D-087-R006; accepted increments.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Release effective at capture.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-087-R007",
+   "text": "NATIVE DWG LIBRARY = OWNER DECISION ('dwgs'): native DWG read/write needs a proprietary licensed library (Autodesk RealDWG / Open Design Alliance) or a copyleft one (LibreDWG, GPL) - adopting any of them is a licensing/payment decision that stays STOPPED (Tier D / Section 20; the format policy's recorded STOP) until the owner rules. The question was put to the owner at capture; DXF (which AutoCAD saves as DWG) is the path meanwhile.",
+   "source_ref": "source-001.md#verbatim-owner-2026-09-24",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-087-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [],
+   "required_harness": "No DWG library in any lockfile or import without a recorded owner decision.",
+   "required_evidence": "Dependency lockfiles + the owner decision record when it arrives.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Open owner question.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-087-R008",
+   "text": "OWNER CONFIRMATION PENDING ('that special problem that we discussed forgot the name of it that basically is like the middleman'): the orchestrator's reading is DXF; confirmation was requested at capture. Work serving R004 proceeds on DXF meanwhile (it serves the AutoCAD-import goal under either reading; vector PDF is already the recorded INPUT interchange). A different answer is recorded as an amendment and re-scopes R004 without discarding delivered DXF work.",
+   "source_ref": "source-001.md#verbatim-owner-2026-09-24",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-087-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [],
+   "required_harness": "Owner answer recorded as an amendment source.",
+   "required_evidence": "source-00N-amendment.md when the owner answers.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Awaiting the owner's answer; non-blocking.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-087-R009",
+   "text": "UNCHANGED BOUNDARIES: every gate G0-G7, dependency security (any new package = the G5 provenance admission + exact pin + the 7-day age gate; zero-dependency implementations preferred), Tier D / Section 20, PR #241 (never merged), the unmounted max-envelope route and its mount preconditions, the D-086 sequencing and preservation prohibitions, the thin-client limits (no local npm, CI is the web authority), and D-051 fail-closed discipline all stand. The 19-task pack, its 9 contracts and GDS P1-P8 are not revived wholesale - features are built as orchestrator-designed packets that may cite them as reference input.",
+   "source_ref": "source-001.md#verbatim-owner-2026-09-24",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-087-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [],
+   "required_harness": "Every bound packet's G0 + gates; dependency-security gates in CI.",
+   "required_evidence": "Gate records and lockfile audits of the bound packets.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing boundary.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-087-R010",
+   "text": "TIME WINDOW ('before today's reset'): the owner's usage window resets later today (2026-09-24, a Thursday; the recorded weekly reset is ~9 PM local per the D-036/D-055 history - unverified external fact). Capacity is front-loaded from the capture seam; nothing is rushed past a gate.",
+   "source_ref": "source-001.md#verbatim-owner-2026-09-24",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-087-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [
+    "D-087-R001"
+   ],
+   "required_harness": "Dispatch timestamps of the bound packets.",
+   "required_evidence": "Launch/dispatch records at the capture-day seams.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Time-sensitive; informs sequencing only.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

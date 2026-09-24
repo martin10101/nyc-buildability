@@ -1120,7 +1120,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-086-ui-design-cleanup/manifest.json"
+  },
+  {
+   "directive_id": "D-087",
+   "slug": "parallel-build-3d-cad-pdf",
+   "title": "Owner 2026-09-24 (seq 128, 'use up the tokens before today's reset'): maximize concurrent build capacity (about ten builders: three loop lanes + orchestrator-dispatched subagents) on pairwise-disjoint gated packets; RELEASES deferred feature work - 3D building-and-lot massing (expansion section-2 hold released for it), AutoCAD-openable CAD export (working reading DXF, owner confirmation pending), phase-C PDF blueprint reading improvement + blueprint writing, CAD write/edit/export; native DWG libraries stay an owner licensing decision; every gate, dependency-security rule, Tier D stop, PR #241, the unmounted route and D-086 boundaries unchanged",
+   "status": "active",
+   "issued_at": "2026-09-24",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-087-parallel-build-3d-cad-pdf/manifest.json"
   }
  ],
- "updated_at": "2026-09-24T04:55:00+00:00"
+ "updated_at": "2026-09-24T07:20:00+00:00"
 }
