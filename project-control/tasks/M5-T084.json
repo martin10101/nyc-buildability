@@ -1,0 +1,83 @@
+{
+  "task_id": "M5-T084",
+  "title": "D-087 research: official DXF format reference notes + a real architect-drawing PDF corpus shortlist + a 3D web-dependency provenance pre-screen (docs only)",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "Produce three cited research notes that de-risk the D-087 builds: (1) docs/research/dxf-format-reference-2026-09.md from the official Autodesk DXF Reference - version codes and what opens them, the minimal valid file for R12 vs R2000+ (handles/OBJECTS), HEADER variables incl. the drawing-units codes (is US survey foot a code, since which version), LAYER/LTYPE entries, group codes for LINE, POLYLINE/VERTEX/SEQEND, LWPOLYLINE, 3DFACE, TEXT; (2) docs/research/architect-drawing-corpus-2026-09.md - REAL architect drawing PDFs from public sources (e.g. public-domain federal measured drawings, public agency bid sets) with URL, publisher, public-domain/licence basis, size, sheet types, vector-vs-scanned, producing application where visible, and a 5-10 file starter corpus with sha256 of files downloaded to a scratch location only; (3) docs/research/3d-web-deps-prescreen-2026-09.md - for three, @react-three/fiber and @react-three/drei: current and >=7-day-old versions with registry publish timestamps, licences, maintainers, install scripts, transitive counts, known advisories (input to a later G5 admission packet; no package change here).",
+  "business_reason": "D-087 releases CAD export, PDF blueprint reading and 3D; each build needs official format facts (never guessed), a real-file corpus (the phased plan requires real files before the reader is widened for production), and a dependency pre-screen before any 3D library can be admitted.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "SOURCES (binding): official/primary only - Autodesk's DXF Reference pages, the npm registry (registry.npmjs.org JSON for publish times + dist.integrity), GitHub advisory database / npm audit data, and the publishing agency's own pages for drawings. Record retrieved_at and the exact URL for every fact; never state a fact you did not read.",
+    "THIN CLIENT (binding): downloaded drawing PDFs go to your scratch/temp directory ONLY - never into the repository; record sha256 + size; keep the total under 50 MB; delete nothing you did not create.",
+    "LICENSING (binding): classify each candidate drawing's reuse basis (public domain / public record with terms / copyrighted - excluded); copyrighted drawings are listed as excluded, never proposed as fixtures. Native-DWG libraries are out of scope (D-087-R007).",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 815 files/17025 nodes/7441 edges): the consumers of your notes are the concurrent packets M5-T081 (app/cad/dxf_writer.py), M5-T083 (app/drawings/sheet_reader.py) and the in-repo strict PDF reader (app/documents/extraction/*) - read-only context for what the notes must answer. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "docs/research/dxf-format-reference-2026-09.md",
+    "docs/research/architect-drawing-corpus-2026-09.md",
+    "docs/research/3d-web-deps-prescreen-2026-09.md",
+    "project-control/reports/M5-T084-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/research/dxf-format-reference-2026-09.md",
+    "docs/research/architect-drawing-corpus-2026-09.md",
+    "docs/research/3d-web-deps-prescreen-2026-09.md",
+    "project-control/reports/M5-T084-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/",
+    "services/",
+    "packages/",
+    ".claude/",
+    "docs/DISCOVERY_BACKLOG.md"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (DXF facts): every group code, version code and header variable in the DXF note cites an exact Autodesk reference URL with retrieved_at; the note states the minimal valid R12 and R2000 structures and whether a US-survey-foot unit code exists (with its version).",
+    "AS-2 (corpus): at least 5 candidate REAL drawings with URL, publisher, reuse basis, size, sheet types and vector-vs-scanned status; each downloaded file has sha256 + size; copyrighted items are excluded explicitly; nothing enters the repository.",
+    "AS-3 (deps pre-screen): for each of three / @react-three/fiber / @react-three/drei - the newest version that is >= 7 complete days old (registry time), licence, install scripts, transitive count and advisory status, each with its registry URL.",
+    "AS-4 (scope): docs only - exactly the allowed_paths change; no package, lockfile, source or rule change."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "official-source-researcher",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T07:24:32.504404+00:00",
+  "updated_at": "2026-09-24T07:24:32.885719+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R004",
+        "D-087-R005",
+        "D-087-R006",
+        "D-087-R007"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T07:24:32.504404+00:00",
+  "documented_test_commands": []
+}

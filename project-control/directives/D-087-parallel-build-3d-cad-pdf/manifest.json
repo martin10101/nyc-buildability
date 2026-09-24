@@ -10,7 +10,7 @@
  "issued_at": "2026-09-24",
  "captured_at": "2026-09-24T07:20:00+00:00",
  "created_at": "2026-09-24T07:20:00+00:00",
- "updated_at": "2026-09-24T07:20:00+00:00",
+ "updated_at": "2026-09-24T07:45:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "ed49b2d8af5fb4783cc3e456e29f78152e921baf",
  "capture_head_sha": null,
@@ -33,7 +33,7 @@
   "D-087-R009",
   "D-087-R010"
  ],
- "requirements_content_digest_sha256": "4324d3b5f28eb23e450698df0fc63dd8303ba9fe52c2603a16bd1174e6ba05ec",
+ "requirements_content_digest_sha256": "730fef117baf45c013625b7b00e2500b95117e05eb41aec31df875d8a294a8c2",
  "sources": [
   {
    "file": "source-001.md",
@@ -64,6 +64,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured mid-turn while the T073/T074/T075 DCVs ran (their validator runs had completed; their predicates tolerate new directive captures). At capture: 256 accepted; three lanes idle pending re-feed. The hold notice gains a D-087 scoped-release subsection (+ the missing D-082 release pointer) in the SAME commit."
+  },
+  {
+   "at": "2026-09-24T07:45:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Seq-128 D-087 wave-1 contract seam (five orchestrator-dispatched subagent packets: DXF writer, massing model, architect-sheet PDF reader, research, PDF sheet writer): bound D-087-R001 <- M5-T081, M5-T082, M5-T083, M5-T084, M5-T085; D-087-R002 <- M5-T081, M5-T082, M5-T083, M5-T084, M5-T085; D-087-R003 <- M5-T082; D-087-R004 <- M5-T081, M5-T084; D-087-R005 <- M5-T083, M5-T084, M5-T085; D-087-R006 <- M5-T081, M5-T084; D-087-R007 <- M5-T081, M5-T084; D-087-R009 <- M5-T081, M5-T082, M5-T083, M5-T085; requirements digest resynced in the same commit."
   }
  ]
 }

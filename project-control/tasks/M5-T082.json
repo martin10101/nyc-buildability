@@ -1,0 +1,95 @@
+{
+  "task_id": "M5-T082",
+  "title": "D-087 3D-1: deterministic massing model - lot + proposed building as a versioned structured-geometry object (declared CRS/units/local origin, closed triangulated meshes, floor plates, metrics, provenance) per the 3D architecture truth model (module + tests; no route, no UI)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build services/api/app/scenario/massing_model.py: the canonical scenario-geometry object of docs/3D_MASSING_ENGINE_ARCHITECTURE.md (sections 2-4 and 10, subset) from (a) the canonical EPSG:2263 lot ring, (b) a proposal footprint ring + floor stack (per-floor heights) read through the accepted B0 proposal contract (app/scenario/proposal.py / contract.py, read-only), and optionally (c) a generated building option in the max-envelope engine's as_dict shape: declared CRS, horizontal/vertical units, axis order, local-origin transform and precision grid; layers parcel / proposed_massing / generated_option; closed prisms per floor band with consistent outward winding (ear-clipping triangulation that handles concave rings); per-floor plates with areas from the 2263 ring; metrics (gross floor area, total height); provenance (input digests, generator_version 'massing-1.0.0'); the section-10 quality checks as typed refusals.",
+  "business_reason": "The owner released 3D building-and-lot handling (D-087-R003); the architecture requires a deterministic geometry truth object BEFORE any renderer - this is the server-side foundation every 3D view and the AutoCAD export consume.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "ARCHITECTURE (binding): docs/3D_MASSING_ENGINE_ARCHITECTURE.md is the design authority for the object's fields (section 2 example), the coordinate strategy (section 3: authoritative CRS in storage, local origin near the parcel centroid for rendering, transform metadata preserved) and the quality gates (section 10). Three.js is NOT in scope; the object is renderer-agnostic JSON.",
+    "FAIL-CLOSED (binding, D-051): a footprint not within the lot beyond a declared tolerance is refused 'footprint_outside_lot' - never clipped silently; holes, self-intersection, non-finite values, over-cap vertex counts, zero/negative heights each a typed refusal; the generated option is accepted only in the engine's exact as_dict shape (mirror, never guess).",
+    "TESTS + MUTATION (binding): rectangle, L-shape (concave) and a 5-floor stack - every prism closed (each edge shared by exactly two faces), outward orientation (signed volume > 0), no degenerate triangle, triangulated cap area == polygon area, volume == area x height within 1e-9 relative; plate areas match shapely's 2263 area; mutation: swapping two floor heights or reversing one winding reddens a named test.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 815 files/17025 nodes/7441 edges): app/scenario/max_envelope.py (998 SLOC, FORBIDDEN - read its as_dict shape only), app/scenario/proposal.py + contract.py (the B0 proposal contract - read-only), app/connectors/mappluto_geometry_arcgis.py (canonical 2263 ring - read-only). massing_model.py is NEW; nothing imports it yet. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/scenario/massing_model.py - the versioned massing truth object + builders + typed refusals",
+    "services/api/tests/scenario/test_massing_model.py - mesh-closure, orientation, area/volume, plate, provenance and refusal tests",
+    "project-control/reports/M5-T082-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/scenario/massing_model.py",
+    "services/api/tests/scenario/test_massing_model.py",
+    "project-control/reports/M5-T082-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/max_envelope.py",
+    "services/api/app/scenario/proposal.py",
+    "services/api/app/scenario/contract.py",
+    "services/api/app/scenario/derivation.py",
+    "services/api/app/scenario/lot_geometry_derivation.py",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/app/connectors/",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (truth object): the output declares CRS EPSG:2263, US-survey-foot horizontal and vertical units, axis order, the local origin and its exact transform, precision grid, generator_version and input digests; it is JSON-serializable and deterministic (golden sha256).",
+    "AS-2 (mesh correctness): for rectangle, concave L-shape and a 5-floor stack every prism is closed, outward-oriented and free of degenerate triangles; cap triangulation area equals the polygon area; mutation - reversing one face winding reddens a named test.",
+    "AS-3 (plates + metrics): per-floor plate areas equal the 2263 footprint area; gross floor area = the sum of plates; total height = the sum of floor heights; mutation - swapping two floor heights reddens.",
+    "AS-4 (fail-closed): footprint outside the lot, holes, self-intersection, non-finite values, over-cap vertices and non-positive heights each return a typed refusal; nothing is clipped or repaired silently.",
+    "AS-5 (honesty + scope): class labels proposed / generated_option only (grep: no permitted/maximum-allowed wording); max_envelope.py and every route byte-untouched; zero new dependencies; ruff + modularity clean."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "3d-massing-engineer",
+  "reviewer_agents": [
+    "geospatial-engineer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T07:24:30.351319+00:00",
+  "updated_at": "2026-09-24T07:24:30.726747+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T07:24:30.351319+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/scenario/test_massing_model.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

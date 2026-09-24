@@ -1,0 +1,96 @@
+{
+  "task_id": "M5-T083",
+  "title": "D-087 PDF-1: architect-sheet PDF reader profile - Bezier flattening with a declared tolerance, full affine CTM (rotation/shear), q/Q stack, Form XObjects with bounded recursion, images counted-never-decoded; composes the in-repo strict reader read-only; survey path byte-untouched (module + tests)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build services/api/app/drawings/sheet_reader.py (+ optional sheet_primitives.py): a SEPARATE interpretation profile for architect drawing sheets that reuses the in-repo strict reader's lexer/objects/xref/container modules READ-ONLY and interprets page content with path construction (m l c v y h re), Bezier curves flattened to polylines under a DECLARED maximum chord error recorded in the output, the full CTM (cm incl. rotation/shear - the survey profile refuses these), a depth-bounded q/Q stack, stroke/fill painting distinguished, text-run positions, Form XObjects with recursion depth <= 8 and cycle refusal, and image XObjects COUNTED and disclosed but never decoded. Output = page-scoped vector primitives in PDF user space + page box + /UserUnit - never auto-trusted as world coordinates (units/scale are confirmed by the user in a later C2 packet). Refusal is a value, never an exception; all-or-nothing per document; bounded sizes/ops/depth.",
+  "business_reason": "The owner asked to improve PDF blueprint reading (D-087-R005); the in-repo reader was built for surveys and refuses curves and rotated transforms, which real architect sheets use constantly.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "READ-ONLY REUSE (binding): app/documents/extraction/{pdf_lexer,pdf_objects,pdf_xref,pdf_container,pdf_content,vector_pdf_decoder,routing,survey_pipeline}.py and app/documents/isolation.py stay BYTE-UNTOUCHED (prove by blob comparison); import their public functions only. The survey decoder's refusals are not relaxed - your profile is a separate module that nothing in the survey pipeline or any route imports.",
+    "PDF AUTHORITY (binding; never guess): operator semantics follow ISO 32000-1 (PDF 1.7) - cite the section per operator in the module; mark recalled citations '[recalled - verify]' for the G1 data-contract-verifier. Untrusted input: bounded stream size, op count, path points, q/Q depth, XObject recursion; no byte executed; no network.",
+    "TESTS + MUTATION (binding): synthetic PDFs built in-test (reuse any existing PDF-bytes test helper under tests/documents read-only, or build your own in your test file): a quarter circle as 4 Beziers flattened within tolerance (measured max deviation <= declared), a 30-degree rotated rectangle via cm, nested q/Q restore, a Form XObject used twice, an image counted not decoded, and each refusal class; mutation: dropping the CTM multiply or the tolerance check reddens a named test.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 815 files/17025 nodes/7441 edges): services/api/app/drawings/ is a NEW package seeded at this seam (__init__.py is the orchestrator's - do not edit). The strict reader modules above are consumed by vector_pdf_decoder.py / survey_pipeline.py / routing.py - all FORBIDDEN. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/drawings/sheet_reader.py (+ optional sheet_primitives.py) - the architect-sheet interpretation profile",
+    "services/api/tests/drawings/test_sheet_reader.py - curve/CTM/stack/XObject/image/refusal tests with mutation notes",
+    "project-control/reports/M5-T083-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/drawings/sheet_reader.py",
+    "services/api/app/drawings/sheet_primitives.py",
+    "services/api/tests/drawings/test_sheet_reader.py",
+    "project-control/reports/M5-T083-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/__init__.py",
+    "services/api/app/documents/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/tests/documents/",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (curves): a quarter circle drawn as Beziers is flattened with measured maximum deviation <= the declared tolerance, and the tolerance is recorded in the output; mutation - skipping the tolerance subdivision reddens.",
+    "AS-2 (transforms + state): a 30-degree cm rotation and a shear map points exactly (1e-9); nested q/Q restores the CTM; mutation - dropping the CTM multiply reddens.",
+    "AS-3 (XObjects + images): a Form XObject used twice yields its primitives twice under each placement's CTM; recursion > 8 or a cycle is refused; an image XObject is counted and disclosed, never decoded.",
+    "AS-4 (fail-closed + bounds): encrypted files, unsupported filters, over-limit streams/ops/points/depth each return a typed refusal VALUE (no exception escapes), all-or-nothing per document.",
+    "AS-5 (isolation + scope): every app/documents module byte-untouched (blob compare in the report); nothing imports the new profile; zero new dependencies; ruff + modularity clean."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T07:24:31.594453+00:00",
+  "updated_at": "2026-09-24T07:24:31.953077+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R005",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T07:24:31.594453+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/drawings/test_sheet_reader.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

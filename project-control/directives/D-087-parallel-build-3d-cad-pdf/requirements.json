@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 10,
  "producer": "orchestrator",
- "updated_at": "2026-09-24T07:20:00+00:00",
+ "updated_at": "2026-09-24T07:45:00+00:00",
  "requirements": [
   {
    "id": "D-087-R001",
@@ -14,7 +14,12 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-087-BOOTSTRAP"
+     "D-087-BOOTSTRAP",
+     "M5-T081",
+     "M5-T082",
+     "M5-T083",
+     "M5-T084",
+     "M5-T085"
     ],
     "task_types": [],
     "milestones": [],
@@ -47,7 +52,12 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-087-BOOTSTRAP"
+     "D-087-BOOTSTRAP",
+     "M5-T081",
+     "M5-T082",
+     "M5-T083",
+     "M5-T084",
+     "M5-T085"
     ],
     "task_types": [],
     "milestones": [],
@@ -78,7 +88,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-087-BOOTSTRAP"
+     "D-087-BOOTSTRAP",
+     "M5-T082"
     ],
     "task_types": [],
     "milestones": [],
@@ -111,7 +122,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-087-BOOTSTRAP"
+     "D-087-BOOTSTRAP",
+     "M5-T081",
+     "M5-T084"
     ],
     "task_types": [],
     "milestones": [],
@@ -145,7 +158,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-087-BOOTSTRAP"
+     "D-087-BOOTSTRAP",
+     "M5-T083",
+     "M5-T084",
+     "M5-T085"
     ],
     "task_types": [],
     "milestones": [],
@@ -178,7 +194,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-087-BOOTSTRAP"
+     "D-087-BOOTSTRAP",
+     "M5-T081",
+     "M5-T084"
     ],
     "task_types": [],
     "milestones": [],
@@ -212,7 +230,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-087-BOOTSTRAP"
+     "D-087-BOOTSTRAP",
+     "M5-T081",
+     "M5-T084"
     ],
     "task_types": [],
     "milestones": [],
@@ -274,7 +294,11 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-087-BOOTSTRAP"
+     "D-087-BOOTSTRAP",
+     "M5-T081",
+     "M5-T082",
+     "M5-T083",
+     "M5-T085"
     ],
     "task_types": [],
     "milestones": [],

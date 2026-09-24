@@ -1,0 +1,97 @@
+{
+  "task_id": "M5-T081",
+  "title": "D-087 CAD-1: zero-dependency DXF writer core - layered site plan (lot, building outline, 3DFACE massing walls, annotation) AutoCAD opens directly (module + tests; no route, no UI)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build services/api/app/cad/dxf_writer.py: a deterministic, dependency-free ASCII DXF writer AutoCAD opens natively (the D-087-R004 'middleman' working reading): HEADER ($ACADVER + the drawing-units variable + extents), TABLES (LTYPE + LAYER with named layers and colors), ENTITIES (LINE, closed 2D polyline, TEXT, 3DFACE), EOF - choosing the most widely openable DXF version and citing the Autodesk DXF Reference for every structural choice. A typed document model with strict validation, fail-closed typed errors, and a pure site-plan builder: lot ring + building outline ring + floor stack -> layers LOT, BUILDING_OUTLINE, MASSING_3D (3DFACE wall quads per floor band + outline polylines at each elevation), ANNOTATION (the proposed-not-a-city-record label, CRS/units note, generator version). Coordinates are EPSG:2263 US survey feet (world) with the unit declared in the header.",
+  "business_reason": "The owner asked for buildings that import into AutoCAD (D-087-R004/R006); an open DXF export is the licence-free path AutoCAD opens directly and saves as DWG, while native DWG stays an owner licensing decision (R007).",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "FORMAT AUTHORITY (binding; never guess): every section order, group code, header variable and entity field follows the Autodesk DXF Reference (help.autodesk.com 'DXF Reference'); cite the reference section next to each constant in the module. You have no network: mark each citation as '[recalled - verify]' so the G1 data-contract-verifier (who has network) checks it; a parallel research packet (M5-T084) records the official notes. Choose R12 (AC1009, no handles/OBJECTS needed) unless you can justify R2000+ from the reference.",
+    "SAFETY (binding): values are written through ONE sanitizer - no CR/LF or control characters can enter the group-code stream (injection-proof), layer names match the reference's allowed set, coordinates are finite, rings closed and non-degenerate, entity count bounded (declare the cap). Any violation = a typed refusal and NO partial output.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 815 files/17025 nodes/7441 edges): services/api/app/cad/ is a NEW package seeded at this seam (its __init__.py is the orchestrator's - do not edit); nothing imports it yet. Sibling M5-T085 writes app/cad/pdf_sheet_writer.py concurrently - FORBIDDEN to you. Geometry inputs mirror app/connectors/mappluto_geometry_arcgis.py rings (EPSG:2263) - read-only. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/cad/dxf_writer.py - typed DXF document model, sanitizing serializer, site-plan builder",
+    "services/api/tests/cad/test_dxf_writer.py - structural round-trip (in-test group-code reader), golden digest, fail-closed and injection tests",
+    "project-control/reports/M5-T081-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/cad/dxf_writer.py",
+    "services/api/tests/cad/test_dxf_writer.py",
+    "project-control/reports/M5-T081-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/cad/__init__.py",
+    "services/api/app/cad/pdf_sheet_writer.py",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/app/scenario/",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (structure): output is ASCII with strictly alternating group-code/value lines, sections in the reference order, terminated by 0/EOF; an in-test minimal group-code reader parses it back; identical inputs give byte-identical output (golden sha256).",
+    "AS-2 (site plan content): a fixture lot + an L-shaped building + 3 floors yields exactly the layers LOT, BUILDING_OUTLINE, MASSING_3D, ANNOTATION; closed outlines; 3DFACE count = wall edges x floor bands; every written coordinate equals its input (round-trip) and the header declares the drawing unit.",
+    "AS-3 (fail-closed + injection): non-finite coordinates, open/degenerate rings, invalid layer names, and over-cap entity counts each give a typed refusal with no partial output; a text value containing CR/LF cannot break the stream - mutation: bypassing the sanitizer reddens a named test.",
+    "AS-4 (honesty): the ANNOTATION layer always carries 'PROPOSED - NOT A CITY RECORD' plus the CRS/units note; no claim-class words appear in any emitted string (grep in the test).",
+    "AS-5 (scope): zero new dependencies; ruff clean; modularity exit 0; exactly the allowed_paths change; no route or web change."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T07:24:29.162367+00:00",
+  "updated_at": "2026-09-24T07:24:29.555262+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R004",
+        "D-087-R006",
+        "D-087-R007",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T07:24:29.162367+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/cad/test_dxf_writer.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
