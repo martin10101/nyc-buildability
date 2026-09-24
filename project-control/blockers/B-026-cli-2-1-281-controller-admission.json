@@ -1,0 +1,19 @@
+{
+ "blocker_id": "B-026",
+ "title": "Loop lanes cannot launch: Claude Code 2.1.281 (the D-085 update) was never admitted to the certified controller (R287 admission + recertification pending), and the controller manifest still binds the pre-B-025 config.toml",
+ "status": "open",
+ "created_at": "2026-09-24T08:05:00+00:00",
+ "created_by": "orchestrator",
+ "affects": [
+  "D-084-R001/R002/R003 (three codex loop lanes - lane occupancy)",
+  "D-087-R001 (the loop-lane share of today's capacity ramp)"
+ ],
+ "detail": "Deficit-convergence closure (seq 128, evidence frozen in the session scratchpad dc-lane-evidence/: autostart-20260924-034824.out.txt + audit tail). The first lane launch since D-085 (lane-1, the seq-128 re-feed) REFUSED exit 11 unsafe_or_drifted before any provider contact: failed_steps controller_manifest + cli_capability_manifest; failed_probes cli_capability_manifest + config_identity + shell_routing. Root-cause cluster (ONE cause family - an owner-sanctioned toolchain/config change that was never re-admitted): (1) provider_cli_drift - claude.exe changed 2.1.252 -> 2.1.281 under D-085-R002 (the journal pins the 2.1.252 identity); (2) routing_evidence_stale - shell-routing evidence exists only for the 2.1.251/2.1.252 identities (shipped fixtures), the R295 tooth is ANDed into cli_capability_manifest (start_gate.py live_revalidation), so a bare --repin-cli-identity cannot pass; (3) config_binding_unverified - C:\\Program Files\\SupervisorConfig\\config.toml was edited by the owner 2026-09-23 17:08 (B-025 allowlist add of claude-opus-5-5) while the shared activation manifest (%LOCALAPPDATA%\\NYCBuildabilitySupervisor\\ctl24-activation\\controller_manifest.json, recorded 2026-09-19) still binds the old digest; (4) NOT-RUN but required by the runbook: the live capability fixtures (capability-probe record, hook-event catalog, native-runtime detection) were never recaptured at 2.1.281. docs/CONTROLLER_UPDATE_RUNBOOK.md section 13 (R287) orders the remedy: recapture the fixture pack at the new version -> full recertification (golden pack, supervisor suites, manifest re-record binding the current config, verify-controller) -> ONLY THEN --repin-cli-identity at the next start. Precedent: the accepted 2.1.252 admission lane (M0-T132). No repin, manifest re-record or rerun was attempted (rule 20: no live rerun before the closure matrix). Lane-1 sits in PAUSED_RECOVERY from the refused start; lanes 2/3 were never launched (PREFLIGHT). Zero pending asks in both stores.",
+ "needs": "ORCHESTRATOR (no owner action needed): contract and run the 2.1.281 admission + recertification lane per runbook section 13 / the M0-T132 precedent under D-085-R004 ('update the loop so it uses the new Opus 5.5') + D-087-R001, then clear-recovery on lane-1 and relaunch each lane once with --repin-cli-identity, staggered. Everything in that runbook except its section-12 owner touchpoints is orchestrator-executable (D-017).",
+ "workaround_in_effect": "The three re-feed packets contracted for the lanes at this seam run instead as orchestrator-dispatched subagent producers in their already-created worktrees (their D-084 lane-occupancy bindings removed with a same-commit digest resync; D-087-R001/R002 bindings kept). The lanes get fresh packets after the admission lane lands.",
+ "candidate_followup": "Admission lane task (M0 milestone) contracted at the next seam.",
+ "scope_corrections": [],
+ "history_note": "Direct consequence of D-085 (CLI update + Opus 5.5 pins, owner-authorized) whose handoff assumed the lanes were launch-ready; the R287 admission step was not part of that directive's executed scope. Same class as the pre-M0-T132 2.1.252 drift.",
+ "resolved_at": null,
+ "resolution": null
+}

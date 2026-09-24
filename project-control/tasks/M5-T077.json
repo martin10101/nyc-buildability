@@ -64,14 +64,8 @@
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T07:41:56.146023+00:00",
-  "updated_at": "2026-09-24T07:43:27.718634+00:00",
+  "updated_at": "2026-09-24T07:55:42.867158+00:00",
   "directive_refs": [
-    {
-      "directive_id": "D-084",
-      "requirement_ids": [
-        "D-084-R001"
-      ]
-    },
     {
       "directive_id": "D-066",
       "requirement_ids": [
@@ -101,6 +95,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contract seam complete: G0 PASS at f57fccd5; worktree wt-m5t077 at the claim-seam commit; launch/dispatch next"
+    },
+    {
+      "at": "2026-09-24T07:55:42.867158+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Scope correction (B-026): the lane launch refused - Claude Code 2.1.281 is not yet admitted to the certified controller - so this packet runs as an orchestrator-dispatched subagent producer in its claimed worktree; D-084 lane-occupancy binding removed (same-commit digest resync); D-087-R001/R002 and every other binding, scope, gate and acceptance scenario unchanged."
     }
   ]
 }
