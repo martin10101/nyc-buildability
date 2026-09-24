@@ -176,6 +176,9 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   then join verbatim at that point with the transmission history noted in the record header.
 - Loop WAIT_FOR_OWNER (tier_ask_blocking) after all asks denied needs `resume-after-answer`
   (WAIT_FOR_OWNER -> PREFLIGHT); `clear-recovery` only exits PAUSED_RECOVERY.
+- NEVER pass `model:` on an Agent dispatch: it OVERRIDES the agent file's claude-opus-4-8 xhigh
+  pin (owner: "sub agent stays 4.8", D-085 src-003); "opus" = Opus 5.5 - 20 seq-128 spawns
+  drifted (report D-085-subagent-model-deviation-2026-09-24.md). Verify via subagent transcripts.
 - Opus 5.5 (D-085): exact id `claude-opus-5-5` (alias opus55; dotted 'opus-5.5' = SILENT
   unrecognized_model fallback to opus-4-8 - never use it). Verified on CLI 2.1.281 canary.
   Worker-pin flips AND the shared allowlist (`C:\Program Files\SupervisorConfig\config.toml`

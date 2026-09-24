@@ -1,0 +1,26 @@
+{
+ "task_id": "M5-T090",
+ "material_commit": "80f17a86 (cherry-pick of wt-m5t090 0d6cc897: package.json + report) + 2e444920 (cherry-pick of the generate-lockfile bot commit 82d2e54d on task/M5-T090-3d-web-deps, run 35985974452); every file MATCH by blob",
+ "produced_at": "2026-09-24T10:25:00+00:00",
+ "producer": "frontend-engineer (orchestrator-dispatched subagent; worktree wt-m5t090) + github-actions[bot] via the reviewed generate-lockfile workflow",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's navigation block names the first future consumer (a later 3D viewer under apps/web/src/components/architect/) and states nothing consumes the packages yet; the producer confirmed in source that nothing imports three or @react-three/* (the graph cache was stale at 114e5e56, so it checked directly); material touches only apps/web/package.json + the report, and the bot commit only apps/web/package-lock.json."
+  ],
+  "D-087-R001": [
+   "One of the seq-128 wave-2 capacity units: contracted at 5e9dbd07 (G0 PASS), claimed at 114e5e56 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with M5-T088/T089/T091/T092; no state or gate skipped."
+  ],
+  "D-087-R002": [
+   "Pairwise-disjoint allowed_paths at G0 (EMPTY overlap; no other live packet declares apps/web/package.json or the lockfile); one worktree wt-m5t090; material 80f17a86 (cherry-pick of 0d6cc897) + the bot lockfile commit 2e444920 (cherry-pick of 82d2e54d) touch exactly the three allowed paths, every file MATCH by blob."
+  ],
+  "D-087-R003": [
+   "Admits the parcel-level 3D web stack the project's 3D rules name (Three.js + React Three Fiber; drei deferred) so a 3D building/lot viewer can be built; the producer report argues necessity against the zero-dependency MapLibre fill-extrusion alternative (sloped sky-exposure planes, per-part transparency/cutaways, GLB viewing, camera views) for the G5 reviewer to rule on."
+  ],
+  "D-087-R009": [
+   "Dependency security unchanged and applied in full: exact pins (0 non-exact), three 0.186.0 published 2026-09-08 (1,348,215 s) and @react-three/fiber 9.7.0 published 2026-07-31 (4,728,917 s) both past the 604800-s floor (fiber 9.8.0 refused as too new); OSV + GitHub advisory queries empty for both versions with a positive control; no install scripts; MIT; lockfile generated ONLY by the reviewed generate-lockfile workflow run 35985974452 (SUCCESS: npm ci integrity, blocking npm audit at every severity, committed-lock age gate, npm CLI advisory check) - 13 new packages, 0 changed or removed versions; no route, no src/ or e2e change; the G5 section-5 provenance review follows."
+  ],
+  "D-087-R011": [
+   "The owner's 'Go' (source-002, 08:42:57Z) lifted only the orchestrator's pause on this admission; nothing waived - the packet runs the full dependency-security admission (pins, age floor, advisories, integrity, GitHub-generated lockfile, CI gates, G5 provenance review)."
+  ]
+ }
+}
