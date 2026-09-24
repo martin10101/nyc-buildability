@@ -50,12 +50,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T15:34:45.826847+00:00",
-  "updated_at": "2026-09-24T15:34:46.285428+00:00",
+  "updated_at": "2026-09-24T15:35:13.098286+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -80,5 +80,15 @@
   "directive_regime_entered_at": "2026-09-24T15:34:45.827869+00:00",
   "documented_test_commands": [
     "powershell -NoProfile -ExecutionPolicy Bypass -File tools/controller_update/ps_tests/run_ps_tests.ps1"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t160",
+  "progress_log": [
+    {
+      "at": "2026-09-24T15:35:13.098286+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Claimed at the wave-5 contract seam 64fce622; worktree C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t160 created at the claim-seam commit; orchestrator-dispatched subagent producer follows."
+    }
   ]
 }
