@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T15:10:18+00:00",
+ "verified_at": "2026-09-24T15:23:20+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -485,6 +485,112 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: stdlib-only imports (AST test); 706ae62a touches only 3 files; zero requirements change; unwired (test_as5_not_wired + grep); honesty label emitted and pinned; restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T092-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T078",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "c5dd725ccedd73424ea5ca0a9f87fa926f4a7d5125480251306d7683caf1ce24",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contracted/claimed/gated packet (G0/G2/G3/G4) run as an orchestrator-dispatched subagent producer after the B-026 lane refusal; the recorded G3/G4 are fresh Opus 4.8 re-reviews after the G3/G4 FAIL -> rework cycle; no state or gate skipped; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp c5dd725c; evaluate_task_refs ok); report M5-T078-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: T078 and T079 disjoint and disjoint from all 44 other live packets (reproduced); worktree wt-m5t078; the rework-seam scope correction (architect.css, one [aria-disabled] selector, G0 re-recorded) is declared by M5-T078 only; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp c5dd725c; evaluate_task_refs ok); report M5-T078-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T079",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "747ee06918acc75ded540783f9efa8778791eec27a2d8bbd0497c985b769d13d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contracted/claimed/gated packet run as a subagent producer after B-026; the recorded G3/G4 are fresh Opus 4.8 re-reviews; no gate skipped; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: T079 and T078 disjoint and disjoint from all 44 other live packets; worktree wt-m5t079; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T088",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "327ef492bd5a7b37284dbf5f7870639d4ff879028a01f43f5686bf88cc48fc86",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: fully gated unit - G0 at 5e9dbd07, claim seam 114e5e56, material 9f355fe1, G2/G3/G4/G5 PASS; produced concurrently with the disjoint T089-T092; no state or gate skipped; blob-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (massing_model.py 42545728, test c55e2cd7, report b4c1b025, max_envelope.py f0abf884, requirements 7da554cf/bf38a09e unchanged; no production importer; identity 327ef492); report M5-T088-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: allowed_paths pairwise disjoint from T089/T090/T091/T092; isolated worktree wt-m5t088; material touches exactly the 3 allowed files; blob-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (massing_model.py 42545728, test c55e2cd7, report b4c1b025, max_envelope.py f0abf884, requirements 7da554cf/bf38a09e unchanged; no production importer; identity 327ef492); report M5-T088-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for this task's share (the 3D truth object made safe for real geometry, DB-054 (a)-(j)): canonical EPSG:2263; typed MassingModelError; MAX_COORD_ABS before any shapely; metered triangulation budget with an up-front least-work refusal; MAX_TOTAL_MESH_VERTICES and MAX_TOTAL_FLOORS (message names floors) before ring prep; fail-closed containment; local-origin volume conditioning; CCW + collinear normalisation; 41 test functions / 54 cases incl. non-star U/comb, CW rings, keyhole; G4 14/14 producer mutants red. F-HIGH-1 (upstream proposal.py) is outside the packet, unreachable (unwired) and QUEUED as M5-T095; blob-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (massing_model.py 42545728, test c55e2cd7, report b4c1b025, max_envelope.py f0abf884, requirements 7da554cf/bf38a09e unchanged; no production importer; identity 327ef492); report M5-T088-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: requirements byte-identical; no lockfile change; the material touches none of the forbidden paths; max_envelope.py byte-untouched; module unwired; PR #241 unmerged; blob-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (massing_model.py 42545728, test c55e2cd7, report b4c1b025, max_envelope.py f0abf884, requirements 7da554cf/bf38a09e unchanged; no production importer; identity 327ef492); report M5-T088-DCV.md."
      ]
     }
    ]

@@ -3,7 +3,7 @@
  "directive_id": "D-082",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-082-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-23T07:10:00+00:00",
+ "verified_at": "2026-09-24T15:23:20+00:00",
  "task_verifications": [
   {
    "directive_id": "D-082",
@@ -165,6 +165,50 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (Part 2): max leads by DOM ORDERING in unit + real-browser e2e; manual editing survives adoption; honesty labels verified in copy and provenance notes; typed degradation never dead, never fabricated."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T078",
+   "applicable_requirement_ids": [
+    "D-082-R001"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "c5dd725ccedd73424ea5ca0a9f87fa926f4a7d5125480251306d7683caf1ce24",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the B-track outline drawing + bridge feeding the same in-memory draft (additive onAdopt; no localStorage/sessionStorage/save/PDF import); web-only allowed_paths; services/api, e2e, outline-bridge-api.ts and app/ forbidden; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp c5dd725c; evaluate_task_refs ok); report M5-T078-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T079",
+   "applicable_requirement_ids": [
+    "D-082-R001"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "747ee06918acc75ded540783f9efa8778791eec27a2d8bbd0497c985b769d13d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: max-envelope-api.ts targets the INTERNAL, flag-gated, UNMOUNTED POST /api/v1/max-envelope; the computed maximum is presented and checked live, never persisted; services/api untouched; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
      ]
     }
    ]

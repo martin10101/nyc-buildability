@@ -61,12 +61,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T09:39:28.321165+00:00",
-  "updated_at": "2026-09-24T14:48:05.732735+00:00",
+  "updated_at": "2026-09-24T15:23:37.228936+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -107,5 +107,7 @@
       "status": "in_progress",
       "message": "Harvested: 353b919d cherry-picked to 9f355fe1 (3 files MATCH); ruff clean, 54 passed, modularity exit 0; evidence map + G2 written; submitting."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-24T15:23:37.226928+00:00"
 }

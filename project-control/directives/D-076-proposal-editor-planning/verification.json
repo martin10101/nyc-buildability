@@ -3,7 +3,7 @@
  "directive_id": "D-076",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-076-BOOTSTRAP at capture; phase-B packets are bound by applicability append at contract time. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-23T07:10:00+00:00",
+ "verified_at": "2026-09-24T15:23:20+00:00",
  "task_verifications": [
   {
    "directive_id": "D-076",
@@ -361,6 +361,50 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (Part 3, with the split-district rider): proposed stays a third input class end-to-end (verbatim candidate seeding, PROPOSED provenance, no record claims, no approval from a passing subset). HJ finding 1 (split-district silent omission) judged non-blocking ONLY because the route is verifiably unmounted (every include_router line checked); it MUST close before the mount - recorded as the top pre-mount closer."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T078",
+   "applicable_requirement_ids": [
+    "D-076-R002"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "c5dd725ccedd73424ea5ca0a9f87fa926f4a7d5125480251306d7683caf1ce24",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: omission never silent (omittedRowsClause; omittedOnConvert names converted AND omitted counts); per-row incomplete markers + aria-invalid; the drawing total labelled 'a UI row tally, never a zoning number' and 'converted to official-grid feet on the server'; value and gap states stay distinct; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp c5dd725c; evaluate_task_refs ok); report M5-T078-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T079",
+   "applicable_requirement_ids": [
+    "D-076-R002"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "747ee06918acc75ded540783f9efa8778791eec27a2d8bbd0497c985b769d13d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: adopt seeds 'Generated building option' and every value stays labelled proposed; street width server-determined, never client-inferred; could-not-check distinct from a value; no passing subset shown as whole-building approval; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
      ]
     }
    ]

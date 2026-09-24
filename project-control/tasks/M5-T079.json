@@ -67,12 +67,12 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T07:41:59.675507+00:00",
-  "updated_at": "2026-09-24T14:41:16.802354+00:00",
+  "updated_at": "2026-09-24T15:23:34.846107+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -143,5 +143,7 @@
       "status": "in_progress",
       "message": "Rework harvested (G3+G4 FAIL cluster closed per the producer's rework section); cherry-picked with every file MATCH; resubmitting for fresh re-reviews."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-24T15:23:34.845237+00:00"
 }

@@ -68,12 +68,12 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T07:41:58.004735+00:00",
-  "updated_at": "2026-09-24T14:41:13.131005+00:00",
+  "updated_at": "2026-09-24T15:23:26.767133+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -143,5 +143,7 @@
       "status": "claimed",
       "message": "LIFECYCLE NOTE: re-recording G0 after the one-stylesheet scope correction moved the packet rework -> ready (the CLI's G0 behaviour); re-claimed with the same FULL worktree path so the rework (2e2bd536, cherry-pick of 6bd0a162, 7 files MATCH) can be resubmitted. No material or scope change beyond the logged scope correction."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-24T15:23:26.767133+00:00"
 }

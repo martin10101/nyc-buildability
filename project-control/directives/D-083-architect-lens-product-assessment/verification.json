@@ -3,7 +3,7 @@
  "directive_id": "D-083",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All thirteen requirements bind the non-ledger sentinel D-083-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. R011 (owner return item) is discharged by the owner-facing reply and audited here. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-23T07:10:00+00:00",
+ "verified_at": "2026-09-24T15:23:20+00:00",
  "task_verifications": [
   {
    "directive_id": "D-083",
@@ -47,6 +47,44 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (Part 3): envelopeAggregateIsComplete is exactly the requirement (one gap OR one advisory forces visible incomplete), mutation-tested in both directions, re-asserted against the real DOM in e2e, and carried through the announcement path ('not a maximum permitted building')."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T079",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R002",
+    "D-083-R004"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "747ee06918acc75ded540783f9efa8778791eec27a2d8bbd0497c985b769d13d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: interim vocabulary ('Preliminary development limits', 'Generated building option'); zero matches for 'maximum allowed building' / 'demonstrated maximum' in the panel and client; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the three claim classes are distinguished - regulatory limits as the preliminary-limits ceilings, the generated option as the only building-shaped claim, the demonstrated maximum not presented; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: envelopeAggregateIsComplete + is-checked/is-incomplete + data-complete + role=status; any gap row or contract violation fails complete (G4-verified mutant); DimensionRow raw-presence XOR renders a typed contract failure that never shows a value; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
      ]
     }
    ]
