@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T093",
+ "material_commit": "ab2a6730 (cherry-pick of wt-m5t093 b12a0d0d; 2 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T14:50:00+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m5t093)",
+ "requirements": {
+  "D-066-R001": [
+   "Navigation block named the read-only consumers (the accepted sheet reader and the strict extraction modules); the material touches exactly the two docs paths; the reader and every app/** file byte-untouched."
+  ],
+  "D-087-R001": [
+   "Wave-3 capacity unit: contracted at a14fb775 (G0), claimed at 6cc93092 (the claim itself recorded in the correction commit after bfe60461), produced by an orchestrator-dispatched subagent concurrently with the wave-2 reviews; no state or gate skipped."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap; one worktree wt-m5t093; material ab2a6730 (cherry-pick of b12a0d0d) touches only the two allowed docs paths; downloads and helpers stayed in the producer's scratch subfolder and were deleted."
+  ],
+  "D-087-R005": [
+   "The DB-055 (g)+(h) precondition discharged WITH A NEGATIVE RESULT: all six public corpus drawings fetched from their recorded URLs with sha256 MATCH; an independent byte scan shows every file uses a PDF 1.5+ cross-reference STREAM and object streams (page trees live only inside /ObjStm), plus latent shading (item 3) and inline images (items 2, 4); the accepted read_sheet refuses all 6 at the cross-reference stage ('cross-reference stream', deterministic across two runs). The note gives a prioritised C1 scope (xref streams + object streams first; then inline images and shading; then an honest scan-only refusal) and claims nothing beyond these files. Real architect PDFs cannot be read yet."
+  ],
+  "D-087-R009": [
+   "Docs only: no reader, app/**, dependency, route or web change; no corpus file, script or fixture committed (licensing)."
+  ]
+ }
+}

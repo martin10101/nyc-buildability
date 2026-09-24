@@ -67,7 +67,7 @@
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T08:14:06.319330+00:00",
-  "updated_at": "2026-09-24T10:08:47.050003+00:00",
+  "updated_at": "2026-09-24T14:40:32.030726+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -112,6 +112,20 @@
       "percent": 95,
       "status": "awaiting_gate",
       "message": "G3 PASS WITH REQUIRED CORRECTIONS (cr-m0 F1-F3, F4/F5 folded): recertification.md section 5 must name the recertified candidate a3f24ff3 with both tree SHAs and a 147-file / 55dc71350b stop condition (F1), add the backup, source-worktree removal, verify-manifest and doctor steps (F2), and propagate the admitted subtree to the lane-2/lane-3 controller instances (F3) with fresh per-lane launch manifests (F4); producer report discloses the claude_binaries 3->1 diff (F5). These corrections BLOCK acceptance and any commissioning hand-off; applied as [ORCH-CORRECTED] edits, then re-freeze and same-reviewer delta attestation. G4 PASS (qa-m0, advisories A1-A7 pre-existing)."
+    },
+    {
+      "at": "2026-09-24T14:40:22.235103+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "rework",
+      "message": "G3 required corrections F1-F3 (+F4/F5) applied as a reports-only correction commit cdd62c5c (cherry-pick of 651271b6); re-freeze follows."
+    },
+    {
+      "at": "2026-09-24T14:40:22.942314+00:00",
+      "agent": "backend-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "Correction harvested: 2 report files MATCH by blob; tools/ unchanged vs the recertified candidate; resubmitting."
     }
   ],
   "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t159"
