@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T078",
+ "material_commit": "5879cdfa (cherry-pick of the wt-m5t078 in-worktree commit; 6 files, every file MATCH by git blob identity at the harvest)",
+ "produced_at": "2026-09-24T09:10:00+00:00",
+ "producer": "frontend-engineer (orchestrator-dispatched subagent after the B-026 lane refusal; worktree wt-m5t078)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's CODE-GRAPH NAVIGATION BLOCK was embedded at the contract seam f57fccd5 naming the drawing-surface consumers and the FORBIDDEN neighbours (ProposalEditor.tsx, proposal-editor.test.tsx, ArchitectEntry.tsx, MaxEnvelopePanel.tsx, LotOutlineMap.tsx, AddressConfirmCard.tsx, any e2e); the producer stayed inside it (git show --stat 5879cdfa = exactly the six allowed paths) and swept the forbidden consumers read-only (producer report AS-6: zero references to any changed surface)."
+  ],
+  "D-076-R002": [
+   "Proposal-editor honesty carried: the drawn outline stays a proposal input (no city-record or rule claim added); the converted count is the server bridge report's vertex count and the omitted count a UI row tally captured at convert time - no measurement or legal number is computed in the presentation layer (producer report copy table); no existing disclosure, provenance note or professional-review meaning was deleted or weakened; CI run 35975846444 at acb224b2 = SUCCESS on all 18 jobs, including `web (lint + typecheck + build)` and `web-e2e (vitest + Playwright vs recorded-official-fixture API)`; the material commit is an ancestor of acb224b2 (git merge-base --is-ancestor), so the producer's [PREDICTED] web claims are proven there."
+  ],
+  "D-082-R001": [
+   "Map-drawing input slice continuation (B-track, released by D-082): the DB-049 drawing-surface disclosure + accessibility cluster lands on the SAME draft model (ProposalOutlineDraw/ProposalOutlineMap; public props unchanged {bbl, onAdopt, fetchImpl}); no phase C/D work, no route, no dependency change; CI run 35975846444 at acb224b2 = SUCCESS on all 18 jobs, including `web (lint + typecheck + build)` and `web-e2e (vitest + Playwright vs recorded-official-fixture API)`; the material commit is an ancestor of acb224b2 (git merge-base --is-ancestor), so the producer's [PREDICTED] web claims are proven there."
+  ],
+  "D-087-R001": [
+   "One of the seq-128 capacity-ramp units: contracted at f57fccd5 (G0 PASS) as a loop-lane packet, claimed at b56f3d5b, and - after the B-026 lane refusal - produced by an orchestrator-dispatched subagent in its claimed worktree wt-m5t078 concurrently with the other D-087 units; no state or gate skipped (scope correction logged in the progress_log)."
+  ],
+  "D-087-R002": [
+   "Pairwise-disjoint allowed_paths recorded at G0 (EMPTY overlap vs every live packet incl. the D-087 subagent packets and M5-T079's MaxEnvelopePanel scope); isolated worktree wt-m5t078; the material touches exactly the six allowed paths."
+  ]
+ }
+}

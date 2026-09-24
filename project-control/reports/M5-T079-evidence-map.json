@@ -1,0 +1,32 @@
+{
+ "task_id": "M5-T079",
+ "material_commit": "006f3589 (cherry-pick of the wt-m5t079 in-worktree commit; 7 files, every file MATCH by git blob identity at the harvest)",
+ "produced_at": "2026-09-24T09:10:00+00:00",
+ "producer": "frontend-engineer (orchestrator-dispatched subagent after the B-026 lane refusal; worktree wt-m5t079)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's CODE-GRAPH NAVIGATION BLOCK was embedded at the contract seam f57fccd5 naming MaxEnvelopePanel/max-envelope-api consumers (entry.test.tsx, proposal-editor e2e) and the forbidden neighbours; the producer stayed inside it (git show --stat 006f3589 = exactly the seven allowed paths; services/api untouched; route UNMOUNTED)."
+  ],
+  "D-076-R002": [
+   "Proposal honesty carried: every max-envelope value is still shown as a preliminary limit or a generated option, never a city record; a response that breaks the binding-or-gap contract now WITHHOLDS the value with a typed contract-violation row instead of rendering it (DB-050(d)); no measurement is computed client-side (the no-client-CRS-math guard is pinned in max-envelope-api.test.ts); CI run 35975846444 at acb224b2 = SUCCESS on all 18 jobs, including `web (lint + typecheck + build)` and `web-e2e (vitest + Playwright vs recorded-official-fixture API)`; the material commit is an ancestor of acb224b2 (git merge-base --is-ancestor), so the producer's [PREDICTED] web claims are proven there."
+  ],
+  "D-082-R001": [
+   "Maximum-envelope-first continuation (D-082 R002/R003 surface): the DB-050(c)-(m) max-surface hardening of the accepted Preliminary-development-limits panel and its client - typed aborted/timeout/oversize/invalid outcomes, XOR fail-closed rows, strengthened copy walls, e2e capture-then-assert stub, entry fetch stub, dead read removed; no phase C/D work, no route mount, no dependency change; CI run 35975846444 at acb224b2 = SUCCESS on all 18 jobs, including `web (lint + typecheck + build)` and `web-e2e (vitest + Playwright vs recorded-official-fixture API)`; the material commit is an ancestor of acb224b2 (git merge-base --is-ancestor), so the producer's [PREDICTED] web claims are proven there."
+  ],
+  "D-083-R001": [
+   "Claim-class prohibition: the heading stays 'Preliminary development limits' and the option label 'Generated building option' (unchanged); the copy wall (DB-050(l)) now also catches the hyphenated/uppercase/multi-space variants of 'maximum allowed building' and 'demonstrated maximum' in rendered copy (producer's wall self-verification: 5 real files pass, 4 injected variants caught, a comment-only mention not caught); CI run 35975846444 at acb224b2 = SUCCESS on all 18 jobs, including `web (lint + typecheck + build)` and `web-e2e (vitest + Playwright vs recorded-official-fixture API)`; the material commit is an ancestor of acb224b2 (git merge-base --is-ancestor), so the producer's [PREDICTED] web claims are proven there."
+  ],
+  "D-083-R002": [
+   "Three claim classes kept distinct: per-rule regulatory limits render as limits, the generated option stays a generated building option, and no demonstrated-maximum claim is made anywhere (wall-enforced); the new contract-violation row is a typed data-contract disclosure, not a new claim class; CI run 35975846444 at acb224b2 = SUCCESS on all 18 jobs, including `web (lint + typecheck + build)` and `web-e2e (vitest + Playwright vs recorded-official-fixture API)`; the material commit is an ancestor of acb224b2 (git merge-base --is-ancestor), so the producer's [PREDICTED] web claims are proven there."
+  ],
+  "D-083-R004": [
+   "No unrestricted green pass: a both/neither (binding XOR gap violated) row withholds its value AND keeps the aggregate visibly incomplete - the aggregate line appends ', and a development limit response broke the binding-or-gap data contract and was withheld' only when a violation exists (producer copy table rows 2-3); gap rows still render 'This preliminary picture is incomplete'; CI run 35975846444 at acb224b2 = SUCCESS on all 18 jobs, including `web (lint + typecheck + build)` and `web-e2e (vitest + Playwright vs recorded-official-fixture API)`; the material commit is an ancestor of acb224b2 (git merge-base --is-ancestor), so the producer's [PREDICTED] web claims are proven there."
+  ],
+  "D-087-R001": [
+   "One of the seq-128 capacity-ramp units: contracted at f57fccd5 (G0 PASS) as a loop-lane packet, claimed at b56f3d5b, and - after the B-026 lane refusal - produced by an orchestrator-dispatched subagent in its claimed worktree wt-m5t079 concurrently with the other D-087 units; no state or gate skipped (scope correction logged in the progress_log)."
+  ],
+  "D-087-R002": [
+   "Pairwise-disjoint allowed_paths recorded at G0 (EMPTY overlap vs every live packet incl. M5-T078's drawing-surface scope and the D-087 subagent packets); isolated worktree wt-m5t079; the material touches exactly the seven allowed paths."
+  ]
+ }
+}

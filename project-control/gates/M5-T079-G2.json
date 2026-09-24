@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T079",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T079-G2.md",
+  "reviewed_at": "2026-09-24T09:07:03.425498+00:00",
+  "content_manifest_sha256": "904bb9038090b7fd3ce54d0efcd21ca59587729eda0a6b59e4b0eb55802b5f0f",
+  "reviewed_sha": "94182057f9034a6c98c86ab9ef9aef97d01e6fb2",
+  "updated_at": "2026-09-24T09:07:06.572465+00:00"
+}
