@@ -62,12 +62,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T07:24:30.351319+00:00",
-  "updated_at": "2026-09-24T07:24:30.726747+00:00",
+  "updated_at": "2026-09-24T07:25:37.696236+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -91,5 +91,15 @@
     "python -m ruff check .",
     "python -m pytest tests/scenario/test_massing_model.py -q",
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t082",
+  "progress_log": [
+    {
+      "at": "2026-09-24T07:25:37.696236+00:00",
+      "agent": "3d-massing-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contract seam complete: G0 PASS; D-087 wave-1 (orchestrator-dispatched subagent producer); worktree wt-m5t082 at the claim-seam commit; dispatch next"
+    }
   ]
 }
