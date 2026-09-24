@@ -108,6 +108,55 @@ LAYER_DEFINITIONS: tuple[tuple[str, int], ...] = (
 )
 
 # --------------------------------------------------------------------------- #
+# Text style (STYLE) and active viewport (VPORT) tables.
+#
+# STYLE record group codes CHECKED against the LIVE Autodesk DXF Reference
+# "STYLE (DXF)" page (help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-DXF,
+# GUID-EF68AF7C-13EF-45A1-8175-ED6CE66C8FC9, retrieved 2026-09-24 UTC): 2 = style
+# name, 70 = standard flags (1 = shape, 4 = vertical), 40 = fixed text height
+# (0 = not fixed), 41 = width factor, 50 = oblique angle, 71 = text-generation
+# flags, 42 = last height used, 3 = primary font file, 4 = bigfont file (blank if
+# none). The record is stable across releases, so it applies unchanged to R12.
+# Every TEXT entity here omits the optional style-name group 7 and therefore
+# resolves to the default STANDARD style (DXF Reference, TEXT: "7 = text style
+# name (optional, default STANDARD)"); defining STANDARD in a STYLE table makes
+# that referenced style PRESENT in the file rather than reconstructed by the
+# reader (closes G1 advisory A2 from M5-T081-G1.md / DB-057 b).
+# --------------------------------------------------------------------------- #
+
+STYLE_STANDARD_NAME = "STANDARD"
+
+#: STANDARD uses AutoCAD's built-in "txt" SHX font (group 3); the reader resolves
+#: "txt" to txt.shx. The bigfont file (group 4) is blank.
+STYLE_PRIMARY_FONT = "txt"
+STYLE_BIGFONT = ""
+STYLE_FIXED_HEIGHT = 0.0      # group 40: 0 -> height taken per-TEXT (its own group 40)
+STYLE_WIDTH_FACTOR = 1.0      # group 41
+STYLE_OBLIQUE_ANGLE = 0.0     # group 50
+STYLE_LAST_HEIGHT = 0.2       # group 42 (last height used); a cosmetic default
+
+# VPORT record group codes are the R12/AC1009 layout [recalled - verify]. The
+# LIVE 2024 "VPORT (DXF)" page (GUID-8CE7CC87-27BD-4490-89DA-C21F516415A9,
+# retrieved 2026-09-24 UTC) is the R2000+ subclass form: it relocates VIEW HEIGHT
+# to group 45 and adds render-mode (281) and UCS groups. In an R12 file AutoCAD
+# reads the VPORT with the R12 schema, where VIEW HEIGHT = group 40 and VIEWPORT
+# ASPECT RATIO = group 41 (lens length 42, clipping 43/44). This *ACTIVE record
+# uses the R12 group codes so a native R12 reader frames the drawing. The codes
+# shared with the live modern page (2 = name, 10/20 + 11/21 = viewport corners,
+# 12/22 = view centre in DCS, 13-15/23-25 = snap/grid, 16/26/36 = view direction,
+# 17/27/37 = view target, 42 = lens length, 50/51 = snap-rotation/twist,
+# 71 = view mode, 72 = circle sides, 74 = UCSICON) are CHECKED against that page.
+
+#: The current-viewport configuration record is always named "*ACTIVE" (VPORT
+#: page, CHECKED: "The entries corresponding to the active viewport ... all have
+#: the name *ACTIVE. The first such entry describes the current viewport.").
+VPORT_ACTIVE_NAME = "*ACTIVE"
+VPORT_LENS_LENGTH = 50.0      # group 42 (CHECKED: "Lens length")
+VPORT_ASPECT_RATIO = 1.0      # group 41 (R12): a square view covers the larger span
+VPORT_FRAME_MARGIN = 1.1      # 10% margin so the extents sit inside the framed view
+VPORT_CIRCLE_SIDES = 1000     # group 72 (CHECKED: "Circle sides"); display-only
+
+# --------------------------------------------------------------------------- #
 # Fixed provenance annotation (honesty; D-073-R006 / D-076-R002 / D-083).
 # --------------------------------------------------------------------------- #
 
@@ -477,10 +526,71 @@ def _write_header(s: _GroupCodeStream, doc: DxfDocument) -> None:
     s.pair(0, "ENDSEC")
 
 
-def _write_tables(s: _GroupCodeStream, doc: DxfDocument) -> None:
-    # DXF Reference, TABLES Section: an LTYPE table then a LAYER table.
-    s.pair(0, "SECTION")
-    s.pair(2, "TABLES")
+def _vport_frame(doc: DxfDocument) -> tuple[float, float, float]:
+    """Return ``(view_center_x, view_center_y, view_height)`` for the *ACTIVE
+    viewport so it FRAMES the drawing extents (with :data:`VPORT_FRAME_MARGIN`).
+
+    The centre is the extents midpoint; the height covers the larger of the
+    extents height and width/aspect, so with :data:`VPORT_ASPECT_RATIO` the whole
+    drawing is in view. A degenerate span floors at 1.0 to keep the height > 0.
+    """
+    min_x, min_y = doc.extents_min[0], doc.extents_min[1]
+    max_x, max_y = doc.extents_max[0], doc.extents_max[1]
+    center_x = (min_x + max_x) / 2.0
+    center_y = (min_y + max_y) / 2.0
+    width = max_x - min_x
+    height = max_y - min_y
+    span = max(width / VPORT_ASPECT_RATIO, height, 1.0)
+    return center_x, center_y, span * VPORT_FRAME_MARGIN
+
+
+def _write_vport_table(s: _GroupCodeStream, doc: DxfDocument) -> None:
+    # DXF Reference, VPORT table (R12 layout; see the VPORT constants block). One
+    # *ACTIVE record framing the drawing extents in a plan view.
+    center_x, center_y, view_height = _vport_frame(doc)
+    s.pair(0, "TABLE")
+    s.pair(2, "VPORT")
+    s.pair(70, "1")                       # max entries
+    s.pair(0, "VPORT")
+    s.pair(2, VPORT_ACTIVE_NAME)          # group 2 = viewport name (*ACTIVE)
+    s.pair(70, "0")                       # standard flags
+    s.real(10, 0.0)                       # lower-left corner of viewport (screen)
+    s.real(20, 0.0)
+    s.real(11, 1.0)                       # upper-right corner of viewport (screen)
+    s.real(21, 1.0)
+    s.real(12, center_x)                  # view centre point (DCS) = extents midpoint
+    s.real(22, center_y)
+    s.real(13, 0.0)                       # snap base point
+    s.real(23, 0.0)
+    s.real(14, 1.0)                       # snap spacing X/Y
+    s.real(24, 1.0)
+    s.real(15, 10.0)                      # grid spacing X/Y
+    s.real(25, 10.0)
+    s.real(16, 0.0)                       # view direction from target (WCS): plan (+Z)
+    s.real(26, 0.0)
+    s.real(36, 1.0)
+    s.real(17, 0.0)                       # view target point (WCS)
+    s.real(27, 0.0)
+    s.real(37, 0.0)
+    s.real(40, view_height)               # group 40 (R12) = view height (frames extents)
+    s.real(41, VPORT_ASPECT_RATIO)        # group 41 (R12) = viewport aspect ratio
+    s.real(42, VPORT_LENS_LENGTH)         # group 42 = lens length
+    s.real(43, 0.0)                       # front clipping plane offset
+    s.real(44, 0.0)                       # back clipping plane offset
+    s.real(50, 0.0)                       # snap rotation angle
+    s.real(51, 0.0)                       # view twist angle
+    s.pair(71, "0")                       # view mode
+    s.pair(72, str(int(VPORT_CIRCLE_SIDES)))  # circle sides (display-only)
+    s.pair(73, "1")                       # fast zoom setting
+    s.pair(74, "3")                       # UCSICON setting
+    s.pair(75, "0")                       # snap on/off
+    s.pair(76, "0")                       # grid on/off
+    s.pair(77, "0")                       # snap style
+    s.pair(78, "0")                       # snap isopair
+    s.pair(0, "ENDTAB")
+
+
+def _write_ltype_table(s: _GroupCodeStream) -> None:
     # LTYPE table with the single CONTINUOUS linetype (DXF Reference, LTYPE).
     s.pair(0, "TABLE")
     s.pair(2, "LTYPE")
@@ -493,6 +603,9 @@ def _write_tables(s: _GroupCodeStream, doc: DxfDocument) -> None:
     s.pair(73, "0")                       # group 73 = dash count (0 = solid)
     s.real(40, 0.0)                       # group 40 = total pattern length
     s.pair(0, "ENDTAB")
+
+
+def _write_layer_table(s: _GroupCodeStream, doc: DxfDocument) -> None:
     # LAYER table (DXF Reference, LAYER).
     s.pair(0, "TABLE")
     s.pair(2, "LAYER")
@@ -504,6 +617,38 @@ def _write_tables(s: _GroupCodeStream, doc: DxfDocument) -> None:
         s.pair(62, str(int(color)))       # group 62 = ACI colour
         s.pair(6, "CONTINUOUS")           # group 6 = linetype name
     s.pair(0, "ENDTAB")
+
+
+def _write_style_table(s: _GroupCodeStream) -> None:
+    # STYLE table (DXF Reference; see the STYLE constants block). One STANDARD
+    # text style so every default-styled TEXT resolves to a defined style.
+    s.pair(0, "TABLE")
+    s.pair(2, "STYLE")
+    s.pair(70, "1")                       # max entries
+    s.pair(0, "STYLE")
+    s.pair(2, STYLE_STANDARD_NAME)        # group 2 = style name
+    s.pair(70, "0")                       # standard flags (0 = ordinary text style)
+    s.real(40, STYLE_FIXED_HEIGHT)        # group 40 = fixed text height (0 = not fixed)
+    s.real(41, STYLE_WIDTH_FACTOR)        # group 41 = width factor
+    s.real(50, STYLE_OBLIQUE_ANGLE)       # group 50 = oblique angle
+    s.pair(71, "0")                       # group 71 = text-generation flags
+    s.real(42, STYLE_LAST_HEIGHT)         # group 42 = last height used
+    s.pair(3, STYLE_PRIMARY_FONT)         # group 3 = primary font file
+    s.pair(4, STYLE_BIGFONT)              # group 4 = bigfont file (blank)
+    s.pair(0, "ENDTAB")
+
+
+def _write_tables(s: _GroupCodeStream, doc: DxfDocument) -> None:
+    # DXF Reference, TABLES Section. Canonical R12 write order is VPORT, LTYPE,
+    # LAYER, STYLE [recalled - verify]; LTYPE precedes LAYER because a layer's
+    # group 6 references the CONTINUOUS linetype, and the STANDARD text style the
+    # TEXT entities use is defined last.
+    s.pair(0, "SECTION")
+    s.pair(2, "TABLES")
+    _write_vport_table(s, doc)
+    _write_ltype_table(s)
+    _write_layer_table(s, doc)
+    _write_style_table(s)
     s.pair(0, "ENDSEC")
 
 

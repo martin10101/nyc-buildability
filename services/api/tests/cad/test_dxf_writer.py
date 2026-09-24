@@ -6,8 +6,9 @@ in-test group-code reader parses the emitted DXF back so the structural
 assertions never depend on the writer's own helpers.
 """
 
+import ast
 import hashlib
-import re
+from pathlib import Path
 
 import pytest
 
@@ -44,7 +45,12 @@ FLOOR_HEIGHTS = [12.0, 11.0, 10.0]
 
 # Golden digest of render_site_plan_dxf(LOT, BUILDING, FLOOR_HEIGHTS) as ASCII
 # bytes. Regenerate ONLY on a deliberate format change (re-anchor + CI green).
-GOLDEN_SHA256 = "2d8988d6d7338ed606a9a253cb0d3af2fe1c8f5d526cd8750dac769a9025d809"
+# Re-pinned for M5-T096: the TABLES section now emits a VPORT (*ACTIVE) table
+# framing the extents and a STYLE (STANDARD) table (order VPORT, LTYPE, LAYER,
+# STYLE) in addition to the prior LTYPE + LAYER tables. No HEADER variable, layer,
+# entity, refusal or honesty text changed; only the added tables move the bytes.
+# Prior golden: 2d8988d6d7338ed606a9a253cb0d3af2fe1c8f5d526cd8750dac769a9025d809.
+GOLDEN_SHA256 = "6a8dbd94fd3f5a6e9ddc22bb5712dd10133a1b7701301c59fc7023f495ba127b"
 
 
 def _render() -> str:
@@ -147,6 +153,71 @@ def entity_type_counts(entities: list[tuple[int, str]]) -> dict[str, int]:
     return counts
 
 
+def table_order(tables: list[tuple[int, str]]) -> list[str]:
+    """Names of the sub-tables in the TABLES section, in file order."""
+    return [
+        tables[k + 1][1]
+        for k in range(len(tables) - 1)
+        if tables[k] == (0, "TABLE") and tables[k + 1][0] == 2
+    ]
+
+
+def read_table_records(tables: list[tuple[int, str]], name: str) -> list[list[tuple[int, str]]]:
+    """Return each record of the named sub-table as its list of (code, value)
+    pairs. A record starts at a ``(0, name)`` pair inside the ``(0,TABLE)/(2,name)
+    ... (0,ENDTAB)`` window and runs up to the next ``0`` pair."""
+    records: list[list[tuple[int, str]]] = []
+    in_table = False
+    current: list[tuple[int, str]] | None = None
+    i, n = 0, len(tables)
+    while i < n:
+        code, value = tables[i]
+        if code == 0 and value == "TABLE":
+            in_table = i + 1 < n and tables[i + 1] == (2, name)
+            current = None
+        elif code == 0 and value == "ENDTAB":
+            if current is not None:
+                records.append(current)
+                current = None
+            in_table = False
+        elif in_table and code == 0 and value == name:
+            if current is not None:
+                records.append(current)
+            current = [(code, value)]
+        elif in_table and current is not None:
+            current.append((code, value))
+        i += 1
+    return records
+
+
+def header_extents(pairs: list[tuple[int, str]]) -> tuple[tuple[float, float], tuple[float, float]]:
+    """($EXTMIN x, y), ($EXTMAX x, y) read back from the HEADER."""
+    def point(var: str) -> tuple[float, float]:
+        idx = pairs.index((9, var))
+        return float(pairs[idx + 1][1]), float(pairs[idx + 2][1])
+    return point("$EXTMIN"), point("$EXTMAX")
+
+
+def text_style_names(entities: list[tuple[int, str]]) -> list[str]:
+    """The style each TEXT entity resolves to: its group-7 value if present, else
+    the STANDARD default (DXF Reference, TEXT group 7 default)."""
+    styles: list[str] = []
+    i, n = 0, len(entities)
+    while i < n:
+        if entities[i] == (0, "TEXT"):
+            style = "STANDARD"
+            j = i + 1
+            while j < n and entities[j][0] != 0:
+                if entities[j][0] == 7:
+                    style = entities[j][1]
+                j += 1
+            styles.append(style)
+            i = j
+        else:
+            i += 1
+    return styles
+
+
 # --------------------------------------------------------------------------- #
 # AS-1 structure: alternation, section order, in-test round-trip, golden digest.
 # --------------------------------------------------------------------------- #
@@ -215,6 +286,76 @@ def test_as2_header_declares_drawing_unit():
     # which passes for ANY constant value; this externally pins the exact code
     # so a 2-vs-21 regression reddens the suite (G3 F1 / G1).
     assert pairs[idx + 1] == (70, "21")
+
+
+# --------------------------------------------------------------------------- #
+# AS-1 tables: LTYPE, LAYER, STYLE (STANDARD) and VPORT (*ACTIVE) in R12 order,
+# with the group codes the DXF Reference gives (M5-T096, closes G1-A2 / DB-057 b).
+# --------------------------------------------------------------------------- #
+
+def test_as1_tables_in_r12_reference_order():
+    """The four sub-tables appear in the canonical R12 write order VPORT, LTYPE,
+    LAYER, STYLE (LTYPE before LAYER because layers reference the linetype)."""
+    tables = split_sections(parse_pairs(_render()))["TABLES"]
+    assert table_order(tables) == ["VPORT", "LTYPE", "LAYER", "STYLE"]
+
+
+def test_as1_style_table_defines_standard():
+    """A STYLE table defines the STANDARD text style that every TEXT resolves to.
+    Mutation: dropping the STYLE table (or its STANDARD entry) empties this list
+    and reddens the test (and test_as1_every_text_resolves_to_a_defined_style)."""
+    tables = split_sections(parse_pairs(_render()))["TABLES"]
+    styles = read_table_records(tables, "STYLE")
+    assert len(styles) == 1, "exactly one STYLE record"
+    names = [v for c, v in styles[0] if c == 2]
+    assert names == ["STANDARD"]
+    fields = {c: v for c, v in styles[0] if c not in (0,)}
+    # Group codes per the live Autodesk STYLE (DXF) page (see the writer's STYLE
+    # constants block): 40 fixed height (0 = per-TEXT), 41 width factor, 50 oblique,
+    # 71 generation flags, 42 last height, 3 primary font, 4 bigfont (blank).
+    assert fields[40] == "0.000000"     # fixed text height 0 -> height taken per-TEXT
+    assert fields[41] == "1.000000"     # width factor
+    assert fields[50] == "0.000000"     # oblique angle
+    assert fields[71] == "0"            # text-generation flags
+    assert fields[3] == "txt"           # primary font file
+    assert fields[4] == ""              # bigfont file (blank)
+
+
+def test_as1_every_text_resolves_to_a_defined_style():
+    """Every TEXT entity resolves to a style that the STYLE table defines. The
+    entities omit group 7, so they use STANDARD, which the STYLE table now
+    provides; dropping the STYLE table leaves the set of defined styles empty."""
+    sections = split_sections(parse_pairs(_render()))
+    defined = {v for rec in read_table_records(sections["TABLES"], "STYLE")
+               for c, v in rec if c == 2}
+    used = text_style_names(sections["ENTITIES"])
+    assert used, "the drawing has TEXT entities"
+    assert set(used) == {"STANDARD"}
+    assert set(used) <= defined, f"undefined text style(s): {set(used) - defined}"
+
+
+def test_as1_vport_active_frames_the_extents():
+    """The VPORT table carries one *ACTIVE record whose view centre is the extents
+    midpoint and whose framed view (height x aspect) covers the whole drawing.
+    Mutation: a VPORT centre that ignores the extents (e.g. fixed 0,0) reddens the
+    centre assertions; a view height that no longer covers the extents reddens the
+    coverage assertions."""
+    pairs = parse_pairs(_render())
+    tables = split_sections(pairs)["TABLES"]
+    vports = read_table_records(tables, "VPORT")
+    assert len(vports) == 1, "exactly one VPORT record"
+    names = [v for c, v in vports[0] if c == 2]
+    assert names == ["*ACTIVE"]
+    rec = {c: v for c, v in vports[0] if c not in (0,)}
+    center_x, center_y = float(rec[12]), float(rec[22])
+    view_height, aspect = float(rec[40]), float(rec[41])
+    # View direction is a plan view (0, 0, 1), target at the origin.
+    assert (rec[16], rec[26], rec[36]) == ("0.000000", "0.000000", "1.000000")
+    (min_x, min_y), (max_x, max_y) = header_extents(pairs)
+    assert center_x == pytest.approx((min_x + max_x) / 2.0, abs=1e-6)
+    assert center_y == pytest.approx((min_y + max_y) / 2.0, abs=1e-6)
+    assert view_height >= (max_y - min_y)              # vertical coverage
+    assert view_height * aspect >= (max_x - min_x)     # horizontal coverage
 
 
 # --------------------------------------------------------------------------- #
@@ -399,14 +540,39 @@ def test_as4_claim_class_words_are_the_expected_set():
 
 
 # --------------------------------------------------------------------------- #
-# AS-5 scope: stdlib only, deterministic import surface.
+# AS-4 import allowlist: only __future__, math, collections.abc and dataclasses
+# may be imported (widens the former stdlib-only test into an allowlist, so a
+# DWG-library / json / any-other import reddens it - DB-057 f).
 # --------------------------------------------------------------------------- #
 
-def test_as5_module_imports_stdlib_only():
-    src = open(d.__file__, encoding="utf-8").read()
-    third_party = re.findall(
-        r"^\s*(?:from|import)\s+(shapely|numpy|pydantic|fastapi|requests|httpx)",
-        src,
-        re.MULTILINE,
-    )
-    assert third_party == [], f"unexpected third-party import: {third_party}"
+#: The ONLY modules dxf_writer.py may import (the module has no self-imports).
+IMPORT_ALLOWLIST = frozenset({"__future__", "math", "collections.abc", "dataclasses"})
+
+
+def _imported_modules(source: str) -> set[str]:
+    """Every module named by an ``import`` / ``from ... import`` in ``source``."""
+    modules: set[str] = set()
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.Import):
+            modules.update(alias.name for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module is not None and node.level == 0:
+            modules.add(node.module)
+    return modules
+
+
+def test_as4_module_import_allowlist():
+    imported = _imported_modules(Path(d.__file__).read_text(encoding="utf-8"))
+    outside = imported - IMPORT_ALLOWLIST
+    assert not outside, f"imports outside the allowlist: {sorted(outside)}"
+    # Non-vacuous: the module really does import each allowlisted stdlib name, so
+    # a test that stopped seeing imports at all would fail too.
+    missing = IMPORT_ALLOWLIST - imported
+    assert not missing, f"missing allowlisted import(s): {sorted(missing)}"
+
+
+def test_as4_allowlist_is_load_bearing():
+    """The allowlist catches an out-of-allowlist import: parsing the module source
+    with `import json` prepended yields `json`, which the allowlist rejects
+    (mirrors the AS-4 mutation 'adding import json reddens it')."""
+    mutated = "import json\n" + Path(d.__file__).read_text(encoding="utf-8")
+    assert _imported_modules(mutated) - IMPORT_ALLOWLIST == {"json"}
