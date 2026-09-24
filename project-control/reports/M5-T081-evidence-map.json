@@ -1,6 +1,6 @@
 {
  "task_id": "M5-T081",
- "material_commit": "4fd58a98 (cherry-pick of the wt-m5t081 in-worktree commit a8e6c8ed; every file MATCH by git blob identity)",
+ "material_commit": "4fd58a98 (cherry-pick of wt-m5t081 a8e6c8ed) + rework 0ffe581c (cherry-pick of wt-m5t081 778bf8ca); every file MATCH by git blob identity at both harvests",
  "produced_at": "2026-09-24T08:20:00+00:00",
  "producer": "backend-engineer (orchestrator-dispatched subagent, D-087 wave; worktree wt-m5t081)",
  "requirements": {
@@ -14,7 +14,7 @@
    "D-087-R002: pairwise-disjoint allowed_paths recorded at G0 (EMPTY overlap vs every live packet); one isolated worktree (wt-m5t081); the in-worktree commit a8e6c8ed touches exactly the allowed paths (git diff --name-only a8e6c8ed^ a8e6c8ed); the shared package __init__ files stayed orchestrator-owned and untouched."
   ],
   "D-087-R004": [
-   "services/api/app/cad/dxf_writer.py writes an ASCII DXF (R12/AC1009, the most widely openable version; header $ACADVER + $INSUNITS=2 + extents; LAYER table; LINE, closed POLYLINE, TEXT, 3DFACE) that AutoCAD opens directly - the working 'middleman' reading (DXF; owner confirmation pending per R008); the pure site-plan builder emits layers LOT, BUILDING_OUTLINE, MASSING_3D (3DFACE walls per floor band + rings at each elevation) and ANNOTATION in EPSG:2263 US survey feet; structure proven by an in-test group-code reader and a pinned golden sha256 (AS-1/AS-2). Every group code is cited '[recalled - verify]' for the G1 online check."
+   "services/api/app/cad/dxf_writer.py writes an ASCII DXF (R12/AC1009, the most widely openable version; header $ACADVER + $INSUNITS=21 [ORCH-CORRECTED per G3-F1/G1: rework 0ffe581c declares US survey feet, INSUNITS_US_SURVEY_FEET=21, test_as2 pins the hardcoded (70, '21') pair] + extents; LAYER table; LINE, closed POLYLINE, TEXT, 3DFACE) that AutoCAD opens directly - the working 'middleman' reading (DXF; owner confirmation pending per R008); the pure site-plan builder emits layers LOT, BUILDING_OUTLINE, MASSING_3D (3DFACE walls per floor band + rings at each elevation) and ANNOTATION in EPSG:2263 US survey feet; structure proven by an in-test group-code reader and a pinned golden sha256 (AS-1/AS-2). Every group code is cited '[recalled - verify]' for the G1 online check."
   ],
   "D-087-R006": [
    "CAD write/export via the OPEN interchange format: typed DXF document model + one sanitizing serializer + site-plan builder (writer only; import is M5-T086)."
@@ -23,7 +23,8 @@
    "No DWG library adopted: the module imports only stdlib (math, collections.abc, dataclasses) - asserted by test_as5_module_imports_stdlib_only; DXF is the path until the owner's licensing decision."
   ],
   "D-087-R009": [
-   "D-087-R009: zero new dependencies (stdlib only; no requirements/lockfile change), no route/main.py/web change, max-envelope route still unmounted, no Tier D action, PR #241 untouched; ruff + modularity clean at the harvested head."
+   "D-087-R009: zero new dependencies (stdlib only; no requirements/lockfile change), no route/main.py/web change, max-envelope route still unmounted, no Tier D action, PR #241 untouched; ruff + modularity clean at the harvested head.",
+   "Rework 0ffe581c (G3 F1 + G4 F1-F3 + G5 F1/F2 cluster) touched only the 3 allowed paths (git show --stat 778bf8ca); still stdlib-only, zero new dependencies; ruff clean and 24 passed at the harvested head."
   ]
  }
 }
