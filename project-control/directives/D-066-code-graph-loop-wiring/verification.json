@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T16:01:06+00:00",
+ "verified_at": "2026-09-24T20:58:44+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1325,6 +1325,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: the packet's navigation block (graph regenerated 817 files / 17027 nodes / 7441 edges; page.tsx routes + ArchitectEntry; query.py --no-regen; advisory) is present and the route/state map is source-grounded; blob-level restamp predicate re-verified by the orchestrator at the accept head 952f324b (P0-RECONCILIATION.md b0e24e50, disclosure-ledger-a.json a106788d, disclosure-ledger-b.json 07775443, producer report 23ed9dc1; identity 12da0949; evaluate_task_refs ok); report M5-T080-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T094",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "59737e437d67060756fa031ba29c7ca610f6f2c9",
+   "reviewed_manifest_sha256": "df266133cf8597decc00e603e7418d7b6f578f2e69c22cd352ca37a65a78e01c",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T20:58:44+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t094): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 821 files / 17652 nodes / 7589 edges; sheet_reader.py had no production importer, only its test; app/documents/extraction and sheet_primitives.py named forbidden neighbours; the query.py --no-regen instruction, advisory) and the reviewers verified the conclusions in source. Blob-level restamp predicate re-verified by the orchestrator at the accept head 59737e43 (sheet_reader.py e3606e0f, sheet_objects.py 1f69f558, sheet_interpreter.py e71266bf, test_sheet_reader_split_equivalence.py fba20c0a, M5-T094-producer-report.md ce2eaecf; identity df266133; evaluate_task_refs ok); report M5-T094-DCV.md."
      ]
     }
    ]

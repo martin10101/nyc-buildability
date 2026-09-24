@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T16:01:06+00:00",
+ "verified_at": "2026-09-24T20:58:44+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -789,6 +789,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: PART A (wt-m5t080: reconciliation + ledger-a + report) and PART B (wt-m5t080b: ledger-b) in separate worktrees on disjoint files in both rounds; ledger id overlap EMPTY; G0 disjointness EMPTY vs every neighbour; blob-level restamp predicate re-verified by the orchestrator at the accept head 952f324b (P0-RECONCILIATION.md b0e24e50, disclosure-ledger-a.json a106788d, disclosure-ledger-b.json 07775443, producer report 23ed9dc1; identity 12da0949; evaluate_task_refs ok); report M5-T080-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T094",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R005",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "59737e437d67060756fa031ba29c7ca610f6f2c9",
+   "reviewed_manifest_sha256": "df266133cf8597decc00e603e7418d7b6f578f2e69c22cd352ca37a65a78e01c",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T20:58:44+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a contracted/claimed/gated capacity unit - G0 at 5cb3ca94, claimed at the wave-4 seam with the full worktree path, producer commit 25879734 cherry-picked to 89128c62, G2/G3/G4/G5 PASS; no state or gate skipped; B-026 names M0-T132 and the loop-lane share, not this task. Blob-level restamp predicate re-verified by the orchestrator at the accept head 59737e43 (sheet_reader.py e3606e0f, sheet_objects.py 1f69f558, sheet_interpreter.py e71266bf, test_sheet_reader_split_equivalence.py fba20c0a, M5-T094-producer-report.md ce2eaecf; identity df266133; evaluate_task_refs ok); report M5-T094-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: one isolated worktree wt-m5t094; G0 disjointness EMPTY vs every active task; the cherry-pick touches exactly the 5 allowed paths, blob-identical to 25879734; no later commit touches the task's code files. Blob-level restamp predicate re-verified by the orchestrator at the accept head 59737e43 (sheet_reader.py e3606e0f, sheet_objects.py 1f69f558, sheet_interpreter.py e71266bf, test_sheet_reader_split_equivalence.py fba20c0a, M5-T094-producer-report.md ce2eaecf; identity df266133; evaluate_task_refs ok); report M5-T094-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a behaviour-preserving split preparing the C1 real-file packet that claims no new reading capability - two independent reviewers reproduced all 62 pinned golden digests + the overall digest from the PRE-split module (89128c62^), so post-split == pre-split byte-for-byte; the accepted M5-T093 trial (0 of 6 real drawings read) is unchanged; no C-track honesty rule weakened; unwired. Blob-level restamp predicate re-verified by the orchestrator at the accept head 59737e43 (sheet_reader.py e3606e0f, sheet_objects.py 1f69f558, sheet_interpreter.py e71266bf, test_sheet_reader_split_equivalence.py fba20c0a, M5-T094-producer-report.md ce2eaecf; identity df266133; evaluate_task_refs ok); report M5-T094-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies (zlib/math/dataclasses/typing + in-repo only; requirements untouched); not wired (no importer outside app/drawings; main.py has no sheet reference); sheet_primitives.py and app/documents byte-untouched; the max-envelope route stays unmounted; PR #241 open and unmerged; no lockfile change. Blob-level restamp predicate re-verified by the orchestrator at the accept head 59737e43 (sheet_reader.py e3606e0f, sheet_objects.py 1f69f558, sheet_interpreter.py e71266bf, test_sheet_reader_split_equivalence.py fba20c0a, M5-T094-producer-report.md ce2eaecf; identity df266133; evaluate_task_refs ok); report M5-T094-DCV.md."
      ]
     }
    ]
