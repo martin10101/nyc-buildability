@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T21:15:00+00:00",
+ "verified_at": "2026-09-24T21:26:50+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1391,6 +1391,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t100): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 827 files / 17658 nodes / 7589 edges; the connector imported only by its test; transport + MapPLUTO modules read-only; the query.py --no-regen instruction, advisory); the verifier independently confirmed zero app importers. Blob-level restamp predicate re-verified by the orchestrator at the accept head 851c4e63 (building_footprints_arcgis.py 9f8b9c4c, test_building_footprints_arcgis.py ea748f18, M5-T100-producer-report.md 9d2098c2; identity 384daa24; evaluate_task_refs ok); report M5-T100-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T096",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "75e75e55b00bfbda3b52d8290e53117e791b8dc3",
+   "reviewed_manifest_sha256": "8db12f2a8140c74ae17a823ae8bd22c6eabdca8378bcf2a0068e7342930c0f83",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:26:50+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t096): the packet carries the graph-derived navigation block (graph regenerated at the contract seam; consumers incl. pdf_sheet_writer.py:54 CLAIM_CLASS_WORDS; the query.py --no-regen instruction, advisory); no public name changed and the consumer suites stay green. Blob-level restamp predicate re-verified by the orchestrator at the accept head 75e75e55 (dxf_writer.py 6f57cdc4, test_dxf_writer.py 79ad39af, test_cad_owner_samples.py c0383c49, .gitattributes ab95c38b, README.md c3e98f73, example-massing.glb 21c1e306, example-site-plan.dxf 2c80881b, example-site-plan.pdf d7220466, M5-T096-producer-report.md e2efa4df; identity 8db12f2a; evaluate_task_refs ok); report M5-T096-DCV.md."
      ]
     }
    ]

@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T21:15:00+00:00",
+ "verified_at": "2026-09-24T21:26:50+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -943,6 +943,68 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new packages (the only new import is from the already-imported app.resilience.transport); no requirements or lockfile change; unwired (no importer in app); no route/main.py/web change; the max-envelope route untouched; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 851c4e63 (building_footprints_arcgis.py 9f8b9c4c, test_building_footprints_arcgis.py ea748f18, M5-T100-producer-report.md 9d2098c2; identity 384daa24; evaluate_task_refs ok); report M5-T100-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T096",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R004",
+    "D-087-R006",
+    "D-087-R007",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "75e75e55b00bfbda3b52d8290e53117e791b8dc3",
+   "reviewed_manifest_sha256": "8db12f2a8140c74ae17a823ae8bd22c6eabdca8378bcf2a0068e7342930c0f83",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:26:50+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contracted at the wave-5 seam 64fce622, claimed at 2e0b2351 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with disjoint packets; all six gates G0/G1/G2/G3/G4/G5 recorded PASS; no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head 75e75e55 (dxf_writer.py 6f57cdc4, test_dxf_writer.py 79ad39af, test_cad_owner_samples.py c0383c49, .gitattributes ab95c38b, README.md c3e98f73, example-massing.glb 21c1e306, example-site-plan.dxf 2c80881b, example-site-plan.pdf d7220466, M5-T096-producer-report.md e2efa4df; identity 8db12f2a; evaluate_task_refs ok); report M5-T096-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs all 21 active neighbours; one isolated worktree wt-m5t096; the cherry-pick d59cbfca touches exactly the 9 allowed files, zero forbidden paths. Blob-level restamp predicate re-verified by the orchestrator at the accept head 75e75e55 (dxf_writer.py 6f57cdc4, test_dxf_writer.py 79ad39af, test_cad_owner_samples.py c0383c49, .gitattributes ab95c38b, README.md c3e98f73, example-massing.glb 21c1e306, example-site-plan.dxf 2c80881b, example-site-plan.pdf d7220466, M5-T096-producer-report.md e2efa4df; identity 8db12f2a; evaluate_task_refs ok); report M5-T096-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: committed owner-openable samples (DXF 7936 B, PDF 1839 B, GLB 2460 B) + a plain-English per-file AutoCAD opening checklist; the DXF gained STYLE (STANDARD) + VPORT (*ACTIVE) tables verified by G1 against the primary AutoCAD R12 DXF Reference; honesty stamps confirmed in the bytes; the README states the owner has NOT yet opened them and R008 ('DXF = the middleman') stays an open owner confirmation. Blob-level restamp predicate re-verified by the orchestrator at the accept head 75e75e55 (dxf_writer.py 6f57cdc4, test_dxf_writer.py 79ad39af, test_cad_owner_samples.py c0383c49, .gitattributes ab95c38b, README.md c3e98f73, example-massing.glb 21c1e306, example-site-plan.dxf 2c80881b, example-site-plan.pdf d7220466, M5-T096-producer-report.md e2efa4df; identity 8db12f2a; evaluate_task_refs ok); report M5-T096-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: export stays in open formats - DXF R12 (AC1009), PDF, glTF 2.0 GLB; the sample DXF reads back through the accepted reader; the samples carry no external references or active content (G5); zero new dependencies. Blob-level restamp predicate re-verified by the orchestrator at the accept head 75e75e55 (dxf_writer.py 6f57cdc4, test_dxf_writer.py 79ad39af, test_cad_owner_samples.py c0383c49, .gitattributes ab95c38b, README.md c3e98f73, example-massing.glb 21c1e306, example-site-plan.dxf 2c80881b, example-site-plan.pdf d7220466, M5-T096-producer-report.md e2efa4df; identity 8db12f2a; evaluate_task_refs ok); report M5-T096-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R007",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (hold honoured): no DWG library and no licensing decision; dxf_writer.py adds no import and its AST import allowlist (with a load-bearing mutation) keeps it stdlib-only. Blob-level restamp predicate re-verified by the orchestrator at the accept head 75e75e55 (dxf_writer.py 6f57cdc4, test_dxf_writer.py 79ad39af, test_cad_owner_samples.py c0383c49, .gitattributes ab95c38b, README.md c3e98f73, example-massing.glb 21c1e306, example-site-plan.dxf 2c80881b, example-site-plan.pdf d7220466, M5-T096-producer-report.md e2efa4df; identity 8db12f2a; evaluate_task_refs ok); report M5-T096-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies (no requirements change; the lock-verify, production-install and web dependency-security jobs green); no route, main.py or web change; the max-envelope route stays unmounted; the .gitattributes binary marking is scoped to docs/samples/cad; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 75e75e55 (dxf_writer.py 6f57cdc4, test_dxf_writer.py 79ad39af, test_cad_owner_samples.py c0383c49, .gitattributes ab95c38b, README.md c3e98f73, example-massing.glb 21c1e306, example-site-plan.dxf 2c80881b, example-site-plan.pdf d7220466, M5-T096-producer-report.md e2efa4df; identity 8db12f2a; evaluate_task_refs ok); report M5-T096-DCV.md."
      ]
     }
    ]

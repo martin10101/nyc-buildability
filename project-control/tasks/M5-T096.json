@@ -73,12 +73,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T15:34:42.032567+00:00",
-  "updated_at": "2026-09-24T20:38:33.398136+00:00",
+  "updated_at": "2026-09-24T21:26:57.229488+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -121,5 +121,7 @@
       "status": "in_progress",
       "message": "Harvested: 33a90617 cherry-picked to d59cbfca (9 files MATCH); harvest checks green; evidence map + G2 written; submitting."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-24T21:26:57.229488+00:00"
 }
