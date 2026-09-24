@@ -110,6 +110,13 @@ export interface EnvelopeDimensionView {
   citations: EnvelopeCitationView[];
   citationCount: number;
   gapReason: string | null;
+  /** [G3-F1] Whether the RAW `binding_value` / `gap_reason` keys arrived non-null,
+   * recorded BEFORE bounding. Bounding nulls a malformed field ("", " ", 7, {},
+   * "20000"), so classifying on the bounded fields alone would launder a
+   * present-but-malformed field into "absent" and let a BOTH row render its value.
+   * The binding-or-gap XOR is enforced on these raw-presence flags. */
+  bindingValuePresent: boolean;
+  gapReasonPresent: boolean;
   conflictAdvisory: EnvelopeConflictAdvisoryView | null;
   detail: string;
 }
@@ -342,6 +349,10 @@ function boundDimension(value: unknown): EnvelopeDimensionView | null {
     citations,
     citationCount: Array.isArray(record.rule_citations) ? record.rule_citations.length : 0,
     gapReason: stringOrNull(record.gap_reason, 64),
+    // RAW presence: JSON null / a missing key is absent; anything else was SENT.
+    // Deliberately not truthiness — a binding_value of 0 is present.
+    bindingValuePresent: record.binding_value !== null && record.binding_value !== undefined,
+    gapReasonPresent: record.gap_reason !== null && record.gap_reason !== undefined,
     conflictAdvisory,
     detail: boundedText(record.detail, "", 600),
   };
@@ -565,10 +576,10 @@ export function maxEnvelopeRequestForProfile(profile: PropertyProfile): MaxEnvel
 }
 
 // ---------------------------------------------------------------------------
-// Aggregate state (D-083-R004): while ANY dimension is an honest gap OR ANY
-// conflict advisory is present, the aggregate presentation stays visibly
-// INCOMPLETE — there is no unrestricted "complete"/green aggregate state. This is
-// the mutation-sensitive predicate the panel and its tests key on.
+// Aggregate state (D-083-R004): while ANY dimension is an honest gap, a withheld
+// contract violation, OR carries a conflict advisory, the aggregate presentation
+// stays visibly INCOMPLETE — there is no unrestricted "complete"/green aggregate
+// state. This is the mutation-sensitive predicate the panel and its tests key on.
 // ---------------------------------------------------------------------------
 export function envelopeHasConflictAdvisory(envelope: EnvelopeView): boolean {
   return envelope.dimensions.some((d) => d.conflictAdvisory !== null);
@@ -577,22 +588,34 @@ export function envelopeHasConflictAdvisory(envelope: EnvelopeView): boolean {
 /** The three mutually-exclusive presentation states of one dimension row. */
 export type DimensionRowKind = "value" | "gap" | "contract_violation";
 
+/** What the service actually returned for a withheld row (drives plain-words copy):
+ * `both` keys set, `neither` key set, or exactly one key set but in a form this
+ * client cannot use (`unreadable` — never described as "neither"). */
+export type ContractViolationShape = "both" | "neither" | "unreadable";
+
 /**
  * Classify a dimension row under the D-083-R004 BINDING-OR-GAP XOR invariant. The
  * server contract (max_envelope.py EnvelopeDimensionResult: "Exactly one of
- * binding_value and gap_reason is set") guarantees exactly one of `bindingValue`
- * and `gapReason` is present. A row that carries BOTH or NEITHER breaks that
- * invariant — it MUST NEVER render as a limit value (a NEITHER row would otherwise
- * render `null` as a number; a BOTH row would launder an untrustworthy value). It
- * surfaces instead as a typed `contract_violation` that keeps the aggregate visibly
- * incomplete. This is the mutation-sensitive predicate the panel and its tests key
- * on: removing the XOR check reddens the both/neither specs.
+ * binding_value and gap_reason is set") means exactly one RAW key is non-null. The
+ * XOR runs on RAW presence (G3-F1), so a blank/non-string gap_reason beside a value
+ * is still BOTH; and the one present field must also be USABLE (a finite number /
+ * a non-blank string) — a present-but-malformed field is never laundered into a
+ * value or a gap. Every other row is a typed `contract_violation` that NEVER
+ * renders a value and keeps the aggregate visibly incomplete.
  */
+export function classifyDimensionRow(
+  d: EnvelopeDimensionView,
+): { kind: "value" } | { kind: "gap" } | { kind: "contract_violation"; returned: ContractViolationShape } {
+  if (d.bindingValuePresent && d.gapReasonPresent) return { kind: "contract_violation", returned: "both" };
+  if (!d.bindingValuePresent && !d.gapReasonPresent) return { kind: "contract_violation", returned: "neither" };
+  if (d.bindingValuePresent) {
+    return d.bindingValue !== null ? { kind: "value" } : { kind: "contract_violation", returned: "unreadable" };
+  }
+  return d.gapReason !== null ? { kind: "gap" } : { kind: "contract_violation", returned: "unreadable" };
+}
+
 export function dimensionRowKind(d: EnvelopeDimensionView): DimensionRowKind {
-  const hasValue = d.bindingValue !== null;
-  const hasGap = d.gapReason !== null;
-  if (hasValue === hasGap) return "contract_violation"; // both set, or neither set
-  return hasValue ? "value" : "gap";
+  return classifyDimensionRow(d).kind;
 }
 
 /** True when ANY dimension breaks the binding-or-gap XOR invariant (D-083-R004).
@@ -605,9 +628,52 @@ export function envelopeHasContractViolation(envelope: EnvelopeView): boolean {
 export function envelopeAggregateIsComplete(envelope: EnvelopeView): boolean {
   return (
     envelope.summary.gap === 0 &&
+    // [G3-A1] completeness also follows the ROWS the analyst sees, not only the
+    // server's own summary.gap count: any gap row keeps the aggregate incomplete.
+    !envelope.dimensions.some((d) => dimensionRowKind(d) === "gap") &&
     !envelopeHasConflictAdvisory(envelope) &&
     !envelopeHasContractViolation(envelope)
   );
+}
+
+/**
+ * The aggregate line (D-083-R004), shared VERBATIM by the visible aggregate and the
+ * announcer so the two never disagree (HJ-1). Its counts are SCREEN-ROW counts (how
+ * many rows below show no value, and how many of those were withheld) — never a
+ * zoning number. "Could not check N of M" appears only when N > 0 (HJ-2: never
+ * "Could not check 0 of M"); when the server's own summary disagrees with the rows,
+ * its count is disclosed rather than dropped.
+ */
+export function envelopeAggregateMessage(envelope: EnvelopeView): string {
+  const { summary } = envelope;
+  if (envelopeAggregateIsComplete(envelope)) {
+    return (
+      `All ${summary.total} preliminary development limits were checked — a rules-derived ` +
+      `estimate requiring professional review.`
+    );
+  }
+  const rows = envelope.dimensions.length;
+  const gapRows = envelope.dimensions.filter((d) => dimensionRowKind(d) === "gap").length;
+  const withheldRows = envelope.dimensions.filter((d) => dimensionRowKind(d) === "contract_violation").length;
+  const notShown = gapRows + withheldRows;
+  const advisory = envelopeHasConflictAdvisory(envelope);
+  const sentences: string[] = [];
+  if (notShown > 0) {
+    sentences.push(
+      `Could not check ${notShown} of ${rows} development limits` +
+        (withheldRows > 0
+          ? ` (${withheldRows} withheld because the service's answer was inconsistent or unreadable)`
+          : "") +
+        (advisory ? ", and a rule conflict needs professional review" : "") +
+        ".",
+    );
+  } else if (advisory) {
+    sentences.push("A rule conflict needs professional review.");
+  }
+  if (summary.gap !== notShown || summary.total !== rows) {
+    sentences.push(`The service's own count listed ${summary.gap} of ${summary.total} as not checked.`);
+  }
+  return `${sentences.join(" ")} This preliminary picture is incomplete.`;
 }
 
 /** Adoption (D-083-R002/AS-4) is offered ONLY for a server-emitted candidate that
@@ -629,12 +695,13 @@ export function candidateIsAdoptable(envelope: EnvelopeView): boolean {
 export function announcementForMaxEnvelope(outcome: MaxEnvelopeOutcome): string {
   switch (outcome.kind) {
     case "envelope": {
-      const { summary } = outcome.envelope;
-      const incomplete = !envelopeAggregateIsComplete(outcome.envelope);
-      const lead = incomplete
-        ? `Preliminary development limits loaded, but ${summary.gap} of ${summary.total} could not be checked`
-        : `Preliminary development limits loaded for ${summary.total} dimensions`;
-      return `${lead}. A rules-derived estimate requiring professional review, not a maximum permitted building.`;
+      const { envelope } = outcome;
+      // [HJ-1/G3-A3] An incomplete envelope announces the SAME aggregate line the
+      // panel shows (withheld clause + "incomplete"), never "0 of N could not be checked".
+      const lead = envelopeAggregateIsComplete(envelope)
+        ? `Preliminary development limits loaded for ${envelope.summary.total} dimensions.`
+        : `Preliminary development limits loaded. ${envelopeAggregateMessage(envelope)}`;
+      return `${lead} A rules-derived estimate requiring professional review, not a maximum permitted building.`;
     }
     case "feature_unavailable":
       return "Preliminary development limits are not available in this environment.";

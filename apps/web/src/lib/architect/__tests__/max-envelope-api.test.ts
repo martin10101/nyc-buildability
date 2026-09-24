@@ -5,8 +5,10 @@ import {
   MAX_ENVELOPE_ROUTE,
   announcementForMaxEnvelope,
   candidateIsAdoptable,
+  classifyDimensionRow,
   dimensionRowKind,
   envelopeAggregateIsComplete,
+  envelopeAggregateMessage,
   envelopeHasConflictAdvisory,
   envelopeHasContractViolation,
   fetchMaxEnvelope,
@@ -315,6 +317,48 @@ describe("candidate bounding + adoptability gate (AS-4)", () => {
     // The binding limits are unaffected by a dropped candidate.
     expect(envelope.dimensions[0].bindingValue).toBe(20000);
   });
+
+  // [G3-F2(2)] Every boundCandidate rejection path OTHER than the srid check, each
+  // isolated (the rest of the candidate stays valid) so each case is the ONLY guard
+  // that rejects it: deleting that guard returns a non-null candidate and reddens it.
+  // Where a guard is otherwise shadowed by a later one, the probe is chosen to reach
+  // it alone (an object-shaped vertex for the pair check; "" for the levels/walls
+  // array checks, which iterates to nothing instead of throwing). Without the
+  // vertices isArray check, "vertices missing" throws inside the decode (red by
+  // exception). The `raw.length < 2` disjunct is shadowed by the finite-y check for
+  // every JSON input (raw[1] is undefined), so it has no separately observable probe.
+  function candidateWith(patch: (c: Record<string, unknown>) => void): Record<string, unknown> {
+    const c = fittedCandidate();
+    patch(c);
+    return c;
+  }
+  const outline = (vertices: unknown) => ({ srid: 2263, vertices });
+  const GOOD_V = [[1000000, 200000], [1000100, 200000], [1000100, 200050]];
+  it.each([
+    { path: "vertices array empty", c: candidateWith((c) => { c.outline = outline([]); }) },
+    { path: "vertices missing (not an array)", c: candidateWith((c) => { c.outline = { srid: 2263 }; }) },
+    { path: "vertex not an array (object with 0/1 keys)", c: candidateWith((c) => { c.outline = outline([...GOOD_V, { 0: 1000000, 1: 200050 }]); }) },
+    { path: "vertex x not finite", c: candidateWith((c) => { c.outline = outline([...GOOD_V, ["1000000", 200050]]); }) },
+    { path: "vertex y not finite", c: candidateWith((c) => { c.outline = outline([...GOOD_V, [1000000, null]]); }) },
+    { path: "levels not an array", c: candidateWith((c) => { c.levels = ""; }) },
+    { path: "level_index not finite", c: candidateWith((c) => { c.levels = [{ level_index: null, floor_count: 3, floor_to_floor_ft: 10 }]; }) },
+    { path: "floor_count not finite", c: candidateWith((c) => { c.levels = [{ level_index: 0, floor_count: "3", floor_to_floor_ft: 10 }]; }) },
+    { path: "floor_to_floor_ft not finite", c: candidateWith((c) => { c.levels = [{ level_index: 0, floor_count: 3, floor_to_floor_ft: "10" }]; }) },
+    { path: "exterior_walls not an array", c: candidateWith((c) => { c.exterior_walls = ""; }) },
+    { path: "wall id not a string", c: candidateWith((c) => { c.exterior_walls = [{ id: 7, start_vertex_index: 0, end_vertex_index: 1 }]; }) },
+    { path: "wall start index not finite", c: candidateWith((c) => { c.exterior_walls = [{ id: "W-S", start_vertex_index: "0", end_vertex_index: 1 }]; }) },
+    { path: "wall end index not finite", c: candidateWith((c) => { c.exterior_walls = [{ id: "W-S", start_vertex_index: 0, end_vertex_index: null }]; }) },
+  ])("drops a candidate whose $path — never adoptable, limits still stand", async ({ c }) => {
+    const envelope = envelopeOf(await run(envelopeResponse(envelopeBody({ candidate: c }), 200)));
+    expect(envelope.candidate).toBeNull();
+    expect(candidateIsAdoptable(envelope)).toBe(false);
+    expect(envelope.dimensions[0].bindingValue).toBe(20000);
+  });
+
+  it("control: the same valid candidate survives bounding (so each reject above is the guard's doing)", async () => {
+    const envelope = envelopeOf(await run(envelopeResponse(envelopeBody({ candidate: candidateWith(() => {}) }), 200)));
+    expect(envelope.candidate).not.toBeNull();
+  });
 });
 
 describe("aggregate state predicate (D-083-R004, AS-3 — mutation-sensitive)", () => {
@@ -365,11 +409,19 @@ describe("outcome helpers", () => {
 
   it("announces an incomplete envelope with the honest count and NEVER 'maximum allowed building' (D-083)", async () => {
     const incomplete = announcementForMaxEnvelope(await run(envelopeResponse(envelopeBody(), 200)));
-    expect(incomplete).toContain("1 of 2 could not be checked");
+    // [HJ-1] The announcer speaks the SAME aggregate line the panel shows, incl. "incomplete".
+    expect(incomplete).toBe(
+      "Preliminary development limits loaded. Could not check 1 of 2 development limits. " +
+        "This preliminary picture is incomplete. A rules-derived estimate requiring professional review, " +
+        "not a maximum permitted building.",
+    );
     expect(incomplete.toLowerCase()).not.toContain("maximum allowed building");
 
     const complete = announcementForMaxEnvelope(await run(envelopeResponse(completeBody(), 200)));
-    expect(complete).toContain("loaded for 2 dimensions");
+    expect(complete).toBe(
+      "Preliminary development limits loaded for 2 dimensions. A rules-derived estimate requiring " +
+        "professional review, not a maximum permitted building.",
+    );
     expect(complete.toLowerCase()).not.toContain("maximum allowed building");
 
     // A superseded (aborted) request announces nothing.
@@ -446,13 +498,21 @@ describe("fetchMaxEnvelope — browser-level modes (DB-050(i): client_timeout, a
 
 describe("dimensionRowKind — binding-or-gap XOR classifier (D-083-R004, DB-050(d), mutation-sensitive)", () => {
   function dimOf(bindingValue: number | null, gapReason: string | null): EnvelopeDimensionView {
-    // A deliberate minimal shape: dimensionRowKind reads only these two fields.
-    return { bindingValue, gapReason } as unknown as EnvelopeDimensionView;
+    // A deliberate minimal shape: the classifier reads only the bounded values and
+    // their raw-presence flags (a well-formed field is present iff its value is set).
+    return {
+      bindingValue,
+      gapReason,
+      bindingValuePresent: bindingValue !== null,
+      gapReasonPresent: gapReason !== null,
+    } as unknown as EnvelopeDimensionView;
   }
 
   it("classifies a value-only row as `value` and a gap-only row as `gap`", () => {
     expect(dimensionRowKind(dimOf(20000, null))).toBe("value");
     expect(dimensionRowKind(dimOf(null, "allowance_unresolved"))).toBe("gap");
+    // Two-mutant rule: a real 0 limit is a VALUE (a truthiness check would withhold it).
+    expect(dimensionRowKind(dimOf(0, null))).toBe("value");
   });
 
   it("classifies BOTH-set and NEITHER-set rows as `contract_violation` (never a value)", () => {
@@ -500,6 +560,126 @@ describe("dimensionRowKind — binding-or-gap XOR classifier (D-083-R004, DB-050
     );
     expect(envelopeHasContractViolation(neither)).toBe(true);
     expect(envelopeAggregateIsComplete(neither)).toBe(false);
+  });
+
+  /** A body row with EXACT raw binding_value / gap_reason (`undefined` = key omitted). */
+  function rawRow(bindingValue: unknown, gapReason: unknown): Record<string, unknown> {
+    const row = bindingDimension({ binding_value: bindingValue, gap_reason: gapReason });
+    if (bindingValue === undefined) delete row.binding_value;
+    if (gapReason === undefined) delete row.gap_reason;
+    return row;
+  }
+
+  // [G3-F1] The XOR runs on RAW presence, decided in boundDimension BEFORE bounding
+  // nulls a malformed field. Every row goes through the real decode path (run()).
+  const RAW_ROWS: Array<{ label: string; bv: unknown; gr: unknown; expected: { kind: string; returned?: string } }> = [
+    { label: "value only", bv: 20000, gr: null, expected: { kind: "value" } },
+    { label: "a real 0 value (two-mutant rule)", bv: 0, gr: null, expected: { kind: "value" } },
+    { label: "gap only", bv: null, gr: "allowance_unresolved", expected: { kind: "gap" } },
+    { label: "value + gap token", bv: 20000, gr: "allowance_unresolved", expected: { kind: "contract_violation", returned: "both" } },
+    { label: 'value + blank gap_reason ""', bv: 20000, gr: "", expected: { kind: "contract_violation", returned: "both" } },
+    { label: 'value + whitespace gap_reason " "', bv: 20000, gr: " ", expected: { kind: "contract_violation", returned: "both" } },
+    { label: "value + non-string gap_reason 7", bv: 20000, gr: 7, expected: { kind: "contract_violation", returned: "both" } },
+    { label: "value + object gap_reason {}", bv: 20000, gr: {}, expected: { kind: "contract_violation", returned: "both" } },
+    { label: "both null", bv: null, gr: null, expected: { kind: "contract_violation", returned: "neither" } },
+    { label: "both keys omitted", bv: undefined, gr: undefined, expected: { kind: "contract_violation", returned: "neither" } },
+    { label: 'blank gap_reason "" alone', bv: null, gr: "", expected: { kind: "contract_violation", returned: "unreadable" } },
+    { label: "non-string gap_reason 7 alone", bv: null, gr: 7, expected: { kind: "contract_violation", returned: "unreadable" } },
+    { label: 'string binding_value "20000" alone', bv: "20000", gr: null, expected: { kind: "contract_violation", returned: "unreadable" } },
+  ];
+  it.each(RAW_ROWS)("raw row ($label) classifies as $expected.kind", async ({ bv, gr, expected }) => {
+    const body = completeBody({
+      dimensions: [
+        rawRow(bv, gr),
+        bindingDimension({ dimension_id: "max_height_ft", label: "Maximum height", unit: "ft", binding_value: 60 }),
+      ],
+      summary: { binding: 2, gap: 0, saturating_binding: 0, total: 2 },
+    });
+    const envelope = envelopeOf(await run(envelopeResponse(body, 200)));
+    // MUTATION (G3-F1 leak): classifying on the BOUNDED fields turns "", " ", 7 and {}
+    // into "absent" -> the value+malformed rows read `value`; this table reddens.
+    expect(classifyDimensionRow(envelope.dimensions[0])).toEqual(expected);
+    expect(envelopeAggregateIsComplete(envelope)).toBe(expected.kind === "value");
+  });
+
+  it("records raw presence for BOTH fields before bounding (present-but-malformed is not absent)", async () => {
+    const body = completeBody({ dimensions: [rawRow(20000, ""), rawRow(null, null)] });
+    const envelope = envelopeOf(await run(envelopeResponse(body, 200)));
+    expect(envelope.dimensions[0]).toMatchObject({ bindingValue: 20000, gapReason: null, bindingValuePresent: true, gapReasonPresent: true });
+    expect(envelope.dimensions[1]).toMatchObject({ bindingValue: null, gapReason: null, bindingValuePresent: false, gapReasonPresent: false });
+  });
+});
+
+describe("aggregate line + completeness from row kinds (G3-A1, HJ-1, HJ-2)", () => {
+  it("[G3-A1] a GAP ROW keeps the aggregate incomplete even when the server's summary.gap is 0", async () => {
+    // One binding + one gap row, but the server's own summary claims gap 0.
+    const envelope = envelopeOf(
+      await run(envelopeResponse(envelopeBody({ summary: { binding: 1, gap: 0, saturating_binding: 0, total: 2 } }), 200)),
+    );
+    // MUTATION: dropping the gap-row term from envelopeAggregateIsComplete reddens this.
+    expect(envelopeAggregateIsComplete(envelope)).toBe(false);
+    expect(envelopeAggregateMessage(envelope)).toBe(
+      "Could not check 1 of 2 development limits. The service's own count listed 0 of 2 as not checked. " +
+        "This preliminary picture is incomplete.",
+    );
+  });
+
+  it("the accepted gap / gap+advisory / complete lines are unchanged", async () => {
+    expect(envelopeAggregateMessage(envelopeOf(await run(envelopeResponse(envelopeBody(), 200))))).toBe(
+      "Could not check 1 of 2 development limits. This preliminary picture is incomplete.",
+    );
+    const withAdvisory = envelopeBody({
+      dimensions: [bindingDimension({ conflict_advisory: { competing_rule_ids: ["a", "b"], note: null } }), gapDimension()],
+    });
+    expect(envelopeAggregateMessage(envelopeOf(await run(envelopeResponse(withAdvisory, 200))))).toBe(
+      "Could not check 1 of 2 development limits, and a rule conflict needs professional review. " +
+        "This preliminary picture is incomplete.",
+    );
+    expect(envelopeAggregateMessage(envelopeOf(await run(envelopeResponse(completeBody(), 200))))).toBe(
+      "All 2 preliminary development limits were checked — a rules-derived estimate requiring professional review.",
+    );
+  });
+
+  it("[HJ-2] a withheld-only envelope counts the withheld row and never says 'Could not check 0 of'", async () => {
+    const body = completeBody({
+      dimensions: [
+        bindingDimension({ gap_reason: "allowance_unresolved" }),
+        bindingDimension({ dimension_id: "max_height_ft", label: "Maximum height", unit: "ft", binding_value: 60 }),
+      ],
+    });
+    const outcome = await run(envelopeResponse(body, 200));
+    const line = envelopeAggregateMessage(envelopeOf(outcome));
+    expect(line).toBe(
+      "Could not check 1 of 2 development limits (1 withheld because the service's answer was inconsistent " +
+        "or unreadable). The service's own count listed 0 of 2 as not checked. This preliminary picture is incomplete.",
+    );
+    expect(line).not.toContain("Could not check 0 of");
+    // [HJ-1] The announcer repeats the withheld clause and "incomplete".
+    expect(announcementForMaxEnvelope(outcome)).toBe(
+      `Preliminary development limits loaded. ${line} A rules-derived estimate requiring professional review, ` +
+        "not a maximum permitted building.",
+    );
+  });
+
+  it("an advisory-only envelope says so plainly (no 'Could not check 0 of')", async () => {
+    const body = completeBody({
+      dimensions: [
+        bindingDimension({ conflict_advisory: { competing_rule_ids: ["a", "b"], note: null } }),
+        bindingDimension({ dimension_id: "max_height_ft", label: "Maximum height", unit: "ft", binding_value: 60 }),
+      ],
+    });
+    expect(envelopeAggregateMessage(envelopeOf(await run(envelopeResponse(body, 200))))).toBe(
+      "A rule conflict needs professional review. This preliminary picture is incomplete.",
+    );
+  });
+
+  it("a server summary.gap with no gap rows is disclosed, never dropped", async () => {
+    const body = completeBody({ summary: { binding: 2, gap: 1, saturating_binding: 0, total: 2 } });
+    const envelope = envelopeOf(await run(envelopeResponse(body, 200)));
+    expect(envelopeAggregateIsComplete(envelope)).toBe(false);
+    expect(envelopeAggregateMessage(envelope)).toBe(
+      "The service's own count listed 1 of 2 as not checked. This preliminary picture is incomplete.",
+    );
   });
 });
 

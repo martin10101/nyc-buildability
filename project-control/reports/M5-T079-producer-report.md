@@ -146,3 +146,146 @@ remapped; no number is computed in the presentation layer.
   additive clause chosen to avoid touching the accepted gap/advisory message).
 
 END-OF-REPORT
+
+## Rework (G3 F1-F2 + G4 F1-F2 cluster)
+
+Appended after the original report (above left byte-identical). Base `a57bb8de`, worktree
+`C:\Users\MLFLL\Downloads\nyc-zoning\wt-m5t079`. One correction cluster, allowed_paths only:
+`max-envelope-api.ts`, `MaxEnvelopePanel.tsx`, their two specs, this report. `entry.test.tsx`,
+`e2e/proposal-editor.spec.ts` and `services/api` untouched; route still UNMOUNTED; no dependency
+change. Every web claim is `[PREDICTED]` (thin client: no npm/node/vitest/playwright run) — CI on
+the pushed head is the proving context.
+
+### Local evidence (cwd = worktree root)
+
+- `python tools/modularity_check.py --check` → `selected 486 files; failures 0; warnings 23`, exit 0
+  `[OBSERVED]`; no warning names a changed file. `max-envelope-api.ts` 532 SLOC / 40 exported
+  symbols (ceiling 40; a first run at 42 raised `symbol_ceiling`, so two one-line helpers were
+  inlined); `MaxEnvelopePanel.tsx` 267 SLOC.
+- A Python replica of the new classifier + aggregate line + announcement (scratchpad only, not the
+  TS) reproduced every literal the new specs pin, for all fixtures `[OBSERVED — replica only]`.
+- Claim-wall and CRS-marker replicas over the wall's 5 files / the guard's 3 files: no banned claim,
+  no marker `[OBSERVED — replica only]`.
+
+### Per-finding closure (file:line at the rework head)
+
+- **G3-F1 (BLOCKING)** — raw presence recorded before bounding: `max-envelope-api.ts:118-119`
+  (view fields) and `:354-355` (`binding_value`/`gap_reason` non-null/undefined, not truthiness).
+  `classifyDimensionRow` `:606-615`: both present → violation `both`; neither → `neither`; exactly
+  one present but unusable (bounded to null) → `unreadable`; only a present-AND-usable single field
+  is `value`/`gap`. `dimensionRowKind` `:617` delegates. Panel detail no longer says "neither" for a
+  malformed field (`MaxEnvelopePanel.tsx:88-92`, `:151-155`). Specs: panel `:455` (value + `""`,
+  `" "`, `7`, `{}` gap_reason → withheld BOTH, row text has no `20000`, aggregate never complete),
+  panel `:483` (a blank / non-string gap_reason alone, a string binding_value alone → "It returned
+  no usable value or reason", never "neither", no `null`), panel `:499` (binding_value `0` → value
+  row "0 ft", complete); api `:590` (13-row raw table through the real decode), api `:605`
+  (presence flags), api `:515` (`dimOf(0, null)` → value).
+- **G3-F2 / G4-F1 (BLOCKING)** — AS-1 panel cards: panel `:665` it.each (413 payload_too_large, 422
+  invalid_request: exact first-`<p>` literal, Retry presence = hardcoded `false` AND cross-checked
+  with `maxEnvelopeOutcomeIsRecoverable`), panel `:673` client_timeout (`vi.useFakeTimers`,
+  abort-honoring pending fetch, `act(advanceTimersByTimeAsync(DEFAULT_TIMEOUT_MS))`, synchronous
+  asserts: exact literal, Retry present, loading gone; `useRealTimers` in the describe's
+  `afterEach`). boundCandidate non-srid rejects: api `:337` it.each, 13 isolated probes covering
+  `max-envelope-api.ts:275` (empty; missing), `:278` (object-shaped vertex), `:281` (x; y), `:287`
+  (levels `""`), `:294` (each of the 3 level fields), `:298` (walls `""`), `:304` (id; start; end),
+  plus a control spec `:358` that the same candidate survives unpatched.
+- **G3-F2(3) / G4-F2 (BLOCKING)** — panel `:599`: render(REQ) with an abort-honoring pending fetch
+  → `rerender(null)` → flush inside `act` (setTimeout 0) → MutationObserver(childList, subtree) on
+  the container → `rerender(REQ2)` → `takeRecords()` → no added node is/contains
+  `data-testid="envelope-failure"`; loading card present after. Guard comment re-anchored at
+  `MaxEnvelopePanel.tsx:283-289` (the reachable path is request→null, not supersession/unmount).
+- **G3-A1** — `envelopeAggregateIsComplete` also requires no gap ROW (`max-envelope-api.ts:628-636`).
+  Specs api `:614`, panel `:514`, and the "gap only" row of api `:590`.
+- **HJ-1 / G3-A3** — the announcer speaks the same aggregate line (`max-envelope-api.ts:697-706`):
+  "Preliminary development limits loaded. {aggregate line} A rules-derived estimate … not a maximum
+  permitted building." Specs api `:410` (exact), api `:643`, panel `:389` (announcer has the
+  withheld clause + "incomplete", never "0 of 2 could not be checked").
+- **HJ-2 / G4-A9** — `envelopeAggregateMessage` (`max-envelope-api.ts:647-677`, rendered at
+  `MaxEnvelopePanel.tsx:218`): screen-row counts; "Could not check N of M" only when N > 0; withheld
+  rows counted in a parenthetical; the server's own count disclosed when it disagrees. Specs api
+  `:627` (accepted lines unchanged), `:643`, `:664`, `:676`; panel `:389`.
+- **HJ-3 / HJ-5** — plain-words headline + detail (`MaxEnvelopePanel.tsx:86-92`, `:126`, `:151-155`).
+- **G4-A1** — row-text negatives: panel `:389` block (`not "20000"`), `:426` block (`not "null"`),
+  plus the same negatives in `:455` / `:483`.
+- **G4-A4** — four gap-copy literals hardcoded and rendered: panel `:374`.
+- **G4-A7** — `draft.street_width_class === ""`: panel `:223` block.
+
+### Mutation traces (static; mutant → the assertion that reddens)
+
+1. Classify on BOUNDED fields again (ignore the presence flags) → value + `""`/`" "`/`7`/`{}` reads
+   `value`: panel `:455` `findByTestId("envelope-contract-violation-max_far_floor_area")` throws and
+   `queryByTestId("envelope-value-…")).toBeNull()` fails; api `:590` rows 5-8 `toEqual` fail.
+2. Delete the both-present line (`:609`) → the same rows fall through to `value`: same reds.
+3. Drop the value usability check (`:612` always `value`) → `"60"` alone renders "null ft": panel
+   `:483` row 3 (value testid present, violation absent); api `:590` last row.
+4. Drop the gap usability check (`:614` always `gap`) → `""`/`7` alone read `gap`: panel `:483` rows
+   1-2 (`envelope-gap-…` present; violation absent); api `:590` rows 11-12.
+5. Truthiness presence at `:354` (`Boolean(record.binding_value)`) → `0` reads `neither`: panel
+   `:499` `findByTestId("envelope-value-max_height_ft")` throws; api `:590` row 2. Truthiness
+   usability at `:612` → api `:515`.
+6. Detail says "neither" for `unreadable` → panel `:483` `not.toHaveTextContent("neither")`.
+7. `announcementForMaxEnvelope` returns "" for payload_too_large / invalid_request / client_timeout
+   → panel `:665` / `:673` `textContent).toBe(<literal>)`.
+8. Retry predicate drift (`maxEnvelopeOutcomeIsRecoverable` gains payload_too_large/invalid_request
+   or loses client_timeout) → panel `:665` both Retry asserts / `:673` `getByTestId("envelope-retry")`.
+9. `timedOut` branch dropped → timeout classifies `aborted`, guard drops it, loading persists →
+   panel `:673` `getByTestId("envelope-failure")` throws.
+10. Any single boundCandidate guard/disjunct deleted → its api `:337` row returns a non-null
+    candidate → `expect(envelope.candidate).toBeNull()` fails (the "vertices missing" probe reddens by
+    a thrown TypeError instead of the assertion). Exception: the `raw.length < 2` disjunct at `:278`
+    is an equivalent mutant — every JSON array shorter than 2 has `raw[1] === undefined`, which the
+    finite-y check at `:281` rejects; no probe can separate it.
+11. Delete the aborted guard `MaxEnvelopePanel.tsx:289` → after request→null the `aborted` outcome
+    is stored (loading false); REQ2's first commit inserts the reasonless failure card before the
+    effect sets loading → panel `:599` `expect(failureCommitted).toBe(false)` fails. (G4's own
+    predicted executed mutant: green at HEAD, red with the guard deleted.)
+12. Drop the gap-row term (`:633`) → api `:614`, panel `:514`, api `:590` row 3.
+13. Announcement reverts to "loaded, but {gap} of {total} could not be checked" → api `:410`, `:643`,
+    panel `:389` announcer asserts.
+14. "Could not check 0 of" reintroduced (`notShown >= 0`) → api `:664`, panel `:389`.
+
+### Copy table delta (before → after; meaning protected)
+
+| # | Before | After | Meaning protected |
+|---|---|---|---|
+| R1 | Row headline (T079 v1): "Could not check — this development limit's response broke the binding-or-gap data contract and was withheld." | "Could not check — the service's answer for this limit was inconsistent or unreadable, so no value is shown." | Still withheld, still "Could not check"; plain words (HJ-3) |
+| R2 | Row detail (T079 v1): "The engine must return exactly one of a binding value or a typed gap reason for each development limit; this response returned {both\|neither}, so the value is withheld and this preliminary picture stays incomplete." | "The service should send either a value or the reason it could not check this limit. It returned {both a value and a reason \| neither a value nor a reason \| no usable value or reason}, so nothing is shown for this limit and this preliminary picture stays incomplete." | Exact about what was sent (G3-F1, HJ-5); "incomplete" kept |
+| R3 | Aggregate with a violation (T079 v1): "Could not check {summary.gap} of {total} development limits[, and a rule conflict needs professional review], and a development limit response broke the binding-or-gap data contract and was withheld. This preliminary picture is incomplete." | "Could not check {gap rows + withheld rows} of {rows} development limits ({W} withheld because the service's answer was inconsistent or unreadable)[, and a rule conflict needs professional review]. [The service's own count listed {summary.gap} of {summary.total} as not checked.] This preliminary picture is incomplete." | Counts the withheld rows; never "0 of N" (HJ-2); server count disclosed, not dropped |
+| R4 | Advisory-only aggregate (accepted T070): "Could not check 0 of {total} development limits, and a rule conflict needs professional review. This preliminary picture is incomplete." | "A rule conflict needs professional review. This preliminary picture is incomplete." | Same meaning without the false-sounding "0 of N" |
+| R5 | Gap row while summary.gap = 0 (accepted T070): read complete — "All {total} preliminary development limits were checked — …" | "Could not check {gap rows} of {rows} development limits. The service's own count listed 0 of {total} as not checked. This preliminary picture is incomplete." | No unrestricted "all checked" over a visible gap (G3-A1, D-083-R004) |
+| R6 | Summary.gap > 0 with no gap row (accepted T070): "Could not check {gap} of {total} development limits. …" | "The service's own count listed {gap} of {total} as not checked. This preliminary picture is incomplete." | Server count kept; no claim the page shows a gap it does not |
+| R7 | Announcement, incomplete (accepted T070): "Preliminary development limits loaded, but {gap} of {total} could not be checked. A rules-derived estimate requiring professional review, not a maximum permitted building." | "Preliminary development limits loaded. {aggregate line} A rules-derived estimate requiring professional review, not a maximum permitted building." | Screen-reader users hear the withheld clause and "incomplete" (HJ-1); D-083 tail kept |
+
+Unchanged byte-for-byte: the gap-only and gap+advisory aggregate lines, the complete aggregate
+line, the complete announcement, every failure-card reason, the gap-reason copy, the disclosure,
+"Preliminary development limits", "Generated building option", and the adoption announcement.
+Count-source note: the "Could not check" numerator is now the count of rows shown without a value
+(gap + withheld) and the denominator the row count; for every consistent server response (all panel,
+entry and e2e fixtures) these equal `summary.gap`/`summary.total`, so the accepted text is identical.
+The counts are derived in the client lib, not in React, and are screen-row counts, not zoning numbers.
+
+### Not closed / honest limits
+
+- **G3-A2 not implemented (deliberate).** Bumping the active token in the null branch or in cleanup
+  would make the `aborted` guard unreachable: request→null would then be dropped by the token check
+  first, and unmount leaves no DOM. The blocking G3-F2(3)/G4-F2 demands a spec that FAILS without
+  that guard, which would then be impossible (the guard would become an equivalent mutant). So the
+  guard stays load-bearing and the null branch stays as it was. The A2 defect remains: a fetch that
+  IGNORES its abort signal (the panel's own test stubs; not the browser's fetch) or a result already
+  resolved at abort time is stored after request→null, announced as loaded while the panel shows
+  "cannot be computed", and could briefly show the old result on the next request's first commit.
+  Unreachable in production today (route unmounted). Routed as D5.
+- `raw.length < 2` (`max-envelope-api.ts:278`) is an equivalent mutant (trace 10).
+- `gapReasonCopy`'s "the reason was not stated" fallback can no longer be reached from a rendered row
+  (a gap row now always carries a usable, non-blank token); kept exported and unit-tested.
+- Not in this rework's list, left as standing advisories: G3-A4/A5/A6/A7/A8, G4-A3/A5/A6/A8, HJ-4, HJ-6.
+
+### DISCOVERIES (for docs/DISCOVERY_BACKLOG.md at the seam)
+
+- D4 (a11y, low; pre-existing structure): the aggregate `<p role="status">` and the always-mounted
+  announcer now carry the same line; a screen reader that also announces a newly mounted status
+  region may read it twice. Route to the mount / D-086 a11y pass together with HJ-6.
+- D5 (G3-A2 residual, above): decide at mount whether to bump the token on request→null/cleanup (and
+  accept the aborted guard as defense-in-depth with a two-guard spec) or keep the current split.
+
+END-OF-REPORT

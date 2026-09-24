@@ -2,7 +2,13 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import { GAP_REASON_COPY, MaxEnvelopePanel, gapReasonCopy } from "../MaxEnvelopePanel";
-import { ENVELOPE_GAP_REASONS, type MaxEnvelopeRequest } from "@/lib/architect/max-envelope-api";
+import {
+  DEFAULT_TIMEOUT_MS,
+  ENVELOPE_GAP_REASONS,
+  maxEnvelopeOutcomeIsRecoverable,
+  type MaxEnvelopeOutcome,
+  type MaxEnvelopeRequest,
+} from "@/lib/architect/max-envelope-api";
 
 /**
  * Task M5-T070 (D-082-R003 + D-083), Preliminary-development-limits panel. The
@@ -106,6 +112,15 @@ function response(body: unknown, status = 200): Response {
 
 function stub(res: Response): typeof fetch {
   return (async () => res) as typeof fetch;
+}
+
+/** A fetch that stays pending until its signal aborts, then rejects like a browser
+ * fetch does (AbortError). Drives the timeout and cancellation paths honestly. */
+function abortHonoringPendingFetch(): typeof fetch {
+  return ((_url: string, init?: RequestInit) =>
+    new Promise<Response>((_resolve, reject) => {
+      init?.signal?.addEventListener("abort", () => reject(new DOMException("aborted", "AbortError")));
+    })) as unknown as typeof fetch;
 }
 
 const REQUEST: MaxEnvelopeRequest = {
@@ -216,6 +231,9 @@ describe("MaxEnvelopePanel — one-action adoption (AS-4)", () => {
     expect(draft.vertices[0]).toEqual({ x: 1000000, y: 200000 });
     expect(draft.zoning_district).toBe("R6");
     expect(draft.area_provenance_note).toContain("proposed input, not a city record");
+    // [G4-A7, DB-050(j)] Street width is server-determined: the seed records "not
+    // provided" — never a client default like "narrow" (D-051: not conservative).
+    expect(draft.street_width_class).toBe("");
   });
 
   it("offers NO adopt action when the candidate was not a contained fit (adoption impossible)", async () => {
@@ -345,6 +363,21 @@ describe("MaxEnvelopePanel — gap-reason copy map (AS-3, DB-050(m): exhaustive 
     expect(Object.keys(GAP_REASON_COPY).sort()).toEqual([...ENVELOPE_GAP_REASONS].sort());
   });
 
+  // [G4-A4] Each token's analyst copy pinned as a HARDCODED literal (not compared
+  // against the imported map, which would be a by-value tautology), and rendered.
+  const GAP_COPY_LITERALS: Array<[string, string]> = [
+    ["no_applicable_rule", "no applicable rule was found for this dimension"],
+    ["allowance_unresolved", "the governing allowance could not be resolved"],
+    ["family_unsupported", "this rule family is not supported by the engine yet"],
+    ["non_commensurable_with_massing", "the rule does not translate to this massing dimension"],
+  ];
+  it.each(GAP_COPY_LITERALS)("gap token %s renders the literal analyst copy", async (token, literal) => {
+    expect(gapReasonCopy(token)).toBe(literal);
+    const body = envelopeBody({ dimensions: [bindingDimension(), gapDimension({ gap_reason: token })] });
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(body))} />);
+    expect(await screen.findByTestId("envelope-gap-max_height_ft")).toHaveTextContent(`Could not check — ${literal}`);
+  });
+
   it("renders an UNKNOWN runtime token verbatim (fail-honest) and a missing reason as a stated fallback", () => {
     expect(gapReasonCopy("some_unmapped_token")).toBe("some_unmapped_token");
     expect(gapReasonCopy(null)).toBe("the reason was not stated");
@@ -365,14 +398,29 @@ describe("MaxEnvelopePanel — binding-or-gap XOR fail-closed (AS-2, DB-050(d), 
     render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(body))} />);
     // The violating row surfaces as a typed contract failure, NEVER a limit value.
     expect(await screen.findByTestId("envelope-contract-violation-max_far_floor_area")).toHaveTextContent(
-      "broke the binding-or-gap data contract",
+      "Could not check — the service's answer for this limit was inconsistent or unreadable, so no value is shown.",
     );
     expect(screen.queryByTestId("envelope-value-max_far_floor_area")).toBeNull();
-    expect(screen.getByTestId("envelope-contract-detail-max_far_floor_area")).toHaveTextContent("returned both");
-    // The aggregate stays visibly INCOMPLETE even though the server's gap count is 0.
+    expect(screen.getByTestId("envelope-contract-detail-max_far_floor_area")).toHaveTextContent(
+      "It returned both a value and a reason, so nothing is shown for this limit",
+    );
+    // [G4-A1] The withheld number never leaks anywhere into the row's text.
+    expect(screen.getByTestId("envelope-dimension-max_far_floor_area")).not.toHaveTextContent("20000");
+    // The aggregate stays visibly INCOMPLETE even though the server's gap count is 0,
+    // and COUNTS the withheld row instead of "Could not check 0 of 2" (HJ-2).
     const aggregate = screen.getByTestId("envelope-aggregate");
     expect(aggregate).toHaveAttribute("data-complete", "false");
-    expect(aggregate).toHaveTextContent("binding-or-gap data contract");
+    expect(aggregate).toHaveTextContent(
+      "Could not check 1 of 2 development limits (1 withheld because the service's answer was inconsistent " +
+        "or unreadable). The service's own count listed 0 of 2 as not checked. This preliminary picture is incomplete.",
+    );
+    expect(aggregate).not.toHaveTextContent("Could not check 0 of");
+    // [HJ-1] The announcer (what screen-reader users hear) repeats the withheld
+    // clause and "incomplete" — never "0 of 2 could not be checked".
+    const announcer = screen.getByTestId("max-envelope-announcer");
+    expect(announcer).toHaveTextContent("1 withheld because the service's answer was inconsistent or unreadable");
+    expect(announcer).toHaveTextContent("This preliminary picture is incomplete.");
+    expect(announcer).not.toHaveTextContent("0 of 2 could not be checked");
   });
 
   it("a row carrying NEITHER binding_value nor gap_reason NEVER renders 'null' as a value", async () => {
@@ -387,8 +435,91 @@ describe("MaxEnvelopePanel — binding-or-gap XOR fail-closed (AS-2, DB-050(d), 
     const violation = await screen.findByTestId("envelope-contract-violation-max_height_ft");
     expect(violation).toBeInTheDocument();
     expect(screen.queryByTestId("envelope-value-max_height_ft")).toBeNull();
-    expect(screen.getByTestId("envelope-contract-detail-max_height_ft")).toHaveTextContent("returned neither");
+    expect(screen.getByTestId("envelope-contract-detail-max_height_ft")).toHaveTextContent(
+      "It returned neither a value nor a reason",
+    );
+    // [G4-A1] No "null" is ever rendered as a limit anywhere in the row.
+    expect(screen.getByTestId("envelope-dimension-max_height_ft")).not.toHaveTextContent("null");
     expect(screen.getByTestId("envelope-aggregate")).toHaveAttribute("data-complete", "false");
+  });
+
+  // [G3-F1] A value beside a PRESENT-but-malformed gap_reason is still BOTH. Before the
+  // fix, bounding nulled these tokens first and the row rendered "20000 sq_ft" with an
+  // aggregate reading "All 2 preliminary development limits were checked".
+  const MALFORMED_GAP_REASONS: Array<[string, unknown]> = [
+    ["blank string", ""],
+    ["whitespace string", " "],
+    ["non-string number", 7],
+    ["non-string object", {}],
+  ];
+  it.each(MALFORMED_GAP_REASONS)("a value beside a %s gap_reason is withheld as BOTH (never a value, never complete)", async (_label, token) => {
+    const body = envelopeBody({
+      dimensions: [
+        bindingDimension({ gap_reason: token }),
+        bindingDimension({ dimension_id: "max_height_ft", label: "Maximum height", unit: "ft", binding_value: 60 }),
+      ],
+      summary: { binding: 2, gap: 0, saturating_binding: 0, total: 2 },
+    });
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(body))} />);
+    expect(await screen.findByTestId("envelope-contract-violation-max_far_floor_area")).toBeInTheDocument();
+    expect(screen.queryByTestId("envelope-value-max_far_floor_area")).toBeNull();
+    expect(screen.getByTestId("envelope-dimension-max_far_floor_area")).toHaveAttribute("data-row-kind", "contract_violation");
+    expect(screen.getByTestId("envelope-dimension-max_far_floor_area")).not.toHaveTextContent("20000");
+    expect(screen.getByTestId("envelope-contract-detail-max_far_floor_area")).toHaveTextContent(
+      "It returned both a value and a reason",
+    );
+    const aggregate = screen.getByTestId("envelope-aggregate");
+    expect(aggregate).toHaveAttribute("data-complete", "false");
+    expect(aggregate).not.toHaveTextContent("All 2 preliminary development limits were checked");
+  });
+
+  // [G3-F1 + HJ-5] ONE field sent, in a form the client cannot use: withheld, and the
+  // detail says "no usable value or reason" — never "neither" (something WAS sent).
+  const UNREADABLE_SINGLE_FIELD: Array<[string, Record<string, unknown>]> = [
+    ["a blank gap_reason alone", { binding_value: null, gap_reason: "" }],
+    ["a non-string gap_reason alone", { binding_value: null, gap_reason: 7 }],
+    ["a string binding_value alone", { binding_value: "60", gap_reason: null }],
+  ];
+  it.each(UNREADABLE_SINGLE_FIELD)("%s is withheld as unreadable, never described as 'neither'", async (_label, fields) => {
+    const body = envelopeBody({
+      dimensions: [bindingDimension(), gapDimension(fields)],
+      summary: { binding: 1, gap: 0, saturating_binding: 0, total: 2 },
+    });
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(body))} />);
+    expect(await screen.findByTestId("envelope-contract-violation-max_height_ft")).toBeInTheDocument();
+    expect(screen.queryByTestId("envelope-value-max_height_ft")).toBeNull();
+    expect(screen.queryByTestId("envelope-gap-max_height_ft")).toBeNull();
+    const detail = screen.getByTestId("envelope-contract-detail-max_height_ft");
+    expect(detail).toHaveTextContent("It returned no usable value or reason");
+    expect(detail).not.toHaveTextContent("neither");
+    expect(screen.getByTestId("envelope-dimension-max_height_ft")).not.toHaveTextContent("null");
+    expect(screen.getByTestId("envelope-aggregate")).toHaveAttribute("data-complete", "false");
+  });
+
+  it("a real binding_value of 0 is a VALUE row, not withheld (two-mutant rule: falsy is not absent)", async () => {
+    const body = envelopeBody({
+      dimensions: [
+        bindingDimension(),
+        bindingDimension({ dimension_id: "max_height_ft", label: "Maximum height", unit: "ft", binding_value: 0 }),
+      ],
+      summary: { binding: 2, gap: 0, saturating_binding: 0, total: 2 },
+    });
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(body))} />);
+    expect(await screen.findByTestId("envelope-value-max_height_ft")).toHaveTextContent("0 ft");
+    expect(screen.getByTestId("envelope-dimension-max_height_ft")).toHaveAttribute("data-row-kind", "value");
+    expect(screen.queryByTestId("envelope-contract-violation-max_height_ft")).toBeNull();
+    expect(screen.getByTestId("envelope-aggregate")).toHaveAttribute("data-complete", "true");
+  });
+
+  it("[G3-A1] a GAP ROW keeps the aggregate incomplete even when the server's summary.gap is 0", async () => {
+    const body = envelopeBody({ summary: { binding: 1, gap: 0, saturating_binding: 0, total: 2 } });
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(body))} />);
+    const aggregate = await screen.findByTestId("envelope-aggregate");
+    expect(aggregate).toHaveAttribute("data-complete", "false");
+    expect(aggregate).toHaveTextContent(
+      "Could not check 1 of 2 development limits. The service's own count listed 0 of 2 as not checked. " +
+        "This preliminary picture is incomplete.",
+    );
   });
 });
 
@@ -457,5 +588,104 @@ describe("MaxEnvelopePanel — loading / retry / superseded (AS-1, DB-050(c)/(i)
     const reason = failure.querySelector<HTMLParagraphElement>("p");
     expect(reason).not.toBeNull();
     expect(reason!.textContent?.trim().length ?? 0).toBeGreaterThan(0);
+  });
+
+  // [G3-F2(3) / G4-F2] DB-050(c) observed directly. Clearing the request aborts the
+  // in-flight fetch; the null branch does NOT bump the active token, so the `aborted`
+  // outcome reaches the panel's .then on the still-active token. Without the aborted
+  // guard it is stored, and re-setting a request then COMMITS a reasonless failure card
+  // (aborted announces "") before the effect starts loading. A MutationObserver sees
+  // that transient commit even though the loading card replaces it in the same act.
+  it("a request cleared and re-set never commits a reasonless failure card (the aborted guard)", async () => {
+    const fetchImpl = abortHonoringPendingFetch();
+    const { container, rerender } = render(<MaxEnvelopePanel request={REQUEST} fetchImpl={fetchImpl} />);
+    expect(screen.getByTestId("envelope-loading")).toBeInTheDocument();
+
+    rerender(<MaxEnvelopePanel request={null} fetchImpl={fetchImpl} />);
+    // Flush the aborted request's hops (reject -> classify `aborted` -> the panel's .then).
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(screen.getByTestId("envelope-no-context")).toBeInTheDocument();
+
+    const observer = new MutationObserver(() => {});
+    observer.observe(container, { childList: true, subtree: true });
+    rerender(<MaxEnvelopePanel request={{ ...REQUEST, label: "re-set request" }} fetchImpl={fetchImpl} />);
+    const records = observer.takeRecords();
+    observer.disconnect();
+
+    const added = records
+      .flatMap((record) => Array.from(record.addedNodes))
+      .filter((node): node is HTMLElement => node instanceof HTMLElement);
+    const failureCommitted = added.some(
+      (node) =>
+        node.getAttribute("data-testid") === "envelope-failure" ||
+        node.querySelector<HTMLElement>('[data-testid="envelope-failure"]') !== null,
+    );
+    // MUTATION: deleting `if (result.kind === "aborted") return;` reddens this.
+    expect(failureCommitted).toBe(false);
+    // The latest request's own state is what shows: loading, no failure card.
+    expect(screen.getByTestId("envelope-loading")).toBeInTheDocument();
+    expect(screen.queryByTestId("envelope-failure")).toBeNull();
+  });
+});
+
+describe("MaxEnvelopePanel — typed failure cards carry their literal reason (AS-1, DB-050(i))", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // Retry presence is pinned as a hardcoded literal AND cross-checked against
+  // maxEnvelopeOutcomeIsRecoverable, so the card and the predicate cannot drift apart.
+  const TYPED_FAILURES: Array<{
+    kind: string;
+    status: number;
+    body: Record<string, unknown>;
+    outcome: MaxEnvelopeOutcome;
+    reason: string;
+    retry: boolean;
+  }> = [
+    {
+      kind: "payload_too_large",
+      status: 413,
+      body: { state: "payload_too_large", message: "too big" },
+      outcome: { kind: "payload_too_large", message: "x", correlationId: null },
+      reason: "Preliminary development limits not loaded: the request was too large to send.",
+      retry: false,
+    },
+    {
+      kind: "invalid_request",
+      status: 422,
+      body: { state: "validation_error", field: "lot.area_sq_ft", message: "must be positive" },
+      outcome: { kind: "invalid_request", field: null, message: "x", correlationId: null },
+      reason: "Preliminary development limits not loaded: the lot context was refused.",
+      retry: false,
+    },
+  ];
+  it.each(TYPED_FAILURES)("$kind renders its typed card with its literal reason; Retry present = $retry", async (row) => {
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(row.body, row.status))} />);
+    const failure = await screen.findByTestId("envelope-failure");
+    expect(failure.querySelector<HTMLParagraphElement>("p")?.textContent).toBe(row.reason);
+    expect(maxEnvelopeOutcomeIsRecoverable(row.outcome)).toBe(row.retry);
+    expect(screen.queryByTestId("envelope-retry") !== null).toBe(row.retry);
+  });
+
+  it("client_timeout renders its typed card with its literal reason and a Retry (fake timers)", async () => {
+    vi.useFakeTimers();
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={abortHonoringPendingFetch()} />);
+    expect(screen.getByTestId("envelope-loading")).toBeInTheDocument();
+    // The client's own budget elapses: it aborts the pending fetch and classifies the
+    // rejection as client_timeout. Asserted synchronously (findBy does not advance
+    // vitest fake timers).
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(DEFAULT_TIMEOUT_MS);
+    });
+    const failure = screen.getByTestId("envelope-failure");
+    expect(failure.querySelector<HTMLParagraphElement>("p")?.textContent).toBe(
+      "Preliminary development limits not loaded: the request took too long and was cancelled.",
+    );
+    expect(maxEnvelopeOutcomeIsRecoverable({ kind: "client_timeout", timeoutMs: DEFAULT_TIMEOUT_MS })).toBe(true);
+    expect(screen.getByTestId("envelope-retry")).toBeInTheDocument();
+    expect(screen.queryByTestId("envelope-loading")).toBeNull();
   });
 });

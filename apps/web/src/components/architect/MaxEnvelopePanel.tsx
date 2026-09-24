@@ -5,12 +5,12 @@ import { OutcomeAnnouncer } from "@/components/property/OutcomeAnnouncer";
 import {
   announcementForMaxEnvelope,
   candidateIsAdoptable,
-  dimensionRowKind,
+  classifyDimensionRow,
   envelopeAggregateIsComplete,
-  envelopeHasConflictAdvisory,
-  envelopeHasContractViolation,
+  envelopeAggregateMessage,
   fetchMaxEnvelope,
   maxEnvelopeOutcomeIsRecoverable,
+  type ContractViolationShape,
   type EnvelopeDimensionView,
   type EnvelopeGapReason,
   type EnvelopeView,
@@ -31,9 +31,9 @@ import { draftFromCandidate, type ProposalDraft } from "@/lib/architect/proposal
  * heading class is "Preliminary development limits"; the emitted candidate is a
  * "Generated building option" (the only building-shaped claim, labeled a checked
  * OPTION); no per-dimension ceiling is ever presented as one permitted building;
- * and while ANY gap or conflict advisory is present the aggregate stays VISIBLY
- * INCOMPLETE — there is no unrestricted green/complete aggregate state, and the
- * copy never asserts an unqualified maximum-allowed-building claim.
+ * and while ANY gap, withheld row, or conflict advisory is present the aggregate
+ * stays VISIBLY INCOMPLETE — there is no unrestricted green/complete aggregate
+ * state, and the copy never asserts an unqualified maximum-allowed-building claim.
  *
  * One action adopts the Generated building option as the starting draft in the
  * accepted editor (through the ONE draft model, proposal-draft.ts); it is
@@ -80,11 +80,22 @@ export function gapReasonCopy(token: string | null): string {
   return isKnownGapReason(token) ? GAP_REASON_COPY[token] : token;
 }
 
+// [HJ-3/HJ-5] Plain-words copy for a withheld row: what the service actually returned.
+// "unreadable" (one field sent, in a form this page cannot use) is never called
+// "neither" — the service DID send something.
+export const CONTRACT_VIOLATION_HEADLINE =
+  "the service's answer for this limit was inconsistent or unreadable, so no value is shown.";
+export const CONTRACT_VIOLATION_RETURNED: Record<ContractViolationShape, string> = {
+  both: "both a value and a reason",
+  neither: "neither a value nor a reason",
+  unreadable: "no usable value or reason",
+};
+
 function DimensionRow({ dimension }: { dimension: EnvelopeDimensionView }) {
   // D-083-R004 XOR: a row is a clean value, an honest gap, or — if the server
-  // response carries BOTH or NEITHER of binding_value/gap_reason — a typed
-  // contract violation that NEVER renders a value (DB-050(d)).
-  const kind = dimensionRowKind(dimension);
+  // response carries BOTH or NEITHER of binding_value/gap_reason, or its one field
+  // is unusable — a typed contract violation that NEVER renders a value (DB-050(d)).
+  const row = classifyDimensionRow(dimension);
   // The ACTUAL server-provided binding-rule citations (section references), not
   // only their count — load-bearing provenance the analyst reads directly.
   const citationSections = dimension.citations
@@ -92,18 +103,18 @@ function DimensionRow({ dimension }: { dimension: EnvelopeDimensionView }) {
     .filter((section): section is string => section !== null && section !== "");
   return (
     <li
-      className={`envelope-dimension${kind === "value" ? "" : " envelope-dimension-gap"}`}
+      className={`envelope-dimension${row.kind === "value" ? "" : " envelope-dimension-gap"}`}
       data-testid={`envelope-dimension-${dimension.dimensionId}`}
-      data-gap={kind === "gap" ? "true" : "false"}
-      data-row-kind={kind}
+      data-gap={row.kind === "gap" ? "true" : "false"}
+      data-row-kind={row.kind}
     >
       <div className="envelope-dimension-head">
         <span className="envelope-dimension-label">{dimension.label}</span>
-        {kind === "value" ? (
+        {row.kind === "value" ? (
           <span className="envelope-dimension-value" data-testid={`envelope-value-${dimension.dimensionId}`}>
             {dimensionValueLabel(dimension)}
           </span>
-        ) : kind === "gap" ? (
+        ) : row.kind === "gap" ? (
           <span className="envelope-dimension-gap-reason" data-testid={`envelope-gap-${dimension.dimensionId}`}>
             Could not check — {gapReasonCopy(dimension.gapReason)}
           </span>
@@ -112,12 +123,11 @@ function DimensionRow({ dimension }: { dimension: EnvelopeDimensionView }) {
             className="envelope-dimension-contract-failure"
             data-testid={`envelope-contract-violation-${dimension.dimensionId}`}
           >
-            Could not check — this development limit&rsquo;s response broke the binding-or-gap data
-            contract and was withheld.
+            Could not check — {CONTRACT_VIOLATION_HEADLINE}
           </span>
         )}
       </div>
-      {kind === "value" ? (
+      {row.kind === "value" ? (
         <>
           <p className="envelope-dimension-provenance" data-testid={`envelope-binding-${dimension.dimensionId}`}>
             Binding rule {dimension.bindingRuleId ?? "unknown"}
@@ -135,14 +145,13 @@ function DimensionRow({ dimension }: { dimension: EnvelopeDimensionView }) {
             </p>
           ) : null}
         </>
-      ) : kind === "gap" ? (
+      ) : row.kind === "gap" ? (
         <p className="envelope-dimension-detail">{dimension.detail}</p>
       ) : (
         <p className="envelope-dimension-detail" data-testid={`envelope-contract-detail-${dimension.dimensionId}`}>
-          The engine must return exactly one of a binding value or a typed gap reason for each
-          development limit; this response returned{" "}
-          {dimension.bindingValue !== null ? "both" : "neither"}, so the value is withheld and this
-          preliminary picture stays incomplete.
+          {`The service should send either a value or the reason it could not check this limit. It returned ${
+            CONTRACT_VIOLATION_RETURNED[row.returned]
+          }, so nothing is shown for this limit and this preliminary picture stays incomplete.`}
         </p>
       )}
       {dimension.conflictAdvisory ? (
@@ -172,8 +181,6 @@ function EnvelopeBody({
   onAdopted: (message: string) => void;
 }) {
   const complete = envelopeAggregateIsComplete(envelope);
-  const hasAdvisory = envelopeHasConflictAdvisory(envelope);
-  const hasViolation = envelopeHasContractViolation(envelope);
   const adoptable = candidateIsAdoptable(envelope);
 
   const adopt = useCallback(() => {
@@ -207,15 +214,8 @@ function EnvelopeBody({
         data-complete={complete ? "true" : "false"}
         role="status"
       >
-        {complete
-          ? `All ${envelope.summary.total} preliminary development limits were checked — a rules-derived ` +
-            `estimate requiring professional review.`
-          : `Could not check ${envelope.summary.gap} of ${envelope.summary.total} development limits` +
-            (hasAdvisory ? ", and a rule conflict needs professional review" : "") +
-            (hasViolation
-              ? ", and a development limit response broke the binding-or-gap data contract and was withheld"
-              : "") +
-            `. This preliminary picture is incomplete.`}
+        {/* HJ-1/HJ-2: the SAME line the announcer speaks; screen-row counts only. */}
+        {envelopeAggregateMessage(envelope)}
       </p>
 
       <ul className="max-envelope-dimensions">
@@ -280,11 +280,12 @@ export function MaxEnvelopePanel({ request, fetchImpl, onAdopt }: MaxEnvelopePan
     setAnnouncement("");
     fetchMaxEnvelope(request, { fetchImpl, signal: controller.signal }).then((result) => {
       if (activeRef.current !== token) return; // superseded by a newer request
-      // DB-050(c): an `aborted` outcome means this request was cancelled (a
-      // supersession or an unmount), never a real result. It must NEVER be stored
-      // as the panel's state — otherwise a request cleared and then re-set would
-      // flash a reasonless failure card (aborted announces ""). The latest
-      // request's own state stays until a REAL outcome replaces it.
+      // DB-050(c): an `aborted` outcome means this request was cancelled, never a
+      // real result. The path that reaches here with the token still active is a
+      // request CLEARED to null (the null branch does not bump the token): stored,
+      // it would make a later re-set commit a reasonless failure card (aborted
+      // announces "") before loading starts. Pinned by the MutationObserver spec in
+      // max-envelope-panel.test.tsx ("cleared and re-set").
       if (result.kind === "aborted") return;
       setOutcome(result);
       setLoading(false);
