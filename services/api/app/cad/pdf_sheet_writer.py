@@ -36,24 +36,26 @@ Input hardening (M5-T091, DB-053 a-c)
 Rings and vertices must be sequences (never ``str``/bytes, sets, or mappings);
 each vertex is exactly two real numbers (``bool`` and numeric strings are
 refused - parsing text to floats is the wiring layer's job). Every caller text
-field must be a ``str`` and is screened, before anything is drawn, for the
-claim-class words the DXF writer bars (:data:`app.cad.dxf_writer.CLAIM_CLASS_WORDS`,
-imported so the two writers share one vocabulary). The number formatter
-:func:`_num` refuses a non-finite value, so ``nan``/``inf`` can never reach the
-content stream as a token.
+field must be a ``str`` and is screened, before anything is drawn, for the shared
+claim-class words (:data:`app.cad.claim_words.CLAIM_CLASS_WORDS`) through the one
+separator-collapsing screen :func:`app.cad.claim_words.contains_claim_word`, which
+all three writers use (M5-T102). Both the given value and the ASCII-sanitised form
+the sheet would print are screened, so a word hidden behind a non-ASCII separator
+that prints as ``?`` is still caught. The number formatter :func:`_num` refuses a
+non-finite value, so ``nan``/``inf`` can never reach the content stream as a token.
 """
 
 from __future__ import annotations
 
 import math
 import numbers
-import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 
-from app.cad.dxf_writer import CLAIM_CLASS_WORDS
+from app.cad.claim_words import CLAIM_CLASS_WORDS, contains_claim_word
 
 __all__ = [
+    "CLAIM_CLASS_WORDS",
     "SCALE_CANDIDATES_FT_PER_IN",
     "SitePlanInput",
     "SitePlanRefusal",
@@ -216,18 +218,16 @@ def render_site_plan_pdf(spec: SitePlanInput) -> bytes | SitePlanRefusal:
 
 # Sequences that are text/bytes, never a ring or an (x, y) pair.
 _TEXT_LIKE = (str, bytes, bytearray, memoryview)
-# Runs of anything but an ASCII letter/digit collapse to ONE space before claim
-# matching, so separator variants ("AS_OF_RIGHT", "MAXIMUM  ALLOWED") still match.
-_CLAIM_SEPARATOR_RUN = re.compile(r"[^A-Z0-9]+")
 
 
 def _screen_caller_text(spec: SitePlanInput) -> SitePlanRefusal | None:
     """Refuse non-string or claim-bearing caller text BEFORE anything is drawn.
 
-    Every caller-supplied string printed on the sheet is checked against the DXF
-    writer's claim-class words (substring, case-insensitive), both as given and in
-    the ASCII-sanitised form the sheet would print. The detail names the field
-    and the barred word, never the caller's text.
+    Every caller-supplied string printed on the sheet is screened against the
+    shared claim-class words through the one separator-collapsing screen
+    (:func:`app.cad.claim_words.contains_claim_word`), both as given and in the
+    ASCII-sanitised form the sheet would print. The detail names the field and the
+    barred word, never the caller's text.
     """
     fields = (
         ("address", spec.address),
@@ -238,19 +238,13 @@ def _screen_caller_text(spec: SitePlanInput) -> SitePlanRefusal | None:
     for name, value in fields:
         if not isinstance(value, str):
             return SitePlanRefusal("invalid_text", f"{name} must be a string")
-        keys = (_claim_key(value), _claim_key(_ascii_sanitise(value)))
-        for word in CLAIM_CLASS_WORDS:
-            barred = _claim_key(word)
-            if any(barred in key for key in keys):
-                return SitePlanRefusal(
-                    "claim_class_word",
-                    f"{name} contains the barred claim-class word {word!r}",
-                )
+        barred = contains_claim_word(value, _ascii_sanitise(value))
+        if barred is not None:
+            return SitePlanRefusal(
+                "claim_class_word",
+                f"{name} contains the barred claim-class word {barred!r}",
+            )
     return None
-
-
-def _claim_key(text: str) -> str:
-    return _CLAIM_SEPARATOR_RUN.sub(" ", text.upper())
 
 
 def _is_sequence(value: object) -> bool:

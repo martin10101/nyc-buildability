@@ -33,7 +33,7 @@ from pathlib import Path
 
 import pytest
 
-from app.cad import dxf_writer
+from app.cad import claim_words, dxf_writer
 from app.cad import pdf_sheet_writer as writer
 from app.cad.pdf_sheet_writer import SitePlanInput, render_site_plan_pdf
 
@@ -456,8 +456,30 @@ def build_calls(monkeypatch):
 
 
 def test_claim_word_set_is_the_dxf_writers_pinned_set():
+    # M5-T102: one canonical list lives in app.cad.claim_words; the PDF and DXF
+    # writers both alias it, so all three share one identity-equal vocabulary.
+    assert writer.CLAIM_CLASS_WORDS is claim_words.CLAIM_CLASS_WORDS
+    assert dxf_writer.CLAIM_CLASS_WORDS is claim_words.CLAIM_CLASS_WORDS
     assert writer.CLAIM_CLASS_WORDS is dxf_writer.CLAIM_CLASS_WORDS  # one vocabulary
     assert tuple(writer.CLAIM_CLASS_WORDS) == _PINNED_CLAIM_WORDS
+    # the PDF writer screens via the shared function, not a local matcher.
+    assert writer.contains_claim_word is claim_words.contains_claim_word
+    assert not hasattr(writer, "_claim_key")
+
+
+def test_as2_removing_the_title_block_screen_lets_claim_word_through(monkeypatch, build_calls):
+    """AS-2 mutation (in-process, consuming namespace): with the shared screen
+    neutered in the pdf_sheet_writer namespace, a claim word in the title-block
+    address is NO LONGER refused and reaches the sheet - so the title-block screen
+    is genuinely load-bearing (DB-053 (c))."""
+    result = render_site_plan_pdf(_spec(address="12 maximum allowed st"))
+    assert isinstance(result, writer.SitePlanRefusal)  # real screen refuses it
+    assert result.reject_code == "claim_class_word"
+    assert build_calls == []  # nothing drawn on the refusal
+
+    monkeypatch.setattr(writer, "contains_claim_word", lambda *texts: None)
+    mutated = render_site_plan_pdf(_spec(address="12 maximum allowed st"))
+    assert isinstance(mutated, bytes)  # the claim word now slips through -> renders
 
 
 @pytest.mark.parametrize("word", _PINNED_CLAIM_WORDS)

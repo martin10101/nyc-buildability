@@ -545,18 +545,37 @@ def test_as4_claim_class_words_are_the_expected_set():
 # DWG-library / json / any-other import reddens it - DB-057 f).
 # --------------------------------------------------------------------------- #
 
-#: The ONLY modules dxf_writer.py may import (the module has no self-imports).
-IMPORT_ALLOWLIST = frozenset({"__future__", "math", "collections.abc", "dataclasses"})
+#: The ONLY modules dxf_writer.py may import. app.cad.claim_words is the shared
+#: claim-word module (M5-T102); everything else is stdlib.
+IMPORT_ALLOWLIST = frozenset(
+    {"__future__", "math", "collections.abc", "dataclasses", "app.cad.claim_words"}
+)
 
 
 def _imported_modules(source: str) -> set[str]:
-    """Every module named by an ``import`` / ``from ... import`` in ``source``."""
+    """Every module named by an ``import`` / ``from ... import`` in ``source``, PLUS
+    the dynamic-import escape hatches the plain scan used to miss (M5-T096 G4 A1 /
+    DB-067 (a)): a ``__import__("mod")`` builtin call and any ``importlib``
+    reference. A ``__import__`` with a non-constant argument flags the call itself
+    (``"__import__"``), which is outside the allowlist and therefore reddens."""
     modules: set[str] = set()
     for node in ast.walk(ast.parse(source)):
         if isinstance(node, ast.Import):
             modules.update(alias.name for alias in node.names)
         elif isinstance(node, ast.ImportFrom) and node.module is not None and node.level == 0:
             modules.add(node.module)
+        elif (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "__import__"
+        ):
+            arg = node.args[0] if node.args else None
+            if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                modules.add(arg.value)  # __import__("json") -> "json"
+            else:
+                modules.add("__import__")  # dynamic module name: flag the call itself
+        elif isinstance(node, ast.Name) and node.id == "importlib":
+            modules.add("importlib")  # importlib.import_module(...) and bare refs
     return modules
 
 
@@ -576,3 +595,60 @@ def test_as4_allowlist_is_load_bearing():
     (mirrors the AS-4 mutation 'adding import json reddens it')."""
     mutated = "import json\n" + Path(d.__file__).read_text(encoding="utf-8")
     assert _imported_modules(mutated) - IMPORT_ALLOWLIST == {"json"}
+
+
+def test_as5_allowlist_flags_dunder_import_and_importlib():
+    """AS-5 / M5-T096 G4 A1 (DB-067 (a)): the import-allowlist scan also flags the
+    __import__ builtin and any importlib reference - the dynamic-import bypass the
+    plain Import/ImportFrom scan was blind to.
+
+    Mutations, each on the real module source:
+    * a constant ``__import__('json')`` reddens (its module name 'json' is flagged);
+    * a non-constant ``__import__(name)`` reddens (the call itself is flagged);
+    * an ``importlib.import_module(...)`` reference reddens.
+    The unmutated module trips none of them (proven by test_as4_module_import_allowlist).
+    """
+    src = Path(d.__file__).read_text(encoding="utf-8")
+    assert _imported_modules("x = __import__('json')\n" + src) - IMPORT_ALLOWLIST == {"json"}
+    assert "__import__" in _imported_modules("x = __import__(name)\n" + src) - IMPORT_ALLOWLIST
+    assert "importlib" in _imported_modules(
+        "importlib.import_module('json')\n" + src
+    ) - IMPORT_ALLOWLIST
+
+
+# --------------------------------------------------------------------------- #
+# AS-2 (M5-T102): the shared separator-collapsing screen bars separator variants
+# in DXF-emitted strings; the former raw substring match let these through.
+# --------------------------------------------------------------------------- #
+
+
+@pytest.mark.parametrize(
+    "variant", ["As_of_right", "Maximum_allowed", "MAXIMUM  ALLOWED", "as-of-right"]
+)
+def test_as2_dxf_separator_variant_in_annotation_refused(monkeypatch, variant):
+    """A separator-variant claim word in a DXF-emitted string is a typed refusal via
+    the shared screen (AS-2 'refused ... as DXF caller strings')."""
+    monkeypatch.setattr(d, "GENERATOR_NOTE", f"{variant} building")
+    with pytest.raises(DxfValidationError) as exc:
+        build_site_plan_document(LOT, BUILDING, FLOOR_HEIGHTS)
+    assert exc.value.code == "claim_class_word"
+
+
+def test_as2_dxf_raw_substring_mutant_emits_separator_variant(monkeypatch):
+    """AS-2 mutation (in-process, consuming namespace): reverting the shared screen
+    to the former raw upper-case substring match lets the separator variant reach
+    the drawing instead of being refused - so the shared screen is load-bearing."""
+    monkeypatch.setattr(d, "GENERATOR_NOTE", "As_of_right building")
+    with pytest.raises(DxfValidationError):  # real screen refuses it
+        build_site_plan_document(LOT, BUILDING, FLOOR_HEIGHTS)
+
+    def _raw(*texts):  # the pre-fix raw substring behaviour
+        blob = " ".join(t.upper() for t in texts)
+        for word in CLAIM_CLASS_WORDS:
+            if word in blob:
+                return word
+        return None
+
+    monkeypatch.setattr(d, "contains_claim_word", _raw)
+    text = render_site_plan_dxf(LOT, BUILDING, FLOOR_HEIGHTS)
+    assert "AS_OF_RIGHT BUILDING" in text.upper()  # the variant now slips through

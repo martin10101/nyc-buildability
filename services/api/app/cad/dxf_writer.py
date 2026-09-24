@@ -54,6 +54,12 @@ import math
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 
+# CLAIM_CLASS_WORDS is re-exported as an identity-equal compatibility alias
+# (pdf_sheet_writer and the tests import it from this module); the explicit
+# ``as`` form marks the intentional re-export.
+from app.cad.claim_words import CLAIM_CLASS_WORDS as CLAIM_CLASS_WORDS
+from app.cad.claim_words import contains_claim_word
+
 # --------------------------------------------------------------------------- #
 # Format constants - Autodesk DXF Reference. Each citation is [recalled - verify]
 # (authored offline); the G1 data-contract-verifier confirms against the live
@@ -167,22 +173,11 @@ PROPOSED_LABEL = "PROPOSED - NOT A CITY RECORD"
 CRS_UNITS_NOTE = "COORDINATES: EPSG:2263 NAD83 NY LONG ISLAND - US SURVEY FEET"
 GENERATOR_NOTE = f"GENERATED BUILDING OPTION - {GENERATOR_ID} V{GENERATOR_VERSION}"
 
-#: Claim-class words forbidden in ANY emitted string (checked at build time and
-#: grepped in the tests). Deliberately excludes the honest negation
-#: "NOT A CITY RECORD" - only affirmative legal/approval claims are barred.
-CLAIM_CLASS_WORDS: tuple[str, ...] = (
-    "PERMITTED",
-    "APPROVED",
-    "CERTIFIED",
-    "COMPLIANT",
-    "LAWFUL",
-    "LEGAL",
-    "ENTITLEMENT",
-    "GUARANTEED",
-    "MAXIMUM ALLOWED",
-    "AS OF RIGHT",
-    "AS-OF-RIGHT",
-)
+# Claim-class words forbidden in ANY emitted string are the shared canonical list
+# in app.cad.claim_words (D-083; M5-T102). ``CLAIM_CLASS_WORDS`` is imported above
+# and re-exported here as an identity-equal compatibility alias (pdf_sheet_writer
+# and the tests import it from this module); the separator-collapsing screen is
+# app.cad.claim_words.contains_claim_word.
 
 # --------------------------------------------------------------------------- #
 # Bounds and caps (fail-closed).
@@ -747,13 +742,14 @@ def _normalize_ring(raw: Sequence[Sequence[float]], *, field: str) -> tuple[Coor
 
 
 def _assert_no_claim_words(text: str) -> None:
-    upper = text.upper()
-    for word in CLAIM_CLASS_WORDS:
-        if word in upper:
-            raise DxfValidationError(
-                "claim_class_word", f"{text!r} contains barred word {word!r}",
-                field=LAYER_ANNOTATION,
-            )
+    # Separator-insensitive shared screen (app.cad.claim_words): "As_of_right" /
+    # "MAXIMUM  ALLOWED" are caught here just as the PDF/GLB writers catch them.
+    barred = contains_claim_word(text)
+    if barred is not None:
+        raise DxfValidationError(
+            "claim_class_word", f"{text!r} contains barred word {barred!r}",
+            field=LAYER_ANNOTATION,
+        )
 
 
 def _build_annotation(

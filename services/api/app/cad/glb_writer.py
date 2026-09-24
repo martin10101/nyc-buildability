@@ -65,6 +65,8 @@ import struct
 from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 
+from app.cad.claim_words import contains_claim_word
+
 __all__ = [
     "AXIS_MAPPING",
     "GLB_MEDIA_TYPE",
@@ -141,21 +143,11 @@ AXIS_MAPPING: dict[str, str] = {
 PROPOSED_LABEL = "Proposed - not a city record"
 GENERATOR = f"NYC Buildability GLB writer v1 (M5-T092) - {PROPOSED_LABEL}"
 
-#: Claim-class words barred from caller-supplied names (upper-cased substring
-#: match). Only affirmative legal/approval claims are barred.
-CLAIM_CLASS_WORDS: tuple[str, ...] = (
-    "PERMITTED",
-    "APPROVED",
-    "CERTIFIED",
-    "COMPLIANT",
-    "LAWFUL",
-    "LEGAL",
-    "ENTITLEMENT",
-    "GUARANTEED",
-    "MAXIMUM ALLOWED",
-    "AS OF RIGHT",
-    "AS-OF-RIGHT",
-)
+# Claim-class words barred from caller-supplied names are the shared canonical list
+# in app.cad.claim_words (D-083; M5-T102). The separator-collapsing screen
+# contains_claim_word (imported above) catches separator variants such as
+# "As_of_right" / "Maximum_allowed" that the former raw substring match let through
+# (DB-059 (b), (c)).
 
 # --------------------------------------------------------------------------- #
 # Bounds and caps (fail-closed).
@@ -358,12 +350,11 @@ def _check_name(name: object, field: str, seen: set[str]) -> str:
             f"{name!r} must be 1..{MESH_NAME_MAX} of [A-Za-z0-9 _-.], no edge spaces",
             field=field,
         )
-    upper = name.upper()
-    for word in CLAIM_CLASS_WORDS:
-        if word in upper:
-            raise GlbValidationError(
-                "claim_class_word", f"{name!r} contains barred word {word!r}", field=field
-            )
+    barred = contains_claim_word(name)
+    if barred is not None:
+        raise GlbValidationError(
+            "claim_class_word", f"{name!r} contains barred word {barred!r}", field=field
+        )
     if name in seen:
         raise GlbValidationError("duplicate_mesh_name", f"{name!r} is repeated", field=field)
     seen.add(name)

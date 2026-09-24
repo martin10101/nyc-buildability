@@ -20,7 +20,9 @@ from pathlib import Path
 
 import pytest
 
+from app.cad import claim_words
 from app.cad import glb_writer as g
+from app.cad.claim_words import CLAIM_CLASS_WORDS
 from app.cad.glb_writer import (
     PROPOSED_LABEL,
     REFUSAL_CODES,
@@ -486,23 +488,97 @@ def test_as4_error_codes_are_registered() -> None:
 
 
 # --------------------------------------------------------------------------- #
-# AS-5 scope: stdlib only, not wired.
+# AS-2 / AS-3 (M5-T102): the shared separator-collapsing claim screen bars
+# separator variants on caller mesh/node NAMES (DB-059 (b)), with a raw-substring
+# mutant proving the screen is load-bearing and full canonical-word coverage.
+# --------------------------------------------------------------------------- #
+
+# The exact separator variants the G5 review (M5-T092-G5) confirmed the former raw
+# substring match ACCEPTED and that this shared screen must now refuse.
+_SEPARATOR_NAME_VARIANTS = [
+    "As_of_right tower",
+    "Maximum_allowed massing",
+    "MAXIMUM  ALLOWED block",
+    "as-of-right unit",
+    "As.of.right lot",
+    "Maximum.allowed env",
+]
+
+
+@pytest.mark.parametrize("name", _SEPARATOR_NAME_VARIANTS)
+def test_as2_separator_variant_names_refused(name: str) -> None:
+    """A claim word hidden behind a separator variant is refused as a mesh name."""
+    with pytest.raises(GlbValidationError) as info:
+        write_glb([GlbMesh(name, SLAB_POSITIONS, SLAB_INDICES)], FRAME)
+    assert info.value.code == "claim_class_word"
+
+
+def test_as2_raw_substring_mutant_lets_separator_variant_through(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """AS-2 mutation (in-process, consuming namespace): reverting the GLB writer to
+    the former raw upper-case substring match accepts a separator variant the
+    shared screen refuses - so the shared screen is genuinely load-bearing."""
+    name = "As_of_right tower"
+    with pytest.raises(GlbValidationError) as info:  # real screen refuses it
+        write_glb([GlbMesh(name, SLAB_POSITIONS, SLAB_INDICES)], FRAME)
+    assert info.value.code == "claim_class_word"
+
+    def _raw(*texts: str) -> str | None:  # the pre-fix behaviour (glb_writer.py:361)
+        blob = " ".join(t.upper() for t in texts)
+        for word in claim_words.CLAIM_CLASS_WORDS:
+            if word in blob:
+                return word
+        return None
+
+    monkeypatch.setattr(g, "contains_claim_word", _raw)
+    data = write_glb([GlbMesh(name, SLAB_POSITIONS, SLAB_INDICES)], FRAME)
+    assert isinstance(data, bytes)  # separator variant now slips through -> renders
+
+
+@pytest.mark.parametrize("word", CLAIM_CLASS_WORDS)
+def test_as3_every_canonical_word_refused_as_name(word: str) -> None:
+    """Full coverage: every word in the shared canonical tuple is barred as a GLB
+    mesh name (the former GLB copy tested only 2 of the 11 words - DB-059 (c))."""
+    name = f"{word.title()} block"  # e.g. "Maximum Allowed block", "As-Of-Right block"
+    with pytest.raises(GlbValidationError) as info:
+        write_glb([GlbMesh(name, SLAB_POSITIONS, SLAB_INDICES)], FRAME)
+    assert info.value.code == "claim_class_word"
+
+
+def test_as3_glb_uses_the_shared_word_list_no_local_copy() -> None:
+    """The GLB writer no longer keeps its own CLAIM_CLASS_WORDS literal; the screen
+    it calls is the shared one (drift guard for DB-059 (c))."""
+    assert not hasattr(g, "CLAIM_CLASS_WORDS")
+    assert g.contains_claim_word is claim_words.contains_claim_word
+
+
+# --------------------------------------------------------------------------- #
+# AS-5 scope: stdlib + the shared claim-word module, not wired.
 # --------------------------------------------------------------------------- #
 
 API_ROOT = Path(__file__).resolve().parents[2]
 MODULE_PATH = API_ROOT / "app" / "cad" / "glb_writer.py"
 
 
-def test_as5_stdlib_imports_only() -> None:
+def test_as5_imports_are_stdlib_plus_shared_claim_words() -> None:
+    """Stdlib only PLUS the one shared claim-word module (M5-T102): no new
+    third-party dependency enters the GLB writer, and the single app import is the
+    shared claim-word module (not a sibling writer or a route)."""
     tree = ast.parse(MODULE_PATH.read_text(encoding="utf-8"))
-    imported = set()
+    roots: set[str] = set()
+    full: set[str] = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
-            imported.update(alias.name.split(".")[0] for alias in node.names)
-        elif isinstance(node, ast.ImportFrom):
-            imported.add((node.module or "").split(".")[0])
-    assert imported == {"__future__", "collections", "dataclasses", "json", "math", "numbers",
-                        "struct"}
+            for alias in node.names:
+                roots.add(alias.name.split(".")[0])
+                full.add(alias.name)
+        elif isinstance(node, ast.ImportFrom) and node.level == 0:
+            roots.add((node.module or "").split(".")[0])
+            full.add(node.module or "")
+    assert roots == {"__future__", "app", "collections", "dataclasses", "json", "math",
+                     "numbers", "struct"}
+    assert {m for m in full if m.startswith("app")} == {"app.cad.claim_words"}
 
 
 def test_as5_not_wired_into_the_app() -> None:
