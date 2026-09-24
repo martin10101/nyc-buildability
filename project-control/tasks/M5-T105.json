@@ -1,0 +1,104 @@
+{
+  "task_id": "M5-T105",
+  "title": "D-087 PKT-B1: PDF sheet writer wiring-hardening (DB-059 a, d; DB-053 a, b, d re-checked) - bounded caller text, an honest never-raise contract, unbalanced-paren escaping proof, the y-only non-finite probe; valid output byte-identical",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Harden services/api/app/cad/pdf_sheet_writer.py before any export route feeds it caller text. (DB-059 a) Bound EVERY caller-supplied text field (address, bbl, generator_version and any other title-block or label string) with a declared maximum length and a typed SitePlanRefusal naming the field, checked before any rendering (no partial output). (DB-053 a, b) Re-check against the CURRENT file (M5-T091 hardened some of this; record what is already closed): a malformed ring vertex (non-numeric, wrong arity, None, nested) must yield a typed refusal through the public API and never raise; the non-finite number path must match the module's documented contract (typed refusal via the public API, docstrings honest - today a never-raises docstring sits on a function that raises internally). (DB-053 d) Prove an address with UNBALANCED parentheses and backslashes is escaped so every PDF text string stays balanced and the file stays well-formed. (DB-059 d) Add a y-only non-finite probe. Valid output stays byte-identical: the PDF golden and the committed owner sample docs/samples/cad/example-site-plan.pdf (pinned by test_cad_owner_samples.py, READ-ONLY here) do not change.",
+  "business_reason": "The accepted plan makes this the last writer-side step before the export service (PKT-D) passes caller text to the PDF site-plan writer; unbounded or mis-escaped caller text would reach downloadable files.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "PLAN SOURCE (binding): the ACCEPTED M5-T099 plan docs/design/d087-export-and-3d-viewer-plan.md (PKT-B1 rows in sections 5 and 6; section 2 says the writer-side DB-059 (a) fix lands HERE and the export-service cap is defense in depth) names this packet; its riders are the scope. Where the plan and a backlog row differ, the backlog row's exact wording wins and the difference goes in the report.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-059 (a), (d) and DB-053 (a), (b), (d) (exact wording) plus DB-072 (context: the shared claim-word screen landed in M5-T102 - do not re-implement it); project-control/reports/M5-T085-G3.md / -G4.md / -G5.md (the original PDF-writer findings), M5-T091-G3.md / -G4.md / -G5.md and M5-T091-DCV.md (what the first hardening closed), M5-T099-G5.md (the _num raises vs never-raises docstring observation). ISO 32000-1 section 7.3.4.2 (literal strings: escaping of ( ) and \\) is the escaping authority - cite it; mark anything recalled as '[recalled - verify]'.",
+    "BYTE-IDENTITY (binding): the PDF golden in test_pdf_sheet_writer.py and the committed sample PDF stay byte-identical; test_cad_owner_samples.py is a READ-ONLY consumer that must pass unchanged. Only refusal behaviour for over-long, malformed or non-finite input changes.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 832 files / 17898 nodes / 7680 edges): pdf_sheet_writer.py is imported only by tests/cad/test_pdf_sheet_writer.py, tests/cad/test_cad_owner_samples.py and tests/cad/test_claim_words.py:162 (unwired); it imports app.cad.claim_words (M5-T102, READ-ONLY here) and dxf_writer's CLAIM_CLASS_WORDS alias. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/cad/pdf_sheet_writer.py - caller-text bounds, honest never-raise contract, escaping proof",
+    "services/api/tests/cad/test_pdf_sheet_writer.py - bound, malformed-vertex, non-finite (x and y) and escaping tests",
+    "project-control/reports/M5-T105-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T102"
+  ],
+  "allowed_paths": [
+    "services/api/app/cad/pdf_sheet_writer.py",
+    "services/api/tests/cad/test_pdf_sheet_writer.py",
+    "project-control/reports/M5-T105-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/cad/claim_words.py",
+    "services/api/app/cad/dxf_writer.py",
+    "services/api/app/cad/glb_writer.py",
+    "services/api/app/cad/__init__.py",
+    "services/api/tests/cad/test_cad_owner_samples.py",
+    "services/api/tests/cad/test_dxf_writer.py",
+    "services/api/tests/cad/test_glb_writer.py",
+    "services/api/tests/cad/test_claim_words.py",
+    "docs/samples/",
+    "services/api/app/drawings/",
+    "services/api/app/documents/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (bounded caller text): every caller text field has a declared cap; over-cap refuses typed naming the field before any rendering; exactly-at-cap passes; removing the check reddens (one mutation per field or a shared check proven to cover every field).",
+    "AS-2 (never-raise honesty): malformed vertices (non-numeric, wrong arity, None, nested) and non-finite x AND y-only coordinates each yield a typed SitePlanRefusal through the public API and never an exception; the docstrings state the real contract; mutation - re-introducing the raise path reddens.",
+    "AS-3 (escaping): addresses with unbalanced '(' / ')' and backslashes render escaped per ISO 32000-1 7.3.4.2; every literal string in the content stream stays balanced and the file stays well-formed (proved by a parser, not by eyeballing); mutation - dropping one escape reddens.",
+    "AS-4 (byte identity + scope): the PDF golden and the committed sample PDF are unchanged (test_cad_owner_samples.py passes unchanged); zero new dependencies; unwired; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T22:44:39.437306+00:00",
+  "updated_at": "2026-09-24T22:44:41.122413+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R005",
+        "D-087-R006",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T22:44:39.437306+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/cad -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
