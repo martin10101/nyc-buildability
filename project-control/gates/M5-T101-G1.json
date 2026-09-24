@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T101",
+  "gate_id": "G1",
+  "reviewer": "data-contract-verifier",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T101-G1.md",
+  "reviewed_at": "2026-09-24T22:36:14.703892+00:00",
+  "content_manifest_sha256": "d906812daea1f525f2c96c01c55338cc444583b9afd3b7022befbb7f4fc0fdd0",
+  "reviewed_sha": "cde8fc0ef10106f319a52dbdd204356a84a5ba0a",
+  "updated_at": "2026-09-24T22:36:20.376493+00:00"
+}
