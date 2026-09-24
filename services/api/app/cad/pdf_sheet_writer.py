@@ -30,12 +30,28 @@ byte-identical output (a golden sha256). Every refusal is a returned
 IEEE-deterministic float operations (``+ - * /`` and ``math.sqrt``) feed the
 emitted numbers, and every number is rounded before formatting, so the golden
 bytes are stable across platforms.
+
+Input hardening (M5-T091, DB-053 a-c)
+-------------------------------------
+Rings and vertices must be sequences (never ``str``/bytes, sets, or mappings);
+each vertex is exactly two real numbers (``bool`` and numeric strings are
+refused - parsing text to floats is the wiring layer's job). Every caller text
+field must be a ``str`` and is screened, before anything is drawn, for the
+claim-class words the DXF writer bars (:data:`app.cad.dxf_writer.CLAIM_CLASS_WORDS`,
+imported so the two writers share one vocabulary). The number formatter
+:func:`_num` refuses a non-finite value, so ``nan``/``inf`` can never reach the
+content stream as a token.
 """
 
 from __future__ import annotations
 
 import math
+import numbers
+import re
+from collections.abc import Sequence
 from dataclasses import dataclass
+
+from app.cad.dxf_writer import CLAIM_CLASS_WORDS
 
 __all__ = [
     "SCALE_CANDIDATES_FT_PER_IN",
@@ -119,6 +135,14 @@ class SitePlanRefusal:
         return {"reject_code": self.reject_code, "detail": self.detail}
 
 
+class _RenderRefused(Exception):
+    """Internal carrier for a refusal found mid-render; never escapes the public API."""
+
+    def __init__(self, refusal: SitePlanRefusal) -> None:
+        super().__init__(refusal.reject_code)
+        self.refusal = refusal
+
+
 def choose_scale(width_ft: float, height_ft: float) -> float | None:
     """Return the feet-per-inch of the tightest standard scale that fits the sheet.
 
@@ -135,6 +159,11 @@ def choose_scale(width_ft: float, height_ft: float) -> float | None:
 
 def render_site_plan_pdf(spec: SitePlanInput) -> bytes | SitePlanRefusal:
     """Render ``spec`` to deterministic PDF 1.4 bytes, or return a typed refusal."""
+    if not isinstance(spec, SitePlanInput):
+        return SitePlanRefusal("invalid_input", "spec must be a SitePlanInput")
+    text_refusal = _screen_caller_text(spec)
+    if text_refusal is not None:
+        return text_refusal
     lot = _validate_ring(spec.lot_ring, "lot")
     if isinstance(lot, SitePlanRefusal):
         return lot
@@ -176,39 +205,78 @@ def render_site_plan_pdf(spec: SitePlanInput) -> bytes | SitePlanRefusal:
         # EPSG:2263 +Y (grid north) maps to +device-Y (up on the page): no flip.
         return (origin_x + (x - min_x) * pt_per_ft, origin_y + (y - min_y) * pt_per_ft)
 
-    content = _build_content(spec, lot, building, feet_per_inch, to_device)
-    return _assemble_pdf(content)
+    try:
+        content = _build_content(spec, lot, building, feet_per_inch, to_device)
+        return _assemble_pdf(content)
+    except _RenderRefused as refused:
+        return refused.refusal
 
 
 # -- validation -----------------------------------------------------------------
 
+# Sequences that are text/bytes, never a ring or an (x, y) pair.
+_TEXT_LIKE = (str, bytes, bytearray, memoryview)
+# Runs of anything but an ASCII letter/digit collapse to ONE space before claim
+# matching, so separator variants ("AS_OF_RIGHT", "MAXIMUM  ALLOWED") still match.
+_CLAIM_SEPARATOR_RUN = re.compile(r"[^A-Z0-9]+")
+
+
+def _screen_caller_text(spec: SitePlanInput) -> SitePlanRefusal | None:
+    """Refuse non-string or claim-bearing caller text BEFORE anything is drawn.
+
+    Every caller-supplied string printed on the sheet is checked against the DXF
+    writer's claim-class words (substring, case-insensitive), both as given and in
+    the ASCII-sanitised form the sheet would print. The detail names the field
+    and the barred word, never the caller's text.
+    """
+    fields = (
+        ("address", spec.address),
+        ("bbl", spec.bbl),
+        ("generated_at", spec.generated_at),
+        ("generator_version", spec.generator_version),
+    )
+    for name, value in fields:
+        if not isinstance(value, str):
+            return SitePlanRefusal("invalid_text", f"{name} must be a string")
+        keys = (_claim_key(value), _claim_key(_ascii_sanitise(value)))
+        for word in CLAIM_CLASS_WORDS:
+            barred = _claim_key(word)
+            if any(barred in key for key in keys):
+                return SitePlanRefusal(
+                    "claim_class_word",
+                    f"{name} contains the barred claim-class word {word!r}",
+                )
+    return None
+
+
+def _claim_key(text: str) -> str:
+    return _CLAIM_SEPARATOR_RUN.sub(" ", text.upper())
+
+
+def _is_sequence(value: object) -> bool:
+    return isinstance(value, Sequence) and not isinstance(value, _TEXT_LIKE)
+
 
 def _validate_ring(
-    ring: tuple[tuple[float, float], ...], label: str
+    ring: object, label: str
 ) -> tuple[tuple[float, float], ...] | SitePlanRefusal:
-    """Coerce, bound, and de-close one ring; refuse anything non-drawable."""
-    points = tuple(ring)
-    if len(points) > _MAX_RING_VERTICES:
+    """Coerce, bound, and de-close one ring; refuse anything non-drawable (never raises)."""
+    if not _is_sequence(ring):
+        return SitePlanRefusal(
+            "invalid_ring", f"{label} ring is not a sequence of (x, y) pairs"
+        )
+    if len(ring) > _MAX_RING_VERTICES:
         return SitePlanRefusal(
             "oversize_input",
-            f"{label} ring has {len(points)} vertices, above the"
+            f"{label} ring has {len(ring)} vertices, above the"
             f" {_MAX_RING_VERTICES} bound",
         )
     cleaned: list[tuple[float, float]] = []
-    for vertex in points:
-        if len(vertex) != 2:
-            return SitePlanRefusal("invalid_ring", f"{label} ring vertex is not a pair")
-        x, y = float(vertex[0]), float(vertex[1])
-        if not (math.isfinite(x) and math.isfinite(y)):
-            return SitePlanRefusal(
-                "non_finite_coordinate", f"{label} ring has a non-finite coordinate"
-            )
-        if abs(x) > _MAX_COORD_ABS or abs(y) > _MAX_COORD_ABS:
-            return SitePlanRefusal(
-                "oversize_input",
-                f"{label} ring coordinate exceeds +/-{_MAX_COORD_ABS:.0f} ft",
-            )
-        cleaned.append((x, y))
+    for vertex in ring:
+        point = _coerce_vertex(vertex, label)
+        if isinstance(point, SitePlanRefusal):
+            return point
+        cleaned.append(point)
     # Drop an explicit closing duplicate of the first vertex; the writer closes rings.
     if len(cleaned) >= 2 and cleaned[0] == cleaned[-1]:
         cleaned = cleaned[:-1]
@@ -218,6 +286,33 @@ def _validate_ring(
             f"{label} ring needs at least 3 distinct vertices, found {len(cleaned)}",
         )
     return tuple(cleaned)
+
+
+def _coerce_vertex(vertex: object, label: str) -> tuple[float, float] | SitePlanRefusal:
+    """One vertex -> a finite, bounded (x, y) float pair, or a typed refusal."""
+    if not _is_sequence(vertex) or len(vertex) != 2:
+        return SitePlanRefusal("invalid_ring", f"{label} ring vertex is not a pair")
+    for value in vertex:
+        if isinstance(value, bool) or not isinstance(value, numbers.Real):
+            return SitePlanRefusal(
+                "non_numeric_coordinate", f"{label} ring has a non-numeric coordinate"
+            )
+    try:
+        x, y = float(vertex[0]), float(vertex[1])
+    except OverflowError:  # an integer (or fraction) beyond the float range
+        return SitePlanRefusal(
+            "oversize_input", f"{label} ring coordinate exceeds +/-{_MAX_COORD_ABS:.0f} ft"
+        )
+    if not (math.isfinite(x) and math.isfinite(y)):
+        return SitePlanRefusal(
+            "non_finite_coordinate", f"{label} ring has a non-finite coordinate"
+        )
+    if abs(x) > _MAX_COORD_ABS or abs(y) > _MAX_COORD_ABS:
+        return SitePlanRefusal(
+            "oversize_input",
+            f"{label} ring coordinate exceeds +/-{_MAX_COORD_ABS:.0f} ft",
+        )
+    return (x, y)
 
 
 # -- content-stream construction ------------------------------------------------
@@ -336,9 +431,7 @@ def _escape_pdf_text(text: str) -> str:
     the content stream.
     """
     out: list[str] = []
-    for ch in text:
-        code = ord(ch)
-        safe = ch if 0x20 <= code <= 0x7E else "?"
+    for safe in _ascii_sanitise(text):
         if safe in ("(", ")", "\\"):
             out.append("\\" + safe)
         else:
@@ -346,8 +439,21 @@ def _escape_pdf_text(text: str) -> str:
     return "".join(out)
 
 
+def _ascii_sanitise(text: str) -> str:
+    """Map every character outside printable ASCII (0x20-0x7E) to ``?``."""
+    return "".join(ch if 0x20 <= ord(ch) <= 0x7E else "?" for ch in text)
+
+
 def _num(value: float) -> str:
-    """Format a coordinate/size deterministically: round to 3 dp, trim, no ``-0``."""
+    """Format a coordinate/size deterministically: round to 3 dp, trim, no ``-0``.
+
+    A non-finite value is a typed refusal (carried to the public boundary), never
+    a ``nan``/``inf`` token in the content stream.
+    """
+    if not math.isfinite(value):
+        raise _RenderRefused(
+            SitePlanRefusal("non_finite_value", "a computed drawing number is not finite")
+        )
     rounded = round(value, 3)
     if rounded == 0.0:
         rounded = 0.0  # collapse -0.0

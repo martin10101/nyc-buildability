@@ -7,6 +7,14 @@ scale, printed units/CRS/grid-north), AS-4 fail-closed refusals + the single
 string escaper (with an in-process escaper-bypass mutant), and AS-5 honesty +
 scope (the PROPOSED / professional-review stamps, never 'true north').
 
+M5-T091 hardening (DB-053 a-d, sections at the end): H-1 malformed rings/vertices
+and any hostile field value are typed refusals, never exceptions; H-2 the number
+formatter refuses non-finite values; H-3 caller text is screened for the DXF
+writer's claim-class words (set pinned by hardcoded literals) with nothing
+emitted; H-4 unbalanced-paren text round-trips exactly through the writer and
+the strict reader, with in-process paren-skipping escaper mutants proving the
+fixtures have teeth.
+
 The strict reader lives in ``app.documents.extraction``. Importing that package
 normally pulls in pipeline modules that use Python 3.12 syntax; CI runs 3.12 and
 the plain import works. Under a 3.11 developer sandbox that import raises
@@ -20,10 +28,12 @@ import hashlib
 import importlib.util
 import sys
 import types
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
 
+from app.cad import dxf_writer
 from app.cad import pdf_sheet_writer as writer
 from app.cad.pdf_sheet_writer import SitePlanInput, render_site_plan_pdf
 
@@ -291,3 +301,257 @@ def test_never_claims_true_north():
     joined = "\n".join(run.text for run in page.text_runs).lower()
     assert "true north" not in joined
     assert "grid n (epsg:2263)" in joined.lower()
+
+
+# -- M5-T091 H-1 (DB-053 a): malformed input is a typed refusal, never a raise ----
+
+_LOT = ((0.0, 0.0), (30.0, 0.0), (30.0, 100.0), (0.0, 100.0))
+_BUILDING = ((5.0, 20.0), (25.0, 20.0), (25.0, 80.0), (5.0, 80.0))
+
+
+@pytest.mark.parametrize(
+    "vertex, code",
+    [
+        (("a", 0.0), "non_numeric_coordinate"),
+        ((0.0, "1.5"), "non_numeric_coordinate"),  # numeric TEXT is refused, never parsed
+        ((None, 0.0), "non_numeric_coordinate"),
+        ((True, 0.0), "non_numeric_coordinate"),
+        ((1j, 0.0), "non_numeric_coordinate"),
+        (([1.0], 0.0), "non_numeric_coordinate"),
+        ((Decimal("1.5"), 0.0), "non_numeric_coordinate"),
+        ((), "invalid_ring"),
+        ((1.0,), "invalid_ring"),
+        ((1.0, 2.0, 3.0), "invalid_ring"),
+        (5, "invalid_ring"),
+        (None, "invalid_ring"),
+        (1.5, "invalid_ring"),
+        ("12", "invalid_ring"),
+        (b"\x01\x02", "invalid_ring"),
+        ({1.0, 2.0}, "invalid_ring"),
+        ({0: 1.0, 1: 2.0}, "invalid_ring"),
+        (object(), "invalid_ring"),
+        ((10**400, 0.0), "oversize_input"),  # an int beyond the float range
+    ],
+)
+@pytest.mark.parametrize("ring_field, ring", [("lot_ring", _LOT), ("building_ring", _BUILDING)])
+def test_malformed_vertex_is_a_typed_refusal_never_raises(ring_field, ring, vertex, code):
+    bad_ring = ring[:2] + (vertex,) + ring[3:]
+    result = render_site_plan_pdf(_spec(**{ring_field: bad_ring}))
+    assert isinstance(result, writer.SitePlanRefusal)
+    assert result.reject_code == code
+
+
+@pytest.mark.parametrize(
+    "ring",
+    [None, 5, 1.5, "abcd", b"abcd", object(), {"a": 1}, set(_LOT), (p for p in _LOT)],
+)
+def test_malformed_lot_ring_container_is_a_typed_refusal(ring):
+    result = render_site_plan_pdf(_spec(lot_ring=ring))
+    assert isinstance(result, writer.SitePlanRefusal)
+    assert result.reject_code == "invalid_ring"
+
+
+def test_list_rings_and_int_coordinates_still_render_identically():
+    """Accepted behaviour kept: lists and ints are valid sequences/reals (same bytes)."""
+    as_lists = [[int(x), int(y)] for x, y in _LOT]
+    assert _rendered(lot_ring=as_lists) == _rendered()
+
+
+@pytest.mark.parametrize("spec", [None, {"lot_ring": _LOT}, "spec", 5])
+def test_non_spec_argument_is_a_typed_refusal(spec):
+    result = render_site_plan_pdf(spec)
+    assert isinstance(result, writer.SitePlanRefusal)
+    assert result.reject_code == "invalid_input"
+
+
+@pytest.mark.parametrize(
+    "field", ["address", "bbl", "generated_at", "generator_version"]
+)
+@pytest.mark.parametrize("value", [None, 1001230045, b"12 MAIN ST", ["12 MAIN ST"]])
+def test_non_string_caller_text_is_a_typed_refusal(field, value):
+    result = render_site_plan_pdf(_spec(**{field: value}))
+    assert isinstance(result, writer.SitePlanRefusal)
+    assert result.reject_code == "invalid_text"
+    assert field in result.detail
+
+
+_HOSTILE_VALUES = (
+    None, True, 0, 1.5, float("nan"), "x", b"x", (), [], {}, set(), object(),
+    (1.0, 2.0), ((1.0, 2.0),), ((1.0, 2.0), (3.0, 4.0), ("x", 5.0)),
+)
+
+
+@pytest.mark.parametrize(
+    "field",
+    ["lot_ring", "building_ring", "address", "bbl", "generated_at", "generator_version"],
+)
+def test_any_hostile_field_value_returns_bytes_or_refusal(field):
+    """The docstring's 'never raises on caller data' promise, swept per field."""
+    for value in _HOSTILE_VALUES:
+        result = render_site_plan_pdf(_spec(**{field: value}))
+        assert isinstance(result, (bytes, writer.SitePlanRefusal)), (field, value)
+
+
+# -- M5-T091 H-2 (DB-053 b): the number formatter refuses non-finite values -------
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), float("-inf")])
+def test_number_formatter_refuses_non_finite(value):
+    with pytest.raises(writer._RenderRefused) as caught:
+        writer._num(value)
+    assert caught.value.refusal.reject_code == "non_finite_value"
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), float("-inf")])
+@pytest.mark.parametrize("constant", ["_TITLE_FONT_PT", "_SHEET_W"])
+def test_non_finite_drawing_number_is_a_typed_refusal_not_a_token(
+    monkeypatch, constant, value
+):
+    """Forced past the ring checks, a non-finite number returns a refusal, no bytes."""
+    monkeypatch.setattr(writer, constant, value)
+    result = render_site_plan_pdf(_spec())
+    assert isinstance(result, writer.SitePlanRefusal)
+    assert result.reject_code == "non_finite_value"
+
+
+def test_number_formatter_unchanged_for_finite_values():
+    assert writer._num(12.0) == "12"
+    assert writer._num(1.23456) == "1.235"
+    assert writer._num(-0.0) == "0"
+    assert writer._num(-0.0001) == "0"
+    assert writer._num(-7.5) == "-7.5"
+
+
+# -- M5-T091 H-3 (DB-053 c): claim-class screen on caller text --------------------
+
+# HARDCODED on purpose (a by-value import would make the pin tautological).
+_PINNED_CLAIM_WORDS = (
+    "PERMITTED",
+    "APPROVED",
+    "CERTIFIED",
+    "COMPLIANT",
+    "LAWFUL",
+    "LEGAL",
+    "ENTITLEMENT",
+    "GUARANTEED",
+    "MAXIMUM ALLOWED",
+    "AS OF RIGHT",
+    "AS-OF-RIGHT",
+)
+_TEXT_FIELDS = ("address", "bbl", "generated_at", "generator_version")
+
+
+@pytest.fixture
+def build_calls(monkeypatch):
+    """Record every content-stream build, so a refusal can prove nothing was drawn."""
+    calls: list[object] = []
+    real = writer._build_content
+
+    def spy(*args, **kwargs):
+        calls.append(args)
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(writer, "_build_content", spy)
+    return calls
+
+
+def test_claim_word_set_is_the_dxf_writers_pinned_set():
+    assert writer.CLAIM_CLASS_WORDS is dxf_writer.CLAIM_CLASS_WORDS  # one vocabulary
+    assert tuple(writer.CLAIM_CLASS_WORDS) == _PINNED_CLAIM_WORDS
+
+
+@pytest.mark.parametrize("word", _PINNED_CLAIM_WORDS)
+@pytest.mark.parametrize("field", _TEXT_FIELDS)
+def test_claim_word_in_caller_text_is_refused_nothing_emitted(build_calls, field, word):
+    text = f"12 {word.lower()} st"
+    result = render_site_plan_pdf(_spec(**{field: text}))
+    assert isinstance(result, writer.SitePlanRefusal)
+    assert result.reject_code == "claim_class_word"
+    assert field in result.detail
+    assert text not in result.detail  # the caller's text is never echoed
+    assert build_calls == []
+
+
+@pytest.mark.parametrize(
+    "address",
+    [
+        "12 AS_OF_RIGHT ST",
+        "12 maximum  allowed ave",
+        "12 As.Of.Right PL",
+        "12 MAXIMUM\tALLOWED ST",
+        "12 Pre-Approved Way",
+        "AS ſOF RIGHT",  # prints as 'AS ?OF RIGHT': the printed form is screened too
+    ],
+)
+def test_claim_word_separator_variants_are_refused(build_calls, address):
+    result = render_site_plan_pdf(_spec(address=address))
+    assert isinstance(result, writer.SitePlanRefusal)
+    assert result.reject_code == "claim_class_word"
+    assert build_calls == []
+
+
+@pytest.mark.parametrize("address", ["12 MAIN ST", "12 PERMIT ST", "1 LEGACY PL"])
+def test_clean_caller_text_still_renders(build_calls, address):
+    assert isinstance(render_site_plan_pdf(_spec(address=address)), bytes)
+    assert len(build_calls) == 1  # the spy is live, so the refusal checks are not vacuous
+
+
+# -- M5-T091 H-4 (DB-053 d): unbalanced parens round-trip exactly ------------------
+
+_UNBALANCED_TEXTS = (
+    "12 MAIN ST (REAR",
+    "12 MAIN ST REAR)",
+    "(",
+    ")",
+    ")(",
+    "((",
+    "a)b(c",
+    "12 MAIN ST \\",
+    "\\(",
+    "\\)",
+)
+
+
+@pytest.mark.parametrize("text", _UNBALANCED_TEXTS)
+@pytest.mark.parametrize("field, prefix", [("address", "SITE: "), ("bbl", "BBL: ")])
+def test_unbalanced_parens_round_trip_through_writer_and_reader(field, prefix, text):
+    reader = _reader()
+    doc = reader.read_pdf_container(_rendered(**{field: text}))
+    assert isinstance(doc, reader.PdfDocument)
+    page = reader.interpret_content(doc.pages[0].content)
+    assert isinstance(page, reader.PageContent)
+    assert [run.text for run in page.text_runs].count(f"{prefix}{text}") == 1
+
+
+def _escaper_skipping(skipped: str):
+    """An idiomatic weakening: sanitise + escape, but forget the chars in ``skipped``."""
+
+    def mutant(text: str) -> str:
+        return "".join(
+            "\\" + ch if ch in "()\\" and ch not in skipped else ch
+            for ch in writer._ascii_sanitise(text)
+        )
+
+    return mutant
+
+
+@pytest.mark.parametrize(
+    "skipped, text",
+    [("(", "12 MAIN ST (REAR"), (")", "12 MAIN ST REAR)"), ("()", "12 MAIN ST (REAR")],
+)
+def test_paren_skipping_escaper_mutant_breaks_unbalanced_roundtrip(monkeypatch, skipped, text):
+    """The unbalanced fixtures see an escaper that forgets a lone paren (G4 EB survivor)."""
+    reader = _reader()
+    monkeypatch.setattr(writer, "_escape_pdf_text", _escaper_skipping(skipped))
+    mutant_pdf = render_site_plan_pdf(_spec(address=text))
+    assert isinstance(mutant_pdf, bytes)
+    doc = reader.read_pdf_container(mutant_pdf)
+    page = (
+        reader.interpret_content(doc.pages[0].content)
+        if isinstance(doc, reader.PdfDocument)
+        else doc
+    )
+    faithful = isinstance(page, reader.PageContent) and any(
+        run.text == f"SITE: {text}" for run in page.text_runs
+    )
+    assert not faithful
