@@ -1,0 +1,97 @@
+{
+  "task_id": "M5-T086",
+  "title": "D-087 CAD-3: strict-subset DXF reader - ASCII DXF LINE / LWPOLYLINE / POLYLINE-VERTEX / 3DFACE / TEXT on named layers into typed primitives with declared units; bounded, fail-closed refusal values, never an exception (module + tests; not wired)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build services/api/app/drawings/dxf_reader.py: a dependency-free STRICT-SUBSET reader for ASCII DXF (the open AutoCAD interchange format; binary DXF refused) that turns the group-code stream into typed, layer-tagged primitives - LINE, LWPOLYLINE (closed flag; bulge arcs refused or flattened under a declared tolerance), POLYLINE/VERTEX/SEQEND, 3DFACE, TEXT - plus the header's declared drawing units and version; anything outside the subset (blocks/INSERT, splines, hatches, proxy objects, xdata) is counted and disclosed or refused per a written rule; malformed pairs, bad numbers, over-limit sizes/entity counts are typed refusal VALUES, all-or-nothing per file. Units are REPORTED, never assumed (no units header = 'unitless', confirmed by the user later - phase-C honesty). Not wired to any route (a later gated packet puts it behind the parser-isolation gate).",
+  "business_reason": "The owner asked for CAD editing, not only export (D-087-R006): reading a DXF back is the licence-free path to bring AutoCAD drawings into the product; native DWG stays an owner licensing decision (R007).",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "FORMAT AUTHORITY (binding; never guess): group codes per the Autodesk DXF Reference - cite per constant, '[recalled - verify]' for the G1 verifier; sibling research M5-T084 records the official notes. Untrusted input: bounded file size, line length, entity count, vertex count, nesting; no eval, no network; refusal is a VALUE.",
+    "TESTS + MUTATION (binding): hand-written DXF fixtures inside the test file (a closed LWPOLYLINE lot, a POLYLINE building, 3DFACE walls, TEXT, an unknown entity, a unitless file, malformed pairs, a binary-DXF sentinel, an over-limit file); mutation: dropping the entity-count bound or the pair-parity check reddens a named test. Do NOT import the concurrent M5-T081 writer - round-trip tests with it belong to a later packet.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam): services/api/app/drawings/ is the orchestrator-seeded package (do not edit __init__.py); sibling M5-T083 writes sheet_reader.py / sheet_primitives.py concurrently - FORBIDDEN to you; nothing imports dxf_reader yet. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/drawings/dxf_reader.py - strict-subset DXF reader with typed primitives + refusal values",
+    "services/api/tests/drawings/test_dxf_reader.py - subset, units, disclosure, refusal and bound tests with mutation notes",
+    "project-control/reports/M5-T086-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/drawings/dxf_reader.py",
+    "services/api/tests/drawings/test_dxf_reader.py",
+    "project-control/reports/M5-T086-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/__init__.py",
+    "services/api/app/drawings/sheet_reader.py",
+    "services/api/app/drawings/sheet_primitives.py",
+    "services/api/app/cad/",
+    "services/api/app/documents/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (subset): a fixture with a closed LWPOLYLINE lot, a POLYLINE building, 3DFACE walls and TEXT yields typed primitives with exact coordinates, layer names and closed flags.",
+    "AS-2 (units honesty): the header's drawing units are reported with the reference code; a file without a units header is reported 'unitless' - never assumed feet.",
+    "AS-3 (outside the subset): unknown entities are counted and disclosed per the written rule; binary DXF and blocks/INSERT follow the documented refuse-or-disclose rule.",
+    "AS-4 (fail-closed + bounds): odd pair counts, non-numeric coordinates, over-limit sizes/entities/vertices each return a typed refusal VALUE (no exception escapes), all-or-nothing; mutation - removing the entity-count bound or the pair-parity check reddens.",
+    "AS-5 (scope): not wired anywhere; zero new dependencies; ruff + modularity clean; exactly the allowed_paths change."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T07:31:32.535102+00:00",
+  "updated_at": "2026-09-24T07:31:33.046593+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R006",
+        "D-087-R007",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T07:31:32.535102+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/drawings/test_dxf_reader.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

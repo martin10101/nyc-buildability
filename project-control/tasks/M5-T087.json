@@ -1,0 +1,75 @@
+{
+  "task_id": "M5-T087",
+  "title": "D-087 research: official NYC building footprint + height source for 3D existing buildings - dataset identity, fields and units (roof height, ground elevation, BIN/BBL keys), CRS, access API, update cadence, licence and known limits (docs only)",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "Produce docs/research/building-footprints-source-2026-09.md: the official NYC source(s) for existing building footprints WITH heights - dataset ids and owning agency, exact field names and meanings for roof height, ground elevation, construction year, BIN and BBL keys (and how they join to MapPLUTO BBLs incl. condo/billing lots), units and vertical datum, CRS and geometry type, access channels (SODA / ArcGIS REST / bulk) with limits and a request shape for 'footprints on one BBL and its neighbours', update cadence and last-updated date, licence/terms, and known quality limits (height derivation method, missing heights, stale footprints). Source recon for a later connector packet and its G1 data-contract review - no connector code here.",
+  "business_reason": "The owner asked for 3D handling of buildings (D-087-R003); showing the existing building and its neighbours in 3D needs an official footprint + height source whose schema, units and datum are recorded - never guessed - before any connector is written.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "SOURCES (binding): official publisher pages and the dataset's own metadata/API responses only (NYC Open Data dataset pages + SODA metadata JSON, the publishing agency's data dictionary, ArcGIS REST service JSON). Exact URL + retrieved_at per fact; any inference labelled INFERENCE; never state a field meaning you did not read in an official source.",
+    "PROBE DISCIPLINE (binding): at most a handful of small metadata/sample requests (<= 5 rows per sample); nothing downloaded in bulk; nothing written outside your worktree's allowed files except a scratch temp dir outside any repository.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001): the future consumers are a connector beside services/api/app/connectors/mappluto_geometry_arcgis.py (EPSG:2263 measurement geometry) and the M5-T082 massing model (app/scenario/massing_model.py) - read-only context for the join keys and CRS the note must settle. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "docs/research/building-footprints-source-2026-09.md",
+    "project-control/reports/M5-T087-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/research/building-footprints-source-2026-09.md",
+    "project-control/reports/M5-T087-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/",
+    "services/",
+    "packages/",
+    ".claude/",
+    "docs/DISCOVERY_BACKLOG.md"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (identity + schema): dataset id(s), owning agency, and every field the 3D use needs (footprint geometry, roof height, ground elevation, BIN, BBL keys) with official meaning, unit and vertical datum, each cited to an official URL with retrieved_at.",
+    "AS-2 (access + join): access channel(s) with limits and a concrete request shape for one BBL + neighbours; how BBL keys join to MapPLUTO incl. condo/billing lots; CRS + geometry type from metadata.",
+    "AS-3 (limits + cadence): update cadence, last-updated date, licence/terms, and known quality limits - inferences labelled.",
+    "AS-4 (scope): docs only; exactly the allowed_paths change."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "official-source-researcher",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "geospatial-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T07:31:33.937529+00:00",
+  "updated_at": "2026-09-24T07:31:34.502155+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T07:31:33.937529+00:00",
+  "documented_test_commands": []
+}
