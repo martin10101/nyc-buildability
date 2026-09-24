@@ -10,7 +10,7 @@
  "issued_at": "2026-09-24",
  "captured_at": "2026-09-24T07:20:00+00:00",
  "created_at": "2026-09-24T07:20:00+00:00",
- "updated_at": "2026-09-24T08:50:00+00:00",
+ "updated_at": "2026-09-24T09:45:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "ed49b2d8af5fb4783cc3e456e29f78152e921baf",
  "capture_head_sha": null,
@@ -35,7 +35,7 @@
   "D-087-R011",
   "D-087-R012"
  ],
- "requirements_content_digest_sha256": "d2f1508621f9f79824ba9d23cf16dea01020496f3d7d52a72aa69a5e680b18f0",
+ "requirements_content_digest_sha256": "87b20e4b611d676be58cbb4f43a973de63c4f8e10f2b22cbedb2aea61c13f01c",
  "sources": [
   {
    "file": "source-001.md",
@@ -106,6 +106,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "source-002 captured verbatim: the owner's pre-continue rundown question (08:38:28Z) and the reply 'Go' (08:42:57Z) to the orchestrator's stated pause on the 3D web library admission. Appended D-087-R011 (authorization: the admission packet may be contracted under the unchanged dependency-security policy, no waiver) and D-087-R012 (return: rundown answered before continuing). No existing requirement text changed; requirements digest resynced SAME commit."
+  },
+  {
+   "at": "2026-09-24T09:45:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Seq-128 D-087 wave-2 contract seam (five subagent packets: M5-T088 massing hardening, M5-T089 footprint connector, M5-T090 3D web library admission under R011, M5-T091 PDF sheet writer hardening, M5-T092 GLB writer): bound D-087-R001 <- M5-T088, M5-T089, M5-T090, M5-T091, M5-T092; D-087-R002 <- M5-T088, M5-T089, M5-T090, M5-T091, M5-T092; D-087-R003 <- M5-T088, M5-T089, M5-T090, M5-T092; D-087-R005 <- M5-T091; D-087-R006 <- M5-T092; D-087-R009 <- M5-T088, M5-T089, M5-T090, M5-T091, M5-T092; D-087-R011 <- M5-T090; requirements digest resynced in the same commit."
   }
  ]
 }

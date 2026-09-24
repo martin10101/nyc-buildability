@@ -1,0 +1,96 @@
+{
+  "task_id": "M5-T091",
+  "title": "D-087 PDF-2b: site-plan sheet writer hardening BEFORE any wiring (DB-053 a-d) - typed refusal for malformed vertices, finite guard at the number formatter, claim-class screen on caller text, unbalanced-paren escaper fixture (module + tests; no route)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the accepted M5-T085 PDF site-plan sheet writer's review riders DB-053 (a)-(d) in services/api/app/cad/pdf_sheet_writer.py and its tests: (a) a malformed vertex (non-numeric, wrong arity, non-sequence) returns a typed SitePlanRefusal instead of raising, so the module's 'never raises on caller data' promise holds; (b) the number formatter refuses non-finite values with a typed refusal even though today's callers cannot reach it; (c) caller-supplied text (address, BBL and any other passthrough) is screened for the claim-class words the DXF writer screens (import its CLAIM_CLASS_WORDS read-only, or define an identical tuple with a drift-guard test asserting equality - justify the choice) and refused, never silently printed; (d) an UNBALANCED-paren address round-trips through the escaper and the in-repo reader. Keep every accepted behaviour; the golden changes only if output bytes change (explain).",
+  "business_reason": "The owner asked for printable blueprints (D-087-R005); the accepted writer is correct but its reviewers named input-hardening gaps that must close before any route feeds it untrusted address text.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-053 (a)-(d) and the reviews they cite - project-control/reports/M5-T081-G3.md (T085 part: A1 _validate_ring raise, A2 no claim screen), M5-T081-G4.md (T085 part: F1 balanced-paren-only fixture) and M5-T081-G5.md (T085 part: F1 malformed input raises, F2 _num finite guard).",
+    "TESTS + MUTATION (binding): each guard gets a test that reddens under its named mutation - removing the vertex type guard (the call must RAISE-free return a refusal), removing the finite guard, disabling the claim screen, and an escaper that forgets to escape a lone ')' or '(' . Record each mutant RED -> restore GREEN in the report.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam): pdf_sheet_writer.py has no production importer yet; app/cad/__init__.py is orchestrator-owned; siblings dxf_writer.py (read-only import allowed for CLAIM_CLASS_WORDS only) and glb_writer.py (M5-T092, in flight) are FORBIDDEN to edit; the strict PDF reader under app/documents is used READ-ONLY by the round-trip test. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/cad/pdf_sheet_writer.py - typed input refusals, finite guard, claim screen",
+    "services/api/tests/cad/test_pdf_sheet_writer.py - mutation-sensitive tests incl. the unbalanced-paren round trip",
+    "project-control/reports/M5-T091-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T085"
+  ],
+  "allowed_paths": [
+    "services/api/app/cad/pdf_sheet_writer.py",
+    "services/api/tests/cad/test_pdf_sheet_writer.py",
+    "project-control/reports/M5-T091-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/cad/__init__.py",
+    "services/api/app/cad/dxf_writer.py",
+    "services/api/app/cad/glb_writer.py",
+    "services/api/app/documents/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (malformed vertex): non-numeric, wrong-arity and non-sequence vertices each return a typed SitePlanRefusal and never raise; mutation - removing the guard makes the named test fail.",
+    "AS-2 (finite guard): the number formatter refuses NaN/inf with a typed refusal; mutation - removing the guard reddens.",
+    "AS-3 (claim screen): an address or BBL containing any claim-class word (the DXF writer's set) is refused with a typed reason and nothing is emitted; the word set is pinned (import or drift-guarded copy); mutation - disabling the screen reddens.",
+    "AS-4 (escaper): an unbalanced-paren address round-trips exactly through the writer and the in-repo reader; mutation - an escaper that skips a lone paren reddens.",
+    "AS-5 (scope): accepted behaviour and golden kept (or a justified re-anchor); zero new dependencies; not wired; ruff + modularity clean; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T09:39:45.679200+00:00",
+  "updated_at": "2026-09-24T09:39:46.959335+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R005",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T09:39:45.679200+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/cad/test_pdf_sheet_writer.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "task_id": "M5-T092",
+  "title": "D-087 3D-3: zero-dependency glTF 2.0 binary (GLB) writer - deterministic triangle-mesh export with named nodes, per-mesh materials and exact accessor bounds; validated by an in-test parser (module + tests; no route, no UI)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build services/api/app/cad/glb_writer.py: a dependency-free, deterministic writer of glTF 2.0 binary (GLB) files from a generic list of named triangle meshes (float positions in a declared local frame + uint32 indices + an optional base colour), producing one node per mesh, one material per distinct colour, exact accessor min/max, 4-byte chunk alignment, the JSON and BIN chunks, and an asset.generator + extras block carrying the CRS/unit/local-origin note and the 'Proposed - not a city record' label. Units: glTF is metres by specification, so the writer takes feet and converts with the declared US-survey-foot factor, recording it. Fail-closed typed refusals (non-finite values, out-of-range indices, degenerate meshes, size caps). The generic input keeps it independent of the massing model's evolving shape; wiring is a later packet.",
+  "business_reason": "GLB is the runtime format the 3D architecture names for browser viewers and the most portable 3D interchange (D-087-R003/R006); a verified writer is the bridge from the massing truth object to any 3D view or download.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "FORMAT AUTHORITY (binding; never guess): the Khronos glTF 2.0 specification (header magic 'glTF', version 2, chunk types JSON/BIN, 4-byte alignment with the specified padding characters, accessor componentType codes, bufferView targets, required asset.version '2.0'); cite sections, mark recalled ones '[recalled - verify]' for the G1 verifier. glTF units are metres and +Y up by specification - declare and apply the axis/unit mapping explicitly.",
+    "TESTS + MUTATION (binding): an in-test GLB parser validates header length, chunk alignment, JSON schema essentials, accessor counts/min/max against the input, and that the BIN chunk decodes back to the input (after the declared unit/axis mapping); golden sha256 for a fixed input; mutations - wrong padding character, accessor min/max off, a skipped unit conversion - each redden a named test.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam): app/cad/ is the orchestrator-seeded package (do not edit __init__.py); siblings dxf_writer.py (M5-T081, in rework) and pdf_sheet_writer.py (M5-T085) are FORBIDDEN; nothing imports glb_writer yet. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/cad/glb_writer.py - deterministic GLB writer with typed refusals",
+    "services/api/tests/cad/test_glb_writer.py - in-test parser, golden, mutation-sensitive tests",
+    "project-control/reports/M5-T092-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/cad/glb_writer.py",
+    "services/api/tests/cad/test_glb_writer.py",
+    "project-control/reports/M5-T092-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/cad/__init__.py",
+    "services/api/app/cad/dxf_writer.py",
+    "services/api/app/cad/pdf_sheet_writer.py",
+    "services/api/app/scenario/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (structure): valid GLB - 12-byte header (magic, version 2, total length), JSON chunk padded with spaces and BIN chunk padded with zeros to 4 bytes, asset.version '2.0'; byte-deterministic (golden sha256).",
+    "AS-2 (content): two named meshes with different colours round-trip through the in-test parser - node names, materials, index counts, positions (after the declared foot->metre and axis mapping) and accessor min/max all exact.",
+    "AS-3 (units + honesty): the foot->metre factor is the US survey foot (1200/3937) and is recorded with the CRS/local-origin note and the proposed-not-a-city-record label in asset/extras; mutation - skipping the conversion reddens.",
+    "AS-4 (fail-closed): non-finite values, index out of range, empty/degenerate meshes, over-cap vertex/index counts -> typed refusals, no partial output.",
+    "AS-5 (scope): zero new dependencies; not wired; ruff + modularity clean; exactly the allowed_paths change."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T09:39:49.417806+00:00",
+  "updated_at": "2026-09-24T09:39:50.729386+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003",
+        "D-087-R006",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T09:39:49.419817+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/cad/test_glb_writer.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
