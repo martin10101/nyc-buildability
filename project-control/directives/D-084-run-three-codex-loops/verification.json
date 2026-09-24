@@ -3,7 +3,7 @@
  "directive_id": "D-084",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-084-BOOTSTRAP at capture; R001/R002 bind the concrete lane packets via applicability.task_ids at their contract seams, R003 already binds M5-T070 (the live loop-3 packet). This directive authorizes lane occupancy only: it lifts no hold, changes no gate, and every packet still passes the normal contract/claim/gate process. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T05:20:00+00:00",
+ "verified_at": "2026-09-24T07:25:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-084",
@@ -45,6 +45,28 @@
      "state": "PASS",
      "evidence": [
       "DCV PASS 1/1 (M5-T076-DCV.md; blob predicate re-verified ALL-MATCH x6 at 72eb3801): all seven R001 clauses on primary evidence incl. the lane-1 journal transitions 1738-1742 (run persistent-local-71-m5t076, ~19 min real work) + autostart log + the 2080-entry audit chain walked UNBROKEN; Ruling 1 - the post-G3-FAIL rework outside the loop stays within the normal gated process, deviation disclosed; frozen identity 1550af01 byte-stable across submit and both independent gates; AS-4 engine blob f0abf884 held through the ENTIRE chain; fail-closed honesty reproduced end-to-end in-process; prohibited-action sweep clean."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-084",
+   "task_id": "M5-T074",
+   "applicable_requirement_ids": [
+    "D-084-R003"
+   ],
+   "reviewed_sha": "4097892249ae095c24a4ec6a2850511e0b8eaee4",
+   "reviewed_manifest_sha256": "b98125f1639bfce2ad1b19426a923cfd23f3e9c4cca3f92e2550004758473b5f",
+   "producer": "qa-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T07:25:00+00:00",
+   "requirements": [
+    {
+     "id": "D-084-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV PASS 1/1 (M5-T074-DCV.md; fresh seq-128 verifier at ed49b2d8; blob predicate re-verified ALL-MATCH x12 + identity b98125f1 at b8ed927c pre-accept): lane-3 journal read-only outside the repo - run persistent3-local-17 closed cycle_closed at its natural close undisturbed, run persistent3-local-18-m5t074 fresh (appears once) launched on the T074 packet and closed cycle_closed with the unit delivered; audit.jsonl run-18 target_paths exactly the two allowed paths, 0 denied; seams 419c967a/ea2cdb65/f4a8cbef; Ruling 1 closes G3-F6 on primary evidence; Ruling 2 confirms the [ORCH-CORRECTED] material_commit ea2cdb65 with nil identity motion; validator --check exit 0 (one run) + CI control-plane green at the pin; prohibited-action sweep clean."
      ]
     }
    ]
