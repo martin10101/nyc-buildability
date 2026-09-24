@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T10:22:00+00:00",
+ "verified_at": "2026-09-24T14:55:24+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -269,6 +269,122 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: stdlib + app.* imports only; no manifest/lockfile/route/main.py/web change in the two T083 commits; main.py mounts no max-envelope router; module unwired; PR #241 open and unmerged; not on main; report M5-T083-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T081",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R004",
+    "D-087-R006",
+    "D-087-R007",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "fa7e5fae8c9d0ae63851481f5f0a21c32cafa2aa",
+   "reviewed_manifest_sha256": "9700b33befc8789a9f12963f8e9284f52ab602c21150c206f5ed28ad314040cf",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T14:55:24+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-cad, joint T081/T086): contracted at 5e704eeb (G0), claimed f9bfd54d (wt-m5t081), concurrent with T082-T085; lifecycle backlog->claimed->awaiting_gate->rework->in_progress->awaiting_gate all via the CLI; G0-G5 PASS at identity 9700b33b; B-026 names only the loop-lane share; restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T081-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: all-packet overlap check at 5e704eeb/86e2f98b/94182057/cfc3d22c finds only the six accepted July broad globs; no live or frozen neighbour overlaps (T086 included); commits a8e6c8ed/778bf8ca touch exactly the 3 allowed paths, cherry-picks 4fd58a98/0ffe581c blob-identical; restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T081-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for this task's share (the DXF writer module + tests): $ACADVER AC1009, $INSUNITS 21 (US survey feet, pinned by test L217), LOT/BUILDING_OUTLINE/MASSING_3D closed POLYLINEs, 3DFACE walls per edge per floor band, ANNOTATION TEXT, 0/EOF; 24/24 tests pass, golden 2d8988d6 reproduced; every group code checked by G1 against the live Autodesk reference. DIRECTIVE-LEVEL GAP (DCV F1, DB-057 (a)): no owner-runnable AutoCAD-open check exists yet and the owner's R008 confirmation is pending - R004 is NOT complete at directive level; restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T081-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for this task's share (writing/exporting through the open format; native DWG untouched): the verifier's own in-memory round trip (writer -> T086 reader) returns AC1009, units 21, 33 entities, lot and building rings exact and closed, honesty texts present. DIRECTIVE-LEVEL GAP (DCV F2, DB-057 (h)): the round trip is not yet a committed test; restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T081-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R007",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: no DWG library in any dependency manifest or lockfile (the one 'ZDWg' hit is inside a base64 integrity hash); no source file imports dwg/libredwg/realdwg/teigha/opendesign/ezdxf/aspose; dxf_writer.py imports only __future__, math, collections.abc and dataclasses. Evidence-wording caveat (DCV F3, DB-057 (f)): the cited stdlib-only test rejects six named libraries only; the fact itself is true in source; restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T081-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: material touches only the 3 allowed paths; no dependency, lockfile, route, main.py or web change; main.py mounts 11 routers, none max_envelope; nothing imports dxf_writer but its test; CI run 35980056704 green at 33662211 (same blobs) incl. api 3.12, modularity, lock-verify, pip-audit, web dependency security; PR #241 open and unmerged; restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T081-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T086",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R006",
+    "D-087-R007",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "fa7e5fae8c9d0ae63851481f5f0a21c32cafa2aa",
+   "reviewed_manifest_sha256": "f0c6963d13a7d72beca146eb1341f4eff7bc0981d23697abc2e805995b52caf2",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T14:55:24+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-cad, joint): contracted at 86e2f98b (G0), claimed 46cc1e6a (wt-m5t086), wave 1.5 concurrent with T081-T085/T087; backlog->claimed->awaiting_gate via the CLI; G0-G5 PASS at identity f0c6963d; restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T086-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: all-packet overlap check at 86e2f98b/94182057/HEAD finds only the six accepted July broad globs; single commit 496fd6f9 touches exactly the 3 allowed paths, cherry-pick 719d96f8 blob-identical; no sibling or __init__ touched; restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T086-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for this task's share (reading/importing through the open format): ASCII DXF LINE, LWPOLYLINE, POLYLINE/VERTEX/SEQEND, 3DFACE and TEXT; binary DXF refused by its sentinel; units reported, never assumed; 28/28 tests pass; writer round trip proven ad hoc. DIRECTIVE-LEVEL GAP (DCV F2, DB-057 (h)): no committed round-trip test yet; restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T086-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R007",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: dxf_reader.py imports only __future__, enum, math and dataclasses; the repo-wide DWG scan is clean; restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T086-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: 719d96f8 touches only the 3 allowed paths - no dependency, route, main.py or web change; only its own test imports the reader; max-envelope route unmounted; CI green at 33662211 with identical blobs; PR #241 untouched; restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T086-DCV.md."
      ]
     }
    ]
