@@ -7,6 +7,7 @@ honesty, the disclose-or-refuse rule, every fail-closed bound, and the two named
 
 from __future__ import annotations
 
+import time
 import tracemalloc
 
 import pytest
@@ -826,3 +827,179 @@ def test_t097_as3_mutation_insunits_codes_reddens() -> None:
         _reader_mod._INSUNITS_NAMES.clear()
         _reader_mod._INSUNITS_NAMES.update(original)
     assert mutated.units.name == "unknown_insunits_22"
+
+
+# ---------------------------------------- T097 round 2: G3-B1 / G5-F1 splitter complexity
+
+
+_SUBQUADRATIC_RATIO_CEIL = 8.0  # linear ~4x per 4x input; the old double-find is ~12-16x
+
+
+def _splitter_scaling_ratio(
+    term: str, n: int, *, reps_small: int = 3, reps_large: int = 2
+) -> float:
+    """Consume the CONSUMED splitter on ``n`` and ``4n`` single-char lines terminated by
+    ``term`` and return the 4x-input time ratio (min over reps to damp scheduler noise). A
+    linear scan is ~4x; the reviewed round-1 per-line double-find is O(n^2) and ~12-16x. The
+    ratio is machine-speed-independent, so no tight absolute wall-clock is asserted."""
+    limits = DxfLimits(max_lines=8_000_000, max_line_chars=65_536)
+    small = ("0" + term) * n
+    large = ("0" + term) * (4 * n)
+
+    def _best(text: str, reps: int) -> float:
+        best = float("inf")
+        total = 0
+        for _ in range(reps):
+            t0 = time.perf_counter()
+            total = sum(1 for _ in _reader_mod._iter_dxf_lines(text, limits))
+            best = min(best, time.perf_counter() - t0)
+        assert total == text.count(term)  # every line consumed, no over/under count
+        return best
+
+    return _best(large, reps_large) / _best(small, reps_small)
+
+
+def test_t097_b1_splitter_time_subquadratic_pure_lf_and_cr() -> None:
+    """G3-B1 / G5-F1 GUARD: the line splitter must be ~linear, not O(n^2), on pure-LF (our own
+    writer's output) and pure-CR input. Parse N and 4N lines; a linear scan scales ~4x, the old
+    per-line double-find ~16x. Require the 4x ratio < 8 (2x margin over linear, generous for a
+    loaded CI runner). The mutation test below rebinds the consumed splitter to that double-find
+    and shows this ceiling reddens."""
+    for term in ("\n", "\r"):
+        ratio = _splitter_scaling_ratio(term, 30_000)
+        assert ratio < _SUBQUADRATIC_RATIO_CEIL, (
+            f"term {term!r} scaling {ratio:.1f}x looks quadratic "
+            f"(linear ~4x, quadratic ~16x, ceiling {_SUBQUADRATIC_RATIO_CEIL})"
+        )
+
+
+def test_t097_b1_mutation_double_find_reddens_time_guard() -> None:
+    """MUTATION (G3-B1 / G5-F1): rebinding the consumed splitter to the reviewed round-1
+    double-find (both ``find('\\n')`` AND ``find('\\r')`` every line) restores the O(n^2)
+    rescan-to-EOF for an absent terminator, so the sub-quadratic ceiling reddens. Must-stay-PASS:
+    the real splitter passes the same check at the same size."""
+    original = _reader_mod._iter_dxf_lines
+
+    def _double_find_mutant(text, limits):  # type: ignore[no-untyped-def]
+        n = len(text)
+        pos = 0
+        count = 0
+        while pos < n:
+            nl = text.find("\n", pos)
+            cr = text.find("\r", pos)
+            if nl == -1 and cr == -1:
+                end = nxt = n
+            elif cr == -1 or (nl != -1 and nl < cr):
+                end, nxt = nl, nl + 1
+            else:
+                end = cr
+                nxt = cr + 2 if (cr + 1 < n and text[cr + 1] == "\n") else cr + 1
+            line = text[pos:end]
+            count += 1
+            if count > limits.max_lines:
+                raise _reader_mod._Refuse(DxfRefusalReason.TOO_MANY_LINES, "over")
+            if len(line) > limits.max_line_chars:
+                raise _reader_mod._Refuse(DxfRefusalReason.LINE_TOO_LONG, "over")
+            yield line
+            pos = nxt
+
+    try:
+        _reader_mod._iter_dxf_lines = _double_find_mutant  # type: ignore[assignment]
+        mutant_ratio = _splitter_scaling_ratio("\n", 30_000, reps_small=3, reps_large=1)
+    finally:
+        _reader_mod._iter_dxf_lines = original
+
+    assert mutant_ratio >= _SUBQUADRATIC_RATIO_CEIL, (
+        f"the double-find should scale quadratically (>= {_SUBQUADRATIC_RATIO_CEIL}x); "
+        f"measured {mutant_ratio:.1f}x - the guard did not redden"
+    )
+    # must-stay-PASS: the real splitter is comfortably sub-quadratic at the same size.
+    assert _splitter_scaling_ratio("\n", 30_000) < _SUBQUADRATIC_RATIO_CEIL
+
+
+# ---------------------------------------- T097 round 2: G4 ADVISORY-1 exact-edge cap probes
+
+
+def test_t097_as2_max_lines_exact_edge_refuses_at_limit_plus_one() -> None:
+    """G4 ADVISORY-1: pin ``max_lines`` at the EXACT edge so the off-by-one mutant
+    (``count > max`` -> ``count > max + 1``, G4 B6) dies. The fixture is a valid 20-line DXF:
+    ``max_lines=20`` (exactly at the limit) parses; ``max_lines=19`` (the file is limit+1 lines)
+    refuses TOO_MANY_LINES. The correct code refuses at line ``max_lines+1``; a +1 mutant would
+    not, so the limit-1 assertion reddens under it."""
+    src = _dxf(
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "LINE"), (8, "A"), (10, 1.0), (20, 2.0), (11, 3.0), (21, 4.0),
+        (0, "ENDSEC"), (0, "EOF"),
+    )  # 10 pairs -> exactly 20 lines
+    assert sum(1 for _ in _reader_mod._iter_dxf_lines(src, DEFAULT_LIMITS)) == 20
+    at_limit = read_dxf(src, limits=DxfLimits(max_lines=20))
+    assert isinstance(at_limit, DxfDocument)  # exactly at the limit still passes
+    over_by_one = read_dxf(src, limits=DxfLimits(max_lines=19))
+    assert isinstance(over_by_one, DxfRefusal)
+    assert over_by_one.reason is DxfRefusalReason.TOO_MANY_LINES
+
+
+def test_t097_as2_max_line_chars_exact_edge_refuses_at_limit_plus_one() -> None:
+    """G4 ADVISORY-1: pin ``max_line_chars`` at the EXACT edge so the off-by-one mutant
+    (``len(line) > max`` -> ``len(line) > max + 1``, G4 B7) dies. The longest line is a 30-char
+    TEXT value: ``max_line_chars=30`` (at the limit) parses; ``max_line_chars=29`` (the line is
+    limit+1 chars) refuses LINE_TOO_LONG."""
+    src = _dxf(
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "TEXT"), (8, "A"), (10, 0.0), (20, 0.0), (1, "X" * 30),
+        (0, "ENDSEC"), (0, "EOF"),
+    )  # longest line is the 30-char TEXT value
+    at_limit = read_dxf(src, limits=DxfLimits(max_line_chars=30))
+    assert isinstance(at_limit, DxfDocument)  # exactly at the limit still passes
+    over_by_one = read_dxf(src, limits=DxfLimits(max_line_chars=29))
+    assert isinstance(over_by_one, DxfRefusal)
+    assert over_by_one.reason is DxfRefusalReason.LINE_TOO_LONG
+
+
+def test_t097_as2_mutation_off_by_one_line_caps_reddens() -> None:
+    """MUTATION (G4 B6/B7): shifting BOTH caps by one (``> max`` -> ``> max + 1``) makes the
+    limit+1 file/line slip through, so both exact-edge probes above redden. Must-stay-PASS: the
+    real splitter refuses at limit+1 (asserted as the baseline)."""
+    lines_src = _dxf(
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "LINE"), (8, "A"), (10, 1.0), (20, 2.0), (11, 3.0), (21, 4.0),
+        (0, "ENDSEC"), (0, "EOF"),
+    )  # 20 lines
+    chars_src = _dxf(
+        (0, "SECTION"), (2, "ENTITIES"),
+        (0, "TEXT"), (8, "A"), (10, 0.0), (20, 0.0), (1, "X" * 30),
+        (0, "ENDSEC"), (0, "EOF"),
+    )
+    # baseline: the real code refuses at limit+1
+    assert isinstance(read_dxf(lines_src, limits=DxfLimits(max_lines=19)), DxfRefusal)
+    assert isinstance(read_dxf(chars_src, limits=DxfLimits(max_line_chars=29)), DxfRefusal)
+
+    original = _reader_mod._iter_dxf_lines
+
+    def _off_by_one_mutant(text, limits):  # type: ignore[no-untyped-def]
+        n = len(text)
+        pos = 0
+        count = 0
+        search = _reader_mod._LINE_TERMINATOR.search
+        while pos < n:
+            match = search(text, pos)
+            end, nxt = (n, n) if match is None else (match.start(), match.end())
+            line = text[pos:end]
+            count += 1
+            if count > limits.max_lines + 1:  # B6 off-by-one
+                raise _reader_mod._Refuse(DxfRefusalReason.TOO_MANY_LINES, "over")
+            if len(line) > limits.max_line_chars + 1:  # B7 off-by-one
+                raise _reader_mod._Refuse(DxfRefusalReason.LINE_TOO_LONG, "over")
+            yield line
+            pos = nxt
+
+    try:
+        _reader_mod._iter_dxf_lines = _off_by_one_mutant  # type: ignore[assignment]
+        lines_mut = read_dxf(lines_src, limits=DxfLimits(max_lines=19))
+        chars_mut = read_dxf(chars_src, limits=DxfLimits(max_line_chars=29))
+    finally:
+        _reader_mod._iter_dxf_lines = original
+
+    # Under the off-by-one the limit+1 file/line is no longer refused -> the edge probes redden.
+    assert isinstance(lines_mut, DxfDocument)
+    assert isinstance(chars_mut, DxfDocument)

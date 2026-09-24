@@ -49,9 +49,13 @@ is also ``unitless`` but with ``source="header:$INSUNITS"``, so the caller can t
 
 Line splitting / input: the stream is split on the three real DXF terminators ONLY (CR, LF,
 CRLF); ``str.splitlines`` also breaks on ``\\x0b \\x0c \\x1c-\\x1e`` and would shift pairing,
-so such a control char is kept VERBATIM in the value (one in a coordinate still fails closed
-at :func:`_to_float`). ``bytes`` is preferred; a ``str`` gets the SAME binary-sentinel and
-non-ASCII checks (no lenient bypass); any other type is a typed refusal, not a ``TypeError``.
+so such a control char is NEVER used to break a line and cannot shift the (code, value)
+pairing (one in a coordinate still fails closed at :func:`_to_float`). It survives inside the
+value where it is flanked by non-whitespace; the pre-existing per-value ``.strip()`` still
+trims it when it is leading/trailing, so a value made up SOLELY of such characters strips to
+``''`` (that strip behaviour is unchanged). ``bytes`` is preferred; a ``str`` gets the SAME
+binary-sentinel and non-ASCII checks (no lenient bypass); any other type is a typed refusal,
+not a ``TypeError``.
 
 Failure model: no exception ever escapes :func:`read_dxf`. Structural problems raise a
 private marker that the public boundary converts to a :class:`DxfRefusal`; a final
@@ -66,6 +70,7 @@ from __future__ import annotations
 
 import enum
 import math
+import re
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 
@@ -527,35 +532,48 @@ def _decode(data: bytes | str, limits: DxfLimits) -> str:
     )
 
 
+# The three real DXF line terminators, and ONLY those: CRLF first so a CR immediately
+# followed by an LF is one break, not two (CR then an empty line). ``str.splitlines()`` also
+# breaks on ``\x0b \x0c \x1c \x1d \x1e`` (all ASCII); a value literally containing one of
+# those would be cut in two and SHIFT the (code, value) pairing (G3-F1 / G5-A2), so those
+# characters are deliberately absent from this pattern.
+_LINE_TERMINATOR = re.compile(r"\r\n|\r|\n")
+
+
 def _iter_dxf_lines(text: str, limits: DxfLimits) -> Iterator[str]:
     """Yield DXF lines splitting on CR, LF or CRLF ONLY, one line at a time.
 
-    ``str.splitlines()`` also splits on ``\\x0b \\x0c \\x1c \\x1d \\x1e`` (all ASCII, so they
-    survive the ASCII decode); a group value literally containing one of those would then be
-    cut in two and SHIFT the (code, value) pairing (G3-F1 / G5-A2). This splitter recognises
-    only the three real DXF line terminators, so such a control character stays VERBATIM
-    inside the value (declared design choice: keep, not refuse); a control char that lands in
-    a coordinate is still caught downstream by :func:`_to_float` (BAD_COORDINATE).
+    A control character ``str.splitlines()`` would split on (``\\x0b \\x0c \\x1c \\x1d \\x1e``)
+    is NOT a terminator here, so it never breaks a line and never shifts the (code, value)
+    pairing. It survives inside the value where it is flanked by non-whitespace; the per-value
+    ``.strip()`` in :func:`_to_pairs` still trims it if it is leading/trailing, so a value made
+    up SOLELY of such characters strips to ``''`` (that strip behaviour is unchanged, G3-A1). A
+    control char that lands in a coordinate is still caught downstream by :func:`_to_float`
+    (BAD_COORDINATE).
 
     It is a GENERATOR: ``max_lines`` and ``max_line_chars`` are enforced WHILE scanning, as
     each line is produced, so an over-``max_lines`` file refuses without the full line list
-    ever being materialised (G5-A4). ``str.find`` locates each terminator at C speed. A
-    trailing terminator does NOT yield an extra empty final line (matching ``splitlines``);
+    ever being materialised (G5-A4).
+
+    Complexity is O(n): a SINGLE precompiled ``_LINE_TERMINATOR.search(text, pos)`` finds the
+    next terminator of ANY of the three kinds in one C-level pass and never rescans for an
+    absent terminator. (The prior implementation called both ``find("\\n")`` AND ``find("\\r")``
+    every line; when a file used only one terminator the other ``find`` rescanned to EOF each
+    line, making pure-LF - our own writer's output - and pure-CR input O(n^2): G3-B1 / G5-F1.)
+    A trailing terminator does NOT yield an extra empty final line (matching ``splitlines``);
     a blank line between two terminators does.
     """
     n = len(text)
     pos = 0
     count = 0
+    search = _LINE_TERMINATOR.search
     while pos < n:
-        nl = text.find("\n", pos)
-        cr = text.find("\r", pos)
-        if nl == -1 and cr == -1:
+        match = search(text, pos)
+        if match is None:  # last line: no trailing terminator
             end = nxt = n
-        elif cr == -1 or (nl != -1 and nl < cr):
-            end, nxt = nl, nl + 1
-        else:  # CR is the earliest terminator; absorb a following LF as one CRLF break.
-            end = cr
-            nxt = cr + 2 if (cr + 1 < n and text[cr + 1] == "\n") else cr + 1
+        else:
+            end = match.start()
+            nxt = match.end()  # already absorbs a full CRLF as one break
         line = text[pos:end]
         count += 1
         if count > limits.max_lines:
