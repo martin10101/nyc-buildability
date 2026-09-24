@@ -1,8 +1,8 @@
 {
  "task_id": "M5-T080",
- "material_commit": "5aadf182 (PART A cherry-pick of wt-m5t080 91785882) + 170b942c (PART B cherry-pick of wt-m5t080b b51cba02), every file MATCH by git blob identity; plus the orchestrator's [ORCH-HARVEST] append of PART B's verbatim return and the cross-file completeness check to the producer report (pre-submit)",
- "produced_at": "2026-09-24T08:55:00+00:00",
- "producer": "frontend-engineer x2 (orchestrator-dispatched subagents, disjoint files: PART A wt-m5t080 commit 91785882, PART B wt-m5t080b commit b51cba02)",
+ "material_commit": "REWORK ROUND: 6644f93f (PART A rework, cherry-pick of wt-m5t080 8a9a9f38) + d5209b4e (PART B rework, cherry-pick of wt-m5t080b 6190e69c), every file MATCH by git blob identity; plus the orchestrator's [ORCH-HARVEST] append of rework PART B's verbatim return and the cross-file check (d8df2674). First round: 5aadf182 + 170b942c.",
+ "produced_at": "2026-09-24T15:06:04+00:00",
+ "producer": "frontend-engineer x2 (orchestrator-dispatched subagents, disjoint files; rework A wt-m5t080 commit 8a9a9f38, rework B wt-m5t080b commit 6190e69c)",
  "requirements": {
   "D-086-R001": [
    "The assessment (docs/UI_DEEP_DIVE_ASSESSMENT.md, sha256 c6d1b257 LF-normalized) is used strictly as INPUT: the ledger transcribes its inventory rows and destinations, marks every assessment-silent field 'P0-proposed:', invents no authority, and P0-RECONCILIATION.md records that its phase labels are report-local; no hold was lifted and nothing in the 19-task pack was started."
@@ -11,7 +11,8 @@
    "P0 - the first contracted design-cleanup packet - delivers exactly the assessment's P0 row: the per-cited-file drift table (apps/web byte-identical dc5a763e..b56f3d5b), the reachable route/state map, the latest DISCOVERY_BACKLOG dispositions, the D-040/D-076/D-082/D-087 boundary check, a Section-13 verification matrix naming fixture/steps and the owning later slice per finding (the proposal-freshness and sample-attribution High findings routed to bounded behavior tasks before P4 polish), and ONE disclosure-migration ledger covering all 381 inventory rows."
   ],
   "D-086-R003": [
-   "Preservation discipline: every L-marked row (344) carries a non-empty always-visible cue (primary_state), expanded destination, accessibility path, print destination and proof owner; zero rows deleted; the only consolidations (LS-C08->LS-C24, LS-C23->LS-C22, LS-C27->LS-C06, SR27->SR12) name resolving survivors; no mark weakened; no source/test/copy change (docs-only diff)."
+   "Preservation discipline: every L-marked row (344) carries a non-empty always-visible cue (primary_state), expanded destination, accessibility path, print destination and proof owner; zero rows deleted; the only consolidations (LS-C08->LS-C24, LS-C23->LS-C22, LS-C27->LS-C06, SR27->SR12) name resolving survivors; no mark weakened; no source/test/copy change (docs-only diff).",
+   "Rework round (G3 F1-F3 + HJ-1..HJ-11 FAIL findings): every L row now names a real visibility obligation, a row-specific accessibility cell (speaking region / alert / focus rule, or a plain statement that nothing speaks), the TRUE print destination (16 LS rows that print in the property brief today routed to the P5 print gate; the false 'legacy route, no print' line corrected on all 72 LS rows) and a line-anchored proof owner or a named gap; authority cells use one class each; no mark, disposition, phase, section or drift changed; the cross-file check re-passes at d8df2674 (381 rows, exact bijection)."
   ],
   "D-086-R004": [
    "Contracted at f57fccd5 AFTER accepts #257 (T074), #258 (T075), #259 (T073) closed the T072-T076 waves and after the D-085 restart seam - the owner-confirmed ordering."
