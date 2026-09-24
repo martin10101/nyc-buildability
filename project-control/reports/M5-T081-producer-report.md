@@ -134,3 +134,96 @@ module. ruff 0.13.0, pytest 8.4.2 locally.
   must wire it to the scenario/max-envelope geometry (EPSG:2263 rings from
   `app.connectors.mappluto_geometry_arcgis` and the massing engine) and decide the export
   route surface. No route is mounted here.
+
+## Rework (G3 F1 + G4 F1 cluster)
+
+Rework of `a8e6c8ed` after G3 FAIL (F1 BLOCKING: wrong drawing-unit code) + G4 FAIL
+(F1 BLOCKING: honesty label test binds by value). One correction cluster, six items;
+every other behavior, the single sanitizer choke point, determinism, zero new
+dependencies and scope unchanged. Line numbers are post-edit.
+
+1. **Units — $INSUNITS 2 -> 21 (US Survey Feet)** (G3 F1 BLOCKING + G1 advisory).
+   Constant renamed `INSUNITS_FEET` -> `INSUNITS_US_SURVEY_FEET = 21`
+   (`dxf_writer.py:79`), emitted at `_write_header` (`:468`). The factually wrong comment
+   ("$INSUNITS cannot distinguish survey from international feet") is replaced with the
+   correct citation (`:64-78`): code 21 = US Survey Feet, ADDED in the AutoCAD 2017 DXF
+   reference, per `docs/research/dxf-format-reference-2026-09.md` sections 0.2/3/7
+   ([HDR2026]/[HDR2017], verbatim "a writer that means survey feet should set $INSUNITS 21,
+   not 2 (international feet)"). ANNOTATION CRS/units text was already "US SURVEY FEET" and
+   is now consistent with the header. `GOLDEN_SHA256` re-anchored (test:47) to
+   `2d8988d6d7338ed606a9a253cb0d3af2fe1c8f5d526cd8750dac769a9025d809` (only the header value
+   byte `2`->`21` changed the digest). `test_as2_header_declares_drawing_unit` (test:211)
+   now asserts the HARDCODED literal `(70, "21")` (was `(70, str(d.INSUNITS_FEET))`, which
+   passed for any value).
+
+2. **Honesty label pin** (G4 F1 BLOCKING). `test_as4_annotation_carries_required_labels`
+   (test:352) previously asserted `PROPOSED_LABEL in text` / `CRS_UNITS_NOTE in text`
+   (imported by value, so a weakened constant shipped green). It now asserts the HARDCODED
+   literals in the serialized output: `"PROPOSED - NOT A CITY RECORD"` and
+   `"COORDINATES: EPSG:2263 NAD83 NY LONG ISLAND - US SURVEY FEET"`, plus pins the two
+   constants themselves to their exact wording (mirrors the pdf_sheet_writer honesty tests).
+
+3. **Sanitizer coverage** (G4 F2). New parametrized `test_as3_sanitizer_rejects_forbidden_bytes`
+   (test:302) asserts `DxfSanitizationError` for `"\x00"`, `"\x1b"` and one non-ASCII char
+   (`"é"`), fed through the emit choke point via a `TextLabel`. A CR/LF-only weakening
+   (which survived the single existing newline test) now reddens the suite. Sanitizer code
+   unchanged (already an allowlist 0x20-0x7E).
+
+4. **Claim-word guard load-bearing** (G4 F3). New `test_as4_claim_word_guard_is_load_bearing`
+   (test:373) monkeypatches an annotation message to carry claim words and asserts the typed
+   `DxfValidationError(code="claim_class_word")` from the builder `_assert_no_claim_words`
+   path (`:604`). New `test_as4_claim_class_words_are_the_expected_set` (test:383) pins the
+   full `CLAIM_CLASS_WORDS` tuple as a hardcoded literal (11 words) so dropping a word reddens.
+
+5. **Builder bounds** (G5 F1 MEDIUM). `build_site_plan_document` (`:665`) now refuses BEFORE
+   materializing any ring/face/line: `len(floor_heights) > MAX_FLOORS` (new `MAX_FLOORS = 2_000`,
+   `:152`) -> `floor_cap_exceeded` (`:691`); `len(building_ring) > MAX_RING_VERTICES` ->
+   `ring_cap_exceeded` (`:696`); `len(building_ring) * n_floors > MAX_ENTITIES` ->
+   `entity_cap_exceeded`. `len(floor_heights)` is read before the heights tuple is built, so a
+   10-million-floor request refuses in O(1) with no allocation.
+   `test_as3_builder_refuses_over_cap_floor_count_before_allocating` (test:321) covers it.
+
+6. **Coordinate magnitude** (G5 F2 LOW). New `MAX_COORD_ABS = 1e8` (`:159`, mirrors the PDF
+   writer). `_format_real` (`:210`) — the single NUMERIC choke point every coordinate passes
+   through — now refuses `abs(value) > MAX_COORD_ABS` as typed `coordinate_out_of_range`
+   (`:220`). `test_as3_coordinate_magnitude_bound_refused` (test:334) covers it. Real NYC
+   EPSG:2263 coords (~1e6) are far inside the bound; the golden fixture is unaffected.
+
+### Self-checks (verbatim)
+
+```
+### CWD: services/api
+$ python -m ruff check .
+All checks passed!
+
+$ python -m pytest tests/cad/test_dxf_writer.py -q
+........................                                                 [100%]
+24 passed in 0.30s
+
+### CWD: worktree root
+$ python tools/modularity_check.py --check
+EXIT=0   (dxf_writer.py and test_dxf_writer.py NOT in the warn/fail list)
+```
+
+Environment: sandbox Python 3.11.9; CI targets 3.12. `from __future__ import annotations`
+keeps behavior identical. Test count 17 -> 24 (+7: sanitizer param x3, floor-bound x1,
+magnitude x1, claim-word load-bearing x1, claim-set literal x1).
+
+### Mutant table (each mutant applied to a byte-restored copy; the guard test run; then restored)
+
+| # | Mutant | Guard test | Result |
+|---|---|---|---|
+| 1 | `INSUNITS_US_SURVEY_FEET = 21` -> `2` | `test_as2_header_declares_drawing_unit` | RED (`assert (70,'2')==(70,'21')`) |
+| 1 | reverted (21) | same | GREEN (in full 24-pass run) |
+| 2 | `PROPOSED_LABEL` drops "NOT A CITY RECORD" | `test_as4_annotation_carries_required_labels` | RED (literal not in output) |
+| 2 | reverted | same | GREEN |
+| 3 | sanitizer -> CR/LF-only rejection | `test_as3_sanitizer_rejects_forbidden_bytes` | RED (3/3: \x00, \x1b, \xe9 DID NOT RAISE) |
+| 3 | reverted (allowlist) | same | GREEN |
+| 4 | `_assert_no_claim_words` -> no-op | `test_as4_claim_word_guard_is_load_bearing` | RED (DID NOT RAISE) |
+| 4 | reverted | same | GREEN |
+| 5 | remove builder floor-cap pre-check | `test_as3_builder_refuses_over_cap_floor_count_before_allocating` | RED (MAX_FLOORS+1 built; DID NOT RAISE) |
+| 5 | reverted | same | GREEN |
+
+No mutant residue remains (`grep -c MUTANT` = 0); the module is byte-restored and the full
+24-test suite is green. New golden sha256:
+`2d8988d6d7338ed606a9a253cb0d3af2fe1c8f5d526cd8750dac769a9025d809`.

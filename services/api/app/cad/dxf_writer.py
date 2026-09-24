@@ -29,10 +29,13 @@ Determinism and safety commitments:
   enter the stream; a violation is a typed refusal, never a scrubbed-and-emitted
   value. Because the whole document is assembled in memory and only returned on
   success, any refusal yields NO partial output.
-* FAIL CLOSED - non-finite coordinates, degenerate or duplicate-vertex rings,
-  invalid layer names, and over-cap entity counts each raise a typed
-  ``DxfValidationError`` with a machine-readable ``code`` BEFORE any serialization
-  begins. There is no "best effort" partial drawing.
+* FAIL CLOSED - non-finite or over-magnitude coordinates, degenerate or
+  duplicate-vertex rings, invalid layer names, over-cap floor counts, and
+  over-cap entity counts each raise a typed ``DxfValidationError`` with a
+  machine-readable ``code``. The builder refuses an oversized request BEFORE it
+  materializes any geometry, and every coordinate that reaches the output passes
+  the magnitude bound at the numeric choke point ``_format_real``. There is no
+  "best effort" partial drawing.
 * HONESTY (D-073-R006 / D-076-R002 / D-083 vocabulary) - the ANNOTATION layer
   always carries "PROPOSED - NOT A CITY RECORD", the CRS/units note (EPSG:2263,
   US survey feet) and the generator identity. Nothing emitted is ever labelled
@@ -61,15 +64,19 @@ from dataclasses import dataclass, field
 #: Codes, "$ACADVER" -> group code 1; AC1009 = R12) [recalled - verify].
 DXF_VERSION_R12 = "AC1009"
 
-#: $INSUNITS integer for feet (DXF Reference, HEADER Section Group Codes,
-#: "$INSUNITS" -> group code 70; 2 = Feet). This is the drawing-units header
-#: variable required by the objective. EPSG:2263 is US survey feet, which
-#: $INSUNITS cannot distinguish from international feet (a 2 ppm difference,
-#: immaterial to opening the drawing); the exact CRS is ALSO stated verbatim on
-#: the ANNOTATION layer so no unit fact depends solely on a reader honouring
-#: $INSUNITS. An unknown-to-a-strict-R12-reader $INSUNITS pair is skipped, not
-#: fatal, because it is an ordinary group-9 header variable [recalled - verify].
-INSUNITS_FEET = 2
+#: $INSUNITS integer for US SURVEY FEET (DXF Reference, HEADER Section Group
+#: Codes, "$INSUNITS" -> group code 70; 21 = US Survey Feet). NYC geometry is
+#: EPSG:2263 (US survey feet), so the drawing self-declares survey feet, NOT
+#: international feet (code 2). Code 21 exists precisely to distinguish survey
+#: from international feet and was ADDED in the AutoCAD 2017 DXF reference
+#: (docs/research/dxf-format-reference-2026-09.md sections 0.2/3/7, primary
+#: sources [HDR2026]/[HDR2017], verbatim: "a writer that means survey feet
+#: should set $INSUNITS 21, not 2 (international feet)"; codes 22-24 = US Survey
+#: Inch/Yard/Mile). $INSUNITS itself postdates a strict R12 reader (it entered
+#: wide use at R2000) and is written here as an ordinary header variable; the
+#: exact CRS is ALSO stated verbatim on the ANNOTATION layer, so no unit fact
+#: depends solely on a reader honouring $INSUNITS.
+INSUNITS_US_SURVEY_FEET = 21
 
 #: Line ending. LF is chosen for byte-deterministic, cross-platform output;
 #: DXF readers split on any newline and the sanitizer forbids CR/LF inside
@@ -139,6 +146,18 @@ MAX_ENTITIES = 50_000
 #: Per-ring vertex cap.
 MAX_RING_VERTICES = 10_000
 
+#: Per-building floor cap. A proposed building's floor stack is bounded; a
+#: larger floor count is a typed refusal enforced BEFORE any geometry is
+#: materialized (mirrors the massing truth object's total-floor ceiling).
+MAX_FLOORS = 2_000
+
+#: Coordinate-magnitude bound (absolute value, US survey feet). A finite but
+#: astronomically large coordinate formats to a ~300-digit token that would
+#: confuse AutoCAD; anything beyond this bound is a typed refusal at the numeric
+#: choke point ``_format_real`` (mirrors the PDF sheet writer's 1e8 bound). NYC
+#: EPSG:2263 coordinates are ~1e6, so real geometry is far inside this bound.
+MAX_COORD_ABS = 1e8
+
 #: Rings below this absolute planar area (sq ft) are degenerate.
 _AREA_EPSILON = 1e-9
 
@@ -189,11 +208,18 @@ class DxfSanitizationError(DxfWriterError):
 # --------------------------------------------------------------------------- #
 
 def _format_real(value: float, *, field: str) -> str:
-    """Deterministic fixed-decimal real. Rejects non-finite up front so a bad
-    coordinate never reaches the stream."""
+    """Deterministic fixed-decimal real and the single NUMERIC choke point:
+    rejects non-finite and over-magnitude values up front so a bad coordinate
+    never reaches the stream (mirrors ``_sanitize_value`` for strings)."""
     if not math.isfinite(value):
         raise DxfValidationError(
             "non_finite_coordinate", f"{value!r} is not finite", field=field
+        )
+    if abs(value) > MAX_COORD_ABS:
+        raise DxfValidationError(
+            "coordinate_out_of_range",
+            f"|{value!r}| exceeds magnitude bound {MAX_COORD_ABS:.0f}",
+            field=field,
         )
     if value == 0.0:  # normalise -0.0 -> 0.0 for stable bytes
         value = 0.0
@@ -439,7 +465,7 @@ def _write_header(s: _GroupCodeStream, doc: DxfDocument) -> None:
     s.pair(9, "$ACADVER")
     s.pair(1, DXF_VERSION_R12)            # group 1 = version string
     s.pair(9, "$INSUNITS")
-    s.pair(70, str(INSUNITS_FEET))        # group 70 = integer units code
+    s.pair(70, str(INSUNITS_US_SURVEY_FEET))  # group 70 = integer units (21 = US Survey Feet)
     s.pair(9, "$EXTMIN")                  # extents min (group 10/20/30)
     s.real(10, doc.extents_min[0])
     s.real(20, doc.extents_min[1])
@@ -654,6 +680,29 @@ def build_site_plan_document(
     """
     lot_ring = _normalize_ring(lot, field="lot")
     building_ring = _normalize_ring(building, field="building")
+
+    # Resource bounds enforced BEFORE materializing any ring/face/line (G5 F1):
+    # a typed refusal on an oversized request, never a multi-gigabyte allocation
+    # first. len(floor_heights) is read before the heights tuple is built, so a
+    # 10-million-floor request refuses in O(1) with no allocation.
+    n_floors = len(floor_heights)
+    if n_floors > MAX_FLOORS:
+        raise DxfValidationError(
+            "floor_cap_exceeded", f"{n_floors} floors exceed cap {MAX_FLOORS}"
+        )
+    edge_count = len(building_ring)
+    if edge_count > MAX_RING_VERTICES:
+        raise DxfValidationError(
+            "ring_cap_exceeded",
+            f"{edge_count} building vertices exceed cap {MAX_RING_VERTICES}",
+            field="building",
+        )
+    if edge_count * n_floors > MAX_ENTITIES:
+        raise DxfValidationError(
+            "entity_cap_exceeded",
+            f"{edge_count}x{n_floors} wall faces would exceed entity cap {MAX_ENTITIES}",
+        )
+
     heights = tuple(float(h) for h in floor_heights)
     if not heights:
         raise DxfValidationError("no_floors", "at least one floor height is required")
@@ -683,9 +732,9 @@ def build_site_plan_document(
     for elev in elevations:
         rings.append(Ring(LAYER_MASSING_3D, building_ring, elev))
 
-    # 3DFACE wall quads: one per building edge per floor band.
+    # 3DFACE wall quads: one per building edge per floor band. ``edge_count`` is
+    # the pre-check value above (len(building_ring)).
     faces: list[Face3D] = []
-    edge_count = len(building_ring)
     for band in range(len(heights)):
         z_bottom, z_top = elevations[band], elevations[band + 1]
         for i in range(edge_count):

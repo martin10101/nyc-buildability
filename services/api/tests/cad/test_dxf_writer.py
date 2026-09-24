@@ -44,7 +44,7 @@ FLOOR_HEIGHTS = [12.0, 11.0, 10.0]
 
 # Golden digest of render_site_plan_dxf(LOT, BUILDING, FLOOR_HEIGHTS) as ASCII
 # bytes. Regenerate ONLY on a deliberate format change (re-anchor + CI green).
-GOLDEN_SHA256 = "dbef79e1fd68508541a874ad5948a0384d08b8124f7c57122422706466d2ff11"
+GOLDEN_SHA256 = "2d8988d6d7338ed606a9a253cb0d3af2fe1c8f5d526cd8750dac769a9025d809"
 
 
 def _render() -> str:
@@ -211,7 +211,10 @@ def test_as2_outlines_closed_and_coordinates_round_trip():
 def test_as2_header_declares_drawing_unit():
     pairs = parse_pairs(_render())
     idx = pairs.index((9, "$INSUNITS"))
-    assert pairs[idx + 1] == (70, str(d.INSUNITS_FEET))  # 2 = feet
+    # Assert the HARDCODED literal 21 (US Survey Feet), NOT str(d.INSUNITS_*),
+    # which passes for ANY constant value; this externally pins the exact code
+    # so a 2-vs-21 regression reddens the suite (G3 F1 / G1).
+    assert pairs[idx + 1] == (70, "21")
 
 
 # --------------------------------------------------------------------------- #
@@ -295,16 +298,67 @@ def test_as3_sanitizer_guard_is_necessary(monkeypatch):
     assert "\nINJECT\n0\nSECTION\n" in "\n" + text
 
 
+@pytest.mark.parametrize("bad", ["\x00", "\x1b", "é"])
+def test_as3_sanitizer_rejects_forbidden_bytes(bad):
+    """A CR/LF-only sanitizer would survive test_as3_newline_injection_refused;
+    this pins NUL, ESC and a non-ASCII char as typed refusals at the emit choke
+    point (allowlist 0x20-0x7E), so weakening the guard to newlines reddens it."""
+    doc = DxfDocument(
+        layers=d.LAYER_DEFINITIONS,
+        texts=[
+            TextLabel(
+                layer="ANNOTATION",
+                position=(0.0, 0.0, 0.0),
+                height=1.0,
+                text=f"LABEL{bad}X",
+            )
+        ],
+    )
+    with pytest.raises(DxfSanitizationError):
+        serialize_document(doc)
+
+
+def test_as3_builder_refuses_over_cap_floor_count_before_allocating():
+    """Over-cap floor count is a typed refusal BEFORE any ring/face/line is
+    materialized (G5 F1). MAX_FLOORS+1 builds successfully if the pre-check is
+    removed (so this test guards the pre-check), and a 10-million-floor request
+    refuses in O(1) with no multi-gigabyte allocation."""
+    with pytest.raises(DxfValidationError) as exc:
+        build_site_plan_document(LOT, BUILDING, [1.0] * (d.MAX_FLOORS + 1))
+    assert exc.value.code == "floor_cap_exceeded"
+    with pytest.raises(DxfValidationError) as exc2:
+        build_site_plan_document(LOT, BUILDING, [1.0] * 10_000_000)
+    assert exc2.value.code == "floor_cap_exceeded"
+
+
+def test_as3_coordinate_magnitude_bound_refused():
+    """A finite but astronomically large coordinate is a typed refusal at the
+    numeric choke point (mirrors the PDF writer's 1e8 bound), not a ~300-digit
+    token that would confuse AutoCAD."""
+    big = d.MAX_COORD_ABS * 10.0
+    with pytest.raises(DxfValidationError) as exc:
+        render_site_plan_dxf(
+            [(0.0, 0.0), (big, 0.0), (big, big), (0.0, big)],
+            BUILDING,
+            FLOOR_HEIGHTS,
+        )
+    assert exc.value.code == "coordinate_out_of_range"
+
+
 # --------------------------------------------------------------------------- #
 # AS-4 honesty.
 # --------------------------------------------------------------------------- #
 
 def test_as4_annotation_carries_required_labels():
     text = _render()
-    assert PROPOSED_LABEL in text
-    assert CRS_UNITS_NOTE in text
-    assert "EPSG:2263" in text
-    assert "US SURVEY FEET" in text
+    # Pin the exact honesty strings as HARDCODED literals in the SERIALIZED
+    # output (mirrors the pdf_sheet_writer honesty tests). Asserting
+    # `PROPOSED_LABEL in text` would ship green even if the constant were
+    # weakened, so assert the literal bytes AND pin the constants themselves.
+    assert "PROPOSED - NOT A CITY RECORD" in text
+    assert "COORDINATES: EPSG:2263 NAD83 NY LONG ISLAND - US SURVEY FEET" in text
+    assert PROPOSED_LABEL == "PROPOSED - NOT A CITY RECORD"
+    assert CRS_UNITS_NOTE == "COORDINATES: EPSG:2263 NAD83 NY LONG ISLAND - US SURVEY FEET"
 
 
 def test_as4_no_claim_class_words_anywhere():
@@ -314,6 +368,34 @@ def test_as4_no_claim_class_words_anywhere():
     # Spot-check words the honesty directive names explicitly.
     for banned in ("PERMITTED", "APPROVED", "MAXIMUM ALLOWED"):
         assert banned not in upper
+
+
+def test_as4_claim_word_guard_is_load_bearing(monkeypatch):
+    """Feed a claim word through the builder's _assert_no_claim_words path: a
+    barred word in ANY annotation message is a typed refusal, never emitted.
+    Neutering _assert_no_claim_words (or dropping the word) reddens this test."""
+    monkeypatch.setattr(d, "GENERATOR_NOTE", "APPROVED MAXIMUM ALLOWED BUILDING")
+    with pytest.raises(DxfValidationError) as exc:
+        build_site_plan_document(LOT, BUILDING, FLOOR_HEIGHTS)
+    assert exc.value.code == "claim_class_word"
+
+
+def test_as4_claim_class_words_are_the_expected_set():
+    """Pin the full barred-word set as a hardcoded literal so dropping a word
+    (weakening the guard) reddens this test rather than shipping green."""
+    assert CLAIM_CLASS_WORDS == (
+        "PERMITTED",
+        "APPROVED",
+        "CERTIFIED",
+        "COMPLIANT",
+        "LAWFUL",
+        "LEGAL",
+        "ENTITLEMENT",
+        "GUARANTEED",
+        "MAXIMUM ALLOWED",
+        "AS OF RIGHT",
+        "AS-OF-RIGHT",
+    )
 
 
 # --------------------------------------------------------------------------- #
