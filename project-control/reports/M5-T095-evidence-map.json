@@ -1,0 +1,26 @@
+{
+ "task_id": "M5-T095",
+ "material_commit": "a2dcc60f (cherry-pick of wt-m5t095 3be80a1d; 3 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T15:50:25+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m5t095)",
+ "requirements": {
+  "D-066-R001": [
+   "The navigation block named every proposal.py consumer (proposal_validation, proposal_checks_api, max_envelope_api, contract, derivation, massing_model, max_envelope, proposal_input_gate) as FORBIDDEN; the material touches exactly the 3 allowed paths; the producer ran the documented 7-suite consumer command: 312 passed unchanged. [ORCH-HARVEST] at the cherry-picked head a2dcc60f (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario/test_proposal_validation_budget.py tests/scenario/test_scenario_proposal.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 74 passed in 13.49s."
+  ],
+  "D-076-R002": [
+   "The proposal editor's validation stays decision-identical: a 360,000-case probe and a committed 24,159-ring regression corpus show 0 disagreements between the old and new simplicity checks (both outcomes exercised); the public validate_proposed_massing / ProposedMassingError surface is unchanged (only MAX_TOTAL_OUTLINE_POSITIONS added to __all__). [ORCH-HARVEST] at the cherry-picked head a2dcc60f (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario/test_proposal_validation_budget.py tests/scenario/test_scenario_proposal.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 74 passed in 13.49s."
+  ],
+  "D-087-R001": [
+   "Wave-4 capacity unit: contracted at 5cb3ca94 (G0), claimed at a749d995 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with M5-T094 and the wave-5/6 units; no state or gate skipped. [ORCH-HARVEST] at the cherry-picked head a2dcc60f (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario/test_proposal_validation_budget.py tests/scenario/test_scenario_proposal.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 74 passed in 13.49s."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task; one worktree wt-m5t095; material touches exactly the 3 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the cherry-picked head a2dcc60f (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario/test_proposal_validation_budget.py tests/scenario/test_scenario_proposal.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 74 passed in 13.49s."
+  ],
+  "D-087-R003": [
+   "Closes the M5-T088 G5 F-HIGH-1 precondition before any 3D/massing wiring: a request-level bound (MAX_TOTAL_OUTLINE_POSITIONS = 20,000) refuses before any simplicity check (spy: zero calls; boundary 20,000 passes / 20,001 refuses); condition 3 of the ring-simplicity check moves from the hand-rolled all-pairs loop to GEOS validity while conditions 1-2 stay byte-identical O(n); worst allowed request measured on this PC 597 s -> 53-87 ms; a GEOSException fails closed to the typed self-intersecting refusal. [ORCH-HARVEST] at the cherry-picked head a2dcc60f (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario/test_proposal_validation_budget.py tests/scenario/test_scenario_proposal.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 74 passed in 13.49s."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies (shapely already admitted; no requirements change); no route, main.py or web change; every consumer untouched; the max-envelope route stays unmounted. [ORCH-HARVEST] at the cherry-picked head a2dcc60f (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario/test_proposal_validation_budget.py tests/scenario/test_scenario_proposal.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 74 passed in 13.49s."
+  ]
+ }
+}
