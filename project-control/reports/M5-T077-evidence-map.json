@@ -1,0 +1,17 @@
+{
+ "task_id": "M5-T077",
+ "material_commit": "f63cfad1 (cherry-pick of the wt-m5t077 in-worktree commit af332042; 5 files, every file MATCH by git blob identity)",
+ "produced_at": "2026-09-24T08:40:00+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent after the B-026 lane refusal; worktree wt-m5t077)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's CODE-GRAPH NAVIGATION BLOCK was embedded at the contract seam (graph regenerated: 817 files) naming max_envelope_api.py's single consumer (tests/api/test_max_envelope_api.py; route UNMOUNTED) and lot_geometry_derivation.py's consumers; the producer stayed inside that scope (cherry-pick diff = the five allowed paths; max_envelope.py byte-untouched, blob f0abf884)."
+  ],
+  "D-087-R001": [
+   "One of the seq-128 capacity-ramp units: contracted at f57fccd5 (G0 PASS), claimed at b56f3d5b, and - after the B-026 lane refusal - produced by an orchestrator-dispatched subagent in its claimed worktree wt-m5t077 concurrently with the other D-087 units; no state or gate skipped (scope correction logged in the progress_log)."
+  ],
+  "D-087-R002": [
+   "Pairwise-disjoint allowed_paths recorded at G0 (EMPTY overlap vs every live packet incl. the seven D-087 subagent packets); isolated worktree wt-m5t077; commit af332042 touches exactly the five allowed paths."
+  ]
+ }
+}
