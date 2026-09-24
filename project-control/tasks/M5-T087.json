@@ -47,12 +47,12 @@
     "geospatial-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T07:31:33.937529+00:00",
-  "updated_at": "2026-09-24T07:31:34.502155+00:00",
+  "updated_at": "2026-09-24T07:32:20.230321+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -71,5 +71,15 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-09-24T07:31:33.937529+00:00",
-  "documented_test_commands": []
+  "documented_test_commands": [],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t087",
+  "progress_log": [
+    {
+      "at": "2026-09-24T07:32:20.230321+00:00",
+      "agent": "official-source-researcher",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contract seam complete: G0 PASS; D-087 wave-1.5; worktree wt-m5t087 at the claim-seam commit; dispatch next"
+    }
+  ]
 }
