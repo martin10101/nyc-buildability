@@ -10,7 +10,7 @@
  "issued_at": "2026-09-19",
  "captured_at": "2026-09-19T06:12:50.269900+00:00",
  "created_at": "2026-09-19T06:12:50.269900+00:00",
- "updated_at": "2026-09-24T08:05:00+00:00",
+ "updated_at": "2026-09-24T15:15:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "665d3d0bb965b5a3d097803428a3f69294fb84b7",
  "capture_head_sha": null,
@@ -26,7 +26,7 @@
   "D-076-R002",
   "D-076-R003"
  ],
- "requirements_content_digest_sha256": "0eef36ffa0e9511e83f6bbc428d3a796918e40d6545e9b98e95598d0b3e54970",
+ "requirements_content_digest_sha256": "f0cbc13926ae8ed5087056268f76bf751f0a44ef7c28da24b8a498dfab4ce22c",
  "sources": [
   {
    "file": "source-001.md",
@@ -129,6 +129,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "Seq-128 lane re-feed + D-086 P0 contract seam (after accepts #257-#259): bound D-076-R002 <- M5-T078, M5-T079; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-24T15:15:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "wave-4 contract seam (M5-T094/T095): bound D-076-R002 <- M5-T095; requirements digest resynced in the same commit."
   }
  ]
 }

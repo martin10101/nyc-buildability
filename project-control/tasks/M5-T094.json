@@ -1,0 +1,99 @@
+{
+  "task_id": "M5-T094",
+  "title": "D-087 PDF-1c: split the architect-sheet reader BEFORE any growth (DB-055 b) - object-graph / stream-decode vs the content interpreter into focused modules behind a compatibility facade; byte-identical behaviour (no feature change)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "services/api/app/drawings/sheet_reader.py is 962 SLOC against a 1000-SLOC hard cap, and the next reader packet (C1: PDF 1.5+ cross-reference and object streams, per the M5-T093 corpus trial) must grow it. Split it along its natural seam BEFORE that growth: move the document/object-graph walk and stream decoding (page tree, resources, form memo, decode budgets, contents joining) into a new module services/api/app/drawings/sheet_objects.py and keep the operator interpreter (graphics/text state, path construction, form placement) in a second new module services/api/app/drawings/sheet_interpreter.py; sheet_reader.py becomes a thin compatibility facade that keeps every public name importable from its current location. NO behaviour change: same refusals, same budgets, same outputs, same public API.",
+  "business_reason": "The owner asked for architect PDF reading (D-087-R005); the corpus trial showed the reader reads no real drawing yet, and the fix must land in a module with room to grow - the modularity policy forbids growing a file already at the justification ceiling.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-055 (b) and project-control/reports/M5-T083-G3-rework.md (the split recommendation: object-graph/stream-decode vs the _StreamRun interpreter, compatibility facade); docs/CODE_MODULARITY_POLICY.md and .claude/rules/code-architecture.md govern the split.",
+    "BEHAVIOUR PRESERVATION (binding): the existing 37 tests in services/api/tests/drawings/test_sheet_reader.py pass UNCHANGED (do not edit them); add a new equivalence test file that runs a corpus of generated synthetic PDFs (curves, CTM, q/Q, forms incl. cycles and depth, images, text, every refusal class, the budgets) through the facade and asserts outputs and refusals byte-identical to a pinned golden captured from the pre-split module; local Python is 3.11 - run the sheet tests through a copy of the outside-repo bare-package shim technique.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 821 files / 17652 nodes / 7589 edges): sheet_reader.py has no production importer (only its test, tests/drawings/test_sheet_reader.py); app/documents/extraction/* are consumed READ-ONLY and FORBIDDEN to edit; sheet_primitives.py stays as is (FORBIDDEN). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/drawings/sheet_objects.py - object graph + stream decode + budgets",
+    "services/api/app/drawings/sheet_interpreter.py - content-stream operator interpreter",
+    "services/api/app/drawings/sheet_reader.py - thin compatibility facade (public API unchanged)",
+    "services/api/tests/drawings/test_sheet_reader_split_equivalence.py - byte-identical equivalence vs the pre-split golden",
+    "project-control/reports/M5-T094-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T083"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/sheet_reader.py",
+    "services/api/app/drawings/sheet_objects.py",
+    "services/api/app/drawings/sheet_interpreter.py",
+    "services/api/tests/drawings/test_sheet_reader_split_equivalence.py",
+    "project-control/reports/M5-T094-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/sheet_primitives.py",
+    "services/api/app/drawings/__init__.py",
+    "services/api/app/drawings/dxf_reader.py",
+    "services/api/app/documents/",
+    "services/api/tests/drawings/test_sheet_reader.py",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (API preserved): every public name previously importable from app.drawings.sheet_reader still is; the 37 existing tests pass unchanged.",
+    "AS-2 (byte-identical behaviour): the equivalence corpus produces outputs and refusals byte-identical to the golden captured from the pre-split module (sha256 pinned), including every refusal class and budget.",
+    "AS-3 (modularity): each production module is under 600 SLOC; imports are acyclic (facade -> interpreter -> objects -> primitives/documents); modularity_check exit 0 with no new warning on app/drawings.",
+    "AS-4 (security properties kept): the flatten point budget, decoded-bytes budget, form depth/cycle guards, top-level backstop and finiteness gates are each still enforced (one mutation per guard reddens a test).",
+    "AS-5 (scope): zero new dependencies; app/documents and sheet_primitives byte-untouched; not wired; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T15:13:18.140432+00:00",
+  "updated_at": "2026-09-24T15:13:18.605529+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R005",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T15:13:18.140432+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/drawings/test_sheet_reader.py tests/drawings/test_sheet_reader_split_equivalence.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

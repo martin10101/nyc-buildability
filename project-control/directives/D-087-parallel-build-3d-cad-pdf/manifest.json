@@ -10,7 +10,7 @@
  "issued_at": "2026-09-24",
  "captured_at": "2026-09-24T07:20:00+00:00",
  "created_at": "2026-09-24T07:20:00+00:00",
- "updated_at": "2026-09-24T10:45:00+00:00",
+ "updated_at": "2026-09-24T15:15:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "ed49b2d8af5fb4783cc3e456e29f78152e921baf",
  "capture_head_sha": null,
@@ -35,7 +35,7 @@
   "D-087-R011",
   "D-087-R012"
  ],
- "requirements_content_digest_sha256": "d8f15ae602f3be849e313825da72b941b11b8bf06042175bae862d9a87f4c8f7",
+ "requirements_content_digest_sha256": "da567a4d0ed41c024586001830831d60005f0e14990b8d861eb503632f418948",
  "sources": [
   {
    "file": "source-001.md",
@@ -118,6 +118,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "Seq-128 D-087 wave-3 contract seam (M5-T093 real-corpus trial of the architect-sheet reader, the DB-055 (g)+(h) precondition): bound D-087-R001 <- M5-T093; D-087-R002 <- M5-T093; D-087-R005 <- M5-T093; D-087-R009 <- M5-T093; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-24T15:15:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "wave-4 contract seam (M5-T094/T095): bound D-087-R001 <- M5-T094, M5-T095; D-087-R002 <- M5-T094, M5-T095; D-087-R003 <- M5-T095; D-087-R005 <- M5-T094; D-087-R009 <- M5-T094, M5-T095; requirements digest resynced in the same commit."
   }
  ]
 }
