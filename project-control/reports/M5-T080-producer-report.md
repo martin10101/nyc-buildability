@@ -221,3 +221,216 @@ END-OF-REPORT
 - Every row carries exactly the packet's 18 keys; both files pass `python -m json.tool`.
 - 344 L-marked rows: none missing primary_state / progressive_destination / accessibility / print_destination / proof_owner.
 - consolidate/retire rows with an unresolved replacement_ref: none (PART B's four consolidations resolve).
+
+---
+
+## Rework A (2026-09-24) — G3 cr-p0 F1–F3 + HJ hj-p0, PART A ledger + reconciliation
+
+Producer: frontend-engineer (rework producer A). Scope: exactly `docs/design/ui-cleanup/P0-RECONCILIATION.md`,
+`docs/design/ui-cleanup/disclosure-ledger-a.json` and this report. `disclosure-ledger-b.json` untouched
+(producer B). Inputs read: `project-control/tasks/M5-T080.json`, `project-control/reports/M5-T080-G3.md`,
+`project-control/reports/M5-T080-HJ.md`, `project-control/directives/D-086-ui-design-cleanup/`, D-082 and
+D-083 requirements, assessment §§1–6, 7.8, 11–14.
+
+### IMPLEMENTATION
+
+1. **Ledger A (155 rows)** — rewrote every `accessibility` and `print_destination` cell from source, one
+   true statement per row (no shared boilerplate: 150 distinct accessibility cells, max repeat 4; print cells
+   repeat only where rows share one surface, e.g. the 28 AD rows + SH-03 on the no-BBL search state).
+   Targeted fixes to `assessed_source`/`current_source` (SH-02, ZC-04, M08), `authority` (PE-07, AD15, M07,
+   SH-07), `primary_state` (PE-02, PC-04, PC-05, PV-01, ME-05), `protected_meaning` (D-083 citations on 10
+   rows), `proof_owner` (139 rows: re-anchors + a phase visibility/announcement proof clause on every L row)
+   and `open_question` (51 rows: in-flight flags, P5 decisions, cross-refs, one defect pointer). No mark,
+   section, disposition or replacement_ref changed; key set and order unchanged.
+2. **Reconciliation** — rewrote §1 (two-step drift + pin-of-record rule + method limit), §2 (route/state
+   map: 23 rows, one per route + flag + view, ★ report), §3 (DB-038/043/046/049/050/051 + head-new
+   DB-053…056, read at `a57bb8de`), §4 (D-076 checkpoint PASSED), §5 (named fixtures, freshness → PC-04/
+   PC-05/PV-01), §6 (counts + anchor list); added §7 (print/accessibility legend, P5-D1…P5-D6, speaking
+   regions, kept `role=alert` sites, P5 print-gate recipe) and §8 (in-flight re-pin register).
+
+### Identity / setup (cwd `C:\Users\MLFLL\Downloads\nyc-zoning\wt-m5t080`)
+
+```
+$ git rev-parse --show-toplevel && git rev-parse HEAD && git status --short && git branch --show-current
+C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t080
+a57bb8dec34129a86e5c9bfe6ea2d2be1f5dfc1d
+task/M5-T080-p0-reconcile
+```
+(status empty = clean tree at start.)
+
+### Per-finding closure (PART A + reconciliation)
+
+| Finding | Status | Rows / sections |
+|---|---|---|
+| G3-F1 (SH-02 line) | CLOSED | SH-02 `current_source` = `page.tsx:5`; `assessed_source` annotated (assessment cites :6, line 6 is `}` at dc5a763e too). The 10 SR path rows are PART B. |
+| G3-F2 PE-07 | CLOSED | authority `exact-copy test …/proposal-editor.test.tsx:83-88`; proof owner the same span. |
+| G3-F2 AD15 | CLOSED | authority `PRD 5 (Primary user flow, step 5 …, PRD.md:96)`. |
+| G3-F2 M07 | CLOSED | DB-002/DB-032 dropped; authority `exact-copy test …/lot-outline-map.test.tsx:349-360 (asserts 'condominium unit lot') @b56f3d5b`; proof owner same; in-flight anchor note (`:362-373` at a57bb8de). R01/R03/C01/C10/E08/E13/LS-C03 are PART B. |
+| G3-F3 D-076 | CLOSED | §4: checkpoint PASSED per D-082-R001. |
+| G3-F3 DB-046 | CLOSED | §3: OPEN row; (a)-(f) resolved 251st; (g)/(h) WATCH; (i) public-exposure packet. |
+| G3-F3 route map | CLOSED | §2 rows 4, 7, 11, 18: AC\*/M\* on the `/property` search state (`ArchitectEntry.tsx:65-67`, `AddressResolutionScreen.tsx:247`, `AddressConfirmCard.tsx:305`); Continue only links to `/property/confirm` (`:380`). |
+| HJ-2 (print, PART A) | CLOSED for PART A | All 155 print cells: 3 printed (SH-01 via root-layout footer — not the appendix; SH-09 when present; LC22 via format.ts), 3 split/partly (SW-01, SW-02, SW-03), 11 not applicable, 1 not a designed print element (SH-15), 137 not printed today. Real gaps recorded as P5-D1 (A01/LS-P01 env banner + SH-02), P5-D2 (A03 footnote, print and ≤700px), P5-D3 (SH-08 alias/draft/borough), P5-D4 (no proposal print), P5-D5 (SW-01 scope), P5-D6 (SW-02 association label). PART B rows (HJ-1) are producer B's. |
+| HJ-5 (a11y, PART A) | CLOSED for PART A | All 155 cells name role/name, keyboard/touch path, speaking region, alert vs status, focus rule. Kept alerts: SH-05/SH-09 (AnalysisIdentityNotice), SH-10, SH-14, PE-07, PC-06, ME-06, ME-09…ME-16, DR-07, DR-11…DR-22. SH-01 = contentinfo landmark, not a control. Same-event duplicates recorded (PE-07, PC-06, ME-03, ME-04/ME-07, ME-06, DR-06/DR-07). Region table in §7. |
+| HJ-6 | CLOSED | ME-05 primary state pins the heading and the qualifier; proof owner records that the qualifier is pinned by no test. D-083 cited (protected_meaning) on ME-01…ME-05, ME-07, ME-08, DR-01, DR-06, DR-10; D-083-R004 on ME-03, ME-08, PC-05, PV-01. PC-05/PV-01 default to failed/unchecked with "Incomplete - N could not be checked". |
+| HJ-7 | CLOSED | §2 rebuilt; AD\* and the no-BBL search state included; ★ view=report. |
+| HJ-8 | CLOSED | §5 freshness → PC-04/PC-05/PV-01 (+ "Changed since check" in their primary states); PE-02 cross-references PE-10. |
+| G3-A1 / HJ-10 | CLOSED as instructed | Flags kept on DR-01…09 and ME-01…17 (pinned b56f3d5b, observed a57bb8de locations recorded); flags extended to DR-10…23 (rendering component + proof file) and M01/M02/M05/M07/M11 (proof anchors). §8 lists copy that will need rows at re-pin; no rows added now. |
+| G3-A5 | CLOSED | DB-038 remaining = (a)/(d)/(e); DB-043 note (checkpoint passed, packet not contracted, (a) closed); false "byte-identical" claim removed; fixtures named in §5; ZC\*/ME\* placement corrected. |
+| G3-A3 (SH-07) | CLOSED | authority `implementation-only prose`; proof owner says no test pins the card (architect-workspace.spec.ts:126 covers only the survey-enabled inbox). |
+| G3-A4 (ZC-04, M08) | CLOSED | ZC-04 `current_source` 30-47 (file has 49 lines); M08 `694-702` (text on 699). |
+| HJ-11 | PARTIAL | PV-01…PV-03 re-anchored to `proposal-editor.test.tsx:91-103` / `:40-42` (no variations spec exists); M05 to `:418`; SH-01 print corrected; every L row now names a phase visibility / announcement / name / silence proof (D-086-R003). Rows still citing a whole test file keep that; exact lines are the owning slice's G0 job. |
+
+### Commands run (cwd `C:\Users\MLFLL\Downloads\nyc-zoning\wt-m5t080` unless stated; outputs verbatim, trimmed where noted)
+
+```
+$ git diff --stat b56f3d5b a57bb8de -- apps/web
+ 11 files changed, 866 insertions(+), 107 deletions(-)     [list in P0-RECONCILIATION §1]
+$ git log --format='%h %s' b56f3d5b..a57bb8de -- apps/web/e2e/proposal-editor.spec.ts
+006f3589 M5-T079 unit (DB-050 max-surface hardening)
+$ git log --format='%h %s' b56f3d5b..a57bb8de -- apps/web/src/components/address/__tests__/lot-outline-map.test.tsx
+5879cdfa M5-T078 unit (DB-049 drawing-surface disclosure + a11y)
+$ git diff -U0 b56f3d5b a57bb8de -- apps/web/src/components/address/__tests__/lot-outline-map.test.tsx | grep '^@@'
+@@ -212,0 +213,10 @@ / @@ -247,2 +257,5 @@ / @@ -530 +543,8 @@ / @@ -713,0 +734,6 @@ / @@ -741 +767,5 @@ / @@ -785 +815,7 @@
+$ git show HEAD:apps/web/src/app/page.tsx | sed -n 5,6p           (dc5a763e identical)
+  return <div className="architect-shell"><header className="architect-topbar"><span class…
+}
+$ git show HEAD:apps/web/src/components/architect/__tests__/proposal-editor.test.tsx | sed -n 83,88p
+  it("blocks a bad-charset draft client-side, naming the route constant, without sending", () => {
+  …
+    expect(screen.getByTestId("draft-problems")).toHaveTextContent("_LABEL_CHARSET");
+    expect(screen.queryByTestId("proposal-check-summary")).toBeNull();
+$ git show HEAD:PRD.md | sed -n 96p
+5. System displays possible matches if ambiguous.
+$ git show b56f3d5b:apps/web/src/components/address/__tests__/lot-outline-map.test.tsx | sed -n '349p;357p'
+  it("condo unit lot: honest-empty state names the reason; no map is constructed", async () => {
+    expect(empty.textContent).toContain("condominium unit lot");
+$ git show HEAD:apps/web/src/components/address/__tests__/lot-outline-map.test.tsx | sed -n '362p;370p'
+  (same two lines)
+$ git show b56f3d5b:…/lot-outline-map.test.tsx | sed -n 418p      and   git show HEAD:… | sed -n 431p
+  it("single_lot without WebGL: honest fallback, +/-20 ft copy kept, maplibre-gl NEVER imported/constructed", …
+$ git show HEAD:apps/web/src/components/address/LotOutlineMap.tsx | sed -n '694p;699p'
+          {view.outcome === "no_outline" ? (
+                  : "No parcel outline is drawn: the official source returned no lot for this BBL. …
+$ git show HEAD:apps/web/src/components/architect/ZoningContextControl.tsx | wc -l
+49
+$ git show b56f3d5b:apps/web/src/components/architect/__tests__/max-envelope-panel.test.tsx | sed -n '18p;122p;275p'
+  "These are rules-derived preliminary development limits for this lot — not a maximum permitted building.";
+    expect(await screen.findByRole("heading", { name: "Preliminary development limits" })).toBeInTheDocument();
+  it("no changed panel/lib source asserts an unqualified 'maximum allowed building' or 'demonstrated maximum'", () => {
+$ git grep -n "not a maximum permitted building" b56f3d5b -- apps/web
+  MaxEnvelopePanel.tsx:264 (lead) · max-envelope-panel.test.tsx:18 (server-disclosure fixture) ·
+  max-envelope-api.test.ts:47 (fixture) · max-envelope-api.ts:587 (announcement)   → the lead is unpinned
+$ git show HEAD:apps/web/src/components/compare/__tests__/property-error-boundary.test.tsx | sed -n 96p
+    expect(card.closest('[role="alert"]')).not.toBeNull();
+$ git show HEAD:apps/web/src/components/architect/__tests__/proposal-editor.test.tsx | sed -n 42p
+    expect(screen.getByTestId("variations-ephemeral")).toHaveTextContent("this browser session only");
+$ git show HEAD:apps/web/e2e/architect-workspace.spec.ts | sed -n 126p
+    if (view === "documents") await expect(page.getByTestId("inbox-empty")).toBeVisible();
+$ grep -rn 'id="bbl-input"\|bbl-input\b' apps/web/src apps/web/e2e --include=*.ts* | grep -v __tests__
+  AddressOutcomeCards.tsx:100 (href="#bbl-input") · PropertyLookup.tsx:286,290 (the only id) · e2e keyboard/a11y specs (legacy)
+$ grep -rn "@media print" --include=*.css apps/web/src
+  app/property/architect.css:140, :187, :188   (no other print rules)
+[summary, not verbatim] source reads with sed/grep/git show for every accessibility/print cell: ArchitectEntry, ArchitectShell,
+  ReportView, architect.css, layout.tsx, page.tsx, ProposalEditor, ProposalCheckReport, ProposalVariations,
+  MaxEnvelopePanel/max-envelope-api/ProposalOutlineDraw/ProposalOutlineMap @b56f3d5b (extracted with git show
+  to the session scratchpad), LotOutlineMap, AddressResolutionScreen, AddressAutocomplete, AddressForm,
+  AddressOutcomeCards, SuggestionChooser, AddressConfirmCard, ConfirmScreen, PropertyLookup, ScenarioWorkspace,
+  DevelopmentLimits, ZoningContextPanel/Control, ZoningSection, AdditionalZoningFlags, OutcomeAnnouncer,
+  error.tsx, ScenarioFailureStates)
+```
+
+Self-check (the required completeness enumeration + json.tool):
+
+```
+$ sed -n '57,923p' docs/UI_DEEP_DIVE_ASSESSMENT.md \
+  | grep -oE '^\|[[:space:]]*(SH-|PE-|DR-|PC-|PV-|ME-|SW-|ZC-|LS-P|LS-C|LS-E|LS-F|LS-T|AD|AC|LC|SR|DB|M|A|C|F|E|R)[0-9]+' \
+  | sed -E 's/^\|[[:space:]]*//' | sort > <scratchpad>/enum.txt
+$ wc -l < enum.txt ; uniq -d enum.txt | wc -l
+381
+0
+$ python <scratchpad>/check_a.py
+enumerated total 381 | enumerated PART A 155 | ledger-a rows 155
+ids appearing more than once in ledger-a: []
+in enum not ledger: [] | in ledger not enum: []
+per family: {'AC': 11, 'AD': 28, 'DR': 23, 'LC': 22, 'M': 13, 'ME': 17, 'PC': 6, 'PE': 10, 'PV': 3, 'SH': 15, 'SW': 3, 'ZC': 4}
+rows with exact 18-key set/order: 155
+L rows 138 | empty required cells: []
+dispositions: {'keep': 16, 'convert': 139} | consolidate/retire without replacement_ref: []
+marks changed vs HEAD: []
+$ python -m json.tool docs/design/ui-cleanup/disclosure-ledger-a.json > /dev/null; echo "exit=$?"
+json.tool disclosure-ledger-a.json exit=0
+$ python -m json.tool docs/design/ui-cleanup/disclosure-ledger-b.json > /dev/null; echo "exit=$?"
+json.tool disclosure-ledger-b.json (untouched) exit=0
+```
+
+Apply-script summary (the script asserts the key order, unchanged marks/sections/dispositions/refs, the five
+L cells non-empty, and that neither old boilerplate sentence survives):
+`rows 155 distinct accessibility 150 max repeat 4 | distinct print 69 max repeat 29 | changed cells per key
+{accessibility 155, print_destination 155, proof_owner 139, open_question 51, protected_meaning 10,
+primary_state 5, authority 4, current_source 3, assessed_source 1}`.
+
+### Evidence status
+
+- [OBSERVED] every cited span, anchor, role, live region and print rule named in the cells, read at
+  `a57bb8de` (or at `b56f3d5b` for the in-flight files) with `git show` / `grep` / `sed`.
+- [BLOCKED] browser, print and screen-reader behaviour (thin client: no npm/npx/node). The print and
+  accessibility cells are source-grounded, not observed in a browser. Harvest recipe for P5: extend
+  `apps/web/e2e/architect-workspace.spec.ts:185-214` (already emulates print on view=report) with one
+  visibility assertion per "printed today" row and one per P5-D decision; for accessibility, a Playwright
+  journey per surface asserting the named live-region text changes once per state change.
+- [PREDICTED] none claimed.
+
+### Meaning preservation
+
+Docs only: no user-visible string changed (no before → after pairs). No mark weakened (script check:
+`marks changed vs HEAD: []`). No disclosure, gap or review meaning removed from any row; the edits add
+destinations, obligations and gaps.
+
+### DISCOVERIES (D-069; route to the orchestrator, not fixed here)
+
+1. **Unreachable legacy branches.** `PropertyLookup.tsx:165` (RuleEvaluationPanel) and `:265`
+   (AddressResolutionScreen, legacy "Address lookup" copy) render only when `ruleEvalEnabled` is true, but
+   the only mount passes `false` (`app/property/page.tsx:41` returns ArchitectEntry when the flag is on;
+   `:45` renders PropertyLookup only when it is off). They render in tests only. Route: P2 / legacy-route
+   retirement decision.
+2. **Dead "Look up by BBL instead" link on the architect route (source-grounded defect).**
+   `AddressOutcomeCards.tsx:100` links to `#bbl-input`, which exists only in PropertyLookup
+   (`PropertyLookup.tsx:290`). On the reachable architect search state the BBL field is `#architect-bbl`
+   inside a closed `<details>` (`ArchitectEntry.tsx:68-73`), so the link should move neither scroll nor focus
+   and leaves the BBL form closed. `address-resolution.test.tsx:459` pins only the href. Needs a browser
+   check and a P2 fix (AD14 open_question).
+3. **Tab title does not follow the architect view.** Flag-on navigation always uses `/property?view=…`
+   (`navigation.ts:13-17`), so the Report and Proposal views are titled "Property lookup — NYC Buildability
+   (internal)". Route: P2/P3 (SH-15).
+4. **ME-05 qualifier unpinned.** "…not a maximum permitted building" in the limits lead
+   (`MaxEnvelopePanel.tsx:262-264` @b56f3d5b) is asserted by no test; the copy wall only forbids "maximum
+   allowed building". Route: M5-T079 rework or P4.
+5. **Landing environment badge hidden at ≤700px** (`architect.css:138` applies on `/`). Folded into P5-D1.
+6. **Map container name may not be exposed.** `aria-label` sits on a role-less `<div>`
+   (`LotOutlineMap.tsx:643-646`); ARIA 1.2 does not name generic elements. Route: next lot-outline-map touch
+   (DB-049 (g)/(h) class).
+7. **Same-event double announcements** (alert card + polite announcer: PE-07, PC-06, ME-06, DR-07/DR-11…22;
+   two announcers for one adopt click: ME-04/ME-07 + PE-08). DB-049/DB-044 class; route P4 after M5-T078.
+
+### Not closed (with reason)
+
+- PART B items (G3-F1 SR paths; G3-F2 R01, R03, C01, C10, E08/E13, LS-C03; HJ-1, HJ-3, HJ-4, HJ-9; PART B
+  halves of HJ-2/HJ-5; G3-A3/A4 PART B rows): producer B's file, out of my scope.
+- HJ-10 rows for new in-flight copy: deliberately not added (orchestrator instruction; copy still changing);
+  listed in reconciliation §8 for the re-pin.
+- HJ-11 exact test lines for rows that cite a whole test file: left to each owning slice's G0; every L row
+  now carries a phase proof obligation.
+- Browser/print/AT observation: [BLOCKED] by the thin-client rule (recipe above).
+
+### Assumptions
+
+- Pin of record: in-flight rows stay at `b56f3d5b` (the orchestrator said to keep the flags and re-pin after
+  the lanes land); all other rows are byte-identical at `a57bb8de`.
+- D-083 is an owner directive, not one of the packet's authority classes, so it is cited in
+  `protected_meaning` / `primary_state`, and each `authority` cell keeps one packet class.
+- "Printed today" means inside the brief print tree or outside every print-hiding rule on view=report.
+
+### Requested status
+
+`awaiting_gate` — delta check of the rows and sections in the closure table (G3 cr-p0; HJ hj-p0 for the
+PART A print/accessibility cells), once producer B's PART B rework is harvested.
