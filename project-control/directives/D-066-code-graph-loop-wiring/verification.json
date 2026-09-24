@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T08:57:00+00:00",
+ "verified_at": "2026-09-24T09:12:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -995,6 +995,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: navigation block present in M5-T087.json inputs (future connector beside mappluto_geometry_arcgis.py + the massing model); report M5-T087-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T082",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "10def4ef106396b15f62284a7dc122d0d1186d67",
+   "reviewed_manifest_sha256": "1e921f5c11fad38a6e96d5f425007f498cae5b552ca43689d87e3e7be0c2b4d8",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T09:12:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: tasks/M5-T082.json inputs carry the CODE-GRAPH NAVIGATION BLOCK (graph regenerated, 815 files; max_envelope FORBIDDEN; proposal/contract/mappluto read-only; impact set; query.py --no-regen instruction); the producer stayed in scope (3-path diff); report M5-T082-DCV.md."
      ]
     }
    ]

@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T08:57:00+00:00",
+ "verified_at": "2026-09-24T09:12:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -147,6 +147,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: docs/research/building-footprints-source-2026-09.md records the official OTI BUILDING dataset (Open Data 5zhs-2jue / ArcGIS BUILDING_view) with HEIGHT_ROOF, GROUND_ELEVATION (NAVD88), BIN, BASE_BBL, MAPPLUTO_BBL quoted from the City dictionary with URL + retrieved_at; feet labelled a well-supported INFERENCE (RQ-1); CRS 2263 with outSR verified live; paging limits; condo billing-lot join; no connector code (recon scope); report M5-T087-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T082",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "10def4ef106396b15f62284a7dc122d0d1186d67",
+   "reviewed_manifest_sha256": "1e921f5c11fad38a6e96d5f425007f498cae5b552ca43689d87e3e7be0c2b4d8",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T09:12:00+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t082): full lifecycle G0@5e704eeb -> claim f9bfd54d (wt-m5t082) -> submit -> G2/G3/G4/G5 PASS; orchestrator-dispatched subagent concurrent with T081/T083/T084/T085; no state or gate skipped; B-026 affects only the loop-lane share of R001, not this packet; restamp predicate re-verified at the accept head (three blobs + max_envelope.py unchanged, identity 1e921f5c, evaluate_task_refs ok); report M5-T082-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness table EMPTY overlap vs every neighbour; 3 allowed paths; material b9b0d31e diff = exactly those; one isolated worktree wt-m5t082; restamp predicate re-verified at the accept head (three blobs + max_envelope.py unchanged, identity 1e921f5c, evaluate_task_refs ok); report M5-T082-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: hold-notice section 2.3 records the D-087 3D release; massing_model.py implements the docs/3D_MASSING_ENGINE_ARCHITECTURE.md truth object (EPSG:2263, us_survey_foot horizontal+vertical, local origin + transform + precision grid, parcel/proposed_massing/generated_option layers, concave-safe ear-clip closed prisms, plates, GFA/height metrics, provenance generator massing-1.0.0, deterministic golden hash, typed refusals incl. footprint_outside_lot never clipped); G3 re-derived it; report M5-T082-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: max_envelope.py byte-identical (f0abf884); no route/main.py/web/dependency file touched; zero new deps (stdlib + already-admitted shapely/numpy; CI lock-verify, dependency-security and pip-audit green); route unmounted; PR #241 open and unmerged; honesty labels present, no permitted/as-of-right/maximum-allowed/approved/entitled wording; modularity green; report M5-T082-DCV.md."
      ]
     }
    ]
