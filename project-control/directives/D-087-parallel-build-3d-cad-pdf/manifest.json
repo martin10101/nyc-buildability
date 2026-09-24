@@ -10,7 +10,7 @@
  "issued_at": "2026-09-24",
  "captured_at": "2026-09-24T07:20:00+00:00",
  "created_at": "2026-09-24T07:20:00+00:00",
- "updated_at": "2026-09-24T08:00:00+00:00",
+ "updated_at": "2026-09-24T08:05:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "ed49b2d8af5fb4783cc3e456e29f78152e921baf",
  "capture_head_sha": null,
@@ -33,7 +33,7 @@
   "D-087-R009",
   "D-087-R010"
  ],
- "requirements_content_digest_sha256": "0203e3969fa9e2af02487ae99aab65e2af7a9e61f0d3d7b3a64558860819beb0",
+ "requirements_content_digest_sha256": "461ea4b6532e4d87f64ffdf4e947f45d64fab72b0f77b30b09263a4c466c830e",
  "sources": [
   {
    "file": "source-001.md",
@@ -76,6 +76,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "Seq-128 D-087 wave-1.5 contract seam (M5-T086 strict-subset DXF reader, M5-T087 building-footprint source research): bound D-087-R001 <- M5-T086, M5-T087; D-087-R002 <- M5-T086, M5-T087; D-087-R003 <- M5-T087; D-087-R006 <- M5-T086; D-087-R007 <- M5-T086; D-087-R009 <- M5-T086; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-24T08:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Seq-128 lane re-feed + D-086 P0 contract seam (after accepts #257-#259): bound D-087-R001 <- M5-T077, M5-T078, M5-T079, M5-T080; D-087-R002 <- M5-T077, M5-T078, M5-T079, M5-T080; requirements digest resynced in the same commit."
   }
  ]
 }

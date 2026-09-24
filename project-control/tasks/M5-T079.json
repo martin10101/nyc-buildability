@@ -1,0 +1,122 @@
+{
+  "task_id": "M5-T079",
+  "title": "DB-050(c)-(m) max-surface hardening: typed aborted/timeout/oversize/invalid states, binding-or-gap XOR enforced fail-closed, exhaustive gap copy, hyphen- and case-proof claim wall, client-CRS-math guard, explicit e2e contract failures, stubbed entry fetch, dead street-width read removed",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Close the DB-050 advisory cluster items (c), (d), (f), (g), (h), (i), (j), (l), (m) on the accepted Preliminary-development-limits panel (MaxEnvelopePanel.tsx, max-envelope-api.ts, their specs, entry.test.tsx, e2e/proposal-editor.spec.ts): no outcome ever renders a reasonless card, a response row that breaks the binding-or-gap invariant can never render as a limit value, every gap token has analyst copy, the D-083 claim wall catches case/hyphen/space variants, a guard proves no client-side CRS math, e2e contract mismatches fail with an explicit message instead of a timeout, the entry spec stops making an unstubbed fetch, and the untested panel branches get specs. DB-050 (b) stays with the mount packet, (e) re-adoption data loss moves to the D-086 proposal-editor behavior packet (same editor-state family), (k) is historical (accepted evidence is never edited). The route stays UNMOUNTED; services/api untouched.",
+  "business_reason": "Both T070 reviews recorded these as the post-#254 hardening touch; closing them makes the panel's honesty guarantees (D-083 claim classes, no unrestricted green) hold against malformed responses and copy drift before the D-086 visual cleanup and the eventual mount.",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD + THIN CLIENT (binding): NEVER run or document npm/npx/node - web behavior proves ONLY in CI on the pushed head (the orchestrator pushes and captures CI at the seam). Local command: `python tools/modularity_check.py --check` from repo root. DOM queries typed per CODING_RULES (`querySelectorAll<HTMLElement>`); deliberate invalid-shape probes as `as unknown as T`; no empty spec files; never propose WebFetch (network is owner-default-deny).",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-050 items (c) (d) (f) (g) (h) (i) (j) (l) (m) (verbatim in the row) + project-control/reports/M5-T070-G3.md and M5-T070-G4.md (A5 at G4 line 162: MaxEnvelopePanel.tsx reads request.lot_rule_facts.street_width_class, which maxEnvelopeRequestForProfile never sets). Re-verify every anchor in actual source first.",
+    "THE CLUSTER (binding): (c) an aborted/superseded request never renders a card with an empty reason - the panel keeps showing the latest request's state; (d) a dimension row carrying BOTH or NEITHER of binding_value/gap_reason never renders a value - it surfaces as a typed contract failure/gap and the aggregate stays visibly incomplete (D-083-R004); (f) a spec proves no client-side coordinate-reference math in the panel and client modules (no proj4 or transform helpers); (g) the e2e stub validates the request contract and fails with an explicit assertion message on mismatch - never timeout-only; (h) entry.test.tsx stubs the max-envelope fetch (no unstubbed network call; suite time returns to baseline); (i) specs for client_timeout, aborted, payload_too_large, invalid_request, the loading card, the Retry nonce (exactly one new request), the superseded-request guard, and boundCandidate non-srid rejects; (j) remove the dead street_width_class read - the adoption seed stays byte-identical to today (\"\" = not provided; street width is server-determined, never inferred in the client); (l) the claim wall matches case-insensitively and across hyphen/space variants (e.g. 'Maximum-allowed building'); (m) the gap-token copy map is exhaustive at compile time (Record over the gap-reason union) and a spec iterates every token.",
+    "D-083 VOCABULARY WALL (binding; D-083-R001/R002/R004): 'Preliminary development limits' and 'Generated building option' stay exactly as accepted; no unqualified 'maximum allowed building'/'demonstrated maximum' copy anywhere; per-dimension ceilings never presented as one building; with any gap, conflict advisory, or contract violation the aggregate stays visibly incomplete. The strengthened wall must still pass on the accepted copy.",
+    "MEANING PRESERVATION (binding; the D-086-R003 discipline applied early): no existing disclosure, honest-gap statement, provenance note, or professional-review meaning is deleted or weakened; every changed user-visible string is listed in the report as before -> after with the meaning it protects; visual states never remap backend statuses; no number is computed in the presentation layer.",
+    "CROSS-LANE WALL (binding): lane-2 packet M5-T078 holds ProposalOutlineDraw.tsx, ProposalOutlineMap.tsx, their specs and lot-outline-map.test.tsx - ALL FORBIDDEN here. ProposalEditor.tsx, proposal-draft.ts and proposal-editor.test.tsx are FORBIDDEN (the D-086 behavior packet owns them; DB-050 (e) moved there). ArchitectEntry.tsx is FORBIDDEN - entry.test.tsx changes are test-side only. services/api is FORBIDDEN (route UNMOUNTED).",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 817 files/17027 nodes/7441 edges): MaxEnvelopePanel.tsx consumers = ArchitectEntry.tsx:31 (FORBIDDEN) + max-envelope-panel.test.tsx (IN scope); depth 2 = app/property/{page,confirm/page,compare/page}.tsx (FORBIDDEN; must render unchanged) + entry.test.tsx (IN scope, test-side). max-envelope-api.ts consumers = ArchitectEntry.tsx:32 (FORBIDDEN), MaxEnvelopePanel.tsx:5, max-envelope-panel.test.tsx, max-envelope-api.test.ts (all IN scope). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "MaxEnvelopePanel.tsx / max-envelope-api.ts: typed outcome states, XOR fail-closed handling, exhaustive gap copy, dead read removed",
+    "Specs in max-envelope-panel.test.tsx / max-envelope-api.test.ts / entry.test.tsx + e2e/proposal-editor.spec.ts contract-failure hardening, each mutation-sensitive",
+    "project-control/reports/M5-T079-producer-report.md (one concise evidence pass; before->after copy table; digest-bound)"
+  ],
+  "dependencies": [
+    "M5-T070"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/architect/MaxEnvelopePanel.tsx",
+    "apps/web/src/components/architect/__tests__/max-envelope-panel.test.tsx",
+    "apps/web/src/lib/architect/max-envelope-api.ts",
+    "apps/web/src/lib/architect/__tests__/max-envelope-api.test.ts",
+    "apps/web/src/components/architect/__tests__/entry.test.tsx",
+    "apps/web/e2e/proposal-editor.spec.ts",
+    "project-control/reports/M5-T079-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/components/architect/ArchitectEntry.tsx",
+    "apps/web/src/components/architect/ProposalEditor.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-editor.test.tsx",
+    "apps/web/src/lib/architect/proposal-draft.ts",
+    "apps/web/src/components/architect/ProposalOutlineDraw.tsx",
+    "apps/web/src/components/architect/ProposalOutlineMap.tsx",
+    "apps/web/src/components/address/",
+    "apps/web/src/app/",
+    "apps/web/e2e/helpers.ts",
+    "services/api/",
+    "packages/contracts/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (typed outcomes): client_timeout, payload_too_large and invalid_request each render their typed failure card with reason text; an aborted/superseded request never renders a reasonless card (the latest request's state stays); the loading card renders; Retry issues exactly one new request - one spec each.",
+    "AS-2 (XOR fail-closed): a dimension row with both binding_value and gap_reason, and one with neither, never renders a value; each surfaces as a typed contract failure/gap and the aggregate stays visibly incomplete; mutation - removing the XOR check reddens a named spec.",
+    "AS-3 (walls): the claim wall rejects injected case/hyphen/space variants and passes the accepted copy; the gap-copy map is a compile-time Record over the gap-reason union and a spec asserts analyst copy (not the raw token) for every token; the no-client-CRS-math spec passes and reddens if a transform import is injected.",
+    "AS-4 (e2e + entry): the e2e stub fails with an explicit request-contract assertion message on a mismatched body (no timeout-only failure path); entry.test.tsx makes no unstubbed max-envelope fetch (asserted).",
+    "AS-5 (dead read + compatibility): the dead street_width_class read is gone and the adoption seed is byte-identical to today; every accepted spec (panel, api, entry, proposal-editor unit, e2e) passes in CI on the pushed head; D-083 wall intact; exactly the allowed_paths change; no new dependency; modularity exit 0; services/api untouched."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T07:41:59.675507+00:00",
+  "updated_at": "2026-09-24T07:42:00.244730+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-084",
+      "requirement_ids": [
+        "D-084-R003"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-076",
+      "requirement_ids": [
+        "D-076-R002"
+      ]
+    },
+    {
+      "directive_id": "D-082",
+      "requirement_ids": [
+        "D-082-R001"
+      ]
+    },
+    {
+      "directive_id": "D-083",
+      "requirement_ids": [
+        "D-083-R001",
+        "D-083-R002",
+        "D-083-R004"
+      ]
+    },
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T07:41:59.675507+00:00",
+  "documented_test_commands": [
+    "python tools/modularity_check.py --check"
+  ]
+}

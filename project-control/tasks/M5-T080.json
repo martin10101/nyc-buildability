@@ -1,0 +1,95 @@
+{
+  "task_id": "M5-T080",
+  "title": "D-086 P0 - reconcile the UI assessment to the current head + ONE disclosure-migration ledger covering every inventory row (docs only; no source, test or copy change)",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "Execute phase P0 of the D-086 design cleanup ('reconcile and preserve meaning'; docs/UI_DEEP_DIVE_ASSESSMENT.md section 14): (1) a reconciliation of the assessment (frozen at dc5a763e) against the pinned head - per cited source file unchanged/moved/changed, the reachable route + state map, the latest DISCOVERY_BACKLOG dispositions for every DB item the assessment cites, the verified D-040/D-076/D-082/D-087 boundaries, and a Section-13 verification matrix (exact fixture/steps per finding + the owning later slice); (2) ONE disclosure-migration ledger with a row for EVERY ID'd inventory row in sections 4-9, each carrying the section-14 migration fields, so every L item has an always-visible cue, an expanded destination, an accessible equivalent, a print destination and a test owner, and no removal/consolidation is orphaned. No redesign, no source/test/copy edit.",
+  "business_reason": "The owner's UI complaint (D-086) is fixed by reorganizing, never by deleting honest disclosures; every later slice (P1-P7) needs this ledger as its no-loss contract and this reconciliation as its current baseline, and D-086-R002 requires P0 first.",
+  "inputs": [
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "THIN CLIENT (binding): docs-only; never run npm/npx/node; no source or test edit; read source with git show / Read at the pinned head.",
+    "SPEC SOURCE (binding): docs/UI_DEEP_DIVE_ASSESSMENT.md (sha256 c6d1b257..., D-086-R001: assessment input, never authorization) - section 14 P0 row + the 'Required migration row for every disclosure' table; sections 4-9 inventories; section 10 (10.2 no-loss, 10.3 copy walls, 10.4 backlog trace + later dispositions); section 11 boundaries; section 13 findings. Its phase labels are report-local; ledger task ids are the orchestrator's.",
+    "LEDGER SHAPE (binding): JSON array, one object per inventory row, keys exactly: id, section, mark (as assessed: L / V / R / combinations), assessed_source (path:lines at dc5a763e), current_source (path:lines at the pinned head), drift (unchanged | moved | changed | removed), trigger, protected_meaning, authority (one of: PRD <section> | reviewer finding <DB/HJ id> | returned contract <name> | exact-copy test <file:line> | implementation-only prose), primary_state, progressive_destination, accessibility, print_destination, disposition (keep | convert | consolidate | retire), replacement_ref (REQUIRED for consolidate/retire: the surviving row id), proof_owner (test file or later phase), phase (P2..P6), open_question (\"\" or the precise question). For every L-marked row, primary_state, progressive_destination, accessibility, print_destination and proof_owner are non-empty; where the assessment is silent write your proposal prefixed 'P0-proposed:' - never invent authority, never weaken a mark.",
+    "SPLIT (binding): two producer spawns on disjoint files - PART A = sections 3-6 rows (SH, PE, DR, PC, PV, ME, SW, ZC, AD, AC, M, LC) in disclosure-ledger-a.json PLUS P0-RECONCILIATION.md (global items); PART B = sections 7-9 rows (A, C, F, E, R, LS-P, LS-C, LS-E, LS-F, LS-T, SR, and the section 9.8 dashboard DB rows) in disclosure-ledger-b.json. Section 10.4 backlog-trace DB- rows are NOT ledger rows - they feed the reconciliation's disposition table.",
+    "COMPLETENESS PROOF (binding): the report records the exact enumeration command used (every table row in sections 4-9 whose first cell starts with an inventory id), the count per family, and a check that every enumerated id appears exactly once across the two ledger files; zero orphaned consolidate/retire rows (replacement_ref resolves).",
+    "MEANING PRESERVATION (binding; the D-086-R003 discipline applied early): no existing disclosure, honest-gap statement, provenance note, or professional-review meaning is deleted or weakened; every changed user-visible string is listed in the report as before -> after with the meaning it protects; visual states never remap backend statuses; no number is computed in the presentation layer.",
+    "CONCURRENT WORK (binding): lanes M5-T078 (drawing surface) and M5-T079 (limits panel) edit ProposalOutlineDraw/Map and MaxEnvelopePanel/max-envelope-api during P0 - record drift at YOUR pinned head only and flag those rows 'in-flight (M5-T078/T079)'; never wait for them.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 817 files/17027 nodes/7441 edges): the route/state map starts at apps/web/src/app/**/page.tsx and components/architect/ArchitectEntry.tsx (query `python tools/code_graph/query.py --no-regen downstream <page>` per route). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "docs/design/ui-cleanup/P0-RECONCILIATION.md - head reconciliation, route/state map, DB dispositions, boundary verification, Section-13 verification matrix, ledger summary + completeness proof",
+    "docs/design/ui-cleanup/disclosure-ledger-a.json - sections 3-6 inventory rows",
+    "docs/design/ui-cleanup/disclosure-ledger-b.json - sections 7-9 inventory rows",
+    "project-control/reports/M5-T080-producer-report.md (one concise evidence pass; both parts)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/design/ui-cleanup/P0-RECONCILIATION.md",
+    "docs/design/ui-cleanup/disclosure-ledger-a.json",
+    "docs/design/ui-cleanup/disclosure-ledger-b.json",
+    "project-control/reports/M5-T080-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/",
+    "services/",
+    "packages/",
+    "docs/UI_DEEP_DIVE_ASSESSMENT.md",
+    ".claude/",
+    "docs/DISCOVERY_BACKLOG.md"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (completeness): every ID'd inventory row in sections 4-9 appears exactly once across the two ledger files (enumeration command + per-family counts recorded; an independent re-enumeration matches); every row has all keys.",
+    "AS-2 (no-loss): every L-marked row has non-empty primary_state, progressive_destination, accessibility, print_destination and proof_owner; every consolidate/retire row names a resolving replacement_ref; no mark is weakened relative to the assessment.",
+    "AS-3 (current truth): every current_source span was checked at the pinned head (drift recorded); authority cells cite a real PRD section, DB/HJ id, contract, or test file:line that exists at the head (spot-checkable).",
+    "AS-4 (reconciliation): P0-RECONCILIATION.md carries the per-file drift table, the reachable route/state map, the latest disposition for every DB item the assessment cites, the D-040/D-076/D-082/D-087 boundary check, and a Section-13 verification matrix naming the fixture/steps and the owning later slice per finding.",
+    "AS-5 (scope): docs-only - exactly the allowed_paths change; no source, test, copy, rule, or assessment edit; valid JSON (python -m json.tool passes on both ledger files)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T07:42:01.190404+00:00",
+  "updated_at": "2026-09-24T07:42:01.869610+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-086",
+      "requirement_ids": [
+        "D-086-R001",
+        "D-086-R002",
+        "D-086-R003",
+        "D-086-R004"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T07:42:01.190925+00:00",
+  "documented_test_commands": [
+    "python -m json.tool docs/design/ui-cleanup/disclosure-ledger-a.json",
+    "python -m json.tool docs/design/ui-cleanup/disclosure-ledger-b.json"
+  ]
+}

@@ -10,7 +10,7 @@
  "issued_at": "2026-09-23",
  "captured_at": "2026-09-23T04:10:00+00:00",
  "created_at": "2026-09-23T04:10:00+00:00",
- "updated_at": "2026-09-23T06:05:00+00:00",
+ "updated_at": "2026-09-24T08:05:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "f58edd1990c97a99fe947e3296529520c07a0546",
  "capture_head_sha": null,
@@ -26,7 +26,7 @@
   "D-084-R002",
   "D-084-R003"
  ],
- "requirements_content_digest_sha256": "d2baddf50bab601d750e8dc6cbdf9b6b4e91504e90199fb5a1e671b280e85752",
+ "requirements_content_digest_sha256": "2d6adabb1d2dbff0a3a3110e164245adc08420c1430db434f38938f2507a0a22",
  "sources": [
   {
    "file": "source-001.md",
@@ -81,6 +81,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "Bound M5-T076 (lane-1 re-feed after the T075 COMPLETE close: DB-050(a) geometry-threading pre-mount packet, backend) onto R001 at its contract seam; digest resync same commit."
+  },
+  {
+   "at": "2026-09-24T08:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Seq-128 lane re-feed + D-086 P0 contract seam (after accepts #257-#259): bound D-084-R001 <- M5-T077; D-084-R002 <- M5-T078; D-084-R003 <- M5-T079; requirements digest resynced in the same commit."
   }
  ]
 }

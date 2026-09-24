@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 4,
  "producer": "orchestrator",
- "updated_at": "2026-09-24T04:55:00+00:00",
+ "updated_at": "2026-09-24T08:05:00+00:00",
  "requirements": [
   {
    "id": "D-086-R001",
@@ -12,7 +12,17 @@
    "source_ref": "source-001.md#the-delivered-artifact",
    "classification": "evidence",
    "binding": true,
-   "applicability": {"task_ids": ["D-086-BOOTSTRAP"], "task_types": [], "milestones": [], "lifecycle_events": [], "paths": [], "effective_date": "2026-09-24"},
+   "applicability": {
+    "task_ids": [
+     "D-086-BOOTSTRAP",
+     "M5-T080"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
    "dependencies": [],
    "required_harness": "The file committed byte-exact with this capture; digest pinned here and re-verifiable.",
    "required_evidence": "The commit carrying both this capture and the file; the digest.",
@@ -20,9 +30,17 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Satisfied by the capture commit itself; verified at first bound-task acceptance.",
-   "evidence_paths": ["docs/UI_DEEP_DIVE_ASSESSMENT.md"],
+   "evidence_paths": [
+    "docs/UI_DEEP_DIVE_ASSESSMENT.md"
+   ],
    "reviewed_sha": null,
-   "maps_to": {"files": ["docs/UI_DEEP_DIVE_ASSESSMENT.md"], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [
+     "docs/UI_DEEP_DIVE_ASSESSMENT.md"
+    ],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-086-R002",
@@ -30,8 +48,21 @@
    "source_ref": "source-001.md#owner-delivery-message-verbatim-2026-09-24-the-auditor-session-summary-the-owner-passed-through",
    "classification": "obligation",
    "binding": true,
-   "applicability": {"task_ids": ["D-086-BOOTSTRAP"], "task_types": [], "milestones": [], "lifecycle_events": [], "paths": [], "effective_date": "2026-09-24"},
-   "dependencies": ["D-086-R001", "D-086-R004"],
+   "applicability": {
+    "task_ids": [
+     "D-086-BOOTSTRAP",
+     "M5-T080"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [
+    "D-086-R001",
+    "D-086-R004"
+   ],
    "required_harness": "Contract seams binding each design-cleanup packet to this directive via applicability.task_ids; the P0 packet contracted first.",
    "required_evidence": "Ledger task files citing D-086 + the P0 disclosure-migration ledger artifact.",
    "producer": "orchestrator",
@@ -40,7 +71,11 @@
    "status_reason": "Waits on R004 sequencing.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-086-R003",
@@ -48,7 +83,17 @@
    "source_ref": "source-001.md#the-delivered-artifact",
    "classification": "prohibition",
    "binding": true,
-   "applicability": {"task_ids": ["D-086-BOOTSTRAP"], "task_types": [], "milestones": [], "lifecycle_events": [], "paths": [], "effective_date": "2026-09-24"},
+   "applicability": {
+    "task_ids": [
+     "D-086-BOOTSTRAP",
+     "M5-T080"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
    "dependencies": [],
    "required_harness": "Carried into every D-086-bound packet's packet text and reviewer duties.",
    "required_evidence": "Per-packet review reports; the P0 migration ledger.",
@@ -58,7 +103,11 @@
    "status_reason": "Standing prohibition; verified per bound task.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-086-R004",
@@ -66,7 +115,17 @@
    "source_ref": "source-001.md#context",
    "classification": "sequencing",
    "binding": true,
-   "applicability": {"task_ids": ["D-086-BOOTSTRAP"], "task_types": [], "milestones": [], "lifecycle_events": [], "paths": [], "effective_date": "2026-09-24"},
+   "applicability": {
+    "task_ids": [
+     "D-086-BOOTSTRAP",
+     "M5-T080"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
    "dependencies": [],
    "required_harness": "Ledger state at the first D-086 contract seam shows the five waves dispositioned and the D-085 handoff written.",
    "required_evidence": "state.json totals + docs/SESSION_HANDOFF.md at that seam.",
@@ -76,7 +135,11 @@
    "status_reason": "Waves in flight; D-085 R005 pending at the seam.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   }
  ]
 }

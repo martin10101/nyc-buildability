@@ -10,7 +10,7 @@
  "issued_at": "2026-09-24",
  "captured_at": "2026-09-24T04:55:00+00:00",
  "created_at": "2026-09-24T04:55:00+00:00",
- "updated_at": "2026-09-24T04:55:00+00:00",
+ "updated_at": "2026-09-24T08:05:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "fc6dc2af94a9288ea5fccb88f4d17c801013b397",
  "capture_head_sha": null,
@@ -27,7 +27,7 @@
   "D-086-R003",
   "D-086-R004"
  ],
- "requirements_content_digest_sha256": "edaef644d74081576230af53e22a8ea097442fe443928421c70eda570ad46224",
+ "requirements_content_digest_sha256": "9ad7f18cf372d4f3c64132f5c980af329ceeb723f09c52f8e1ca85c4ea29789f",
  "sources": [
   {
    "file": "source-001.md",
@@ -58,6 +58,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured with the assessment file committed byte-exact in the SAME commit (digest c6d1b257...). At capture: 255 accepted; T075/T074/T076 at DCV; T073 wave queued; D-085 R002-R004 DONE, R005 seam-gated. Disjoint peer commit relative to every in-flight review surface. First planning effect at the seam: contract P0 (reconcile + disclosure migration ledger) before any visual work."
+  },
+  {
+   "at": "2026-09-24T08:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Seq-128 lane re-feed + D-086 P0 contract seam (after accepts #257-#259): bound D-086-R001 <- M5-T080; D-086-R002 <- M5-T080; D-086-R003 <- M5-T080; D-086-R004 <- M5-T080; requirements digest resynced in the same commit."
   }
  ]
 }

@@ -1,0 +1,113 @@
+{
+  "task_id": "M5-T078",
+  "title": "DB-049 drawing-surface disclosure + accessibility cluster: omitted rows never silent, row-level incomplete markers, one-region map-readiness announcement, selection-status consistency, keyboard-reachable Convert, one finiteness predicate - plus the lot-outline-map spec riders",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Close DB-049 (a)-(e) and the carried M5-T071 G3 riders F4/F6/F7/F8 plus the DB-049 (g)/(h) spec riders on the accepted drawing surface (ProposalOutlineDraw.tsx, ProposalOutlineMap.tsx + their specs, lot-outline-map.test.tsx): the user always learns which rows a conversion will omit and why, incomplete rows are identified row by row, the map-ready change is announced through the wrapper's ONE existing status region, a selected untyped point is described truthfully, Convert stays keyboard-reachable while not convertible, and one shared finiteness predicate feeds every count. ProposalEditor.tsx (reserved for the D-086 behavior packet), LotOutlineMap.tsx (accepted leaf) and every e2e spec stay untouched; DB-049 (f) leaf readiness and (i) real-browser e2e stay routed.",
+  "business_reason": "The T071 walkthrough (A1, MEDIUM) found Convert silently dropping untyped rows once three finite points exist - five visible rows can become a three-vertex outline with no notice - and the UI assessment lists the same drawing issues as Section-13 behavior findings that must be fixed before any visual polish of this surface (D-086-R002 ordering).",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD + THIN CLIENT (binding): NEVER run or document npm/npx/node - web behavior proves ONLY in CI on the pushed head (the orchestrator pushes and captures CI at the seam). Local command: `python tools/modularity_check.py --check` from repo root. DOM queries typed per CODING_RULES (`querySelectorAll<HTMLElement>`); deliberate invalid-shape probes as `as unknown as T`; no empty spec files; never propose WebFetch (network is owner-default-deny).",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-049 items (a)-(e), (g), (h) + project-control/reports/M5-T071-HJ.md A1/A2/A3/A5/A7 (lines 71-83) + M5-T071-G3.md final disposition (lines 85-87: F4 = A1, F6 duplicated finiteness predicate at ProposalOutlineMap.tsx:55/:69 and ProposalOutlineDraw.tsx:153-155/:163, F7 half-typed-row copy, F8 the observer effect's [bbl] reset key) + M5-T071-G4.md G4-2/G4-3. Re-verify every anchor in actual source first. NOTE: DB-049 (j) is RESOLVED - the T071 G3 tail survived in that report's final disposition section.",
+    "THE CLUSTER (binding): (a) whenever incompleteCount > 0 the incomplete-row hint renders INDEPENDENT of Convert enablement, the point of action states how many rows will not be included, and the post-convert status names converted AND omitted counts - never silent omission; (b) each incomplete row carries aria-invalid=\"true\" plus a visible text marker (never color alone); (F7) the marker/hint names the exact missing ordinate (longitude, latitude, or both); (c) the map-ready copy flip is announced through the wrapper's EXISTING status region - adding any new live region (aria-live / role=status / role=alert) is FORBIDDEN; (d) selecting an untyped row: the status names the selection and the instruction says to PLACE (not move) the point; (e) Convert while not convertible uses aria-disabled=\"true\" (stays in the tab order), activation announces the reason through the existing status region and makes NO conversion/bridge call; (F6) ONE finiteness predicate (consume the exported finitePointCount or one shared helper) at all four sites; (F8) a reset-key comment on the [bbl] dependency so an exhaustive-deps autofix cannot silently drop it; (g) the AS-1 sync spec in lot-outline-map.test.tsx also asserts exactly one map instance (no rebuild); (h) no exact call tally on mocks.addLayer anywhere in lot-outline-map.test.tsx (today :248/:530/:741/:785; use the file's own presence idiom at :571/:616) while the guarded defects still redden.",
+    "MEANING PRESERVATION (binding; the D-086-R003 discipline applied early): no existing disclosure, honest-gap statement, provenance note, or professional-review meaning is deleted or weakened; every changed user-visible string is listed in the report as before -> after with the meaning it protects; visual states never remap backend statuses; no number is computed in the presentation layer.",
+    "CROSS-LANE WALL (binding): lane-3 packet M5-T079 holds MaxEnvelopePanel.tsx, max-envelope-api.ts, their specs, entry.test.tsx and e2e/proposal-editor.spec.ts - ALL FORBIDDEN here. ProposalEditor.tsx + proposal-editor.test.tsx are FORBIDDEN (the D-086 Section-13 behavior packet owns that surface): ProposalOutlineDraw's public props stay compatible and every accepted finite-value flow behaves byte-identically. No e2e spec is added or modified. LotOutlineMap.tsx (accepted address-flow leaf) is FORBIDDEN - DB-049 (f) needs it and stays routed.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 817 files/17027 nodes/7441 edges): ProposalOutlineDraw.tsx consumers = ProposalEditor.tsx:31 (FORBIDDEN) + proposal-outline-draw.test.tsx (IN scope); depth 2 = ArchitectEntry.tsx + proposal-editor.test.tsx (FORBIDDEN; must stay green unchanged). ProposalOutlineMap.tsx consumers = ProposalOutlineDraw.tsx (IN scope) + proposal-outline-map.test.tsx (IN scope). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "ProposalOutlineDraw.tsx / ProposalOutlineMap.tsx: omitted-row disclosure, row markers, one-region readiness + selection announcements, aria-disabled Convert, one finiteness predicate, reset-key comment",
+    "Specs in proposal-outline-draw.test.tsx / proposal-outline-map.test.tsx / lot-outline-map.test.tsx proving every item, each mutation-sensitive",
+    "project-control/reports/M5-T078-producer-report.md (one concise evidence pass; before->after copy table; digest-bound)"
+  ],
+  "dependencies": [
+    "M5-T071"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/architect/ProposalOutlineDraw.tsx",
+    "apps/web/src/components/architect/ProposalOutlineMap.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-outline-draw.test.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-outline-map.test.tsx",
+    "apps/web/src/components/address/__tests__/lot-outline-map.test.tsx",
+    "project-control/reports/M5-T078-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/components/architect/ProposalEditor.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-editor.test.tsx",
+    "apps/web/src/components/architect/ArchitectEntry.tsx",
+    "apps/web/src/components/architect/MaxEnvelopePanel.tsx",
+    "apps/web/src/components/address/LotOutlineMap.tsx",
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/lib/architect/",
+    "apps/web/src/lib/outline-bridge-api.ts",
+    "apps/web/e2e/",
+    "services/api/",
+    "packages/contracts/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (omission never silent): 4 rows with 3 finite - Convert enabled, the hint names 1 incomplete row, the point of action states it will not be included, and after conversion the status names 3 converted and 1 omitted; mutation - re-gating the hint on finiteCount < MIN_DRAWN_VERTICES reddens a named spec.",
+    "AS-2 (row markers): each incomplete row has aria-invalid=\"true\" and a visible text marker naming the missing ordinate(s) exactly (longitude / latitude / both); complete rows carry neither; mutation - dropping aria-invalid reddens.",
+    "AS-3 (one status region): the map-ready copy flip is announced via the existing status region; a spec counts the live regions (aria-live / role=status / role=alert) in the drawing section and asserts the count equals the accepted baseline.",
+    "AS-4 (selection + keyboard): selecting an untyped row - the status names the selection and the instruction says to place the point; Convert while not convertible is focusable (aria-disabled=\"true\"), activation announces the reason and triggers NO conversion (spy asserts zero calls).",
+    "AS-5 (single predicate + riders): one finiteness predicate consumed at every site (grep-provable - no duplicated Number.isFinite pair check outside it); the [bbl] reset-key comment present; the lot-outline-map AS-1 sync spec asserts one map instance; no exact tally on mocks.addLayer anywhere in lot-outline-map.test.tsx (grep-provable) while the guarded second-source and stale-payload defects still redden.",
+    "AS-6 (compatibility + scope): every accepted finite-flow spec (proposal-outline-draw, proposal-outline-map, proposal-editor, entry) passes unchanged in CI on the pushed head; exactly the allowed_paths change; no e2e edit; no new dependency; modularity exit 0; the before->after copy table covers every changed string."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T07:41:58.004735+00:00",
+  "updated_at": "2026-09-24T07:41:58.511400+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-084",
+      "requirement_ids": [
+        "D-084-R002"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-076",
+      "requirement_ids": [
+        "D-076-R002"
+      ]
+    },
+    {
+      "directive_id": "D-082",
+      "requirement_ids": [
+        "D-082-R001"
+      ]
+    },
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T07:41:58.004735+00:00",
+  "documented_test_commands": [
+    "python tools/modularity_check.py --check"
+  ]
+}

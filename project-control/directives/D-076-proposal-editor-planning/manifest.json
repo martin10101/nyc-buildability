@@ -10,7 +10,7 @@
  "issued_at": "2026-09-19",
  "captured_at": "2026-09-19T06:12:50.269900+00:00",
  "created_at": "2026-09-19T06:12:50.269900+00:00",
- "updated_at": "2026-09-22T22:10:00+00:00",
+ "updated_at": "2026-09-24T08:05:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "665d3d0bb965b5a3d097803428a3f69294fb84b7",
  "capture_head_sha": null,
@@ -26,7 +26,7 @@
   "D-076-R002",
   "D-076-R003"
  ],
- "requirements_content_digest_sha256": "15431cedcf714645c572014a16bed38c3f8ea6b0469ca69c25c64e8f318931d4",
+ "requirements_content_digest_sha256": "0eef36ffa0e9511e83f6bbc428d3a796918e40d6545e9b98e95598d0b3e54970",
  "sources": [
   {
    "file": "source-001.md",
@@ -123,6 +123,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "Bound M5-T071 (T066-wave hardening: DB-047 d/e + DB-048 flake; drawing-surface only, disjoint from the live T070 lane) at the seq-125 251st/252nd acceptance seam; graph regenerated at this seam (799/16885/7381) before authoring; digest resync same commit."
+  },
+  {
+   "at": "2026-09-24T08:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Seq-128 lane re-feed + D-086 P0 contract seam (after accepts #257-#259): bound D-076-R002 <- M5-T078, M5-T079; requirements digest resynced in the same commit."
   }
  ]
 }
