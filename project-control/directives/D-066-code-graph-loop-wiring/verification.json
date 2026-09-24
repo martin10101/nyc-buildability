@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-23T07:10:00+00:00",
+ "verified_at": "2026-09-24T08:57:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -929,6 +929,72 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED with the repeated non-blocking packet-drift gap (Part 3): navigation block present and re-derived true in source; consumer sweep discharged by construction (additive-only shared-module changes) + CI; regeneration corroborated-by-control-record (out-of-repo artifact by design). The query.py consultation sentence is absent again (contracted before the restoration duty existed) - the recorded duty covers future packets."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T084",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "f2870507309967160a091b2491d57e1e9e6fcd8f",
+   "reviewed_manifest_sha256": "f1d130abbf6cf13ce35cf91fc3d3dfeacdde0af2593bcc11bbaa6177fc9655fe",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T08:57:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: CODE-GRAPH NAVIGATION BLOCK present in M5-T084.json inputs (graph 815 files / 17025 nodes; names consumers M5-T081/T083 and the strict reader); report M5-T084-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T085",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "f2870507309967160a091b2491d57e1e9e6fcd8f",
+   "reviewed_manifest_sha256": "e258165147c33b071e88a27454a294cf0fa359ef51623bf8ecb57ebcb18beaf9",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T08:57:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: navigation block present in M5-T085.json inputs (app/cad seam; forbidden sibling dxf_writer.py; reader read-only); report M5-T085-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T087",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "f2870507309967160a091b2491d57e1e9e6fcd8f",
+   "reviewed_manifest_sha256": "07cf9683e6b5937c8245b30adb68c003b1612bb2d386c3c2050dc7d4b91595ee",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T08:57:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: navigation block present in M5-T087.json inputs (future connector beside mappluto_geometry_arcgis.py + the massing model); report M5-T087-DCV.md."
      ]
     }
    ]

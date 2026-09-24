@@ -2,7 +2,154 @@
  "schema": "directive_verification/v2",
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
- "verified_by": null,
- "verified_at": null,
- "task_verifications": []
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-24T08:57:00+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T084",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R004",
+    "D-087-R005",
+    "D-087-R006",
+    "D-087-R007"
+   ],
+   "reviewed_sha": "f2870507309967160a091b2491d57e1e9e6fcd8f",
+   "reviewed_manifest_sha256": "f1d130abbf6cf13ce35cf91fc3d3dfeacdde0af2593bcc11bbaa6177fc9655fe",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T08:57:00+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-w1, joint T084/T085/T087): contracted/claimed/gated in-regime packet citing R001; wave-1 concurrent subagent producer (material 075cc555; G0 lists the concurrent T081/82/83/85); restamp predicate reproduced at the accept head: the nine frozen blobs unchanged and evaluate_task_refs ok; the same verifier ruled the D-087 source-002 amendment (744154df) inside the predicate; report M5-T084-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness table EMPTY overlap with every neighbour; worktree wt-m5t084; material touches only the 4 docs/report paths; restamp predicate reproduced at the accept head: the nine frozen blobs unchanged and evaluate_task_refs ok; the same verifier ruled the D-087 source-002 amendment (744154df) inside the predicate; report M5-T084-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: docs/research/dxf-format-reference-2026-09.md grounds the AutoCAD-openable DXF middleman in official Autodesk facts (R12/AC1009 minimal file; $INSUNITS 21 = US Survey Feet, version-bracketed 2016 absent / 2017 present; LINE/LWPOLYLINE/3DFACE/TEXT group codes; retrieved_at + PDF sha256); report M5-T084-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: docs/research/architect-drawing-corpus-2026-09.md lists 6 REAL public-domain drawings (3 vector + 3 scanned) with URL, publisher, reuse basis, bytes, sheet types, producing app and sha256; downloaded to scratch only (nothing committed); report M5-T084-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the same note establishes DXF-out open interchange (R12 ASCII) aligned to the survey document format policy; docs only; report M5-T084-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R007",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: native DWG kept out of scope (AutoCAD saves DWG from DXF); repo scan of requirements, package.json and source imports finds no DWG library; ezdxf named only as a DXF option, not a dependency; report M5-T084-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T085",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R005",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "f2870507309967160a091b2491d57e1e9e6fcd8f",
+   "reviewed_manifest_sha256": "e258165147c33b071e88a27454a294cf0fa359ef51623bf8ecb57ebcb18beaf9",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T08:57:00+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-w1, joint): contracted/claimed/gated in-regime packet citing R001; wave-1 subagent producer backend-engineer (material 519bc360); restamp predicate reproduced at the accept head: the nine frozen blobs unchanged and evaluate_task_refs ok; the same verifier ruled the D-087 source-002 amendment (744154df) inside the predicate; report M5-T085-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 EMPTY overlap; worktree wt-m5t085; material touches ONLY app/cad/pdf_sheet_writer.py + its test + the report, not the forbidden __init__.py / dxf_writer.py / requirements / route; restamp predicate reproduced at the accept head: the nine frozen blobs unchanged and evaluate_task_refs ok; the same verifier ruled the D-087 source-002 amendment (744154df) inside the predicate; report M5-T085-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED with its own run (ruff exit 0; pytest 19/19 incl. golden c38360f9, round-trip counts, dims, escaper-bypass mutant red, xref-offset corruption detected): deterministic PDF 1.4 site plan from EPSG:2263 rings, server-side dimension strings with declared rounding, scale bar, grid-north arrow never true north, title block 'PROPOSED - NOT A CITY RECORD' + 'Not for construction - professional review required', one escaper, typed fail-closed refusals; report M5-T085-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: stdlib-only imports; no requirements/package/lockfile change; no route/main.py/web change; module unwired (max-envelope route stays unmounted); modularity clean; report M5-T085-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T087",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003"
+   ],
+   "reviewed_sha": "f2870507309967160a091b2491d57e1e9e6fcd8f",
+   "reviewed_manifest_sha256": "07cf9683e6b5937c8245b30adb68c003b1612bb2d386c3c2050dc7d4b91595ee",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T08:57:00+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-w1, joint): contracted/claimed/gated in-regime packet citing R001; wave-1.5 subagent producer official-source-researcher (material a01d5fac); restamp predicate reproduced at the accept head: the nine frozen blobs unchanged and evaluate_task_refs ok; the same verifier ruled the D-087 source-002 amendment (744154df) inside the predicate; report M5-T087-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 EMPTY overlap incl. the five wave-1 packets; worktree wt-m5t087; material touches only the 2 doc/report paths; restamp predicate reproduced at the accept head: the nine frozen blobs unchanged and evaluate_task_refs ok; the same verifier ruled the D-087 source-002 amendment (744154df) inside the predicate; report M5-T087-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: docs/research/building-footprints-source-2026-09.md records the official OTI BUILDING dataset (Open Data 5zhs-2jue / ArcGIS BUILDING_view) with HEIGHT_ROOF, GROUND_ELEVATION (NAVD88), BIN, BASE_BBL, MAPPLUTO_BBL quoted from the City dictionary with URL + retrieved_at; feet labelled a well-supported INFERENCE (RQ-1); CRS 2263 with outSR verified live; paging limits; condo billing-lot join; no connector code (recon scope); report M5-T087-DCV.md."
+     ]
+    }
+   ]
+  }
+ ]
 }
