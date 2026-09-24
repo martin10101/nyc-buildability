@@ -8,6 +8,13 @@ Scope (allowed paths): `services/api/tests/connectors/test_bridge_ring_precondit
 
 ## STATUS — BLOCKED (the AS-1/AS-2/AS-3 runtime evidence is producible only by the routed supervisor/CI capture)
 
+> **[ORCH-CORRECTED per M5-T073-G3 F5, 2026-09-24]: SUPERSEDED — the routed capture WAS
+> executed.** This heading, the §5 "⧗ pending-harvest" preamble, and §9's "status is
+> BLOCKED" all describe the pre-harvest state and are kept verbatim per the
+> report-preservation convention. The task's real state is in the appended
+> **[ORCH-HARVEST]** section at the end of this report: 14 passed, scoped ruff clean,
+> every [PREDICTED] row elevated to OBSERVED, the §5 table filled from the run's output.
+
 The producer-environment broker runs documented commands from the **worktree root only**; it
 rejected the `cd services/api`-wrapped and non-documented `-s` variants when they were attempted
 earlier this task (transcripts in §2, rows 2–4). Per the current directive those rejected broker
@@ -266,6 +273,18 @@ scoped ruff + pytest, §6). Do not accept, merge, or mount before that capture's
   JSON; the §5 measured columns above are transcribed from that output verbatim (4-decimal
   display; refused-before-fit cells `—` per the §5 rule; P05's separation shown at full
   leading precision 0.0000194 ft).
+
+### [ORCH-CORRECTED per M5-T073-G3 F1, 2026-09-24] Dataset-release disclosure for the §5 sample
+
+The eight pairs span TWO MapPLUTO release pairings, now recorded per side in
+`pairs_manifest.json` (`dataset_version`): **P01–P04 pair a 26v2 display ring (captured
+2026-09-12) against a 26v1 authoritative ring (captured 2026-07-20, ~54 days apart,
+cross-release)**; **P05–P08 are 26v2/26v2** (same-second captures). The §5/§7 bounded
+verdict is therefore stated over this mixed-release sample: the four same-release pairs
+are also all `counts_equal=true`, and cross-release count equality is a stronger result
+for the densification question, but the mount configuration fetches both rings live from
+ONE release — the mount packet inherits this as a stated assumption, not a proven
+invariant.
 
 ### §7 disposition — resolves at branch (b), with the observed refusal classes
 

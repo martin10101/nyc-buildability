@@ -44,6 +44,15 @@ have. That remainder is ROUTED TO HARVEST (never fabricated) with an exact,
 re-runnable spec in ``fixtures/bridge_ring_pairs/HARVEST_SPEC.md``; the harness
 picks up harvested pairs with no code change. The bounded verdict on the current
 real sample lives in ``project-control/reports/M5-T073-producer-report.md``.
+
+[ORCH-CORRECTED per M5-T073-G3 F4, 2026-09-24]: the harvest COMPLETED - the live
+sample is 8 pairs / 5 boroughs / 7 geometry classes (P05-P08 orchestrator-captured
+per HARVEST_SPEC.md). The paragraph above describes the pre-harvest state and is
+kept for history. The manifest floor test now enforces the packet floor, and each
+pair's measured verdict/refusal class is pinned against the manifest (G3 F2).
+Dataset-release disclosure (G3 F1): P01-P04 pair a 26v2 display ring against a
+26v1 authoritative ring; P05-P08 are 26v2/26v2 (per-side dataset_version now
+recorded in the manifest).
 """
 
 from __future__ import annotations
@@ -444,14 +453,15 @@ _PAIR_IDS = [p["pair_id"] for p in _PAIRS]
 
 
 def test_real_pairs_manifest_is_present_and_covers_multiple_classes():
-    """The offline real sample assembled from the accepted connector fixture
-    packs. It is a BOUNDED sample (see the producer report); the >=8-pair /
-    >=3-borough completion is routed to harvest (HARVEST_SPEC.md)."""
+    """The harvested real sample must hold the PACKET floor (>=8 pairs across
+    >=3 boroughs), not the pre-harvest interim floor. [ORCH-CORRECTED per
+    M5-T073-G3 F4: raised from >=4/>=2 after the P05-P08 harvest landed - a
+    silently dropped pair must fail here, never shrink the sample quietly.]"""
     assert _PAIRS, "pairs_manifest.json must bind at least the accepted-fixture real pairs"
     boroughs = {p.get("borough_code") for p in _PAIRS}
     classes = {p["geometry_class"] for p in _PAIRS}
-    assert len(_PAIRS) >= 4
-    assert len(boroughs) >= 2
+    assert len(_PAIRS) >= 8
+    assert len(boroughs) >= 3
     assert len(classes) >= 3
 
 
@@ -465,11 +475,19 @@ def test_real_pair_measured_offline_with_roundtrip_provenance(pair):
     auth = provenance["authoritative"]
     if auth["recorded_response_body_sha256"]:
         assert auth["computed_response_body_sha256"] == auth["recorded_response_body_sha256"]
+    # [ORCH-CORRECTED per M5-T073-G3 F3]: the display side gets the same
+    # recorded==computed guard as the authoritative side (all 8 match today).
     assert provenance["display"]["computed_sha256"].startswith("sha256:")
+    assert provenance["display"]["computed_sha256"] == pair["display"]["source_file_sha256"]
     # A precondition violation is a FINDING, never a test failure by itself.
     assert verdict.verdict in ("pass", "refuse")
     if verdict.verdict == "refuse":
         assert verdict.refusal_class is not None
+    # [ORCH-CORRECTED per M5-T073-G3 F2]: the measured classification is PINNED
+    # against the manifest so a weakened gate (e.g. a dropped ambiguity check)
+    # reddens instead of silently flipping the sample's pass count.
+    assert verdict.verdict == pair["expected_verdict"]
+    assert verdict.refusal_class == pair["expected_refusal_class"]
     assert verdict.display_vertex_count >= 3
     assert verdict.auth_vertex_count >= 3
     assert verdict.residual_bound_ft == BRIDGE_MAX_RMS_RESIDUAL_FT
