@@ -1,0 +1,35 @@
+{
+ "task_id": "M5-T099",
+ "material_commit": "cd04fddb (cherry-pick of wt-m5t099 d322458f; 2 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T16:06:42+00:00",
+ "producer": "cloud-architect (orchestrator-dispatched subagent; worktree wt-m5t099)",
+ "requirements": {
+  "D-066-R001": [
+   "The navigation block asked for the consumers of every inventoried block; the code-graph impact query was stale on the reset worktree, so the producer verified consumers by source grep (the only production import of any D-087 block is pdf_sheet_writer.py:54 -> dxf_writer CLAIM_CLASS_WORDS) and recorded the stale-graph fact as a discovery. [ORCH-HARVEST] at the cherry-picked head cd04fddb (Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-083-R001": [
+   "The plan's export labels and viewer copy use only the interim claim-class vocabulary ('Generated building option', 'Preliminary development limits') and forbid 'approved' / 'maximum allowed building'; the withheld demonstrated maximum stays listed among the max-envelope mount preconditions. [ORCH-HARVEST] at the cherry-picked head cd04fddb (Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-083-R002": [
+   "The export and scene contracts keep the three claim classes distinct (regulatory limits, generated option, demonstrated maximum unavailable) in labels and provenance. [ORCH-HARVEST] at the cherry-picked head cd04fddb (Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-087-R001": [
+   "Wave-6 capacity unit: contracted at d7a843d6 (G0), claimed at 2957e40d with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with the wave-4/5 units; no state or gate skipped. [ORCH-HARVEST] at the cherry-picked head cd04fddb (Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task; one worktree wt-m5t099; material touches exactly the 2 allowed docs paths, every file MATCH by blob; the plan's own packet breakdown keeps every parallel batch file-disjoint and serializes the single hot mount file app/main.py. [ORCH-HARVEST] at the cherry-picked head cd04fddb (Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-087-R003": [
+   "Plan section 2.1 specifies the 3D scene payload (massing + lot + context buildings) and section 3 the web viewer on the admitted three 0.186.0 + @react-three/fiber 9.7.0 (frames EPSG:2263 feet -> local metres via the GLB writer axis map, performance caps, a non-visual text alternative, print behaviour, CI-only web tests), with the @types/three choice left to the owner. [ORCH-HARVEST] at the cherry-picked head cd04fddb (Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-087-R004": [
+   "Plan section 4 keeps DXF R12 / $INSUNITS 21 as the AutoCAD path, routes the owner-openable sample + checklist to M5-T096 and the committed round trip to M5-T097, and lists R008 (DXF as the middleman) as an open owner decision. [ORCH-HARVEST] at the cherry-picked head cd04fddb (Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-087-R006": [
+   "Plan section 2 specifies the export contract (DXF, PDF site plan, GLB) through open formats with media types, Content-Disposition, size and time budgets and typed refusals; section 4 scopes the future DXF import into the proposal editor behind user confirmation; native DWG stays an owner licensing decision (R007). [ORCH-HARVEST] at the cherry-picked head cd04fddb (Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-087-R009": [
+   "Docs only: no code, test, route, dependency or web change; every route module is proposed to ship UNMOUNTED with the main.py mount isolated; the max-envelope preconditions are listed verbatim and not relaxed. [ORCH-HARVEST] at the cherry-picked head cd04fddb (Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ]
+ }
+}
