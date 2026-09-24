@@ -68,12 +68,12 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "ready",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T07:41:58.004735+00:00",
-  "updated_at": "2026-09-24T09:58:38.728841+00:00",
+  "updated_at": "2026-09-24T10:51:09.601826+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -135,6 +135,13 @@
       "percent": 60,
       "status": "rework",
       "message": "SCOPE CORRECTION (orchestrator, rework seam): allowed_paths += apps/web/src/app/property/architect.css so the rework can restore the disabled look its own disabled->aria-disabled migration removed (G3-A1 / HJ-2: .architect-shell button:disabled no longer matches). One selector only; no other packet declares this file (disjointness re-checked); G0 re-recorded at the rework seam."
+    },
+    {
+      "at": "2026-09-24T10:50:49.905294+00:00",
+      "agent": "frontend-engineer",
+      "percent": 85,
+      "status": "claimed",
+      "message": "LIFECYCLE NOTE: re-recording G0 after the one-stylesheet scope correction moved the packet rework -> ready (the CLI's G0 behaviour); re-claimed with the same FULL worktree path so the rework (2e2bd536, cherry-pick of 6bd0a162, 7 files MATCH) can be resubmitted. No material or scope change beyond the logged scope correction."
     }
   ]
 }
