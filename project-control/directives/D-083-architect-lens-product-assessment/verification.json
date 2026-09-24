@@ -3,7 +3,7 @@
  "directive_id": "D-083",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All thirteen requirements bind the non-ledger sentinel D-083-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. R011 (owner return item) is discharged by the owner-facing reply and audited here. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T15:23:20+00:00",
+ "verified_at": "2026-09-24T21:04:35+00:00",
  "task_verifications": [
   {
    "directive_id": "D-083",
@@ -85,6 +85,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: envelopeAggregateIsComplete + is-checked/is-incomplete + data-complete + role=status; any gap row or contract violation fails complete (G4-verified mutant); DimensionRow raw-presence XOR renders a typed contract failure that never shows a value; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T099",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R002"
+   ],
+   "reviewed_sha": "cf0da3587227911f3460f41f07e6bc313674e865",
+   "reviewed_manifest_sha256": "f46e45de86ac4c64e7b2043632cb95602feae3f77a873e10c47a9465535a2ba5",
+   "producer": "cloud-architect",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:04:35+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the plan labels proposed geometry 'Proposed - not a city record' and a fitted candidate 'Generated building option', uses 'Preliminary development limits' for per-rule ceilings, and names 'approved' / 'permitted' / 'maximum allowed building' / 'demonstrated maximum' only in prohibiting or withholding contexts; it never presents per-dimension ceilings as one permitted building. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the export and scene contracts keep regulatory limit / generated building option / demonstrated maximum distinct, with the demonstrated maximum WITHHELD (plan section 7 item 6) until its evidence standard is met. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
      ]
     }
    ]

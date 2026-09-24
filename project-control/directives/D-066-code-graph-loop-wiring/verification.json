@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T20:58:44+00:00",
+ "verified_at": "2026-09-24T21:04:35+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1347,6 +1347,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t094): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 821 files / 17652 nodes / 7589 edges; sheet_reader.py had no production importer, only its test; app/documents/extraction and sheet_primitives.py named forbidden neighbours; the query.py --no-regen instruction, advisory) and the reviewers verified the conclusions in source. Blob-level restamp predicate re-verified by the orchestrator at the accept head 59737e43 (sheet_reader.py e3606e0f, sheet_objects.py 1f69f558, sheet_interpreter.py e71266bf, test_sheet_reader_split_equivalence.py fba20c0a, M5-T094-producer-report.md ce2eaecf; identity df266133; evaluate_task_refs ok); report M5-T094-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T099",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cf0da3587227911f3460f41f07e6bc313674e865",
+   "reviewed_manifest_sha256": "f46e45de86ac4c64e7b2043632cb95602feae3f77a873e10c47a9465535a2ba5",
+   "producer": "cloud-architect",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:04:35+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t099): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 827 files / 17658 nodes / 7589 edges; consumers, forbidden neighbours, the query.py --no-regen instruction, advisory); the producer verified consumers in source by grep when the cached graph was stale on the reset worktree, as the advisory graph permits. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
      ]
     }
    ]

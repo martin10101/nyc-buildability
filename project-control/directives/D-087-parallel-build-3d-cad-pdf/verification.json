@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T20:58:44+00:00",
+ "verified_at": "2026-09-24T21:04:35+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -835,6 +835,68 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies (zlib/math/dataclasses/typing + in-repo only; requirements untouched); not wired (no importer outside app/drawings; main.py has no sheet reference); sheet_primitives.py and app/documents byte-untouched; the max-envelope route stays unmounted; PR #241 open and unmerged; no lockfile change. Blob-level restamp predicate re-verified by the orchestrator at the accept head 59737e43 (sheet_reader.py e3606e0f, sheet_objects.py 1f69f558, sheet_interpreter.py e71266bf, test_sheet_reader_split_equivalence.py fba20c0a, M5-T094-producer-report.md ce2eaecf; identity df266133; evaluate_task_refs ok); report M5-T094-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T099",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R004",
+    "D-087-R006",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "cf0da3587227911f3460f41f07e6bc313674e865",
+   "reviewed_manifest_sha256": "f46e45de86ac4c64e7b2043632cb95602feae3f77a873e10c47a9465535a2ba5",
+   "producer": "cloud-architect",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:04:35+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contracted at the G0 seam d7a843d6, claimed at 2957e40d with the full worktree path, produced by an orchestrator-dispatched subagent; G2/G3/G5 PASS at the corrected identity after a recorded G3 FAIL -> tagged correction -> re-freeze -> same-reviewer delta cycle; no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs all active tasks; one worktree wt-m5t099; the material touches exactly the 2 allowed docs paths; the plan's parallel batches are pairwise file-disjoint with every serialization (PKT-A -> B1 on pdf_sheet_writer.py; PKT-H/J on app/main.py) stated; the correction moved no allowed_paths. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: plan section 2.1 specifies the 3D scene payload (massing + lot + context buildings) and section 3 the viewer on the admitted three 0.186.0 + @react-three/fiber 9.7.0 (EPSG:2263 feet -> local metres via the GLB writer's axis map, performance caps, non-visual alternative, print, CSP posture, CI-only web proof); canonical 2263 server-side; the July 3D pack stays reference input only. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: plan section 4 keeps DXF R12/AC1009 with $INSUNITS 21 as the AutoCAD path, routes the owner-openable sample + checklist to M5-T096 and the committed round trip to M5-T097, and lists R008 ('DXF = the middleman') as an OPEN owner decision. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: plan section 2 specifies the export contract (DXF, PDF site plan, GLB) through open formats with media types, a server-side filename allowlist (mandatory PKT-D criterion), size and time budgets, and typed refusals; section 4 scopes the future DXF import behind user confirmation with its parse-time controls; native DWG stays the R007 owner decision. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: docs only; every route module is proposed UNMOUNTED; the max-envelope preconditions are quoted verbatim and not relaxed; the @types/three choice is left to the owner under the full dependency-security policy with no waiver; the safety riders DB-061 (i) and the PKT-K inflated-bytes cap are carried forward as mandatory; nothing claims a capability that does not exist (the sheet reader reads 0 of 6 real drawings). Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
      ]
     }
    ]
