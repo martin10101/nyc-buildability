@@ -80,10 +80,12 @@ the A1 runtime-journal directory — come from the reviewed binding contract, ne
 
 ## 4. Install the accepted controller from the frozen candidate (immutable source binding)
 
-The copy source is pinned to the immutable accepted production candidate commit
-`3f4cee8680ba5c9a167327507af387d316f5dbc3` (M0-T143 Codex --output-schema strict-subset
-repair + reviewer failure observability; D-024 Amendment 46, superseding the
-M0-T142/M0-T141/M0-T136 candidates) by the checked-in binding contract `tools/controller_update/source_binding.json`. The installer
+The copy source is pinned to the immutable recertified production candidate commit
+`a3f24ff3825c126c038f59b1ea6d2352f29d724a` (M0-T159 recertification: the D-024-R287
+admission of Claude Code 2.1.281, accepted 275th, report
+`project-control/reports/M0-T159-recertification.md`; re-pinned by task M0-T160,
+superseding a5886dab (M0-T148), e0dd4a3a (M0-T146) and 3f4cee86 (M0-T143) as the
+install source) by the checked-in binding contract `tools/controller_update/source_binding.json`. The installer
 never resolves a mutable ref — not a branch, not HEAD, not a remote-tracking name — and
 refuses any binding value that is not a full 40-hex commit SHA. Before copying it
 verifies, fail closed (R609): the source repository and normalized origin identity; that
