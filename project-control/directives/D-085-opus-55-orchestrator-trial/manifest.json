@@ -10,7 +10,7 @@
  "issued_at": "2026-09-23",
  "captured_at": "2026-09-23T16:45:00+00:00",
  "created_at": "2026-09-23T16:45:00+00:00",
- "updated_at": "2026-09-23T19:15:00+00:00",
+ "updated_at": "2026-09-24T06:15:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "9bc68dc733c17d60dfdb2add1672e0faceb47d73",
  "capture_head_sha": null,
@@ -96,6 +96,12 @@
    "actor": "orchestrator",
    "action": "evidence",
    "note": "R002 DONE (CLI 2.1.252->2.1.281; stale broken npm-global 2.1.220 removed). R003 DONE (claude-opus-5-5 verified: bundle strings + live canary canonicalModel; dotted 'opus-5.5' is a silent unrecognized_model fallback - never use). R004 DONE by owner actuation (B-025 resolved: three lane pins + both allowlist lists verified by direct read; subagents stay opus-4-8 per source-003). Outstanding: R005 restart handoff at the finished seam."
+  },
+  {
+   "at": "2026-09-24T06:15:00+00:00",
+   "actor": "orchestrator",
+   "action": "evidence",
+   "note": "R005 EXECUTED at this seam: owner invoked /session-handoff; docs/SESSION_HANDOFF.md replaced naming claude-opus-5-5 as the successor session's model with the exact owner launch line; R002/R003/R004 evidence carried in this manifest + B-025 resolution. The R001 wave-completion clause was overtaken by events with owner consent (the owner invoked the handoff mid-round; T072/T076 accepted #255/#256, T075/T074/T073 fully gated and parked at DCV - the successor takes the three accepts). D-085 execution complete pending DCV verification rows at the first bound acceptance."
   }
  ]
 }

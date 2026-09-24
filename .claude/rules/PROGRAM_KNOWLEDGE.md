@@ -179,5 +179,10 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - Opus 5.5 (D-085): exact id `claude-opus-5-5` (alias opus55; dotted 'opus-5.5' = SILENT
   unrecognized_model fallback to opus-4-8 - never use it). Verified on CLI 2.1.281 canary.
   Worker-pin flips AND the shared allowlist (`C:\Program Files\SupervisorConfig\config.toml`
-  [claude].allowed_models + [approved_models].models - opus-5-5 absent) are OWNER edits
-  (classifier-blocked; B-025 carries the four exact lines).
+  [claude].allowed_models + [approved_models].models) are OWNER edits (classifier-blocked;
+  B-025 resolved by owner actuation - all three lanes + allowlist on opus-5-5 since 2026-09-23).
+- DCV dispatch prompts MUST FORBID running the full `tools/test_directive_compliance.py`
+  (~7.6 min/TEST vs the grown registry = ~16h; T076-DCV F3 measured it; two DCVs stalled 3h+
+  on it, seq 127): the authoritative harness evidence is `validate_directive_compliance.py
+  --check` w/ a DIRECT exit code + the CI control-plane job at a verified head +
+  test_project_control.py + test_directive_reminder.py; the full suite is CI's job.
