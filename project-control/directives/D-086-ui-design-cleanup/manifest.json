@@ -1,0 +1,63 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-086",
+ "version": 1,
+ "slug": "ui-design-cleanup",
+ "title": "Owner 2026-09-24 (UI design cleanup; grounding complaint 2026-09-23 'it should be more visually explanatory'): the delivered UI deep-dive assessment (docs/UI_DEEP_DIVE_ASSESSMENT.md, digest-pinned) is the authoritative redesign brief - plan and contract the phased design-cleanup work (P0 reconcile+disclosure-migration ledger first; behavior findings verified/repaired before a surface's visual polish) under the normal gated process AFTER the T072-T076 waves and the D-085 seam; permanent preservation prohibitions (no disclosure lost without a migration row; no status laundering; no presentation-layer math; every hold/boundary/mount precondition unchanged); assessment recommendations are never authorization",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-24",
+ "captured_at": "2026-09-24T04:55:00+00:00",
+ "created_at": "2026-09-24T04:55:00+00:00",
+ "updated_at": "2026-09-24T04:55:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "fc6dc2af94a9288ea5fccb88f4d17c801013b397",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "The owner voiced the complaint 2026-09-23, accepted the orchestrator's offer to route it through an assessment-only session (prompt provided by the orchestrator), and delivered the finished assessment 2026-09-24 with the auditor summary quoted verbatim. Planning/contracting authorization for the design-cleanup lane under the normal gated process; it lifts no hold, releases no capability, and changes no gate."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-086-R001",
+  "D-086-R002",
+  "D-086-R003",
+  "D-086-R004"
+ ],
+ "requirements_content_digest_sha256": "edaef644d74081576230af53e22a8ea097442fe443928421c70eda570ad46224",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-24T04:55:00+00:00",
+   "content_digest_sha256": "eec2c0d7ed27577a68f070209cf8b9c2436bdb4a3d6fef774f69257916fe3cb8"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "planning_authorization",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "recording the assessment artifact; contracting the phased design-cleanup packets (P0-P7 shape, orchestrator-assigned ids/scopes/gates) after the R004 sequencing clears; bounded behavior-verification tasks for the Section-13 findings",
+  "forbidden": "launching the held 19-task expansion pack or the 9 contracts or GDS P1-P8 on this authority; lifting any hold; mounting the max-envelope route; releasing phase C/D; deleting any disclosure without its migration row; laundering backend statuses; presentation-layer computation; treating assessment prose as contracted work or release authorization"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-24T04:55:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured with the assessment file committed byte-exact in the SAME commit (digest c6d1b257...). At capture: 255 accepted; T075/T074/T076 at DCV; T073 wave queued; D-085 R002-R004 DONE, R005 seam-gated. Disjoint peer commit relative to every in-flight review surface. First planning effect at the seam: contract P0 (reconcile + disclosure migration ledger) before any visual work."
+  }
+ ]
+}

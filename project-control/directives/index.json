@@ -1108,7 +1108,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-085-opus-55-orchestrator-trial/manifest.json"
+  },
+  {
+   "directive_id": "D-086",
+   "slug": "ui-design-cleanup",
+   "title": "Owner 2026-09-24 (UI design cleanup; grounding complaint 2026-09-23 'it should be more visually explanatory'): the delivered UI deep-dive assessment (docs/UI_DEEP_DIVE_ASSESSMENT.md, digest-pinned) is the authoritative redesign brief - plan and contract the phased design-cleanup work (P0 reconcile+disclosure-migration ledger first; behavior findings verified/repaired before a surface's visual polish) under the normal gated process AFTER the T072-T076 waves and the D-085 seam; permanent preservation prohibitions (no disclosure lost without a migration row; no status laundering; no presentation-layer math; every hold/boundary/mount precondition unchanged); assessment recommendations are never authorization",
+   "status": "active",
+   "issued_at": "2026-09-24",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-086-ui-design-cleanup/manifest.json"
   }
  ],
- "updated_at": "2026-09-23T16:45:00+00:00"
+ "updated_at": "2026-09-24T04:55:00+00:00"
 }
