@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T094",
+ "material_commit": "89128c62 (cherry-pick of wt-m5t094 25879734; 5 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T16:08:56+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m5t094)",
+ "requirements": {
+  "D-066-R001": [
+   "The navigation block recorded that sheet_reader.py has no production importer (only its test), that app/documents/extraction and sheet_primitives.py are READ-ONLY, and the query.py --no-regen instruction; the material touches exactly the 5 allowed paths; app/documents and sheet_primitives.py are byte-untouched. [ORCH-HARVEST] at the cherry-picked head 89128c62 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python C:/Users/MLFLL/AppData/Local/Temp/claude/C--Users-MLFLL-Downloads-nyc-zoning-ctl24/e2a23d3a-9e54-4025-861f-29e70d815dbb/scratchpad/run_sheet_split_tests.py` (cwd .) -> exit 0: 46 passed in 0.52s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn symbol_ceiling: tools/agent_supervisor/policy.py - many top-level symbols; a signal, not a verdict."
+  ],
+  "D-087-R001": [
+   "Wave-4 capacity unit: contracted at 5cb3ca94 (G0), claimed at a749d995 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with M5-T095 and the wave-5/6 units; no state or gate skipped. [ORCH-HARVEST] at the cherry-picked head 89128c62 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python C:/Users/MLFLL/AppData/Local/Temp/claude/C--Users-MLFLL-Downloads-nyc-zoning-ctl24/e2a23d3a-9e54-4025-861f-29e70d815dbb/scratchpad/run_sheet_split_tests.py` (cwd .) -> exit 0: 46 passed in 0.52s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn symbol_ceiling: tools/agent_supervisor/policy.py - many top-level symbols; a signal, not a verdict."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task; one worktree wt-m5t094; material touches exactly the 5 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the cherry-picked head 89128c62 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python C:/Users/MLFLL/AppData/Local/Temp/claude/C--Users-MLFLL-Downloads-nyc-zoning-ctl24/e2a23d3a-9e54-4025-861f-29e70d815dbb/scratchpad/run_sheet_split_tests.py` (cwd .) -> exit 0: 46 passed in 0.52s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn symbol_ceiling: tools/agent_supervisor/policy.py - many top-level symbols; a signal, not a verdict."
+  ],
+  "D-087-R005": [
+   "The DB-055 (b) split that the real-PDF reader work (C1) needs before any growth: sheet_reader.py (962 SLOC) becomes a 314-SLOC compatibility facade over sheet_objects.py (245 SLOC: object graph, stream decode, decoded-bytes budget, form memo, contents joining) and sheet_interpreter.py (584 SLOC: the operator interpreter); __all__ unchanged; a 62-case golden captured from the PRE-split module (sha256 767766eb...) is reproduced byte-identically after the split with all 62 per-case digests pinned; one mutation per security guard reddens (flatten point budget, decoded-bytes budget, form depth, form cycle, top-level backstop, finiteness gate); the shared read_object_table stays untouched, leaving a clean seam for a NEW profile-level xref/object-stream resolver. Real architect PDFs are still NOT readable - this is preparation only. [ORCH-HARVEST] at the cherry-picked head 89128c62 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python C:/Users/MLFLL/AppData/Local/Temp/claude/C--Users-MLFLL-Downloads-nyc-zoning-ctl24/e2a23d3a-9e54-4025-861f-29e70d815dbb/scratchpad/run_sheet_split_tests.py` (cwd .) -> exit 0: 46 passed in 0.52s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn symbol_ceiling: tools/agent_supervisor/policy.py - many top-level symbols; a signal, not a verdict."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies (math/zlib/dataclasses/typing + app.*); unwired (no production importer outside app/drawings); no route, main.py or web change. [ORCH-HARVEST] at the cherry-picked head 89128c62 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python C:/Users/MLFLL/AppData/Local/Temp/claude/C--Users-MLFLL-Downloads-nyc-zoning-ctl24/e2a23d3a-9e54-4025-861f-29e70d815dbb/scratchpad/run_sheet_split_tests.py` (cwd .) -> exit 0: 46 passed in 0.52s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn symbol_ceiling: tools/agent_supervisor/policy.py - many top-level symbols; a signal, not a verdict."
+  ]
+ }
+}
