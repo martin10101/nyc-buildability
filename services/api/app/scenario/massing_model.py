@@ -49,6 +49,14 @@ before any triangulation or mesh), and ear-clipping work beyond
 when the least possible work already exceeds it, else metered so the worst-case
 O(n^3) scan cannot run away). Identical outlines are triangulated once.
 
+M5-T098 (DB-061 a-d) before-wiring guards: the LOT ring - a separate argument B0
+never sees - gets the same NYC EPSG:2263 range check as the proposal footprint
+(``lot_ring_out_of_nyc_bounds``), so a wrong-unit / wrong-CRS lot (a 4326 lon/lat
+or metric ring) is refused BY NAME and never mislabelled ``footprint_outside_lot``;
+and any ``shapely``/GEOS engine error on a build path is wrapped into a typed
+:class:`MassingModelError` (``geometry_engine_error``) at the module boundary, so no
+untyped error can escape. Valid inputs are unchanged.
+
 Deterministic and offline: standard library + the admitted ``shapely`` (validity,
 area, containment) and ``numpy`` (mesh volume / area reductions). No network, no new
 dependency, no route, no web. ``content_hash`` pins a golden sha256.
@@ -56,6 +64,7 @@ dependency, no route, no web. ``content_hash`` pins a golden sha256.
 
 from __future__ import annotations
 
+import functools
 import hashlib
 import json
 import math
@@ -64,10 +73,15 @@ from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
+from shapely.errors import GEOSException
 from shapely.geometry import Polygon
 
 from .proposal import (
     MAX_OUTLINE_VERTICES,
+    NYC_2263_X_MAX,
+    NYC_2263_X_MIN,
+    NYC_2263_Y_MAX,
+    NYC_2263_Y_MIN,
     ProposedMassingError,
     validate_proposed_massing,
 )
@@ -141,6 +155,30 @@ class MassingModelError(ValueError):
         super().__init__(message)
         self.reason = reason
         self.field = field
+
+
+def _wrap_geos_errors(func):
+    """Wrap the shapely/GEOS engine boundary (DB-061 d): any :class:`GEOSException`
+    escaping the geometry engine on a build path becomes a typed
+    :class:`MassingModelError` (``geometry_engine_error``), so no untyped error reaches
+    a caller and every wiring route can map one exception family to a client response.
+
+    Inputs are magnitude- and NYC-range-bounded, finiteness-checked and validity-checked
+    before any shapely construct runs, so this is a defensive backstop, not a routine
+    path - valid inputs never trigger it and their output is unchanged. A
+    :class:`MassingModelError` is a :class:`ValueError`, NOT a :class:`GEOSException`, so
+    a typed refusal raised inside the body passes through unwrapped with its own reason."""
+
+    @functools.wraps(func)
+    def _guarded(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except GEOSException as exc:
+            raise MassingModelError(
+                f"the geometry engine (shapely/GEOS) failed on this input: {exc}",
+                reason="geometry_engine_error", field=None) from exc
+
+    return _guarded
 
 
 # ---------------------------------------------------------------------------
@@ -576,7 +614,15 @@ def _expand_floor_stack(
 
 def _check_output_size(floors: Sequence[_Floor]) -> None:
     """Refuse an over-large mesh from ring sizes alone, BEFORE any triangulation or
-    prism is built (``over_cap_output_vertices``)."""
+    prism is built (``over_cap_output_vertices``).
+
+    This total INTENTIONALLY does not content-dedupe (DB-061 f / G3-A3): every floor
+    emits its OWN prism, so two floors sharing an identical outline still produce two
+    prisms and thus ``2 * (2 * ring)`` output vertices. :func:`_triangulate_distinct`
+    dedupes the triangulation WORK (a distinct ring is triangulated once), but the
+    emitted vertex COUNT is per floor. Never 'optimize' this sum into a
+    per-distinct-ring figure: it would under-count the real payload a viewer/exporter
+    receives and let the ceiling be bypassed."""
     total = sum(2 * len(floor.ring) for floor in floors)
     if total > MAX_TOTAL_MESH_VERTICES:
         raise MassingModelError(
@@ -609,12 +655,34 @@ def _triangulate_distinct(
 # ---------------------------------------------------------------------------
 
 
+def _require_lot_ring_in_nyc_bounds(ring: Sequence[_Point]) -> None:
+    """Fail closed when the LOT ring is outside plausible NYC EPSG:2263 bounds (DB-061 c
+    / G3-A2 / G5 F-LOW-2). The lot arrives as a SEPARATE argument that the B0 contract
+    (:func:`validate_proposed_massing`) never sees, so without this guard a 4326 (lon/
+    lat degrees) or metric lot passes the magnitude bound and is then MISLABELLED
+    ``footprint_outside_lot`` downstream - the wrong cause. This reuses the very
+    :data:`NYC_2263_X_MIN` .. constants B0 applies to the proposal footprint (single
+    source of truth), and names ``lot_ring`` so the refusal points at the real culprit.
+    These are generous fail-closed unit guards, never a precise city boundary."""
+    for x, y in ring:
+        if not (NYC_2263_X_MIN <= x <= NYC_2263_X_MAX
+                and NYC_2263_Y_MIN <= y <= NYC_2263_Y_MAX):
+            raise MassingModelError(
+                f"lot_ring vertex ({x}, {y}) is outside plausible NYC EPSG:2263 bounds "
+                f"([{NYC_2263_X_MIN}, {NYC_2263_X_MAX}] x [{NYC_2263_Y_MIN}, "
+                f"{NYC_2263_Y_MAX}] US survey feet) - likely a wrong-unit or wrong-CRS "
+                "lot; it is refused, never mislabelled",
+                reason="lot_ring_out_of_nyc_bounds", field="lot_ring")
+
+
 def _lot_polygon(lot_ring: Sequence[Sequence[float]]) -> tuple[Polygon, list[_Point]]:
     """Validate the canonical lot ring and return its shapely polygon + prepared ring.
-    Refuses a self-intersecting or self-touching lot. One ring cannot carry a hole: a
+    Refuses a self-intersecting or self-touching lot, and a lot outside the NYC
+    EPSG:2263 range (a wrong-unit / wrong-CRS mistake). One ring cannot carry a hole: a
     keyhole ring that pinches one off by revisiting a vertex is refused
     ``self_intersection`` in :func:`_prepare_ring`."""
     ring = _prepare_ring(lot_ring, "lot_ring")
+    _require_lot_ring_in_nyc_bounds(ring)
     poly = Polygon([(x, y) for x, y in ring])
     if poly.interiors:  # defensive: unreachable from one ring (DB-054 f)
         raise MassingModelError("lot_ring encloses a hole; a massing lot must be a "
@@ -651,6 +719,7 @@ def _crs_frame(origin: _Point) -> dict:
     }
 
 
+@_wrap_geos_errors
 def build_massing_model(
     *,
     lot_ring: Sequence[Sequence[float]],

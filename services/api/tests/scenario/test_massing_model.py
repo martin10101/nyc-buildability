@@ -730,9 +730,12 @@ def test_t088_as4_coordinate_magnitude_bound_is_inclusive():
     edge = mm.MAX_COORD_ABS
     assert edge == 1e8
     lot = [[-edge, -edge], [edge, -edge], [edge, edge], [-edge, edge]]
-    model = build_massing_model(lot_ring=lot, proposed_massing=_rect_block())
-    assert model.as_dict()["parcel"]["area_sq_ft"] == 4e16
-    assert model.to_json()  # strict JSON: every value finite
+    # M5-T098 (DB-061 c): the lot build path now NYC-range-gates the ring, so a ±1e8
+    # lot no longer builds (it is a wrong-CRS/out-of-range lot). The magnitude bound
+    # is CRS-agnostic and lives in _prepare_ring; its inclusivity (a coordinate exactly
+    # AT 1e8 is accepted) is proven THERE directly, preserving this test's coverage.
+    at_bound = mm._prepare_ring([[edge, edge], [edge - 1.0, edge], [edge, edge - 1.0]], "f")
+    assert len(at_bound) == 3  # exactly 1e8 accepted (inclusive)
     lot[1] = [edge + 0.5, -edge]
     with pytest.raises(MassingModelError) as exc:
         build_massing_model(lot_ring=lot, proposed_massing=_rect_block())
@@ -879,3 +882,187 @@ def test_t088_as5_five_floor_stack_golden():
     assert model.content_hash() == (
         "sha256:e23b5cbcca6ea7defee4b04c6bac51a94d4c26b5e643e2af923d29d1c248a6c5"
     )
+
+
+# ---------------------------------------------------------------------------
+# M5-T098 (DB-061 a-d) before-wiring hardening. Every test here is ADDED; the
+# existing goldens above stay byte-identical.
+# ---------------------------------------------------------------------------
+
+
+# --- AS-1: the coordinate-magnitude bound checks x OR y (mutant MD) ---------
+
+
+def test_t098_as1_y_only_magnitude_violation_is_refused():
+    """DB-061 a / G4 ADVISORY-1 (strong): the magnitude bound checks x OR y. Every
+    prior test violated it on X (or on both), so mutant MD - dropping the
+    ``or abs(y) > MAX_COORD_ABS`` clause - survived, re-opening the DB-054(h) overflow
+    via Y. A small-x / over-bound-y ring must be refused. Tested on _prepare_ring
+    directly: the bound is CRS-agnostic and lives there (the lot/footprint build paths
+    NYC-range-gate first, at a far tighter bound). With MD this ring parses cleanly and
+    NO refusal is raised, so this reddens MD."""
+    over = mm.MAX_COORD_ABS + 1.0  # 1e8 + 1, over the magnitude bound, on Y only
+    with pytest.raises(MassingModelError) as exc:
+        mm._prepare_ring([[0.0, over], [1.0, over], [0.0, over + 1.0]], "f")
+    assert exc.value.reason == "coordinate_out_of_range"
+    assert exc.value.field == "f[0]"
+
+
+def test_t098_as1_y_only_magnitude_bound_is_inclusive():
+    """The Y bound is inclusive at exactly 1e8 (mirrors the X-side inclusivity), so the
+    y-only refusal above is a true > bound, not an off-by-one."""
+    edge = mm.MAX_COORD_ABS
+    at_bound = mm._prepare_ring([[0.0, edge], [1.0, edge], [0.0, edge - 1.0]], "f")
+    assert len(at_bound) == 3  # y == 1e8 exactly is accepted
+
+
+# --- AS-2: the lot ring gets the NYC EPSG:2263 range check (mutant: no check) -
+
+
+def test_t098_as2_lot_ring_in_4326_degrees_is_refused_naming_lot_ring():
+    """DB-061 c / G3-A2 / G5 F-LOW-2: the LOT ring - a separate argument B0 never sees
+    - gets the same NYC EPSG:2263 range check as the proposal footprint. A 4326
+    lon/lat lot (degrees) is refused, NAMING lot_ring; it is NOT reached by containment
+    and mislabelled ``footprint_outside_lot``. Removing the check lets the tiny 4326
+    lot reach containment, where the NYC-feet footprint reports footprint_outside_lot -
+    a different reason - so this reddens that mutation."""
+    lot_4326 = [[-73.99, 40.70], [-73.98, 40.70], [-73.98, 40.71], [-73.99, 40.71]]
+    with pytest.raises(MassingModelError) as exc:
+        build_massing_model(lot_ring=lot_4326, proposed_massing=_rect_block())
+    assert exc.value.reason == "lot_ring_out_of_nyc_bounds"
+    assert exc.value.field == "lot_ring"
+
+
+def test_t098_as2_lot_ring_in_metres_is_refused_naming_lot_ring():
+    """A UTM-metres lot (another common wrong-CRS mistake: x far below the NYC 2263
+    easting range, y far above the northing range) is likewise refused by name."""
+    lot_utm = [[583000.0, 4507000.0], [583100.0, 4507000.0],
+               [583100.0, 4507120.0], [583000.0, 4507120.0]]
+    with pytest.raises(MassingModelError) as exc:
+        build_massing_model(lot_ring=lot_utm, proposed_massing=_rect_block())
+    assert exc.value.reason == "lot_ring_out_of_nyc_bounds"
+    assert exc.value.field == "lot_ring"
+
+
+def test_t098_as2_lot_ring_reuses_the_b0_footprint_bounds():
+    """The lot check reuses the SAME NYC_2263_* constants B0 range-checks the footprint
+    with (single source of truth) - a lot one foot below the easting minimum is refused,
+    exactly on the shared bound."""
+    below = mm.NYC_2263_X_MIN - 1.0
+    lot = [[below, 200000.0], [below + 100.0, 200000.0],
+           [below + 100.0, 200120.0], [below, 200120.0]]
+    with pytest.raises(MassingModelError) as exc:
+        build_massing_model(lot_ring=lot, proposed_massing=_rect_block())
+    assert exc.value.reason == "lot_ring_out_of_nyc_bounds"
+
+
+def test_t098_as2_in_range_lot_is_unaffected_golden_unchanged():
+    """An in-range NYC lot is untouched by the new check: the accepted M5-T082/T088
+    golden bytes are unchanged (no behaviour change for valid input)."""
+    model = _build(_rect_block())
+    assert model.content_hash() == (
+        "sha256:b7fa9862a0bb23885e7d7d71dae4a2d448a6ca4720f29a7b6bf68b4227c5133b"
+    )
+
+
+# --- AS-3: shapely GEOSException is wrapped at the module boundary -----------
+
+
+def test_t098_as3_geos_exception_is_wrapped_as_massing_error(monkeypatch):
+    """DB-061 d / G5 F-LOW-3: a shapely/GEOS engine error on a build path surfaces as a
+    typed MassingModelError, never an untyped GEOSException. Proven by a SPY that makes
+    the module's shapely Polygon construction raise GEOSException - not by hunting for a
+    real GEOS crash (input is bounded/validity-checked before shapely today)."""
+    from shapely.errors import GEOSException
+
+    calls = {"n": 0}
+
+    def exploding_polygon(*args, **kwargs):
+        calls["n"] += 1
+        raise GEOSException("simulated GEOS engine failure")
+
+    monkeypatch.setattr(mm, "Polygon", exploding_polygon)
+    with pytest.raises(MassingModelError) as exc:
+        _build(_rect_block())
+    assert exc.value.reason == "geometry_engine_error"
+    assert calls["n"] >= 1  # the spied shapely construct really ran and raised
+
+
+def test_t098_as3_generated_option_path_also_wraps_geos(monkeypatch):
+    """The generated-option build path (build_from_generated_option -> build_massing_model)
+    is covered by the same boundary wrap."""
+    from shapely.errors import GEOSException
+
+    def exploding_polygon(*args, **kwargs):
+        raise GEOSException("simulated GEOS engine failure")
+
+    candidate = _rect_block()
+    envelope = {"candidate": candidate, "candidate_placement": {"status": "fitted"}}
+    monkeypatch.setattr(mm, "Polygon", exploding_polygon)
+    with pytest.raises(MassingModelError) as exc:
+        build_from_generated_option(lot_ring=LOT_RING, max_envelope=envelope)
+    assert exc.value.reason == "geometry_engine_error"
+
+
+def test_t098_as3_typed_refusal_passes_through_the_geos_wrap_unchanged():
+    """The wrap is SELECTIVE: a MassingModelError raised inside the wrapped body is a
+    ValueError, not a GEOSException, so it is not swallowed or re-wrapped - its own
+    reason survives (here footprint_outside_lot)."""
+    block = _rect_block()
+    block["outline"] = _outline([[x + 200.0, y] for x, y in RECT])  # outside the lot
+    with pytest.raises(MassingModelError) as exc:
+        _build(block)
+    assert exc.value.reason == "footprint_outside_lot"
+
+
+# --- AS-4: scan units are charged BEFORE the inner scan (mutant ME) ----------
+
+
+def test_t098_as4_scan_units_charged_before_the_inner_scan(monkeypatch):
+    """DB-061 b / G4 ADVISORY-2: in _triangulate the worst-case ``m-3`` scan units are
+    charged BEFORE the inner point-in-triangle scan runs. A budget that overspends
+    exactly at that charge refuses WITHOUT running the scan; mutant ME (charge the m-3
+    units AFTER the scan) would run the whole scan first. Counting point-in-triangle
+    calls discriminates the two: 0 (before) vs m-3 (after)."""
+    ring = mm._prepare_ring(_regular(8), "t")
+    n = len(ring)
+    assert n == 8
+    calls = {"n": 0}
+    real_pit = mm._point_in_triangle
+
+    def counting_pit(*args, **kwargs):
+        calls["n"] += 1
+        return real_pit(*args, **kwargs)
+
+    monkeypatch.setattr(mm, "_point_in_triangle", counting_pit)
+    # units = n-3: the pos-0 candidate charge (1) leaves n-4; the convex candidate's
+    # m-3 = n-3 charge then overspends. Charged BEFORE the scan -> zero pit calls.
+    with pytest.raises(MassingModelError) as exc:
+        mm._triangulate(ring, "t", mm._WorkBudget(n - 3))
+    assert exc.value.reason == "triangulation_budget_exceeded"
+    assert exc.value.field == "t"
+    assert calls["n"] == 0  # the inner scan never ran (mutant ME makes this n-3 > 0)
+
+
+# --- AS-5: scope / no new dependency / unwired ------------------------------
+
+
+def test_t098_as5_module_imports_no_route_or_web_and_no_new_dependency():
+    """Scope: the module stays a pure builder - no FastAPI/route/app/web import, and no
+    third-party dependency beyond the already-admitted numpy + shapely."""
+    source = pathlib.Path(mm.__file__).read_text(encoding="utf-8")
+    for forbidden in ("fastapi", "app.main", "app.api", "starlette", "requests",
+                      "httpx", "app.cad"):
+        assert forbidden not in source, f"unexpected wiring/import: {forbidden!r}"
+    # The only imports are stdlib + numpy + shapely + the read-only B0 proposal contract.
+    import ast
+
+    tree = ast.parse(source)
+    roots: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            roots.update(alias.name.split(".")[0] for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+            roots.add(node.module.split(".")[0])
+    assert roots <= {"functools", "hashlib", "json", "math", "collections", "dataclasses",
+                     "typing", "numpy", "shapely", "__future__"}
