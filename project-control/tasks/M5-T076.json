@@ -51,12 +51,12 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "rework",
+  "progress_percent": 70,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-23T05:42:11.092850+00:00",
-  "updated_at": "2026-09-23T15:20:06.429674+00:00",
+  "updated_at": "2026-09-24T03:02:45.981064+00:00",
   "directive_refs": [
     {
       "directive_id": "D-084",
@@ -87,6 +87,13 @@
       "percent": 95,
       "status": "claimed",
       "message": "Unit harvested (b8dc1044 ALL-MATCH x5); ruff clean + 40 passed OBSERVED; submitting - CI on the push is the backstop"
+    },
+    {
+      "at": "2026-09-24T03:02:45.980078+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "rework",
+      "message": "G3 FAIL (code-reviewer): five required corrections before resubmission - F1 unguarded derivation hop escapes the status matrix (reproduced untyped 500, no correlation header); F2 non-list lot_line_segments silently replaced instead of typed-refused (reproduced 200-fitted); F3 binding TESTS clause unmet (recorded MPG02/MPG06/MPG07 fixtures unused; derived-but-unfittable dominant path untested; deviation undisclosed); F4 over-cap conflated with invalid_geometry against valid official data; F5 threadpool-side lazy client construction race (DB-039(i) class). F6/F7/F8 advisory. Producer rework dispatched."
     }
   ]
 }
