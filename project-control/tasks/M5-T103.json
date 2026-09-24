@@ -1,0 +1,112 @@
+{
+  "task_id": "M5-T103",
+  "title": "D-087 PKT-K (C1): real-file architect PDF resolver - PDF 1.5+ cross-reference streams and object streams in a NEW profile-level module (never widening the shared read_object_table), with mandatory decompression guards and a real-corpus run",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "The M5-T093 real-corpus trial read 0 of 6 real architect drawings: every file uses a PDF 1.5+ cross-reference STREAM plus object streams, which the reused strict reader (app/documents/extraction/pdf_xref.read_object_table, shared with the accepted survey pipeline) refuses. Build a NEW module services/api/app/drawings/pdf_object_streams.py that resolves cross-reference streams (/Type /XRef: /W field widths, /Index subsections, /Size, entry types 0/1/2, bounded /Prev chains with a cycle guard, hybrid-reference /XRefStm) and object streams (/Type /ObjStm: /N, /First, bounded object counts), including the PNG predictors ISO 32000-1 section 7.4.4.4 allows on these streams, and wire it through the sheet_reader facade / sheet_objects object graph so a classic-xref file still takes the old path unchanged. Every unsupported feature (encryption, other filters, TIFF predictor 2 if not implemented, broken offsets, etc.) is a typed refusal. Apply the plan's MANDATORY guard and the reader riders listed in the acceptance scenarios, then run the six real corpus items (fetched into scratch by URL, sha256-verified, NEVER committed) and report per file what now happens.",
+  "business_reason": "The owner released PDF blueprint reading (D-087-R005); the reader must actually open real architect drawings before any wiring or owner claim, and the accepted plan names this resolver as the next reader step with a mandatory zip-bomb guard.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "PLAN SOURCE (binding): the ACCEPTED M5-T099 plan docs/design/d087-export-and-3d-viewer-plan.md (PKT-K rows in sections 5 and 6, incl. its MANDATORY PKT-K acceptance criterion) names this work; its riders are the scope. Where the plan and a backlog row differ, the backlog row's exact wording wins and the difference goes in the report.",
+    "LOCAL 3.11 SHIM (binding): the sheet tests cannot collect on local Python 3.11 (PEP 695 behind app/documents/extraction/__init__.py). Run them through a copy of the outside-repo bare-package shim C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\4598a04e-a86e-466c-9a14-eaa63bdf9a90\\scratchpad\\shims\\run_sheet_split_tests.py (copy it into your own scratch folder and point it at YOUR worktree and test files). CI on Python 3.12 is the authority for the raw pytest command.",
+    "SPEC SOURCE (binding): ISO 32000-1 sections 7.5.7 (object streams), 7.5.8 (cross-reference streams), 7.5.8.4 (hybrid-reference files) and 7.4.4.4 (LZW/Flate predictor parameters) - cite the section next to each constant and mark anything recalled rather than read as '[recalled - verify]' for the G1 verifier; docs/DISCOVERY_BACKLOG.md DB-055 (f), (g), (k), (l) and DB-064 (c), (d) (exact wording); docs/research/architect-corpus-reader-trial-2026-09.md and docs/research/architect-drawing-corpus-2026-09.md (the six items: URLs + sha256); project-control/reports/M5-T093-G1.md / -G3.md, M5-T094-G3.md / -G4.md / -G5.md, M5-T099-G5.md (F2(a)).",
+    "MANDATORY GUARD (binding; the accepted plan's PKT-K criterion, M5-T099 G5 F2(a)): an ABSOLUTE inflated-bytes cap AND an inflate-ratio guard on every cross-reference and object stream, charged BEFORE the inflated bytes are materialized (bounded incremental decompression, never an unbounded zlib.decompress), sharing the document-wide decoded-bytes budget; plus bounded /Prev depth, object-stream count and /N; each guard with an in-process mutation that reddens.",
+    "SHARED READER UNTOUCHED (binding; DB-055 (k)): app/documents/extraction/ (incl. pdf_xref.read_object_table) is READ-ONLY - its second consumer is the accepted survey pipeline. The 62-case split-equivalence golden (tests/drawings/test_sheet_reader_split_equivalence.py, READ-ONLY here) must stay byte-identical.",
+    "REAL CORPUS (binding; D-087-R005 honesty): fetch the six corpus items by their recorded URLs into your scratch folder ONLY, verify each sha256 against the note, run read_sheet, tabulate per file the new outcome (read, with page/primitive counts; or the typed refusal reason) next to M5-T093's, then delete the copies. Never commit a corpus file or any excerpt of it. If your sandbox cannot fetch, record [BLOCKED] with the exact recipe; the orchestrator runs it at harvest. Claim nothing beyond what is observed.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 830 files / 17842 nodes / 7656 edges): sheet_reader.py (facade; its single read_object_table call is the integration point), sheet_objects.py (object graph + decode + budgets) and sheet_interpreter.py (the /XObject name echoes at the Do handler) are imported only by each other and tests/drawings/*; app/documents/extraction/* and sheet_primitives.py are READ-ONLY; tests/drawings/test_sheet_reader.py belongs to the parallel M5-T104 and is FORBIDDEN here. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/drawings/pdf_object_streams.py - cross-reference + object stream resolver (new)",
+    "services/api/app/drawings/sheet_reader.py, sheet_objects.py, sheet_interpreter.py - integration + guards + riders",
+    "services/api/tests/drawings/test_pdf_object_streams.py - resolver, predictor, guard and mutation tests (new)",
+    "project-control/reports/M5-T103-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T097"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/pdf_object_streams.py",
+    "services/api/app/drawings/sheet_reader.py",
+    "services/api/app/drawings/sheet_objects.py",
+    "services/api/app/drawings/sheet_interpreter.py",
+    "services/api/tests/drawings/test_pdf_object_streams.py",
+    "project-control/reports/M5-T103-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/documents/",
+    "services/api/app/drawings/sheet_primitives.py",
+    "services/api/app/drawings/dxf_reader.py",
+    "services/api/app/drawings/__init__.py",
+    "services/api/tests/drawings/test_sheet_reader.py",
+    "services/api/tests/drawings/test_sheet_reader_split_equivalence.py",
+    "services/api/tests/drawings/test_dxf_reader.py",
+    "services/api/tests/drawings/test_dxf_roundtrip.py",
+    "services/api/app/cad/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    "docs/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (resolver): synthetic in-test PDFs cover a cross-reference stream with each entry type 0/1/2, multiple /Index subsections, a /Prev chain (and a /Prev cycle refused), a hybrid /XRefStm file, an object stream holding several objects, and each implemented PNG predictor; objects resolve correctly through read_sheet; every unsupported feature is a typed refusal naming the feature; a classic-xref file still takes the unchanged old path.",
+    "AS-2 (mandatory decompression guard): an absolute inflated-bytes cap and an inflate-ratio guard on every xref/object stream, charged before materialization and sharing the document-wide decoded-bytes budget (DB-064 (d): no post-increment overshoot); bounded /Prev depth, object-stream count and /N; a zip-bomb fixture refuses typed with bounded memory; one in-process mutation per guard reddens.",
+    "AS-3 (refusal hygiene): XObject /name echoes and the unsupported-/Filter name in refusal details are truncated with _preview (DB-055 (f), DB-064 (c)); a file that parses but yields ZERO vector geometry (scan-only) is a typed refusal, never an empty success (DB-055 (l)).",
+    "AS-4 (no regression): app/documents/extraction is byte-untouched; the 62-case split-equivalence golden and the existing sheet-reader suites pass unchanged; each production module stays under 600 SLOC; imports acyclic; modularity_check exit 0.",
+    "AS-5 (real corpus, honest): the six corpus items are fetched to scratch by URL, sha256-verified and run through read_sheet; the report tabulates old vs new outcome per file; nothing from the corpus is committed; the `sh` shading operator and inline images stay declared typed refusals unless implemented and tested (DB-055 (g)); no claim beyond the observed results.",
+    "AS-6 (scope): zero new dependencies (zlib is stdlib); unwired; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T21:54:05.002849+00:00",
+  "updated_at": "2026-09-24T21:54:08.126464+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R005",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T21:54:05.003855+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/drawings/test_pdf_object_streams.py tests/drawings/test_sheet_reader.py tests/drawings/test_sheet_reader_split_equivalence.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

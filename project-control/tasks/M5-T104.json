@@ -1,0 +1,99 @@
+{
+  "task_id": "M5-T104",
+  "title": "D-087 PKT-K2: architect-sheet reader test debt (DB-055 a, e, i; DB-064 a, b) - tests that execute every accepted operator, a truly rotated rectangle, a non-vacuous mid-path-cm assertion, two distinct forms, and per-document byte accounting; one citation fix",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the architect-sheet reader's recorded test gaps without changing production behaviour: in services/api/tests/drawings/test_sheet_reader.py - (DB-055 a) make test_mid_path_cm_does_not_corrupt_curve_start assert the reopened curve's first INTERIOR point (the value the bug displaces; revert-to-pre-fix must redden it); (DB-055 i) execute the operators no test runs today (re, v, y, s, f, F, f*, B*, b, b*, n, W, W*, TL, Td, TD, T*, TJ, ' and \") and replace the 'rotated rectangle' that is really a rotated line with a true rotated rectangle; (DB-064 a) a document with two DISTINCT Form XObjects both decoded and placed (kills a wrong-key form memo); (DB-064 b) a multi-stream document whose streams are each under the per-stream cap but sum over the patched document total (kills per-stream accounting). In services/api/app/drawings/sheet_primitives.py fix ONLY the apply_matrix citation (section 8.3.3 -> 8.3.4, DB-055 e); no code change there.",
+  "business_reason": "The reviewed reader has correct code but several accepted operators and two budget semantics are never exercised; closing the gaps makes the next reader packets' regressions detectable.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "PLAN SOURCE (binding): the ACCEPTED M5-T099 plan docs/design/d087-export-and-3d-viewer-plan.md (PKT-K rows in sections 5 and 6, incl. its MANDATORY PKT-K acceptance criterion) names this work; its riders are the scope. Where the plan and a backlog row differ, the backlog row's exact wording wins and the difference goes in the report.",
+    "LOCAL 3.11 SHIM (binding): the sheet tests cannot collect on local Python 3.11 (PEP 695 behind app/documents/extraction/__init__.py). Run them through a copy of the outside-repo bare-package shim C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\4598a04e-a86e-466c-9a14-eaa63bdf9a90\\scratchpad\\shims\\run_sheet_split_tests.py (copy it into your own scratch folder and point it at YOUR worktree and test files). CI on Python 3.12 is the authority for the raw pytest command.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-055 (a), (e), (i) and DB-064 (a), (b) (exact wording); project-control/reports/M5-T083-G4-rework.md (F6), M5-T083-DCV.md (F3), M5-T094-G4.md (A-1, A-2 with the reviewer's surviving-mutant descriptions).",
+    "NO PRODUCTION CHANGE (binding): the only non-test edit is the one-line citation fix in sheet_primitives.py; every new test must pass against today's production code AND redden under the mutant it targets (record each mutant and its red run - mutate the CONSUMING namespace).",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 830 files / 17842 nodes / 7656 edges): the reader modules (sheet_reader / sheet_objects / sheet_interpreter / sheet_primitives) are imported only by each other and tests/drawings/*. The parallel M5-T103 owns sheet_reader.py, sheet_objects.py, sheet_interpreter.py and the new pdf_object_streams files - FORBIDDEN here; do not rely on behaviour they may change. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/tests/drawings/test_sheet_reader.py - the DB-055 (a)(i) and DB-064 (a)(b) tests",
+    "services/api/app/drawings/sheet_primitives.py - the section 8.3.4 citation fix only",
+    "project-control/reports/M5-T104-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T094"
+  ],
+  "allowed_paths": [
+    "services/api/tests/drawings/test_sheet_reader.py",
+    "services/api/app/drawings/sheet_primitives.py",
+    "project-control/reports/M5-T104-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/sheet_reader.py",
+    "services/api/app/drawings/sheet_objects.py",
+    "services/api/app/drawings/sheet_interpreter.py",
+    "services/api/app/drawings/pdf_object_streams.py",
+    "services/api/tests/drawings/test_pdf_object_streams.py",
+    "services/api/tests/drawings/test_sheet_reader_split_equivalence.py",
+    "services/api/app/documents/",
+    "services/api/app/drawings/dxf_reader.py",
+    "services/api/app/cad/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (non-vacuous mid-path cm): the strengthened assertion pins the reopened curve's first interior point; the literal pre-fix revert reddens it (record the red run).",
+    "AS-2 (operator coverage): every operator DB-055 (i) lists is executed by at least one test with an asserted outcome; a true rotated rectangle (four edges, rotated CTM) is asserted vertex by vertex.",
+    "AS-3 (budget semantics): two distinct Form XObjects decode and place correctly (a wrong-key memo mutant reddens); a multi-stream document under the per-stream cap but over the patched document total refuses 'decoded bytes budget' (a per-stream-accounting mutant reddens).",
+    "AS-4 (no production change + scope): sheet_primitives.py differs only in the citation text; every existing test passes unchanged; zero new dependencies; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T21:54:13.484106+00:00",
+  "updated_at": "2026-09-24T21:54:14.980073+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R005",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T21:54:13.484698+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/drawings/test_sheet_reader.py tests/drawings/test_sheet_reader_split_equivalence.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
