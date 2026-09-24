@@ -56,12 +56,12 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T07:42:01.190404+00:00",
-  "updated_at": "2026-09-24T07:42:01.869610+00:00",
+  "updated_at": "2026-09-24T07:43:39.186656+00:00",
   "directive_refs": [
     {
       "directive_id": "D-086",
@@ -91,5 +91,15 @@
   "documented_test_commands": [
     "python -m json.tool docs/design/ui-cleanup/disclosure-ledger-a.json",
     "python -m json.tool docs/design/ui-cleanup/disclosure-ledger-b.json"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t080",
+  "progress_log": [
+    {
+      "at": "2026-09-24T07:43:39.186656+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contract seam complete: G0 PASS at f57fccd5; worktree wt-m5t080 at the claim-seam commit; launch/dispatch next"
+    }
   ]
 }

@@ -59,12 +59,12 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T07:41:56.146023+00:00",
-  "updated_at": "2026-09-24T07:41:56.816449+00:00",
+  "updated_at": "2026-09-24T07:43:27.718634+00:00",
   "directive_refs": [
     {
       "directive_id": "D-084",
@@ -92,5 +92,15 @@
     "python -m ruff check .",
     "python -m pytest tests/scenario/test_lot_geometry_derivation.py tests/api/test_max_envelope_api.py -q",
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t077",
+  "progress_log": [
+    {
+      "at": "2026-09-24T07:43:27.717121+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contract seam complete: G0 PASS at f57fccd5; worktree wt-m5t077 at the claim-seam commit; launch/dispatch next"
+    }
   ]
 }
