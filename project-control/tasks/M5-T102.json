@@ -1,0 +1,115 @@
+{
+  "task_id": "M5-T102",
+  "title": "D-087 PKT-A: one shared claim-word module for the DXF, PDF and GLB writers (DB-059 b, c; DB-053 c) - separator-collapsing screen everywhere, one canonical word list with a drift guard, byte-identical valid output",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Create services/api/app/cad/claim_words.py: the ONE canonical CLAIM_CLASS_WORDS tuple and the PDF writer's separator-collapsing key (today pdf_sheet_writer._claim_key) exposed as a small public screen function. Rewire all three writers to it: the GLB writer's raw substring _check_name (DB-059 b), its literal word-list copy (DB-059 c), the DXF writer's screen, and the PDF writer's screen incl. the caller-supplied title-block address/bbl passthrough (DB-053 c). Keep every public name importable where it is today (dxf_writer.CLAIM_CLASS_WORDS is imported by pdf_sheet_writer and tests - keep it as a compatibility alias of the shared tuple). Valid output stays byte-identical: every writer golden and the committed owner samples (docs/samples/cad/, pinned by test_cad_owner_samples.py) do not change. Also close the M5-T096 G4 advisory A1 in test_dxf_writer.py: the import-allowlist test also flags __import__ calls and any importlib reference.",
+  "business_reason": "D-083 bars claim words ('approved', 'maximum allowed building', ...) from every product surface; today one writer screens separator variants and two do not, and three copies of the list can drift. The accepted plan makes this shared module the first export-wiring step.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - this packet ships a tested module only; wiring is a later gated packet. The max-envelope route stays UNMOUNTED (its mount preconditions are unchanged).",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "PLAN SOURCE (binding): the ACCEPTED M5-T099 plan docs/design/d087-export-and-3d-viewer-plan.md (sections 1, 5, 6 and its rider map) names this packet; its riders and mandatory criteria are the scope. Where the plan and the backlog row differ, the backlog row's exact wording wins and the difference goes in the report.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-059 (b), (c) and DB-053 (c) (exact wording); project-control/reports/M5-T092-G5.md (the separator-variant finding), M5-T091-G3.md, M5-T085-G3.md (DB-053 c), M5-T096-G4.md (A1); D-083 claim-class vocabulary in project-control/directives/D-083-architect-lens-product-assessment/requirements.json. The word list's CONTENT does not change in this packet - only where it lives and how every writer matches it.",
+    "BYTE-IDENTITY (binding): the DXF golden, the PDF golden, the GLB golden and the three committed samples in docs/samples/cad/ stay byte-identical (test_cad_owner_samples.py and test_dxf_roundtrip.py are READ-ONLY consumers that must stay green unchanged); only refusal behaviour for separator-variant claim words changes.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 827 files / 17839 nodes / 7656 edges): dxf_writer is imported by pdf_sheet_writer.py:54 (CLAIM_CLASS_WORDS) and by tests/cad/test_dxf_writer.py, test_pdf_sheet_writer.py, test_cad_owner_samples.py and tests/drawings/test_dxf_roundtrip.py; glb_writer and pdf_sheet_writer are imported only by their tests and test_cad_owner_samples.py. No production module outside app/cad imports any writer (unwired). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/cad/claim_words.py - canonical word list + separator-collapsing screen (new)",
+    "services/api/app/cad/dxf_writer.py, glb_writer.py, pdf_sheet_writer.py - rewired to the shared screen",
+    "services/api/tests/cad/test_claim_words.py - screen + drift tests (new)",
+    "services/api/tests/cad/test_dxf_writer.py, test_glb_writer.py, test_pdf_sheet_writer.py - per-writer variant tests",
+    "project-control/reports/M5-T102-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T096"
+  ],
+  "allowed_paths": [
+    "services/api/app/cad/claim_words.py",
+    "services/api/app/cad/dxf_writer.py",
+    "services/api/app/cad/glb_writer.py",
+    "services/api/app/cad/pdf_sheet_writer.py",
+    "services/api/tests/cad/test_claim_words.py",
+    "services/api/tests/cad/test_dxf_writer.py",
+    "services/api/tests/cad/test_glb_writer.py",
+    "services/api/tests/cad/test_pdf_sheet_writer.py",
+    "project-control/reports/M5-T102-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/cad/__init__.py",
+    "services/api/tests/cad/test_cad_owner_samples.py",
+    "docs/samples/",
+    "services/api/app/drawings/",
+    "services/api/tests/drawings/",
+    "services/api/app/scenario/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (one source): claim_words.py holds the only CLAIM_CLASS_WORDS literal and the only matching key; each writer imports it (an AST/drift test proves no writer keeps a local word literal or its own matcher); dxf_writer.CLAIM_CLASS_WORDS still resolves (compatibility alias, identity-equal to the shared tuple).",
+    "AS-2 (separator variants refused everywhere): 'As_of_right', 'Maximum_allowed', 'MAXIMUM  ALLOWED', 'as-of-right' are refused as GLB mesh/node names, DXF caller strings, and PDF title-block address/bbl; mutation - reverting the GLB writer to raw substring matching reddens; mutation - removing the title-block screen reddens.",
+    "AS-3 (full word coverage + drift guard): every word in the canonical tuple is tested against each writer; the tuple is pinned BY VALUE in test_claim_words.py so an edit to the list reddens.",
+    "AS-4 (byte-identical valid output): the DXF, PDF and GLB goldens and the three committed samples are unchanged (test_cad_owner_samples.py and test_dxf_roundtrip.py pass unchanged).",
+    "AS-5 (allowlist + scope): the dxf_writer import-allowlist test also flags __import__ calls and importlib references (mutation - an __import__('json') call reddens); zero new dependencies; unwired; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-24T21:27:27.284431+00:00",
+  "updated_at": "2026-09-24T21:27:28.585102+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R004",
+        "D-087-R006",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-083",
+      "requirement_ids": [
+        "D-083-R001",
+        "D-083-R002"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-24T21:27:27.284431+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/cad tests/drawings/test_dxf_roundtrip.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
