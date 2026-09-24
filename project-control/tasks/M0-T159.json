@@ -63,11 +63,11 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T08:14:06.319330+00:00",
-  "updated_at": "2026-09-24T09:25:24.635540+00:00",
+  "updated_at": "2026-09-24T10:08:47.050003+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -105,6 +105,13 @@
       "percent": 90,
       "status": "in_progress",
       "message": "Harvested: a3f24ff3 cherry-picked to cfc3d22c (12 files MATCH by blob); four re-pointed packs 150 passed at this checkout; evidence map + G2 written; submitting."
+    },
+    {
+      "at": "2026-09-24T10:08:47.047997+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "awaiting_gate",
+      "message": "G3 PASS WITH REQUIRED CORRECTIONS (cr-m0 F1-F3, F4/F5 folded): recertification.md section 5 must name the recertified candidate a3f24ff3 with both tree SHAs and a 147-file / 55dc71350b stop condition (F1), add the backup, source-worktree removal, verify-manifest and doctor steps (F2), and propagate the admitted subtree to the lane-2/lane-3 controller instances (F3) with fresh per-lane launch manifests (F4); producer report discloses the claude_binaries 3->1 diff (F5). These corrections BLOCK acceptance and any commissioning hand-off; applied as [ORCH-CORRECTED] edits, then re-freeze and same-reviewer delta attestation. G4 PASS (qa-m0, advisories A1-A7 pre-existing)."
     }
   ],
   "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t159"
