@@ -12,6 +12,12 @@ NEVER the display-only 4326 outline connector), in exactly the shape
 :func:`app.api.v1.proposal_checks_api._build_lot_context` validates and
 :class:`app.scenario.derivation.LotContext` consumes.
 
+The ROUTE decides eligibility, not this module: server-side derivation is invoked ONLY when the
+caller supplied no lot-line geometry - an ABSENT ``lot_line_segments`` field or an EMPTY LIST
+(DB-051(b) orchestrator ruling). A present-but-``null`` or otherwise malformed value is a typed 422
+refusal upstream and never reaches this module - one rule, one refusal class; ``null`` is NOT
+treated as absent.
+
 Design commitments:
 
 * AUTHORITATIVE SOURCE ONLY. The exterior ring comes from the connector's canonical EPSG:2263

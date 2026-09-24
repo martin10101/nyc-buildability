@@ -164,15 +164,18 @@ def _should_derive_lot_geometry(lot: dict) -> bool:
     non-empty BBL. A request that carries any lot-line segment is served byte-identically to today
     (no derivation call).
 
-    "No lot-line geometry" means the field is ABSENT, ``None``, or an EMPTY LIST - nothing else. A
-    malformed ``lot_line_segments`` (a string, a number, an object) is NOT an invitation to
-    substitute derived geometry: it stays on the typed-refusal path so ``_build_lot_context``'s
-    ``lot.lot_line_segments must be an array`` 422 survives unchanged, with or without a BBL.
-    Silently replacing a caller's malformed field would turn a documented refusal into a 200."""
+    "No lot-line geometry" means the field is ABSENT or an EMPTY LIST - nothing else (DB-051(b)
+    orchestrator ruling: ONE rule, ONE refusal class). A present-but-``null`` ``lot_line_segments``
+    is NOT treated as absent: like any other non-list value (a string, a number, an object) it
+    stays on the typed-refusal path so ``_build_lot_context``'s ``lot.lot_line_segments must be an
+    array`` 422 survives unchanged, in EVERY BBL/provider state and with NO provider call. That is
+    the same 422 ``null`` already receives without a BBL, and no client sends ``null`` (the web
+    client sends ``[]``). Silently deriving over a caller's ``null`` or malformed field would turn a
+    documented refusal into a 200."""
     if "lot_line_segments" in lot:
         segments = lot["lot_line_segments"]
-        supplied_none = segments is None or (isinstance(segments, list) and not segments)
-        if not supplied_none:
+        supplied_empty = isinstance(segments, list) and not segments
+        if not supplied_empty:
             return False
     bbl = lot.get("bbl")
     if isinstance(bbl, str):

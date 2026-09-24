@@ -420,11 +420,37 @@ def test_ring_cutter_reports_degenerate_and_over_cap_separately():
     assert _exterior_ring_segments([], max_segments=800) == (None, _RING_DEGENERATE)
 
 
+def test_ring_cutter_at_cap_boundary_derives_exactly_max_segments():
+    """DB-051(d): the at-cap boundary. A ring whose exterior yields EXACTLY ``max_segments``
+    segments derives ALL of them - the cutter's guard is ``>``, not ``>=``. One more segment than
+    the cap is ``geometry_over_cap``. A ``>`` -> ``>=`` off-by-one would wrongly refuse a valid lot
+    with exactly ``max_segments`` exterior segments (a fail-closed direction, but still wrong), so
+    the boundary is pinned directly. MUTATION: ``>`` -> ``>=`` reddens the at-cap assertion."""
+    from app.scenario.lot_geometry_derivation import _RING_OVER_CAP, _exterior_ring_segments
+
+    triangle_ring = [["0", "0"], ["10", "0"], ["10", "10"]]  # yields 3 exterior segments
+
+    # count == max_segments: derives all of them (the `>` guard does not trip at equality).
+    at_cap, reason = _exterior_ring_segments([[triangle_ring]], max_segments=3)
+    assert reason is None
+    assert at_cap is not None and len(at_cap) == 3
+
+    # max_segments + 1 (here: a 3-segment ring against a cap of 2) is geometry_over_cap.
+    assert _exterior_ring_segments([[triangle_ring]], max_segments=2) == (None, _RING_OVER_CAP)
+
+
 def test_unresolvable_bbl_is_fail_closed_without_calling_provider():
+    """DB-051(c): BBL_UNRESOLVABLE's honest detail is asserted here (it was the one outcome whose
+    detail was pinned nowhere). MUTATION: blanking the BBL_UNRESOLVABLE detail string reddens the
+    detail assertions below."""
     derived = derive_lot_line_segments("not-a-bbl", provider=_provider_never_called())
     assert derived.outcome is LotGeometryDerivationOutcome.BBL_UNRESOLVABLE
     assert derived.segments is None
     assert derived.provenance is None
+    # The detail is non-empty and names the unresolvable-BBL reason (never a blank/opaque string).
+    assert derived.detail
+    assert "not a resolvable canonical BBL" in derived.detail
+    assert "no server-side lot geometry was derived" in derived.detail
 
 
 def test_connector_fault_is_fail_closed():

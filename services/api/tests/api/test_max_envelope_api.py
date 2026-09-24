@@ -601,8 +601,13 @@ def test_connector_fault_keeps_honest_gap(client, monkeypatch):
     assert resp.status_code == 200
     doc = resp.json()
     assert doc["candidate"] is None
-    assert doc["candidate_placement"]["status"] == "lot_geometry_unsupported"
+    placement = doc["candidate_placement"]
+    assert placement["status"] == "lot_geometry_unsupported"
     assert doc["derived_lot_geometry"]["outcome"] == "connector_fault"
+    # DB-051(c): the failure reason reaches placement.detail (not only the derived block).
+    assert "server-side lot-geometry derivation" in placement["detail"]
+    assert "connector_fault" in placement["detail"]
+    assert "could not be reached" in placement["detail"]
 
 
 def test_unresolvable_bbl_keeps_honest_gap_without_calling_provider(client, monkeypatch):
@@ -616,8 +621,13 @@ def test_unresolvable_bbl_keeps_honest_gap_without_calling_provider(client, monk
     assert resp.status_code == 200
     doc = resp.json()
     assert doc["candidate"] is None
-    assert doc["candidate_placement"]["status"] == "lot_geometry_unsupported"
+    placement = doc["candidate_placement"]
+    assert placement["status"] == "lot_geometry_unsupported"
     assert doc["derived_lot_geometry"]["outcome"] == "bbl_unresolvable"
+    # DB-051(c): the honest bbl_unresolvable reason reaches placement.detail.
+    assert "server-side lot-geometry derivation" in placement["detail"]
+    assert "bbl_unresolvable" in placement["detail"]
+    assert "not a resolvable canonical BBL" in placement["detail"]
 
 
 def test_no_bbl_and_no_segments_does_not_derive(client, monkeypatch):
@@ -629,6 +639,28 @@ def test_no_bbl_and_no_segments_does_not_derive(client, monkeypatch):
     assert resp.status_code == 200
     doc = resp.json()
     assert calls == []
+    assert "derived_lot_geometry" not in doc
+    assert doc["candidate_placement"]["status"] == "lot_geometry_unsupported"
+
+
+@pytest.mark.parametrize("non_scalar_bbl", [{"x": 1}, ["1008350041"]])
+def test_non_scalar_bbl_does_not_derive_and_never_calls_the_provider(
+    client, monkeypatch, non_scalar_bbl
+):
+    """AS-4 / DB-051(e): a non-scalar ``lot.bbl`` (an object or a list) is not a usable BBL, so
+    ``_should_derive_lot_geometry`` returns False. The request then gets today's honest
+    ``lot_geometry_unsupported`` gap - a 200 with NO ``derived_lot_geometry`` block at all (no typed
+    refusal, no derivation attempt) - and the provider is never even RESOLVED, proven by the spy.
+    This pins the documented fail-closed behavior; ``_build_lot_context`` never reads the bbl."""
+    calls: list[str] = []
+    resolutions: list[str] = []
+    _inject_provider_recording_resolution(monkeypatch, _recording_provider(calls), resolutions)
+    resp = client.post(
+        _URL, json=_body(lot={**_LOT, "lot_line_segments": [], "bbl": non_scalar_bbl})
+    )
+    assert resp.status_code == 200
+    doc = resp.json()
+    assert resolutions == [] and calls == []  # provider never resolved or called
     assert "derived_lot_geometry" not in doc
     assert doc["candidate_placement"]["status"] == "lot_geometry_unsupported"
 
@@ -665,14 +697,21 @@ def test_500_when_the_lot_geometry_provider_raises_unexpectedly(client, monkeypa
     assert body["correlation_id"] == resp.headers["X-Correlation-ID"]
 
 
-@pytest.mark.parametrize("malformed", ["abc", 42, {"id": "L-S"}, True])
+@pytest.mark.parametrize(
+    "malformed",
+    # Truthy set (the pre-T077 net) PLUS the FALSY set (DB-051(a) / G4-F1): the idiomatic weakening
+    # `if lot.get("lot_line_segments"): return False` ships GREEN over every truthy value but lets
+    # the five falsy malformed values fall through to derivation, silently replacing a documented
+    # 422 with a 200. Only the falsy values discriminate that mutant - so both sets are pinned.
+    ["abc", 42, {"id": "L-S"}, True, 0, "", {}, False, 0.0],
+)
 def test_malformed_segments_refuse_identically_with_and_without_a_bbl(
     client, monkeypatch, malformed
 ):
-    """F2: a malformed ``lot.lot_line_segments`` is a documented typed 422 today. Adding a BBL must
-    NOT turn it into a 200 by substituting derived geometry - the caller's malformed field stays on
-    the typed-refusal path, byte-for-byte the same refusal as without the BBL, and the provider is
-    never resolved or called."""
+    """F2 / DB-051(a): a malformed ``lot.lot_line_segments`` is a documented typed 422 today. Adding
+    a BBL must NOT turn it into a 200 by substituting derived geometry - the caller's malformed
+    field (truthy OR falsy) stays on the typed-refusal path, byte-for-byte the same refusal as
+    without the BBL, and the provider is never resolved or called."""
     calls: list[str] = []
     resolutions: list[str] = []
     _inject_provider_recording_resolution(monkeypatch, _recording_provider(calls), resolutions)
@@ -694,23 +733,58 @@ def test_malformed_segments_refuse_identically_with_and_without_a_bbl(
     assert resolutions == [] and calls == []
 
 
-def test_absent_or_null_segments_with_a_bbl_still_derive(client, monkeypatch):
-    """F2 (the other direction): tightening the guard must not break the derive path. The three
-    shapes that mean "no geometry supplied" - the field ABSENT, ``None``, or an EMPTY LIST - all
-    still derive and fit."""
+def test_absent_or_empty_segments_with_a_bbl_still_derive(client, monkeypatch):
+    """AS-1 / DB-051(b): the two shapes that mean "no geometry supplied" and INVITE server-side
+    derivation - the field ABSENT or an EMPTY LIST - both derive and fit. ``null`` is deliberately
+    NOT here: it refuses (see test_null_segments_refuse_in_every_state_with_no_provider_call)."""
     _inject_provider(monkeypatch, lambda _bbl: _rect_result())
     base = {k: v for k, v in _LOT.items() if k != "lot_line_segments"}
 
     for lot in (
-        {**base, "bbl": "1008350041"},                              # absent
-        {**base, "lot_line_segments": None, "bbl": "1008350041"},   # null
-        {**base, "lot_line_segments": [], "bbl": "1008350041"},     # empty list
+        {**base, "bbl": "1008350041"},                            # absent
+        {**base, "lot_line_segments": [], "bbl": "1008350041"},   # empty list
     ):
         resp = client.post(_URL, json=_body(lot=lot))
         assert resp.status_code == 200, lot
         doc = resp.json()
         assert doc["derived_lot_geometry"]["outcome"] == "derived", lot
         assert doc["candidate_placement"]["status"] == "fitted", lot
+
+
+def test_null_segments_refuse_in_every_state_with_no_provider_call(client, monkeypatch):
+    """AS-1 / DB-051(b) ORCHESTRATOR RULING: the JSON ``null`` spelling of ``lot_line_segments`` is
+    NOT an invitation to derive. Unlike an absent field or an empty list, ``null`` stays on
+    ``_build_lot_context``'s typed 422 (``lot.lot_line_segments must be an array``) in EVERY
+    BBL/provider state - no BBL, BBL + a passing provider, BBL + a failing provider - each with NO
+    provider call. One rule, one refusal class: the same 422 ``null`` already receives without a
+    BBL. MUTATION (DB-051(b)): re-admitting ``None`` to the derivable set reddens this test."""
+    base = {k: v for k, v in _LOT.items() if k != "lot_line_segments"}
+
+    def _recording_faulting(calls: list[str]):
+        from app.connectors.mappluto_geometry_arcgis import MalformedResponseError
+
+        def _p(canonical_bbl: str):
+            calls.append(canonical_bbl)
+            raise MalformedResponseError("boom", correlation_id="c")
+
+        return _p
+
+    states = [
+        ("no BBL", {**base, "lot_line_segments": None}, _recording_provider),
+        ("BBL + passing provider",
+         {**base, "lot_line_segments": None, "bbl": "1008350041"}, _recording_provider),
+        ("BBL + failing provider",
+         {**base, "lot_line_segments": None, "bbl": "1008350041"}, _recording_faulting),
+    ]
+    for label, lot, make_provider in states:
+        calls: list[str] = []
+        resolutions: list[str] = []
+        _inject_provider_recording_resolution(monkeypatch, make_provider(calls), resolutions)
+        resp = client.post(_URL, json=_body(lot=lot))
+        assert _pair(resp) == (422, "validation_error"), label
+        assert resp.json()["field"] == "lot.lot_line_segments", label
+        assert resolutions == [] and calls == [], label  # provider never resolved or called
+        assert "derived_lot_geometry" not in resp.json(), label
 
 
 def test_recorded_single_lot_derives_but_is_honestly_unfittable(client, monkeypatch):
