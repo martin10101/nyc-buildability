@@ -62,12 +62,12 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T08:14:06.319330+00:00",
-  "updated_at": "2026-09-24T08:15:22.083556+00:00",
+  "updated_at": "2026-09-24T09:25:24.635540+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -98,6 +98,13 @@
       "percent": 20,
       "status": "backlog",
       "message": "Contract seam complete: G0 PASS; worktree wt-m0t159 cut from the CERTIFIED controller commit a5886dab (branch task/M0-T159-cli-2-1-281-admission); dispatch next"
+    },
+    {
+      "at": "2026-09-24T09:24:45.426974+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Harvested: a3f24ff3 cherry-picked to cfc3d22c (12 files MATCH by blob); four re-pointed packs 150 passed at this checkout; evidence map + G2 written; submitting."
     }
   ],
   "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t159"

@@ -4,9 +4,18 @@
   "reviewer": "data-contract-verifier",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M5-T083-G1.md",
-  "reviewed_at": "2026-09-24T08:30:23.284566+00:00",
-  "content_manifest_sha256": "e550d721c2e0a0cdb6f7ae771077a847b9bb885b67614b04d4153a982e7a6d7c",
-  "reviewed_sha": "fb38d429b9189cfc5b4efa1aaec1c91cffe040a3",
-  "updated_at": "2026-09-24T08:30:25.151620+00:00"
+  "report_file": "project-control/reports/M5-T083-G1-rework.md",
+  "reviewed_at": "2026-09-24T09:20:07.725105+00:00",
+  "content_manifest_sha256": "86661a1ac1114f4463b2d3ce21d71d1660cea6d8788adfa0dd9250fc6a68607e",
+  "reviewed_sha": "33662211137a36f0ff4b7c8ac8ae779f75943f8a",
+  "history": [
+    {
+      "reviewer": "data-contract-verifier",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T083-G1.md",
+      "reviewed_at": "2026-09-24T08:30:23.284566+00:00"
+    }
+  ],
+  "updated_at": "2026-09-24T09:20:22.215869+00:00"
 }
