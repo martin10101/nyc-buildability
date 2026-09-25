@@ -64,12 +64,15 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-from app.documents.extraction.pdf_lexer import PdfSyntaxError
 from app.documents.extraction.pdf_objects import PdfRef
 from app.documents.extraction.pdf_xref import (
     PdfObjectTable,
     UnsupportedPdfFeature,
     read_object_table,
+)
+from app.drawings.pdf_object_streams import (
+    XREF_STREAM_FEATURES,
+    resolve_object_table,
 )
 from app.drawings.sheet_interpreter import _IDENTITY, _StreamRun
 from app.drawings.sheet_objects import (
@@ -246,9 +249,33 @@ def _read_sheet(
         return _refuse("flatten tolerance", "flatten_tolerance must be a positive finite number")
     tolerance = float(flatten_tolerance)
 
-    table = read_object_table(bytes(data))
-    if isinstance(table, (PdfSyntaxError, UnsupportedPdfFeature)):
-        return _wrap_strict(table)
+    # Classic-xref path (unchanged): the strict reader is the authority. Only when it refuses
+    # a PDF 1.5+ cross-reference-stream-family file does the NEW resolver take over (M5-T103),
+    # so a classic file behaves byte-for-byte as before and the resolver never widens the
+    # shared strict reader. ``decoded_seed`` carries the resolver's already-charged bytes into
+    # the content-stream decoder so both phases share ONE decoded-bytes budget.
+    data_bytes = bytes(data)
+    raw_table = read_object_table(data_bytes)
+    decoded_seed = 0
+    used_resolver = False
+    if isinstance(raw_table, PdfObjectTable):
+        table = raw_table
+    elif (
+        isinstance(raw_table, UnsupportedPdfFeature)
+        and raw_table.feature in XREF_STREAM_FEATURES
+    ):
+        resolved = resolve_object_table(
+            data_bytes, max_total_decoded_bytes=MAX_TOTAL_DECODED_BYTES
+        )
+        if resolved is None:
+            return _wrap_strict(raw_table)  # not a file this resolver handles
+        if isinstance(resolved, SheetRefusal):
+            return resolved
+        table = resolved.table
+        decoded_seed = resolved.decoded_bytes
+        used_resolver = True
+    else:
+        return _wrap_strict(raw_table)
 
     root = _catalog_pages_root(table)
     if isinstance(root, SheetRefusal):
@@ -273,6 +300,7 @@ def _read_sheet(
             max_decoded_stream_bytes=MAX_DECODED_STREAM_BYTES,
             max_total_decoded_bytes=MAX_TOTAL_DECODED_BYTES,
             decode_stream=_decode_stream,
+            decoded_bytes=decoded_seed,
         ),
     )
     pages: list[SheetPage] = []
@@ -314,6 +342,14 @@ def _read_sheet(
             pages.append(page)
         else:
             return _refuse("page tree", "a page tree node /Type is neither /Pages nor /Page")
+    # Scan-only class split (DB-055 (l), only on the NEW resolver path so the classic-xref
+    # synthetic suites are unchanged): a real file that parses but surfaces ZERO vector
+    # geometry (a scanned/OCR page) is a typed refusal, never an empty success.
+    if used_resolver and not any(page.polylines for page in pages):
+        return _refuse(
+            "scan only",
+            "the document parsed but yields zero vector geometry (scan-only page set)",
+        )
     return SheetDocument(flatten_tolerance=tolerance, pages=tuple(pages))
 
 

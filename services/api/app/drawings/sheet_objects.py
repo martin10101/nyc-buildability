@@ -31,6 +31,7 @@ from app.drawings.sheet_primitives import SheetRefusal
 MAX_DECODED_STREAM_BYTES = 8_388_608  # decoded content/form-stream byte cap (per stream)
 MAX_TOTAL_DECODED_BYTES = 134_217_728  # decoded bytes charged across the whole document
 _DETAIL_PREVIEW_CHARS = 64  # attacker-derived tokens are truncated to this in a detail
+_INFLATE_CHUNK = 65536  # bounded incremental-inflation chunk (caps materialized memory)
 
 _ROOT_KEY = PdfName("Root")
 _TYPE_KEY = PdfName("Type")
@@ -54,6 +55,9 @@ _COLORSPACE_KEY = PdfName("ColorSpace")
 _FILTER_KEY = PdfName("Filter")
 _DECODE_PARMS_KEY = PdfName("DecodeParms")
 _FLATE = PdfName("FlateDecode")
+_PREDICTOR_KEY = PdfName("Predictor")
+_COLUMNS_KEY = PdfName("Columns")
+_COLORS_KEY = PdfName("Colors")
 
 _MAX_RESOLVE_HOPS = 32
 _ABSENT = object()
@@ -157,7 +161,9 @@ def _decode_stream(
         return _refuse("stream filter array", f"/Filter is an array of {len(filter_value)}")
     if filter_value != _FLATE:
         name = filter_value.value if isinstance(filter_value, PdfName) else repr(filter_value)
-        return _refuse("stream filter", f"/Filter /{name} is outside the supported subset")
+        return _refuse(
+            "stream filter", f"/Filter /{_preview(name)} is outside the supported subset"
+        )
     decompressor = zlib.decompressobj()
     try:
         decoded = decompressor.decompress(stream.raw_data, cap)
@@ -225,12 +231,15 @@ class _StreamDecoder:
         max_decoded_stream_bytes: int,
         max_total_decoded_bytes: int,
         decode_stream,
+        decoded_bytes: int = 0,
     ) -> None:
         self.table = table
         self.max_decoded_stream_bytes = max_decoded_stream_bytes
         self.max_total_decoded_bytes = max_total_decoded_bytes
         self._decode_stream = decode_stream  # patchable hook (facade sheet_reader._decode_stream)
-        self.decoded_bytes = 0  # document-wide
+        # document-wide; seeded with the bytes a PDF 1.5+ xref/object-stream resolve already
+        # charged, so the two phases share ONE decoded-bytes budget (M5-T103).
+        self.decoded_bytes = decoded_bytes
         self.form_cache: dict[tuple[int, int], bytes] = {}  # decoded Form content by ref key
 
     def charge_decoded(self, count: int) -> SheetRefusal | None:
@@ -288,3 +297,124 @@ class _StreamDecoder:
                 parts.append(decoded)
             return b"\n".join(parts)
         return _refuse("contents", "/Contents is neither a stream nor an array of streams")
+
+
+# ============== PDF 1.5+ stream-decode primitives (shared with the object-stream resolver)
+#
+# These serve the M5-T103 cross-reference/object-stream resolver (:mod:`pdf_object_streams`),
+# which composes them; they are not on the classic content-stream path, so the 62-case split
+# golden is unaffected. Bounds are threaded in as plain ints so the resolver's patchable
+# module constants (its mutation surface) still drive them.
+
+
+def inflate_guarded(
+    raw: bytes, *, absolute_cap: int, ratio_multiplier: int, charge
+) -> bytes | SheetRefusal:
+    """Inflate ``raw`` by BOUNDED INCREMENTAL decompression (never an unbounded
+    ``zlib.decompress``): each chunk is charged via ``charge`` and checked against the
+    absolute inflated-bytes cap and the inflate-ratio guard BEFORE it is retained, so a zip
+    bomb refuses with memory bounded to one chunk plus the output so far (the M5-T103
+    mandatory guard). ``charge(n)`` returns a :class:`SheetRefusal` when the shared
+    document-wide budget would overflow, else None."""
+    decompressor = zlib.decompressobj()
+    out = bytearray()
+    ratio_cap = len(raw) * ratio_multiplier
+    src = raw
+    while True:
+        try:
+            chunk = decompressor.decompress(src, _INFLATE_CHUNK)
+        except zlib.error:
+            return _refuse("corrupt flate stream", "zlib refused a cross-reference/object stream")
+        src = decompressor.unconsumed_tail
+        if chunk:
+            projected = len(out) + len(chunk)
+            if projected > absolute_cap:
+                return _refuse("inflated bytes cap", f"over {absolute_cap} inflated bytes")
+            if projected > ratio_cap:
+                return _refuse(
+                    "inflate ratio", f"inflated:compressed ratio over {ratio_multiplier}"
+                )
+            charged = charge(len(chunk))
+            if charged is not None:
+                return charged
+            out += chunk
+        if decompressor.eof:
+            break
+        if not chunk and not src:
+            return _refuse("corrupt flate stream", "flate stream ended before its terminator")
+    return bytes(out)
+
+
+def apply_predictor(data: bytes, parms: dict) -> bytes | SheetRefusal:
+    """Apply the §7.4.4.4 predictor named by ``/DecodeParms``: 1/absent = none; 2 = TIFF
+    (typed refusal, not implemented); 10-15 = PNG (per-row filter tag byte)."""
+    predictor = _parm_int(parms, _PREDICTOR_KEY, 1)
+    if predictor is None:
+        return _refuse("predictor", "/Predictor is not an integer")
+    if predictor == 1:
+        return data
+    if predictor == 2:
+        return _refuse("predictor", "TIFF predictor 2 is not implemented")
+    if predictor < 10 or predictor > 15:
+        return _refuse("predictor", f"unsupported /Predictor {predictor}")
+    columns = _parm_int(parms, _COLUMNS_KEY, 1)
+    colors = _parm_int(parms, _COLORS_KEY, 1)
+    bpc = _parm_int(parms, _BPC_KEY, 8)
+    if None in (columns, colors, bpc) or columns < 1 or colors < 1 or bpc < 1:  # type: ignore[operator]
+        return _refuse("predictor", "/DecodeParms has a non-positive geometry parameter")
+    row_len = (columns * colors * bpc + 7) // 8
+    return _png_unfilter(data, row_len, max(1, (colors * bpc + 7) // 8))
+
+
+def _parm_int(parms: dict, key: PdfName, default: int) -> int | None:
+    if key not in parms:
+        return default
+    value = parms[key]
+    return value if type(value) is int else None
+
+
+def _png_unfilter(data: bytes, row_len: int, bpp: int) -> bytes | SheetRefusal:
+    """Reverse the PNG per-row filters (§7.4.4.4 / RFC 2083 [recalled - verify], corroborated
+    by decoding the real corpus xref streams): each row is a 1-byte filter tag then
+    ``row_len`` bytes; the tag selects None/Sub/Up/Average/Paeth."""
+    stride = row_len + 1
+    if row_len <= 0 or len(data) % stride != 0:
+        return _refuse("predictor", "PNG-predicted rows are misaligned with /Columns")
+    out = bytearray()
+    previous = bytearray(row_len)
+    pos = 0
+    for _ in range(len(data) // stride):
+        tag = data[pos]
+        current = bytearray(data[pos + 1 : pos + stride])
+        pos += stride
+        if tag == 0:
+            pass
+        elif tag == 1:
+            for i in range(bpp, row_len):
+                current[i] = (current[i] + current[i - bpp]) & 0xFF
+        elif tag == 2:
+            for i in range(row_len):
+                current[i] = (current[i] + previous[i]) & 0xFF
+        elif tag == 3:
+            for i in range(row_len):
+                left = current[i - bpp] if i >= bpp else 0
+                current[i] = (current[i] + ((left + previous[i]) >> 1)) & 0xFF
+        elif tag == 4:
+            for i in range(row_len):
+                left = current[i - bpp] if i >= bpp else 0
+                upper_left = previous[i - bpp] if i >= bpp else 0
+                current[i] = (current[i] + _paeth(left, previous[i], upper_left)) & 0xFF
+        else:
+            return _refuse("predictor", f"unsupported PNG row filter {tag}")
+        out += current
+        previous = current
+    return bytes(out)
+
+
+def _paeth(a: int, b: int, c: int) -> int:
+    """The PNG Paeth predictor of left (a), up (b), upper-left (c) (§7.4.4.4 [recalled])."""
+    p = a + b - c
+    pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
+    if pa <= pb and pa <= pc:
+        return a
+    return b if pb <= pc else c

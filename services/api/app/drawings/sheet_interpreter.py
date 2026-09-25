@@ -550,7 +550,7 @@ class _StreamRun:
         name = values[0].value
         table = self._interp.table
         if self._resources is _ABSENT or not isinstance(self._resources, dict):
-            return _refuse("xobject", f"/{name} Do with no /Resources dictionary")
+            return _refuse("xobject", f"/{_preview(name)} Do with no /Resources dictionary")
         xobjects = _resolve(table, self._resources.get(_XOBJECT_KEY, _ABSENT))
         if isinstance(xobjects, SheetRefusal):
             return xobjects
@@ -558,19 +558,19 @@ class _StreamRun:
             return _refuse("xobject", "/Resources has no /XObject dictionary")
         entry = xobjects.get(PdfName(name), _ABSENT)
         if entry is _ABSENT:
-            return _refuse("xobject", f"/XObject has no entry named /{name}")
+            return _refuse("xobject", f"/XObject has no entry named /{_preview(name)}")
         ref_key = (entry.number, entry.generation) if isinstance(entry, PdfRef) else None
         stream = _resolve(table, entry)
         if isinstance(stream, SheetRefusal):
             return stream
         if not isinstance(stream, PdfStream):
-            return _refuse("xobject", f"/{name} does not resolve to a stream")
+            return _refuse("xobject", f"/{_preview(name)} does not resolve to a stream")
         subtype = _resolve(table, stream.dictionary.get(_SUBTYPE_KEY, _ABSENT))
         if subtype == _IMAGE:
             return self._place_image(name, stream)
         if subtype == _FORM:
             return self._place_form(name, stream, ref_key)
-        return _refuse("xobject", f"/{name} has unsupported /Subtype")
+        return _refuse("xobject", f"/{_preview(name)} has unsupported /Subtype")
 
     def _place_image(self, name: str, stream: PdfStream) -> SheetRefusal | None:
         table = self._interp.table
@@ -604,7 +604,9 @@ class _StreamRun:
                 "xobject recursion", f"form nesting over depth {interp.limits.max_xobject_depth}"
             )
         if ref_key is not None and ref_key in self._stack:
-            return _refuse("xobject cycle", f"form /{name} references an ancestor (cycle)")
+            return _refuse(
+                "xobject cycle", f"form /{_preview(name)} references an ancestor (cycle)"
+            )
         table = interp.table
         content = interp.decoder.decode_form(stream, ref_key)
         if isinstance(content, SheetRefusal):
