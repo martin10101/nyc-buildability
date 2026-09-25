@@ -1,0 +1,122 @@
+{
+  "task_id": "M5-T107",
+  "title": "D-087 PKT-E: 3D scene assembler + UNMOUNTED scene route - the massing truth object plus official context buildings under one declared ground datum, escaped untrusted text, the job/deadline/rate-limit safety, and the footprint connector's pre-consumption riders (DB-073 a-g)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build the plan section 2.1 scene payload: services/api/app/scenario/scene_assembler.py (a pure assembler: MassingModel.as_dict() - source, disclosure, coordinate_reference_system with world_to_local, parcel, building_layer, meshes, plates, metrics, provenance - PLUS a context_buildings layer from fetch_context_buildings, each building's base_z derived from GROUND_ELEVATION under ONE declared vertical datum chosen knowingly, the vertical unit explicit) and services/api/app/api/v1/scene_api.py (an UNMOUNTED, flag-gated route that runs the assembly in a cancellable job under a deadline and a rate limit). First close the footprint connector's pre-consumption riders DB-073 (a)-(g) and DB-054 (o). Untrusted context text is declared and escaped for every renderer; MultiPolygon courtyard holes are disclosed or refused, never dropped; honesty labels per D-083.",
+  "business_reason": "The accepted plan's batch 2: the 3D viewer (PKT-I) needs a server-built, renderer-agnostic scene that shows the proposed or generated building in its real neighbourhood without ever becoming the source of truth.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "UNMOUNTED ROUTE (binding; plan section 2): the route module ships UNMOUNTED - app/main.py is NOT touched; the router is asserted ABSENT from OpenAPI (mirror the accepted max_envelope_api / M5-T059 pattern); flag-gated by INTERNAL_RULE_EVAL_ENABLED with include_in_schema=False, and an absent/empty/unknown flag returns the generic 404 byte-indistinguishable from an unmounted path (app/api/v1/lot_geometry.py:100 sentinel). Mounting is PKT-H, a later gated packet. The max-envelope route stays UNMOUNTED.",
+    "JOB SAFETY (binding; DB-061 (i), the M5-T088 G5 fix (b)): the work runs OFF the event loop in a cancellable job under a per-request wall-clock deadline, with a per-caller RATE LIMIT at the route (reuse the repo's existing rate-limit mechanism - see app/api/v1/lot_geometry.py / properties.py - never a new package). Request bodies are read through the accepted T053 bounded-streaming primitives (a raw-byte ceiling BEFORE materialization). Over budget = a typed refusal, never a partial result. Only a server-generated correlation id is logged; no caller or upstream text reaches a log line (exception class + a length-bounded sanitized message at most).",
+    "PLAN SOURCE (binding): the ACCEPTED M5-T099 plan docs/design/d087-export-and-3d-viewer-plan.md - the PKT-E rows in sections 5 and 6 and the section 2.1 scene payload contract - names this packet; its riders are the scope. Where the plan and a backlog row differ, the backlog row's exact wording wins and the difference goes in the report. The plan's test paths tests/api/v1/... are corrected to sit beside their service's tests (tests/scenario, tests/drawings, tests/cad): the frozen M4-T005 packet's allowed_paths glob services/api/tests/api/**, and D-087-R002 requires disjointness from frozen packets too.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-073 (a)-(g), DB-054 (k), (l), (n), (o), DB-058 (a), (f), DB-053 (f), (g) and DB-061 (i) (exact wording); project-control/reports/M5-T101-G1.md / -G3.md / -G4.md / -G5.md (the connector findings, both official GROUND_ELEVATION definitions), M5-T082/M5-T088/M5-T098 reports (the massing truth object); docs/research/source-registry-drafts/building-footprints.json (the datum facts).",
+    "SEQUENCING (binding): this packet depends on M5-T106 (DB-069 (a)-(d), the massing pre-wiring fixes, running in parallel). Do not edit massing_model.py; M5-T107 cannot be ACCEPTED before M5-T106 is. If your assembler needs a massing behaviour M5-T106 is changing, code against the public API and record the dependency in the report.",
+    "DATUM (binding; never guess): GROUND_ELEVATION has two official definitions (the City dictionary: lowest ground-level elevation; FGDC: centroid-interpolated bare-earth DTM) and NAVD88 is stated only by the dictionary; a zero ground is kept as a typed unverified value. Choose ONE declared datum for base_z, state the choice and its source in the payload's provenance, and disclose zero/unverified grounds - never silently treat them as sea level.",
+    "NETWORK (binding): tests never touch the network - drive fetch_context_buildings through its existing fakes / injected transport; the route passes interactive=True plus a deadline (DB-073 (c)).",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 832 files / 17984 nodes / 7700 edges): building_footprints_arcgis.py is imported only by tests/connectors/test_building_footprints_arcgis.py (unwired; its geometry helpers live in building_footprints_geometry.py); massing_model.py only by its test (M5-T106 owns it now - READ-ONLY here); glb_writer.py (optional GLB payload) by tests/cad/*. The connector file is ~1073 lines (above the justification threshold): put new helpers in building_footprints_geometry.py or scene_assembler.py and record a cohesion note. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/scenario/scene_assembler.py - the section 2.1 scene payload assembler",
+    "services/api/app/api/v1/scene_api.py - the UNMOUNTED flag-gated scene route (job + deadline + rate limit)",
+    "services/api/tests/scenario/test_scene_assembler.py and services/api/tests/scenario/test_scene_api.py",
+    "services/api/app/connectors/building_footprints_arcgis.py (+ building_footprints_geometry.py) - DB-073 (a)-(g), DB-054 (o)",
+    "services/api/tests/connectors/test_building_footprints_arcgis.py - the DB-073 (e)-(g) tests",
+    "project-control/reports/M5-T107-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T101",
+    "M5-T106"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/scene_assembler.py",
+    "services/api/app/api/v1/scene_api.py",
+    "services/api/tests/scenario/test_scene_assembler.py",
+    "services/api/tests/scenario/test_scene_api.py",
+    "services/api/app/connectors/building_footprints_arcgis.py",
+    "services/api/app/connectors/building_footprints_geometry.py",
+    "services/api/tests/connectors/test_building_footprints_arcgis.py",
+    "project-control/reports/M5-T107-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/massing_model.py",
+    "services/api/tests/scenario/test_massing_model.py",
+    "services/api/app/scenario/proposal.py",
+    "services/api/app/cad/",
+    "services/api/app/drawings/",
+    "services/api/app/resilience/",
+    "docs/research/source-registry-drafts/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (payload): the assembler returns the section 2.1 shape - MassingModel.as_dict() plus context_buildings - with the vertical unit explicit (DB-054 (k)) and ONE declared ground datum with its source in provenance (DB-058 (f), DB-053 (f)); a golden fixture pins it; string coordinates parse to float or refuse typed (DB-054 (o)).",
+    "AS-2 (honesty + disclosure): labels follow D-083 ('Proposed - not a city record' / 'Generated building option'; never permitted/approved/maximum allowed); per-level nesting (DB-054 (l)) and the missing party-wall distinction (DB-054 (n)) are disclosed; MultiPolygon courtyard holes are disclosed or refused, never dropped (DB-053 (g)); zero/unverified grounds are disclosed.",
+    "AS-3 (untrusted text): every context-building source string is declared untrusted in the payload and escaped for rendering (DB-058 (a)); refusal details are bounded; no source or caller text reaches a log line.",
+    "AS-4 (route, unmounted): absent from OpenAPI; flag-gated generic 404; bounded request bytes; the assembly runs off the event loop in a cancellable job with a per-request deadline and a per-caller rate limit (DB-061 (i)); typed refusals; a server-generated correlation id; each safety property has a test and a reddening mutation.",
+    "AS-5 (connector riders DB-073 (a)-(g)): the correlation-id sanitiser also strips U+2028/U+2029 and is length-bounded at the log sites; the deadline is checked before the metadata fetch and during retry sleeps; a tz-naive deadline refuses as disallowed_request; the grep-based not-wired test is replaced by an import-graph/AST check; a multi-page advancing-clock deadline test and a cumulative-bytes ceiling test between the one-page and two-page sums exist.",
+    "AS-6 (scope): zero new dependencies; app/main.py untouched; the connector's existing tests pass apart from the replaced not-wired test; exactly the allowed paths; modularity_check exit 0."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T01:31:18.098678+00:00",
+  "updated_at": "2026-09-25T01:31:18.480634+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-083",
+      "requirement_ids": [
+        "D-083-R001",
+        "D-083-R002"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T01:31:18.098678+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/scenario tests/connectors -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

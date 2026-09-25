@@ -10,7 +10,7 @@
  "issued_at": "2026-09-24",
  "captured_at": "2026-09-25T01:15:00+00:00",
  "created_at": "2026-09-25T01:15:00+00:00",
- "updated_at": "2026-09-25T01:15:00+00:00",
+ "updated_at": "2026-09-25T01:45:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "afbde1cf625a5f9d317e3d49024e97870bcc619d",
  "capture_head_sha": null,
@@ -30,7 +30,7 @@
   "D-088-R006",
   "D-088-R007"
  ],
- "requirements_content_digest_sha256": "d9069e27c7dc811dab3a70f605b6258a43b324aaf8d4cf8f5df02c8861dfdc8e",
+ "requirements_content_digest_sha256": "8b3a636d14c065f603bcc250c2fe38116fb87337bb7ef0450e83a56e45a90c50",
  "sources": [
   {
    "file": "source-001.md",
@@ -61,6 +61,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured verbatim before acting (D-001 discipline). At capture: 288 accepted; all lanes down (B-026 open; recertification M0-T159 and the installer re-pin M0-T160 accepted; commissioning owner-typed and not yet run); lanes 1-3 exist, lanes 4-5 do not; M5-T103 in rework (G5 FAIL, orchestrator-dispatched rework producer running), M5-T105 at its final compliance check. frozen_baseline_sha = this capture's parent. Relation: raises D-072-R001's ceiling; D-071, D-072 and D-084 stay active. Immediate planning effect: prepare the owner's commissioning helper (extended to lanes 4-5) and contract five pairwise-disjoint lane packets."
+  },
+  {
+   "at": "2026-09-25T01:45:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "wave-10 contract seam (seq 129: M5-T106 + M5-T107 + M5-T108 + M5-T109 + M0-T161 - the M5-T099 plan's batch 2, the DB-069 massing pre-wiring packet, and the D-088 commissioning helper): bound D-088-R003 <- M0-T161; D-088-R004 <- M0-T161; D-088-R007 <- M0-T161; requirements digest resynced in the same commit."
   }
  ]
 }

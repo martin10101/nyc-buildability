@@ -1,0 +1,106 @@
+{
+  "task_id": "M0-T161",
+  "title": "D-088 five-lane commissioning helper (OWNER-RUN): the accepted M0-T159 section 5 sequence as one fail-closed PowerShell script (read-only check, update, per-lane first start, canary approval, lanes 2-5 from a plan file) extended to stand up and verify lanes 4 and 5, plus a plain-English owner guide; the producer changes NOTHING on the machine",
+  "task_type": "infrastructure",
+  "milestone_id": "M0",
+  "objective": "Write tools/controller_update/commission_lanes.ps1 so the owner runs the B-026 commissioning with a few one-line commands instead of forty hand-typed blocks, with every STOP check built in. Phases: 'check' (read-only preconditions + a plan of what update will do, incl. free disk space); 'update' (recertification sections 5.2-5.10 verbatim - backup + tree proofs, install from a3f24ff3 with the documented source_worktree_exists handling, record-manifest with the exact '147 55dc7135...' STOP, verify-manifest, propagation to lanes 2-5 (lanes 4-5 created: folder, certified tools\\agent_supervisor mirror, mrl folder, a wrapper derived from lane 3's with only lane-specific values changed and the checkout key computed by the controller's own checkout_key), tree proofs for all five, verify-controller from all five copies + wt-controller-src, doctor, doctor --live, post-update checks); 'lane' (section 5.11 for one lane: status, clear-recovery only on PAUSED_RECOVERY, a fresh launch manifest, the '2.1.281 946eb509...' STOP, start with --repin-cli-identity, DETACHED so it survives the session; lane 1 must be the supervised one-cycle canary); 'approve' (the canary's prompt-digest approval the owner types, then the re-start without repin); 'lanes' (lanes 2-5 from an orchestrator-written plan file, refusing overlapping allowed_paths, spaced at least 60 s). Plus project-control/reports/M0-T161-owner-guide.md in plain English.",
+  "business_reason": "D-088: five loops need the owner-typed commissioning (runbook section 12); a reviewed, fail-closed helper makes that a few safe lines for a non-technical owner instead of a long error-prone sequence.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "NO MACHINE CHANGE (binding): you WRITE the script and its offline test; you never RUN any phase of it, never run update_controller_from_candidate.ps1, record-manifest, verify-controller, doctor, doctor --live, start, clear-recovery, resume-pending-prompt or any supervisor verb, and never touch C:\\SupervisorController*, C:\\SupervisorBackup, C:\\Program Files\\SupervisorConfig, %LOCALAPPDATA%\\NYCBuildabilitySupervisor or wt-controller-src. Allowed commands: read-only git plumbing, the PowerShell parser ([System.Management.Automation.Language.Parser]::ParseFile) and the offline ps_tests suite.",
+    "SPEC SOURCE (binding): project-control/reports/M0-T159-recertification.md section 5 (5.0-5.12) - transcribe every command, argument, path, digest and STOP condition EXACTLY (a reviewer maps each 5.x block to your lines); docs/CONTROLLER_UPDATE_RUNBOOK.md sections 2-10, 12, 13; docs/MRL_LAUNCH_RUNBOOK.md sections 1, 2, 5, 6; project-control/directives/D-088-run-five-codex-loops/ (R003, R004, R007); the lane wrappers' structure is C:\\SupervisorController3\\autostart-launch.ps1 (READ-ONLY reference; copy its structure, never edit it).",
+    "DESIGN (binding): PowerShell 5.1 compatible (no &&, no ternary, no ?? ); Set-StrictMode + $ErrorActionPreference 'Stop'; every path, digest, version and SHA a named constant at the top; external commands go through ONE small invoke helper that checks $LASTEXITCODE (so tests can stub it); no Invoke-Expression and no caller text interpolated into a command string; every STOP throws a plain-English line naming the step and the expected value and runs nothing further; 'check' never writes; 'update' never touches config.toml, model_selection.toml or the activation manifest except the section 5.4 record-manifest re-record it is meant to do; lanes 4-5 get only their own folders; the 'lanes' plan file is JSON the orchestrator writes (lane -> FULL worktree path + packet id + mode) and the script validates it (packet status claimed/in_progress, worktree is a git worktree, distinct worktrees and lane numbers, pairwise-disjoint allowed_paths) before starting anything; starts are detached (Start-Process, hidden, stdout/stderr to named logs under %LOCALAPPDATA%\\NYCBuildabilitySupervisor\\autostart-logs) and the script prints the log paths and PIDs.",
+    "OWNER GUIDE (binding; D-064 + D-088-R007): project-control/reports/M0-T161-owner-guide.md in simple English - the exact one-line commands to type with the '!' prefix in the orchestrator session, in order, what success looks like, what to do on a STOP line (stop and tell the orchestrator), and that lanes 2-5 wait for the orchestrator's 'canary passed' message. No jargon beyond the commands themselves.",
+    "HARNESS (binding): an isolated producer sandbox may refuse powershell.exe on this suite - record AS-4 as [BLOCKED] with the exact recipe; the ORCHESTRATOR runs `powershell -NoProfile -ExecutionPolicy Bypass -File tools/controller_update/ps_tests/run_ps_tests.ps1` from the worktree root at harvest (run_ps_tests discovers test_*.ps1 automatically).",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 832 files / 17984 nodes / 7700 edges): no Python module imports anything under tools/controller_update; the existing scripts (update_controller_from_candidate.ps1, source_binding.json, the other ps_tests) are READ-ONLY references; the checkout key comes from tools/agent_supervisor/durable_state.py checkout_key (call it through python from wt-controller-src at run time; never re-implement it). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "tools/controller_update/commission_lanes.ps1 - the owner-run fail-closed commissioning helper",
+    "tools/controller_update/ps_tests/test_commission_lanes.ps1 - offline parse + stubbed-STOP + wrapper-diff tests",
+    "project-control/reports/M0-T161-owner-guide.md - the plain-English owner guide",
+    "project-control/reports/M0-T161-producer-report.md - incl. the section 5 -> script line map"
+  ],
+  "dependencies": [
+    "M0-T160"
+  ],
+  "allowed_paths": [
+    "tools/controller_update/commission_lanes.ps1",
+    "tools/controller_update/ps_tests/test_commission_lanes.ps1",
+    "project-control/reports/M0-T161-owner-guide.md",
+    "project-control/reports/M0-T161-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/controller_update/update_controller_from_candidate.ps1",
+    "tools/controller_update/source_binding.json",
+    "tools/controller_update/ps_tests/fixtures.ps1",
+    "tools/controller_update/ps_tests/run_ps_tests.ps1",
+    "tools/controller_update/ps_tests/test_backup_phase.ps1",
+    "tools/controller_update/ps_tests/test_install_rollback_binding.ps1",
+    "tools/controller_update/ps_tests/test_junction_containment.ps1",
+    "tools/controller_update/ps_tests/test_mutants_detected.ps1",
+    "tools/controller_update/ps_tests/test_null_exit.ps1",
+    "tools/controller_update/ps_tests/test_runbook_parse.ps1",
+    "tools/controller_update/ps_tests/test_source_binding.ps1",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+    "docs/MRL_LAUNCH_RUNBOOK.md",
+    "tools/agent_supervisor/",
+    "services/",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (faithful transcription): every section 5.1-5.11 command, argument, path, digest and STOP condition appears with identical values (the report's 5.x -> line map; pinned values are named constants); nothing in section 5 is dropped or reordered except where the report justifies it.",
+    "AS-2 (fail closed): each STOP condition throws a plain-English line and nothing after it runs - proven offline by the ps_test with the invoke helper stubbed to return the wrong value at each STOP; 'check' performs no write (a stub records every call).",
+    "AS-3 (lanes 4-5 + plan file): the stand-up writes only C:\\SupervisorController4/5 content and never config.toml, model_selection.toml or the activation manifest; the generated wrapper differs from lane 3's only in lane-specific values (checkout path, checkout key, log names, labels) - proven by a diff test on a fixture copy; the plan-file validator refuses overlapping allowed_paths, duplicate lanes/worktrees and unclaimed packets.",
+    "AS-4 (harness): run_ps_tests.ps1 passes at the harvested head, including the new test (orchestrator-run at harvest); the script parses clean under Windows PowerShell 5.1.",
+    "AS-5 (owner guide + scope): the guide is plain English with the exact '!' lines in order; exactly the allowed paths; no machine change by the producer."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T01:31:22.299578+00:00",
+  "updated_at": "2026-09-25T01:31:23.526621+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-088",
+      "requirement_ids": [
+        "D-088-R004",
+        "D-088-R003",
+        "D-088-R007"
+      ]
+    },
+    {
+      "directive_id": "D-024",
+      "requirement_ids": [
+        "D-024-R287"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T01:31:22.299578+00:00",
+  "documented_test_commands": [
+    "powershell -NoProfile -ExecutionPolicy Bypass -File tools/controller_update/ps_tests/run_ps_tests.ps1"
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "task_id": "M5-T109",
+  "title": "D-087 PKT-D: CAD export service + UNMOUNTED export route - one flag-gated surface turning a proposed or generated massing into DXF / PDF site plan / GLB via the accepted writers; mandatory filename safety, one reconciled redacted refusal, caps before the writers, job/deadline/rate limit; plus the PDF writer's hostile-__float__ fix",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build plan section 2: services/api/app/cad/export_service.py (a pure service) and services/api/app/api/v1/export_api.py (an UNMOUNTED, flag-gated route). format in {dxf, pdf, glb}; geometry validated against the tightest writer cap for that format (refuse, never truncate); floors <= 2000; the RAW caller input length capped before normalization (DB-057 (d)); every caller text field length-capped and claim-word screened BEFORE any writer; one uniform refusal {reject_code, detail} reconciling the DXF, PDF and GLB writers without echoing caller text (DB-059 (e), (h)); coincident stacked-prism caps deduped or disclosed for GLB (DB-054 (m)); the MANDATORY filename-safety criterion; per-format media types and embedded provenance; deterministic generated_at. Also fix the PDF writer's hostile-__float__ escape (DB-075 (a)) with the golden and the owner sample unchanged.",
+  "business_reason": "The owner asked for buildings that import into AutoCAD and for blueprint writing (D-087-R004/R005/R006): this is the server surface that hands architects the DXF, PDF and GLB files.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "UNMOUNTED ROUTE (binding; plan section 2): the route module ships UNMOUNTED - app/main.py is NOT touched; the router is asserted ABSENT from OpenAPI (mirror the accepted max_envelope_api / M5-T059 pattern); flag-gated by INTERNAL_RULE_EVAL_ENABLED with include_in_schema=False, and an absent/empty/unknown flag returns the generic 404 byte-indistinguishable from an unmounted path (app/api/v1/lot_geometry.py:100 sentinel). Mounting is PKT-H, a later gated packet. The max-envelope route stays UNMOUNTED.",
+    "JOB SAFETY (binding; DB-061 (i), the M5-T088 G5 fix (b)): the work runs OFF the event loop in a cancellable job under a per-request wall-clock deadline, with a per-caller RATE LIMIT at the route (reuse the repo's existing rate-limit mechanism - see app/api/v1/lot_geometry.py / properties.py - never a new package). Request bodies are read through the accepted T053 bounded-streaming primitives (a raw-byte ceiling BEFORE materialization). Over budget = a typed refusal, never a partial result. Only a server-generated correlation id is logged; no caller or upstream text reaches a log line (exception class + a length-bounded sanitized message at most).",
+    "PLAN SOURCE (binding): the ACCEPTED M5-T099 plan docs/design/d087-export-and-3d-viewer-plan.md - the PKT-D rows in sections 5 and 6 and the whole section 2 export API contract, incl. its MANDATORY filename-safety criterion - names this packet; its riders are the scope. Where the plan and a backlog row differ, the backlog row's exact wording wins and the difference goes in the report. The plan's test paths tests/api/v1/... are corrected to sit beside their service's tests (tests/scenario, tests/drawings, tests/cad): the frozen M4-T005 packet's allowed_paths glob services/api/tests/api/**, and D-087-R002 requires disjointness from frozen packets too.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-057 (d), DB-059 (e), (h), DB-054 (m), DB-061 (i), DB-072 (d), (e), (g) and DB-075 (a)-(d) (exact wording); project-control/reports/M5-T099-G5.md (F1 filename safety), M5-T102-G5.md, M5-T105-G3.md / -G4.md / -G5.md. RFC 6266 / RFC 5987 for Content-Disposition (mark recalled details '[recalled - verify]'). DB-057 (k) (the reader's DxfLimits clamp) belongs to PKT-F (M5-T108), not here.",
+    "FILENAME SAFETY (binding, MANDATORY; plan section 2): the <token> in 'site-plan-<token>.<ext>' is built SERVER-SIDE from an allowlist - only [A-Za-z0-9._-] survives, length-capped, derived from the validated bbl and the deterministic generated_at; raw caller text NEVER reaches a response-header value; non-ASCII uses the RFC 6266 / RFC 5987 filename*=UTF-8'' form beside the ASCII filename; a test proves a caller value carrying a quote, ';', CR/LF or non-ASCII cannot break, split or spoof the header.",
+    "WRITER BYTE-IDENTITY (binding): the only writer change is DB-075 (a) in pdf_sheet_writer.py (broaden _coerce_vertex's float() catch to a typed refusal + a hostile-__float__ test). The PDF golden, the DXF/GLB writers and the committed owner samples (docs/samples/cad/, pinned by test_cad_owner_samples.py - READ-ONLY) stay byte-identical.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 832 files / 17984 nodes / 7700 edges): dxf_writer.py, glb_writer.py and pdf_sheet_writer.py are imported only by tests/cad/* and tests/drawings/test_dxf_roundtrip.py (unwired); claim_words.py (M5-T102) is the shared screen (READ-ONLY); massing_model.py belongs to the parallel M5-T106 (READ-ONLY here). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/cad/export_service.py - the export service (format dispatch, caps, screen, reconciled refusals)",
+    "services/api/app/api/v1/export_api.py - the UNMOUNTED flag-gated export route",
+    "services/api/tests/cad/test_export_service.py and services/api/tests/cad/test_export_api.py",
+    "services/api/app/cad/pdf_sheet_writer.py + tests/cad/test_pdf_sheet_writer.py - DB-075 (a) only",
+    "project-control/reports/M5-T109-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T102",
+    "M5-T105"
+  ],
+  "allowed_paths": [
+    "services/api/app/cad/export_service.py",
+    "services/api/app/api/v1/export_api.py",
+    "services/api/tests/cad/test_export_service.py",
+    "services/api/tests/cad/test_export_api.py",
+    "services/api/app/cad/pdf_sheet_writer.py",
+    "services/api/tests/cad/test_pdf_sheet_writer.py",
+    "project-control/reports/M5-T109-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/cad/dxf_writer.py",
+    "services/api/app/cad/glb_writer.py",
+    "services/api/app/cad/claim_words.py",
+    "services/api/app/cad/__init__.py",
+    "services/api/tests/cad/test_cad_owner_samples.py",
+    "services/api/tests/cad/test_dxf_writer.py",
+    "services/api/tests/cad/test_glb_writer.py",
+    "services/api/tests/cad/test_claim_words.py",
+    "docs/samples/",
+    "services/api/app/scenario/",
+    "services/api/app/drawings/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (service): each format dispatches to its accepted writer; geometry over the tightest cap for the format, floors > 2000, or an over-long RAW caller input refuse typed BEFORE normalization or any writer (DB-057 (d)); caller text is length-capped and claim-word screened before any writer; each bound has a reddening mutation.",
+    "AS-2 (one reconciled, redacted refusal): DXF/PDF/GLB refusals surface as one {reject_code, detail} shape that never echoes caller text (DB-059 (e), (h)); a GLB raise and a PDF returned refusal map the same way; tests prove a hostile caller name is absent from every refusal.",
+    "AS-3 (filename safety, MANDATORY): the header tests of the FILENAME SAFETY input pass; mutation - passing the raw caller value into the token - reddens.",
+    "AS-4 (route, unmounted): absent from OpenAPI; flag-gated generic 404; bounded request bytes; the writer runs off the event loop in a cancellable job with a per-request deadline and a per-caller rate limit (DB-061 (i)); per-format media types; a server-generated correlation id; typed refusals, never a partial file.",
+    "AS-5 (provenance + honesty + caps): embedded provenance per format; source labels per D-083; deterministic generated_at; coincident stacked-prism interface caps deduped or disclosed for GLB (DB-054 (m)).",
+    "AS-6 (writer fix + byte identity): a numbers.Real whose __float__ raises ValueError/TypeError yields a typed refusal (DB-075 (a)); the PDF golden and the owner samples are unchanged (test_cad_owner_samples.py passes unchanged); zero new dependencies; app/main.py untouched; exactly the allowed paths; modularity_check exit 0."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T01:31:20.905196+00:00",
+  "updated_at": "2026-09-25T01:31:21.678204+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R004",
+        "D-087-R005",
+        "D-087-R006",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-083",
+      "requirement_ids": [
+        "D-083-R001",
+        "D-083-R002"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T01:31:20.905196+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/cad -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

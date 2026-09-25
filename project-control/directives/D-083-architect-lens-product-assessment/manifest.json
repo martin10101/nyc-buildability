@@ -10,7 +10,7 @@
  "issued_at": "2026-09-21",
  "captured_at": "2026-09-21T06:22:00+00:00",
  "created_at": "2026-09-21T06:22:00+00:00",
- "updated_at": "2026-09-24T21:40:00+00:00",
+ "updated_at": "2026-09-25T01:45:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "defe301382459db82e27265feefd333615de26f9",
  "capture_head_sha": null,
@@ -36,7 +36,7 @@
   "D-083-R012",
   "D-083-R013"
  ],
- "requirements_content_digest_sha256": "2ff20c34dec0a0a307f4be8b35907d891f20dcacc3e14d4e1486a4e78131a8bc",
+ "requirements_content_digest_sha256": "b270cc3b905f52a8d0ea4b94d002a7b19e751296f90d5b12d88bd2e4d561f974",
  "sources": [
   {
    "file": "source-001.md",
@@ -97,6 +97,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "wave-7 contract seam (seq 129: M5-T101 + M5-T102 from the accepted M5-T099 plan): bound D-083-R001 <- M5-T102; D-083-R002 <- M5-T102; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T01:45:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "wave-10 contract seam (seq 129: M5-T106 + M5-T107 + M5-T108 + M5-T109 + M0-T161 - the M5-T099 plan's batch 2, the DB-069 massing pre-wiring packet, and the D-088 commissioning helper): bound D-083-R001 <- M5-T107, M5-T108, M5-T109; D-083-R002 <- M5-T107, M5-T109; D-083-R006 <- M5-T108; requirements digest resynced in the same commit."
   }
  ]
 }

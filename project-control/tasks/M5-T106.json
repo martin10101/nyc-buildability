@@ -1,0 +1,97 @@
+{
+  "task_id": "M5-T106",
+  "title": "D-087 massing pre-wiring 2 (DB-069 a-d; DB-061 b): raw-vertex NYC range check before the collinear collapse, every shapely error typed at the boundary, the missing Y-clause/later-vertex probes, bounded refusal echoes - before the PKT-E scene seam wires user geometry into the massing model",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the DB-069 before-wiring advisories in services/api/app/scenario/massing_model.py so the PKT-E scene assembler (M5-T107, which depends on this packet) can feed user geometry into the massing model. (a) Range-check the RAW lot vertices against the NYC EPSG:2263 bounds BEFORE the collinear collapse (an out-of-range collinear spike such as x=2e6 must refuse typed, as B0 does). (b) Every shapely error at the boundary becomes a typed MassingModelError - catch shapely.errors.ShapelyError (GEOSException, TopologicalError, GeometryTypeError, DimensionError...) or correct the docstrings to the exact truth. (c) Add the missing probes: an in-X/out-of-Y lot and a lot whose LATER vertex is out of range. (d) Refusal messages echo at most a bounded preview of caller input (a 200,000-character vertex string must not produce a 200,055-character message). DB-061 (b): pin the scan-unit charge order (mutant ME) with a test, or record why it is behaviour-free. Valid-input outputs stay byte-identical.",
+  "business_reason": "DB-069 routes (a)-(d) to BEFORE any wiring of user geometry into the massing model - the PKT-E scene seam is that wiring, so this small packet unblocks the 3D scene's acceptance.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py or web change; massing_model.py stays unwired (its only consumer is its test). The max-envelope route stays UNMOUNTED.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-069 (a)-(d) and DB-061 (b) (exact wording); project-control/reports/M5-T098-G3.md / -G4.md / -G5.md / -DCV.md (the findings) and M5-T088-G4.md (mutant ME). The NYC_2263_* bounds are imported from app/scenario/proposal.py (READ-ONLY; DB-069 (e) is a note only).",
+    "MODULARITY (binding): massing_model.py is ~894 lines, above the warning threshold - keep the change lean, record a one-paragraph cohesion justification in the report, and run the modularity check; if the fix would push the file toward its cap, stop and report rather than split in this packet.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 832 files / 17984 nodes / 7700 edges): massing_model.py is imported only by tests/scenario/test_massing_model.py (unwired); it imports app.scenario.proposal (READ-ONLY). The parallel M5-T107 (scene assembler) will import it - do not change any public name or signature. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/scenario/massing_model.py - raw-vertex range check, typed shapely errors, bounded echoes",
+    "services/api/tests/scenario/test_massing_model.py - the DB-069 (a)-(d) probes + mutations, DB-061 (b)",
+    "project-control/reports/M5-T106-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T098"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/massing_model.py",
+    "services/api/tests/scenario/test_massing_model.py",
+    "project-control/reports/M5-T106-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/proposal.py",
+    "services/api/app/scenario/scene_assembler.py",
+    "services/api/app/cad/",
+    "services/api/app/connectors/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (raw range check): an out-of-range vertex that the collinear collapse would remove (e.g. a collinear x=2e6 spike) refuses typed; valid rings unchanged; mutation - checking after the collapse - reddens.",
+    "AS-2 (typed shapely errors): each shapely error type reaching the boundary becomes a typed MassingModelError (a test injects the ShapelyError siblings), or the docstrings state the exact truth; mutation - catching only GEOSException - reddens.",
+    "AS-3 (probes): an in-X/out-of-Y lot and a later-vertex-out lot each refuse typed; mutations - dropping the Y clause, checking only vertex[0] - redden.",
+    "AS-4 (bounded echoes): refusal messages carry at most a declared bounded preview of caller input (the 200,000-character case stays under the bound); mutation - unbounded repr - reddens.",
+    "AS-5 (DB-061 b): the scan-unit charge order is pinned by a test that kills mutant ME, or the report proves it behaviour-free.",
+    "AS-6 (scope): valid-input outputs byte-identical (the existing suite passes unchanged apart from added tests); zero new dependencies; unwired; exactly the allowed paths; modularity_check exit 0."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "3d-massing-engineer",
+  "reviewer_agents": [
+    "geospatial-engineer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T01:31:17.131231+00:00",
+  "updated_at": "2026-09-25T01:31:17.533358+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T01:31:17.131231+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/scenario -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

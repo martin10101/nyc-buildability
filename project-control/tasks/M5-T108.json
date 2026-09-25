@@ -1,0 +1,115 @@
+{
+  "task_id": "M5-T108",
+  "title": "D-087 PKT-F: DXF import service + UNMOUNTED import route - an architect's DXF read by the hardened strict reader, closed rings offered as candidates the USER assigns roles to, a proposal DRAFT through the same validation contract; upload ceiling, magic-byte check, clamped limits, job/deadline/rate limit; persists nothing",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build services/api/app/drawings/dxf_import.py (a pure service) and services/api/app/api/v1/dxf_import_api.py (an UNMOUNTED, flag-gated route) per plan section 4. read_dxf (accepted, hardened by M5-T097) reads the strict subset; the service lists the closed rings as candidates (layer, vertex count, measured dimensions in the declared units) and builds a proposed_massing DRAFT only from roles the USER assigns (building outline / property line / street frontage) and units the user confirms against a known dimension, through the SAME validate_proposed_massing contract. Discrepancies are shown, never auto-reconciled; nothing is labelled a city record; the draft carries input-precision provenance (imported drawing, not survey-confirmed - D-083-R006). Plan section 4 parse-time controls (b)-(e) and DB-070 (a)-(e), DB-057 (k) are acceptance criteria. The import persists NOTHING.",
+  "business_reason": "The owner's CAD goal is two-way (D-087-R006): architects bring their own drawings in through the open DXF format while native DWG stays an owner licensing decision (R007).",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "UNMOUNTED ROUTE (binding; plan section 2): the route module ships UNMOUNTED - app/main.py is NOT touched; the router is asserted ABSENT from OpenAPI (mirror the accepted max_envelope_api / M5-T059 pattern); flag-gated by INTERNAL_RULE_EVAL_ENABLED with include_in_schema=False, and an absent/empty/unknown flag returns the generic 404 byte-indistinguishable from an unmounted path (app/api/v1/lot_geometry.py:100 sentinel). Mounting is PKT-H, a later gated packet. The max-envelope route stays UNMOUNTED.",
+    "JOB SAFETY (binding; DB-061 (i), the M5-T088 G5 fix (b)): the work runs OFF the event loop in a cancellable job under a per-request wall-clock deadline, with a per-caller RATE LIMIT at the route (reuse the repo's existing rate-limit mechanism - see app/api/v1/lot_geometry.py / properties.py - never a new package). Request bodies are read through the accepted T053 bounded-streaming primitives (a raw-byte ceiling BEFORE materialization). Over budget = a typed refusal, never a partial result. Only a server-generated correlation id is logged; no caller or upstream text reaches a log line (exception class + a length-bounded sanitized message at most).",
+    "PLAN SOURCE (binding): the ACCEPTED M5-T099 plan docs/design/d087-export-and-3d-viewer-plan.md - the PKT-F rows in sections 5 and 6 and section 4 (the AutoCAD round trip and the import parse-time controls (b)-(e)) - names this packet; its riders are the scope. Where the plan and a backlog row differ, the backlog row's exact wording wins and the difference goes in the report. The plan's test paths tests/api/v1/... are corrected to sit beside their service's tests (tests/scenario, tests/drawings, tests/cad): the frozen M4-T005 packet's allowed_paths glob services/api/tests/api/**, and D-087-R002 requires disjointness from frozen packets too.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-070 (a)-(e), DB-057 (k) and DB-061 (i) (exact wording); project-control/reports/M5-T097-G3.md / -G5.md / -G5-rework.md / -DCV.md; docs/SURVEY_DOCUMENT_FORMAT_POLICY.md (the DXF in-path); D-083-R006 (input-precision provenance: an imported drawing is never upgraded to survey precision).",
+    "PARSE-TIME CONTROLS (binding; plan section 4 (b)-(e) + DB-070): (b) a raw upload byte ceiling enforced by the T053 bounded-streaming primitives BEFORE the body is materialized; (c) read_dxf runs off the event loop in a cancellable job under a deadline with the route's rate limit; (d) a content-type + magic-byte check (ASCII DXF only; the binary-DXF sentinel refused); only exact bytes reach read_dxf and DxfLimits is CLAMPED at the seam, never built from untrusted input (DB-057 (k), DB-070 (d)); (e) nothing is persisted - an in-memory draft only (no storage, no RLS surface). Drawing text (TEXT values, layer names, $ACADVER) keeps control characters for provenance, so it is escaped on output and never logged raw; refusal details never reflect raw content unbounded (DB-070 (a), (b)). DB-070 (c) (a small digit cap on group codes) belongs to dxf_reader.py, READ-ONLY here: implement it at the seam only if it needs no reader change, else record it for the next dxf_reader touch.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 832 files / 17984 nodes / 7700 edges): dxf_reader.py is imported only by tests/drawings/test_dxf_reader.py and test_dxf_roundtrip.py (READ-ONLY here; ~613 SLOC, WARN band); validate_proposed_massing lives in app/scenario/proposal.py (READ-ONLY; consumers include max_envelope_api.py, proposal_checks_api.py, proposal_validation.py). The parallel M5-T103 rework owns app/drawings/sheet_* and pdf_object_streams.py - FORBIDDEN here. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/drawings/dxf_import.py - the import service (candidates -> user roles -> proposal draft)",
+    "services/api/app/api/v1/dxf_import_api.py - the UNMOUNTED flag-gated import route",
+    "services/api/tests/drawings/test_dxf_import.py and services/api/tests/drawings/test_dxf_import_api.py",
+    "project-control/reports/M5-T108-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T097"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/dxf_import.py",
+    "services/api/app/api/v1/dxf_import_api.py",
+    "services/api/tests/drawings/test_dxf_import.py",
+    "services/api/tests/drawings/test_dxf_import_api.py",
+    "project-control/reports/M5-T108-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/dxf_reader.py",
+    "services/api/app/drawings/sheet_*.py",
+    "services/api/app/drawings/pdf_object_streams.py",
+    "services/api/app/drawings/__init__.py",
+    "services/api/app/scenario/",
+    "services/api/app/cad/",
+    "services/api/app/documents/",
+    "services/api/tests/drawings/test_dxf_reader.py",
+    "services/api/tests/drawings/test_dxf_roundtrip.py",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (parse-time controls): an over-ceiling upload refuses before the body is materialized; a binary-DXF or non-DXF upload refuses on the magic-byte/content-type check; DxfLimits is clamped at the seam; read_dxf runs in a cancellable job under a deadline with a rate limit; each control has a test and a reddening mutation.",
+    "AS-2 (candidates -> user roles -> draft): closed rings are listed as candidates with layer and measured dimensions; a draft is built only from user-assigned roles and user-confirmed units through validate_proposed_massing; discrepancies are reported, never auto-reconciled; an unclosed or ambiguous input refuses typed.",
+    "AS-3 (honesty + provenance): nothing is labelled a city record or permitted; the draft carries input-precision provenance (imported drawing, not survey-confirmed) that no later step upgrades (D-083-R006).",
+    "AS-4 (untrusted drawing text): drawing strings are escaped on output and never logged raw; refusal details are bounded; only exact bytes are accepted (DB-070 (a), (b), (d)).",
+    "AS-5 (persists nothing + scope): no storage write anywhere; app/main.py untouched; the route is absent from OpenAPI; zero new dependencies; exactly the allowed paths; modularity_check exit 0."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T01:31:19.306555+00:00",
+  "updated_at": "2026-09-25T01:31:19.738979+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R006",
+        "D-087-R007",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-083",
+      "requirement_ids": [
+        "D-083-R001",
+        "D-083-R006"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T01:31:19.306555+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/drawings/test_dxf_import.py -q",
+    "python -m pytest tests/drawings/test_dxf_import_api.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
