@@ -43,6 +43,7 @@ from __future__ import annotations
 
 import asyncio
 import functools
+import json
 import logging
 import threading
 import time
@@ -186,6 +187,24 @@ def _not_found() -> JSONResponse:
     """Generic 404 identical to FastAPI's default for an unmounted path (fail-safe
     disable): no correlation id, no body hint that the feature exists."""
     return JSONResponse(status_code=404, content={"detail": "Not Found"})
+
+
+def _guard_finite_response(body: dict, correlation_id: str) -> JSONResponse | None:
+    """Defense-in-depth pre-render guard (G5 MEDIUM 1).
+
+    Starlette renders a JSONResponse with ``allow_nan=False``; a non-finite float anywhere in
+    a 200 body would make that render raise ValueError AFTER the handler returns - an untyped,
+    correlation-id-less 500. The service already refuses out-of-range coordinates, so this is a
+    second line: pre-serialize the body with the SAME encoder settings the renderer uses
+    (mirroring ``proposal_validation.py``); on failure return the typed (500, internal_error)
+    with a correlation id, never a bare 500. Returns ``None`` when the body is safe to render.
+    """
+    try:
+        json.dumps(body, ensure_ascii=False, allow_nan=False)
+    except ValueError:
+        logger.error("dxf_import non_finite_response correlation_id=%s", correlation_id)
+        return _error(500, "internal_error", "unexpected internal error", correlation_id)
+    return None
 
 
 def _error(
@@ -373,6 +392,9 @@ async def post_dxf_candidates(request: Request) -> JSONResponse:
         ),
         "correlation_id": correlation_id,
     }
+    guarded = _guard_finite_response(body, correlation_id)
+    if guarded is not None:
+        return guarded
     return _json(200, body, correlation_id)
 
 
@@ -404,4 +426,7 @@ async def post_dxf_draft(request: Request) -> JSONResponse:
         "discrepancies": list(outcome.discrepancies),
         "correlation_id": correlation_id,
     }
+    guarded = _guard_finite_response(body, correlation_id)
+    if guarded is not None:
+        return guarded
     return _json(200, body, correlation_id)

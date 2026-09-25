@@ -43,7 +43,10 @@ from app.drawings.dxf_reader import (
     DxfReadResult,
     DxfRefusal,
     DxfUnits,
+    FacePrimitive,
+    LinePrimitive,
     PolylinePrimitive,
+    TextPrimitive,
 )
 from app.scenario.proposal import ProposedMassingError, validate_proposed_massing
 
@@ -230,6 +233,17 @@ def measured_dimensions(
     }
 
 
+def _measured_is_finite(measured: dict[str, float | str]) -> bool:
+    """Whether every NUMERIC measured value is finite. A coordinate that is individually
+    finite but huge (e.g. ``1e300``) makes the shoelace products / bbox span OVERFLOW to
+    ``inf`` (G5 MEDIUM 1); such a value is JSON-non-compliant under ``allow_nan=False`` and
+    would otherwise raise an untyped 500 during response render. The service refuses it as a
+    typed ``coordinate_out_of_range`` instead."""
+    return all(
+        math.isfinite(v) for v in measured.values() if isinstance(v, (int, float))
+    )
+
+
 def sniff_dxf_media(content_type: str | None, raw: bytes) -> ImportRefusal | None:
     """Content-type + magic-byte gate at the seam (plan section 4 (d)): ASCII DXF
     only, the binary-DXF sentinel refused. Returns an :class:`ImportRefusal` when the
@@ -308,30 +322,54 @@ def list_candidates(doc: DxfReadResult) -> CandidatesResult | ImportRefusal:
         return _refusal_from_read(doc)
 
     rings = _closed_ring_candidates(doc)
-    candidates = tuple(
-        Candidate(
-            index=idx,
-            entity_type=prim.entity_type,
-            layer=_escape_drawing_text(prim.layer) or "0",
-            vertex_count=len(prim.vertices),
-            measured=measured_dimensions(prim.vertices, doc.units.name),
+    candidates_list: list[Candidate] = []
+    for idx, prim in rings:
+        measured = measured_dimensions(prim.vertices, doc.units.name)
+        # G5 MEDIUM 1: a huge-but-finite ring overflows the measured dimensions to inf; refuse
+        # typed here so the route never emits a non-finite value that breaks JSON render.
+        if not _measured_is_finite(measured):
+            return ImportRefusal(
+                ok=False,
+                reason="coordinate_out_of_range",
+                detail=(
+                    f"candidate ring {idx} has coordinates so large its measured dimensions "
+                    "overflow to a non-finite value; the drawing is out of the representable range"
+                ),
+                field="building_outline",
+            )
+        candidates_list.append(
+            Candidate(
+                index=idx,
+                entity_type=prim.entity_type,
+                layer=_escape_drawing_text(prim.layer) or "0",
+                vertex_count=len(prim.vertices),
+                measured=measured,
+            )
         )
-        for idx, prim in rings
-    )
-    # Disclose everything that was NOT a candidate so the user sees the full picture.
-    open_polylines = sum(
-        1 for p in doc.primitives if isinstance(p, PolylinePrimitive) and not p.closed
-    )
+    candidates = tuple(candidates_list)
+    # Disclose everything that was NOT a candidate so the user sees the full picture. Entity
+    # kinds are counted by isinstance against the imported reader classes (not fragile
+    # ``type(p).__name__`` strings that would silently report 0 after a reader rename - G3 A2).
+    open_polylines = 0
+    degenerate_closed_rings = 0
     kinds = {"LINE": 0, "3DFACE": 0, "TEXT": 0}
     for p in doc.primitives:
-        if type(p).__name__ == "LinePrimitive":
+        if isinstance(p, PolylinePrimitive):
+            if not p.closed:
+                open_polylines += 1
+            elif len(p.vertices) < 3:
+                # A CLOSED ring with < 3 vertices is not a candidate; disclose it so it is
+                # never silently absent from BOTH the candidate list and the open count (G3 A6).
+                degenerate_closed_rings += 1
+        elif isinstance(p, LinePrimitive):
             kinds["LINE"] += 1
-        elif type(p).__name__ == "FacePrimitive":
+        elif isinstance(p, FacePrimitive):
             kinds["3DFACE"] += 1
-        elif type(p).__name__ == "TextPrimitive":
+        elif isinstance(p, TextPrimitive):
             kinds["TEXT"] += 1
     disclosure = {
         "open_polylines": open_polylines,
+        "degenerate_closed_rings": degenerate_closed_rings,
         "lines": kinds["LINE"],
         "faces": kinds["3DFACE"],
         "text": kinds["TEXT"],
@@ -415,6 +453,18 @@ def _resolve_scale(
     return known / measured, "known_dimension", tuple(discrepancies)
 
 
+def _select_ring(
+    rings: list[tuple[int, PolylinePrimitive]], index: int
+) -> PolylinePrimitive:
+    """Return the ring the USER assigned to a role, addressed by its candidate ``index``.
+
+    A dedicated seam so a test can prove the draft is built from the user-assigned ring and
+    NOT silently from ring 0 or the largest ring (G4 F1): ``rings`` is ordered by candidate
+    index, so ``rings[index][0] == index`` and the assigned ring is ``rings[index][1]``.
+    """
+    return rings[index][1]
+
+
 def _outline_vertices(prim: PolylinePrimitive, scale: float) -> list[list[float]]:
     """Scale the ring and make its closure EXPLICIT (proposal outlines repeat the
     first vertex). This surfaces the reader's flag-implied closure; it is not a
@@ -463,7 +513,7 @@ def build_draft(doc: DxfReadResult, assignment: RoleAssignment) -> DraftResult |
         return scale_res
     scale, scale_source, discrepancies = scale_res
 
-    outline_prim = rings[assignment.building_outline][1]
+    outline_prim = _select_ring(rings, assignment.building_outline)
     author = _escape_drawing_text(assignment.author) or ""
     block = {
         "outline": {"srid": _REQUIRED_SRID, "vertices": _outline_vertices(outline_prim, scale)},

@@ -84,4 +84,95 @@ Local Python is 3.11.9 (ruff/pyproject target 3.12). Code is 3.11-runnable and p
 - **DISC-C (DB-070 (c) carry-forward).** The small group-code digit cap remains for the next `dxf_reader.py` touch (see closure table).
 - **DISC-D (2-D drawing has no height).** A DXF footprint carries no vertical dimension, so the draft REQUIRES the user to supply `floors` + `floor_to_floor_ft`; the service never invents a height (honesty). Recorded so a future UI surfaces this clearly.
 
+---
+
+# Round 2 (rework) — consolidated fix for G4 F1, G5 MEDIUM 1, and advisories
+
+Producer: backend-engineer (orchestrator-dispatched subagent).
+Base (parent) commit: `51f50aa147c0675c0e2669614349487ef715c112` (integration head; contains round-1
+material `2df81013` + the three review reports). ONE new commit on top; only the 5 allowed files.
+The whole failure surface was inventoried first (from `M5-T108-G3.md`, `M5-T108-G4.md`,
+`M5-T108-G5.md`) and fixed as ONE bounded change. dxf_reader.py and everything else untouched.
+
+## Per-finding closure
+
+1. **G5 MEDIUM 1 (BLOCKING) — non-finite measured dimensions → untyped 500. CLOSED.**
+   - Service (`dxf_import.py`): added `_measured_is_finite`; `list_candidates` now measures each
+     ring, and if any numeric measured value is non-finite (a huge-but-finite ring like `1e300`
+     whose shoelace products / bbox span overflow to `inf`) returns a typed
+     `ImportRefusal(reason="coordinate_out_of_range", field="building_outline")` → the route maps
+     it to a 422 WITH a correlation id (new reason token; `_refusal_response` already routes any
+     non-`unsupported_media_type` reason to 422/validation_error).
+   - Route (`dxf_import_api.py`): added `_guard_finite_response` — a defense-in-depth PRE-RENDER
+     guard mirroring `proposal_validation.py`'s `json.dumps(..., allow_nan=False)`, called before
+     BOTH 200 returns. Any non-finite value in a response body becomes the typed
+     `(500, "internal_error")` WITH a correlation id instead of a bare Starlette 500 raised during
+     render. `import json` added.
+   - Tests: service `test_overflow_coordinates_refuse_typed_never_non_finite`; route
+     `test_overflow_coordinates_typed_4xx_never_500` (422, never 500, has X-Correlation-ID) and
+     `test_non_finite_body_becomes_typed_500_with_correlation_id`. Reddening mutations below.
+2. **G4 F1 (BLOCKING) — draft never proves it uses the USER-ASSIGNED ring. CLOSED.**
+   - Extracted `_select_ring(rings, index)` seam in `dxf_import.py`; `build_draft` uses it.
+   - Tests: service `test_draft_uses_the_user_assigned_ring_not_ring0_or_largest` and route
+     `test_draft_uses_the_user_assigned_ring` — TWO distinct closed in-bounds rings, ring A the
+     LARGER, `building_outline=1`; assert `outline.vertices[0] == [990000.0, 200000.0]` (ring B's
+     first vertex, scaled). Two reddening mutations (always-ring-0 and largest-ring) below; both
+     yield ring A `[985000.0, 195000.0]` and fail the guard test.
+3. **G4 A1 — known-dimension scale-guard coverage. CLOSED.**
+   `test_known_dimension_scale_guard_refuses_bad_values`: `measured_length` 0 / negative / nan /
+   inf and `known_length_ft` 0 / negative / inf each → `ImportRefusal(unsupported_units)`. Also
+   catches the (previously surviving) mutant that drops the finite/strictly-positive guard.
+4. **G4 A2 — reader-refusal detail control-char escaping. CLOSED.**
+   `test_reader_refusal_detail_with_control_char_is_escaped` + mutation
+   `test_mutation_refusal_detail_escaping`.
+5. **G4 A3 — exactly-at-ceiling boundary. CLOSED.**
+   `test_upload_exactly_at_ceiling_accepted_plus_one_refused`: a body of exactly `MAX_BODY_BYTES`
+   passes the ceiling (reaches the reader → 422), `MAX_BODY_BYTES + 1` → 413.
+6. **G3 A2 — isinstance disclosure counts + fixture. CLOSED.**
+   Disclosure now uses `isinstance` against the imported `LinePrimitive` / `FacePrimitive` /
+   `TextPrimitive` (not `type(p).__name__`). `test_disclosure_counts_line_face_text_by_isinstance`
+   with a LINE, a 3DFACE and a TEXT.
+7. **G3 A6 — three test gaps. CLOSED.**
+   - `(500, "internal_error")` now asserted in `test_status_state_matrix_is_the_documented_set`.
+   - `test_disclosed_unknown_and_skipped_sections_are_escaped` (control-char names → `\xNN`).
+   - `degenerate_closed_rings` disclosure count added; a CLOSED polyline with < 3 vertices is now
+     DISCLOSED, never silently absent — `test_degenerate_closed_ring_is_disclosed_not_silently_absent`.
+
+OUT OF SCOPE (unchanged, correctly deferred to the PKT-H mount): G3 A1/A3/A4/A5, G5 LOW 2/LOW 3,
+DB-070 (c). No new discoveries this round.
+
+## Round 2 mutation table (consuming-namespace; each asserts the FLIPPED outcome)
+
+| # | Finding | Guarding test | Reddening mutation | Flip |
+|---|---|---|---|---|
+| 1 | G4 F1 | `test_draft_uses_the_user_assigned_ring_not_ring0_or_largest` | `test_mutation_ring_selection_always_ring0` (`svc._select_ring`→rings[0]) | vertices[0] ring A `[985000,195000]` ≠ ring B `[990000,200000]` |
+| 2 | G4 F1 | (same) | `test_mutation_ring_selection_largest_ring` (`svc._select_ring`→max-area) | vertices[0] ring A (larger) ≠ ring B |
+| 3 | G5 MED 1 svc | `test_overflow_coordinates_refuse_typed_never_non_finite` | `test_mutation_overflow_finiteness_guard` (`svc._measured_is_finite`→True) | `ok=True` w/ non-finite area vs typed refusal |
+| 4 | G5 MED 1 route | `test_non_finite_body_becomes_typed_500_with_correlation_id` | `test_mutation_pre_render_finiteness_guard` (`mod._guard_finite_response`→None) | bare 500 no X-Correlation-ID vs typed (500,internal_error) with id |
+| 5 | G4 A2 | `test_reader_refusal_detail_with_control_char_is_escaped` | `test_mutation_refusal_detail_escaping` (`svc._escape_drawing_text`→identity) | raw `\x01` present vs `\x01` escaped |
+
+## Round 2 commands (explicit cwd; verbatim tails) — all [OBSERVED]
+
+- cwd `services/api`: `python -m ruff check .` → `All checks passed!`
+- cwd `services/api`: `python -m pytest tests/drawings/test_dxf_import.py tests/drawings/test_dxf_import_api.py tests/drawings/test_dxf_reader.py tests/drawings/test_dxf_roundtrip.py -q` → `118 passed in 10.62s` (round 1 was 102: +16 new tests; import+api 41→57; reader+roundtrip 61 unchanged/green).
+- cwd `services/api`: `python -m pytest tests/drawings/test_dxf_import.py tests/drawings/test_dxf_import_api.py -q` → `57 passed in 5.38s`.
+- cwd repo root: `python tools/modularity_check.py --check` → `failures 0; warnings 27` / `EXIT=0` (neither dxf_import.py nor dxf_import_api.py is in the warning list).
+- New-file SLOC: `dxf_import.py` 559 lines / `dxf_import_api.py` 432 lines — both under WARN 600.
+
+### Local-toolchain note (NOT a defect; unchanged from round 1)
+`cd services/api && python -m pytest tests/drawings -q` (the whole directory) reports 3 COLLECTION
+errors in unrelated files — `test_pdf_object_streams.py`, `test_sheet_reader.py`,
+`test_sheet_reader_split_equivalence.py` — because they import `app/documents/units.py`, whose
+line 276 uses Python 3.12 PEP 695 generic syntax (`def _match_unit[UnitT: enum.Enum](`) that the
+sandbox's local Python 3.11.9 cannot parse. Those files and `app/documents/units.py` are outside
+this packet's scope and untouched; the errors are present at the base commit and are the documented
+sandbox-3.11-vs-repo-3.12 artifact. CI runs 3.12 and collects them; all three G3/G4/G5 reviewers ran
+the four in-scope DXF files explicitly for the same reason. [OBSERVED]
+
+## Round 2 deviations
+
+None beyond round 1's deviations (all still stand). No new dependencies; the route stays
+`include_in_schema=False` and absent from the real app + OpenAPI (`test_route_is_unmounted_in_the_real_app`);
+persists nothing.
+
 END-OF-REPORT

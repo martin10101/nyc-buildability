@@ -18,6 +18,8 @@ proves the test constrains the guard.
 
 from __future__ import annotations
 
+import math
+
 from app.drawings import dxf_import as svc
 from app.drawings.dxf_import import (
     DRAFT_INPUT_PRECISION,
@@ -29,10 +31,24 @@ from app.drawings.dxf_import import (
     measured_dimensions,
     sniff_dxf_media,
 )
-from app.drawings.dxf_reader import read_dxf
+from app.drawings.dxf_reader import DxfRefusal, DxfRefusalReason, read_dxf
 
 # A ring in real NYC EPSG:2263 (US survey feet) space so a draft can pass the contract.
 _RING = [(985000.0, 195000.0), (985080.0, 195000.0), (985080.0, 195100.0), (985000.0, 195100.0)]
+# Two DISTINCT closed in-bounds rings for the user-assigned-ring test (G4 F1). Ring A is the
+# LARGER of the two (200x200 vs 80x100), so both an always-ring-0 mutant AND a largest-ring
+# mutant would wrongly pick ring A instead of the user-assigned ring B.
+_RING_A = [(985000.0, 195000.0), (985200.0, 195000.0), (985200.0, 195200.0), (985000.0, 195200.0)]
+_RING_B = [(990000.0, 200000.0), (990080.0, 200000.0), (990080.0, 200100.0), (990000.0, 200100.0)]
+# Coordinates that are each individually finite but overflow the measured dimensions to inf.
+_OVERFLOW_RING = [(1e300, 1e300), (1e300, 2e300), (2e300, 2e300), (2e300, 1e300)]
+# Raw ENTITIES group-code lines for the disclosure fixture (a LINE, a 3DFACE, a TEXT).
+_LINE_ENTITY = ["0", "LINE", "8", "GRID", "10", "0", "20", "0", "30", "0",
+                "11", "10", "21", "10", "31", "0"]
+_FACE_ENTITY = ["0", "3DFACE", "8", "ROOF", "10", "0", "20", "0", "30", "0",
+                "11", "10", "21", "0", "31", "0", "12", "10", "22", "10", "32", "0"]
+_TEXT_ENTITY = ["0", "TEXT", "8", "NOTE", "10", "5", "20", "5", "30", "0", "40", "2.5",
+                "1", "label"]
 # POSITIVE claim words that must never appear. "city record" is deliberately absent: the
 # honest label legitimately reads "Proposed - not a city record" (a negation, not a claim).
 _FORBIDDEN_WORDS = (
@@ -41,9 +57,13 @@ _FORBIDDEN_WORDS = (
 
 
 def _dxf(
-    rings=((_RING, "BUILDING", True),), *, insunits=21, acadver="AC1027", extra=""
+    rings=((_RING, "BUILDING", True),), *, insunits=21, acadver="AC1027", extra="", entities=()
 ) -> bytes:
-    """Build a minimal ASCII DXF: a HEADER ($INSUNITS, $ACADVER) + ENTITIES rings."""
+    """Build a minimal ASCII DXF: a HEADER ($INSUNITS, $ACADVER) + ENTITIES rings.
+
+    ``entities`` appends raw group-code lines into the ENTITIES section (e.g. a LINE/3DFACE/
+    TEXT) so a test can exercise the non-candidate disclosure counts.
+    """
     lines = ["0", "SECTION", "2", "HEADER"]
     lines += ["9", "$ACADVER", "1", acadver]
     lines += ["9", "$INSUNITS", "70", str(insunits)]
@@ -52,6 +72,7 @@ def _dxf(
         lines += ["0", "LWPOLYLINE", "8", layer, "70", "1" if closed else "0"]
         for x, y in verts:
             lines += ["10", str(x), "20", str(y)]
+    lines += list(entities)
     lines += ["0", "ENDSEC", "0", "EOF"]
     body = "\r\n".join(lines) + "\r\n" + extra
     return body.encode("ascii")
@@ -90,6 +111,49 @@ def test_open_polyline_is_disclosed_not_a_candidate():
     assert result.disclosure["open_polylines"] == 1
 
 
+def test_disclosure_counts_line_face_text_by_isinstance():
+    # G3 A2: entity-kind counts use isinstance against the imported reader classes. A fixture
+    # with a LINE, a 3DFACE and a TEXT exercises all three branches (previously unexercised).
+    doc = read_dxf(_dxf(entities=_LINE_ENTITY + _FACE_ENTITY + _TEXT_ENTITY))
+    result = list_candidates(doc)
+    assert result.ok
+    assert result.disclosure["lines"] == 1
+    assert result.disclosure["faces"] == 1
+    assert result.disclosure["text"] == 1
+
+
+def test_degenerate_closed_ring_is_disclosed_not_silently_absent():
+    # G3 A6: a CLOSED polyline with < 3 vertices is not a candidate AND not an open polyline;
+    # it must still be DISCLOSED (as degenerate), never silently dropped from both counts.
+    tiny = [(985000.0, 195000.0), (985010.0, 195010.0)]
+    result = list_candidates(read_dxf(_dxf(rings=((tiny, "TINY", True),))))
+    assert result.candidates == ()
+    assert result.disclosure["open_polylines"] == 0  # it IS closed
+    assert result.disclosure["degenerate_closed_rings"] == 1
+
+
+def test_disclosed_unknown_and_skipped_sections_are_escaped():
+    # G3 A6: disclosed_unknown type names and skipped_section names pass through the escaper,
+    # so a control char embedded in either is rendered \\xNN, never emitted raw.
+    lines = ["0", "SECTION", "2", "HEADER", "9", "$INSUNITS", "70", "21", "0", "ENDSEC"]
+    lines += ["0", "SECTION", "2", "TAB\x01LES", "0", "ENDSEC"]  # a skipped section (bad name)
+    lines += ["0", "SECTION", "2", "ENTITIES"]
+    lines += ["0", "LWPOLYLINE", "8", "B", "70", "1"]
+    for x, y in _RING:
+        lines += ["10", str(x), "20", str(y)]
+    lines += ["0", "CIR\x01", "8", "L", "10", "0", "20", "0"]  # an unknown entity type (bad name)
+    lines += ["0", "ENDSEC", "0", "EOF"]
+    doc = read_dxf(("\r\n".join(lines) + "\r\n").encode("ascii"))
+    result = list_candidates(doc)
+    assert result.ok
+    unknown_names = [name for name, _ in result.disclosure["disclosed_unknown"]]
+    assert any("\\x01" in n for n in unknown_names)
+    assert all("\x01" not in n for n in unknown_names)
+    skipped = result.disclosure["skipped_sections"]
+    assert any("\\x01" in s for s in skipped)
+    assert all("\x01" not in s for s in skipped)
+
+
 def test_measured_dimensions_perimeter_and_area():
     m = measured_dimensions(tuple(_RING), "feet")
     assert m["perimeter"] == 360.0  # 80 + 100 + 80 + 100
@@ -116,6 +180,17 @@ def test_draft_built_from_roles_and_confirmed_units():
     assert draft.provenance["assigned_roles"]["building_outline"] == 0
 
 
+def test_draft_uses_the_user_assigned_ring_not_ring0_or_largest():
+    # G4 F1: TWO distinct closed in-bounds rings; the user assigns building_outline=1, so the
+    # draft MUST be built from ring B (the SECOND ring), not ring 0 and not the largest (ring A).
+    doc = read_dxf(_dxf(rings=((_RING_A, "A", True), (_RING_B, "B", True))))
+    draft = build_draft(doc, _assign(building_outline=1))
+    assert draft.ok
+    # ring B's first vertex, scaled by 1.0 (us_survey_feet) - closure is appended, so [0] is it.
+    assert draft.proposed_massing["outline"]["vertices"][0] == [990000.0, 200000.0]
+    assert draft.provenance["assigned_roles"]["building_outline"] == 1
+
+
 def test_units_mismatch_is_shown_never_reconciled():
     # drawing declares meters; user confirms feet -> discrepancy shown, feet used.
     draft = build_draft(read_dxf(_dxf(insunits=6)), _assign())
@@ -135,6 +210,33 @@ def test_known_dimension_scale_path():
     assert draft.ok
     assert draft.provenance["scale_source"] == "known_dimension"
     assert draft.provenance["unit_scale_ft_per_unit"] == 1.0
+
+
+def test_known_dimension_scale_guard_refuses_bad_values():
+    # G4 A1: the known-dimension scale guard is fail-closed on CALLER-CONTROLLED numeric
+    # params. Zero / negative / non-finite measured_length or known_length_ft must each refuse
+    # typed (never a ZeroDivisionError-500 or a garbage nan scale).
+    bad = [
+        dict(known_length_ft=80.0, measured_length=0.0),
+        dict(known_length_ft=80.0, measured_length=-5.0),
+        dict(known_length_ft=-5.0, measured_length=80.0),
+        dict(known_length_ft=0.0, measured_length=80.0),
+        dict(known_length_ft=80.0, measured_length=float("nan")),
+        dict(known_length_ft=80.0, measured_length=float("inf")),
+        dict(known_length_ft=float("inf"), measured_length=80.0),
+    ]
+    for over in bad:
+        r = build_draft(read_dxf(_dxf()), _assign(confirmed_units=None, **over))
+        assert isinstance(r, ImportRefusal), over
+        assert r.reason == "unsupported_units", over
+
+
+def test_overflow_coordinates_refuse_typed_never_non_finite():
+    # G5 MEDIUM 1: coordinates individually finite but huge (1e300) overflow the measured
+    # dimensions to inf; the service refuses typed instead of emitting a non-finite value.
+    result = list_candidates(read_dxf(_dxf(rings=((_OVERFLOW_RING, "B", True),))))
+    assert isinstance(result, ImportRefusal)
+    assert result.reason == "coordinate_out_of_range"
 
 
 def test_ambiguous_units_refused():
@@ -184,6 +286,18 @@ def test_drawing_text_is_escaped_on_output():
     assert "\x01" not in result.candidates[0].layer
     assert "\\x01" in result.candidates[0].layer
     assert "\x1b" not in (result.acad_version or "")
+
+
+def test_reader_refusal_detail_with_control_char_is_escaped():
+    # G4 A2: a reader DxfRefusal whose detail carries a control character is escaped by the
+    # service before it reaches a caller (the route's length bound does NOT strip control chars).
+    refusal = DxfRefusal(
+        ok=False, reason=DxfRefusalReason.MALFORMED_STRUCTURE, detail="bad\x01value"
+    )
+    out = list_candidates(refusal)
+    assert isinstance(out, ImportRefusal)
+    assert "\x01" not in out.detail
+    assert "\\x01" in out.detail
 
 
 def test_sniff_accepts_ascii_dxf_and_refuses_binary_and_junk():
@@ -241,3 +355,50 @@ def test_mutation_ambiguous_units_guard(monkeypatch):
     monkeypatch.setattr(svc, "_resolve_scale", lambda a, d: (1.0, "confirmed_units", ()))
     r = build_draft(read_dxf(_dxf()), _assign(known_length_ft=80.0, measured_length=80.0))
     assert r.ok  # reddens test_ambiguous_units_refused
+
+
+def test_mutation_ring_selection_always_ring0(monkeypatch):
+    # G4 F1: a regression that ALWAYS selects ring 0 -> the draft is built from ring A, not the
+    # user-assigned ring B, proving the selection seam is what honours the assignment.
+    monkeypatch.setattr(svc, "_select_ring", lambda rings, index: rings[0][1])
+    doc = read_dxf(_dxf(rings=((_RING_A, "A", True), (_RING_B, "B", True))))
+    draft = build_draft(doc, _assign(building_outline=1))
+    # reddens test_draft_uses_the_user_assigned_ring_not_ring0_or_largest
+    assert draft.proposed_massing["outline"]["vertices"][0] == [985000.0, 195000.0]
+
+
+def test_mutation_ring_selection_largest_ring(monkeypatch):
+    # G4 F1: a regression that auto-picks the LARGEST-area ring -> the draft is built from ring
+    # A (the larger), not the user-assigned ring B, proving the selection uses the assignment.
+    def _largest(rings, index):
+        return max(
+            (p for _, p in rings),
+            key=lambda p: measured_dimensions(p.vertices, "feet")["area"],
+        )
+
+    monkeypatch.setattr(svc, "_select_ring", _largest)
+    doc = read_dxf(_dxf(rings=((_RING_A, "A", True), (_RING_B, "B", True))))
+    draft = build_draft(doc, _assign(building_outline=1))
+    # reddens test_draft_uses_the_user_assigned_ring_not_ring0_or_largest
+    assert draft.proposed_massing["outline"]["vertices"][0] == [985000.0, 195000.0]
+
+
+def test_mutation_overflow_finiteness_guard(monkeypatch):
+    # G5 MEDIUM 1: drop the finiteness guard (consuming namespace) -> the overflow ring lists a
+    # non-finite measured value, proving the real guard is what refuses it typed.
+    monkeypatch.setattr(svc, "_measured_is_finite", lambda measured: True)
+    result = list_candidates(read_dxf(_dxf(rings=((_OVERFLOW_RING, "B", True),))))
+    assert result.ok  # reddens test_overflow_coordinates_refuse_typed_never_non_finite
+    assert not math.isfinite(result.candidates[0].measured["area"])
+
+
+def test_mutation_refusal_detail_escaping(monkeypatch):
+    # G4 A2: neuter the escaper -> a control char in a reader-refusal detail reaches the caller,
+    # proving the real escaper is what removes it from the refusal path.
+    monkeypatch.setattr(svc, "_escape_drawing_text", lambda v, **k: v)
+    refusal = DxfRefusal(
+        ok=False, reason=DxfRefusalReason.MALFORMED_STRUCTURE, detail="bad\x01value"
+    )
+    out = list_candidates(refusal)
+    # reddens test_reader_refusal_detail_with_control_char_is_escaped
+    assert "\x01" in out.detail
