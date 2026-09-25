@@ -1,0 +1,121 @@
+{
+  "task_id": "M5-T120",
+  "title": "D-087 PDF-reading P4 (the M5-T118 riders DB-090 a/b/c/i): split sheet_interpreter.py (748/750) FIRST - the path-state handlers into sheet_path_state.py behind the unchanged interface - then skip inline images whose /DP is a dictionary, fix the three ISO citation pointers, and give item 2's post-paint lineto a disclosed rule that never draws from an undefined point; re-run the six real architect PDFs by sha256",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Four steps, in this order. (1) SPLIT FIRST (DB-090 c; G3 A1): sheet_interpreter.py is 748 of 750 lines. Move the path-state group of _StreamRun (_flush_open, _open_after_close, _moveto, _lineto, _curveto, _close, _charge_points, _paint, the _op_m/_op_l/_op_c/_op_v/_op_y/_op_h/_op_re handlers and _PATH_HANDLERS, with the constants only they use) into a NEW module app/drawings/sheet_path_state.py (for example a mixin class that _StreamRun inherits), keeping every name that tests or other modules reach through sheet_interpreter importable from it (a compatibility facade). Byte-identical output: the existing goldens and the split-equivalence suite pass UNCHANGED at the split commit point. Split-facade trap (seq 130 lesson): a test that monkeypatches a name in sheet_interpreter (e.g. read_inline_dict, skip_inline_image, _SKIP_SHADING, _StreamRun._place_form) stops biting if the consumer moves - grep every monkeypatch/setattr on sheet_interpreter and prove each still reddens (patch the consuming namespace + a positive control where needed). (2) /DP DICTIONARIES (DB-090 a; G1 A): an inline image whose /DP (or /DecodeParms) value is a dictionary, or an array of dictionaries/nulls, is skipped like any other inline image: allow exactly ONE nested level for that key only, under the same byte cap; any other nested dictionary still refuses; samples are never decoded. (3) CITATIONS (DB-090 b; G1 B): sheet_inline_image.py :17 and :186 cite 8.9.5.2 for row alignment (correct: ISO 32000-1 8.9.3), :67 cites 8.9.5.2 for the allowed BitsPerComponent set (correct: 8.9.5.1 / Table 89), :84 names Table 92 for the colour-space abbreviations (correct: Table 93). (4) ITEM 2's POST-PAINT LINETO (DB-090 i): after a painting operator the current point is undefined (ISO 32000-1 8.5.2 / 8.5.3), so today an 'l' with no current point refuses the whole document. Implement ONE disclosed lenient rule that NEVER draws a segment from an undefined or stale point: an 'l' with no current point starts a new subpath AT ITS OWN end point (no segment is drawn to it; later segments draw from it), counted per page in a disclosed field whose default keeps every existing golden byte-identical. Cite the reader behaviour this matches (e.g. the Canvas 2D 'ensure there is a subpath' rule that pdf.js relies on, or MuPDF's handling) and mark it '[recalled - verify]' unless you verified it from a primary source - the G1 verifier checks it. PROHIBITED: reopening at the last pre-paint point (that invents a segment). Curves (c/v/y) with no current point STAY a typed refusal in this packet (report whether any real file hits one). Then re-run the six real files by sha256 and report honestly per item.",
+  "business_reason": "The owner's goal is reading real architect PDF drawings (D-087-R005). After M5-T118, 3 of 6 real files read fully; item 2 (a 94-page vector set) stops at one post-paint lineto. The interpreter must be split before it can grow at all (the 750-line limit).",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "OVERNIGHT (binding; D-089): the owner is asleep - never wait for or ask the owner anything. Put any question in the report's OPEN QUESTIONS section with your recommended answer; the orchestrator decides or queues it. Stop only for a Tier D item (legal/zoning approval, secrets, payment, licensing) and report it.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - the module stays wired exactly as today. The max-envelope route stays UNMOUNTED.",
+    "LOCAL PYTHON (binding): the sandbox runs Python 3.11 while app/documents/units.py uses 3.12-only PEP 695 syntax, so a pytest run that collects the app.documents chain stops at collection. Run such files through the orchestrator's scratch shim from services/api: `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\shim311\\runtests.py <tests> -q -p no:cacheprovider` (it stubs only package __init__ bodies) and mark those results [OBSERVED-via-shim]; CI (3.12) is the authority.",
+    "SPEC SOURCE (binding): project-control/reports/M5-T118-producer-report.md (the real-corpus table; OPEN QUESTIONS 1), M5-T118-G1.md (FINDING A + the citation map), -G3.md (A1, A2), -G4.md, -G5.md (L1, L2); docs/DISCOVERY_BACKLOG.md DB-090 (a)-(j); docs/research/architect-drawing-corpus-2026-09.md (the six files: URLs + full sha256).",
+    "FORMAT AUTHORITY (binding; never guess): ISO 32000-1 8.5.2 / 8.5.3 (path construction and painting; the current point after painting), Table 59; 8.9.3, 8.9.5.1 / Table 89, 8.9.7 / Tables 92-93 (inline images). Cite sections next to the code; mark anything unverifiable '[recalled - verify]' for the G1 verifier.",
+    "SAFETY (binding): the nested /DP level is bounded (one level, the same byte cap, that key only); the orphan-lineto rule never creates a segment from an undefined point and is counted; every refusal detail bounded; pdf_object_streams.py, sheet_marked_content.py and app/documents/ READ-ONLY; test_pdf_object_streams.py passes unchanged.",
+    "REAL CORPUS (binding; D-087-R005 honesty): fetch the six files to a scratch folder OUTSIDE the worktree, verify each sha256, run read_sheet TWICE per file, record per item: read (pages, path/segment counts, the new orphan-subpath count) or refused (stage + reason + the next blocker), then delete the copies. Commit nothing from the corpus. Never claim more than you observed.",
+    "TESTS + MUTATION OBLIGATIONS (binding; offline tests): the split is proved by the unchanged goldens + the split-equivalence suite; a /DP-dictionary inline image skipped (the linework after it still draws), a second nesting level and a non-/DP nested dictionary still refused; the orphan 'l' starts a subpath at its own point with the count incremented and NO segment from the pre-paint point (assert the exact points), an orphan curve still refused; each with a named in-process mutation that reddens it (e.g. reopen-at-last-point, allow-any-nested-dict, drop-the-count). Record each mutant run; never commit harnesses.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at the wave-1 seam, 844 files / 18356 nodes / 7841 edges): the sheet reader modules (sheet_reader.py, sheet_interpreter.py, sheet_objects.py, sheet_inline_image.py, sheet_marked_content.py, sheet_primitives.py) are imported only inside app/drawings and by tests/drawings; sheet_reader.py imports _IDENTITY and _StreamRun from sheet_interpreter (keep both importable there); pdf_object_streams.py imports sheet_objects.py (both READ-ONLY here). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/drawings/sheet_path_state.py (NEW) - the path-state handlers split out of the interpreter",
+    "services/api/app/drawings/sheet_interpreter.py - smaller, facade names kept",
+    "services/api/app/drawings/sheet_inline_image.py - /DP dictionaries skipped; citation pointers fixed",
+    "services/api/app/drawings/sheet_primitives.py / sheet_reader.py - only the disclosed orphan-subpath count",
+    "services/api/tests/drawings/test_sheet_p4_features.py (NEW) + any deliberate test revisions",
+    "project-control/reports/M5-T120-producer-report.md (incl. the real-corpus table and the split map)"
+  ],
+  "dependencies": [
+    "M5-T118"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/sheet_path_state.py",
+    "services/api/app/drawings/sheet_interpreter.py",
+    "services/api/app/drawings/sheet_inline_image.py",
+    "services/api/app/drawings/sheet_primitives.py",
+    "services/api/app/drawings/sheet_reader.py",
+    "services/api/tests/drawings/test_sheet_p4_features.py",
+    "services/api/tests/drawings/test_sheet_p3_features.py",
+    "services/api/tests/drawings/test_sheet_reader.py",
+    "services/api/tests/drawings/test_sheet_reader_split_equivalence.py",
+    "services/api/tests/drawings/test_sheet_content_features.py",
+    "project-control/reports/M5-T120-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/pdf_object_streams.py",
+    "services/api/tests/drawings/test_pdf_object_streams.py",
+    "services/api/app/drawings/sheet_marked_content.py",
+    "services/api/app/drawings/sheet_objects.py",
+    "services/api/app/drawings/dxf_reader.py",
+    "services/api/app/drawings/dxf_import.py",
+    "services/api/app/documents/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/app/cad/",
+    "services/api/tests/api/",
+    "docs/research/",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (split first): sheet_path_state.py holds the path-state group; sheet_interpreter.py well under 750 lines; every facade name still importable; the goldens and the split-equivalence suite pass unchanged; every monkeypatch on sheet_interpreter still bites (positive control where the consumer moved).",
+    "AS-2 (/DP dictionaries): a /DP dictionary (and an array of dictionaries/nulls) inline image is skipped with the linework after it intact; a second nesting level and a non-/DP nested dictionary still refuse typed; mutations redden.",
+    "AS-3 (citations): the three pointers corrected (8.9.3; 8.9.5.1 / Table 89; Table 93).",
+    "AS-4 (orphan lineto): an 'l' after a paint starts a new subpath at its own point, never a segment from the pre-paint point; the per-page count is disclosed and defaults keep the goldens byte-identical; an orphan curve still refuses; the reopen-at-last-point mutant reddens.",
+    "AS-5 (real corpus, honest): the six files by sha256, two runs each, a per-item table; copies deleted; nothing committed; no claim beyond the observation.",
+    "AS-6 (scope): zero new dependencies; unwired; test_pdf_object_streams.py unchanged and green; ruff clean; modularity exit 0; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T08:01:59.486679+00:00",
+  "updated_at": "2026-09-25T08:01:59.931431+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R005",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T08:01:59.486679+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/drawings -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
