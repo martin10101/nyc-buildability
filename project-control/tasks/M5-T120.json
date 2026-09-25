@@ -88,12 +88,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "rework",
+  "progress_percent": 90,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-25T08:01:59.486679+00:00",
-  "updated_at": "2026-09-25T08:57:43.329947+00:00",
+  "updated_at": "2026-09-25T09:22:04.163243+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -133,6 +133,13 @@
       "percent": 90,
       "status": "in_progress",
       "message": "Harvested: 3d08a559 cherry-picked to 5ae5700e (9 files MATCH); harvest checks green; evidence map + G2 written; submitting."
+    },
+    {
+      "at": "2026-09-25T09:22:04.163243+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "rework",
+      "message": "PASS with a required correction (M5-T120 G1): the orphan-lineto reader-of-record citation (MuPDF warns-and-ignores; the Canvas 2D / pdf.js basis is verified) - an [ORCH-CORRECTED per M5-T120 G1] doc-only edit follows (wt-m5t120 4d9593ca), then a re-freeze and same-reviewer delta attestations."
     }
   ]
 }
