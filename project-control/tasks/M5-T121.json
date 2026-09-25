@@ -1,0 +1,119 @@
+{
+  "task_id": "M5-T121",
+  "title": "D-087 PKT-L (proposal-editor phase C2/C3): the PDF sheet import service - closed rings on a chosen page offered as candidates, the USER assigns building outline / property line / street frontage and names one real-world edge length (the scale), and a proposal DRAFT is built through the same validate_proposed_massing contract as the DXF import; pure service, UNMOUNTED",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build app/drawings/sheet_import.py, the PDF counterpart of the accepted DXF import service (app/drawings/dxf_import.py, M5-T108 - the precedent to mirror; READ-ONLY here). Pure: no I/O, no route, no persistence; every failure a typed refusal VALUE, never an exception to the caller. (1) CANDIDATES: given a SheetDocument from read_sheet and a page index, list the page's CLOSED polylines as candidates addressed by their stable polyline index on that page, each with vertex count and measured dimensions in SHEET units (bbox, perimeter, area - reuse dxf_import's public measured_dimensions where it fits); bounded (at most a declared number, largest area first, the total count disclosed); plus a disclosure of what else the page holds (open polylines, text runs, images, the reader's skip counts) and the page's text runs containing the word 'scale' LISTED verbatim (escaped, length-bounded) as reference notes - never parsed into a scale. A page index out of range, or a page with no closed ring, is an honest typed result (the no-closed-ring case says outlines drawn as separate segments are not joined yet). (2) SCALE (the phase-C plan's C2 rule: confirmation against a user-named known dimension): the user names ONE edge of a candidate ring (candidate index + edge index) and its real length in feet; the SERVICE measures that edge on the sheet itself (never a client-supplied measurement); scale = known feet / measured sheet length; finite, strictly positive, bounded, else refused. No architectural-scale menu in this packet (the page's printed scale notes are reference only). (3) DRAFT (C3): the user-assigned building-outline ring, scaled, explicit closure, into a proposed_massing block validated by app.scenario.proposal.validate_proposed_massing exactly as dxf_import.build_draft does (the contract's provenance kind stays 'proposed'); a separate provenance block with input_class 'imported_pdf', the precision label 'imported drawing - not survey-confirmed', the source label 'Proposed - not a city record', the page index, the named edge + known length + measured length + scale, the assigned roles, and a frame note that the outline is in a LOCAL scaled sheet frame, not aligned to the mapped lot (alignment is a later step). Nothing is ever labelled a city record, a permit, approved, or a maximum allowed building; input precision is never upgraded (D-083-R006).",
+  "business_reason": "The owner wants real architect PDFs to become usable proposals (D-087-R005; the phase-C plan). Three of six real files now read fully (M5-T118); this is the step that turns a read page into a draft building the user confirms, with honest scale and provenance.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "OVERNIGHT (binding; D-089): the owner is asleep - never wait for or ask the owner anything. Put any question in the report's OPEN QUESTIONS section with your recommended answer; the orchestrator decides or queues it. Stop only for a Tier D item (legal/zoning approval, secrets, payment, licensing) and report it.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - the module stays wired exactly as today. The max-envelope route stays UNMOUNTED.",
+    "LOCAL PYTHON (binding): the sandbox runs Python 3.11 while app/documents/units.py uses 3.12-only PEP 695 syntax, so a pytest run that collects the app.documents chain stops at collection. Run such files through the orchestrator's scratch shim from services/api: `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\shim311\\runtests.py <tests> -q -p no:cacheprovider` (it stubs only package __init__ bodies) and mark those results [OBSERVED-via-shim]; CI (3.12) is the authority.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "SPEC SOURCE (binding): docs/PROPOSAL_EDITOR_PHASED_PLAN.md 'Phase C' (C2 the confirm flow, C3 the SAME B0 contract); docs/design/d087-export-and-3d-viewer-plan.md section 5 'Standalone tracks' (PKT-L); the precedent app/drawings/dxf_import.py (M5-T108: candidates, RoleAssignment, _resolve_scale's known-dimension path, build_draft, ImportRefusal, the escape rule) and project-control/reports/M5-T108-producer-report.md + -G3.md, -G4.md, -G5.md; the reader's output types in app/drawings/sheet_primitives.py (SheetDocument, SheetPage with user_unit / polylines / text_runs / images / skip counts, SheetPolyline.closed) and read_sheet in sheet_reader.py; app/scenario/proposal.py (validate_proposed_massing, _validate_provenance).",
+    "UNTRUSTED DRAWING TEXT (binding; the M5-T108 G5 lesson DB-070 a, b): every drawing-derived string in any output (scale notes, anything from the file) is escaped (no raw control byte) and length-bounded; the DXF escape helper is private - implement the same rule in this module with its own tests (or import it only if you justify it in the report); never modify dxf_import.py.",
+    "CONCURRENCY (binding): M5-T120 is editing the reader modules (sheet_interpreter.py, sheet_path_state.py, sheet_inline_image.py, sheet_primitives.py, sheet_reader.py) and their tests RIGHT NOW. Import only the public reader API (read_sheet and the Sheet* types); build test fixtures inside test_sheet_import.py (keyword-constructed Sheet* values and/or a minimal synthetic-PDF builder of your own) - never import helpers from another test module; construct dataclasses by KEYWORD so an appended defaulted field cannot break you.",
+    "TESTS + MUTATION OBLIGATIONS (binding; offline): candidates = closed rings only, bounded + total disclosed, deterministic order, measured in sheet units; the empty / out-of-range / no-closed-ring results; scale notes listed escaped and never parsed; the edge-measured scale (exact arithmetic asserted), non-finite / zero / negative / out-of-range edge refused; the draft outline equals the ASSIGNED ring scaled (assert exact points and explicit closure); a contract violation becomes a typed draft_invalid refusal; the provenance block (input_class imported_pdf, precision, label, frame note, scale inputs, roles); no claim wording anywhere. Each with a named in-process mutation that reddens it (e.g. ring 0 instead of the assigned ring, a client-supplied measurement accepted, the escape dropped, the bound removed, precision upgraded); record each mutant run; never commit harnesses.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at the wave-1 seam, 844 files / 18356 nodes / 7841 edges): the new module has no consumers yet (unmounted); it imports read_sheet / Sheet* from the reader (M5-T120 in flight - public API only), dxf_import's public names (READ-ONLY), and app.scenario.proposal (READ-ONLY; its other consumers are the proposal routes, dxf_import and the scenario engine). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/drawings/sheet_import.py (NEW) - candidates, the edge-measured scale, the draft + provenance",
+    "services/api/tests/drawings/test_sheet_import.py (NEW) - offline tests + the mutation table",
+    "project-control/reports/M5-T121-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T118"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/sheet_import.py",
+    "services/api/tests/drawings/test_sheet_import.py",
+    "project-control/reports/M5-T121-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/dxf_import.py",
+    "services/api/app/drawings/dxf_reader.py",
+    "services/api/app/drawings/sheet_interpreter.py",
+    "services/api/app/drawings/sheet_path_state.py",
+    "services/api/app/drawings/sheet_inline_image.py",
+    "services/api/app/drawings/sheet_primitives.py",
+    "services/api/app/drawings/sheet_reader.py",
+    "services/api/app/drawings/sheet_objects.py",
+    "services/api/app/drawings/sheet_marked_content.py",
+    "services/api/app/drawings/pdf_object_streams.py",
+    "services/api/app/scenario/",
+    "services/api/app/documents/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/app/cad/",
+    "services/api/tests/api/",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    "docs/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (candidates): closed rings only, addressed by stable polyline index, bounded with the total disclosed, measured in sheet units; the page disclosure; scale notes listed escaped and never parsed; out-of-range page and no-closed-ring pages are honest typed results; mutations redden.",
+    "AS-2 (scale): one user-named edge + real length; the service measures the edge itself; scale = known feet / measured length with exact assertions; invalid inputs refused typed; the client-measurement mutant reddens.",
+    "AS-3 (draft): the ASSIGNED ring scaled with explicit closure through validate_proposed_massing; kind stays 'proposed'; a contract violation is a typed draft_invalid refusal; the ring-0 mutant reddens.",
+    "AS-4 (honesty + provenance): input_class imported_pdf, 'imported drawing - not survey-confirmed', 'Proposed - not a city record', the LOCAL-frame note, the scale inputs and roles; no permit / approved / maximum-allowed wording; precision never upgraded; every drawing-derived string escaped and bounded.",
+    "AS-5 (scope): pure (no I/O, no route, no persistence); zero new dependencies; dxf_import.py, the reader modules and app/scenario untouched; ruff clean; modularity exit 0; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T08:08:08.389976+00:00",
+  "updated_at": "2026-09-25T08:08:08.997292+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R005",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-083",
+      "requirement_ids": [
+        "D-083-R001",
+        "D-083-R006"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T08:08:08.389976+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/drawings/test_sheet_import.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
