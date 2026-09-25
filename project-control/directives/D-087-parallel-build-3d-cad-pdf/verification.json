@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T00:47:06+00:00",
+ "verified_at": "2026-09-25T01:22:07+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1319,6 +1319,60 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies (no requirements change; lock-verify and production-install green); unwired; the split-equivalence golden untouched; production unchanged except the citation line; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 259b6d40 (test_sheet_reader.py 613bcd20, sheet_primitives.py eb4205a2, M5-T104-producer-report.md baa2cf45; identity 38a70866; evaluate_task_refs ok); report M5-T104-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T105",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R005",
+    "D-087-R006",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "bdbcfd252d49e0a4f64e59b035983e44aeaed96b",
+   "reviewed_manifest_sha256": "28abc2f685e0c80c0df6d48c99b06e7bf5136d414eacd70ca934f186a2aa32c1",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T01:22:07+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the full gated lifecycle - G0 at 77b8e114, claim at 2368fb73, G2 at e294cf1f, G3/G4/G5 PASS by independent reviewers - with no state or gate skipped; capacity added as one more disjoint packet. Blob-level restamp predicate re-verified by the orchestrator at the accept head bdbcfd25 (pdf_sheet_writer.py bc68ca12, test_pdf_sheet_writer.py bdad0969, M5-T105-producer-report.md ddcdab6c; identity 28abc2f6; evaluate_task_refs ok); report M5-T105-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: exactly 3 allowed paths; G0 disjointness EMPTY vs every active task incl. the concurrent M5-T101/T103/T104; one isolated worktree wt-m5t105; the cherry-pick touches only the 3 allowed paths. Blob-level restamp predicate re-verified by the orchestrator at the accept head bdbcfd25 (pdf_sheet_writer.py bc68ca12, test_pdf_sheet_writer.py bdad0969, M5-T105-producer-report.md ddcdab6c; identity 28abc2f6; evaluate_task_refs ok); report M5-T105-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: blueprint writing hardened while unwired and before export wiring - a shared 120-character caller-text cap checked before any drawing, the extracted _finish boundary making the never-raise contract honest, the ISO 32000-1 7.3.4.2 escaping citation marked [recalled - verify]; valid output byte-identical (golden c38360f9); no over-claim. Blob-level restamp predicate re-verified by the orchestrator at the accept head bdbcfd25 (pdf_sheet_writer.py bc68ca12, test_pdf_sheet_writer.py bdad0969, M5-T105-producer-report.md ddcdab6c; identity 28abc2f6; evaluate_task_refs ok); report M5-T105-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the owner-sample suite passes unchanged (10 passed) and the committed sample PDF is untouched; tests/cad 368 passed; over-long, malformed-vertex and non-finite input return typed refusals. Blob-level restamp predicate re-verified by the orchestrator at the accept head bdbcfd25 (pdf_sheet_writer.py bc68ca12, test_pdf_sheet_writer.py bdad0969, M5-T105-producer-report.md ddcdab6c; identity 28abc2f6; evaluate_task_refs ok); report M5-T105-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies (stdlib + the accepted claim_words module); unwired (no route, main.py, __init__ or web change); requirements untouched; PR #241 open and unmerged; the max-envelope route stays unmounted. Blob-level restamp predicate re-verified by the orchestrator at the accept head bdbcfd25 (pdf_sheet_writer.py bc68ca12, test_pdf_sheet_writer.py bdad0969, M5-T105-producer-report.md ddcdab6c; identity 28abc2f6; evaluate_task_refs ok); report M5-T105-DCV.md."
      ]
     }
    ]
