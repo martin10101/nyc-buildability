@@ -18,7 +18,8 @@
     "FILENAME SAFETY (binding, MANDATORY; plan section 2): the <token> in 'site-plan-<token>.<ext>' is built SERVER-SIDE from an allowlist - only [A-Za-z0-9._-] survives, length-capped, derived from the validated bbl and the deterministic generated_at; raw caller text NEVER reaches a response-header value; non-ASCII uses the RFC 6266 / RFC 5987 filename*=UTF-8'' form beside the ASCII filename; a test proves a caller value carrying a quote, ';', CR/LF or non-ASCII cannot break, split or spoof the header.",
     "WRITER BYTE-IDENTITY (binding): the only writer change is DB-075 (a) in pdf_sheet_writer.py (broaden _coerce_vertex's float() catch to a typed refusal + a hostile-__float__ test). The PDF golden, the DXF/GLB writers and the committed owner samples (docs/samples/cad/, pinned by test_cad_owner_samples.py - READ-ONLY) stay byte-identical.",
     "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 832 files / 17984 nodes / 7700 edges): dxf_writer.py, glb_writer.py and pdf_sheet_writer.py are imported only by tests/cad/* and tests/drawings/test_dxf_roundtrip.py (unwired); claim_words.py (M5-T102) is the shared screen (READ-ONLY); massing_model.py belongs to the parallel M5-T106 (READ-ONLY here). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
-    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam.",
+    "RE-SCOPE (orchestrator, 2026-09-25, at harvest; CODING_RULES consumer sweep): the producer found that the accepted tests/cad/test_glb_writer.py::test_as5_not_wired_into_the_app greps app/** for 'glb_writer' and asserts no importer - PKT-D's export service legitimately imports the writer (UNMOUNTED). That test file is added to allowed_paths so the ORCHESTRATOR can update the assertion as a tagged [ORCH-CORRECTED] edit: the export service is the only allowed importer and app/main.py must not import the export service or route. No other change to that file."
   ],
   "outputs": [
     "services/api/app/cad/export_service.py - the export service (format dispatch, caps, screen, reconciled refusals)",
@@ -38,7 +39,8 @@
     "services/api/tests/cad/test_export_api.py",
     "services/api/app/cad/pdf_sheet_writer.py",
     "services/api/tests/cad/test_pdf_sheet_writer.py",
-    "project-control/reports/M5-T109-producer-report.md"
+    "project-control/reports/M5-T109-producer-report.md",
+    "services/api/tests/cad/test_glb_writer.py"
   ],
   "forbidden_paths": [
     "services/api/app/cad/dxf_writer.py",
@@ -47,7 +49,6 @@
     "services/api/app/cad/__init__.py",
     "services/api/tests/cad/test_cad_owner_samples.py",
     "services/api/tests/cad/test_dxf_writer.py",
-    "services/api/tests/cad/test_glb_writer.py",
     "services/api/tests/cad/test_claim_words.py",
     "docs/samples/",
     "services/api/app/scenario/",
