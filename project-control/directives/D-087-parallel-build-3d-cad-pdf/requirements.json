@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 12,
  "producer": "orchestrator",
- "updated_at": "2026-09-25T08:37:41+00:00",
+ "updated_at": "2026-09-25T09:28:22+00:00",
  "requirements": [
   {
    "id": "D-087-R001",
@@ -63,7 +63,8 @@
      "M5-T120",
      "M5-T121",
      "M5-T123",
-     "M5-T122"
+     "M5-T122",
+     "M5-T124"
     ],
     "task_types": [],
     "milestones": [],
@@ -143,7 +144,8 @@
      "M5-T120",
      "M5-T121",
      "M5-T123",
-     "M5-T122"
+     "M5-T122",
+     "M5-T124"
     ],
     "task_types": [],
     "milestones": [],
@@ -282,7 +284,8 @@
      "M5-T113",
      "M5-T118",
      "M5-T120",
-     "M5-T121"
+     "M5-T121",
+     "M5-T124"
     ],
     "task_types": [],
     "milestones": [],
@@ -469,7 +472,8 @@
      "M5-T117",
      "M5-T120",
      "M5-T121",
-     "M5-T123"
+     "M5-T123",
+     "M5-T124"
     ],
     "task_types": [],
     "milestones": [],

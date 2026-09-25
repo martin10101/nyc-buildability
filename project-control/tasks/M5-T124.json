@@ -1,0 +1,121 @@
+{
+  "task_id": "M5-T124",
+  "title": "D-087 PKT-L2 (proposal-editor phase C2, alignment): a pure service that places an imported drawing's LOCAL-frame draft outline onto the mapped lot (EPSG:2263) by a rigid fit through user-confirmed control-point pairs, reports every residual and discrepancy (never auto-reconciled), and re-validates the aligned draft through validate_proposed_massing - UNMOUNTED",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build app/drawings/drawing_alignment.py (NEW, pure: no I/O, no route, no persistence; every failure a typed refusal VALUE). Today a PDF sheet draft (M5-T121) - and any DXF drawn in a local frame (M5-T108) - is a correctly scaled outline in a LOCAL frame, so validate_proposed_massing refuses it as outside the NYC EPSG:2263 bounds (DB-092, the key limit). The phase-C plan's C2 wording: 'alignment to the mapped lot with any discrepancy shown, never auto-reconciled'. (1) INPUT: a proposed_massing draft block + its provenance dict (as returned by sheet_import.build_draft or dxf_import.build_draft - duck-typed on the block's documented shape; never import-edit either module), the mapped lot ring in EPSG:2263 US survey feet (the caller supplies it from the measurement connector - this module fetches nothing), and a list of user-confirmed control-point pairs (a point in the draft's local frame, in feet, <-> a point in 2263). (2) FIT: a 2D rigid least-squares fit (rotation + translation, NO scaling and NO reflection - the scale was already fixed by the user's measured edge) through >= 2 pairs; with exactly 2 pairs the fit is determined but unchecked (disclose it); declare every bound (pair count cap, finite coordinates, lot-ring size cap, distinct points). (3) DISCREPANCIES, SHOWN NEVER RECONCILED: the per-pair residuals and the maximum residual against a declared tolerance; the scale the pairs imply versus the confirmed scale (a disagreement means the measured edge or a pick is wrong - disclose, never rescale); a better mirror-image fit when >= 3 pairs (the drawing may be mirrored - disclose, never flip); the area of the aligned outline that falls outside the mapped lot (shapely, already admitted - disclose, never clip). (4) OUTPUT: the draft block with the outline transformed into 2263 and RE-VALIDATED by validate_proposed_massing (a contract failure is a typed refusal), plus an alignment provenance block (method, pair count, rotation, translation, residuals, tolerance, the discrepancies) - the input-precision label is kept exactly ('imported drawing - not survey-confirmed'); alignment never upgrades precision and never claims survey accuracy.",
+  "business_reason": "The owner wants real architect drawings to become usable proposals (D-087-R005). The PDF import (M5-T121) builds a correctly scaled draft that cannot be placed on the lot yet; this is the step that lets the user place it, with every mismatch shown.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "OVERNIGHT (binding; D-089): the owner is asleep - never wait for or ask the owner anything. Put any question in the report's OPEN QUESTIONS section with your recommended answer; the orchestrator decides or queues it. Stop only for a Tier D item (legal/zoning approval, secrets, payment, licensing) and report it.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - the module stays wired exactly as today. The max-envelope route stays UNMOUNTED.",
+    "LOCAL PYTHON (binding): the sandbox runs Python 3.11 while app/documents/units.py uses 3.12-only PEP 695 syntax, so a pytest run that collects the app.documents chain stops at collection. Run such files through the orchestrator's scratch shim from services/api: `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\shim311\\runtests.py <tests> -q -p no:cacheprovider` (it stubs only package __init__ bodies) and mark those results [OBSERVED-via-shim]; CI (3.12) is the authority.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "SPEC SOURCE (binding): docs/PROPOSAL_EDITOR_PHASED_PLAN.md 'Phase C' (C2: 'alignment to the mapped lot with any discrepancy shown, never auto-reconciled'; C3 the SAME B0 contract); docs/DISCOVERY_BACKLOG.md DB-092 (the key limit), DB-081 and the M5-T108 riders (the DXF local-frame precedent); app/drawings/sheet_import.py and dxf_import.py (the draft block + provenance shapes - READ-ONLY); app/scenario/proposal.py (validate_proposed_massing, the NYC_2263 bounds - READ-ONLY); app/connectors/mappluto_geometry_arcgis.py (the 2263 MEASUREMENT lot geometry this module's caller will supply - READ-ONLY; never the 4326 display outline).",
+    "MATH AUTHORITY (binding; never guess): the 2D rigid least-squares fit (Kabsch / orthogonal Procrustes restricted to proper rotations: centroids, the optimal angle atan2(sum cross, sum dot) of the centred pairs, translation = target centroid - R x source centroid); cite the formula next to the code; the implied scale is computed separately (similarity fit) and only DISCLOSED. EPSG:2263 = US survey feet; the local frame is in the draft's confirmed feet.",
+    "HONESTY + SAFETY (binding): alignment is user-confirmed, never automatic (no auto-matching of corners); the result never claims survey accuracy; precision label unchanged; every discrepancy is a disclosed value, never a silent correction; every number in the output finite (JSON-safe) - a non-finite or out-of-bounds result is a typed refusal; bounded work (declared caps on pairs and lot-ring vertices).",
+    "TESTS + MUTATION OBLIGATIONS (binding; offline): exact fits (pure translation; 90-degree and arbitrary rotation; the aligned outline's exact 2263 vertices asserted); residuals with noisy picks; 2-pair disclosure; the implied-scale disagreement disclosed not applied; a mirrored pick set disclosed not flipped; the outside-lot area disclosed not clipped; too-few / coincident / non-finite / over-cap inputs refused typed; the aligned draft passes validate_proposed_massing and a still-out-of-bounds result is refused; precision never upgraded. Each with a named in-process mutation that reddens it (e.g. allow reflection, apply the implied scale, clip to the lot, drop a residual, upgrade precision). Record each mutant run; never commit harnesses.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at the wave-1 seam, 844 files / 18356 nodes / 7841 edges): the new module has no consumers yet (unmounted); it reads the draft block shape produced by sheet_import.py and dxf_import.py (both READ-ONLY; M5-T121 / M5-T108 accepted) and calls app.scenario.proposal validate_proposed_massing (READ-ONLY). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/drawings/drawing_alignment.py (NEW) - the rigid fit, discrepancies and re-validated draft",
+    "services/api/tests/drawings/test_drawing_alignment.py (NEW) - offline tests + the mutation table",
+    "project-control/reports/M5-T124-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T121"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/drawing_alignment.py",
+    "services/api/tests/drawings/test_drawing_alignment.py",
+    "project-control/reports/M5-T124-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/sheet_import.py",
+    "services/api/app/drawings/dxf_import.py",
+    "services/api/app/drawings/dxf_reader.py",
+    "services/api/app/drawings/sheet_interpreter.py",
+    "services/api/app/drawings/sheet_path_state.py",
+    "services/api/app/drawings/sheet_inline_image.py",
+    "services/api/app/drawings/sheet_primitives.py",
+    "services/api/app/drawings/sheet_reader.py",
+    "services/api/app/drawings/sheet_objects.py",
+    "services/api/app/drawings/sheet_marked_content.py",
+    "services/api/app/drawings/pdf_object_streams.py",
+    "services/api/app/scenario/",
+    "services/api/app/connectors/",
+    "services/api/app/documents/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/app/cad/",
+    "services/api/tests/api/",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    "docs/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (fit): a rigid least-squares fit (no scale, no reflection) from >= 2 user-confirmed pairs; exact fits land the outline on the asserted 2263 vertices; the formula cited; mutations redden.",
+    "AS-2 (discrepancies shown, never reconciled): per-pair residuals + the maximum against a declared tolerance; the implied-scale disagreement, a better mirror fit and the outside-lot area each DISCLOSED and never applied; the 2-pair case disclosed as unchecked.",
+    "AS-3 (contract): the aligned draft re-validated by validate_proposed_massing (kind stays 'proposed'); a still-invalid result is a typed refusal; the alignment provenance block complete.",
+    "AS-4 (honesty + safety): precision label unchanged; no survey-accuracy, permit, approved or maximum-allowed wording; every output number finite; bounded inputs refused typed.",
+    "AS-5 (scope): pure (no I/O, no route, no persistence); zero new dependencies (shapely already admitted); the import modules, the reader modules, app/scenario and the connectors untouched; ruff clean; modularity exit 0; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T09:28:24.011063+00:00",
+  "updated_at": "2026-09-25T09:28:24.505400+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R005",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-083",
+      "requirement_ids": [
+        "D-083-R001",
+        "D-083-R006"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T09:28:24.013072+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/drawings/test_drawing_alignment.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
