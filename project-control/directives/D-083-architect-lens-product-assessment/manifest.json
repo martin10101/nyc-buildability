@@ -10,7 +10,7 @@
  "issued_at": "2026-09-21",
  "captured_at": "2026-09-21T06:22:00+00:00",
  "created_at": "2026-09-21T06:22:00+00:00",
- "updated_at": "2026-09-25T05:01:54+00:00",
+ "updated_at": "2026-09-25T06:01:14+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "defe301382459db82e27265feefd333615de26f9",
  "capture_head_sha": null,
@@ -36,7 +36,7 @@
   "D-083-R012",
   "D-083-R013"
  ],
- "requirements_content_digest_sha256": "b79c8d6cffd0660f6f465f047ef3f65a76f4efd89817aef992cd8074493056ba",
+ "requirements_content_digest_sha256": "48ecee39692d85160bd2671e5bc06d9fc706c3a2d3345714f66b305b6ade1517",
  "sources": [
   {
    "file": "source-001.md",
@@ -115,6 +115,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "D-089 wave-1 contract seam (seq 130: M5-T111 + M5-T112 + M5-T113 + M5-T114 - overnight subagent-producer packets, the B-026 workaround): bound D-083-R001 <- M5-T114; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T06:01:14+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-089 wave-2 contract seam (seq 130: M5-T115 - overnight subagent-producer packets, the B-026 workaround): bound D-083-R001 <- M5-T115; requirements digest resynced in the same commit."
   }
  ]
 }
