@@ -3,10 +3,19 @@
   "gate_id": "G5",
   "reviewer": "security-reviewer",
   "role": "independent_review",
-  "result": "FAIL",
-  "report_file": "project-control/reports/M5-T107-G5.md",
-  "reviewed_at": "2026-09-25T02:51:43.077054+00:00",
-  "content_manifest_sha256": "0acc497ef034ff019dbd1a7f394d4416bf8e25c08ef6447d0f295e7469d9e32c",
-  "reviewed_sha": "7f5c82faaf9ba46bc71b4a0151abb2240917abda",
-  "updated_at": "2026-09-25T02:51:45.383357+00:00"
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T107-G5-rework.md",
+  "reviewed_at": "2026-09-25T03:37:47.290242+00:00",
+  "content_manifest_sha256": "a367f5488b8ad520c25dc2c26fe7bad2f2f1065a9442bf9c077a70697b33501e",
+  "reviewed_sha": "1f4933e86fbe0ccf75940bdebca1a9a096e70a36",
+  "history": [
+    {
+      "reviewer": "security-reviewer",
+      "role": "independent_review",
+      "result": "FAIL",
+      "report_file": "project-control/reports/M5-T107-G5.md",
+      "reviewed_at": "2026-09-25T02:51:43.077054+00:00"
+    }
+  ],
+  "updated_at": "2026-09-25T03:37:50.701232+00:00"
 }
