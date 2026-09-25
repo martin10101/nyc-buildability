@@ -25,6 +25,7 @@ from app.documents.extraction.pdf_lexer import (
     lex_primitive,
 )
 from app.documents.extraction.pdf_objects import PdfRef, PdfStream
+from app.drawings.sheet_marked_content import read_inline_dict
 from app.drawings.sheet_objects import (
     _ABSENT,
     _BPC_KEY,
@@ -146,6 +147,13 @@ class _StreamRun:
                 if error is not None:
                     return error
                 continue
+            if data[self._pos] == 0x3C and self._pos + 1 < len(data) and data[
+                self._pos + 1
+            ] == 0x3C:  # '<<' inline marked-content property-list operand (BDC/DP, §14.6)
+                error = self._read_inline_dict()
+                if error is not None:
+                    return error
+                continue
             token = lex_primitive(data, self._pos)
             if isinstance(token, LexedToken):
                 self._operands.append(token.value)
@@ -212,6 +220,23 @@ class _StreamRun:
                 return _wrap_strict(token)
             items.append(token.value)
             self._pos = token.end_offset
+
+    def _read_inline_dict(self) -> SheetRefusal | None:
+        """Consume a balanced, bounded inline ``<< >>`` marked-content property list (§14.6) as a
+        single DISCARDED operand, so ``BDC`` / ``DP`` accept it (they clear it via ``_IGNORED``);
+        the property list paints nothing. Depth/length bounds come from the threaded facade limits
+        so a patched bound still bites; an unbalanced/too-deep/too-long list is a typed refusal."""
+        result = read_inline_dict(
+            self._data,
+            self._pos,
+            max_depth=self._interp.limits.max_marked_content_depth,
+            max_bytes=self._interp.limits.max_marked_content_bytes,
+        )
+        if isinstance(result, SheetRefusal):
+            return result
+        self._operands.append(result.value)
+        self._pos = result.end_offset
+        return None
 
     # -- operand typing ---------------------------------------------------------------
     def _take(self, kinds: str) -> tuple[object, ...] | None:

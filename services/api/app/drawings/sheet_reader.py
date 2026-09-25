@@ -75,6 +75,10 @@ from app.drawings.pdf_object_streams import (
     resolve_object_table,
 )
 from app.drawings.sheet_interpreter import _IDENTITY, _StreamRun
+from app.drawings.sheet_marked_content import (
+    MAX_MARKED_CONTENT_BYTES,
+    MAX_MARKED_CONTENT_DEPTH,
+)
 from app.drawings.sheet_objects import (
     _ABSENT,
     _KIDS_KEY,
@@ -111,6 +115,8 @@ __all__ = [
     "DEFAULT_FLATTEN_TOLERANCE",
     "MAX_CONTENT_OPERATORS",
     "MAX_DECODED_STREAM_BYTES",
+    "MAX_MARKED_CONTENT_BYTES",
+    "MAX_MARKED_CONTENT_DEPTH",
     "MAX_PATH_POINTS",
     "MAX_Q_DEPTH",
     "MAX_TOTAL_DECODED_BYTES",
@@ -125,8 +131,10 @@ MAX_CONTENT_OPERATORS = 200_000   # executed operators, summed across all nested
 MAX_PATH_POINTS = 500_000         # flattened path points emitted, summed across the page
 MAX_Q_DEPTH = 128                 # saved graphics states in one content stream
 MAX_XOBJECT_DEPTH = 8             # Form XObject recursion depth (page content is depth 0)
-# MAX_DECODED_STREAM_BYTES / MAX_TOTAL_DECODED_BYTES are re-exported from sheet_objects
-# (their canonical home) so the public name and the patch surface stay at this location.
+# MAX_DECODED_STREAM_BYTES / MAX_TOTAL_DECODED_BYTES are re-exported from sheet_objects and
+# MAX_MARKED_CONTENT_DEPTH / MAX_MARKED_CONTENT_BYTES from sheet_marked_content (their canonical
+# homes) so the public names and the patch surface stay at this location; all are threaded into
+# the interpreter/decoder at read time so patching one here still changes the running read.
 DEFAULT_FLATTEN_TOLERANCE = 0.25  # declared maximum chord error, user-space units
 
 
@@ -142,6 +150,8 @@ class _InterpreterLimits:
     max_path_points: int
     max_q_depth: int
     max_xobject_depth: int
+    max_marked_content_depth: int
+    max_marked_content_bytes: int
 
 
 class _SheetInterpreter:
@@ -292,6 +302,8 @@ def _read_sheet(
             max_path_points=MAX_PATH_POINTS,
             max_q_depth=MAX_Q_DEPTH,
             max_xobject_depth=MAX_XOBJECT_DEPTH,
+            max_marked_content_depth=MAX_MARKED_CONTENT_DEPTH,
+            max_marked_content_bytes=MAX_MARKED_CONTENT_BYTES,
         ),
         flatten_cubic=_flatten_cubic,
         concat_matrix=_concat_matrix,
@@ -342,15 +354,43 @@ def _read_sheet(
             pages.append(page)
         else:
             return _refuse("page tree", "a page tree node /Type is neither /Pages nor /Page")
-    # Scan-only class split (DB-055 (l), only on the NEW resolver path so the classic-xref
-    # synthetic suites are unchanged): a real file that parses but surfaces ZERO vector
-    # geometry (a scanned/OCR page) is a typed refusal, never an empty success.
-    if used_resolver and not any(page.polylines for page in pages):
-        return _refuse(
-            "scan only",
-            "the document parsed but yields zero vector geometry (scan-only page set)",
-        )
+    scan_only = _scan_only_refusal(pages, used_resolver=used_resolver)
+    if scan_only is not None:
+        return scan_only
     return SheetDocument(flatten_tolerance=tolerance, pages=tuple(pages))
+
+
+def _scan_only_refusal(
+    pages: list[SheetPage], *, used_resolver: bool
+) -> SheetRefusal | None:
+    """Return the scan-only refusal for a document that parsed but surfaces ZERO vector geometry,
+    else ``None``. Extracted as a module-level seam (M5-T113) so a mutation can defeat the gate
+    and prove it is load-bearing (DB-076 c).
+
+    Scoped to the NEW resolver path (DB-055 l) so the classic-xref synthetic suites are unchanged.
+    Now that content-stream predictors (DB-076 a) and marked-content inline dictionaries
+    (DB-076 b) let a real scanned page parse to completion instead of refusing at its ``<<`` or
+    predictor, this gate is REACHABLE on real scanned files (DB-076 c): a scanned/OCR sheet is a
+    full-page raster image with no vector linework, which is exactly zero polylines here.
+
+    DB-076 (e) records two KNOWN inconsistencies this packet DISCLOSES rather than fixes (see the
+    M5-T113 producer report for the rationale): (1) the ``"scan only"`` label also fires on a
+    text-only page set — its feature is pinned to ``"scan only"`` by the read-only
+    tests/drawings/test_pdf_object_streams.py::test_scan_only_page_is_typed_refusal, so the label
+    cannot change here without breaking a must-pass-unchanged suite; the detail below names the
+    text-only case honestly; (2) an image-only page succeeds on the classic path (this gate is
+    resolver-scoped) but refuses here — immaterial for the real corpus, every item of which is a
+    PDF 1.5+ cross-reference-stream file that takes the resolver path (M5-T093). Unifying the two
+    paths would flip accepted classic behaviour and revise goldens beyond this packet's scope."""
+    if not used_resolver:
+        return None
+    if any(page.polylines for page in pages):
+        return None
+    return _refuse(
+        "scan only",
+        "the document parsed but yields zero vector geometry (scan-only raster or text-only "
+        "page set; no drawing linework)",
+    )
 
 
 def _build_page(

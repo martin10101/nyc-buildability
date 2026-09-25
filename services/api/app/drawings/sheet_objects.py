@@ -136,20 +136,30 @@ def _resolved_int(table: PdfObjectTable, value: object) -> int | None:
 def _decode_stream(
     table: PdfObjectTable, stream: PdfStream, decoder: _StreamDecoder
 ) -> bytes | SheetRefusal:
-    """Decode a content/form stream under the strict single-``/FlateDecode`` subset;
-    refuse ``/DecodeParms``, filter arrays, other filters, corrupt deflate, or over-cap
-    output. Mirrors the container's decode doctrine without mutating it. EVERY decode charges
-    the document-wide decoded-bytes budget (``decoder.charge_decoded``), so many small decodes
-    (e.g. repeated Form ``Do``) cannot amplify total decompression without bound.
+    """Decode a content/form stream under the strict single-``/FlateDecode`` subset, now also
+    accepting a ``/DecodeParms`` §7.4.4.4 PNG predictor (10-15) by REUSING the bounded
+    :func:`apply_predictor` (never a second predictor implementation; M5-T113 DB-076 a). The
+    TIFF predictor (2), filter arrays, and every other filter stay typed refusals; corrupt
+    deflate and over-cap output stay typed refusals. Mirrors the container's decode doctrine
+    without mutating it. EVERY decode charges the document-wide decoded-bytes budget
+    (``decoder.charge_decoded``), so many small decodes (e.g. repeated Form ``Do``) cannot
+    amplify total decompression without bound; the predictor runs on the ALREADY-charged and
+    already-cap-bounded inflated bytes and its own working buffer is geometry-bounded BEFORE it
+    is sized (the M5-T103 G5 guard, inherited unchanged via ``apply_predictor``).
 
     ``decoder`` supplies the (facade-threaded, hence patchable) per-stream and document byte
     caps and the charge counter; keeping the ``(table, stream, decoder)`` signature preserves
     the in-process mutant seam the existing suite relies on."""
     dictionary = stream.dictionary
     cap = decoder.max_decoded_stream_bytes
-    if _DECODE_PARMS_KEY in dictionary:
-        return _refuse("decode parameters", "stream carries /DecodeParms (unsupported)")
+    parms = _content_decode_parms(table, dictionary)
+    if isinstance(parms, SheetRefusal):
+        return parms
     if _FILTER_KEY not in dictionary:
+        if parms is not None:  # a predictor is meaningless without a /FlateDecode filter
+            return _refuse(
+                "decode parameters", "/DecodeParms present without a /FlateDecode filter"
+            )
         raw = stream.raw_data
         if len(raw) > cap:
             return _refuse("stream size", f"raw stream over {cap} bytes")
@@ -173,7 +183,35 @@ def _decode_stream(
     if decompressor.unconsumed_tail or not decompressor.eof:
         return _refuse("flate output bound", f"flate output over {cap} bytes")
     charged = decoder.charge_decoded(len(decoded))
-    return charged if charged is not None else decoded
+    if charged is not None:
+        return charged
+    if parms is None:
+        return decoded
+    return apply_predictor(decoded, parms, absolute_cap=cap)
+
+
+def _content_decode_parms(
+    table: PdfObjectTable, dictionary: dict
+) -> dict | None | SheetRefusal:
+    """Resolve a content/form stream's ``/DecodeParms`` to a single parameter dictionary (§7.4.4.4),
+    or ``None`` when absent. A single-element ``/DecodeParms`` array is unwrapped (mirroring the
+    xref/object-stream resolver, whose ``/Filter`` is likewise a length-one subset); a
+    multi-element array or any other non-dictionary is a typed refusal, so the content path never
+    guesses a filter/parms pairing outside the single-``/FlateDecode`` subset."""
+    if _DECODE_PARMS_KEY not in dictionary:
+        return None
+    parms = _resolve(table, dictionary[_DECODE_PARMS_KEY])
+    if isinstance(parms, SheetRefusal):
+        return parms
+    if isinstance(parms, list):
+        if len(parms) != 1:
+            return _refuse("decode parameters", f"/DecodeParms is an array of {len(parms)}")
+        parms = _resolve(table, parms[0])
+        if isinstance(parms, SheetRefusal):
+            return parms
+    if not isinstance(parms, dict):
+        return _refuse("decode parameters", "/DecodeParms is not a dictionary")
+    return parms
 
 
 def _media_box(

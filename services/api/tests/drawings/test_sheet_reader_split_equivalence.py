@@ -6,12 +6,17 @@ The architect drawing-sheet reader was split (DB-055 b) into
 compatibility facade :mod:`app.drawings.sheet_reader` (public entry, bounds, backstop,
 page-tree driver). This file proves the split changed NO behaviour:
 
-* AS-2 byte-identical: a 62-case corpus (curves, CTM, q/Q, forms incl. cycles/depth,
+* AS-2 byte-identical: a 63-case corpus (curves, CTM, q/Q, forms incl. cycles/depth,
   images, text, every refusal class, the budgets) is serialized into a canonical,
   order-preserving form; its per-case + overall sha256 digests must equal the GOLDEN
   captured from the PRE-split module (pinned below). The budget cases apply the same
   facade-constant patch the existing suite uses, so they also prove the split still
-  threads a patched bound into the running interpreter/decoder.
+  threads a patched bound into the running interpreter/decoder. M5-T113 DELIBERATELY revised
+  the /DecodeParms golden (DB-076 a): the former single `refuse_decode_parms` refusal case is
+  replaced by `decode_parms_png_predictor` (now a drawn success) + `refuse_decode_parms_tiff`
+  (TIFF predictor still refused); the other 61 cases stay byte-pinned to the pre-split baseline,
+  and their digests are UNCHANGED, so the split-equivalence proof holds for everything the split
+  touched. The two revised digests were recaptured from the CURRENT module (M5-T113 report).
 * AS-4 each security guard is load-bearing: one mutation per guard (flatten point budget,
   decoded-bytes budget, form depth guard, form cycle guard, top-level backstop, finiteness
   gate) reddens a test.
@@ -67,6 +72,27 @@ def _stream(data: bytes, extra: bytes = b"") -> bytes:
 
 def _flate(plain: bytes, extra: bytes = b"") -> bytes:
     return _stream(zlib.compress(plain), b" /Filter /FlateDecode" + extra)
+
+
+def _flate_png_pred(content: bytes, predictor: int = 12) -> bytes:
+    """A content stream flate-compressing ONE PNG-predictor row (filter tag 2 = Up, previous row
+    = zeros, so the forward-filtered bytes equal ``content`` and the reader recovers ``content``
+    only by stripping the tag byte and un-filtering). The row spans ``len(content)`` columns.
+    Tag 2 (not 0) makes the predictor load-bearing: without it the leading tag byte 0x02 is an
+    illegal token, so a success here proves the §7.4.4.4 predictor path ran (M5-T113 DB-076 a)."""
+    columns = len(content)
+    row = bytes([2]) + content  # tag 2 (Up) with a zero previous row leaves the row unchanged
+    extra = (
+        b" /Filter /FlateDecode /DecodeParms << /Predictor %d /Columns %d >>"
+        % (predictor, columns)
+    )
+    return _stream(zlib.compress(row), extra)
+
+
+def _flate_tiff_pred(content: bytes) -> bytes:
+    """A flate content stream declaring the TIFF predictor (2), which stays a typed refusal."""
+    extra = b" /Filter /FlateDecode /DecodeParms << /Predictor 2 /Columns %d >>" % len(content)
+    return _stream(zlib.compress(content), extra)
 
 
 def _one_page(
@@ -311,11 +337,24 @@ def _cases() -> list[tuple[str, bytes, float, dict]]:
         b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 800 600] /Contents 4 0 R >>",
         _stream(b"garbage", b" /Filter /LZWDecode"),
     ]), D, {}))
-    a(("refuse_decode_parms", _pdf([
+    # M5-T113 DELIBERATE golden revision (DB-076 a): the pre-M5-T113 corpus had a single
+    # `refuse_decode_parms` case that FROZE /DecodeParms as an unconditional "decode parameters"
+    # refusal. That behaviour is intentionally changed here: a content stream with /FlateDecode +
+    # a §7.4.4.4 PNG predictor now DECODES and draws, while the TIFF predictor (2) stays a typed
+    # refusal. The old case is replaced by these two (before -> after recorded in the M5-T113
+    # producer report). Every OTHER case below stays byte-pinned to the pre-split golden, so the
+    # M5-T094 split-equivalence proof is intact for everything the split actually touched.
+    a(("decode_parms_png_predictor", _pdf([
         b"<< /Type /Catalog /Pages 2 0 R >>",
         b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
         b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 800 600] /Contents 4 0 R >>",
-        _stream(b"x", b" /Filter /FlateDecode /DecodeParms << /Predictor 12 >>"),
+        _flate_png_pred(b"5 7 m 9 3 l S"),
+    ]), D, {}))
+    a(("refuse_decode_parms_tiff", _pdf([
+        b"<< /Type /Catalog /Pages 2 0 R >>",
+        b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 800 600] /Contents 4 0 R >>",
+        _flate_tiff_pred(b"5 7 m 9 3 l S"),
     ]), D, {}))
     a(("refuse_filter_array", _pdf([
         b"<< /Type /Catalog /Pages 2 0 R >>",
@@ -433,13 +472,19 @@ def overall_digest(sr) -> str:
     return h.hexdigest()
 
 
-# GOLDEN: captured from the PRE-split sheet_reader module before any edit (M5-T094).
-_OVERALL = "767766ebc3e1bf1edbba58558d612db06e1fec18fa1d0713dbe8e47fe5283106"
+# GOLDEN: captured from the PRE-split sheet_reader module before any edit (M5-T094); the two
+# `*decode_parms*` cases were DELIBERATELY recaptured at M5-T113 (DB-076 a) and _OVERALL was
+# recomputed for the 63-case corpus. All 61 unrevised per-case digests are UNCHANGED.
+_OVERALL = "887a0a680999ab46733b305208e438b47ea2e9f5e275c2fd3e98ba9c601840b5"
 _GOLDEN = {
     "asym_bezier": "dcb1a08370e49f494484da30dd28c531020eee8c430616400520862ab8d4018d",
     "contents_array": "feccdc8409a6c869b185c9db02f8473503e03c271e3e015f5d9240afe3a49e39",
     "ctm_rotate_translate": "a1ff5fede3a7f9173dc5778f333a8f42fce0d25506f901a541911640665e4047",
     "ctm_shear": "6f6c0b81d2d1fe464564040627bf0eebc1b6ab8dc1fc7bb09b75974fef34c78b",
+    # M5-T113 (DB-076 a): a /FlateDecode + PNG-predictor content stream now DECODES and draws
+    # the line (5,7)->(9,3), so its canonical form equals the plain `line` case's.
+    "decode_parms_png_predictor":
+        "f1b2f8353122b7680f3c43eaa03773396eab071dd39143456846e65e945da6e0",
     "empty_contents_absent": "e936fda65058735ca2668323def79a3f346965745be75afb9a51d7a8559f26d7",
     "flate_content": "f1b2f8353122b7680f3c43eaa03773396eab071dd39143456846e65e945da6e0",
     "form_flate": "553b3239e54c79b18e241c59e795a380435792e2f3c3ad83727cba3ebbfaa379",
@@ -463,7 +508,10 @@ _GOLDEN = {
     "refuse_bad_tolerance": "ad1b54a3535f3d8a8c04f7bbc372f3d1369b6af55eeafea8d1397da7c97f0f67",
     "refuse_catalog_no_type": "8a37488d19f12d98774940bdbb77cfe56f97da756460a74f9781b4910575ee65",
     "refuse_dangling_operands": "33270203463528e67ae85880bda46263cd9d03d1c898161e616735fe79f7c2f6",
-    "refuse_decode_parms": "9530c4e65ca0acc0f986c1f9ce72255a09c99e72f4600f54aa302e6f5f96c023",
+    # M5-T113 (DB-076 a): the TIFF predictor (2) stays a typed "predictor" refusal (the new
+    # "what stays unsupported" golden case; the former unconditional refuse_decode_parms is gone).
+    "refuse_decode_parms_tiff":
+        "f0c87de8e7d60cfc42304a901dadd438661664811f570926778b6d4788a2b479",
     "refuse_decoded_bytes": "5f8b8a5e8b71f156859585bf6e24f95703561baace05dd7207ef85987a89115e",
     "refuse_encryption": "d46f4bb36448f8090dc8bc773337c14bd6331563c8640271df367cc1192bfc68",
     "refuse_filter_array": "5a9210588a524427a52a2691d9a33d7d486274ea65d79fd2c399fd351e15e9bb",
@@ -508,7 +556,7 @@ def test_corpus_shape_is_nontrivial():
     """Guard against an accidental all-refuse (or all-success) regression that would make
     the digest comparison vacuous."""
     blobs = dict(run_corpus(sheet_reader))
-    assert len(blobs) == 62
+    assert len(blobs) == 63
     docs = sum(1 for b in blobs.values() if b.startswith(b"DOCUMENT"))
     refs = sum(1 for b in blobs.values() if b.startswith(b"REFUSAL"))
     assert docs >= 25 and refs >= 25
