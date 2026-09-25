@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T111",
+  "gate_id": "G5",
+  "reviewer": "security-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T111-G5.md",
+  "reviewed_at": "2026-09-25T06:03:47.581377+00:00",
+  "content_manifest_sha256": "3f87108f625842f409b03efb12aefb0d5741c329c32d25e0448ebcc34cd0e49a",
+  "reviewed_sha": "01856916eba27de2cbdebbf0c305693063281976",
+  "updated_at": "2026-09-25T06:03:49.210518+00:00"
+}
