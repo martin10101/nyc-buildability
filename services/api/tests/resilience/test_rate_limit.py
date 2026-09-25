@@ -223,8 +223,13 @@ def test_slot_held_until_thread_ends_not_on_await_cancel():
     def _abandoning_runner(fn):
         # Run the guarded work in a real background thread; return a coroutine that only sleeps,
         # so wait_for's deadline cancels the AWAIT while the thread keeps running (the route's
-        # deadline-abandonment path).
+        # deadline-abandonment path). DB-088 (g): an EVENT HANDSHAKE - block until the worker has
+        # provably entered work() and set `started` - replaces the former 50 ms thread-start
+        # window, so when the deadline fires the worker is GUARANTEED running (no wall-clock race:
+        # `_guarded` sets its internal started flag BEFORE work() sets this event, so `started`
+        # being set implies the run_in_job_slot started flag is already True).
         threading.Thread(target=fn, daemon=True).start()
+        assert started.wait(5.0), "worker thread did not start"
 
         async def _sleep_forever():
             await asyncio.sleep(3600)
@@ -322,7 +327,11 @@ def test_post_start_cancel_releases_the_slot_exactly_once_no_double():
         return "done"
 
     def _abandoning_runner(fn):
+        # DB-088 (g): event handshake (block until the worker has provably started) replaces the
+        # 50 ms thread-start window, so the deadline fires only after the worker is running - the
+        # post-start cancel path is exercised deterministically, with no wall-clock race.
         threading.Thread(target=fn, daemon=True).start()
+        assert started.wait(5.0), "worker thread did not start"
 
         async def _sleep_forever():
             await asyncio.sleep(3600)
@@ -392,18 +401,25 @@ def test_full_table_sweep_runs_at_most_once_per_window():
 
 
 def test_empty_or_non_string_principal_falls_back_to_host():
-    """G5 Finding 3 / AS-3: the principal keys the caller ONLY when it is a NON-EMPTY STRING; an
-    empty string or any non-string value falls back to the host key, so a blank/malformed
-    principal cannot collapse distinct callers into one 'principal:' bucket. Mutation
-    (empty-principal-accepted, i.e. `if principal is not None`): "" -> "principal:" -> the
-    empty-string assertion reddens (recorded in the report)."""
+    """G5 Finding 3 / AS-3 / M5-T117 G5 A1 (DB-088 b): the principal keys the caller ONLY when it
+    is a string that is NON-EMPTY AFTER STRIPPING whitespace; an empty string, a WHITESPACE-ONLY
+    string, or any non-string value falls back to the host key, so a blank/whitespace/malformed
+    principal cannot collapse distinct callers into one 'principal:' bucket. Mutations
+    (empty-principal-accepted `if principal is not None`; whitespace-principal-keyed
+    `and principal` without `.strip()`): "" / "   " -> "principal:..." -> the assertions redden
+    (recorded in the report)."""
     # Empty-string principal -> host key, NOT "principal:".
     assert caller_key(_FakeRequest(principal="", host="203.0.113.9")) == "host:203.0.113.9"
+    # WHITESPACE-ONLY principal (space, tab, newline, mixed) -> host key, NOT "principal:   "
+    # (DB-088 b): a whitespace-only principal is treated as absent, like an empty one.
+    for blank in (" ", "   ", "\t", "\n", " \t\n "):
+        assert caller_key(_FakeRequest(principal=blank, host="203.0.113.9")) == "host:203.0.113.9"
     # Non-string principals of every stripe -> host key.
     for bad in (0, 0.0, False, [], {}, ("x",), 12345):
         assert caller_key(_FakeRequest(principal=bad, host="203.0.113.9")) == "host:203.0.113.9"
-    # A genuine non-empty string principal is still used.
+    # A genuine non-empty string principal (even with surrounding whitespace + content) is used.
     assert caller_key(_FakeRequest(principal="user-9", host="203.0.113.9")) == "principal:user-9"
+    assert caller_key(_FakeRequest(principal=" u ", host="203.0.113.9")) == "principal: u "
 
 
 def test_x_forwarded_for_header_never_changes_the_key():
@@ -472,3 +488,41 @@ def test_job_slots_admit_at_most_max_slots_under_contention():
         t.join()
     assert sum(results) == 10
     assert slots.in_flight == 10
+
+
+# --------------------------------- DB-088 (a): summed job slots stay under the anyio thread pool
+
+
+def _anyio_default_thread_pool_tokens() -> int:
+    """Read the INSTALLED anyio's default thread-pool capacity LIVE (never assumed). anyio 4.10.0
+    builds it in ``AsyncIOBackend.current_default_thread_limiter`` as ``CapacityLimiter(40)``
+    (anyio/_backends/_asyncio.py); ``current_default_thread_limiter`` needs a running loop, so
+    read ``total_tokens`` inside one."""
+    import anyio
+
+    async def _get() -> float:
+        return anyio.to_thread.current_default_thread_limiter().total_tokens
+
+    return int(asyncio.run(_get()))
+
+
+def test_summed_job_slots_stay_under_the_anyio_thread_pool():
+    """DB-088 (a) / AS-2: the three D-087 routes' in-flight job-slot caps SUM to strictly LESS than
+    anyio's default thread-pool token count, with declared headroom for the app's other run_sync
+    users, and the heavier per-slot routes get fewer slots. This test FAILS if the sum ever reaches
+    (or exceeds) the pool - the reddening mutation (bump any route's cap so the sum hits the pool)
+    is recorded in the report. run_in_threadpool dispatches every job onto this one pool, so a held
+    slot must always imply an available (or soon-available) thread token."""
+    from app.api.v1.dxf_import_api import DXF_IMPORT_MAX_IN_FLIGHT
+    from app.api.v1.export_api import EXPORT_MAX_IN_FLIGHT
+    from app.api.v1.scene_api import SCENE_MAX_IN_FLIGHT
+
+    pool = _anyio_default_thread_pool_tokens()
+    total = SCENE_MAX_IN_FLIGHT + EXPORT_MAX_IN_FLIGHT + DXF_IMPORT_MAX_IN_FLIGHT
+    # STRICTLY under the pool (fails if the sum reaches or exceeds it).
+    assert total < pool, f"summed slots {total} must stay under the anyio pool {pool}"
+    # Declared headroom (>= 8 tokens) for the app's other run_in_threadpool users.
+    assert pool - total >= 8
+    # Heavier per-slot routes get fewer slots: dxf-import (20 MiB/slot) <= scene (2 MiB + deep
+    # parse) <= export (1 MiB, CPU-bound).
+    assert DXF_IMPORT_MAX_IN_FLIGHT <= SCENE_MAX_IN_FLIGHT <= EXPORT_MAX_IN_FLIGHT

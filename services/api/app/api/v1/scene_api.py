@@ -57,7 +57,6 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from app.api.v1.proposal_validation import (
-    MAX_BODY_BYTES,
     _bounded_message,
     _declared_content_length,
     _read_body_within_ceiling,
@@ -74,8 +73,8 @@ from app.resilience.rate_limit import (
 from app.scenario.scene_assembler import SceneAssemblyError, build_scene_payload
 
 __all__ = [
-    "MAX_BODY_BYTES",
     "MAX_FIELD_LEN",
+    "SCENE_MAX_BODY_BYTES",
     "SCENE_MAX_IN_FLIGHT",
     "SCENE_MAX_SECONDS",
     "SCENE_RATE_LIMIT_MAX",
@@ -101,6 +100,18 @@ _ROUTE_METHODS = ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 #: route's BP-3 bound).
 MAX_FIELD_LEN = 200
 
+#: Raw request-body ceiling for THIS route (DB-086 (d) / M5-T111 G5 Finding 4). Sized to the
+#: scene request contract's OWN caps, NOT the shared 256 KiB proposal_validation.MAX_BODY_BYTES
+#: (which stays 256 KiB and is untouched). A maximal legitimate scene body is dominated by the
+#: proposed_massing block at ``app.scenario.proposal`` caps: MAX_TOTAL_OUTLINE_POSITIONS (20,000)
+#: coordinate pairs + MAX_EXTERIOR_WALLS (4,000) wall records + MAX_LEVELS (500) level records,
+#: plus a lot_ring capped at MAX_OUTLINE_VERTICES (1,000) and a small context. That maximal body
+#: MEASURES ~811,225 bytes (~792 KiB, [OBSERVED]; see the producer report + the measurement test),
+#: which the shared 256 KiB ceiling would WRONGLY refuse (413). 2 MiB admits it with ~2.6x headroom
+#: for the context and schema evolution while keeping the per-slot memory bounded; enforced BEFORE
+#: the body is buffered past it via the reused bounded-streaming path (the 413 shape is unchanged).
+SCENE_MAX_BODY_BYTES = 2 * 1024 * 1024  # 2 MiB
+
 #: Per-request wall-clock budget for the whole off-event-loop assembly (DB-061 (i)). Over it,
 #: the awaited job is cancelled and a typed 504 is returned to the client - never a partial
 #: scene; the worker thread itself cannot be force-killed and runs to completion, bounded by the
@@ -118,10 +129,14 @@ SCENE_RATE_LIMIT_WINDOW_S = 60.0
 #: evicted. The durable per-caller key (the authenticated principal) arrives with PKT-H.
 SCENE_RATE_LIMIT_MAX_KEYS = 4096
 
-#: Bounded in-flight assembly jobs (DB-082 (b)). A slot is held from job start until the worker
-#: THREAD returns (never at the deadline cancel), so deadline-abandoned threads cannot pile up.
-#: Kept below anyio's 40-thread default pool so one saturated route cannot starve it.
-SCENE_MAX_IN_FLIGHT = 16
+#: Bounded in-flight assembly jobs (DB-082 (b) / DB-088 (a)). A slot is held from job start until
+#: the worker THREAD returns (never at the deadline cancel), so deadline-abandoned threads cannot
+#: pile up. Sized with export (12) and dxf-import (4) so the SUMMED caps (8 + 12 + 4 = 24) stay
+#: UNDER anyio's 40-token default thread pool with 16 tokens of headroom for the app's other
+#: run_sync users; scene gets FEWER slots than export because its per-slot memory is heavier (a
+#: 2 MiB ceiling body parsed to a deep coordinate object graph). The summed-under-the-pool
+#: invariant is asserted by tests/resilience/test_rate_limit.py.
+SCENE_MAX_IN_FLIGHT = 8
 
 #: The shared limiter + job-slot instances for this route (per-route state; the CLASS is shared
 #: across the three D-087 routes). Exposed via getters that tests reset/tighten.
@@ -213,7 +228,7 @@ def _payload_too_large(correlation_id: str) -> JSONResponse:
         413,
         {
             "state": "payload_too_large",
-            "message": f"request body exceeds the maximum of {MAX_BODY_BYTES} bytes",
+            "message": f"request body exceeds the maximum of {SCENE_MAX_BODY_BYTES} bytes",
             "correlation_id": correlation_id,
         },
         correlation_id,
@@ -298,10 +313,10 @@ async def scene_endpoint(request: Request) -> JSONResponse:
 
     # Bounded body - raw size ceiling BEFORE parsing, via the reused bounded-streaming accumulator.
     declared_length = _declared_content_length(request)
-    if declared_length is not None and declared_length > MAX_BODY_BYTES:
+    if declared_length is not None and declared_length > SCENE_MAX_BODY_BYTES:
         logger.info("scene_v1 payload_too_large declared correlation_id=%s", correlation_id)
         return _payload_too_large(correlation_id)
-    raw, too_large = await _read_body_within_ceiling(request.stream(), MAX_BODY_BYTES)
+    raw, too_large = await _read_body_within_ceiling(request.stream(), SCENE_MAX_BODY_BYTES)
     if too_large:
         logger.info("scene_v1 payload_too_large streamed correlation_id=%s", correlation_id)
         return _payload_too_large(correlation_id)

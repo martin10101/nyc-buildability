@@ -29,7 +29,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app.api.v1 import export_api as mod
-from app.api.v1.export_api import EXPORT_STATUS_STATE_MATRIX, MAX_BODY_BYTES, router
+from app.api.v1.export_api import EXPORT_MAX_BODY_BYTES, EXPORT_STATUS_STATE_MATRIX, router
 from app.cad import export_service
 from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
 
@@ -145,16 +145,24 @@ def test_no_path_in_the_throwaway_app_openapi(mounted_app):
     assert not any(p.startswith("/api/v1/export") for p in schema_paths)
 
 
-#: Names of constructors a route-local limiter would use for its state table.
-_LIMITER_CONTAINER_CALLS = frozenset({"dict", "defaultdict", "OrderedDict", "deque"})
+#: Names of MUTABLE constructors a route-local limiter would use for its state table. Includes
+#: ``Counter``/``set``/``list`` (DB-088 (e)) on top of the original dict/deque family; ``frozenset``
+#: is deliberately EXCLUDED - it is immutable and is the legitimate shape of the route modules'
+#: *_STATUS_STATE_MATRIX and _TRUE_TOKENS constants (never a limiter's mutable state).
+_LIMITER_CONTAINER_CALLS = frozenset(
+    {"dict", "defaultdict", "OrderedDict", "deque", "Counter", "set", "list"}
+)
 
 
 def _module_level_limiter_containers(src: str) -> list[str]:
-    """AST guard (G3 A2 / G4 gap 4): return the target names of any MODULE-LEVEL assignment whose
-    value is a dict literal or a ``dict``/``defaultdict``/``OrderedDict``/``deque`` construction -
-    the shape a reintroduced route-local limiter would take (a *plain dict* the old substring scan
-    missed). The shared limiter keeps ALL such state inside app.resilience.rate_limit, so a
-    hardened route module must have NONE."""
+    """AST guard (G3 A2 / G4 gap 4 / DB-088 (e)): return the target names of any MODULE-LEVEL
+    assignment whose value is the shape a reintroduced route-local limiter would take - a dict or
+    set literal, an EMPTY list literal (``[]``, the empty-state shape; a *non-empty* constant list
+    such as ``__all__``/``_ROUTE_METHODS`` is left alone), or a ``dict``/``defaultdict``/
+    ``OrderedDict``/``deque``/``Counter``/``set``/``list`` construction (the plain-dict AND the
+    list/set/Counter forms the substring scan missed). The shared limiter keeps ALL such state
+    inside app.resilience.rate_limit, so a hardened route module must have NONE. ``frozenset``
+    constants (the status matrices, _TRUE_TOKENS) are immutable and are NOT flagged."""
     found: list[str] = []
     for node in ast.parse(src).body:  # module scope only
         if isinstance(node, ast.Assign):
@@ -163,7 +171,11 @@ def _module_level_limiter_containers(src: str) -> list[str]:
             targets, value = [node.target], node.value
         else:
             continue
-        is_container = isinstance(value, ast.Dict)
+        # dict/set literals are always mutable state; an EMPTY list literal is empty limiter state
+        # (a non-empty list literal is a constant like __all__/_ROUTE_METHODS and is left alone).
+        is_container = isinstance(value, (ast.Dict, ast.Set))
+        if isinstance(value, ast.List) and not value.elts:
+            is_container = True
         if isinstance(value, ast.Call):
             fn = value.func
             name = getattr(fn, "id", None) or getattr(fn, "attr", None)
@@ -171,6 +183,24 @@ def _module_level_limiter_containers(src: str) -> list[str]:
         if is_container:
             found += [t.id for t in targets if isinstance(t, ast.Name)]
     return found
+
+
+def test_ast_guard_also_catches_list_set_counter_limiters():
+    """DB-088 (e): the AST no-local-limiter guard catches a module-level list / set / Counter
+    limiter (not only the dict/deque family), while the route modules' legitimate constants
+    (non-empty list literals, frozenset matrices) are NOT flagged. Mutation (the OLD guard,
+    dict/deque only): the list/set/Counter cases return [] and this reddens - recorded."""
+    assert _module_level_limiter_containers("_log = []\n") == ["_log"]
+    assert _module_level_limiter_containers("_log = list()\n") == ["_log"]
+    assert _module_level_limiter_containers("_seen = set()\n") == ["_seen"]
+    assert _module_level_limiter_containers("_seen = {'a'}\n") == ["_seen"]
+    assert _module_level_limiter_containers("_c = Counter()\n") == ["_c"]
+    assert _module_level_limiter_containers(
+        "import collections\n_c = collections.Counter()\n"
+    ) == ["_c"]
+    assert _module_level_limiter_containers("__all__ = ['a', 'b']\n") == []
+    assert _module_level_limiter_containers("_ROUTE_METHODS = ['GET', 'POST']\n") == []
+    assert _module_level_limiter_containers("_M = frozenset({(1, 2)})\n") == []
 
 
 def test_route_uses_the_shared_limiter_and_slots_only():
@@ -227,10 +257,43 @@ def test_filename_falls_back_to_correlation_id_when_token_empties(client):
 # --------------------------------------------------------------------------- #
 
 def test_413_oversized_body(client):
-    resp = client.post(_URL, content=b"x" * (MAX_BODY_BYTES + 1), headers=_JSON_HEADERS)
+    resp = client.post(_URL, content=b"x" * (EXPORT_MAX_BODY_BYTES + 1), headers=_JSON_HEADERS)
     assert _pair(resp) == (413, "payload_too_large")
     assert _pair(resp) in EXPORT_STATUS_STATE_MATRIX
     assert resp.headers.get("X-Correlation-ID")
+
+
+def _maximal_export_body() -> dict:
+    """An export request at the writer contract caps: two rings at the DXF ring cap
+    (export_service._FORMAT_RING_CAP['dxf'] = 10,000 vertices) plus MAX_FLOORS (2,000) floor
+    heights. Maximal in SIZE; the geometry is a self-touching zig so the writer refuses it - the
+    ceiling's contract is the SIZE gate; a legitimate 200 is the per-format file test."""
+    ring = [[985000.0 + i * 0.5, 195000.0 + i * 0.5] for i in range(10000)]
+    return {"format": "dxf", "source": "proposed", "lot_ring": ring, "building_ring": ring,
+            "floor_heights": [10.0] * 2000, "address": "A" * 120, "bbl": "1-00123-0045",
+            "generated_at": "2026-09-24T00:00:00Z", "generator_version": "site-plan-writer/1.0.0"}
+
+
+def test_ceiling_admits_the_contract_maximal_export_request():
+    """AS-1: the ceiling is sized to admit the contract-maximal export and the OLD shared 256 KiB
+    ceiling would refuse it. A maximal-at-caps body serializes to well over 256 KiB yet at or under
+    the new ceiling. Mutation (the old 256 KiB constant): the ceiling would refuse this legitimate
+    maximum (413) before the writer's own vertex cap - recorded."""
+    import json
+
+    body = _maximal_export_body()
+    size = len(json.dumps(body, ensure_ascii=False, allow_nan=False).encode("utf-8"))
+    assert size > 256 * 1024  # the OLD shared 256 KiB ceiling would WRONGLY refuse this
+    assert size <= EXPORT_MAX_BODY_BYTES  # the NEW route ceiling admits it
+
+
+def test_maximal_sized_export_body_is_admitted_past_the_ceiling(client):
+    """AS-1: a body at the maximal legitimate SIZE is admitted PAST the 413 size gate through the
+    real route (it reaches the writer; the geometry then yields a typed refusal, but NEVER a 413).
+    Mutation (set the ceiling back to 256 KiB): this body would 413 - recorded."""
+    resp = client.post(_URL, json=_maximal_export_body())
+    assert resp.status_code != 413  # admitted past the size ceiling
+    assert _pair(resp) in EXPORT_STATUS_STATE_MATRIX
 
 
 @pytest.mark.parametrize("raw", [b"", b"   ", b"not json", b"[]", b'"a string"'])

@@ -51,7 +51,6 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse, Response
 
 from app.api.v1.proposal_validation import (
-    MAX_BODY_BYTES,
     _bounded_message,
     _declared_content_length,
     _read_body_within_ceiling,
@@ -68,9 +67,9 @@ from app.resilience.rate_limit import (
 
 __all__ = [
     "EXPORT_DEADLINE_SECONDS",
+    "EXPORT_MAX_BODY_BYTES",
     "EXPORT_MAX_IN_FLIGHT",
     "EXPORT_STATUS_STATE_MATRIX",
-    "MAX_BODY_BYTES",
     "RATE_LIMIT_MAX_KEYS",
     "RATE_LIMIT_MAX_REQUESTS",
     "RATE_LIMIT_WINDOW_SECONDS",
@@ -88,6 +87,16 @@ router = APIRouter(prefix="/api/v1", tags=["export"])
 #: existence. When ENABLED only POST does work; any other method is a genuine 405.
 _ROUTE_METHODS = ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 
+#: Raw request-body ceiling for THIS route (DB-086 (d) / M5-T111 G5 Finding 4). Sized to the
+#: export request contract's OWN caps, NOT the shared 256 KiB proposal_validation.MAX_BODY_BYTES
+#: (which stays 256 KiB and is untouched). A maximal legitimate export is two rings at the writer
+#: cap (``export_service._FORMAT_RING_CAP`` = 10,000 vertices for dxf/glb) plus MAX_FLOORS (2,000)
+#: floor heights; that body MEASURES ~452,336 bytes (~442 KiB, [OBSERVED]; see the producer report
+#: + the measurement test), which the shared 256 KiB ceiling would WRONGLY refuse (413) BEFORE the
+#: writer's own vertex cap. 1 MiB admits it with ~2.3x headroom; enforced BEFORE the body is
+#: buffered past it via the reused bounded-streaming path (the 413 shape is unchanged).
+EXPORT_MAX_BODY_BYTES = 1 * 1024 * 1024  # 1 MiB
+
 #: Per-request wall-clock deadline (seconds). The writer runs off the event loop and is
 #: abandoned by the deadline past this bound -> a typed 503, never a partial file.
 EXPORT_DEADLINE_SECONDS = 15.0
@@ -99,10 +108,13 @@ RATE_LIMIT_WINDOW_SECONDS = 60.0
 #: Hard ceiling on distinct tracked caller keys (bounds limiter memory against key spraying).
 RATE_LIMIT_MAX_KEYS = 8192
 
-#: Bounded in-flight writer jobs (DB-082 (b)). A slot is held from job start until the worker
-#: THREAD returns (never at the deadline cancel), so deadline-abandoned writer threads cannot
-#: pile up. Kept below anyio's 40-thread default pool so one saturated route cannot starve it.
-EXPORT_MAX_IN_FLIGHT = 16
+#: Bounded in-flight writer jobs (DB-082 (b) / DB-088 (a)). A slot is held from job start until
+#: the worker THREAD returns (never at the deadline cancel), so deadline-abandoned writer threads
+#: cannot pile up. Sized with scene (8) and dxf-import (4) so the SUMMED caps (8 + 12 + 4 = 24)
+#: stay UNDER anyio's 40-token default thread pool with 16 tokens of headroom for the app's other
+#: run_sync users; export gets the MOST of the three because its per-slot memory is the lightest
+#: (a 1 MiB ceiling; the writer is CPU-bound, not memory-bound). See tests/resilience.
+EXPORT_MAX_IN_FLIGHT = 12
 
 #: The shared limiter + job-slot instances for this route (per-route state; the CLASS is shared
 #: across the three D-087 routes). Exposed via getters that tests reset/tighten.
@@ -242,18 +254,18 @@ async def export_endpoint(request: Request) -> Response:
 
     # Guard 3: raw body size ceiling BEFORE parsing, via BOUNDED STREAMING accumulation.
     declared_length = _declared_content_length(request)
-    if declared_length is not None and declared_length > MAX_BODY_BYTES:
+    if declared_length is not None and declared_length > EXPORT_MAX_BODY_BYTES:
         logger.info("export_v1 payload_too_large declared=%d correlation_id=%s",
                     declared_length, correlation_id)
         return _error(413, "payload_too_large",
-                      f"request body exceeds the maximum of {MAX_BODY_BYTES} bytes",
+                      f"request body exceeds the maximum of {EXPORT_MAX_BODY_BYTES} bytes",
                       correlation_id)
-    raw, too_large = await _read_body_within_ceiling(request.stream(), MAX_BODY_BYTES)
+    raw, too_large = await _read_body_within_ceiling(request.stream(), EXPORT_MAX_BODY_BYTES)
     if too_large:
         logger.info("export_v1 payload_too_large streamed_over_ceiling correlation_id=%s",
                     correlation_id)
         return _error(413, "payload_too_large",
-                      f"request body exceeds the maximum of {MAX_BODY_BYTES} bytes",
+                      f"request body exceeds the maximum of {EXPORT_MAX_BODY_BYTES} bytes",
                       correlation_id)
 
     if not raw or not raw.strip():

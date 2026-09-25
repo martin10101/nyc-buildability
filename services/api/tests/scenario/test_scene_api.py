@@ -31,7 +31,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app.api.v1 import scene_api as mod
-from app.api.v1.scene_api import MAX_BODY_BYTES, SCENE_STATUS_STATE_MATRIX, router
+from app.api.v1.scene_api import SCENE_MAX_BODY_BYTES, SCENE_STATUS_STATE_MATRIX, router
 from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
 from app.connectors.building_footprints_arcgis import (
     ContextBuilding,
@@ -237,16 +237,24 @@ def test_no_path_in_the_throwaway_app_openapi(mounted_app):
 # ---------------------------------------------------------------------------
 
 
-#: Names of constructors a route-local limiter would use for its state table.
-_LIMITER_CONTAINER_CALLS = frozenset({"dict", "defaultdict", "OrderedDict", "deque"})
+#: Names of MUTABLE constructors a route-local limiter would use for its state table. Includes
+#: ``Counter``/``set``/``list`` (DB-088 (e)) on top of the original dict/deque family; ``frozenset``
+#: is deliberately EXCLUDED - it is immutable and is the legitimate shape of the route modules'
+#: *_STATUS_STATE_MATRIX and _TRUE_TOKENS constants (never a limiter's mutable state).
+_LIMITER_CONTAINER_CALLS = frozenset(
+    {"dict", "defaultdict", "OrderedDict", "deque", "Counter", "set", "list"}
+)
 
 
 def _module_level_limiter_containers(src: str) -> list[str]:
-    """AST guard (G3 A2 / G4 gap 4): return the target names of any MODULE-LEVEL assignment whose
-    value is a dict literal or a ``dict``/``defaultdict``/``OrderedDict``/``deque`` construction -
-    the shape a reintroduced route-local limiter would take (a *plain dict* the old substring scan
-    missed). The shared limiter keeps ALL such state inside app.resilience.rate_limit, so a
-    hardened route module must have NONE."""
+    """AST guard (G3 A2 / G4 gap 4 / DB-088 (e)): return the target names of any MODULE-LEVEL
+    assignment whose value is the shape a reintroduced route-local limiter would take - a dict or
+    set literal, an EMPTY list literal (``[]``, the empty-state shape; a *non-empty* constant list
+    such as ``__all__``/``_ROUTE_METHODS`` is left alone), or a ``dict``/``defaultdict``/
+    ``OrderedDict``/``deque``/``Counter``/``set``/``list`` construction (the plain-dict AND the
+    list/set/Counter forms the substring scan missed). The shared limiter keeps ALL such state
+    inside app.resilience.rate_limit, so a hardened route module must have NONE. ``frozenset``
+    constants (the status matrices, _TRUE_TOKENS) are immutable and are NOT flagged."""
     found: list[str] = []
     for node in ast.parse(src).body:  # module scope only
         if isinstance(node, ast.Assign):
@@ -255,7 +263,11 @@ def _module_level_limiter_containers(src: str) -> list[str]:
             targets, value = [node.target], node.value
         else:
             continue
-        is_container = isinstance(value, ast.Dict)
+        # dict/set literals are always mutable state; an EMPTY list literal is empty limiter state
+        # (a non-empty list literal is a constant like __all__/_ROUTE_METHODS and is left alone).
+        is_container = isinstance(value, (ast.Dict, ast.Set))
+        if isinstance(value, ast.List) and not value.elts:
+            is_container = True
         if isinstance(value, ast.Call):
             fn = value.func
             name = getattr(fn, "id", None) or getattr(fn, "attr", None)
@@ -263,6 +275,27 @@ def _module_level_limiter_containers(src: str) -> list[str]:
         if is_container:
             found += [t.id for t in targets if isinstance(t, ast.Name)]
     return found
+
+
+def test_ast_guard_also_catches_list_set_counter_limiters():
+    """DB-088 (e): the AST no-local-limiter guard catches a module-level list / set / Counter
+    limiter (not only the dict/deque family). Each reintroduction shape is flagged, while the
+    route modules' legitimate constants (non-empty list literals, frozenset matrices) are NOT.
+    Mutation (the OLD guard, dict/deque only): the list/set/Counter cases return [] and this
+    reddens - recorded in the report."""
+    # Reintroduction shapes a list/set/Counter limiter would take -> all flagged.
+    assert _module_level_limiter_containers("_log = []\n") == ["_log"]
+    assert _module_level_limiter_containers("_log = list()\n") == ["_log"]
+    assert _module_level_limiter_containers("_seen = set()\n") == ["_seen"]
+    assert _module_level_limiter_containers("_seen = {'a'}\n") == ["_seen"]
+    assert _module_level_limiter_containers("_c = Counter()\n") == ["_c"]
+    assert _module_level_limiter_containers(
+        "import collections\n_c = collections.Counter()\n"
+    ) == ["_c"]
+    # Legitimate constants the route modules actually use -> NOT flagged (no false positive).
+    assert _module_level_limiter_containers("__all__ = ['a', 'b']\n") == []
+    assert _module_level_limiter_containers("_ROUTE_METHODS = ['GET', 'POST']\n") == []
+    assert _module_level_limiter_containers("_M = frozenset({(1, 2)})\n") == []
 
 
 def test_route_uses_the_shared_limiter_and_slots_only():
@@ -290,8 +323,56 @@ def test_route_uses_the_shared_limiter_and_slots_only():
 
 
 def test_413_oversized_body(client):
-    resp = client.post(_URL, content=b"x" * (MAX_BODY_BYTES + 1), headers=_JSON_HEADERS)
+    resp = client.post(_URL, content=b"x" * (SCENE_MAX_BODY_BYTES + 1), headers=_JSON_HEADERS)
     assert _pair(resp) == (413, "payload_too_large")
+    assert _pair(resp) in SCENE_STATUS_STATE_MATRIX
+
+
+def _maximal_scene_body() -> dict:
+    """A scene request at the proposed_massing contract caps (app.scenario.proposal): 20,000 total
+    outline positions (footprint 1,000 + 500 levels x 38), 4,000 exterior walls and a lot_ring at
+    MAX_OUTLINE_VERTICES (1,000). Structurally maximal in SIZE (the geometry is degenerate, so the
+    assembler will refuse it - the ceiling's contract is the SIZE gate, tested here; a legitimate
+    non-degenerate request is the happy-path 200 test)."""
+    foot = 1000
+    n_levels = 500
+    per_level = (20000 - foot) // n_levels  # 38
+    foot_ring = [[1000000.0 + i, 200000.0 + i] for i in range(foot)]
+    levels = [
+        {"level_index": li, "floor_count": 1, "floor_to_floor_ft": 12.0,
+         "outline": {"srid": 2263, "vertices": [[1000000.0 + j, 200000.0 + j]
+                                                 for j in range(per_level)]}}
+        for li in range(n_levels)
+    ]
+    walls = [{"id": f"W{i}", "start_vertex_index": i % foot, "end_vertex_index": (i + 1) % foot}
+             for i in range(4000)]
+    pm = {"outline": {"srid": 2263, "vertices": foot_ring}, "levels": levels,
+          "exterior_walls": walls,
+          "provenance": {"author": "a" * 64, "editor_version": "v1.0.0", "kind": "proposed"}}
+    lot = [[1000000.0 + i, 200000.0 + i] for i in range(1000)]
+    return {"lot_ring": lot, "proposed_massing": pm,
+            "context": {"envelope": [1020160, 267240, 1020230, 267325]}}
+
+
+def test_ceiling_admits_the_contract_maximal_scene_request():
+    """AS-1: the ceiling is sized to admit the contract-maximal scene request and the OLD shared
+    256 KiB ceiling would refuse it. A maximal-at-caps body serializes to well over 256 KiB yet at
+    or under the new ceiling - so it fits the new ceiling but NOT the old one. Mutation (the old
+    256 KiB constant): the ceiling would refuse this legitimate maximum (413) - recorded."""
+    import json
+
+    body = _maximal_scene_body()
+    size = len(json.dumps(body, ensure_ascii=False, allow_nan=False).encode("utf-8"))
+    assert size > 256 * 1024  # the OLD shared 256 KiB ceiling would WRONGLY refuse this
+    assert size <= SCENE_MAX_BODY_BYTES  # the NEW route ceiling admits it
+
+
+def test_maximal_sized_scene_body_is_admitted_past_the_ceiling(client):
+    """AS-1: a body at the maximal legitimate SIZE is admitted PAST the 413 size gate through the
+    real route (it reaches the assembler; the degenerate geometry then yields a typed refusal, but
+    NEVER a 413). Mutation (set the ceiling back to 256 KiB): this body would 413 - recorded."""
+    resp = client.post(_URL, json=_maximal_scene_body())
+    assert resp.status_code != 413  # admitted past the size ceiling
     assert _pair(resp) in SCENE_STATUS_STATE_MATRIX
 
 
@@ -551,7 +632,7 @@ def test_every_emitted_pair_is_in_the_matrix(client, monkeypatch):
     seen = set()
     seen.add(_pair(client.post(_URL, json=_body())))                       # 200
     seen.add(_pair(client.post(_URL, content=b"", headers=_JSON_HEADERS)))  # 422
-    seen.add(_pair(client.post(_URL, content=b"x" * (MAX_BODY_BYTES + 1),
+    seen.add(_pair(client.post(_URL, content=b"x" * (SCENE_MAX_BODY_BYTES + 1),
                                headers=_JSON_HEADERS)))                     # 413
     for pair in seen:
         assert pair in SCENE_STATUS_STATE_MATRIX

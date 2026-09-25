@@ -57,7 +57,6 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from app.api.v1.proposal_validation import (
-    MAX_BODY_BYTES,
     _bounded_message,
     _declared_content_length,
     _read_body_within_ceiling,
@@ -83,9 +82,9 @@ from app.resilience.rate_limit import (
 
 __all__ = [
     "DXF_IMPORT_ENABLED_ENV_VAR",
+    "DXF_IMPORT_MAX_BODY_BYTES",
     "DXF_IMPORT_MAX_IN_FLIGHT",
     "DXF_IMPORT_STATUS_STATE_MATRIX",
-    "MAX_BODY_BYTES",
     "RATE_LIMIT_MAX_KEYS",
     "RATE_LIMIT_MAX_REQUESTS",
     "RATE_LIMIT_WINDOW_SECONDS",
@@ -111,10 +110,23 @@ _ROUTE_METHODS = ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 DXF_IMPORT_ENABLED_ENV_VAR = "DXF_IMPORT_ENABLED"
 _TRUE_TOKENS = frozenset({"1", "true", "yes", "on"})
 
+#: Raw upload byte ceiling for THIS route (DB-086 (d) / M5-T111 G5 Finding 4). Sized to REAL
+#: architect ASCII DXF files, NOT the shared 256 KiB proposal_validation.MAX_BODY_BYTES (which
+#: stays 256 KiB and is untouched). The architect-drawing corpus records no DXF byte sizes
+#: (only TIFF/PDF masters; docs/research/architect-drawing-corpus-2026-09.md), so this is sized
+#: from the DOCUMENTED real-file range 1-20 MB (DB-086 d): 20 MiB (20,971,520) covers a 20 MB
+#: (decimal) file with headroom and stays under the reader's own 64 MiB hard clamp
+#: (dxf_reader._MAX_LIMITS). The shared 256 KiB ceiling would refuse EVERY real 1-20 MB DXF (413,
+#: fail-closed) before the reader ever runs. NOTE: the reader's OTHER DxfLimits fields keep their
+#: defaults; max_lines=2,000,000 (dxf_reader.py, READ-ONLY here) can bind before max_bytes for a
+#: vertex-dense DXF - reported as a DISCOVERY (see the producer report).
+DXF_IMPORT_MAX_BODY_BYTES = 20 * 1024 * 1024  # 20 MiB
+
 #: The FIXED, reviewed DxfLimits passed to read_dxf. Never built from untrusted input
-#: (DB-057 (k), DB-070 (d)); the reader additionally hard-clamps every field. max_bytes
-#: matches the route body ceiling so the two size bounds agree.
-_IMPORT_DXF_LIMITS = DxfLimits(max_bytes=MAX_BODY_BYTES)
+#: (DB-057 (k), DB-070 (d)); the reader additionally hard-clamps every field. max_bytes is raised
+#: WITH the route body ceiling (DB-086 d) so the two size bounds agree; every other field keeps
+#: its reviewed DxfLimits default (dxf_reader.py is read-only in this packet).
+_IMPORT_DXF_LIMITS = DxfLimits(max_bytes=DXF_IMPORT_MAX_BODY_BYTES)
 
 #: Per-request wall-clock deadline for the off-event-loop read job (DB-070 (e)). The
 #: read is linear and input-bounded; this bounds the caller's wait. A Python thread is
@@ -128,10 +140,13 @@ RATE_LIMIT_WINDOW_SECONDS = 60.0
 #: Hard ceiling on distinct tracked caller keys (bounds limiter memory against key spraying).
 RATE_LIMIT_MAX_KEYS = 8192
 
-#: Bounded in-flight read jobs (DB-082 (b)). A slot is held from job start until the worker
-#: THREAD returns (never at the deadline cancel), so deadline-abandoned read threads cannot pile
-#: up. Kept below anyio's 40-thread default pool so one saturated route cannot starve it.
-DXF_IMPORT_MAX_IN_FLIGHT = 16
+#: Bounded in-flight read jobs (DB-082 (b) / DB-088 (a)). A slot is held from job start until the
+#: worker THREAD returns (never at the deadline cancel), so deadline-abandoned read threads cannot
+#: pile up. Sized with scene (8) and export (12) so the SUMMED caps (8 + 12 + 4 = 24) stay UNDER
+#: anyio's 40-token default thread pool with 16 tokens of headroom for the app's other run_sync
+#: users; dxf-import gets the FEWEST because its per-slot memory is the heaviest by far (a 20 MiB
+#: upload buffer per in-flight read). See tests/resilience/test_rate_limit.py.
+DXF_IMPORT_MAX_IN_FLIGHT = 4
 
 #: The shared limiter + job-slot instances for this route (per-route state; the CLASS is shared
 #: across the three D-087 routes). Exposed via getters that tests reset/tighten.
@@ -281,18 +296,20 @@ async def _read_body_and_run(request: Request, correlation_id: str):
     Returns a reader result (DxfReadResult) or a JSONResponse to short-circuit on. The flag gate
     and the per-caller rate limit run in the HANDLER before this (DB-081 (b))."""
     declared = _declared_content_length(request)
-    if declared is not None and declared > MAX_BODY_BYTES:
+    if declared is not None and declared > DXF_IMPORT_MAX_BODY_BYTES:
         logger.info("dxf_import payload_too_large declared correlation_id=%s", correlation_id)
         return _error(
             413, "payload_too_large",
-            f"request body exceeds the maximum of {MAX_BODY_BYTES} bytes", correlation_id,
+            f"request body exceeds the maximum of {DXF_IMPORT_MAX_BODY_BYTES} bytes",
+            correlation_id,
         )
-    raw, too_large = await _read_body_within_ceiling(request.stream(), MAX_BODY_BYTES)
+    raw, too_large = await _read_body_within_ceiling(request.stream(), DXF_IMPORT_MAX_BODY_BYTES)
     if too_large:
         logger.info("dxf_import payload_too_large streamed correlation_id=%s", correlation_id)
         return _error(
             413, "payload_too_large",
-            f"request body exceeds the maximum of {MAX_BODY_BYTES} bytes", correlation_id,
+            f"request body exceeds the maximum of {DXF_IMPORT_MAX_BODY_BYTES} bytes",
+            correlation_id,
         )
 
     sniff = sniff_dxf_media(request.headers.get("content-type"), raw)

@@ -33,8 +33,8 @@ from fastapi.testclient import TestClient
 from app.api.v1 import dxf_import_api as mod
 from app.api.v1.dxf_import_api import (
     DXF_IMPORT_ENABLED_ENV_VAR,
+    DXF_IMPORT_MAX_BODY_BYTES,
     DXF_IMPORT_STATUS_STATE_MATRIX,
-    MAX_BODY_BYTES,
     router,
 )
 from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
@@ -193,16 +193,24 @@ def test_no_path_in_the_throwaway_app_openapi(mounted_app):
     assert not any(p.startswith("/api/v1/dxf-import") for p in schema_paths)
 
 
-#: Names of constructors a route-local limiter would use for its state table.
-_LIMITER_CONTAINER_CALLS = frozenset({"dict", "defaultdict", "OrderedDict", "deque"})
+#: Names of MUTABLE constructors a route-local limiter would use for its state table. Includes
+#: ``Counter``/``set``/``list`` (DB-088 (e)) on top of the original dict/deque family; ``frozenset``
+#: is deliberately EXCLUDED - it is immutable and is the legitimate shape of the route modules'
+#: *_STATUS_STATE_MATRIX and _TRUE_TOKENS constants (never a limiter's mutable state).
+_LIMITER_CONTAINER_CALLS = frozenset(
+    {"dict", "defaultdict", "OrderedDict", "deque", "Counter", "set", "list"}
+)
 
 
 def _module_level_limiter_containers(src: str) -> list[str]:
-    """AST guard (G3 A2 / G4 gap 4): return the target names of any MODULE-LEVEL assignment whose
-    value is a dict literal or a ``dict``/``defaultdict``/``OrderedDict``/``deque`` construction -
-    the shape a reintroduced route-local limiter would take (a *plain dict* the old substring scan
-    missed). The shared limiter keeps ALL such state inside app.resilience.rate_limit, so a
-    hardened route module must have NONE."""
+    """AST guard (G3 A2 / G4 gap 4 / DB-088 (e)): return the target names of any MODULE-LEVEL
+    assignment whose value is the shape a reintroduced route-local limiter would take - a dict or
+    set literal, an EMPTY list literal (``[]``, the empty-state shape; a *non-empty* constant list
+    such as ``__all__``/``_ROUTE_METHODS`` is left alone), or a ``dict``/``defaultdict``/
+    ``OrderedDict``/``deque``/``Counter``/``set``/``list`` construction (the plain-dict AND the
+    list/set/Counter forms the substring scan missed). The shared limiter keeps ALL such state
+    inside app.resilience.rate_limit, so a hardened route module must have NONE. ``frozenset``
+    constants (the status matrices, _TRUE_TOKENS) are immutable and are NOT flagged."""
     found: list[str] = []
     for node in ast.parse(src).body:  # module scope only
         if isinstance(node, ast.Assign):
@@ -211,7 +219,11 @@ def _module_level_limiter_containers(src: str) -> list[str]:
             targets, value = [node.target], node.value
         else:
             continue
-        is_container = isinstance(value, ast.Dict)
+        # dict/set literals are always mutable state; an EMPTY list literal is empty limiter state
+        # (a non-empty list literal is a constant like __all__/_ROUTE_METHODS and is left alone).
+        is_container = isinstance(value, (ast.Dict, ast.Set))
+        if isinstance(value, ast.List) and not value.elts:
+            is_container = True
         if isinstance(value, ast.Call):
             fn = value.func
             name = getattr(fn, "id", None) or getattr(fn, "attr", None)
@@ -219,6 +231,24 @@ def _module_level_limiter_containers(src: str) -> list[str]:
         if is_container:
             found += [t.id for t in targets if isinstance(t, ast.Name)]
     return found
+
+
+def test_ast_guard_also_catches_list_set_counter_limiters():
+    """DB-088 (e): the AST no-local-limiter guard catches a module-level list / set / Counter
+    limiter (not only the dict/deque family), while the route modules' legitimate constants
+    (non-empty list literals, frozenset matrices) are NOT flagged. Mutation (the OLD guard,
+    dict/deque only): the list/set/Counter cases return [] and this reddens - recorded."""
+    assert _module_level_limiter_containers("_log = []\n") == ["_log"]
+    assert _module_level_limiter_containers("_log = list()\n") == ["_log"]
+    assert _module_level_limiter_containers("_seen = set()\n") == ["_seen"]
+    assert _module_level_limiter_containers("_seen = {'a'}\n") == ["_seen"]
+    assert _module_level_limiter_containers("_c = Counter()\n") == ["_c"]
+    assert _module_level_limiter_containers(
+        "import collections\n_c = collections.Counter()\n"
+    ) == ["_c"]
+    assert _module_level_limiter_containers("__all__ = ['a', 'b']\n") == []
+    assert _module_level_limiter_containers("_ROUTE_METHODS = ['GET', 'POST']\n") == []
+    assert _module_level_limiter_containers("_M = frozenset({(1, 2)})\n") == []
 
 
 def test_route_uses_the_shared_limiter_and_slots_only():
@@ -261,39 +291,63 @@ def test_no_persistence_state_between_requests(client):
 
 # --------------------------------------------------------------------------- AS-1 (b) ceiling
 
+# The real ceiling is 20 MiB (sized for real 1-20 MB architect DXF files, DB-086 d). The
+# enforcement MECHANISM is proven at a SMALL monkeypatched ceiling below (no 20 MiB test bodies);
+# the REAL ceiling value + the raised reader clamp are proven by the arithmetic test that follows.
+_SMALL_CEILING = 4096
 
-def test_over_ceiling_upload_refused_413(client):
-    big = b"0\r\nSECTION\r\n" + b"9" * (MAX_BODY_BYTES + 1)
+
+def test_dxf_ceiling_sized_for_real_files_and_raises_the_reader_clamp():
+    """AS-1: the DXF import ceiling is sized for REAL architect files (documented 1-20 MB,
+    DB-086 d), a real 20 MB (decimal) file fits, the reader's DxfLimits.max_bytes is RAISED with
+    it, and it stays under the reader's own hard clamp (dxf_reader is read-only). Mutation (revert
+    the ceiling to the shared 256 KiB): a real 1-20 MB file would 413 - recorded."""
+    from app.drawings.dxf_reader import _LIMIT_CEILINGS
+
+    assert DXF_IMPORT_MAX_BODY_BYTES >= 20 * 1000 * 1000  # a real 20 MB (decimal) file fits
+    assert DXF_IMPORT_MAX_BODY_BYTES > 256 * 1024  # the OLD shared 256 KiB refuses every real file
+    assert mod._IMPORT_DXF_LIMITS.max_bytes == DXF_IMPORT_MAX_BODY_BYTES  # reader clamp raised too
+    assert DXF_IMPORT_MAX_BODY_BYTES <= _LIMIT_CEILINGS["max_bytes"]  # under the reader hard clamp
+
+
+def test_over_ceiling_upload_refused_413(client, monkeypatch):
+    # Enforcement at a small ceiling (no 20 MiB body): a body one byte over the ceiling 413s.
+    monkeypatch.setattr(mod, "DXF_IMPORT_MAX_BODY_BYTES", _SMALL_CEILING)
+    big = b"0\r\nSECTION\r\n" + b"9" * (_SMALL_CEILING + 1)
     resp = client.post(_CAND_URL, content=big, headers=_DXF_HEADERS)
     assert _pair(resp) == (413, "payload_too_large")
 
 
 def test_over_ceiling_streamed_refused_413(client, monkeypatch):
     # Force the declared-length fast path off so the STREAMED accumulator is what refuses.
+    monkeypatch.setattr(mod, "DXF_IMPORT_MAX_BODY_BYTES", _SMALL_CEILING)
     monkeypatch.setattr(mod, "_declared_content_length", lambda request: None)
-    big = b"0\r\nSECTION\r\n" + b"9" * (MAX_BODY_BYTES + 1)
+    big = b"0\r\nSECTION\r\n" + b"9" * (_SMALL_CEILING + 1)
     resp = client.post(_CAND_URL, content=big, headers=_DXF_HEADERS)
     assert _pair(resp) == (413, "payload_too_large")
 
 
 def test_mutation_ceiling_guard(client, monkeypatch):
-    # Raise the ceiling far above the payload -> the over-original body no longer 413s,
-    # proving MAX_BODY_BYTES drives the guard (AS-1 b).
-    monkeypatch.setattr(mod, "MAX_BODY_BYTES", 10**9)
-    big = _dxf() + b"9" * (MAX_BODY_BYTES + 1000)
-    resp = client.post(_CAND_URL, content=big, headers=_DXF_HEADERS)
-    assert resp.status_code != 413
+    # A small ceiling 413s the body; raising the ceiling admits the SAME body -> proves
+    # DXF_IMPORT_MAX_BODY_BYTES drives the guard (AS-1 b).
+    body = b"0\r\nSECTION\r\n" + b"9" * (2 * _SMALL_CEILING)
+    monkeypatch.setattr(mod, "DXF_IMPORT_MAX_BODY_BYTES", _SMALL_CEILING)
+    assert _pair(client.post(_CAND_URL, content=body, headers=_DXF_HEADERS)) == (
+        413, "payload_too_large")
+    monkeypatch.setattr(mod, "DXF_IMPORT_MAX_BODY_BYTES", 10**9)
+    assert client.post(_CAND_URL, content=body, headers=_DXF_HEADERS).status_code != 413
 
 
-def test_upload_exactly_at_ceiling_accepted_plus_one_refused(client):
-    # G4 A3: the ceiling is a strict '>' - exactly MAX_BODY_BYTES is ACCEPTED (passes the
-    # ceiling through to the reader, here a 422), and MAX_BODY_BYTES + 1 is refused 413. Guards
-    # against a '>=' off-by-one that would (safely) refuse the boundary too.
+def test_upload_exactly_at_ceiling_accepted_plus_one_refused(client, monkeypatch):
+    # G4 A3: the ceiling is a strict '>' - exactly the ceiling is ACCEPTED (passes through to the
+    # reader, here a 422), and ceiling + 1 is refused 413. Guards against a '>=' off-by-one that
+    # would (safely) refuse the boundary too. Proven at a small monkeypatched ceiling.
+    monkeypatch.setattr(mod, "DXF_IMPORT_MAX_BODY_BYTES", _SMALL_CEILING)
     prefix = b"0\r\nSECTION\r\n"
-    at_limit = prefix + b"9" * (MAX_BODY_BYTES - len(prefix))
-    assert len(at_limit) == MAX_BODY_BYTES
+    at_limit = prefix + b"9" * (_SMALL_CEILING - len(prefix))
+    assert len(at_limit) == _SMALL_CEILING
     resp = client.post(_CAND_URL, content=at_limit, headers=_DXF_HEADERS)
-    assert resp.status_code != 413  # the ceiling accepts exactly MAX_BODY_BYTES
+    assert resp.status_code != 413  # the ceiling accepts exactly the limit
     assert _pair(resp) == (422, "validation_error")  # reached the reader, refused there
     over = at_limit + b"9"
     resp_over = client.post(_CAND_URL, content=over, headers=_DXF_HEADERS)
@@ -336,7 +390,8 @@ def test_seam_passes_fixed_reviewed_limits(client, monkeypatch):
     client.post(_CAND_URL, content=_dxf(), headers=_DXF_HEADERS)
     assert captured["limits"] is mod._IMPORT_DXF_LIMITS
     assert isinstance(captured["limits"], DxfLimits)
-    assert captured["limits"].max_bytes == MAX_BODY_BYTES  # fixed, not request-derived
+    # fixed, not request-derived; raised WITH the route ceiling (DB-086 d)
+    assert captured["limits"].max_bytes == DXF_IMPORT_MAX_BODY_BYTES
 
 
 def test_mutation_clamp_uses_module_constant(client, monkeypatch):

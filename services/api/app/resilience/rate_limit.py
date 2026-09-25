@@ -28,15 +28,18 @@ What it provides (stdlib only, zero new dependencies):
   once - so it is never leaked (Finding 1). Over the cap raises :class:`SlotsExhausted` for a
   typed refusal.
 
-SLOT COUNT vs THE anyio THREAD POOL (Finding 1 context): ``run_in_threadpool`` dispatches work
-onto anyio's default thread pool, whose capacity limiter defaults to 40 tokens (OBSERVED). The
-three D-087 routes each cap at ``max_slots=16``, so no single route (16 < 40) can starve the
-pool, but their SUM (3 x 16 = 48) EXCEEDS 40. Holding a job slot therefore does NOT imply an
-available thread token: under load a slot can be held while its worker still waits for a token,
-and if the per-request deadline cancels the await during that wait the worker never starts.
-:func:`run_in_job_slot` releases the slot on that pre-start cancel path so those held-but-never-
-started slots cannot accumulate to permanent exhaustion. (PKT-H may additionally size the summed
-slot caps at or below the pool, or acquire the token with the slot, when it mounts the routes.)
+SLOT COUNT vs THE anyio THREAD POOL (Finding 1 context; DB-088 (a)): ``run_in_threadpool``
+dispatches work onto anyio's default thread pool, whose capacity limiter defaults to 40 tokens
+(``anyio._backends._asyncio.AsyncIOBackend.current_default_thread_limiter`` builds
+``CapacityLimiter(40)``; anyio 4.10.0, [OBSERVED]
+``anyio.to_thread.current_default_thread_limiter().total_tokens == 40``). The three D-087 routes
+now size their per-route ``max_slots`` so the SUM stays UNDER the pool with headroom for the app's
+other ``run_sync`` users (scene 8 + export 12 + dxf-import 4 = 24 < 40; the heavier per-slot
+routes get fewer slots): a held job slot therefore always implies a thread token is (or will soon
+be) available for it, and even the residual pre-start-cancel path is released by
+:func:`run_in_job_slot` so a held-but-never-started slot cannot accumulate to permanent
+exhaustion. (The summed-slots-under-the-pool invariant is asserted by
+``tests/resilience/test_rate_limit.py::test_summed_job_slots_stay_under_the_anyio_thread_pool``.)
 """
 
 from __future__ import annotations
@@ -196,12 +199,14 @@ def caller_key(request: Request) -> str:
     the client host. The two are namespaced (``principal:`` vs ``host:``) so a host string can
     never collide with a principal id.
 
-    PRINCIPAL HYGIENE (Finding 3): the principal is used ONLY when ``request.state.principal``
-    is a non-empty ``str``. Anything else - no attribute (no auth yet), ``None``, an empty
-    string, or a non-string value - falls back to the host key. This closes the case where a
-    blank or malformed principal ("" -> "principal:") would silently collapse distinct callers
-    into ONE bucket. PKT-H's auth must supply a non-empty, server-authenticated,
-    non-caller-influenced id; this helper enforces the non-empty-string half here.
+    PRINCIPAL HYGIENE (Finding 3 + M5-T117 G5 A1 / DB-088 (b)): the principal is used ONLY when
+    ``request.state.principal`` is a ``str`` that is non-empty AFTER stripping whitespace.
+    Anything else - no attribute (no auth yet), ``None``, an empty string, a WHITESPACE-ONLY
+    string ("   "), or a non-string value - falls back to the host key. This closes the case
+    where a blank ("" -> "principal:") OR a whitespace-only ("   " -> "principal:   ") principal
+    would silently collapse distinct callers into ONE bucket. PKT-H's auth must supply a
+    non-empty, server-authenticated, non-caller-influenced id; this helper enforces the
+    non-empty-after-strip-string half here.
 
     PRINCIPAL SOURCE: PKT-H (the mount packet) adds authentication; its auth dependency /
     middleware sets ``request.state.principal`` to the authenticated principal id. This helper
@@ -217,7 +222,7 @@ def caller_key(request: Request) -> str:
     UNMOUNTED until PKT-H supplies auth.
     """
     principal = getattr(getattr(request, "state", None), "principal", None)
-    if isinstance(principal, str) and principal:
+    if isinstance(principal, str) and principal.strip():
         return f"principal:{principal}"
     client = getattr(request, "client", None)
     host = getattr(client, "host", None) if client is not None else None
