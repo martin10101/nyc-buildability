@@ -64,12 +64,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "rework",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-25T01:31:17.131231+00:00",
-  "updated_at": "2026-09-25T02:25:42.857508+00:00",
+  "updated_at": "2026-09-25T02:26:23.311058+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -109,6 +109,13 @@
       "percent": 90,
       "status": "in_progress",
       "message": "Harvested: 691f5934 cherry-picked to 966cca75 (3 files MATCH); harvest checks green; evidence map + G2 written; submitting."
+    },
+    {
+      "at": "2026-09-25T02:26:23.311058+00:00",
+      "agent": "3d-massing-engineer",
+      "percent": 85,
+      "status": "rework",
+      "message": "PASS with required corrections (G3 ADVISORY-1 / G4 ADVISORY-1,2 / G5 MED-1, LOW-1 are before-wiring preconditions for PKT-E M5-T107, which depends on this packet): one bounded rework round - typed OverflowError for huge-int coordinates, bounded echoes at the B0 re-echo and the no-candidate detail, an exact module docstring, a second ShapelyError sibling in AS-2; then same-reviewer delta attestations."
     }
   ]
 }
