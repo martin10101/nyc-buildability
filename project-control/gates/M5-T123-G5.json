@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T123",
+  "gate_id": "G5",
+  "reviewer": "security-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T123-G5.md",
+  "reviewed_at": "2026-09-25T09:14:58.930956+00:00",
+  "content_manifest_sha256": "7bd23182b1a5998ae9b4911af60f7de3bf4f62cf45e0ca02c5d6b73bcea8baf3",
+  "reviewed_sha": "9d5311a89fee5e2e6ca450324798773446bdb384",
+  "updated_at": "2026-09-25T09:15:00.029384+00:00"
+}
