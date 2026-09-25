@@ -69,6 +69,19 @@ test("canonical evaluated FAR stays distinct from the PLUTO reference and the sq
   await expect(page.locator(".architect-bulk-rows")).toContainText("Not calculated");
 });
 
+// M5-T119 (D-086 P3a, ledger A06): the readable per-cap coverage status renders
+// BESIDE the cap value, keeping the "FAR only" scope note.
+test("the readable per-cap coverage status renders beside the cap value on the overview", async ({ page }) => {
+  await open(page, "overview", "1000010100");
+  const cap = page.getByTestId("architect-cap");
+  await expect(cap.locator(".architect-metric")).toHaveText("15,000 sq ft");
+  await expect(cap).toContainText("FAR only · Buildable envelope not assessed");
+  // The status chip sits on the same cap line as the value (A06 "beside the value").
+  const line = cap.locator(".architect-cap-line");
+  await expect(line.getByTestId("architect-cap-status")).toHaveText("Conditional");
+  await expect(line).toContainText("15,000 sq ft");
+});
+
 for (const view of ["overview", "zoning", "scenarios", "evidence", "report"]) {
   test(`${view}: malformed accepted trace remains inspectable without promoting numbers`, async ({ page }) => {
     const bbl = "1000010100";

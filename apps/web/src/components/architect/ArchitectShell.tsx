@@ -27,6 +27,26 @@ export function ArchitectShell({ bbl, active, children, surveyEnabled = false }:
       </details>
         <button className="secondary-button architect-menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="architect-navigation" onClick={() => setMenuOpen(value => !value)}>Navigation</button>
       </header>
+      {/* M5-T119 (D-086 P3a, DB-087 g / DISC-P2-1, ledger A01/A03): the shell's
+          own environment disclosure (.architect-environment) and the nav
+          professional-review footnote are display:none ≤700px (architect.css),
+          so on a phone a loaded workspace surface previously showed NEITHER the
+          internal-build / no-access-control / do-not-share / "nothing here is a
+          legal determination" restriction (A01/LS-P01) NOR the professional-
+          review requirement (A03). This phone-only strip (display:none ≥701px in
+          architect.css, so no desktop duplication) restores both on every loaded
+          surface. It is NOT shown on the search landing (active === "search"),
+          which already carries its own always-visible environment+review strip
+          (PropertySearch, M5-T115). It reuses that accepted paraphrase verbatim
+          (role=note, honest restriction text — never colour alone) rather than a
+          second InternalBanner, so no duplicate `internal-banner` region appears
+          on a shell-wrapped route; the topbar InternalBanner stays the desktop
+          carrier. */}
+      {active !== "search" ? <div className="architect-shell-environment" role="note" data-testid="shell-environment">
+        <span className="architect-shell-env-badge">Internal build</span>
+        <span className="architect-shell-env-note">No sign-in or access control yet, the official data shown is unreviewed, and nothing here is a legal determination — do not share outside the engineering team.</span>
+        <p className="architect-shell-review" data-testid="shell-review">Preliminary analysis — professional review required before any reliance.</p>
+      </div> : null}
       <div className="architect-body">
         <nav id="architect-navigation" className={`architect-nav ${menuOpen ? "is-open" : ""}`} aria-label="Architect workspace">
           <Link href={propertyHref()} aria-current={active === "search" ? "page" : undefined} onClick={() => setMenuOpen(false)}>Search property</Link>

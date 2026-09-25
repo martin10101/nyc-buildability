@@ -213,6 +213,52 @@ test("the closed screen brief prints all readable facts and sources, with an opt
   await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
 });
 
+// M5-T119 (D-086 P3a, AS-2, spec §5.3 / frame O-D): the overview canvas is two
+// columns on desktop — the site map/context is the wider LEFT column, the limit
+// matrix the RIGHT column.
+test("the overview canvas is two side-by-side columns on desktop (map/context left, limit matrix right)", async ({ page }, info) => {
+  await page.setViewportSize({ width: 1440, height: 960 });
+  await openView(page, "overview");
+  await expect(page.locator(".architect-overview-grid")).toBeVisible();
+  const mapBox = await page.locator(".architect-map-card").boundingBox();
+  const limitsBox = await page.getByRole("region", { name: "Development limits" }).boundingBox();
+  expect(mapBox && limitsBox).toBeTruthy();
+  if (mapBox && limitsBox) {
+    // Side-by-side, not stacked: their vertical extents overlap.
+    const overlap = Math.min(mapBox.y + mapBox.height, limitsBox.y + limitsBox.height) - Math.max(mapBox.y, limitsBox.y);
+    expect(overlap, "map and matrix must sit on the same row (two columns), not stacked").toBeGreaterThan(0);
+    // Map/context is the LEFT column and the wider (~55%) one.
+    expect(mapBox.x + mapBox.width).toBeLessThanOrEqual(limitsBox.x + 1);
+    expect(mapBox.width).toBeGreaterThan(limitsBox.width);
+  }
+  await screenshot(page, info, "16-overview-canvas-desktop");
+});
+
+// M5-T119 (D-086 P3a, AS-1, ledger A04): the former separate conflict / critical-
+// missing alerts fold into ONE role=status exception strip on the overview.
+test("active issues fold into ONE exception strip on the overview, no separate alert blocks", async ({ page }) => {
+  const bbl = BBL;
+  // Match ONLY the profile document (not its /scenario or /rule-evaluation children).
+  await page.route(url => new URL(url).pathname === `/api/v1/properties/${bbl}`, async route => {
+    const response = await route.fetch();
+    const body = await response.json();
+    body.conflicts = [...(body.conflicts ?? []), { field: "lotarea", resolution: "unresolved", values: [{ source_id: "nyc-dcp-pluto-soda", value: 3 }, { source_id: "another-source", value: 4 }] }];
+    if (Array.isArray(body.missing_inputs) && body.missing_inputs.length) body.missing_inputs[0].criticality = "critical";
+    await route.fulfill({ response, json: body });
+  });
+  await page.goto(`/property?ruleeval=on&bbl=${bbl}&view=overview`);
+  await expect(page.getByTestId("profile-view")).toBeVisible({ timeout: 15_000 });
+  const strip = page.getByTestId("overview-exception-strip");
+  await expect(strip).toBeVisible();
+  await expect(strip).toHaveAttribute("role", "status");
+  await expect(strip.getByTestId("exception-issue-conflict")).toContainText("Unresolved data conflicts");
+  await expect(strip.getByRole("link", { name: "Review conflicting source values →" })).toHaveAttribute("href", `/property?ruleeval=on&bbl=${bbl}&view=issues`);
+  await expect(strip.getByTestId("exception-issue-missing")).toContainText("Critical inputs missing");
+  await expect(strip.getByRole("link", { name: "Review missing inputs →" })).toHaveAttribute("href", `/property?ruleeval=on&bbl=${bbl}&view=issues`);
+  // Folded: no legacy separate `.architect-alert` status blocks remain on the overview.
+  await expect(page.locator(".architect-alert")).toHaveCount(0);
+});
+
 test("manual and BBL recovery remain reachable when suggestions fail", async ({ page }) => {
   await page.route("https://geosearch.planninglabs.nyc/v2/autocomplete?**", route => route.fulfill({ status: 429, contentType: "application/json", body: "{}" }));
   await page.goto("/property?ruleeval=on");

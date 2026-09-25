@@ -363,3 +363,54 @@ for (const viewport of VIEWPORTS) {
     );
   });
 }
+
+/* ================================================================ *
+ * D-086 P3a (M5-T119): the LOADED overview canvas (AS-2) renders with no
+ * horizontal overflow at every width, and the shell environment + professional-
+ * review disclosure (AS-4 / DB-087 g / DISC-P2-1) is visible at 360px on the
+ * loaded workspace — closing the ≤700px gap the M5-T115 slice left open for the
+ * loaded surfaces (it fixed only the SEARCH surface).
+ * ================================================================ */
+async function openOverview(page: Page, bbl = "1000010010"): Promise<void> {
+  await page.goto(`/property?ruleeval=on&bbl=${bbl}&view=overview`);
+  await expect(page.getByTestId("profile-view")).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole("region", { name: "Development limits" })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText("Loading draft scenario…", { exact: true })).toHaveCount(0, { timeout: 15_000 });
+}
+
+for (const viewport of VIEWPORTS) {
+  test(`D-086 P3a (AS-2): the loaded overview canvas renders with no horizontal overflow at ${viewport.name}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await openOverview(page);
+    await expectNoHorizontalOverflow(page);
+  });
+}
+
+test("D-086 P3a (AS-4 / DB-087 g): the shell environment + review disclosure is visible at 360px on a loaded overview", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 740 });
+  await openOverview(page);
+  const env = page.getByTestId("shell-environment");
+  await expect(env).toBeVisible();
+  await expect(env).toContainText("Internal build");
+  // The restriction meaning is visible as text (role=note), not colour alone.
+  await expect(env).toContainText("No sign-in or access control yet");
+  await expect(env).toContainText("nothing here is a legal determination");
+  await expect(env).toContainText("do not share outside the engineering team");
+  const review = page.getByTestId("shell-review");
+  await expect(review).toBeVisible();
+  await expect(review).toContainText("professional review required");
+  await expectNoHorizontalOverflow(page);
+});
+
+test("D-086 P3a: the shell environment strip is phone-only — hidden at desktop where the topbar carries the meaning", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await openOverview(page);
+  // In the DOM but display:none ≥701px (the desktop topbar disclosure + nav footnote carry it).
+  await expect(page.getByTestId("shell-environment")).toBeHidden();
+});

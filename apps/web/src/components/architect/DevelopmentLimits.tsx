@@ -33,17 +33,23 @@ export function DraftHeadline({ scenario, evaluation = null, bbl = "" }: { scena
   const cap = scenarioCap(scenario, evaluation, bbl);
   return <div className="architect-draft-headline" data-testid="architect-cap">
     <h2>Draft zoning floor-area cap</h2>
-    <p className="architect-metric">{cap != null ? <>{formatValue(cap)}<span> sq ft</span></> : "Not calculated"}</p>
+    {/* M5-T119 (D-086 P3a, ledger A06): the readable per-cap coverage status sits
+        BESIDE the cap number. Every text node is unchanged — the cap value, the
+        "FAR only" scope note, the exact STATUS_LABELS enum gloss and the source-
+        wording disclosure all remain, so the shared printed brief (ReportView →
+        DevelopmentLimits) keeps identical meaning; only the status moves up beside
+        the value. */}
+    <div className="architect-cap-line">
+      <p className="architect-metric">{cap != null ? <>{formatValue(cap)}<span> sq ft</span></> : "Not calculated"}</p>
+      {scenario ? <span className="architect-status" data-testid="architect-cap-status">{STATUS_LABELS[scenario.coverage_status]}</span> : null}
+    </div>
     <p className="section-note">FAR only · Buildable envelope not assessed</p>
-    {scenario ? <>
-      <span className="architect-status">{STATUS_LABELS[scenario.coverage_status]}</span>
-      <details className="provenance-details architect-result-scope">
+    {scenario ? <details className="provenance-details architect-result-scope">
         <summary>Result scope and source wording</summary>
         <p className="section-note">Recorded coverage: <code>{scenario.coverage_status}</code></p>
         <p>{scenario.cap_label}</p>
         {scenario.reasons.length ? <ul className="architect-issue-list">{scenario.reasons.map((reason, i) => <li key={i}>{reason}</li>)}</ul> : null}
-      </details>
-    </> : null}
+      </details> : null}
   </div>;
 }
 

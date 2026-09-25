@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen, fireEvent } from "@testing-library/react";
+import { cleanup, render, screen, fireEvent, within } from "@testing-library/react";
+import { ArchitectShell } from "../ArchitectShell";
 import { EvidenceRecord } from "../EvidenceRecord";
 import { baseProfile } from "@/test-support/fixtures";
 import { propertyHref, readWorkspaceView } from "@/lib/architect/navigation";
@@ -85,4 +86,39 @@ it("prints a readable brief by default and includes complete audit records only 
   expect(Array.from(document.querySelectorAll<HTMLDetailsElement>(".architect-raw")).every(item => item.open)).toBe(true);
   fireEvent(window, new Event("afterprint"));
   print.mockRestore();
+});
+
+/* M5-T119 (D-086 P3a, DB-087 g / DISC-P2-1, ledger A01/A03): the shell carries a
+ * phone-width environment + professional-review strip on LOADED surfaces (its CSS
+ * visibility is proven at 360px by the responsive-a11y e2e; jsdom applies no media
+ * queries, so these assert DOM presence + search-surface gating). */
+describe("M5-T119 — shell phone-width environment + review strip", () => {
+  afterEach(cleanup);
+  it("renders the environment restriction note and the review line on a loaded surface", () => {
+    render(<ArchitectShell bbl="1000010010" active="overview"><p>Workspace child</p></ArchitectShell>);
+    const strip = screen.getByTestId("shell-environment");
+    // role=note carries the restriction meaning as text, never colour alone.
+    expect(strip).toHaveAttribute("role", "note");
+    expect(within(strip).getByText("Internal build")).toBeInTheDocument();
+    expect(strip).toHaveTextContent("No sign-in or access control yet");
+    expect(strip).toHaveTextContent("nothing here is a legal determination");
+    expect(strip).toHaveTextContent("do not share outside the engineering team");
+    const review = within(strip).getByTestId("shell-review");
+    expect(review).toHaveTextContent("professional review required");
+    // The strip reuses the accepted M5-T115 paraphrase and does NOT add a second
+    // internal-banner region (the topbar keeps the only one).
+    expect(within(strip).queryByTestId("internal-banner")).toBeNull();
+  });
+
+  it("does NOT render the shell environment strip on the search surface (no double with the search strip)", () => {
+    render(<ArchitectShell active="search"><p>Search child</p></ArchitectShell>);
+    expect(screen.queryByTestId("shell-environment")).toBeNull();
+    expect(screen.queryByTestId("shell-review")).toBeNull();
+  });
+
+  it("keeps the desktop topbar environment disclosure untouched on a loaded surface", () => {
+    render(<ArchitectShell bbl="1000010010" active="overview"><p>Workspace child</p></ArchitectShell>);
+    // The topbar `.architect-environment` details still exists (desktop carrier).
+    expect(document.querySelector(".architect-environment")).not.toBeNull();
+  });
 });

@@ -682,3 +682,56 @@ describe("M5-T040 — DB-025 determination-state display gating (D-073-R006)", (
     expect(panel).toHaveAttribute("aria-label", "Wide-street conditional FAR");
   });
 });
+
+describe("M5-T119 — A06 readable per-cap status beside the cap value; A09 distinct FAR rows (D-086 P3a)", () => {
+  it("renders the readable coverage status BESIDE the cap number and keeps the FAR-only scope note", () => {
+    const { profile, evaluation, scenario } = inputs();
+    const { container } = show(profile, evaluation, scenario);
+    const cap = screen.getByTestId("architect-cap");
+    // The status sits on the same cap line as the value (A06 "beside the value").
+    const line = container.querySelector<HTMLElement>(".architect-cap-line")!;
+    expect(within(line).getByTestId("architect-cap-status")).toHaveTextContent("Conditional");
+    expect(line).toHaveTextContent("15,000 sq ft");
+    // The scope note and the exact enum wording survive unchanged.
+    expect(cap).toHaveTextContent("FAR only · Buildable envelope not assessed");
+    expect(within(cap).getByText("Result scope and source wording").closest("details")!).toHaveTextContent("conditional");
+  });
+
+  it("keeps the readable status beside a withheld ('Not calculated') cap for professional_review_required", () => {
+    const { profile, evaluation, scenario } = inputs();
+    scenario.coverage_status = "professional_review_required";
+    const { container } = show(profile, evaluation, scenario);
+    const line = container.querySelector<HTMLElement>(".architect-cap-line")!;
+    expect(within(line).getByTestId("architect-cap-status")).toHaveTextContent("Professional review required");
+    expect(within(line).getByText("Not calculated")).toBeInTheDocument();
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("FAR only · Buildable envelope not assessed");
+  });
+
+  it("shows no cap status chip when there is no scenario (honest absence, no invented status)", () => {
+    const { profile } = inputs();
+    show(profile);
+    expect(screen.queryByTestId("architect-cap-status")).toBeNull();
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+  });
+
+  it("keeps city-record FAR and evaluated (draft) FAR as DISTINCT rows (A09; already built, re-proved here)", () => {
+    const { profile, evaluation, scenario } = inputs();
+    show(profile, evaluation, scenario);
+    expect(screen.getByText("Residential FAR · city record")).toBeInTheDocument();
+    expect(screen.getByText("Evaluated residential FAR")).toBeInTheDocument();
+    const reference = screen.getByTestId("development-reference-far");
+    const evaluated = screen.getByTestId("development-evaluated-far");
+    expect(reference).not.toBe(evaluated);
+    expect(reference).toHaveTextContent("3.00");
+    expect(evaluated).toHaveTextContent("1.50");
+  });
+
+  it("the printed brief keeps the cap value, FAR-only note and readable status text (ReportView meaning unchanged)", () => {
+    const { profile, evaluation, scenario } = inputs();
+    render(<ReportView profile={profile} evaluation={evaluation} scenario={scenario} label="Test property" />);
+    const cap = screen.getByTestId("architect-cap");
+    expect(cap).toHaveTextContent("15,000 sq ft");
+    expect(cap).toHaveTextContent("FAR only · Buildable envelope not assessed");
+    expect(within(cap).getByTestId("architect-cap-status")).toHaveTextContent("Conditional");
+  });
+});

@@ -22,6 +22,7 @@ import { LotOutlineMap } from "@/components/address/LotOutlineMap";
 import { FactsTable } from "@/components/property/FactsTable";
 import { ABSENT_BBL_MAP_LINK_NOTE, ZOLA_LOT_LINK_LABEL } from "./AddressAutocomplete";
 import { DevelopmentLimits } from "./DevelopmentLimits";
+import { OverviewExceptionStrip } from "./OverviewExceptionStrip";
 import { ZoningContextPanel } from "./ZoningContextPanel";
 export { DraftHeadline } from "./DevelopmentLimits";
 export function PropertyIssuesSummary({ profile }: {
@@ -359,12 +360,15 @@ export function PropertyOverview({ profile, scenario, evaluation = null, onInspe
     const shownScenario = withholdAllowances ? null : scenario;
     const shownEvaluation = withholdAllowances ? null : evaluation;
     return <>
-    <PropertyIssuesSummary profile={profile}/>
+    <OverviewExceptionStrip profile={profile}/>
+    {/* M5-T119 (D-086 P3a, spec §5.3 / frame O-D): the two-column overview
+        canvas. The site map/context is the wider (~55%) LEFT column and the
+        limit matrix the ~45% RIGHT column, stacking to a single column at
+        ≤950px (architect.css .architect-overview-grid). The former separate
+        conflict/missing/stale alerts now fold into OverviewExceptionStrip
+        above; PropertyIssuesSummary stays byte-identical for the printed brief
+        (ReportView) and the scenarios view. */}
     <div className="architect-overview-grid">
-      <div>
-        <DevelopmentLimits profile={profile} scenario={shownScenario} evaluation={shownEvaluation} onInspect={onInspect}/>
-        <Link className="primary-button" href={propertyHref(bbl, "zoning")}>View zoning details <span aria-hidden="true">→</span></Link>
-      </div>
       <section className="card architect-map-card">
         <div className="architect-panel-heading">
           <h2>Site context</h2>
@@ -381,6 +385,10 @@ export function PropertyOverview({ profile, scenario, evaluation = null, onInspe
         </div>
         <LotOutlineMap bbl={bbl} context/>
       </section>
+      <div>
+        <DevelopmentLimits profile={profile} scenario={shownScenario} evaluation={shownEvaluation} onInspect={onInspect}/>
+        <Link className="primary-button" href={propertyHref(bbl, "zoning")}>View zoning details <span aria-hidden="true">→</span></Link>
+      </div>
     </div>
     <CondoRecordsChannelSection decision={condo}/>
     <ZoningContextPanel profile={profile}/>

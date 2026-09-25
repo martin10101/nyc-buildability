@@ -62,7 +62,25 @@
 .architect-raw pre { white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;line-height:1.6;padding:12px;max-height:420px;overflow:auto;background:#f2f4f2;border-radius:3px; }
 .architect-alert { padding:14px 17px;border:1px solid #decca6;border-left:3px solid var(--arch-accent);background:#faf3e4;font-size:12px;border-radius:4px;margin-bottom:18px; }
 .architect-alert p { margin:4px 0; }
-.architect-overview-grid { display:grid;grid-template-columns:minmax(0,1.13fr) minmax(320px,1fr);gap:24px;align-items:start; }
+/* M5-T119 (D-086 P3a, spec §5.3 / frame O-D): two-column canvas — the site
+ * map/context is the wider (~55%) LEFT column, the limit matrix the ~45% RIGHT
+ * column. Both minmax tracks keep a 0 floor so nothing forces horizontal
+ * overflow; the grid collapses to one column at ≤950px (below). */
+.architect-overview-grid { display:grid;grid-template-columns:minmax(320px,1.25fr) minmax(0,1fr);gap:24px;align-items:start; }
+/* One consolidated active-issue strip (A04): one role=status region folding the
+ * former conflict / critical-missing / stale alerts. Same warm-alert treatment
+ * as .architect-alert (never colour alone — each row carries text + a link). */
+.architect-exception-strip { padding:14px 17px;border:1px solid #decca6;border-left:3px solid var(--arch-accent);background:#faf3e4;border-radius:4px;margin-bottom:18px; }
+.architect-exception-title { color:#6c5425;letter-spacing:.08em;font-size:10px;text-transform:uppercase;font-weight:640;margin:0 0 8px!important; }
+.architect-exception-row { font-size:12px;padding:8px 0;border-top:1px solid #ecdcb6; }
+.architect-exception-row:first-of-type { border-top:0;padding-top:0; }
+.architect-exception-row strong { display:block;color:var(--arch-ink);margin-bottom:2px; }
+.architect-exception-row p { margin:0 0 5px;color:#6c5425;line-height:1.6; }
+.architect-exception-row a { font-size:12px; }
+.architect-exception-fields { color:var(--arch-ink);font-weight:550; }
+/* A06: the readable per-cap coverage status beside the cap value. */
+.architect-cap-line { display:flex;align-items:baseline;gap:10px 12px;flex-wrap:wrap; }
+.architect-cap-line .architect-metric { margin-bottom:0!important; }
 .architect-map-card { padding:16px!important; }
 .architect-panel-heading { display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:14px; }
 .architect-panel-heading h2 { font-size:15px;margin:0; }
@@ -133,7 +151,7 @@
 .architect-shell .sr-panel { border-color:var(--arch-line);border-radius:4px;box-shadow:none; }
 .architect-shell .sr-focus-panel { position:sticky;top:20px;align-self:start; }
 @media(min-width:1700px) { .architect-content { max-width:1900px;width:100%;margin:0 auto;padding:36px 42px; } }
-@media(max-width:1200px) { .architect-workspace-grid.has-inspector { grid-template-columns:minmax(0,1fr); }.architect-inspector { position:static;max-height:none; }.architect-overview-grid { gap:18px;grid-template-columns:minmax(0,1fr) minmax(280px,1fr); }.architect-content { padding:24px; } }
+@media(max-width:1200px) { .architect-workspace-grid.has-inspector { grid-template-columns:minmax(0,1fr); }.architect-inspector { position:static;max-height:none; }.architect-overview-grid { gap:18px;grid-template-columns:minmax(280px,1.1fr) minmax(0,1fr); }.architect-content { padding:24px; } }
 @media(max-width:950px) { .architect-body { grid-template-columns:165px minmax(0,1fr); }.architect-nav { padding-left:7px;padding-right:7px; }.architect-nav>a { font-size:12px; }.architect-overview-grid { grid-template-columns:1fr; }.architect-overview-result { padding:12px!important; }.architect-evidence-layout { grid-template-columns:190px minmax(0,1fr);gap:14px; }.architect-evidence-list { padding:12px!important; }.architect-evidence-detail { padding:18px!important; } }
 @media(max-width:700px) { .architect-topbar { padding:0 15px;height:60px; }.architect-brand { font-size:13px;gap:8px; }.architect-brand svg { width:22px; }.architect-environment { display:none; }.architect-menu-toggle { display:inline-flex!important;min-height:34px!important;padding:6px 10px!important; }.architect-body { display:block; }.architect-nav { display:none;min-height:auto;position:static;border-right:0;border-bottom:1px solid var(--arch-line); }.architect-nav.is-open { display:grid;grid-template-columns:repeat(2,minmax(0,1fr)); }.architect-nav-label { grid-column:1/-1; }.architect-nav-footnote { display:none; }.architect-content { padding:20px 14px 32px; }.architect-property-header { flex-wrap:wrap;gap:12px;margin-bottom:22px; }.architect-property-header h1 { font-size:25px; }.architect-property-header>.secondary-button { min-height:32px;padding:6px 12px; }.architect-evidence-layout { grid-template-columns:1fr; }.architect-evidence-list { position:static;max-height:270px; }.architect-search-view { margin:12px 0; }.architect-search-view [data-testid="address-resolution-screen"]>.card { padding:23px; }.architect-shell .card { padding:18px; }.architect-search-input { font-size:15px!important; }.architect-shell .facts-table { min-width:490px; }.architect-overview-result .facts-table { min-width:0; }.architect-shell .lot-outline-map { height:365px; }.architect-metric { font-size:44px; }.architect-report-intro { flex-direction:column; }.architect-shell .sr-focus-panel { position:static; } }
 @media(prefers-reduced-motion:reduce) { .architect-shell * { scroll-behavior:auto!important;transition:none!important;animation:none!important; } }
@@ -250,3 +268,21 @@
 .architect-confirm-label { margin:2px 0 4px;color:var(--arch-muted);letter-spacing:.09em;font-size:10px;text-transform:uppercase;font-weight:640; }
 .architect-search-view .architect-search-environment + [data-testid="address-resolution-screen"] { margin-top:0; }
 @media(max-width:700px) { .architect-search-environment { padding:11px 13px; }.architect-search-env-note { flex-basis:100%; }.architect-search-actions .secondary-button { flex:1 1 100%; } }
+
+/* ---------------------------------------------------------------------------
+ * D-086 P3a (M5-T119) — phone-width shell environment + professional-review
+ * strip for LOADED workspace surfaces (DB-087 g / DISC-P2-1, ledger A01/A03).
+ * The desktop shell already carries the environment disclosure (.architect-
+ * environment, topbar) and the review footnote (.architect-nav-footnote), both
+ * display:none ≤700px. This strip is display:none at ≥701px (no desktop
+ * duplication) and appears ONLY ≤700px, restoring both meanings on a phone. It
+ * never uses colour alone — the restriction text (InternalBanner role=note) and
+ * the review line are plain text. New shell-environment selectors only.
+ * ------------------------------------------------------------------------- */
+.architect-shell-environment { display:none; }
+@media(max-width:700px) {
+  .architect-shell-environment { display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;padding:10px 14px;background:var(--arch-warm);border-bottom:1px solid #e6d3a8; }
+  .architect-shell-env-badge { flex:none;display:inline-flex;align-items:center;background:var(--arch-accent);color:#fff;font-size:10px;font-weight:640;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px; }
+  .architect-shell-env-note { flex:1 1 240px;min-width:0;color:#6c5425;font-size:12px;line-height:1.55; }
+  .architect-shell-review { flex:1 1 100%;margin:0;color:#4a616f;font-size:12px;font-weight:550;line-height:1.5; }
+}
