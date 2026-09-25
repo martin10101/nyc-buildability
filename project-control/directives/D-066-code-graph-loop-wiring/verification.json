@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T01:22:07+00:00",
+ "verified_at": "2026-09-25T02:14:27+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1589,6 +1589,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t105): the packet carries the graph-derived navigation block (regenerated at the contract seam, 832 files / 17898 nodes / 7680 edges) naming the writer's consumers (test_pdf_sheet_writer, test_cad_owner_samples, test_claim_words) and its claim_words import, with the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head bdbcfd25 (pdf_sheet_writer.py bc68ca12, test_pdf_sheet_writer.py bdad0969, M5-T105-producer-report.md ddcdab6c; identity 28abc2f6; evaluate_task_refs ok); report M5-T105-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T103",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "30b5e37c675d209d13ffea79d2d8a8e0d7c86f0c",
+   "reviewed_manifest_sha256": "6cf6c3038897358466995f4816fae20bb3242a943ce4d8e6461bcdd2c6ae60b6",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T02:14:27+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t103): the packet carries the graph-derived navigation block (regenerated at the contract seam, 830 files / 17842 nodes / 7656 edges) naming the facade's single read_object_table integration point, the read-only app/documents/extraction and sheet_primitives.py, the forbidden test_sheet_reader.py, and the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head 30b5e37c (pdf_object_streams.py 2cafd799, sheet_objects.py 568ca077, sheet_reader.py c7cf0b9f, sheet_interpreter.py 34e2ee39, test_pdf_object_streams.py e9500aeb, M5-T103-producer-report.md bc99696e; identity 6cf6c303; evaluate_task_refs ok); report M5-T103-DCV.md."
      ]
     }
    ]

@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T01:22:07+00:00",
+ "verified_at": "2026-09-25T02:14:27+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1373,6 +1373,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies (stdlib + the accepted claim_words module); unwired (no route, main.py, __init__ or web change); requirements untouched; PR #241 open and unmerged; the max-envelope route stays unmounted. Blob-level restamp predicate re-verified by the orchestrator at the accept head bdbcfd25 (pdf_sheet_writer.py bc68ca12, test_pdf_sheet_writer.py bdad0969, M5-T105-producer-report.md ddcdab6c; identity 28abc2f6; evaluate_task_refs ok); report M5-T105-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T103",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R005",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "30b5e37c675d209d13ffea79d2d8a8e0d7c86f0c",
+   "reviewed_manifest_sha256": "6cf6c3038897358466995f4816fae20bb3242a943ce4d8e6461bcdd2c6ae60b6",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T02:14:27+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a full contracted/claimed/gated packet (G0 at 8e20acf2, claim at e9a268a5, one worktree wt-m5t103); both material commits 3fab28f6 + 6e5b831c touch only the 6 allowed paths; one FAIL -> rework -> delta cycle with no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head 30b5e37c (pdf_object_streams.py 2cafd799, sheet_objects.py 568ca077, sheet_reader.py c7cf0b9f, sheet_interpreter.py 34e2ee39, test_pdf_object_streams.py e9500aeb, M5-T103-producer-report.md bc99696e; identity 6cf6c303; evaluate_task_refs ok); report M5-T103-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs every active task incl. the parallel M5-T104; the DCV independently intersected the 6 allowed paths with every non-accepted task (incl. the wave-10 M5-T106..T109 and M0-T161): zero overlap. Blob-level restamp predicate re-verified by the orchestrator at the accept head 30b5e37c (pdf_object_streams.py 2cafd799, sheet_objects.py 568ca077, sheet_reader.py c7cf0b9f, sheet_interpreter.py 34e2ee39, test_pdf_object_streams.py e9500aeb, M5-T103-producer-report.md bc99696e; identity 6cf6c303; evaluate_task_refs ok); report M5-T103-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: real-file PDF reading moves forward (cross-reference streams, object streams, hybrid files, bounded /Prev, PNG predictors; all six corpus drawings now clear the xref/object-stream stage, re-run independently by dc-t103 with outcomes identical across both rounds) and the report claims nothing more: NO corpus drawing fully reads yet (items 1-2 stop at content /DecodeParms, items 3-6 at marked-content inline dictionaries). Blob-level restamp predicate re-verified by the orchestrator at the accept head 30b5e37c (pdf_object_streams.py 2cafd799, sheet_objects.py 568ca077, sheet_reader.py c7cf0b9f, sheet_interpreter.py 34e2ee39, test_pdf_object_streams.py e9500aeb, M5-T103-producer-report.md bc99696e; identity 6cf6c303; evaluate_task_refs ok); report M5-T103-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies (zlib stdlib); unwired; app/documents/extraction byte-untouched; the 62-case split-equivalence golden byte-identical; every drawings module < 600 SLOC; the mandatory PKT-K guard (bounded incremental inflate with the absolute cap + ratio guard charged before materialization and sharing the document budget; /Prev depth + cycle, object-stream count, /N) plus the round-2 predictor-buffer and incremental object-count bounds, each with a reddening mutation; PR #241 open and unmerged; the max-envelope route unmounted. Blob-level restamp predicate re-verified by the orchestrator at the accept head 30b5e37c (pdf_object_streams.py 2cafd799, sheet_objects.py 568ca077, sheet_reader.py c7cf0b9f, sheet_interpreter.py 34e2ee39, test_pdf_object_streams.py e9500aeb, M5-T103-producer-report.md bc99696e; identity 6cf6c303; evaluate_task_refs ok); report M5-T103-DCV.md."
      ]
     }
    ]
