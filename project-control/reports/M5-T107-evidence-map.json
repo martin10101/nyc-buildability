@@ -1,0 +1,29 @@
+{
+ "task_id": "M5-T107",
+ "material_commit": "d3c47a85 (cherry-pick of wt-m5t107 f4a1d107; 7 files, every file MATCH by blob)",
+ "produced_at": "2026-09-25T02:29:54+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m5t107)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's navigation block (graph regenerated at the contract seam, 832 files / 17984 nodes / 7700 edges) named the connector's only consumer (its test), the geometry helper module, massing_model.py (read-only, owned by M5-T106) and the optional glb_writer; the producer kept new helpers out of the ~1073-line connector (865 -> 900 SLOC) with a cohesion note. [ORCH-HARVEST] at the harvested head d3c47a85 (cherry-pick d3c47a85; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario tests/connectors -q` (cwd services/api) -> exit 0: 1823 passed in 63.25s (0:01:03); `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R001": [
+   "Wave-10 capacity unit: contracted at 06db6449 (G0), claimed at 11089429 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with four disjoint packets; its acceptance waits on M5-T106 (declared dependency); no state or gate skipped. [ORCH-HARVEST] at the harvested head d3c47a85 (cherry-pick d3c47a85; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario tests/connectors -q` (cwd services/api) -> exit 0: 1823 passed in 63.25s (0:01:03); `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task (route tests in tests/scenario because the frozen M4-T005 packet globs tests/api/**); one worktree wt-m5t107; the producer commit touches exactly its 7 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the harvested head d3c47a85 (cherry-pick d3c47a85; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario tests/connectors -q` (cwd services/api) -> exit 0: 1823 passed in 63.25s (0:01:03); `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R003": [
+   "3D massing in its real neighbourhood: the pure scene assembler returns the plan section 2.1 payload (MassingModel.as_dict() plus context buildings) under ONE declared vertical datum (a local z=0 frame; base_z = GROUND_ELEVATION minus the site ground; both official ground definitions disclosed, NAVD88 attributed to the City dictionary only; zero/unverified/missing grounds disclosed, never sea level), with the vertical unit explicit; untrusted context text declared and escaped; courtyard holes disclosed or refused; the UNMOUNTED scene route runs the assembly off-loop under a deadline and a per-caller rate limit. [ORCH-HARVEST] at the harvested head d3c47a85 (cherry-pick d3c47a85; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario tests/connectors -q` (cwd services/api) -> exit 0: 1823 passed in 63.25s (0:01:03); `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies (a stdlib sliding-window limiter); the route is absent from OpenAPI and flag-gated; app/main.py, massing_model.py, proposal.py, app/cad and app/resilience untouched; tests never touch the network. [ORCH-HARVEST] at the harvested head d3c47a85 (cherry-pick d3c47a85; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario tests/connectors -q` (cwd services/api) -> exit 0: 1823 passed in 63.25s (0:01:03); `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-083-R001": [
+   "The scene never labels anything permitted, approved or maximum allowed; proposal geometry is 'Proposed - not a city record'. [ORCH-HARVEST] at the harvested head d3c47a85 (cherry-pick d3c47a85; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario tests/connectors -q` (cwd services/api) -> exit 0: 1823 passed in 63.25s (0:01:03); `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-083-R002": [
+   "The payload's source vocabulary keeps 'Proposed - not a city record' apart from 'Generated building option' and claims no demonstrated maximum. [ORCH-HARVEST] at the harvested head d3c47a85 (cherry-pick d3c47a85; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario tests/connectors -q` (cwd services/api) -> exit 0: 1823 passed in 63.25s (0:01:03); `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ]
+ }
+}
