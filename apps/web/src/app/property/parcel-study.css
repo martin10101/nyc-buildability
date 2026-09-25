@@ -4,7 +4,7 @@
 .parcel-study fieldset { margin:0;padding:0;border:0;min-width:0; }
 .parcel-study legend { margin-bottom:12px;font-size:12px;font-weight:650;color:var(--arch-ink); }
 .parcel-study-options { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:22px 0!important; }
-.parcel-study-options legend { float:left;width:100%; }
+.parcel-study-options legend { float:none;width:auto; }
 .parcel-study-options label { display:flex;align-items:flex-start;gap:9px;min-height:76px;padding:14px;border:1px solid var(--arch-line);border-radius:8px;cursor:pointer;background:var(--arch-surface); }
 .parcel-study-options label.is-selected { background:#f6ecd8;border-color:#a46d16;box-shadow:inset 0 0 0 1px #a46d16; }
 .parcel-study-options input,.parcel-study-radio input { accent-color:#87590e;margin-top:4px; }

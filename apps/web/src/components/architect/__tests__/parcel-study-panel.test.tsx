@@ -33,6 +33,10 @@ describe("parcel study choices stay separate from legal status and calculations"
     const comparison = screen.getByRole("region", { name: "Study comparison" });
     expect(within(comparison).getAllByText("Not calculated")).toHaveLength(6);
     expect(comparison).not.toHaveTextContent(/3\.44|sq ft|approved|verified/i);
+    const details = screen.getByText(/The condo record links tax parcels/);
+    expect(details).not.toBeVisible();
+    fireEvent.click(screen.getByRole("link", { name: "Why?" }));
+    expect(details).toBeVisible();
   });
 
   it("changes arrangement without changing building intent or legal status", () => {

@@ -49,6 +49,7 @@ function StudyWorkspace({ scope, records }: { scope: ParcelStudyScope; records: 
   const [transferMessage, setTransferMessage] = useState("");
   const [importError, setImportError] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
+  const basisDetails = useRef<HTMLDetailsElement>(null);
   const importSequence = useRef(0);
   const source = useParcelStudyRecords(scope.baseBbls);
   const scenarios = deriveParcelStudyScenarios(draft);
@@ -93,7 +94,7 @@ function StudyWorkspace({ scope, records }: { scope: ParcelStudyScope; records: 
       <div><p className="architect-eyebrow">{scope.baseBbls.length} recorded base parcels</p><h2 id="parcel-study-title">How would you use this land?</h2></div>
       <span className="architect-status">Hypothetical study</span>
     </div>
-    <p className="parcel-study-boundary">Legal zoning-lot arrangement: <strong>Not established here</strong> <a href="#parcel-study-basis">Why?</a></p>
+    <p className="parcel-study-boundary">Legal zoning-lot arrangement: <strong>Not established here</strong> <a href="#parcel-study-basis" onClick={() => { if (basisDetails.current) basisDetails.current.open = true; }}>Why?</a></p>
     <fieldset className="parcel-study-options">
       <legend>Study arrangement</legend>
       {ARRANGEMENTS.map(([value, label, description]) => <label key={value} className={draft.arrangement === value ? "is-selected" : ""}>
@@ -144,7 +145,7 @@ function StudyWorkspace({ scope, records }: { scope: ParcelStudyScope; records: 
     </div>
     <div className="architect-panel-heading parcel-study-records-heading"><h3>Each parcel’s city records</h3><button type="button" className="architect-text-button" onClick={source.retry} disabled={source.loading}>{source.loading ? "Loading records…" : "Refresh records"}</button></div>
     <ParcelStudyRecords records={source.records}/>
-    <details id="parcel-study-basis" className="provenance-details">
+    <details ref={basisDetails} id="parcel-study-basis" className="provenance-details">
       <summary>Why limits are unavailable · site status and sources</summary>
       <dl className="parcel-study-basis">
         <div><dt>Site identity</dt><dd>The condo record links tax parcels. It does not establish a legal zoning lot. A study choice does not combine or separate property legally.</dd></div>
