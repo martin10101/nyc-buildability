@@ -70,12 +70,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-25T06:30:36.536293+00:00",
-  "updated_at": "2026-09-25T07:33:34.984828+00:00",
+  "updated_at": "2026-09-25T07:47:34.216816+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -130,5 +130,7 @@
       "status": "in_progress",
       "message": "Rework harvested: e94deb0c cherry-picked to c903307e (3 files MATCH); checks green; resubmitting."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-25T07:47:34.216816+00:00"
 }

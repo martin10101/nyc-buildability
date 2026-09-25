@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T07:36:48+00:00",
+ "verified_at": "2026-09-25T07:47:32+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1903,6 +1903,60 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies; routes UNMOUNTED; limits / 429 shape / deadlines / correlation ids unchanged; the existing app/resilience modules untouched; CI green at the reviewed head ca007dcf (run 36107082334); the PKT-H carry-forwards (48 > 40 slot sizing, the auth principal, per-route body ceilings) are deferred to the mount, reinforcing R009. Blob-level restamp predicate re-verified by the orchestrator at the accept head 3be7c22f (rate_limit.py 10916271, test_rate_limit.py 2efb09a2, scene_api.py fa6a1181, test_scene_api.py d0851eab, test_dxf_import_api.py fccbf334, test_export_api.py d5500e8d, M5-T117-producer-report.md 8dd9dc70; identity 4b04fb33; evaluate_task_refs ok); report M5-T117-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T116",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R006",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "b1c43167dee08730def4fc553cb69e5a2f2e01cd",
+   "reviewed_manifest_sha256": "23fd4149109076437121ae6282d9b09539a9a4e3d4641c1decfe53268e5d8e59",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T07:47:32+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a contracted, claimed, gated packet (G0 at the wave-3 contract seam, claim seam c375457c); G0/G2/G3/G4/G5 recorded; the FAIL -> rework -> same-reviewer re-rule cycle tracked; no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head b1c43167 (export_service.py 25437d25, test_export_service.py fb1ea711, M5-T116-producer-report.md bb2a479d; identity 23fd4149; evaluate_task_refs ok); report M5-T116-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs 19 active neighbours; one worktree; both material commits (99c8457f, c903307e) touch exactly the 3 allowed paths. Blob-level restamp predicate re-verified by the orchestrator at the accept head b1c43167 (export_service.py 25437d25, test_export_service.py fb1ea711, M5-T116-producer-report.md bb2a479d; identity 23fd4149; evaluate_task_refs ok); report M5-T116-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: GLB caps from the concave-safe triangulate_polygon (not a vertex-0 fan) with outward winding and walls on the same prepared ring; a GEOS simplicity gate refuses crossed bowties typed; area-sum + containment + winding oracles in-test; the fan and gate-drop mutants redden; 464 passed. Blob-level restamp predicate re-verified by the orchestrator at the accept head b1c43167 (export_service.py 25437d25, test_export_service.py fb1ea711, M5-T116-producer-report.md bb2a479d; identity 23fd4149; evaluate_task_refs ok); report M5-T116-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the export service hardened; DXF and PDF outputs and the owner samples byte-identical; native DWG still refused (the R007 hold intact); zero new dependencies. Blob-level restamp predicate re-verified by the orchestrator at the accept head b1c43167 (export_service.py 25437d25, test_export_service.py fb1ea711, M5-T116-producer-report.md bb2a479d; identity 23fd4149; evaluate_task_refs ok); report M5-T116-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies (shapely already pinned); UNMOUNTED (app/main.py untouched); the writers, claim_words and app/scenario untouched; PR #241 unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head b1c43167 (export_service.py 25437d25, test_export_service.py fb1ea711, M5-T116-producer-report.md bb2a479d; identity 23fd4149; evaluate_task_refs ok); report M5-T116-DCV.md."
      ]
     }
    ]

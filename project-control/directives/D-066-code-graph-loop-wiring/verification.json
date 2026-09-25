@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T07:36:48+00:00",
+ "verified_at": "2026-09-25T07:47:32+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1853,6 +1853,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t117): the packet's navigation block names rate_limit.py's consumers, the READ-ONLY neighbours and the query.py --no-regen instruction; the G0 report attests the regenerated graph. Blob-level restamp predicate re-verified by the orchestrator at the accept head 3be7c22f (rate_limit.py 10916271, test_rate_limit.py 2efb09a2, scene_api.py fa6a1181, test_scene_api.py d0851eab, test_dxf_import_api.py fccbf334, test_export_api.py d5500e8d, M5-T117-producer-report.md 8dd9dc70; identity 4b04fb33; evaluate_task_refs ok); report M5-T117-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T116",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "b1c43167dee08730def4fc553cb69e5a2f2e01cd",
+   "reviewed_manifest_sha256": "23fd4149109076437121ae6282d9b09539a9a4e3d4641c1decfe53268e5d8e59",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T07:47:32+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t116): the packet's navigation block names the consumers (export_api.py + tests READ-ONLY), the forbidden neighbours and the query.py --no-regen instruction; the G0 report corroborates. Blob-level restamp predicate re-verified by the orchestrator at the accept head b1c43167 (export_service.py 25437d25, test_export_service.py fb1ea711, M5-T116-producer-report.md bb2a479d; identity 23fd4149; evaluate_task_refs ok); report M5-T116-DCV.md."
      ]
     }
    ]
