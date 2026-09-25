@@ -3,7 +3,7 @@
  "directive_id": "D-083",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All thirteen requirements bind the non-ledger sentinel D-083-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. R011 (owner return item) is discharged by the owner-facing reply and audited here. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T22:38:50+00:00",
+ "verified_at": "2026-09-25T04:13:21+00:00",
  "task_verifications": [
   {
    "directive_id": "D-083",
@@ -145,6 +145,66 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: no writer can emit a barred claim word from caller text into an exported file (a refused write yields no output; the PDF title-block screen is load-bearing); the PDF refusal does not echo caller text, and the GLB/DXF refusal-message echo is the disclosed DB-059 (h) deferral that never reaches an exported file. Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T107",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R002"
+   ],
+   "reviewed_sha": "1983bdd61deff2d00436e4fc9784dfb47db25a87",
+   "reviewed_manifest_sha256": "a367f5488b8ad520c25dc2c26fe7bad2f2f1065a9442bf9c077a70697b33501e",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:13:15+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the only barred-word hit in the produced files is a negative disclosure; a test runs the shared claim-word screen over every assembler label, disclosure and datum string; proposal geometry is 'Proposed - not a city record'. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (scene_assembler.py 57a8afde, scene_api.py b2c14483, building_footprints_arcgis.py be407e64, test_scene_assembler.py fd5c5587, test_scene_api.py 94403239, test_building_footprints_arcgis.py b1be2943, M5-T107-producer-report.md 2b22fedf; identity a367f548; evaluate_task_refs ok); report M5-T107-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the proposed and generated-option sources and disclosures stay distinct; no demonstrated-maximum claim. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (scene_assembler.py 57a8afde, scene_api.py b2c14483, building_footprints_arcgis.py be407e64, test_scene_assembler.py fd5c5587, test_scene_api.py 94403239, test_building_footprints_arcgis.py b1be2943, M5-T107-producer-report.md 2b22fedf; identity a367f548; evaluate_task_refs ok); report M5-T107-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T108",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R006"
+   ],
+   "reviewed_sha": "1983bdd61deff2d00436e4fc9784dfb47db25a87",
+   "reviewed_manifest_sha256": "2873d915f97d352ce0683e9acbb7c14f320f3ab1457158a1ee5cf6d533c63fc1",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:13:21+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the draft and candidate responses say 'Proposed - not a city record' / 'Nothing here is a city record or a permitted value'; a test asserts no barred claim word in the provenance or massing. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (dxf_import.py 124ad72b, dxf_import_api.py eacb56b8, test_dxf_import.py 8b64e4a9, test_dxf_import_api.py 2d6edbbd, M5-T108-producer-report.md 1f42b2f0; identity 2873d915; evaluate_task_refs ok); report M5-T108-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: DRAFT_INPUT_PRECISION = 'imported drawing - not survey-confirmed' is carried in the draft provenance and never upgraded; the candidates notice repeats it. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (dxf_import.py 124ad72b, dxf_import_api.py eacb56b8, test_dxf_import.py 8b64e4a9, test_dxf_import_api.py 2d6edbbd, M5-T108-producer-report.md 1f42b2f0; identity 2873d915; evaluate_task_refs ok); report M5-T108-DCV.md."
      ]
     }
    ]

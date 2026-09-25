@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T04:01:49+00:00",
+ "verified_at": "2026-09-25T04:13:21+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1633,6 +1633,72 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: the packet carries the graph-derived navigation block (no Python module imports tools/controller_update; the existing scripts read-only; the checkout key from durable_state at run time) and the helper honours it. Blob-level restamp predicate re-verified by the orchestrator at the accept head 6314a25c (commission_lanes.ps1 a39ba5bb, test_commission_lanes.ps1 f0d69ef1, M0-T161-owner-guide.md db29c32a, M0-T161-producer-report.md f2fd87cd; identity 82864416; evaluate_task_refs ok); report M0-T161-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T106",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "1983bdd61deff2d00436e4fc9784dfb47db25a87",
+   "reviewed_manifest_sha256": "074a9f7b85532db300e67ea9f165008c6114437215e0c52922458dad2b55ddb3",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:13:07+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t106): the packet carries the graph-derived navigation block (832 files / 17984 nodes / 7700 edges) naming massing_model.py's only consumer and warning that the parallel M5-T107 codes against the public API; the public API is unchanged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (massing_model.py 68e062e5, test_massing_model.py 6971be8a, M5-T106-producer-report.md 14be254c; identity 074a9f7b; evaluate_task_refs ok); report M5-T106-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T107",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "1983bdd61deff2d00436e4fc9784dfb47db25a87",
+   "reviewed_manifest_sha256": "a367f5488b8ad520c25dc2c26fe7bad2f2f1065a9442bf9c077a70697b33501e",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:13:15+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t107): the packet carries the graph-derived navigation block (832 files / 17984 nodes / 7700 edges) naming the connector's only consumer, massing_model (read-only), glb_writer, the forbidden neighbours and the query.py --no-regen instruction. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (scene_assembler.py 57a8afde, scene_api.py b2c14483, building_footprints_arcgis.py be407e64, test_scene_assembler.py fd5c5587, test_scene_api.py 94403239, test_building_footprints_arcgis.py b1be2943, M5-T107-producer-report.md 2b22fedf; identity a367f548; evaluate_task_refs ok); report M5-T107-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T108",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "1983bdd61deff2d00436e4fc9784dfb47db25a87",
+   "reviewed_manifest_sha256": "2873d915f97d352ce0683e9acbb7c14f320f3ab1457158a1ee5cf6d533c63fc1",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:13:21+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t108): the packet carries the graph-derived navigation block (832 files / 17984 nodes / 7700 edges) naming dxf_reader.py's consumers (read-only), validate_proposed_massing's home and consumers, the forbidden neighbours and the query.py --no-regen instruction. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (dxf_import.py 124ad72b, dxf_import_api.py eacb56b8, test_dxf_import.py 8b64e4a9, test_dxf_import_api.py 2d6edbbd, M5-T108-producer-report.md 1f42b2f0; identity 2873d915; evaluate_task_refs ok); report M5-T108-DCV.md."
      ]
     }
    ]
