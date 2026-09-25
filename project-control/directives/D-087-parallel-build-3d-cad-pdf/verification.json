@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T06:32:16+00:00",
+ "verified_at": "2026-09-25T06:34:06+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1749,6 +1749,68 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies; unwired; pdf_object_streams.py and app/documents/ untouched; modularity exit 0 (sheet_interpreter 690 < 750); validate_directive_compliance --check exit 0; CI green at the pushed fc76a09f. Blob-level restamp predicate re-verified by the orchestrator at the accept head c375457c (sheet_objects.py f99c5058, sheet_marked_content.py 6faf7291, sheet_interpreter.py 31ebc55e, sheet_reader.py aaf4f651, test_sheet_content_features.py bddceb42, test_sheet_reader.py 613bcd20, test_sheet_reader_split_equivalence.py 1d1f26de, M5-T113-producer-report.md cdc39739; identity 804214cf; evaluate_task_refs ok); report M5-T113-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T111",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R004",
+    "D-087-R006",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "f2ada974c56c7c69639076f71e8e519e928d853b",
+   "reviewed_manifest_sha256": "3f87108f625842f409b03efb12aefb0d5741c329c32d25e0448ebcc34cd0e49a",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T06:34:06+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a contracted, claimed, gated packet (G0 93b94019, claimed 275ef85f) produced concurrently with disjoint M5-T112/T113/T114; five gates recorded; no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head f2ada974 (rate_limit.py 637c1b6a, test_rate_limit.py 0f2b0278, scene_api.py 9cdc8eb7, dxf_import_api.py 6a58ae1a, export_api.py 4177ba09, test_scene_api.py cd6232cf, test_dxf_import_api.py 233878ef, test_export_api.py ec9f9419, M5-T111-producer-report.md 70a7d045; identity 3f87108f; evaluate_task_refs ok); report M5-T111-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs all 19 active tasks; one worktree wt-m5t111; the material commit = exactly the 9 allowed paths; route tests beside their services. Blob-level restamp predicate re-verified by the orchestrator at the accept head f2ada974 (rate_limit.py 637c1b6a, test_rate_limit.py 0f2b0278, scene_api.py 9cdc8eb7, dxf_import_api.py 6a58ae1a, export_api.py 4177ba09, test_scene_api.py cd6232cf, test_dxf_import_api.py 233878ef, test_export_api.py ec9f9419, M5-T111-producer-report.md 70a7d045; identity 3f87108f; evaluate_task_refs ok); report M5-T111-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the UNMOUNTED 3D scene route - include_in_schema=False, the flag gate first for every method, the rate limit before the body read/parse, bounded job slots (503), the shared app.resilience.rate_limit primitives; no route-local limiter remains. Blob-level restamp predicate re-verified by the orchestrator at the accept head f2ada974 (rate_limit.py 637c1b6a, test_rate_limit.py 0f2b0278, scene_api.py 9cdc8eb7, dxf_import_api.py 6a58ae1a, export_api.py 4177ba09, test_scene_api.py cd6232cf, test_dxf_import_api.py 233878ef, test_export_api.py ec9f9419, M5-T111-producer-report.md 70a7d045; identity 3f87108f; evaluate_task_refs ok); report M5-T111-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the UNMOUNTED DXF import route - dual flag gate first, the limiter before _parse_assignment on /draft (DB-081 b), job slots, include_in_schema=False, the shared limiter, the aligned utf-8 encode step (DB-081 e). Blob-level restamp predicate re-verified by the orchestrator at the accept head f2ada974 (rate_limit.py 637c1b6a, test_rate_limit.py 0f2b0278, scene_api.py 9cdc8eb7, dxf_import_api.py 6a58ae1a, export_api.py 4177ba09, test_scene_api.py cd6232cf, test_dxf_import_api.py 233878ef, test_export_api.py ec9f9419, M5-T111-producer-report.md 70a7d045; identity 3f87108f; evaluate_task_refs ok); report M5-T111-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the UNMOUNTED CAD export route (DXF / PDF / GLB) - flag gate first, every method 404 while disabled, the limiter before the body read, job slots, include_in_schema=False, the shared limiter. Blob-level restamp predicate re-verified by the orchestrator at the accept head f2ada974 (rate_limit.py 637c1b6a, test_rate_limit.py 0f2b0278, scene_api.py 9cdc8eb7, dxf_import_api.py 6a58ae1a, export_api.py 4177ba09, test_scene_api.py cd6232cf, test_dxf_import_api.py 233878ef, test_export_api.py ec9f9419, M5-T111-producer-report.md 70a7d045; identity 3f87108f; evaluate_task_refs ok); report M5-T111-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies (stdlib + already-admitted starlette); app/main.py untouched (routes UNMOUNTED); absent from OpenAPI (throwaway-app tests); the existing app/resilience modules untouched; the max-envelope route untouched. G5 Finding 1 (MEDIUM, a pre-start cancel slot leak) is unreachable while UNMOUNTED and recorded as a mount precondition - consistent with R009. Blob-level restamp predicate re-verified by the orchestrator at the accept head f2ada974 (rate_limit.py 637c1b6a, test_rate_limit.py 0f2b0278, scene_api.py 9cdc8eb7, dxf_import_api.py 6a58ae1a, export_api.py 4177ba09, test_scene_api.py cd6232cf, test_dxf_import_api.py 233878ef, test_export_api.py ec9f9419, M5-T111-producer-report.md 70a7d045; identity 3f87108f; evaluate_task_refs ok); report M5-T111-DCV.md."
      ]
     }
    ]
