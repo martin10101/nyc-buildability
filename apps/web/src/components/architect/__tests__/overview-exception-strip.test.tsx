@@ -45,6 +45,26 @@ describe("OverviewExceptionStrip — AS-1: one strip, only ACTIVE issues", () =>
     expect(screen.queryByTestId("overview-exception-strip")).toBeNull();
     // Absent-state of the aria region: no role=status "Active issues" exists.
     expect(screen.queryByRole("status", { name: "Active issues" })).toBeNull();
+    // Absent-state of the HJ A2 heading + aria-labelledby: no "Active issues"
+    // heading exists when the strip is absent.
+    expect(screen.queryByRole("heading", { name: "Active issues" })).toBeNull();
+  });
+
+  it("names the strip via a SINGLE h2 heading (announced once, findable in the outline) — HJ A2", () => {
+    const profile = baseProfile();
+    withConflict(profile);
+    render(<OverviewExceptionStrip profile={profile} />);
+    const strip = screen.getByTestId("overview-exception-strip");
+    // A real heading in the outline (the strip is the content a hurried analyst
+    // most needs to find)...
+    const heading = within(strip).getByRole("heading", { level: 2, name: "Active issues" });
+    expect(heading).toBeInTheDocument();
+    // ...and the region is named BY that heading (aria-labelledby), not a duplicate
+    // aria-label, so the name is announced ONCE.
+    expect(strip).toHaveAttribute("aria-labelledby", heading.id);
+    expect(strip).not.toHaveAttribute("aria-label");
+    // The status region still resolves to the single "Active issues" name.
+    expect(screen.getByRole("status", { name: "Active issues" })).toBe(strip);
   });
 
   it("surfaces an unresolved conflict with its fields, the blocked effect and the preserved link", () => {
@@ -76,7 +96,7 @@ describe("OverviewExceptionStrip — AS-1: one strip, only ACTIVE issues", () =>
     );
   });
 
-  it("surfaces a stale source keeping the exact stale sentence plus a review clause, no link", () => {
+  it("surfaces a stale source keeping the exact stale sentence + review clause AND an Evidence link — HJ A4", () => {
     const profile = baseProfile();
     withStale(profile);
     render(<OverviewExceptionStrip profile={profile} />);
@@ -86,7 +106,48 @@ describe("OverviewExceptionStrip — AS-1: one strip, only ACTIVE issues", () =>
       "The property source is stale. Captured dates and retrieval status are available in Evidence.",
     );
     expect(row).toHaveTextContent("Review the retrieval dates before relying on these figures.");
-    expect(within(row).queryByRole("link")).toBeNull();
+    // HJ A4: the stale row now carries an explicit link to the Evidence view's
+    // retrieval status (the actionable path the conflict/missing rows already set).
+    const link = within(row).getByRole("link", { name: "Retrieval status in Evidence →" });
+    expect(link).toHaveAttribute("href", propertyHref(profile.identity.bbl, "evidence"));
+  });
+
+  it("gives a condo base-lot resolution conflict its OWN true clause, not 'official sources disagree' — HJ A5", () => {
+    const profile = baseProfile();
+    // The strip only reads field/resolution here; withConflict's numeric values are
+    // irrelevant to the row's heading/field/link/clause.
+    withConflict(profile, "condo_base_lot_resolution");
+    render(<OverviewExceptionStrip profile={profile} />);
+    const row = screen.getByTestId("exception-issue-condo-base-lot");
+    // Keeps its heading, its field name, and its review link...
+    expect(row).toHaveTextContent("Unresolved data conflicts");
+    expect(row).toHaveTextContent(fieldLabel("condo_base_lot_resolution"));
+    expect(within(row).getByRole("link", { name: "Review conflicting source values →" })).toHaveAttribute(
+      "href",
+      propertyHref(profile.identity.bbl, "issues"),
+    );
+    // ...but the clause is TRUE for what it annotates, and never the inaccurate
+    // "official sources disagree" framing; it points at the records section below.
+    expect(row).toHaveTextContent("the condo's base lot is not resolved to a single lot");
+    expect(row).toHaveTextContent("City records for this condo");
+    expect(row.textContent ?? "").not.toMatch(/official sources disagree/i);
+    // A condo-only conflict does not render the generic source-disagreement row.
+    expect(screen.queryByTestId("exception-issue-conflict")).toBeNull();
+  });
+
+  it("keeps 'official sources disagree' on a TRUE source conflict while the condo conflict gets its own true clause", () => {
+    const profile = baseProfile();
+    withConflict(profile, "lotarea");
+    withConflict(profile, "condo_base_lot_resolution");
+    render(<OverviewExceptionStrip profile={profile} />);
+    // The real conflict keeps the accurate source-disagreement clause...
+    const generic = screen.getByTestId("exception-issue-conflict");
+    expect(generic).toHaveTextContent("official sources disagree on these");
+    expect(generic.textContent ?? "").not.toMatch(/base lot is not resolved/i);
+    // ...and the condo conflict is a separate row with the true clause.
+    const condo = screen.getByTestId("exception-issue-condo-base-lot");
+    expect(condo).toHaveTextContent("the condo's base lot is not resolved to a single lot");
+    expect(condo.textContent ?? "").not.toMatch(/official sources disagree/i);
   });
 
   it("folds all three active issues into ONE role=status region (one strip, not three)", () => {

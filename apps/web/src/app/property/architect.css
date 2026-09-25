@@ -62,22 +62,45 @@
 .architect-raw pre { white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;line-height:1.6;padding:12px;max-height:420px;overflow:auto;background:#f2f4f2;border-radius:3px; }
 .architect-alert { padding:14px 17px;border:1px solid #decca6;border-left:3px solid var(--arch-accent);background:#faf3e4;font-size:12px;border-radius:4px;margin-bottom:18px; }
 .architect-alert p { margin:4px 0; }
+/* HJ A7 (M5-T122): the identity-withhold alert (AnalysisIdentityNotice, role=alert,
+ * data-identity-state differs|absent) is the most severe overview state — a
+ * wrong-property withhold. Give it a distinct, more-assertive rose treatment (spec
+ * §3 --status-conflict #C23B4B) so a sighted user never confuses it with the amber
+ * active-issues strip. Role and text are UNCHANGED (CSS only); PropertyIssuesSummary's
+ * own .architect-alert (no data-identity-state) is untouched. */
+.architect-alert[data-identity-state] { border-color:#e3b7bd;border-left-color:#c23b4b;background:#fbf1f2; }
+.architect-alert[data-identity-state] strong { color:#8f2733; }
 /* M5-T119 (D-086 P3a, spec §5.3 / frame O-D): two-column canvas — the site
  * map/context is the wider (~55%) LEFT column, the limit matrix the ~45% RIGHT
- * column. Both minmax tracks keep a 0 floor so nothing forces horizontal
- * overflow; the grid collapses to one column at ≤950px (below). */
+ * column. Horizontal-overflow safety comes from the ≤950px collapse to a single
+ * column (below), proven by the responsive-a11y e2e — NOT from a 0 floor on both
+ * tracks (M5-T122 fix of the M5-T119 G3 advisory: the LEFT track keeps a non-zero
+ * min of 320px, 280px ≤1200px; only the RIGHT track floors at 0). */
 .architect-overview-grid { display:grid;grid-template-columns:minmax(320px,1.25fr) minmax(0,1fr);gap:24px;align-items:start; }
 /* One consolidated active-issue strip (A04): one role=status region folding the
  * former conflict / critical-missing / stale alerts. Same warm-alert treatment
- * as .architect-alert (never colour alone — each row carries text + a link). */
+ * as .architect-alert (never colour alone — each row carries text + a link).
+ * M5-T122 HJ A2: the title is a real <h2> named via aria-labelledby; the selector
+ * is scoped under the strip so it out-specifies `.architect-shell h2` and keeps the
+ * small eyebrow look. */
 .architect-exception-strip { padding:14px 17px;border:1px solid #decca6;border-left:3px solid var(--arch-accent);background:#faf3e4;border-radius:4px;margin-bottom:18px; }
-.architect-exception-title { color:#6c5425;letter-spacing:.08em;font-size:10px;text-transform:uppercase;font-weight:640;margin:0 0 8px!important; }
+.architect-exception-strip .architect-exception-title { color:#6c5425;letter-spacing:.08em;font-size:10px;text-transform:uppercase;font-weight:640;margin:0 0 8px!important; }
 .architect-exception-row { font-size:12px;padding:8px 0;border-top:1px solid #ecdcb6; }
 .architect-exception-row:first-of-type { border-top:0;padding-top:0; }
 .architect-exception-row strong { display:block;color:var(--arch-ink);margin-bottom:2px; }
 .architect-exception-row p { margin:0 0 5px;color:#6c5425;line-height:1.6; }
 .architect-exception-row a { font-size:12px; }
 .architect-exception-fields { color:var(--arch-ink);font-weight:550; }
+/* M5-T122 (D-086 P3b, spec §5.4): condo RECORDS surface presentation. The heading
+ * row keeps the h2 accessible name alone and sets "Reference only" as a plain-text
+ * sibling tag (C02); the "Human record" claim-class label (C04) and the
+ * recorded-vs-current parcel comparison disclosure (C06) are text, never colour or
+ * an icon alone. */
+.architect-condo-heading { display:flex;align-items:baseline;gap:10px;flex-wrap:wrap; }
+.architect-condo-reference-tag { font-size:10px;letter-spacing:.07em;text-transform:uppercase;font-weight:640;color:#4a5a44;background:#eef2ec;border:1px solid #d5ddcf;border-radius:3px;padding:2px 7px; }
+.architect-condo-claim-tag { display:inline-block;font-size:10px;letter-spacing:.07em;text-transform:uppercase;font-weight:640;color:#3f4a5a;background:#eef1f5;border:1px solid #d3dae2;border-radius:3px;padding:2px 7px;margin:0 0 6px!important; }
+.architect-condo-discrepancy-detail { margin-top:6px; }
+.architect-condo-discrepancy-detail summary { cursor:pointer;color:#344e60;font-weight:500; }
 /* A06: the readable per-cap coverage status beside the cap value. */
 .architect-cap-line { display:flex;align-items:baseline;gap:10px 12px;flex-wrap:wrap; }
 .architect-cap-line .architect-metric { margin-bottom:0!important; }

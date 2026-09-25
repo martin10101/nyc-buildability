@@ -414,3 +414,39 @@ test("D-086 P3a: the shell environment strip is phone-only — hidden at desktop
   // In the DOM but display:none ≥701px (the desktop topbar disclosure + nav footnote carry it).
   await expect(page.getByTestId("shell-environment")).toBeHidden();
 });
+
+/* ================================================================ *
+ * D-086 P3b (M5-T122): the M5-T119 review riders on the loaded-overview exception
+ * strip survive at the 360px phone width — the strip is named by ONE heading
+ * (announced once), the condo base-lot conflict carries its true clause, the stale
+ * row links to Evidence, and none of it forces horizontal overflow.
+ * ================================================================ */
+test("D-086 P3b (M5-T122 HJ A2/A4/A5): the active-issues strip riders render with no overflow at 360px", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 740 });
+  await page.route(url => new URL(url).pathname === "/api/v1/properties/1000010010", async route => {
+    const response = await route.fetch();
+    const body = await response.json();
+    body.conflicts = [
+      ...(body.conflicts ?? []),
+      { field: "condo_base_lot_resolution", resolution: "unresolved", values: [{ source_id: "nyc-dof-dtm-condo-soda", value: "1003030019" }, { source_id: "nyc-dof-dtm-condo-soda", value: "1003030025" }] },
+    ];
+    body.reproducibility = { ...(body.reproducibility ?? {}), staleness: { stale: true } };
+    await route.fulfill({ response, json: body });
+  });
+  await openOverview(page);
+  const strip = page.getByTestId("overview-exception-strip");
+  await expect(strip).toBeVisible();
+  // HJ A2: one heading names the region (announced once) and is in the outline.
+  await expect(strip.getByRole("heading", { level: 2, name: "Active issues" })).toBeVisible();
+  await expect(strip).toHaveAttribute("aria-labelledby", "overview-exception-strip-heading");
+  // HJ A5: the condo conflict's true clause; HJ A4: the stale Evidence link.
+  await expect(strip.getByTestId("exception-issue-condo-base-lot")).toContainText(
+    "the condo's base lot is not resolved to a single lot",
+  );
+  await expect(
+    strip.getByTestId("exception-issue-stale").getByRole("link", { name: "Retrieval status in Evidence →" }),
+  ).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+});

@@ -251,12 +251,49 @@ test("active issues fold into ONE exception strip on the overview, no separate a
   const strip = page.getByTestId("overview-exception-strip");
   await expect(strip).toBeVisible();
   await expect(strip).toHaveAttribute("role", "status");
+  // M5-T122 HJ A2: the strip is named by a single h2 heading (announced once, in
+  // the heading outline), not a duplicate aria-label.
+  await expect(strip.getByRole("heading", { level: 2, name: "Active issues" })).toBeVisible();
+  await expect(strip).toHaveAttribute("aria-labelledby", "overview-exception-strip-heading");
   await expect(strip.getByTestId("exception-issue-conflict")).toContainText("Unresolved data conflicts");
   await expect(strip.getByRole("link", { name: "Review conflicting source values →" })).toHaveAttribute("href", `/property?ruleeval=on&bbl=${bbl}&view=issues`);
   await expect(strip.getByTestId("exception-issue-missing")).toContainText("Critical inputs missing");
   await expect(strip.getByRole("link", { name: "Review missing inputs →" })).toHaveAttribute("href", `/property?ruleeval=on&bbl=${bbl}&view=issues`);
   // Folded: no legacy separate `.architect-alert` status blocks remain on the overview.
   await expect(page.locator(".architect-alert")).toHaveCount(0);
+});
+
+// M5-T122 (D-086 P3b): the M5-T119 review riders on the exception strip —
+// HJ A4 (stale row links to Evidence) and HJ A5 (a condo base-lot resolution
+// conflict gets a TRUE clause, never "official sources disagree").
+test("the exception strip carries the stale Evidence link and a true condo base-lot clause", async ({ page }) => {
+  const bbl = BBL;
+  await page.route(url => new URL(url).pathname === `/api/v1/properties/${bbl}`, async route => {
+    const response = await route.fetch();
+    const body = await response.json();
+    body.conflicts = [
+      ...(body.conflicts ?? []),
+      { field: "condo_base_lot_resolution", resolution: "unresolved", values: [{ source_id: "nyc-dof-dtm-condo-soda", value: "1003030019" }, { source_id: "nyc-dof-dtm-condo-soda", value: "1003030025" }] },
+    ];
+    body.reproducibility = { ...(body.reproducibility ?? {}), staleness: { stale: true } };
+    await route.fulfill({ response, json: body });
+  });
+  await page.goto(`/property?ruleeval=on&bbl=${bbl}&view=overview`);
+  await expect(page.getByTestId("profile-view")).toBeVisible({ timeout: 15_000 });
+  const strip = page.getByTestId("overview-exception-strip");
+  await expect(strip).toBeVisible();
+  await expect(strip.getByRole("heading", { level: 2, name: "Active issues" })).toBeVisible();
+  // HJ A5: the condo conflict row states what it actually is and points at the
+  // records section; it never wears the inaccurate "official sources disagree" clause.
+  const condoRow = strip.getByTestId("exception-issue-condo-base-lot");
+  await expect(condoRow).toContainText("the condo's base lot is not resolved to a single lot");
+  await expect(condoRow).toContainText("City records for this condo");
+  await expect(condoRow).not.toContainText("official sources disagree");
+  await expect(condoRow.getByRole("link", { name: "Review conflicting source values →" })).toHaveAttribute("href", `/property?ruleeval=on&bbl=${bbl}&view=issues`);
+  // HJ A4: the stale row links to the Evidence view's retrieval status.
+  await expect(
+    strip.getByTestId("exception-issue-stale").getByRole("link", { name: "Retrieval status in Evidence →" }),
+  ).toHaveAttribute("href", `/property?ruleeval=on&bbl=${bbl}&view=evidence`);
 });
 
 test("manual and BBL recovery remain reachable when suggestions fail", async ({ page }) => {
