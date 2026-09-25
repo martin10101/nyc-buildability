@@ -1144,7 +1144,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-088-run-five-codex-loops/manifest.json"
+  },
+  {
+   "directive_id": "D-089",
+   "slug": "overnight-task-after-task",
+   "title": "Owner 2026-09-25 ('I am going to sleep u keep running till in the morning tesk after tesk'): continuous task-after-task operation overnight without waiting for owner replies - accept what is ready, contract, dispatch, review, accept, re-feed; the loop-lane share runs as orchestrator-dispatched producers while the owner-typed B-026 commissioning waits for the morning; NO stop condition lifted (Tier D, holds, PR #241, gate FAILs, dependency security, owner-typed commissioning)",
+   "status": "active",
+   "issued_at": "2026-09-25",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-089-overnight-task-after-task/manifest.json"
   }
  ],
- "updated_at": "2026-09-25T01:15:00+00:00"
+ "updated_at": "2026-09-25T04:45:26+00:00"
 }

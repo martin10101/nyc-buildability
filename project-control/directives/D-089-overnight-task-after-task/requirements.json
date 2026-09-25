@@ -1,0 +1,134 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-089",
+ "version": 1,
+ "requirement_count": 4,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-25T04:45:26+00:00",
+ "requirements": [
+  {
+   "id": "D-089-R001",
+   "text": "Continuous task-after-task operation until the owner returns ('u keep running till in the morning tesk after tesk'): while the owner sleeps the orchestrator keeps completing ledger work one task after another without waiting for owner replies (ADR-006 Tier A; the D-080 overnight precedent) - accept what is ready (M5-T109 first), contract the next released, non-held packets, dispatch producers, run the independent review waves, record gates, accept at seams, and re-feed. The loop-lane share runs as orchestrator-dispatched subagent producers while B-026 keeps the lanes down (the workaround recorded on B-026), several packets at once only when their allowed_paths are pairwise disjoint (D-087-R002, D-088-R005), up to D-088-R001's five, reduced stepwise for machine contention (D-088-R006 disk space).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-089-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-25"
+   },
+   "dependencies": [],
+   "required_harness": "The normal contract -> claim -> gate -> accept lifecycle per task; a recorded pairwise-disjointness check before each parallel dispatch wave.",
+   "required_evidence": "The overnight ledger delta (accepted tasks, gate records, seam commits) and the morning handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-089-R002",
+   "text": "'Keep running' lifts NO stop condition: Tier D / Section 20 hard stops; owner holds (expansion section 2 minus the D-040/D-076/D-082/D-087 scoped releases; PR #241 never merged; the unmounted max-envelope route; native DWG licensing); gate FAIL handling (rework, never override); genuine blockers; dependency security with no agent waiver; the thin-client limits; and the D-064/D-085 model pins (never pass model: on a dispatch) all stand. The OWNER-TYPED loop commissioning and canary approval (B-026; runbook section 12; D-088 scope) are never run on the owner's behalf.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-089-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-25"
+   },
+   "dependencies": [],
+   "required_harness": "Every overnight action stays inside Tier A/B; any Tier D or owner-typed item is queued for the morning, never executed.",
+   "required_evidence": "Absence of any hold/gate/Tier D change or commissioning run in the overnight commits and logs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-089-R003",
+   "text": "Owner-needed items wait for the morning: the owner is asleep, so no owner-typed step (the B-026 commissioning, the canary digest approval, any Tier D or legal answer) can happen overnight. Each such item is queued for the morning report and the next accepted dependency continues (ADR-006 Tier C); nothing blocks on an owner reply.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-089-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-25"
+   },
+   "dependencies": [],
+   "required_harness": "Owner-needed items recorded (blocker, backlog or handoff) while work continues on independent packets.",
+   "required_evidence": "The morning handoff's owner-pending list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-089-R004",
+   "text": "Morning report in simple English (D-064; D-088-R007): what was finished overnight, what waits for the owner (the loop commissioning commands filled in and ready to paste; any owner decisions), and why the loops did not run overnight (the commissioning is owner-typed).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-089-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-25"
+   },
+   "dependencies": [],
+   "required_harness": "An owner-facing reply in plain words with the exact lines to type.",
+   "required_evidence": "The morning session reply + the handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

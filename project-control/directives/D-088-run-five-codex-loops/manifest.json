@@ -10,7 +10,7 @@
  "issued_at": "2026-09-24",
  "captured_at": "2026-09-25T01:15:00+00:00",
  "created_at": "2026-09-25T01:15:00+00:00",
- "updated_at": "2026-09-25T05:05:00+00:00",
+ "updated_at": "2026-09-25T04:45:26+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "afbde1cf625a5f9d317e3d49024e97870bcc619d",
  "capture_head_sha": null,
@@ -38,9 +38,19 @@
    "sequence": 1,
    "recorded_at": "2026-09-25T01:15:00+00:00",
    "content_digest_sha256": "375ee0c3e975dcfd8ae7d8cfeb9ce20418813be0113c027c5449dabae7b59748"
+  },
+  {
+   "file": "source-002-amendment.md",
+   "kind": "amendment",
+   "sequence": 2,
+   "amends": "source-001.md",
+   "recorded_at": "2026-09-25T04:45:26+00:00",
+   "content_digest_sha256": "eb446f18a3b494ba18886abe8712309f6133edafa91582a5f594a7676c60a7e0"
   }
  ],
- "amendments": [],
+ "amendments": [
+  "source-002-amendment.md"
+ ],
  "supersedes": [],
  "superseded_by": null,
  "affected_tasks": [],
@@ -73,6 +83,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "D-088 lane-1 contract seam (seq 129: M5-T110 - the supervised one-cycle canary packet for loop lane 1): bound D-088-R002 <- M5-T110; D-088-R005 <- M5-T110; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T04:45:26+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "source-002 captured verbatim ('Run 5 codex loop side by side', received ~04:35Z at the seq-130 resume): a re-affirmation of source-001 and the owner's go after the status pause. No requirement text changes (requirements.json untouched; its content digest unchanged). The commissioning and the canary approval stay OWNER-TYPED (B-026 open). Captured in the same commit as D-089 (the owner's follow-up 'keep running till in the morning'). Clock note: earlier entries' times were approximate (the 05:05Z entries predate this real-time capture)."
   }
  ]
 }
