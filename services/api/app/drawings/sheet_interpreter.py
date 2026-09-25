@@ -6,8 +6,12 @@ graphics subset: full affine CTM (rotation/shear), the ``q``/``Q`` stack, path c
 cubic-Bezier flattening under a declared chord error, stroke/fill, text-run placement under the
 text+CTM matrices, Form XObject re-interpretation with depth/cycle bounds (images counted, never
 decoded), and (M5-T118) the ``sh`` operator and inline images (``BI``/``ID``/``EI``) skipped as
-non-geometry with a count. It composes :mod:`app.drawings.sheet_objects` (decode) and
-:mod:`app.drawings.sheet_inline_image` (the inline-image skip), and is driven by the
+non-geometry with a count. The path-construction group (``m l c v y h re`` + cubic flattening + the
+paint operators) is inherited from :class:`app.drawings.sheet_path_state._PathState` (M5-T120 split
+so this module stays under the 750-line ceiling; DB-090 c) — this module keeps the scan loop,
+operand typing, ``_map``, operator dispatch, text runs, and Form/inline-image handling. It composes
+:mod:`app.drawings.sheet_objects` (decode), :mod:`app.drawings.sheet_inline_image` (the inline-image
+skip) and :mod:`app.drawings.sheet_path_state`, and is driven by the
 :class:`~app.drawings.sheet_reader._SheetInterpreter` coordinator; the bounds (per-page +
 per-document) and ``concat_matrix`` / ``flatten_cubic`` are THREADED IN via ``self._interp.*`` so
 patching a facade constant still bites.
@@ -44,11 +48,11 @@ from app.drawings.sheet_objects import (
     _resolved_int,
     _wrap_strict,
 )
+from app.drawings.sheet_path_state import _PATH_HANDLERS, _PathState
 from app.drawings.sheet_primitives import (
     Matrix,
     Point,
     SheetImage,
-    SheetPolyline,
     SheetRefusal,
     SheetTextRun,
 )
@@ -63,10 +67,9 @@ _IDENTITY: Matrix = (1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
 _WHITESPACE = frozenset(b"\x00\t\n\x0c\r ")
 _DELIMITERS = frozenset(b"()<>[]{}/%")
 
-_PAINT_STROKE = frozenset({"S", "s", "B", "B*", "b", "b*"})
-_PAINT_FILL = frozenset({"f", "F", "f*", "B", "B*", "b", "b*"})
+# ``_PAINT_ALL`` is the DISPATCH set read by ``_execute`` (below); the stroke/fill/close-first
+# sub-sets consumed by ``_PathState._paint`` moved with it to :mod:`app.drawings.sheet_path_state`.
 _PAINT_ALL = frozenset({"S", "s", "f", "F", "f*", "B", "B*", "b", "b*", "n"})
-_PAINT_CLOSE_FIRST = frozenset({"s", "b", "b*"})
 _TEXT_SHOW_OR_MOVE = frozenset({"Td", "TD", "Tm", "T*", "Tj", "TJ", "'", '"'})
 # ``sh`` (§8.7.4.2 / Table 77) paints a colour fill, NOT linework, so it is SKIPPED as
 # non-geometry with a disclosed count (M5-T118, DB-055 c), never refused. A rebindable set (not an
@@ -100,9 +103,12 @@ _IGNORED = frozenset(
 # ================================================================= content-stream executor
 
 
-class _StreamRun:
+class _StreamRun(_PathState):
     """Mutable scanner/executor for a single content stream. Owns the per-stream path,
-    text, and CTM-stack state; defers budgets and output to the shared interpreter."""
+    text, and CTM-stack state; defers budgets and output to the shared interpreter. The path
+    group (``m l c v y h re`` construction, cubic flattening, paint) is inherited from
+    :class:`app.drawings.sheet_path_state._PathState`; this class owns the scan loop, operand
+    typing, ``_map``, operator dispatch, text runs, and Form/inline-image handling."""
 
     def __init__(
         self,
@@ -262,12 +268,7 @@ class _StreamRun:
         ops.clear()
         return values
 
-    # -- path helpers -----------------------------------------------------------------
-    def _flush_open(self) -> None:
-        if self._cur_points is not None and len(self._cur_points) >= 1:
-            self._subpaths.append((self._cur_points, False))
-        self._cur_points = None
-
+    # -- coordinate map (path construction lives in _PathState / sheet_path_state) -----
     def _map(self, x: float, y: float) -> Point | SheetRefusal:
         """Map user point ``(x, y)`` through the current CTM into device space; refuse a
         non-finite result (CTM overflow to inf/nan — G5 F6)."""
@@ -275,118 +276,6 @@ class _StreamRun:
         if not _is_finite_point(point):
             return _refuse("non-finite coordinate", "a coordinate is not finite after CTM math")
         return point
-
-    def _open_after_close(self) -> None:
-        """After ``h`` / ``re`` / a paint's close, a segment op with no intervening ``m``
-        begins a NEW subpath at the current point (device space), per ISO 32000-1 Table 59
-        (G1 F5), rather than being refused."""
-        self._cur_points = [self._current]  # type: ignore[list-item]
-        self._subpath_start = self._current
-
-    def _moveto(self, x: float, y: float) -> SheetRefusal | None:
-        self._flush_open()
-        point = self._map(x, y)
-        if isinstance(point, SheetRefusal):
-            return point
-        self._cur_points = [point]
-        self._current = point          # device space (post-CTM)
-        self._subpath_start = point
-        return None
-
-    def _lineto(self, x: float, y: float) -> SheetRefusal | None:
-        if self._current is None:
-            return _refuse("path", "'l' with no current point")
-        point = self._map(x, y)
-        if isinstance(point, SheetRefusal):
-            return point
-        if self._cur_points is None:
-            self._open_after_close()
-        self._cur_points.append(point)  # type: ignore[union-attr]
-        self._current = point
-        return self._charge_points(1)
-
-    def _curveto(
-        self, ctrl1: Point, ctrl2: Point, end: Point, *, ctrl1_is_current: bool = False
-    ) -> SheetRefusal | None:
-        if self._current is None:
-            return _refuse("path", "curve with no current point")
-        interp = self._interp
-        p0 = self._current                       # device space; a mid-path cm cannot move it
-        p1: Point | SheetRefusal = p0 if ctrl1_is_current else self._map(*ctrl1)
-        if isinstance(p1, SheetRefusal):
-            return p1
-        p2 = self._map(*ctrl2)
-        if isinstance(p2, SheetRefusal):
-            return p2
-        p3 = self._map(*end)
-        if isinstance(p3, SheetRefusal):
-            return p3
-        if self._cur_points is None:
-            self._open_after_close()
-        # Thread the TIGHTER of the page-remaining and document-remaining point budgets INTO
-        # flattening (M5-T118): a degenerate curve stops and refuses at whichever budget is
-        # closer instead of first materializing 2**MAX_FLATTEN_DEPTH points (G5 F1 / G3 F1).
-        page_remaining = interp.limits.max_page_path_points - interp.page_point_count
-        doc_remaining = interp.limits.max_document_path_points - interp.point_count
-        remaining = min(page_remaining, doc_remaining)
-        if remaining < 0:
-            remaining = 0
-        out: list[Point] = []
-        completed = interp.flatten_cubic(p0, p1, p2, p3, interp.tolerance, out, 0, remaining)
-        if not completed:
-            if page_remaining <= doc_remaining:
-                return _refuse(
-                    "path points",
-                    f"over {interp.limits.max_page_path_points} flattened points",
-                )
-            return _refuse(
-                "path point ceiling",
-                f"over {interp.limits.max_document_path_points} flattened points across "
-                "the document",
-            )
-        for point in out:                        # de Casteljau midpoints can overflow to inf
-            if not _is_finite_point(point):
-                return _refuse("non-finite coordinate", "a flattened point is not finite")
-        self._cur_points.extend(out)  # type: ignore[union-attr]
-        self._current = p3
-        return self._charge_points(len(out))
-
-    def _close(self) -> None:
-        if self._cur_points is not None and self._subpath_start is not None:
-            self._subpaths.append((self._cur_points, True))
-            self._cur_points = None
-            self._current = self._subpath_start   # device space
-
-    def _charge_points(self, count: int) -> SheetRefusal | None:
-        interp = self._interp
-        interp.point_count += count
-        interp.page_point_count += count
-        if interp.page_point_count > interp.limits.max_page_path_points:
-            return _refuse(
-                "path points", f"over {interp.limits.max_page_path_points} flattened points"
-            )
-        if interp.point_count > interp.limits.max_document_path_points:
-            return _refuse(
-                "path point ceiling",
-                f"over {interp.limits.max_document_path_points} flattened points across "
-                "the document",
-            )
-        return None
-
-    def _paint(self, word: str) -> None:
-        if word in _PAINT_CLOSE_FIRST:
-            self._close()
-        self._flush_open()
-        stroked = word in _PAINT_STROKE
-        filled = word in _PAINT_FILL
-        for points, closed in self._subpaths:
-            if len(points) >= 2:
-                self._interp.polylines.append(
-                    SheetPolyline(tuple(points), closed, stroked, filled)
-                )
-        self._subpaths = []
-        self._current = None
-        self._subpath_start = None
 
     # -- operator dispatch ------------------------------------------------------------
     def _execute(self, word: str, offset: int) -> SheetRefusal | None:
@@ -440,61 +329,6 @@ class _StreamRun:
             "unsupported operator",
             f"operator '{_preview(word)}' at offset {offset} is outside the architect-sheet subset",
         )
-
-    # -- path operators ---------------------------------------------------------------
-    def _op_m(self) -> SheetRefusal | None:
-        values = self._take("nn")
-        if values is None:
-            return _refuse("m", "m needs 2 numbers")
-        return self._moveto(float(values[0]), float(values[1]))
-
-    def _op_l(self) -> SheetRefusal | None:
-        values = self._take("nn")
-        if values is None:
-            return _refuse("l", "l needs 2 numbers")
-        return self._lineto(float(values[0]), float(values[1]))
-
-    def _op_c(self) -> SheetRefusal | None:
-        values = self._take("nnnnnn")
-        if values is None:
-            return _refuse("c", "c needs 6 numbers")
-        v = [float(x) for x in values]
-        return self._curveto((v[0], v[1]), (v[2], v[3]), (v[4], v[5]))
-
-    def _op_v(self) -> SheetRefusal | None:
-        values = self._take("nnnn")
-        if values is None or self._current is None:
-            return _refuse("v", "v needs 4 numbers and a current point")
-        v = [float(x) for x in values]
-        # 'v': the first control point coincides with the current point (device space).
-        return self._curveto((0.0, 0.0), (v[0], v[1]), (v[2], v[3]), ctrl1_is_current=True)
-
-    def _op_y(self) -> SheetRefusal | None:
-        values = self._take("nnnn")
-        if values is None:
-            return _refuse("y", "y needs 4 numbers")
-        v = [float(x) for x in values]
-        return self._curveto((v[0], v[1]), (v[2], v[3]), (v[2], v[3]))
-
-    def _op_h(self) -> SheetRefusal | None:
-        if self._operands:
-            return _refuse("h", "h takes no operands")
-        self._close()
-        return None
-
-    def _op_re(self) -> SheetRefusal | None:
-        values = self._take("nnnn")
-        if values is None:
-            return _refuse("re", "re needs 4 numbers")
-        x, y, w, h = (float(v) for v in values)
-        move_err = self._moveto(x, y)
-        if move_err is not None:
-            return move_err
-        for err in (self._lineto(x + w, y), self._lineto(x + w, y + h), self._lineto(x, y + h)):
-            if err is not None:
-                return err
-        self._close()
-        return None
 
     # -- text operators ---------------------------------------------------------------
     def _text(self, word: str, offset: int) -> SheetRefusal | None:
@@ -735,14 +569,9 @@ def _matches(value: object, kind: str) -> bool:
     return isinstance(value, tuple)  # "a"
 
 
-_PATH_HANDLERS = {
-    "m": _StreamRun._op_m,
-    "l": _StreamRun._op_l,
-    "c": _StreamRun._op_c,
-    "v": _StreamRun._op_v,
-    "y": _StreamRun._op_y,
-    "h": _StreamRun._op_h,
-}
+# ``_PATH_HANDLERS`` (the ``m l c v y h`` dispatch table) is imported from
+# :mod:`app.drawings.sheet_path_state`, where the handlers now live; ``_execute`` reads it as this
+# module's global so a monkeypatch of ``sheet_interpreter._PATH_HANDLERS`` still reaches dispatch.
 _TEXT_STATE_OR_OBJECT = frozenset(
     {"BT", "ET", "Tf", "TL", "Td", "TD", "Tm", "T*", "Tj", "TJ", "'", '"'}
 )

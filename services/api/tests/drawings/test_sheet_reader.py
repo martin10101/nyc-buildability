@@ -705,8 +705,9 @@ _PAINT_FLAGS = {
 
 def test_all_paint_operators_set_expected_flags():
     """Each accepted painting operator is executed and its (stroked, filled, closed) outcome is
-    asserted. Mutants (report): emptying `_PAINT_STROKE` / `_PAINT_FILL` / `_PAINT_CLOSE_FIRST`
-    each reddens the stroked / filled / closed facet respectively."""
+    asserted. Mutants (report): emptying `sheet_path_state._PAINT_STROKE` / `_PAINT_FILL` /
+    `_PAINT_CLOSE_FIRST` (their home after the M5-T120 split) each reddens the stroked / filled /
+    closed facet respectively — committed as positive controls in test_sheet_p4_features.py."""
     for word, (stroked, filled, closed) in _PAINT_FLAGS.items():
         doc = read_sheet(_one_page(b"0 0 m 10 0 l 10 10 l " + word.encode("ascii")))
         assert isinstance(doc, SheetDocument), word

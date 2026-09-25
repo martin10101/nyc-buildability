@@ -378,7 +378,11 @@ def _cases() -> list[tuple[str, bytes, float, dict]]:
     a(("refuse_unbalanced_Q", _one_page(b"Q"), D, {}))
     a(("refuse_text_before_tf", _one_page(b"BT (x) Tj ET"), D, {}))
     a(("refuse_nested_bt", _one_page(b"BT BT ET ET"), D, {}))
-    a(("refuse_l_no_current", _one_page(b"5 5 l S"), D, {}))
+    # M5-T120 (DB-090 i): a post-paint `l` with no current point now OPENS a subpath at its own
+    # point (a read, not a refusal), so the former `5 5 l S` refusal probe is replaced by an orphan
+    # CURVE, which STAYS a typed "curve with no current point" refusal (the new orphan-lineto READ
+    # behaviour + its mutations live in tests/drawings/test_sheet_p4_features.py).
+    a(("refuse_curve_no_current", _one_page(b"5 5 10 10 20 20 c S"), D, {}))
     a(("refuse_nested_inline_array", _one_page(b"BT /F1 10 Tf [[ ]] TJ ET",
                                                resources=b"<< /Font << /F1 << >> >> >>"), D, {}))
 
@@ -479,10 +483,13 @@ def overall_digest(sr) -> str:
 
 # GOLDEN: captured from the PRE-split sheet_reader module before any edit (M5-T094); the two
 # `*decode_parms*` cases were DELIBERATELY recaptured at M5-T113 (DB-076 a). M5-T118 recaptured
-# `refuse_unsupported_op` (its former `sh` probe is now a skipped shading op — DB-055 c/d) and
-# _OVERALL; the per-page/document budget split changed NO other case digest (verified: the only
-# CHANGED case is `refuse_unsupported_op`). All 62 unrevised per-case digests are UNCHANGED.
-_OVERALL = "137837884e15e8bfc2a30261d2b89cc4f2cd1206fff6b5ea3a425c51cf29fe5b"
+# `refuse_unsupported_op` (its former `sh` probe is now a skipped shading op — DB-055 c/d). M5-T120
+# replaced `refuse_l_no_current` (`5 5 l S`, now a READ) with `refuse_curve_no_current` (an orphan
+# curve, still a refusal — DB-090 i) and recaptured _OVERALL; the sheet_interpreter path-state split
+# (DB-090 c) and the /DP-dictionary + citation changes (DB-090 a/b) changed NO other case digest
+# (verified: the only CHANGED case is the deliberate l->curve substitution). All 62 unrevised
+# per-case digests are UNCHANGED.
+_OVERALL = "264b54168d4317dcbee4802eff2b6b4524f73d0487ab2adcc9465c9bc3b00efd"
 _GOLDEN = {
     "asym_bezier": "dcb1a08370e49f494484da30dd28c531020eee8c430616400520862ab8d4018d",
     "contents_array": "feccdc8409a6c869b185c9db02f8473503e03c271e3e015f5d9240afe3a49e39",
@@ -514,6 +521,9 @@ _GOLDEN = {
     "refuse_bad_media_box": "be71e8ca6e07b88b887add265cb9b4b31cca6ce3c96bbde8d4b820e8820add81",
     "refuse_bad_tolerance": "ad1b54a3535f3d8a8c04f7bbc372f3d1369b6af55eeafea8d1397da7c97f0f67",
     "refuse_catalog_no_type": "8a37488d19f12d98774940bdbb77cfe56f97da756460a74f9781b4910575ee65",
+    # M5-T120 (DB-090 i): replaces the former `refuse_l_no_current` (`5 5 l S`), which now READS as
+    # an orphan-lineto subpath; an orphan CURVE stays a "curve with no current point" refusal.
+    "refuse_curve_no_current": "53a90aae3d41353208ade352d13eaabb09f49e70bccf8786a1fe4007df40b965",
     "refuse_dangling_operands": "33270203463528e67ae85880bda46263cd9d03d1c898161e616735fe79f7c2f6",
     # M5-T113 (DB-076 a): the TIFF predictor (2) stays a typed "predictor" refusal (the new
     # "what stays unsupported" golden case; the former unconditional refuse_decode_parms is gone).
@@ -523,7 +533,6 @@ _GOLDEN = {
     "refuse_encryption": "d46f4bb36448f8090dc8bc773337c14bd6331563c8640271df367cc1192bfc68",
     "refuse_filter_array": "5a9210588a524427a52a2691d9a33d7d486274ea65d79fd2c399fd351e15e9bb",
     "refuse_filter_lzw": "04432e1061622c153de41270d74ac94465a8fd1222ad307fa7da5831d50a6eb6",
-    "refuse_l_no_current": "f6448ff8a078601a8938d57c13415cc14e7636530df29826bef46c36be89758e",
     "refuse_malformed_header": "3855b2b5917f029c482e1e94e982938ed52f70bf4b89791d98393f5292b1da89",
     "refuse_missing_media_box": "ee8a73cd995259969303666638effd59cc352c541abb88adf590a60b87181be9",
     "refuse_nested_bt": "d9a885312cff03cc14ddfde1860af08c8db6c9b9961a36e22d59840e7fcbf26e",

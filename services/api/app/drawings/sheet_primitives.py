@@ -194,9 +194,12 @@ class SheetPage:
     ``shading_skips`` / ``inline_image_skips`` are the DISCLOSED counts of two non-geometry
     constructs the reader deliberately skips rather than refusing (M5-T118, D-087 P3): the
     ``sh`` shading operator (ISO 32000-1 §8.7.4.2, a colour fill, not linework) and inline
-    images (``BI``/``ID``/``EI``, §8.9.7, raster samples, never decoded). They paint nothing
-    into ``polylines`` / ``images``, so the page surfaces the count for honest disclosure. Both
-    default to 0, so a page with neither is byte-identical to the pre-P3 output type."""
+    images (``BI``/``ID``/``EI``, §8.9.7, raster samples, never decoded). ``orphan_subpaths``
+    (M5-T120, D-087 P4) counts subpaths opened by an ``l`` with no current point after a painting
+    operator (§8.5.2 / §8.5.3): the reader begins a new subpath AT ITS OWN point instead of refusing
+    the document, never drawing a segment from the undefined pre-paint point. All three paint
+    nothing of their own into ``polylines`` / ``images``, so the page surfaces the count for honest
+    disclosure. Each defaults to 0, so a page with none is byte-identical to the pre-P3/P4 type."""
 
     index: int
     media_box: tuple[float, float, float, float]
@@ -207,6 +210,7 @@ class SheetPage:
     images: tuple[SheetImage, ...]
     shading_skips: int = 0
     inline_image_skips: int = 0
+    orphan_subpaths: int = 0
 
     @property
     def image_count(self) -> int:
@@ -230,6 +234,12 @@ class SheetDocument:
     def inline_image_skips(self) -> int:
         """Total inline images (``BI``/``ID``/``EI``) skipped across all pages (M5-T118; §8.9.7)."""
         return sum(page.inline_image_skips for page in self.pages)
+
+    @property
+    def orphan_subpaths(self) -> int:
+        """Total post-paint ``l``-with-no-current-point subpaths opened at their own point across
+        all pages (M5-T120; §8.5.2 / §8.5.3)."""
+        return sum(page.orphan_subpaths for page in self.pages)
 
 
 @dataclass(frozen=True)

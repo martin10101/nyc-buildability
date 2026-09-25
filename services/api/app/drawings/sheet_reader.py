@@ -194,9 +194,9 @@ class _SheetInterpreter:
 
     ``op_count`` / ``point_count`` are DOCUMENT-WIDE (never reset), checked against the document
     ceilings; ``page_op_count`` / ``page_point_count`` are PER-PAGE (reset by :meth:`begin_page`),
-    checked against the per-page budgets (M5-T118). ``shading_skips`` / ``inline_image_skips`` are
-    document totals; their ``page_*`` counterparts hold the current page's counts so
-    :func:`_build_page` can stamp them onto each :class:`SheetPage`."""
+    checked against the per-page budgets (M5-T118). ``shading_skips`` / ``inline_image_skips`` /
+    ``orphan_subpaths`` are document totals; their ``page_*`` counterparts hold the current page's
+    counts so :func:`_build_page` can stamp them onto each :class:`SheetPage`."""
 
     def __init__(
         self,
@@ -221,19 +221,23 @@ class _SheetInterpreter:
         self.point_count = 0  # document-wide
         self.shading_skips = 0  # document-wide (sh operators skipped)
         self.inline_image_skips = 0  # document-wide (BI/ID/EI images skipped)
+        self.orphan_subpaths = 0  # document-wide (post-paint 'l' subpaths opened at own point)
         self.page_op_count = 0  # reset per page by begin_page
         self.page_point_count = 0  # reset per page by begin_page
         self.page_shading_skips = 0  # reset per page by begin_page
         self.page_inline_image_skips = 0  # reset per page by begin_page
+        self.page_orphan_subpaths = 0  # reset per page by begin_page
 
     def begin_page(self) -> None:
-        """Reset every PER-PAGE counter (operators, points, non-geometry skips) and the decoder's
-        per-page decoded-bytes budget at the start of a page (M5-T118, DB-055 c). Extracted as a
-        seam so a mutation defeating the reset proves the per-page budgets are load-bearing."""
+        """Reset every PER-PAGE counter (operators, points, non-geometry skips, orphan subpaths)
+        and the decoder's per-page decoded-bytes budget at the start of a page (M5-T118, DB-055 c;
+        M5-T120, DB-090 i). Extracted as a seam so a mutation defeating the reset proves the
+        per-page budgets are load-bearing."""
         self.page_op_count = 0
         self.page_point_count = 0
         self.page_shading_skips = 0
         self.page_inline_image_skips = 0
+        self.page_orphan_subpaths = 0
         self.decoder.begin_page()
 
     def interpret(
@@ -493,4 +497,5 @@ def _build_page(
         images=images,
         shading_skips=interpreter.page_shading_skips,
         inline_image_skips=interpreter.page_inline_image_skips,
+        orphan_subpaths=interpreter.page_orphan_subpaths,
     )

@@ -4,17 +4,21 @@ reader profile (M5-T118, D-087 PDF-3; DB-055 d).
 ISO 32000-1 §8.9.7 (inline images): a content stream may embed a small image directly with the
 ``BI`` (begin image) / ``ID`` (image data) / ``EI`` (end image) operators, rather than as an image
 XObject. Between ``BI`` and ``ID`` is an ABBREVIATED image dictionary (Table 92 key abbreviations,
-Table 93 filter abbreviations); after ``ID`` and a single whitespace byte comes the raw sample
-data, terminated by ``EI``. An inline image is a raster, not drawing linework, so this reader
+Table 93 filter/colour-space abbreviations); after ``ID`` and a single whitespace byte comes the raw
+sample data, terminated by ``EI``. An inline image is a raster, not drawing linework, so this reader
 SKIPS it (never decodes the samples, never refuses the whole document for it — the M5-T113 corpus
-blocker for item 4) and discloses a per-page count.
+blocker for item 4) and discloses a per-page count. The /DP (or /DecodeParms) value may itself be a
+decode-parameters DICTIONARY, or an array of such dictionaries / nulls (the common CCITTFax /
+Flate-predictor shape in scanned sheets, M5-T120 / DB-090 a); it is consumed for BALANCE only — one
+nested ``<< >>`` level, that key only, under the same byte cap — so the image still skips instead
+of refusing (any other key with a nested dictionary, or a second nesting level, stays a refusal).
 
 The hard problem is skipping the data WITHOUT desynchronizing the content stream, because the raw
 sample bytes are arbitrary and must not be lexed as operators. Two bounded strategies (§8.9.7):
 
 * DETERMINABLE length — an UNFILTERED image with a known geometry: the data length is
-  ``ceil(Width * components * BitsPerComponent / 8) * Height`` (each row byte-aligned, §8.9.5.2
-  [recalled - verify]). ``components`` comes from the colour space (Table 92 abbreviations); an
+  ``ceil(Width * components * BitsPerComponent / 8) * Height`` (each row byte-aligned, §8.9.3
+  "Sample Representation"). ``components`` comes from the colour space (Table 93 abbreviations); an
   image mask is 1 component at 1 bit. We compute the length, then REQUIRE a whitespace-delimited
   ``EI`` exactly where the data ends. If ``EI`` is not there, the computed length disagrees with
   the stream, so we REFUSE (a typed :class:`SheetRefusal`) rather than guess.
@@ -61,14 +65,28 @@ _WHITESPACE = frozenset(b"\x00\t\n\x0c\r ")
 _DELIMITERS = frozenset(b"()<>[]{}/%")
 _OPEN_BRACKET = 0x5B   # '['
 _CLOSE_BRACKET = 0x5D  # ']'
+_LESS_THAN = 0x3C      # '<'  ('<<' opens a dictionary VALUE)
+_GREATER_THAN = 0x3E   # '>'  ('>>' closes a dictionary VALUE)
 _PERCENT = 0x25        # '%'
 _CR = 0x0D
 _LF = 0x0A
-_VALID_BPC = frozenset({1, 2, 4, 8, 16})  # §8.9.5.2 permitted /BitsPerComponent values
+# §8.9.5.1 / Table 89 permitted /BitsPerComponent values (inline-image key alias in Table 92)
+_VALID_BPC = frozenset({1, 2, 4, 8, 16})
 
 # Sentinel for an array VALUE parsed only for dictionary balance (its contents never decide the
 # data length: an array-valued colour space or a present /Filter both force the EI scan).
 _ARRAY_VALUE = object()
+
+# ISO 32000-1 §8.9.7 / §7.4.4: an inline image's /DP or /DecodeParms VALUE may be a decode-params
+# DICTIONARY (the usual CCITTFax `/DP << /K -1 /Columns .. >>` or Flate-predictor shape), or an
+# ARRAY of such dictionaries / nulls (one per filter). It carries decode parameters, NOT geometry,
+# so it is consumed for BALANCE only: exactly ONE nested ``<< >>`` level, under the same dictionary
+# byte cap, for these keys ONLY. A nested dictionary under any OTHER key, or a second nesting level,
+# is a typed refusal; the samples are never decoded.
+_DECODE_PARMS_KEYS = frozenset({"DP", "DecodeParms"})
+_MAX_INLINE_DP_DICT_DEPTH = 1  # one nested << >> level for a /DP value; deeper nesting refuses
+# Sentinel for a /DP dictionary VALUE parsed only for balance (contents never decide the length).
+_DICT_VALUE = object()
 
 # Table 92 key abbreviations -> the geometry keys this skip cares about. Only these decide the
 # determinable-length arithmetic; every other key is parsed (for balance) and ignored.
@@ -79,7 +97,7 @@ _CS_KEYS = frozenset({"CS", "ColorSpace"})
 _FILTER_KEYS = frozenset({"F", "Filter"})
 _IMAGEMASK_KEYS = frozenset({"IM", "ImageMask"})
 
-# Table 92 colour-space abbreviations (+ full device/CIE names) -> component count. A colour space
+# Table 93 colour-space abbreviations (+ full device/CIE names) -> component count. A colour space
 # not listed here (e.g. a named /Properties resource, an ICCBased stream) has UNKNOWN components,
 # so the image is treated as not-determinable and its data is located by the EI scan.
 _COMPONENTS = {
@@ -132,7 +150,9 @@ def _parse_dictionary(
 ) -> tuple[dict[str, object], int] | SheetRefusal:
     """Parse the abbreviated inline-image dictionary (§8.9.7) from ``start`` up to the ``ID``
     keyword, returning ``(dict, id_end)`` or a typed refusal. Keys are names; values are names,
-    numbers, booleans, null, strings, or ``[ ]`` arrays. Bounded by ``max_dict_bytes``."""
+    numbers, booleans, null, strings, ``[ ]`` arrays, or — for /DP // /DecodeParms ONLY — a single
+    nested ``<< >>`` dictionary (or an array of such dictionaries / nulls). Bounded by
+    ``max_dict_bytes``."""
     n = len(data)
     pos = start
     dictionary: dict[str, object] = {}
@@ -146,13 +166,31 @@ def _parse_dictionary(
         if pos >= n:
             break
         byte = data[pos]
-        if byte == _OPEN_BRACKET:  # an array VALUE (e.g. /Filter [ /Fl ] or /D [ 0 1 ])
+        if byte == _OPEN_BRACKET:  # an array VALUE (/Filter [/Fl], /D [0 1], /DP [<< >> null])
             if pending_key is None:
                 return _refuse("inline image", "array where an inline-image key was expected")
-            end = _skip_array(data, pos, max_dict_bytes - (pos - start))
+            end = _skip_array(
+                data, pos, max_dict_bytes - (pos - start),
+                allow_dicts=_nested_dict_allowed(pending_key),
+            )
             if isinstance(end, SheetRefusal):
                 return end
             dictionary[pending_key] = _ARRAY_VALUE
+            pending_key = None
+            pos = end
+            continue
+        if byte == _LESS_THAN and pos + 1 < n and data[pos + 1] == _LESS_THAN:  # a '<<' dict VALUE
+            if pending_key is None:
+                return _refuse("inline image", "dictionary where an inline-image key was expected")
+            if not _nested_dict_allowed(pending_key):
+                return _refuse(
+                    "inline image",
+                    "a nested dictionary is only allowed as a /DP or /DecodeParms value",
+                )
+            end = _skip_dict(data, pos, max_dict_bytes - (pos - start))
+            if isinstance(end, SheetRefusal):
+                return end
+            dictionary[pending_key] = _DICT_VALUE
             pending_key = None
             pos = end
             continue
@@ -183,7 +221,7 @@ def _parse_dictionary(
 
 
 def _determinable_length(dictionary: dict[str, object]) -> int | None | SheetRefusal:
-    """The unfiltered inline-image data length from the geometry (§8.9.5.2 [recalled - verify]):
+    """The unfiltered inline-image data length from the geometry (§8.9.3 "Sample Representation"):
     ``ceil(Width * components * BitsPerComponent / 8) * Height`` with each row byte-aligned; or
     ``None`` when the length is NOT determinable (a filter is present, or the colour space /
     geometry is unknown) so the caller must scan for ``EI``; or a typed refusal on a present-but-
@@ -268,9 +306,21 @@ def _ei_at(data: bytes, pos: int) -> bool:
     return after >= n or data[after] in _WHITESPACE or data[after] in _DELIMITERS
 
 
-def _skip_array(data: bytes, start: int, remaining_bytes: int) -> int | SheetRefusal:
-    """Skip a bounded ``[ ... ]`` array VALUE (a filter or /Decode array), returning the index just
-    past ``]``. Nested arrays are refused (outside the inline-image subset). Bounded by
+def _nested_dict_allowed(key: str) -> bool:
+    """Whether an inline-image key may carry a nested ``<< >>`` dictionary VALUE (or an array of
+    them): ONLY /DP or /DecodeParms (§8.9.7 / §7.4.4). Any other key with a nested dictionary is a
+    typed refusal. Kept a small module function so a mutation (allow-any / allow-none) can prove the
+    /DP-only restriction is load-bearing without editing the tree."""
+    return key in _DECODE_PARMS_KEYS
+
+
+def _skip_array(
+    data: bytes, start: int, remaining_bytes: int, *, allow_dicts: bool = False
+) -> int | SheetRefusal:
+    """Skip a bounded ``[ ... ]`` array VALUE (a filter, /Decode, or — when ``allow_dicts`` — a /DP
+    array of decode-parameter dictionaries / nulls), returning the index just past ``]``. Nested
+    arrays are refused (outside the inline-image subset); a nested ``<<`` is refused unless
+    ``allow_dicts`` (the /DP case), and then only ONE dictionary level. Bounded by
     ``remaining_bytes`` so a runaway array cannot walk the whole stream."""
     n = len(data)
     pos = start + 1  # past '['
@@ -285,11 +335,65 @@ def _skip_array(data: bytes, start: int, remaining_bytes: int) -> int | SheetRef
             return pos + 1
         if byte == _OPEN_BRACKET:
             return _refuse("inline image", "nested array in an inline-image value")
+        if byte == _LESS_THAN and pos + 1 < n and data[pos + 1] == _LESS_THAN:  # a '<<' dict item
+            if not allow_dicts:
+                return _refuse(
+                    "inline image", "a nested dictionary is only allowed in a /DP value array"
+                )
+            end = _skip_dict(data, pos, remaining_bytes - (pos - start))
+            if isinstance(end, SheetRefusal):
+                return end
+            pos = end
+            continue
         token = lex_primitive(data, pos)
         if isinstance(token, PdfSyntaxError):
             return _refuse("inline image", "malformed token in an inline-image array value")
         pos = token.end_offset
     return _refuse("inline image", "unclosed array in an inline-image value")
+
+
+def _skip_dict(
+    data: bytes, start: int, remaining_bytes: int, *, level: int = 1
+) -> int | SheetRefusal:
+    """Skip a balanced ``<< ... >>`` decode-parameters dictionary VALUE (a /DP or /DecodeParms
+    value, §8.9.7 / §7.4.4) for BALANCE ONLY, returning the index just past ``>>``. Exactly ONE
+    level: a nested ``<<`` beyond ``_MAX_INLINE_DP_DICT_DEPTH`` is a typed refusal; an array value
+    inside is skipped for balance (scalars only, no dicts); every scalar is lexed and DISCARDED.
+    Bounded by ``remaining_bytes``. Its contents never influence the skip (a /DP dict rides with a
+    /F filter, which already forces the EI scan), and no sample byte is ever decoded."""
+    n = len(data)
+    pos = start + 2  # past '<<'
+    while pos < n:
+        if pos - start > remaining_bytes:
+            return _refuse("inline image", "inline-image /DP dictionary is too long")
+        pos = _skip_ws_comments(data, pos)
+        if pos >= n:
+            break
+        byte = data[pos]
+        if byte == _GREATER_THAN and pos + 1 < n and data[pos + 1] == _GREATER_THAN:
+            return pos + 2  # past '>>'
+        if byte == _OPEN_BRACKET:  # an array VALUE inside the /DP dict (e.g. a /Decode array)
+            end = _skip_array(data, pos, remaining_bytes - (pos - start))
+            if isinstance(end, SheetRefusal):
+                return end
+            pos = end
+            continue
+        if byte == _LESS_THAN and pos + 1 < n and data[pos + 1] == _LESS_THAN:  # a nested '<<'
+            if level >= _MAX_INLINE_DP_DICT_DEPTH:
+                return _refuse(
+                    "inline image",
+                    "an inline-image /DP value nests deeper than one dictionary level",
+                )
+            end = _skip_dict(data, pos, remaining_bytes - (pos - start), level=level + 1)
+            if isinstance(end, SheetRefusal):
+                return end
+            pos = end
+            continue
+        token = lex_primitive(data, pos)
+        if isinstance(token, PdfSyntaxError):
+            return _refuse("inline image", "malformed token in an inline-image /DP dictionary")
+        pos = token.end_offset
+    return _refuse("inline image", "unclosed /DP dictionary in an inline-image value")
 
 
 def _skip_ws_comments(data: bytes, pos: int) -> int:
