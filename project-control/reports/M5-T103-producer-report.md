@@ -4,6 +4,131 @@ Producer: backend-engineer. Worktree: `C:\Users\MLFLL\Downloads\nyc-zoning\wt-m5
 (branch `task/M5-T103-pdf-object-streams`). Claim seam / parent:
 `e9a268a52704a073a52ee0a34f4230394dbf9a49`.
 
+---
+
+## ROUND 2 (rework) — consolidated G5/G3/G4/G1 findings
+
+Round 1 (material `3fab28f6`) was reviewed: G1/G3/G4 PASS with advisories, G5 FAIL on one
+BLOCKING defect. This round is ONE bounded change on top of integration head
+`afbde1cf625a5f9d317e3d49024e97870bcc619d`. Files changed (all inside allowed_paths):
+`app/drawings/sheet_objects.py`, `app/drawings/pdf_object_streams.py`,
+`tests/drawings/test_pdf_object_streams.py`, and this report. `sheet_reader.py` /
+`sheet_interpreter.py` were NOT needed. `app/documents/extraction`, `sheet_primitives.py` and
+the forbidden test files stay byte-untouched.
+
+### Per-finding closure
+
+- **G5 Finding 1 (HIGH, BLOCKING) — predictor working buffer bypassed the memory guard.**
+  `apply_predictor` (`sheet_objects.py`) now takes an explicit `absolute_cap` and, BEFORE any
+  geometry-sized allocation: (a) returns immediately for empty data (`if not data: return data`,
+  so the reviewer's empty-inflating file never touches `row_len`); (b) validates
+  `/BitsPerComponent` against the §7.4.4.4 set `{1,2,4,8,16}` (new `_VALID_BPC`); (c) bounds
+  `row_len` by `absolute_cap` (typed `"predictor"` refusal above it); (d) requires the data to
+  align to whole rows before `_png_unfilter` allocates. The resolver threads the cap in at
+  `_decode_stream` (`apply_predictor(decoded, parms, absolute_cap=limits.max_inflated)`), so the
+  working buffer is bounded by the data present AND the per-stream cap. `resolve_object_table`
+  still never raises (no `/Columns`-sized allocation exists to raise `MemoryError`).
+  Proof: the reviewer's 198-byte empty-inflate + `/Columns 50000000` file now peaks **45,182 B**
+  through `read_sheet` (round-1: 50,004,634 B), a typed refusal (`unresolvable reference`, no
+  catalog); the in-process mutation restoring the round-1 allocation order peaks **50,005,054 B**
+  (reddens the ceiling). Tests: `test_predictor_empty_inflate_is_memory_bounded` (resolve +
+  read, tracemalloc, ceiling 4 MB), `test_predictor_buffer_guard_is_load_bearing`,
+  `test_predictor_oversized_row_is_typed_refusal`, `test_predictor_invalid_bpc_is_typed_refusal`,
+  `test_predictor_empty_data_returns_without_geometry`.
+
+- **G5 Finding 2 = G3 A1 = G1 F3 (chain-collection memory unbounded).** The per-stream merge is
+  now the shared helper `sheet_objects.merge_stream_entries`, called inside
+  `_collect_stream_entries`; it enforces the object-count bound INCREMENTALLY — `entries_map`
+  bounded by `MAX_PDF_OBJECTS` (4096) and `seen` bounded by `MAX_XREF_ENTRIES` (131072), both a
+  typed `"object count bound"` refusal the moment crossed — so chain memory is a constant, not
+  chain-length × per-stream rows. Verdict is byte-identical for inputs within the bound (`_materialize`
+  keeps its post-merge check for the hybrid classic-fill path). Proof: a 33-hop /Prev chain
+  (66,000 distinct entries) peaks **1.07 MB** and refuses `object count bound`; the mutation
+  moving the check back to `_materialize` peaks **11.09 MB**. Tests:
+  `test_object_count_bound_is_memory_bounded`, `test_object_count_bound_incremental_is_load_bearing`
+  (ceiling 4 MB).
+
+- **G4 A1 [W10] cross-phase budget carry.** `test_cross_phase_budget_carry` +
+  `_..._is_load_bearing`: a compress=(1,2,3) file where the resolver charges R=211 B and the
+  content decode charges C=600 B; at a document budget of 700 (max(R,C)=600 < 700 < R+C=811) the
+  seeded content phase refuses `decoded bytes budget`; dropping the seed (mutation wrapping
+  `resolve_object_table` to return `decoded_bytes=0`) removes the refusal.
+- **G4 A2 [W1] zero-width /W.** `test_zero_width_type_and_field3_defaults`: a real `/W [0 4 0]`
+  fixture (type field → 1, field-3 → 0). Fixed the misleading comment in
+  `test_narrow_field_widths_default_generation` (that fixture is `w0=1`, not zero-width).
+- **G4 A3 [W9] _preview sites.** Added `test_resolver_filter_echo_is_preview_truncated` (the
+  resolver's OWN /Filter echo, `pdf_object_streams._decode_stream`) and
+  `test_xobject_no_resources_name_echo_is_preview_truncated` (a second XObject site). All XObject
+  /name echoes (`sheet_interpreter.py:553/561/567/573/608`) and the operator echo (`:378`) call
+  the SAME uniform `_preview` helper; two XObject sites + both /Filter sites (content and
+  resolver) are now covered, and the remainder are equivalent identical `_preview(name)` calls.
+- **G4 A4.** Renamed `test_reads_uncompressed_xref_stream` → `test_reads_flate_xref_stream`
+  (its fixture is Flate-compressed) and added `test_reads_raw_no_filter_xref_stream` for the
+  resolver's true no-/Filter branch.
+- **G4 A5 = G3 A4.** `test_broken_type1_offset_is_typed_refusal` now points the lying offset at a
+  REAL but WRONG object header and asserts the specific `object identity` feature (+ SHEET_PROFILE
+  origin).
+- **G4 minor.** Green-baseline assertions added to the ratio / object-stream-count /
+  object-stream-/N / shared-budget mutation tests; `test_decode_budget_charge_refuses_before_incrementing`
+  asserts `_DecodeBudget.charge` refuses before incrementing (no overshoot).
+- **G3 A5.** Removed the dead first assignment in `test_unsupported_predictor_tiff_is_typed_refusal`.
+- **G3 A6.** `test_classic_prev_without_xrefstm_returns_strict_refusal`: a classic table with
+  trailer `/Prev` and no `/XRefStm` still returns the strict `incremental update chain` refusal.
+- **G1 F1 (wording).** `_MAX_FIELD_WIDTH` comment now states it is THIS module's own safety bound
+  (ISO 32000-1 §7.5.8.2 sets no /W maximum); `_read_w`'s docstring softened to match.
+
+Out of scope (routed to backlog, not done): G5 F3 predictor CPU budget; G3 A2/A3 scan-only label
+semantics; G3 A7 = G1 F2 stream-object-in-ObjStm explicit refusal; G1 F4 classic-table /Prev
+chains; content-stream discoveries D1-D3. No new discoveries this round.
+
+### Round-2 mutation table (each guard's fix is load-bearing)
+
+| Guard / carry | In-process mutation | Fixed peak / result | Mutated peak / result |
+|---|---|---|---|
+| predictor working buffer | `apply_predictor` → round-1 alloc-first | 45,182 B, refusal | 50,005,054 B (RED) |
+| incremental object count | `merge_stream_entries` → no-bound | 1.07 MB, `object count bound` | 11.09 MB (RED) |
+| cross-phase budget seed | `resolve_object_table` → `decoded_bytes=0` | refusal `decoded bytes budget` | no refusal (RED) |
+| predictor oversized row | (unit) `absolute_cap=5`, /Columns 100 | `predictor` refusal | n/a |
+| predictor invalid bpc | (unit) `/BitsPerComponent 3` | `predictor` refusal | n/a |
+
+### Round-2 self-checks (explicit cwd)
+
+- **[OBSERVED] `cd services/api && python -m ruff check .`** → `All checks passed!` (exit 0).
+- **[OBSERVED] sheet suites via the 3.11 shim copy** (pointed at this worktree; runs
+  `test_pdf_object_streams.py` + `test_sheet_reader.py` + `test_sheet_reader_split_equivalence.py`)
+  → **99 passed** (round-1 was 84; +15 new round-2 tests, incl. M5-T104's tests in
+  `test_sheet_reader.py`). The 62-case split-equivalence golden is among them, byte-identical.
+- **[BLOCKED, CI-authoritative] `cd services/api && python -m pytest tests/drawings/... -q`** →
+  `SyntaxError` collecting `app/documents/units.py:276` (PEP 695 under local Python 3.11), same
+  documented harness as round 1. CI on 3.12 runs the raw command; the shim copy on 3.11 is the
+  local proof. Recipe for harvest: the three-file pytest from `services/api` on Python 3.12.
+- **[OBSERVED] `cd <repo root> && python tools/modularity_check.py --check`** → exit 0; no
+  warning for any drawings module. SLOC (tool metric, WARN at 600): pdf_object_streams **593**,
+  sheet_objects **402**, sheet_reader 342, sheet_interpreter 586 — all < 600. Imports acyclic
+  (`sheet_objects` does not import `pdf_object_streams`; `merge_stream_entries` takes plain-int
+  bounds).
+
+### Round-2 real corpus (AS-5) — fetched to scratch, sha256-verified, run, deleted
+
+All six re-fetched by their recorded URLs into scratch only, each sha256 **MATCHED**, run through
+`read_sheet` twice (run1 == run2 for all), copies deleted; nothing committed. Outcomes are
+IDENTICAL to round 1 — every file still resolves its full PNG-predicted cross-reference/object
+streams and advances to the same content-level limit, proving the predictor change broke nothing:
+
+| # | file (bytes) | round-2 outcome |
+|---|---|---|
+| 1 | VA HVAC 1 (6,490,778) | REFUSAL content `decode parameters` (resolved past xref/objstm) |
+| 2 | VA HVAC 2 (6,804,710) | REFUSAL content `decode parameters` |
+| 3 | VA Dwg Rqmts (885,378) | REFUSAL content `malformed pdf` found `<<` (offset 8) |
+| 4 | HAER NY-18 (148,470) | REFUSAL content `malformed pdf` found `<<` (offset 49) |
+| 5 | HABS OR-167 (15,158) | REFUSAL content `malformed pdf` found `<<` (offset 49) |
+| 6 | HABS WA-235 (11,800) | REFUSAL content `malformed pdf` found `<<` (offset 53) |
+
+No corpus file or excerpt is committed. No claim beyond the observed results; no real architect
+PDF fully reads yet (the content-level limits are unchanged and out of PKT-K scope).
+
+---
+
 ## What shipped
 
 A NEW profile-level resolver `services/api/app/drawings/pdf_object_streams.py` that builds a

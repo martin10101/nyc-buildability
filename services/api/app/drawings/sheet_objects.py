@@ -58,6 +58,7 @@ _FLATE = PdfName("FlateDecode")
 _PREDICTOR_KEY = PdfName("Predictor")
 _COLUMNS_KEY = PdfName("Columns")
 _COLORS_KEY = PdfName("Colors")
+_VALID_BPC = frozenset({1, 2, 4, 8, 16})  # §7.4.4.4 permitted /BitsPerComponent values
 
 _MAX_RESOLVE_HOPS = 32
 _ABSENT = object()
@@ -345,9 +346,18 @@ def inflate_guarded(
     return bytes(out)
 
 
-def apply_predictor(data: bytes, parms: dict) -> bytes | SheetRefusal:
+def apply_predictor(data: bytes, parms: dict, *, absolute_cap: int) -> bytes | SheetRefusal:
     """Apply the §7.4.4.4 predictor named by ``/DecodeParms``: 1/absent = none; 2 = TIFF
-    (typed refusal, not implemented); 10-15 = PNG (per-row filter tag byte)."""
+    (typed refusal, not implemented); 10-15 = PNG (per-row filter tag byte).
+
+    No working buffer is sized by the ``/DecodeParms`` geometry until that geometry is bounded
+    against BOTH the data actually present AND ``absolute_cap`` (the M5-T103 predictor memory
+    guard; G5 round-1 Finding 1). Empty data returns BEFORE ``row_len`` is derived, and an
+    oversized or non-§7.4.4.4 geometry is a typed ``"predictor"`` refusal, so an attacker-chosen
+    ``/Columns`` can never make this allocate a large buffer nor raise ``MemoryError`` (keeping
+    the resolver's "never raises" contract). ``absolute_cap`` is the resolver's per-stream
+    inflated-bytes cap, so ``row_len`` is bounded by a constant even before the data-present
+    alignment check below narrows it to ``len(data) - 1``."""
     predictor = _parm_int(parms, _PREDICTOR_KEY, 1)
     if predictor is None:
         return _refuse("predictor", "/Predictor is not an integer")
@@ -357,12 +367,20 @@ def apply_predictor(data: bytes, parms: dict) -> bytes | SheetRefusal:
         return _refuse("predictor", "TIFF predictor 2 is not implemented")
     if predictor < 10 or predictor > 15:
         return _refuse("predictor", f"unsupported /Predictor {predictor}")
+    if not data:
+        return data  # empty inflate: nothing to unfilter, no geometry-sized buffer is touched
     columns = _parm_int(parms, _COLUMNS_KEY, 1)
     colors = _parm_int(parms, _COLORS_KEY, 1)
     bpc = _parm_int(parms, _BPC_KEY, 8)
-    if None in (columns, colors, bpc) or columns < 1 or colors < 1 or bpc < 1:  # type: ignore[operator]
+    if None in (columns, colors) or columns < 1 or colors < 1:  # type: ignore[operator]
         return _refuse("predictor", "/DecodeParms has a non-positive geometry parameter")
+    if bpc not in _VALID_BPC:
+        return _refuse("predictor", f"/BitsPerComponent {bpc} is not 1, 2, 4, 8 or 16")
     row_len = (columns * colors * bpc + 7) // 8
+    if row_len > absolute_cap:
+        return _refuse("predictor", f"predicted row length over {absolute_cap} bytes")
+    if len(data) % (row_len + 1) != 0:
+        return _refuse("predictor", "PNG-predicted rows are misaligned with /Columns")
     return _png_unfilter(data, row_len, max(1, (colors * bpc + 7) // 8))
 
 
@@ -418,3 +436,36 @@ def _paeth(a: int, b: int, c: int) -> int:
     if pa <= pb and pa <= pc:
         return a
     return b if pb <= pc else c
+
+
+def merge_stream_entries(
+    entries_map: dict[int, tuple[int, int, int]],
+    seen: set[int],
+    entries: list[tuple[int, int, int, int]],
+    *,
+    max_distinct: int,
+    max_objects: int,
+) -> SheetRefusal | None:
+    """Merge ONE cross-reference stream's decoded entries into the ``/Prev``-chain maps, the
+    first-seen object number winning (a free entry seen first suppresses a later in-use one).
+
+    The object-count bound is enforced INCREMENTALLY as the maps grow (M5-T103 G5 round-1
+    Finding 2), so chain-collection memory is bounded by a CONSTANT, never by ``/Prev``-chain
+    length times per-stream rows: ``max_objects`` bounds the in-use ``entries_map`` and
+    ``max_distinct`` bounds the ``seen`` set (free entries included). Either over-limit is a
+    typed ``"object count bound"`` refusal VALUE the moment it is crossed; for every input
+    within the bound the merge is byte-identical to an unbounded merge. Composed by the
+    :mod:`app.drawings.pdf_object_streams` resolver; not on the classic content path."""
+    for number, entry_type, field2, field3 in entries:
+        if number in seen:
+            continue
+        seen.add(number)
+        if len(seen) > max_distinct:
+            return _refuse(
+                "object count bound", f"over {max_distinct} distinct cross-reference entries"
+            )
+        if entry_type in (1, 2):
+            entries_map[number] = (entry_type, field2, field3)
+            if len(entries_map) > max_objects:
+                return _refuse("object count bound", f"over {max_objects} in-use objects")
+    return None

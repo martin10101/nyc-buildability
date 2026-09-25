@@ -28,7 +28,7 @@ import zlib
 
 import pytest
 
-from app.drawings import pdf_object_streams, sheet_reader
+from app.drawings import pdf_object_streams, sheet_objects, sheet_reader
 from app.drawings.sheet_primitives import SheetDocument, SheetRefusal
 from app.drawings.sheet_reader import read_sheet, sheet_refusal
 
@@ -231,8 +231,19 @@ def test_placeholder_seed_passes():
     assert pdf_object_streams.resolve_object_table is not None
 
 
-def test_reads_uncompressed_xref_stream():
+def test_reads_flate_xref_stream():
+    # A FlateDecode-compressed cross-reference stream (no PNG predictor). The true no-/Filter
+    # (raw) branch is covered by test_reads_raw_no_filter_xref_stream (A4).
     doc = read_sheet(_xref_pdf())
+    assert isinstance(doc, SheetDocument)
+    assert len(doc.pages) == 1
+    assert _first_polyline_flat(doc) == pytest.approx([10.0, 10.0, 100.0, 100.0])
+
+
+def test_reads_raw_no_filter_xref_stream():
+    # The resolver's true no-/Filter decode branch (pdf_object_streams._decode_stream, filt is
+    # None): the entry table is stored raw, never Flate-compressed.
+    doc = read_sheet(_raw_xref_stream_pdf())
     assert isinstance(doc, SheetDocument)
     assert len(doc.pages) == 1
     assert _first_polyline_flat(doc) == pytest.approx([10.0, 10.0, 100.0, 100.0])
@@ -268,7 +279,9 @@ def test_each_png_predictor_row_filter(tag):
 
 
 def test_narrow_field_widths_default_generation():
-    # /W [1 2 1] with the third field width still present; and a zero-width type field.
+    # /W [1 2 1]: a narrow (2-byte) offset field and a 1-byte generation field; w0=1, so the
+    # type field IS present (NOT zero-width). The true zero-width /W defaults (type field and
+    # field-3) are covered by test_zero_width_type_and_field3_defaults.
     doc = read_sheet(_xref_pdf(compress=(1, 2, 3), widths=(1, 2, 1)))
     assert isinstance(doc, SheetDocument)
 
@@ -320,11 +333,7 @@ def test_encryption_is_typed_refusal():
 
 
 def test_unsupported_predictor_tiff_is_typed_refusal():
-    pdf = _xref_pdf(
-        compress=(1, 2, 3),
-        xref_extra=b"",
-    )
-    # rebuild the xref stream with a TIFF predictor declared (not implemented).
+    # An xref stream declaring the TIFF predictor (2), which is not implemented.
     pdf = _xref_pdf_with_predictor_value(2)
     ref = _refusal(pdf)
     assert ref is not None
@@ -333,10 +342,13 @@ def test_unsupported_predictor_tiff_is_typed_refusal():
 
 
 def test_broken_type1_offset_is_typed_refusal():
-    # a type-1 entry whose offset lands in the middle of the file (not an object header).
+    # A type-1 entry whose offset points at a DIFFERENT object's header (a lying offset): the
+    # (number, generation) identity check must reject it with the specific "object identity"
+    # feature, never silently accept the wrong object (G3/G4 round-1 A4/A5).
     ref = _refusal(_broken_offset_pdf())
     assert ref is not None
-    assert ref.origin in (SheetRefusal.STRICT_READER, SheetRefusal.SHEET_PROFILE)
+    assert ref.origin == SheetRefusal.SHEET_PROFILE
+    assert ref.feature == "object identity"
 
 
 # ================================================================================== AS-2
@@ -350,6 +362,7 @@ def test_absolute_inflated_cap_mutation_reddens(monkeypatch):
 
 def test_inflate_ratio_mutation_reddens(monkeypatch):
     pdf = _xref_pdf(compress=(1, 2, 3))
+    assert isinstance(read_sheet(pdf), SheetDocument)  # green at the default ratio guard
     monkeypatch.setattr(pdf_object_streams, "MAX_INFLATE_RATIO", 0)
     ref = _refusal(pdf)
     assert ref is not None and ref.feature == "inflate ratio"
@@ -365,6 +378,7 @@ def test_prev_depth_mutation_reddens(monkeypatch):
 
 def test_object_stream_count_mutation_reddens(monkeypatch):
     pdf = _xref_pdf(compress=(1, 2, 3))
+    assert isinstance(read_sheet(pdf), SheetDocument)  # green at the default object-stream cap
     monkeypatch.setattr(pdf_object_streams, "MAX_OBJECT_STREAMS", 0)
     ref = _refusal(pdf)
     assert ref is not None and ref.feature == "object stream count"
@@ -372,6 +386,7 @@ def test_object_stream_count_mutation_reddens(monkeypatch):
 
 def test_objstm_n_mutation_reddens(monkeypatch):
     pdf = _xref_pdf(compress=(1, 2, 3))  # ObjStm with /N 3
+    assert isinstance(read_sheet(pdf), SheetDocument)  # green at the default /N cap
     monkeypatch.setattr(pdf_object_streams, "MAX_OBJSTM_OBJECTS", 1)
     ref = _refusal(pdf)
     assert ref is not None and ref.feature == "object stream"
@@ -382,6 +397,7 @@ def test_shared_document_budget_mutation_reddens(monkeypatch):
     # The resolver charges the SAME document-wide budget the facade owns: shrinking it via
     # the facade constant makes the xref/object-stream decode refuse.
     pdf = _xref_pdf(compress=(1, 2, 3))
+    assert isinstance(read_sheet(pdf), SheetDocument)  # green at the default document budget
     monkeypatch.setattr(sheet_reader, "MAX_TOTAL_DECODED_BYTES", 4)
     ref = _refusal(pdf)
     assert ref is not None and ref.feature == "decoded bytes budget"
@@ -533,8 +549,9 @@ def _hybrid_pdf() -> bytes:
 
 
 def _broken_offset_pdf() -> bytes:
-    """A cross-reference stream whose object-3 type-1 entry points at a byte offset that is not
-    an object header (a lying offset), which must be a typed refusal, never a guess."""
+    """A cross-reference stream whose object-3 type-1 entry points at object 1's header (a lying
+    offset landing on a REAL but WRONG object), which the identity check must reject with the
+    specific "object identity" feature, never a guess."""
     header = b"%PDF-1.5\n"
     body = bytearray(header)
     base = {
@@ -552,7 +569,7 @@ def _broken_offset_pdf() -> bytes:
     entries = {0: (0, 0, 0)}
     for n in (1, 2, 4):
         entries[n] = (1, offsets[n], 0)
-    entries[3] = (1, 3, 0)  # bogus offset -> not an object header
+    entries[3] = (1, offsets[1], 0)  # lying offset -> lands on object 1's header, not object 3
     entries[5] = (1, xref_offset, 0)
     body += _xref_stream_blob(5, 6, entries, (1, 4, 2), None, None, b"")
     body += b"startxref\n%d\n%%%%EOF\n" % xref_offset
@@ -609,3 +626,387 @@ def _zip_bomb_pdf(inflated_size: int) -> bytes:
     body += b"5 0 obj\n%s\nstream\n%s\nendstream\nendobj\n" % (dictionary, bomb)
     body += b"startxref\n%d\n%%%%EOF\n" % xref_offset
     return bytes(body)
+
+
+# =============================================================== ROUND 2 (rework) additions
+#
+# Consolidated G5/G3/G4/G1 round-1 findings: the predictor memory guard (G5 F1, BLOCKING), the
+# incremental object-count bound (G5 F2 = G3 A1 = G1 F3), and the G4 test-adequacy gaps.
+# Memory ceilings are calibrated so each guard's regression test is GREEN with the fix and RED
+# under the round-1 allocation/collection order (an in-process mutation reddens it).
+
+# Measured (local py3.11, tracemalloc): F1 fix peak ~0.04 MB vs mutation ~50 MB; F2 fix peak
+# ~1.1 MB vs mutation ~11 MB. Ceilings sit between fix and mutation with wide margins both ways.
+_PREDICTOR_PEAK_CEILING = 4_000_000     # << the 50 MB the pre-fix /Columns buffer allocated
+_OBJECT_COUNT_PEAK_CEILING = 4_000_000  # between the bounded fix (~1.1 MB) and whole-chain (~11 MB)
+# Cross-phase carry: resolver charge R=211, content charge C=600 (=20*repeat); R+C=811. A budget
+# in (max(R,C)=600, R+C=811) refuses only when the seed is carried across the two phases.
+_CROSS_PHASE_BUDGET = 700
+_CROSS_PHASE_REPEAT = 30                 # content = 20 bytes * repeat (uncompressed, no /Filter)
+
+
+# ---------------------------------------------------------------------- round-2 fixtures
+def _raw_xref_stream_pdf() -> bytes:
+    """An xref stream with NO /Filter: the entry table is stored raw, exercising the resolver's
+    true no-/Filter decode branch (pdf_object_streams._decode_stream, filt is None)."""
+    body = bytearray(b"%PDF-1.5\n")
+    base = {
+        1: b"<< /Type /Catalog /Pages 2 0 R >>",
+        2: b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        3: b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 800 600] /Contents 4 0 R >>",
+    }
+    offsets: dict[int, int] = {}
+    for n in (1, 2, 3):
+        offsets[n] = len(body)
+        body += b"%d 0 obj\n%s\nendobj\n" % (n, base[n])
+    offsets[4] = len(body)
+    body += _content_obj(4, _LINE)
+    xref_offset = len(body)
+    entries = {0: (0, 0, 0), 5: (1, xref_offset, 0)}
+    for n in (1, 2, 3, 4):
+        entries[n] = (1, offsets[n], 0)
+    raw = bytearray()
+    for onum in range(6):
+        t, f2, f3 = entries.get(onum, (0, 0, 0))
+        raw += _be(t, 1) + _be(f2, 4) + _be(f3, 2)
+    dictionary = b"<< /Type /XRef /Size 6 /W [1 4 2] /Root 1 0 R /Length %d >>" % len(raw)
+    body += b"5 0 obj\n%s\nstream\n%s\nendstream\nendobj\n" % (dictionary, bytes(raw))
+    body += b"startxref\n%d\n%%%%EOF\n" % xref_offset
+    return bytes(body)
+
+
+def _zero_width_fields_pdf() -> bytes:
+    """An xref stream with /W [0 4 0]: a zero-width type field (defaults to type 1) AND a
+    zero-width field-3 (defaults to generation 0), covering both §7.5.8.2 defaults. Objects
+    1-5 are uncompressed type-1; /Index [1 5] skips the free object 0."""
+    body = bytearray(b"%PDF-1.5\n")
+    base = {
+        1: b"<< /Type /Catalog /Pages 2 0 R >>",
+        2: b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        3: b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 800 600] /Contents 4 0 R >>",
+    }
+    offsets: dict[int, int] = {}
+    for n in (1, 2, 3):
+        offsets[n] = len(body)
+        body += b"%d 0 obj\n%s\nendobj\n" % (n, base[n])
+    offsets[4] = len(body)
+    body += _content_obj(4, _LINE)
+    xref_offset = len(body)
+    offsets[5] = xref_offset
+    raw = bytearray()
+    for onum in range(1, 6):  # /Index [1 5]: only field2 (4 bytes); type and gen are defaulted
+        raw += _be(offsets[onum], 4)
+    comp = zlib.compress(bytes(raw))
+    dictionary = (
+        b"<< /Type /XRef /Size 6 /W [0 4 0] /Index [1 5] /Root 1 0 R"
+        b" /Length %d /Filter /FlateDecode >>" % len(comp)
+    )
+    body += b"5 0 obj\n%s\nstream\n%s\nendstream\nendobj\n" % (dictionary, comp)
+    body += b"startxref\n%d\n%%%%EOF\n" % xref_offset
+    return bytes(body)
+
+
+def _xref_stream_bad_filter_pdf(filter_name: bytes) -> bytes:
+    """An xref stream declaring an unsupported /Filter (a long name), so the RESOLVER's own
+    /Filter echo (pdf_object_streams._decode_stream) must be _preview-truncated (AS-3)."""
+    body = bytearray(b"%PDF-1.5\n")
+    base = {
+        1: b"<< /Type /Catalog /Pages 2 0 R >>",
+        2: b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        3: b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 800 600] /Contents 4 0 R >>",
+    }
+    offsets: dict[int, int] = {}
+    for n in (1, 2, 3):
+        offsets[n] = len(body)
+        body += b"%d 0 obj\n%s\nendobj\n" % (n, base[n])
+    offsets[4] = len(body)
+    body += _content_obj(4, _LINE)
+    xref_offset = len(body)
+    entries = {0: (0, 0, 0), 5: (1, xref_offset, 0)}
+    for n in (1, 2, 3, 4):
+        entries[n] = (1, offsets[n], 0)
+    raw = bytearray()  # NOT flate-compressed; the bogus /Filter must be refused before decode
+    for onum in range(6):
+        t, f2, f3 = entries.get(onum, (0, 0, 0))
+        raw += _be(t, 1) + _be(f2, 4) + _be(f3, 2)
+    dictionary = (
+        b"<< /Type /XRef /Size 6 /W [1 4 2] /Root 1 0 R /Length %d /Filter /%s >>"
+        % (len(raw), filter_name)
+    )
+    body += b"5 0 obj\n%s\nstream\n%s\nendstream\nendobj\n" % (dictionary, bytes(raw))
+    body += b"startxref\n%d\n%%%%EOF\n" % xref_offset
+    return bytes(body)
+
+
+def _classic_with_prev_pdf() -> bytes:
+    """A classic xref TABLE whose trailer carries /Prev but NO /XRefStm: the strict reader
+    refuses 'incremental update chain' and the resolver defers (returns None), so the strict
+    refusal must stand unchanged (G3 round-1 A6)."""
+    body = bytearray(b"%PDF-1.7\n")
+    objects = [
+        b"<< /Type /Catalog /Pages 2 0 R >>",
+        b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 800 600] /Contents 4 0 R >>",
+        b"<< /Length %d >>\nstream\n%s\nendstream" % (len(_LINE), _LINE),
+    ]
+    offsets = []
+    for index, obj in enumerate(objects, start=1):
+        offsets.append(len(body))
+        body += b"%d 0 obj\n%s\nendobj\n" % (index, obj)
+    xref = len(body)
+    body += b"xref\n0 5\n0000000000 65535 f \n"
+    for off in offsets:
+        body += b"%010d 00000 n \n" % off
+    body += b"trailer\n<< /Size 5 /Root 1 0 R /Prev 0 >>\nstartxref\n%d\n%%%%EOF\n" % xref
+    return bytes(body)
+
+
+def _empty_predictor_bomb_pdf(columns: int) -> bytes:
+    """The G5 round-1 Finding-1 vector: a cross-reference stream that INFLATES TO EMPTY yet
+    declares /DecodeParms with a huge /Columns. The pre-fix predictor allocated a /Columns-sized
+    working buffer BEFORE checking the (empty) data; the guarded path returns before row_len."""
+    body = bytearray(b"%PDF-1.5\n")
+    empty = zlib.compress(b"")  # inflates to b""
+    xref_offset = len(body)
+    dictionary = (
+        b"<< /Type /XRef /Size 0 /W [1 4 2] /Root 1 0 R /Length %d /Filter /FlateDecode"
+        b" /DecodeParms << /Predictor 12 /Columns %d >> >>" % (len(empty), columns)
+    )
+    body += b"5 0 obj\n%s\nstream\n%s\nendstream\nendobj\n" % (dictionary, empty)
+    body += b"startxref\n%d\n%%%%EOF\n" % xref_offset
+    return bytes(body)
+
+
+def _object_count_chain_pdf(streams: int, per: int) -> bytes:
+    """A /Prev chain of ``streams`` cross-reference streams, each declaring ``per`` DISTINCT
+    type-1 entries at distinct object numbers. Without the incremental object-count bound the
+    merged map WOULD accumulate ``streams * per`` entries before _materialize refuses; the fix
+    refuses inside collection. Entry offsets are bogus (0) — the file always refuses before any
+    object is materialized. Built oldest-first so each /Prev points at an already-known offset."""
+    body = bytearray(b"%PDF-1.5\n")
+    size = streams * per + streams + 10
+    prev = None
+    for j in range(streams):
+        base = j * per + 1  # distinct object numbers per stream
+        entries = {onum: (1, 0, 0) for onum in range(base, base + per)}
+        off = len(body)
+        extra = b"" if prev is None else b" /Prev %d" % prev
+        body += _xref_stream_blob(900000 + j, size, entries, (1, 4, 2), None, [base, per], extra)
+        prev = off
+    body += b"startxref\n%d\n%%%%EOF\n" % prev  # startxref -> newest (last-built) stream
+    return bytes(body)
+
+
+def _cross_phase_pdf(content_repeat: int) -> bytes:
+    """A compress=(1,2,3) file: the resolver decodes the ObjStm + xref stream (charging bytes);
+    the long UNCOMPRESSED content (object 4, no /Filter) is decoded LATER against the SAME
+    document budget (AS-2 cross-phase carry)."""
+    content = b"10 10 m 100 100 l S " * content_repeat
+    return _xref_pdf(compress=(1, 2, 3), content=content)
+
+
+# --------------------------------------------------------------- round-2 in-process mutations
+def _apply_predictor_round1(data, parms, *, absolute_cap):
+    """Round-1 (pre-fix) allocation order: derive row_len from /Columns and call the REAL PNG
+    unfilter (which allocates bytearray(row_len)) WITHOUT the empty-data / bound guard, so the
+    predictor memory-bound test reddens under this mutation."""
+    columns = sheet_objects._parm_int(parms, sheet_objects._COLUMNS_KEY, 1)
+    colors = sheet_objects._parm_int(parms, sheet_objects._COLORS_KEY, 1)
+    bpc = sheet_objects._parm_int(parms, sheet_objects._BPC_KEY, 8)
+    row_len = (columns * colors * bpc + 7) // 8
+    return sheet_objects._png_unfilter(data, row_len, max(1, (colors * bpc + 7) // 8))
+
+
+def _merge_no_bound(entries_map, seen, entries, *, max_distinct, max_objects):
+    """Round-1 (pre-fix) merge: accumulate the whole /Prev chain with NO incremental bound, so
+    the object-count refusal falls back to the post-collection check in _materialize and the
+    object-count memory-bound test reddens under this mutation."""
+    for number, entry_type, field2, field3 in entries:
+        if number in seen:
+            continue
+        seen.add(number)
+        if entry_type in (1, 2):
+            entries_map[number] = (entry_type, field2, field3)
+    return None
+
+
+# ============================================================ G5 F1 — predictor memory guard
+def test_predictor_empty_inflate_is_memory_bounded():
+    # BLOCKING G5 round-1 Finding 1: an empty-inflating xref stream with a huge /Columns must
+    # NOT allocate a /Columns-sized buffer. Through resolve_object_table AND read_sheet the peak
+    # stays tiny and the outcome is a typed value (never a crash / MemoryError).
+    pdf = _empty_predictor_bomb_pdf(columns=50_000_000)
+    tracemalloc.start()
+    try:
+        resolved = pdf_object_streams.resolve_object_table(
+            pdf, max_total_decoded_bytes=sheet_reader.MAX_TOTAL_DECODED_BYTES
+        )
+        _c, peak_resolve = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    assert isinstance(resolved, (pdf_object_streams.ResolvedTable, SheetRefusal))
+    assert peak_resolve < _PREDICTOR_PEAK_CEILING
+
+    tracemalloc.start()
+    try:
+        ref = _refusal(pdf)
+        _c, peak_read = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    assert ref is not None  # a typed refusal VALUE (no catalog), never a crash
+    assert peak_read < _PREDICTOR_PEAK_CEILING
+
+
+def test_predictor_buffer_guard_is_load_bearing(monkeypatch):
+    # Restore the round-1 allocation order (buffer sized by /Columns BEFORE the empty/bound
+    # check): the memory-bound test reddens — the peak balloons to ~/Columns bytes.
+    monkeypatch.setattr(pdf_object_streams, "apply_predictor", _apply_predictor_round1)
+    pdf = _empty_predictor_bomb_pdf(columns=50_000_000)
+    tracemalloc.start()
+    try:
+        _refusal(pdf)
+        _c, peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    assert peak > _PREDICTOR_PEAK_CEILING  # the pre-fix code materialized the full /Columns buffer
+
+
+def test_predictor_oversized_row_is_typed_refusal():
+    # A predicted row longer than the absolute cap is a typed "predictor" refusal (defence for
+    # the working buffer), never an allocation.
+    ref = sheet_objects.apply_predictor(
+        b"\x00" * 12,
+        {sheet_objects._PREDICTOR_KEY: 12, sheet_objects._COLUMNS_KEY: 100},
+        absolute_cap=5,
+    )
+    assert isinstance(ref, SheetRefusal) and ref.feature == "predictor"
+
+
+def test_predictor_invalid_bpc_is_typed_refusal():
+    # /BitsPerComponent outside the §7.4.4.4 set {1,2,4,8,16} is a typed "predictor" refusal.
+    ref = sheet_objects.apply_predictor(
+        b"\x00" * 8,
+        {
+            sheet_objects._PREDICTOR_KEY: 12,
+            sheet_objects._BPC_KEY: 3,
+            sheet_objects._COLUMNS_KEY: 1,
+        },
+        absolute_cap=1_000,
+    )
+    assert isinstance(ref, SheetRefusal) and ref.feature == "predictor"
+    assert "BitsPerComponent" in ref.detail
+
+
+def test_predictor_empty_data_returns_without_geometry():
+    # Empty data returns b"" without touching row_len even when /Columns is enormous.
+    result = sheet_objects.apply_predictor(
+        b"",
+        {sheet_objects._PREDICTOR_KEY: 12, sheet_objects._COLUMNS_KEY: 10**9},
+        absolute_cap=8_388_608,
+    )
+    assert result == b""
+
+
+# ================================================= G5 F2 / G3 A1 / G1 F3 — object-count bound
+def test_object_count_bound_is_memory_bounded():
+    # G5 round-1 Finding 2: a /Prev chain that WOULD accumulate tens of thousands of entries
+    # refuses INSIDE collection with the "object count bound" feature and bounded memory.
+    pdf = _object_count_chain_pdf(streams=33, per=2000)
+    tracemalloc.start()
+    try:
+        ref = _refusal(pdf)
+        _c, peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    assert ref is not None and ref.feature == "object count bound"
+    assert peak < _OBJECT_COUNT_PEAK_CEILING
+
+
+def test_object_count_bound_incremental_is_load_bearing(monkeypatch):
+    # Move the check back after collection (round-1: bound only in _materialize): the whole
+    # chain is merged first, so the peak balloons past the ceiling although the file still
+    # refuses (later) with the same feature.
+    monkeypatch.setattr(pdf_object_streams, "merge_stream_entries", _merge_no_bound)
+    pdf = _object_count_chain_pdf(streams=33, per=2000)
+    tracemalloc.start()
+    try:
+        ref = _refusal(pdf)
+        _c, peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    assert ref is not None and ref.feature == "object count bound"
+    assert peak > _OBJECT_COUNT_PEAK_CEILING
+
+
+# ========================================================= G4 A1 [W10] — cross-phase budget
+def test_cross_phase_budget_carry(monkeypatch):
+    # The resolver's charged-bytes seed feeds the content decoder. With a document budget each
+    # phase fits under but whose SUM they exceed, the content phase refuses.
+    monkeypatch.setattr(sheet_reader, "MAX_TOTAL_DECODED_BYTES", _CROSS_PHASE_BUDGET)
+    ref = _refusal(_cross_phase_pdf(_CROSS_PHASE_REPEAT))
+    assert ref is not None and ref.feature == "decoded bytes budget"
+
+
+def test_cross_phase_budget_carry_is_load_bearing(monkeypatch):
+    # Drop the resolver's charged-bytes seed: the content phase alone fits, so the joint-budget
+    # refusal disappears (the document reads, or refuses for a different reason).
+    monkeypatch.setattr(sheet_reader, "MAX_TOTAL_DECODED_BYTES", _CROSS_PHASE_BUDGET)
+    real = pdf_object_streams.resolve_object_table
+
+    def _no_seed(data, *, max_total_decoded_bytes):
+        result = real(data, max_total_decoded_bytes=max_total_decoded_bytes)
+        if isinstance(result, pdf_object_streams.ResolvedTable):
+            return pdf_object_streams.ResolvedTable(table=result.table, decoded_bytes=0)
+        return result
+
+    monkeypatch.setattr(sheet_reader, "resolve_object_table", _no_seed)
+    ref = sheet_refusal(read_sheet(_cross_phase_pdf(_CROSS_PHASE_REPEAT)))
+    assert ref is None or ref.feature != "decoded bytes budget"
+
+
+# ============================================================ G4 A2/A3/A4 + G3 A6 coverage
+def test_zero_width_type_and_field3_defaults():
+    # /W [0 4 0]: the type field defaults to 1 and field-3 (generation) defaults to 0 (§7.5.8.2).
+    doc = read_sheet(_zero_width_fields_pdf())
+    assert isinstance(doc, SheetDocument)
+    assert _first_polyline_flat(doc) == pytest.approx([10.0, 10.0, 100.0, 100.0])
+
+
+def test_resolver_filter_echo_is_preview_truncated():
+    # The RESOLVER's own /Filter echo (pdf_object_streams._decode_stream) is _preview-truncated
+    # — a distinct echo site from the content-stream one (test_unsupported_filter_name_is_...)
+    # and the XObject ones. All XObject /name echoes route through the SAME _preview helper.
+    long_filter = "Q" * 90
+    ref = _refusal(_xref_stream_bad_filter_pdf(long_filter.encode()))
+    assert ref is not None and ref.feature == "stream filter"
+    assert "...(truncated)" in ref.detail
+    assert long_filter not in ref.detail
+
+
+def test_xobject_no_resources_name_echo_is_preview_truncated():
+    # A SECOND XObject /name echo site (Do with no /Resources) confirming the uniform _preview
+    # helper truncates at every site (the first is covered by
+    # test_xobject_name_echo_is_preview_truncated).
+    long_name = "B" * 90
+    ref = _refusal(_xref_pdf(content=b"/" + long_name.encode() + b" Do"))
+    assert ref is not None and ref.feature == "xobject"
+    assert "...(truncated)" in ref.detail
+    assert long_name not in ref.detail
+
+
+def test_classic_prev_without_xrefstm_returns_strict_refusal():
+    # G3 round-1 A6: a classic xref table with trailer /Prev and no /XRefStm still returns the
+    # strict "incremental update chain" refusal unchanged (the resolver defers).
+    ref = _refusal(_classic_with_prev_pdf())
+    assert ref is not None
+    assert ref.origin == SheetRefusal.STRICT_READER
+    assert ref.feature == "incremental update chain"
+
+
+def test_decode_budget_charge_refuses_before_incrementing():
+    # DB-064(d): _DecodeBudget.charge refuses BEFORE incrementing, so the total never overshoots.
+    budget = pdf_object_streams._DecodeBudget(cap=10)
+    assert budget.charge(6) is None and budget.used == 6
+    ref = budget.charge(5)  # 6 + 5 = 11 > 10
+    assert isinstance(ref, SheetRefusal) and ref.feature == "decoded bytes budget"
+    assert budget.used == 6  # NOT incremented on refusal (no overshoot)

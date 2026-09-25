@@ -72,6 +72,7 @@ from app.drawings.sheet_objects import (
     _wrap_strict,
     apply_predictor,
     inflate_guarded,
+    merge_stream_entries,
 )
 from app.drawings.sheet_primitives import SheetRefusal
 
@@ -97,7 +98,9 @@ MAX_OBJECT_STREAMS = 4096             # §7.5.7 distinct object streams decoded 
 MAX_OBJSTM_OBJECTS = 8192            # §7.5.7 /N compressed objects in one object stream
 MAX_XREF_ENTRIES = 131_072          # entries decoded from one cross-reference stream
 
-_MAX_FIELD_WIDTH = 8               # §7.5.8.2 max bytes for one /W field (big-endian int)
+_MAX_FIELD_WIDTH = 8               # this module's OWN safety bound on one /W field width in
+                                   # bytes: ISO 32000-1 §7.5.8.2 sets no maximum, so we fail
+                                   # closed above an 8-byte big-endian integer (G1 round-1 F1)
 _WHITESPACE = b"\x00\t\n\x0c\r "
 
 # The strict reader refuses these three cross-reference-stream-family features by name; the
@@ -274,12 +277,18 @@ def _collect_stream_entries(
         dct, entries, prev = one
         if trailer is None:
             trailer = dct
-        for number, entry_type, field2, field3 in entries:
-            if number in seen:
-                continue
-            seen.add(number)
-            if entry_type in (1, 2):
-                entries_map[number] = (entry_type, field2, field3)
+        # Bound the merged maps INCREMENTALLY (G5 round-1 Finding 2): refuse the moment the
+        # in-use or distinct-entry count exceeds a cap, so chain-collection memory stays a
+        # constant regardless of /Prev-chain length. Within the bound the verdict is unchanged.
+        merged = merge_stream_entries(
+            entries_map,
+            seen,
+            entries,
+            max_distinct=limits.max_xref_entries,
+            max_objects=MAX_PDF_OBJECTS,
+        )
+        if merged is not None:
+            return merged
         cur = prev
         depth += 1
     if trailer is None:  # unreachable (first_offset always yields a stream) - stay total
@@ -328,8 +337,9 @@ def _read_one_xref_stream(
 
 
 def _read_w(dct: dict) -> tuple[int, int, int] | SheetRefusal:
-    """Read the required ``/W`` field widths: exactly three integers, the middle one
-    positive, none over the byte-width bound (§7.5.8.2)."""
+    """Read the required ``/W`` field widths (§7.5.8.2): exactly three integers with the middle
+    one positive; none over this module's own ``_MAX_FIELD_WIDTH`` safety bound (the spec sets
+    no /W maximum)."""
     raw = dct.get(_W_KEY)
     if not isinstance(raw, list) or len(raw) != 3:
         return _refuse("xref stream", "/W is not an array of three integers")
@@ -662,7 +672,7 @@ def _decode_stream(
         parms = parms[0]
     if not isinstance(parms, dict):
         return decoded
-    return apply_predictor(decoded, parms)
+    return apply_predictor(decoded, parms, absolute_cap=limits.max_inflated)
 
 
 # ================================================================================== helpers
