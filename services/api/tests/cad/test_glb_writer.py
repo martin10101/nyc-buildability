@@ -582,9 +582,13 @@ def test_as5_imports_are_stdlib_plus_shared_claim_words() -> None:
 
 
 def test_as5_not_wired_into_the_app() -> None:
+    # [ORCH-CORRECTED per M5-T109 harvest] the export service is the one allowed importer, and
+    # its route stays UNMOUNTED: app/main.py imports neither the service nor the route.
     importers = [
         path.relative_to(API_ROOT).as_posix()
         for path in (API_ROOT / "app").rglob("*.py")
         if path != MODULE_PATH and "glb_writer" in path.read_text(encoding="utf-8")
     ]
-    assert importers == []
+    assert importers == ["app/cad/export_service.py"]
+    main_text = (API_ROOT / "app" / "main.py").read_text(encoding="utf-8")
+    assert "export_service" not in main_text and "export_api" not in main_text
