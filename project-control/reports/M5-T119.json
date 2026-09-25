@@ -1,0 +1,21 @@
+{
+  "task_id": "M5-T119",
+  "producer_agent": "frontend-engineer",
+  "report_file": "project-control/reports/M5-T119-producer-report.md",
+  "submitted_at": "2026-09-25T07:58:08.014348+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T119-evidence-map.json",
+  "content_manifest_sha256": "824d5bd9da82d36e51064b97c5fc62913086b0ad8292eb2ca496197d63ff12cd",
+  "reviewed_sha": "4a631bf3b284176ab51268519099e8ee12ccf490",
+  "applicable_requirements": [
+    "D-066-R001",
+    "D-083-R001",
+    "D-086-R001",
+    "D-086-R002",
+    "D-086-R003",
+    "D-086-R004",
+    "D-087-R001",
+    "D-087-R002"
+  ],
+  "updated_at": "2026-09-25T07:58:09.624601+00:00"
+}

@@ -1,0 +1,32 @@
+{
+ "task_id": "M5-T119",
+ "material_commit": "4a631bf3 (cherry-pick of wt-m5t119 7ca2ad26; 12 files, every file MATCH by blob)",
+ "produced_at": "2026-09-25T07:58:06+00:00",
+ "producer": "frontend-engineer (orchestrator-dispatched subagent; worktree wt-m5t119)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's navigation block (graph regenerated at the wave-1 seam: 844 files / 18356 nodes / 7841 edges) named the overview's renderers (ArchitectEntry.tsx overview view, ReportView.tsx the printed brief - both READ-ONLY), ArchitectShell.tsx wrapping every architect route, and the three e2e specs that walk these surfaces; the producer left ArchitectEntry.tsx and ReportView.tsx untouched and edited only those three specs. [ORCH-HARVEST] at the harvested head 4a631bf3 (cherry-pick 4a631bf3; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-083-R001": [
+   "No claim-class wording added: the producer reports a grep-clean diff for permitted / approved / maximum-allowed wording; the cap row keeps 'FAR only - Buildable envelope not assessed'; the section-29 text stays in the global footer via REQUIRED_DISCLAIMER (layout.tsx untouched); the phone shell strip reuses the accepted M5-T115 wording verbatim. [ORCH-HARVEST] at the harvested head 4a631bf3 (cherry-pick 4a631bf3; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-086-R001": [
+   "The assessment and the accepted P1 spec (M5-T114) are used as input only; the ledger task id is orchestrator-assigned; the meaning-change register items MR-1..MR-8 are not adopted. [ORCH-HARVEST] at the harvested head 4a631bf3 (cherry-pick 4a631bf3; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-086-R002": [
+   "P3a (the first half of the assessment's P3 overview slice) is the next contracted D-086 phase after P0 (M5-T080), P1 (M5-T114) and P2 (M5-T115), gated G0/G2/G3/G4 with a human-journey walkthrough; the contextual inspector and the collapsed existing-building group stay for P3b. [ORCH-HARVEST] at the harvested head 4a631bf3 (cherry-pick 4a631bf3; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-086-R003": [
+   "Preservation: the producer report's ledger proof table maps every touched row (A04, A06, A09, A05, A15, A13, A01/LS-P01, A03, LS-P09/LS-P12) before -> after -> protected meaning -> proving test -> print path; the conflict and missing-input links and wording are kept verbatim inside the strip (additions only name the blocked effect); ReportView.tsx untouched and PropertyIssuesSummary still prints A04 in the brief; identity mismatch (role=alert) and incomplete assessment (role=status) deliberately stay in their own regions (deviation D2, disclosed for the reviewers to rule on). [ORCH-HARVEST] at the harvested head 4a631bf3 (cherry-pick 4a631bf3; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-086-R004": [
+   "Sequencing honoured: contracted after the accepted P2 (M5-T115, 300th accept). [ORCH-HARVEST] at the harvested head 4a631bf3 (cherry-pick 4a631bf3; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R001": [
+   "Capacity unit under D-087 + D-089 (overnight): contracted at fdf1e2ae (G0), claimed at d895f3c8 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with disjoint backend packets; no state or gate skipped. [ORCH-HARVEST] at the harvested head 4a631bf3 (cherry-pick 4a631bf3; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R002": [
+   "G0 disjointness EMPTY vs every live packet; the declared-glob overlap with the dormant pre-regime M4-T005 (apps/web/src/app/property/**, apps/web/e2e/**) is recorded as excluded per the M5-T077 DCV F1 ruling; one worktree wt-m5t119; the producer commit touches exactly its 12 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the harvested head 4a631bf3 (cherry-pick 4a631bf3; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ]
+ }
+}
