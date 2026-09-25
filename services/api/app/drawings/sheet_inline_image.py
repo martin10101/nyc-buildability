@@ -433,8 +433,9 @@ def _bool_value(dictionary: dict[str, object], keys: frozenset[str]) -> bool | N
 
 
 def _components(dictionary: dict[str, object]) -> int | None:
-    """Component count from the inline-image colour space (Table 92), or ``None`` when the colour
-    space is absent, an array/stream, or a name outside the known device/CIE set."""
+    """Component count from the inline-image colour space (the /CS key is Table 92; its value
+    abbreviations are Table 93 - [ORCH-CORRECTED per M5-T120 G1 advisory]), or ``None`` when the
+    colour space is absent, an array/stream, or a name outside the known device/CIE set."""
     for key in _CS_KEYS:
         if key in dictionary:
             value = dictionary[key]

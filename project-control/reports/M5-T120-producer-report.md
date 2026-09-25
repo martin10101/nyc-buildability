@@ -103,10 +103,12 @@ draws NO segment to it (later `l` draw FROM it), and increments the per-page + d
 This fires ONLY when the current point is undefined — after a painting operator (ISO 32000-1 §8.5.3) or
 at stream start — so no existing golden path (which always has an `m`/`re`/`h`-retained current point)
 is perturbed; the count defaults to 0 and is not serialized by the equivalence corpus, so goldens are
-byte-identical. Reader-of-record match: the Canvas-2D "ensure there is a subpath" rule pdf.js relies on
-/ MuPDF's handling, marked `[recalled - verify]` (not verified from a primary source; ISO 32000-1
-§8.5.2/§8.5.3 for "current point undefined after painting" IS verified via the packet's FORMAT
-AUTHORITY). PROHIBITED reopening-at-the-last-point is NOT done (the mutation proves it). Curves
+byte-identical. Reader-of-record match [ORCH-CORRECTED per M5-T120 G1]: the WHATWG HTML Canvas 2D
+`lineTo` "ensure there is a subpath" rule (a new subpath at the point, no segment), which pdf.js
+inherits by drawing to a canvas - verified by the G1 reviewer from the primary source; MuPDF is
+STRICTER (its `fz_lineto` with no current point warns and ignores the operator), so it is NOT a match.
+ISO 32000-1 §8.5.2/§8.5.3 ("current point undefined after painting") IS verified via the packet's
+FORMAT AUTHORITY. PROHIBITED reopening-at-the-last-point is NOT done (the mutation proves it). Curves
 (`c`/`v`/`y`) with no current point STAY typed refusals (`_curveto` / `_op_v`); **no real file hits an
 orphan curve** (item 2 reads fully).
 
@@ -192,9 +194,10 @@ case is this substitution (`changed-vs-golden: []`; added `refuse_curve_no_curre
    item 2's 8,154 inline images carry no /DP dictionary, so /DP-dict handling is proven by synthetic
    tests only. RECOMMEND accept — it is a real, common class in SCANNED CCITTFax sheets (G1 A named it),
    it is fully bounded and mutation-covered, and a future scanned-CAD file will exercise it. Not a gap.
-2. **Orphan-lineto reader-of-record citation is `[recalled - verify]`.** The "start a subpath at the
-   lineto's own point when there is no current point" leniency matches Canvas-2D / pdf.js / MuPDF from
-   recall; I could not verify it from a primary source offline. RECOMMEND the G1 verifier confirm; the
+2. **Orphan-lineto reader-of-record citation** [ORCH-CORRECTED per M5-T120 G1: resolved]. The "start a
+   subpath at the lineto's own point when there is no current point" leniency matches the WHATWG Canvas
+   2D `lineTo` rule that pdf.js inherits (G1-verified from the primary source); MuPDF does NOT match -
+   it warns and ignores the orphan lineto (stricter). Originally: RECOMMEND the G1 verifier confirm; the
    ISO §8.5.2/§8.5.3 "current point undefined after painting" basis IS verified, and the rule provably
    never invents a segment (the reopen-at-last-point mutant reddens).
 3. **Should orphan curves also lenient-reopen?** No real file hits one (item 2 reads fully). RECOMMEND

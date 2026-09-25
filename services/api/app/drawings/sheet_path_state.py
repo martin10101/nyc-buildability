@@ -85,10 +85,12 @@ class _PathState:
         (ISO 32000-1 §8.5.2 / §8.5.3, Table 59) — starts a NEW subpath AT ITS OWN end point: NO
         segment is drawn to it (never from the stale pre-paint point, which would INVENT a segment),
         and later segments draw FROM it. Counted per page in a disclosed field whose default keeps
-        every existing golden byte-identical (M5-T120 / DB-090 i). This matches the reader-of-record
-        leniency — the Canvas-2D "ensure there is a subpath" rule pdf.js relies on, and MuPDF's
-        handling [recalled - verify]. Curves (``c``/``v``/``y``) with no current point STAY a typed
-        refusal (see :meth:`_curveto` / :meth:`app.drawings.sheet_interpreter._StreamRun._op_v`)."""
+        every existing golden byte-identical (M5-T120 / DB-090 i). This follows the WHATWG HTML
+        Canvas 2D ``lineTo`` rule ("ensure there is a subpath" for the point: a new subpath, no
+        segment), which pdf.js inherits by drawing to a canvas; MuPDF is STRICTER (``fz_lineto``
+        with no current point warns and ignores the operator) [ORCH-CORRECTED per M5-T120 G1:
+        the MuPDF clause]. Curves (``c``/``v``/``y``) with no current point STAY a typed refusal
+        (see :meth:`_curveto` / :meth:`app.drawings.sheet_interpreter._StreamRun._op_v`)."""
         point = self._map(x, y)
         if isinstance(point, SheetRefusal):
             return point
