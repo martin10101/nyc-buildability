@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T22:38:50+00:00",
+ "verified_at": "2026-09-25T00:38:08+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1227,6 +1227,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: stdlib-only (re, numbers); no requirements, main.py, route, web, apps, packages or app/cad/__init__.py change; unwired; the max-envelope route stays unmounted; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T101",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "68bc726ec064c28d66761dbfb9b504a693565f64",
+   "reviewed_manifest_sha256": "d906812daea1f525f2c96c01c55338cc444583b9afd3b7022befbb7f4fc0fdd0",
+   "producer": "geospatial-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T00:38:08+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 at the contract seam 40169b9c, claimed at 442b2dd2 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with disjoint packets; the full gate ladder G0/G1/G2/G3/G4/G5 PASS; no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head 68bc726e (building_footprints_arcgis.py 22c86686, building_footprints_geometry.py d5867737, test_building_footprints_arcgis.py 60751a0a, building-footprints.json 3844dcec, M5-T101-producer-report.md 5aacc3cd; identity d906812d; evaluate_task_refs ok); report M5-T101-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs all 20 active neighbours incl. M5-T102; one worktree wt-m5t101; the cherry-pick touches exactly the 5 allowed paths; no forbidden path in the diff. Blob-level restamp predicate re-verified by the orchestrator at the accept head 68bc726e (building_footprints_arcgis.py 22c86686, building_footprints_geometry.py d5867737, test_building_footprints_arcgis.py 60751a0a, building-footprints.json 3844dcec, M5-T101-producer-report.md 5aacc3cd; identity d906812d; evaluate_task_refs ok); report M5-T101-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the 3D-context connector is hardened before wiring - a byte-identical split (geometry helpers re-exported, acyclic; the 117 existing tests unchanged; fixtures untouched), typed bounds (a 50,000-vertex per-geometry cap and a 64 MiB cumulative decoded-bytes ceiling charged before retention; a per-page deadline; interactive max_attempts = 1), both official ground-elevation definitions disclosed and a zero ground kept as a typed unverified value, untrusted source-text fields declared, and a source_registry draft whose facts G1 verified against the live official service, FGDC, dictionary and SODA metadata. Blob-level restamp predicate re-verified by the orchestrator at the accept head 68bc726e (building_footprints_arcgis.py 22c86686, building_footprints_geometry.py d5867737, test_building_footprints_arcgis.py 60751a0a, building-footprints.json 3844dcec, M5-T101-producer-report.md 5aacc3cd; identity d906812d; evaluate_task_refs ok); report M5-T101-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies (stdlib + admitted shapely + internal modules; no import re); unwired; no route, main.py or web change; app/resilience and the MapPLUTO connector untouched; the connector at 865 SLOC under the 1000 cap; requirements untouched; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 68bc726e (building_footprints_arcgis.py 22c86686, building_footprints_geometry.py d5867737, test_building_footprints_arcgis.py 60751a0a, building-footprints.json 3844dcec, M5-T101-producer-report.md 5aacc3cd; identity d906812d; evaluate_task_refs ok); report M5-T101-DCV.md."
      ]
     }
    ]

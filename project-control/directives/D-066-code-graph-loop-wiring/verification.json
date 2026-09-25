@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T22:38:50+00:00",
+ "verified_at": "2026-09-25T00:38:08+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1523,6 +1523,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t102): the packet carries the graph-derived navigation block (regenerated at the contract seam, 827 files / 17839 nodes / 7656 edges) naming pdf_sheet_writer.py:54 CLAIM_CLASS_WORDS, the writer tests, test_cad_owner_samples.py and test_dxf_roundtrip.py, with the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T101",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "68bc726ec064c28d66761dbfb9b504a693565f64",
+   "reviewed_manifest_sha256": "d906812daea1f525f2c96c01c55338cc444583b9afd3b7022befbb7f4fc0fdd0",
+   "producer": "geospatial-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T00:38:08+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t101): the packet carries the graph-derived navigation block (regenerated at the contract seam, 827 files / 17839 nodes / 7656 edges) naming the connector's sole consumer (its test), the read-only transport and MapPLUTO neighbours, and the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head 68bc726e (building_footprints_arcgis.py 22c86686, building_footprints_geometry.py d5867737, test_building_footprints_arcgis.py 60751a0a, building-footprints.json 3844dcec, M5-T101-producer-report.md 5aacc3cd; identity d906812d; evaluate_task_refs ok); report M5-T101-DCV.md."
      ]
     }
    ]
