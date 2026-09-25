@@ -10,7 +10,7 @@
  "issued_at": "2026-09-24",
  "captured_at": "2026-09-24T07:20:00+00:00",
  "created_at": "2026-09-24T07:20:00+00:00",
- "updated_at": "2026-09-25T01:45:00+00:00",
+ "updated_at": "2026-09-25T05:05:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "ed49b2d8af5fb4783cc3e456e29f78152e921baf",
  "capture_head_sha": null,
@@ -35,7 +35,7 @@
   "D-087-R011",
   "D-087-R012"
  ],
- "requirements_content_digest_sha256": "74210487e7062d9b48e870b6f9131f069f5df26366d2fc41b34b5c76c603c2b8",
+ "requirements_content_digest_sha256": "ddec99c163306f86d16f5ff32403dae02d617af3e4b414859404c49f20d2ec6a",
  "sources": [
   {
    "file": "source-001.md",
@@ -160,6 +160,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "wave-10 contract seam (seq 129: M5-T106 + M5-T107 + M5-T108 + M5-T109 + M0-T161 - the M5-T099 plan's batch 2, the DB-069 massing pre-wiring packet, and the D-088 commissioning helper): bound D-087-R001 <- M5-T106, M5-T107, M5-T108, M5-T109; D-087-R002 <- M5-T106, M5-T107, M5-T108, M5-T109; D-087-R003 <- M5-T106, M5-T107; D-087-R004 <- M5-T109; D-087-R005 <- M5-T109; D-087-R006 <- M5-T108, M5-T109; D-087-R007 <- M5-T108; D-087-R009 <- M5-T106, M5-T107, M5-T108, M5-T109; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T05:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-088 lane-1 contract seam (seq 129: M5-T110 - the supervised one-cycle canary packet for loop lane 1): bound D-087-R001 <- M5-T110; D-087-R002 <- M5-T110; D-087-R006 <- M5-T110; requirements digest resynced in the same commit."
   }
  ]
 }

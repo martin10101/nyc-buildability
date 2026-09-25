@@ -1,0 +1,104 @@
+{
+  "task_id": "M5-T110",
+  "title": "D-088 lane-1 canary: claim-word test debt (DB-072 a, c) - a direct 11-word DXF refusal test via a patched generator note, and an import-allowlist walk that also covers relative imports; tests only",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close DB-072 (a) and (c) with tests only. (a) The DXF writer's refusal of every barred claim word is proven only transitively today (the shared-function 11-word test + an identity pin): add a test in tests/cad/test_dxf_writer.py parametrized over ALL entries of the shared CLAIM_CLASS_WORDS that monkeypatches the DXF writer's GENERATOR_NOTE (in the consuming namespace) to contain each word and asserts the typed claim_class_word refusal. (c) The import-allowlist AST walk in tests/cad/test_claim_words.py (test_as1_each_writer_imports_the_shared_module) skips relative imports (ast.ImportFrom with level > 0): make it resolve or refuse them so a relative import of a disallowed module cannot slip past. Production code is byte-untouched.",
+  "business_reason": "D-088's lane-1 canary: a small, safe, test-only unit that exercises the recommissioned loop end to end while closing two honesty-test gaps the M5-T102 reviewers routed.",
+  "inputs": [
+    "LOOP LANE (binding; D-088): this packet runs in codex loop lane 1 under the certified supervisor (the SUPERVISED ONE-CYCLE CANARY: one unit, the owner approves the prompt digest). Work ONLY inside the task worktree the launch names; commit nothing yourself unless the loop contract asks - the orchestrator harvests. Keep the change as small as the acceptance scenarios allow.",
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-072 (a) and (c) (exact wording) and project-control/reports/M5-T102-G4.md (A1, A3) and M5-T102-G3.md (A3). The claim words are services/api/app/cad/claim_words.py CLAIM_CLASS_WORDS (READ-ONLY); the DXF writer's refusal code is claim_class_word (see test_as4_claim_word_guard_is_load_bearing in test_dxf_writer.py for the existing single-phrase pattern).",
+    "TESTS + MUTATION OBLIGATIONS (binding; offline only): (a) the new parametrized test covers every entry of CLAIM_CLASS_WORDS and asserts the typed refusal for each; mutation - removing one word from the writer's screen (in the consuming namespace) reddens exactly that case. (c) the walk handles level > 0 imports; mutation - restoring the level-0-only walk reddens a test that feeds it a relative import of a disallowed module (use a synthetic source string parsed with ast, never a real file change). Record each mutant run (red/green) in the report; do not commit mutation harnesses.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 844 files / 18356 nodes / 7841 edges): claim_words.py is imported by dxf_writer.py, glb_writer.py, pdf_sheet_writer.py, export_service.py and tests/cad/test_claim_words.py - all READ-ONLY here; the two test files are leaf files (no importers). export_service.py and its tests belong to the in-review M5-T109 - FORBIDDEN. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/tests/cad/test_dxf_writer.py - a direct 11-word claim refusal test (DB-072 a)",
+    "services/api/tests/cad/test_claim_words.py - the import walk covers relative imports (DB-072 c)",
+    "project-control/reports/M5-T110-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T102"
+  ],
+  "allowed_paths": [
+    "services/api/tests/cad/test_dxf_writer.py",
+    "services/api/tests/cad/test_claim_words.py",
+    "project-control/reports/M5-T110-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/cad/",
+    "services/api/tests/cad/test_export_service.py",
+    "services/api/tests/cad/test_export_api.py",
+    "services/api/tests/cad/test_pdf_sheet_writer.py",
+    "services/api/tests/cad/test_glb_writer.py",
+    "services/api/tests/cad/test_cad_owner_samples.py",
+    "docs/samples/",
+    "services/api/app/main.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (direct 11-word DXF coverage): a test parametrized over every CLAIM_CLASS_WORDS entry patches the DXF writer's GENERATOR_NOTE to carry that word and asserts the typed claim_class_word refusal; mutation - dropping one word from the screen reddens exactly that parameter (run recorded).",
+    "AS-2 (relative imports): the allowlist walk resolves or refuses ast.ImportFrom nodes with level > 0; a test feeds a synthetic relative import of a disallowed module and asserts it is caught; mutation - the level-0-only walk reddens it (run recorded).",
+    "AS-3 (scope): tests only - production byte-untouched (blob compare in the report); every existing test passes unchanged; ruff clean; modularity exit 0; zero new dependencies."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T04:07:37.046788+00:00",
+  "updated_at": "2026-09-25T04:07:38.453911+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-088",
+      "requirement_ids": [
+        "D-088-R002",
+        "D-088-R005"
+      ]
+    },
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R006"
+      ]
+    },
+    {
+      "directive_id": "D-083",
+      "requirement_ids": [
+        "D-083-R001"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T04:07:37.046788+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/cad/test_dxf_writer.py tests/cad/test_claim_words.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
