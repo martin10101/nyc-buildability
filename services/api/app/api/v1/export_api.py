@@ -1,1 +1,1 @@
-"""Placeholder seeded at the M5-T109 contract seam; the producer replaces it (PKT-D unmounted export route)."""
+"""Placeholder (M5-T109 contract seam, PKT-D route); the producer replaces it."""

@@ -1,1 +1,1 @@
-"""Placeholder seeded at the M5-T107 contract seam; the producer replaces it (PKT-E scene assembler)."""
+"""Placeholder (M5-T107 contract seam, PKT-E assembler); the producer replaces it."""
