@@ -61,12 +61,12 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-25T05:02:00.603185+00:00",
-  "updated_at": "2026-09-25T05:02:21.629695+00:00",
+  "updated_at": "2026-09-25T05:26:50.779566+00:00",
   "directive_refs": [
     {
       "directive_id": "D-086",
@@ -111,6 +111,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Claimed at the D-089 wave-1 contract seam 93b94019; worktree C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t114 created at the claim-seam commit; an orchestrator-dispatched subagent producer follows."
+    },
+    {
+      "at": "2026-09-25T05:26:25.986938+00:00",
+      "agent": "product-design-director",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Harvested: c9349900 cherry-picked to 2f350015 (3 files MATCH); harvest checks green; evidence map + G2 written; submitting."
     }
   ]
 }
