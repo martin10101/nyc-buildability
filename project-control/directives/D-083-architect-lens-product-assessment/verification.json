@@ -3,7 +3,7 @@
  "directive_id": "D-083",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All thirteen requirements bind the non-ledger sentinel D-083-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. R011 (owner return item) is discharged by the owner-facing reply and audited here. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T07:47:32+00:00",
+ "verified_at": "2026-09-25T08:36:47+00:00",
  "task_verifications": [
   {
    "directive_id": "D-083",
@@ -301,6 +301,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: the reconciled refusal detail is built server-side from the fixed reject code only (the bowtie test asserts the exact server template); only the two honest source labels exist; no claim wording. Blob-level restamp predicate re-verified by the orchestrator at the accept head b1c43167 (export_service.py 25437d25, test_export_service.py fb1ea711, M5-T116-producer-report.md bb2a479d; identity 23fd4149; evaluate_task_refs ok); report M5-T116-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T119",
+   "applicable_requirement_ids": [
+    "D-083-R001"
+   ],
+   "reviewed_sha": "ed22997176cc991d6d6401e48b0be194c2a120f9",
+   "reviewed_manifest_sha256": "824d5bd9da82d36e51064b97c5fc62913086b0ad8292eb2ca496197d63ff12cd",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T08:36:47+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a grep over the four changed components + architect.css finds no permitted / approved / maximum-allowed wording (HJ grep-clean too); the new strings are honest ('Preliminary analysis - professional review required before any reliance', 'nothing here is a legal determination'). Blob-level restamp predicate re-verified by the orchestrator at the accept head ed229971 (OverviewExceptionStrip.tsx 2d0891cd, PropertyOverview.tsx dd1ed01f, DevelopmentLimits.tsx e0016bb3, ArchitectShell.tsx b3d37ec7, overview-exception-strip.test.tsx 2bb31414, development-limits.test.tsx e98835e5, workspace.test.tsx bcad93f3, architect.css 5aa998d1, development-limits.spec.ts d74c9f53, architect-workspace.spec.ts 18e6b07b, responsive-a11y.spec.ts 572cca1f, M5-T119-producer-report.md 2d4e8b8b; identity 824d5bd9; evaluate_task_refs ok); report M5-T119-DCV.md."
      ]
     }
    ]

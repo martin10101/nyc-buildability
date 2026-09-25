@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T07:51:40+00:00",
+ "verified_at": "2026-09-25T08:36:47+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1897,6 +1897,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t118): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges) names the sheet-reader consumers and the query.py --no-regen instruction; the G0 report corroborates the regen (F2 label nit only). Blob-level restamp predicate re-verified by the orchestrator at the accept head 4db02f5d (sheet_reader.py 277161a5, sheet_inline_image.py 0e4321da, sheet_interpreter.py c570b6c0, sheet_primitives.py 2bd28761, sheet_objects.py 6be11292, test_sheet_p3_features.py 092027b3, test_sheet_reader.py 4da538f7, test_sheet_reader_split_equivalence.py bb448f98, test_sheet_content_features.py bddceb42, M5-T118-producer-report.md 1b023958; identity 47a46803; evaluate_task_refs ok); report M5-T118-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T119",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "ed22997176cc991d6d6401e48b0be194c2a120f9",
+   "reviewed_manifest_sha256": "824d5bd9da82d36e51064b97c5fc62913086b0ad8292eb2ca496197d63ff12cd",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T08:36:47+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t119): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges) names the renderers (ArchitectEntry overview view, ReportView printed brief - READ-ONLY), ArchitectShell and the three e2e specs, with the query.py --no-regen instruction; G0 confirms the regen. Blob-level restamp predicate re-verified by the orchestrator at the accept head ed229971 (OverviewExceptionStrip.tsx 2d0891cd, PropertyOverview.tsx dd1ed01f, DevelopmentLimits.tsx e0016bb3, ArchitectShell.tsx b3d37ec7, overview-exception-strip.test.tsx 2bb31414, development-limits.test.tsx e98835e5, workspace.test.tsx bcad93f3, architect.css 5aa998d1, development-limits.spec.ts d74c9f53, architect-workspace.spec.ts 18e6b07b, responsive-a11y.spec.ts 572cca1f, M5-T119-producer-report.md 2d4e8b8b; identity 824d5bd9; evaluate_task_refs ok); report M5-T119-DCV.md."
      ]
     }
    ]

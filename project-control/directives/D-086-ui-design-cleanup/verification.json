@@ -3,7 +3,7 @@
  "directive_id": "D-086",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-086-BOOTSTRAP at capture; concrete design-cleanup packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R003 is a standing prohibition carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T07:10:05+00:00",
+ "verified_at": "2026-09-25T08:36:47+00:00",
  "task_verifications": [
   {
    "directive_id": "D-086",
@@ -139,6 +139,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: contracted at the wave-2 seam after the accepted P0 and P1; dependency M5-T114. Blob-level restamp predicate re-verified by the orchestrator at the accept head 675dc7a1 (AddressResolutionScreen.tsx 1cd66f0f, AddressForm.tsx 2f0af0a3, SuggestionChooser.tsx 3dc70161, AddressOutcomeCards.tsx f7126347, AddressConfirmCard.tsx 4e139d5f, LotOutlineMap.tsx 6c5d0fe8, address-resolution.test.tsx 29ee3626, address-confirm.test.tsx a574ff92, lot-outline-map.test.tsx 535f7b27, AddressAutocomplete.tsx 53e44e55, ArchitectEntry.tsx 39979587, autocomplete.test.tsx 4ad628c5, entry.test.tsx 46eb31b5, architect.css d917ab02, confirm-journey.spec.ts 30ed69f8, lot-outline.spec.ts 60798f12, a11y-announcements.spec.ts 3402bad2, responsive-a11y.spec.ts 3a02a6b4, M5-T115-producer-report.md c8b11889; identity 70ed25ba; evaluate_task_refs ok); report M5-T115-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-086",
+   "task_id": "M5-T119",
+   "applicable_requirement_ids": [
+    "D-086-R002",
+    "D-086-R001",
+    "D-086-R003",
+    "D-086-R004"
+   ],
+   "reviewed_sha": "ed22997176cc991d6d6401e48b0be194c2a120f9",
+   "reviewed_manifest_sha256": "824d5bd9da82d36e51064b97c5fc62913086b0ad8292eb2ca496197d63ff12cd",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T08:36:47+00:00",
+   "requirements": [
+    {
+     "id": "D-086-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: P3a contracted as a gated packet (G0/G2/G3/G4 + a human-journey walkthrough) after the accepted P0/P1/P2; all eight P3 exit-gate scenarios map to property-asserting tests green in CI; deviation D2 (identity mismatch role=alert and incomplete assessment role=status kept in their own regions above the strip) ruled a compliant, disclosed reading - folding would downgrade role=alert and the strip structurally cannot see the nulled evaluation. Blob-level restamp predicate re-verified by the orchestrator at the accept head ed229971 (OverviewExceptionStrip.tsx 2d0891cd, PropertyOverview.tsx dd1ed01f, DevelopmentLimits.tsx e0016bb3, ArchitectShell.tsx b3d37ec7, overview-exception-strip.test.tsx 2bb31414, development-limits.test.tsx e98835e5, workspace.test.tsx bcad93f3, architect.css 5aa998d1, development-limits.spec.ts d74c9f53, architect-workspace.spec.ts 18e6b07b, responsive-a11y.spec.ts 572cca1f, M5-T119-producer-report.md 2d4e8b8b; identity 824d5bd9; evaluate_task_refs ok); report M5-T119-DCV.md."
+     ]
+    },
+    {
+     "id": "D-086-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the assessment is untouched (absent from the 12-file diff) and used as input only; the ledger id is orchestrator-assigned; no hold lifted; the meaning-change register MR-1..MR-8 not adopted. Blob-level restamp predicate re-verified by the orchestrator at the accept head ed229971 (OverviewExceptionStrip.tsx 2d0891cd, PropertyOverview.tsx dd1ed01f, DevelopmentLimits.tsx e0016bb3, ArchitectShell.tsx b3d37ec7, overview-exception-strip.test.tsx 2bb31414, development-limits.test.tsx e98835e5, workspace.test.tsx bcad93f3, architect.css 5aa998d1, development-limits.spec.ts d74c9f53, architect-workspace.spec.ts 18e6b07b, responsive-a11y.spec.ts 572cca1f, M5-T119-producer-report.md 2d4e8b8b; identity 824d5bd9; evaluate_task_refs ok); report M5-T119-DCV.md."
+     ]
+    },
+    {
+     "id": "D-086-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the conflict / missing-input headings, field labels, both links and the stale sentence kept verbatim (tests); PropertyIssuesSummary byte-unchanged and still printing A04 in the brief; no UI-computed number, no status remap; section 29 only via REQUIRED_DISCLAIMER; F1 (non-blocking): the pre-existing A06 status chip moved beside the cap value, which the shared DraftHeadline also reflows in the printed brief with identical words (pinned by development-limits.test.tsx:729). Blob-level restamp predicate re-verified by the orchestrator at the accept head ed229971 (OverviewExceptionStrip.tsx 2d0891cd, PropertyOverview.tsx dd1ed01f, DevelopmentLimits.tsx e0016bb3, ArchitectShell.tsx b3d37ec7, overview-exception-strip.test.tsx 2bb31414, development-limits.test.tsx e98835e5, workspace.test.tsx bcad93f3, architect.css 5aa998d1, development-limits.spec.ts d74c9f53, architect-workspace.spec.ts 18e6b07b, responsive-a11y.spec.ts 572cca1f, M5-T119-producer-report.md 2d4e8b8b; identity 824d5bd9; evaluate_task_refs ok); report M5-T119-DCV.md."
+     ]
+    },
+    {
+     "id": "D-086-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the P3a contract seam fdf1e2ae sits after the accepted P0 (M5-T080), P1 (M5-T114) and P2 (M5-T115). Blob-level restamp predicate re-verified by the orchestrator at the accept head ed229971 (OverviewExceptionStrip.tsx 2d0891cd, PropertyOverview.tsx dd1ed01f, DevelopmentLimits.tsx e0016bb3, ArchitectShell.tsx b3d37ec7, overview-exception-strip.test.tsx 2bb31414, development-limits.test.tsx e98835e5, workspace.test.tsx bcad93f3, architect.css 5aa998d1, development-limits.spec.ts d74c9f53, architect-workspace.spec.ts 18e6b07b, responsive-a11y.spec.ts 572cca1f, M5-T119-producer-report.md 2d4e8b8b; identity 824d5bd9; evaluate_task_refs ok); report M5-T119-DCV.md."
      ]
     }
    ]
