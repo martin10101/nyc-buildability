@@ -79,7 +79,10 @@ $script:CandidateSubtree   = '9c0b14eaa56ce32d241c77f789266035b584380c'
 $script:WrongSubtree       = '11d43515656120caae473cca5d6a833a57e5ea35'   # cfc3d22c - the NOT-install-source (5.0)
 $script:ManifestStop       = '147 55dc71350b9f6b0a57e8e4121c62a9d2a4fe8914eea8bcd1ca4acdddbcec74b9'   # 5.4 STOP
 $script:ConfigRawHash      = '610ce9d5cdf50dbf0710424c232ecc7b600c688e419d71204cddcbb9055270e5'         # 5.1 Get-FileHash raw
-$script:ConfigLfHash       = '34f4fe90a1ecc2f4544b4ca7ff33fd08af0923cdf3c96d8c462acb8fe7b2a62e'         # manifest-bound LF
+# The manifest-bound config.toml LF hash (34f4fe90...) is asserted transitively by
+# 5.4's "147 55dc7135..." manifest digest STOP and by 5.7 verify-controller's
+# external config.toml binding, so it is not a separate constant here (G3 F1: the
+# recert's ConfigLfHash is covered, never a dead pin).
 $script:ChainCheckStop     = '2.1.281 946eb5098cc8a56a189b8f0e3f083b6a8569030431252c9bb0ab4203b23bfff1' # 5.11 STOP
 $script:ClaudeVersion      = '2.1.281'
 $script:InstalledFileCount = 204   # 5.3 "files 204 byte-identical"
@@ -233,6 +236,27 @@ function Get-TreeHashList {
         Where-Object { $_.FullName -notmatch '\\(__pycache__|\.pytest_cache)\\' } |
         ForEach-Object { (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash + '  ' + $_.FullName.Substring($r.Length + 1) } |
         Sort-Object)
+}
+
+function Get-TreeFileCount {
+    # Count real source files under $Root (recursive), ignoring the cache dirs the
+    # robocopy /XD and the tree comparison also skip. Returns -1 if $Root is absent.
+    # Used to prove the certified source is populated BEFORE any /MIR mirror.
+    param([string]$Root)
+    if (-not (Test-Path -LiteralPath $Root)) { return -1 }
+    return @(Get-ChildItem -LiteralPath $Root -Recurse -File -Force |
+        Where-Object { $_.FullName -notmatch '\\(__pycache__|\.pytest_cache)\\' }).Count
+}
+
+function Resolve-PathKey {
+    # Normalize a path (absolute, backslash, no trailing slash, lower-case) for
+    # comparison. A relative git output is resolved against $Base. Used by the plan
+    # validator's linked-worktree check.
+    param([string]$Base, [string]$P)
+    $full = $P
+    if (-not [System.IO.Path]::IsPathRooted($full)) { $full = Join-Path $Base $full }
+    try { $full = [System.IO.Path]::GetFullPath($full) } catch { }
+    return $full.Replace('/', '\').TrimEnd('\').ToLowerInvariant()
 }
 
 function Start-Detached {
@@ -408,7 +432,17 @@ function Step-Install {
     if ($r.stdout -match [regex]::Escape($script:WrongSubtree)) {
         throw ('STOP [update 5.3]: install reported the WRONG subtree ' + $script:WrongSubtree + ' (cfc3d22c) - not the certified candidate')
     }
-    Write-Output ('  installed candidate ' + $script:CandidateCommit + ', subtree ' + $script:CandidateSubtree)
+    # Recert 5.3 pins the commit tree and the file count too - assert both.
+    if ($r.stdout -notmatch [regex]::Escape($script:CandidateTree)) {
+        throw ('STOP [update 5.3]: install did not report the candidate commit tree ' + $script:CandidateTree +
+            ' - roll back per runbook section 10')
+    }
+    if ($r.stdout -notmatch ('\b' + [regex]::Escape([string]$script:InstalledFileCount) + '\s+byte-identical')) {
+        throw ('STOP [update 5.3]: install did not report "' + $script:InstalledFileCount +
+            ' byte-identical" source-to-destination files - roll back per runbook section 10')
+    }
+    Write-Output ('  installed candidate ' + $script:CandidateCommit + ', commit tree ' + $script:CandidateTree +
+        ', subtree ' + $script:CandidateSubtree + ', ' + $script:InstalledFileCount + ' files')
 }
 
 function Ensure-ActivationDir {
@@ -418,6 +452,13 @@ function Ensure-ActivationDir {
     if (-not (Test-Path -LiteralPath $dir)) {
         New-Item -ItemType Directory -Force -Path $dir | Out-Null
     }
+}
+
+function Write-WrapperFile {
+    # Write a lane wrapper file (a real machine write during 5.6). A stubbable seam so
+    # the offline tests can guarantee no wrapper is ever written to the machine.
+    param([string]$Path, [string]$Content)
+    [System.IO.File]::WriteAllText($Path, $Content)
 }
 
 function Step-RecordManifest {
@@ -444,11 +485,23 @@ function Step-RecordManifest {
 function Step-VerifyManifest {
     Write-Output '-- 5.5 prove the manifest matches the accepted source'
     $r = Invoke-UpdateScriptPhase -UpdatePhase 'verify-manifest'
-    if ($r.code -ne 0 -or $r.stdout -notmatch 'MANIFEST VERIFIED against the accepted source') {
-        throw ("STOP [update 5.5]: verify-manifest did not report MANIFEST VERIFIED (exit " + $r.code + "): " +
-            (($r.stdout + ' ' + $r.stderr).Trim()))
+    # Recert 5.5 pins the accepted-source commit and both counts - assert all of them.
+    $expectedAt = 'MANIFEST VERIFIED against the accepted source at ' + $script:CandidateCommit
+    if ($r.code -ne 0 -or $r.stdout -notmatch [regex]::Escape($expectedAt)) {
+        throw ("STOP [update 5.5]: verify-manifest did not report MANIFEST VERIFIED at the candidate " +
+            $script:CandidateCommit + " (exit " + $r.code + "): " +
+            (($r.stdout + ' ' + $r.stderr).Trim()) + " - roll back per runbook section 10")
+    }
+    if ($r.stdout -notmatch [regex]::Escape('covered files ' + $script:CoveredFileCount)) {
+        throw ("STOP [update 5.5]: verify-manifest did not report 'covered files " + $script:CoveredFileCount +
+            "' - roll back per runbook section 10")
+    }
+    if ($r.stdout -notmatch [regex]::Escape('installed files re-compared ' + $script:InstalledFileCount)) {
+        throw ("STOP [update 5.5]: verify-manifest did not report 'installed files re-compared " +
+            $script:InstalledFileCount + "' - roll back per runbook section 10")
     }
     Write-Output ('  ' + (($r.stdout -split "`n")[0]).Trim())
+    Write-Output ('  covered files ' + $script:CoveredFileCount + '; installed files re-compared ' + $script:InstalledFileCount)
 }
 
 function Step-Propagate {
@@ -463,9 +516,20 @@ function Step-Propagate {
         New-Item -ItemType Directory -Force -Path (Join-Path $checkout 'mrl') | Out-Null
         $key = Get-CheckoutKey -Checkout $checkout
         $wrapperText = New-LaneWrapperContent -Lane3Content $lane3Content -LaneNumber $lane -CheckoutKey $key
-        [System.IO.File]::WriteAllText((Join-Path $checkout 'autostart-launch.ps1'), $wrapperText)
+        Write-WrapperFile -Path (Join-Path $checkout 'autostart-launch.ps1') -Content $wrapperText
         Write-Output ('  lane ' + $lane + ' stood up at ' + $checkout + ' (checkout key ' + $key.Substring(0, 12) + '..., ACTIVE-TASK block: not yet fed)')
     }
+
+    # Precondition (G5): the certified source must exist and hold the expected file
+    # count BEFORE any /MIR mirror. A /MIR from a missing or wrong-count source would
+    # DELETE the destination contents, so this STOPs before touching any lane.
+    $srcCount = Get-TreeFileCount -Root $certifiedTree
+    if ($srcCount -ne $script:InstalledFileCount) {
+        throw ("STOP [update 5.6]: the certified source tree '" + $certifiedTree + "' holds " + $srcCount +
+            " files, expected " + $script:InstalledFileCount +
+            " - refusing to robocopy /MIR from a missing or wrong source; roll back per runbook section 10")
+    }
+    Write-Output ('  certified source ' + $certifiedTree + ': ' + $srcCount + ' files (precondition met)')
 
     # Mirror the certified tree into lanes 2-5.
     foreach ($lane in @('2', '3', '4', '5')) {
@@ -473,7 +537,8 @@ function Step-Propagate {
         $rc = Invoke-Ext -FilePath 'robocopy' -ExtArgs @($certifiedTree, $dst, '/MIR',
             '/XD', '__pycache__', '.pytest_cache', '/R:0', '/W:0', '/NP', '/NFL', '/NDL')
         if ($rc.code -ge 8) {
-            throw ('STOP [update 5.6]: robocopy into ' + $dst + ' failed, raw exit ' + $rc.code)
+            throw ('STOP [update 5.6]: robocopy into ' + $dst + ' failed, raw exit ' + $rc.code +
+                ' - roll back per runbook section 10')
         }
         Write-Output ('  ' + $dst + ': robocopy raw exit ' + $rc.code)
     }
@@ -496,7 +561,7 @@ function Step-VerifyController {
             -WorkingDirectory $dir
         if ($r.code -ne 0 -or $r.stdout -notmatch 'controller verified, including the external config.toml binding') {
             throw ("STOP [update 5.7]: verify-controller FAILED from " + $dir + " (exit " + $r.code + "): " +
-                (($r.stdout + ' ' + $r.stderr).Trim()))
+                (($r.stdout + ' ' + $r.stderr).Trim()) + " - roll back per runbook section 10")
         }
         Write-Output ('  verified from ' + $dir)
     }
@@ -512,7 +577,7 @@ function Step-Doctor {
         '--manifest', $script:ManifestPath) -WorkingDirectory 'C:\SupervisorController'
     if ($r.code -ne 0 -or $r.stdout -notmatch 'PASS') {
         throw ("STOP [update 5.8]: doctor did not report overall PASS (exit " + $r.code + "): " +
-            (($r.stdout + ' ' + $r.stderr).Trim()))
+            (($r.stdout + ' ' + $r.stderr).Trim()) + " - roll back per runbook section 10")
     }
     Write-Output '  doctor overall PASS'
 }
@@ -528,7 +593,7 @@ function Step-DoctorLive {
         '--claude-executable', $script:ClaudeExe) -WorkingDirectory 'C:\SupervisorController'
     if ($r.code -ne 0 -or $r.stdout -notmatch 'VERIFIED') {
         throw ("STOP [update 5.9]: doctor --live did not record VERIFIED (exit " + $r.code + "): " +
-            (($r.stdout + ' ' + $r.stderr).Trim()))
+            (($r.stdout + ' ' + $r.stderr).Trim()) + " - roll back per runbook section 10")
     }
     Write-Output '  doctor --live VERIFIED'
 }
@@ -554,12 +619,12 @@ function New-LaneWrapperContent {
         [Parameter(Mandatory = $true)][string]$CheckoutKey
     )
     if ($CheckoutKey -notmatch '^[0-9a-f]{64}$') {
-        throw ("lane " + $LaneNumber + " checkout key is not a 64-hex value: '" + $CheckoutKey + "'")
+        throw ("STOP [update 5.6]: lane " + $LaneNumber + " checkout key is not a 64-hex value: '" + $CheckoutKey + "'")
     }
     if ($Lane3Content -match "(?m)^\`$CheckoutKey\s*=\s*'([0-9a-f]{64})'") {
         $lane3Key = $Matches[1]
     } else {
-        throw 'could not find lane 3 checkout key assignment in the reference wrapper'
+        throw 'STOP [update 5.6]: could not find lane 3 checkout key assignment in the reference wrapper'
     }
     $out = $Lane3Content
     # Lane-specific values ONLY: checkout key, checkout path, log names, labels.
@@ -584,7 +649,7 @@ function Set-NotYetFedBlock {
         if ($startIdx -ge 0 -and $lines[$i] -match '^# -{10,}\s*$') { $endIdx = $i; break }
     }
     if ($startIdx -lt 0 -or $endIdx -lt 0) {
-        throw 'could not locate the ACTIVE-TASK block markers in the reference wrapper'
+        throw 'STOP [update 5.6]: could not locate the ACTIVE-TASK block markers in the reference wrapper'
     }
     $py = ''
     $workdir = ''
@@ -593,7 +658,7 @@ function Set-NotYetFedBlock {
         if ($lines[$i] -match "^\`$WorkDir\s*=\s*'(.+)'") { $workdir = $Matches[1] }
     }
     if ($py -eq '' -or $workdir -eq '') {
-        throw 'could not extract $Py / $WorkDir from the reference ACTIVE-TASK block'
+        throw 'STOP [update 5.6]: could not extract $Py / $WorkDir from the reference ACTIVE-TASK block'
     }
     $block = @(
         '# ---- ACTIVE-TASK block (orchestrator-maintained) --------------------------',
@@ -618,6 +683,15 @@ function Set-NotYetFedBlock {
 # ============================================================================
 # Phase: lane (recertification 5.11 for one lane; lane 1 = supervised canary).
 # ============================================================================
+
+function Assert-PacketId {
+    # A packet id must be a literal M<n>-T<n> before it is ever joined into a tasks
+    # path (no separators, no traversal). Fail closed on anything else.
+    param([string]$PacketId, [string]$Step)
+    if ($PacketId -notmatch '^M\d+-T\d+$') {
+        throw ("STOP [" + $Step + "]: packet id '" + $PacketId + "' is not a valid M<n>-T<n> id")
+    }
+}
 
 function Get-LaneMode {
     param([string]$LaneNumber, [string]$RequestedMode)
@@ -658,6 +732,8 @@ function Start-LaneFirstLaunch {
     # The per-lane 5.11 sequence: status, clear-recovery only on PAUSED_RECOVERY, a
     # fresh launch manifest, the "2.1.281 946eb509..." STOP, then a DETACHED start.
     param([string]$LaneNumber, [string]$Checkout, [string]$LaneWorktree, [string]$LanePacketId, [string]$Mode, [bool]$Repin)
+
+    Assert-PacketId -PacketId $LanePacketId -Step 'lane 5.11'
 
     # (2) status
     $status = Invoke-Ext -FilePath 'python' -ExtArgs @('-m', 'tools.agent_supervisor', 'status', '--checkout', $Checkout) `
@@ -815,17 +891,44 @@ function Assert-ValidLanePlan {
         }
         $seenLane[$laneNo] = $true
 
-        $wtKey = ([System.IO.Path]::GetFullPath([string]$entry.worktree)).TrimEnd('\').ToLowerInvariant()
-        if ($seenWorktree.ContainsKey($wtKey)) {
-            throw ("STOP [lanes]: worktree '" + $entry.worktree + "' is shared by two lanes")
-        }
-        $seenWorktree[$wtKey] = $true
+        # Mode must be valid for this lane BEFORE any lane starts (fail closed up
+        # front, same rule as the single-lane path).
+        $null = Get-LaneMode -LaneNumber $laneNo -RequestedMode ([string]$entry.mode)
 
-        # The worktree must be a real git worktree.
-        $top = Invoke-Ext -FilePath 'git' -ExtArgs @('-C', [string]$entry.worktree, 'rev-parse', '--show-toplevel')
+        # Packet id must be a literal M<n>-T<n> before any path join.
+        Assert-PacketId -PacketId ([string]$entry.packet_id) -Step 'lanes'
+
+        # The worktree must be a LINKED git worktree ROOT: --show-toplevel must equal
+        # the given path (rejects a subdirectory), and --git-common-dir must differ
+        # from the worktree's own git dir (rejects the primary checkout, whose common
+        # dir and git dir are the same).
+        $wt = [string]$entry.worktree
+        $wtGiven = Resolve-PathKey -Base $script:Ctl24 -P $wt
+        $top = Invoke-Ext -FilePath 'git' -ExtArgs @('-C', $wt, 'rev-parse', '--show-toplevel')
         if ($top.code -ne 0) {
-            throw ("STOP [lanes]: '" + $entry.worktree + "' is not a git worktree (lane " + $laneNo + ")")
+            throw ("STOP [lanes]: '" + $wt + "' is not a git worktree (lane " + $laneNo + ")")
         }
+        $topKey = Resolve-PathKey -Base $wt -P $top.stdout.Trim()
+        if ($topKey -ne $wtGiven) {
+            throw ("STOP [lanes]: '" + $wt + "' is not a worktree root (its top-level is '" + $top.stdout.Trim() +
+                "') - point lane " + $laneNo + " at the worktree root, not a subdirectory")
+        }
+        $gd = Invoke-Ext -FilePath 'git' -ExtArgs @('-C', $wt, 'rev-parse', '--absolute-git-dir')
+        $gcd = Invoke-Ext -FilePath 'git' -ExtArgs @('-C', $wt, 'rev-parse', '--git-common-dir')
+        if ($gd.code -ne 0 -or $gcd.code -ne 0) {
+            throw ("STOP [lanes]: could not resolve the git directories for '" + $wt + "' (lane " + $laneNo + ")")
+        }
+        if ((Resolve-PathKey -Base $wt -P $gd.stdout.Trim()) -eq (Resolve-PathKey -Base $wt -P $gcd.stdout.Trim())) {
+            throw ("STOP [lanes]: '" + $wt + "' is the primary checkout, not a linked worktree (lane " + $laneNo +
+                ") - each lane must be its own linked git worktree")
+        }
+
+        # Dedup by the RESOLVED top-level, so two entries under one worktree cannot
+        # pass as distinct.
+        if ($seenWorktree.ContainsKey($topKey)) {
+            throw ("STOP [lanes]: worktree '" + $wt + "' is shared by two lanes")
+        }
+        $seenWorktree[$topKey] = $true
 
         # The packet must exist and be claimed / in_progress.
         $packetPath = Join-Path $script:Ctl24 ('project-control\tasks\' + [string]$entry.packet_id + '.json')
@@ -859,12 +962,28 @@ function Assert-ValidLanePlan {
     Write-Output ('  plan validated: ' + $laneKeys.Count + ' lane(s), pairwise-disjoint allowed_paths, all packets claimed/in_progress')
 }
 
+function Get-NormPathBase {
+    # Strip a trailing glob suffix (/** or /*) to the directory prefix it covers, so
+    # 'services/api/**' and 'services/api/*' both normalize to 'services/api'. This is
+    # the SAFE (over-approximating) direction for a disjointness check: a glob is
+    # treated as covering everything under its directory.
+    param([string]$P)
+    $b = $P
+    if ($b.EndsWith('/**')) { $b = $b.Substring(0, $b.Length - 3) }
+    elseif ($b.EndsWith('/*')) { $b = $b.Substring(0, $b.Length - 2) }
+    return $b.TrimEnd('/')
+}
+
 function Get-PathOverlap {
     # Returns the first overlapping path pair (equal, or one an ancestor of the
-    # other), or '' if the two allowed-path sets are disjoint.
+    # other), or '' if the two allowed-path sets are disjoint. Glob-aware: a
+    # 'dir/**' or 'dir/*' entry is treated as covering everything under 'dir', so it
+    # overlaps any path at or under 'dir'.
     param([string[]]$PathsA, [string[]]$PathsB)
-    foreach ($a in $PathsA) {
-        foreach ($b in $PathsB) {
+    foreach ($rawA in $PathsA) {
+        $a = Get-NormPathBase -P $rawA
+        foreach ($rawB in $PathsB) {
+            $b = Get-NormPathBase -P $rawB
             if ($a -eq $b) { return $a }
             if ($a.StartsWith($b + '/')) { return $a }
             if ($b.StartsWith($a + '/')) { return $b }
@@ -889,8 +1008,9 @@ function Invoke-LanesPhase {
         $first = $false
         $laneNo = [string]$entry.lane
         $checkout = $script:LaneCheckout[$laneNo]
+        $mode = Get-LaneMode -LaneNumber $laneNo -RequestedMode ([string]$entry.mode)
         Start-LaneFirstLaunch -LaneNumber $laneNo -Checkout $checkout -LaneWorktree ([string]$entry.worktree) `
-            -LanePacketId ([string]$entry.packet_id) -Mode ([string]$entry.mode) -Repin $true | Out-Null
+            -LanePacketId ([string]$entry.packet_id) -Mode $mode -Repin $true | Out-Null
     }
     Write-Output ''
     Write-Output 'LANES STARTED - each with its own runtime identity, worktree and fresh manifest.'

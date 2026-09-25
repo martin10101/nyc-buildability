@@ -155,4 +155,92 @@ machine write.
   `durable_state.runtime_dir_for` / `checkout_key` at run time (D-066-R001), so no
   truncated value is ever needed.
 
+---
+
+# Round 2 - required corrections (M0-T161-G3 F1-F5, M0-T161-G5 advisories)
+
+Round 1 PASSED G3 (`cr-m0t161`) and G5 (`sec-m0t161`); every finding was ADVISORY. This
+round takes all of them into ONE bounded change before the owner runs the helper. Still
+NO machine change: no phase run, no supervisor verb, no `update_controller_from_candidate.ps1`,
+no write outside the four allowed worktree paths. One new commit on top of `8273c688`
+(round-1 material `b27fc89b` + both review reports), containing only the 4 allowed files.
+
+## R2.1 Per-finding closure
+
+| Finding | What round 1 did | Round 2 correction | Where (commission_lanes.ps1 unless noted) |
+|---|---|---|---|
+| **G3 F2** (top; the owner reads it) - owner-guide step 4 wrongly said step 3 prints the digest | prose misdirected the owner | Rewrote owner-guide step 4 as TWO commands: (1) `approve` WITHOUT a digest -> prints the pending approval + digest, then STOPs on purpose; (2) re-run `approve` with that exact digest. The guide quotes the script's STOP text VERBATIM (`STOP [approve]: pass -PromptDigest <the digest printed above> to approve the held prompt`) and flags it as the ONE expected STOP. Step 3 note now says it does NOT print the code. | `M0-T161-owner-guide.md` step 4 + "one rule" note; STOP source unchanged at Invoke-ApprovePhase (the "pass -PromptDigest..." throw) |
+| **G3 F1** - 4 pinned values defined but never asserted | echoes only | Assert `CandidateTree` 82432361 AND `204 byte-identical` in `Step-Install` (L436, L440). Assert `covered files 146`, `installed files re-compared 204`, and the `...at a3f24ff3...` accepted-source commit in `Step-VerifyManifest` (L490, L495, L499). `ConfigLfHash` REMOVED (dead pin); comment L82-85 records it is covered transitively by the 5.4 manifest-digest STOP + 5.7 verify-controller config binding. | Step-Install L435-445; Step-VerifyManifest L488-504; constant removed L82-85 |
+| **G3 F4** - 4 wrapper-generation throws lacked the `STOP` prefix | fail-closed but off-heuristic | All four now start `STOP [update 5.6]:` (they run during 5.6 wrapper generation). `grep 'throw ' \| grep -v STOP` = empty. | New-LaneWrapperContent (2 throws), Set-NotYetFedBlock (2 throws) |
+| **G5** - no source precondition before robocopy /MIR | detected only post-hoc | New `Get-TreeFileCount` helper (L241) + a precondition immediately before the /MIR loop: the certified source must hold exactly `InstalledFileCount` (204) files (cache dirs excluded, as /XD and the tree compare do) or it STOPs BEFORE any mirror. | Step-Propagate L523-532 |
+| **G5** - 5.5-5.9 STOPs missing the rollback pointer | only 5.4 had it | Added `roll back per runbook section 10` to 5.5 verify-manifest (L493/497/501), 5.6 robocopy (L541) + the new precondition (L530), 5.7 verify-controller (L564), 5.8 doctor (L580), 5.9 doctor --live (L596). Also to the two new 5.3 asserts (L438/442). | as listed |
+| **G5 medium + G3 F3** - plan validator gaps | prefix-only overlap; weak worktree check; mode/packet-id unconstrained | (a) Each lane worktree must be a LINKED worktree ROOT: `--show-toplevel` equals the given path AND `--absolute-git-dir` != `--git-common-dir` (rejects the primary checkout and subdirectories), via `Resolve-PathKey` (L251). (b) Dedup worktrees by RESOLVED toplevel. (c) Lanes-phase mode routed through `Get-LaneMode` up front in `Assert-ValidLanePlan` AND at start in `Invoke-LanesPhase`. (d) `packet_id` constrained to `^M\d+-T\d+$` before any path join, via `Assert-PacketId` (L687) in `Start-LaneFirstLaunch` (L736, covers the lane/approve/lanes join) and `Assert-ValidLanePlan` (L899). (e) `Get-PathOverlap` glob-aware via `Get-NormPathBase` (L965): trailing `/**` and `/*` normalize to the covered directory, so `dir/**` covers everything under `dir` (safe over-approximation). | Assert-ValidLanePlan L894-931; Get-NormPathBase/Get-PathOverlap L965-993; Invoke-LanesPhase mode line |
+| **G5 LOW + G3 F5** - test coverage gaps + belt-and-braces writes | STOP-wiring proven; some guards unproven | Added offline stubbed tests 6-11 (see R2.4). Every machine-write path is now stubbed in the update tests: `New-Item` (simple no-op function so `-ItemType` falls into `$args`) and a new production `Write-WrapperFile` seam (L457) both stubbed, so no wrapper or folder can be written even if a STOP moved. | test_commission_lanes.ps1 sections 6-11 |
+
+## R2.2 Updated section-5 -> script line map (changed/new anchors only; round-1 map otherwise stands)
+
+| Recert 5.x | New/changed anchor |
+|---|---|
+| 5.0 pinned identities | `ConfigLfHash` constant removed (transitively covered); comment L82-85. Other pins unchanged (L76-90) |
+| 5.3 install | `Step-Install` now asserts `CandidateTree` (L436) and `204 byte-identical` (L440); both STOPs name rollback |
+| 5.5 verify-manifest | `Step-VerifyManifest` now asserts `at <candidate>` (L490), `covered files 146` (L495), `installed files re-compared 204` (L499); all name rollback |
+| 5.6 propagation | robocopy source precondition `Get-TreeFileCount` (L241) + STOP before /MIR (L523-532); robocopy STOP names rollback (L541); wrapper-generation throws now STOP-prefixed |
+| 5.7/5.8/5.9 | verify-controller (L564), doctor (L580), doctor --live (L596) STOPs name rollback |
+| 5.11 lanes plan | `Assert-ValidLanePlan` linked-worktree root + dedup-by-toplevel + up-front mode + packet-id (L894-931); `Get-PathOverlap` glob-aware (L977); helpers `Resolve-PathKey` (L251), `Assert-PacketId` (L687), `Get-NormPathBase` (L965) |
+
+## R2.3 STOP table - round-2 additions (round-1 STOPs unchanged)
+
+| STOP | Where | Fires when |
+|---|---|---|
+| install commit tree | Step-Install L436 | 5.3: install output lacks commit tree 82432361 |
+| install file count | Step-Install L440 | 5.3: install output lacks "204 byte-identical" |
+| verify-manifest at-commit | Step-VerifyManifest L490 | 5.5: no "MANIFEST VERIFIED ... at a3f24ff3" |
+| verify-manifest counts | Step-VerifyManifest L495/L499 | 5.5: missing "covered files 146" or "installed files re-compared 204" |
+| robocopy source precondition | Step-Propagate L529 | 5.6: certified source tree file count != 204 (STOP BEFORE any /MIR) |
+| wrapper generation (4) | New-LaneWrapperContent / Set-NotYetFedBlock | 5.6: bad checkout key, missing lane-3 key, missing ACTIVE-TASK markers, or missing $Py/$WorkDir (now STOP-prefixed) |
+| linked-worktree root | Assert-ValidLanePlan L913/L922 | lanes: worktree top-level != given path (subdirectory), or git-dir == common-dir (primary checkout) |
+| packet-id charset | Assert-PacketId L689 (lane/approve/lanes) | packet id not `^M\d+-T\d+$` before any tasks-path join |
+
+Also: 5.5-5.9 STOP messages now carry "roll back per runbook section 10"; the lanes-phase
+mode now fails closed via `Get-LaneMode` (unknown mode STOPs up front, not just at the supervisor).
+
+## R2.4 Test list - round-2 additions (`test_commission_lanes.ps1`; sections 1-5 retained, 2a/2b/5 adjusted)
+
+- 2a: install stub now emits the full valid identity line (commit + tree + subtree + "204
+  byte-identical"); `New-Item` and `Write-WrapperFile` stubbed (belt-and-braces no-write).
+- 2b: uses a valid `M0-T999` packet id (Start-LaneFirstLaunch now charset-checks it).
+- 5: packet ids renamed to valid `M0-T90x`; git stub answers all three rev-parse calls as a
+  valid linked worktree.
+- **6** robocopy /MIR source precondition STOPs on a wrong source count, BEFORE any robocopy.
+- **7** install STOPs on the cfc3d22c wrong subtree (`11d43515`).
+- **8** lane 1 rejects a non-supervised mode, defaults to supervised, and its start carries NO
+  `--owner-enable-bounded-auto` (captured start args) while repinning and running one cycle.
+- **9** approve STOPs when no digest is given and when the digest is not held; `resume-pending-prompt`
+  is never called in either case.
+- **10** the update config/model immutability guard STOPs when config.toml changes (run 1) and when
+  model_selection.toml changes (run 2); the whole update runs through with valid stubbed outputs
+  and every write helper stubbed.
+- **11** plan validator refuses a glob overlap (`dir/**` over a file under `dir`), accepts
+  glob-disjoint paths, refuses a non `M<n>-T<n>` packet id, refuses the primary checkout, and
+  refuses a subdirectory of a worktree.
+
+## R2.5 Self-checks (explicit cwd; [OBSERVED]/[BLOCKED])
+
+- Worktree identity - [OBSERVED]: `git -C C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t161 rev-parse
+  --show-toplevel` -> the wt-m0t161 path; HEAD before this commit = `8273c6881677d9ec83f1e03bc5c63af534180df7`.
+- PowerShell parser + offline ps_tests (AS-4) - [BLOCKED], same sandbox refusal as round 1: the
+  isolated producer sandbox refuses every `powershell.exe` invocation (even a read-only
+  `Parser::ParseFile`, even with the sandbox override): "this command runs powershell in a plain
+  command; ... Refusing to run it". Orchestrator recipe at harvest (cwd = worktree root):
+  - parse: `powershell -NoProfile -ExecutionPolicy Bypass -Command "$e=$null;$t=$null;[System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path 'tools\controller_update\commission_lanes.ps1').Path,[ref]$t,[ref]$e)|Out-Null; $e.Count"` (repeat for `ps_tests\test_commission_lanes.ps1`); expect `0` both.
+  - suite: `powershell -NoProfile -ExecutionPolicy Bypass -File tools/controller_update/ps_tests/run_ps_tests.ps1`; expect every `test_*.ps1` to pass, including `test_commission_lanes.ps1` (now proving sections 1-11). The suite stubs `Invoke-Ext` and all tree/launch/write helpers, so it starts no lane and writes nothing outside `%TEMP%`.
+
+Manual-review compensations for the un-runnable state (round 2 specifics): the `New-Item` test
+stubs are SIMPLE functions (no `[Parameter]` attribute) so their `-ItemType/-Force/-Path` named
+args fall into `$args` instead of erroring an advanced binder; the counter stub uses
+`$x = $x + 1` (not `$x++`) so no stray value can leak into the return; the immutability test
+drives the full update with valid stubbed outputs and asserts the guard fires on a single
+before/after hash flip; the linked-worktree checks are proven with a git stub that echoes the
+`-C` path for `--show-toplevel` and distinct/equal git-dir vs common-dir per case.
+
 END-OF-REPORT

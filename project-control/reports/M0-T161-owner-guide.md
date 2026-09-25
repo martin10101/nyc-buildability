@@ -48,16 +48,34 @@ name. Put them where it says `<folder>` and `<task-name>` below, then type the l
 !powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\tools\controller_update\commission_lanes.ps1 -Phase lane -Lane 1 -Worktree <folder> -PacketId <task-name>
 ```
 
-What good looks like: it prints `started DETACHED` and a line that says the loop is
-waiting for you to approve it.
+What good looks like: it prints `started DETACHED` and a line that says the loop
+will wait for you to approve it. (This step does NOT print the approval code - the
+loop starts in the background and parks; step 4 shows you the code.)
 
 If any line starts with `STOP`: stop and tell the assistant.
 
-## Step 4 - Approve the first loop
+## Step 4 - Approve the first loop (two commands)
 
-The command in step 3 will print a long code called a "digest". Copy that code.
-Use the same folder and task name as step 3, and paste the code where it says
-`<digest>`:
+You run the approve command twice. The first time shows you the code; the second
+time uses it.
+
+First, run it WITHOUT a code. Use the same folder and task name as step 3:
+
+```
+!powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\tools\controller_update\commission_lanes.ps1 -Phase approve -Lane 1 -Worktree <folder> -PacketId <task-name>
+```
+
+This one prints the loop's pending approval, including a long code called a
+"digest", and then stops on purpose with exactly this line:
+
+```
+STOP [approve]: pass -PromptDigest <the digest printed above> to approve the held prompt
+```
+
+That one STOP is expected here - it is just showing you the code. Copy the long
+code it printed just above that line.
+
+Now run the SAME command again, this time pasting the code after `-PromptDigest`:
 
 ```
 !powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\tools\controller_update\commission_lanes.ps1 -Phase approve -Lane 1 -Worktree <folder> -PacketId <task-name> -PromptDigest <digest>
@@ -65,7 +83,8 @@ Use the same folder and task name as step 3, and paste the code where it says
 
 What good looks like: it prints `approved` and then `canary re-started`.
 
-If any line starts with `STOP`: stop and tell the assistant.
+If the second command (or any command other than that expected first-approve line
+above) prints a line starting with `STOP`: stop and tell the assistant.
 
 Now wait. The assistant watches this first loop finish one round of work and checks
 it is healthy. The assistant will tell you either "the canary passed - go ahead" or
@@ -92,6 +111,11 @@ If any line starts with `STOP`: stop and tell the assistant.
 If any command prints a line that begins with `STOP`, stop and tell the assistant
 exactly what it said. A `STOP` means the command found something not as expected and
 did nothing further, on purpose. This is safe - it is the command protecting the work.
+
+The ONE exception is the first approve command in step 4: it stops on purpose with
+`STOP [approve]: pass -PromptDigest ...` only to show you the code to copy. For that
+one, copy the code and run the approve command again with it (as step 4 explains). If
+you are ever unsure whether a STOP is that expected one, tell the assistant.
 
 ## Why sometimes fewer than five loops run
 
