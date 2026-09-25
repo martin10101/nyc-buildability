@@ -1,4 +1,5 @@
 "use client";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import type { PropertyProfile } from "@/lib/contract";
 import type { Scenario } from "@/lib/scenario-contract";
@@ -14,6 +15,7 @@ import { ABSENT_BBL_MAP_LINK_NOTE, ZOLA_LOT_LINK_LABEL } from "./AddressAutocomp
 import { DevelopmentLimits } from "./DevelopmentLimits";
 import { OverviewExceptionStrip } from "./OverviewExceptionStrip";
 import { ZoningContextPanel } from "./ZoningContextPanel";
+import { ParcelStudyPanel } from "./ParcelStudyPanel";
 // M5-T122 (D-086 P3b, AS-2): the condo RECORDS surface moved to
 // CondoRecordsSection.tsx. PropertyOverview stays a compatibility FACADE for every
 // public condo name other modules import from it today — ReportView.tsx imports
@@ -38,6 +40,11 @@ export {
     condoWithholdsAllowances,
 };
 export type { CondoDisplayState, CondoSurfaceDecision };
+function OverviewRecordDetails({ multiLot, children }: { multiLot: boolean; children: ReactNode }) {
+    return multiLot ? <details className="parcel-study-source-summary">
+      <summary>Entered lot record and development-limit status</summary>{children}
+    </details> : <>{children}</>;
+}
 export function PropertyIssuesSummary({ profile }: {
     profile: PropertyProfile;
 }) {
@@ -86,8 +93,10 @@ export function PropertyOverview({ profile, scenario, evaluation = null, onInspe
     const withholdAllowances = condo.withholdAllowances;
     const shownScenario = withholdAllowances ? null : scenario;
     const shownEvaluation = withholdAllowances ? null : evaluation;
+    const studyRecords = condo.recordsView?.outcome === "multi_lot_set" ? condo.recordsView : null;
     return <>
     <OverviewExceptionStrip profile={profile}/>
+    {studyRecords ? <ParcelStudyPanel requestedBbl={bbl} records={studyRecords} recordsConflict={condo.conflict}/> : null}
     {/* M5-T119 (D-086 P3a, spec §5.3 / frame O-D): the two-column overview
         canvas. The site map/context is the wider (~55%) LEFT column and the
         limit matrix the ~45% RIGHT column, stacking to a single column at
@@ -95,6 +104,7 @@ export function PropertyOverview({ profile, scenario, evaluation = null, onInspe
         conflict/missing/stale alerts now fold into OverviewExceptionStrip
         above; PropertyIssuesSummary stays byte-identical for the printed brief
         (ReportView) and the scenarios view. */}
+    <OverviewRecordDetails multiLot={!!studyRecords}>
     <div className="architect-overview-grid">
       <section className="card architect-map-card">
         <div className="architect-panel-heading">
@@ -110,14 +120,15 @@ export function PropertyOverview({ profile, scenario, evaluation = null, onInspe
             <span className="section-note" data-testid="site-zola-absent">{ABSENT_BBL_MAP_LINK_NOTE}</span>
           )}
         </div>
-        <LotOutlineMap bbl={bbl} context/>
+        {studyRecords ? <p className="section-note">The study above displays the recorded base parcels. This entered condo lot is an identity reference, not additional land.</p> : <LotOutlineMap bbl={bbl} context/>}
       </section>
       <div>
         <DevelopmentLimits profile={profile} scenario={shownScenario} evaluation={shownEvaluation} onInspect={onInspect}/>
         <Link className="primary-button" href={propertyHref(bbl, "zoning")}>View zoning details <span aria-hidden="true">→</span></Link>
       </div>
     </div>
-    <CondoRecordsChannelSection decision={condo}/>
+    </OverviewRecordDetails>
+    <div id="condo-records"><CondoRecordsChannelSection decision={condo}/></div>
     <ZoningContextPanel profile={profile}/>
     <details className="card architect-disclosure architect-existing-building">
       <summary>Existing building information</summary>

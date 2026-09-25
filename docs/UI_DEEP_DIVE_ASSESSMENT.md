@@ -1448,3 +1448,302 @@ Paths below are relative to apps/web/src/. They identify inspected source covera
 ### Handoff
 
 This assessment is ready for the orchestrator to record, reconcile against the shared checkout, and use to scope gated work. The candidate branch still pointed to the audited SHA when checked at completion. The report is a single uncommitted handoff artifact; it has not been placed in the inaccessible Windows checkout or committed through GitHub. No source change, project-control operation, test execution, deployment, or parked-work release is implied. The deployed-Chrome walkthrough remains outstanding.
+
+
+---
+
+## 17. September 25 addendum — Wallabout, multi-parcel studies, and implementation authorization
+
+**Added 25 September 2026. This addendum preserves sections 1–16 as the September 23 historical assessment.** Statements above that no browser journey occurred, that the work was assessment-only, that D-082 was not named in the inspected hold, and that the file was uncommitted describe that earlier session and source snapshot. They must not be read as a September 25 deployment report. The dated findings below supersede those historical status statements only where expressly identified.
+
+The owner subsequently asked: why does entering **298 Wallabout Street, Brooklyn** show essentially R7 and 3.44, rather than height, width, and build potential; can the two underlying parcels be used together or separately; and how should the application handle those choices? After discussing the findings, the owner explicitly authorized building and pushing an update and expanding this document with the recommendations and their underlying reasoning. That new request supersedes the earlier assessment-only write restriction for this increment. It does not authorize fabricated feasibility results, edits to the live orchestrator's control files, execution of `tools/project_control.py`, or local npm/npx/node use. This addendum neither assigns orchestrator task IDs nor records gate acceptance.
+
+### 17.1 Evidence dates and authority
+
+| Evidence | Date / reference | What it supports | What it does not establish |
+|---|---|---|---|
+| Original UI assessment | September 23; candidate SHA `dc5a763e7494de62a0dbfd8e60e8cbbade73bc8c` | Full text/disclosure inventory and redesign rationale in sections 1–16. | Current production behavior after later commits. |
+| Current candidate source inspected for this addendum | September 25; [`3b9cfd16ca51bc9c8776ec03b5be027574b1d977`](https://github.com/martin10101/nyc-buildability/tree/3b9cfd16ca51bc9c8776ec03b5be027574b1d977), branch `candidate/D-024-mrl-option-b` | Source-level explanation of the Wallabout refusal and the available property/geometry contracts. | Proof that this exact SHA is deployed, or that all source-level behavior passed a live test. |
+| Deployed address journey | September 25; [Wallabout overview](https://nyc-buildability.onrender.com/property/confirm?bbl=3022647515&ruleeval=on) and [property facts](https://nyc-buildability.onrender.com/property?ruleeval=on&bbl=3022647515&view=facts) | The observed address identity, displayed city-record FAR, unresolved base-lot relationship, and withheld development outputs. | Title, legal merger eligibility, verified parcel-specific zoning, or an approved building envelope. Links reopen current data and may later differ from the observation. |
+| Current expansion hold | `.claude/rules/expansion-agent-dispatch-hold.md` at the current candidate source | D-087 scoped release now appears in §2.3; D-082 is explicitly acknowledged there. | A blanket release of the old expansion pack or proof that its features are implemented. |
+| Official legal reference check | September 25; sources in §19.5 | A limited conceptual model for the study workflow. | A professional determination for lots 32 and 33 or complete implementation of all applicable zoning provisions. |
+
+**Current hold reconciliation:** the September 24 D-087 addition releases the named families of building-and-lot 3D massing, AutoCAD-readable DXF export, phase-C PDF blueprint reading/writing, and CAD write/edit/export through orchestrator-designed packets under normal gates. Native-DWG libraries remain an owner licensing decision. The notice also acknowledges D-082's max-envelope-first and map-drawing release. The 19 proposed tasks, nine proposed contracts, GDS P1–P8 and suspended master-plan instructions remain reference material rather than an automatic task queue; phase D beyond the named families remains held. This is a correction to the historical hold description in §11, based only on the current rule file. No `project-control/` record was accessed for this reconciliation.
+
+### 17.2 The product decision
+
+**A multi-parcel address should open a useful site study, not end in an unexplained blank limits panel.** The application should expose the source parcels, let the architect state the proposed arrangement, compare alternatives, and retain the reasons that an allowance cannot yet be calculated. Choosing a study arrangement is a planning action. Establishing the legally operative zoning lot and producing a supported envelope are separate actions with separate evidence.
+
+The next visible product improvement is therefore a **site-study planner with parcel-specific source context and honest comparison states**. It is not a checkbox that legally merges lots, a frontend calculation of building height from FAR, or a claim that a planned 3D feature is already an operational envelope engine. The complete outcome still requires the staged calculation and evidence work in §22.
+
+## 18. Why 298 Wallabout shows R7-1 and 3.44 without a buildable shape
+
+### 18.1 What the deployed journey actually showed
+
+| Observed item | September 25 value / state | Interpretation |
+|---|---|---|
+| Selected city address match | `298 WALLABOUT STREET, BROOKLYN 11206` | Identifies the selected address result. It does not define the development site. |
+| Entered / condo billing BBL | `3022647515` | The billing identity returned for this journey. It is not an additional third land parcel to include in a study area. |
+| BIN shown by address match | `3388750` | A building identity reference, distinct from land and zoning-lot identity. |
+| Recorded base lot A | `3022640032` — Brooklyn, block 2264, lot 32 | One member of the city-recorded base-lot set. |
+| Recorded base lot B | `3022640033` — Brooklyn, block 2264, lot 33 | The other member of that set. |
+| Main property source district | `R7-1` | The main PLUTO property record's district label. At this observation it did not establish each base parcel's separately resolved district/intersection. |
+| Main property source residential FAR | `3.44`, labelled city record; PLUTO `26v2` | A reference field from the captured city record, not a supported rule determination for the proposed combined or independent site. |
+| Base-lot zoning in the condo-record channel | Unknown for both lots; zoning missing for 2 lots | The identity channel supplied the lot relationship without parcel-specific zoning. Unknown is not an absence of zoning. |
+| Site definition record | Not confirmed | No active confirmation was shown establishing the selected site arrangement. A record by itself would not resolve all calculation prerequisites. |
+| Evaluated FAR / zoning floor-area cap | Not calculated | The app withheld draft calculation outputs for this identity path. |
+| Height / setbacks and yards / coverage | Not calculated | The requested envelope dimensions were not supplied as supported results. |
+| Main property record dimensions | Lot area `5,405 sq ft`; frontage `54.5 ft`; depth `100 ft`; irregular lot `Yes` | Recorded descriptive facts for that profile. They are not proposed-building dimensions, separate parcel areas, a surveyed rectangle, or evidence that the whole rectangle can be built on. |
+| Record provenance observed | DOF DTM condo channel; dataset `p8u6-a6it`; retrieval `2026-09-25T18:07:50Z` | Trace for the identity observation. It does not make the channel a zoning-lot legal determination. |
+
+The browser environment could not provide WebGL for the map. That observation is a limitation of this browser session, not proof that the owner's normal browser has a broken map or that the geometry service returned no data. No confirmation or other durable site record was created during the walkthrough.
+
+### 18.2 Three separate questions are currently being collapsed into one frustrating screen
+
+| Layer | The actual question | What was available | Why the missing answer matters |
+|---|---|---|---|
+| Source identity | Which address, billing record, land parcels and buildings do these records describe? | Address/billing identity and two base-lot IDs. The main profile also supplied a district label and source FAR. | Selecting one base lot arbitrarily or applying the umbrella's record to both would create a false site. |
+| Site definition | Which land is being studied together, and what evidence establishes its legal zoning-lot arrangement? | A multi-lot relationship with no verified zoning-lot determination in this journey. | Two tax lots can require one shared calculation or separate calculations; the city billing relationship does not settle that. |
+| Calculation coverage | For that stated arrangement, are the geometry, applicable rule families, inputs and evidence sufficient to calculate each requested limit? | Source context and limited rule support; no supported full R7 envelope returned. | Resolving identity alone cannot manufacture height, yard, coverage or width outputs that the engine does not support. |
+
+**The user's complaint is therefore substantive, not just a request for cleaner labels.** The app's main screen gave a recorded district and ratio while the practical question—what can fit here?—remained unanswered. Better information hierarchy should reveal the real next decision and supported facts immediately. A complete answer also requires additional engine work; a layout change cannot substitute for it.
+
+### 18.3 Source-grounded reason for the refusal
+
+At the September 25 source snapshot:
+
+- `services/api/app/connectors/condo_base_lot.py` resolves the single-base case differently from a multi-lot set. The Wallabout multi-lot fixture does not select one base parcel as the calculation target.
+- `services/api/app/spatial/live_provider.py` stops this unresolved multi-lot path before treating one parcel's ZTLDB/geometry result as the site. The named unresolved-condo condition reaches rule integration.
+- `services/api/app/rules/integration.py` preserves that refusal. It does not turn PLUTO's residential FAR into an evaluated allowance to fill the gap.
+- `services/api/app/api/v1/condo_records.py` distinguishes a human site-confirmation record from a calculation. Recording or reading a confirmation does not, by itself, select a computational site or unlock limits.
+- `apps/web/src/components/architect/PropertyOverview.tsx` withholds scenario/rule summaries for this condo state while preserving the source record. `apps/web/src/lib/architect/development-limits.ts` has no supplied numeric height, yard or coverage value for the ordinary overview bulk rows.
+- The inspected rule/route coverage does not supply a complete R7 height/yard/coverage envelope for this live journey. The presence of a separate maximum-envelope UI and adoption controls does not prove that a mounted production path can calculate this address.
+
+These guards protect against a misleading result. The defect in the experience is that the practical choice and useful source context are too remote from the missing outputs. The remedy is to keep the guards while introducing a clearly scoped study workflow, followed by reviewed expansion of supported calculations.
+
+### 18.4 What must not be inferred from 3.44 or the lot dimensions
+
+A recorded FAR cannot be read as 3.44 stories, a maximum height, a width, unused rights, or an approved floor-area cap. No numerical Wallabout entitlement is established in this addendum. A generic multiplication using the billing record's area would bypass the unresolved site definition and could use the wrong area or rule. Likewise, frontage and depth are source facts, not a buildable footprint after yards, street conditions, easements and other restrictions.
+
+The intended result matrix distinguishes **recorded fact**, **user assumption**, **draft calculation**, and **professionally reviewed determination**. Missing values must retain an explicit unavailable state. Neither a source number nor a user-entered number may silently move to a more authoritative category.
+
+## 19. Underlying concepts: land identity, legal site, rules, and proposed buildings
+
+### 19.1 Four things the program must represent separately
+
+| Concept | Plain-language meaning | Product consequence |
+|---|---|---|
+| Tax lot / BBL | A property-tax identifier; the condo record can introduce a billing identity and related land identities. | Keep entered, billing and base identities as named roles. Display the relationship and its source without adding duplicate land. |
+| Zoning lot | The land unit used for zoning analysis. Its boundary need not match one tax lot. | Store the proposed study arrangement separately from the evidence of the legally operative arrangement. |
+| Zoning district | The mapped rules applying to land, such as R7-1, potentially with overlays or multiple intersecting districts. | Fetch and display parcel-specific district context; do not copy the parent label across unknown parcels or call a combined study a rezoning. |
+| Building | A physical existing or proposed structure; one zoning lot can contain multiple buildings. | Store building count/form separately from site arrangement. Two buildings must not automatically receive two independent full allowances. |
+
+Conceptual references: [DCP zoning glossary](https://www.nyc.gov/assets/planning/downloads/pdf/zoning/downloadable-zoning-resources/zoning-glossary.pdf), tax lot and lot/zoning lot entries; [ZR §12-10](https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10), zoning lot definition. The glossary is explanatory background marked 2021, not a source for assuming current district-specific numerical limits.
+
+### 19.2 Can the architect use both parcels together?
+
+Potentially. Under the usual current routes in §12-10, qualifying land within one block has at least ten feet of contiguity, with applicable ownership, parties-in-interest, title and documentation conditions. Other parts of the definition address historically established lots. A condo billing relationship is not that determination. The parcels may already comprise one zoning lot; review must establish the existing arrangement before describing the proposal as a new merger. [Official definition](https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10).
+
+For the product, this means the architect can choose a **hypothetical combined study** without the UI claiming that a legal merger has occurred. Any later transition to a documented arrangement requires qualified review of the relevant title, recorded instruments, survey and DOB material. Names, selections or uploads alone are not evidence of consent by every required party. The software should preserve the record and the reviewer decision, not present a legal conclusion generated from a checkbox.
+
+### 19.3 What if the architect keeps the parcels separate?
+
+The study must first distinguish “two buildings on one site” from “two independent zoning lots.” Subdivision under §12-10 requires compliant resulting lots and buildings, with a specified allowance for existing noncompliance that is not newly created or increased. Existing legal arrangements do not dissolve because a UI selection changes. [Official definition](https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10).
+
+Product consequence: an independent-sites option is always clearly a **study assumption** until its status is documented. The application must retain whether the current arrangement is unknown, already combined, separately documented, or subject to unresolved evidence. A separate study cannot quietly reset consumed or allocated rights. Where available evidence contradicts the selected assumption, keep the alternative available as a hypothetical question while naming the conflict and withholding any claim that it is presently executable.
+
+### 19.4 Combining changes the analysis boundary, not automatically the rules or allowance
+
+A multi-district site requires the applicable split-lot rules. Chapter 77 differentiates existing and later-created arrangements and includes its own floor-area provisions. Combining parcels does not itself replace all district labels with the most favorable one. Do not infer a uniform district, average FARs, or assume that an exception applies without evaluating its conditions. [ZR Article VII, Chapter 7](https://zoningresolution.planning.nyc.gov/article-vii/chapter-7).
+
+A simple illustration explains why combination is not an automatic bonus: if two hypothetical 2,000-square-foot sites each have an applicable FAR of 3, the simple floor-area cap is 6,000 square feet each, or 12,000 in total. A 4,000-square-foot combined study using that same FAR also gives 12,000. This is invented teaching arithmetic, **not a Wallabout result**. FAR relates zoning floor area to zoning-lot area; it is not a height or building-count rule. Other bulk controls constrain what can fit. [DCP glossary, FAR and bulk entries](https://www.nyc.gov/assets/planning/downloads/pdf/zoning/downloadable-zoning-resources/zoning-glossary.pdf).
+
+For implementation, the useful question is whether the proposed arrangement can accommodate a better building configuration under all supported constraints. A shared site can require different boundary treatment and allocation across buildings. The interface must not imply that internal lines, easements, fire-safety requirements or agreements have all disappeared. It should show the selected study boundary and keep the original source parcel lines available for comparison. Any claim of increased feasible yield must come from an evaluated scenario, not the selection control itself.
+
+### 19.5 Official reference scope
+
+| Source checked September 25 | Used here for | Deliberately not used for |
+|---|---|---|
+| [ZR §12-10 — Definitions](https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10) | Distinguishing zoning lots from tax-map identities; limited assembly/subdivision concepts. | Declaring lots 32/33 eligible, already merged, separate, or approved; replacing title review. |
+| [ZR Article VII, Chapter 7](https://zoningresolution.planning.nyc.gov/article-vii/chapter-7) | The need to preserve and evaluate district boundaries and relevant conditions. | Claiming a Chapter 77 exception applies to this property. |
+| [DCP zoning glossary](https://www.nyc.gov/assets/planning/downloads/pdf/zoning/downloadable-zoning-resources/zoning-glossary.pdf) | Plain-language identity, FAR and bulk concepts. | Current R7 numerical entitlement or an exhaustive legal source. |
+
+These are source links for the reasoning, not rules newly admitted into the application's executable rule registry. Current legal text, captured versions, effective dates and applicable conditions need their ordinary domain and source gates before a new numerical rule is used.
+
+## 20. Concrete screen direction for the parcel-study update
+
+### 20.1 The first viewport
+
+The map and study choice should carry the explanation. The default desktop composition is a property header, a map occupying roughly three-fifths of the main row, and a compact study/limits panel in the remaining area. Mobile stacks the map and study controls, with a concise parcel list always usable without the map. This is a proposed composition, not a claim of measured production dimensions.
+
+- Header: **298 Wallabout Street**; Brooklyn; billing identity available in an identity disclosure; short **Draft study** status.
+- Map: the actual source outlines for **Lot 32** and **Lot 33**, each with a stable label and independent selection state. The billing identity is never drawn or counted as an extra selected land parcel merely because it is the entered BBL.
+- Study selector: **Together / Separately / Compare**. The result panel names the exact selected lot set so selection and results cannot diverge.
+- Building intention: **One building / Multiple buildings / Undecided**, independent of study arrangement. It changes an assumption, not a legal record or a computed allowance.
+- Existing buildings: **Retain / Alter / Demolish / Undecided**, with parcel- or building-level detail when available. The initial unknown state must not default to a vacant site.
+- Main output: a small comparison of available parcel/source facts and supported result states. Missing height, footprint and yard outputs identify their actual prerequisite instead of presenting another long general warning.
+
+The map is a reference display until the application has an admitted measurement/geometry contract. It must not acquire surveyed dimensions, a legally confirmed combined boundary or a maximum envelope merely because two outlines are highlighted together.
+
+### 20.2 Three concrete studies
+
+| Study | User-facing label | What it means | Numerical behavior until full prerequisites exist |
+|---|---|---|---|
+| A | Together · one building | Consider both selected parcels in a shared site arrangement and one proposed building. | Show parcel source facts and the declared assumption. A height/width/floor-area result is absent unless a supported calculation actually supplies it. |
+| B | Together · multiple buildings | Consider the same selected site with more than one building. | Do not duplicate the site's allowance for every building. Show allocation as unresolved until a supported allocation model exists. |
+| C | Separately · independent sites | Consider an independent site for each parcel. | Keep separate source facts and independently scoped missing/result states. Name unresolved legal independence; never infer two executable entitlements from two tax IDs. |
+
+These studies should be comparable without losing the original parcel identities. Selecting “Compare” should show like-for-like rows, not three differently worded legal warnings. The comparison may initially answer “which land and assumptions are included?” before it can answer “which option yields more?” That is useful progress only if the UI clearly labels the remaining numerical gaps.
+
+### 20.3 Result rows and progressive detail
+
+| Row / element | Visible summary | Detail opened by the row |
+|---|---|---|
+| Included land | Lot 32 + Lot 33, or each independent study's lot | Entered/billing/base identities, relationship source, captured timestamp, exact BBLs. |
+| Arrangement | Hypothetical combined site / Hypothetical independent sites | Recorded legal arrangement if known; assumption; unresolved or contradictory evidence; what review is required. |
+| District | Each available parcel's recorded district; Unknown when absent | Per-parcel source/version and any split/overlay information supplied. No parent-record substitution. |
+| Lot area/frontage/depth | Recorded values with units, individually scoped | Original source field, capture, identity, irregular-lot caveat and measurement limitation. |
+| Evaluated FAR | A returned supported value or Not calculated | Applicable rule/input/identity chain, scope, reasons and citations. |
+| Floor-area cap | A returned supported value or Not calculated | Calculation formula, site/portion identity, assumptions and exact result scope. |
+| Height / setbacks / coverage / buildable footprint | Returned supported result or specific unavailable state | Missing rule family, geometry, input, review or service state. Distinguish these causes. |
+| Retained construction and rights | Selected intention plus Known / Unresolved | Existing zoning floor area, evidence, commitments/allocations and provenance when supported. |
+| Save/export state | Download study / Import study; browser-only where applicable | Schema version, assumptions and scope; exporting a study is not saving a legal confirmation. |
+
+The complete disclosure content inventoried in sections 4–10 remains available. Add one focused site-definition summary near the study selector and retain detailed explanations in named disclosures. Do not create a separate full-paragraph warning for every comparison cell. Important conflicts, source failures, unavailable results and hypothetical status remain visible before interaction; color or a hover tooltip is insufficient.
+
+### 20.4 State transitions and form behavior
+
+The study model should preserve explicit user choices across switching between views. A form edit must update its revision and invalidate any downstream result tied to the previous selection/assumption. Request responses from a previous property or revision must never overwrite the current study. Changing property should start a new identity-scoped study or require an explicit import; it must not carry Wallabout's parcel set into another property.
+
+Export/import is a way to share a planning assumption set, not an attestation mechanism. Imported content is untrusted input: validate its schema and BBL membership, disclose incompatible property identity, reject unsupported versions and malformed values, and preserve current form state on failure. An import cannot inject authoritative source facts, set professional approval, bypass unknown site status, or attach an old result to a new revision. Fetch current source context through the ordinary read-only APIs after a valid import; identify changes from the exported snapshot when that comparison is supported.
+
+Study exports should state whether they contain assumptions alone, a captured source snapshot, or calculation evidence. The UI should not advertise source/evidence portability unless those fields are actually included. Persistence language must match the implementation: a downloaded file, a session draft and a server-saved record are different outcomes.
+
+### 20.5 Accessible and degraded states
+
+Keyboard and touch users must be able to select lots and studies using ordinary controls even if the map fails. Each parcel's accessible name should include its lot label and full BBL where needed to distinguish it. The selected state must not rely on color alone. Map loading, geometry unavailable, source failure, partial parcel availability and rendering failure remain separate outcomes; one failed parcel cannot become a complete combined-site display.
+
+Use one concise announcement for a changed study or source outcome. Preserve requested/returned identity guards. Empty or stale source data must not erase the user's assumptions, and a failed export/import must not imply success. On a narrow screen, the critical study status and unavailable results stay readable without horizontal scrolling through an oversized matrix.
+
+## 21. Data and calculation requirements behind the interface
+
+The following are implementation requirements and future gate criteria. They are not claims that the September 25 planner increment includes a new backend, legal workflow or envelope engine.
+
+### 21.1 Separate records with explicit authority
+
+| Record | Minimum information | Authority boundary |
+|---|---|---|
+| Property source context | Requested and returned BBL, source/version/capture, typed facts, district context, warnings, geometry status. | A captured city record; not a selected development site. |
+| Parcel-set snapshot | Billing relationship and unique base BBLs, each source identity, set/version or comparable stable fingerprint. | Prevent duplicate land, silent substitutions and stale membership. |
+| Study draft | Parent property identity, selected unique parcels, arrangement, building intention, retained/demolished intention, assumptions, revision. | User-authored planning input; never a legal confirmation. |
+| Geometry input | Authoritative CRS, source rings/identities, validity, uncertainty and version; separately identified display geometry. | Measurement-ready geometry must be established before dimensional calculations. |
+| Evaluation | Exact input/study revision, rule/source versions, coverage by family, typed outputs, refusal reasons and calculation trace. | Only supported outputs can become draft numerical results. |
+| Review / legal-site evidence | Evidence references, arrangement reviewed, reviewer identity/role, timestamp, status and replacement/withdrawal history. | A record with a defined scope; no automatic promotion to a legal opinion or city approval. |
+| Building allocation | Proposed/retained structures and any supported floor-area allocations/commitments, each linked to one site arrangement. | Cannot duplicate shared allowance or ignore existing commitments. |
+
+Some of these records may map onto existing accepted contracts rather than require new contracts. The orchestrator should inspect and extend accepted types under normal gates instead of treating this table as authorization to introduce the nine parked expansion contracts.
+
+### 21.2 Numeric invariants
+
+1. **Deduplicate physical land.** The billing BBL, condo units and base lots are identity roles; do not add all their recorded areas together. Duplicate IDs, overlapping source features and membership conflicts require explicit handling.
+2. **Do not add FAR ratios.** Keep ratio, area and use/condition scopes separate. Summation of floor-area terms is valid only when the applicable rules and site/portion identities support it; a mixed-district combined site is not a generic average-FAR calculation.
+3. **Do not measure from a reference map.** A future combined geometry needs valid projected geometry, such as the existing project measurement CRS EPSG:2263, and a deterministic geometric union with documented tolerances. Display longitude/latitude, screen pixels, bounding boxes and frontage-times-depth are not replacements.
+4. **Respect geometry complexity.** Holes, multiple rings, concavity, narrow connections, overlaps, noncontiguous components and source discrepancies must be detected. A malformed or disjoint set cannot silently become a filled rectangle or a single valid site.
+5. **Derive boundary roles after defining the study.** Street/front/rear/side relationships and split-district portions require supported inputs. Removing a visible internal tax line from a study view does not determine every legal setback or building-code condition.
+6. **Separate retained floor area from PLUTO gross building area.** An eventual remaining-capacity calculation needs the appropriate zoning-floor-area evidence and any applicable allocations/commitments. Unknown consumption is not zero. Selecting “demolish” is a scenario assumption, not proof of approval or automatic release of every restriction.
+7. **Keep alternative scenarios mutually exclusive.** The same land or allowance can appear in alternative studies, but those alternatives cannot be added together as simultaneous available capacity. A comparison total must say what it totals.
+8. **Bind results to inputs.** Any change to lot set, site arrangement, geometry, retained buildings, district/other assumptions or rule snapshot makes the prior result stale. Download, report and adoption flows must respect the same binding.
+9. **Support partial knowledge honestly.** One parcel's valid facts survive another parcel's failed fetch. A partial source set cannot acquire a complete-site aggregate or a green success state. Zero remains distinguishable from unknown, not assessed, not applicable and withheld.
+10. **No numerical bridge from appearance.** A visual massing, source outline, user sketch or attractive comparison card is not evidence of a legal maximum. Future 3D must consume supported geometry and calculation outputs with visible scope.
+
+### 21.3 Source, site, and rule coverage are independent states
+
+An appropriate internal model has independent dimensions for source retrieval, identity consistency, chosen study arrangement, legal evidence, geometry readiness, rule coverage and review. Avoid one overall confidence score that obscures why a particular answer is missing. The UI can display one concise primary state while preserving each dimension in detail.
+
+For example, a parcel can have an available city area and district record, an unconfirmed combined-site assumption, usable display geometry, and unsupported height rules at the same time. The truthful display is a useful fact table plus an explicit unavailable height result. Neither withholding every source fact nor displaying an assumed maximum is an acceptable substitute.
+
+## 22. Phased delivery plan for gated orchestrator tasks
+
+The labels below are local planning labels only. They are not canonical task IDs, new ledger entries, owner acceptance, or authorization to modify orchestrator-owned control records. They extend §14 with the multi-parcel requirements and dependencies. Normal source/domain, producer, independent human-journey, integrated regression, security and release gates remain applicable.
+
+| Phase | Concrete output | Dependencies / important limits | Acceptance evidence |
+|---|---|---|---|
+| MP0 — Reconcile baseline and disclosures | Current branch snapshot; reachable planner entry; new source/assumption/result vocabulary; mapping from affected inventory items to their new location. | Preserve the September 23 inventory; reconcile latest accepted work and current D-087 scope. | Exact source commit; independent review of the scoped increment; no lost identity/provenance/gap meaning. |
+| MP1 — Useful site-study planner | Together/separately/compare choices; one/multiple-building intention; retained/demolished/undecided inputs; real per-parcel read-only source facts and display outlines; validated form export/import if included. | Existing property/lot-geometry APIs only. No projected union, legal merger, new allowance or envelope claim. | Unit/interaction checks for study transitions, parcel-set validity, stale responses, import failures and unknown/zero distinction; browser review of Wallabout and ordinary single-parcel cases. |
+| MP2 — Deterministic site geometry | Identity-bound parcel-set snapshot; EPSG:2263 geometry validation/union; per-parcel and combined area lineage; preserved original boundaries and uncertainty; street/lot-line classification prerequisites. | Proper backend/contract scope and official geometry sources. The display map is not the measurement producer. | Geometry fixtures covering overlap, holes, concavity, duplicate IDs, disconnected parcels, CRS failure and uncertainty; independent geometry review; source fingerprint and revision binding. |
+| MP3 — Legal-site evidence and records | Existing-arrangement evidence, proposed arrangement, review status, conflicts and lifecycle; qualified review path and authenticated record mutation if admitted. | Do not reopen disabled confirmation writes just to save a draft. Determine appropriate evidence/role/authentication boundaries before durable review claims. | Security/authentication and authorization evidence; actor/timestamp/history preservation; unverified/self-attested/revoked/discrepant cases; evidence never silently promoted to legal approval. |
+| MP4 — Applicable rule coverage | Reviewed R7 and other required height, street-wall, setback, yard, coverage/open-space and use/overlay rule support; per-site/portion applicability. | Current official legal sources and versioned rule admission. Complete each rule family rather than infer from FAR or a district label. | Supported, inapplicable, missing-input, conflicting-source and unsupported cases; effective-date/citation trace; split-district conditions and professional domain review. |
+| MP5 — Capacity and building allocation | Supported retained zoning-floor-area inputs, commitments, demolition assumptions and allocation across proposed buildings; comparison of independent versus shared site. | MP2–MP4 plus evidence of any rights/allocations relied upon. Gross PLUTO area is not an automatic substitute. | No double use of land/rights; retained-plus-new cases; unknown consumption; independently scoped alternatives; input revision invalidates old totals. |
+| MP6 — Envelope and proposal integration | A supported dimensioned envelope/footprint for each eligible study; proposal-editor adoption; explain which limit controls each edge/height. | Geometry, rules and identity complete for the claimed scope. Preserve unsupported portions instead of producing a decorative maximum. Follow D-076/D-082/D-087 scope as relevant. | Remote contract/integration/build checks; real accepted endpoint path; geometry-to-proposal lineage; edit/recheck/adopt/stale-result cases; independent architect walkthrough. |
+| MP7 — Report, comparison and release | Shared screen/report state; clear side-by-side results and remaining conditions; source/evidence appendix; deployed verification packet. | Print/export must retain study identity, hypothetical/review status, result revision and missing checks. | Desktop/mobile/keyboard/print inspection, current-SHA CI evidence, post-deployment Wallabout journey, ordinary and boundary fixtures, rollback/release record by its authorized owner. |
+
+**MP1 is not completion of MP2–MP7.** Its value is enabling a clear, reproducible development question and exposing actual parcel context. The full promise of “height, width and what can I build?” becomes complete only for the site arrangements and rule families that pass the later gates. Release notes must say precisely which outputs were added and which are still unavailable.
+
+### 22.1 Minimum regression scenarios
+
+| Scenario | Required behavior |
+|---|---|
+| Wallabout billing BBL with lots 32 and 33 | Both base identities appear; billing area is not added as third land; source FAR remains a record; no automatic legal-site or envelope result. |
+| Ordinary single base parcel | Existing single-parcel results and workflow remain usable; multi-parcel planning does not introduce a false blocker. |
+| One or both base profiles unavailable | Available records remain individually usable; missing parcel and incomplete set are explicit; no complete aggregate. |
+| Parent/base identity mismatch | Requested and returned IDs remain inspectable; foreign facts or geometry are not attached to the study. |
+| Parent district known, child district unknown | Child remains unknown; parent label is not copied into child or combined results. |
+| Different districts / overlays across selected land | Each supplied district remains visible; a single favorable label is not chosen automatically. |
+| Duplicate parcel or overlapping source features | No double area/allowance; explicit validation or source conflict according to the admitted contract. |
+| Together one building versus together multiple buildings | Shared site scope stays the same; allowance is not multiplied by building count. |
+| Separately selected while evidence says already combined | Hypothetical study remains explicitly conditional; no claim of legal subdivision or fresh independent rights. |
+| Retain / alter / demolish / undecided | Assumptions remain visible; missing retained zoning floor area is not zero; prior results become stale when intention changes. |
+| Edit while requests are running / switch BBL | Old response cannot populate the new study; draft identity and revision remain coherent. |
+| Valid export/import | Study choices round-trip exactly within supported schema; authority and persistence wording are accurate. |
+| Malformed / wrong-property / unsupported import | Clear error; no silent coercion of important values; current draft preserved; no source/review privilege escalation. |
+| Map unavailable or no WebGL | Keyboard/touch parcel controls and source facts remain available; no invented map or dimensions. |
+| Print/download detached from workspace | Parcel set, arrangement, source/result distinction, unresolved conditions and review scope remain attached. |
+
+### 22.2 Completion criterion from the architect's perspective
+
+For the Wallabout case, the architect should be able to identify both actual source parcels, choose a shared or independent study, distinguish one building from several, record assumptions about existing buildings, and compare the consequences without reading a page of repeated warning prose. Each supported dimension should have an immediately accessible explanation of its governing inputs/rule. Each unsupported dimension should say why it is missing and what must happen next.
+
+The product is not complete merely because the user can choose “Together.” The architect's original question remains open until a supported calculation supplies the requested physical limits for the selected study. This distinction must survive the documentation, UI, screenshots, tests, PR description and release notes.
+
+## 23. September 25 implementation and verification record
+
+The owner subsequently authorized implementation, GitHub push and this report update in the current session. The implementation is based on candidate commit `3b9cfd16ca51bc9c8776ec03b5be027574b1d977`; it is a separate feature branch for integration against `candidate/D-024-mrl-option-b`. No orchestrator-owned control files, rule publication, production confirmation writes or deployment configuration are changed.
+
+### 23.1 Delivered implementation scope
+
+- The overview opens a multi-parcel study when the current condo channel provides a complete, matching parcel set. Together, separately and compare controls keep tax-lot membership separate from legal zoning-lot status.
+- A MapLibre map displays the real per-parcel outline responses, with numbered labels and grouping colors. It preserves polygon holes and multipart geometry, and keeps per-parcel status/source links available if WebGL, tiles or an outline fail. No measurement or union is made from display coordinates.
+- Independent, bounded source requests show each parcel's recorded area, frontage, depth, zoning and PLUTO FAR reference. Sources, freshness, conflicts, missing inputs and existing-building information remain inspectable. Values are never summed into a development allowance.
+- The architect can choose one or multiple buildings for the combined study and retain/alter/demolish/undecided intent per parcel. Building count initially remains undecided. This is parcel-level planning intent; individual building identity and buildings spanning parcels remain a later integration requirement.
+- Together/separate comparison cards identify proposed site membership and explicitly unavailable height, buildable width/depth and available floor area. The cards do not claim that independently legal zoning lots exist or that a merger/subdivision occurred.
+- Versioned JSON download/restore carries study choices only. It excludes source facts, geometry, calculated limits and legal approval. Strict identity, membership, exact-field and size validation reject stale, cross-property, malformed and forged imports. Choices otherwise last only while this page is open; no cloud save or durable confirmation is implied.
+- The existing entered-lot result panel moves behind an expandable disclosure on the multi-lot overview. Existing allowance withholding remains unchanged. The original condo-records surface, provenance and ordinary single-parcel flow are retained.
+- An independent static review identified a transport-integrity gap: the existing records decoder can omit malformed display rows. The new `studyIdentityIntegrity` marker validates every original raw parcel identity before filtering/sanitization, and the planner refuses a missing or false marker. Display compatibility is preserved, but a partial source set cannot become a complete study.
+
+### 23.2 Changed implementation boundaries
+
+| Responsibility | Paths |
+|---|---|
+| Study grouping and strict form exchange | `apps/web/src/lib/architect/parcel-study.ts` |
+| Cancellable per-parcel source reads and BBL association | `apps/web/src/lib/architect/use-parcel-study-records.ts` |
+| Raw condo identity completeness marker | `apps/web/src/lib/condo-records.ts` |
+| Study controls, comparison and file exchange | `apps/web/src/components/architect/ParcelStudyPanel.tsx` |
+| Display-only map | `apps/web/src/components/architect/ParcelStudyMap.tsx` |
+| Source-record presentation | `apps/web/src/components/architect/ParcelStudyRecords.tsx` |
+| Overview entry and progressive disclosure | `apps/web/src/components/architect/PropertyOverview.tsx` |
+| Responsive presentation | `apps/web/src/app/property/parcel-study.css`, `apps/web/src/app/property/layout.tsx` |
+| Regression evidence authored | Focused `parcel-study`, `condo-study-identity` and `use-parcel-study-records` Vitest suites; `apps/web/e2e/parcel-study.spec.ts` desktop/mobile/keyboard/file-round-trip/partial-failure journeys |
+
+No dependency, backend rule, canonical property contract, database migration, authentication permission, site-confirmation mutation or project-control state is changed. The client form exchange format is explicitly not a competing property or rule-evaluation contract.
+
+### 23.3 Verification and delivery boundaries
+
+The code has producer-separated static review. Review findings on original-source completeness, independent outline loading and missing styles were addressed before submission. Tests are authored for remote execution. No local npm, npx or node was run, and no local build or test pass is claimed. The existing GitHub CI must provide lint, typecheck, build, Vitest and Playwright results against the actual pushed head; the PR's checks and final delivery message carry those results. A pushed branch is not a verified live deployment, nor orchestrator task acceptance.
+
+The browser regression fixtures deliberately use synthetic transport scaffolding for the two Wallabout identifiers; their reused source dimensions and geometry are not evidence about Wallabout's land or entitlement. Earlier live observations in §18 remain pre-change observations.
+
+### 23.4 What this increment does not complete
+
+Actual combined-site geometry in survey feet, independently established zoning-lot arrangements, reviewed R7 height/yard/coverage rules, remaining-rights allocation, dimensioned legal envelopes, individual-building treatment, shared screen/report result contracts and proposal-editor adoption still require MP2–MP7. A useful study form is now implemented; the original request for reliable maximum height and buildable dimensions remains open. Those missing outputs are identified in the UI rather than invented or hidden.
+
+The original disclosure-preservation rule continues: provenance, limitations and unresolved questions move into understandable visible states and progressive detail; they do not disappear.
