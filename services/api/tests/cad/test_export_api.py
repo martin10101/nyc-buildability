@@ -20,6 +20,7 @@ limiter runs before body parse; AS-5 the bounded job cap yields a typed 503; AS-
 
 from __future__ import annotations
 
+import ast
 import inspect
 import time
 
@@ -113,15 +114,19 @@ def test_flag_off_is_a_generic_404(mounted_app, monkeypatch):
 
 
 def test_every_method_is_a_generic_404_while_disabled(mounted_app, monkeypatch):
-    """DB-081 (d): with the flag off, GET/POST/PUT/PATCH/DELETE all return the generic 404
-    byte-identical to an unmounted path - no 405 that would leak the route's existence."""
+    """DB-081 (d): with the flag off, GET/POST/PUT/PATCH/DELETE and also HEAD/OPTIONS all return
+    the generic 404 byte-identical to an unmounted path - no 405 that would leak the route's
+    existence (every method in _ROUTE_METHODS is covered; G3 A1 / G4 gap 3)."""
     monkeypatch.delenv(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, raising=False)
     with TestClient(mounted_app, raise_server_exceptions=False) as c:
-        for method in ("GET", "POST", "PUT", "PATCH", "DELETE"):
+        for method in ("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"):
             resp = c.request(method, _URL)
             assert resp.status_code == 404, method
-            assert resp.json() == {"detail": "Not Found"}, method
             assert "X-Correlation-ID" not in resp.headers, method
+            if method == "HEAD":
+                assert resp.content == b"", method  # HEAD carries no body
+            else:
+                assert resp.json() == {"detail": "Not Found"}, method
 
 
 def test_enabled_non_post_method_is_a_real_405(client):
@@ -140,17 +145,49 @@ def test_no_path_in_the_throwaway_app_openapi(mounted_app):
     assert not any(p.startswith("/api/v1/export") for p in schema_paths)
 
 
+#: Names of constructors a route-local limiter would use for its state table.
+_LIMITER_CONTAINER_CALLS = frozenset({"dict", "defaultdict", "OrderedDict", "deque"})
+
+
+def _module_level_limiter_containers(src: str) -> list[str]:
+    """AST guard (G3 A2 / G4 gap 4): return the target names of any MODULE-LEVEL assignment whose
+    value is a dict literal or a ``dict``/``defaultdict``/``OrderedDict``/``deque`` construction -
+    the shape a reintroduced route-local limiter would take (a *plain dict* the old substring scan
+    missed). The shared limiter keeps ALL such state inside app.resilience.rate_limit, so a
+    hardened route module must have NONE."""
+    found: list[str] = []
+    for node in ast.parse(src).body:  # module scope only
+        if isinstance(node, ast.Assign):
+            targets, value = node.targets, node.value
+        elif isinstance(node, ast.AnnAssign) and node.value is not None:
+            targets, value = [node.target], node.value
+        else:
+            continue
+        is_container = isinstance(value, ast.Dict)
+        if isinstance(value, ast.Call):
+            fn = value.func
+            name = getattr(fn, "id", None) or getattr(fn, "attr", None)
+            is_container = is_container or name in _LIMITER_CONTAINER_CALLS
+        if is_container:
+            found += [t.id for t in targets if isinstance(t, ast.Name)]
+    return found
+
+
 def test_route_uses_the_shared_limiter_and_slots_only():
-    """AS-1: the shared limiter/slot classes back this route; no route-local limiter class or
-    deque/OrderedDict survives (AST-ish check over the module source)."""
+    """AS-1: the shared limiter/slot classes back this route; no route-local limiter class,
+    module-level dict/deque/OrderedDict or the old ``_rate_state`` dict survives (an AST guard
+    over the module source catches the plain-dict form the substring scan missed - G3 A2)."""
     from app.resilience.rate_limit import JobSlots, SlidingWindowRateLimiter
 
     assert isinstance(mod.get_rate_limiter(), SlidingWindowRateLimiter)
     assert isinstance(mod.get_job_slots(), JobSlots)
     assert not hasattr(mod, "_RateLimiter")
+    assert not hasattr(mod, "_rate_state")
     src = inspect.getsource(mod)
     assert "class _RateLimiter" not in src
-    assert "deque" not in src and "OrderedDict" not in src
+    assert "deque" not in src and "OrderedDict" not in src and "_rate_state" not in src
+    # AST guard: NO module-level dict/defaultdict/OrderedDict/deque limiter container.
+    assert _module_level_limiter_containers(src) == []
 
 
 # --------------------------------------------------------------------------- #

@@ -1,11 +1,14 @@
 """Unit pack for the shared route-side limiter (M5-T111): app/resilience/rate_limit.py.
 
 Fully OFFLINE and deterministic - the clock is injected, the job-slot runner is injected, no
-network, no real sleeps beyond short thread hand-offs. Covers the properties AS-2 (bounded +
-fail-closed + active-key no-eviction + idle eviction), AS-3 (principal-over-host key) and AS-5
-(job slot held until the thread ends, over-cap typed refusal). Each property has a reddening
-mutation; the mutation RUNS (red/green) are recorded in the producer report (scratch harness,
-never committed).
+network, no real sleeps beyond short thread hand-offs (and a barrier for the contention tests).
+Covers the properties AS-2 (bounded + fail-closed + active-key no-eviction + idle eviction +
+the M5-T117 Finding 2 once-per-window sweep bound), AS-3 (principal-over-host key + the M5-T117
+Finding 3 non-empty-string principal hygiene + X-Forwarded-For is never trusted) and AS-5 (job
+slot held until the thread ends, over-cap typed refusal + the M5-T117 Finding 1 release on a
+PRE-START cancel with no leak and no double release). It also proves the threading.Lock in both
+primitives under concurrent callers (G4 gap 1). Each property has a reddening mutation; the
+mutation RUNS (red/green) are recorded in the producer report (scratch harness, never committed).
 """
 
 from __future__ import annotations
@@ -50,12 +53,14 @@ class _FakeClient:
 
 
 class _FakeRequest:
-    def __init__(self, *, principal=None, host=None):
+    def __init__(self, *, principal=None, host=None, headers=None):
         if principal is not None:
             self.state = _FakeState(principal=principal)
         else:
             self.state = _FakeState()
         self.client = _FakeClient(host) if host is not None else None
+        # A real Starlette request always carries headers; caller_key must never read them.
+        self.headers = dict(headers or {})
 
 
 # --------------------------------------------------------------------------- basic window
@@ -246,3 +251,224 @@ def test_slot_held_until_thread_ends_not_on_await_cancel():
         assert slots.in_flight == 0
 
     asyncio.run(_scenario())
+
+
+# ------------------------------------------------------- AS-5 Finding 1: pre-start cancel leak
+
+
+class _CountingJobSlots(JobSlots):
+    """A JobSlots that counts real release() calls, to PROVE the slot is released exactly once
+    (never twice) on the post-start-timeout path."""
+
+    def __init__(self, *, max_slots: int) -> None:
+        super().__init__(max_slots=max_slots)
+        self.release_calls = 0
+
+    def release(self) -> None:
+        self.release_calls += 1
+        super().release()
+
+
+def _never_starts_runner(fn):
+    """Model 'the runner is still waiting for a thread-pool token': never call the worker fn,
+    just return a coroutine that sleeps, so wait_for's deadline cancels the await while the
+    worker has NOT started (the exact pre-thread-start window of G5 Finding 1)."""
+
+    async def _sleep_forever():
+        await asyncio.sleep(3600)
+
+    return _sleep_forever()
+
+
+def test_pre_start_cancel_releases_the_slot_exactly_once_no_leak():
+    """G5 Finding 1: when the deadline cancels the await BEFORE the worker starts (the runner
+    still waiting for a thread token, so work() never runs), the acquired slot is released
+    exactly once and in_flight returns to 0 - the slot is NOT leaked. Mutation
+    (never-release-on-pre-start-cancel): the cancel path stops releasing -> in_flight stays 1 ->
+    this reddens (recorded in the report)."""
+    slots = JobSlots(max_slots=1)
+    ran = {"work": False}
+
+    def _work():
+        ran["work"] = True  # pragma: no cover - the worker must never run in this scenario
+        return "should-not-run"
+
+    async def _scenario():
+        assert slots.in_flight == 0
+        with pytest.raises(TimeoutError):
+            await run_in_job_slot(slots, _work, timeout=0.02, runner=_never_starts_runner)
+        # The worker never ran, and the pre-start cancel path released the acquired slot.
+        assert ran["work"] is False
+        assert slots.in_flight == 0
+        # The slot is genuinely free again: a fresh job can take it (no permanent leak).
+        assert slots.try_acquire() is True
+
+    asyncio.run(_scenario())
+
+
+def test_post_start_cancel_releases_the_slot_exactly_once_no_double():
+    """G5 Finding 1: a job cancelled AFTER its worker started is released EXACTLY ONCE - by the
+    worker's own finally when the thread returns - and the cancel path must NOT also release
+    (no double release). Counts the real release() calls. Mutation
+    (release-on-every-cancel): the cancel path releases unconditionally -> the slot frees at the
+    deadline while the thread still runs -> the in_flight==1 assertion reddens (recorded)."""
+    slots = _CountingJobSlots(max_slots=1)
+    started = threading.Event()
+    may_finish = threading.Event()
+
+    def _blocking_work():
+        started.set()
+        may_finish.wait(5.0)
+        return "done"
+
+    def _abandoning_runner(fn):
+        threading.Thread(target=fn, daemon=True).start()
+
+        async def _sleep_forever():
+            await asyncio.sleep(3600)
+
+        return _sleep_forever()
+
+    async def _scenario():
+        with pytest.raises(TimeoutError):
+            await run_in_job_slot(
+                slots, _blocking_work, timeout=0.05, runner=_abandoning_runner
+            )
+        assert started.wait(1.0)
+        # Worker started -> the cancel path did NOT release; the slot is still held, unreleased.
+        assert slots.in_flight == 1
+        assert slots.release_calls == 0
+        may_finish.set()
+        for _ in range(500):
+            if slots.in_flight == 0:
+                break
+            await asyncio.sleep(0.01)
+        # Released exactly once, by the worker's finally; never a second (double) release.
+        assert slots.in_flight == 0
+        assert slots.release_calls == 1
+
+    asyncio.run(_scenario())
+
+
+# ------------------------------------------------------- AS-2 Finding 2: bounded full-table sweep
+
+
+def test_full_table_sweep_runs_at_most_once_per_window():
+    """G5 Finding 2: a flood of DISTINCT new keys arriving at a full ceiling triggers the
+    O(max_keys x max_requests) expired-key sweep AT MOST ONCE per window, not once per refused
+    key, so it cannot serialize every caller behind a full sweep. Counts the real _sweep_expired
+    calls. Mutation (sweep-on-every-refused-key): _maybe_sweep sweeps unconditionally -> the
+    count grows with the flood -> the 'at most once' assertion reddens (recorded in the report)."""
+    clock = _Clock(0.0)
+    lim = _limiter(max_requests=1, window=10.0, max_keys=3, clock=clock)
+    assert lim.allow("a") and lim.allow("b") and lim.allow("c")  # ceiling full of active keys
+    assert lim.active_key_count() == 3
+
+    sweeps = {"n": 0}
+    real_sweep = lim._sweep_expired
+
+    def _counting_sweep(now):
+        sweeps["n"] += 1
+        return real_sweep(now)
+
+    lim._sweep_expired = _counting_sweep  # type: ignore[method-assign]
+
+    # A flood of distinct new keys in the SAME window: all refused (ceiling full of active keys),
+    # and the full sweep runs at most once across the whole flood - refused keys are not tracked.
+    for i in range(50):
+        assert lim.allow(f"flood-{i}") is False
+    assert sweeps["n"] <= 1
+    assert lim.active_key_count() == 3  # the flood did not grow the table
+
+    # The next window re-opens the throttle: a new refused key sweeps again, now reclaiming the
+    # (expired) a/b/c so 'later' is admitted - proving the per-window cadence, not a total block.
+    clock.t = 25.0  # a,b,c windows (single stamps at t=0) are now expired
+    assert lim.allow("later") is True
+    assert sweeps["n"] == 2
+    assert lim.active_key_count() == 1  # a,b,c reclaimed; only 'later' remains
+
+
+# ------------------------------------------------- AS-3 Finding 3: principal hygiene + XFF
+
+
+def test_empty_or_non_string_principal_falls_back_to_host():
+    """G5 Finding 3 / AS-3: the principal keys the caller ONLY when it is a NON-EMPTY STRING; an
+    empty string or any non-string value falls back to the host key, so a blank/malformed
+    principal cannot collapse distinct callers into one 'principal:' bucket. Mutation
+    (empty-principal-accepted, i.e. `if principal is not None`): "" -> "principal:" -> the
+    empty-string assertion reddens (recorded in the report)."""
+    # Empty-string principal -> host key, NOT "principal:".
+    assert caller_key(_FakeRequest(principal="", host="203.0.113.9")) == "host:203.0.113.9"
+    # Non-string principals of every stripe -> host key.
+    for bad in (0, 0.0, False, [], {}, ("x",), 12345):
+        assert caller_key(_FakeRequest(principal=bad, host="203.0.113.9")) == "host:203.0.113.9"
+    # A genuine non-empty string principal is still used.
+    assert caller_key(_FakeRequest(principal="user-9", host="203.0.113.9")) == "principal:user-9"
+
+
+def test_x_forwarded_for_header_never_changes_the_key():
+    """G4 gap 2 / AS-3: caller_key derives the key from request.state.principal else the peer
+    host ONLY - a caller-supplied X-Forwarded-For header is deliberately NOT trusted (it is
+    spoofable; trusting it would let one caller mint unlimited distinct keys and defeat the
+    limiter). The key stays host-based for any XFF value. Mutation (trust-XFF): caller_key reads
+    the XFF header -> the key changes -> this reddens (recorded in the report)."""
+    peer = "203.0.113.5"
+    for xff in ("10.9.9.9", "attacker, 10.0.0.1", "not-an-ip", ""):
+        req = _FakeRequest(host=peer, headers={"x-forwarded-for": xff, "X-Forwarded-For": xff})
+        assert caller_key(req) == f"host:{peer}"
+    # With NO client at all, an XFF header cannot conjure a key from thin air either.
+    assert caller_key(_FakeRequest(headers={"x-forwarded-for": "10.9.9.9"})) == "host:unknown"
+
+
+# ------------------------------------------------- G4 gap 1: lock contention (both primitives)
+
+
+def test_limiter_admits_at_most_max_requests_under_concurrent_callers():
+    """G4 gap 1: SlidingWindowRateLimiter.allow() is a lock-guarded read-modify-write, so under
+    many concurrent callers on ONE key the admitted total is EXACTLY max_requests, never more.
+    Deterministic: a barrier releases all threads together. Mutation (drop the lock) can
+    over-admit under this contention - recorded red in the report."""
+    lim = SlidingWindowRateLimiter(max_requests=10, window_seconds=1000.0, max_keys=8)
+    n = 64
+    barrier = threading.Barrier(n)
+    results: list[bool] = []
+    rlock = threading.Lock()
+
+    def _worker():
+        barrier.wait()
+        ok = lim.allow("shared")
+        with rlock:
+            results.append(ok)
+
+    threads = [threading.Thread(target=_worker) for _ in range(n)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert sum(results) == 10  # exactly the cap admitted; the lock prevents over-admission
+    assert lim.active_key_count() == 1
+
+
+def test_job_slots_admit_at_most_max_slots_under_contention():
+    """G4 gap 1: JobSlots.try_acquire is lock-guarded, so under many concurrent acquirers the
+    admitted total is EXACTLY max_slots, never more. Deterministic via a barrier. Mutation (drop
+    the lock) can over-admit - recorded red in the report."""
+    slots = JobSlots(max_slots=10)
+    n = 64
+    barrier = threading.Barrier(n)
+    results: list[bool] = []
+    rlock = threading.Lock()
+
+    def _worker():
+        barrier.wait()
+        ok = slots.try_acquire()
+        with rlock:
+            results.append(ok)
+
+    threads = [threading.Thread(target=_worker) for _ in range(n)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert sum(results) == 10
+    assert slots.in_flight == 10

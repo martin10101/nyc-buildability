@@ -34,10 +34,10 @@ boundary primitives:
   connector's own wall-clock deadline + ``interactive`` single-attempt posture + response-byte
   and vertex caps; the massing build is vertex-bounded), so no unbounded work is left running.
   The whole assembly is additionally admitted through a bounded IN-FLIGHT JOB CAP
-  (:func:`app.resilience.run_in_job_slot`), so deadline-abandoned threads cannot pile up: a
-  slot is held until the worker THREAD returns (never at the deadline cancel) and over the cap
-  is a typed 503. A per-caller RATE LIMIT (the shared, bounded
-  :class:`app.resilience.SlidingWindowRateLimiter`) precedes all work.
+  (:func:`app.resilience.rate_limit.run_in_job_slot`), so deadline-abandoned threads cannot pile
+  up: a slot is held until the worker THREAD returns (never at the deadline cancel) and over the
+  cap is a typed 503. A per-caller RATE LIMIT (the shared, bounded
+  :class:`app.resilience.rate_limit.SlidingWindowRateLimiter`) precedes all work.
 * Logging - only a SERVER-generated correlation id, the state, and bounded field names reach a
   log line; no caller or upstream text is ever logged (the assembler does not log at all).
 
@@ -108,7 +108,7 @@ MAX_FIELD_LEN = 200
 SCENE_MAX_SECONDS = 15.0
 
 #: Per-caller rate limit (a sliding window), unchanged from the route-local limiter (30 / 60 s);
-#: now served by the ONE shared, bounded :class:`app.resilience.SlidingWindowRateLimiter`.
+#: now served by the ONE shared :class:`app.resilience.rate_limit.SlidingWindowRateLimiter`.
 SCENE_RATE_LIMIT_MAX = 30
 SCENE_RATE_LIMIT_WINDOW_S = 60.0
 
