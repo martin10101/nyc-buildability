@@ -10,7 +10,7 @@
  "issued_at": "2026-09-24",
  "captured_at": "2026-09-24T04:55:00+00:00",
  "created_at": "2026-09-24T04:55:00+00:00",
- "updated_at": "2026-09-25T07:14:12+00:00",
+ "updated_at": "2026-09-25T08:37:41+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "fc6dc2af94a9288ea5fccb88f4d17c801013b397",
  "capture_head_sha": null,
@@ -27,7 +27,7 @@
   "D-086-R003",
   "D-086-R004"
  ],
- "requirements_content_digest_sha256": "cddce97d8438a7c18cd99929f5963715f2f41e1978c2e45553871cbe415cae6e",
+ "requirements_content_digest_sha256": "2293b0c84422bae0095ebe194f518c9df556369c4ce40c3e994251aadb4bc255",
  "sources": [
   {
    "file": "source-001.md",
@@ -82,6 +82,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "D-089 wave-4 contract seam (seq 130): M5-T119: bound D-086-R001 <- M5-T119; D-086-R002 <- M5-T119; D-086-R003 <- M5-T119; D-086-R004 <- M5-T119; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T08:37:41+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-089 wave-7 contract seam (seq 130): M5-T122: bound D-086-R001 <- M5-T122; D-086-R002 <- M5-T122; D-086-R003 <- M5-T122; D-086-R004 <- M5-T122; requirements digest resynced in the same commit."
   }
  ]
 }
