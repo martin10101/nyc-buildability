@@ -1,0 +1,26 @@
+{
+ "task_id": "M5-T105",
+ "material_commit": "e294cf1f (cherry-pick of wt-m5t105 07a926a3; 3 files, every file MATCH by blob)",
+ "produced_at": "2026-09-25T00:42:55+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m5t105)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's navigation block (graph regenerated at the contract seam) named every pdf_sheet_writer consumer (its test, test_cad_owner_samples.py, test_claim_words.py:162) and the read-only claim_words / dxf_writer imports; the consumers pass unchanged. [ORCH-HARVEST] at the cherry-picked head e294cf1f (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 368 passed in 2.41s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R001": [
+   "Wave-9 capacity unit: contracted at 77b8e114 (G0), claimed at 2368fb73 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with disjoint packets; no state or gate skipped. [ORCH-HARVEST] at the cherry-picked head e294cf1f (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 368 passed in 2.41s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task; one worktree wt-m5t105; the producer commit touches exactly the 3 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the cherry-picked head e294cf1f (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 368 passed in 2.41s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R005": [
+   "Blueprint WRITING hardened before export wiring: caller text is length-bounded (a shared 120-character cap checked before any drawing, typed text_too_long naming the field, never echoing caller text), the non-finite path's never-raise contract is made honest through one mutation-testable public boundary, and unbalanced-paren/backslash addresses are escaped per ISO 32000-1 7.3.4.2 with combined fixtures; valid output byte-identical. [ORCH-HARVEST] at the cherry-picked head e294cf1f (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 368 passed in 2.41s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R006": [
+   "The PDF site-plan export keeps byte-identical valid output (golden c38360f9 unchanged; the committed owner sample PDF unchanged; test_cad_owner_samples.py green unchanged) while over-long, malformed and non-finite input now refuses typed. [ORCH-HARVEST] at the cherry-picked head e294cf1f (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 368 passed in 2.41s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies (stdlib only); unwired; no route/main.py/web change; claim_words.py and the other writers untouched. [ORCH-HARVEST] at the cherry-picked head e294cf1f (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 368 passed in 2.41s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ]
+ }
+}

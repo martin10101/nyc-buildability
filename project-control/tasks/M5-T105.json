@@ -70,12 +70,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-24T22:44:39.437306+00:00",
-  "updated_at": "2026-09-24T22:45:11.167687+00:00",
+  "updated_at": "2026-09-25T00:43:00.691008+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -109,6 +109,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Claimed at the wave-9 contract seam 77b8e114; worktree C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t105 created at the claim-seam commit; orchestrator-dispatched subagent producer follows."
+    },
+    {
+      "at": "2026-09-25T00:42:55.352273+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Harvested: 07a926a3 cherry-picked to e294cf1f (3 files MATCH); harvest checks green; evidence map + G2 written; submitting."
     }
   ]
 }
