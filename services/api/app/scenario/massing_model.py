@@ -1,103 +1,81 @@
-"""M5-T082 (D-087 3D-1): the deterministic massing truth object.
+"""M5-T082 (D-087 3D-1): the deterministic massing truth object - compatibility facade.
 
 The canonical scenario-geometry object of ``docs/3D_MASSING_ENGINE_ARCHITECTURE.md``
-(sections 2-4 and 10, subset). It is the SERVER-SIDE truth every 3D view and the
-CAD export consume; a renderer draws it and never invents it (section 2). Nothing
-here is a rule and nothing is a city record.
+(sections 2-4 and 10, subset). It is the SERVER-SIDE truth every 3D view and the CAD
+export consume; a renderer draws it and never invents it (section 2). Nothing here is a
+rule and nothing is a city record.
 
-Honesty (D-076-R002 / D-083 vocabulary): a building derived from an architect
-proposal is ``proposed`` ("Proposed - not a city record"); a building derived from
-the max-envelope generator is a ``generated_option`` ("Generated building option").
-No output is ever labelled a city record, a rule, or an achievable / legal value,
-and no legal conclusion is drawn. The two source labels are the ONLY building
-labels this module emits.
+M5-T112 (DB-079 a) split this 994-line module along its responsibilities, BEHIND THIS
+COMPATIBILITY FACADE - every public name :mod:`app.scenario.scene_assembler` and the tests
+import keeps working from here unchanged:
 
-What it builds, from (a) the canonical EPSG:2263 lot ring, (b) a proposal footprint
-ring + floor stack read through the accepted B0 proposal contract
-(:mod:`app.scenario.proposal`, read-only), and optionally (c) a generated building
-option in the max-envelope engine's ``as_dict`` shape:
+* :mod:`app.scenario.massing_guards` - the fail-closed input boundary: the typed
+  :class:`MassingModelError`, bounded caller-input echoes, the finiteness / magnitude
+  predicates, the NYC EPSG:2263 range guard, the shapely geometry-engine wrap, and the
+  DB-079 (b) overflow-field locator;
+* :mod:`app.scenario.massing_triangulation` - ring preparation and the concave-safe
+  ear-clipping triangulator with its work budget (its ``triangulate_polygon`` is the ONE
+  public reusable API the later GLB export fix, DB-082 a, consumes);
+* :mod:`app.scenario.massing_mesh` - prism / plate / mesh construction.
 
-* a declared coordinate frame - CRS, horizontal + vertical unit, axis order, a
-  stable local origin near the parcel centroid and its exact world->local transform,
-  and a precision grid (section 3);
-* layers ``parcel`` and one of ``proposed_massing`` / ``generated_option`` (section 5
-  subset);
-* closed, outward-oriented triangulated prisms per floor band - a bottom cap, a top
-  cap (ear-clipping triangulation that handles concave rings) and side walls, with
-  consistent winding so the signed volume is positive and every directed edge
-  appears exactly once (section 4 "Mesh construction" + section 10 mesh gate);
-* per-floor plates with areas from the authoritative 2263 ring (shapely), gross floor
-  area and total height metrics (section 10 reconciliation);
-* provenance - the input digests, the passed-through proposal provenance and the
-  ``generator_version`` ``massing-1.0.0`` (section 2).
+This module keeps the builder orchestration and the truth object: it validates the lot
+ring and the B0 ``proposed_massing`` block (read-only through :mod:`app.scenario.proposal`),
+expands the floor stack, triangulates each distinct outline once under one shared work
+budget, meshes a prism per floor, and assembles the versioned truth object with its
+declared EPSG:2263 coordinate frame, per-floor plates, metrics and provenance.
 
-Every section-10 quality gate that this slice can enforce is a TYPED refusal
-(:class:`MassingModelError` with a machine-readable ``reason``): a footprint not
-within the lot is ``footprint_outside_lot`` and is NEVER clipped or repaired; a
-self-intersecting or self-touching ring (a single ring cannot carry a hole - one
-that pinches a hole off by revisiting a vertex is ``self_intersection``), a
-non-finite value, an over-cap vertex count, a non-positive floor height, or an
-empty floor stack each fail closed.
+Honesty (D-076-R002 / D-083 vocabulary): a building derived from an architect proposal is
+``proposed`` ("Proposed - not a city record"); one derived from the max-envelope generator
+is a ``generated_option`` ("Generated building option"). No output is ever labelled a city
+record, a rule, or an achievable / legal value, and no legal conclusion is drawn.
 
-M5-T088 (DB-054 a-j) resource bounds, each a typed refusal raised BEFORE the heavy
-work it guards: a coordinate beyond :data:`MAX_COORD_ABS` (``coordinate_out_of_range``,
-so no lot area / centroid can overflow into a non-JSON value), more than
-:data:`MAX_TOTAL_FLOORS` floors (``over_cap_floors``, before any ring is prepared),
-more than :data:`MAX_TOTAL_MESH_VERTICES` output vertices (``over_cap_output_vertices``,
-before any triangulation or mesh), and ear-clipping work beyond
-:data:`MAX_TRIANGULATION_WORK` (``triangulation_budget_exceeded`` - refused up front
-when the least possible work already exceeds it, else metered so the worst-case
-O(n^3) scan cannot run away). Identical outlines are triangulated once.
-
-M5-T098 (DB-061 a-d) before-wiring guards: the LOT ring - a separate argument B0
-never sees - gets the same NYC EPSG:2263 range check as the proposal footprint
-(``lot_ring_out_of_nyc_bounds``), so a wrong-unit / wrong-CRS lot (a 4326 lon/lat
-or metric ring) is refused BY NAME and never mislabelled ``footprint_outside_lot``;
-and any ``shapely`` geometry-engine error on a build path is wrapped into a typed
-:class:`MassingModelError` (``geometry_engine_error``) at the module boundary, so no
-untyped ``shapely`` error can escape. Valid inputs are unchanged.
-
-M5-T106 (DB-069 a-h) before-wiring hardening, ahead of the PKT-E scene seam that
-feeds user geometry in: the LOT NYC range check runs on the RAW vertices (before the
-collinear collapse), so an out-of-range collinear spike (e.g. x=2e6) is refused, not
-silently collapsed away; a coordinate beyond the finite float range (a JSON integer
-literal such as ``10**400``) is treated as non-finite on BOTH the lot and footprint
-paths, so it fails closed as a typed ``non_finite`` refusal instead of an untyped
-``OverflowError`` escaping the builder; the geometry-engine wrap catches the whole
-:class:`shapely.errors.ShapelyError` family (``GEOSException`` and its siblings -
-``TopologicalError``, ``GeometryTypeError``, ``DimensionError``...), so no ``shapely``
-error escapes untyped; and the caller-input echoes this module itself builds - a
-rejected lot or footprint vertex, the ``source`` value, a floor height, the re-echoed
-B0 validation error, and the generated-option placement-gap detail - are each
-length-bounded through :func:`_preview` (:data:`MAX_ECHO_CHARS`), so a huge pasted
-vertex cannot amplify one of these messages; :func:`_preview` itself never raises, even
-on a hostile ``__repr__``. Valid inputs are unchanged (both goldens byte-identical).
-
-Deterministic and offline: standard library + the admitted ``shapely`` (validity,
-area, containment) and ``numpy`` (mesh volume / area reductions). No network, no new
-dependency, no route, no web. ``content_hash`` pins a golden sha256.
+The only intended behaviour change in the M5-T112 split is DB-079 (b): the B0
+``OverflowError`` arm now names the level outline when the out-of-float-range value sits
+there, not the blanket ``proposed_massing.outline``. Every valid-input output is
+byte-identical. Deterministic and offline: standard library + the admitted ``shapely`` /
+``numpy``; no network, no new dependency, no route, no web. ``content_hash`` pins a golden
+sha256.
 """
 
 from __future__ import annotations
 
-import functools
 import hashlib
 import json
-import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
-import numpy as np
-from shapely.errors import ShapelyError
 from shapely.geometry import Polygon
 
+from .massing_guards import MAX_COORD_ABS as MAX_COORD_ABS
+from .massing_guards import MAX_ECHO_CHARS as MAX_ECHO_CHARS
+from .massing_guards import NYC_2263_X_MAX as NYC_2263_X_MAX
+from .massing_guards import NYC_2263_X_MIN as NYC_2263_X_MIN
+from .massing_guards import NYC_2263_Y_MAX as NYC_2263_Y_MAX
+from .massing_guards import NYC_2263_Y_MIN as NYC_2263_Y_MIN
+from .massing_guards import (
+    MassingModelError,
+    _is_finite_number,
+    _locate_overflow_field,
+    _Point,
+    _preview,
+    _wrap_geos_errors,
+)
+from .massing_mesh import _build_prism, _PrismMesh
+from .massing_triangulation import (
+    _QUANT_DECIMALS,
+    MAX_TRIANGULATION_WORK,
+    _min_ear_clip_work,
+    _prepare_ring,
+    _q,
+    _triangulate,
+    _WorkBudget,
+)
+from .massing_triangulation import _cross3 as _cross3
+from .massing_triangulation import _point_in_triangle as _point_in_triangle
+from .massing_triangulation import _signed_area as _signed_area
+from .proposal import MAX_OUTLINE_VERTICES as MAX_OUTLINE_VERTICES
 from .proposal import (
-    MAX_OUTLINE_VERTICES,
-    NYC_2263_X_MAX,
-    NYC_2263_X_MIN,
-    NYC_2263_Y_MAX,
-    NYC_2263_Y_MIN,
     ProposedMassingError,
     validate_proposed_massing,
 )
@@ -126,7 +104,6 @@ AXIS_ORDER = "easting_northing"  # x = easting, y = northing
 #: The grid a renderer should snap to; emitted coordinates are quantised to it so
 #: the golden serialization is stable. Metadata, never a legal precision claim.
 PRECISION_GRID_FT = 1e-6
-_QUANT_DECIMALS = 6  # round(ft, 6) == PRECISION_GRID_FT
 
 # --- source labels (the ONLY building labels; honesty vocabulary) ---------
 SOURCE_PROPOSED = "proposed"
@@ -147,424 +124,9 @@ MAX_TOTAL_FLOORS = 2000
 #: A footprint may sit at most this far outside the lot line (survey noise) before
 #: it is refused ``footprint_outside_lot``. It is NEVER clipped to fit.
 FOOTPRINT_OUTSIDE_LOT_TOL_FT = 1e-6
-#: Coordinate-magnitude bound (absolute value, US survey feet) on EVERY ring - the
-#: lot ring is not B0-bounded, and a finite ~1e154 value overflows shapely's area /
-#: centroid to inf/NaN. Mirrors the DXF / PDF writers' 1e8 (far outside NYC 2263).
-MAX_COORD_ABS = 1e8
 #: Total emitted mesh vertices (2 x ring size per floor band) - bounds the payload a
 #: viewer / exporter receives (~6.5 MB of JSON at the ceiling).
 MAX_TOTAL_MESH_VERTICES = 100_000
-#: Per-request ear-clipping work, in units that upper-bound point-in-triangle tests
-#: (a convex 999-vertex ring costs 497,502). Shared by every distinct ring.
-MAX_TRIANGULATION_WORK = 2_000_000
-#: A refusal message echoes at most this many characters of the offending caller input
-#: (DB-069 d / M5-T098 G5 F-LOW-2). The lot ring has no B0 total-positions gate, so a
-#: 200,000-character pasted vertex would otherwise produce a 200,000-character message
-#: (log / response amplification). :func:`_preview` truncates the ``repr`` to this bound.
-MAX_ECHO_CHARS = 120
-
-_Point = tuple[float, float]
-
-
-class MassingModelError(ValueError):
-    """A massing input failed a section-10 quality gate. Carries a machine-readable
-    ``reason`` and, where a specific field is implicated, the dotted ``field`` path.
-    A subclass of :class:`ValueError` so a caller may catch broadly, but every
-    refusal is typed and nothing is silently clipped or repaired."""
-
-    def __init__(self, message: str, *, reason: str, field: str | None = None) -> None:
-        super().__init__(message)
-        self.reason = reason
-        self.field = field
-
-
-def _wrap_geos_errors(func):
-    """Wrap the shapely geometry-engine boundary (DB-061 d / DB-069 b): any
-    :class:`shapely.errors.ShapelyError` escaping the engine on a build path becomes a
-    typed :class:`MassingModelError` (``geometry_engine_error``), so no untyped
-    ``shapely`` error reaches a caller and every wiring route can map one exception
-    family to a client response. ``ShapelyError`` is the shapely base class, so this
-    covers ``GEOSException`` AND its siblings (``TopologicalError``,
-    ``GeometryTypeError``, ``DimensionError``, ``EmptyPartError``, ...) - the earlier
-    ``except GEOSException`` let the non-GEOS siblings escape untyped (M5-T098 G3/G5
-    advisory), which this closes before the PKT-E scene seam feeds user geometry in.
-
-    Inputs are magnitude- and NYC-range-bounded, finiteness-checked and validity-checked
-    before any shapely construct runs, so this is a defensive backstop, not a routine
-    path - valid inputs never trigger it and their output is unchanged. A
-    :class:`MassingModelError` is a :class:`ValueError`, NOT a
-    :class:`shapely.errors.ShapelyError` (their class hierarchies are disjoint below
-    :class:`Exception`), so a typed refusal raised inside the body passes through
-    unwrapped with its own reason."""
-
-    @functools.wraps(func)
-    def _guarded(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except ShapelyError as exc:
-            raise MassingModelError(
-                f"the geometry engine (shapely) failed on this input: {_preview(exc)}",
-                reason="geometry_engine_error", field=None) from exc
-
-    return _guarded
-
-
-# ---------------------------------------------------------------------------
-# Numeric helpers (deterministic).
-# ---------------------------------------------------------------------------
-
-
-def _preview(value: object, limit: int = MAX_ECHO_CHARS) -> str:
-    """A length-bounded ``repr`` of caller input for a refusal message (DB-069 d).
-
-    Returns ``repr(value)`` unchanged when it is within ``limit`` characters; otherwise
-    the first ``limit`` characters followed by a compact ``...<+N chars>`` marker (``N``
-    a small integer, so the whole preview stays bounded). A refusal that echoes a huge
-    pasted vertex, source or height thus cannot amplify the message. Resolved from the
-    module namespace at call time so a mutation to it reddens the bounded-echo tests.
-
-    ``repr`` itself never escapes this helper (DB-069 h / G5 INFO): a value whose
-    ``repr`` raises - a ``RecursionError`` on deeply-nested data, or a hostile
-    ``__repr__`` - yields the fixed ``<unrepresentable value>`` placeholder rather than
-    propagating, so a refusal message can always be built."""
-    try:
-        text = repr(value)
-    except Exception:  # noqa: BLE001 - a refusal preview must never itself raise
-        return "<unrepresentable value>"
-    if len(text) <= limit:
-        return text
-    return f"{text[:limit]}...<+{len(text) - limit} chars>"
-
-
-def _q(value: float) -> float:
-    """Quantise a coordinate to the declared precision grid (deterministic)."""
-    return round(float(value), _QUANT_DECIMALS)
-
-
-def _is_finite_number(value: object) -> bool:
-    """True for a finite int/float that is not a bool (JSON booleans are ints in
-    Python and must never pass a numeric check).
-
-    An int too large to convert to float (a JSON integer literal beyond the float
-    range, e.g. ``10**400``) is treated as NON-finite (DB-069 g / G5 MED-1) instead of
-    being allowed to raise ``OverflowError`` out of ``math.isfinite``: the caller then
-    fails closed with the typed ``non_finite`` refusal rather than an untyped
-    ``OverflowError`` escaping the builder. A finite float such as ``1e300`` is
-    unaffected - it stays finite and hits the magnitude bound as before."""
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        return False
-    try:
-        return math.isfinite(value)
-    except OverflowError:
-        return False
-
-
-def _signed_area(ring: Sequence[_Point]) -> float:
-    """Shoelace signed area of a distinct-vertex ring; > 0 for counter-clockwise."""
-    total = 0.0
-    n = len(ring)
-    for i in range(n):
-        x0, y0 = ring[i]
-        x1, y1 = ring[(i + 1) % n]
-        total += x0 * y1 - x1 * y0
-    return total / 2.0
-
-
-def _cross3(a: _Point, b: _Point, c: _Point) -> float:
-    """Signed area term of triangle ``a b c``; > 0 for a left (CCW) turn at ``b``."""
-    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
-
-
-def _point_in_triangle(p: _Point, a: _Point, b: _Point, c: _Point) -> bool:
-    """True when ``p`` is inside or on the boundary of CCW triangle ``a b c``.
-    Boundary-inclusive so a vertex touching an ear edge disqualifies the ear."""
-    d1 = _cross3(a, b, p)
-    d2 = _cross3(b, c, p)
-    d3 = _cross3(c, a, p)
-    has_neg = d1 < 0 or d2 < 0 or d3 < 0
-    has_pos = d1 > 0 or d2 > 0 or d3 > 0
-    return not (has_neg and has_pos)
-
-
-# ---------------------------------------------------------------------------
-# Ring preparation + ear-clipping triangulation.
-# ---------------------------------------------------------------------------
-
-
-def _require_raw_vertices_in_nyc_bounds(
-    vertices: Sequence[_Point], field: str
-) -> None:
-    """Refuse when any RAW ring vertex is outside plausible NYC EPSG:2263 bounds (DB-069
-    a / DB-061 c). Called from :func:`_prepare_ring` on the lot ring BEFORE the collinear
-    collapse, reusing the very :data:`NYC_2263_X_MIN` .. constants B0 applies to the
-    proposal footprint (single source of truth) and naming ``field`` so the refusal
-    points at the real culprit. EVERY vertex is checked (not only the first), on BOTH the
-    easting and northing axes. Generous fail-closed unit guards, never a precise city
-    boundary."""
-    for x, y in vertices:
-        if not (NYC_2263_X_MIN <= x <= NYC_2263_X_MAX
-                and NYC_2263_Y_MIN <= y <= NYC_2263_Y_MAX):
-            raise MassingModelError(
-                f"lot_ring vertex ({x}, {y}) is outside plausible NYC EPSG:2263 bounds "
-                f"([{NYC_2263_X_MIN}, {NYC_2263_X_MAX}] x [{NYC_2263_Y_MIN}, "
-                f"{NYC_2263_Y_MAX}] US survey feet) - likely a wrong-unit or wrong-CRS "
-                "lot; it is refused, never mislabelled",
-                reason="lot_ring_out_of_nyc_bounds", field=field)
-
-
-def _prepare_ring(
-    points: Sequence[Sequence[float]], field: str, *, nyc_range_check: bool = False
-) -> list[_Point]:
-    """Normalise a 2263 ring to distinct, non-collinear, CCW vertices.
-
-    Accepts an open or explicitly-closed ring, drops the closing duplicate, and
-    collapses collinear straight vertices (redundant corners on one edge) so ear
-    clipping finds a strict-convex ear at every step and the caps and side walls
-    share the SAME boundary. Fails closed on a non-finite or over-magnitude
-    coordinate, an over-cap count, a duplicate vertex, or fewer than three distinct
-    corners.
-
-    When ``nyc_range_check`` is set (the lot path, which B0 never sees), each RAW vertex
-    is range-checked against the NYC EPSG:2263 bounds in this parse loop - BEFORE the
-    collinear collapse below (DB-069 a) - so an out-of-range collinear spike (e.g. a
-    x=2e6 vertex on a straight edge) is refused ``lot_ring_out_of_nyc_bounds`` rather
-    than silently collapsed away and never checked. The magnitude bound is checked first
-    so a ~1e154 overflow still refuses ``coordinate_out_of_range`` (not mislabelled).
-    Footprint / per-level rings are B0-range-checked upstream and pass ``False`` here."""
-    if not isinstance(points, (list, tuple)):
-        raise MassingModelError(f"{field} must be a list of [x, y] points",
-                                reason="invalid_source", field=field)
-    if len(points) > MAX_OUTLINE_VERTICES:
-        raise MassingModelError(
-            f"{field} has {len(points)} vertices, over the cap {MAX_OUTLINE_VERTICES}",
-            reason="over_cap_vertices", field=field)
-
-    parsed: list[_Point] = []
-    raw: list[_Point] = []
-    for idx, pt in enumerate(points):
-        if not isinstance(pt, (list, tuple)) or len(pt) != 2:
-            raise MassingModelError(f"{field}[{idx}] must be an [x, y] pair",
-                                    reason="invalid_source", field=f"{field}[{idx}]")
-        x, y = pt[0], pt[1]
-        if not _is_finite_number(x) or not _is_finite_number(y):
-            raise MassingModelError(
-                f"{field}[{idx}] must be a finite [x, y] pair; got {_preview(pt)}",
-                reason="non_finite", field=f"{field}[{idx}]")
-        if abs(x) > MAX_COORD_ABS or abs(y) > MAX_COORD_ABS:
-            raise MassingModelError(
-                f"{field}[{idx}] exceeds the coordinate magnitude bound "
-                f"{MAX_COORD_ABS:.0f} ft",
-                reason="coordinate_out_of_range", field=f"{field}[{idx}]")
-        raw.append((x, y))
-        parsed.append((_q(x), _q(y)))
-
-    # Lot-only NYC EPSG:2263 range check on the RAW vertices (DB-069 a), AFTER the whole
-    # magnitude pass (so a ~1e154 overflow still refuses coordinate_out_of_range first -
-    # the accepted M5-T088 precedence) and BEFORE the collinear collapse below (so an
-    # out-of-range collinear spike, e.g. x=2e6 on a straight edge, is refused, not
-    # silently collapsed away and never seen).
-    if nyc_range_check:
-        _require_raw_vertices_in_nyc_bounds(raw, field)
-
-    if len(parsed) >= 2 and parsed[0] == parsed[-1]:
-        parsed = parsed[:-1]  # drop the explicit closing duplicate
-    if len(set(parsed)) != len(parsed):
-        raise MassingModelError(
-            f"{field} has a duplicate vertex other than the closing vertex",
-            reason="self_intersection", field=field)
-    if len(parsed) < 3:
-        raise MassingModelError(
-            f"{field} needs at least 3 distinct vertices; got {len(parsed)}",
-            reason="invalid_source", field=field)
-
-    # Orient CCW so triangulation winds toward +z.
-    if _signed_area(parsed) < 0:
-        parsed.reverse()
-
-    # Collapse collinear straight vertices (redundant on a straight edge).
-    ring: list[_Point] = []
-    n = len(parsed)
-    for i in range(n):
-        prev_pt = parsed[(i - 1) % n]
-        cur = parsed[i]
-        nxt = parsed[(i + 1) % n]
-        if _cross3(prev_pt, cur, nxt) == 0.0:
-            continue
-        ring.append(cur)
-    if len(ring) < 3:
-        raise MassingModelError(
-            f"{field} collapses to fewer than 3 non-collinear corners",
-            reason="invalid_source", field=field)
-    return ring
-
-
-class _WorkBudget:
-    """A per-request ear-clipping work meter. Units upper-bound point-in-triangle
-    tests; overspending is a typed ``triangulation_budget_exceeded`` refusal."""
-
-    __slots__ = ("limit", "remaining")
-
-    def __init__(self, units: int) -> None:
-        self.limit = units
-        self.remaining = units
-
-    def charge(self, units: int, field: str) -> None:
-        self.remaining -= units
-        if self.remaining < 0:
-            raise MassingModelError(
-                f"{field} triangulation exceeds the work budget of {self.limit} units; "
-                "refused before the ear scan runs away",
-                reason="triangulation_budget_exceeded", field=field)
-
-
-def _min_ear_clip_work(n: int) -> int:
-    """The least :func:`_triangulate` can charge for an ``n``-vertex ring: each of the
-    n-3 clips (m = n..4 remaining) examines at least one candidate (1 unit) and scans
-    it fully (m-3 units), so sum(m-2) = (n-2)(n-1)/2 - 1. Exact, never an estimate."""
-    return (n - 2) * (n - 1) // 2 - 1 if n > 3 else 0
-
-
-def _triangulate(
-    ring: Sequence[_Point], field: str, budget: _WorkBudget | None = None
-) -> list[tuple[int, int, int]]:
-    """Ear-clipping triangulation of a simple CCW ring (concave-safe).
-
-    Returns index triples into ``ring``, each wound CCW (so a +z-facing cap normal).
-    A simple polygon always has an ear (two-ears theorem); a stall means the ring is
-    not simple and fails closed as ``self_intersection``. Work is metered by
-    ``budget`` (a fresh :data:`MAX_TRIANGULATION_WORK` budget when omitted): one unit
-    per candidate, and each convex candidate's worst-case containment scan (m-3
-    units) is charged BEFORE that scan runs."""
-    n = len(ring)
-    if n < 3:
-        raise MassingModelError(f"{field} needs at least 3 vertices to triangulate",
-                                reason="invalid_source", field=field)
-    if n == 3:
-        return [(0, 1, 2)]
-    if budget is None:
-        budget = _WorkBudget(MAX_TRIANGULATION_WORK)
-
-    remaining = list(range(n))
-    triangles: list[tuple[int, int, int]] = []
-    guard = 0
-    guard_max = 2 * n * n + 8
-    while len(remaining) > 3 and guard < guard_max:
-        guard += 1
-        m = len(remaining)
-        clipped = False
-        for pos in range(m):
-            budget.charge(1, field)
-            i_prev = remaining[(pos - 1) % m]
-            i_cur = remaining[pos]
-            i_next = remaining[(pos + 1) % m]
-            a, b, c = ring[i_prev], ring[i_cur], ring[i_next]
-            if _cross3(a, b, c) <= 0.0:  # reflex or collinear -> not an ear tip
-                continue
-            budget.charge(m - 3, field)
-            if any(
-                _point_in_triangle(ring[j], a, b, c)
-                for j in remaining
-                if j not in (i_prev, i_cur, i_next)
-            ):
-                continue
-            triangles.append((i_prev, i_cur, i_next))
-            del remaining[pos]
-            clipped = True
-            break
-        if not clipped:
-            break
-    if len(remaining) != 3:
-        raise MassingModelError(
-            f"{field} could not be triangulated; the ring is not a simple polygon",
-            reason="self_intersection", field=field)
-    triangles.append((remaining[0], remaining[1], remaining[2]))
-    return triangles
-
-
-# ---------------------------------------------------------------------------
-# Prism mesh construction.
-# ---------------------------------------------------------------------------
-
-
-@dataclass(frozen=True)
-class _PrismMesh:
-    floor_index: int
-    level_index: int
-    z_bottom_ft: float
-    z_top_ft: float
-    vertices: tuple[tuple[float, float, float], ...]
-    triangles: tuple[tuple[int, int, int], ...]
-    plate_area_sq_ft: float
-    signed_volume_cu_ft: float
-
-    def as_dict(self) -> dict:
-        return {
-            "floor_index": self.floor_index,
-            "level_index": self.level_index,
-            "z_bottom_ft": self.z_bottom_ft,
-            "z_top_ft": self.z_top_ft,
-            "vertices": [list(v) for v in self.vertices],
-            "triangles": [list(t) for t in self.triangles],
-            "plate_area_sq_ft": self.plate_area_sq_ft,
-            "signed_volume_cu_ft": self.signed_volume_cu_ft,
-        }
-
-
-def _build_prism(
-    ring: Sequence[_Point],
-    cap: Sequence[tuple[int, int, int]],
-    z_bottom: float,
-    z_top: float,
-    floor_index: int,
-    level_index: int,
-    local_origin: _Point,
-) -> _PrismMesh:
-    """A single closed, outward-oriented prism over ``ring`` between two elevations.
-
-    Bottom + top caps (top from the CCW ``cap`` triangulation, bottom reversed) and
-    one outward-wound side quad per ring edge. Vertices are stored in authoritative
-    world 2263 coordinates; the signed volume is reduced in LOCAL coordinates (origin
-    subtracted) so the closed-mesh volume is well conditioned at NYC magnitudes."""
-    n = len(ring)
-    zb, zt = _q(z_bottom), _q(z_top)
-    verts: list[tuple[float, float, float]] = [(x, y, zb) for x, y in ring]  # 0..n-1
-    verts += [(x, y, zt) for x, y in ring]  # n..2n-1
-    tris: list[tuple[int, int, int]] = []
-    # Top cap: CCW from above -> +z outward normal.
-    for a, b, c in cap:
-        tris.append((a + n, b + n, c + n))
-    # Bottom cap: reversed -> -z outward normal.
-    for a, b, c in cap:
-        tris.append((a, c, b))
-    # Side walls: for CCW ring edge i->j, outward-wound quad (bi,bj,tj)+(bi,tj,ti).
-    for i in range(n):
-        j = (i + 1) % n
-        bi, bj = i, j
-        ti, tj = i + n, j + n
-        tris.append((bi, bj, tj))
-        tris.append((bi, tj, ti))
-
-    ox, oy = local_origin
-    local = np.array(
-        [[vx - ox, vy - oy, vz] for vx, vy, vz in verts], dtype=np.float64
-    )
-    idx = np.array(tris, dtype=np.int64)
-    v0 = local[idx[:, 0]]
-    v1 = local[idx[:, 1]]
-    v2 = local[idx[:, 2]]
-    signed_volume = float(np.sum(np.einsum("ij,ij->i", v0, np.cross(v1, v2))) / 6.0)
-
-    plate_area = float(Polygon([(x, y) for x, y in ring]).area)
-    return _PrismMesh(
-        floor_index=floor_index,
-        level_index=level_index,
-        z_bottom_ft=zb,
-        z_top_ft=zt,
-        vertices=tuple(verts),
-        triangles=tuple(tris),
-        plate_area_sq_ft=round(plate_area, _QUANT_DECIMALS),
-        signed_volume_cu_ft=round(signed_volume, _QUANT_DECIMALS),
-    )
 
 
 # ---------------------------------------------------------------------------
@@ -751,7 +313,7 @@ def _triangulate_distinct(
 
 
 # ---------------------------------------------------------------------------
-# Builders.
+# Lot ring + coordinate frame.
 # ---------------------------------------------------------------------------
 
 
@@ -805,6 +367,11 @@ def _crs_frame(origin: _Point) -> dict:
     }
 
 
+# ---------------------------------------------------------------------------
+# Builders.
+# ---------------------------------------------------------------------------
+
+
 @_wrap_geos_errors
 def build_massing_model(
     *,
@@ -834,15 +401,19 @@ def build_massing_model(
             f"proposed_massing failed B0 contract validation: {_preview(exc)}",
             reason="invalid_source", field=exc.field) from exc
     except OverflowError as exc:
-        # A footprint coordinate beyond the finite float range (a JSON integer literal
-        # such as 10**400) overflows B0's own finiteness check (math.isfinite on a huge
-        # int raises OverflowError, NOT a ProposedMassingError). Type it as the same
-        # non_finite refusal the lot path raises, so no untyped OverflowError escapes the
-        # builder (DB-069 g / G5 MED-1).
+        # A footprint or per-level outline coordinate beyond the finite float range (a
+        # JSON integer literal such as 10**400) overflows B0's own finiteness check
+        # (math.isfinite on a huge int raises OverflowError, NOT a ProposedMassingError).
+        # Type it as the same non_finite refusal the lot path raises, so no untyped
+        # OverflowError escapes the builder (DB-069 g / G5 MED-1), and name the REAL
+        # outline the overflow sits in (DB-079 b): _locate_overflow_field walks B0's
+        # order and returns proposed_massing.outline (footprint, unchanged) or
+        # proposed_massing.levels[<pos>].outline (a level outline), never the blanket
+        # footprint label for a level-outline overflow.
         raise MassingModelError(
             "proposed_massing carries a coordinate beyond the finite float range "
             "(a non-finite magnitude); it is refused, never truncated",
-            reason="non_finite", field="proposed_massing.outline") from exc
+            reason="non_finite", field=_locate_overflow_field(proposed_massing)) from exc
 
     # Cheap bounds first: nothing below runs for an over-tall stack.
     _check_floor_cap(proposed_massing["levels"])
