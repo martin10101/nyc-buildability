@@ -3,7 +3,7 @@
  "directive_id": "D-083",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All thirteen requirements bind the non-ledger sentinel D-083-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. R011 (owner return item) is discharged by the owner-facing reply and audited here. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T08:36:47+00:00",
+ "verified_at": "2026-09-25T08:58:47+00:00",
  "task_verifications": [
   {
    "directive_id": "D-083",
@@ -323,6 +323,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: a grep over the four changed components + architect.css finds no permitted / approved / maximum-allowed wording (HJ grep-clean too); the new strings are honest ('Preliminary analysis - professional review required before any reliance', 'nothing here is a legal determination'). Blob-level restamp predicate re-verified by the orchestrator at the accept head ed229971 (OverviewExceptionStrip.tsx 2d0891cd, PropertyOverview.tsx dd1ed01f, DevelopmentLimits.tsx e0016bb3, ArchitectShell.tsx b3d37ec7, overview-exception-strip.test.tsx 2bb31414, development-limits.test.tsx e98835e5, workspace.test.tsx bcad93f3, architect.css 5aa998d1, development-limits.spec.ts d74c9f53, architect-workspace.spec.ts 18e6b07b, responsive-a11y.spec.ts 572cca1f, M5-T119-producer-report.md 2d4e8b8b; identity 824d5bd9; evaluate_task_refs ok); report M5-T119-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T121",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R006"
+   ],
+   "reviewed_sha": "8ecdbeb27fee7db6ccc333b986cb1f236f820e5c",
+   "reviewed_manifest_sha256": "243a7da1f600197b77561d059c79605a22e93dc43ae6cd1884f3fa43a1c6ddf0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T08:58:47+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: only honest labels ('Proposed - not a city record', 'imported drawing - not survey-confirmed', the local-frame note); no permit / approved / maximum-allowed wording (test_provenance_block_is_complete_and_honest scans for them); the service computes no regulatory ceiling. Blob-level restamp predicate re-verified by the orchestrator at the accept head 8ecdbeb2 (sheet_import.py faa95c04, test_sheet_import.py ecc14b54, M5-T121-producer-report.md ea826181; identity 243a7da1; evaluate_task_refs ok); report M5-T121-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the provenance block carries input_class 'imported_pdf', precision 'imported drawing - not survey-confirmed' (a set-once constant; test_mutation_precision_not_upgraded reddens on an upgrade) and the frame note that the outline is not aligned to the mapped lot. Blob-level restamp predicate re-verified by the orchestrator at the accept head 8ecdbeb2 (sheet_import.py faa95c04, test_sheet_import.py ecc14b54, M5-T121-producer-report.md ea826181; identity 243a7da1; evaluate_task_refs ok); report M5-T121-DCV.md."
      ]
     }
    ]

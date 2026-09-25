@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T08:36:47+00:00",
+ "verified_at": "2026-09-25T08:58:47+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1919,6 +1919,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t119): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges) names the renderers (ArchitectEntry overview view, ReportView printed brief - READ-ONLY), ArchitectShell and the three e2e specs, with the query.py --no-regen instruction; G0 confirms the regen. Blob-level restamp predicate re-verified by the orchestrator at the accept head ed229971 (OverviewExceptionStrip.tsx 2d0891cd, PropertyOverview.tsx dd1ed01f, DevelopmentLimits.tsx e0016bb3, ArchitectShell.tsx b3d37ec7, overview-exception-strip.test.tsx 2bb31414, development-limits.test.tsx e98835e5, workspace.test.tsx bcad93f3, architect.css 5aa998d1, development-limits.spec.ts d74c9f53, architect-workspace.spec.ts 18e6b07b, responsive-a11y.spec.ts 572cca1f, M5-T119-producer-report.md 2d4e8b8b; identity 824d5bd9; evaluate_task_refs ok); report M5-T119-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T121",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "8ecdbeb27fee7db6ccc333b986cb1f236f820e5c",
+   "reviewed_manifest_sha256": "243a7da1f600197b77561d059c79605a22e93dc43ae6cd1884f3fa43a1c6ddf0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T08:58:47+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t121): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges; no consumers - unmounted; the reader public types, dxf_import public names and app.scenario.proposal READ-ONLY) with the query.py --no-regen instruction. Blob-level restamp predicate re-verified by the orchestrator at the accept head 8ecdbeb2 (sheet_import.py faa95c04, test_sheet_import.py ecc14b54, M5-T121-producer-report.md ea826181; identity 243a7da1; evaluate_task_refs ok); report M5-T121-DCV.md."
      ]
     }
    ]
