@@ -1,4 +1,4 @@
-# SESSION HANDOFF — seq 130 overnight (2026-09-25 ~10:10 UTC; D-089 "keep running till the morning task after task"; session 01DfjZ9jL8Ni9V1LJ1UqcGt2, main claude-opus-5-5)
+# SESSION HANDOFF — seq 130 overnight (2026-09-25 ~10:40 UTC; D-089 "keep running till the morning task after task"; session 01DfjZ9jL8Ni9V1LJ1UqcGt2, main claude-opus-5-5)
 
 Orientation only — the ledger (`python tools/project_control.py status`) and `project-control/`
 WIN over this prose. Campaign NEXT prose is stale (D-024 era); ledger + this file govern.
@@ -9,25 +9,23 @@ HEAD = this handoff commit (pushed) · origin github.com/martin10101/nyc-buildab
 except policy-dirty `.claude/agent-memory/**` (reviewer notes, never committed) and old untracked
 `scratchpad/**`.
 
-## State: 308 ACCEPTED (seq 130 = #295-#308, all overnight under D-089)
+## State: 309 ACCEPTED (seq 130 = #295-#309, all overnight under D-089)
 T109 export service · T114 D-086 P1 spec · T112 massing split (FAIL → [ORCH-CORRECTED] → delta) ·
 T113 PDF P2 · T111 route limits · T115 D-086 P2 address/confirm · T117 limiter must-fix · T116 GLB
 concave caps (FAIL → fresh rework producer → delta) · T118 PDF P3 (3/6) · T119 D-086 P3a overview ·
 T121 PKT-L PDF sheet import · T123 pre-mount riders 2 · T120 PDF P4 (4/6; G1 required correction →
-[ORCH-CORRECTED] doc-only → 4 deltas) · T122 D-086 P3b condo. Riders DB-082..DB-095.
+[ORCH-CORRECTED] doc-only → 4 deltas) · T122 D-086 P3b condo · T124 PKT-L2 drawing alignment.
+Riders DB-082..DB-096.
 Owner directives captured: D-088 source-002 (re-affirmation "Run 5 codex loop side by side") and
 **D-089** (overnight task-after-task; no stop condition lifted; commissioning never run for the owner).
 Honest limits: 4 of 6 real architect PDFs read fully (items 5-6 are scans - a different capability);
-a PDF draft is a LOCAL frame until M5-T124 aligns it; 3D scene / DXF import / export routes are
+the PDF / DXF import chain has every pure service (read → candidates + scale → align → contract) but
+no wiring yet (DB-096 a: the importers validate the local frame too early; b: a control-point UI);
+3D scene / DXF import / export routes are
 built but UNMOUNTED - PKT-H needs the sign-in principal + instance sizing (DB-093 preconditions 1-5).
 
 ## In flight
-- **M5-T124** (PKT-L2 drawing alignment: rigid fit of a local-frame draft onto the mapped lot in
-  2263, discrepancies shown never applied; pure, UNMOUNTED): contracted 724248f2, claimed 4c7437dd,
-  worktree C:\Users\MLFLL\Downloads\nyc-zoning\wt-m5t124; the producer delivered ede877bb (39 tests,
-  10 mutations); harvest + cr/qa/sec reviews + DCV + accept follow (check the ledger for how far it
-  got). Its DISC-A: the importers' build_draft validates a local frame too early - the C2 mount must
-  build the pre-alignment block without that check and validate only the aligned block.
+- Nothing running: every sub-agent returned and was recorded (M5-T124 accepted as #309).
 - **M5-T110** = D-088 lane-1 supervised canary: contracted + CLAIMED at 1983bdd6, worktree
   C:\Users\MLFLL\Downloads\nyc-zoning\wt-m5t110 — NOT started (waits for the owner's commissioning).
 
@@ -66,7 +64,9 @@ launch wave (D-088-R006); never delete old worktrees without the owner's OK.
 1. Morning: give the owner the plain-English overnight summary and the 4 commissioning commands
    (above); run none of them yourself. Refresh the Control Room
    (https://claude.ai/artifact/MnxTLzCxWLSxMf8zaABUgk; publish with `url`) when numbers change.
-2. Finish M5-T124 (harvest → review → DCV → accept) unless it already landed.
+2. Next packets (pick disjoint ones; disk permitting): the C2 mount / wiring for drawing import
+   (DB-096 a, d) · the control-point UI (DB-096 b) · D-086 P4 proposal/drawing slice · the lane
+   candidates listed above.
 3. After the owner's steps 1-4: verify the canary, contract lanes 2-5 + the plan file, give step 5.
 4. PKT-H (mount) waits on owner-facing decisions: sign-in principal and instance size (DB-093).
 
@@ -94,6 +94,6 @@ repository evidence. Verify: cwd IS C:\Users\MLFLL\Downloads\nyc-zoning\ctl24 (`
 --show-toplevel`), branch candidate/D-024-mrl-option-b, HEAD == origin, /mcp empty (Bootstrap Gate 0).
 Read CLAUDE.md, docs/SESSION_HANDOFF.md and `python tools/project_control.py status` (the ledger
 wins). Report READY TO RESUME or BLOCKED. Then continue from EXACT NEXT ACTION without redoing work:
-308 accepted; M5-T124 (drawing alignment) may be mid-flight; M5-T110 is the lane-1 canary. Never pass
+309 accepted; nothing in flight; M5-T110 is the lane-1 canary. Never pass
 `model:`; DCVs never run the 16 h suite; stop for Tier D, PR #241, owner holds, and every owner-typed
 commissioning step.
