@@ -37,7 +37,20 @@ Guarantees (deterministic, stdlib + already-admitted packages only, no I/O, no c
 * GLB DEDUPE (DB-054 (m)). The GLB massing is a SINGLE extruded prism from the floor
   base to the roof; per-floor bands are NOT emitted as separate stacked prisms, so no
   coincident interface caps exist to dedupe. This choice is disclosed in the returned
-  provenance and in the file's own ``asset.extras`` (via the writer).
+  ``ExportResult.provenance['glb_massing']`` (NOT in the file's ``asset.extras``, whose
+  extras carry only the origin / axis / label; M5-T109 G3 A4 / DB-082 (h)).
+* CONCAVE-SAFE GLB CAPS (DB-082 (a)). The prism's bottom and top caps are triangulated
+  by the ONE public concave-safe massing triangulator
+  (:func:`app.scenario.massing_triangulation.triangulate_polygon`), NOT a naive vertex-0
+  fan (wrong for an L-shaped or other concave footprint - fan triangles fall outside the
+  footprint and over-count its area). Its PREPARED CCW ring is reused for the side walls,
+  so caps and walls share ONE boundary and one outward winding (bottom cap facing -z, top
+  +z). A non-simple / over-budget / out-of-range footprint is a typed refusal
+  (:class:`~app.scenario.massing_guards.MassingModelError`) reconciled to the ONE redacted
+  :class:`ExportRefusal` shape, never a malformed mesh. Finiteness and the coordinate
+  magnitude bound are checked inside the triangulator; the lot-only NYC range check is
+  omitted there by design (M5-T112 G5 INFO-1 / DB-084 (d)) and the GLB writer re-validates
+  finiteness, the local-coordinate bound and degeneracy.
 * HONESTY (D-083 / D-073-R006 / D-076-R002). ``source`` is one of the two allowed
   labels ("Proposed - not a city record" / "Generated building option"); nothing is ever
   labelled permitted, approved, or "maximum allowed building".
@@ -52,6 +65,8 @@ from dataclasses import dataclass, field
 
 from app.cad import dxf_writer, glb_writer, pdf_sheet_writer
 from app.cad.claim_words import contains_claim_word
+from app.scenario.massing_guards import MassingModelError
+from app.scenario.massing_triangulation import triangulate_polygon
 
 __all__ = [
     "DXF_MEDIA_TYPE",
@@ -187,6 +202,13 @@ class ExportResult:
 # Filename safety.
 # --------------------------------------------------------------------------- #
 
+def _allowlist_token(raw: str) -> str:
+    """Keep ONLY :data:`_TOKEN_CHARS` from ``raw`` and length-cap the result. The single
+    choke point BOTH the bbl/generated_at token and the caller-supplied fallback token pass
+    through (DB-082 (c) / M5-T109 G5 A1), so the two allowlist paths can never drift."""
+    return "".join(ch for ch in str(raw) if ch in _TOKEN_CHARS)[:MAX_TOKEN_LEN]
+
+
 def build_filename_token(bbl: str, generated_at: str) -> str | None:
     """Return the server-built, allowlisted download token, or ``None`` when nothing
     usable survives.
@@ -195,10 +217,21 @@ def build_filename_token(bbl: str, generated_at: str) -> str | None:
     ``;``, CR/LF and non-ASCII byte is DROPPED (never escaped-and-kept). The result is
     length-capped. A token that reduces to nothing, or to only ``.``/``-``/``_``, returns
     ``None`` so the caller substitutes a caller-free default (DB-065 (a))."""
-    raw = f"{bbl}-{generated_at}"
-    kept = "".join(ch for ch in raw if ch in _TOKEN_CHARS)[:MAX_TOKEN_LEN]
+    kept = _allowlist_token(f"{bbl}-{generated_at}")
     if not kept.strip("._-"):
         return None
+    return kept
+
+
+def _sanitize_fallback_token(fallback: str) -> str:
+    """Pass the caller-supplied fallback token through the SAME allowlist + length cap
+    before it reaches :func:`content_disposition` (DB-082 (c) / M5-T109 G5 A1, defence in
+    depth). Even though the route passes a safe correlation id, this choke point re-
+    allowlists so no caller value is trusted; a fallback that reduces to nothing (or only
+    ``.``/``-``/``_``) uses the caller-free server default :data:`_DEFAULT_TOKEN`."""
+    kept = _allowlist_token(fallback)
+    if not kept.strip("._-"):
+        return _DEFAULT_TOKEN
     return kept
 
 
@@ -283,6 +316,17 @@ def _reconcile(code: str, fmt: str) -> ExportRefusal:
     )
 
 
+def _reconcile_triangulation(reason: str) -> ExportRefusal:
+    """Reconcile the concave-safe triangulator's typed
+    :class:`~app.scenario.massing_guards.MassingModelError` into the ONE redacted refusal
+    shape (DB-082 (a)). The triangulator's own message can echo a caller coordinate or
+    vertex; this keeps ONLY its fixed ``reason`` code and a server-built detail, echoing no
+    caller value (DB-059 (h))."""
+    return ExportRefusal(
+        reason, f"the glb footprint could not be triangulated (reject_code={reason})"
+    )
+
+
 # --------------------------------------------------------------------------- #
 # GLB massing geometry - a SINGLE extruded prism (DB-054 (m) dedupe by construction).
 # --------------------------------------------------------------------------- #
@@ -340,23 +384,41 @@ def _build_prism_mesh(
     """Build ONE closed extruded prism (bottom cap + walls + top cap) for the footprint,
     localized to its own SW-min origin so the offsets stay inside the GLB local-coordinate
     bound. Per-floor bands are collapsed into this single extrusion, so there are NO
-    coincident stacked-prism interface caps to dedupe (DB-054 (m))."""
-    origin_x = min(x for x, _ in footprint)
-    origin_y = min(y for _, y in footprint)
-    n = len(footprint)
-    local = [(x - origin_x, y - origin_y) for x, y in footprint]
+    coincident stacked-prism interface caps to dedupe (DB-054 (m)).
+
+    The caps are triangulated by the ONE public concave-safe triangulator
+    :func:`app.scenario.massing_triangulation.triangulate_polygon` (DB-082 (a)) - NOT a
+    vertex-0 fan, which is wrong for a concave (e.g. L-shaped) footprint. It returns the
+    PREPARED CCW ring (closing duplicate dropped, exactly-collinear vertices collapsed,
+    oriented CCW) and CCW triangle indices INTO that ring; the side walls are built from
+    the SAME prepared ring so caps and walls share one boundary and one winding. The bottom
+    cap faces -z (its CCW-from-above triangles are reversed) and the top cap faces +z
+    (kept), the outward winding :mod:`app.cad.glb_writer` expects. A non-simple /
+    over-budget / out-of-range footprint raises a typed
+    :class:`~app.scenario.massing_guards.MassingModelError`, reconciled by the caller.
+    Finiteness and the coordinate magnitude bound are checked inside the triangulator
+    (``_prepare_ring``); the lot-only NYC range check is omitted there by design (M5-T112
+    G5 INFO-1) and the GLB writer re-validates finiteness, the local bound and degeneracy.
+    """
+    triangulation = triangulate_polygon(footprint, field="building_ring")
+    ring = triangulation.ring
+    cap_triangles = triangulation.triangles
+    n = len(ring)
+    origin_x = min(x for x, _ in ring)
+    origin_y = min(y for _, y in ring)
+    local = [(x - origin_x, y - origin_y) for x, y in ring]
     # bottom ring at local z = 0 (indices 0..n-1), top ring at z = roof_height (n..2n-1).
     positions: list[tuple[float, float, float]] = [(x, y, 0.0) for x, y in local]
     positions += [(x, y, roof_height) for x, y in local]
     indices: list[int] = []
-    for i in range(n):
+    for i in range(n):  # side walls, in the prepared-ring order (shared boundary)
         j = (i + 1) % n
         b_i, b_j, t_i, t_j = i, j, n + i, n + j
         indices += [b_i, b_j, t_j, b_i, t_j, t_i]  # two wall triangles
-    for i in range(1, n - 1):  # bottom cap fan
-        indices += [0, i + 1, i]
-    for i in range(1, n - 1):  # top cap fan
-        indices += [n, n + i, n + i + 1]
+    for a, b, c in cap_triangles:  # bottom cap faces -z: reverse the CCW-from-above winding
+        indices += [a, c, b]
+    for a, b, c in cap_triangles:  # top cap faces +z: keep the CCW winding, on the top ring
+        indices += [n + a, n + b, n + c]
     mesh = glb_writer.GlbMesh(
         name="massing",
         positions=positions,
@@ -410,7 +472,10 @@ def _render_glb(request: ExportRequest) -> bytes | ExportRefusal:
     roof_height, refusal = _roof_height(request.floor_heights)
     if refusal is not None:
         return refusal
-    mesh, frame = _build_prism_mesh(footprint, roof_height, request.base_elevation)
+    try:
+        mesh, frame = _build_prism_mesh(footprint, roof_height, request.base_elevation)
+    except MassingModelError as exc:
+        return _reconcile_triangulation(getattr(exc, "reason", "triangulation_error"))
     try:
         return glb_writer.write_glb([mesh], frame)
     except glb_writer.GlbWriterError as exc:
@@ -477,7 +542,9 @@ def build_export(
     if isinstance(rendered, ExportRefusal):
         return rendered
 
-    token = build_filename_token(request.bbl, request.generated_at) or fallback_token
+    token = build_filename_token(request.bbl, request.generated_at)
+    if token is None:  # re-allowlist the fallback too (DB-082 (c)); never trust a caller token
+        token = _sanitize_fallback_token(fallback_token)
     ext = _FORMAT_EXT[fmt]
     filename = f"site-plan-{token}.{ext}"
     source_label = _SOURCE_LABELS[request.source]
