@@ -1243,3 +1243,163 @@ def test_t106_as6_valid_input_goldens_byte_identical():
     assert _build(_five_floor_block()).content_hash() == (
         "sha256:e23b5cbcca6ea7defee4b04c6bac51a94d4c26b5e643e2af923d29d1c248a6c5"
     )
+
+
+# ---------------------------------------------------------------------------
+# M5-T106 round 2 (before-wiring preconditions for PKT-E / M5-T107): the typed
+# boundary is completed for out-of-float-range integers, the residual echo sites
+# are bounded, a second ShapelyError sibling pins the base-class catch, and
+# _preview is proven never to raise. Every test here is ADDED (append-only).
+# ---------------------------------------------------------------------------
+
+
+# --- MED-1: a huge-integer coordinate fails closed as a typed non_finite -----
+
+
+def test_t106r2_huge_int_lot_vertex_is_typed_non_finite():
+    """G5 MED-1 (lot path): a JSON integer literal beyond the float range (10**400)
+    makes math.isfinite overflow. It must fail closed as a typed non_finite refusal, NOT
+    escape as an untyped OverflowError. _is_finite_number treats an out-of-float-range int
+    as non-finite; the refusal message is bounded too.
+
+    Mutation (revert _is_finite_number to call math.isfinite without the OverflowError
+    guard): an untyped OverflowError escapes build_massing_model -> pytest.raises(
+    MassingModelError) is not satisfied -> RED."""
+    huge = 10 ** 400
+    lot = [[huge, 200000.0], [1000100.0, 200000.0],
+           [1000100.0, 200120.0], [1000000.0, 200120.0]]
+    with pytest.raises(MassingModelError) as exc:
+        build_massing_model(lot_ring=lot, proposed_massing=_rect_block())
+    assert exc.value.reason == "non_finite"
+    assert exc.value.field == "lot_ring[0]"
+    assert len(str(exc.value)) <= 300  # the echo of the huge int is bounded
+
+
+def test_t106r2_huge_int_footprint_vertex_is_typed_non_finite():
+    """G5 MED-1 (footprint path): the same 10**400 in the proposal FOOTPRINT overflows B0's
+    own finiteness check (proposal._is_real_number -> math.isfinite), which raises
+    OverflowError, NOT a ProposedMassingError - so the existing `except ProposedMassingError`
+    never sees it. The added `except OverflowError` types it as the same non_finite refusal.
+
+    Mutation (drop the `except OverflowError` on the B0 validation try/except): the
+    OverflowError escapes build_massing_model untyped -> RED."""
+    block = _rect_block()
+    block["outline"] = _outline(
+        [[10 ** 400, 200010.0], [1000050.0, 200010.0],
+         [1000050.0, 200070.0], [1000010.0, 200070.0]])
+    with pytest.raises(MassingModelError) as exc:
+        build_massing_model(lot_ring=LOT_RING, proposed_massing=block)
+    assert exc.value.reason == "non_finite"
+    assert exc.value.field == "proposed_massing.outline"
+
+
+# --- LOW-1 / G3 ADVISORY-1(B): the re-echoed B0 error is length-bounded -------
+
+
+def test_t106r2_b0_error_echo_is_bounded():
+    """G5 LOW-1 = G3 ADVISORY-1(B): build_massing_model re-echoes the B0 ProposedMassingError
+    text at the validation boundary. A 200,000-character FOOTPRINT vertex makes B0 produce a
+    ~200,000-character message (proposal.py:250 `{vertex!r}`), which the re-echo would repeat
+    unbounded. _preview(exc) bounds it.
+
+    Mutation (revert the re-echo to `{exc}`): the message balloons to ~200,000 chars and the
+    pasted value appears -> RED."""
+    huge = "9" * 200_000
+    block = _rect_block()
+    block["outline"] = _outline(
+        [[huge, 200010.0], [1000050.0, 200010.0],
+         [1000050.0, 200070.0], [1000010.0, 200070.0]])
+    with pytest.raises(MassingModelError) as exc:
+        build_massing_model(lot_ring=LOT_RING, proposed_massing=block)
+    msg = str(exc.value)
+    assert exc.value.reason == "invalid_source"
+    assert huge not in msg           # the pasted value is truncated, not echoed
+    assert len(msg) <= 300           # bounded (prefix + preview + marker)
+    assert "chars>" in msg           # the truncation marker is present
+
+
+# --- G3 ADVISORY-1(A) = G4 ADVISORY-2: the no-candidate detail is bounded -----
+
+
+def test_t106r2_no_candidate_detail_echo_is_bounded():
+    """G3 ADVISORY-1(A) = G4 ADVISORY-2: build_from_generated_option's no-candidate path
+    echoes the engine placement-gap `detail`. A 200,000-character detail would otherwise
+    produce a ~200,000-character refusal. _preview(detail) bounds it.
+
+    Mutation (revert to `{detail or ''}`): the full detail appears and the message is
+    ~200,000 chars -> RED."""
+    huge = "z" * 200_000
+    envelope = {
+        "candidate": None,
+        "candidate_placement": {"status": "footprint_exceeds_lot", "detail": huge},
+    }
+    with pytest.raises(MassingModelError) as exc:
+        build_from_generated_option(lot_ring=LOT_RING, max_envelope=envelope)
+    msg = str(exc.value)
+    assert exc.value.reason == "no_generated_candidate"
+    assert huge not in msg
+    assert len(msg) <= 300
+    assert "chars>" in msg
+
+    # A short, valid detail is still surfaced (the bound is transparent for small input).
+    short = {
+        "candidate": None,
+        "candidate_placement": {"status": "footprint_exceeds_lot",
+                                "detail": "the rules-derived footprint exceeds the lot"},
+    }
+    with pytest.raises(MassingModelError) as exc2:
+        build_from_generated_option(lot_ring=LOT_RING, max_envelope=short)
+    assert "footprint exceeds the lot" in str(exc2.value)
+
+
+# --- G4 ADVISORY-1: a SECOND, distinct ShapelyError sibling pins the base catch
+
+
+def test_t106r2_second_non_geos_shapely_sibling_is_also_wrapped(monkeypatch):
+    """G4 ADVISORY-1: the AS-2 wrap must catch the ShapelyError BASE class, not an
+    enumerated pair. test_t106_as2 exercises only TopologicalError; a maintainer narrowing
+    the catch to `except (GEOSException, TopologicalError)` would ship green while other
+    siblings escaped untyped. A SECOND, different sibling (GeometryTypeError - a genuine
+    ShapelyError that is neither a GEOSException NOR a TopologicalError) raised on a build
+    path is also wrapped as a typed geometry_engine_error.
+
+    Mutation (`except (GEOSException, TopologicalError)`): GeometryTypeError escapes
+    untyped -> RED (this test), while test_t106_as2 above stays green."""
+    from shapely.errors import GeometryTypeError, GEOSException, ShapelyError, TopologicalError
+
+    assert issubclass(GeometryTypeError, ShapelyError)
+    assert not issubclass(GeometryTypeError, GEOSException)
+    assert not issubclass(GeometryTypeError, TopologicalError)  # distinct from AS-2's sibling
+
+    def exploding_polygon(*args, **kwargs):
+        raise GeometryTypeError("simulated non-GEOS, non-Topological shapely failure")
+
+    monkeypatch.setattr(mm, "Polygon", exploding_polygon)
+    with pytest.raises(MassingModelError) as exc:
+        _build(_rect_block())
+    assert exc.value.reason == "geometry_engine_error"
+
+
+# --- G5 INFO: _preview itself never raises -----------------------------------
+
+
+def test_t106r2_preview_never_raises_when_repr_raises():
+    """G5 INFO: _preview must never itself raise - a refusal message must always be
+    buildable. A hostile __repr__ (RuntimeError) and a self-recursive __repr__
+    (RecursionError) both yield the fixed `<unrepresentable value>` placeholder instead of
+    propagating.
+
+    Mutation (drop the try/except so repr(value) is called directly): the exception escapes
+    _preview -> the call raises and the assertions are never reached -> RED."""
+    class _Hostile:
+        def __repr__(self):
+            raise RuntimeError("hostile __repr__")
+
+    class _Recursive:
+        def __repr__(self):
+            return repr(self)  # unbounded recursion -> RecursionError
+
+    assert mm._preview(_Hostile()) == "<unrepresentable value>"
+    assert mm._preview(_Recursive()) == "<unrepresentable value>"
+    # a normal value is still previewed verbatim (the guard is transparent)
+    assert mm._preview([1.0, 2.0]) == repr([1.0, 2.0])

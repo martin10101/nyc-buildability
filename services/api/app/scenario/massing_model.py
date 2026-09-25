@@ -57,15 +57,21 @@ and any ``shapely`` geometry-engine error on a build path is wrapped into a type
 :class:`MassingModelError` (``geometry_engine_error``) at the module boundary, so no
 untyped ``shapely`` error can escape. Valid inputs are unchanged.
 
-M5-T106 (DB-069 a-d) before-wiring hardening, ahead of the PKT-E scene seam that
+M5-T106 (DB-069 a-h) before-wiring hardening, ahead of the PKT-E scene seam that
 feeds user geometry in: the LOT NYC range check runs on the RAW vertices (before the
 collinear collapse), so an out-of-range collinear spike (e.g. x=2e6) is refused, not
-silently collapsed away; the geometry-engine wrap catches the whole
+silently collapsed away; a coordinate beyond the finite float range (a JSON integer
+literal such as ``10**400``) is treated as non-finite on BOTH the lot and footprint
+paths, so it fails closed as a typed ``non_finite`` refusal instead of an untyped
+``OverflowError`` escaping the builder; the geometry-engine wrap catches the whole
 :class:`shapely.errors.ShapelyError` family (``GEOSException`` and its siblings -
 ``TopologicalError``, ``GeometryTypeError``, ``DimensionError``...), so no ``shapely``
-error escapes untyped; and every refusal echo of caller input is length-bounded
-(:data:`MAX_ECHO_CHARS` via :func:`_preview`), so a huge pasted vertex cannot amplify
-a message. Valid inputs are unchanged (both goldens byte-identical).
+error escapes untyped; and the caller-input echoes this module itself builds - a
+rejected lot or footprint vertex, the ``source`` value, a floor height, the re-echoed
+B0 validation error, and the generated-option placement-gap detail - are each
+length-bounded through :func:`_preview` (:data:`MAX_ECHO_CHARS`), so a huge pasted
+vertex cannot amplify one of these messages; :func:`_preview` itself never raises, even
+on a hostile ``__repr__``. Valid inputs are unchanged (both goldens byte-identical).
 
 Deterministic and offline: standard library + the admitted ``shapely`` (validity,
 area, containment) and ``numpy`` (mesh volume / area reductions). No network, no new
@@ -215,8 +221,16 @@ def _preview(value: object, limit: int = MAX_ECHO_CHARS) -> str:
     the first ``limit`` characters followed by a compact ``...<+N chars>`` marker (``N``
     a small integer, so the whole preview stays bounded). A refusal that echoes a huge
     pasted vertex, source or height thus cannot amplify the message. Resolved from the
-    module namespace at call time so a mutation to it reddens the bounded-echo tests."""
-    text = repr(value)
+    module namespace at call time so a mutation to it reddens the bounded-echo tests.
+
+    ``repr`` itself never escapes this helper (DB-069 h / G5 INFO): a value whose
+    ``repr`` raises - a ``RecursionError`` on deeply-nested data, or a hostile
+    ``__repr__`` - yields the fixed ``<unrepresentable value>`` placeholder rather than
+    propagating, so a refusal message can always be built."""
+    try:
+        text = repr(value)
+    except Exception:  # noqa: BLE001 - a refusal preview must never itself raise
+        return "<unrepresentable value>"
     if len(text) <= limit:
         return text
     return f"{text[:limit]}...<+{len(text) - limit} chars>"
@@ -229,12 +243,20 @@ def _q(value: float) -> float:
 
 def _is_finite_number(value: object) -> bool:
     """True for a finite int/float that is not a bool (JSON booleans are ints in
-    Python and must never pass a numeric check)."""
-    return (
-        not isinstance(value, bool)
-        and isinstance(value, (int, float))
-        and math.isfinite(value)
-    )
+    Python and must never pass a numeric check).
+
+    An int too large to convert to float (a JSON integer literal beyond the float
+    range, e.g. ``10**400``) is treated as NON-finite (DB-069 g / G5 MED-1) instead of
+    being allowed to raise ``OverflowError`` out of ``math.isfinite``: the caller then
+    fails closed with the typed ``non_finite`` refusal rather than an untyped
+    ``OverflowError`` escaping the builder. A finite float such as ``1e300`` is
+    unaffected - it stays finite and hits the magnitude bound as before."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return False
+    try:
+        return math.isfinite(value)
+    except OverflowError:
+        return False
 
 
 def _signed_area(ring: Sequence[_Point]) -> float:
@@ -809,8 +831,18 @@ def build_massing_model(
         validate_proposed_massing(proposed_massing)
     except ProposedMassingError as exc:
         raise MassingModelError(
-            f"proposed_massing failed B0 contract validation: {exc}",
+            f"proposed_massing failed B0 contract validation: {_preview(exc)}",
             reason="invalid_source", field=exc.field) from exc
+    except OverflowError as exc:
+        # A footprint coordinate beyond the finite float range (a JSON integer literal
+        # such as 10**400) overflows B0's own finiteness check (math.isfinite on a huge
+        # int raises OverflowError, NOT a ProposedMassingError). Type it as the same
+        # non_finite refusal the lot path raises, so no untyped OverflowError escapes the
+        # builder (DB-069 g / G5 MED-1).
+        raise MassingModelError(
+            "proposed_massing carries a coordinate beyond the finite float range "
+            "(a non-finite magnitude); it is refused, never truncated",
+            reason="non_finite", field="proposed_massing.outline") from exc
 
     # Cheap bounds first: nothing below runs for an over-tall stack.
     _check_floor_cap(proposed_massing["levels"])
@@ -921,9 +953,13 @@ def build_from_generated_option(
     if candidate is None:
         placement = max_envelope.get("candidate_placement") or {}
         detail = placement.get("detail") if isinstance(placement, Mapping) else None
+        # The engine-sourced ``detail`` is length-bounded through _preview (DB-069 d
+        # extension / G3 ADVISORY-1 A = G4 ADVISORY-2): a huge detail string cannot
+        # amplify this refusal message.
+        detail_preview = _preview(detail) if detail else ""
         raise MassingModelError(
             "max_envelope emitted no candidate footprint (an explicit typed placement "
-            f"gap); no generated option can be built. {detail or ''}".strip(),
+            f"gap); no generated option can be built. {detail_preview}".strip(),
             reason="no_generated_candidate", field="max_envelope.candidate")
     return build_massing_model(
         lot_ring=lot_ring,
