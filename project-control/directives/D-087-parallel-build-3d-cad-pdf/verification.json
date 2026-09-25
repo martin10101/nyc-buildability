@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T07:47:32+00:00",
+ "verified_at": "2026-09-25T07:51:40+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1957,6 +1957,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies (shapely already pinned); UNMOUNTED (app/main.py untouched); the writers, claim_words and app/scenario untouched; PR #241 unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head b1c43167 (export_service.py 25437d25, test_export_service.py fb1ea711, M5-T116-producer-report.md bb2a479d; identity 23fd4149; evaluate_task_refs ok); report M5-T116-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T118",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R005",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "4db02f5d86a957600ad1b396ce80f42c074a6d45",
+   "reviewed_manifest_sha256": "47a4680373c6691e6959754e9867e47c401c5f17a7e52af5a1482a78688da477",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T07:51:40+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: evaluate_task_refs applicable == cited (5 ids); contracted at the wave-3 seam e8d101d7 (G0), claimed at f2ada974, produced by an orchestrator-dispatched subagent concurrently with disjoint M5-T116/M5-T117; G0..G5 all recorded, no state skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4db02f5d (sheet_reader.py 277161a5, sheet_inline_image.py 0e4321da, sheet_interpreter.py c570b6c0, sheet_primitives.py 2bd28761, sheet_objects.py 6be11292, test_sheet_p3_features.py 092027b3, test_sheet_reader.py 4da538f7, test_sheet_reader_split_equivalence.py bb448f98, test_sheet_content_features.py bddceb42, M5-T118-producer-report.md 1b023958; identity 47a46803; evaluate_task_refs ok); report M5-T118-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs 19 active neighbours; one worktree; material 992c47b1 touches exactly 9 of the 10 allowed paths, none forbidden. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4db02f5d (sheet_reader.py 277161a5, sheet_inline_image.py 0e4321da, sheet_interpreter.py c570b6c0, sheet_primitives.py 2bd28761, sheet_objects.py 6be11292, test_sheet_p3_features.py 092027b3, test_sheet_reader.py 4da538f7, test_sheet_reader_split_equivalence.py bb448f98, test_sheet_content_features.py bddceb42, M5-T118-producer-report.md 1b023958; identity 47a46803; evaluate_task_refs ok); report M5-T118-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: per-page budgets under per-document ceilings, sh skipped and counted, inline images skipped by the bounded sheet_inline_image.py (samples never decoded; ambiguity = typed refusal); G4 independently re-downloaded the six sha256-pinned real PDFs and reproduced 3 of 6 read fully (items 1/3/4), item 2 the new orphan-lineto refusal, items 5-6 scan-only; F1 advisory: a /DP-dictionary inline image is refused fail-safe (disclosed follow-up). Blob-level restamp predicate re-verified by the orchestrator at the accept head 4db02f5d (sheet_reader.py 277161a5, sheet_inline_image.py 0e4321da, sheet_interpreter.py c570b6c0, sheet_primitives.py 2bd28761, sheet_objects.py 6be11292, test_sheet_p3_features.py 092027b3, test_sheet_reader.py 4da538f7, test_sheet_reader_split_equivalence.py bb448f98, test_sheet_content_features.py bddceb42, M5-T118-producer-report.md 1b023958; identity 47a46803; evaluate_task_refs ok); report M5-T118-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies; pdf_object_streams.py, its test, sheet_marked_content.py and app/documents/ byte-identical; sheet_interpreter.py 748 < 750; unwired (no route or app/main.py change); PR #241 OPEN/unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4db02f5d (sheet_reader.py 277161a5, sheet_inline_image.py 0e4321da, sheet_interpreter.py c570b6c0, sheet_primitives.py 2bd28761, sheet_objects.py 6be11292, test_sheet_p3_features.py 092027b3, test_sheet_reader.py 4da538f7, test_sheet_reader_split_equivalence.py bb448f98, test_sheet_content_features.py bddceb42, M5-T118-producer-report.md 1b023958; identity 47a46803; evaluate_task_refs ok); report M5-T118-DCV.md."
      ]
     }
    ]
