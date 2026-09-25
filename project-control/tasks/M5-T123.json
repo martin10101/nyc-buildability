@@ -1,0 +1,122 @@
+{
+  "task_id": "M5-T123",
+  "title": "D-087 pre-mount riders 2 (DB-086 d, DB-088 a, b, e, g): per-route request-body ceilings for the UNMOUNTED 3D scene, CAD export and DXF import routes (sized for real files, with the arithmetic), the summed job slots sized under anyio's 40-token thread pool, a whitespace-only principal treated as absent, and the review test notes - routes stay UNMOUNTED",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the engineering riders that stand between the three UNMOUNTED routes and the PKT-H mount, EXCEPT the auth principal itself (a separate decision). (1) PER-ROUTE BODY CEILINGS (DB-086 d = M5-T111 G5 Finding 4): scene_api.py, export_api.py and dxf_import_api.py today borrow proposal_validation.MAX_BODY_BYTES (256 KiB), which refuses a legitimate maximum export request (about 452 KB per the M5-T111 producer) and real architect DXF files (1-20 MB). Give each route its OWN declared ceiling constant sized from evidence (the maximum legitimate request for scene and export; the real DXF corpus for import) and raise the import route's DxfLimits max_bytes with it; the DXF reader's other limits stay as they are - if they would refuse a real 20 MB file, say so as a discovery (dxf_reader.py is READ-ONLY). Declare the worst-case memory arithmetic (ceiling x in-flight slots x parse overhead) in the report. proposal_validation.py is untouched. (2) SLOT SIZING (DB-088 a): the three routes' job slots (16 each = 48) exceed anyio's default 40-token thread pool; size them so the SUM stays under the pool with headroom for the app's other run_sync users (declare the numbers and the reasoning; heavier routes get fewer slots), and add a test that fails if the sum ever exceeds the pool. (3) PRINCIPAL HYGIENE (DB-088 b): caller_key treats a whitespace-only principal as absent (host key), like an empty one. (4) TEST NOTES: DB-088 e - the AST no-local-limiter guard also catches a module-level list / set / Counter limiter; DB-088 g - the post-start-timeout tests no longer depend on a 50 ms thread-start window (an event handshake instead of sleep). Every other behaviour (limits per window, the 429 shape, deadlines, correlation ids, the generic 404 while disabled) stays exactly as it is.",
+  "business_reason": "The 3D scene, CAD export and DXF import routes are built but switched off. Before they can ever be switched on, they must accept real-sized files safely and not starve the server's thread pool; this packet closes those engineering items (the sign-in principal is separate).",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "OVERNIGHT (binding; D-089): the owner is asleep - never wait for or ask the owner anything. Put any question in the report's OPEN QUESTIONS section with your recommended answer; the orchestrator decides or queues it. Stop only for a Tier D item (legal/zoning approval, secrets, payment, licensing) and report it.",
+    "STAY UNMOUNTED (binding; plan section 2): app/main.py is NOT touched; every route stays absent from OpenAPI, flag-gated OFF by default with the generic 404 sentinel. Mounting is PKT-H, a later gated packet. The max-envelope route stays UNMOUNTED.",
+    "LOCAL PYTHON (binding): the sandbox runs Python 3.11 while app/documents/units.py uses 3.12-only PEP 695 syntax, so a pytest run that collects the app.documents chain stops at collection. Run such files through the orchestrator's scratch shim from services/api: `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\shim311\\runtests.py <tests> -q -p no:cacheprovider` (it stubs only package __init__ bodies) and mark those results [OBSERVED-via-shim]; CI (3.12) is the authority.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-086 (d), (e) and DB-088 (a), (b), (e), (g) (exact wording); project-control/reports/M5-T111-G5.md (Finding 4), M5-T111-producer-report.md (the ~452 KB export measurement, DB-D1/DB-D2), M5-T117-G5.md (the 48 vs 40 relation), M5-T117-G3.md, -G4.md, the M5-T117 producer report; docs/research/architect-drawing-corpus-2026-09.md for real file sizes where DXF sizes are recorded (if none are recorded, say so and size from the documented 1-20 MB range).",
+    "MEASURE, DO NOT GUESS (binding): the maximum legitimate scene and export request sizes are computed from the request contracts' own caps (vertex / level / field limits) with the arithmetic shown, or measured with a synthetic maximal request in a test; anyio's default thread-token count is read from the installed anyio (cite the version and the source line) - never assumed.",
+    "SAFETY (binding): every ceiling is enforced BEFORE the body is buffered beyond it (the existing streaming _read_body_within_ceiling path); the 413 shape unchanged; a test per route proves ceiling+1 byte is refused and a maximal legitimate request is accepted; mutations (the old shared 256 KiB constant; a slot sum over the pool; whitespace principal keyed) each redden a test.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at the wave-1 seam, 844 files / 18356 nodes / 7841 edges): rate_limit.py is imported by the three route modules and tests/resilience/test_rate_limit.py; the three route modules are imported only by their own tests (UNMOUNTED - app/main.py does not include them); proposal_validation.py is a MOUNTED route (READ-ONLY here - its MAX_BODY_BYTES stays 256 KiB). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/api/v1/scene_api.py, export_api.py, dxf_import_api.py - own ceilings + slot counts",
+    "services/api/app/resilience/rate_limit.py - whitespace principal treated as absent; the pool relation",
+    "services/api/tests/... - ceiling edge tests, the slot-sum guard, the broader AST guard, event handshakes",
+    "project-control/reports/M5-T123-producer-report.md (incl. the size and memory arithmetic)"
+  ],
+  "dependencies": [
+    "M5-T117"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/scene_api.py",
+    "services/api/app/api/v1/export_api.py",
+    "services/api/app/api/v1/dxf_import_api.py",
+    "services/api/app/resilience/rate_limit.py",
+    "services/api/tests/resilience/test_rate_limit.py",
+    "services/api/tests/scenario/test_scene_api.py",
+    "services/api/tests/cad/test_export_api.py",
+    "services/api/tests/drawings/test_dxf_import_api.py",
+    "project-control/reports/M5-T123-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/main.py",
+    "services/api/app/api/v1/proposal_validation.py",
+    "services/api/app/api/v1/scenario_analysis.py",
+    "services/api/app/api/v1/site_definition.py",
+    "services/api/app/drawings/",
+    "services/api/app/cad/",
+    "services/api/app/scenario/",
+    "services/api/app/resilience/breaker.py",
+    "services/api/app/resilience/budget.py",
+    "services/api/app/resilience/cache.py",
+    "services/api/app/resilience/config.py",
+    "services/api/app/resilience/fetcher.py",
+    "services/api/app/resilience/metrics.py",
+    "services/api/app/resilience/retry.py",
+    "services/api/app/resilience/transport.py",
+    "services/api/app/resilience/__init__.py",
+    "services/api/tests/api/",
+    "services/api/tests/drawings/test_sheet_import.py",
+    "services/api/tests/drawings/test_sheet_p4_features.py",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    "docs/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (ceilings): each route has its own declared ceiling sized from shown arithmetic or measurement; ceiling+1 refused with the unchanged 413 shape before buffering past it; a maximal legitimate request accepted; the import DxfLimits max_bytes raised with its ceiling; the memory arithmetic in the report.",
+    "AS-2 (slots): the summed job slots stay under anyio's thread-token count read from the installed anyio, with headroom declared; a test fails if the sum reaches the pool; heavier routes get fewer slots.",
+    "AS-3 (principal): a whitespace-only principal falls back to the host key like an empty one; mutation reddens.",
+    "AS-4 (test notes): the AST guard catches module-level list / set / Counter limiters too; the post-start-timeout tests use an event handshake, not a timing window.",
+    "AS-5 (scope): routes UNMOUNTED (app/main.py untouched); proposal_validation.py untouched; 429 shape, per-window limits, deadlines, correlation ids and the disabled 404 unchanged; zero new dependencies; ruff clean; modularity exit 0; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T08:17:45.254422+00:00",
+  "updated_at": "2026-09-25T08:17:45.788948+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003",
+        "D-087-R004",
+        "D-087-R006",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T08:17:45.254422+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/resilience tests/scenario/test_scene_api.py tests/drawings/test_dxf_import_api.py tests/cad/test_export_api.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
