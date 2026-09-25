@@ -3,7 +3,7 @@
  "directive_id": "D-086",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-086-BOOTSTRAP at capture; concrete design-cleanup packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R003 is a standing prohibition carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T16:01:06+00:00",
+ "verified_at": "2026-09-25T05:53:37+00:00",
  "task_verifications": [
   {
    "directive_id": "D-086",
@@ -47,6 +47,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: contract seam f57fccd5 sits after accepts #255-#259 and after the D-085 Opus 5.5 restart seam, as the owner ordered; blob-level restamp predicate re-verified by the orchestrator at the accept head 952f324b (P0-RECONCILIATION.md b0e24e50, disclosure-ledger-a.json a106788d, disclosure-ledger-b.json 07775443, producer report 23ed9dc1; identity 12da0949; evaluate_task_refs ok); report M5-T080-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-086",
+   "task_id": "M5-T114",
+   "applicable_requirement_ids": [
+    "D-086-R002",
+    "D-086-R001",
+    "D-086-R003",
+    "D-086-R004"
+   ],
+   "reviewed_sha": "7b3686f027b0e71aacdff4056daa456659ac2a79",
+   "reviewed_manifest_sha256": "24ac1f58b30e8ecab3b32535041b023eb8c9020dacd65694c052caecdbdf1e5e",
+   "producer": "product-design-director",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T05:53:37+00:00",
+   "requirements": [
+    {
+     "id": "D-086-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the deliverables match the assessment's P1 row (vocabulary, per-surface normal/boundary/missing/failure states, a 7 x 4 matrix, copy samples, mockups); gates G0/G2/G3 with G3 = the visual-quality design walkthrough plus a human-journey review; contracted after the accepted P0. Blob-level restamp predicate re-verified by the orchestrator at the accept head 7b3686f0 (P1-VISUAL-STATE-SPEC.md 0b223036, P1-mockups.html 0f842cbd, M5-T114-producer-report.md ec2d4c77; identity 24ac1f58; evaluate_task_refs ok); report M5-T114-DCV.md."
+     ]
+    },
+    {
+     "id": "D-086-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the spec names the assessment as input, never authorization (section 0); the phase label is report-local; the ledger id is orchestrator-assigned; no hold lifted and the assessment file untouched. Blob-level restamp predicate re-verified by the orchestrator at the accept head 7b3686f0 (P1-VISUAL-STATE-SPEC.md 0b223036, P1-mockups.html 0f842cbd, M5-T114-producer-report.md ec2d4c77; identity 24ac1f58; evaluate_task_refs ok); report M5-T114-DCV.md."
+     ]
+    },
+    {
+     "id": "D-086-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the section 7 preservation checklist; the section-29 quote word-identical to PRD.md and disclaimer.ts (one apostrophe glyph, F1, meaning and prominence intact; builders render REQUIRED_DISCLAIMER); city warnings above Continue; MR-1..MR-8 held in the register, not adopted; no status remapped, no number computed in the UI. Blob-level restamp predicate re-verified by the orchestrator at the accept head 7b3686f0 (P1-VISUAL-STATE-SPEC.md 0b223036, P1-mockups.html 0f842cbd, M5-T114-producer-report.md ec2d4c77; identity 24ac1f58; evaluate_task_refs ok); report M5-T114-DCV.md."
+     ]
+    },
+    {
+     "id": "D-086-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: P0 (M5-T080) accepted with R001-R004 PASS and its seam after the D-085 restart; P1 contracted at seq 130 as the next phase in order. Blob-level restamp predicate re-verified by the orchestrator at the accept head 7b3686f0 (P1-VISUAL-STATE-SPEC.md 0b223036, P1-mockups.html 0f842cbd, M5-T114-producer-report.md ec2d4c77; identity 24ac1f58; evaluate_task_refs ok); report M5-T114-DCV.md."
      ]
     }
    ]

@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T04:46:43+00:00",
+ "verified_at": "2026-09-25T05:53:37+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1721,6 +1721,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t109): the packet carries the graph-derived navigation block (regenerated at the contract seam, 832 files / 17984 nodes / 7700 edges) naming the writers' consumers and forbidden neighbours with the query.py --no-regen instruction; the graph stayed advisory and the harvest sweep found the one real consumer (test_glb_writer AS-5), handled in scope. Blob-level restamp predicate re-verified by the orchestrator at the accept head a9cf917a (export_service.py 2bf8963d, export_api.py dec92648, test_export_service.py 2fbce1cb, test_export_api.py 9301f098, pdf_sheet_writer.py 8064d845, test_pdf_sheet_writer.py 3935fa7c, test_glb_writer.py ca206312, M5-T109-producer-report.md ccf4480e; identity 802274bd; evaluate_task_refs ok); report M5-T109-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T114",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "7b3686f027b0e71aacdff4056daa456659ac2a79",
+   "reviewed_manifest_sha256": "24ac1f58b30e8ecab3b32535041b023eb8c9020dacd65694c052caecdbdf1e5e",
+   "producer": "product-design-director",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T05:53:37+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t114): the packet carries the navigation block (graph regenerated at the seam, 844 files / 18356 nodes / 7841 edges) naming the route/state entry points with the query.py --no-regen instruction; graph advisory. Blob-level restamp predicate re-verified by the orchestrator at the accept head 7b3686f0 (P1-VISUAL-STATE-SPEC.md 0b223036, P1-mockups.html 0f842cbd, M5-T114-producer-report.md ec2d4c77; identity 24ac1f58; evaluate_task_refs ok); report M5-T114-DCV.md."
      ]
     }
    ]

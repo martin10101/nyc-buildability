@@ -3,7 +3,7 @@
  "directive_id": "D-083",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All thirteen requirements bind the non-ledger sentinel D-083-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. R011 (owner return item) is discharged by the owner-facing reply and audited here. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T04:46:43+00:00",
+ "verified_at": "2026-09-25T05:53:37+00:00",
  "task_verifications": [
   {
    "directive_id": "D-083",
@@ -235,6 +235,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: 'Proposed - not a city record' and 'Generated building option' stay distinct; no demonstrated-maximum claim. Blob-level restamp predicate re-verified by the orchestrator at the accept head a9cf917a (export_service.py 2bf8963d, export_api.py dec92648, test_export_service.py 2fbce1cb, test_export_api.py 9301f098, pdf_sheet_writer.py 8064d845, test_pdf_sheet_writer.py 3935fa7c, test_glb_writer.py ca206312, M5-T109-producer-report.md ccf4480e; identity 802274bd; evaluate_task_refs ok); report M5-T109-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T114",
+   "applicable_requirement_ids": [
+    "D-083-R001"
+   ],
+   "reviewed_sha": "7b3686f027b0e71aacdff4056daa456659ac2a79",
+   "reviewed_manifest_sha256": "24ac1f58b30e8ecab3b32535041b023eb8c9020dacd65694c052caecdbdf1e5e",
+   "producer": "product-design-director",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T05:53:37+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: 'Proposed - not a city record', 'Generated building option' and 'Preliminary development limits' are used; sections 2.1, 7 and 9 forbid permitted / approved / maximum-allowed; a claim-word grep of both files finds only prohibitions, the section-29 text or the 'Approved copy' heading. Blob-level restamp predicate re-verified by the orchestrator at the accept head 7b3686f0 (P1-VISUAL-STATE-SPEC.md 0b223036, P1-mockups.html 0f842cbd, M5-T114-producer-report.md ec2d4c77; identity 24ac1f58; evaluate_task_refs ok); report M5-T114-DCV.md."
      ]
     }
    ]
