@@ -170,4 +170,88 @@ parsing) lives in the new focused module `scene_assembler.py`.
 - **DB-3 (GLB payload):** plan section 2.1 lists an OPTIONAL accompanying GLB via `write_glb`;
   not included in this packet (kept minimal, `app/cad` is out of scope). Route it to PKT-D/PKT-H.
 
+---
+
+## Round 2 (rework on top of integration head `8273c6881677d9ec83f1e03bc5c63af534180df7`)
+
+Round 1 review: G1/G3/G4 PASS with advisories, G5 FAIL on F-1. The full failure surface was
+inventoried and repaired as ONE bounded change across 5 files. The connector production module
+(`building_footprints_arcgis.py`) and `building_footprints_geometry.py` were NOT touched this
+round — the F-1 fix is entirely inside the assembler; the connector's own numeric inputs
+(`_coord`/`_finite`, `_check_page_size`, `_validate_deadline`) already OverflowError-guard.
+
+### Per-finding closure
+
+- **G5 F-1 (BLOCKING) — huge-int coordinate → untyped 500.** `scene_assembler._coerce_coordinate`
+  int/float branch now wraps `float(value)` in `try/except OverflowError → return None`, mirroring
+  the connector's `_finite()`. A `10**400` coordinate now flows to the existing typed
+  `unparseable_coordinate` refusal (422), not an untyped OverflowError (500). Other numeric inputs
+  checked: the assembler's ONLY float() conversion is `_coerce_coordinate` (a huge numeric STRING
+  already resolved to inf → refused via `math.isfinite`); heights/scalars are converted by the
+  massing model (M5-T106 lane, now typed-refusing) and re-raised as `SceneAssemblyError` inside
+  `build_scene_massing`'s try; site_ground/page_size/deadline are validated by the connector's
+  already-guarded helpers. Tests: service + route + an in-process mutation; also a source-revert
+  verification (below).
+- **G5 F-2 = G3 A1 — incomplete escaping.** New `_escape_untrusted_mapping` escapes both KEYS and
+  string VALUES; applied to `attributes_escaped` and each `gaps[]` record. `drift_signals` and
+  `geometry_findings` are now `_escape_untrusted`-mapped in the layer/building. The
+  `untrusted_source_text_escaped` disclosure, the module docstring, and the helper docstring are
+  rewritten to be exactly true (enumerate keys, values, geom_source, last_status_type, gap fields
+  incl. raw, drift_signals, geometry_findings). Fixed gap keys / official attribute keys escape to
+  themselves (no consumer break).
+- **G5 F-3 = G3 A2 — unbounded rate-limit state.** `_rate_limit_allows` now evicts a key when its
+  pruned window is empty and bounds the tracked-key count via new `SCENE_RATE_LIMIT_MAX_KEYS`
+  (4096): a new caller at the ceiling triggers `_evict_empty_keys` (sweep of expired keys) and, if
+  the ceiling is still full of ACTIVE callers, is refused fail-closed. The shared limiter module
+  stays a PKT-H note (DB-1, unchanged).
+- **G5 F-4 — "cancelled" overstated.** Module docstring + `SCENE_MAX_SECONDS` docstring now state
+  the truth: the awaited coroutine is cancelled and a 504 is returned with no partial scene to the
+  client; the worker thread cannot be force-killed and runs to completion, its total work bounded
+  by the connector deadline + interactive single-attempt + byte/vertex caps. Client 504 message
+  reworded to not imply a thread kill.
+- **G3 A4 — non-dict `context`.** DECISION: refuse it typed (422, field `context`) rather than
+  silently treating it as no-context; an absent/null context remains honest no-context (200,
+  not_requested). Rationale: silently swallowing a caller-fault masks the mistake and violates the
+  "typed refusals" contract. Tested (str/list/int → 422; None → 200 not_requested).
+- **G3 A5 — ground_status authority.** New layer disclosure `ground_status_is_authoritative` +
+  paired test: a consumer must not read `base_z_grounded` alone; `ground_status` is authoritative
+  (a zero/unverified ground yields a real base_z with base_z_grounded true but
+  ground_status=`ground_zero_unverified`).
+- **G4 adv 1 — vacuous AST test.** Added a traversal floor: `assert len(seen) > 1` and
+  `assert "app.api.v1.proposal_validation" in seen` (a known main-reachable module the scene route
+  also reuses), so the unreachability assertions cannot pass on an empty walk.
+- **G4 adv 2 — route caplog.** New test: a refusal carrying a hostile caller string emits a log
+  line containing ONLY `field=lot_ring[0]` + the server correlation id; the hostile string is in no
+  record.
+- **G4 adv 4 — 500 matrix pairs.** Two new tests exercise (500, internal_error): the assemble-stage
+  `except Exception` (fake raising a RuntimeError; asserts no exception text leaks) and the
+  serialization-unsafe branch (a NaN-bearing scene fails `allow_nan=False`).
+- **G1 ADV-1 — height provenance.** New `HEIGHT_PROVENANCE` (imports the connector's
+  `HEIGHT_UNIT_BASIS` [feet is inference, RQ-1] + `HEIGHT_REFERENCE` [HEIGHT_ROOF above ground, not
+  sea level]) threaded onto the context layer, present even for not_requested. Tested.
+- **OUT OF SCOPE, untouched:** shared limiter/proxy/auth (PKT-H); G1 ADV-2 (accepted connector
+  wording, DB-073 (h)); G4 adv 3 (mounted include_in_schema, PKT-H); massing_model.py.
+
+### Mutation table (reddening proof)
+
+| Finding | Guard | Mutation | Result |
+|---|---|---|---|
+| F-1 | OverflowError guard in `_coerce_coordinate` | source-revert to bare `float(value)` | `test_422_huge_int_...` + `test_as1_huge_int_...` RED (OverflowError → 500); restored → green |
+| F-1 | same | in-process: `sa._coerce_coordinate` → unguarded fn | `test_as1_overflow_guard_is_load_bearing...` asserts `OverflowError` leaks |
+| F-2 | key escaping in `_escape_untrusted_mapping` | source-revert to values-only | `test_as3_hostile_attribute_key...` RED (raw key survives); restored → green |
+| F-2 | key/gap/drift/findings escaping | in-process: `sa._escape_untrusted` → identity | `test_as3_escape_completeness_guard...` asserts raw `<k>`/`<r>`/`<d>` survive |
+| F-3 | key ceiling + eviction | source-revert to pre-fix `_rate_limit_allows` | `test_rate_limit_evicts_expired_keys...` RED (4th caller admitted); restored → green |
+| F-3 | key ceiling | in-process: raise `SCENE_RATE_LIMIT_MAX_KEYS` to 1000 | 4 active callers all admitted (embedded) |
+
+### Commands (cwd, verbatim tails)
+
+- `cd services/api && python -m ruff check .` → `All checks passed!`
+- `cd services/api && python -m pytest tests/scenario tests/connectors -q` →
+  `1842 passed in 71.47s` (was 1823; +19 tests).
+- new/edited tests verbose → `14 passed in 4.40s` (all PASSED).
+- source-revert reddening runs (F-1/F-2/F-3) → the named tests FAILED as expected, restored to
+  green after re-applying each fix.
+- `cd <repo root> && python tools/modularity_check.py --check` → `EXIT=0` (warnings only; the
+  connector production file is unchanged this round, so no growth was added to it).
+
 END-OF-REPORT

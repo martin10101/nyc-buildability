@@ -841,6 +841,13 @@ def test_pkte_connector_is_unwired_from_the_mounted_app_and_wired_only_to_the_sc
         if path is None:
             continue
         queue.extend(_app_imports(path))
+    # G4 advisory 1: a traversal FLOOR so the unreachability assertions cannot pass VACUOUSLY.
+    # If _module_path stopped resolving modules (a source-tree move), the BFS from app.main would
+    # traverse nothing (seen == {"app.main"}) and every "not in seen" assertion would pass while
+    # verifying nothing. Assert the walk actually reached a KNOWN-reachable app module.
+    assert len(seen) > 1, "the import walk resolved nothing beyond app.main (vacuous)"
+    assert "app.api.v1.proposal_validation" in seen, (
+        "a known main-reachable module is absent from the walk; the traversal is not working")
     assert "app.connectors.building_footprints_arcgis" not in seen
     assert "app.api.v1.scene_api" not in seen  # the scene route ships UNMOUNTED
     # The expected wiring: the scene assembler is the connector's one production consumer.

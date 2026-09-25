@@ -29,11 +29,14 @@ Honesty (D-083 / D-076-R002): the massing labels are the massing model's own
 labelled an official city record (display/massing grade), never permitted, approved, or
 a maximum-allowed building, and no legal conclusion is drawn.
 
-Untrusted text (DB-058 (a)): every context-building source string (the attributes map,
-``geom_source``, ``last_status_type``) is DECLARED untrusted and ESCAPED for rendering
-here (HTML-entity encoded, control characters and the U+2028/U+2029 line/paragraph
-separators stripped, length-bounded); the raw verbatim strings are not emitted into the
-scene. No source or caller text is ever logged (this module does not log at all).
+Untrusted text (DB-058 (a)): every context-building source string is DECLARED untrusted
+and ESCAPED for rendering here (HTML-entity encoded, control characters and the
+U+2028/U+2029 line/paragraph separators stripped, length-bounded). This covers the
+attributes map's KEYS and string values (the upstream host controls keys too - the
+connector passes the raw attributes map and drift-signals unknown keys), ``geom_source``,
+``last_status_type``, each gap's fields (including ``raw``), ``drift_signals``, and
+``geometry_findings``; the raw unescaped strings are not emitted into the scene. No source
+or caller text is ever logged (this module does not log at all).
 
 String coordinates (DB-054 (o)): a lot ring or footprint that arrives with numeric
 STRING coordinates (as MapPLUTO can serialize them) is parsed to float here before the
@@ -52,6 +55,8 @@ from collections.abc import Mapping
 from typing import Any
 
 from app.connectors.building_footprints_arcgis import (
+    HEIGHT_REFERENCE,
+    HEIGHT_UNIT_BASIS,
     ContextBuilding,
     ContextBuildingsResult,
 )
@@ -132,6 +137,17 @@ GROUND_DATUM_DECISION: dict[str, Any] = {
     ),
 }
 
+#: Height provenance for the context-building layer (G1 ADV-1). Threads the connector's two
+#: height caveats into the scene so a renderer that reads a raw ``height_roof_ft`` /
+#: ``ground_elevation_ft`` sees them: the unit is an INFERENCE (research RQ-1), not a published
+#: per-field unit tag, and HEIGHT_ROOF is measured ABOVE THE GROUND, not above sea level. Both
+#: strings are carried verbatim from the connector so there is one source of truth.
+HEIGHT_PROVENANCE: dict[str, Any] = {
+    "height_unit": VERTICAL_UNIT,
+    "height_unit_basis": HEIGHT_UNIT_BASIS,
+    "height_reference": HEIGHT_REFERENCE,
+}
+
 #: Scene-level honesty / limitation disclosures carried on every payload.
 _MASSING_DISCLOSURES = (
     {
@@ -167,9 +183,23 @@ _CONTEXT_DISCLOSURES = (
         "code": "untrusted_source_text_escaped",
         "backlog": "DB-058 (a)",
         "detail": (
-            "Context-building source strings (attributes, geom_source, last_status_type) are "
-            "verbatim official text; they are declared untrusted and are HTML-escaped and "
-            "control-character-stripped here before rendering. The raw strings are not emitted."
+            "Context-building source strings are verbatim official text declared untrusted and "
+            "HTML-escaped (control characters and the U+2028/U+2029 separators stripped, "
+            "length-bounded) here before rendering. Every such field is escaped: the attributes "
+            "map KEYS and string values, geom_source, last_status_type, each gap's fields "
+            "(including raw), drift_signals, and geometry_findings. The raw unescaped strings are "
+            "not emitted."
+        ),
+    },
+    {
+        "code": "ground_status_is_authoritative",
+        "backlog": None,
+        "detail": (
+            "ground_status is the authoritative grounding field for a context building. A "
+            "consumer must not read base_z_grounded alone: a zero or otherwise unverified "
+            "GROUND_ELEVATION still yields a real base_z_ft with base_z_grounded true, and only "
+            "ground_status (grounded / ground_zero_unverified / ground_elevation_missing / "
+            "site_ground_not_supplied) discloses whether the ground is verified."
         ),
     },
     {
@@ -210,7 +240,15 @@ def _coerce_coordinate(value: object) -> float | None:
     if isinstance(value, bool):
         return None
     if isinstance(value, (int, float)):
-        number = float(value)
+        try:
+            number = float(value)
+        except OverflowError:
+            # A JSON integer literal beyond float range (e.g. 10**400) would make float()
+            # raise an untyped OverflowError; refuse it as an unparseable coordinate so the
+            # caller gets the typed refusal, never a 500 (G5 F-1). Mirrors the connector's
+            # _finite() OverflowError guard. (A huge numeric STRING resolves to inf, which the
+            # math.isfinite() check below already refuses.)
+            return None
         return number if math.isfinite(number) else None
     if isinstance(value, str):
         try:
@@ -342,10 +380,16 @@ def _escape_untrusted(value: object) -> object:
     return escaped[:MAX_UNTRUSTED_LEN] + "...(truncated)"
 
 
-def _escape_attributes(attributes: Mapping[str, Any]) -> dict:
-    """Escape every string VALUE of an official attributes map for rendering; keep numeric
-    and null values as-is. Keys are the pinned official field names (not caller text)."""
-    return {name: _escape_untrusted(value) for name, value in attributes.items()}
+def _escape_untrusted_mapping(mapping: Mapping[Any, Any]) -> dict:
+    """Escape every string KEY and string VALUE of a flat untrusted/official mapping for
+    rendering; numeric and null keys/values pass through unchanged (DB-058 (a) / G5 F-2).
+
+    The upstream host controls attribute KEYS too - the connector passes the full raw
+    attributes map (``attributes=dict(attrs)``) and drift-signals any unknown key, so a novel
+    or hostile key string can reach the payload; escaping both key and value closes that vector.
+    The pinned official keys (and the fixed gap keys ``field``/``code``/``raw``) contain no
+    special characters, so escaping is a no-op for them and only encodes genuinely hostile text."""
+    return {_escape_untrusted(key): _escape_untrusted(value) for key, value in mapping.items()}
 
 
 # ---------------------------------------------------------------------------
@@ -388,7 +432,8 @@ def _context_building(building: ContextBuilding, site_ground: float | None) -> d
         "ground_status": _ground_status(building, site_ground),
         "vertical_unit": VERTICAL_UNIT,
         "geometry_status": building.geometry_status,
-        "geometry_findings": list(building.geometry_findings),
+        # DB-058 (a) / G5 F-2: findings carry repr-bounded upstream-derived diagnostics; escape.
+        "geometry_findings": [_escape_untrusted(f) for f in building.geometry_findings],
         "parts": [
             {"exterior": [list(pt) for pt in part.exterior],
              "holes": [[list(pt) for pt in hole] for hole in part.holes],
@@ -400,13 +445,15 @@ def _context_building(building: ContextBuilding, site_ground: float | None) -> d
         "footprint_area_sq_ft": building.footprint_area_sq_ft,
         "query_relation": building.query_relation,
         "flags": list(building.flags),
-        "gaps": [dict(gap) for gap in building.gaps],
+        # DB-058 (a) / G5 F-2: gaps[].raw carries a repr of an upstream value; escape every
+        # string in each gap (the fixed field/code keys escape to themselves).
+        "gaps": [_escape_untrusted_mapping(gap) for gap in building.gaps],
         # DB-058 (a): the untrusted source strings, declared and ESCAPED for rendering.
         "untrusted_text_fields": list(building.untrusted_text_fields),
         "untrusted_text_notice": building.untrusted_text_notice,
         "geom_source_escaped": _escape_untrusted(building.geom_source),
         "last_status_type_escaped": _escape_untrusted(building.last_status_type),
-        "attributes_escaped": _escape_attributes(building.attributes),
+        "attributes_escaped": _escape_untrusted_mapping(building.attributes),
     }
 
 
@@ -444,6 +491,7 @@ def _context_layer(
         "layer": CONTEXT_LAYER,
         "vertical_unit": VERTICAL_UNIT,
         "ground_datum": GROUND_DATUM_DECISION,
+        "height_provenance": HEIGHT_PROVENANCE,
         "disclosures": [dict(d) for d in _CONTEXT_DISCLOSURES],
     }
     if result is None:
@@ -455,7 +503,8 @@ def _context_layer(
         site_ground_elevation_ft=result.site_ground_elevation_ft,
         subject_bbl=result.subject_bbl,
         crs=dict(result.crs),
-        drift_signals=list(result.drift_signals),
+        # DB-058 (a) / G5 F-2: a drift signal embeds a repr of an unknown upstream KEY; escape.
+        drift_signals=[_escape_untrusted(s) for s in result.drift_signals],
         provenance=result.provenance(),
         refusal=_context_refusal_block(result),
         buildings=[_context_building(b, result.site_ground_elevation_ft)

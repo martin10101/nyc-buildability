@@ -23,11 +23,15 @@ boundary primitives:
   arrive with the PUBLIC exposure packet (PKT-H), recorded here as a disposition, not
   implemented (the route is unreachable without the internal flag).
 * Job safety (DB-061 (i), the M5-T088 G5 fix (b)) - the assembly (the CPU-bound massing build
-  + the connector fetch + the assemble) runs OFF the event loop in a CANCELLABLE job under a
-  per-request wall-clock deadline (``asyncio.wait_for`` over ``run_in_threadpool``), and the
-  connector is called ``interactive=True`` with a matching wall-clock ``deadline`` so its own
-  paging is bounded too (DB-073 (c)). Over the deadline -> a typed 504, never a partial scene.
-  A per-caller RATE LIMIT (in-process, stdlib) precedes all work.
+  + the connector fetch + the assemble) runs OFF the event loop under a per-request wall-clock
+  deadline (``asyncio.wait_for`` over ``run_in_threadpool``), and the connector is called
+  ``interactive=True`` with a matching wall-clock ``deadline`` so its own paging is bounded too
+  (DB-073 (c)). Over the deadline the AWAIT is cancelled and a typed 504 is returned with no
+  partial scene reaching the client; the underlying worker thread cannot be force-killed and
+  runs to completion in the background, but its total work is independently bounded (the
+  connector's own wall-clock deadline + ``interactive`` single-attempt posture + response-byte
+  and vertex caps; the massing build is vertex-bounded), so no unbounded work is left running.
+  A per-caller RATE LIMIT (in-process, stdlib, memory-bounded) precedes all work.
 * Logging - only a SERVER-generated correlation id, the state, and bounded field names reach a
   log line; no caller or upstream text is ever logged (the assembler does not log at all).
 
@@ -64,6 +68,7 @@ __all__ = [
     "MAX_FIELD_LEN",
     "SCENE_MAX_SECONDS",
     "SCENE_RATE_LIMIT_MAX",
+    "SCENE_RATE_LIMIT_MAX_KEYS",
     "SCENE_RATE_LIMIT_WINDOW_S",
     "SCENE_STATUS_STATE_MATRIX",
     "get_context_buildings_fetch",
@@ -79,7 +84,9 @@ router = APIRouter(prefix="/api/v1", tags=["scene"])
 MAX_FIELD_LEN = 200
 
 #: Per-request wall-clock budget for the whole off-event-loop assembly (DB-061 (i)). Over it,
-#: the job is cancelled and a typed 504 is returned - never a partial scene.
+#: the awaited job is cancelled and a typed 504 is returned to the client - never a partial
+#: scene; the worker thread itself cannot be force-killed and runs to completion, bounded by the
+#: connector's own deadline and byte/vertex caps (see the module docstring).
 SCENE_MAX_SECONDS = 15.0
 
 #: Per-caller in-process rate limit (a sliding window). Keyed by caller host; the internal
@@ -88,7 +95,15 @@ SCENE_MAX_SECONDS = 15.0
 SCENE_RATE_LIMIT_MAX = 30
 SCENE_RATE_LIMIT_WINDOW_S = 60.0
 
+#: Upper bound on the number of distinct caller-host keys the sliding-window state may hold, so
+#: a spray of distinct callers cannot grow ``_rate_state`` without bound (G5 F-3 / G3 A2). When
+#: a NEW caller arrives at the ceiling, expired-window keys are swept first; if the ceiling is
+#: still full of ACTIVE callers the new caller is refused (fail-closed). A durable per-caller
+#: key (chosen at the auth seam) and a shared limiter module arrive with PKT-H.
+SCENE_RATE_LIMIT_MAX_KEYS = 4096
+
 #: Per-caller request timestamps (monotonic seconds), keyed by caller host. In-process only.
+#: Bounded to ``SCENE_RATE_LIMIT_MAX_KEYS`` active keys; expired windows are evicted.
 _rate_state: dict[str, list[float]] = {}
 
 #: The documented (HTTP status, state) pairs - the single source of truth. The 200 scene
@@ -124,15 +139,35 @@ def _reset_rate_limit_state() -> None:
     _rate_state.clear()
 
 
+def _evict_empty_keys(now: float, window: float) -> None:
+    """Drop every key whose window is empty after pruning (G5 F-3 / G3 A2), so the state holds
+    only currently-active callers. O(keys); called only when a NEW caller hits the key ceiling."""
+    for key in list(_rate_state):
+        if not any(now - t < window for t in _rate_state[key]):
+            _rate_state.pop(key, None)
+
+
 def _rate_limit_allows(caller_key: str) -> bool:
-    """Sliding-window per-caller rate limit (DB-061 (i)). Reads the module-level max/window at
-    call time so a test can tighten them. Prunes stamps outside the window on each call."""
+    """Sliding-window per-caller rate limit (DB-061 (i)), memory-bounded (G5 F-3 / G3 A2). Reads
+    the module-level max/window/key-ceiling at call time so a test can tighten them. Prunes the
+    caller's stamps outside the window on each call, EVICTS the caller's key when that window is
+    empty (so a dead entry is never left behind), and bounds the total distinct-key count: a new
+    caller arriving at the ceiling triggers a sweep of expired keys, and if the ceiling is still
+    full of active callers the new caller is refused (fail-closed)."""
     now = _rate_limit_clock()
     window = SCENE_RATE_LIMIT_WINDOW_S
     stamps = [t for t in _rate_state.get(caller_key, []) if now - t < window]
+    if not stamps:
+        # An empty window (a brand-new caller or one whose stamps all expired) leaves no entry
+        # behind; the caller is then treated as new for the key-ceiling check below.
+        _rate_state.pop(caller_key, None)
     if len(stamps) >= SCENE_RATE_LIMIT_MAX:
-        _rate_state[caller_key] = stamps
+        _rate_state[caller_key] = stamps  # at the limit: keep the (nonempty) window, refuse
         return False
+    if caller_key not in _rate_state and len(_rate_state) >= SCENE_RATE_LIMIT_MAX_KEYS:
+        _evict_empty_keys(now, window)
+        if len(_rate_state) >= SCENE_RATE_LIMIT_MAX_KEYS:
+            return False  # key ceiling full of active callers: refuse the new caller (fail-closed)
     stamps.append(now)
     _rate_state[caller_key] = stamps
     return True
@@ -204,8 +239,8 @@ def _deadline_exceeded(correlation_id: str) -> JSONResponse:
         {
             "state": "deadline_exceeded",
             "message": (
-                "the scene assembly exceeded the per-request time budget and was cancelled; "
-                "no partial scene is returned"
+                "the scene assembly exceeded the per-request time budget; the request was "
+                "cancelled and no scene is returned"
             ),
             "correlation_id": correlation_id,
         },
@@ -284,7 +319,16 @@ async def post_scene(request: Request) -> JSONResponse:
         return _validation_error(
             "exactly one of proposed_massing or generated_option is required", correlation_id,
             field="proposed_massing")
-    context = body.get("context") if isinstance(body.get("context"), dict) else {}
+    # G3 A4: a non-dict `context` is a caller-side request fault, not "no context" - refuse it
+    # typed rather than silently ignoring it (an absent or null context is honest no-context).
+    context_raw = body.get("context")
+    if context_raw is None:
+        context: dict = {}
+    elif isinstance(context_raw, dict):
+        context = context_raw
+    else:
+        return _validation_error(
+            "context must be a JSON object when present", correlation_id, field="context")
 
     # The whole assembly runs OFF the event loop in a CANCELLABLE job under the per-request
     # wall-clock deadline (DB-061 (i)). The connector is called interactive=True with a matching

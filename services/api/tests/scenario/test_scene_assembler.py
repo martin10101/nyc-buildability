@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import ast
 import json
+import math
 from pathlib import Path
 
 import pytest
@@ -199,6 +200,75 @@ def test_as1_non_numeric_or_non_finite_coordinate_is_refused_typed():
         assert exc.value.field == "lot_ring[0]"
 
 
+def test_as1_huge_int_coordinate_is_refused_typed_never_a_500():
+    """G5 F-1: a JSON integer literal beyond float range (10**400) in ANY coordinate is a typed
+    unparseable_coordinate refusal, never an untyped OverflowError -> 500. Covered in the lot ring
+    AND a proposed-massing outline vertex (both flow through _coerce_coordinate)."""
+    huge = 10**400
+    ring = [[huge, 200000.0], [1000100.0, 200000.0],
+            [1000100.0, 200120.0], [1000000.0, 200120.0]]
+    with pytest.raises(SceneAssemblyError) as lot_exc:
+        build_scene_massing(lot_ring=ring, proposed_massing=_pm())
+    assert lot_exc.value.reason == "unparseable_coordinate"
+    assert lot_exc.value.field == "lot_ring[0]"
+
+    pm = _pm()
+    pm["outline"]["vertices"] = [[huge, 200010.0], *pm["outline"]["vertices"][1:]]
+    with pytest.raises(SceneAssemblyError) as pm_exc:
+        build_scene_massing(lot_ring=LOT_RING, proposed_massing=pm)
+    assert pm_exc.value.reason == "unparseable_coordinate"
+    assert pm_exc.value.field == "proposed_massing.outline.vertices[0]"
+
+    # A huge numeric STRING resolves to inf and is refused the same way (the str branch already
+    # goes through math.isfinite); pin it so both int and string overflow paths are covered.
+    assert sa._coerce_coordinate("1" + "0" * 400) is None
+    assert sa._coerce_coordinate(huge) is None  # the guarded int/float branch returns None
+
+
+def test_as1_overflow_guard_is_load_bearing_in_process_mutation(monkeypatch):
+    """G5 F-1 in-process mutation (mutate the CONSUMING namespace): an UNGUARDED _coerce_coordinate
+    lets float(10**400) raise the untyped OverflowError inside parse_ring - proving the
+    OverflowError guard is what turns the huge int into the typed refusal."""
+    ring = [[10**400, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]
+    # Real, guarded code: a typed refusal.
+    with pytest.raises(SceneAssemblyError):
+        parse_ring(ring, "lot_ring")
+
+    def _unguarded(value):  # the pre-fix body: no OverflowError guard on the int/float branch
+        if isinstance(value, bool):
+            return None
+        if isinstance(value, (int, float)):
+            number = float(value)  # raises OverflowError for a huge int
+            return number if math.isfinite(number) else None
+        if isinstance(value, str):
+            try:
+                number = float(value.strip())
+            except (ValueError, TypeError):
+                return None
+            return number if math.isfinite(number) else None
+        return None
+
+    monkeypatch.setattr(sa, "_coerce_coordinate", _unguarded)
+    with pytest.raises(OverflowError):  # the guard, removed, leaks the untyped error
+        parse_ring(ring, "lot_ring")
+
+
+def test_as1_context_height_provenance_is_threaded_from_the_connector():
+    """G1 ADV-1: the connector's height_unit_basis (feet is an inference, RQ-1) and
+    height_reference (HEIGHT_ROOF above ground, not sea level) are threaded into the context
+    layer, present even when no context was requested."""
+    from app.connectors.building_footprints_arcgis import HEIGHT_REFERENCE, HEIGHT_UNIT_BASIS
+
+    for context in (_result(), None):
+        layer = _scene(context=context)["context_buildings"]
+        hp = layer["height_provenance"]
+        assert hp["height_unit"] == VERTICAL_UNIT
+        assert hp["height_unit_basis"] == HEIGHT_UNIT_BASIS
+        assert "INFERENCE" in hp["height_unit_basis"]
+        assert hp["height_reference"] == HEIGHT_REFERENCE
+        assert "not height above sea level" in hp["height_reference"]
+
+
 def test_as1_assembler_is_deterministic():
     a = _scene(context=_result())
     b = _scene(context=_result())
@@ -248,6 +318,20 @@ def test_as2_per_level_nesting_and_party_wall_are_disclosed():
     codes = {d["code"]: d for d in _scene()["disclosures"]}
     assert codes["per_level_nesting_not_asserted"]["backlog"] == "DB-054 (l)"
     assert codes["no_party_wall_distinction"]["backlog"] == "DB-054 (n)"
+
+
+def test_as2_ground_status_authority_is_disclosed_for_consumers():
+    """G3 A5: the layer discloses that ground_status - not base_z_grounded - is the authoritative
+    grounding field, so a consumer does not treat a zero/unverified ground as verified."""
+    codes = {d["code"]: d for d in _scene(context=_result())["context_buildings"]["disclosures"]}
+    note = codes["ground_status_is_authoritative"]["detail"]
+    assert "ground_status" in note and "base_z_grounded" in note
+    assert "ground_zero_unverified" in note
+    # The paired zero-but-unverified row: a real base_z with base_z_grounded True yet not verified.
+    building = _building(ground_elevation_ft=0.0, flags=["ground_elevation_zero_unverified"],
+                         relative_base_z_ft=-200.0, relative_roof_z_ft=-155.0)
+    (out,) = _scene(context=_result([building]))["context_buildings"]["buildings"]
+    assert out["base_z_grounded"] is True and out["ground_status"] == "ground_zero_unverified"
 
 
 def test_as2_multipolygon_courtyard_holes_are_disclosed_never_dropped():
@@ -319,6 +403,48 @@ def test_as3_escape_guard_is_load_bearing_in_process_mutation(monkeypatch):
     monkeypatch.setattr(sa, "_RENDER_UNSAFE_DELETE", {})
     mutated = _scene(context=_result([building]))["context_buildings"]["buildings"][0]
     assert " " in mutated["last_status_type_escaped"]  # the guard, disabled, leaks it
+
+
+def test_as3_hostile_attribute_key_gap_raw_and_drift_name_are_escaped():
+    """G5 F-2 / G3 A1: attribute KEYS, gap raw values, drift-signal names and geometry findings are
+    untrusted upstream text too - all are HTML-escaped, so no raw markup survives in the payload."""
+    hostile_key = "<img src=x onerror=alert(1)>"
+    building = _building(
+        attributes={hostile_key: "v", "OBJECTID": 1},
+        gaps=[{"field": "HEIGHT_ROOF", "code": "malformed", "raw": "'<b>boom</b>'"}],
+        geometry_findings=["invalid_part:0:<self-intersection>"])
+    result = _result([building])
+    result.drift_signals = ["unknown_attribute:'<script>evil</script>'"]
+    scene = _scene(context=result)
+    layer = scene["context_buildings"]
+    (out,) = layer["buildings"]
+    # The attribute KEY (F-2's core vector) is escaped: the raw key is gone, encoded form present.
+    assert hostile_key not in out["attributes_escaped"]
+    assert "&lt;img src=x onerror=alert(1)&gt;" in out["attributes_escaped"]
+    # gap raw, drift name and geometry findings escaped.
+    assert out["gaps"][0]["raw"] == "&#x27;&lt;b&gt;boom&lt;/b&gt;&#x27;"
+    assert out["gaps"][0]["field"] == "HEIGHT_ROOF"  # server literal unchanged
+    assert out["geometry_findings"] == ["invalid_part:0:&lt;self-intersection&gt;"]
+    assert layer["drift_signals"] == [
+        "unknown_attribute:&#x27;&lt;script&gt;evil&lt;/script&gt;&#x27;"]
+    dumped = json.dumps(scene)
+    for raw in ("<img", "<b>", "<script>", "<self-intersection>"):
+        assert raw not in dumped
+
+
+def test_as3_escape_completeness_guard_is_load_bearing_in_process_mutation(monkeypatch):
+    """G5 F-2 in-process mutation (consuming namespace): with _escape_untrusted made identity, the
+    hostile attribute KEY, gap raw and drift name all survive raw - proving the added key/gap/drift
+    escaping is load-bearing (not just value escaping)."""
+    building = _building(attributes={"<k>": "v"},
+                         gaps=[{"field": "F", "code": "c", "raw": "<r>"}])
+    result = _result([building])
+    result.drift_signals = ["<d>"]
+    clean = json.dumps(_scene(context=result))
+    assert "<k>" not in clean and "<r>" not in clean and "<d>" not in clean
+    monkeypatch.setattr(sa, "_escape_untrusted", lambda v: v)
+    leaked = json.dumps(_scene(context=result))
+    assert "<k>" in leaked and "<r>" in leaked and "<d>" in leaked
 
 
 def test_as3_context_refusal_is_disclosed_and_bounded_never_dropped():

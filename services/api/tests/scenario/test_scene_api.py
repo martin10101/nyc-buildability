@@ -15,6 +15,7 @@ AS-6 (scope): zero new dependencies; app/main.py untouched.
 
 from __future__ import annotations
 
+import logging
 import time
 
 import pytest
@@ -240,6 +241,28 @@ def test_bad_field_is_bounded(client):
     assert len(resp.json()["message"]) < 1000
 
 
+def test_422_huge_int_coordinate_is_typed_not_a_500(client):
+    """G5 F-1: a JSON integer coordinate beyond float range (10**400) is a typed 422
+    (unparseable_coordinate) naming the field, never an untyped OverflowError -> 500."""
+    resp = client.post(_URL, json=_body(lot_ring=[[10**400, 0], [1, 0], [1, 1], [0, 1]]))
+    assert _pair(resp) == (422, "validation_error")
+    assert resp.json()["field"] == "lot_ring[0]"
+    assert resp.headers.get("X-Correlation-ID")
+
+
+def test_422_non_dict_context_is_refused_typed(client):
+    """G3 A4: a non-dict `context` is a caller-side request fault -> typed 422 naming the field,
+    not a silently ignored no-context (which would mask the caller's mistake)."""
+    for bad in ("not-an-object", [1, 2], 5):
+        resp = client.post(_URL, json=_body(context=bad))
+        assert _pair(resp) == (422, "validation_error"), bad
+        assert resp.json()["field"] == "context"
+    # An ABSENT/null context is still honest no-context (200, not_requested).
+    resp = client.post(_URL, json=_body(context=None))
+    assert resp.status_code == 200
+    assert resp.json()["context_buildings"]["status"] == "not_requested"
+
+
 # ---------------------------------------------------------------------------
 # AS-4: the per-caller rate limit (DB-061 (i)) + a reddening mutation.
 # ---------------------------------------------------------------------------
@@ -259,6 +282,58 @@ def test_429_rate_limit_and_its_reddening_mutation(client, monkeypatch):
     monkeypatch.setattr(mod, "SCENE_RATE_LIMIT_MAX", 1000)
     mod._reset_rate_limit_state()
     assert [client.post(_URL, json=_body()).status_code for _ in range(4)] == [200] * 4
+
+
+# ---------------------------------------------------------------------------
+# AS-4: the rate-limit state is MEMORY-BOUNDED (G5 F-3 / G3 A2) + reddening mutations.
+# ---------------------------------------------------------------------------
+
+
+def test_rate_limit_evicts_expired_keys_and_bounds_the_key_count(monkeypatch):
+    """G5 F-3 / G3 A2: the sliding-window state evicts a key whose window expired and bounds the
+    total tracked-key count, so a spray of distinct callers cannot grow it without bound. In-process
+    mutation: raising the key ceiling far above the caller count removes the refusal, proving the
+    ceiling is load-bearing. (Unit-level: TestClient gives every request the same host.)"""
+    clock = {"t": 1000.0}
+    monkeypatch.setattr(mod, "_rate_limit_clock", lambda: clock["t"])
+    monkeypatch.setattr(mod, "SCENE_RATE_LIMIT_WINDOW_S", 60.0)
+    monkeypatch.setattr(mod, "SCENE_RATE_LIMIT_MAX_KEYS", 3)
+    mod._reset_rate_limit_state()
+
+    for host in ("a", "b", "c"):  # three distinct active callers fill the key ceiling
+        assert mod._rate_limit_allows(host) is True
+    assert len(mod._rate_state) == 3
+
+    # A fourth NEW caller while all windows are active -> the ceiling refuses it (fail-closed);
+    # the dict does not grow.
+    assert mod._rate_limit_allows("d") is False
+    assert len(mod._rate_state) == 3 and "d" not in mod._rate_state
+
+    # Advance past the window: the three windows expire. A new caller triggers the sweep, the
+    # expired keys are evicted, and the dict stays bounded.
+    clock["t"] += 61.0
+    assert mod._rate_limit_allows("d") is True
+    assert set(mod._rate_state) == {"d"}
+
+    # Mutation: with a large ceiling the fourth active caller is admitted (no refusal).
+    clock["t"] = 5000.0
+    monkeypatch.setattr(mod, "SCENE_RATE_LIMIT_MAX_KEYS", 1000)
+    mod._reset_rate_limit_state()
+    assert [mod._rate_limit_allows(h) for h in ("a", "b", "c", "d")] == [True] * 4
+    assert len(mod._rate_state) == 4
+
+
+def test_rate_limit_evicts_a_single_key_whose_window_emptied(monkeypatch):
+    """G5 F-3: a key with no live stamps left is dropped, never kept as a dead entry."""
+    clock = {"t": 0.0}
+    monkeypatch.setattr(mod, "_rate_limit_clock", lambda: clock["t"])
+    monkeypatch.setattr(mod, "SCENE_RATE_LIMIT_WINDOW_S", 10.0)
+    mod._reset_rate_limit_state()
+    assert mod._rate_limit_allows("solo") is True
+    assert mod._rate_state["solo"] == [0.0]
+    clock["t"] = 100.0  # the window has expired
+    mod._evict_empty_keys(clock["t"], mod.SCENE_RATE_LIMIT_WINDOW_S)
+    assert "solo" not in mod._rate_state
 
 
 # ---------------------------------------------------------------------------
@@ -286,6 +361,59 @@ def test_504_deadline_and_its_reddening_mutation(client, monkeypatch):
     monkeypatch.setattr(mod, "SCENE_MAX_SECONDS", 30.0)
     mod._reset_rate_limit_state()
     assert client.post(_URL, json=_body()).status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# AS-3/AS-4: no caller or upstream text reaches a log line (G4 advisory 2).
+# ---------------------------------------------------------------------------
+
+
+def test_no_caller_or_upstream_text_reaches_a_log_line(client, caplog):
+    """G4 advisory 2: the route logs ONLY a server correlation id + bounded server-vocabulary field
+    names - never caller or upstream text. A refusal carrying a hostile caller string logs the field
+    path only, and the hostile string appears in NO log record."""
+    hostile = "<script>hostile-caller-text</script>"
+    with caplog.at_level(logging.INFO, logger="app.api.v1.scene_api"):
+        resp = client.post(_URL, json=_body(lot_ring=[[hostile, "0"], [1, 0], [1, 1], [0, 1]]))
+    assert resp.status_code == 422
+    messages = [r.getMessage() for r in caplog.records]
+    assert messages, "expected the refusal to emit a log line"
+    joined = "\n".join(messages)
+    assert hostile not in joined and "hostile-caller-text" not in joined
+    # What IS logged: the server field vocabulary + the correlation id, nothing caller-derived.
+    cid = resp.headers["X-Correlation-ID"]
+    assert any("field=lot_ring[0]" in m and cid in m for m in messages)
+
+
+# ---------------------------------------------------------------------------
+# AS-4/AS-6: the (500, "internal_error") matrix pairs are exercised (G4 advisory 4).
+# ---------------------------------------------------------------------------
+
+
+def test_500_assemble_stage_unexpected_error_is_generic(client, monkeypatch):
+    """G4 advisory 4: an unexpected (non-typed) error inside the off-loop assembly maps to the
+    documented generic (500, internal_error); no exception text reaches the client."""
+    def _boom(**kwargs):
+        raise RuntimeError("<secret-internal-detail>")
+
+    monkeypatch.setattr(mod, "build_scene_payload", _boom)
+    resp = client.post(_URL, json=_body())
+    assert _pair(resp) == (500, "internal_error")
+    assert _pair(resp) in SCENE_STATUS_STATE_MATRIX
+    assert resp.headers.get("X-Correlation-ID")
+    assert "secret-internal-detail" not in resp.text
+
+
+def test_500_serialization_unsafe_scene_is_generic(client, monkeypatch):
+    """G4 advisory 4: a scene that survives the pre-parse guard but is not strict-JSON serializable
+    (a NaN slipping in) maps to the documented (500, internal_error), never a partial/NaN body."""
+    def _nan_scene(**kwargs):
+        return {"scene_version": "scene-1.0.0", "bad": float("nan")}
+
+    monkeypatch.setattr(mod, "build_scene_payload", _nan_scene)
+    resp = client.post(_URL, json=_body())
+    assert _pair(resp) == (500, "internal_error")
+    assert _pair(resp) in SCENE_STATUS_STATE_MATRIX
 
 
 # ---------------------------------------------------------------------------
