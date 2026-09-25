@@ -1,0 +1,118 @@
+{
+  "task_id": "M5-T118",
+  "title": "D-087 PDF-reading P3 (the M5-T113 real-corpus next blockers): per-page work budgets under a bounded document ceiling (DB-055 c), the sh shading operator skipped as non-geometry, inline images (BI/ID/EI) skipped safely instead of refusing the document (DB-055 d) - re-run the six real architect PDFs by sha256",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Take the architect-sheet reader past the three named blockers from the M5-T113 corpus run. (1) Budgets (DB-055 c): items 1-2 (88- and 94-page vector sets) hit the per-DOCUMENT 200k operator budget; restructure the point/operator/decoded-byte budgets as per-PAGE budgets under a bounded per-document ceiling (declare every number and the worst-case CPU/memory arithmetic; nothing unbounded; the per-request deadline stays the future route's duty, DB-076 d). (2) The sh operator (ISO 32000-1 8.7.4.2 / Table 77 area, shading) paints a colour fill, not linework: skip it as non-geometry with a disclosure count, never a refusal (item 3). (3) Inline images (8.9.7: BI <dict> ID <data> EI) are skipped safely instead of refusing the whole document (item 4): parse the inline image dictionary with the existing bounded lexer, compute the data length when it is determinable (unfiltered: width x height x components x bits), otherwise scan for a whitespace-delimited EI under a byte cap; any ambiguity = a typed refusal, never a guess that desynchronizes the content stream. Put the inline-image logic in a new module app/drawings/sheet_inline_image.py so sheet_interpreter.py (690 lines) stays under 750. Then re-run the six real files by sha256 and report honestly: if any reads fully, say which and what it produced; items 5-6 are scans and stay an honest scan-only refusal.",
+  "business_reason": "The owner's goal is reading real architect PDF drawings (D-087-R005). After M5-T113 the six real files stop at three named, fixable blockers; clearing them may let the first real architect drawings read.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "OVERNIGHT (binding; D-089): the owner is asleep - never wait for or ask the owner anything. Put any question in the report's OPEN QUESTIONS section with your recommended answer; the orchestrator decides or queues it. Stop only for a Tier D item (legal/zoning approval, secrets, payment, licensing) and report it.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - the module stays wired exactly as today. The max-envelope route stays UNMOUNTED.",
+    "LOCAL PYTHON (binding): the sandbox runs Python 3.11 while app/documents/units.py uses 3.12-only PEP 695 syntax, so a pytest run that collects the app.documents chain stops at collection. Run such files through the orchestrator's scratch shim from services/api: `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\shim311\\runtests.py <tests> -q -p no:cacheprovider` (it stubs only package __init__ bodies) and mark those results [OBSERVED-via-shim]; CI (3.12) is the authority.",
+    "SPEC SOURCE (binding): project-control/reports/M5-T113-producer-report.md (the real-corpus table and the D-notes), M5-T113-G1.md, -G3.md, -G4.md, -G5.md; docs/DISCOVERY_BACKLOG.md DB-055 (c), (d) and DB-076 (d), (j) and the M5-T113 riders row; docs/research/architect-drawing-corpus-2026-09.md (the six files: URLs + full sha256) and architect-corpus-reader-trial-2026-09.md.",
+    "FORMAT AUTHORITY (binding; never guess): ISO 32000-1 8.9.7 (inline images, Table 92 abbreviations, Table 93 filter abbreviations), 8.7.4 (shading and the sh operator), 7.8 (content streams); cite sections next to the code; mark anything unverifiable '[recalled - verify]' for the G1 verifier.",
+    "SAFETY (binding): every budget declared and bounded; the inline-image skip is bounded (dictionary depth/bytes via the existing lexer, a data-length cap, an EI-scan byte cap) and never desynchronizes the stream silently; refusal details bounded; pdf_object_streams.py and app/documents/ READ-ONLY; test_pdf_object_streams.py passes unchanged.",
+    "REAL CORPUS (binding; D-087-R005 honesty): fetch the six files to a scratch folder OUTSIDE the worktree, verify each sha256, run read_sheet TWICE per file, record per item: read (pages, path/segment counts) or refused (stage + reason + the next blocker), then delete the copies. Commit nothing from the corpus. Never claim more than you observed.",
+    "TESTS + MUTATION OBLIGATIONS (binding; offline tests): per-page vs document budget cases (a multi-page fixture that the old per-document budget refused and the new one reads; a page over its budget refuses; the document ceiling still refuses); sh skipped with a count; inline images with and without filters, determinable and scanned lengths, an ambiguous EI refused; each with a named in-process mutation that reddens it. Record each mutant run; never commit harnesses.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at the wave-1 seam, 844 files / 18356 nodes / 7841 edges): the sheet reader modules (sheet_reader.py, sheet_interpreter.py, sheet_objects.py, sheet_marked_content.py, sheet_primitives.py) are imported only inside app/drawings and by tests/drawings; pdf_object_streams.py imports sheet_objects.py (READ-ONLY here). Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/drawings/sheet_reader.py - per-page budgets under a bounded document ceiling",
+    "services/api/app/drawings/sheet_inline_image.py (NEW) - the bounded inline-image skip",
+    "services/api/app/drawings/sheet_interpreter.py - minimal wiring (sh skip, BI/ID/EI dispatch)",
+    "services/api/app/drawings/sheet_primitives.py / sheet_objects.py - only where a budget lives",
+    "services/api/tests/drawings/test_sheet_p3_features.py (NEW) + deliberate golden revisions",
+    "project-control/reports/M5-T118-producer-report.md (incl. the real-corpus table)"
+  ],
+  "dependencies": [
+    "M5-T113"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/sheet_reader.py",
+    "services/api/app/drawings/sheet_inline_image.py",
+    "services/api/app/drawings/sheet_interpreter.py",
+    "services/api/app/drawings/sheet_primitives.py",
+    "services/api/app/drawings/sheet_objects.py",
+    "services/api/tests/drawings/test_sheet_p3_features.py",
+    "services/api/tests/drawings/test_sheet_reader.py",
+    "services/api/tests/drawings/test_sheet_reader_split_equivalence.py",
+    "services/api/tests/drawings/test_sheet_content_features.py",
+    "project-control/reports/M5-T118-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/pdf_object_streams.py",
+    "services/api/tests/drawings/test_pdf_object_streams.py",
+    "services/api/app/drawings/sheet_marked_content.py",
+    "services/api/app/drawings/dxf_reader.py",
+    "services/api/app/drawings/dxf_import.py",
+    "services/api/app/documents/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/app/cad/",
+    "services/api/tests/api/",
+    "docs/research/",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (budgets): per-page budgets under a declared document ceiling; a multi-page fixture the old per-document budget refused now reads; an over-budget page and an over-ceiling document refuse typed; the worst-case arithmetic is in the report; mutations redden.",
+    "AS-2 (sh): the shading operator is skipped as non-geometry with a disclosed count; mutation - refusing sh - reddens.",
+    "AS-3 (inline images): BI/ID/EI with a determinable length and with a scanned EI are skipped without desynchronizing the stream (the linework after the image still draws); an ambiguous or over-cap image refuses typed; mutations redden.",
+    "AS-4 (real corpus, honest): the six files by sha256, two runs each, a per-item table; copies deleted; nothing committed; no claim beyond the observation.",
+    "AS-5 (scope): zero new dependencies; unwired; test_pdf_object_streams.py unchanged and green; sheet_interpreter.py under 750 lines; ruff clean; modularity exit 0; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T06:32:37.343895+00:00",
+  "updated_at": "2026-09-25T06:32:37.734270+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R005",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T06:32:37.343895+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/drawings -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

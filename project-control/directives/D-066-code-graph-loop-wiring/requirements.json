@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 4,
  "producer": "orchestrator",
- "updated_at": "2026-09-25T06:30:35+00:00",
+ "updated_at": "2026-09-25T06:32:36+00:00",
  "requirements": [
   {
    "id": "D-066-R001",
@@ -96,7 +96,8 @@
      "M5-T113",
      "M5-T114",
      "M5-T115",
-     "M5-T116"
+     "M5-T116",
+     "M5-T118"
     ],
     "task_types": [],
     "milestones": [],
