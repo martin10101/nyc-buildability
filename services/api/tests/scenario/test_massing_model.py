@@ -24,6 +24,7 @@ import pytest
 from shapely.geometry import Polygon
 
 from app.scenario import massing_model as mm
+from app.scenario import massing_triangulation as mt
 from app.scenario.massing_model import (
     MassingModel,
     MassingModelError,
@@ -1028,13 +1029,16 @@ def test_t098_as4_scan_units_charged_before_the_inner_scan(monkeypatch):
     n = len(ring)
     assert n == 8
     calls = {"n": 0}
-    real_pit = mm._point_in_triangle
+    # [ORCH-CORRECTED per M5-T112 G3 B1 / G4 BLOCKING] after the M5-T112 split the inner scan
+    # lives in massing_triangulation and resolves _point_in_triangle THERE, so the counter
+    # patches that CONSUMING namespace (a facade patch no longer bites).
+    real_pit = mt._point_in_triangle
 
     def counting_pit(*args, **kwargs):
         calls["n"] += 1
         return real_pit(*args, **kwargs)
 
-    monkeypatch.setattr(mm, "_point_in_triangle", counting_pit)
+    monkeypatch.setattr(mt, "_point_in_triangle", counting_pit)
     # units = n-3: the pos-0 candidate charge (1) leaves n-4; the convex candidate's
     # m-3 = n-3 charge then overspends. Charged BEFORE the scan -> zero pit calls.
     with pytest.raises(MassingModelError) as exc:
@@ -1042,6 +1046,10 @@ def test_t098_as4_scan_units_charged_before_the_inner_scan(monkeypatch):
     assert exc.value.reason == "triangulation_budget_exceeded"
     assert exc.value.field == "t"
     assert calls["n"] == 0  # the inner scan never ran (mutant ME makes this n-3 > 0)
+    # Positive control: with ample budget the same patched scan DOES run, so the zero above
+    # is a real observation and this guard cannot go vacuous silently again.
+    mm._triangulate(ring, "t", mm._WorkBudget(mm.MAX_TRIANGULATION_WORK))
+    assert calls["n"] > 0
 
 
 # --- AS-5: scope / no new dependency / unwired ------------------------------
