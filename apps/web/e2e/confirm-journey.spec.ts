@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { expectProfile, lookup } from "./helpers";
 
 /**
@@ -117,4 +117,57 @@ test("Confirm screen renders API failure states (no_match via real API) with rec
   await expect(
     page.getByRole("link", { name: /Back to property lookup/ }),
   ).toBeVisible();
+});
+
+/* ================================================================ *
+ * D-086 P2 (M5-T115) — the LIVE architect address-confirm card ("Is this the
+ * right lot?") on /property?ruleeval=on, walked through the recorded-official-
+ * fixture harness. Spec §5.2: entered vs matched vs BBL identities stay DISTINCT
+ * (AS-2), the city warnings stay verbatim above Continue, and Continue is the one
+ * dominant action (AS-3). Assertions are on stable copy/testids, never pixels.
+ * ================================================================ */
+async function resolveToAddressConfirm(page: Page, street: string): Promise<void> {
+  await page.goto("/property?ruleeval=on");
+  await page.getByText("Enter address manually", { exact: true }).click();
+  const form = page.getByTestId("address-form");
+  await form.getByLabel("House number", { exact: true }).fill("100");
+  await form.getByLabel("Street", { exact: true }).fill(street);
+  await form.getByLabel("Borough", { exact: true }).selectOption("Manhattan");
+  await form.getByTestId("address-submit").click();
+  await expect(page.getByTestId("address-confirm-card")).toBeVisible({
+    timeout: 15_000,
+  });
+}
+
+test("D-086 P2 (AS-2): the address-confirm card keeps entered vs matched vs BBL identities distinct, with Continue as the one dominant action", async ({
+  page,
+}) => {
+  await resolveToAddressConfirm(page, "OUTLINE AVENUE");
+
+  // The dominant decision is the question heading.
+  await expect(
+    page.getByRole("heading", { name: "Is this the right lot?" }),
+  ).toBeVisible();
+
+  // Matched identity is explicitly labelled and distinct from the entered line.
+  await expect(page.getByTestId("confirm-matched-label")).toHaveText(
+    "City-matched address",
+  );
+  await expect(page.getByTestId("confirm-address")).toContainText("OUTLINE AVENUE");
+  await expect(page.getByTestId("entered-input")).toContainText("You searched for");
+  await expect(page.getByTestId("entered-input")).toContainText("100");
+  // The carried-forward identity is the tax lot (BBL), shown distinctly.
+  await expect(page.getByTestId("resolved-bbl")).toBeVisible();
+
+  // One dominant action; the recovery action is secondary and present.
+  await expect(page.getByTestId("confirm-continue")).toBeVisible();
+  await expect(page.getByTestId("not-my-property")).toBeVisible();
+
+  // AS-3: the identity comparison note never shifts the Continue action — the
+  // Continue CTA stays the one dominant action regardless of the async
+  // record-address channel (the pixel CLS proof lives in responsive-a11y.spec.ts).
+  await expect(page.getByTestId("address-confirm-card")).toHaveAttribute(
+    "data-record-address-status",
+    /loading|equal|absent|route-absent|error|shown/,
+  );
 });

@@ -336,3 +336,30 @@ for (const viewport of VIEWPORTS) {
     }
   });
 }
+
+/* ================================================================ *
+ * D-086 P2 (M5-T115) / DB-083(f): the environment badge + professional-review
+ * line stay visible on the SEARCH surface at every width, including the 360px
+ * phone width where the shell's own `.architect-environment` disclosure and nav
+ * footnote are hidden (architect.css ≤700px). The search-scoped badge/line are
+ * carried by PropertySearch so no breakpoint removes the internal-build /
+ * no-access-control / do-not-share / "not a legal determination" meaning
+ * (LS-P01/A01) or the "professional review required" meaning (A03).
+ * ================================================================ */
+for (const viewport of VIEWPORTS) {
+  test(`D-086 P2 (DB-083 f): the search-surface environment badge + review line are visible at ${viewport.name}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto("/property?ruleeval=on");
+
+    const env = page.getByTestId("search-environment");
+    await expect(env).toBeVisible();
+    await expect(env).toContainText("Internal build");
+    await expect(env).toContainText("nothing here is a legal determination");
+    await expect(page.getByTestId("search-review")).toBeVisible();
+    await expect(page.getByTestId("search-review")).toContainText(
+      "professional review required",
+    );
+  });
+}

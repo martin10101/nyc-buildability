@@ -525,6 +525,45 @@ describe("S8 — DB-026 entered-vs-matched identity honesty", () => {
       "120 BROADWAY",
     );
   });
+
+  it("AS-2 (spec §5.2): the matched line carries an explicit 'City-matched address' label, distinct from the entered ('You searched for') and the PLUTO record labels", async () => {
+    const doc = resolvedDoc();
+    doc.input_echo.house_number = "1279";
+    doc.input_echo.street = "37 street";
+    doc.input_echo.borough = "Brooklyn";
+    doc.canonical.bbl = "3052960043";
+    doc.canonical.street_name_normalized = "37 STREET";
+    doc.canonical.borough_name = "BROOKLYN";
+    await renderResolved(doc);
+
+    // The matched line is explicitly labelled, so a first-time analyst can tell
+    // it apart from what they typed and from the city-record address.
+    const label = screen.getByTestId("confirm-matched-label");
+    expect(label.textContent).toBe("City-matched address");
+    // The label sits immediately before the matched address line.
+    const matched = screen.getByTestId("confirm-address");
+    expect(
+      label.compareDocumentPosition(matched) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    // Three DISTINCT identity vocabularies on the surface: matched vs entered.
+    expect(screen.getByTestId("entered-input").textContent).toContain("You searched for");
+    expect(screen.getByTestId("entered-input").textContent).toContain("1279 37 street");
+    expect(matched.textContent).toContain("37 STREET");
+  });
+
+  it("AS-2: the matched-address label is absent when the city returned no printable normalized street (no line to label)", async () => {
+    const doc = resolvedDoc();
+    doc.input_echo.house_number = "";
+    doc.input_echo.street = "raw entry";
+    doc.input_echo.borough = "";
+    doc.input_echo.zip = null;
+    doc.canonical.street_name_normalized = null;
+    doc.canonical.borough_name = null;
+    doc.canonical.zip_code = null;
+    await renderResolved(doc);
+    expect(screen.queryByTestId("confirm-address")).toBeNull();
+    expect(screen.queryByTestId("confirm-matched-label")).toBeNull();
+  });
 });
 
 /* ================================================================ *

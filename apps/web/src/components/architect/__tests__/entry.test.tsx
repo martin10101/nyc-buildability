@@ -218,6 +218,83 @@ describe("connected architect entry", () => {
   });
 });
 
+/* ================================================================ *
+ * D-086 P2 (M5-T115) — the search surface: ONE search/recovery area with the
+ * environment badge + professional-review line kept at every width (DB-083 f),
+ * the address search, and the BBL alternative whose four distinct lib/bbl.ts
+ * validation messages render verbatim (spec §5.1). Rendered with NO bbl param
+ * so ArchitectEntry mounts PropertySearch.
+ * ================================================================ */
+describe("D-086 P2 search surface (no bbl → PropertySearch)", () => {
+  beforeEach(() => { state.params = new URLSearchParams(); });
+
+  it("AS-5/DB-083(f): the environment badge + professional-review line render on the search surface (no breakpoint hides them) and carry the internal-build meaning WITHOUT retyping the §29 disclaimer", () => {
+    render(<ArchitectEntry />);
+    const env = screen.getByTestId("search-environment");
+    expect(env).toHaveAttribute("role", "note");
+    expect(env).toHaveTextContent("Internal build");
+    // LS-P01/A01 meaning: no access control, do-not-share, not a legal determination.
+    expect(env).toHaveTextContent("No sign-in or access control yet");
+    expect(env).toHaveTextContent("do not share outside the engineering team");
+    expect(env).toHaveTextContent("nothing here is a legal determination");
+    // A03: the professional-review line is present and visible on the surface.
+    expect(screen.getByTestId("search-review")).toHaveTextContent(
+      "Preliminary analysis — professional review required before any reliance.",
+    );
+    // The env note is the environment disclosure, NOT the PRD §29 disclaimer (that
+    // one stays verbatim in the global footer via REQUIRED_DISCLAIMER, DB-083 b).
+    expect(env).not.toHaveTextContent(
+      "This platform provides preliminary development and zoning feasibility",
+    );
+  });
+
+  it("AS-1: ONE search/recovery area — the address search and the BBL alternative are both on the search surface (the BBL is a native details labelled as an alternative, not a separate step)", () => {
+    render(<ArchitectEntry />);
+    // The address search (architect autocomplete + manual resolver) is present.
+    expect(screen.getByTestId("address-resolution-screen")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Find a property" })).toBeInTheDocument();
+    // The BBL alternative is a native <details> naming itself an alternative.
+    expect(screen.getByText("Search by tax lot (BBL)")).toBeInTheDocument();
+    expect(screen.getByText(/alternative to the address search above, not a separate step/)).toBeInTheDocument();
+    expect(screen.getByLabelText("BBL")).toBeInTheDocument();
+  });
+
+  it("AS-1: an invalid BBL renders each of the four DISTINCT lib/bbl.ts messages verbatim — never one generic red icon", () => {
+    render(<ArchitectEntry />);
+    const input = screen.getByLabelText("BBL");
+    const open = () => fireEvent.click(screen.getByRole("button", { name: "Open property" }));
+    const errorBox = () => screen.getByTestId("architect-bbl-error");
+
+    // empty
+    fireEvent.change(input, { target: { value: "   " } });
+    open();
+    expect(errorBox()).toHaveTextContent("Enter a 10-digit BBL (borough, block, and lot).");
+
+    // non_numeric
+    fireEvent.change(input, { target: { value: "12ab567890" } });
+    open();
+    expect(errorBox()).toHaveTextContent("A BBL contains digits only");
+
+    // wrong_length
+    fireEvent.change(input, { target: { value: "12345" } });
+    open();
+    expect(errorBox()).toHaveTextContent("A BBL is exactly 10 digits; you entered 5.");
+
+    // invalid_borough (first digit 0)
+    fireEvent.change(input, { target: { value: "0234567890" } });
+    open();
+    expect(errorBox()).toHaveTextContent("The first digit is the borough and must be 1–5");
+
+    // A valid BBL clears the error and routes (no message rendered).
+    fireEvent.change(input, { target: { value: "1000010010" } });
+    open();
+    expect(state.push).toHaveBeenCalled();
+    expect(errorBox()).toBeEmptyDOMElement();
+    // aria-invalid is set only while an error is shown (removed on the valid input).
+    expect(input).not.toHaveAttribute("aria-invalid");
+  });
+});
+
 /**
  * Task M5-T070 (D-082-R003 + D-083 / AS-6): the Preliminary-development-limits
  * panel composes ADDITIVELY above the accepted proposal editor on the architect

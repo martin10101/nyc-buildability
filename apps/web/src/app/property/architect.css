@@ -230,3 +230,23 @@
 .proposal-compare-column { border:1px solid var(--arch-line);border-radius:8px;padding:10px 12px; }
 .proposal-compare-column ul { margin:8px 0 0;padding-left:18px; }
 @media(max-width:900px) { .proposal-editor-grid { grid-template-columns:1fr; }.proposal-compare-grid { grid-template-columns:1fr; } }
+
+/* ---------------------------------------------------------------------------
+ * D-086 P2 (M5-T115) — search / confirm / autocomplete / map presentation only.
+ * New search- and confirm-scoped classes plus additive polish that LAYERS over
+ * the existing search/autocomplete/map rules (later-rule cascade); no shared
+ * selector (.architect-disclosure, .architect-eyebrow, shell rules) is touched.
+ * The environment badge + review line below are deliberately visible at EVERY
+ * width — no breakpoint hides them — closing the ≤700px architect.css:138 gap
+ * for the search surface (DB-083 f).
+ * ------------------------------------------------------------------------- */
+.architect-search-environment { display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin:0 0 18px;padding:12px 15px;background:var(--arch-warm);border:1px solid #e6d3a8;border-left:3px solid var(--arch-accent);border-radius:6px; }
+.architect-search-env-badge { flex:none;display:inline-flex;align-items:center;background:var(--arch-accent);color:#fff;font-size:10px;font-weight:640;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px; }
+.architect-search-env-note { flex:1 1 240px;min-width:0;color:#6c5425;font-size:12px;line-height:1.55; }
+.architect-search-review { margin:18px 0 0;padding:11px 14px;background:var(--arch-surface);border:1px solid var(--arch-line);border-radius:6px;color:#4a616f;font-size:12px;font-weight:550;line-height:1.5; }
+.architect-search-view .architect-search-bbl > .section-note { margin:0 0 14px; }
+.architect-search-bbl-error { margin:12px 0 0;padding:10px 13px;background:#fbe9e7;border:1px solid #e0a99f;border-left:3px solid #c23b4b;border-radius:6px;color:#7a271a;font-size:12px;line-height:1.55; }
+.architect-search-actions { display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 4px; }
+.architect-confirm-label { margin:2px 0 4px;color:var(--arch-muted);letter-spacing:.09em;font-size:10px;text-transform:uppercase;font-weight:640; }
+.architect-search-view .architect-search-environment + [data-testid="address-resolution-screen"] { margin-top:0; }
+@media(max-width:700px) { .architect-search-environment { padding:11px 13px; }.architect-search-env-note { flex-basis:100%; }.architect-search-actions .secondary-button { flex:1 1 100%; } }

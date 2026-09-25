@@ -64,20 +64,40 @@ function PropertySearch() {
     };
     return <div className="architect-search-view">
     <p className="architect-eyebrow">Property intelligence · New York City</p>
+    {/* DB-083(f) / HJ ADV-4: the environment badge + professional-review line stay
+        visible on the search surface at EVERY width — the shell's own
+        `.architect-environment` disclosure and nav footnote are hidden ≤700px
+        (architect.css P0 gap), so the internal-build / no-access-control /
+        do-not-share / "nothing here is a legal determination" meaning (LS-P01/A01)
+        and the "professional review required" meaning (A03) are carried here in a
+        search-scoped element that no breakpoint hides. This is the environment
+        notice, NOT the PRD §29 disclaimer — that stays verbatim in the global
+        footer via REQUIRED_DISCLAIMER (never retyped, DB-083 b). */}
+    <div className="architect-search-environment" role="note" data-testid="search-environment">
+      <span className="architect-search-env-badge">Internal build</span>
+      <span className="architect-search-env-note">No sign-in or access control yet, the official data shown is unreviewed, and nothing here is a legal determination — do not share outside the engineering team.</span>
+    </div>
     <AddressResolutionScreen architect/>
-    <details className="card architect-disclosure">
+    <details className="card architect-disclosure architect-search-bbl">
       <summary>Search by tax lot (BBL)</summary>
+      <p className="section-note">Already have the 10-digit borough–block–lot? Open it directly — this is an alternative to the address search above, not a separate step.</p>
       <form className="bbl-form" onSubmit={submit} noValidate>
         <div className="field-group">
           <label className="field-label" htmlFor="architect-bbl">BBL</label>
-          <input id="architect-bbl" className="text-input" inputMode="numeric" autoComplete="off" placeholder="10-digit borough–block–lot" value={bbl} onChange={event => { setBbl(event.target.value); setError(null); }} aria-describedby="architect-bbl-error"/>
+          <input id="architect-bbl" className="text-input" inputMode="numeric" autoComplete="off" placeholder="10-digit borough–block–lot" value={bbl} onChange={event => { setBbl(event.target.value); setError(null); }} aria-describedby="architect-bbl-error" aria-invalid={error ? true : undefined}/>
         </div>
         <button type="submit" className="primary-button">Open property</button>
       </form>
-      <p id="architect-bbl-error" role="status">
+      {/* The four distinct lib/bbl.ts validation messages (empty / non_numeric /
+          wrong_length / invalid_borough) render verbatim from validateBblInput —
+          never one generic red icon (spec §5.1 Missing). role="status" is kept for
+          the aria-describedby announcer contract; the styled wrapper only appears
+          when there is a message, so the honest empty state is unchanged. */}
+      <p id="architect-bbl-error" role="status" className={error ? "architect-search-bbl-error" : undefined} data-testid="architect-bbl-error">
         {error}
       </p>
     </details>
+    <p className="architect-search-review" data-testid="search-review">Preliminary analysis — professional review required before any reliance.</p>
   </div>;
 }
 function LoadedWorkspace({ profile, view, surveyEnabled }: {

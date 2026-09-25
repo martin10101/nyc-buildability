@@ -185,6 +185,18 @@ export function AddressConfirmCard({
       <h2 className="section-title" tabIndex={-1} data-outcome-heading>
         Is this the right lot?
       </h2>
+      {/* Spec §5.2 identity comparison: entered vs matched vs PLUTO stay DISTINCT.
+          A static label above the big line names it explicitly as the city-matched
+          address, so a first-time analyst can tell it apart from what they typed
+          ("You searched for …" below) and from the PLUTO city-record address (after
+          Continue). This label is a presentation clarification only — it renders on
+          first paint (never async), so it does not affect the Continue CTA's
+          byte-stable position across the record-address insert (AS-3). */}
+      {addressLine ? (
+        <p className="architect-confirm-label" data-testid="confirm-matched-label">
+          City-matched address
+        </p>
+      ) : null}
       {addressLine ? (
         <p
           className="section-title"
