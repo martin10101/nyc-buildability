@@ -5,8 +5,17 @@
   "role": "self_check",
   "result": "PASS",
   "report_file": "project-control/reports/M5-T112-G2.md",
-  "reviewed_at": "2026-09-25T05:42:54.150836+00:00",
-  "content_manifest_sha256": "7cfb9cf564e72dc024558dee7ab004cfa352c5c3744e6d8d0ef83168f279f67e",
-  "reviewed_sha": "7413ecf428ed574f469992f3ac63090f83f50ea8",
-  "updated_at": "2026-09-25T05:42:59.866127+00:00"
+  "reviewed_at": "2026-09-25T06:07:11.957864+00:00",
+  "content_manifest_sha256": "4b71b83987689a1ce831b24f25f0c8f58d6b82f6a50e3b378dab966f89a77ef5",
+  "reviewed_sha": "1b24fa948436e2f06552ea0c5ad11ab755285d20",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "self_check",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T112-G2.md",
+      "reviewed_at": "2026-09-25T05:42:54.150836+00:00"
+    }
+  ],
+  "updated_at": "2026-09-25T06:07:13.189950+00:00"
 }

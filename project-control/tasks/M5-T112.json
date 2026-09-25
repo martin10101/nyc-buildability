@@ -76,12 +76,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
+  "status": "awaiting_gate",
   "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-25T05:01:57.300815+00:00",
-  "updated_at": "2026-09-25T06:04:04.761408+00:00",
+  "updated_at": "2026-09-25T06:07:13.210133+00:00",
   "directive_refs": [
     {
       "directive_id": "D-087",
@@ -121,6 +121,13 @@
       "percent": 90,
       "status": "in_progress",
       "message": "Harvested: f31aeef5 cherry-picked to 7413ecf4 (7 files MATCH); harvest checks green; evidence map + G2 written; submitting."
+    },
+    {
+      "at": "2026-09-25T06:07:07.490509+00:00",
+      "agent": "3d-massing-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Rework harvested: 5347abbc cherry-picked to 1b24fa94 (1 files MATCH); checks green; resubmitting."
     }
   ]
 }
