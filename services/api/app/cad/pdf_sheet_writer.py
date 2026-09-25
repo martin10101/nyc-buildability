@@ -16,17 +16,21 @@ The content stream emits ONLY constructs the strict reader
 (``BT``/``Tf``/``Td``/``Tj``/``ET``) under a translation-only CTM. No curves,
 rotated/sheared transforms, images, or XObjects appear. Object, cross-reference,
 and trailer structure follow ISO 32000-1 §7.5 (classic ``xref`` table, exact
-byte offsets, ``startxref``/``%%EOF``); string escaping of ``(`` ``)`` ``\\``
-runs through the single :func:`_escape_pdf_text` escaper and all text is
-ASCII-sanitised.
+byte offsets, ``startxref``/``%%EOF``); literal-string escaping of ``(`` ``)``
+``\\`` runs through the single :func:`_escape_pdf_text` escaper per ISO 32000-1
+§7.3.4.2 and all text is ASCII-sanitised.
 
 Purity and determinism
 ----------------------
 :func:`render_site_plan_pdf` is a pure function of its :class:`SitePlanInput`:
 no clock, randomness, network, or I/O. ``generated_at`` and ``generator_version``
 are inputs, never read from the environment, so identical inputs yield
-byte-identical output (a golden sha256). Every refusal is a returned
-:class:`SitePlanRefusal` value; the function never raises on caller data. Only
+byte-identical output (a golden sha256). The PUBLIC entry never raises on caller
+data: a problem found before rendering is a RETURNED :class:`SitePlanRefusal`,
+while a non-finite number found mid-render is RAISED by :func:`_num` as the
+private :class:`_RenderRefused` carrier and converted back into a returned
+:class:`SitePlanRefusal` at the one public boundary :func:`_finish` - so the
+``_num`` docstring and this never-raise promise agree (DB-053 b). Only
 IEEE-deterministic float operations (``+ - * /`` and ``math.sqrt``) feed the
 emitted numbers, and every number is rounded before formatting, so the golden
 bytes are stable across platforms.
@@ -43,6 +47,15 @@ all three writers use (M5-T102). Both the given value and the ASCII-sanitised fo
 the sheet would print are screened, so a word hidden behind a non-ASCII separator
 that prints as ``?`` is still caught. The number formatter :func:`_num` refuses a
 non-finite value, so ``nan``/``inf`` can never reach the content stream as a token.
+
+Wiring hardening (M5-T105, DB-059 a, d; DB-053 b)
+------------------------------------------------
+Every caller text field is additionally bounded at :data:`_MAX_TEXT_CHARS`
+characters and refused - typed, naming the field, before anything is drawn - when
+longer, so unbounded caller text cannot inflate the sheet once an export route
+feeds it (DB-059 a). The per-vertex finiteness check covers x AND y (DB-059 d),
+and the non-finite raise/return contract above is documented honestly (DB-053 b).
+Valid output is byte-identical to the M5-T091 golden.
 """
 
 from __future__ import annotations
@@ -90,6 +103,11 @@ _MAX_RING_VERTICES = 1024
 # EPSG:2263 (NY Long Island ft) spans ~900k-1.07M easting, ~120k-280k northing;
 # 1e8 is far outside any real NYC parcel yet bounds absurd inputs.
 _MAX_COORD_ABS = 1.0e8
+# Every caller text field is bounded so unbounded caller text cannot inflate the
+# sheet once an export route feeds it (DB-059 a; a 200k-char address renders a
+# ~201 kB PDF today). 120 chars comfortably holds a real address / bbl / provenance
+# line on one title-block row (9 pt Helvetica, landscape US Letter) yet refuses abuse.
+_MAX_TEXT_CHARS = 120
 
 # -- drawing element counts (exported so round-trip tests assert exact totals) --
 _SCALE_BAR_DIVISIONS = 4
@@ -207,6 +225,25 @@ def render_site_plan_pdf(spec: SitePlanInput) -> bytes | SitePlanRefusal:
         # EPSG:2263 +Y (grid north) maps to +device-Y (up on the page): no flip.
         return (origin_x + (x - min_x) * pt_per_ft, origin_y + (y - min_y) * pt_per_ft)
 
+    return _finish(spec, lot, building, feet_per_inch, to_device)
+
+
+def _finish(
+    spec: SitePlanInput,
+    lot: tuple[tuple[float, float], ...],
+    building: tuple[tuple[float, float], ...] | None,
+    feet_per_inch: float,
+    to_device,
+) -> bytes | SitePlanRefusal:
+    """The one public boundary: build + assemble, converting a mid-render
+    :class:`_RenderRefused` into a RETURNED :class:`SitePlanRefusal`.
+
+    :func:`_num` RAISES the private :class:`_RenderRefused` carrier when a computed
+    drawing number is non-finite; this is the SOLE place that carrier is caught and
+    turned back into a returned refusal, so :func:`render_site_plan_pdf` never
+    raises on caller data (the honest DB-053 b contract). No partial output: either
+    a complete :func:`_assemble_pdf` byte string or a refusal is returned.
+    """
     try:
         content = _build_content(spec, lot, building, feet_per_inch, to_device)
         return _assemble_pdf(content)
@@ -221,13 +258,16 @@ _TEXT_LIKE = (str, bytes, bytearray, memoryview)
 
 
 def _screen_caller_text(spec: SitePlanInput) -> SitePlanRefusal | None:
-    """Refuse non-string or claim-bearing caller text BEFORE anything is drawn.
+    """Refuse non-string, over-long, or claim-bearing caller text BEFORE drawing.
 
-    Every caller-supplied string printed on the sheet is screened against the
-    shared claim-class words through the one separator-collapsing screen
+    Every caller-supplied string printed on the sheet is screened, in order, for:
+    (1) type (must be ``str``); (2) length (at most :data:`_MAX_TEXT_CHARS`, so
+    unbounded caller text cannot inflate the sheet - DB-059 a; bounding first also
+    keeps the separator-collapsing screen off a huge string); (3) the shared
+    claim-class words through the one separator-collapsing screen
     (:func:`app.cad.claim_words.contains_claim_word`), both as given and in the
-    ASCII-sanitised form the sheet would print. The detail names the field and the
-    barred word, never the caller's text.
+    ASCII-sanitised form the sheet would print. Every refusal names the field and,
+    for a claim word, the barred word - never the caller's text.
     """
     fields = (
         ("address", spec.address),
@@ -238,6 +278,11 @@ def _screen_caller_text(spec: SitePlanInput) -> SitePlanRefusal | None:
     for name, value in fields:
         if not isinstance(value, str):
             return SitePlanRefusal("invalid_text", f"{name} must be a string")
+        if len(value) > _MAX_TEXT_CHARS:
+            return SitePlanRefusal(
+                "text_too_long",
+                f"{name} exceeds the {_MAX_TEXT_CHARS}-character limit",
+            )
         barred = contains_claim_word(value, _ascii_sanitise(value))
         if barred is not None:
             return SitePlanRefusal(
@@ -421,8 +466,11 @@ def _escape_pdf_text(text: str) -> str:
     Any byte outside printable ASCII (0x20-0x7E) becomes ``?`` so the emitted
     string never carries bytes the strict reader would mishandle; the three
     literal-string metacharacters are backslash-escaped so parentheses in an
-    address cannot unbalance the stream. This is the SOLE path text takes into
-    the content stream.
+    address cannot unbalance the stream. Per ISO 32000-1 §7.3.4.2 a literal string
+    only REQUIRES escaping unbalanced ``(`` / ``)`` and every ``\\`` [recalled -
+    verify against the standard's exact wording]; escaping ALL three unconditionally
+    is the conservative superset and always leaves every literal string balanced and
+    well-formed. This is the SOLE path text takes into the content stream.
     """
     out: list[str] = []
     for safe in _ascii_sanitise(text):
@@ -441,8 +489,11 @@ def _ascii_sanitise(text: str) -> str:
 def _num(value: float) -> str:
     """Format a coordinate/size deterministically: round to 3 dp, trim, no ``-0``.
 
-    A non-finite value is a typed refusal (carried to the public boundary), never
-    a ``nan``/``inf`` token in the content stream.
+    A non-finite value RAISES the private :class:`_RenderRefused` carrier (this
+    function is NOT total on non-finite input, by design) so a ``nan``/``inf``
+    token can never reach the content stream. The carrier never escapes the public
+    API: the single boundary :func:`_finish` catches it and returns a typed
+    :class:`SitePlanRefusal` instead (DB-053 b honest contract).
     """
     if not math.isfinite(value):
         raise _RenderRefused(

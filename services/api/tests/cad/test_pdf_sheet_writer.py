@@ -26,6 +26,8 @@ pipeline modules.
 
 import hashlib
 import importlib.util
+import math
+import numbers
 import sys
 import types
 from decimal import Decimal
@@ -211,6 +213,9 @@ def test_units_crs_scale_and_grid_north_printed():
         (((0.0, 0.0), (1.0, 0.0)), "invalid_ring"),
         (((0.0, 0.0), (float("nan"), 0.0), (1.0, 1.0)), "non_finite_coordinate"),
         (((0.0, 0.0), (float("inf"), 0.0), (1.0, 1.0)), "non_finite_coordinate"),
+        # DB-059 (d): the non-finite check covers Y, not only X.
+        (((0.0, 0.0), (1.0, float("nan")), (1.0, 1.0)), "non_finite_coordinate"),
+        (((0.0, 0.0), (1.0, float("inf")), (1.0, 1.0)), "non_finite_coordinate"),
         (((0.0, 0.0), (2.0e8, 0.0), (2.0e8, 1.0)), "oversize_input"),
     ],
 )
@@ -531,6 +536,8 @@ _UNBALANCED_TEXTS = (
     "12 MAIN ST \\",
     "\\(",
     "\\)",
+    "12 MAIN ST \\ (REAR",  # DB-053 (d): unbalanced '(' AND a backslash together
+    "\\)a(\\",             # backslashes wrapping an unbalanced ')...(' run
 )
 
 
@@ -577,3 +584,144 @@ def test_paren_skipping_escaper_mutant_breaks_unbalanced_roundtrip(monkeypatch, 
         run.text == f"SITE: {text}" for run in page.text_runs
     )
     assert not faithful
+
+
+# -- M5-T105 AS-1 (DB-059 a): every caller text field is length-bounded -------------
+
+
+@pytest.mark.parametrize("field", _TEXT_FIELDS)
+def test_over_long_caller_text_is_refused_nothing_drawn(build_calls, field):
+    """An over-cap field is a typed refusal that NAMES the field, returned BEFORE any
+    rendering (no partial output), and never echoes the caller's text (DB-059 a)."""
+    over_long = "A" * (writer._MAX_TEXT_CHARS + 1)
+    result = render_site_plan_pdf(_spec(**{field: over_long}))
+    assert isinstance(result, writer.SitePlanRefusal)
+    assert result.reject_code == "text_too_long"
+    assert field in result.detail
+    assert over_long not in result.detail  # the caller's text is never echoed
+    assert build_calls == []  # nothing drawn on the refusal
+
+
+@pytest.mark.parametrize("field", _TEXT_FIELDS)
+def test_exactly_at_cap_caller_text_still_renders(field):
+    """The bound is inclusive: exactly _MAX_TEXT_CHARS characters renders bytes."""
+    at_cap = "A" * writer._MAX_TEXT_CHARS
+    assert len(at_cap) == writer._MAX_TEXT_CHARS
+    assert isinstance(render_site_plan_pdf(_spec(**{field: at_cap})), bytes)
+
+
+@pytest.mark.parametrize("field", _TEXT_FIELDS)
+def test_length_cap_is_load_bearing_for_every_field(monkeypatch, field):
+    """AS-1 mutation (in-process, consuming namespace): neuter the shared length cap
+    and the over-long field slips through to a rendered sheet - so the one shared
+    check genuinely bounds EVERY caller field."""
+    over_long = "A" * (writer._MAX_TEXT_CHARS + 1)
+    assert isinstance(
+        render_site_plan_pdf(_spec(**{field: over_long})), writer.SitePlanRefusal
+    )
+    monkeypatch.setattr(writer, "_MAX_TEXT_CHARS", 10**9)
+    assert isinstance(render_site_plan_pdf(_spec(**{field: over_long})), bytes)
+
+
+def test_length_cap_precedes_the_claim_word_screen(build_calls):
+    """Length is bounded before the separator-collapsing claim screen, so an over-cap
+    value that also contains a claim word refuses as text_too_long (and the screen
+    never runs on the huge string)."""
+    over_and_claim = ("maximum allowed " * 20)[: writer._MAX_TEXT_CHARS + 5]
+    assert len(over_and_claim) > writer._MAX_TEXT_CHARS
+    result = render_site_plan_pdf(_spec(address=over_and_claim))
+    assert isinstance(result, writer.SitePlanRefusal)
+    assert result.reject_code == "text_too_long"  # length wins over the claim word
+    assert build_calls == []
+
+
+def test_length_cap_does_not_change_valid_output():
+    """Adding the cap leaves valid, in-bounds output byte-identical (guards AS-4)."""
+    assert hashlib.sha256(_rendered()).hexdigest() == _GOLDEN_SHA256
+
+
+# -- M5-T105 AS-2 (DB-053 b): honest non-finite raise/return contract ---------------
+
+
+def test_public_api_converts_internal_raise_to_a_returned_refusal(monkeypatch):
+    """Forced past the ring checks, a non-finite drawing number makes _num RAISE the
+    private carrier mid-render, and render_site_plan_pdf RETURNS a typed refusal - it
+    never lets the exception escape (DB-053 b honest contract)."""
+    monkeypatch.setattr(writer, "_TITLE_FONT_PT", float("nan"))
+    result = render_site_plan_pdf(_spec())
+    assert isinstance(result, writer.SitePlanRefusal)  # returned, not raised
+    assert result.reject_code == "non_finite_value"
+
+
+def test_boundary_conversion_is_load_bearing_raise_path_reddens(monkeypatch):
+    """AS-2 mutation (in-process, consuming namespace): re-introduce the raise path
+    by replacing the boundary _finish with one that does NOT catch _RenderRefused.
+    The public API then RAISES instead of returning - proving the single boundary
+    catch is what upholds the never-raise contract."""
+    monkeypatch.setattr(writer, "_TITLE_FONT_PT", float("nan"))
+    # real boundary: returns a refusal, no exception escapes
+    assert isinstance(render_site_plan_pdf(_spec()), writer.SitePlanRefusal)
+
+    def _finish_without_catch(spec, lot, building, feet_per_inch, to_device):
+        content = writer._build_content(spec, lot, building, feet_per_inch, to_device)
+        return writer._assemble_pdf(content)
+
+    monkeypatch.setattr(writer, "_finish", _finish_without_catch)
+    with pytest.raises(writer._RenderRefused):
+        render_site_plan_pdf(_spec())
+
+
+# -- M5-T105 AS-2 (DB-059 d): the vertex finiteness check covers Y, not only X -------
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf")])
+@pytest.mark.parametrize(
+    "ring_field, ring", [("lot_ring", _LOT), ("building_ring", _BUILDING)]
+)
+def test_y_only_non_finite_vertex_is_non_finite_coordinate(ring_field, ring, bad):
+    """DB-059 (d): a vertex whose Y (not X) is non-finite refuses with the SPECIFIC
+    non_finite_coordinate code through the public API, never an exception."""
+    bad_ring = ring[:1] + ((ring[1][0], bad),) + ring[2:]
+    result = render_site_plan_pdf(_spec(**{ring_field: bad_ring}))
+    assert isinstance(result, writer.SitePlanRefusal)
+    assert result.reject_code == "non_finite_coordinate"
+
+
+def _coerce_vertex_x_only_finite(vertex, label):
+    """EX2 weakening (the M5-T091 G4 survivor): check finiteness of X but NOT Y."""
+    if not writer._is_sequence(vertex) or len(vertex) != 2:
+        return writer.SitePlanRefusal("invalid_ring", f"{label} ring vertex is not a pair")
+    for value in vertex:
+        if isinstance(value, bool) or not isinstance(value, numbers.Real):
+            return writer.SitePlanRefusal(
+                "non_numeric_coordinate", f"{label} ring has a non-numeric coordinate"
+            )
+    try:
+        x, y = float(vertex[0]), float(vertex[1])
+    except OverflowError:
+        return writer.SitePlanRefusal("oversize_input", f"{label} ring coordinate too big")
+    if not math.isfinite(x):  # the Y finiteness check is DROPPED - the EX2 mutant
+        return writer.SitePlanRefusal(
+            "non_finite_coordinate", f"{label} ring has a non-finite coordinate"
+        )
+    if abs(x) > writer._MAX_COORD_ABS or abs(y) > writer._MAX_COORD_ABS:
+        return writer.SitePlanRefusal("oversize_input", f"{label} ring coordinate too big")
+    return (x, y)
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf")])
+def test_y_only_finiteness_check_is_load_bearing(monkeypatch, bad):
+    """AS-2 mutation (in-process, consuming namespace): with the Y half of the
+    finiteness check dropped, a Y-only non-finite vertex is no longer caught as
+    non_finite_coordinate - it slips past _coerce_vertex and is caught downstream
+    under a DIFFERENT code, so the y-only probe reddens. Still a typed refusal (never
+    raises), which is why the code assertion - not just isinstance - has teeth."""
+    y_bad = _LOT[:1] + ((_LOT[1][0], bad),) + _LOT[2:]
+    real = render_site_plan_pdf(_spec(lot_ring=y_bad, building_ring=None))
+    assert isinstance(real, writer.SitePlanRefusal)
+    assert real.reject_code == "non_finite_coordinate"
+
+    monkeypatch.setattr(writer, "_coerce_vertex", _coerce_vertex_x_only_finite)
+    mutant = render_site_plan_pdf(_spec(lot_ring=y_bad, building_ring=None))
+    assert isinstance(mutant, writer.SitePlanRefusal)  # still typed, never raises
+    assert mutant.reject_code != "non_finite_coordinate"  # but not the Y-specific code
