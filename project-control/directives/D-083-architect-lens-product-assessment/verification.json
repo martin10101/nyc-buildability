@@ -3,7 +3,7 @@
  "directive_id": "D-083",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All thirteen requirements bind the non-ledger sentinel D-083-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. R011 (owner return item) is discharged by the owner-facing reply and audited here. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T08:58:47+00:00",
+ "verified_at": "2026-09-25T09:56:08+00:00",
  "task_verifications": [
   {
    "directive_id": "D-083",
@@ -353,6 +353,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: the provenance block carries input_class 'imported_pdf', precision 'imported drawing - not survey-confirmed' (a set-once constant; test_mutation_precision_not_upgraded reddens on an upgrade) and the frame note that the outline is not aligned to the mapped lot. Blob-level restamp predicate re-verified by the orchestrator at the accept head 8ecdbeb2 (sheet_import.py faa95c04, test_sheet_import.py ecc14b54, M5-T121-producer-report.md ea826181; identity 243a7da1; evaluate_task_refs ok); report M5-T121-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T122",
+   "applicable_requirement_ids": [
+    "D-083-R001"
+   ],
+   "reviewed_sha": "06086f5d14bcd49b0adbcb9163fe2685ff2e218c",
+   "reviewed_manifest_sha256": "356596f7f567543d81b41e475c0987ca9ab7017467509e577c61c78ebc320353",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T09:56:08+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a banned-wording grep over every changed file finds no permitted / approved / maximum-allowed wording in production code (the only match is a test asserting its absence); the new tags are P1 section 5.4 record labels, not claims. Blob-level restamp predicate re-verified by the orchestrator at the accept head 06086f5d (CondoRecordsSection.tsx 64b4d685, PropertyOverview.tsx 320c0050, OverviewExceptionStrip.tsx b49c7475, architect.css 8235b6ee, condo-records-section.test.tsx c00a834f, condo-resolution-display.test.tsx 1e563717, overview-exception-strip.test.tsx ea2ae851, architect-workspace.spec.ts ac0db8ac, responsive-a11y.spec.ts 2f649002, M5-T122-producer-report.md d2eeee41; identity 356596f7; evaluate_task_refs ok); report M5-T122-DCV.md."
      ]
     }
    ]

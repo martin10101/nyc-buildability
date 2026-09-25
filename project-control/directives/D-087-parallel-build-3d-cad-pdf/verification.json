@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T09:46:26+00:00",
+ "verified_at": "2026-09-25T09:56:08+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -2187,6 +2187,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies; unwired; pdf_object_streams.py (+ test), sheet_marked_content.py and sheet_objects.py byte-identical since the claim seam; requirements unchanged; exactly one golden substitution; PR #241 not implicated. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4975d73c (sheet_path_state.py 64e5e088, sheet_interpreter.py 04f2e39a, sheet_inline_image.py 16bd1843, sheet_primitives.py 8e16392a, sheet_reader.py 84368ef7, test_sheet_p4_features.py 7e6527a9, test_sheet_p3_features.py 092027b3, test_sheet_reader.py cfd0def1, test_sheet_reader_split_equivalence.py 51197f59, test_sheet_content_features.py bddceb42, M5-T120-producer-report.md b134e064; identity 80c33f6d; evaluate_task_refs ok); report M5-T120-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T122",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002"
+   ],
+   "reviewed_sha": "06086f5d14bcd49b0adbcb9163fe2685ff2e218c",
+   "reviewed_manifest_sha256": "356596f7f567543d81b41e475c0987ca9ab7017467509e577c61c78ebc320353",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T09:56:08+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 at 6d5a2623, claimed at 55276f2d (one worktree), an orchestrator-dispatched subagent producer, G2/G3/G4 PASS; no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head 06086f5d (CondoRecordsSection.tsx 64b4d685, PropertyOverview.tsx 320c0050, OverviewExceptionStrip.tsx b49c7475, architect.css 8235b6ee, condo-records-section.test.tsx c00a834f, condo-resolution-display.test.tsx 1e563717, overview-exception-strip.test.tsx ea2ae851, architect-workspace.spec.ts ac0db8ac, responsive-a11y.spec.ts 2f649002, M5-T122-producer-report.md d2eeee41; identity 356596f7; evaluate_task_refs ok); report M5-T122-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: exactly 9 of the 10 allowed paths, no forbidden path, one worktree; the M4-T005 declared-glob overlap correctly EXCLUDED as dormant pre-regime (no frozen identity, no live writer; the M5-T077 precedent), not waived. Blob-level restamp predicate re-verified by the orchestrator at the accept head 06086f5d (CondoRecordsSection.tsx 64b4d685, PropertyOverview.tsx 320c0050, OverviewExceptionStrip.tsx b49c7475, architect.css 8235b6ee, condo-records-section.test.tsx c00a834f, condo-resolution-display.test.tsx 1e563717, overview-exception-strip.test.tsx ea2ae851, architect-workspace.spec.ts ac0db8ac, responsive-a11y.spec.ts 2f649002, M5-T122-producer-report.md d2eeee41; identity 356596f7; evaluate_task_refs ok); report M5-T122-DCV.md."
      ]
     }
    ]

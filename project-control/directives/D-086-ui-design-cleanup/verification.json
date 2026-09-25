@@ -3,7 +3,7 @@
  "directive_id": "D-086",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-086-BOOTSTRAP at capture; concrete design-cleanup packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R003 is a standing prohibition carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T08:36:47+00:00",
+ "verified_at": "2026-09-25T09:56:08+00:00",
  "task_verifications": [
   {
    "directive_id": "D-086",
@@ -185,6 +185,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: the P3a contract seam fdf1e2ae sits after the accepted P0 (M5-T080), P1 (M5-T114) and P2 (M5-T115). Blob-level restamp predicate re-verified by the orchestrator at the accept head ed229971 (OverviewExceptionStrip.tsx 2d0891cd, PropertyOverview.tsx dd1ed01f, DevelopmentLimits.tsx e0016bb3, ArchitectShell.tsx b3d37ec7, overview-exception-strip.test.tsx 2bb31414, development-limits.test.tsx e98835e5, workspace.test.tsx bcad93f3, architect.css 5aa998d1, development-limits.spec.ts d74c9f53, architect-workspace.spec.ts 18e6b07b, responsive-a11y.spec.ts 572cca1f, M5-T119-producer-report.md 2d4e8b8b; identity 824d5bd9; evaluate_task_refs ok); report M5-T119-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-086",
+   "task_id": "M5-T122",
+   "applicable_requirement_ids": [
+    "D-086-R002",
+    "D-086-R001",
+    "D-086-R003",
+    "D-086-R004"
+   ],
+   "reviewed_sha": "06086f5d14bcd49b0adbcb9163fe2685ff2e218c",
+   "reviewed_manifest_sha256": "356596f7f567543d81b41e475c0987ca9ab7017467509e577c61c78ebc320353",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T09:56:08+00:00",
+   "requirements": [
+    {
+     "id": "D-086-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: P3b contracted after the accepted P3a (M5-T119) with G0/G2/G3/G4 + a human-journey review; every condo exit-gate scenario (C01, C02, C04, C06, C08 present + absent; self-attested, revoked / not-confirmed, discrepant, unavailable in the unchanged suite) green in CI. Blob-level restamp predicate re-verified by the orchestrator at the accept head 06086f5d (CondoRecordsSection.tsx 64b4d685, PropertyOverview.tsx 320c0050, OverviewExceptionStrip.tsx b49c7475, architect.css 8235b6ee, condo-records-section.test.tsx c00a834f, condo-resolution-display.test.tsx 1e563717, overview-exception-strip.test.tsx ea2ae851, architect-workspace.spec.ts ac0db8ac, responsive-a11y.spec.ts 2f649002, M5-T122-producer-report.md d2eeee41; identity 356596f7; evaluate_task_refs ok); report M5-T122-DCV.md."
+     ]
+    },
+    {
+     "id": "D-086-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the assessment is byte-exact to its pin (sha256 c6d1b257); no docs or hold-rule file touched; no meaning-change-register wording. Blob-level restamp predicate re-verified by the orchestrator at the accept head 06086f5d (CondoRecordsSection.tsx 64b4d685, PropertyOverview.tsx 320c0050, OverviewExceptionStrip.tsx b49c7475, architect.css 8235b6ee, condo-records-section.test.tsx c00a834f, condo-resolution-display.test.tsx 1e563717, overview-exception-strip.test.tsx ea2ae851, architect-workspace.spec.ts ac0db8ac, responsive-a11y.spec.ts 2f649002, M5-T122-producer-report.md d2eeee41; identity 356596f7; evaluate_task_refs ok); report M5-T122-DCV.md."
+     ]
+    },
+    {
+     "id": "D-086-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the four fail-safe condo logic units byte-identical after the move; every old heading and honest-gap sentence kept (tags added as siblings, the locked h2 names exact); records never read as allowances; C10 role=status; the identity alert's role and text unchanged (CSS only); the facade keeps all five importers; ReportView and report-view.test.tsx untouched and green, the condo section and the C06 comparison reach the printed brief. Blob-level restamp predicate re-verified by the orchestrator at the accept head 06086f5d (CondoRecordsSection.tsx 64b4d685, PropertyOverview.tsx 320c0050, OverviewExceptionStrip.tsx b49c7475, architect.css 8235b6ee, condo-records-section.test.tsx c00a834f, condo-resolution-display.test.tsx 1e563717, overview-exception-strip.test.tsx ea2ae851, architect-workspace.spec.ts ac0db8ac, responsive-a11y.spec.ts 2f649002, M5-T122-producer-report.md d2eeee41; identity 356596f7; evaluate_task_refs ok); report M5-T122-DCV.md."
+     ]
+    },
+    {
+     "id": "D-086-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: M5-T122 created after M5-T119's acceptance, the dependency recorded. Blob-level restamp predicate re-verified by the orchestrator at the accept head 06086f5d (CondoRecordsSection.tsx 64b4d685, PropertyOverview.tsx 320c0050, OverviewExceptionStrip.tsx b49c7475, architect.css 8235b6ee, condo-records-section.test.tsx c00a834f, condo-resolution-display.test.tsx 1e563717, overview-exception-strip.test.tsx ea2ae851, architect-workspace.spec.ts ac0db8ac, responsive-a11y.spec.ts 2f649002, M5-T122-producer-report.md d2eeee41; identity 356596f7; evaluate_task_refs ok); report M5-T122-DCV.md."
      ]
     }
    ]
