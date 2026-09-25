@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T09:56:08+00:00",
+ "verified_at": "2026-09-25T10:33:24+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -2217,6 +2217,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: exactly 9 of the 10 allowed paths, no forbidden path, one worktree; the M4-T005 declared-glob overlap correctly EXCLUDED as dormant pre-regime (no frozen identity, no live writer; the M5-T077 precedent), not waived. Blob-level restamp predicate re-verified by the orchestrator at the accept head 06086f5d (CondoRecordsSection.tsx 64b4d685, PropertyOverview.tsx 320c0050, OverviewExceptionStrip.tsx b49c7475, architect.css 8235b6ee, condo-records-section.test.tsx c00a834f, condo-resolution-display.test.tsx 1e563717, overview-exception-strip.test.tsx ea2ae851, architect-workspace.spec.ts ac0db8ac, responsive-a11y.spec.ts 2f649002, M5-T122-producer-report.md d2eeee41; identity 356596f7; evaluate_task_refs ok); report M5-T122-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T124",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R005",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "002f663c6050603e9a0e94f5040086ea2a98f8a4",
+   "reviewed_manifest_sha256": "005165359511993410727a049cba6e6602ebe10d9fe88d60cd86e481891f39d1",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T10:33:24+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contracted at 724248f2 (G0), claimed at 4c7437dd, produced by an orchestrator-dispatched subagent; G0/G2/G3/G4/G5 PASS in order; no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head 002f663c (drawing_alignment.py eede1e29, test_drawing_alignment.py c1de0c40, M5-T124-producer-report.md 286dc10b; identity 00516535; evaluate_task_refs ok); report M5-T124-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: exactly the 3 allowed paths in one worktree; the G0 disjointness table EMPTY vs every active task; the material commit shares nothing with a peer. Blob-level restamp predicate re-verified by the orchestrator at the accept head 002f663c (drawing_alignment.py eede1e29, test_drawing_alignment.py c1de0c40, M5-T124-producer-report.md 286dc10b; identity 00516535; evaluate_task_refs ok); report M5-T124-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a 2D rigid Kabsch fit (proper rotation only) moves the outline into 2263; scale, reflection and clipping are computed only to disclose (dedicated identity seams, mutation-proven); residuals, the implied scale, a better mirror fit and the outside-lot area are disclosed and never applied; the aligned block is re-validated by the unchanged contract. DISC-A (the importers' build_draft validates a local frame too early, so the future mount must build the pre-alignment block without that check) is an honest, disclosed next step, not a gap. Blob-level restamp predicate re-verified by the orchestrator at the accept head 002f663c (drawing_alignment.py eede1e29, test_drawing_alignment.py c1de0c40, M5-T124-producer-report.md 286dc10b; identity 00516535; evaluate_task_refs ok); report M5-T124-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: imports only copy, math, dataclasses, shapely (already admitted) and app.scenario.proposal - zero new dependencies; the importers are duck-typed, never imported or edited; unmounted; modularity exit 0 with the module not flagged; PR #241 unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 002f663c (drawing_alignment.py eede1e29, test_drawing_alignment.py c1de0c40, M5-T124-producer-report.md 286dc10b; identity 00516535; evaluate_task_refs ok); report M5-T124-DCV.md."
      ]
     }
    ]

@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T09:56:08+00:00",
+ "verified_at": "2026-09-25T10:33:24+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -2007,6 +2007,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t122): the packet's code-graph navigation block names every PropertyOverview.tsx importer (ArchitectEntry, ProfileViews, PropertyFacts, ReportView, ScenarioWorkspace) and the tests, with the query.py --no-regen instruction; each consumer verified in source. Blob-level restamp predicate re-verified by the orchestrator at the accept head 06086f5d (CondoRecordsSection.tsx 64b4d685, PropertyOverview.tsx 320c0050, OverviewExceptionStrip.tsx b49c7475, architect.css 8235b6ee, condo-records-section.test.tsx c00a834f, condo-resolution-display.test.tsx 1e563717, overview-exception-strip.test.tsx ea2ae851, architect-workspace.spec.ts ac0db8ac, responsive-a11y.spec.ts 2f649002, M5-T122-producer-report.md d2eeee41; identity 356596f7; evaluate_task_refs ok); report M5-T122-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T124",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "002f663c6050603e9a0e94f5040086ea2a98f8a4",
+   "reviewed_manifest_sha256": "005165359511993410727a049cba6e6602ebe10d9fe88d60cd86e481891f39d1",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T10:33:24+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t124): the packet carries the code-graph navigation block (844 files / 18356 nodes / 7841 edges) naming the module's inputs (the importers' draft block shape and validate_proposed_massing, both READ-ONLY) and no consumers (unmounted), with the query.py --no-regen instruction; G0 corroborates. Blob-level restamp predicate re-verified by the orchestrator at the accept head 002f663c (drawing_alignment.py eede1e29, test_drawing_alignment.py c1de0c40, M5-T124-producer-report.md 286dc10b; identity 00516535; evaluate_task_refs ok); report M5-T124-DCV.md."
      ]
     }
    ]
