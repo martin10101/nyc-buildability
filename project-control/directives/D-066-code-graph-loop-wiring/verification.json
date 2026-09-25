@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T06:34:06+00:00",
+ "verified_at": "2026-09-25T07:10:05+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1809,6 +1809,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t111): the packet's navigation block names each route's sole importer (its own test), that app/main.py imports none, the READ-ONLY neighbours and the query.py --no-regen instruction; the consumer claims verified in source. Blob-level restamp predicate re-verified by the orchestrator at the accept head f2ada974 (rate_limit.py 637c1b6a, test_rate_limit.py 0f2b0278, scene_api.py 9cdc8eb7, dxf_import_api.py 6a58ae1a, export_api.py 4177ba09, test_scene_api.py cd6232cf, test_dxf_import_api.py 233878ef, test_export_api.py ec9f9419, M5-T111-producer-report.md 70a7d045; identity 3f87108f; evaluate_task_refs ok); report M5-T111-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T115",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "675dc7a1ef571f3bc2c7c1000e87556265ceaea6",
+   "reviewed_manifest_sha256": "70ed25ba2dd8adb47b249cd76981936ecef3416e45e7faae1fae091dcf007bd8",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T07:10:05+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t115): the packet's navigation block names the live flow, PropertyOverview.tsx READ-ONLY and the query.py --no-regen instruction; the G0 report corroborates. Blob-level restamp predicate re-verified by the orchestrator at the accept head 675dc7a1 (AddressResolutionScreen.tsx 1cd66f0f, AddressForm.tsx 2f0af0a3, SuggestionChooser.tsx 3dc70161, AddressOutcomeCards.tsx f7126347, AddressConfirmCard.tsx 4e139d5f, LotOutlineMap.tsx 6c5d0fe8, address-resolution.test.tsx 29ee3626, address-confirm.test.tsx a574ff92, lot-outline-map.test.tsx 535f7b27, AddressAutocomplete.tsx 53e44e55, ArchitectEntry.tsx 39979587, autocomplete.test.tsx 4ad628c5, entry.test.tsx 46eb31b5, architect.css d917ab02, confirm-journey.spec.ts 30ed69f8, lot-outline.spec.ts 60798f12, a11y-announcements.spec.ts 3402bad2, responsive-a11y.spec.ts 3a02a6b4, M5-T115-producer-report.md c8b11889; identity 70ed25ba; evaluate_task_refs ok); report M5-T115-DCV.md."
      ]
     }
    ]

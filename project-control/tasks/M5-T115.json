@@ -87,12 +87,12 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-25T06:01:17.251984+00:00",
-  "updated_at": "2026-09-25T06:49:06.302118+00:00",
+  "updated_at": "2026-09-25T07:10:10.403722+00:00",
   "directive_refs": [
     {
       "directive_id": "D-086",
@@ -144,5 +144,7 @@
       "status": "in_progress",
       "message": "Harvested: f94081ac cherry-picked to 75c03f25 (8 files MATCH); harvest checks green; evidence map + G2 written; submitting."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-25T07:10:10.403722+00:00"
 }

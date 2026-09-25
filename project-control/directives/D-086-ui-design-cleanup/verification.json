@@ -3,7 +3,7 @@
  "directive_id": "D-086",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-086-BOOTSTRAP at capture; concrete design-cleanup packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R003 is a standing prohibition carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T05:53:37+00:00",
+ "verified_at": "2026-09-25T07:10:05+00:00",
  "task_verifications": [
   {
    "directive_id": "D-086",
@@ -93,6 +93,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: P0 (M5-T080) accepted with R001-R004 PASS and its seam after the D-085 restart; P1 contracted at seq 130 as the next phase in order. Blob-level restamp predicate re-verified by the orchestrator at the accept head 7b3686f0 (P1-VISUAL-STATE-SPEC.md 0b223036, P1-mockups.html 0f842cbd, M5-T114-producer-report.md ec2d4c77; identity 24ac1f58; evaluate_task_refs ok); report M5-T114-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-086",
+   "task_id": "M5-T115",
+   "applicable_requirement_ids": [
+    "D-086-R002",
+    "D-086-R001",
+    "D-086-R003",
+    "D-086-R004"
+   ],
+   "reviewed_sha": "675dc7a1ef571f3bc2c7c1000e87556265ceaea6",
+   "reviewed_manifest_sha256": "70ed25ba2dd8adb47b249cd76981936ecef3416e45e7faae1fae091dcf007bd8",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T07:10:05+00:00",
+   "requirements": [
+    {
+     "id": "D-086-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: P2 contracted after P0 and P1 with the assessment's exit gate (G0/G2/G3/G4 + the human-journey walkthrough); all nine P2 exit-gate scenarios covered by property-asserting tests green in CI; the re-cite-vs-new split is the correct reading under R003 (HJ-4 is an expectation note). Blob-level restamp predicate re-verified by the orchestrator at the accept head 675dc7a1 (AddressResolutionScreen.tsx 1cd66f0f, AddressForm.tsx 2f0af0a3, SuggestionChooser.tsx 3dc70161, AddressOutcomeCards.tsx f7126347, AddressConfirmCard.tsx 4e139d5f, LotOutlineMap.tsx 6c5d0fe8, address-resolution.test.tsx 29ee3626, address-confirm.test.tsx a574ff92, lot-outline-map.test.tsx 535f7b27, AddressAutocomplete.tsx 53e44e55, ArchitectEntry.tsx 39979587, autocomplete.test.tsx 4ad628c5, entry.test.tsx 46eb31b5, architect.css d917ab02, confirm-journey.spec.ts 30ed69f8, lot-outline.spec.ts 60798f12, a11y-announcements.spec.ts 3402bad2, responsive-a11y.spec.ts 3a02a6b4, M5-T115-producer-report.md c8b11889; identity 70ed25ba; evaluate_task_refs ok); report M5-T115-DCV.md."
+     ]
+    },
+    {
+     "id": "D-086-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the assessment's pinned digest re-verified; used as input; the ledger id orchestrator-assigned; no hold lifted; MR-1..MR-8 not adopted. Blob-level restamp predicate re-verified by the orchestrator at the accept head 675dc7a1 (AddressResolutionScreen.tsx 1cd66f0f, AddressForm.tsx 2f0af0a3, SuggestionChooser.tsx 3dc70161, AddressOutcomeCards.tsx f7126347, AddressConfirmCard.tsx 4e139d5f, LotOutlineMap.tsx 6c5d0fe8, address-resolution.test.tsx 29ee3626, address-confirm.test.tsx a574ff92, lot-outline-map.test.tsx 535f7b27, AddressAutocomplete.tsx 53e44e55, ArchitectEntry.tsx 39979587, autocomplete.test.tsx 4ad628c5, entry.test.tsx 46eb31b5, architect.css d917ab02, confirm-journey.spec.ts 30ed69f8, lot-outline.spec.ts 60798f12, a11y-announcements.spec.ts 3402bad2, responsive-a11y.spec.ts 3a02a6b4, M5-T115-producer-report.md c8b11889; identity 70ed25ba; evaluate_task_refs ok); report M5-T115-DCV.md."
+     ]
+    },
+    {
+     "id": "D-086-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: an additive diff preserving ids, roles, aria contracts and the matched line; section 29 only via REQUIRED_DISCLAIMER; city warnings verbatim above Continue; no UI math; no status remap; the environment note carries the InternalBanner meaning; visibility and meaning proofs both present. Blob-level restamp predicate re-verified by the orchestrator at the accept head 675dc7a1 (AddressResolutionScreen.tsx 1cd66f0f, AddressForm.tsx 2f0af0a3, SuggestionChooser.tsx 3dc70161, AddressOutcomeCards.tsx f7126347, AddressConfirmCard.tsx 4e139d5f, LotOutlineMap.tsx 6c5d0fe8, address-resolution.test.tsx 29ee3626, address-confirm.test.tsx a574ff92, lot-outline-map.test.tsx 535f7b27, AddressAutocomplete.tsx 53e44e55, ArchitectEntry.tsx 39979587, autocomplete.test.tsx 4ad628c5, entry.test.tsx 46eb31b5, architect.css d917ab02, confirm-journey.spec.ts 30ed69f8, lot-outline.spec.ts 60798f12, a11y-announcements.spec.ts 3402bad2, responsive-a11y.spec.ts 3a02a6b4, M5-T115-producer-report.md c8b11889; identity 70ed25ba; evaluate_task_refs ok); report M5-T115-DCV.md."
+     ]
+    },
+    {
+     "id": "D-086-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contracted at the wave-2 seam after the accepted P0 and P1; dependency M5-T114. Blob-level restamp predicate re-verified by the orchestrator at the accept head 675dc7a1 (AddressResolutionScreen.tsx 1cd66f0f, AddressForm.tsx 2f0af0a3, SuggestionChooser.tsx 3dc70161, AddressOutcomeCards.tsx f7126347, AddressConfirmCard.tsx 4e139d5f, LotOutlineMap.tsx 6c5d0fe8, address-resolution.test.tsx 29ee3626, address-confirm.test.tsx a574ff92, lot-outline-map.test.tsx 535f7b27, AddressAutocomplete.tsx 53e44e55, ArchitectEntry.tsx 39979587, autocomplete.test.tsx 4ad628c5, entry.test.tsx 46eb31b5, architect.css d917ab02, confirm-journey.spec.ts 30ed69f8, lot-outline.spec.ts 60798f12, a11y-announcements.spec.ts 3402bad2, responsive-a11y.spec.ts 3a02a6b4, M5-T115-producer-report.md c8b11889; identity 70ed25ba; evaluate_task_refs ok); report M5-T115-DCV.md."
      ]
     }
    ]
