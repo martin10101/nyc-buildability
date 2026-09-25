@@ -7,6 +7,8 @@
   bump a nonce state and focus in a `useEffect`.
 - DON'T commit an empty `.test.ts`/`.test.tsx` — vitest fails on "no suite"; seed one trivial
   passing test. Empty python test files are fine.
+- DO keep every seeded placeholder line <= 100 chars — ruff E501 lints app/ placeholders and is
+  the api CI job's first step (wave-10 seam 06db6449 reddened CI until 580d1125).
 - DON'T run or document npm/npx/node locally (thin client) — web tests prove ONLY in CI on the
   pushed head; never mark web behavior verified from local reasoning.
 - DO run `python -m ruff check services/api` before any api checkpoint/commit — it is the api
