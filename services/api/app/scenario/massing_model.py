@@ -53,9 +53,19 @@ M5-T098 (DB-061 a-d) before-wiring guards: the LOT ring - a separate argument B0
 never sees - gets the same NYC EPSG:2263 range check as the proposal footprint
 (``lot_ring_out_of_nyc_bounds``), so a wrong-unit / wrong-CRS lot (a 4326 lon/lat
 or metric ring) is refused BY NAME and never mislabelled ``footprint_outside_lot``;
-and any ``shapely``/GEOS engine error on a build path is wrapped into a typed
+and any ``shapely`` geometry-engine error on a build path is wrapped into a typed
 :class:`MassingModelError` (``geometry_engine_error``) at the module boundary, so no
-untyped error can escape. Valid inputs are unchanged.
+untyped ``shapely`` error can escape. Valid inputs are unchanged.
+
+M5-T106 (DB-069 a-d) before-wiring hardening, ahead of the PKT-E scene seam that
+feeds user geometry in: the LOT NYC range check runs on the RAW vertices (before the
+collinear collapse), so an out-of-range collinear spike (e.g. x=2e6) is refused, not
+silently collapsed away; the geometry-engine wrap catches the whole
+:class:`shapely.errors.ShapelyError` family (``GEOSException`` and its siblings -
+``TopologicalError``, ``GeometryTypeError``, ``DimensionError``...), so no ``shapely``
+error escapes untyped; and every refusal echo of caller input is length-bounded
+(:data:`MAX_ECHO_CHARS` via :func:`_preview`), so a huge pasted vertex cannot amplify
+a message. Valid inputs are unchanged (both goldens byte-identical).
 
 Deterministic and offline: standard library + the admitted ``shapely`` (validity,
 area, containment) and ``numpy`` (mesh volume / area reductions). No network, no new
@@ -73,7 +83,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
-from shapely.errors import GEOSException
+from shapely.errors import ShapelyError
 from shapely.geometry import Polygon
 
 from .proposal import (
@@ -141,6 +151,11 @@ MAX_TOTAL_MESH_VERTICES = 100_000
 #: Per-request ear-clipping work, in units that upper-bound point-in-triangle tests
 #: (a convex 999-vertex ring costs 497,502). Shared by every distinct ring.
 MAX_TRIANGULATION_WORK = 2_000_000
+#: A refusal message echoes at most this many characters of the offending caller input
+#: (DB-069 d / M5-T098 G5 F-LOW-2). The lot ring has no B0 total-positions gate, so a
+#: 200,000-character pasted vertex would otherwise produce a 200,000-character message
+#: (log / response amplification). :func:`_preview` truncates the ``repr`` to this bound.
+MAX_ECHO_CHARS = 120
 
 _Point = tuple[float, float]
 
@@ -158,24 +173,31 @@ class MassingModelError(ValueError):
 
 
 def _wrap_geos_errors(func):
-    """Wrap the shapely/GEOS engine boundary (DB-061 d): any :class:`GEOSException`
-    escaping the geometry engine on a build path becomes a typed
-    :class:`MassingModelError` (``geometry_engine_error``), so no untyped error reaches
-    a caller and every wiring route can map one exception family to a client response.
+    """Wrap the shapely geometry-engine boundary (DB-061 d / DB-069 b): any
+    :class:`shapely.errors.ShapelyError` escaping the engine on a build path becomes a
+    typed :class:`MassingModelError` (``geometry_engine_error``), so no untyped
+    ``shapely`` error reaches a caller and every wiring route can map one exception
+    family to a client response. ``ShapelyError`` is the shapely base class, so this
+    covers ``GEOSException`` AND its siblings (``TopologicalError``,
+    ``GeometryTypeError``, ``DimensionError``, ``EmptyPartError``, ...) - the earlier
+    ``except GEOSException`` let the non-GEOS siblings escape untyped (M5-T098 G3/G5
+    advisory), which this closes before the PKT-E scene seam feeds user geometry in.
 
     Inputs are magnitude- and NYC-range-bounded, finiteness-checked and validity-checked
     before any shapely construct runs, so this is a defensive backstop, not a routine
     path - valid inputs never trigger it and their output is unchanged. A
-    :class:`MassingModelError` is a :class:`ValueError`, NOT a :class:`GEOSException`, so
-    a typed refusal raised inside the body passes through unwrapped with its own reason."""
+    :class:`MassingModelError` is a :class:`ValueError`, NOT a
+    :class:`shapely.errors.ShapelyError` (their class hierarchies are disjoint below
+    :class:`Exception`), so a typed refusal raised inside the body passes through
+    unwrapped with its own reason."""
 
     @functools.wraps(func)
     def _guarded(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except GEOSException as exc:
+        except ShapelyError as exc:
             raise MassingModelError(
-                f"the geometry engine (shapely/GEOS) failed on this input: {exc}",
+                f"the geometry engine (shapely) failed on this input: {_preview(exc)}",
                 reason="geometry_engine_error", field=None) from exc
 
     return _guarded
@@ -184,6 +206,20 @@ def _wrap_geos_errors(func):
 # ---------------------------------------------------------------------------
 # Numeric helpers (deterministic).
 # ---------------------------------------------------------------------------
+
+
+def _preview(value: object, limit: int = MAX_ECHO_CHARS) -> str:
+    """A length-bounded ``repr`` of caller input for a refusal message (DB-069 d).
+
+    Returns ``repr(value)`` unchanged when it is within ``limit`` characters; otherwise
+    the first ``limit`` characters followed by a compact ``...<+N chars>`` marker (``N``
+    a small integer, so the whole preview stays bounded). A refusal that echoes a huge
+    pasted vertex, source or height thus cannot amplify the message. Resolved from the
+    module namespace at call time so a mutation to it reddens the bounded-echo tests."""
+    text = repr(value)
+    if len(text) <= limit:
+        return text
+    return f"{text[:limit]}...<+{len(text) - limit} chars>"
 
 
 def _q(value: float) -> float:
@@ -233,7 +269,30 @@ def _point_in_triangle(p: _Point, a: _Point, b: _Point, c: _Point) -> bool:
 # ---------------------------------------------------------------------------
 
 
-def _prepare_ring(points: Sequence[Sequence[float]], field: str) -> list[_Point]:
+def _require_raw_vertices_in_nyc_bounds(
+    vertices: Sequence[_Point], field: str
+) -> None:
+    """Refuse when any RAW ring vertex is outside plausible NYC EPSG:2263 bounds (DB-069
+    a / DB-061 c). Called from :func:`_prepare_ring` on the lot ring BEFORE the collinear
+    collapse, reusing the very :data:`NYC_2263_X_MIN` .. constants B0 applies to the
+    proposal footprint (single source of truth) and naming ``field`` so the refusal
+    points at the real culprit. EVERY vertex is checked (not only the first), on BOTH the
+    easting and northing axes. Generous fail-closed unit guards, never a precise city
+    boundary."""
+    for x, y in vertices:
+        if not (NYC_2263_X_MIN <= x <= NYC_2263_X_MAX
+                and NYC_2263_Y_MIN <= y <= NYC_2263_Y_MAX):
+            raise MassingModelError(
+                f"lot_ring vertex ({x}, {y}) is outside plausible NYC EPSG:2263 bounds "
+                f"([{NYC_2263_X_MIN}, {NYC_2263_X_MAX}] x [{NYC_2263_Y_MIN}, "
+                f"{NYC_2263_Y_MAX}] US survey feet) - likely a wrong-unit or wrong-CRS "
+                "lot; it is refused, never mislabelled",
+                reason="lot_ring_out_of_nyc_bounds", field=field)
+
+
+def _prepare_ring(
+    points: Sequence[Sequence[float]], field: str, *, nyc_range_check: bool = False
+) -> list[_Point]:
     """Normalise a 2263 ring to distinct, non-collinear, CCW vertices.
 
     Accepts an open or explicitly-closed ring, drops the closing duplicate, and
@@ -241,7 +300,15 @@ def _prepare_ring(points: Sequence[Sequence[float]], field: str) -> list[_Point]
     clipping finds a strict-convex ear at every step and the caps and side walls
     share the SAME boundary. Fails closed on a non-finite or over-magnitude
     coordinate, an over-cap count, a duplicate vertex, or fewer than three distinct
-    corners."""
+    corners.
+
+    When ``nyc_range_check`` is set (the lot path, which B0 never sees), each RAW vertex
+    is range-checked against the NYC EPSG:2263 bounds in this parse loop - BEFORE the
+    collinear collapse below (DB-069 a) - so an out-of-range collinear spike (e.g. a
+    x=2e6 vertex on a straight edge) is refused ``lot_ring_out_of_nyc_bounds`` rather
+    than silently collapsed away and never checked. The magnitude bound is checked first
+    so a ~1e154 overflow still refuses ``coordinate_out_of_range`` (not mislabelled).
+    Footprint / per-level rings are B0-range-checked upstream and pass ``False`` here."""
     if not isinstance(points, (list, tuple)):
         raise MassingModelError(f"{field} must be a list of [x, y] points",
                                 reason="invalid_source", field=field)
@@ -251,6 +318,7 @@ def _prepare_ring(points: Sequence[Sequence[float]], field: str) -> list[_Point]
             reason="over_cap_vertices", field=field)
 
     parsed: list[_Point] = []
+    raw: list[_Point] = []
     for idx, pt in enumerate(points):
         if not isinstance(pt, (list, tuple)) or len(pt) != 2:
             raise MassingModelError(f"{field}[{idx}] must be an [x, y] pair",
@@ -258,14 +326,23 @@ def _prepare_ring(points: Sequence[Sequence[float]], field: str) -> list[_Point]
         x, y = pt[0], pt[1]
         if not _is_finite_number(x) or not _is_finite_number(y):
             raise MassingModelError(
-                f"{field}[{idx}] must be a finite [x, y] pair; got {pt!r}",
+                f"{field}[{idx}] must be a finite [x, y] pair; got {_preview(pt)}",
                 reason="non_finite", field=f"{field}[{idx}]")
         if abs(x) > MAX_COORD_ABS or abs(y) > MAX_COORD_ABS:
             raise MassingModelError(
                 f"{field}[{idx}] exceeds the coordinate magnitude bound "
                 f"{MAX_COORD_ABS:.0f} ft",
                 reason="coordinate_out_of_range", field=f"{field}[{idx}]")
+        raw.append((x, y))
         parsed.append((_q(x), _q(y)))
+
+    # Lot-only NYC EPSG:2263 range check on the RAW vertices (DB-069 a), AFTER the whole
+    # magnitude pass (so a ~1e154 overflow still refuses coordinate_out_of_range first -
+    # the accepted M5-T088 precedence) and BEFORE the collinear collapse below (so an
+    # out-of-range collinear spike, e.g. x=2e6 on a straight edge, is refused, not
+    # silently collapsed away and never seen).
+    if nyc_range_check:
+        _require_raw_vertices_in_nyc_bounds(raw, field)
 
     if len(parsed) >= 2 and parsed[0] == parsed[-1]:
         parsed = parsed[:-1]  # drop the explicit closing duplicate
@@ -584,12 +661,13 @@ def _expand_floor_stack(
         if not _is_finite_number(height) or height <= 0:
             raise MassingModelError(
                 f"level {level_index} floor_to_floor_ft must be finite and > 0; "
-                f"got {height!r}",
+                f"got {_preview(height)}",
                 reason="non_positive_height",
                 field=f"proposed_massing.levels[{level_index}].floor_to_floor_ft")
         if isinstance(count, bool) or not isinstance(count, int) or count < 1:
             raise MassingModelError(
-                f"level {level_index} floor_count must be an integer >= 1; got {count!r}",
+                f"level {level_index} floor_count must be an integer >= 1; "
+                f"got {_preview(count)}",
                 reason="invalid_source",
                 field=f"proposed_massing.levels[{level_index}].floor_count")
 
@@ -655,34 +733,20 @@ def _triangulate_distinct(
 # ---------------------------------------------------------------------------
 
 
-def _require_lot_ring_in_nyc_bounds(ring: Sequence[_Point]) -> None:
-    """Fail closed when the LOT ring is outside plausible NYC EPSG:2263 bounds (DB-061 c
-    / G3-A2 / G5 F-LOW-2). The lot arrives as a SEPARATE argument that the B0 contract
-    (:func:`validate_proposed_massing`) never sees, so without this guard a 4326 (lon/
-    lat degrees) or metric lot passes the magnitude bound and is then MISLABELLED
-    ``footprint_outside_lot`` downstream - the wrong cause. This reuses the very
-    :data:`NYC_2263_X_MIN` .. constants B0 applies to the proposal footprint (single
-    source of truth), and names ``lot_ring`` so the refusal points at the real culprit.
-    These are generous fail-closed unit guards, never a precise city boundary."""
-    for x, y in ring:
-        if not (NYC_2263_X_MIN <= x <= NYC_2263_X_MAX
-                and NYC_2263_Y_MIN <= y <= NYC_2263_Y_MAX):
-            raise MassingModelError(
-                f"lot_ring vertex ({x}, {y}) is outside plausible NYC EPSG:2263 bounds "
-                f"([{NYC_2263_X_MIN}, {NYC_2263_X_MAX}] x [{NYC_2263_Y_MIN}, "
-                f"{NYC_2263_Y_MAX}] US survey feet) - likely a wrong-unit or wrong-CRS "
-                "lot; it is refused, never mislabelled",
-                reason="lot_ring_out_of_nyc_bounds", field="lot_ring")
-
-
 def _lot_polygon(lot_ring: Sequence[Sequence[float]]) -> tuple[Polygon, list[_Point]]:
     """Validate the canonical lot ring and return its shapely polygon + prepared ring.
     Refuses a self-intersecting or self-touching lot, and a lot outside the NYC
-    EPSG:2263 range (a wrong-unit / wrong-CRS mistake). One ring cannot carry a hole: a
-    keyhole ring that pinches one off by revisiting a vertex is refused
+    EPSG:2263 range (a wrong-unit / wrong-CRS mistake, ``lot_ring_out_of_nyc_bounds``).
+
+    The lot is the ONE ring B0 never validates, so :func:`_prepare_ring` is called with
+    ``nyc_range_check=True``: it range-checks the RAW vertices in its parse loop, BEFORE
+    the collinear collapse (DB-069 a), reusing the very :data:`NYC_2263_X_MIN` ..
+    constants B0 applies to the proposal footprint (single source of truth) and naming
+    ``lot_ring`` so the refusal points at the real culprit. These are generous
+    fail-closed unit guards, never a precise city boundary. One ring cannot carry a
+    hole: a keyhole ring that pinches one off by revisiting a vertex is refused
     ``self_intersection`` in :func:`_prepare_ring`."""
-    ring = _prepare_ring(lot_ring, "lot_ring")
-    _require_lot_ring_in_nyc_bounds(ring)
+    ring = _prepare_ring(lot_ring, "lot_ring", nyc_range_check=True)
     poly = Polygon([(x, y) for x, y in ring])
     if poly.interiors:  # defensive: unreachable from one ring (DB-054 f)
         raise MassingModelError("lot_ring encloses a hole; a massing lot must be a "
@@ -737,7 +801,7 @@ def build_massing_model(
     :class:`MassingModelError`; nothing is clipped or repaired."""
     if source not in _LAYER_FOR_SOURCE:
         raise MassingModelError(
-            f"source must be one of {sorted(_LAYER_FOR_SOURCE)}; got {source!r}",
+            f"source must be one of {sorted(_LAYER_FOR_SOURCE)}; got {_preview(source)}",
             reason="invalid_source", field="source")
 
     # Fail-closed B0 validation of the proposed building (translated to a typed refusal).

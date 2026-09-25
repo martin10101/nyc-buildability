@@ -1066,3 +1066,180 @@ def test_t098_as5_module_imports_no_route_or_web_and_no_new_dependency():
             roots.add(node.module.split(".")[0])
     assert roots <= {"functools", "hashlib", "json", "math", "collections", "dataclasses",
                      "typing", "numpy", "shapely", "__future__"}
+
+
+# ---------------------------------------------------------------------------
+# M5-T106 (DB-069 a-d + DB-061 b) before-wiring hardening, ahead of the PKT-E
+# scene seam. Every test here is ADDED; the goldens above stay byte-identical.
+# ---------------------------------------------------------------------------
+
+
+# --- AS-1: the LOT NYC range check runs on RAW vertices, before the collapse ---
+
+
+def test_t106_as1_out_of_range_collinear_spike_in_lot_is_refused():
+    """DB-069 a / M5-T098 G3 ADVISORY-1: the lot NYC range check must run on the RAW
+    vertices, BEFORE the collinear collapse. A spike vertex at x=2e6 (out of the NYC
+    X-range, under the 1e8 magnitude bound) lies ON the straight bottom edge, so the
+    collinear collapse WOULD remove it - and the old post-collapse check never saw it.
+    The raw-vertex check refuses it, naming lot_ring.
+
+    Mutation (checking the COLLAPSED ring instead of the raw vertices): the spike is
+    collapsed away, the remaining ring is the clean in-range rectangle, no refusal is
+    raised and the model builds - so this test reddens that mutant."""
+    lot = [
+        [1000000.0, 200000.0],
+        [2000000.0, 200000.0],   # collinear spike on y=200000; x=2e6 is out of NYC range
+        [1000100.0, 200000.0],
+        [1000100.0, 200120.0],
+        [1000000.0, 200120.0],
+    ]
+    with pytest.raises(MassingModelError) as exc:
+        build_massing_model(lot_ring=lot, proposed_massing=_rect_block())
+    assert exc.value.reason == "lot_ring_out_of_nyc_bounds"
+    assert exc.value.field == "lot_ring"
+
+
+def test_t106_as1_near_overflow_lot_still_refuses_magnitude_first():
+    """The raw NYC check is ordered AFTER the magnitude bound, so a ~1e154 overflow lot
+    still refuses coordinate_out_of_range (not mislabelled lot_ring_out_of_nyc_bounds):
+    the accepted M5-T088 precedence is preserved by the raw-vertex ordering."""
+    big = 1e154
+    lot = [[-big, -big], [big, -big], [big, big], [-big, big]]
+    with pytest.raises(MassingModelError) as exc:
+        build_massing_model(lot_ring=lot, proposed_massing=_rect_block())
+    assert exc.value.reason == "coordinate_out_of_range"
+    assert exc.value.field == "lot_ring[0]"
+
+
+# --- AS-2: the geometry-engine wrap catches the whole ShapelyError family ----
+
+
+def test_t106_as2_non_geos_shapely_error_is_wrapped(monkeypatch):
+    """DB-069 b / M5-T098 G3 ADVISORY-2 / G5 F-LOW-1: the wrap catches the whole
+    shapely ShapelyError family, not only GEOSException. A non-GEOS sibling
+    (TopologicalError) raised on a build path is wrapped as a typed
+    geometry_engine_error; the earlier `except GEOSException` would let it ESCAPE
+    untyped. Proven with a spy on the module's Polygon construct. The fixture asserts
+    the sibling is genuinely a ShapelyError but NOT a GEOSException, so the widening is
+    real; the mutant (except GEOSException) reddens because a raw TopologicalError
+    escapes instead of a MassingModelError."""
+    from shapely.errors import GEOSException, ShapelyError, TopologicalError
+
+    assert issubclass(TopologicalError, ShapelyError)
+    assert not issubclass(TopologicalError, GEOSException)  # a genuine non-GEOS sibling
+
+    def exploding_polygon(*args, **kwargs):
+        raise TopologicalError("simulated non-GEOS shapely engine failure")
+
+    monkeypatch.setattr(mm, "Polygon", exploding_polygon)
+    with pytest.raises(MassingModelError) as exc:
+        _build(_rect_block())
+    assert exc.value.reason == "geometry_engine_error"
+
+
+def test_t106_as2_typed_refusal_still_passes_through_the_widened_wrap():
+    """The widened wrap stays SELECTIVE: MassingModelError is a ValueError, disjoint
+    from ShapelyError, so a typed refusal raised inside the wrapped body is not swallowed
+    or re-wrapped - its own reason survives (here footprint_outside_lot)."""
+    block = _rect_block()
+    block["outline"] = _outline([[x + 200.0, y] for x, y in RECT])  # outside the lot
+    with pytest.raises(MassingModelError) as exc:
+        _build(block)
+    assert exc.value.reason == "footprint_outside_lot"
+
+
+# --- AS-3: the lot NYC check probes the Y clause and later vertices ----------
+
+
+def test_t106_as3_lot_in_x_range_out_of_y_range_is_refused():
+    """DB-069 c / M5-T098 G4 ADVISORY-A: the Y clause was under-probed (every prior lot
+    fixture violated X first). A lot whose vertices are IN the X range but OUT of the Y
+    range is refused, naming lot_ring. Dropping the `and NYC_2263_Y_MIN <= y <= ...`
+    clause reddens this (only X checked -> the lot builds far from the footprint and
+    refuses footprint_outside_lot, a different reason)."""
+    y_out = mm.NYC_2263_Y_MAX + 1000.0  # above the northing range; x stays in range
+    lot = [[1000000.0, y_out], [1000100.0, y_out],
+           [1000100.0, y_out + 120.0], [1000000.0, y_out + 120.0]]
+    with pytest.raises(MassingModelError) as exc:
+        build_massing_model(lot_ring=lot, proposed_massing=_rect_block())
+    assert exc.value.reason == "lot_ring_out_of_nyc_bounds"
+    assert exc.value.field == "lot_ring"
+
+
+def test_t106_as3_lot_later_vertex_out_of_range_is_refused():
+    """DB-069 c / M5-T098 G4 ADVISORY-A: the check must scan EVERY vertex, not only
+    ring[0]. A lot whose first two vertices are in-range but a LATER vertex is out of the
+    Y range is refused. Checking only ring[0] reddens this: the tall in-X lot otherwise
+    contains the footprint and builds cleanly (no refusal at all)."""
+    y_out = mm.NYC_2263_Y_MAX + 1000.0
+    lot = [
+        [1000000.0, 200000.0],   # vertex[0] fully in range
+        [1000100.0, 200000.0],   # vertex[1] fully in range
+        [1000100.0, y_out],      # a LATER vertex out of the Y range
+        [1000000.0, y_out],
+    ]
+    with pytest.raises(MassingModelError) as exc:
+        build_massing_model(lot_ring=lot, proposed_massing=_rect_block())
+    assert exc.value.reason == "lot_ring_out_of_nyc_bounds"
+    assert exc.value.field == "lot_ring"
+
+
+# --- AS-4: refusal messages echo at most a bounded preview of caller input ---
+
+
+def test_t106_as4_lot_vertex_refusal_echo_is_bounded():
+    """DB-069 d / M5-T098 G5 F-LOW-2: a refusal echoing caller input is length-bounded.
+    The lot path has no B0 total-positions gate, so a 200,000-character vertex value
+    would otherwise produce a ~200,055-character message (log / response amplification).
+    An unbounded `repr` reddens this (the full pasted value appears and the message is
+    ~200,000 chars)."""
+    huge = "9" * 200_000
+    lot = [[huge, 200000.0], [1000100.0, 200000.0], [1000100.0, 200120.0],
+           [1000000.0, 200120.0]]
+    with pytest.raises(MassingModelError) as exc:
+        build_massing_model(lot_ring=lot, proposed_massing=_rect_block())
+    msg = str(exc.value)
+    assert exc.value.reason == "non_finite"
+    assert huge not in msg          # the full pasted value is truncated, not echoed
+    assert len(msg) <= 300          # bounded (the preview limit + marker + prefix)
+    assert "chars>" in msg          # the truncation marker is present (input was elided)
+
+
+def test_t106_as4_invalid_source_refusal_echo_is_bounded():
+    """The same bound applies to the `source` echo (a distinct caller-input echo site);
+    an unbounded `repr` reddens it too."""
+    huge = "x" * 200_000
+    with pytest.raises(MassingModelError) as exc:
+        build_massing_model(lot_ring=LOT_RING, proposed_massing=_rect_block(), source=huge)
+    msg = str(exc.value)
+    assert exc.value.reason == "invalid_source"
+    assert huge not in msg
+    assert len(msg) <= 300
+
+
+def test_t106_as4_preview_is_transparent_for_small_values():
+    """_preview does not alter a within-bound value (so valid-input error messages and
+    the goldens are unchanged): a short repr is returned verbatim, and the bound is the
+    declared MAX_ECHO_CHARS."""
+    assert mm._preview([1000000.0, 200000.0]) == repr([1000000.0, 200000.0])
+    assert mm.MAX_ECHO_CHARS == 120
+    long = "z" * (mm.MAX_ECHO_CHARS + 50)
+    out = mm._preview(long)
+    assert len(out) < len(repr(long))
+    assert out.startswith(repr(long)[: mm.MAX_ECHO_CHARS])
+
+
+# --- AS-6: valid-input output is byte-identical (goldens unchanged) ----------
+
+
+def test_t106_as6_valid_input_goldens_byte_identical():
+    """AS-6 scope: the M5-T106 guards touch only refusal paths; a valid build is
+    unchanged, so both accepted goldens (the 1-floor RECT and the 5-floor stack) stay
+    byte-identical."""
+    assert _build(_rect_block()).content_hash() == (
+        "sha256:b7fa9862a0bb23885e7d7d71dae4a2d448a6ca4720f29a7b6bf68b4227c5133b"
+    )
+    assert _build(_five_floor_block()).content_hash() == (
+        "sha256:e23b5cbcca6ea7defee4b04c6bac51a94d4c26b5e643e2af923d29d1c248a6c5"
+    )
