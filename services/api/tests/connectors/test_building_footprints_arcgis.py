@@ -799,11 +799,53 @@ def test_as5_module_imports_only_stdlib_shapely_and_app():
                      "app"}
 
 
-def test_as5_connector_is_not_wired_to_any_route_or_module():
-    for path in (API_ROOT / "app").rglob("*.py"):
-        if path == MODULE_PATH:
+def _app_imports(path: Path) -> set[str]:
+    """The ``app.*`` modules a source file imports (direct edges), by AST."""
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    mods: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module and node.module.startswith("app."):
+            mods.add(node.module)
+        elif isinstance(node, ast.Import):
+            mods.update(a.name for a in node.names if a.name.startswith("app."))
+    return mods
+
+
+def _module_path(module: str) -> Path | None:
+    """Resolve an ``app.*`` module name to its source file (a ``module.py`` or a package
+    ``__init__.py``), or None when it is neither (a namespace / C-extension)."""
+    parts = module.split(".")
+    candidate = API_ROOT.joinpath(*parts).with_suffix(".py")
+    if candidate.exists():
+        return candidate
+    pkg_init = API_ROOT.joinpath(*parts, "__init__.py")
+    return pkg_init if pkg_init.exists() else None
+
+
+def test_pkte_connector_is_unwired_from_the_mounted_app_and_wired_only_to_the_scene_assembler():
+    """AS-5 (DB-073 e): the grep-for-the-literal not-wired test is REPLACED with an
+    import-graph/AST check, because PKT-E now imports this connector by design and the old grep
+    would trip on that. The load-bearing invariant is instead: the connector is NOT reachable
+    from the mounted app (app.main), and neither is the UNMOUNTED scene route - so no route
+    serving this connector is live. It IS wired to exactly the accepted consumer, the scene
+    assembler. Mutation guard: mounting scene_api in main.py (or importing the connector from a
+    reachable module) makes it reachable and reddens the unreachability assertion."""
+    seen: set[str] = set()
+    queue = ["app.main"]
+    while queue:
+        module = queue.pop()
+        if module in seen:
             continue
-        assert "building_footprints_arcgis" not in path.read_text(encoding="utf-8"), path
+        seen.add(module)
+        path = _module_path(module)
+        if path is None:
+            continue
+        queue.extend(_app_imports(path))
+    assert "app.connectors.building_footprints_arcgis" not in seen
+    assert "app.api.v1.scene_api" not in seen  # the scene route ships UNMOUNTED
+    # The expected wiring: the scene assembler is the connector's one production consumer.
+    assembler = API_ROOT / "app" / "scenario" / "scene_assembler.py"
+    assert "app.connectors.building_footprints_arcgis" in _app_imports(assembler)
 
 
 def test_as5_fixture_pack_contains_no_credential_material():
@@ -1017,7 +1059,9 @@ def test_pktc_wall_clock_deadline_stops_paging_typed():
                             deadline=past)
     refusal = refused(result, "deadline_exceeded")
     assert refusal.detail["reason"] == "deadline_exceeded"
-    assert transport.calls == [build_metadata_url()]  # no query page fetched
+    # DB-073(c): the deadline is now checked BEFORE the metadata fetch too, so a past deadline
+    # makes NO request at all (previously the metadata request was already in flight).
+    assert transport.calls == []
     future = datetime(2026, 9, 24, 13, 0, 0, tzinfo=UTC)
     ok_result, _ = run(SUBJECT_ROUTES, envelope=SUBJECT_ENVELOPE, page_size=2, deadline=future)
     assert ok_result.status == "ok"
@@ -1158,3 +1202,136 @@ def test_pktc_source_registry_draft_matches_connector_identity():
         assert key in primary
     blob = json.dumps(primary)
     assert "RQ-1" in blob and "RQ-2" in blob  # height-unit + datum inferences stay open
+
+
+# ---------------------------------------------------------------------------
+# M5-T107 PKT-E riders (DB-073 a-g): the wiring packet's pre-consumption fixes to the
+# connector - the correlation-id sanitiser also strips U+2028/U+2029 and is length-bounded;
+# the deadline is honoured before the metadata fetch and during retry sleeps; a tz-naive
+# deadline is a typed disallowed_request; a multi-page advancing-clock deadline test and a
+# cumulative-bytes ceiling test between the one-page and two-page sums. Every page/geometry
+# below is SYNTHETIC or a monkeypatched config; nothing reaches the network.
+# ---------------------------------------------------------------------------
+
+
+def test_pkte_correlation_id_strips_line_and_paragraph_separators(caplog):
+    """DB-073(a) / M5-T101 G5 L-1: the sanitizer strips U+2028 (line) and U+2029 (paragraph)
+    separators too, so a cid carrying them cannot forge a log line at either log site and a
+    consumer that renders result.correlation_id raw is safe. Mutation guard: removing
+    0x2028/0x2029 from _CONTROL_CHAR_DELETE leaves the separators in and reddens both the unit
+    and the end-to-end assertions."""
+    assert bf._safe_correlation_id("A B C") == "ABC"
+    assert len(bf._safe_correlation_id("A B C").splitlines()) == 1
+    with caplog.at_level(logging.ERROR, logger=LOGGER_NAME):
+        result = fetch_context_buildings(
+            envelope=SUBJECT_ENVELOPE, transport=_broken_transport(RuntimeError("boom")),
+            clock=FIXED_CLOCK, correlation_id="pre post FORGED")
+    line = _error_records(caplog)[0].getMessage()
+    assert " " not in line and " " not in line
+    assert "correlation_id=prepostFORGED" in line
+    assert result.correlation_id == "prepostFORGED"
+
+
+def test_pkte_correlation_id_is_length_bounded_at_the_source():
+    """DB-073(b) / M5-T101 G5 L-2: a very long printable cid is length-bounded to _LOG_FIELD_MAX
+    at the source, so a hostile caller cannot dump an unbounded id at every log site (incl. once
+    per retry attempt in the shared transport). Mutation guard: removing the length bound in
+    _safe_correlation_id restores the 5000-char value and reddens this."""
+    bounded = bf._safe_correlation_id("z" * 5000)
+    assert bounded.endswith("...(truncated)")
+    assert len(bounded) <= bf._LOG_FIELD_MAX + len("...(truncated)")
+    assert bf._safe_correlation_id("t-cid") == "t-cid"  # a short cid is unchanged
+
+
+def test_pkte_deadline_checked_before_the_metadata_fetch():
+    """DB-073(c): a past deadline refuses deadline_exceeded BEFORE any request - not even the
+    metadata fetch is made. Mutation guard: removing the pre-metadata _check_deadline lets the
+    metadata request go out (transport.calls != [])."""
+    past = datetime(2026, 9, 24, 11, 0, 0, tzinfo=UTC)
+    result, transport = run(SUBJECT_ROUTES, envelope=SUBJECT_ENVELOPE, page_size=2,
+                            deadline=past)
+    assert refused(result, "deadline_exceeded")
+    assert transport.calls == []
+
+
+def test_pkte_deadline_refuses_during_a_retry_sleep():
+    """DB-073(c): the deadline is honoured DURING retry backoff, not only at each page top. A
+    transient 500 triggers a retry; the clock crosses the deadline before the sleep, so the
+    connector refuses deadline_exceeded rather than overshooting by the retry budget. Mutation
+    guard: passing the plain self.sleep (dropping the _check_deadline in _sleep_within_deadline)
+    lets the retry proceed and the call refuses upstream_error after the budget instead."""
+    before = datetime(2026, 9, 24, 11, 0, 0, tzinfo=UTC)
+    after = datetime(2026, 9, 24, 13, 0, 0, tzinfo=UTC)
+    deadline = datetime(2026, 9, 24, 12, 0, 0, tzinfo=UTC)
+    state = {"attempt1": False}
+
+    def clock():
+        return after if state["attempt1"] else before
+
+    def transport(url, headers, timeout):
+        if url == build_metadata_url():
+            return ok(body("layer_metadata.json"))
+        state["attempt1"] = True  # a P1 attempt just happened -> clock now past the deadline
+        return TransportResponse(500, "busy")
+
+    result = fetch_context_buildings(
+        envelope=SUBJECT_ENVELOPE, page_size=2, transport=transport, clock=clock,
+        sleep=lambda _s: None, rng=Random(0), correlation_id="t-cid", max_attempts=3,
+        deadline=deadline)
+    assert result.status == "refused"
+    assert result.refusal.error_type == "deadline_exceeded"
+
+
+def test_pkte_tz_naive_deadline_is_a_typed_disallowed_request():
+    """DB-073(d): a tz-naive deadline is refused as disallowed_request BEFORE any I/O, not a
+    TypeError -> internal_error from the comparison. Mutation guard: removing _validate_deadline
+    lets the naive datetime reach _check_deadline and become internal_error."""
+    naive = datetime(2026, 9, 24, 13, 0, 0)  # no tzinfo
+    result, transport = run(SUBJECT_ROUTES, envelope=SUBJECT_ENVELOPE, page_size=2,
+                            deadline=naive)
+    assert result.refusal.error_type == "disallowed_request"
+    assert result.refusal.detail["reason"] == "tz_naive_deadline"
+    assert transport.calls == []
+
+
+def test_pkte_deadline_is_checked_at_every_page_not_once():
+    """DB-073(f) / M5-T101 G4 A1: with an advancing clock the deadline trips on the SECOND page,
+    proving each page top checks the deadline (not a hoisted once-only check). Mutation guard: a
+    once-only check hoisted before the paging loop (using the pre-loop 'before' time) lets both
+    pages through and the call succeeds - reddening this refusal assertion."""
+    before = datetime(2026, 9, 24, 11, 0, 0, tzinfo=UTC)
+    after = datetime(2026, 9, 24, 13, 0, 0, tzinfo=UTC)
+    deadline = datetime(2026, 9, 24, 12, 0, 0, tzinfo=UTC)
+    state = {"page1": False}
+
+    def clock():
+        return after if state["page1"] else before
+
+    replay = Replay(SUBJECT_ROUTES)
+
+    def transport(url, headers, timeout):
+        resp = replay(url, headers, timeout)
+        if url == P1_URL:
+            state["page1"] = True  # page 1 fetched -> the page-2 top check is now past deadline
+        return resp
+
+    result = fetch_context_buildings(
+        envelope=SUBJECT_ENVELOPE, page_size=2, transport=transport, clock=clock,
+        sleep=lambda _s: None, rng=Random(0), correlation_id="t-cid", deadline=deadline)
+    assert result.status == "refused"
+    assert result.refusal.error_type == "deadline_exceeded"
+    assert replay.calls == [build_metadata_url(), P1_URL]  # page 2 never fetched
+
+
+def test_pkte_cumulative_bytes_ceiling_is_between_the_one_and_two_page_sums(monkeypatch):
+    """DB-073(g) / M5-T101 G4 A2: with the ceiling set BETWEEN the one-page and two-page byte
+    sums, the query refuses cumulative_bytes_ceiling on the second page - proving the byte total
+    accumulates across pages. Mutation guard: a per-page reset (decoded_bytes = len(body) each
+    page) leaves page 2 under the ceiling and lets the query succeed - reddening this."""
+    b1 = len(body("subject_2033800084_envelope_p1.json").encode("utf-8"))
+    b2 = len(body("subject_2033800084_envelope_p2.json").encode("utf-8"))
+    monkeypatch.setattr(bf, "MAX_TOTAL_DECODED_BYTES", b1 + b2 - 1)
+    result, transport = run(SUBJECT_ROUTES, envelope=SUBJECT_ENVELOPE, page_size=2)
+    refusal = refused(result, "resource_exhausted")
+    assert refusal.detail["reason"] == "cumulative_bytes_ceiling"
+    assert transport.calls == [build_metadata_url(), P1_URL, P2_URL]

@@ -428,11 +428,15 @@ def raw_body_digest(body: str) -> str:
 _INTERNAL_ERROR_LOG_MESSAGE = "unexpected internal failure - no data returned"
 _LOG_FIELD_MAX = 200
 
-# DB-066(a): strip CR/LF and every C0/C1 control character + DEL OUTRIGHT before the shared
-# allowlist runs. The allowlist regex ends in ``$``, which in Python matches BEFORE a trailing
-# newline, so a value like ``"Foo\n"`` would otherwise pass through raw and forge a log line.
-# (No ``import re`` - the AS-5 import allowlist forbids it - a str.translate table does it.)
-_CONTROL_CHAR_DELETE = {c: None for c in [*range(0x20), 0x7F, *range(0x80, 0xA0)]}
+# DB-066(a) + DB-073(a): strip CR/LF, every C0/C1 control character, DEL, AND the U+2028 /
+# U+2029 line & paragraph separators OUTRIGHT before the shared allowlist runs. The allowlist
+# regex ends in ``$``, which in Python matches BEFORE a trailing newline, so a value like
+# ``"Foo\n"`` would otherwise pass through raw and forge a log line; U+2028/U+2029 are Unicode
+# line separators that ``str.splitlines()`` (and many renderers) treat as newlines yet are NOT
+# C0/C1 controls, so they are added here explicitly (DB-073 (a), M5-T101 G5 L-1). (No
+# ``import re`` - the AS-5 import allowlist forbids it - a str.translate table does it.)
+_CONTROL_CHAR_DELETE = {c: None for c in [*range(0x20), 0x7F, *range(0x80, 0xA0),
+                                          0x2028, 0x2029]}
 
 
 def _sanitized_bounded(text: str, limit: int = _LOG_FIELD_MAX) -> str:
@@ -446,13 +450,22 @@ def _sanitized_bounded(text: str, limit: int = _LOG_FIELD_MAX) -> str:
 
 
 def _safe_correlation_id(raw: object) -> str:
-    """DB-058(d) / DB-066(b): a caller correlation id is UNTRUSTED. Strip CR/LF and control
-    characters so it can never forge a log line at EITHER log site (this connector or the
-    shared transport, which logs it too). A missing / non-string / emptied-after-strip id
-    becomes a server-generated uuid4 hex - so no raw caller value ever reaches a log."""
+    """DB-058(d) / DB-066(b) / DB-073(a,b): a caller correlation id is UNTRUSTED. Strip CR/LF,
+    control characters and the U+2028/U+2029 separators so it can never forge a log line at
+    EITHER log site (this connector or the shared transport, which logs it too), THEN bound its
+    length to :data:`_LOG_FIELD_MAX` so a hostile caller cannot dump an arbitrarily long id at
+    every log site (DB-073 (b), M5-T101 G5 L-2). A missing / non-string / emptied-after-strip id
+    becomes a server-generated uuid4 hex - so no raw or unbounded caller value ever reaches a
+    log. Bounding at the source also protects ``result.correlation_id`` for a raw-rendering
+    consumer (DB-073 (a))."""
     if not isinstance(raw, str):
         return uuid.uuid4().hex
-    return raw.translate(_CONTROL_CHAR_DELETE) or uuid.uuid4().hex
+    cleaned = raw.translate(_CONTROL_CHAR_DELETE)
+    if not cleaned:
+        return uuid.uuid4().hex
+    if len(cleaned) <= _LOG_FIELD_MAX:
+        return cleaned
+    return cleaned[:_LOG_FIELD_MAX] + "...(truncated)"
 
 
 def _refusal_time(io: _Io) -> str:
@@ -618,12 +631,22 @@ class _Io:
             compute_delay=jittered_retry_after_delay(
                 backoff_base=self.backoff_base, backoff_cap=self.backoff_cap,
                 retry_after_cap=self.retry_after_cap, rng=self.rng, wall_clock=self.clock),
-            sleep=self.sleep,
+            sleep=self._sleep_within_deadline,
             budget=self.budget,
         )
         self.retrieved_at = _rfc3339(self.clock())
         self.digest = raw_body_digest(response.body)
         return response.body
+
+    def _sleep_within_deadline(self, seconds: float) -> None:
+        """DB-073(c): the caller wall-clock deadline is honoured DURING retry backoff too, not
+        only at each page top. Before sleeping between attempts, refuse with a typed
+        ``deadline_exceeded`` if the deadline is already reached, so a slow host cannot make a
+        request overshoot by a full retry budget (M5-T101 G5 T-1). A missing deadline never
+        refuses. The raise propagates out of ``request_with_retry`` (the injected sleep is
+        called outside its try) into the connector's fail-closed refusal path."""
+        _check_deadline(self)
+        self.sleep(seconds)
 
 
 def _parse_json_object(body: str, *, url: str, cid: str) -> dict:
@@ -940,6 +963,22 @@ def _validate_inputs(site_ground: object, subject_bbl: object, page_size: object
     return ground, subject
 
 
+def _validate_deadline(deadline: object, cid: str) -> None:
+    """DB-073(d): a caller ``deadline`` must be a TIMEZONE-AWARE datetime. A tz-naive datetime
+    would raise ``TypeError`` when compared against the tz-aware clock in :func:`_check_deadline`
+    and surface as a generic ``internal_error``; refuse it up front as a typed
+    ``disallowed_request`` (before any I/O), naming the fault (M5-T101 G3 A2). ``None`` never
+    refuses."""
+    if deadline is None:
+        return
+    if (not isinstance(deadline, datetime) or deadline.tzinfo is None
+            or deadline.utcoffset() is None):
+        raise DisallowedRequestError(
+            "deadline must be a timezone-aware datetime; a tz-naive value is refused, never "
+            "compared", correlation_id=cid,
+            detail={"reason": "tz_naive_deadline", "value": _safe_repr(deadline)})
+
+
 def _collect_pages(io: _Io, query: _Query, size: int,
                    result: ContextBuildingsResult) -> list[tuple[int, dict]]:
     """Deterministic resultOffset paging with loop-safety guarantees (every violation is a
@@ -1034,9 +1073,11 @@ def fetch_context_buildings(
     try:
         site_ground, subject = _validate_inputs(site_ground_elevation_ft, subject_bbl,
                                                 page_size, cid)
+        _validate_deadline(deadline, cid)  # DB-073(d): tz-naive deadline -> typed refusal
         query = _build_query(envelope, polygon, cid)
         result.query, result.site_ground_elevation_ft, result.subject_bbl = (
             query.echo, site_ground, subject)
+        _check_deadline(io)  # DB-073(c): honour the deadline BEFORE the metadata fetch too
         max_records = _fetch_layer_metadata(io, result)
         size = min(page_size or MAX_PAGE_SIZE, max_records)
         collected = _collect_pages(io, query, size, result)
