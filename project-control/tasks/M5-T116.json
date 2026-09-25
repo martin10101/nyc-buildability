@@ -1,0 +1,110 @@
+{
+  "task_id": "M5-T116",
+  "title": "D-087 export-service pre-mount hardening (DB-082 a, c, f, g, h): concave-safe GLB caps via the public massing triangulator (L-shaped footprints), the fallback filename token re-allowlisted, all four caller text fields screened in tests, the floor-cap edge pinned, the GLB disclosure docstring fixed",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the export-service PKT-H riders in services/api/app/cad/export_service.py (UNMOUNTED route; the service itself). (a) DB-082 a: the GLB prism's bottom and top caps are a fan from vertex 0, wrong (and not refused) for concave footprints such as L-shapes - build the caps from the ONE public concave-safe triangulator app.scenario.massing_triangulation.triangulate_polygon (the accepted M5-T112 API: ring in, prepared CCW ring + triangles out, work budget, typed refusals), mapping its typed refusal to the service's reconciled refusal shape; confirm the footprint is range-checked upstream before triangulation (the triangulator omits the lot-only NYC check by design - M5-T112 G5 INFO-1) and state where. (c) DB-082 c: re-allowlist the fallback filename token at content_disposition (defence in depth: every token, including the fallback, passes the same allowlist + length cap). (f) test the claim-word and length screens over ALL FOUR caller text fields (address, bbl, generated_at, generator_version), not only address. (g) pin the floor-cap edge (2000 accepted, 2001 refused). (h) fix the service docstring that misplaces the GLB dedupe disclosure (it is ExportResult.provenance['glb_massing']). The DXF and PDF writers' outputs and the owner samples stay byte-identical; convex GLB output may change only where the triangulation differs, disclosed in the report.",
+  "business_reason": "L-shaped and other concave buildings are common in NYC; the 3D export must draw their roofs and floors correctly before the export route is mounted in the app.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "OVERNIGHT (binding; D-089): the owner is asleep - never wait for or ask the owner anything. Put any question in the report's OPEN QUESTIONS section with your recommended answer; the orchestrator decides or queues it. Stop only for a Tier D item (legal/zoning approval, secrets, payment, licensing) and report it.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "STAY UNMOUNTED (binding; plan section 2): app/main.py is NOT touched; every route stays absent from OpenAPI, flag-gated OFF by default with the generic 404 sentinel. Mounting is PKT-H, a later gated packet. The max-envelope route stays UNMOUNTED.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-082 (a), (c), (f), (g), (h) (exact wording; (b), (d), (e) went to M5-T111 and the mount; (i) stays by note); project-control/reports/M5-T109-G3.md, -G4.md, -G5.md, -DCV.md; M5-T112-G5.md (INFO-1: where the footprint range check lives) and the M5-T112 producer report (triangulate_polygon).",
+    "GLB CORRECTNESS (binding): for a concave footprint every cap triangle lies inside the footprint and the cap triangle areas sum to the footprint area (both caps, within float tolerance); winding stays outward (bottom cap facing -z, top +z) as the accepted glb_writer expects; the triangulator's work budget applies; a self-intersecting footprint is a typed refusal, never a malformed mesh.",
+    "TESTS + MUTATION OBLIGATIONS (binding; offline only): L- and U-shaped footprints (area-sum + containment oracle computed in the test, not imported from the code under test), a convex case, a self-intersecting refusal; the fallback-token allowlist; the four-field screen parametrization; 2000 vs 2001 floors. Each with a named in-process mutation (consuming namespace) that reddens it - e.g. restoring the vertex-0 fan. Record each mutant run; never commit harnesses.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at the wave-1 seam, 844 files / 18356 nodes / 7841 edges): export_service.py is imported by app/api/v1/export_api.py and tests/cad/test_export_service.py + test_export_api.py; export_api.py and its test are READ-ONLY here (a parallel packet may edit them); glb_writer.py, dxf_writer.py, pdf_sheet_writer.py, claim_words.py and the owner samples are READ-ONLY; app/scenario/massing_triangulation.py is imported READ-ONLY. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/cad/export_service.py - concave-safe GLB caps, re-allowlisted fallback token, docstring fix",
+    "services/api/tests/cad/test_export_service.py - concave caps, token, four-field screens, floor edge + mutations",
+    "project-control/reports/M5-T116-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T112"
+  ],
+  "allowed_paths": [
+    "services/api/app/cad/export_service.py",
+    "services/api/tests/cad/test_export_service.py",
+    "project-control/reports/M5-T116-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/api/",
+    "services/api/tests/cad/test_export_api.py",
+    "services/api/app/cad/glb_writer.py",
+    "services/api/app/cad/dxf_writer.py",
+    "services/api/app/cad/pdf_sheet_writer.py",
+    "services/api/app/cad/claim_words.py",
+    "services/api/app/scenario/",
+    "services/api/app/main.py",
+    "docs/samples/",
+    "services/api/tests/api/",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (concave GLB caps): L and U footprints produce caps whose triangles lie inside the footprint and sum to its area (both caps); outward winding kept; mutation - the vertex-0 fan - reddens.",
+    "AS-2 (refusals): a self-intersecting or over-budget footprint is the service's reconciled typed refusal (no caller text echoed); the report names where the footprint's range check runs upstream.",
+    "AS-3 (fallback token): every filename token, including the fallback, passes the allowlist + length cap before content_disposition; mutation - skipping it for the fallback - reddens.",
+    "AS-4 (screens + edges): the claim-word and length screens are tested on all four caller text fields; 2000 floors accepted, 2001 refused; mutations redden.",
+    "AS-5 (scope): DXF and PDF outputs and the owner samples byte-identical; the docstring fix; zero new dependencies; UNMOUNTED; ruff clean; modularity exit 0; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T06:30:36.536293+00:00",
+  "updated_at": "2026-09-25T06:30:36.977447+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003",
+        "D-087-R006",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-083",
+      "requirement_ids": [
+        "D-083-R001"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T06:30:36.536293+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/cad -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
