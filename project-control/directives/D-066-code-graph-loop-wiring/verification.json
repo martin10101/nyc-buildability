@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T05:53:37+00:00",
+ "verified_at": "2026-09-25T06:29:46+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1743,6 +1743,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t114): the packet carries the navigation block (graph regenerated at the seam, 844 files / 18356 nodes / 7841 edges) naming the route/state entry points with the query.py --no-regen instruction; graph advisory. Blob-level restamp predicate re-verified by the orchestrator at the accept head 7b3686f0 (P1-VISUAL-STATE-SPEC.md 0b223036, P1-mockups.html 0f842cbd, M5-T114-producer-report.md ec2d4c77; identity 24ac1f58; evaluate_task_refs ok); report M5-T114-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T112",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "bfefd93474318b2913f477bb1c0820f4f3be31d0",
+   "reviewed_manifest_sha256": "4b71b83987689a1ce831b24f25f0c8f58d6b82f6a50e3b378dab966f89a77ef5",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T06:29:46+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t112): the packet's navigation block names the consumers (scene_assembler.py -> scene_api.py, test_massing_model.py, test_scene_assembler.py), the regenerated graph and the query.py --no-regen instruction; graph advisory. Blob-level restamp predicate re-verified by the orchestrator at the accept head bfefd934 (massing_model.py 809ad7aa, massing_guards.py 5114dcf2, massing_triangulation.py cb8cf82b, massing_mesh.py d7fec512, test_massing_model.py d87db465, test_massing_split_equivalence.py a75f6863, test_massing_triangulation.py 44084bbb, M5-T112-producer-report.md f23d7184; identity 4b71b839; evaluate_task_refs ok); report M5-T112-DCV.md."
      ]
     }
    ]

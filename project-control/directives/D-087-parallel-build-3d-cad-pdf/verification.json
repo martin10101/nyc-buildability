@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T05:53:37+00:00",
+ "verified_at": "2026-09-25T06:29:46+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1657,6 +1657,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: G0 disjointness EMPTY vs every active task; one worktree wt-m5t114; the material commit touches exactly the 3 allowed paths; the worktree commit c9349900's blobs equal the cherry-pick's (the producer's files committed unchanged). Blob-level restamp predicate re-verified by the orchestrator at the accept head 7b3686f0 (P1-VISUAL-STATE-SPEC.md 0b223036, P1-mockups.html 0f842cbd, M5-T114-producer-report.md ec2d4c77; identity 24ac1f58; evaluate_task_refs ok); report M5-T114-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T112",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "bfefd93474318b2913f477bb1c0820f4f3be31d0",
+   "reviewed_manifest_sha256": "4b71b83987689a1ce831b24f25f0c8f58d6b82f6a50e3b378dab966f89a77ef5",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T06:29:46+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a contracted, claimed, gated packet (G0 93b94019, claimed 275ef85f, full worktree path) run concurrently with the disjoint M5-T111/T113/T114; no state or gate skipped; the FAIL -> rework -> delta cycle recorded with history. Blob-level restamp predicate re-verified by the orchestrator at the accept head bfefd934 (massing_model.py 809ad7aa, massing_guards.py 5114dcf2, massing_triangulation.py cb8cf82b, massing_mesh.py d7fec512, test_massing_model.py d87db465, test_massing_split_equivalence.py a75f6863, test_massing_triangulation.py 44084bbb, M5-T112-producer-report.md f23d7184; identity 4b71b839; evaluate_task_refs ok); report M5-T112-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY; one worktree wt-m5t112; 7413ecf4 (7 files) and the correction 1b24fa94 (1 test file) touch only allowed paths. Blob-level restamp predicate re-verified by the orchestrator at the accept head bfefd934 (massing_model.py 809ad7aa, massing_guards.py 5114dcf2, massing_triangulation.py cb8cf82b, massing_mesh.py d7fec512, test_massing_model.py d87db465, test_massing_split_equivalence.py a75f6863, test_massing_triangulation.py 44084bbb, M5-T112-producer-report.md f23d7184; identity 4b71b839; evaluate_task_refs ok); report M5-T112-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the massing module split along responsibilities behind a compatibility facade (acyclic guards -> triangulation -> mesh -> facade); the concave-safe triangulate_polygon is a documented public API for the GLB fix; outputs byte-identical except the single intended DB-079 (b) label; ruff clean, 817 scenario tests, modularity exit 0. Blob-level restamp predicate re-verified by the orchestrator at the accept head bfefd934 (massing_model.py 809ad7aa, massing_guards.py 5114dcf2, massing_triangulation.py cb8cf82b, massing_mesh.py d7fec512, test_massing_model.py d87db465, test_massing_split_equivalence.py a75f6863, test_massing_triangulation.py 44084bbb, M5-T112-producer-report.md f23d7184; identity 4b71b839; evaluate_task_refs ok); report M5-T112-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies (shapely + numpy already admitted); unwired; scene_assembler.py / app/api / app/main.py untouched; CI green at the pushed fc76a09f (all 18 jobs incl. pip-audit and web dependency security). Blob-level restamp predicate re-verified by the orchestrator at the accept head bfefd934 (massing_model.py 809ad7aa, massing_guards.py 5114dcf2, massing_triangulation.py cb8cf82b, massing_mesh.py d7fec512, test_massing_model.py d87db465, test_massing_split_equivalence.py a75f6863, test_massing_triangulation.py 44084bbb, M5-T112-producer-report.md f23d7184; identity 4b71b839; evaluate_task_refs ok); report M5-T112-DCV.md."
      ]
     }
    ]
