@@ -4,9 +4,18 @@
   "reviewer": "geospatial-engineer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M5-T106-G3.md",
-  "reviewed_at": "2026-09-25T02:25:28.495460+00:00",
-  "content_manifest_sha256": "37b2924cf4a7121b44e8f9ad83f7fe28a93781a372d1c0db7891d5b674f1e22f",
-  "reviewed_sha": "3fbbb2f6cf728b2b6ae02ac1c9c3171b369db549",
-  "updated_at": "2026-09-25T02:25:30.178032+00:00"
+  "report_file": "project-control/reports/M5-T106-G3-rework.md",
+  "reviewed_at": "2026-09-25T03:07:50.051925+00:00",
+  "content_manifest_sha256": "074a9f7b85532db300e67ea9f165008c6114437215e0c52922458dad2b55ddb3",
+  "reviewed_sha": "bdf89c7189135b0ed553d3894a111857c7dc6127",
+  "history": [
+    {
+      "reviewer": "geospatial-engineer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T106-G3.md",
+      "reviewed_at": "2026-09-25T02:25:28.495460+00:00"
+    }
+  ],
+  "updated_at": "2026-09-25T03:07:51.174295+00:00"
 }
