@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T00:38:08+00:00",
+ "verified_at": "2026-09-25T00:47:06+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1273,6 +1273,52 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies (stdlib + admitted shapely + internal modules; no import re); unwired; no route, main.py or web change; app/resilience and the MapPLUTO connector untouched; the connector at 865 SLOC under the 1000 cap; requirements untouched; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 68bc726e (building_footprints_arcgis.py 22c86686, building_footprints_geometry.py d5867737, test_building_footprints_arcgis.py 60751a0a, building-footprints.json 3844dcec, M5-T101-producer-report.md 5aacc3cd; identity d906812d; evaluate_task_refs ok); report M5-T101-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T104",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R005",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "259b6d4036652e2b5a23e9ca184c01eff937c77d",
+   "reviewed_manifest_sha256": "38a708668c98f80b46273ab40579506c745e5af564ad6b10802ca5353211c839",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T00:47:06+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the full gated lifecycle - G0 at 8e20acf2, claim at e9a268a5, G2/G3/G4 PASS - run concurrently with the file-disjoint M5-T103; no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head 259b6d40 (test_sheet_reader.py 613bcd20, sheet_primitives.py eb4205a2, M5-T104-producer-report.md baa2cf45; identity 38a70866; evaluate_task_refs ok); report M5-T104-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: M5-T104's three allowed paths are fully disjoint from M5-T103's six (which its forbidden_paths fence); G0 disjointness EMPTY vs every active task; one isolated worktree wt-m5t104; the cherry-pick touches exactly the 3 allowed paths. Blob-level restamp predicate re-verified by the orchestrator at the accept head 259b6d40 (test_sheet_reader.py 613bcd20, sheet_primitives.py eb4205a2, M5-T104-producer-report.md baa2cf45; identity 38a70866; evaluate_task_refs ok); report M5-T104-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: regression tests only, no new reading capability claimed - the sheet_primitives.py change is the one-line apply_matrix citation (8.3.3 -> 8.3.4); all ten named DB-055/DB-064 tests exist; the DB-055 (a) test now pins the interior point the bug displaces; mutation runs are recorded (not committed) as the packet input asks, and both reviewers reproduced them. Blob-level restamp predicate re-verified by the orchestrator at the accept head 259b6d40 (test_sheet_reader.py 613bcd20, sheet_primitives.py eb4205a2, M5-T104-producer-report.md baa2cf45; identity 38a70866; evaluate_task_refs ok); report M5-T104-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies (no requirements change; lock-verify and production-install green); unwired; the split-equivalence golden untouched; production unchanged except the citation line; PR #241 open and unmerged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 259b6d40 (test_sheet_reader.py 613bcd20, sheet_primitives.py eb4205a2, M5-T104-producer-report.md baa2cf45; identity 38a70866; evaluate_task_refs ok); report M5-T104-DCV.md."
      ]
     }
    ]

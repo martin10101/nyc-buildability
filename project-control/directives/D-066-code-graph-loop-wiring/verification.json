@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T00:38:08+00:00",
+ "verified_at": "2026-09-25T00:47:06+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1545,6 +1545,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t101): the packet carries the graph-derived navigation block (regenerated at the contract seam, 827 files / 17839 nodes / 7656 edges) naming the connector's sole consumer (its test), the read-only transport and MapPLUTO neighbours, and the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head 68bc726e (building_footprints_arcgis.py 22c86686, building_footprints_geometry.py d5867737, test_building_footprints_arcgis.py 60751a0a, building-footprints.json 3844dcec, M5-T101-producer-report.md 5aacc3cd; identity d906812d; evaluate_task_refs ok); report M5-T101-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T104",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "259b6d4036652e2b5a23e9ca184c01eff937c77d",
+   "reviewed_manifest_sha256": "38a708668c98f80b46273ab40579506c745e5af564ad6b10802ca5353211c839",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T00:47:06+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t104): the packet carries the graph-derived navigation block (regenerated at the contract seam, 830 files / 17842 nodes / 7656 edges) naming the reader modules' consumers and fencing the parallel M5-T103's files, with the query.py --no-regen instruction (advisory); the wave-8 bind has a same-commit digest resync. Blob-level restamp predicate re-verified by the orchestrator at the accept head 259b6d40 (test_sheet_reader.py 613bcd20, sheet_primitives.py eb4205a2, M5-T104-producer-report.md baa2cf45; identity 38a70866; evaluate_task_refs ok); report M5-T104-DCV.md."
      ]
     }
    ]
