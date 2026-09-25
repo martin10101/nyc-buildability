@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T106",
+ "material_commit": "966cca75 (cherry-pick of wt-m5t106 691f5934; 3 files, every file MATCH by blob)",
+ "produced_at": "2026-09-25T02:02:09+00:00",
+ "producer": "3d-massing-engineer (orchestrator-dispatched subagent; worktree wt-m5t106)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's navigation block (graph regenerated at the contract seam, 832 files / 17984 nodes / 7700 edges) named massing_model.py's only consumer (its test) and the read-only proposal.py import, and warned that the parallel M5-T107 codes against the public API; no public name or signature changed. [ORCH-HARVEST] at the cherry-picked head 966cca75 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario -q` (cwd services/api) -> exit 0: 722 passed in 24.25s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R001": [
+   "Wave-10 capacity unit: contracted at 06db6449 (G0), claimed at 11089429 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with four disjoint packets; no state or gate skipped. [ORCH-HARVEST] at the cherry-picked head 966cca75 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario -q` (cwd services/api) -> exit 0: 722 passed in 24.25s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task incl. the four wave-10 peers; one worktree wt-m5t106; the producer commit touches exactly the 3 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the cherry-picked head 966cca75 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario -q` (cwd services/api) -> exit 0: 722 passed in 24.25s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R003": [
+   "3D massing hardened before the PKT-E scene seam wires user geometry into it (DB-069 (a)-(d)): the NYC range check runs on the RAW lot vertices before the collinear collapse, every shapely error type becomes a typed MassingModelError, the in-X/out-of-Y and later-vertex-out probes exist, refusal echoes are bounded (120 characters); DB-061 (b) mutant ME confirmed dead by the existing test. Valid-input outputs byte-identical. [ORCH-HARVEST] at the cherry-picked head 966cca75 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario -q` (cwd services/api) -> exit 0: 722 passed in 24.25s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies; unwired (the only importer is its test); no route, main.py or web change; proposal.py untouched; massing_model.py stays under the modularity cap (warning band, cohesion note in the report). [ORCH-HARVEST] at the cherry-picked head 966cca75 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario -q` (cwd services/api) -> exit 0: 722 passed in 24.25s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ]
+ }
+}
