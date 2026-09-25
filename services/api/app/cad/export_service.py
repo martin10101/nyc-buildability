@@ -47,7 +47,10 @@ Guarantees (deterministic, stdlib + already-admitted packages only, no I/O, no c
   so caps and walls share ONE boundary and one outward winding (bottom cap facing -z, top
   +z). A non-simple / over-budget / out-of-range footprint is a typed refusal
   (:class:`~app.scenario.massing_guards.MassingModelError`) reconciled to the ONE redacted
-  :class:`ExportRefusal` shape, never a malformed mesh. Finiteness and the coordinate
+  :class:`ExportRefusal` shape, never a malformed mesh. The ear-clipper only detects a
+  DUPLICATE-vertex ring, so this service adds an explicit GEOS simplicity gate
+  (:func:`_reject_non_simple_ring`) on the PREPARED ring, refusing a crossed 'bowtie' with
+  DISTINCT vertices as ``self_intersection`` (G3 B1 / AS-2). Finiteness and the coordinate
   magnitude bound are checked inside the triangulator; the lot-only NYC range check is
   omitted there by design (M5-T112 G5 INFO-1 / DB-084 (d)) and the GLB writer re-validates
   finiteness, the local-coordinate bound and degeneracy.
@@ -62,6 +65,9 @@ import math
 import urllib.parse
 from collections.abc import Sequence
 from dataclasses import dataclass, field
+
+from shapely.errors import ShapelyError
+from shapely.geometry import LinearRing
 
 from app.cad import dxf_writer, glb_writer, pdf_sheet_writer
 from app.cad.claim_words import contains_claim_word
@@ -115,11 +121,15 @@ _SOURCE_LABELS: dict[str, str] = {
 #: Per-format RAW ring-vertex cap, checked BEFORE normalization (DB-057 (d)). PDF is the
 #: tightest (1024) so it is the binding cap for a PDF export; DXF (10_000) also bounds the
 #: single-prism GLB build (2*n verts, 12*n-12 indices stays far under the GLB writer's
-#: 500_000-vertex / 1_500_000-index budget).
+#: 500_000-vertex / 1_500_000-index budget). NOTE (G3 A1): for the GLB FOOTPRINT the
+#: EFFECTIVE cap is the concave-safe triangulator's ``MAX_OUTLINE_VERTICES`` = 1000, not
+#: this raw 10_000 - a 1001..10_000-vertex footprint is refused ``over_cap_vertices`` INSIDE
+#: the triangulator (``_prepare_ring``, before the ear scan); this raw 10_000 gate still
+#: bounds the GLB request's (never-rendered) lot ring.
 _FORMAT_RING_CAP: dict[str, int] = {
     "pdf": pdf_sheet_writer._MAX_RING_VERTICES,   # 1024
     "dxf": dxf_writer.MAX_RING_VERTICES,          # 10_000
-    "glb": dxf_writer.MAX_RING_VERTICES,          # 10_000
+    "glb": dxf_writer.MAX_RING_VERTICES,          # 10_000 raw; effective footprint cap 1000
 }
 
 #: Floor-stack ceiling (mirrors the accepted DXF/massing cap): floors <= 2000.
@@ -378,6 +388,32 @@ def _roof_height(floor_heights: Sequence[float]) -> tuple[float, ExportRefusal |
     return total, None
 
 
+def _reject_non_simple_ring(ring: Sequence[tuple[float, float]]) -> None:
+    """Refuse a self-intersecting (non-simple) footprint as a typed ``self_intersection``
+    :class:`~app.scenario.massing_guards.MassingModelError` (reconciled to the ONE redacted
+    :class:`ExportRefusal` by the caller; G3 B1 / AS-2).
+
+    The ear-clipping triangulator only refuses a DUPLICATE-vertex ring; a crossed 'bowtie'
+    with DISTINCT vertices (its edges cross) ear-clips to completion and would otherwise
+    yield a valid-but-self-overlapping mesh. This explicit GEOS simplicity gate closes that
+    gap. It runs on the PREPARED ring ``triangulate_polygon`` returns - whose preparation
+    already proved finiteness, the coordinate magnitude bound and the 1000-vertex cap - so
+    shapely/GEOS never sees a non-finite or over-cap coordinate. Any GEOS/shapely error is
+    mapped to the SAME typed refusal (fail closed)."""
+    try:
+        is_simple = LinearRing(ring).is_simple
+    except (ShapelyError, ValueError) as exc:
+        raise MassingModelError(
+            "building_ring failed the GEOS simplicity check",
+            reason="self_intersection", field="building_ring",
+        ) from exc
+    if not is_simple:
+        raise MassingModelError(
+            "building_ring is a self-intersecting (non-simple) polygon",
+            reason="self_intersection", field="building_ring",
+        )
+
+
 def _build_prism_mesh(
     footprint: list[tuple[float, float]], roof_height: float, base_elevation: float
 ) -> tuple[glb_writer.GlbMesh, glb_writer.GlbLocalFrame]:
@@ -395,13 +431,17 @@ def _build_prism_mesh(
     cap faces -z (its CCW-from-above triangles are reversed) and the top cap faces +z
     (kept), the outward winding :mod:`app.cad.glb_writer` expects. A non-simple /
     over-budget / out-of-range footprint raises a typed
-    :class:`~app.scenario.massing_guards.MassingModelError`, reconciled by the caller.
+    :class:`~app.scenario.massing_guards.MassingModelError`, reconciled by the caller;
+    :func:`_reject_non_simple_ring` runs an explicit GEOS simplicity gate on the prepared
+    ring so a crossed 'bowtie' with DISTINCT vertices (which the ear-clipper misses) is that
+    same ``self_intersection`` refusal, never a self-overlapping mesh (G3 B1 / AS-2).
     Finiteness and the coordinate magnitude bound are checked inside the triangulator
     (``_prepare_ring``); the lot-only NYC range check is omitted there by design (M5-T112
     G5 INFO-1) and the GLB writer re-validates finiteness, the local bound and degeneracy.
     """
     triangulation = triangulate_polygon(footprint, field="building_ring")
     ring = triangulation.ring
+    _reject_non_simple_ring(ring)  # G3 B1 / AS-2: the ear-clipper misses a distinct-vertex bowtie
     cap_triangles = triangulation.triangles
     n = len(ring)
     origin_x = min(x for x, _ in ring)

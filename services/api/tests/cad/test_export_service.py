@@ -16,6 +16,11 @@ computed IN THIS TEST (not imported from the code under test), a convex case, a 
 refusal, and the mandatory vertex-0-fan mutation; (c) the fallback filename token re-allowlisted;
 (f) the claim-word and length screens parametrized over ALL FOUR caller text fields; (g) the
 floor-cap edge (2000 accepted, 2001 refused). Each new guard gets its reddening in-process mutant.
+
+M5-T116 rework round 2 adds, at the very end: the explicit GEOS simplicity gate (a distinct-vertex
+'bowtie' is a typed self_intersection refusal, G3 B1, with a gate-dropping mutant); the 1000/1001
+GLB footprint vertex-cap edge (G3 A1); and a prepared-ring fixture where preparation reorders +
+collapses the ring, pinning that the prism positions come from the PREPARED ring (G4 ADVISORY 2).
 """
 
 from __future__ import annotations
@@ -521,9 +526,11 @@ def test_concave_footprint_export_produces_valid_glb():
 
 
 def test_self_intersecting_footprint_is_a_reconciled_typed_refusal():
-    """AS-2: a non-simple (duplicate-vertex) footprint is the triangulator's
-    self_intersection refusal, reconciled to the ONE {reject_code, detail} shape - never a
-    malformed mesh and never echoing a caller coordinate (DB-059 (h))."""
+    """AS-2: a non-simple footprint of the DUPLICATE-VERTEX subclass is the triangulator's
+    own self_intersection refusal, reconciled to the ONE {reject_code, detail} shape and
+    never echoing a caller coordinate (DB-059 (h)). The DISTINCT-vertex 'bowtie' subclass -
+    which the ear-clipper does NOT detect - is covered by the explicit simplicity gate in
+    test_distinct_vertex_bowtie_is_a_reconciled_typed_refusal below (G3 B1)."""
     dup = [[985000.0, 195000.0], [985060.0, 195000.0],
            [985000.0, 195000.0], [985060.0, 195060.0]]
     result = es.build_export(_request(format="glb", building_ring=dup))
@@ -662,3 +669,120 @@ def test_floor_cap_edge_mutation_reddens(monkeypatch):
     monkeypatch.setattr(es, "MAX_FLOORS", 1999)
     mutant = es.build_export(exactly)
     assert isinstance(mutant, es.ExportRefusal) and mutant.reject_code == "floor_cap_exceeded"
+
+
+# =========================================================================== #
+# M5-T116 rework round 2 - the explicit GEOS simplicity gate (G3 B1 / AS-2), the
+# 1000/1001 GLB footprint cap edge (G3 A1), and a prepared-ring fixture (G4 ADVISORY 2).
+# =========================================================================== #
+
+# Crossed 'bowtie' footprints with DISTINCT vertices (edges cross, no repeated vertex).
+# The ear-clipper does NOT stall on these, so before the simplicity gate they yielded a
+# valid-but-self-overlapping glTF instead of a refusal.
+_BOWTIES = [
+    ([[0.0, 0.0], [60.0, 60.0], [60.0, 0.0], [0.0, 60.0]], "origin"),
+    ([[985000.0, 195000.0], [985060.0, 195060.0],
+      [985060.0, 195000.0], [985000.0, 195060.0]], "nyc-scale"),
+    ([[0.0, 0.0], [40.0, 0.0], [0.0, 40.0], [40.0, 40.0]], "figure-eight"),
+]
+
+
+@pytest.mark.parametrize("bowtie, ids", _BOWTIES)
+def test_distinct_vertex_bowtie_is_a_reconciled_typed_refusal(bowtie, ids):
+    """G3 B1 / AS-2: a crossed bowtie with DISTINCT vertices is the reconciled
+    self_intersection refusal (never a self-overlapping mesh), echoing no caller
+    coordinate. The ear-clipper misses this class; the explicit GEOS simplicity gate on the
+    prepared ring catches it."""
+    result = es.build_export(_request(format="glb", building_ring=bowtie), fallback_token="x")
+    assert isinstance(result, es.ExportRefusal), ids
+    assert result.reject_code == "self_intersection"
+    assert set(result.to_payload()) == {"reject_code", "detail"}
+    # the detail is EXACTLY the server-built template - no caller coordinate echoed (DB-059 (h))
+    assert result.detail == (
+        "the glb footprint could not be triangulated (reject_code=self_intersection)"
+    )
+
+
+def test_simplicity_gate_dropped_lets_a_bowtie_through(monkeypatch):
+    """The MANDATORY AS-2 mutation: drop the simplicity gate (consuming namespace). A
+    distinct-vertex bowtie - a typed self_intersection refusal on the real path - now
+    ear-clips to a valid-but-self-overlapping glTF, proving the gate is load-bearing."""
+    bowtie = [[0.0, 0.0], [60.0, 60.0], [60.0, 0.0], [0.0, 60.0]]
+    real = es.build_export(_request(format="glb", building_ring=bowtie), fallback_token="x")
+    assert isinstance(real, es.ExportRefusal) and real.reject_code == "self_intersection"
+
+    monkeypatch.setattr(es, "_reject_non_simple_ring", lambda ring: None)
+    mutant = es.build_export(_request(format="glb", building_ring=bowtie), fallback_token="x")
+    assert isinstance(mutant, es.ExportResult)  # gate off -> a self-overlapping mesh renders
+    assert mutant.body.startswith(b"glTF")
+
+
+def _circle_ring(k, radius=400.0, cx=985000.0, cy=195000.0):
+    """k distinct, strictly-convex (non-collinear) EPSG:2263 vertices on a circle."""
+    import math
+    return [[cx + radius * math.cos(2 * math.pi * i / k),
+             cy + radius * math.sin(2 * math.pi * i / k)] for i in range(k)]
+
+
+def test_glb_footprint_vertex_cap_1000_accepted_1001_refused():
+    """G3 A1: the EFFECTIVE GLB footprint cap is the triangulator's MAX_OUTLINE_VERTICES
+    (1000), NOT the raw 10_000 _FORMAT_RING_CAP['glb']. Exactly 1000 vertices triangulate to
+    a valid glTF; 1001 is refused over_cap_vertices INSIDE the triangulator (before the ear
+    scan), reconciled to the ONE refusal shape."""
+    assert es._FORMAT_RING_CAP["glb"] == 10_000  # the raw gate is looser than the real cap
+    ok = es.build_export(_request(format="glb", building_ring=_circle_ring(1000)),
+                         fallback_token="x")
+    assert isinstance(ok, es.ExportResult) and ok.body.startswith(b"glTF")
+    over = es.build_export(_request(format="glb", building_ring=_circle_ring(1001)),
+                           fallback_token="x")
+    assert isinstance(over, es.ExportRefusal)
+    assert over.reject_code == "over_cap_vertices"
+
+
+# A CW-ordered rectangle with a COLLINEAR midpoint on the bottom edge: preparation both
+# reverses it to CCW and collapses the midpoint, so the prepared ring differs from the
+# localized raw input in BOTH order and vertex count (unlike the L/U/convex fixtures).
+_CW_COLLINEAR_FOOTPRINT = [
+    (985000.0, 195000.0), (985000.0, 195060.0), (985060.0, 195060.0),
+    (985060.0, 195000.0), (985030.0, 195000.0),
+]
+
+
+def test_prism_positions_come_from_the_prepared_ring_not_the_raw_input(monkeypatch):
+    """G4 ADVISORY 2: for a footprint where preparation reorders (CW->CCW) and collapses a
+    collinear midpoint, the prism positions must come from the PREPARED ring - the one the
+    cap triangles index and the walls share. A raw-ring build (positions from the input
+    order/count while the caps index the prepared ring) reddens the cap-count oracle."""
+    raw = list(_CW_COLLINEAR_FOOTPRINT)
+    mesh, _frame = es._build_prism_mesh(raw, 30.0, 0.0)
+    positions, n, local_ring, bottom, top = _caps_from_mesh(mesh)
+    ox = min(x for x, _ in raw)
+    oy = min(y for _, y in raw)
+    # preparation changed the ring: fewer vertices than raw (the midpoint collapsed) ...
+    assert n < len(raw)
+    assert local_ring != [(x - ox, y - oy) for x, y in raw]
+    # ... and the positions equal the REAL prepared ring (localized), not the raw input.
+    prepared = es.triangulate_polygon(raw, field="building_ring").ring
+    pox = min(x for x, _ in prepared)
+    poy = min(y for _, y in prepared)
+    assert local_ring == [(x - pox, y - poy) for x, y in prepared]
+    # the caps tile the footprint with the correct count and area.
+    foot_area = _shoelace_area(local_ring)
+    assert len(bottom) == n - 2 == len(top)
+    b_area = sum(abs(_tri_signed_area(positions[a][:2], positions[b][:2], positions[c][:2]))
+                 for a, b, c in bottom)
+    assert b_area == pytest.approx(foot_area, rel=1e-9)
+
+    # raw-ring mutant: positions built from the RAW order/count while the cap triangles
+    # still index the prepared ring -> the caps no longer tile the footprint.
+    real_fn = es.triangulate_polygon
+
+    def _raw_ring(points, field="polygon", **kwargs):
+        prepared_t = real_fn(points, field, **kwargs)
+        raw_pts = tuple((float(x), float(y)) for x, y in points)
+        return mt.Triangulation(ring=raw_pts, triangles=prepared_t.triangles)
+
+    monkeypatch.setattr(es, "triangulate_polygon", _raw_ring)
+    m_mesh, _mf = es._build_prism_mesh(raw, 30.0, 0.0)
+    _mpos, m_n, _mring, m_bottom, m_top = _caps_from_mesh(m_mesh)
+    assert len(m_bottom) != m_n - 2 or len(m_top) != m_n - 2  # caps no longer tile

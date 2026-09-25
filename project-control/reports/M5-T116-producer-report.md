@@ -150,4 +150,84 @@ None. The `_coerce_footprint` guard is kept (it runs before the triangulator) to
 - D-b: Effective GLB footprint vertex cap is now 1000 (the outline cap), below the service's 10 000
   raw-ring cap (OQ-1). Fail-closed; disclosed.
 
+---
+
+## Rework round 2 (backend-engineer, orchestrator-dispatched)
+
+- Parent (round-1 head): `74e97bb4436e6a2ffd51417e36a132f08eedb946`. This section is ONE new commit
+  on top of it; the new sha is in the producer return.
+- Files changed (only allowed paths): `services/api/app/cad/export_service.py`,
+  `services/api/tests/cad/test_export_service.py`, this report.
+- Resolves G3 VERDICT FAIL / B1 (= G4 ADVISORY 1 = G5 ADVISORY-1) plus G3 A1 and G4 ADVISORY 2.
+
+### G3 B1 (BLOCKING) - a distinct-vertex bowtie is now a typed self_intersection refusal
+The ear-clipper only refuses a DUPLICATE-vertex ring; a crossed 'bowtie' with DISTINCT vertices
+ear-clips to completion and previously yielded a valid-but-self-overlapping glTF (AS-2 unmet as
+written). Added an in-scope GEOS simplicity gate `_reject_non_simple_ring` (export_service.py, new
+function) called from `_build_prism_mesh` right after `triangulate_polygon` returns, on the PREPARED
+ring only (its preparation already proved finiteness, the coordinate magnitude bound and the
+1000-vertex cap - so shapely/GEOS never sees non-finite or over-cap input). It raises the triangulator's
+own typed `MassingModelError(reason="self_intersection")`, caught by the existing `_render_glb`
+`except MassingModelError` and reconciled to the SAME ONE redacted `ExportRefusal` (no caller text).
+Any shapely/GEOS error (`ShapelyError`/`ValueError`) is mapped to that same typed refusal (fail closed).
+- Import: `from shapely.errors import ShapelyError` + `from shapely.geometry import LinearRing`
+  (shapely 2.0.7 is already-admitted; used across app/scenario and app/connectors). ZERO new deps.
+- The existing duplicate-vertex AS-2 test docstring no longer over-claims: it now states it covers the
+  DUPLICATE-vertex subclass and points to the new bowtie test for the DISTINCT-vertex subclass.
+
+### G3 A1 - the effective GLB footprint cap is stated in-code + edge test
+`_FORMAT_RING_CAP['glb']` stays the raw 10_000 gate (it still bounds the GLB request's never-rendered
+lot ring), but a NOTE at the constant now states the EFFECTIVE footprint cap is the triangulator's
+`MAX_OUTLINE_VERTICES` = 1000, enforced `over_cap_vertices` inside `_prepare_ring`. Added
+`test_glb_footprint_vertex_cap_1000_accepted_1001_refused`: a 1000-vertex circle footprint renders a
+valid glTF; 1001 is refused `over_cap_vertices`.
+
+### G4 ADVISORY 2 - a prepared-ring fixture pins "positions come from the prepared ring"
+Added `_CW_COLLINEAR_FOOTPRINT` (CW-ordered rectangle with a collinear bottom-edge midpoint) so
+preparation both reverses to CCW and collapses the midpoint - the prepared ring differs from the
+localized raw input in BOTH order and count (unlike L/U/convex, where they coincide).
+`test_prism_positions_come_from_the_prepared_ring_not_the_raw_input` asserts the prism's bottom ring
+equals the localized PREPARED ring (not the raw input) and that the caps tile the footprint; a raw-ring
+mutant (positions from the raw order/count while cap triangles index the prepared ring) breaks the
+n-2 cap-count oracle.
+
+### GLB before/after (round 2)
+NO new GLB byte change beyond round 1's disclosed convex cap-index change: the simplicity gate only
+REFUSES a non-simple ring; for every simple footprint it returns without touching the mesh, so all
+produced meshes are byte-identical to round 1. DXF/PDF outputs and the owner samples stay
+byte-identical (`test_cad_owner_samples.py` 10 passed, unchanged).
+
+### Mutation table (round 2)
+| # | Guard | Mutation (type) | Observed |
+|---|-------|-----------------|----------|
+| R2-1 | (B1) simplicity gate | SOURCE: gate call removed from `_build_prism_mesh` | `test_distinct_vertex_bowtie...[origin|nyc-scale|figure-eight]` FAILED (ExportResult, not a refusal) AND `test_simplicity_gate_dropped...` real-path assert FAILED - 4 red. Restored. |
+| R2-2 | (B1) simplicity gate | in-process: `es._reject_non_simple_ring`->no-op | `test_simplicity_gate_dropped_lets_a_bowtie_through` PASS (mutant renders a glTF vs the real self_intersection refusal) |
+| R2-3 | (G4 adv2) prepared ring | in-process: `es.triangulate_polygon`->ring=raw order/count, triangles=prepared | `test_prism_positions_come_from_the_prepared_ring_not_the_raw_input` PASS (mutant cap count 2 != n-2=3) |
+
+Round-1 mutations #1-#6 preserved and still green.
+
+### Self-checks round 2 (explicit cwd; each [OBSERVED])
+- cwd `services/api`: `python -m ruff check .` -> [OBSERVED] `All checks passed!`
+- cwd `services/api`: `python -m pytest tests/cad -q` -> [OBSERVED] `464 passed in 4.06s` (was 458; +6:
+  3 bowtie params, gate-drop mutant, 1000/1001 cap edge, prepared-ring). `test_cad_owner_samples.py`
+  included and unchanged (10 passed).
+- cwd repo root: `python tools/modularity_check.py --check` -> [OBSERVED] `failures 0; warnings 27`,
+  EXIT 0. `export_service.py` NOT flagged (612 lines; the review_signal threshold is higher; the
+  round-1 filename-token/concave-cap work already sat at 572 and this adds one small function + docs).
+- Env: Python 3.11.9, ruff 0.13.0, shapely 2.0.7. Full exec + local test run available this session.
+
+### Per-AS re-confirmation
+- AS-2 (refusals) now holds AS WRITTEN: a self-intersecting footprint - BOTH the duplicate-vertex and
+  the distinct-vertex bowtie subclasses - is the reconciled typed refusal, never a malformed/overlapping
+  mesh. Upstream range-check location unchanged (see round-1 section). PASS.
+- AS-1 / AS-3 / AS-4 / AS-5 unchanged from round 1 and still green.
+
+### OPEN QUESTIONS (round 2; owner asleep)
+- OQ-3: The simplicity gate runs `LinearRing(prepared_ring).is_simple` on every GLB build. Cost is
+  bounded (<=1000 vertices, GEOS O(n log n)); it never sees non-finite/over-cap input (the triangulator
+  prepared it first). RECOMMEND: accept as-is; no config knob needed. (Round-1 OQ-2 / DISCOVERY D-a is
+  now RESOLVED for the export service path; the underlying `triangulate_polygon` bowtie-blindness that
+  D-a records still belongs to M5-T112 for any other consumer, so leave D-a in the backlog as a
+  triangulator note.)
+
 END-OF-REPORT
