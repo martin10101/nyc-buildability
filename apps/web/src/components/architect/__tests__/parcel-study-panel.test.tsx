@@ -28,7 +28,7 @@ describe("parcel study choices stay separate from legal status and calculations"
   it("offers both arrangements with undecided buildings and no numerical development allowance", () => {
     render(<ParcelStudyPanel requestedBbl={ENTERED} records={records()}/>);
     expect(screen.getByRole("radio", { name: /Compare/ })).toBeChecked();
-    expect(screen.getByRole("radio", { name: "Not decided", exact: true })).toBeChecked();
+    expect(screen.getByRole("radio", { name: "Not decided" })).toBeChecked();
     expect(screen.getByText("Not established here")).toBeVisible();
     const comparison = screen.getByRole("region", { name: "Study comparison" });
     expect(within(comparison).getAllByText("Not calculated")).toHaveLength(6);
@@ -38,13 +38,13 @@ describe("parcel study choices stay separate from legal status and calculations"
   it("changes arrangement without changing building intent or legal status", () => {
     render(<ParcelStudyPanel requestedBbl={ENTERED} records={records()}/>);
     fireEvent.change(screen.getByLabelText("Existing buildings on Lot 32"), { target: { value: "retain" } });
-    fireEvent.click(screen.getByRole("radio", { name: "Multiple buildings", exact: true }));
+    fireEvent.click(screen.getByRole("radio", { name: "Multiple buildings" }));
     fireEvent.click(screen.getByRole("radio", { name: /Separately/ }));
     expect(screen.getByText("2 proposed sites")).toBeVisible();
     expect(screen.queryByText("1 proposed site")).toBeNull();
     fireEvent.click(screen.getByRole("radio", { name: /Together/ }));
     expect(screen.getByText("1 proposed site")).toBeVisible();
-    expect(screen.getByRole("radio", { name: "Multiple buildings", exact: true })).toBeChecked();
+    expect(screen.getByRole("radio", { name: "Multiple buildings" })).toBeChecked();
     expect(screen.getByLabelText("Existing buildings on Lot 32")).toHaveValue("retain");
     expect(screen.getByText("Not established here")).toBeVisible();
   });
