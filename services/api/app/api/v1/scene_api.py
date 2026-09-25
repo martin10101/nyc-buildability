@@ -17,21 +17,27 @@ boundary primitives:
 
 * Posture - feature-flag gated OFF by default (REUSED ``INTERNAL_RULE_EVAL_ENABLED``;
   ``include_in_schema=False``; absent/empty/unknown flag -> a generic 404
-  byte-indistinguishable from an unmounted path - the ``lot_geometry.py:100`` sentinel). A
-  bounded request body (raw-byte ceiling by BOUNDED STREAMING, reusing the accepted T053
-  primitives). No auth change: authn / tenancy / per-user ownership of the supplied geometry
-  arrive with the PUBLIC exposure packet (PKT-H), recorded here as a disposition, not
-  implemented (the route is unreachable without the internal flag).
+  byte-indistinguishable from an unmounted path - the ``lot_geometry.py:100`` sentinel), for
+  EVERY HTTP method (DB-081 (d)): the path is registered for all methods so a disabled route
+  never answers a 405 that would leak its existence. A bounded request body (raw-byte ceiling
+  by BOUNDED STREAMING, reusing the accepted T053 primitives). No auth change: authn / tenancy
+  / per-user ownership of the supplied geometry arrive with the PUBLIC exposure packet (PKT-H),
+  recorded here as a disposition, not implemented (the route is unreachable without the
+  internal flag).
 * Job safety (DB-061 (i), the M5-T088 G5 fix (b)) - the assembly (the CPU-bound massing build
   + the connector fetch + the assemble) runs OFF the event loop under a per-request wall-clock
-  deadline (``asyncio.wait_for`` over ``run_in_threadpool``), and the connector is called
+  deadline (``run_in_job_slot`` over ``run_in_threadpool``), and the connector is called
   ``interactive=True`` with a matching wall-clock ``deadline`` so its own paging is bounded too
   (DB-073 (c)). Over the deadline the AWAIT is cancelled and a typed 504 is returned with no
   partial scene reaching the client; the underlying worker thread cannot be force-killed and
   runs to completion in the background, but its total work is independently bounded (the
   connector's own wall-clock deadline + ``interactive`` single-attempt posture + response-byte
   and vertex caps; the massing build is vertex-bounded), so no unbounded work is left running.
-  A per-caller RATE LIMIT (in-process, stdlib, memory-bounded) precedes all work.
+  The whole assembly is additionally admitted through a bounded IN-FLIGHT JOB CAP
+  (:func:`app.resilience.run_in_job_slot`), so deadline-abandoned threads cannot pile up: a
+  slot is held until the worker THREAD returns (never at the deadline cancel) and over the cap
+  is a typed 503. A per-caller RATE LIMIT (the shared, bounded
+  :class:`app.resilience.SlidingWindowRateLimiter`) precedes all work.
 * Logging - only a SERVER-generated correlation id, the state, and bounded field names reach a
   log line; no caller or upstream text is ever logged (the assembler does not log at all).
 
@@ -41,17 +47,14 @@ The emitted (HTTP status, state) pairs are the single source of truth
 
 from __future__ import annotations
 
-import asyncio
 import functools
 import json
 import logging
-import time
 import uuid
 from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-from starlette.concurrency import run_in_threadpool
 
 from app.api.v1.proposal_validation import (
     MAX_BODY_BYTES,
@@ -61,23 +64,38 @@ from app.api.v1.proposal_validation import (
 )
 from app.config import internal_rule_eval_enabled
 from app.connectors.building_footprints_arcgis import fetch_context_buildings
+from app.resilience.rate_limit import (
+    JobSlots,
+    SlidingWindowRateLimiter,
+    SlotsExhausted,
+    caller_key,
+    run_in_job_slot,
+)
 from app.scenario.scene_assembler import SceneAssemblyError, build_scene_payload
 
 __all__ = [
     "MAX_BODY_BYTES",
     "MAX_FIELD_LEN",
+    "SCENE_MAX_IN_FLIGHT",
     "SCENE_MAX_SECONDS",
     "SCENE_RATE_LIMIT_MAX",
     "SCENE_RATE_LIMIT_MAX_KEYS",
     "SCENE_RATE_LIMIT_WINDOW_S",
     "SCENE_STATUS_STATE_MATRIX",
     "get_context_buildings_fetch",
+    "get_job_slots",
+    "get_rate_limiter",
     "router",
 ]
 
 logger = logging.getLogger("app.api.v1.scene_api")
 
 router = APIRouter(prefix="/api/v1", tags=["scene"])
+
+#: Every HTTP method registered on the path, so a DISABLED route answers ALL of them with the
+#: SAME generic 404 as an unmounted path (DB-081 (d)) - no 405 that would leak the route's
+#: existence. When ENABLED only POST does work; any other method is a genuine 405.
+_ROUTE_METHODS = ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 
 #: Hard cap on a refusal ``field`` value on EVERY response and log path (mirrors the sibling
 #: route's BP-3 bound).
@@ -89,32 +107,43 @@ MAX_FIELD_LEN = 200
 #: connector's own deadline and byte/vertex caps (see the module docstring).
 SCENE_MAX_SECONDS = 15.0
 
-#: Per-caller in-process rate limit (a sliding window). Keyed by caller host; the internal
-#: route has no auth yet, so the key is best-effort (authn/tenancy arrive with PKT-H). Never a
-#: new dependency - stdlib only.
+#: Per-caller rate limit (a sliding window), unchanged from the route-local limiter (30 / 60 s);
+#: now served by the ONE shared, bounded :class:`app.resilience.SlidingWindowRateLimiter`.
 SCENE_RATE_LIMIT_MAX = 30
 SCENE_RATE_LIMIT_WINDOW_S = 60.0
 
-#: Upper bound on the number of distinct caller-host keys the sliding-window state may hold, so
-#: a spray of distinct callers cannot grow ``_rate_state`` without bound (G5 F-3 / G3 A2). When
-#: a NEW caller arrives at the ceiling, expired-window keys are swept first; if the ceiling is
-#: still full of ACTIVE callers the new caller is refused (fail-closed). A durable per-caller
-#: key (chosen at the auth seam) and a shared limiter module arrive with PKT-H.
+#: Upper bound on the number of distinct caller keys the shared limiter may hold, so a spray of
+#: distinct callers cannot grow its state without bound (G5 F-3 / G3 A2). A new caller arriving
+#: while the ceiling is full of ACTIVE keys is refused (fail-closed); an active key is never
+#: evicted. The durable per-caller key (the authenticated principal) arrives with PKT-H.
 SCENE_RATE_LIMIT_MAX_KEYS = 4096
 
-#: Per-caller request timestamps (monotonic seconds), keyed by caller host. In-process only.
-#: Bounded to ``SCENE_RATE_LIMIT_MAX_KEYS`` active keys; expired windows are evicted.
-_rate_state: dict[str, list[float]] = {}
+#: Bounded in-flight assembly jobs (DB-082 (b)). A slot is held from job start until the worker
+#: THREAD returns (never at the deadline cancel), so deadline-abandoned threads cannot pile up.
+#: Kept below anyio's 40-thread default pool so one saturated route cannot starve it.
+SCENE_MAX_IN_FLIGHT = 16
+
+#: The shared limiter + job-slot instances for this route (per-route state; the CLASS is shared
+#: across the three D-087 routes). Exposed via getters that tests reset/tighten.
+_RATE_LIMITER = SlidingWindowRateLimiter(
+    max_requests=SCENE_RATE_LIMIT_MAX,
+    window_seconds=SCENE_RATE_LIMIT_WINDOW_S,
+    max_keys=SCENE_RATE_LIMIT_MAX_KEYS,
+)
+_JOB_SLOTS = JobSlots(max_slots=SCENE_MAX_IN_FLIGHT)
 
 #: The documented (HTTP status, state) pairs - the single source of truth. The 200 scene
-#: carries NO ``state``; the disabled/unmounted sentinel is (404, None).
+#: carries NO ``state``; the disabled/unmounted sentinel is (404, None) for EVERY method; a
+#: non-POST method on the ENABLED route is a genuine (405, None).
 SCENE_STATUS_STATE_MATRIX: frozenset[tuple[int, str | None]] = frozenset(
     {
         (200, None),  # the assembled scene payload (NO state)
-        (404, None),  # flag off / unmounted-path sentinel (generic Not Found)
+        (404, None),  # flag off / unmounted-path sentinel (generic Not Found), every method
+        (405, None),  # non-POST method on the ENABLED route (real Method Not Allowed)
         (413, "payload_too_large"),  # raw body over MAX_BODY_BYTES, before parse
         (422, "validation_error"),  # malformed body OR a typed scene-assembly refusal
         (429, "rate_limited"),  # per-caller rate limit exceeded
+        (503, "capacity_exhausted"),  # the bounded in-flight job cap was full (DB-082 (b))
         (504, "deadline_exceeded"),  # the assembly exceeded the per-request wall-clock budget
         (500, "internal_error"),  # unexpected internal defect (generic)
     }
@@ -129,53 +158,15 @@ def get_context_buildings_fetch():
     return fetch_context_buildings
 
 
-def _rate_limit_clock() -> float:
-    return time.monotonic()
+def get_rate_limiter() -> SlidingWindowRateLimiter:
+    """The shared, bounded per-caller limiter for this route. Tests reset/tighten it via this
+    getter; NOT a client-controlled input."""
+    return _RATE_LIMITER
 
 
-def _reset_rate_limit_state() -> None:
-    """Test hook: clear the in-process rate-limit window (module state persists across a
-    process, and every test mounts a fresh app)."""
-    _rate_state.clear()
-
-
-def _evict_empty_keys(now: float, window: float) -> None:
-    """Drop every key whose window is empty after pruning (G5 F-3 / G3 A2), so the state holds
-    only currently-active callers. O(keys); called only when a NEW caller hits the key ceiling."""
-    for key in list(_rate_state):
-        if not any(now - t < window for t in _rate_state[key]):
-            _rate_state.pop(key, None)
-
-
-def _rate_limit_allows(caller_key: str) -> bool:
-    """Sliding-window per-caller rate limit (DB-061 (i)), memory-bounded (G5 F-3 / G3 A2). Reads
-    the module-level max/window/key-ceiling at call time so a test can tighten them. Prunes the
-    caller's stamps outside the window on each call, EVICTS the caller's key when that window is
-    empty (so a dead entry is never left behind), and bounds the total distinct-key count: a new
-    caller arriving at the ceiling triggers a sweep of expired keys, and if the ceiling is still
-    full of active callers the new caller is refused (fail-closed)."""
-    now = _rate_limit_clock()
-    window = SCENE_RATE_LIMIT_WINDOW_S
-    stamps = [t for t in _rate_state.get(caller_key, []) if now - t < window]
-    if not stamps:
-        # An empty window (a brand-new caller or one whose stamps all expired) leaves no entry
-        # behind; the caller is then treated as new for the key-ceiling check below.
-        _rate_state.pop(caller_key, None)
-    if len(stamps) >= SCENE_RATE_LIMIT_MAX:
-        _rate_state[caller_key] = stamps  # at the limit: keep the (nonempty) window, refuse
-        return False
-    if caller_key not in _rate_state and len(_rate_state) >= SCENE_RATE_LIMIT_MAX_KEYS:
-        _evict_empty_keys(now, window)
-        if len(_rate_state) >= SCENE_RATE_LIMIT_MAX_KEYS:
-            return False  # key ceiling full of active callers: refuse the new caller (fail-closed)
-    stamps.append(now)
-    _rate_state[caller_key] = stamps
-    return True
-
-
-def _caller_key(request: Request) -> str:
-    client = request.client
-    return client.host if client is not None else "unknown"
+def get_job_slots() -> JobSlots:
+    """The bounded in-flight job-slot counter for this route. NOT a client-controlled input."""
+    return _JOB_SLOTS
 
 
 def _json(status_code: int, body: dict, correlation_id: str) -> JSONResponse:
@@ -188,6 +179,14 @@ def _not_found() -> JSONResponse:
     """Generic 404 identical to FastAPI's default for an unmounted path (fail-safe disable):
     no correlation id, no body hint that the feature exists."""
     return JSONResponse(status_code=404, content={"detail": "Not Found"})
+
+
+def _method_not_allowed() -> JSONResponse:
+    """A genuine 405 for a non-POST method on the ENABLED route (the disabled case is a 404,
+    handled first). Carries no state; only POST is a real operation."""
+    return JSONResponse(
+        status_code=405, content={"detail": "Method Not Allowed"}, headers={"Allow": "POST"}
+    )
 
 
 def _bounded_field(field: str | None) -> str | None:
@@ -233,6 +232,21 @@ def _rate_limited(correlation_id: str) -> JSONResponse:
     )
 
 
+def _capacity_exhausted(correlation_id: str) -> JSONResponse:
+    """Typed (503, capacity_exhausted): the bounded in-flight job cap is full (DB-082 (b)) -
+    every slot is held by a still-running (possibly deadline-abandoned) worker thread. A
+    server-capacity signal, distinct from the per-caller 429 and the per-request 504."""
+    return _json(
+        503,
+        {
+            "state": "capacity_exhausted",
+            "message": "the server is at its in-flight job capacity; retry later",
+            "correlation_id": correlation_id,
+        },
+        correlation_id,
+    )
+
+
 def _deadline_exceeded(correlation_id: str) -> JSONResponse:
     return _json(
         504,
@@ -262,19 +276,23 @@ def _internal_error_500(correlation_id: str) -> JSONResponse:
     )
 
 
-@router.post("/scene", include_in_schema=False)
-async def post_scene(request: Request) -> JSONResponse:
+@router.api_route("/scene", methods=_ROUTE_METHODS, include_in_schema=False)
+async def scene_endpoint(request: Request) -> JSONResponse:
     """Assemble the section 2.1 scene payload for a caller lot + proposal/generated option and
     an optional context query. Feature-flag gated OFF by default (reuses
     INTERNAL_RULE_EVAL_ENABLED), mirroring the sibling internal routes."""
-    # Fail-safe disable: absent/unknown flag -> generic 404 with no hint the feature exists.
+    # Fail-safe disable: absent/unknown flag -> generic 404 for EVERY method (DB-081 (d)), with
+    # no hint the feature exists. Checked FIRST, before the method is dispatched.
     if not internal_rule_eval_enabled():
         return _not_found()
+    if request.method != "POST":
+        return _method_not_allowed()
 
     correlation_id = uuid.uuid4().hex
 
-    # Per-caller rate limit BEFORE any body read or heavy work (DB-061 (i)).
-    if not _rate_limit_allows(_caller_key(request)):
+    # Per-caller rate limit BEFORE any body read or heavy work (DB-061 (i)); the shared bounded
+    # limiter, keyed on the authenticated principal when present else the caller host.
+    if not get_rate_limiter().allow(caller_key(request)):
         logger.info("scene_v1 rate_limited correlation_id=%s", correlation_id)
         return _rate_limited(correlation_id)
 
@@ -331,8 +349,9 @@ async def post_scene(request: Request) -> JSONResponse:
             "context must be a JSON object when present", correlation_id, field="context")
 
     # The whole assembly runs OFF the event loop in a CANCELLABLE job under the per-request
-    # wall-clock deadline (DB-061 (i)). The connector is called interactive=True with a matching
-    # wall-clock deadline so its own paging is bounded too (DB-073 (c)). Over budget -> 504.
+    # wall-clock deadline AND a bounded in-flight job slot (DB-061 (i), DB-082 (b)). The
+    # connector is called interactive=True with a matching wall-clock deadline so its own paging
+    # is bounded too (DB-073 (c)). Over budget -> 504; the job cap full -> 503.
     connector_deadline = datetime.now(UTC) + timedelta(seconds=SCENE_MAX_SECONDS)
     fetch = get_context_buildings_fetch()
     work = functools.partial(
@@ -353,7 +372,10 @@ async def post_scene(request: Request) -> JSONResponse:
         rule_release_id=body.get("rule_release_id"),
     )
     try:
-        scene = await asyncio.wait_for(run_in_threadpool(work), timeout=SCENE_MAX_SECONDS)
+        scene = await run_in_job_slot(get_job_slots(), work, timeout=SCENE_MAX_SECONDS)
+    except SlotsExhausted:
+        logger.warning("scene_v1 capacity_exhausted correlation_id=%s", correlation_id)
+        return _capacity_exhausted(correlation_id)
     except TimeoutError:
         logger.warning("scene_v1 deadline_exceeded correlation_id=%s", correlation_id)
         return _deadline_exceeded(correlation_id)

@@ -17,16 +17,19 @@ primitives rather than forking them:
 
 * Posture - feature-flag gated OFF by default (REUSED ``INTERNAL_RULE_EVAL_ENABLED``;
   ``include_in_schema=False``; absent/empty/unknown flag -> a generic 404 with no correlation id
-  and no body hint, byte-identical to an unmounted path). A bounded request body (raw-byte
-  ceiling by BOUNDED STREAMING, reusing the accepted T053 primitives) is read BEFORE any parse.
-  authn / tenancy / per-user ownership arrive with the PUBLIC exposure packet (PKT-H), recorded
-  here as a disposition, not implemented (unreachable without the internal flag).
+  and no body hint, byte-identical to an unmounted path) for EVERY HTTP method (DB-081 (d)): the
+  path is registered for all methods so a disabled route never answers a 405 that would leak its
+  existence. A bounded request body (raw-byte ceiling by BOUNDED STREAMING, reusing the accepted
+  T053 primitives) is read BEFORE any parse. authn / tenancy / per-user ownership arrive with the
+  PUBLIC exposure packet (PKT-H), recorded here as a disposition, not implemented (unreachable
+  without the internal flag).
 * Job safety (DB-061 (i), the M5-T088 G5 fix (b)) - the writer runs OFF the event loop in a
-  cancellable job (``run_in_threadpool`` under ``asyncio.wait_for``) with a per-request
-  wall-clock deadline, behind a per-caller RATE LIMIT. Over budget -> a typed refusal, never a
-  partial file. There is no in-repo per-caller route limiter to reuse (the existing
-  ``rate_limited`` states are UPSTREAM-connector 429/503 handling); this route adds a minimal,
-  stdlib, in-process sliding-window limiter (recorded as a deviation).
+  cancellable job (``run_in_job_slot`` over ``run_in_threadpool``) with a per-request wall-clock
+  deadline, behind a per-caller RATE LIMIT and a bounded IN-FLIGHT JOB CAP. Over the deadline ->
+  a typed 503, never a partial file; the cap full -> a typed 503; the slot is held until the
+  worker THREAD returns (never at the deadline cancel) so deadline-abandoned threads cannot pile
+  up (DB-082 (b)). The per-caller limiter and the job-slot cap are now the ONE shared, bounded
+  :mod:`app.resilience.rate_limit` primitives shared with the scene / import routes.
 * Redaction - only a server-generated ``X-Correlation-ID`` is logged; NO caller or writer text
   reaches a log line (the exception class + a length-bounded sanitized message at most). The
   reconciled refusal body is ``{reject_code, detail}`` from the service, which never echoes
@@ -39,17 +42,13 @@ server-built ``Content-Disposition`` (the mandatory filename-safety token), NOT 
 
 from __future__ import annotations
 
-import asyncio
 import functools
 import json
 import logging
-import time
 import uuid
-from collections import OrderedDict, deque
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse, Response
-from starlette.concurrency import run_in_threadpool
 
 from app.api.v1.proposal_validation import (
     MAX_BODY_BYTES,
@@ -59,13 +58,23 @@ from app.api.v1.proposal_validation import (
 )
 from app.cad import export_service
 from app.config import internal_rule_eval_enabled
+from app.resilience.rate_limit import (
+    JobSlots,
+    SlidingWindowRateLimiter,
+    SlotsExhausted,
+    caller_key,
+    run_in_job_slot,
+)
 
 __all__ = [
     "EXPORT_DEADLINE_SECONDS",
+    "EXPORT_MAX_IN_FLIGHT",
     "EXPORT_STATUS_STATE_MATRIX",
     "MAX_BODY_BYTES",
+    "RATE_LIMIT_MAX_KEYS",
     "RATE_LIMIT_MAX_REQUESTS",
     "RATE_LIMIT_WINDOW_SECONDS",
+    "get_job_slots",
     "get_rate_limiter",
     "router",
 ]
@@ -74,78 +83,63 @@ logger = logging.getLogger("app.api.v1.export_api")
 
 router = APIRouter(prefix="/api/v1", tags=["export"])
 
+#: Every HTTP method registered on the path, so a DISABLED route answers ALL of them with the
+#: SAME generic 404 as an unmounted path (DB-081 (d)) - no 405 that would leak the route's
+#: existence. When ENABLED only POST does work; any other method is a genuine 405.
+_ROUTE_METHODS = ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+
 #: Per-request wall-clock deadline (seconds). The writer runs off the event loop and is
-#: abandoned by ``asyncio.wait_for`` past this bound -> a typed 503, never a partial file.
+#: abandoned by the deadline past this bound -> a typed 503, never a partial file.
 EXPORT_DEADLINE_SECONDS = 15.0
 
-#: Per-caller sliding-window rate limit. Read live inside the limiter so a test can monkeypatch
-#: them without re-instantiating the singleton.
+#: Per-caller sliding-window rate limit (unchanged: 30 / 60 s), now served by the ONE shared,
+#: bounded :class:`app.resilience.SlidingWindowRateLimiter`.
 RATE_LIMIT_MAX_REQUESTS = 30
 RATE_LIMIT_WINDOW_SECONDS = 60.0
 #: Hard ceiling on distinct tracked caller keys (bounds limiter memory against key spraying).
-_RATE_LIMIT_MAX_KEYS = 8192
+RATE_LIMIT_MAX_KEYS = 8192
+
+#: Bounded in-flight writer jobs (DB-082 (b)). A slot is held from job start until the worker
+#: THREAD returns (never at the deadline cancel), so deadline-abandoned writer threads cannot
+#: pile up. Kept below anyio's 40-thread default pool so one saturated route cannot starve it.
+EXPORT_MAX_IN_FLIGHT = 16
+
+#: The shared limiter + job-slot instances for this route (per-route state; the CLASS is shared
+#: across the three D-087 routes). Exposed via getters that tests reset/tighten.
+_RATE_LIMITER = SlidingWindowRateLimiter(
+    max_requests=RATE_LIMIT_MAX_REQUESTS,
+    window_seconds=RATE_LIMIT_WINDOW_SECONDS,
+    max_keys=RATE_LIMIT_MAX_KEYS,
+)
+_JOB_SLOTS = JobSlots(max_slots=EXPORT_MAX_IN_FLIGHT)
 
 #: The documented (HTTP status, state) pairs - the single source of truth. A 200 is a FILE with
-#: NO ``state`` (pair ``(200, None)``); every refusal is JSON carrying a ``state``.
+#: NO ``state`` (pair ``(200, None)``); every refusal is JSON carrying a ``state``. The disabled
+#: sentinel is (404, None) for EVERY method; a non-POST method on the ENABLED route is (405, None).
 EXPORT_STATUS_STATE_MATRIX: frozenset[tuple[int, str | None]] = frozenset(
     {
         (200, None),  # the export file (bytes; per-format media type; NO state)
-        (404, None),  # flag off / unmounted-path sentinel (generic Not Found)
+        (404, None),  # flag off / unmounted-path sentinel (generic Not Found), every method
+        (405, None),  # non-POST method on the ENABLED route (real Method Not Allowed)
         (413, "payload_too_large"),  # raw body over MAX_BODY_BYTES, before parse
         (422, "validation_error"),  # malformed body OR a reconciled writer/service refusal
         (429, "rate_limited"),  # per-caller rate limit exceeded
+        (503, "capacity_exhausted"),  # the bounded in-flight job cap was full (DB-082 (b))
         (503, "deadline_exceeded"),  # per-request wall-clock deadline exceeded
         (500, "internal_error"),  # unexpected internal defect (generic)
     }
 )
 
 
-class _RateLimiter:
-    """A minimal in-process, per-caller sliding-window limiter (stdlib only).
-
-    Keeps, per caller key, the monotonic timestamps of recent admitted requests; prunes those
-    older than :data:`RATE_LIMIT_WINDOW_SECONDS` and refuses once :data:`RATE_LIMIT_MAX_REQUESTS`
-    remain in the window. The window/limit are read LIVE from the module so a test can tighten
-    them. Tracked keys are bounded; the least-recently-touched key is evicted past the ceiling."""
-
-    def __init__(self, *, clock=time.monotonic, max_keys: int = _RATE_LIMIT_MAX_KEYS) -> None:
-        self._events: OrderedDict[str, deque[float]] = OrderedDict()
-        self._clock = clock
-        self._max_keys = max_keys
-
-    def allow(self, key: str) -> bool:
-        now = self._clock()
-        window = RATE_LIMIT_WINDOW_SECONDS
-        limit = RATE_LIMIT_MAX_REQUESTS
-        events = self._events.get(key)
-        if events is None:
-            if len(self._events) >= self._max_keys:
-                self._events.popitem(last=False)  # evict the least-recently-touched key
-            events = deque()
-            self._events[key] = events
-        self._events.move_to_end(key)
-        while events and now - events[0] > window:
-            events.popleft()
-        if len(events) >= limit:
-            return False
-        events.append(now)
-        return True
-
-    def reset(self) -> None:
-        self._events.clear()
-
-
-_RATE_LIMITER = _RateLimiter()
-
-
-def get_rate_limiter() -> _RateLimiter:
-    """The process rate limiter. Tests reset it between requests; NOT a client input."""
+def get_rate_limiter() -> SlidingWindowRateLimiter:
+    """The shared, bounded per-caller limiter for this route. Tests reset/tighten it via this
+    getter; NOT a client-controlled input."""
     return _RATE_LIMITER
 
 
-def _caller_key(request: Request) -> str:
-    client = request.client
-    return client.host if client and client.host else "unknown"
+def get_job_slots() -> JobSlots:
+    """The bounded in-flight job-slot counter for this route. NOT a client-controlled input."""
+    return _JOB_SLOTS
 
 
 # --------------------------------------------------------------------------- #
@@ -156,6 +150,14 @@ def _not_found() -> JSONResponse:
     """Generic 404 identical to FastAPI's default for an unmounted path (fail-safe disable):
     no correlation id, no body hint the feature exists."""
     return JSONResponse(status_code=404, content={"detail": "Not Found"})
+
+
+def _method_not_allowed() -> JSONResponse:
+    """A genuine 405 for a non-POST method on the ENABLED route (the disabled case is a 404,
+    handled first). Carries no state; only POST is a real operation."""
+    return JSONResponse(
+        status_code=405, content={"detail": "Method Not Allowed"}, headers={"Allow": "POST"}
+    )
 
 
 def _error(status_code: int, state: str, message: str, correlation_id: str) -> JSONResponse:
@@ -218,19 +220,23 @@ def _build_request(body: dict) -> export_service.ExportRequest:
     )
 
 
-@router.post("/export", include_in_schema=False)
-async def post_export(request: Request) -> Response:
+@router.api_route("/export", methods=_ROUTE_METHODS, include_in_schema=False)
+async def export_endpoint(request: Request) -> Response:
     """Export a caller massing option to a DXF, PDF or GLB download. Feature-flag gated OFF by
     default (reuses INTERNAL_RULE_EVAL_ENABLED), mirroring the sibling internal routes."""
-    # Guard 1 (fail-safe disable): absent/unknown flag -> a generic 404 with no hint the
-    # feature exists. Checked FIRST, before a correlation id is minted or the body is read.
+    # Guard 1 (fail-safe disable): absent/unknown flag -> a generic 404 for EVERY method
+    # (DB-081 (d)) with no hint the feature exists. Checked FIRST, before a correlation id is
+    # minted or the method is dispatched.
     if not internal_rule_eval_enabled():
         return _not_found()
+    if request.method != "POST":
+        return _method_not_allowed()
 
     correlation_id = uuid.uuid4().hex
 
-    # Guard 2: per-caller rate limit BEFORE any body read or work.
-    if not get_rate_limiter().allow(_caller_key(request)):
+    # Guard 2: per-caller rate limit BEFORE any body read or work (the shared bounded limiter,
+    # keyed on the authenticated principal when present else the caller host).
+    if not get_rate_limiter().allow(caller_key(request)):
         logger.info("export_v1 rate_limited correlation_id=%s", correlation_id)
         return _error(429, "rate_limited", "per-caller rate limit exceeded", correlation_id)
 
@@ -273,18 +279,19 @@ async def post_export(request: Request) -> Response:
     export_request = _build_request(body)
 
     # The single service entry, run OFF the event loop in a cancellable job under a per-request
-    # wall-clock deadline (DB-061 (i)). The fallback filename token is the correlation id, so a
-    # bbl/generated_at that allowlists to nothing still yields a caller-free filename.
+    # wall-clock deadline AND a bounded in-flight job slot (DB-061 (i), DB-082 (b)). The fallback
+    # filename token is the correlation id, so a bbl/generated_at that allowlists to nothing still
+    # yields a caller-free filename. Over budget -> 503 deadline; the job cap full -> 503 capacity.
+    work = functools.partial(
+        export_service.build_export, export_request, fallback_token=correlation_id
+    )
     try:
-        result = await asyncio.wait_for(
-            run_in_threadpool(
-                functools.partial(
-                    export_service.build_export, export_request, fallback_token=correlation_id
-                )
-            ),
-            timeout=EXPORT_DEADLINE_SECONDS,
-        )
-    except TimeoutError:  # asyncio.wait_for raises TimeoutError (asyncio.TimeoutError alias)
+        result = await run_in_job_slot(get_job_slots(), work, timeout=EXPORT_DEADLINE_SECONDS)
+    except SlotsExhausted:
+        logger.warning("export_v1 capacity_exhausted correlation_id=%s", correlation_id)
+        return _error(503, "capacity_exhausted",
+                      "the server is at its in-flight job capacity; retry later", correlation_id)
+    except TimeoutError:  # the deadline raises TimeoutError (asyncio.TimeoutError alias)
         logger.warning("export_v1 deadline_exceeded correlation_id=%s", correlation_id)
         return _error(503, "deadline_exceeded",
                       "export exceeded the per-request time budget", correlation_id)

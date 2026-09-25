@@ -14,17 +14,24 @@ assert it is ABSENT from the real app's OpenAPI.
 
 Posture (mirrors the accepted sibling internal routes; plan sections 2 + 4):
 
-* Flag-gated OFF by default. The base internal gate REUSES
-  ``INTERNAL_RULE_EVAL_ENABLED``; because this is a caller-supplied-geometry
+* Flag-gated OFF by default, for EVERY HTTP method (DB-081 (d)). The base internal
+  gate REUSES ``INTERNAL_RULE_EVAL_ENABLED``; because this is a caller-supplied-geometry
   IMPORT path, a dedicated default-off write flag (``DXF_IMPORT_ENABLED``) gates it
   ADDITIONALLY (plan section 2: registration flag AND handler flag). Either flag
   absent/empty/unknown -> a generic ``404`` byte-indistinguishable from an
-  unmounted path (the accepted sentinel, ``lot_geometry.py:100``). ``include_in_schema=False``.
+  unmounted path (the accepted sentinel, ``lot_geometry.py:100``) for every method, so a
+  disabled route never answers a 405 that would leak its existence. ``include_in_schema=False``.
 * Parse-time controls (plan section 4 (b)-(e)):
+  (a) the flag gate AND the per-caller RATE LIMIT run BEFORE any body or query-parameter
+      parse (DB-081 (b)): an over-limit ``/draft`` with a malformed parameter gets the 429,
+      never a 422 that would run ahead of the limiter;
   (b) a raw upload byte ceiling enforced by the accepted T053 bounded-streaming
       primitives BEFORE the body is materialised;
   (c) ``read_dxf`` runs OFF the event loop in a cancellable job under a per-request
-      wall-clock deadline, with a per-caller RATE LIMIT at the route (DB-061 (i));
+      wall-clock deadline AND a bounded in-flight job slot (DB-082 (b)); the slot is held
+      until the worker THREAD returns (never at the deadline cancel), so deadline-abandoned
+      threads cannot pile up. The per-caller RATE LIMIT is the ONE shared, bounded
+      :class:`app.resilience.SlidingWindowRateLimiter` (DB-061 (i));
   (d) a content-type + magic-byte check (ASCII DXF only, binary sentinel refused);
       only the exact bytes reach ``read_dxf`` and :data:`_IMPORT_DXF_LIMITS` is a
       fixed reviewed clamp, never built from untrusted input (DB-057 (k), DB-070 (d));
@@ -41,17 +48,13 @@ reader change is possible from this packet - recorded for the next reader touch.
 
 from __future__ import annotations
 
-import asyncio
 import functools
 import json
 import logging
-import threading
-import time
 import uuid
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
-from starlette.concurrency import run_in_threadpool
 
 from app.api.v1.proposal_validation import (
     MAX_BODY_BYTES,
@@ -70,15 +73,25 @@ from app.drawings.dxf_import import (
     sniff_dxf_media,
 )
 from app.drawings.dxf_reader import DxfLimits, read_dxf
+from app.resilience.rate_limit import (
+    JobSlots,
+    SlidingWindowRateLimiter,
+    SlotsExhausted,
+    caller_key,
+    run_in_job_slot,
+)
 
 __all__ = [
     "DXF_IMPORT_ENABLED_ENV_VAR",
+    "DXF_IMPORT_MAX_IN_FLIGHT",
     "DXF_IMPORT_STATUS_STATE_MATRIX",
     "MAX_BODY_BYTES",
+    "RATE_LIMIT_MAX_KEYS",
     "RATE_LIMIT_MAX_REQUESTS",
     "RATE_LIMIT_WINDOW_SECONDS",
     "READ_DEADLINE_SECONDS",
     "dxf_import_enabled",
+    "get_job_slots",
     "get_rate_limiter",
     "router",
 ]
@@ -86,6 +99,11 @@ __all__ = [
 logger = logging.getLogger("app.api.v1.dxf_import_api")
 
 router = APIRouter(prefix="/api/v1", tags=["dxf_import"])
+
+#: Every HTTP method registered on each path, so a DISABLED route answers ALL of them with the
+#: SAME generic 404 as an unmounted path (DB-081 (d)) - no 405 that would leak the route's
+#: existence. When ENABLED only POST does work; any other method is a genuine 405.
+_ROUTE_METHODS = ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 
 #: Dedicated default-off write flag for this caller-supplied-geometry IMPORT path
 #: (plan section 2). Its canonical name registration lives with the PKT-H mount seam
@@ -103,20 +121,41 @@ _IMPORT_DXF_LIMITS = DxfLimits(max_bytes=MAX_BODY_BYTES)
 #: not force-killed, but the clamped limits bound the work it can do before returning.
 READ_DEADLINE_SECONDS = 10.0
 
-#: Per-caller rate limit (DB-061 (i)): at most N requests per window per client key.
+#: Per-caller rate limit (DB-061 (i)): at most N requests per window per caller key. Now served
+#: by the ONE shared, bounded :class:`app.resilience.SlidingWindowRateLimiter`.
 RATE_LIMIT_MAX_REQUESTS = 30
 RATE_LIMIT_WINDOW_SECONDS = 60.0
+#: Hard ceiling on distinct tracked caller keys (bounds limiter memory against key spraying).
+RATE_LIMIT_MAX_KEYS = 8192
+
+#: Bounded in-flight read jobs (DB-082 (b)). A slot is held from job start until the worker
+#: THREAD returns (never at the deadline cancel), so deadline-abandoned read threads cannot pile
+#: up. Kept below anyio's 40-thread default pool so one saturated route cannot starve it.
+DXF_IMPORT_MAX_IN_FLIGHT = 16
+
+#: The shared limiter + job-slot instances for this route (per-route state; the CLASS is shared
+#: across the three D-087 routes). Exposed via getters that tests reset/tighten.
+_RATE_LIMITER = SlidingWindowRateLimiter(
+    max_requests=RATE_LIMIT_MAX_REQUESTS,
+    window_seconds=RATE_LIMIT_WINDOW_SECONDS,
+    max_keys=RATE_LIMIT_MAX_KEYS,
+)
+_JOB_SLOTS = JobSlots(max_slots=DXF_IMPORT_MAX_IN_FLIGHT)
 
 #: The documented (HTTP status, state) pairs - the single source of truth. A 200 body
-#: carries NO ``state`` (pair ``(200, None)``), mirroring the accepted sibling routes.
+#: carries NO ``state`` (pair ``(200, None)``), mirroring the accepted sibling routes. The
+#: disabled sentinel is (404, None) for EVERY method; a non-POST method on the ENABLED route is
+#: a genuine (405, None).
 DXF_IMPORT_STATUS_STATE_MATRIX: frozenset[tuple[int, str | None]] = frozenset(
     {
         (200, None),  # candidate listing or validated draft
-        (404, None),  # flag off / unmounted-path sentinel (generic Not Found)
+        (404, None),  # flag off / unmounted-path sentinel (generic Not Found), every method
+        (405, None),  # non-POST method on the ENABLED route (real Method Not Allowed)
         (413, "payload_too_large"),  # raw body over MAX_BODY_BYTES, before parse
         (415, "unsupported_media_type"),  # content-type / magic-byte / binary sentinel
         (422, "validation_error"),  # unreadable DXF, bad assignment, invalid draft
         (429, "rate_limited"),  # per-caller rate limit exceeded
+        (503, "capacity_exhausted"),  # the bounded in-flight job cap was full (DB-082 (b))
         (503, "deadline_exceeded"),  # off-loop read job passed the deadline
         (500, "internal_error"),  # unexpected internal defect (generic)
     }
@@ -135,46 +174,20 @@ def dxf_import_enabled(env=None) -> bool:
     return raw.strip().lower() in _TRUE_TOKENS
 
 
-class _RateLimiter:
-    """Minimal thread-safe fixed-window per-caller rate limiter (stdlib only; no new
-    dependency). ``check`` returns True when the caller is within budget. Keyed by a
-    caller identity the route derives from the connection; a monotonic clock so a
-    wall-clock change cannot widen the window."""
-
-    def __init__(self, max_requests: int, window_seconds: float) -> None:
-        self._max = max_requests
-        self._window = window_seconds
-        self._lock = threading.Lock()
-        self._hits: dict[str, list[float]] = {}
-
-    def check(self, key: str, *, now: float | None = None) -> bool:
-        stamp = time.monotonic() if now is None else now
-        with self._lock:
-            recent = [t for t in self._hits.get(key, ()) if stamp - t < self._window]
-            if len(recent) >= self._max:
-                self._hits[key] = recent
-                return False
-            recent.append(stamp)
-            self._hits[key] = recent
-            return True
-
-    def reset(self) -> None:
-        with self._lock:
-            self._hits.clear()
+def _import_enabled() -> bool:
+    """Both gating flags must be an explicit true token; either absent/unknown -> disabled."""
+    return internal_rule_eval_enabled() and dxf_import_enabled()
 
 
-_RATE_LIMITER = _RateLimiter(RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_SECONDS)
-
-
-def get_rate_limiter() -> _RateLimiter:
-    """The per-caller rate limiter. Tests monkeypatch this module attribute to inject a
-    tight or disabled limiter; NOT a client-controlled input."""
+def get_rate_limiter() -> SlidingWindowRateLimiter:
+    """The shared, bounded per-caller limiter for this route. Tests reset/tighten it via this
+    getter; NOT a client-controlled input."""
     return _RATE_LIMITER
 
 
-def _client_key(request: Request) -> str:
-    client = request.client
-    return client.host if client is not None else "unknown"
+def get_job_slots() -> JobSlots:
+    """The bounded in-flight job-slot counter for this route. NOT a client-controlled input."""
+    return _JOB_SLOTS
 
 
 def _json(status_code: int, body: dict, correlation_id: str) -> JSONResponse:
@@ -189,6 +202,14 @@ def _not_found() -> JSONResponse:
     return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 
+def _method_not_allowed() -> JSONResponse:
+    """A genuine 405 for a non-POST method on the ENABLED route (the disabled case is a 404,
+    handled first). Carries no state; only POST is a real operation."""
+    return JSONResponse(
+        status_code=405, content={"detail": "Method Not Allowed"}, headers={"Allow": "POST"}
+    )
+
+
 def _guard_finite_response(body: dict, correlation_id: str) -> JSONResponse | None:
     """Defense-in-depth pre-render guard (G5 MEDIUM 1).
 
@@ -196,12 +217,15 @@ def _guard_finite_response(body: dict, correlation_id: str) -> JSONResponse | No
     a 200 body would make that render raise ValueError AFTER the handler returns - an untyped,
     correlation-id-less 500. The service already refuses out-of-range coordinates, so this is a
     second line: pre-serialize the body with the SAME encoder settings the renderer uses
-    (mirroring ``proposal_validation.py``); on failure return the typed (500, internal_error)
-    with a correlation id, never a bare 500. Returns ``None`` when the body is safe to render.
+    (``allow_nan=False`` then ``ensure_ascii=False`` + ``.encode("utf-8")``, ALIGNED with the
+    sibling routes / ``proposal_validation.py`` per DB-081 (e), so the guard also catches a
+    non-encodable string - an unpaired surrogate - the ``ensure_ascii=False`` renderer would
+    raise on mid-response); on failure return the typed (500, internal_error) with a correlation
+    id, never a bare 500. Returns ``None`` when the body is safe to render.
     """
     try:
-        json.dumps(body, ensure_ascii=False, allow_nan=False)
-    except ValueError:
+        json.dumps(body, ensure_ascii=False, allow_nan=False).encode("utf-8")
+    except ValueError:  # ValueError (NaN/Infinity) or its subclass UnicodeEncodeError (surrogate)
         logger.error("dxf_import non_finite_response correlation_id=%s", correlation_id)
         return _error(500, "internal_error", "unexpected internal error", correlation_id)
     return None
@@ -240,29 +264,22 @@ def _refusal_response(refusal: ImportRefusal, correlation_id: str) -> JSONRespon
 
 
 async def _read_dxf_with_deadline(raw: bytes):
-    """Run read_dxf OFF the event loop in a cancellable job under the deadline (DB-070
-    (e) / DB-061 (i)). ``asyncio.wait_for`` cancels the await on timeout; the clamped
-    :data:`_IMPORT_DXF_LIMITS` bound the work the thread can do."""
-    return await asyncio.wait_for(
-        run_in_threadpool(functools.partial(read_dxf, raw, limits=_IMPORT_DXF_LIMITS)),
+    """Run read_dxf OFF the event loop in a cancellable job under the deadline AND a bounded
+    in-flight job slot (DB-070 (e) / DB-061 (i) / DB-082 (b)). The deadline cancels the await;
+    the clamped :data:`_IMPORT_DXF_LIMITS` bound the work the thread can do; the slot is held
+    until the thread returns so abandoned reads cannot pile up. Raises SlotsExhausted over the
+    cap and TimeoutError past the deadline."""
+    return await run_in_job_slot(
+        get_job_slots(),
+        functools.partial(read_dxf, raw, limits=_IMPORT_DXF_LIMITS),
         timeout=READ_DEADLINE_SECONDS,
     )
 
 
-async def _guarded_read(request: Request, correlation_id: str):
-    """Shared pipeline for both endpoints: flag gate, rate limit, bounded body,
-    media/magic-byte gate, then the deadline-bounded off-loop read. Returns either a
-    reader result (DxfReadResult) or a JSONResponse to short-circuit on."""
-    # Fail-safe disable: EITHER flag absent/unknown -> generic 404, no feature hint.
-    if not (internal_rule_eval_enabled() and dxf_import_enabled()):
-        return _not_found()
-
-    if not get_rate_limiter().check(_client_key(request)):
-        logger.info("dxf_import rate_limited correlation_id=%s", correlation_id)
-        return _error(
-            429, "rate_limited", "per-caller rate limit exceeded; retry later", correlation_id
-        )
-
+async def _read_body_and_run(request: Request, correlation_id: str):
+    """Body ceiling -> media/magic-byte gate -> deadline-bounded off-loop read under a job slot.
+    Returns a reader result (DxfReadResult) or a JSONResponse to short-circuit on. The flag gate
+    and the per-caller rate limit run in the HANDLER before this (DB-081 (b))."""
     declared = _declared_content_length(request)
     if declared is not None and declared > MAX_BODY_BYTES:
         logger.info("dxf_import payload_too_large declared correlation_id=%s", correlation_id)
@@ -285,6 +302,12 @@ async def _guarded_read(request: Request, correlation_id: str):
 
     try:
         return await _read_dxf_with_deadline(raw)
+    except SlotsExhausted:
+        logger.warning("dxf_import capacity_exhausted correlation_id=%s", correlation_id)
+        return _error(
+            503, "capacity_exhausted",
+            "the server is at its in-flight job capacity; retry later", correlation_id,
+        )
     except TimeoutError:
         logger.error("dxf_import deadline_exceeded correlation_id=%s", correlation_id)
         return _error(
@@ -357,12 +380,32 @@ def _parse_assignment(query, correlation_id: str):
     )
 
 
-@router.post("/dxf-import/candidates", include_in_schema=False)
-async def post_dxf_candidates(request: Request) -> JSONResponse:
+def _gate_and_limit(request: Request, correlation_id: str) -> JSONResponse | None:
+    """Fail-safe disable + per-caller rate limit, run BEFORE any body or parameter parse
+    (DB-081 (b)). Returns a short-circuit 429 response, or None to proceed. (The 404 for a
+    disabled feature and the 405 for a wrong method are handled in the endpoint dispatch.)"""
+    if not get_rate_limiter().allow(caller_key(request)):
+        logger.info("dxf_import rate_limited correlation_id=%s", correlation_id)
+        return _error(
+            429, "rate_limited", "per-caller rate limit exceeded; retry later", correlation_id
+        )
+    return None
+
+
+@router.api_route("/dxf-import/candidates", methods=_ROUTE_METHODS, include_in_schema=False)
+async def dxf_candidates_endpoint(request: Request) -> JSONResponse:
     """List the closed-ring candidates in an uploaded ASCII DXF (layer, vertex count,
     measured dimensions in the DECLARED units). Persists nothing."""
+    if not _import_enabled():
+        return _not_found()
+    if request.method != "POST":
+        return _method_not_allowed()
     correlation_id = uuid.uuid4().hex
-    result = await _guarded_read(request, correlation_id)
+    limited = _gate_and_limit(request, correlation_id)
+    if limited is not None:
+        return limited
+
+    result = await _read_body_and_run(request, correlation_id)
     if isinstance(result, JSONResponse):
         return result
 
@@ -398,19 +441,29 @@ async def post_dxf_candidates(request: Request) -> JSONResponse:
     return _json(200, body, correlation_id)
 
 
-@router.post("/dxf-import/draft", include_in_schema=False)
-async def post_dxf_draft(request: Request) -> JSONResponse:
+@router.api_route("/dxf-import/draft", methods=_ROUTE_METHODS, include_in_schema=False)
+async def dxf_draft_endpoint(request: Request) -> JSONResponse:
     """Build a proposed_massing DRAFT from the user's assigned roles and confirmed
     units, validated through validate_proposed_massing. Persists nothing."""
+    # Fail-safe disable FIRST (DB-081 (d)): a disabled feature must not leak a 422 for
+    # malformed params either.
+    if not _import_enabled():
+        return _not_found()
+    if request.method != "POST":
+        return _method_not_allowed()
     correlation_id = uuid.uuid4().hex
+
+    # DB-081 (b): the per-caller rate limit runs BEFORE the query parameters are parsed, so an
+    # over-limit caller with a malformed parameter gets the 429, never a 422 ahead of the limiter.
+    limited = _gate_and_limit(request, correlation_id)
+    if limited is not None:
+        return limited
+
     assignment = _parse_assignment(request.query_params, correlation_id)
     if isinstance(assignment, JSONResponse):
-        # Still fail-safe closed: a disabled feature must not answer 422 either.
-        if not (internal_rule_eval_enabled() and dxf_import_enabled()):
-            return _not_found()
         return assignment
 
-    result = await _guarded_read(request, correlation_id)
+    result = await _read_body_and_run(request, correlation_id)
     if isinstance(result, JSONResponse):
         return result
 

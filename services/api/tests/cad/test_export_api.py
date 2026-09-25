@@ -1,4 +1,4 @@
-"""Acceptance pack for POST /api/v1/export - the UNMOUNTED CAD/3D export route (M5-T109, PKT-D).
+"""Acceptance pack for POST /api/v1/export - the UNMOUNTED CAD/3D export route (M5-T109 + T111).
 
 Fully OFFLINE and deterministic. The route is the trust boundary onto the accepted, route-free
 :func:`app.cad.export_service.build_export`; it ships UNMOUNTED (app/main.py is NOT touched), so
@@ -6,15 +6,21 @@ every test mounts the router on a FRESH ``FastAPI()`` via ``TestClient`` (the ac
 max_envelope_api pattern) and one test asserts the path is ABSENT from the real app's OpenAPI.
 
 AS-4 (route discipline): absent from OpenAPI; flag off -> the same generic 404 as an unmounted
-path; bounded request bytes (413); per-format media types on a 200 FILE; a server-generated
-X-Correlation-ID; the writer runs off the event loop in a cancellable job with a per-request
-deadline (503) behind a per-caller rate limit (429); typed refusals are JSON, never a partial
-file. DB-075 (b): a pathological-but-bounded caller input returns the reconciled typed refusal
-through the REAL route.
+path for EVERY method; bounded request bytes (413); per-format media types on a 200 FILE; a
+server-generated X-Correlation-ID; the writer runs off the event loop in a cancellable job with a
+per-request deadline (503) behind the ONE shared per-caller rate limiter (429) and a bounded
+in-flight job cap (503 capacity); typed refusals are JSON, never a partial file. DB-075 (b): a
+pathological-but-bounded caller input returns the reconciled typed refusal through the REAL route.
+
+M5-T111 riders proven here (the shared-limiter properties live in
+tests/resilience/test_rate_limit.py): AS-1 the route uses the shared limiter only; AS-4 the
+limiter runs before body parse; AS-5 the bounded job cap yields a typed 503; AS-6 every method
+404 while disabled + OpenAPI absence on a throwaway app that includes the router.
 """
 
 from __future__ import annotations
 
+import inspect
 import time
 
 import pytest
@@ -72,16 +78,18 @@ def mounted_app() -> FastAPI:
 
 @pytest.fixture
 def client(mounted_app, monkeypatch):
-    """A client over a fresh app with the flag ON and a freshly reset rate limiter."""
+    """A client over a fresh app with the flag ON and freshly reset shared limiter + slots."""
     monkeypatch.setenv(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, "1")
     mod.get_rate_limiter().reset()
+    mod.get_job_slots().reset()
     with TestClient(mounted_app, raise_server_exceptions=False) as test_client:
         yield test_client
     mod.get_rate_limiter().reset()
+    mod.get_job_slots().reset()
 
 
 # --------------------------------------------------------------------------- #
-# AS-4: unmounted + flag gating.
+# AS-4 / AS-6: unmounted + flag gating + every-method 404 + OpenAPI absence.
 # --------------------------------------------------------------------------- #
 
 def test_route_is_unmounted_in_the_real_app():
@@ -102,6 +110,47 @@ def test_flag_off_is_a_generic_404(mounted_app, monkeypatch):
     assert resp.json() == {"detail": "Not Found"}
     assert "X-Correlation-ID" not in resp.headers
     assert _pair(resp) in EXPORT_STATUS_STATE_MATRIX
+
+
+def test_every_method_is_a_generic_404_while_disabled(mounted_app, monkeypatch):
+    """DB-081 (d): with the flag off, GET/POST/PUT/PATCH/DELETE all return the generic 404
+    byte-identical to an unmounted path - no 405 that would leak the route's existence."""
+    monkeypatch.delenv(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, raising=False)
+    with TestClient(mounted_app, raise_server_exceptions=False) as c:
+        for method in ("GET", "POST", "PUT", "PATCH", "DELETE"):
+            resp = c.request(method, _URL)
+            assert resp.status_code == 404, method
+            assert resp.json() == {"detail": "Not Found"}, method
+            assert "X-Correlation-ID" not in resp.headers, method
+
+
+def test_enabled_non_post_method_is_a_real_405(client):
+    """When ENABLED, a non-POST method is a genuine 405 (only POST does work)."""
+    resp = client.get(_URL)
+    assert resp.status_code == 405
+    assert _pair(resp) == (405, None)
+    assert _pair(resp) in EXPORT_STATUS_STATE_MATRIX
+
+
+def test_no_path_in_the_throwaway_app_openapi(mounted_app):
+    """AS-6 / DB-082 (d): the router IS included on this throwaway app, yet
+    include_in_schema=False keeps the export path out of its OpenAPI document."""
+    schema_paths = mounted_app.openapi().get("paths", {})
+    assert _URL not in schema_paths
+    assert not any(p.startswith("/api/v1/export") for p in schema_paths)
+
+
+def test_route_uses_the_shared_limiter_and_slots_only():
+    """AS-1: the shared limiter/slot classes back this route; no route-local limiter class or
+    deque/OrderedDict survives (AST-ish check over the module source)."""
+    from app.resilience.rate_limit import JobSlots, SlidingWindowRateLimiter
+
+    assert isinstance(mod.get_rate_limiter(), SlidingWindowRateLimiter)
+    assert isinstance(mod.get_job_slots(), JobSlots)
+    assert not hasattr(mod, "_RateLimiter")
+    src = inspect.getsource(mod)
+    assert "class _RateLimiter" not in src
+    assert "deque" not in src and "OrderedDict" not in src
 
 
 # --------------------------------------------------------------------------- #
@@ -193,18 +242,53 @@ def test_422_unsupported_format(client):
 
 
 # --------------------------------------------------------------------------- #
-# AS-4: per-caller rate limit (429) + per-request deadline (503).
+# AS-4: per-caller rate limit (429), limit-before-parse, deadline (503), capacity (503).
 # --------------------------------------------------------------------------- #
 
 def test_429_per_caller_rate_limit(client, monkeypatch):
-    monkeypatch.setattr(mod, "RATE_LIMIT_MAX_REQUESTS", 2)
-    mod.get_rate_limiter().reset()
+    """The shared per-caller limiter refuses over-budget requests. Mutation (mutate the CONSUMING
+    namespace - the live limiter): a large max_requests removes the 429."""
+    limiter = mod.get_rate_limiter()
+    monkeypatch.setattr(limiter, "max_requests", 2)
+    limiter.reset()
     assert client.post(_URL, json=_body()).status_code == 200
     assert client.post(_URL, json=_body()).status_code == 200
     limited = client.post(_URL, json=_body())
     assert _pair(limited) == (429, "rate_limited")
     assert _pair(limited) in EXPORT_STATUS_STATE_MATRIX
     assert limited.headers.get("X-Correlation-ID")
+
+    monkeypatch.setattr(limiter, "max_requests", 1000)
+    limiter.reset()
+    assert [client.post(_URL, json=_body()).status_code for _ in range(4)] == [200] * 4
+
+
+def test_limiter_runs_before_body_parse(client, monkeypatch):
+    """AS-4 / DB-081 (b) analogue: the limiter refuses BEFORE the body is read - an over-limit
+    caller with a malformed body gets the 429, never a 422. Load-bearing: admitting the same
+    caller lets the SAME malformed body reach the parser (422) and trips the body-read tripwire."""
+    limiter = mod.get_rate_limiter()
+    real = mod._read_body_within_ceiling
+    seen = {"read": False}
+
+    async def _tripwire(stream, max_bytes):
+        seen["read"] = True
+        return await real(stream, max_bytes)
+
+    monkeypatch.setattr(mod, "_read_body_within_ceiling", _tripwire)
+
+    monkeypatch.setattr(limiter, "max_requests", 0)  # refuse every caller
+    limiter.reset()
+    resp = client.post(_URL, content=b"not json at all", headers=_JSON_HEADERS)
+    assert _pair(resp) == (429, "rate_limited")
+    assert seen["read"] is False  # the body was NOT read (the limiter precedes the parse)
+
+    monkeypatch.setattr(limiter, "max_requests", 1000)  # admit the caller
+    limiter.reset()
+    seen["read"] = False
+    resp2 = client.post(_URL, content=b"not json at all", headers=_JSON_HEADERS)
+    assert _pair(resp2) == (422, "validation_error")
+    assert seen["read"] is True
 
 
 def test_503_per_request_deadline(client, monkeypatch):
@@ -220,6 +304,23 @@ def test_503_per_request_deadline(client, monkeypatch):
     assert _pair(resp) == (503, "deadline_exceeded")
     assert _pair(resp) in EXPORT_STATUS_STATE_MATRIX
     assert resp.headers.get("X-Correlation-ID")
+
+
+def test_503_capacity_exhausted_and_its_reddening_mutation(client, monkeypatch):
+    """AS-5 / DB-082 (b): when the bounded in-flight job cap is full, a new job is refused with a
+    typed (503, capacity_exhausted). Mutation: restoring capacity lets the SAME request complete
+    (200), proving the cap is load-bearing."""
+    slots = mod.get_job_slots()
+    monkeypatch.setattr(slots, "max_slots", 0)  # every slot is 'taken' -> refuse
+    slots.reset()
+    resp = client.post(_URL, json=_body())
+    assert _pair(resp) == (503, "capacity_exhausted")
+    assert _pair(resp) in EXPORT_STATUS_STATE_MATRIX
+    assert resp.headers.get("X-Correlation-ID")
+
+    monkeypatch.setattr(slots, "max_slots", 16)
+    slots.reset()
+    assert client.post(_URL, json=_body()).status_code == 200
 
 
 def test_500_on_an_unexpected_internal_defect(client, monkeypatch):

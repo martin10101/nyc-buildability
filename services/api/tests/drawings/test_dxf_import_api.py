@@ -1,4 +1,4 @@
-"""Acceptance pack for the UNMOUNTED DXF import route (task M5-T108, D-087 PKT-F).
+"""Acceptance pack for the UNMOUNTED DXF import route (task M5-T108 + M5-T111 route-hardening).
 
 Fully OFFLINE and deterministic. The route is the trust boundary onto the accepted DXF
 reader + import service; it ships UNMOUNTED (app/main.py untouched), so every test mounts
@@ -7,14 +7,22 @@ pattern) and one test asserts it is ABSENT from the real app's OpenAPI.
 
 - AS-1 (parse-time controls): an over-ceiling upload refuses before the body is
   materialised; a binary / non-DXF upload refuses on the media/magic-byte check; DxfLimits
-  is a fixed clamp at the seam; read_dxf runs in a deadline-bounded off-loop job with a
-  per-caller rate limit. Each control has a test AND a reddening mutation.
-- AS-5 (persists nothing + scope): flag off -> the generic 404; UNMOUNTED from the real
-  app; the documented (status, state) matrix; no persistence.
+  is a fixed clamp at the seam; read_dxf runs in a deadline-bounded off-loop job under a
+  bounded in-flight job cap with the ONE shared per-caller rate limiter. Each control has a
+  test AND a reddening mutation.
+- AS-5 (persists nothing + scope): flag off -> the generic 404 for EVERY method; UNMOUNTED
+  from the real app; the documented (status, state) matrix; no persistence.
+
+M5-T111 riders proven here (the shared-limiter properties live in
+tests/resilience/test_rate_limit.py): AS-1 the route uses the shared limiter only; DB-081 (b)
+the rate limit precedes the parameter parse; AS-5 the bounded job cap yields a typed 503;
+AS-6 every method 404 while disabled + OpenAPI absence; DB-081 (e) the pre-render guard's
+utf-8 encode step catches a non-encodable string.
 """
 
 from __future__ import annotations
 
+import inspect
 import time
 
 import pytest
@@ -75,12 +83,15 @@ def mounted_app() -> FastAPI:
 
 @pytest.fixture
 def client(mounted_app, monkeypatch):
-    """A client over a fresh app with BOTH gating flags ON and a clean rate limiter."""
+    """A client over a fresh app with BOTH gating flags ON and freshly reset limiter + slots."""
     monkeypatch.setenv(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, "1")
     monkeypatch.setenv(DXF_IMPORT_ENABLED_ENV_VAR, "1")
     mod.get_rate_limiter().reset()
+    mod.get_job_slots().reset()
     with TestClient(mounted_app, raise_server_exceptions=False) as test_client:
         yield test_client
+    mod.get_rate_limiter().reset()
+    mod.get_job_slots().reset()
 
 
 # --------------------------------------------------------------------------- happy path
@@ -138,6 +149,28 @@ def test_draft_flag_off_is_404_even_with_bad_params(mounted_app, monkeypatch):
     assert resp.status_code == 404
 
 
+def test_every_method_is_a_generic_404_while_disabled(mounted_app, monkeypatch):
+    """DB-081 (d): with the dedicated flag off, every method on both paths returns the generic
+    404 byte-identical to an unmounted path - no 405 that would leak the route's existence."""
+    monkeypatch.setenv(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, "1")
+    monkeypatch.delenv(DXF_IMPORT_ENABLED_ENV_VAR, raising=False)
+    with TestClient(mounted_app, raise_server_exceptions=False) as c:
+        for url in (_CAND_URL, _DRAFT_URL):
+            for method in ("GET", "POST", "PUT", "PATCH", "DELETE"):
+                resp = c.request(method, url)
+                assert resp.status_code == 404, (url, method)
+                assert resp.json() == {"detail": "Not Found"}, (url, method)
+                assert "X-Correlation-ID" not in resp.headers, (url, method)
+
+
+def test_enabled_non_post_method_is_a_real_405(client):
+    """When ENABLED, a non-POST method is a genuine 405 on both paths (only POST does work)."""
+    for url in (_CAND_URL, _DRAFT_URL):
+        resp = client.get(url)
+        assert resp.status_code == 405, url
+        assert _pair(resp) == (405, None), url
+
+
 def test_route_is_unmounted_in_the_real_app():
     from app.main import app as real_app
 
@@ -148,12 +181,35 @@ def test_route_is_unmounted_in_the_real_app():
     assert _CAND_URL not in paths and _DRAFT_URL not in paths
 
 
+def test_no_path_in_the_throwaway_app_openapi(mounted_app):
+    """AS-6 / DB-080 (c): the router IS included on this throwaway app, yet
+    include_in_schema=False keeps both import paths out of its OpenAPI document."""
+    schema_paths = mounted_app.openapi().get("paths", {})
+    assert _CAND_URL not in schema_paths and _DRAFT_URL not in schema_paths
+    assert not any(p.startswith("/api/v1/dxf-import") for p in schema_paths)
+
+
+def test_route_uses_the_shared_limiter_and_slots_only():
+    """AS-1: the shared limiter/slot classes back this route; no route-local limiter class or
+    deque/OrderedDict survives (AST-ish check over the module source)."""
+    from app.resilience.rate_limit import JobSlots, SlidingWindowRateLimiter
+
+    assert isinstance(mod.get_rate_limiter(), SlidingWindowRateLimiter)
+    assert isinstance(mod.get_job_slots(), JobSlots)
+    assert not hasattr(mod, "_RateLimiter")
+    src = inspect.getsource(mod)
+    assert "class _RateLimiter" not in src
+    assert "deque" not in src and "OrderedDict" not in src
+
+
 def test_status_state_matrix_is_the_documented_set():
     assert (200, None) in DXF_IMPORT_STATUS_STATE_MATRIX
     assert (404, None) in DXF_IMPORT_STATUS_STATE_MATRIX
+    assert (405, None) in DXF_IMPORT_STATUS_STATE_MATRIX  # DB-081 (d) enabled non-POST
     assert (413, "payload_too_large") in DXF_IMPORT_STATUS_STATE_MATRIX
     assert (415, "unsupported_media_type") in DXF_IMPORT_STATUS_STATE_MATRIX
     assert (429, "rate_limited") in DXF_IMPORT_STATUS_STATE_MATRIX
+    assert (503, "capacity_exhausted") in DXF_IMPORT_STATUS_STATE_MATRIX  # DB-082 (b) job cap
     assert (503, "deadline_exceeded") in DXF_IMPORT_STATUS_STATE_MATRIX
     assert (500, "internal_error") in DXF_IMPORT_STATUS_STATE_MATRIX  # G3 A6
 
@@ -297,8 +353,9 @@ def test_mutation_deadline_guard(client, monkeypatch):
 
 
 def test_rate_limit_429(client, monkeypatch):
-    monkeypatch.setattr(mod, "_RATE_LIMITER", mod._RateLimiter(1, 60.0))
-    monkeypatch.setattr(mod, "get_rate_limiter", lambda: mod._RATE_LIMITER)
+    limiter = mod.get_rate_limiter()
+    monkeypatch.setattr(limiter, "max_requests", 1)
+    limiter.reset()
     first = client.post(_CAND_URL, content=_dxf(), headers=_DXF_HEADERS)
     second = client.post(_CAND_URL, content=_dxf(), headers=_DXF_HEADERS)
     assert first.status_code == 200
@@ -306,16 +363,52 @@ def test_rate_limit_429(client, monkeypatch):
 
 
 def test_mutation_rate_limit_guard(client, monkeypatch):
-    # Disable the limiter -> the second request no longer 429s, proving the limiter drives
-    # the refusal (AS-1 c).
-    class _AlwaysAllow:
-        def check(self, key, **k):
-            return True
-
-    monkeypatch.setattr(mod, "get_rate_limiter", lambda: _AlwaysAllow())
+    # Raise the limit far above the request count -> the later requests no longer 429,
+    # proving the limiter drives the refusal (AS-1 c).
+    limiter = mod.get_rate_limiter()
+    monkeypatch.setattr(limiter, "max_requests", 1000)
+    limiter.reset()
     for _ in range(3):
         resp = client.post(_CAND_URL, content=_dxf(), headers=_DXF_HEADERS)
     assert resp.status_code == 200  # reddens test_rate_limit_429
+
+
+def test_draft_rate_limit_precedes_parameter_parse(client, monkeypatch):
+    """DB-081 (b): an over-limit caller hitting /draft with a MALFORMED parameter gets the 429,
+    never a 422 ahead of the limiter. Load-bearing: admitting the caller lets the SAME malformed
+    parameter reach the parser (422), proving the rate limit precedes the parameter parse."""
+    limiter = mod.get_rate_limiter()
+    bad = "?building_outline=0&floors=notanumber&floor_to_floor_ft=11&author=J"
+
+    monkeypatch.setattr(limiter, "max_requests", 0)  # refuse every caller
+    limiter.reset()
+    resp = client.post(_DRAFT_URL + bad, content=_dxf(), headers=_DXF_HEADERS)
+    assert _pair(resp) == (429, "rate_limited")  # the limiter fired before the param parse
+
+    monkeypatch.setattr(limiter, "max_requests", 1000)  # admit the caller
+    limiter.reset()
+    resp2 = client.post(_DRAFT_URL + bad, content=_dxf(), headers=_DXF_HEADERS)
+    assert _pair(resp2) == (422, "validation_error")  # now the malformed param is parsed
+
+
+# --------------------------------------------------------------------------- AS-5 job cap
+
+
+def test_503_capacity_exhausted_and_its_reddening_mutation(client, monkeypatch):
+    """AS-5 / DB-082 (b): when the bounded in-flight job cap is full, a new read job is refused
+    with a typed (503, capacity_exhausted). Mutation: restoring capacity lets the SAME request
+    complete (200), proving the cap is load-bearing."""
+    slots = mod.get_job_slots()
+    monkeypatch.setattr(slots, "max_slots", 0)  # every slot is 'taken' -> refuse
+    slots.reset()
+    resp = client.post(_CAND_URL, content=_dxf(), headers=_DXF_HEADERS)
+    assert _pair(resp) == (503, "capacity_exhausted")
+    assert _pair(resp) in DXF_IMPORT_STATUS_STATE_MATRIX
+    assert resp.headers.get("X-Correlation-ID")
+
+    monkeypatch.setattr(slots, "max_slots", 16)
+    slots.reset()
+    assert client.post(_CAND_URL, content=_dxf(), headers=_DXF_HEADERS).status_code == 200
 
 
 # --------------------------------------------------------------------------- draft refusals
@@ -398,3 +491,24 @@ def test_mutation_pre_render_finiteness_guard(client, monkeypatch):
     )
     assert resp.status_code == 500  # reddens test_non_finite_body_becomes_typed_500...
     assert "X-Correlation-ID" not in resp.headers  # bare Starlette 500, untyped
+
+
+# --------------------------------------------------------------------------- DB-081 (e) encode step
+
+
+def test_pre_render_guard_catches_a_non_encodable_string():
+    """DB-081 (e): the pre-render guard's utf-8 encode step (now ALIGNED with the sibling routes)
+    catches a non-encodable string - an unpaired surrogate - that ``json.dumps`` alone would pass,
+    returning a typed (500, internal_error) rather than a bare Starlette 500. It still catches a
+    non-finite float. A safe body returns None. Mutation (drop the .encode step): the surrogate
+    slips through and the guard returns None - recorded red in the report."""
+    cid = "cid-test"
+    surrogate_body = {"x": "\ud800"}  # json.dumps succeeds; .encode('utf-8') raises
+    resp = mod._guard_finite_response(surrogate_body, cid)
+    assert resp is not None and resp.status_code == 500
+
+    nan_body = {"x": float("nan")}  # allow_nan=False still catches NaN
+    resp_nan = mod._guard_finite_response(nan_body, cid)
+    assert resp_nan is not None and resp_nan.status_code == 500
+
+    assert mod._guard_finite_response({"x": 1.0, "ok": "ascii"}, cid) is None  # safe body

@@ -1,4 +1,4 @@
-"""Acceptance pack for POST /api/v1/scene (task M5-T107, AS-4, AS-6).
+"""Acceptance pack for POST /api/v1/scene (task M5-T107 + M5-T111 route-hardening riders).
 
 Fully OFFLINE and deterministic. The route is the trust boundary onto the accepted scene
 assembler; it ships UNMOUNTED (app/main.py is NOT touched), so every test mounts the router on
@@ -7,14 +7,21 @@ one test asserts the route is ABSENT from the real app. It is feature-flag gated
 (reuses ``INTERNAL_RULE_EVAL_ENABLED``). The context connector is injected as an OFFLINE fake so
 nothing touches the network.
 
-AS-4 (route, unmounted): absent from OpenAPI; flag-off generic 404; bounded request bytes; the
-assembly runs off the event loop in a cancellable job with a per-request deadline and a
-per-caller rate limit (each with a reddening mutation); typed refusals; a server correlation id.
+AS-4 (route, unmounted): absent from OpenAPI; flag-off generic 404 for EVERY method; bounded
+request bytes; the assembly runs off the event loop in a cancellable job with a per-request
+deadline, a bounded in-flight job cap and the ONE shared per-caller rate limiter (each with a
+reddening mutation); typed refusals; a server correlation id.
 AS-6 (scope): zero new dependencies; app/main.py untouched.
+
+M5-T111 riders proven here (the shared-limiter properties themselves live in
+tests/resilience/test_rate_limit.py): AS-1 the route uses the shared limiter only; AS-4 the
+limiter runs before body parse; AS-5 the bounded job cap yields a typed 503; AS-6 every method
+404 while disabled + OpenAPI absence on a throwaway app that includes the router.
 """
 
 from __future__ import annotations
 
+import inspect
 import logging
 import time
 
@@ -98,10 +105,12 @@ def _pair(response) -> tuple[int, str | None]:
 
 
 @pytest.fixture(autouse=True)
-def _reset_rate_limit():
-    mod._reset_rate_limit_state()
+def _reset_shared_state():
+    mod.get_rate_limiter().reset()
+    mod.get_job_slots().reset()
     yield
-    mod._reset_rate_limit_state()
+    mod.get_rate_limiter().reset()
+    mod.get_job_slots().reset()
 
 
 @pytest.fixture
@@ -167,7 +176,7 @@ def test_200_without_context_is_a_scene_with_no_context_query(client):
 
 
 # ---------------------------------------------------------------------------
-# AS-4: flag off + UNMOUNTED.
+# AS-4 / AS-6: flag off + UNMOUNTED + every-method 404 + OpenAPI absence.
 # ---------------------------------------------------------------------------
 
 
@@ -181,12 +190,62 @@ def test_flag_off_is_a_generic_404(mounted_app, monkeypatch):
     assert _pair(resp) in SCENE_STATUS_STATE_MATRIX
 
 
+def test_every_method_is_a_generic_404_while_disabled(mounted_app, monkeypatch):
+    """DB-081 (d): with the flag off, GET/POST/PUT/PATCH/DELETE all return the generic 404
+    byte-identical to an unmounted path - no 405 that would leak the route's existence."""
+    monkeypatch.delenv(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, raising=False)
+    with TestClient(mounted_app, raise_server_exceptions=False) as client:
+        for method in ("GET", "POST", "PUT", "PATCH", "DELETE"):
+            resp = client.request(method, _URL)
+            assert resp.status_code == 404, method
+            assert resp.json() == {"detail": "Not Found"}, method
+            assert "X-Correlation-ID" not in resp.headers, method
+
+
+def test_enabled_non_post_method_is_a_real_405(client):
+    """When ENABLED, a non-POST method is a genuine 405 (only POST does work) - proving the
+    disabled 404 above is the flag, not a missing route registration."""
+    resp = client.get(_URL)
+    assert resp.status_code == 405
+    assert _pair(resp) == (405, None)
+    assert _pair(resp) in SCENE_STATUS_STATE_MATRIX
+
+
 def test_route_is_unmounted_in_the_real_app():
     from app.main import app as real_app
 
     real_paths = {getattr(route, "path", None) for route in real_app.routes}
     assert _URL not in real_paths
     assert _URL not in real_app.openapi().get("paths", {})
+
+
+def test_no_path_in_the_throwaway_app_openapi(mounted_app):
+    """AS-6 / DB-080 (c): the router IS included on this throwaway app, yet
+    include_in_schema=False keeps every scene path out of its OpenAPI document."""
+    schema_paths = mounted_app.openapi().get("paths", {})
+    assert _URL not in schema_paths
+    assert not any(p.startswith("/api/v1/scene") for p in schema_paths)
+
+
+# ---------------------------------------------------------------------------
+# AS-1: the route uses the ONE shared limiter only (no route-local limiter remains).
+# ---------------------------------------------------------------------------
+
+
+def test_route_uses_the_shared_limiter_and_slots_only():
+    """AS-1: the shared limiter/slot classes back this route and no route-local limiter class,
+    dict or deque survives. AST-ish check over the module source is the reddening guard: a
+    reintroduced local limiter (a class, ``deque``/``OrderedDict``, or the old ``_rate_state``
+    dict) reddens it."""
+    from app.resilience.rate_limit import JobSlots, SlidingWindowRateLimiter
+
+    assert isinstance(mod.get_rate_limiter(), SlidingWindowRateLimiter)
+    assert isinstance(mod.get_job_slots(), JobSlots)
+    assert not hasattr(mod, "_RateLimiter")
+    assert not hasattr(mod, "_rate_state")
+    src = inspect.getsource(mod)
+    assert "class _RateLimiter" not in src
+    assert "deque" not in src and "OrderedDict" not in src and "_rate_state" not in src
 
 
 # ---------------------------------------------------------------------------
@@ -264,76 +323,75 @@ def test_422_non_dict_context_is_refused_typed(client):
 
 
 # ---------------------------------------------------------------------------
-# AS-4: the per-caller rate limit (DB-061 (i)) + a reddening mutation.
+# AS-4: the per-caller rate limit (shared limiter) + reddening mutation.
 # ---------------------------------------------------------------------------
 
 
 def test_429_rate_limit_and_its_reddening_mutation(client, monkeypatch):
-    """The per-caller rate limit refuses over-budget requests with a typed 429. In-process
-    mutation (mutate the CONSUMING namespace): raising SCENE_RATE_LIMIT_MAX far above the request
-    count removes the 429 entirely - proving the limit is load-bearing."""
-    monkeypatch.setattr(mod, "SCENE_RATE_LIMIT_MAX", 2)
-    mod._reset_rate_limit_state()
+    """The shared per-caller limiter refuses over-budget requests with a typed 429. Mutation
+    (mutate the CONSUMING namespace - the live limiter): raising max_requests far above the
+    request count removes the 429 entirely, proving the limit is load-bearing."""
+    limiter = mod.get_rate_limiter()
+    monkeypatch.setattr(limiter, "max_requests", 2)
+    limiter.reset()
     statuses = [client.post(_URL, json=_body()).status_code for _ in range(3)]
     assert statuses == [200, 200, 429]
     assert _pair(client.post(_URL, json=_body())) == (429, "rate_limited")
 
-    # Mutation: a large limit lets every request through (no 429).
-    monkeypatch.setattr(mod, "SCENE_RATE_LIMIT_MAX", 1000)
-    mod._reset_rate_limit_state()
+    monkeypatch.setattr(limiter, "max_requests", 1000)
+    limiter.reset()
     assert [client.post(_URL, json=_body()).status_code for _ in range(4)] == [200] * 4
 
 
+def test_limiter_runs_before_body_parse(client, monkeypatch):
+    """AS-4 / DB-081 (b) analogue: the limiter refuses BEFORE the body is read - an over-limit
+    caller with a malformed body gets the 429, never a 422. Load-bearing: admitting the same
+    caller lets the SAME malformed body reach the parser (422) and trips the body-read tripwire,
+    proving the ordering."""
+    limiter = mod.get_rate_limiter()
+    real = mod._read_body_within_ceiling
+    seen = {"read": False}
+
+    async def _tripwire(stream, max_bytes):
+        seen["read"] = True
+        return await real(stream, max_bytes)
+
+    monkeypatch.setattr(mod, "_read_body_within_ceiling", _tripwire)
+
+    monkeypatch.setattr(limiter, "max_requests", 0)  # refuse every caller
+    limiter.reset()
+    resp = client.post(_URL, content=b"not json at all", headers=_JSON_HEADERS)
+    assert _pair(resp) == (429, "rate_limited")
+    assert seen["read"] is False  # the body was NOT read (the limiter precedes the parse)
+
+    monkeypatch.setattr(limiter, "max_requests", 1000)  # admit the caller
+    limiter.reset()
+    seen["read"] = False
+    resp2 = client.post(_URL, content=b"not json at all", headers=_JSON_HEADERS)
+    assert _pair(resp2) == (422, "validation_error")
+    assert seen["read"] is True
+
+
 # ---------------------------------------------------------------------------
-# AS-4: the rate-limit state is MEMORY-BOUNDED (G5 F-3 / G3 A2) + reddening mutations.
+# AS-5: the bounded in-flight job cap yields a typed 503 + reddening mutation.
 # ---------------------------------------------------------------------------
 
 
-def test_rate_limit_evicts_expired_keys_and_bounds_the_key_count(monkeypatch):
-    """G5 F-3 / G3 A2: the sliding-window state evicts a key whose window expired and bounds the
-    total tracked-key count, so a spray of distinct callers cannot grow it without bound. In-process
-    mutation: raising the key ceiling far above the caller count removes the refusal, proving the
-    ceiling is load-bearing. (Unit-level: TestClient gives every request the same host.)"""
-    clock = {"t": 1000.0}
-    monkeypatch.setattr(mod, "_rate_limit_clock", lambda: clock["t"])
-    monkeypatch.setattr(mod, "SCENE_RATE_LIMIT_WINDOW_S", 60.0)
-    monkeypatch.setattr(mod, "SCENE_RATE_LIMIT_MAX_KEYS", 3)
-    mod._reset_rate_limit_state()
+def test_503_capacity_exhausted_and_its_reddening_mutation(client, monkeypatch):
+    """AS-5 / DB-082 (b): when the bounded in-flight job cap is full, a new job is refused with a
+    typed (503, capacity_exhausted) rather than starting unbounded work. Mutation: restoring
+    capacity lets the SAME request complete (200), proving the cap is load-bearing."""
+    slots = mod.get_job_slots()
+    monkeypatch.setattr(slots, "max_slots", 0)  # every slot is 'taken' -> refuse
+    slots.reset()
+    resp = client.post(_URL, json=_body())
+    assert _pair(resp) == (503, "capacity_exhausted")
+    assert _pair(resp) in SCENE_STATUS_STATE_MATRIX
+    assert resp.headers.get("X-Correlation-ID")
 
-    for host in ("a", "b", "c"):  # three distinct active callers fill the key ceiling
-        assert mod._rate_limit_allows(host) is True
-    assert len(mod._rate_state) == 3
-
-    # A fourth NEW caller while all windows are active -> the ceiling refuses it (fail-closed);
-    # the dict does not grow.
-    assert mod._rate_limit_allows("d") is False
-    assert len(mod._rate_state) == 3 and "d" not in mod._rate_state
-
-    # Advance past the window: the three windows expire. A new caller triggers the sweep, the
-    # expired keys are evicted, and the dict stays bounded.
-    clock["t"] += 61.0
-    assert mod._rate_limit_allows("d") is True
-    assert set(mod._rate_state) == {"d"}
-
-    # Mutation: with a large ceiling the fourth active caller is admitted (no refusal).
-    clock["t"] = 5000.0
-    monkeypatch.setattr(mod, "SCENE_RATE_LIMIT_MAX_KEYS", 1000)
-    mod._reset_rate_limit_state()
-    assert [mod._rate_limit_allows(h) for h in ("a", "b", "c", "d")] == [True] * 4
-    assert len(mod._rate_state) == 4
-
-
-def test_rate_limit_evicts_a_single_key_whose_window_emptied(monkeypatch):
-    """G5 F-3: a key with no live stamps left is dropped, never kept as a dead entry."""
-    clock = {"t": 0.0}
-    monkeypatch.setattr(mod, "_rate_limit_clock", lambda: clock["t"])
-    monkeypatch.setattr(mod, "SCENE_RATE_LIMIT_WINDOW_S", 10.0)
-    mod._reset_rate_limit_state()
-    assert mod._rate_limit_allows("solo") is True
-    assert mod._rate_state["solo"] == [0.0]
-    clock["t"] = 100.0  # the window has expired
-    mod._evict_empty_keys(clock["t"], mod.SCENE_RATE_LIMIT_WINDOW_S)
-    assert "solo" not in mod._rate_state
+    monkeypatch.setattr(slots, "max_slots", 16)
+    slots.reset()
+    assert client.post(_URL, json=_body()).status_code == 200
 
 
 # ---------------------------------------------------------------------------
@@ -344,7 +402,7 @@ def test_rate_limit_evicts_a_single_key_whose_window_emptied(monkeypatch):
 def test_504_deadline_and_its_reddening_mutation(client, monkeypatch):
     """A slow assembly is cancelled at the per-request wall-clock deadline with a typed 504 - no
     partial scene. In-process mutation: with a generous deadline the SAME slow fetch returns 200,
-    proving the deadline (asyncio.wait_for over run_in_threadpool) is load-bearing."""
+    proving the deadline (run_in_job_slot over run_in_threadpool) is load-bearing."""
     def _slow_fetch(**kwargs):
         time.sleep(0.3)
         return _ok_result([_one_building()])
@@ -359,7 +417,7 @@ def test_504_deadline_and_its_reddening_mutation(client, monkeypatch):
 
     # Mutation: a generous deadline lets the same slow work complete (200).
     monkeypatch.setattr(mod, "SCENE_MAX_SECONDS", 30.0)
-    mod._reset_rate_limit_state()
+    mod.get_rate_limiter().reset()
     assert client.post(_URL, json=_body()).status_code == 200
 
 
