@@ -1,1 +1,500 @@
-<!-- Placeholder seeded at the M5-T114 contract seam; the producer replaces it. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D-086 P1 — Annotated UI mockups (NYC Buildability, internal)</title>
+<style>
+  /* ---- Design tokens (presentation-only proposal; see P1-VISUAL-STATE-SPEC.md §3) ---- */
+  :root{
+    --surface-canvas:#F7F8FA; --surface-raised:#FFFFFF; --surface-sunken:#EEF1F5;
+    --ink-strong:#11151C; --ink:#2C3440; --ink-muted:#5B6472;
+    --line:#E2E6EC; --line-strong:#C7CDD6;
+    --accent:#2F5BEA; --accent-ink:#1C3AA8;
+    --status-draft:#4B57C4; --status-review:#B5750B; --status-conflict:#C23B4B;
+    --status-unsupported:#5B6472; --status-na:#8A93A2; --status-verified:#1E7A50;
+    --claim-city:#3F4A5A; --claim-proposed:#9A6212; --claim-generated:#4B57C4; --claim-human:#3F4A5A;
+    --r:10px; --shadow:0 1px 2px rgba(17,21,28,.06);
+    --focus:0 0 0 3px rgba(47,91,234,.45);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-canvas);color:var(--ink);
+    font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  h1,h2,h3,h4{color:var(--ink-strong);margin:0 0 .4em;line-height:1.25}
+  h1{font-size:28px} h2{font-size:22px} h3{font-size:18px} h4{font-size:16px}
+  p{margin:.3em 0}
+  a{color:var(--accent-ink)}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px}
+  .doc-head{border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:20px}
+  .muted{color:var(--ink-muted)}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
+  .small{font-size:13px}
+  /* ---- Fictional-data banner ---- */
+  .fiction{background:#FFF4E5;border:2px dashed var(--claim-proposed);color:#6b4708;
+    border-radius:var(--r);padding:12px 16px;margin:16px 0;font-weight:600}
+  /* ---- Status vocabulary chips (never colour alone: symbol + text) ---- */
+  .chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 10px;
+    font-size:13px;font-weight:600;border:1px solid var(--line-strong);background:var(--surface-raised)}
+  .chip .sym{font-weight:700}
+  .c-verified{color:var(--status-verified);border-color:#Bfe3cf}
+  .c-conditional,.c-draft{color:var(--status-draft);border-color:#cfd3f0}
+  .c-review{color:var(--status-review);border-color:#e6d6a8}
+  .c-conflict{color:var(--status-conflict);border-color:#eec2c7}
+  .c-unsupported{color:var(--status-unsupported);border-color:var(--line-strong)}
+  .c-na{color:var(--status-na);border-color:var(--line)}
+  .claim{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12px;font-weight:700;
+    letter-spacing:.02em;border:1px solid var(--line-strong)}
+  .k-city{color:var(--claim-city)} .k-proposed{color:var(--claim-proposed);border-style:dashed}
+  .k-generated{color:var(--claim-generated);border-style:dashed} .k-human{color:var(--claim-human)}
+  /* ---- Surface section + frames ---- */
+  .surface{margin:34px 0;padding-top:8px;border-top:3px solid var(--line-strong)}
+  .decision{background:var(--surface-sunken);border-left:4px solid var(--accent);border-radius:0 var(--r) var(--r) 0;
+    padding:8px 14px;margin:8px 0 16px;font-weight:600}
+  .frames{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+  .frame{background:var(--surface-raised);border:1px solid var(--line);border-radius:var(--r);
+    box-shadow:var(--shadow);overflow:hidden}
+  .frame.desktop{flex:1 1 620px;min-width:320px}
+  .frame.phone{flex:0 0 320px;max-width:100%}
+  .frame-label{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--ink-muted);padding:8px 12px;background:var(--surface-sunken);border-bottom:1px solid var(--line)}
+  .pane{padding:14px}
+  /* ---- App-shell bits ---- */
+  .topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-bottom:1px solid var(--line);
+    background:var(--surface-raised)}
+  .brand{font-weight:700;color:var(--ink-strong)}
+  .env{border:1px solid var(--line-strong);border-radius:6px;padding:1px 8px;font-size:12px;font-weight:700;color:var(--ink-muted)}
+  .env::before{content:"● "}
+  .idrow{font-size:13px;color:var(--ink-muted)}
+  .nav{display:flex;gap:6px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid var(--line);font-size:13px}
+  .nav .item{padding:3px 8px;border-radius:6px}
+  .nav .item.active{background:var(--surface-sunken);color:var(--accent-ink);font-weight:700}
+  .nav .item.planned{color:var(--status-na);border:1px dashed var(--line-strong)}
+  .status-line{font-size:13px;color:var(--status-review);padding:6px 12px}
+  /* ---- Result rows / cards ---- */
+  .card{border:1px solid var(--line);border-radius:var(--r);padding:12px;margin:10px 0}
+  .row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:0}
+  .row .lbl{color:var(--ink)}
+  .row .val{font-weight:700;color:var(--ink-strong);text-align:right}
+  .val .unit{font-weight:400;color:var(--ink-muted);font-size:13px}
+  .why{color:var(--accent-ink);font-size:13px;white-space:nowrap}
+  .big{font-size:24px;font-weight:800;color:var(--ink-strong)}
+  .alert{border:1px solid var(--status-conflict);border-left:4px solid var(--status-conflict);
+    background:#fdf2f3;border-radius:var(--r);padding:10px;margin:10px 0}
+  .alert b{color:var(--status-conflict)}
+  .note{border:1px solid var(--line);border-left:4px solid var(--status-na);background:var(--surface-sunken);
+    border-radius:var(--r);padding:10px;margin:10px 0;font-size:14px}
+  .strip{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+  .strip .ex{font-size:12px;font-weight:600;border:1px solid var(--line-strong);border-radius:6px;padding:2px 8px}
+  .btn{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:8px 14px;font-weight:700;font-size:14px}
+  .btn.secondary{background:var(--surface-raised);color:var(--accent-ink);border:1px solid var(--line-strong)}
+  .field{border:1px solid var(--line-strong);border-radius:8px;padding:10px 12px;color:var(--ink-muted);margin:6px 0}
+  details{border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:6px 0;font-size:14px}
+  summary{cursor:pointer;font-weight:600}
+  .map{background:repeating-linear-gradient(45deg,#e9edf3,#e9edf3 10px,#eef2f7 10px,#eef2f7 20px);
+    border:1px solid var(--line-strong);border-radius:8px;height:120px;display:flex;align-items:center;justify-content:center;
+    color:var(--ink-muted);font-size:13px;text-align:center;padding:8px}
+  .map.lot{position:relative}
+  .map.lot::after{content:"[ approximate lot outline ]";position:absolute}
+  /* ---- Annotation callouts ---- */
+  .anno{background:#f0f6ff;border:1px solid #cfe0fb;border-radius:var(--r);padding:12px 14px;margin:12px 0;font-size:14px}
+  .anno h4{color:var(--accent-ink);margin-bottom:6px}
+  .anno ul{margin:.2em 0;padding-left:20px}
+  .anno li{margin:3px 0}
+  .states{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0}
+  .st{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13.5px}
+  .st .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+    color:#fff;background:var(--ink-muted);border-radius:4px;padding:1px 6px;margin-right:6px}
+  .st.normal .tag{background:#2f7a55} .st.boundary .tag{background:var(--status-review)}
+  .st.missing .tag{background:var(--status-na)} .st.failure .tag{background:var(--status-conflict)}
+  table.voc{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0}
+  table.voc th,table.voc td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+  table.voc th{background:var(--surface-sunken)}
+  .legend{background:var(--surface-raised);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:16px 0}
+  footer{margin:40px 0 10px;padding-top:16px;border-top:1px solid var(--line);color:var(--ink-muted);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="doc-head">
+  <h1>D-086 P1 — Annotated visual/state mockups</h1>
+  <p class="muted">NYC Buildability (internal). Presentation-only design over existing contracts. Companion to
+  <span class="mono">docs/design/ui-cleanup/P1-VISUAL-STATE-SPEC.md</span>. Static file — no script, no external
+  resource. Assessment output, not implementation authorization (D-086-R001).</p>
+</div>
+
+<div class="fiction">
+  ALL DATA ON THIS PAGE IS FICTIONAL. The address “<span class="mono">0000 Example Avenue, Test Borough</span>”
+  and BBL “<span class="mono">0-00000-0000</span>” are invented placeholders for backend values — never a real
+  address presented as a real city record. Numbers are illustrative and are not calculated here.
+</div>
+
+<div class="legend">
+  <h3>Shared status vocabulary (never colour alone — symbol + text; see spec §2)</h3>
+  <p class="small">Coverage status (verbatim enum from <span class="mono">lib/coverage.ts</span>):</p>
+  <div class="strip">
+    <span class="chip c-verified"><span class="sym">✓</span> verified</span>
+    <span class="chip c-conditional"><span class="sym">◐</span> conditional</span>
+    <span class="chip c-review"><span class="sym">!</span> professional_review_required</span>
+    <span class="chip c-conflict"><span class="sym">≠</span> data_conflict</span>
+    <span class="chip c-unsupported"><span class="sym">∅</span> unsupported</span>
+    <span class="chip c-na"><span class="sym">—</span> not_applicable</span>
+  </div>
+  <p class="small">Claim class (what kind of information — spec §2.1):</p>
+  <div class="strip">
+    <span class="claim k-city">CITY RECORD</span>
+    <span class="claim k-generated">GENERATED BUILDING OPTION</span>
+    <span class="claim k-proposed">PROPOSED — NOT A CITY RECORD</span>
+    <span class="claim k-human">HUMAN RECORD</span>
+  </div>
+  <p class="small muted">A draft result never shows <b>✓ verified</b> (draft coverage excludes it). Nothing is ever
+  labelled “permitted”, “approved”, or “maximum allowed building”.</p>
+</div>
+
+<!-- =============================== 1. SEARCH =============================== -->
+<section class="surface" id="search">
+  <h2>1 · Search</h2>
+  <div class="decision">Dominant decision: <b>Which property am I analysing?</b> One search field.</div>
+  <div class="frames">
+    <div class="frame desktop">
+      <div class="frame-label">Frame S-D · desktop · normal</div>
+      <div class="topbar"><span class="brand">NYC Buildability</span><span class="env">Internal build</span></div>
+      <div class="pane">
+        <h3>Find a property</h3>
+        <div class="field">Search: start typing an address… <span class="muted small">(fictional)</span></div>
+        <details><summary>Search by tax lot (BBL)</summary>
+          <div class="field mono">Borough · Block · Lot</div>
+          <p class="small muted">Four distinct errors kept: empty · digits-only · length · borough.</p>
+        </details>
+        <div class="card small">
+          <div class="row"><span class="lbl">0000 Example Avenue, Test Borough</span><span class="why">Select →</span></div>
+          <div class="row"><span class="lbl">0000 Example Boulevard, Test Borough</span><span class="why">Select →</span></div>
+          <p class="muted small" style="padding-top:6px">Suggestions — no auto-pick. Keyboard + touch.</p>
+        </div>
+        <p class="small muted">Required disclaimer footer (§29) renders below on every route.</p>
+      </div>
+    </div>
+    <div class="frame phone">
+      <div class="frame-label">Frame S-M · phone</div>
+      <div class="topbar"><span class="brand">Buildability</span><span class="env">Internal</span></div>
+      <div class="pane">
+        <div class="field">Search: address…</div>
+        <details><summary>Search by BBL</summary><div class="field mono">B · Block · Lot</div></details>
+        <div class="card small"><div class="row"><span class="lbl">0000 Example Ave</span><span class="why">→</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="states">
+    <div class="st normal"><span class="tag">Normal</span> Suggestions list (<span class="mono">kind:"suggestions"</span>), no auto-pick.</div>
+    <div class="st boundary"><span class="tag">Boundary</span> Slow-but-healthy source (6&nbsp;s, DB-008) → patient “still searching”; manual fallback keeps the typed text.</div>
+    <div class="st missing"><span class="tag">Missing</span> Zero results / <span class="mono">no_match</span>; four distinct BBL errors — never one generic red icon.</div>
+    <div class="st failure"><span class="tag">Failure</span> <span class="mono">error</span> reasons: source_unavailable (retry once) · rejected · rate_limited · timeout · unavailable — distinct recovery, spoken once.</div>
+  </div>
+  <div class="anno"><h4>Placement (spec §5.1)</h4><ul>
+    <li>L-rows SH-01, SH-02, SH-05, SH-10, SH-11/12/13, SH-15, and AD01–AD28 land in this one search/recovery area.</li>
+    <li>Accessibility: address <span class="mono">OutcomeAnnouncer</span> speaks each outcome once; <span class="mono">#architect-bbl-error</span> polite; no auto-pick.</li>
+    <li>Print: not a print surface (pre-property). Disclaimer footer prints on every page.</li>
+  </ul></div>
+</section>
+
+<!-- =============================== 2. CONFIRMATION =============================== -->
+<section class="surface" id="confirm">
+  <h2>2 · Confirmation <span class="small muted">(D-040 released)</span></h2>
+  <div class="decision">Dominant decision: <b>Is this the right lot before I commit to analysis?</b></div>
+  <div class="frames">
+    <div class="frame desktop">
+      <div class="frame-label">Frame C-D · desktop · normal</div>
+      <div class="pane">
+        <h3>Confirm this property</h3>
+        <div class="card small">
+          <div class="row"><span class="lbl">Searched address</span><span class="val">0000 Example Avenue <span class="unit">(fictional)</span></span></div>
+          <div class="row"><span class="lbl">PLUTO representative address</span><span class="val">0000 Example Ave</span></div>
+          <div class="row"><span class="lbl">BBL</span><span class="val mono">0-00000-0000</span></div>
+        </div>
+        <div class="map lot">Reference lot — context only, nothing measured</div>
+        <p class="small muted">Approximate outline · source noted. Map accuracy and map failure are separate meanings.</p>
+        <div class="alert"><b>City warning (exact, kept above Continue):</b> [Warning message 1] · [Warning message 2]</div>
+        <p><span class="btn">Continue</span> <span class="btn secondary">Change property</span></p>
+      </div>
+    </div>
+    <div class="frame phone">
+      <div class="frame-label">Frame C-M · phone</div>
+      <div class="pane">
+        <div class="card small">
+          <div class="row"><span class="lbl">Searched</span><span class="val">0000 Example Ave</span></div>
+          <div class="row"><span class="lbl">BBL</span><span class="val mono">0-00000-0000</span></div>
+        </div>
+        <div class="map lot" style="height:90px">Reference outline</div>
+        <div class="alert small"><b>City warning</b> above Continue</div>
+        <p><span class="btn">Continue</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="states">
+    <div class="st normal"><span class="tag">Normal</span> Matched lot + reference outline; city warnings above Continue.</div>
+    <div class="st boundary"><span class="tag">Boundary</span> Entered vs matched vs PLUTO differ → all three kept distinct; equal IDs collapse to one line.</div>
+    <div class="st missing"><span class="tag">Missing</span> No geometry / no WebGL → truthful map-unavailable; BBL identity survives without the map.</div>
+    <div class="st failure"><span class="tag">Failure</span> Map render / basemap-only failure — a street-layer error never erases a working parcel.</div>
+  </div>
+  <div class="anno"><h4>Placement (spec §5.2)</h4><ul>
+    <li>AC01–AC11 (confirm card), M01–M13 (lot-outline map), LC01–LC22 (legacy off-flag) — ledger holds each row’s destination.</li>
+    <li><b>Preserved:</b> both exact city warnings stay above Continue (icon-only is insufficient — §12 rule 2).</li>
+  </ul></div>
+</section>
+
+<!-- =============================== 3. OVERVIEW =============================== -->
+<section class="surface" id="overview">
+  <h2>3 · Overview</h2>
+  <div class="decision">Dominant decision: <b>What kind of result is this, which limits are available, what prevents reliance?</b></div>
+  <div class="frames">
+    <div class="frame desktop">
+      <div class="frame-label">Frame O-D · desktop · normal</div>
+      <div class="topbar"><span class="brand">NYC Buildability</span><span class="env">Internal build</span>
+        <span class="idrow">· 0000 Example Ave · Test Borough · BBL 0-00000-0000 · <b>Draft analysis</b></span></div>
+      <div class="nav"><span class="item active">Overview</span><span class="item">Records / Zoning</span>
+        <span class="item">Proposal</span><span class="item">Evidence</span><span class="item">Report</span>
+        <span class="item planned">Envelope · Planned</span></div>
+      <div class="status-line">Preliminary analysis — professional review required</div>
+      <div class="pane">
+        <div class="alert small"><b>Active issues:</b> 1 critical input missing (lot area) · stale source (retrieved 0000-00-00)</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div class="map" style="flex:1 1 240px">Site map / context (~55%)</div>
+          <div class="card" style="flex:1 1 240px;margin:0">
+            <div class="row"><span class="lbl">Residential FAR — city record <span class="claim k-city">CITY RECORD</span></span><span class="val">0.00 <span class="why">Source</span></span></div>
+            <div class="row"><span class="lbl">Residential FAR — rule evaluation <span class="claim k-generated">DRAFT</span></span><span class="val">0.00 <span class="chip c-conditional"><span class="sym">◐</span>conditional</span></span></div>
+            <div class="row"><span class="lbl">Zoning floor-area cap</span><span class="val big">00,000<br><span class="unit">sq ft · FAR only · envelope not assessed</span></span></div>
+            <div class="row"><span class="lbl">Height</span><span class="val">Not calculated <span class="why">Why?</span></span></div>
+            <div class="row"><span class="lbl">Setbacks &amp; yards</span><span class="val">Review required <span class="chip c-review"><span class="sym">!</span></span></span></div>
+          </div>
+        </div>
+        <details><summary>Existing building information</summary><p class="small muted">Collapsed, reversible; all records + source controls kept.</p></details>
+      </div>
+    </div>
+    <div class="frame phone">
+      <div class="frame-label">Frame O-M · phone</div>
+      <div class="topbar"><span class="brand">Buildability</span><span class="env">Internal</span></div>
+      <div class="status-line small">Preliminary — professional review required</div>
+      <div class="pane">
+        <div class="alert small"><b>Active issues</b> · 1 critical missing · stale</div>
+        <div class="map" style="height:90px">Site map</div>
+        <div class="card" style="margin-top:8px">
+          <div class="row"><span class="lbl">FAR — city record</span><span class="val">0.00</span></div>
+          <div class="row"><span class="lbl">Cap</span><span class="val">00,000 <span class="unit">sq ft · FAR only</span></span></div>
+          <div class="row"><span class="lbl">Height</span><span class="val">Not calculated</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="states">
+    <div class="st normal"><span class="tag">Normal</span> City-record vs draft FAR distinct; cap “FAR only · envelope not assessed”; honest bulk states.</div>
+    <div class="st boundary"><span class="tag">Boundary</span> Wide-street conditional vs conservative FAR distinct (withholding beside value); split districts + preserved ranges.</div>
+    <div class="st missing"><span class="tag">Missing</span> missing_critical / missing_noncritical named + counts; Unknown as a word; stale source dated.</div>
+    <div class="st failure"><span class="tag">Failure</span> “Rule details incomplete” (record preserved); each fail_safe label distinct (never generic “Warning”); identity mismatch withholds + retains record.</div>
+  </div>
+  <div class="anno"><h4>Placement (spec §5.3)</h4><ul>
+    <li>SH-05/06/08/09/14, ZC-01–ZC-04, A01–A15, and shared LS-P01/03–16.</li>
+    <li>Statuses come from <span class="mono">calculationStatus()</span>, <span class="mono">bulkRow()</span>, <span class="mono">residentialReference()</span>, <span class="mono">CoverageStatus</span> — no number computed here.</li>
+    <li>Print: A04–A12/A14/A15 print in the brief by default; A13 is screen-only.</li>
+  </ul></div>
+</section>
+
+<!-- =============================== 4. CONDO =============================== -->
+<section class="surface" id="condo">
+  <h2>4 · Condo records</h2>
+  <div class="decision">Dominant decision: <b>What does the city record say about this condo’s land — and does anything prevent using a computed allowance?</b> Records, never allowances.</div>
+  <div class="frames">
+    <div class="frame desktop">
+      <div class="frame-label">Frame K-D · desktop · multi-lot boundary</div>
+      <div class="pane">
+        <h3>City records for this condo <span class="claim k-city">REFERENCE ONLY</span></h3>
+        <div class="card">
+          <div class="row"><span class="lbl">Condo lot you entered</span><span class="val mono">0-00000-0000</span></div>
+          <div class="row"><span class="lbl">Billing lot</span><span class="val mono">0-00000-0001</span></div>
+          <div class="row"><span class="lbl">Base tax lot 1</span><span class="val">M1-5/R7-2 <span class="unit">recorded</span></span></div>
+          <div class="row"><span class="lbl">Base tax lot 2</span><span class="val">not recorded (unknown)</span></div>
+        </div>
+        <div class="note small"><b>Zoning missing for 1 lot.</b> Recorded zoning comes from a separate source not yet connected (ZTLDB). Unknown ≠ no zoning.</div>
+        <div class="card small">
+          <div class="row"><span class="lbl">Recorded confirmation <span class="claim k-human">HUMAN RECORD</span></span><span class="val">A. Reviewer · 0000-00-00T00:00:00.000Z</span></div>
+          <div class="row"><span class="lbl">Attestation</span><span class="val" style="color:var(--status-conflict)">Self-attested — not usable for calculations</span></div>
+        </div>
+        <p class="small muted">Two-plus base lots ⇒ computed allowances are withheld above; records here unlock nothing (monotonic).</p>
+        <p class="small muted">Source · dataset · version · retrieved: [exact values, explicit unknowns].</p>
+      </div>
+    </div>
+    <div class="frame phone">
+      <div class="frame-label">Frame K-M · phone</div>
+      <div class="pane">
+        <h4>City records <span class="claim k-city">REFERENCE ONLY</span></h4>
+        <div class="card small">
+          <div class="row"><span class="lbl">Entered</span><span class="val mono">…0000</span></div>
+          <div class="row"><span class="lbl">Billing</span><span class="val mono">…0001</span></div>
+          <div class="row"><span class="lbl">Base lot 1</span><span class="val">M1-5/R7-2</span></div>
+        </div>
+        <div class="note small">Self-attested — not usable for calculations.</div>
+      </div>
+    </div>
+  </div>
+  <div class="states">
+    <div class="st normal"><span class="tag">Normal</span> <span class="mono">single</span> base lot → paired identity joined by “City record”.</div>
+    <div class="st boundary"><span class="tag">Boundary</span> <span class="mono">multi_lot</span> → all base lots; divergent-zoning notice only when zoning is actually recorded; human confirmation.</div>
+    <div class="st missing"><span class="tag">Missing</span> Unknown zoning + “Zoning missing for N lots”; “never recorded” vs “no active confirmation”.</div>
+    <div class="st failure"><span class="tag">Failure</span> <span class="mono">unresolved</span>/<span class="mono">resolver_error</span> withhold; self-attested refusal; transport <span class="mono">unavailable</span> → no records, no withhold.</div>
+  </div>
+  <div class="anno"><h4>Placement (spec §5.4)</h4><ul>
+    <li>C01–C11. Channel states from <span class="mono">deriveCondoChannelState()</span>; withholds = multi_lot | unresolved | resolver_error only.</li>
+    <li>C05 refusal forced by <span class="mono">unauthenticated_self_attested</span> even if the payload claims otherwise. C11 renders nothing by design.</li>
+  </ul></div>
+</section>
+
+<!-- =============================== 5. PROPOSAL / DRAWING =============================== -->
+<section class="surface" id="proposal">
+  <h2>5 · Proposal / drawing <span class="small muted">(D-076 + D-082 released; max-envelope route UNMOUNTED)</span></h2>
+  <div class="decision">Dominant decision: <b>What am I proposing, and does a preliminary check flag anything?</b> Everything is Proposed input; a check never implies approval.</div>
+  <div class="frames">
+    <div class="frame desktop">
+      <div class="frame-label">Frame P-D · desktop · normal</div>
+      <div class="pane">
+        <h3>Proposal editor <span class="claim k-proposed">PROPOSED — NOT A CITY RECORD</span> <span class="chip c-review"><span class="sym">!</span>preliminary check</span></h3>
+        <div class="card small">
+          <div class="row"><span class="lbl">Outline (EPSG:2263 feet — numeric authority)</span><span class="val">coordinate table</span></div>
+          <div class="row"><span class="lbl">Levels · exterior walls</span><span class="val">editable</span></div>
+        </div>
+        <h4>Drawing surface <span class="claim k-proposed">PROPOSED SKETCH · APPROXIMATE — NOT A SURVEY</span></h4>
+        <div class="map">Reference map — context only. Drawing → Converted coordinates (server-side).</div>
+        <details><summary>Accuracy &amp; method</summary><p class="small">Fit residual (RMS), correspondence method, alignment, source rings. Conversion precision never upgrades input precision.</p></details>
+        <div class="card small">
+          <div class="row"><span class="lbl">Preliminary development limits</span><span class="val">shown as-is (route unmounted)</span></div>
+          <div class="row"><span class="lbl">Engine candidate</span><span class="val"><span class="claim k-generated">GENERATED BUILDING OPTION</span></span></div>
+        </div>
+        <p><span class="btn">Run check</span> <span class="small muted">→ per-check pass / fail / could_not_check with visible reason.</span></p>
+      </div>
+    </div>
+    <div class="frame phone">
+      <div class="frame-label">Frame P-M · phone</div>
+      <div class="pane">
+        <h4>Proposal <span class="claim k-proposed">PROPOSED</span></h4>
+        <div class="card small"><div class="row"><span class="lbl">Outline table (numeric authority)</span><span class="val">shown</span></div></div>
+        <div class="map" style="height:80px">Sketch — approximate</div>
+        <div class="card small"><div class="row"><span class="lbl">Engine option</span><span class="val"><span class="claim k-generated">GENERATED OPTION</span></span></div></div>
+        <p><span class="btn">Run check</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="states">
+    <div class="st normal"><span class="tag">Normal</span> Check pass/fail/could_not_check; <span class="mono">bridged</span> conversion with residual + verbatim server disclosure.</div>
+    <div class="st boundary"><span class="tag">Boundary</span> &lt;3 finite points → Convert disabled with visible readiness count + incomplete-row markers; “Changed since check”.</div>
+    <div class="st missing"><span class="tag">Missing</span> Example seed labelled “Example — not your input”; a generated option is not implied by an adopt button.</div>
+    <div class="st failure"><span class="tag">Failure</span> Typed refusals (residual_too_high · correspondence_unavailable · out_of_neighborhood · feature_unavailable) with exact residual/bound; “Proposal not sent”.</div>
+  </div>
+  <div class="anno"><h4>Placement (spec §5.5)</h4><ul>
+    <li>PE-01/03/04/07/08, DR-01–DR-23, PC-01–PC-06, PV-01/02, ME-01–ME-17, SW-01/02, ZC-04, LS-C01–LS-C28.</li>
+    <li>DR/ME rows pinned at <span class="mono">b56f3d5b</span> (M5-T078/T079 in rework) — re-pinned at accept.</li>
+    <li><b>Copy-wall:</b> “maximum allowed building” / “demonstrated maximum” banned; the term is “Generated building option”.</li>
+  </ul></div>
+</section>
+
+<!-- =============================== 6. EVIDENCE =============================== -->
+<section class="surface" id="evidence">
+  <h2>6 · Evidence</h2>
+  <div class="decision">Dominant decision: <b>Where is the exact basis for this value?</b> One inspector: summary → trace/source → raw.</div>
+  <div class="frames">
+    <div class="frame desktop">
+      <div class="frame-label">Frame E-D · desktop · normal</div>
+      <div class="pane" style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1 1 220px">
+          <h4>Evidence index</h4>
+          <div class="field small">Search facts…</div>
+          <div class="strip"><span class="ex">Lot</span><span class="ex">Building</span><span class="ex">Identity</span></div>
+          <p class="small muted">3 of 12 shown · “No facts match this filter” + Clear restores all.</p>
+        </div>
+        <div style="flex:1 1 260px" class="card">
+          <h4>Inspector — Residential FAR</h4>
+          <div class="row"><span class="lbl">Source (ZoLa first)</span><span class="why">Open source →</span></div>
+          <div class="row"><span class="lbl">Original / normalized</span><span class="val">0000 / 0.00</span></div>
+          <div class="row"><span class="lbl">Captured vs current</span><span class="val small">current may differ from captured</span></div>
+          <details><summary>Calculation trace · citations (verbatim)</summary><p class="small">Steps, outputs, uncertainty; blockquote citation; wide-street reason + fallback note in the readable tier.</p></details>
+          <details><summary>Raw captured record (lossless)</summary><p class="small mono">{…} · hostile URLs never become links</p></details>
+        </div>
+      </div>
+    </div>
+    <div class="frame phone">
+      <div class="frame-label">Frame E-M · phone</div>
+      <div class="pane">
+        <div class="field small">Search facts…</div>
+        <div class="card small">
+          <h4>Inspector</h4>
+          <div class="row"><span class="lbl">Source (ZoLa first)</span><span class="why">Open →</span></div>
+          <div class="row"><span class="lbl">Original/normalized</span><span class="val">0000 / 0.00</span></div>
+          <p class="small muted">Full-width; Escape closes, focus returns.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="states">
+    <div class="st normal"><span class="tag">Normal</span> “Source / Why” opens the inspector to that record; ZoLa-first + current-vs-captured.</div>
+    <div class="st boundary"><span class="tag">Boundary</span> Filter narrows → “No facts match this filter” + Clear restores all rows.</div>
+    <div class="st missing"><span class="tag">Missing</span> “Source record unavailable — was not supplied”; “No safe official dataset link”; “No transformation steps recorded”.</div>
+    <div class="st failure"><span class="tag">Failure</span> Hostile captured URL is never a link; raw JSON stays a lossless final tier.</div>
+  </div>
+  <div class="anno"><h4>Placement (spec §5.6)</h4><ul>
+    <li>F02/03/04/06/07/08, E01–E16, LS-E01–LS-E11. Inspector focus-in / Escape / focus-return kept at every width.</li>
+    <li>Print: inspector hidden; the same records reach paper via the brief appendix (ReportSources).</li>
+  </ul></div>
+</section>
+
+<!-- =============================== 7. REPORT =============================== -->
+<section class="surface" id="report">
+  <h2>7 · Report <span class="small muted">(★ the one printing surface)</span></h2>
+  <div class="decision">Dominant decision: <b>Can I take this off-screen with its scope, identity, conflicts and review status intact?</b></div>
+  <div class="frames">
+    <div class="frame desktop">
+      <div class="frame-label">Frame R-D · desktop · normal</div>
+      <div class="pane">
+        <div class="card small" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+          <span><b>Property brief</b> · BBL 0-00000-0000 · Profile generated 0000-00-00 · <span style="color:var(--status-na)">Not saved</span></span>
+          <span><span class="btn">Print property brief</span> <label class="small">[ ] Include full audit appendix</label></span>
+        </div>
+        <div class="alert small"><b>≠ Identity mismatch:</b> Requested 0-00000-0000 / Returned 0-00000-9999 — Results are withheld from this property.</div>
+        <div class="card small">
+          <div class="row"><span class="lbl">Development limits</span><span class="val">FAR only · readable status prints</span></div>
+          <div class="row"><span class="lbl">Condo records · identity notices</span><span class="val">print by default</span></div>
+          <div class="row"><span class="lbl">Calculation evidence · citations</span><span class="val">reasons + quotes print</span></div>
+          <div class="row"><span class="lbl">Source &amp; review appendix</span><span class="val">opens for print</span></div>
+          <div class="row"><span class="lbl">Raw audit JSON</span><span class="val">appendix only (checkbox)</span></div>
+        </div>
+        <p class="small muted">Required disclaimer (§29) is the canonical reliance statement on paper. Screen expansion restored after print.</p>
+      </div>
+    </div>
+    <div class="frame phone">
+      <div class="frame-label">Frame R-M · phone</div>
+      <div class="pane">
+        <div class="card small"><b>Property brief</b> · <span style="color:var(--status-na)">Not saved</span><br>
+          <span class="btn" style="margin-top:6px">Print</span></div>
+        <p class="small muted">Contents list → sections. Critical scope/identity/conflicts/review print with the number.</p>
+      </div>
+    </div>
+  </div>
+  <div class="states">
+    <div class="st normal"><span class="tag">Normal</span> Brief prints scope/identity/conflicts/review + appendix; raw JSON only when the appendix is selected.</div>
+    <div class="st boundary"><span class="tag">Boundary</span> A printout taken while loading shows the channel state — matches the screen, never a clean blank.</div>
+    <div class="st missing"><span class="tag">Missing</span> Absent inputs print as named missing states; “Unknown — not supplied”.</div>
+    <div class="st failure"><span class="tag">Failure</span> Identity mismatch <span class="mono">role=alert</span> + both IDs prints; incomplete-evaluation notice prints.</div>
+  </div>
+  <div class="anno"><h4>Placement (spec §5.7)</h4><ul>
+    <li>R01, R03/R04/R05, SH-01; structure row R02 governs the contents nav + controlled audit inclusion.</li>
+    <li>Open P5 print decisions carried, not resolved: P5-D1…P5-D6, F04, LS-P10, LS-P15.</li>
+  </ul></div>
+</section>
+
+<footer>
+  Fictional data throughout. Presentation-only; no backend field added, no number computed here, no backend status
+  remapped. No disclosure, honest-gap statement, provenance note or professional-review meaning is dropped or
+  weakened. See <span class="mono">P1-VISUAL-STATE-SPEC.md</span> §7 (preservation checklist) and §10
+  (meaning-change register). — D-086 P1 / M5-T114.
+</footer>
+
+</div>
+</body>
+</html>
