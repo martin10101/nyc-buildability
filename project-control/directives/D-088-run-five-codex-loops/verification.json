@@ -2,7 +2,46 @@
  "schema": "directive_verification/v2",
  "directive_id": "D-088",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All seven requirements bind the non-ledger sentinel D-088-BOOTSTRAP at capture; lane packets bind R002/R005 via applicability.task_ids at their contract seams and verify per-task at acceptance; R001/R003/R004/R006/R007 are operational duties evidenced by the commissioning output, lane journals and owner replies. No completion claim exists at capture time.",
- "verified_by": null,
- "verified_at": null,
- "task_verifications": []
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-25T04:01:49+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-088",
+   "task_id": "M0-T161",
+   "applicable_requirement_ids": [
+    "D-088-R004",
+    "D-088-R003",
+    "D-088-R007"
+   ],
+   "reviewed_sha": "6314a25cbb635e2dc22e5b94a795f4e6898353f4",
+   "reviewed_manifest_sha256": "8286441633db9f2516b3ae3377e62af2e4264cc855a58d6d179f7f9f26e049b6",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:01:49+00:00",
+   "requirements": [
+    {
+     "id": "D-088-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a faithful, fail-closed transcription of the recertification section 5 (every pinned value and STOP verified against M0-T159-recertification.md), lane 1 forced to the supervised one-cycle canary with the owner-typed digest approval, lanes 2-5 from a validated plan file at least 60 s apart, a fresh launch manifest per start, repin on first starts only; every STOP halts everything after it (tests 2a/2b/2c). Blob-level restamp predicate re-verified by the orchestrator at the accept head 6314a25c (commission_lanes.ps1 a39ba5bb, test_commission_lanes.ps1 f0d69ef1, M0-T161-owner-guide.md db29c32a, M0-T161-producer-report.md f2fd87cd; identity 82864416; evaluate_task_refs ok); report M0-T161-DCV.md."
+     ]
+    },
+    {
+     "id": "D-088-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for this task's share (dcv-m0t161): the helper's update phase stands up lanes 4-5 (own folders, an mrl folder, a wrapper derived from lane 3's changing only lane-specific values with the ACTIVE-TASK block marked NOT-YET-FED, the checkout key from the controller's own durable_state.checkout_key), proves all five copies byte-identical to wt-controller-src and runs verify-controller from each, STOPs if config.toml or model_selection.toml change, and refuses any robocopy /MIR unless the certified source holds exactly 204 files. RUNTIME CLOSURE STAYS OPEN until the owner runs -Phase update (lanes 4/5 are absent today; B-026 open). Blob-level restamp predicate re-verified by the orchestrator at the accept head 6314a25c (commission_lanes.ps1 a39ba5bb, test_commission_lanes.ps1 f0d69ef1, M0-T161-owner-guide.md db29c32a, M0-T161-producer-report.md f2fd87cd; identity 82864416; evaluate_task_refs ok); report M0-T161-DCV.md."
+     ]
+    },
+    {
+     "id": "D-088-R007",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: project-control/reports/M0-T161-owner-guide.md is plain English with five steps of exact '!' one-liners in order, what good looks like, the STOP rule and its one expected exception (the first approve, quoted byte-exact from the script), and why fewer than five loops may run. Blob-level restamp predicate re-verified by the orchestrator at the accept head 6314a25c (commission_lanes.ps1 a39ba5bb, test_commission_lanes.ps1 f0d69ef1, M0-T161-owner-guide.md db29c32a, M0-T161-producer-report.md f2fd87cd; identity 82864416; evaluate_task_refs ok); report M0-T161-DCV.md."
+     ]
+    }
+   ]
+  }
+ ]
 }

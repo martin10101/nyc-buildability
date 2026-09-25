@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T02:14:27+00:00",
+ "verified_at": "2026-09-25T04:01:49+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1611,6 +1611,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t103): the packet carries the graph-derived navigation block (regenerated at the contract seam, 830 files / 17842 nodes / 7656 edges) naming the facade's single read_object_table integration point, the read-only app/documents/extraction and sheet_primitives.py, the forbidden test_sheet_reader.py, and the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head 30b5e37c (pdf_object_streams.py 2cafd799, sheet_objects.py 568ca077, sheet_reader.py c7cf0b9f, sheet_interpreter.py 34e2ee39, test_pdf_object_streams.py e9500aeb, M5-T103-producer-report.md bc99696e; identity 6cf6c303; evaluate_task_refs ok); report M5-T103-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M0-T161",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "6314a25cbb635e2dc22e5b94a795f4e6898353f4",
+   "reviewed_manifest_sha256": "8286441633db9f2516b3ae3377e62af2e4264cc855a58d6d179f7f9f26e049b6",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:01:49+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the packet carries the graph-derived navigation block (no Python module imports tools/controller_update; the existing scripts read-only; the checkout key from durable_state at run time) and the helper honours it. Blob-level restamp predicate re-verified by the orchestrator at the accept head 6314a25c (commission_lanes.ps1 a39ba5bb, test_commission_lanes.ps1 f0d69ef1, M0-T161-owner-guide.md db29c32a, M0-T161-producer-report.md f2fd87cd; identity 82864416; evaluate_task_refs ok); report M0-T161-DCV.md."
      ]
     }
    ]

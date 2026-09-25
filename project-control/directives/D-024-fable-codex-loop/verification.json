@@ -12344,9 +12344,31 @@
      ]
     }
    ]
+  },
+  {
+   "directive_id": "D-024",
+   "task_id": "M0-T161",
+   "applicable_requirement_ids": [
+    "D-024-R287"
+   ],
+   "reviewed_sha": "6314a25cbb635e2dc22e5b94a795f4e6898353f4",
+   "reviewed_manifest_sha256": "8286441633db9f2516b3ae3377e62af2e4264cc855a58d6d179f7f9f26e049b6",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:01:49+00:00",
+   "requirements": [
+    {
+     "id": "D-024-R287",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the check phase STOPs unless the install binding pins the recertified candidate a3f24ff3; install, manifest re-record and verify run before any repin; the repin is applied only at a lane's first start; the launch-manifest chain STOP requires exactly '2.1.281 946eb509...' (no silent version acceptance). Blob-level restamp predicate re-verified by the orchestrator at the accept head 6314a25c (commission_lanes.ps1 a39ba5bb, test_commission_lanes.ps1 f0d69ef1, M0-T161-owner-guide.md db29c32a, M0-T161-producer-report.md f2fd87cd; identity 82864416; evaluate_task_refs ok); report M0-T161-DCV.md."
+     ]
+    }
+   ]
   }
  ],
  "updated_at": "2026-09-04T20:06:24+00:00",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-24T22:04:10+00:00"
+ "verified_at": "2026-09-25T04:01:49+00:00"
 }
