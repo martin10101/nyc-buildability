@@ -725,3 +725,71 @@ def test_y_only_finiteness_check_is_load_bearing(monkeypatch, bad):
     mutant = render_site_plan_pdf(_spec(lot_ring=y_bad, building_ring=None))
     assert isinstance(mutant, writer.SitePlanRefusal)  # still typed, never raises
     assert mutant.reject_code != "non_finite_coordinate"  # but not the Y-specific code
+
+
+# -- M5-T109 (DB-075 a): a hostile numbers.Real __float__ is a typed refusal, never a raise ------
+
+
+@numbers.Real.register
+class _HostileFloatValueError:
+    """A registered ``numbers.Real`` whose ``__float__`` raises ``ValueError``: it passes the
+    ``isinstance(numbers.Real)`` guard in ``_coerce_vertex`` yet cannot yield a float."""
+
+    def __float__(self):
+        raise ValueError("hostile __float__")
+
+    def __repr__(self):
+        return "<hostile-real>"
+
+
+@numbers.Real.register
+class _HostileFloatTypeError:
+    """As above, but ``__float__`` raises ``TypeError``."""
+
+    def __float__(self):
+        raise TypeError("hostile __float__")
+
+    def __repr__(self):
+        return "<hostile-real>"
+
+
+@pytest.mark.parametrize("hostile", [_HostileFloatValueError(), _HostileFloatTypeError()])
+@pytest.mark.parametrize("ring_field, ring", [("lot_ring", _LOT), ("building_ring", _BUILDING)])
+def test_hostile_float_vertex_is_a_typed_refusal_never_raises(ring_field, ring, hostile):
+    """DB-075 (a): the broadened ``_coerce_vertex`` catch turns a ``ValueError``/``TypeError``
+    from a hostile ``__float__`` into a typed ``non_numeric_coordinate`` refusal (not reachable
+    from JSON, but the public boundary must never raise on caller data). The refusal redacts."""
+    bad_ring = ring[:1] + ((hostile, 0.0),) + ring[2:]
+    result = render_site_plan_pdf(_spec(**{ring_field: bad_ring}))
+    assert isinstance(result, writer.SitePlanRefusal)
+    assert result.reject_code == "non_numeric_coordinate"
+    assert "hostile" not in result.detail  # the caller repr is not echoed
+
+
+def _coerce_vertex_overflow_only(vertex, label):
+    """The PRE-DB-075 ``_coerce_vertex`` body: the ``float()`` catch covers ONLY
+    ``OverflowError``, so a hostile ``__float__`` escapes the never-raise contract."""
+    if not writer._is_sequence(vertex) or len(vertex) != 2:
+        return writer.SitePlanRefusal("invalid_ring", f"{label} ring vertex is not a pair")
+    for value in vertex:
+        if isinstance(value, bool) or not isinstance(value, numbers.Real):
+            return writer.SitePlanRefusal(
+                "non_numeric_coordinate", f"{label} ring has a non-numeric coordinate"
+            )
+    try:
+        x, y = float(vertex[0]), float(vertex[1])
+    except OverflowError:  # the ONLY catch before DB-075 (a)
+        return writer.SitePlanRefusal("oversize_input", f"{label} ring coordinate too big")
+    return (x, y)
+
+
+def test_narrow_overflow_only_catch_reddens_on_a_hostile_float(monkeypatch):
+    """AS-6 mutation (in-process, consuming namespace): restore the pre-fix narrow catch; a
+    hostile ``__float__`` then ESCAPES as a raise, proving the broadened catch is load-bearing."""
+    bad_ring = _LOT[:1] + ((_HostileFloatValueError(), 0.0),) + _LOT[2:]
+    real = render_site_plan_pdf(_spec(lot_ring=bad_ring))
+    assert isinstance(real, writer.SitePlanRefusal)  # real code: typed refusal
+
+    monkeypatch.setattr(writer, "_coerce_vertex", _coerce_vertex_overflow_only)
+    with pytest.raises(ValueError):  # mutant: the ValueError escapes the never-raise contract
+        render_site_plan_pdf(_spec(lot_ring=bad_ring))

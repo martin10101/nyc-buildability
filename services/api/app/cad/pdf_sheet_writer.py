@@ -56,6 +56,14 @@ longer, so unbounded caller text cannot inflate the sheet once an export route
 feeds it (DB-059 a). The per-vertex finiteness check covers x AND y (DB-059 d),
 and the non-finite raise/return contract above is documented honestly (DB-053 b).
 Valid output is byte-identical to the M5-T091 golden.
+
+Export-seam hardening (M5-T109, DB-075 (a))
+-------------------------------------------
+:func:`_coerce_vertex` previously caught only ``OverflowError`` around ``float()``; a
+``numbers.Real`` subclass whose ``__float__`` raises ``ValueError``/``TypeError`` passed the
+``isinstance`` guard yet escaped the never-raise contract. The catch is broadened to a typed
+``non_numeric_coordinate`` refusal (unreachable from JSON, but the public boundary must never
+raise on caller data). Valid output stays byte-identical to the golden.
 """
 
 from __future__ import annotations
@@ -341,6 +349,14 @@ def _coerce_vertex(vertex: object, label: str) -> tuple[float, float] | SitePlan
     except OverflowError:  # an integer (or fraction) beyond the float range
         return SitePlanRefusal(
             "oversize_input", f"{label} ring coordinate exceeds +/-{_MAX_COORD_ABS:.0f} ft"
+        )
+    except (ValueError, TypeError):
+        # DB-075 (a): a numbers.Real subclass whose __float__ raises ValueError/TypeError
+        # passed the isinstance(numbers.Real) check above but cannot yield a float; broaden
+        # the catch so the never-raise contract holds (not reachable from JSON, but the
+        # public boundary must never raise on caller data).
+        return SitePlanRefusal(
+            "non_numeric_coordinate", f"{label} ring has a non-numeric coordinate"
         )
     if not (math.isfinite(x) and math.isfinite(y)):
         return SitePlanRefusal(
