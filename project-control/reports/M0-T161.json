@@ -2,11 +2,11 @@
   "task_id": "M0-T161",
   "producer_agent": "backend-engineer",
   "report_file": "project-control/reports/M0-T161-producer-report.md",
-  "submitted_at": "2026-09-25T02:23:35.877742+00:00",
+  "submitted_at": "2026-09-25T03:36:08.319570+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T161-evidence-map.json",
-  "content_manifest_sha256": "2719a63a7a31678c2b8a000b83dfe8ee13d1e6bb201b2cf81e52d219c6c5125c",
-  "reviewed_sha": "b27fc89b2244920c6e42ab908920abc8edda78aa",
+  "content_manifest_sha256": "8286441633db9f2516b3ae3377e62af2e4264cc855a58d6d179f7f9f26e049b6",
+  "reviewed_sha": "158b5bca02ed45af0a43914c8394d284c2f68861",
   "applicable_requirements": [
     "D-024-R287",
     "D-066-R001",
@@ -14,5 +14,5 @@
     "D-088-R004",
     "D-088-R007"
   ],
-  "updated_at": "2026-09-25T02:23:41.207157+00:00"
+  "updated_at": "2026-09-25T03:36:24.854416+00:00"
 }

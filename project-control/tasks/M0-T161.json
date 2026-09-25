@@ -70,12 +70,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
-  "progress_percent": 85,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-25T01:31:22.299578+00:00",
-  "updated_at": "2026-09-25T02:55:48.206338+00:00",
+  "updated_at": "2026-09-25T03:36:27.729116+00:00",
   "directive_refs": [
     {
       "directive_id": "D-088",
@@ -125,6 +125,13 @@
       "percent": 85,
       "status": "rework",
       "message": "PASS with required corrections (G3 cr-m0t161 F1-F5, G5 sec-m0t161 hardening advisories): the owner runs this helper on the live controller, so the owner-guide step-4 misdirection (G3 F2) and the defense-in-depth gaps are fixed in ONE bounded round before the owner uses it; same-reviewer delta attestations follow."
+    },
+    {
+      "at": "2026-09-25T03:36:04.843311+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Rework harvested: 25981c08 cherry-picked to 158b5bca (4 files MATCH); checks green; resubmitting."
     }
   ]
 }
