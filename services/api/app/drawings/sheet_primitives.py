@@ -189,7 +189,14 @@ class SheetImage:
 @dataclass(frozen=True)
 class SheetPage:
     """One interpreted page: its box, user unit, declared flattening tolerance, and the
-    flat vector/text/image primitives in execution order."""
+    flat vector/text/image primitives in execution order.
+
+    ``shading_skips`` / ``inline_image_skips`` are the DISCLOSED counts of two non-geometry
+    constructs the reader deliberately skips rather than refusing (M5-T118, D-087 P3): the
+    ``sh`` shading operator (ISO 32000-1 §8.7.4.2, a colour fill, not linework) and inline
+    images (``BI``/``ID``/``EI``, §8.9.7, raster samples, never decoded). They paint nothing
+    into ``polylines`` / ``images``, so the page surfaces the count for honest disclosure. Both
+    default to 0, so a page with neither is byte-identical to the pre-P3 output type."""
 
     index: int
     media_box: tuple[float, float, float, float]
@@ -198,6 +205,8 @@ class SheetPage:
     polylines: tuple[SheetPolyline, ...]
     text_runs: tuple[SheetTextRun, ...]
     images: tuple[SheetImage, ...]
+    shading_skips: int = 0
+    inline_image_skips: int = 0
 
     @property
     def image_count(self) -> int:
@@ -211,6 +220,16 @@ class SheetDocument:
 
     flatten_tolerance: float
     pages: tuple[SheetPage, ...]
+
+    @property
+    def shading_skips(self) -> int:
+        """Total ``sh`` shading operators skipped across all pages (M5-T118; §8.7.4.2)."""
+        return sum(page.shading_skips for page in self.pages)
+
+    @property
+    def inline_image_skips(self) -> int:
+        """Total inline images (``BI``/``ID``/``EI``) skipped across all pages (M5-T118; §8.9.7)."""
+        return sum(page.inline_image_skips for page in self.pages)
 
 
 @dataclass(frozen=True)

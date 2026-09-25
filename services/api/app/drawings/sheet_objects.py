@@ -29,6 +29,7 @@ from app.drawings.sheet_primitives import SheetRefusal
 
 # -- decode bounds (each over-limit is a typed refusal VALUE) -----------------------------
 MAX_DECODED_STREAM_BYTES = 8_388_608  # decoded content/form-stream byte cap (per stream)
+MAX_PAGE_DECODED_BYTES = 33_554_432  # decoded bytes charged while building ONE page (M5-T118)
 MAX_TOTAL_DECODED_BYTES = 134_217_728  # decoded bytes charged across the whole document
 _DETAIL_PREVIEW_CHARS = 64  # attacker-derived tokens are truncated to this in a detail
 _INFLATE_CHUNK = 65536  # bounded incremental-inflation chunk (caps materialized memory)
@@ -255,36 +256,59 @@ def _catalog_pages_root(table: PdfObjectTable) -> object | SheetRefusal:
 
 
 class _StreamDecoder:
-    """Document-wide stream-decode coordinator: the decoded-bytes budget and the Form
+    """Document-wide stream-decode coordinator: the decoded-bytes budgets and the Form
     XObject decode memo (DB-055 b: "decode budgets, form memo").
 
     ONE instance per document is shared across pages AND nested Form recursion, so the
     ``decoded_bytes`` accounting and the per-``(number, generation)`` form cache bound the
-    whole read. ``_decode_stream`` is the (facade-threaded, patchable) decode hook; the byte
-    caps are likewise threaded so patching the facade constants still bites."""
+    whole read. Two decoded-bytes budgets are charged in tandem (M5-T118, DB-055 c): a PER-PAGE
+    budget (``page_decoded_bytes`` vs ``max_page_decoded_bytes``), reset by :meth:`begin_page`
+    at the start of each page, bounds the decode work attributable to ONE page (its ``/Contents``
+    plus any Form XObjects first decoded on that page — a cached form re-placed on a later page
+    charges nothing); the PER-DOCUMENT ceiling (``decoded_bytes`` vs ``max_total_decoded_bytes``)
+    bounds the whole read and is never reset. ``_decode_stream`` is the (facade-threaded,
+    patchable) decode hook; the byte caps are likewise threaded so patching the facade constants
+    still bites."""
 
     def __init__(
         self,
         table: PdfObjectTable,
         *,
         max_decoded_stream_bytes: int,
+        max_page_decoded_bytes: int,
         max_total_decoded_bytes: int,
         decode_stream,
         decoded_bytes: int = 0,
     ) -> None:
         self.table = table
         self.max_decoded_stream_bytes = max_decoded_stream_bytes
+        self.max_page_decoded_bytes = max_page_decoded_bytes
         self.max_total_decoded_bytes = max_total_decoded_bytes
         self._decode_stream = decode_stream  # patchable hook (facade sheet_reader._decode_stream)
         # document-wide; seeded with the bytes a PDF 1.5+ xref/object-stream resolve already
-        # charged, so the two phases share ONE decoded-bytes budget (M5-T103).
+        # charged, so the two phases share ONE document decoded-bytes ceiling (M5-T103). The seed
+        # is NOT attributed to any page (it precedes the page walk), so page_decoded_bytes starts
+        # at 0 and is reset per page by begin_page.
         self.decoded_bytes = decoded_bytes
+        self.page_decoded_bytes = 0
         self.form_cache: dict[tuple[int, int], bytes] = {}  # decoded Form content by ref key
 
+    def begin_page(self) -> None:
+        """Reset the per-page decoded-bytes counter at the start of a page (M5-T118)."""
+        self.page_decoded_bytes = 0
+
     def charge_decoded(self, count: int) -> SheetRefusal | None:
-        """Charge ``count`` bytes against the document-wide decoded-bytes budget; refuse
-        once the running total would exceed the (threaded) total cap."""
+        """Charge ``count`` bytes against BOTH the per-page decoded-bytes budget and the
+        document-wide ceiling; refuse the moment either running total would be exceeded. The
+        per-page budget is checked first (the tighter, page-scoped bound), then the document
+        ceiling (the wording the M5-T104 per-document accounting test pins)."""
+        self.page_decoded_bytes += count
         self.decoded_bytes += count
+        if self.page_decoded_bytes > self.max_page_decoded_bytes:
+            return _refuse(
+                "page decoded bytes",
+                f"over {self.max_page_decoded_bytes} decoded bytes on one page",
+            )
         if self.decoded_bytes > self.max_total_decoded_bytes:
             return _refuse(
                 "decoded bytes budget",

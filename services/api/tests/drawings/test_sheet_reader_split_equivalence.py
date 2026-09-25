@@ -364,7 +364,12 @@ def _cases() -> list[tuple[str, bytes, float, dict]]:
     ]), D, {}))
 
     # --- refusals: profile operator / structure
-    a(("refuse_unsupported_op", _one_page(b"0 0 1 sc 5 5 sh"), D, {}))
+    # M5-T118 DELIBERATE golden revision: the former probe used `sh`, which is now SKIPPED as
+    # non-geometry (a colour shading, §8.7.4.2 — see test_sheet_p3_features.py) rather than
+    # refused, so it can no longer stand for an unsupported operator. The case keeps its PURPOSE
+    # (proving an out-of-subset operator is a typed "unsupported operator" refusal) with a
+    # genuinely out-of-subset token `zz`; its digest and _OVERALL are recaptured below.
+    a(("refuse_unsupported_op", _one_page(b"0 0 1 sc 5 5 zz"), D, {}))
     a(("refuse_unsupported_op_long", _one_page(b"Z" * 100_000), D, {}))
     a(("refuse_dangling_operands", _one_page(b"1 2 3"), D, {}))
     a(("refuse_unclosed_text", _one_page(b"BT /F1 12 Tf",
@@ -473,9 +478,11 @@ def overall_digest(sr) -> str:
 
 
 # GOLDEN: captured from the PRE-split sheet_reader module before any edit (M5-T094); the two
-# `*decode_parms*` cases were DELIBERATELY recaptured at M5-T113 (DB-076 a) and _OVERALL was
-# recomputed for the 63-case corpus. All 61 unrevised per-case digests are UNCHANGED.
-_OVERALL = "887a0a680999ab46733b305208e438b47ea2e9f5e275c2fd3e98ba9c601840b5"
+# `*decode_parms*` cases were DELIBERATELY recaptured at M5-T113 (DB-076 a). M5-T118 recaptured
+# `refuse_unsupported_op` (its former `sh` probe is now a skipped shading op — DB-055 c/d) and
+# _OVERALL; the per-page/document budget split changed NO other case digest (verified: the only
+# CHANGED case is `refuse_unsupported_op`). All 62 unrevised per-case digests are UNCHANGED.
+_OVERALL = "137837884e15e8bfc2a30261d2b89cc4f2cd1206fff6b5ea3a425c51cf29fe5b"
 _GOLDEN = {
     "asym_bezier": "dcb1a08370e49f494484da30dd28c531020eee8c430616400520862ab8d4018d",
     "contents_array": "feccdc8409a6c869b185c9db02f8473503e03c271e3e015f5d9240afe3a49e39",
@@ -532,7 +539,8 @@ _GOLDEN = {
     "refuse_unbalanced_q": "c48991f9a5255dac746340193184ab4f93e67c60362bdb43a617680babb152e9",
     "refuse_unclosed_text": "95b072ac6da9b4b93109294313850ef8fc58602e976d54fe8fb0f74cd13fa311",
     "refuse_unresolvable_ref": "dd04e7444ee22a94406a2425bad7a2fdc35c59101f3444c04b72ca230f0e031e",
-    "refuse_unsupported_op": "c0efa5e1c6a709627a2e592d6a4c3c32bbb462cc6b79a7f96c40c5baf75fd4c6",
+    # M5-T118: recaptured after the `sh` probe became `zz` (see the corpus-case comment).
+    "refuse_unsupported_op": "c4353d678cf4a7f9a54410b12f79c0874208b6ae1677b277fc8a4ac75415cee0",
     "refuse_unsupported_op_long":
         "e5241b3d714963af50c4471472fd98a30f4b1de65b923c85376de3e6c56e26a6",
     "refuse_xobject_cycle": "45df1f0551c6c7318da4c6a553c4b0015fa12a29bcae08aa70241f267d212f1f",

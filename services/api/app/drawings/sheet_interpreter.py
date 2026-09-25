@@ -1,17 +1,16 @@
 """Content-stream operator interpreter for the architect drawing-sheet profile
-(M5-T094 split of the M5-T083 reader; DB-055 b). NO behaviour change.
+(M5-T094 split of the M5-T083 reader; DB-055 b).
 
 :class:`_StreamRun` is the per-content-stream scanner/executor for the WIDER-than-survey
-graphics subset: full affine CTM (rotation/shear), the ``q``/``Q`` graphics-state stack,
-path construction with cubic-Bezier flattening under a declared chord error, stroke/fill
-distinction, text-run placement under the text+CTM matrices, and Form XObject
-re-interpretation with depth/cycle bounds (image XObjects counted, never decoded).
-
-It composes object-graph/decode helpers from :mod:`app.drawings.sheet_objects` and is
-driven by the :class:`~app.drawings.sheet_reader._SheetInterpreter` coordinator that the
-facade builds. The profile bounds and the ``concat_matrix`` / ``flatten_cubic`` algebra
-are THREADED IN via the coordinator (``self._interp.*``) so patching a facade constant or
-function still bites; they are never read as this module's globals.
+graphics subset: full affine CTM (rotation/shear), the ``q``/``Q`` stack, path construction with
+cubic-Bezier flattening under a declared chord error, stroke/fill, text-run placement under the
+text+CTM matrices, Form XObject re-interpretation with depth/cycle bounds (images counted, never
+decoded), and (M5-T118) the ``sh`` operator and inline images (``BI``/``ID``/``EI``) skipped as
+non-geometry with a count. It composes :mod:`app.drawings.sheet_objects` (decode) and
+:mod:`app.drawings.sheet_inline_image` (the inline-image skip), and is driven by the
+:class:`~app.drawings.sheet_reader._SheetInterpreter` coordinator; the bounds (per-page +
+per-document) and ``concat_matrix`` / ``flatten_cubic`` are THREADED IN via ``self._interp.*`` so
+patching a facade constant still bites.
 """
 
 from __future__ import annotations
@@ -25,6 +24,7 @@ from app.documents.extraction.pdf_lexer import (
     lex_primitive,
 )
 from app.documents.extraction.pdf_objects import PdfRef, PdfStream
+from app.drawings.sheet_inline_image import skip_inline_image
 from app.drawings.sheet_marked_content import read_inline_dict
 from app.drawings.sheet_objects import (
     _ABSENT,
@@ -68,6 +68,11 @@ _PAINT_FILL = frozenset({"f", "F", "f*", "B", "B*", "b", "b*"})
 _PAINT_ALL = frozenset({"S", "s", "f", "F", "f*", "B", "B*", "b", "b*", "n"})
 _PAINT_CLOSE_FIRST = frozenset({"s", "b", "b*"})
 _TEXT_SHOW_OR_MOVE = frozenset({"Td", "TD", "Tm", "T*", "Tj", "TJ", "'", '"'})
+# ``sh`` (§8.7.4.2 / Table 77) paints a colour fill, NOT linework, so it is SKIPPED as
+# non-geometry with a disclosed count (M5-T118, DB-055 c), never refused. A rebindable set (not an
+# inline literal) so a mutation (``sheet_interpreter._SKIP_SHADING = frozenset()``) can prove the
+# skip is load-bearing by making ``sh`` fall through to the unsupported-operator refusal.
+_SKIP_SHADING = frozenset({"sh"})
 # No-effect-on-geometry operators consumed and ignored (operands cleared).
 _IGNORED = frozenset(
     {
@@ -137,7 +142,8 @@ class _StreamRun:
     # -- scan loop --------------------------------------------------------------------
     def run(self) -> SheetRefusal | None:
         data = self._data
-        max_operators = self._interp.limits.max_content_operators
+        interp = self._interp
+        limits = interp.limits
         while True:
             self._skip_ws()
             if self._pos >= len(data):
@@ -167,9 +173,15 @@ class _StreamRun:
                 return _wrap_strict(token)
             word = data[word_start:word_end].decode("latin-1")
             self._pos = word_end
-            self._interp.op_count += 1
-            if self._interp.op_count > max_operators:
-                return _refuse("operator count", f"over {max_operators} operators")
+            interp.op_count += 1
+            interp.page_op_count += 1
+            if interp.page_op_count > limits.max_page_operators:
+                return _refuse("operator count", f"over {limits.max_page_operators} operators")
+            if interp.op_count > limits.max_document_operators:
+                return _refuse(
+                    "operator ceiling",
+                    f"over {limits.max_document_operators} operators across the document",
+                )
             error = self._execute(word, word_start)
             if error is not None:
                 return error
@@ -311,17 +323,27 @@ class _StreamRun:
             return p3
         if self._cur_points is None:
             self._open_after_close()
-        max_points = interp.limits.max_path_points
-        remaining = max_points - interp.point_count
+        # Thread the TIGHTER of the page-remaining and document-remaining point budgets INTO
+        # flattening (M5-T118): a degenerate curve stops and refuses at whichever budget is
+        # closer instead of first materializing 2**MAX_FLATTEN_DEPTH points (G5 F1 / G3 F1).
+        page_remaining = interp.limits.max_page_path_points - interp.page_point_count
+        doc_remaining = interp.limits.max_document_path_points - interp.point_count
+        remaining = min(page_remaining, doc_remaining)
         if remaining < 0:
             remaining = 0
         out: list[Point] = []
-        # Thread the page's REMAINING point budget INTO flattening: a degenerate curve stops
-        # and refuses at the budget instead of first materializing 2**MAX_FLATTEN_DEPTH points
-        # (G5 F1 / G3 F1).
         completed = interp.flatten_cubic(p0, p1, p2, p3, interp.tolerance, out, 0, remaining)
         if not completed:
-            return _refuse("path points", f"over {max_points} flattened points")
+            if page_remaining <= doc_remaining:
+                return _refuse(
+                    "path points",
+                    f"over {interp.limits.max_page_path_points} flattened points",
+                )
+            return _refuse(
+                "path point ceiling",
+                f"over {interp.limits.max_document_path_points} flattened points across "
+                "the document",
+            )
         for point in out:                        # de Casteljau midpoints can overflow to inf
             if not _is_finite_point(point):
                 return _refuse("non-finite coordinate", "a flattened point is not finite")
@@ -338,8 +360,17 @@ class _StreamRun:
     def _charge_points(self, count: int) -> SheetRefusal | None:
         interp = self._interp
         interp.point_count += count
-        if interp.point_count > interp.limits.max_path_points:
-            return _refuse("path points", f"over {interp.limits.max_path_points} flattened points")
+        interp.page_point_count += count
+        if interp.page_point_count > interp.limits.max_page_path_points:
+            return _refuse(
+                "path points", f"over {interp.limits.max_page_path_points} flattened points"
+            )
+        if interp.point_count > interp.limits.max_document_path_points:
+            return _refuse(
+                "path point ceiling",
+                f"over {interp.limits.max_document_path_points} flattened points across "
+                "the document",
+            )
         return None
 
     def _paint(self, word: str) -> None:
@@ -395,6 +426,13 @@ class _StreamRun:
             return None
         if word == "Do":
             return self._op_do()
+        if word in _SKIP_SHADING:  # ``sh`` colour shading (§8.7.4.2): skip + count, never refuse
+            self._interp.page_shading_skips += 1
+            self._interp.shading_skips += 1
+            self._operands.clear()
+            return None
+        if word == "BI":
+            return self._op_bi()
         if word in _IGNORED:
             self._operands.clear()
             return None
@@ -596,6 +634,26 @@ class _StreamRun:
         if subtype == _FORM:
             return self._place_form(name, stream, ref_key)
         return _refuse("xobject", f"/{_preview(name)} has unsupported /Subtype")
+
+    def _op_bi(self) -> SheetRefusal | None:
+        """Skip a ``BI`` ... ``ID`` ... ``EI`` inline image (§8.9.7) as non-geometry, resuming just
+        past ``EI`` WITHOUT desynchronizing (:mod:`app.drawings.sheet_inline_image` does the bounded
+        parse). ``self._pos`` already sits just past ``BI``; a count is disclosed; no sample byte is
+        decoded; any ambiguity/over-cap is a typed refusal from the helper (never a guess)."""
+        interp = self._interp
+        span = skip_inline_image(
+            self._data,
+            self._pos,
+            max_dict_bytes=interp.limits.max_inline_image_dict_bytes,
+            max_data_scan_bytes=interp.limits.max_inline_image_data_bytes,
+        )
+        if isinstance(span, SheetRefusal):
+            return span
+        self._pos = span.end_offset
+        interp.page_inline_image_skips += 1
+        interp.inline_image_skips += 1
+        self._operands.clear()
+        return None
 
     def _place_image(self, name: str, stream: PdfStream) -> SheetRefusal | None:
         table = self._interp.table

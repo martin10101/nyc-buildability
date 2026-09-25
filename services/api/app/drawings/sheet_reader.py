@@ -74,6 +74,10 @@ from app.drawings.pdf_object_streams import (
     XREF_STREAM_FEATURES,
     resolve_object_table,
 )
+from app.drawings.sheet_inline_image import (
+    MAX_INLINE_IMAGE_DATA_BYTES,
+    MAX_INLINE_IMAGE_DICT_BYTES,
+)
 from app.drawings.sheet_interpreter import _IDENTITY, _StreamRun
 from app.drawings.sheet_marked_content import (
     MAX_MARKED_CONTENT_BYTES,
@@ -89,6 +93,7 @@ from app.drawings.sheet_objects import (
     _TYPE_KEY,
     _USER_UNIT_KEY,
     MAX_DECODED_STREAM_BYTES,
+    MAX_PAGE_DECODED_BYTES,
     MAX_TOTAL_DECODED_BYTES,
     _catalog_pages_root,
     _decode_stream,
@@ -115,8 +120,13 @@ __all__ = [
     "DEFAULT_FLATTEN_TOLERANCE",
     "MAX_CONTENT_OPERATORS",
     "MAX_DECODED_STREAM_BYTES",
+    "MAX_DOCUMENT_OPERATORS",
+    "MAX_DOCUMENT_PATH_POINTS",
+    "MAX_INLINE_IMAGE_DATA_BYTES",
+    "MAX_INLINE_IMAGE_DICT_BYTES",
     "MAX_MARKED_CONTENT_BYTES",
     "MAX_MARKED_CONTENT_DEPTH",
+    "MAX_PAGE_DECODED_BYTES",
     "MAX_PATH_POINTS",
     "MAX_Q_DEPTH",
     "MAX_TOTAL_DECODED_BYTES",
@@ -127,14 +137,27 @@ __all__ = [
 
 # -- profile bounds (each over-limit is a typed refusal VALUE; threaded into the interpreter
 #    and decoder at read time, so patching one of these still changes the running read) -----
-MAX_CONTENT_OPERATORS = 200_000   # executed operators, summed across all nested forms
-MAX_PATH_POINTS = 500_000         # flattened path points emitted, summed across the page
+#
+# PER-PAGE budgets bound the work of interpreting ONE page (operators/points executed while
+# building that page, INCLUDING the Form XObjects it places), reset at the start of each page.
+# A real multi-sheet vector CAD set (M5-T113 corpus items 1-2: 88- and 94-page HVAC details)
+# has a large operator/point SUM across pages but a modest per-page count; the pre-M5-T118
+# reader charged one DOCUMENT-wide operator budget and refused those files on the sum (DB-055 c).
+MAX_CONTENT_OPERATORS = 200_000   # executed operators on ONE page (name kept; now per-page)
+MAX_PATH_POINTS = 500_000         # flattened path points emitted on ONE page (name kept; per-page)
+# PER-DOCUMENT ceilings bound the whole read regardless of page count, so a many-page document
+# whose pages are each just under the per-page cap still cannot run unbounded work. They are set
+# to 100x the per-page cap: comfortably above a real 88/94-page vector set (measured in the
+# M5-T118 corpus run) yet a hard bound (see the producer report's worst-case arithmetic).
+MAX_DOCUMENT_OPERATORS = 20_000_000    # executed operators summed across all pages + nested forms
+MAX_DOCUMENT_PATH_POINTS = 50_000_000  # flattened path points summed across all pages
 MAX_Q_DEPTH = 128                 # saved graphics states in one content stream
 MAX_XOBJECT_DEPTH = 8             # Form XObject recursion depth (page content is depth 0)
-# MAX_DECODED_STREAM_BYTES / MAX_TOTAL_DECODED_BYTES are re-exported from sheet_objects and
-# MAX_MARKED_CONTENT_DEPTH / MAX_MARKED_CONTENT_BYTES from sheet_marked_content (their canonical
-# homes) so the public names and the patch surface stay at this location; all are threaded into
-# the interpreter/decoder at read time so patching one here still changes the running read.
+# MAX_DECODED_STREAM_BYTES / MAX_PAGE_DECODED_BYTES / MAX_TOTAL_DECODED_BYTES are re-exported from
+# sheet_objects, MAX_MARKED_CONTENT_DEPTH / MAX_MARKED_CONTENT_BYTES from sheet_marked_content, and
+# MAX_INLINE_IMAGE_DICT_BYTES / MAX_INLINE_IMAGE_DATA_BYTES from sheet_inline_image (their canonical
+# homes) so the public names and the patch surface stay at this location; all are threaded into the
+# interpreter/decoder at read time so patching one here still changes the running read.
 DEFAULT_FLATTEN_TOLERANCE = 0.25  # declared maximum chord error, user-space units
 
 
@@ -144,14 +167,19 @@ DEFAULT_FLATTEN_TOLERANCE = 0.25  # declared maximum chord error, user-space uni
 @dataclass(frozen=True)
 class _InterpreterLimits:
     """Operator/geometry bounds, captured from the facade constants at read time so a
-    patched facade constant reaches the running interpreter."""
+    patched facade constant reaches the running interpreter. Operator and path-point budgets
+    come in a PER-PAGE pair (reset each page) and a PER-DOCUMENT ceiling (M5-T118, DB-055 c)."""
 
-    max_content_operators: int
-    max_path_points: int
+    max_page_operators: int
+    max_document_operators: int
+    max_page_path_points: int
+    max_document_path_points: int
     max_q_depth: int
     max_xobject_depth: int
     max_marked_content_depth: int
     max_marked_content_bytes: int
+    max_inline_image_dict_bytes: int
+    max_inline_image_data_bytes: int
 
 
 class _SheetInterpreter:
@@ -162,7 +190,13 @@ class _SheetInterpreter:
     geometry never leaks into another :class:`SheetPage`. The decoded-bytes budget and Form
     memo live on the composed :class:`~app.drawings.sheet_objects._StreamDecoder`; the
     per-content-stream operator execution lives in
-    :class:`~app.drawings.sheet_interpreter._StreamRun`."""
+    :class:`~app.drawings.sheet_interpreter._StreamRun`.
+
+    ``op_count`` / ``point_count`` are DOCUMENT-WIDE (never reset), checked against the document
+    ceilings; ``page_op_count`` / ``page_point_count`` are PER-PAGE (reset by :meth:`begin_page`),
+    checked against the per-page budgets (M5-T118). ``shading_skips`` / ``inline_image_skips`` are
+    document totals; their ``page_*`` counterparts hold the current page's counts so
+    :func:`_build_page` can stamp them onto each :class:`SheetPage`."""
 
     def __init__(
         self,
@@ -185,6 +219,22 @@ class _SheetInterpreter:
         self.images: list[SheetImage] = []
         self.op_count = 0  # document-wide
         self.point_count = 0  # document-wide
+        self.shading_skips = 0  # document-wide (sh operators skipped)
+        self.inline_image_skips = 0  # document-wide (BI/ID/EI images skipped)
+        self.page_op_count = 0  # reset per page by begin_page
+        self.page_point_count = 0  # reset per page by begin_page
+        self.page_shading_skips = 0  # reset per page by begin_page
+        self.page_inline_image_skips = 0  # reset per page by begin_page
+
+    def begin_page(self) -> None:
+        """Reset every PER-PAGE counter (operators, points, non-geometry skips) and the decoder's
+        per-page decoded-bytes budget at the start of a page (M5-T118, DB-055 c). Extracted as a
+        seam so a mutation defeating the reset proves the per-page budgets are load-bearing."""
+        self.page_op_count = 0
+        self.page_point_count = 0
+        self.page_shading_skips = 0
+        self.page_inline_image_skips = 0
+        self.decoder.begin_page()
 
     def interpret(
         self,
@@ -298,18 +348,23 @@ def _read_sheet(
         table,
         tolerance,
         limits=_InterpreterLimits(
-            max_content_operators=MAX_CONTENT_OPERATORS,
-            max_path_points=MAX_PATH_POINTS,
+            max_page_operators=MAX_CONTENT_OPERATORS,
+            max_document_operators=MAX_DOCUMENT_OPERATORS,
+            max_page_path_points=MAX_PATH_POINTS,
+            max_document_path_points=MAX_DOCUMENT_PATH_POINTS,
             max_q_depth=MAX_Q_DEPTH,
             max_xobject_depth=MAX_XOBJECT_DEPTH,
             max_marked_content_depth=MAX_MARKED_CONTENT_DEPTH,
             max_marked_content_bytes=MAX_MARKED_CONTENT_BYTES,
+            max_inline_image_dict_bytes=MAX_INLINE_IMAGE_DICT_BYTES,
+            max_inline_image_data_bytes=MAX_INLINE_IMAGE_DATA_BYTES,
         ),
         flatten_cubic=_flatten_cubic,
         concat_matrix=_concat_matrix,
         decoder=_StreamDecoder(
             table,
             max_decoded_stream_bytes=MAX_DECODED_STREAM_BYTES,
+            max_page_decoded_bytes=MAX_PAGE_DECODED_BYTES,
             max_total_decoded_bytes=MAX_TOTAL_DECODED_BYTES,
             decode_stream=_decode_stream,
             decoded_bytes=decoded_seed,
@@ -417,6 +472,10 @@ def _build_page(
     resources = _ABSENT if own_res is _ABSENT else _resolve(table, own_res)
     if isinstance(resources, SheetRefusal):
         return resources
+    # Reset every PER-PAGE budget (operators, points, decoded bytes, non-geometry skips) BEFORE
+    # decoding this page's content, so the page's decode + interpret work is charged fresh
+    # against the per-page budgets while the document ceilings keep accumulating (M5-T118).
+    interpreter.begin_page()
     content = interpreter.decoder.decode_contents(node)
     if isinstance(content, SheetRefusal):
         return content
@@ -432,4 +491,6 @@ def _build_page(
         polylines=polylines,
         text_runs=text_runs,
         images=images,
+        shading_skips=interpreter.page_shading_skips,
+        inline_image_skips=interpreter.page_inline_image_skips,
     )

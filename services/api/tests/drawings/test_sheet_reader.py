@@ -320,14 +320,17 @@ def test_as4_q_depth_bound_is_refused(monkeypatch):
 
 
 def test_as4_unsupported_operator_is_refused():
-    refusal = sheet_refusal(read_sheet(_one_page(b"0 0 1 sc 5 5 sh")))
+    # M5-T118 golden revision: `sh` (shading) is now SKIPPED as non-geometry (see
+    # test_sheet_p3_features.py), so this "unsupported operator" probe uses a genuinely
+    # out-of-subset token `zz` instead of the former `sh`.
+    refusal = sheet_refusal(read_sheet(_one_page(b"0 0 1 sc 5 5 zz")))
     assert refusal is not None
     assert refusal.feature == "unsupported operator"
 
 
 def test_as4_all_or_nothing_second_page_refusal_fails_whole_document():
     good = _stream(b"5 7 m 9 3 l S")
-    bad = _stream(b"5 5 sh")  # unsupported operator on page 2
+    bad = _stream(b"5 5 zz")  # unsupported operator on page 2 (was `sh`, now skipped — M5-T118)
     pdf = _pdf(
         [
             b"<< /Type /Catalog /Pages 2 0 R >>",
