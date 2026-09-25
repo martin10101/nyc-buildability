@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T07:10:05+00:00",
+ "verified_at": "2026-09-25T07:36:48+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1831,6 +1831,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t115): the packet's navigation block names the live flow, PropertyOverview.tsx READ-ONLY and the query.py --no-regen instruction; the G0 report corroborates. Blob-level restamp predicate re-verified by the orchestrator at the accept head 675dc7a1 (AddressResolutionScreen.tsx 1cd66f0f, AddressForm.tsx 2f0af0a3, SuggestionChooser.tsx 3dc70161, AddressOutcomeCards.tsx f7126347, AddressConfirmCard.tsx 4e139d5f, LotOutlineMap.tsx 6c5d0fe8, address-resolution.test.tsx 29ee3626, address-confirm.test.tsx a574ff92, lot-outline-map.test.tsx 535f7b27, AddressAutocomplete.tsx 53e44e55, ArchitectEntry.tsx 39979587, autocomplete.test.tsx 4ad628c5, entry.test.tsx 46eb31b5, architect.css d917ab02, confirm-journey.spec.ts 30ed69f8, lot-outline.spec.ts 60798f12, a11y-announcements.spec.ts 3402bad2, responsive-a11y.spec.ts 3a02a6b4, M5-T115-producer-report.md c8b11889; identity 70ed25ba; evaluate_task_refs ok); report M5-T115-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T117",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "3be7c22fcd16d32b17c18f2e68525c69735c480e",
+   "reviewed_manifest_sha256": "4b04fb332d1e1cee9b609321f48fac89c1862c45baf2801a18d2086cf26923cd",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T07:36:48+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t117): the packet's navigation block names rate_limit.py's consumers, the READ-ONLY neighbours and the query.py --no-regen instruction; the G0 report attests the regenerated graph. Blob-level restamp predicate re-verified by the orchestrator at the accept head 3be7c22f (rate_limit.py 10916271, test_rate_limit.py 2efb09a2, scene_api.py fa6a1181, test_scene_api.py d0851eab, test_dxf_import_api.py fccbf334, test_export_api.py d5500e8d, M5-T117-producer-report.md 8dd9dc70; identity 4b04fb33; evaluate_task_refs ok); report M5-T117-DCV.md."
      ]
     }
    ]
