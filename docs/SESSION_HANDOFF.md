@@ -1,89 +1,99 @@
-# SESSION HANDOFF — seq 128-final (2026-09-24 ~16:15 UTC; owner-invoked /session-handoff, no reason given; session 01DfjZ9jL8Ni9V1LJ1UqcGt2, main claude-opus-5-5)
+# SESSION HANDOFF — seq 129-final (2026-09-25 ~04:40 UTC; owner-invoked /session-handoff, no reason given; session 01DfjZ9jL8Ni9V1LJ1UqcGt2, main claude-opus-5-5)
 
 Orientation only — the ledger (`python tools/project_control.py status`) and `project-control/`
 WIN over this prose. Campaign NEXT prose is stale (D-024 era); ledger + this file govern.
 
 ## Identity (live at generation)
 Repo root C:\Users\MLFLL\Downloads\nyc-zoning\ctl24 · branch `candidate/D-024-mrl-option-b` ·
-HEAD = this handoff commit (parent 127e78af, pushed) · origin
+HEAD = this handoff commit (parent fbd123ca, pushed) · origin
 github.com/martin10101/nyc-buildability.git. Tree clean except policy-dirty
-`.claude/agent-memory/**` (reviewer/producer notes, never committed) and old untracked `scratchpad/**`.
+`.claude/agent-memory/**` (reviewer notes, never committed) and old untracked `scratchpad/**`.
 
-## State: 277 ACCEPTED (seq 128 = #257-#277 under D-087 "use today's capacity")
-Accepted this session: T081 DXF writer, T086 DXF reader, T091 PDF sheet hardening, T092 GLB writer,
-T078/T079 web reworks, T088 massing hardening, T089 OTI footprint connector, T093 real-PDF trial
-(NEGATIVE: 0 of 6 real drawings read — PDF 1.5+ xref/object streams), M0-T159 CLI 2.1.281
-admission, T090 three 0.186.0 + @react-three/fiber 9.7.0 (full dep-security, no waiver), T080 D-086
-P0 ledger. Riders: DB-057..DB-063 in docs/DISCOVERY_BACKLOG.md.
+## State: 294 ACCEPTED (seq 129 = #278-#294)
+T094 sheet split · T099 export/3D plan · T100 connector riders · T096 CAD samples · T095 proposal
+time budget · T098 massing pre-wiring · T097 DXF reader · M0-T160 install re-pin · T102 claim words ·
+T101 footprint hardening · T104 PDF test debt · T105 PDF writer · T103 PDF 1.5+ resolver (FAIL →
+rework) · M0-T161 commissioning helper (corrections round) · T106 massing pre-wiring 2 · T107 3D
+scene assembler + UNMOUNTED route (FAIL → rework) · T108 DXF import + UNMOUNTED route (FAIL →
+rework). Riders DB-064..DB-081 in docs/DISCOVERY_BACKLOG.md (DB-077 never used; T109 takes DB-082).
+Owner directive **D-088** captured ("Run5 codex loops in parallel": 7 reqs; ceiling 3 → 5; D-072
+audit note; B-026 scope correction = commissioning is OWNER-TYPED).
+Honest limits: 0 of 6 real architect PDFs fully read (all pass the xref stage; content features
+next, DB-076 a-c). 3D scene / DXF import / export routes are built but UNMOUNTED (not in the app).
 
-**Harvested + submitted, G0+G2 PASS, awaiting independent review (nothing reviewed yet):**
-| Task | What | Material | Gates to run (roster) |
-|---|---|---|---|
-| M5-T094 | sheet_reader split, byte-identical (62-case golden) | 89128c62 | G3 code-reviewer, G4 qa, G5 security, DCV |
-| M5-T095 | proposal.py time budget (worst request 597 s → ≤87 ms; 0 decision disagreements over a 360k probe + a committed 24k-ring corpus) | a2dcc60f | G3, G4, G5, DCV |
-| M5-T096 | owner CAD samples + README checklist, DXF STYLE/VPORT, import allowlist | d59cbfca | G1 data-contract (VPORT R12 codes + TABLES order are "[recalled - verify]"), G3, G4, G5, DCV |
-| M5-T097 | DXF reader hardening + committed round trip | 9a281517 | G3, G4, G5, DCV |
-| M5-T098 | massing pre-wiring (DB-061 a-d) — DISCLOSED edit of one contradicted T088 assertion | 4b25c60c | G3 geospatial-engineer, G4, G5, DCV |
-| M5-T099 | export-wiring + 3D-viewer PLAN (docs/design/d087-export-and-3d-viewer-plan.md) | cd04fddb | G3, G5, DCV |
-| M5-T100 | footprint connector riders DB-058 e/h/l/m | 2624adec | G3, G4, G5, DCV |
+## In flight (nothing running; every sub-agent returned and was recorded)
+- **M5-T109** (PKT-D export service + UNMOUNTED route + DB-075 a): G0/G2/G3/G4/G5 PASS, DCV PASS 9/9
+  (report saved: project-control/reports/M5-T109-DCV.md). NOT accepted — the owner said stop.
+  Predicate: 8 blobs (export_service 2bf8963d, export_api dec92648, test_export_service 2fbce1cb,
+  test_export_api 9301f098, pdf_sheet_writer 8064d845, test_pdf_sheet_writer 3935fa7c,
+  test_glb_writer ca206312, report ccf4480e) + identity 802274bd. Ready accept config (backlog
+  DB-082): C:\Users\MLFLL\AppData\Local\Temp\claude\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\4598a04e-a86e-466c-9a14-eaa63bdf9a90\scratchpad\seam\acc_t109.json
+  (run that folder's accept_task.py; D-088 is in its DIRS map).
+- **M5-T110** = D-088 lane-1 supervised canary (DB-072 a, c; tests only): contracted + CLAIMED at
+  1983bdd6, worktree C:\Users\MLFLL\Downloads\nyc-zoning\wt-m5t110 — NOT started (waits for the owner).
 
-Each has its producer report, evidence map and G2 record in project-control/reports/. Harvest
-checks (local 3.11) all green; sheet tests need the bare-package shim (PEP 695 behind
-app/documents/extraction) — CI 3.12 is the authority. Samples: docs/samples/cad/ (binary via
-.gitattributes).
+## Loops (D-088) — owner-typed commissioning, NOT yet run (B-026 open)
+Guide: project-control/reports/M0-T161-owner-guide.md (script tools/controller_update/commission_lanes.ps1).
+Owner types with `!`: (1) `-Phase check` → CHECK PASSED; (2) `-Phase update` → UPDATE PASSED;
+(3) `-Phase lane -Lane 1 -Worktree C:\Users\MLFLL\Downloads\nyc-zoning\wt-m5t110 -PacketId M5-T110`
+→ started DETACHED; (4) `-Phase approve` with the same values, first WITHOUT a digest (prints it,
+then the one expected STOP), then again with `-PromptDigest <digest>`. The orchestrator then checks
+the canary (M0-T159-recertification.md §5.12: audit `cli_identity_repinned` → launched/settled OK;
+one_shot_unit.json tools inside the inventory; model claude-opus-5-5) and only then gives step (5)
+`-Phase lanes -PlanFile <plan>` for lanes 2-5. Any other STOP → stop, diagnose, blocker.
+Before step 5: contract 4 pairwise-disjoint lane packets (bind D-088-R002/R005; FULL worktree
+paths; worktree at the claim seam) and write the plan JSON (`commission_lanes_plan/v1`,
+lanes[{lane, worktree, packet_id, mode}] — the validator refuses non-linked worktrees, unclaimed
+packets, overlap, bad ids). Candidates: PKT-K3 real-PDF content features (DB-076 a-c; parse
+marked-content dicts in the SHEET layer — app/documents/extraction is shared READ-ONLY; the
+refuse_decode_parms golden case changes deliberately) · PKT-L PDF user-confirm (DB-055 c, d) ·
+shared bounded route rate limiter (app/resilience/rate_limit.py; DB-080 a, DB-081 a) · massing_model
+split with a facade (994/1000; DB-079 a) · D-086 P1 visual/state spec · DXF STYLE/VPORT.
+Disk 3.5 GB free (99%); 336 worktrees registered — D-088-R006: re-check before each launch wave.
 
-**M0-T160 (re-pin tools/controller_update/source_binding.json → a3f24ff3) = NEEDS_SPLIT.** Producer
-commit 28878be2 sits UNHARVESTED on branch task/M0-T160-source-binding-repin (wt-m0t160): the binding
-edit is correct (git-plumbing verified) but AS-3 cannot pass in scope — test_runbook_parse.ps1 pins
-`3f4cee86` and docs/CONTROLLER_UPDATE_RUNBOOK.md §4 line 84 names it too; that test is ALREADY RED at
-HEAD (orchestrator-observed, 1 assertion failure; CI never runs these ps_tests) — DB-063.
-
-## Sub-agent disposition at handoff
-ALL finished and reconciled: 8 producers (T094-T100, M0-T160) harvested or recorded; dcv-t080
-PASS → T080 accepted; every named reviewer idle with results recorded. Nothing live. No loop lanes
-running (B-026 open until M0-T160 + owner commissioning).
+## Session lessons (Tier-2 worthy)
+- The frozen M4-T005 packet globs `services/api/tests/api/**`: new route tests go beside their
+  service (tests/scenario|drawings|cad) or G0 shows OVERLAP.
+- Placeholder lines ≤ 100 chars (ruff E501; now in CODING_RULES). If the orchestrator edits a
+  placeholder, harvest by taking the producer blob exactly (cherry-pick -X theirs + checkout).
+- A consumer test broken by legitimate wiring → harvest-time scope correction (add path, G0
+  re-record, tagged [ORCH-CORRECTED] edit) — T109 test_glb_writer AS-5.
+- Concurrent DCV validator runs can exceed 60 min: after ~15 min ask the DCV to hand-verify digests.
+- Bash heredocs turn `"\\n"` into real newlines — write Python with the Write tool (hit twice).
 
 ## EXACT NEXT ACTION (successor)
-1. Verify the branch-head CI run (all 18 jobs) at this head — it is the 3.12 proof for T094's raw pytest.
-2. Dispatch the reviews in the table (≤2 spawns per message; cwd must be ctl24 for `isolation`;
-   pin HEAD; END-OF-REPORT; parts ≤400 words; never ask the orchestrator to write memory). Then one
-   fresh DCV per task: blob-level restamp predicate + broad disjoint-peer tolerance UP FRONT, validator
-   `--check` at most once with a direct exit code, NEVER `tools/test_directive_compliance.py` (16 h).
-   Accept back-to-back per task (v2 rows at live HEAD; pattern = this session's accept_*.py seams).
-3. M0-T160: add docs/CONTROLLER_UPDATE_RUNBOOK.md + tools/controller_update/ps_tests/test_runbook_parse.ps1
-   to allowed_paths (3-file lockstep), G0 re-record (resets to ready) → re-claim (FULL path wt-m0t160) →
-   rework producer on top of 28878be2 → the ORCHESTRATOR runs
-   `powershell -NoProfile -ExecutionPolicy Bypass -File tools/controller_update/ps_tests/run_ps_tests.ps1`
-   in wt-m0t160 at harvest (producer sandboxes refuse it) → G3/G5 + DCV → accept → give the owner the
-   typed commissioning list (M0-T159-recertification.md §5). B-026 closes only after that.
-4. Next packets from the T099 plan once accepted (batch 1: shared claim-word module, PDF-writer
-   hardening, connector wiring + source_registry, C1 xref/object-stream resolver in a NEW
-   profile module — never widen read_object_table). Sweep DB-053..DB-063 at each seam.
-5. Refresh the owner's Control Room artifact (https://claude.ai/artifact/MnxTLzCxWLSxMf8zaABUgk; read
-   it, then publish with `url`).
+0. The owner asked to STOP for an in-depth conversation about where things stand. Start by
+   answering that in simple English; begin no new work until the owner says go.
+1. Accept M5-T109 (config above; v2 rows at live HEAD; one seam commit; push).
+2. Walk the owner through commissioning steps 1-4, verify the canary, contract lanes 2-5 + the plan
+   file, give step 5.
+3. Refresh the Control Room (https://claude.ai/artifact/MnxTLzCxWLSxMf8zaABUgk; publish with `url`).
+4. PKT-H (mount) only after DB-080 a-d, DB-081 a-e, DB-082 a-e and the shared limiter; the
+   max-envelope route stays UNMOUNTED (plan §7).
 
-## Owner decisions pending (ask in simple English, D-064)
-R008 "DXF = the middleman?" (samples at docs/samples/cad/ — still in review) · R007 native DWG
-license (Tier D) · @types/three: package (pulls a WASM physics engine) vs a reviewed local .d.ts —
-plan §3.1, owner chooses · real architect PDFs · the August M0-T034 governance job.
+## Owner decisions pending (simple English, D-064)
+R008 "DXF = the middleman?" (open docs/samples/cad) · R007 native DWG license (Tier D) · three.js
+typings: package (pulls a physics engine) vs a reviewed local .d.ts · real architect PDFs · OK to
+list old worktrees for disk cleanup (never delete unasked) · the August M0-T034 governance job.
 
 ## Standing restrictions
-Tier D / Section 20 stops; PR #241 NEVER merged; expansion §2 hold except D-040/D-076/D-082/D-087
-releases; max-envelope route UNMOUNTED (preconditions in plan §7); supervisor SHADOW-ONLY; never
-pass `model:` on a dispatch (agent files pin opus-4-8; owner: "sub agent stays 4.8"); dependency
-security with no agent waiver; no local npm/node; seam scripts `python -u`, Windows paths via the
-Write tool; owner replies in simple English.
+Tier D / Section 20 stops; PR #241 NEVER merged; expansion §2 hold except the D-040/D-076/D-082/D-087
+releases; max-envelope route UNMOUNTED; commissioning + canary approval are OWNER-TYPED (runbook §12);
+never pass `model:` on a dispatch (agents stay opus-4-8); DCVs never run tools/test_directive_compliance.py;
+dependency security with no agent waiver; no local npm/node; owner replies in simple English.
 
 ## FILE MAP (smallest authoritative set)
-project-control/{state.json,tasks/,gates/,blockers/,reports/}; directives D-024/D-066/D-076/D-082/
-D-083/D-086/D-087; docs/DISCOVERY_BACKLOG.md (DB-053..DB-063 + seq-128 sweeps);
-docs/design/d087-export-and-3d-viewer-plan.md; .claude/rules/PROGRAM_KNOWLEDGE.md (seq-128 lessons).
+project-control/{state.json,tasks/,gates/,blockers/B-026,reports/}; directives D-066/D-083/D-087/D-088;
+docs/DISCOVERY_BACKLOG.md (DB-064..DB-081 + seq-129 sweeps); docs/design/d087-export-and-3d-viewer-plan.md;
+project-control/reports/M0-T159-recertification.md §5 + M0-T161-owner-guide.md; .claude/rules/PROGRAM_KNOWLEDGE.md.
 
 ## COPY INTO THE NEW SESSION
-Resume as the NYC Buildability orchestrator on claude-opus-5-5 (verify with /model). Fast resume:
-cwd IS C:\Users\MLFLL\Downloads\nyc-zoning\ctl24 (`git rev-parse --show-toplevel`), branch
-candidate/D-024-mrl-option-b, HEAD == origin, Bootstrap Gate 0 (/mcp empty) — then read
-docs/SESSION_HANDOFF.md and CONTINUE from EXACT NEXT ACTION. Do NOT redo harvested work: 277
-accepted; M5-T094..T100 are submitted and only need their independent reviews + DCVs; M0-T160 needs
-the 3-file re-scope. Subagents keep their agent-file model (never pass `model:`); DCVs never run the
-16 h suite. D-080 nonstop + D-082..D-087 apply; stop for Tier D and owner holds.
+Resume as the NYC Buildability orchestrator on claude-opus-5-5 (verify with /model). Work only from
+repository evidence. Verify: cwd IS C:\Users\MLFLL\Downloads\nyc-zoning\ctl24 (`git rev-parse
+--show-toplevel`), branch candidate/D-024-mrl-option-b, HEAD == origin, /mcp empty (Bootstrap Gate 0).
+Read CLAUDE.md, docs/SESSION_HANDOFF.md and `python tools/project_control.py status` (the ledger
+wins). Report READY TO RESUME or BLOCKED. The owner paused work for an in-depth conversation — answer
+that first, in simple English, and start nothing new until the owner says go. Then continue from
+EXACT NEXT ACTION without redoing work: 294 accepted; M5-T109 needs only its accept; M5-T110 is the
+lane-1 canary. Never pass `model:`; DCVs never run the 16 h suite; stop for Tier D, PR #241, owner
+holds, and every owner-typed commissioning step.
