@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T04:13:21+00:00",
+ "verified_at": "2026-09-25T04:46:43+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1699,6 +1699,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t108): the packet carries the graph-derived navigation block (832 files / 17984 nodes / 7700 edges) naming dxf_reader.py's consumers (read-only), validate_proposed_massing's home and consumers, the forbidden neighbours and the query.py --no-regen instruction. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (dxf_import.py 124ad72b, dxf_import_api.py eacb56b8, test_dxf_import.py 8b64e4a9, test_dxf_import_api.py 2d6edbbd, M5-T108-producer-report.md 1f42b2f0; identity 2873d915; evaluate_task_refs ok); report M5-T108-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T109",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "a9cf917aa8ec1486f93d0e0ec97e4f00585757e2",
+   "reviewed_manifest_sha256": "802274bdc19be7cfa8fbb3d417ce6921f95fdc130c39343d7b0b8a5893ec6775",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:46:43+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t109): the packet carries the graph-derived navigation block (regenerated at the contract seam, 832 files / 17984 nodes / 7700 edges) naming the writers' consumers and forbidden neighbours with the query.py --no-regen instruction; the graph stayed advisory and the harvest sweep found the one real consumer (test_glb_writer AS-5), handled in scope. Blob-level restamp predicate re-verified by the orchestrator at the accept head a9cf917a (export_service.py 2bf8963d, export_api.py dec92648, test_export_service.py 2fbce1cb, test_export_api.py 9301f098, pdf_sheet_writer.py 8064d845, test_pdf_sheet_writer.py 3935fa7c, test_glb_writer.py ca206312, M5-T109-producer-report.md ccf4480e; identity 802274bd; evaluate_task_refs ok); report M5-T109-DCV.md."
      ]
     }
    ]

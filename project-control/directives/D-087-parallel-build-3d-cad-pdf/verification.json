@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T04:13:21+00:00",
+ "verified_at": "2026-09-25T04:46:43+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -1565,6 +1565,68 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies; UNMOUNTED (include_in_schema=False, absent from OpenAPI, app/main.py untouched, a dual default-off flag gate); dxf_reader.py, config.py and requirements untouched; persists nothing. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (dxf_import.py 124ad72b, dxf_import_api.py eacb56b8, test_dxf_import.py 8b64e4a9, test_dxf_import_api.py 2d6edbbd, M5-T108-producer-report.md 1f42b2f0; identity 2873d915; evaluate_task_refs ok); report M5-T108-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T109",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R004",
+    "D-087-R005",
+    "D-087-R006",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "a9cf917aa8ec1486f93d0e0ec97e4f00585757e2",
+   "reviewed_manifest_sha256": "802274bdc19be7cfa8fbb3d417ce6921f95fdc130c39343d7b0b8a5893ec6775",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:46:43+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a contracted/claimed/gated packet (G0 at 06db6449, re-recorded at 6f9aff3c after the harvest-time scope correction; claimed at 11089429; one worktree wt-m5t109); G2/G3/G4/G5 PASS; no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head a9cf917a (export_service.py 2bf8963d, export_api.py dec92648, test_export_service.py 2fbce1cb, test_export_api.py 9301f098, pdf_sheet_writer.py 8064d845, test_pdf_sheet_writer.py 3935fa7c, test_glb_writer.py ca206312, M5-T109-producer-report.md ccf4480e; identity 802274bd; evaluate_task_refs ok); report M5-T109-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs every active task (route tests in tests/cad because the frozen M4-T005 packet globs tests/api/**); the cherry-pick touches exactly the 7 allowed files; the added test_glb_writer.py and pdf_sheet_writer.py overlap only accepted packets, and the test edit is a tracked [ORCH-CORRECTED] orchestrator edit. Blob-level restamp predicate re-verified by the orchestrator at the accept head a9cf917a (export_service.py 2bf8963d, export_api.py dec92648, test_export_service.py 2fbce1cb, test_export_api.py 9301f098, pdf_sheet_writer.py 8064d845, test_pdf_sheet_writer.py 3935fa7c, test_glb_writer.py ca206312, M5-T109-producer-report.md ccf4480e; identity 802274bd; evaluate_task_refs ok); report M5-T109-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the export service renders the accepted DXF writer's output (image/vnd.dxf, a safe attachment filename) for AutoCAD; the DXF writer is byte-frozen (golden green); the route stays UNMOUNTED until the PKT-H mount. Blob-level restamp predicate re-verified by the orchestrator at the accept head a9cf917a (export_service.py 2bf8963d, export_api.py dec92648, test_export_service.py 2fbce1cb, test_export_api.py 9301f098, pdf_sheet_writer.py 8064d845, test_pdf_sheet_writer.py 3935fa7c, test_glb_writer.py ca206312, M5-T109-producer-report.md ccf4480e; identity 802274bd; evaluate_task_refs ok); report M5-T109-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R005",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the PDF site plan is served with caller text capped and claim-word screened before the writer; the DB-075 (a) fix (a hostile __float__ raising ValueError/TypeError is a typed non_numeric_coordinate refusal) is additive with a reddening test; the PDF golden and owner samples byte-identical. Blob-level restamp predicate re-verified by the orchestrator at the accept head a9cf917a (export_service.py 2bf8963d, export_api.py dec92648, test_export_service.py 2fbce1cb, test_export_api.py 9301f098, pdf_sheet_writer.py 8064d845, test_pdf_sheet_writer.py 3935fa7c, test_glb_writer.py ca206312, M5-T109-producer-report.md ccf4480e; identity 802274bd; evaluate_task_refs ok); report M5-T109-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: DXF / PDF / GLB through open formats with one reconciled redacted refusal (_reconcile discards the writer's message), caps before any writer (raw ring length before normalization, floors <= 2000), mandatory filename safety (allowlist token, RFC 6266/5987 filename*), GLB coincident-cap dedupe, an off-loop deadline and a per-caller rate limit; no DWG library. Blob-level restamp predicate re-verified by the orchestrator at the accept head a9cf917a (export_service.py 2bf8963d, export_api.py dec92648, test_export_service.py 2fbce1cb, test_export_api.py 9301f098, pdf_sheet_writer.py 8064d845, test_pdf_sheet_writer.py 3935fa7c, test_glb_writer.py ca206312, M5-T109-producer-report.md ccf4480e; identity 802274bd; evaluate_task_refs ok); report M5-T109-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: zero new dependencies (stdlib + admitted fastapi/starlette); UNMOUNTED (absent from OpenAPI, app/main.py untouched, include_in_schema=False, flag-gated generic 404); the other writers, claim_words and the samples untouched; PR #241 untouched. Blob-level restamp predicate re-verified by the orchestrator at the accept head a9cf917a (export_service.py 2bf8963d, export_api.py dec92648, test_export_service.py 2fbce1cb, test_export_api.py 9301f098, pdf_sheet_writer.py 8064d845, test_pdf_sheet_writer.py 3935fa7c, test_glb_writer.py ca206312, M5-T109-producer-report.md ccf4480e; identity 802274bd; evaluate_task_refs ok); report M5-T109-DCV.md."
      ]
     }
    ]
