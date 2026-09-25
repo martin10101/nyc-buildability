@@ -4,9 +4,18 @@
   "reviewer": "security-reviewer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M5-T112-G5.md",
-  "reviewed_at": "2026-09-25T06:03:58.315522+00:00",
-  "content_manifest_sha256": "7cfb9cf564e72dc024558dee7ab004cfa352c5c3744e6d8d0ef83168f279f67e",
-  "reviewed_sha": "01856916eba27de2cbdebbf0c305693063281976",
-  "updated_at": "2026-09-25T06:04:04.754438+00:00"
+  "report_file": "project-control/reports/M5-T112-G5-rework.md",
+  "reviewed_at": "2026-09-25T06:13:11.653647+00:00",
+  "content_manifest_sha256": "4b71b83987689a1ce831b24f25f0c8f58d6b82f6a50e3b378dab966f89a77ef5",
+  "reviewed_sha": "fc76a09fd137def076977e5d90f8cb9a202a6874",
+  "history": [
+    {
+      "reviewer": "security-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T112-G5.md",
+      "reviewed_at": "2026-09-25T06:03:58.315522+00:00"
+    }
+  ],
+  "updated_at": "2026-09-25T06:13:13.071418+00:00"
 }
