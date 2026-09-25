@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T06:29:46+00:00",
+ "verified_at": "2026-09-25T06:32:16+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1765,6 +1765,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t112): the packet's navigation block names the consumers (scene_assembler.py -> scene_api.py, test_massing_model.py, test_scene_assembler.py), the regenerated graph and the query.py --no-regen instruction; graph advisory. Blob-level restamp predicate re-verified by the orchestrator at the accept head bfefd934 (massing_model.py 809ad7aa, massing_guards.py 5114dcf2, massing_triangulation.py cb8cf82b, massing_mesh.py d7fec512, test_massing_model.py d87db465, test_massing_split_equivalence.py a75f6863, test_massing_triangulation.py 44084bbb, M5-T112-producer-report.md f23d7184; identity 4b71b839; evaluate_task_refs ok); report M5-T112-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T113",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "c375457cfbe996454cf63a0554f7aa6f31bc0c94",
+   "reviewed_manifest_sha256": "804214cf70019d51953f05a11bc8ff6182aea66c94127379463d731c84ae6596",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T06:32:16+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t113): the packet's navigation block names the importers and the READ-ONLY pdf_object_streams.py + its test with the query.py --no-regen instruction; the producer reused apply_predictor and left both read-only files byte-unchanged. Blob-level restamp predicate re-verified by the orchestrator at the accept head c375457c (sheet_objects.py f99c5058, sheet_marked_content.py 6faf7291, sheet_interpreter.py 31ebc55e, sheet_reader.py aaf4f651, test_sheet_content_features.py bddceb42, test_sheet_reader.py 613bcd20, test_sheet_reader_split_equivalence.py 1d1f26de, M5-T113-producer-report.md cdc39739; identity 804214cf; evaluate_task_refs ok); report M5-T113-DCV.md."
      ]
     }
    ]
