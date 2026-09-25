@@ -1,0 +1,29 @@
+{
+ "task_id": "M5-T116",
+ "material_commit": "99c8457f (cherry-pick of wt-m5t116 74e97bb4; 3 files, every file MATCH by blob)",
+ "produced_at": "2026-09-25T06:55:46+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m5t116)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's navigation block (graph regenerated at the wave-1 seam: 844 files / 18356 nodes / 7841 edges) named export_service.py's importers (export_api.py, the two cad test files) and the READ-ONLY writers, claim_words and massing_triangulation; the producer edited only the service and its test and imported triangulate_polygon read-only. [ORCH-HARVEST] at the harvested head 99c8457f (cherry-pick 99c8457f; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 458 passed in 2.97s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-083-R001": [
+   "No new claim wording; the reconciled refusal stays redacted (reason only, never caller text); the claim-word screen now tested on all four caller text fields. [ORCH-HARVEST] at the harvested head 99c8457f (cherry-pick 99c8457f; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 458 passed in 2.97s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R001": [
+   "Capacity unit under D-087 + D-089 (overnight): contracted at the wave-3 seam (G0), claimed at c375457c with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with disjoint packets (M5-T117, M5-T118, M5-T115 reviews); no state or gate skipped. [ORCH-HARVEST] at the harvested head 99c8457f (cherry-pick 99c8457f; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 458 passed in 2.97s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R002": [
+   "G0 disjointness EMPTY vs every live packet; one worktree wt-m5t116; the producer commit touches exactly its 3 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the harvested head 99c8457f (cherry-pick 99c8457f; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 458 passed in 2.97s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R003": [
+   "3D export correctness: the GLB prism caps are built from the accepted concave-safe triangulate_polygon (M5-T112) instead of a vertex-0 fan, the prepared CCW ring reused for the walls with outward winding kept; L- and U-shaped footprints tested with an in-test area-sum + containment oracle. [ORCH-HARVEST] at the harvested head 99c8457f (cherry-pick 99c8457f; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 458 passed in 2.97s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R006": [
+   "CAD export hardening before the mount: the fallback filename token passes the same allowlist + length cap at one choke point before content_disposition; the four caller text fields screened in tests; the 2000/2001 floor edge pinned; the GLB disclosure docstring corrected. DXF / PDF outputs and the owner samples byte-identical. [ORCH-HARVEST] at the harvested head 99c8457f (cherry-pick 99c8457f; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 458 passed in 2.97s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies; the export route stays UNMOUNTED and untouched; glb_writer / dxf_writer / pdf_sheet_writer / claim_words untouched; modularity exit 0. [ORCH-HARVEST] at the harvested head 99c8457f (cherry-pick 99c8457f; Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad -q` (cwd services/api) -> exit 0: 458 passed in 2.97s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ]
+ }
+}
