@@ -1,0 +1,122 @@
+{
+  "task_id": "M5-T111",
+  "title": "D-087 pre-mount route hardening: ONE shared bounded rate limiter (app/resilience/rate_limit.py) replacing the three route-local limiters, rate-limit before parsing, bounded in-flight jobs, disabled-means-404 for every method, and the OpenAPI-absence pin (DB-080 a-c, DB-081 a-e, DB-082 b, d, e) - routes stay UNMOUNTED",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the route-side PKT-H (mount) preconditions in the three UNMOUNTED routes (app/api/v1/scene_api.py, dxf_import_api.py, export_api.py). (1) Build ONE shared, bounded, thread-safe sliding-window limiter in services/api/app/resilience/rate_limit.py and replace all three route-local limiters with it: per-route limits unchanged (30 per 60 s today), a declared key ceiling, idle/expired keys evicted, and when the table is still full of ACTIVE keys the NEW key is refused (fail-closed) - an active key's history is never evicted (that would reset its window). (2) ONE caller-key function: the authenticated principal when the request carries one (PKT-H adds auth), else the caller host - the proxy-collapse limit (DB-080 b) disclosed in the docstring. (3) The limiter runs BEFORE any body or parameter parsing on every route (DB-081 b: a malformed /dxf-import/draft must not get a 422 before the limiter). (4) A bounded in-flight job cap per route: a job abandoned by the deadline keeps its slot until its thread really finishes, so abandoned threads cannot pile up (DB-082 b); over the cap = a typed refusal. (5) While the flag is off, EVERY HTTP method on these paths returns the generic 404 byte-identical to an unmounted path (DB-081 d), proven on a throwaway app that includes the router. (6) Pin include_in_schema=False with a test that includes each router in a throwaway FastAPI app and asserts none of its paths appear in openapi() (DB-080 c, DB-082 d). (7) DB-081 e: align the pre-render guard's utf-8 encode step with its sibling or record why it is unreachable. (8) DB-081 c / DB-082 e: record per route the body ceiling vs the parser's own caps with the arithmetic; change a ceiling only if a legitimate maximum input is refused AND the parser caps bound the work - otherwise keep it and route the finding.",
+  "business_reason": "The 3D scene, DXF import and CAD export routes are built but not in the app; PKT-H (the mount) waits on these route-safety riders. Closing them in one packet makes the mount a small, reviewable step.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "OVERNIGHT (binding; D-089): the owner is asleep - never wait for or ask the owner anything. Put any question in the report's OPEN QUESTIONS section with your recommended answer; the orchestrator decides or queues it. Stop only for a Tier D item (legal/zoning approval, secrets, payment, licensing) and report it.",
+    "STAY UNMOUNTED (binding; plan section 2): app/main.py is NOT touched; every route stays absent from OpenAPI, flag-gated OFF by default with the generic 404 sentinel. Mounting is PKT-H, a later gated packet. The max-envelope route stays UNMOUNTED.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-080 (a)-(d), DB-081 (a)-(e) and DB-082 (b), (d), (e) (exact wording; where this packet and a row differ, the row wins and the difference goes in the report); project-control/reports/M5-T107-G3.md / -G5.md, M5-T108-G3.md / -G5.md, M5-T109-G3.md / -G5.md (the limiter findings). DB-080 (d) (GLB beside the scene) and DB-082 (a), (c), (f)-(i) belong to other packets - out of scope here.",
+    "SHARED LIMITER DESIGN (binding): stdlib only (threading.Lock, collections, time.monotonic injected as a clock for tests); a small typed API (e.g. a limiter class with allow(key) -> bool plus a reset hook for tests) and a caller_key(request) helper; the three routes keep their documented limits and their typed 429 refusal shape; any public name a test imports today keeps working or the test is updated in scope with the reason in the report. Do NOT edit the existing app/resilience modules (connector resilience - READ-ONLY); rate_limit.py is a new sibling.",
+    "JOB SLOTS (binding): the in-flight cap counts a job from start until its worker thread returns (not until the awaiting coroutine is cancelled); prove with a test that holds a thread past the deadline and shows the slot stays taken until the thread ends, then frees.",
+    "TESTS + MUTATION OBLIGATIONS (binding; offline only): each property (bounded keys, active-key no-eviction, idle eviction, principal-over-host key, limiter-before-parse on every route, job slot held past the deadline, every-method 404 while disabled, OpenAPI absence) has a test and a named mutation that reddens it; record each mutant run (red/green) in the report; do not commit harnesses.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 844 files / 18356 nodes / 7841 edges): scene_api.py, dxf_import_api.py and export_api.py are each imported only by their own test file (tests/scenario/test_scene_api.py, tests/drawings/test_dxf_import_api.py, tests/cad/test_export_api.py); app/main.py imports none of them. scene_api.py imports app/scenario/scene_assembler.py and export_api.py imports app/cad/export_service.py - both READ-ONLY here (the parallel M5-T112 splits massing_model.py behind a facade; export_service.py belongs to a later packet). The frozen M4-T005 packet globs services/api/tests/api/** - keep every new test beside its service. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/resilience/rate_limit.py - the ONE shared bounded limiter + caller_key + job slots",
+    "services/api/tests/resilience/test_rate_limit.py - the limiter's own tests + mutations",
+    "services/api/app/api/v1/scene_api.py, dxf_import_api.py, export_api.py - switched to the shared limiter; limiter before parsing; job slots; every-method 404 while disabled",
+    "services/api/tests/scenario/test_scene_api.py, tests/drawings/test_dxf_import_api.py, tests/cad/test_export_api.py - the route-side tests (OpenAPI absence, 404 for every method, order)",
+    "project-control/reports/M5-T111-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T107",
+    "M5-T108",
+    "M5-T109"
+  ],
+  "allowed_paths": [
+    "services/api/app/resilience/rate_limit.py",
+    "services/api/tests/resilience/test_rate_limit.py",
+    "services/api/app/api/v1/scene_api.py",
+    "services/api/app/api/v1/dxf_import_api.py",
+    "services/api/app/api/v1/export_api.py",
+    "services/api/tests/scenario/test_scene_api.py",
+    "services/api/tests/drawings/test_dxf_import_api.py",
+    "services/api/tests/cad/test_export_api.py",
+    "project-control/reports/M5-T111-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/main.py",
+    "services/api/app/cad/",
+    "services/api/app/scenario/",
+    "services/api/app/drawings/",
+    "services/api/app/resilience/breaker.py",
+    "services/api/app/resilience/budget.py",
+    "services/api/app/resilience/cache.py",
+    "services/api/app/resilience/config.py",
+    "services/api/app/resilience/fetcher.py",
+    "services/api/app/resilience/metrics.py",
+    "services/api/app/resilience/retry.py",
+    "services/api/app/resilience/transport.py",
+    "services/api/app/resilience/__init__.py",
+    "services/api/tests/api/",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (one shared limiter): the three routes use the one module; no route-local limiter class, dict or deque remains (grep in the report); per-route limits unchanged; mutation - one route keeping a local limiter - is caught by a test or an AST check.",
+    "AS-2 (bounded + fail-closed): the key table never exceeds its ceiling; idle keys are evicted; with the table full of ACTIVE keys a NEW key is refused and no active key loses its history; mutations - LRU eviction of an active key, no ceiling - redden.",
+    "AS-3 (key): an authenticated principal (when present on the request) is the key, else the host; mutation - host-first - reddens a test that sends two principals from one host.",
+    "AS-4 (limit before parse): on every route an over-limit caller with a malformed body or parameter gets the 429, not a 422/400; mutation - parse first - reddens.",
+    "AS-5 (job slots): a job past its deadline keeps its slot until its thread ends; over the cap = typed refusal; mutation - release on cancel - reddens.",
+    "AS-6 (disabled = 404 for every method; OpenAPI absence): with the flag off, GET/PUT/PATCH/DELETE/POST on each path return the generic 404 byte-identical to an unmounted path on a throwaway app that includes the router; no path appears in that app's openapi(); mutations redden.",
+    "AS-7 (ceilings + encode step): the report carries the per-route ceiling arithmetic (DB-081 c, DB-082 e) and the DB-081 e decision; any ceiling change is justified by the parser caps.",
+    "AS-8 (scope): zero new dependencies; app/main.py untouched; routes still UNMOUNTED; every existing test of the three routes passes or is updated in scope with the reason; ruff clean; modularity exit 0; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T05:01:56.044889+00:00",
+  "updated_at": "2026-09-25T05:01:56.622361+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003",
+        "D-087-R004",
+        "D-087-R006",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T05:01:56.046453+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/resilience tests/scenario/test_scene_api.py tests/drawings/test_dxf_import_api.py tests/cad/test_export_api.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

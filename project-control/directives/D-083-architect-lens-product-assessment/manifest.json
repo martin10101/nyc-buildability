@@ -10,7 +10,7 @@
  "issued_at": "2026-09-21",
  "captured_at": "2026-09-21T06:22:00+00:00",
  "created_at": "2026-09-21T06:22:00+00:00",
- "updated_at": "2026-09-25T05:05:00+00:00",
+ "updated_at": "2026-09-25T05:01:54+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "defe301382459db82e27265feefd333615de26f9",
  "capture_head_sha": null,
@@ -36,7 +36,7 @@
   "D-083-R012",
   "D-083-R013"
  ],
- "requirements_content_digest_sha256": "1edb1a86392120f123344b9273e04d9c7cdbacbcd402e28538bd724d642c9500",
+ "requirements_content_digest_sha256": "b79c8d6cffd0660f6f465f047ef3f65a76f4efd89817aef992cd8074493056ba",
  "sources": [
   {
    "file": "source-001.md",
@@ -109,6 +109,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "D-088 lane-1 contract seam (seq 129: M5-T110 - the supervised one-cycle canary packet for loop lane 1): bound D-083-R001 <- M5-T110; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T05:01:54+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-089 wave-1 contract seam (seq 130: M5-T111 + M5-T112 + M5-T113 + M5-T114 - overnight subagent-producer packets, the B-026 workaround): bound D-083-R001 <- M5-T114; requirements digest resynced in the same commit."
   }
  ]
 }

@@ -1,0 +1,114 @@
+{
+  "task_id": "M5-T113",
+  "title": "D-087 PDF-reading P2 (DB-076 a-c, e): content-stream FlateDecode with the /DecodeParms predictor, marked-content BDC/DP inline property-list dictionaries, and a scan-only refusal that is reachable and honest on real files - re-run the six real architect PDFs by sha256",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Move the sheet reader past the content-stream limits that stop every real architect PDF (M5-T103: all six pass the xref stage; none yields linework yet). (a) Content and form streams: accept /FlateDecode with a /DecodeParms PNG predictor (ISO 32000-1 7.4.4.4) by reusing the bounded apply_predictor already in app/drawings/sheet_objects.py (never a second predictor implementation); the TIFF predictor and every other filter stay typed refusals; the refuse_decode_parms golden in tests/drawings/test_sheet_reader_split_equivalence.py changes DELIBERATELY (new expected result + a new refusal case for what stays unsupported). (b) Marked content: BDC and DP accept an inline << >> property-list dictionary operand (balanced, bounded depth/length, never interpreted as drawing), in a new module app/drawings/sheet_marked_content.py so sheet_interpreter.py (665 lines) barely grows. (c) With (b) in place the scan-only refusal becomes reachable on real scanned files; (e) fix or disclose the two scan-only inconsistencies (the label also fires on text-only documents; an image-only page succeeds on the classic path but refuses on the resolver path). Then re-run the six real corpus files by sha256 and report honestly what each now does.",
+  "business_reason": "The owner's goal is reading real architect PDF drawings (D-087-R005); today zero of six real files read. These three content features are the recorded next blockers.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "OVERNIGHT (binding; D-089): the owner is asleep - never wait for or ask the owner anything. Put any question in the report's OPEN QUESTIONS section with your recommended answer; the orchestrator decides or queues it. Stop only for a Tier D item (legal/zoning approval, secrets, payment, licensing) and report it.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - the module stays wired exactly as today. The max-envelope route stays UNMOUNTED.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-076 (a)-(c), (e) (exact wording) and DB-055 (d) (inline images stay refused); project-control/reports/M5-T103-producer-report.md (the D1-D3 real-corpus findings), M5-T103-G1.md / -G3.md / -G5.md; docs/research/architect-corpus-reader-trial-2026-09.md (the six files: URLs + sha256). DB-076 (d), (f)-(k) belong to later packets.",
+    "FORMAT AUTHORITY (binding; never guess): every construct follows ISO 32000-1 (7.4.4.4 predictors, 14.6 marked content, 8.2 content-stream operator syntax); cite sections next to the code and mark any citation you cannot check as '[recalled - verify]' for the G1 verifier.",
+    "SAFETY (binding): the predictor path keeps every existing bound (inflated-bytes cap, geometry bounds BEFORE any buffer is sized - the M5-T103 G5 lesson); the inline dictionary lexer has a declared depth and byte cap; any violation is a typed refusal with a bounded detail, never a partial read. pdf_object_streams.py (693 lines; DB-076 i: split before growth) and app/documents/extraction/ are READ-ONLY.",
+    "REAL CORPUS (binding; D-087-R005 honesty): fetch the six files named in the research note to a scratch folder OUTSIDE the worktree, verify each sha256 against the note, run read_sheet TWICE per file (run1 == run2), record per item: refused (stage + reason) or read (page count, path/segment counts), then delete the copies. Commit nothing from the corpus. Report only what you observed; if a file still refuses, name the next blocker. Nobody may tell the owner real architect PDFs can be read unless one actually reads.",
+    "TESTS + MUTATION OBLIGATIONS (binding; offline tests): synthetic fixtures for predictor 10-15 content streams, TIFF predictor refusal, nested/unbalanced/oversized inline dictionaries, BDC/DP with name vs inline-dict operands, and the scan-only cases; each with a named mutation that reddens; record each mutant run (red/green) in the report; do not commit harnesses.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 844 files / 18356 nodes / 7841 edges): sheet_objects.py is imported by pdf_object_streams.py, sheet_interpreter.py, sheet_reader.py and tests/drawings/test_pdf_object_streams.py + test_sheet_reader_split_equivalence.py; sheet_interpreter.py by sheet_reader.py and the equivalence test; nothing in app/ outside app/drawings imports the sheet reader (unwired). test_pdf_object_streams.py is READ-ONLY and must pass unchanged. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/drawings/sheet_objects.py - content/form stream predictor support via apply_predictor",
+    "services/api/app/drawings/sheet_marked_content.py - bounded inline property-list dictionary operand lexer",
+    "services/api/app/drawings/sheet_interpreter.py, sheet_reader.py - minimal wiring + scan-only fixes",
+    "services/api/tests/drawings/test_sheet_content_features.py - new tests + mutations",
+    "services/api/tests/drawings/test_sheet_reader.py, test_sheet_reader_split_equivalence.py - deliberate golden revision",
+    "project-control/reports/M5-T113-producer-report.md (incl. the real-corpus table)"
+  ],
+  "dependencies": [
+    "M5-T103"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/sheet_objects.py",
+    "services/api/app/drawings/sheet_marked_content.py",
+    "services/api/app/drawings/sheet_interpreter.py",
+    "services/api/app/drawings/sheet_reader.py",
+    "services/api/tests/drawings/test_sheet_content_features.py",
+    "services/api/tests/drawings/test_sheet_reader.py",
+    "services/api/tests/drawings/test_sheet_reader_split_equivalence.py",
+    "project-control/reports/M5-T113-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/pdf_object_streams.py",
+    "services/api/tests/drawings/test_pdf_object_streams.py",
+    "services/api/app/drawings/dxf_reader.py",
+    "services/api/app/drawings/dxf_import.py",
+    "services/api/app/documents/",
+    "services/api/app/api/",
+    "services/api/app/main.py",
+    "services/api/app/cad/",
+    "services/api/tests/api/",
+    "docs/research/",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (predictor content streams): a content stream with /FlateDecode + /DecodeParms PNG predictor 10-15 decodes through the existing bounded apply_predictor and draws; TIFF (2) and other filters refuse typed; the refuse_decode_parms golden is revised deliberately (before -> after in the report); mutation - refusing /DecodeParms again - reddens.",
+    "AS-2 (marked content): BDC/DP with an inline dictionary operand parse (balanced, bounded) and draw nothing themselves; unbalanced, too deep or too long dictionaries refuse typed; mutation - refusing inline dicts - reddens.",
+    "AS-3 (scan-only honesty): the scan-only refusal is reachable where a document really has no vector geometry; the text-only and classic-vs-resolver image-only inconsistencies are fixed or disclosed (DB-076 e); mutations redden.",
+    "AS-4 (real corpus, honest): the six files by sha256, two runs each, per-item result table in the report; nothing from the corpus committed; no claim beyond the observation.",
+    "AS-5 (scope): zero new dependencies; unwired; test_pdf_object_streams.py passes unchanged; ruff clean; modularity exit 0 (sheet_interpreter.py stays under 750 lines); exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T05:01:58.585625+00:00",
+  "updated_at": "2026-09-25T05:01:59.307364+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R005",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T05:01:58.586635+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/drawings -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

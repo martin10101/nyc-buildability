@@ -1,0 +1,106 @@
+{
+  "task_id": "M5-T114",
+  "title": "D-086 P1 - visual/state specification: shared status vocabulary, annotated desktop + mobile mockups for search, confirmation, overview, condo, proposal/drawing, evidence and report (normal / boundary / missing / failure states), approved copy samples - presentation-only, every disclosure placed per the P0 ledger (docs only)",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "Write the assessment's P1 deliverable (docs/UI_DEEP_DIVE_ASSESSMENT.md section 14, P1 row) on top of the accepted P0 (docs/design/ui-cleanup/P0-RECONCILIATION.md + the two disclosure-migration ledgers): docs/design/ui-cleanup/P1-VISUAL-STATE-SPEC.md with (1) ONE shared status vocabulary (state, meaning, the backend status it comes from - never remapped -, visual treatment, accessible text); (2) per surface - search, confirmation, overview, condo, proposal/drawing, evidence, report - desktop and mobile layout annotations and the normal, boundary, missing and failure states, every disclosure placed at its P0 ledger destination (cite the ledger row ids); (3) approved copy samples as before -> after with the protected meaning; (4) a meaning-change register: any copy that could change legal meaning is NOT adopted - it is listed as a question for qualified review; and docs/design/ui-cleanup/P1-mockups.html: static, self-contained annotated mockups of the seven surfaces (desktop + mobile frames) using the spec's vocabulary.",
+  "business_reason": "The owner asked for a more visually explanatory product (D-086); P0 fixed the facts and the no-loss ledger, P1 fixes the target look and states so the per-surface slices (P2-P6) can be built and reviewed against one agreed picture.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). You have no shell: write the files in the worktree; the orchestrator commits them at harvest. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "OVERNIGHT (binding; D-089): the owner is asleep - never wait for or ask the owner anything. Put any question in the report's OPEN QUESTIONS section with your recommended answer; the orchestrator decides or queues it. Stop only for a Tier D item (legal/zoning approval, secrets, payment, licensing) and report it.",
+    "MEANING PRESERVATION (binding; the D-086-R003 discipline applied early): no existing disclosure, honest-gap statement, provenance note, or professional-review meaning is deleted or weakened; every changed user-visible string is listed in the report as before -> after with the meaning it protects; visual states never remap backend statuses; no number is computed in the presentation layer.",
+    "HONESTY (binding; D-073-R006/D-076-R002/D-083 vocabulary): proposal-derived geometry is 'Proposed - not a city record'; a generated option is a 'Generated building option'; nothing is ever labeled permitted, approved, or 'maximum allowed building'; no legal conclusion is drawn.",
+    "THIN CLIENT (binding): docs-only; never run npm/npx/node; no source, test or copy edit under apps/ or services/; read the current web source with Read at the pinned head.",
+    "SPEC SOURCE (binding): docs/UI_DEEP_DIVE_ASSESSMENT.md (D-086-R001: assessment input, never authorization) - section 14 P1 row (exit gate: design walkthrough with normal/boundary/missing/failure states; keep section-29 wording/prominence, exact returned disclosures and current city-warning visibility until explicitly resolved), sections 4-10 inventories and no-loss rules; docs/design/ui-cleanup/P0-RECONCILIATION.md (route/state map, drift, DB dispositions, boundary check, section-13 matrix) and disclosure-ledger-a.json / -b.json (every disclosure's progressive destination, accessibility path and print destination); reference only: docs/design/address-entry-confirm-design-spec.md, docs/design/ui-prototype.html, docs/design/ui-inspiration/, docs/design/d087-export-and-3d-viewer-plan.md (the released 3D/CAD/PDF surfaces).",
+    "BOUNDARIES (binding): presentation-only design over EXISTING contracts - no new backend field, no number computed in the presentation layer, visual states never remap backend statuses; the expansion section-2 hold stands except the D-040/D-076/D-082/D-087 releases (show only released surfaces); the max-envelope route stays UNMOUNTED (a mockup may show its panel only as it exists today).",
+    "MOCKUP FILE (binding): P1-mockups.html is ONE static file - inline CSS only, no script, no external font, image or CDN; readable at desktop and phone widths; every annotation is text (not only colour); realistic but clearly FICTIONAL sample data (never a real address presented as a real record).",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 844 files / 18356 nodes / 7841 edges): the route/state map starts at apps/web/src/app/**/page.tsx and components/architect/ArchitectEntry.tsx (query `python tools/code_graph/query.py --no-regen downstream <page>` if you can; otherwise read the P0 route/state map). Graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "docs/design/ui-cleanup/P1-VISUAL-STATE-SPEC.md - vocabulary, per-surface states, copy samples, meaning-change register",
+    "docs/design/ui-cleanup/P1-mockups.html - static annotated desktop + mobile mockups of the seven surfaces",
+    "project-control/reports/M5-T114-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T080"
+  ],
+  "allowed_paths": [
+    "docs/design/ui-cleanup/P1-VISUAL-STATE-SPEC.md",
+    "docs/design/ui-cleanup/P1-mockups.html",
+    "project-control/reports/M5-T114-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/",
+    "services/",
+    "packages/",
+    "docs/UI_DEEP_DIVE_ASSESSMENT.md",
+    "docs/design/ui-cleanup/P0-RECONCILIATION.md",
+    "docs/design/ui-cleanup/disclosure-ledger-a.json",
+    "docs/design/ui-cleanup/disclosure-ledger-b.json",
+    ".claude/",
+    "docs/DISCOVERY_BACKLOG.md"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (vocabulary): one status vocabulary table; every state maps FROM a named backend status or returned field (no remap, no computed number); each has non-colour accessible text.",
+    "AS-2 (coverage): all seven surfaces have desktop + mobile annotations and the normal, boundary, missing and failure states (a 7 x 4 coverage matrix in the spec, every cell filled or explicitly 'not applicable - why').",
+    "AS-3 (no-loss): every L-marked P0 ledger row for these surfaces is placed (ledger row id cited) at its progressive destination with its accessibility and print path; section-29 wording/prominence, exact returned disclosures and city-warning visibility unchanged (a checklist in the spec).",
+    "AS-4 (copy + meaning): copy samples are before -> after with the protected meaning; nothing uses permitted/approved/maximum-allowed claim words; any legal-meaning change sits in the meaning-change register as a question for qualified review, not adopted.",
+    "AS-5 (mockups): one static self-contained HTML file (no script, no external resource), fictional sample data labelled as such, desktop + phone frames for the seven surfaces.",
+    "AS-6 (scope): docs-only - exactly the allowed paths; no source, test, copy, ledger or assessment edit."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "product-design-director",
+  "reviewer_agents": [
+    "visual-quality-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T05:02:00.603185+00:00",
+  "updated_at": "2026-09-25T05:02:01.185785+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-086",
+      "requirement_ids": [
+        "D-086-R002",
+        "D-086-R001",
+        "D-086-R003",
+        "D-086-R004"
+      ]
+    },
+    {
+      "directive_id": "D-083",
+      "requirement_ids": [
+        "D-083-R001"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T05:02:00.603185+00:00",
+  "documented_test_commands": [
+    "git diff --stat",
+    "git status --porcelain"
+  ]
+}

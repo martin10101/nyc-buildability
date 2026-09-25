@@ -1,0 +1,109 @@
+{
+  "task_id": "M5-T112",
+  "title": "D-087 massing_model split (DB-079 a, b): guards / triangulation / mesh modules behind a compatibility facade (994 -> well under the cap), the ear-clipping triangulator made a public reusable API for the GLB export fix, and the B0 overflow field label corrected - byte-identical outputs otherwise",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "services/api/app/scenario/massing_model.py is 994/1000 lines (DB-079 a: split BEFORE any growth). Split it along its responsibilities into three new modules - app/scenario/massing_guards.py (input validation, NYC bounds, bounded echoes, the typed error), app/scenario/massing_triangulation.py (ring preparation, the concave-safe ear-clipping triangulator and its work budget) and app/scenario/massing_mesh.py (prism/plate/mesh construction) - keeping massing_model.py as the compatibility facade: every public name scene_assembler.py and the tests import today keeps working unchanged. Expose the triangulator as ONE documented public function in massing_triangulation.py (ring in, triangles out, the same work budget and typed refusals) so the later GLB export fix (DB-082 a) reuses it instead of a naive fan. DB-079 b: the B0 OverflowError arm names the real field (the level outline when the overflowing value sits there). Every valid-input output stays byte-identical; the only intended behaviour change is the (b) field label.",
+  "business_reason": "The 3D massing module cannot grow until it is split, and the CAD export's GLB caps need the massing model's concave-safe triangulator (L-shaped buildings are common in NYC); this split unblocks both without changing any result.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "OVERNIGHT (binding; D-089): the owner is asleep - never wait for or ask the owner anything. Put any question in the report's OPEN QUESTIONS section with your recommended answer; the orchestrator decides or queues it. Stop only for a Tier D item (legal/zoning approval, secrets, payment, licensing) and report it.",
+    "NO EXPOSURE (binding): no route, endpoint, app/main.py, or web change - the module stays wired exactly as today. The max-envelope route stays UNMOUNTED.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-079 (a), (b) (exact wording) and DB-082 (a) (the consumer of the public triangulator - NOT fixed here); project-control/reports/M5-T106-G3.md / -G4.md / -DCV.md; docs/CODE_MODULARITY_POLICY.md (split with a compatibility facade). DB-079 (c) (proposal.py echo) is out of scope.",
+    "EQUIVALENCE PROOF (binding): BEFORE editing, capture golden digests at the contract head of the facade's outputs over a fixed corpus (the existing test inputs plus concave, collinear, holed-refusal, budget-exceeded and out-of-bounds cases: the as_dict() JSON for successes and (code, field, message) for refusals); tests/scenario/test_massing_split_equivalence.py pins them, and the ONLY differing digests are the DB-079 (b) field-label cases (listed in the report with before -> after).",
+    "MODULARITY (binding): each new module stays under the 600-line warning threshold with one responsibility; no dumping-ground helpers module; no circular import (guards <- triangulation <- mesh <- facade); run `python tools/modularity_check.py --check` from the repo root.",
+    "TESTS + MUTATION OBLIGATIONS (binding; offline only): the public triangulator gets its own tests (convex, concave L/U shapes, collinear collapse, budget refusal, degenerate refusal) with a mutation that reddens (e.g. dropping the reflex check); DB-079 (b) gets a test that reddens under the old label. Record each mutant run (red/green) in the report; do not commit harnesses.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam, 844 files / 18356 nodes / 7841 edges): massing_model.py is imported by app/scenario/scene_assembler.py (-> app/api/v1/scene_api.py), tests/scenario/test_massing_model.py and tests/scenario/test_scene_assembler.py - all of them must pass UNCHANGED through the facade (scene_assembler.py, scene_api.py and their tests are READ-ONLY here; the parallel M5-T111 edits scene_api.py). app/scenario/proposal.py is READ-ONLY. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/scenario/massing_guards.py, massing_triangulation.py, massing_mesh.py - the split",
+    "services/api/app/scenario/massing_model.py - the compatibility facade (+ the DB-079 b label fix)",
+    "services/api/tests/scenario/test_massing_split_equivalence.py - golden equivalence",
+    "services/api/tests/scenario/test_massing_triangulation.py - the public triangulator's tests",
+    "project-control/reports/M5-T112-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T106"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/massing_model.py",
+    "services/api/app/scenario/massing_guards.py",
+    "services/api/app/scenario/massing_triangulation.py",
+    "services/api/app/scenario/massing_mesh.py",
+    "services/api/tests/scenario/test_massing_model.py",
+    "services/api/tests/scenario/test_massing_split_equivalence.py",
+    "services/api/tests/scenario/test_massing_triangulation.py",
+    "project-control/reports/M5-T112-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/scene_assembler.py",
+    "services/api/app/scenario/proposal.py",
+    "services/api/tests/scenario/test_scene_assembler.py",
+    "services/api/tests/scenario/test_scene_api.py",
+    "services/api/app/api/",
+    "services/api/app/cad/",
+    "services/api/app/drawings/",
+    "services/api/app/main.py",
+    "services/api/tests/api/",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (split + facade): massing_model.py is a thin facade well under the warning threshold; the three new modules each own one responsibility and stay under 600 lines; every public name imported by scene_assembler.py and the tests still imports from massing_model; no circular import.",
+    "AS-2 (equivalence): the golden digests captured at the contract head match after the split for every corpus case except the DB-079 (b) label cases (listed before -> after); test_massing_model.py and test_scene_assembler.py pass unchanged.",
+    "AS-3 (public triangulator): one documented public function with the same work budget and typed refusals; concave rings triangulate correctly (triangle area sum == polygon area within tolerance); a named mutation reddens.",
+    "AS-4 (DB-079 b): the overflow refusal names the level-outline field when the value sits there; the old label reddens the new test.",
+    "AS-5 (scope): zero new dependencies; unwired (no route/app change); ruff clean; modularity exit 0; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "3d-massing-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T05:01:57.300815+00:00",
+  "updated_at": "2026-09-25T05:01:57.807042+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T05:01:57.300815+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/scenario -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
