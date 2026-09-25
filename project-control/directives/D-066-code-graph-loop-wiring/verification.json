@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T09:40:24+00:00",
+ "verified_at": "2026-09-25T09:46:26+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1963,6 +1963,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t123): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges) names rate_limit.py's importers, the three UNMOUNTED route modules' test-only importers and proposal_validation.py as a MOUNTED READ-ONLY route, with the query.py --no-regen instruction. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4c7437dd (scene_api.py 1f03ff7c, export_api.py 0d5f2f07, dxf_import_api.py 1329bc90, rate_limit.py 0ff04d27, test_rate_limit.py 4ee8baa2, test_scene_api.py 027116e2, test_export_api.py d6407d7d, test_dxf_import_api.py 0e789d64, M5-T123-producer-report.md ac510dcc; identity 7bd23182; evaluate_task_refs ok); report M5-T123-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T120",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "4975d73c033cbe8327cd1b0d717caacc43616276",
+   "reviewed_manifest_sha256": "80c33f6deaea51920c99496de59c0c959839bca0587aa4e607222c4976542d23",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T09:46:26+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t120): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges) names the sheet-reader consumers, the forbidden neighbours and the query.py --no-regen instruction; G0 confirms the regeneration. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4975d73c (sheet_path_state.py 64e5e088, sheet_interpreter.py 04f2e39a, sheet_inline_image.py 16bd1843, sheet_primitives.py 8e16392a, sheet_reader.py 84368ef7, test_sheet_p4_features.py 7e6527a9, test_sheet_p3_features.py 092027b3, test_sheet_reader.py cfd0def1, test_sheet_reader_split_equivalence.py 51197f59, test_sheet_content_features.py bddceb42, M5-T120-producer-report.md b134e064; identity 80c33f6d; evaluate_task_refs ok); report M5-T120-DCV.md."
      ]
     }
    ]
