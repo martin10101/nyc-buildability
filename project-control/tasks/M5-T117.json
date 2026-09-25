@@ -1,0 +1,115 @@
+{
+  "task_id": "M5-T117",
+  "title": "D-087 shared rate-limit hardening (the M5-T111 G5 must-fix-before-enable + riders): no job-slot leak when a deadline cancels before the worker thread starts, a bounded full-table sweep, principal hygiene, and the review test gaps (HEAD/OPTIONS, a broader no-local-limiter guard, lock contention, X-Forwarded-For never trusted) - routes stay UNMOUNTED",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the M5-T111 review riders in services/api/app/resilience/rate_limit.py and the three route test files. (1) G5 Finding 1 (MEDIUM, must fix before any route is enabled): run_in_job_slot acquires a slot, then awaits the thread-pool runner under wait_for; if the deadline cancels while the runner is still waiting for a thread token, the worker never starts and the slot leaks forever. Release the slot exactly once when the job is cancelled before work() starts (a start flag set inside the worker; the worker's finally releases only if it started), keep 'held until the thread returns' once work() HAS started, and document the relation between the total slot count and anyio's thread-pool size. (2) Finding 2: bound the full-table expiry sweep (at most once per window, or a per-call cost cap) so a new-key flood cannot serialize every caller behind an O(max_keys x max_requests) sweep. (3) Finding 3: caller_key uses a principal only when it is a non-empty string; anything else falls back to the host key. (4) Tests: HEAD and OPTIONS in the every-method-404 loops of all three routes (G3 A1 / G4 gap 3); an AST-based no-local-limiter guard that also catches a plain dict (G3 A2 / G4 gap 4); a multi-thread contention test showing the admitted total never exceeds the limit (G4 gap 1); an X-Forwarded-For header never changes the key (G4 gap 2). (5) G3 A3: scene_api.py docstrings reference the real import path app.resilience.rate_limit. Per-route limits and every existing behaviour stay as they are.",
+  "business_reason": "The security review found one leak that must be closed before the 3D scene, DXF import and CAD export routes are ever switched on; this packet closes it and the smaller review gaps.",
+  "inputs": [
+    "PRODUCER MODE (binding): you are an orchestrator-dispatched subagent producer working ONLY inside your task worktree (named in the dispatch). Every file path you write is under that worktree; commit your work there as ONE commit and report its sha. Never touch the primary checkout, the ledger, or any path outside allowed_paths.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form is the standard - route what you cannot run to harvest with an exact recipe, never predict-as-observed; explicit cwd on every recorded command.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands may be runnable only from the worktree root - route blocked runs to harvest with an exact recipe, never predict-as-observed.",
+    "ZERO NEW DEPENDENCIES (binding; D-087-R009 + the dependency-security policy): stdlib plus already-admitted packages only (shapely/numpy/pydantic/fastapi are admitted); no lockfile or requirements change; no network access in code or tests.",
+    "OVERNIGHT (binding; D-089): the owner is asleep - never wait for or ask the owner anything. Put any question in the report's OPEN QUESTIONS section with your recommended answer; the orchestrator decides or queues it. Stop only for a Tier D item (legal/zoning approval, secrets, payment, licensing) and report it.",
+    "STAY UNMOUNTED (binding; plan section 2): app/main.py is NOT touched; every route stays absent from OpenAPI, flag-gated OFF by default with the generic 404 sentinel. Mounting is PKT-H, a later gated packet. The max-envelope route stays UNMOUNTED.",
+    "LOCAL PYTHON (binding): the sandbox runs Python 3.11 while app/documents/units.py uses 3.12-only PEP 695 syntax, so a pytest run that collects the app.documents chain stops at collection. Run such files through the orchestrator's scratch shim from services/api: `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\shim311\\runtests.py <tests> -q -p no:cacheprovider` (it stubs only package __init__ bodies) and mark those results [OBSERVED-via-shim]; CI (3.12) is the authority.",
+    "SPEC SOURCE (binding): project-control/reports/M5-T111-G5.md (Findings 1-4, the reproduction and the three fix options), M5-T111-G3.md (A1-A5), M5-T111-G4.md (gaps 1-5), the M5-T111 producer report; docs/DISCOVERY_BACKLOG.md (the M5-T111 riders row). Finding 4 (per-route body ceilings) belongs to the mount packet - out of scope.",
+    "CANCELLATION PROOF (binding): a deterministic test whose injected runner never starts the worker until after the deadline fires (an asyncio.Event it never sets before cancellation) shows in_flight returns to 0 after the cancel; the existing held-until-thread-ends test keeps passing; a double-release is impossible (a test cancels after the start and asserts one release). Mutations: never releasing on pre-start cancel, and releasing on every cancel, each redden a test.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at the wave-1 seam, 844 files / 18356 nodes / 7841 edges): rate_limit.py is imported by the three route modules and tests/resilience/test_rate_limit.py; the route modules' only other importers are their own tests. export_service.py (a parallel packet) and every existing app/resilience module are READ-ONLY. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY - verify every material conclusion in actual source.",
+    "DISCOVERY ROUTING (D-069, binding): out-of-scope product/domain/defect findings go in the report's DISCOVERIES section - never fixed in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam."
+  ],
+  "outputs": [
+    "services/api/app/resilience/rate_limit.py - pre-start cancel release, bounded sweep, principal hygiene",
+    "services/api/tests/resilience/test_rate_limit.py - cancellation, contention, XFF, sweep and principal tests",
+    "services/api/app/api/v1/scene_api.py - docstring import path only",
+    "services/api/tests/scenario/test_scene_api.py, tests/drawings/test_dxf_import_api.py, tests/cad/test_export_api.py - HEAD/OPTIONS + the AST no-local-limiter guard",
+    "project-control/reports/M5-T117-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T111"
+  ],
+  "allowed_paths": [
+    "services/api/app/resilience/rate_limit.py",
+    "services/api/tests/resilience/test_rate_limit.py",
+    "services/api/app/api/v1/scene_api.py",
+    "services/api/tests/scenario/test_scene_api.py",
+    "services/api/tests/drawings/test_dxf_import_api.py",
+    "services/api/tests/cad/test_export_api.py",
+    "project-control/reports/M5-T117-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/main.py",
+    "services/api/app/cad/",
+    "services/api/app/api/v1/dxf_import_api.py",
+    "services/api/app/api/v1/export_api.py",
+    "services/api/app/api/v1/proposal_validation.py",
+    "services/api/app/resilience/breaker.py",
+    "services/api/app/resilience/budget.py",
+    "services/api/app/resilience/cache.py",
+    "services/api/app/resilience/config.py",
+    "services/api/app/resilience/fetcher.py",
+    "services/api/app/resilience/metrics.py",
+    "services/api/app/resilience/retry.py",
+    "services/api/app/resilience/transport.py",
+    "services/api/app/resilience/__init__.py",
+    "services/api/tests/api/",
+    "services/api/requirements.txt",
+    "services/api/requirements.in",
+    "apps/",
+    "packages/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (no slot leak): a job cancelled before its worker starts releases its slot exactly once; a started job still holds its slot until the thread returns; mutations redden (never-release, release-on-every-cancel).",
+    "AS-2 (bounded sweep): a new-key flood at the ceiling performs at most one full sweep per window (or a declared per-call cap); a test counts sweeps; mutation - sweep on every refused new key - reddens.",
+    "AS-3 (principal hygiene + XFF): an empty or non-string principal falls back to the host key; an X-Forwarded-For header never changes the key; mutations redden.",
+    "AS-4 (test gaps): HEAD and OPTIONS answer the generic 404 on all three routes while disabled; an AST guard catches a module-level dict/deque/OrderedDict limiter in any of the three routes; a multi-thread contention test never admits more than the limit.",
+    "AS-5 (scope): per-route limits, 429 shape, deadlines, correlation ids unchanged; routes UNMOUNTED; zero new dependencies; ruff clean; modularity exit 0; exactly the allowed paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-25T06:35:06.278379+00:00",
+  "updated_at": "2026-09-25T06:35:06.816812+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-087",
+      "requirement_ids": [
+        "D-087-R001",
+        "D-087-R002",
+        "D-087-R003",
+        "D-087-R004",
+        "D-087-R006",
+        "D-087-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-25T06:35:06.278700+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/resilience tests/scenario/test_scene_api.py tests/drawings/test_dxf_import_api.py tests/cad/test_export_api.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
