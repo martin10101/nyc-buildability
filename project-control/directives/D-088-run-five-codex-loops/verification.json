@@ -1,0 +1,8 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-088",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All seven requirements bind the non-ledger sentinel D-088-BOOTSTRAP at capture; lane packets bind R002/R005 via applicability.task_ids at their contract seams and verify per-task at acceptance; R001/R003/R004/R006/R007 are operational duties evidenced by the commissioning output, lane journals and owner replies. No completion claim exists at capture time.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": []
+}

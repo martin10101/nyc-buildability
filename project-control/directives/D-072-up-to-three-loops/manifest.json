@@ -10,7 +10,7 @@
  "issued_at": "2026-09-18",
  "captured_at": "2026-09-18T06:09:26.684709+00:00",
  "created_at": "2026-09-18T06:09:26.684709+00:00",
- "updated_at": "2026-09-18T06:09:26.684709+00:00",
+ "updated_at": "2026-09-25T01:15:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "dcd010939c9768ff5fdb94af55f544c6b3d5b7ce",
  "capture_head_sha": null,
@@ -57,6 +57,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured verbatim from the seq-116 resume prompt before any loop relaunch or third-instance setup."
+  },
+  {
+   "at": "2026-09-25T01:15:00+00:00",
+   "actor": "orchestrator",
+   "action": "ceiling_raised_by_later_directive",
+   "note": "D-088 (owner 2026-09-24, 'Run5 codex loops in parallel') raises R001's concurrent-loop ceiling from three to five. R001-R003 text is unchanged; the isolation regime, the no-conflict rule and the stepwise-reduction rule carry forward to every lane (D-088-R001/R005)."
   }
  ]
 }

@@ -1132,7 +1132,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-087-parallel-build-3d-cad-pdf/manifest.json"
+  },
+  {
+   "directive_id": "D-088",
+   "slug": "run-five-codex-loops",
+   "title": "Owner 2026-09-24 ('Run5 codex loops in parallel'): run FIVE codex loop lanes side by side - raises D-072's ceiling of three to five; lanes 4-5 stood up as byte-identical certified controller instances with their own runtime identities; every lane fed with a pairwise-disjoint, contracted, claimed packet; no lane launches before the owner-typed B-026 commissioning (lane 1 = supervised canary first); D-071/D-072 isolation, every gate, hold, Tier D stop and dependency rule unchanged",
+   "status": "active",
+   "issued_at": "2026-09-24",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-088-run-five-codex-loops/manifest.json"
   }
  ],
- "updated_at": "2026-09-24T07:20:00+00:00"
+ "updated_at": "2026-09-25T01:15:00+00:00"
 }

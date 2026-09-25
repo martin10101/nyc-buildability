@@ -1,0 +1,227 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-088",
+ "version": 1,
+ "requirement_count": 7,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-25T01:15:00+00:00",
+ "requirements": [
+  {
+   "id": "D-088-R001",
+   "text": "Up to FIVE concurrent codex loop lanes are AUTHORIZED ('Run5 codex loops in parallel'). This is the new owner decision that raises D-072-R001's ceiling of three to five (as D-072 raised D-071's two). Every lane runs under the D-071/D-072 isolation regime unchanged: its own supervisor runtime identity (a distinct --checkout deriving its own lock, journal and audit chain), its own task worktree and branch, and a packet whose allowed_paths are pairwise disjoint from every other live lane's. The stepwise-reduction rule carries forward: on sustained machine or account contention reduce the lane count one step at a time (5 -> 4 -> 3 -> 2 -> 1) and record why.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-088-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [],
+   "required_harness": "The lane launch records show at most five concurrent lanes, each with a distinct runtime identity, worktree and branch; any reduction is recorded with its reason.",
+   "required_evidence": "Lane journals/launch records + the ledger packets they ran + any recorded reduction note.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-088-R002",
+   "text": "Keep five lanes running side by side ('Run5 codex loops in parallel'): the orchestrator contracts enough pairwise-disjoint packets from released, non-held work to feed five lanes, feeds and launches each lane under the D-070 finished-seam standard (packet contracted, claimed with the FULL worktree path and pushed; worktree at or past the claim seam; a fresh launch manifest or pointed launcher; a fresh run-id; stale asks denied in both stores first), re-feeds each lane at its natural close, and records the concrete reason whenever fewer than five lanes run (commissioning not yet done, no eligible disjoint work, a lane parked on a stop condition, or contention under R001).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-088-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [],
+   "required_harness": "Each lane packet's contract seam is recorded in the ledger (new-task, binds, G0, claim) and its launch journal shows a healthy fresh run; gaps below five carry a recorded reason.",
+   "required_evidence": "Ledger task files + contract/claim seam commits + lane run journals/launch records + reason notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; lane packets bind via applicability.task_ids at their contract seams.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-088-R003",
+   "text": "Stand up lanes 4 and 5 (five lanes; three instances exist): two new supervisor instances (C:\\SupervisorController4 and C:\\SupervisorController5) holding the certified controller tree byte-identical to lanes 1-3 - proved with the recertification's tree comparison and verify-controller from each copy - each with its own runtime identity (--checkout) and its own mrl folder for launch manifests, sharing the certified config.toml, model selection file and activation manifest WITHOUT changing any of them (a change there voids the recertification). If standing up a lane ever needs a config, allowlist or manifest change, stop and ask the owner.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-088-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [],
+   "required_harness": "Byte-identical tree comparison lines and verify-controller PASS output for C:\\SupervisorController4 and C:\\SupervisorController5, with the config.toml and activation-manifest digests unchanged.",
+   "required_evidence": "The commissioning run output (tree comparison + verify-controller for all five copies) and the unchanged config/manifest digests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-088-R004",
+   "text": "No lane launches before B-026 closes: the owner-typed commissioning of the recertified controller (M0-T159-recertification.md section 5; runbook section 12 owner touchpoints) completes first, extended to propagate to and verify lanes 4 and 5. Lane 1 launches first as the supervised one-cycle canary (section 5.12) with the owner's prompt-digest approval and the canary checks; lanes 2-5 start only after the canary passes, at least 60 s apart, each with a freshly drafted launch manifest and --repin-cli-identity on its first start only. Any STOP line or canary anomaly: launch no further lane and open a blocker.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "dependency",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-088-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [],
+   "required_harness": "Commissioning output with every STOP check passed; the canary's audit/one_shot_unit evidence clean; lane 2-5 first starts after it, spaced at least 60 s.",
+   "required_evidence": "The commissioning output, the lane-1 canary run evidence, and lanes 2-5 launch records with timestamps.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-088-R005",
+   "text": "No conflict between the five loops and no scope change: before ANY lane launch the orchestrator verifies zero allowed_paths overlap across ALL live lane packets and every in-flight orchestrator-dispatched producer (pairwise) and records the check; no two lanes share a worktree, branch or runtime identity; the orchestrator alone integrates, sequentially at seams. This directive lifts no hold (expansion section 2 minus its scoped releases, PR #241, the unmounted max-envelope route, DWG licensing), changes no gate, grants no Tier D action and waives no dependency-security rule.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-088-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [],
+   "required_harness": "A recorded pairwise-disjointness check precedes every launch wave; no hold, gate or Tier D boundary moves on this directive's authority.",
+   "required_evidence": "Contract-seam G0 disjointness records + the pre-launch pairwise check notes; absence of any hold/gate change.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; lane packets bind via applicability.task_ids at their contract seams.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-088-R006",
+   "text": "Capacity fact at capture (thin client): C: had 4.5 GB free (99% full) with 322 registered git worktrees; five lanes add roughly 0.5 GB (two lane folders of about 48 MB, five task worktrees of about 85 MB) plus run logs and journals. Re-check free space before each launch wave; low disk space counts as machine contention under R001's stepwise-reduction rule and is reported to the owner.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-088-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [],
+   "required_harness": "A free-space reading recorded before each launch wave.",
+   "required_evidence": "Pre-launch free-space readings in the launch notes/handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-088-R007",
+   "text": "Report to the owner in simple English (D-064): what they must type for the commissioning and the canary approval, when each lane starts, and whenever fewer than five lanes run and why.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-088-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-24"
+   },
+   "dependencies": [],
+   "required_harness": "Owner-facing replies that carry the exact lines to type and the lane status in plain words.",
+   "required_evidence": "The session replies + the handoff's lane-status section.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}
