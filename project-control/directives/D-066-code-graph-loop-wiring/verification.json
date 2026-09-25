@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T08:58:47+00:00",
+ "verified_at": "2026-09-25T09:40:24+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -1941,6 +1941,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (dcv-t121): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges; no consumers - unmounted; the reader public types, dxf_import public names and app.scenario.proposal READ-ONLY) with the query.py --no-regen instruction. Blob-level restamp predicate re-verified by the orchestrator at the accept head 8ecdbeb2 (sheet_import.py faa95c04, test_sheet_import.py ecc14b54, M5-T121-producer-report.md ea826181; identity 243a7da1; evaluate_task_refs ok); report M5-T121-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T123",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "4c7437dd3eb0068ebff6c15221913e5bb7e6b801",
+   "reviewed_manifest_sha256": "7bd23182b1a5998ae9b4911af60f7de3bf4f62cf45e0ca02c5d6b73bcea8baf3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T09:40:24+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t123): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges) names rate_limit.py's importers, the three UNMOUNTED route modules' test-only importers and proposal_validation.py as a MOUNTED READ-ONLY route, with the query.py --no-regen instruction. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4c7437dd (scene_api.py 1f03ff7c, export_api.py 0d5f2f07, dxf_import_api.py 1329bc90, rate_limit.py 0ff04d27, test_rate_limit.py 4ee8baa2, test_scene_api.py 027116e2, test_export_api.py d6407d7d, test_dxf_import_api.py 0e789d64, M5-T123-producer-report.md ac510dcc; identity 7bd23182; evaluate_task_refs ok); report M5-T123-DCV.md."
      ]
     }
    ]

@@ -3,7 +3,7 @@
  "directive_id": "D-087",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-087-BOOTSTRAP at capture; concrete packets bind via applicability.task_ids at their contract seams and verify per-task at acceptance. R002/R009 are standing prohibitions carried into every bound packet. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-25T08:58:47+00:00",
+ "verified_at": "2026-09-25T09:40:24+00:00",
  "task_verifications": [
   {
    "directive_id": "D-087",
@@ -2079,6 +2079,68 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: zero new dependencies (math / dataclasses + internal modules); unmounted (3 files, no route, app/main.py untouched); dxf_import.py, the reader modules and app/scenario untouched; modularity exit 0 with sheet_import.py not flagged; CI green. Blob-level restamp predicate re-verified by the orchestrator at the accept head 8ecdbeb2 (sheet_import.py faa95c04, test_sheet_import.py ecc14b54, M5-T121-producer-report.md ea826181; identity 243a7da1; evaluate_task_refs ok); report M5-T121-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-087",
+   "task_id": "M5-T123",
+   "applicable_requirement_ids": [
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R004",
+    "D-087-R006",
+    "D-087-R009"
+   ],
+   "reviewed_sha": "4c7437dd3eb0068ebff6c15221913e5bb7e6b801",
+   "reviewed_manifest_sha256": "7bd23182b1a5998ae9b4911af60f7de3bf4f62cf45e0ca02c5d6b73bcea8baf3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T09:40:24+00:00",
+   "requirements": [
+    {
+     "id": "D-087-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a full gated packet - G0 at 80e6274a, claimed at 8acf9c86, an orchestrator-dispatched subagent producer run concurrently with disjoint packets; G0/G2/G3/G4/G5 PASS, no state or gate skipped. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4c7437dd (scene_api.py 1f03ff7c, export_api.py 0d5f2f07, dxf_import_api.py 1329bc90, rate_limit.py 0ff04d27, test_rate_limit.py 4ee8baa2, test_scene_api.py 027116e2, test_export_api.py d6407d7d, test_dxf_import_api.py 0e789d64, M5-T123-producer-report.md ac510dcc; identity 7bd23182; evaluate_task_refs ok); report M5-T123-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 disjointness EMPTY vs 19 active neighbours; one worktree; exactly the 9 allowed paths, no forbidden path; disjoint from M5-T120/T121/T122. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4c7437dd (scene_api.py 1f03ff7c, export_api.py 0d5f2f07, dxf_import_api.py 1329bc90, rate_limit.py 0ff04d27, test_rate_limit.py 4ee8baa2, test_scene_api.py 027116e2, test_export_api.py d6407d7d, test_dxf_import_api.py 0e789d64, M5-T123-producer-report.md ac510dcc; identity 7bd23182; evaluate_task_refs ok); report M5-T123-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: scene_api.py SCENE_MAX_BODY_BYTES 2 MiB (over a measured 811,225-byte maximum) on both the declared-length and streamed paths; SCENE_MAX_IN_FLIGHT 16 -> 8; UNMOUNTED. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4c7437dd (scene_api.py 1f03ff7c, export_api.py 0d5f2f07, dxf_import_api.py 1329bc90, rate_limit.py 0ff04d27, test_rate_limit.py 4ee8baa2, test_scene_api.py 027116e2, test_export_api.py d6407d7d, test_dxf_import_api.py 0e789d64, M5-T123-producer-report.md ac510dcc; identity 7bd23182; evaluate_task_refs ok); report M5-T123-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: dxf_import_api.py DXF_IMPORT_MAX_BODY_BYTES 20 MiB with the route DxfLimits max_bytes raised with it (under the reader's 64 MiB clamp; dxf_reader.py untouched); both paths; slots 16 -> 4; the max_lines-binds-first limit disclosed (DB-D4); F1 - the report's DXF memory figure is optimistic (G5 measured ~17x input) - ruled an acceptable disclosed LOW advisory for UNMOUNTED code on condition the measured figure is recorded as a PKT-H precondition (done in DB-093). Blob-level restamp predicate re-verified by the orchestrator at the accept head 4c7437dd (scene_api.py 1f03ff7c, export_api.py 0d5f2f07, dxf_import_api.py 1329bc90, rate_limit.py 0ff04d27, test_rate_limit.py 4ee8baa2, test_scene_api.py 027116e2, test_export_api.py d6407d7d, test_dxf_import_api.py 0e789d64, M5-T123-producer-report.md ac510dcc; identity 7bd23182; evaluate_task_refs ok); report M5-T123-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: export_api.py EXPORT_MAX_BODY_BYTES 1 MiB (over a measured 452,336 bytes) on both paths; slots 16 -> 12; the summed slots 24 < anyio 4.10.0's 40-token pool, guarded by a test reading the live constants and limiter; a whitespace-only principal falls back to the host key. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4c7437dd (scene_api.py 1f03ff7c, export_api.py 0d5f2f07, dxf_import_api.py 1329bc90, rate_limit.py 0ff04d27, test_rate_limit.py 4ee8baa2, test_scene_api.py 027116e2, test_export_api.py d6407d7d, test_dxf_import_api.py 0e789d64, M5-T123-producer-report.md ac510dcc; identity 7bd23182; evaluate_task_refs ok); report M5-T123-DCV.md."
+     ]
+    },
+    {
+     "id": "D-087-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: routes UNMOUNTED (app/main.py untouched); proposal_validation.py unchanged at 256 KiB; dxf_reader.py untouched; zero new dependencies; the 429 shape, per-window limits, deadlines, correlation ids and the disabled 404 unchanged (199 tests). Blob-level restamp predicate re-verified by the orchestrator at the accept head 4c7437dd (scene_api.py 1f03ff7c, export_api.py 0d5f2f07, dxf_import_api.py 1329bc90, rate_limit.py 0ff04d27, test_rate_limit.py 4ee8baa2, test_scene_api.py 027116e2, test_export_api.py d6407d7d, test_dxf_import_api.py 0e789d64, M5-T123-producer-report.md ac510dcc; identity 7bd23182; evaluate_task_refs ok); report M5-T123-DCV.md."
      ]
     }
    ]
