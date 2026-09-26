@@ -6,9 +6,9 @@ import type { CondoSurfaceDecision } from "../CondoRecordsSection";
 import { deriveParcelStudyScope } from "@/lib/architect/parcel-study";
 import { useParcelStudyRecords } from "@/lib/architect/use-parcel-study-records";
 
-function BaseParcelMap({ bbls, compact }: { bbls: readonly string[]; compact: boolean }) {
-  const source = useParcelStudyRecords(bbls);
-  return <><ParcelStudyMap compact={compact} arrangement="compare" outlines={source.records.map(record => ({ bbl: record.bbl, outcome: record.outlineOutcome, loading: record.outlineOutcome === null }))}/>
+function BaseParcelMap({ bbls, billingBbl, compact }: { bbls: readonly string[]; billingBbl: string | null; compact: boolean }) {
+  const source = useParcelStudyRecords(bbls, billingBbl);
+  return <><ParcelStudyMap compact={compact} arrangement="compare" contextOutline={source.contextOutline} outlines={source.records.map(record => ({ bbl: record.bbl, outcome: record.outlineOutcome, loading: record.outlineOutcome === null }))}/>
     <button type="button" className="architect-text-button" onClick={source.retry} disabled={source.loading}>Refresh parcel outlines</button></>;
 }
 /** Only city geometry is rendered. The billing record is never added as land. */
@@ -19,7 +19,7 @@ export function DashboardMap({ bbl, condo, compact = false }: { bbl: string; con
     if (!scope.ok || condo.conflict || records.enteredBbl !== bbl || records.studyIdentityIntegrity !== true) {
       return <p role="status">Parcel identities need review before these outlines can be displayed.</p>;
     }
-    return <BaseParcelMap key={scope.scope.key} bbls={scope.scope.baseBbls} compact={compact}/>;
+    return <BaseParcelMap key={scope.scope.key} bbls={scope.scope.baseBbls} billingBbl={scope.scope.billingBbl} compact={compact}/>;
   }
   const zola = zolaLotUrl(bbl);
   return <>{zola ? <a className="dashboard-map-zola" href={zola} target="_blank" rel="noopener noreferrer">View this lot on ZoLa ↗</a> : null}<LotOutlineMap key={bbl} bbl={bbl} context/></>;

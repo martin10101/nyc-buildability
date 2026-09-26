@@ -161,3 +161,78 @@ describe("useParcelStudyRecords: independent city-record reads", () => {
     expect(result.current.records[0]).toMatchObject({ profileOutcome: { kind: "network_error" }, outlineOutcome: { kind: "document" } });
   });
 });
+
+const BASES = ["3022640032", "3022640033"];
+const BILLING = "3022647515";
+const OTHER_BILLING = "3022647516";
+
+function missing(bbl: string): LotOutlineOutcome {
+  return { kind: "document", correlationId: null, view: {
+    bbl, outcome: "no_outline", outcomeToken: "no_outline", geometry: null,
+    geometryUnusable: false, featureCount: 0, reviewRequired: false,
+    noOutlineReason: "no_feature_for_bbl", condoClassification: { classification: "unknown", note: null },
+    accuracyNote: "Approximate", attribution: "NYC DCP", disclaimer: "Display only", notes: [],
+    source: { sourceId: "nyc-dcp-mappluto", datasetVersion: "26v2", retrievedAt: null },
+  } };
+}
+
+describe("parcel study context requests", () => {
+  it("fetches billing geometry separately without adding billing land or a billing profile request", async () => {
+    const { result } = renderHook(() => useParcelStudyRecords(BASES, BILLING));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.records.map(record => record.bbl)).toEqual(BASES);
+    expect(vi.mocked(fetchPropertyProfile).mock.calls.map(([bbl]) => bbl)).toEqual(BASES);
+    expect(vi.mocked(fetchLotGeometry).mock.calls.map(([bbl]) => bbl).sort()).toEqual([...BASES, BILLING]);
+    expect(result.current.contextOutline).toEqual({ bbl: BILLING, outcome: missing(BILLING), loading: false });
+  });
+
+  it("rejects foreign billing identity without discarding base records", async () => {
+    vi.mocked(fetchLotGeometry).mockImplementation(async bbl => missing(bbl === BILLING ? OTHER_BILLING : bbl));
+    const { result } = renderHook(() => useParcelStudyRecords(BASES, BILLING));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.contextOutline?.outcome).toMatchObject({ kind: "error", state: "result_mismatch" });
+    expect(result.current.records.every(record => record.outlineOutcome?.kind === "document")).toBe(true);
+  });
+
+  it("turns a rejected billing request into retryable context failure without discarding base records", async () => {
+    vi.mocked(fetchLotGeometry).mockImplementation(async bbl => {
+      if (bbl === BILLING) throw new Error("Network unavailable");
+      return missing(bbl);
+    });
+    const { result } = renderHook(() => useParcelStudyRecords(BASES, BILLING));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.contextOutline?.outcome?.kind).toBe("network_error");
+    expect(result.current.records).toHaveLength(2);
+    vi.mocked(fetchLotGeometry).mockImplementation(async bbl => missing(bbl));
+    act(() => result.current.retry());
+    expect(result.current.contextOutline?.outcome).toBeNull();
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.contextOutline?.outcome?.kind).toBe("document");
+  });
+
+  it("aborts stale context on retry and A → B → A identity switches, ignoring late results", async () => {
+    const pending: Array<{ bbl: string; signal?: AbortSignal; resolve: (value: LotOutlineOutcome) => void }> = [];
+    vi.mocked(fetchLotGeometry).mockImplementation((bbl, options) => {
+      if (BASES.includes(bbl)) return Promise.resolve(missing(bbl));
+      return new Promise(resolve => pending.push({ bbl, signal: options?.signal, resolve }));
+    });
+    const { result, rerender, unmount } = renderHook(({ billing }) => useParcelStudyRecords(BASES, billing), { initialProps: { billing: BILLING } });
+    await waitFor(() => expect(pending).toHaveLength(1));
+    act(() => result.current.retry());
+    await waitFor(() => expect(pending).toHaveLength(2));
+    expect(pending[0].signal?.aborted).toBe(true);
+    rerender({ billing: OTHER_BILLING });
+    await waitFor(() => expect(pending).toHaveLength(3));
+    rerender({ billing: BILLING });
+    await waitFor(() => expect(pending).toHaveLength(4));
+    expect(result.current.contextOutline).toEqual({ bbl: BILLING, outcome: null, loading: true });
+    await act(async () => { for (const stale of pending.slice(0, 3)) stale.resolve(missing(stale.bbl)); });
+    expect(result.current.contextOutline?.outcome).toBeNull();
+    expect(pending.slice(0, 3).every(item => item.signal?.aborted)).toBe(true);
+    await act(async () => pending[3].resolve(missing(BILLING)));
+    expect(result.current.contextOutline?.outcome).toEqual(missing(BILLING));
+    expect(result.current.loading).toBe(false);
+    unmount();
+    expect(pending[3].signal?.aborted).toBe(true);
+  });
+});

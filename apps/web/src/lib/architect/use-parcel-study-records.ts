@@ -15,6 +15,7 @@ export interface ParcelStudyRecord {
 interface RecordSnapshot {
   request: { scope: string; attempt: number };
   records: ParcelStudyRecord[];
+  contextOutcome: LotOutlineOutcome | null;
 }
 
 function matchProfile(bbl: string, outcome: LookupOutcome): LookupOutcome {
@@ -42,19 +43,21 @@ function matchOutline(bbl: string, outcome: LotOutlineOutcome): LotOutlineOutcom
 /**
  * Scope and attempt identify every visible snapshot. Old results are hidden
  * during render, before effect cleanup, including an A → B → A scope change.
- * Three parcel workers bound concurrency to six independent read requests.
+ * Three parcel workers bound concurrency to six independent read requests,
+ * plus one geometry-only read for the separately identified billing context.
  * A failed profile does not discard its outline or another parcel's records.
  */
-export function useParcelStudyRecords(baseBbls: readonly string[]) {
-  const scope = JSON.stringify([...new Set(baseBbls)].sort());
+export function useParcelStudyRecords(baseBbls: readonly string[], billingBbl: string | null = null) {
+  const baseScope = JSON.stringify([...new Set(baseBbls)].sort());
+  const scope = JSON.stringify([baseScope, billingBbl]);
   const [attempt, setAttempt] = useState(0);
   const [snapshot, setSnapshot] = useState<RecordSnapshot | null>(null);
   // Object identity gives A → B → A a new generation, even before effects run.
   const request = useMemo(() => ({ scope, attempt }), [scope, attempt]);
   const emptyRecords = useMemo<ParcelStudyRecord[]>(() => {
-    const bbls: string[] = JSON.parse(scope);
+    const bbls: string[] = JSON.parse(baseScope);
     return bbls.map(bbl => ({ bbl, profileOutcome: null, outlineOutcome: null, loading: true }));
-  }, [scope]);
+  }, [baseScope]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -66,6 +69,7 @@ export function useParcelStudyRecords(baseBbls: readonly string[]) {
         const records = previous?.request === request ? previous.records : emptyRecords;
         return {
           request,
+          contextOutcome: previous?.request === request ? previous.contextOutcome : null,
           records: records.map(record => {
             if (record.bbl !== bbl) return record;
             const merged = { ...record, ...patch };
@@ -91,13 +95,29 @@ export function useParcelStudyRecords(baseBbls: readonly string[]) {
       }
     }
     for (let index = 0; index < Math.min(3, emptyRecords.length); index += 1) void worker();
+    // The caller supplies the billing identity from the validated condo scope.
+    // It is context only: never a profile read or a member of the land records.
+    if (billingBbl) {
+      const updateContext = (outcome: LotOutlineOutcome) => {
+        if (controller.signal.aborted) return;
+        setSnapshot(previous => controller.signal.aborted ? previous : {
+          request,
+          records: previous?.request === request ? previous.records : emptyRecords,
+          contextOutcome: matchOutline(billingBbl, outcome),
+        });
+      };
+      void fetchLotGeometry(billingBbl, { signal: controller.signal }).then(updateContext,
+        () => updateContext({ kind: "network_error", message: "The condo context outline could not be loaded. Retry this study." }));
+    }
     return () => controller.abort();
-  }, [request, emptyRecords]);
+  }, [request, emptyRecords, billingBbl]);
 
   const records = snapshot?.request === request ? snapshot.records : emptyRecords;
+  const contextOutcome = snapshot?.request === request ? snapshot.contextOutcome : null;
   return {
     records,
-    loading: records.some(record => record.loading),
+    contextOutline: billingBbl ? { bbl: billingBbl, outcome: contextOutcome, loading: contextOutcome === null } : null,
+    loading: records.some(record => record.loading) || (billingBbl !== null && contextOutcome === null),
     retry: () => setAttempt(value => value + 1),
   };
 }

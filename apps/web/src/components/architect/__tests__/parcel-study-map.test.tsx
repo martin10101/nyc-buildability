@@ -4,7 +4,7 @@ import type { LotOutlineOutcome, ValidatedGeometry } from "@/lib/lot-geometry-ap
 import { ParcelStudyMap, type ParcelStudyOutline } from "../ParcelStudyMap";
 
 interface TestSource {
-  data: { features: Array<{ properties: { bbl: string; color: string }; geometry: ValidatedGeometry }> };
+  data: { features: Array<{ properties: { bbl: string; color: string; contextOnly: boolean }; geometry: ValidatedGeometry }> };
 }
 interface TestMap {
   sources: Map<string, TestSource>;
@@ -62,6 +62,7 @@ vi.mock("maplibre-gl", () => {
 
 const LOT_A = "3022640032";
 const LOT_B = "3022640033";
+const BILLING = "3022647515";
 const polygon: ValidatedGeometry = { type: "Polygon", coordinates: [
   [[-73.958, 40.700], [-73.957, 40.700], [-73.957, 40.701], [-73.958, 40.701], [-73.958, 40.700]],
   [[-73.9578, 40.7002], [-73.9572, 40.7002], [-73.9572, 40.7008], [-73.9578, 40.7008], [-73.9578, 40.7002]],
@@ -84,6 +85,20 @@ function result(bbl: string, geometry: ValidatedGeometry = polygon): LotOutlineO
 function outline(bbl: string, outcome = result(bbl)): ParcelStudyOutline {
   return { bbl, outcome, loading: false };
 }
+function missing(bbl: string): ParcelStudyOutline {
+  const outcome = result(bbl);
+  if (outcome.kind === "document") Object.assign(outcome.view, {
+    outcome: "no_outline", geometry: null, featureCount: 0, noOutlineReason: "no_feature_for_bbl",
+  });
+  return outline(bbl, outcome);
+}
+function condoContext(): ParcelStudyOutline {
+  const outcome = result(BILLING, multipolygon);
+  if (outcome.kind === "document") outcome.view.condoClassification = {
+    classification: "condo_billing_lot", note: "Condominium billing lot: merged complex outline.",
+  };
+  return outline(BILLING, outcome);
+}
 function features(index = runtime.maps.length - 1) {
   return runtime.maps[index].sources.get("parcel-study-outlines")!.data.features;
 }
@@ -105,6 +120,54 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 describe("ParcelStudyMap display-only identity and geometry", () => {
+  it("shows the recorded condo outline without inventing a third land parcel when Wallabout base outlines are absent", async () => {
+    render(<ParcelStudyMap compact arrangement="compare" outlines={[missing(LOT_A), missing(LOT_B)]} contextOutline={condoContext()} />);
+    await screen.findByText("Condo tax-map outline shown for context; individual parcel boundaries unavailable.");
+    expect(screen.getByTestId("parcel-study-context-outline")).toHaveAttribute("data-context-state", "rendered");
+    expect(features()).toEqual([{ type: "Feature", properties: { bbl: BILLING, color: "#24699a", contextOnly: true }, geometry: multipolygon }]);
+    expect(runtime.markers.map(marker => marker.textContent)).toEqual(["Condo context"]);
+    expect(screen.getAllByText("No outline in the source record.")).toHaveLength(2);
+    expect(screen.getByLabelText("Parcel outline availability").children).toHaveLength(2);
+    expect(screen.getByText("Condo tax-map outline · context only")).toBeVisible();
+    expect(screen.getByText(`Billing BBL ${BILLING} · Not an additional parcel or a confirmed development site. The condo tax-map outline does not establish individual parcel boundaries.`)).toBeInTheDocument();
+    expect(screen.getByText("Condominium billing lot: merged complex outline.")).toBeInTheDocument();
+    expect(screen.queryByText(/1 of 2 approximate parcel outlines shown/)).not.toBeInTheDocument();
+  });
+
+  it.each(["wrong BBL", "review", "malformed", "nonbilling", "multiple", "no outline", "duplicate base"])("withholds unsafe condo context: %s", async (reason) => {
+    const context = condoContext();
+    if (context.outcome?.kind !== "document") throw new Error("Fixture must be a document");
+    if (reason === "wrong BBL") context.outcome.view.bbl = "3022647516";
+    if (reason === "review") context.outcome.view.reviewRequired = true;
+    if (reason === "malformed") context.outcome.view.geometry = { type: "Polygon", coordinates: [] };
+    if (reason === "nonbilling") context.outcome.view.condoClassification.classification = "base_lot";
+    if (reason === "multiple") context.outcome.view.featureCount = 2;
+    if (reason === "no outline") { context.outcome.view.outcome = "no_outline"; context.outcome.view.geometry = null; }
+    if (reason === "duplicate base") { context.bbl = LOT_A; context.outcome.view.bbl = LOT_A; }
+    render(<ParcelStudyMap arrangement="compare" outlines={[missing(LOT_A), missing(LOT_B)]} contextOutline={context} />);
+    expect(screen.getByTestId("parcel-study-context-outline")).toHaveAttribute("data-context-state", "unavailable");
+    expect(runtime.maps).toHaveLength(0);
+    expect(screen.queryByTestId("parcel-study-map-canvas")).not.toBeInTheDocument();
+    expect(screen.getAllByText("No outline in the source record.").length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("keeps a usable base outline when another is missing instead of replacing it with condo context", async () => {
+    render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A), missing(LOT_B)]} contextOutline={condoContext()} />);
+    await screen.findByText("1 of 2 approximate parcel outlines shown.");
+    expect(features().map(feature => feature.properties)).toEqual([{ bbl: LOT_A, color: "#a4680c", contextOnly: false }]);
+    expect(runtime.markers.map(marker => marker.textContent)).toEqual(["1 · Lot 32"]);
+    expect(screen.queryByTestId("parcel-study-context-outline")).not.toBeInTheDocument();
+    expect(screen.getByText("No outline in the source record.")).toBeInTheDocument();
+  });
+
+  it("distinguishes missing records from failed outline requests and keeps retry guidance visible with context", async () => {
+    const { rerender } = render(<ParcelStudyMap arrangement="compare" outlines={[missing(LOT_A), missing(LOT_B)]} />);
+    expect(screen.getByText("Individual parcel boundaries unavailable in the source records.")).toBeVisible();
+    rerender(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A, { kind: "client_timeout", timeoutMs: 12000 }), missing(LOT_B)]} contextOutline={condoContext()} />);
+    await screen.findByText("Condo tax-map outline shown for context; individual parcel requests failed. Retry to check availability.");
+    expect(screen.getByText("Outline request timed out.")).toBeInTheDocument();
+  });
+
   it("uses compact camera padding, resizes before a pending fit, and preserves camera after readiness", async () => {
     let width = 400, height = 160;
     vi.spyOn(Element.prototype, "clientWidth", "get").mockImplementation(() => width);
