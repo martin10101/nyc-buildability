@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { PropertyProfile } from "@/lib/contract";
 import type { Scenario } from "@/lib/scenario-contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
@@ -20,10 +20,12 @@ import { CapturedRecord } from "../EvidenceRecord";
 import { DashboardMap } from "./DashboardMap";
 import type { DashboardTool } from "./types";
 
-function ProposalTool({ profile }: { profile: PropertyProfile }) {
+function ProposalTool({ profile, focusEnvelope = false, envelopeRequest = 0 }: { profile: PropertyProfile; focusEnvelope?: boolean; envelopeRequest?: number }) {
   const request = useMemo(() => maxEnvelopeRequestForProfile(profile), [profile]);
   const [adoptedDraft, setAdoptedDraft] = useState<ProposalDraft | null>(null);
-  return <><MaxEnvelopePanel request={request} onAdopt={setAdoptedDraft}/><ProposalEditor bbl={profile.identity.bbl} adoptedDraft={adoptedDraft}/></>;
+  const [limitsOpen, setLimitsOpen] = useState(focusEnvelope);
+  useEffect(() => { setLimitsOpen(focusEnvelope); }, [focusEnvelope, envelopeRequest]);
+  return <><details className="dashboard-tool-details" open={limitsOpen} onToggle={event => setLimitsOpen(event.currentTarget.open)}><summary>Preliminary development limits · inspect status &amp; sources</summary><MaxEnvelopePanel request={request} onAdopt={setAdoptedDraft}/></details><ProposalEditor bbl={profile.identity.bbl} adoptedDraft={adoptedDraft}/></>;
 }
 export interface DashboardToolsProps {
   tool: DashboardTool;
@@ -40,6 +42,8 @@ export interface DashboardToolsProps {
   onInspect: (id: string) => void;
   onOpen: (tool: DashboardTool) => void;
   surveyEnabled: boolean;
+  focusEnvelope?: boolean;
+  envelopeRequest?: number;
 }
 /** Existing guarded detail surfaces keep their provenance and honest-gap copy. */
 export function DashboardTools(props: DashboardToolsProps) {
@@ -66,7 +70,7 @@ export function DashboardTools(props: DashboardToolsProps) {
     case "proposal":
     case "envelope": return condo.withholdAllowances
       ? <section className="card"><h2>Site definition required</h2><p>Combined-site proposal and envelope checks are unavailable for this unresolved condo site. Recorded base parcels can be studied together or separately without establishing development rights.</p><button type="button" className="primary-button" onClick={() => onOpen("study")}>Open parcel study</button></section>
-      : <ProposalTool profile={profile}/>;
+      : <ProposalTool profile={profile} focusEnvelope={props.focusEnvelope} envelopeRequest={props.envelopeRequest}/>;
     case "documents": return surveyEnabled ? <SurveyReviewClientProvider><ReviewInbox bbl={bbl} embedded/></SurveyReviewClientProvider> : <section className="card"><h2>Document review is unavailable in this environment</h2><p>Survey review must be enabled before document records can be retrieved. No document inventory or upload service is available here.</p></section>;
     case "units": return <PlannedView label="Units"/>;
     case "financials": return <PlannedView label="Financials"/>;

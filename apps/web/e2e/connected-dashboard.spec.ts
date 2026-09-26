@@ -40,6 +40,15 @@ test("address confirmation populates the same dashboard and floating tools retai
   await page.getByRole("button", { name: /Draw a proposal/ }).click();
   await expect(editor.getByLabel("Proposal label", { exact: true })).toHaveValue("Persistent courtyard sketch");
   await editor.getByRole("button", { name: "Close Proposal editor window" }).click();
+  await page.getByRole("group", { name: "Development details" }).getByRole("button", { name: "Envelope", exact: true }).click();
+  await expect(editor.locator(".dashboard-tool-details")).toHaveAttribute("open", "");
+  await editor.locator(".dashboard-tool-details>summary").click();
+  await expect(editor.locator(".dashboard-tool-details")).not.toHaveAttribute("open", "");
+  await editor.getByRole("button", { name: "Close Proposal editor window" }).click();
+  await page.getByRole("group", { name: "Development details" }).getByRole("button", { name: "Envelope", exact: true }).click();
+  await expect(editor.locator(".dashboard-tool-details")).toHaveAttribute("open", "");
+  await expect(editor.getByLabel("Proposal label", { exact: true })).toHaveValue("Persistent courtyard sketch");
+  await editor.getByRole("button", { name: "Close Proposal editor window" }).click();
   await capture(page, info, "connected-dashboard-desktop", true);
   await page.getByRole("region", { name: "Quick actions" }).getByRole("button", { name: /Open map/ }).click();
   const map = page.getByRole("dialog", { name: "Property map" });
@@ -70,6 +79,8 @@ test("address confirmation populates the same dashboard and floating tools retai
   expect(frame!.x).toBeGreaterThanOrEqual(0);
   expect(frame!.x + frame!.width).toBeLessThanOrEqual(390);
   expect(frame!.y + frame!.height).toBeLessThanOrEqual(844);
+  const labelField = await editor.getByLabel("Proposal label", { exact: true }).boundingBox();
+  expect(labelField!.y + labelField!.height).toBeLessThan(frame!.y + frame!.height);
   await capture(page, info, "connected-proposal-mobile");
 });
 

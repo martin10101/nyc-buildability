@@ -46,12 +46,14 @@ function LoadedDashboard({ profile, initialTool, surveyEnabled, addressRevision,
   const evaluation = condo.withholdAllowances || associationMismatch ? null : inspectableEvaluation;
   const [address, setAddress] = useState<SelectedAddress | null>(null);
   const [tool, setTool] = useState<DashboardTool | null>(initialTool === "envelope" ? "proposal" : initialTool);
+  const [focusEnvelope, setFocusEnvelope] = useState(initialTool === "envelope");
+  const [envelopeRequest, setEnvelopeRequest] = useState(0);
   const [selection, setSelection] = useState("calculation");
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => { setAddress(recalledAddress(bbl)); }, [bbl, addressRevision]);
   useEffect(() => { root.current?.querySelector<HTMLElement>("h1")?.focus(); }, [bbl, addressRevision]);
   const label = address?.label ?? profile.identity.address?.normalized_address ?? `BBL ${bbl}`;
-  const open = useCallback((value: DashboardTool) => setTool(value === "envelope" ? "proposal" : value), []);
+  const open = useCallback((value: DashboardTool) => { setFocusEnvelope(value === "envelope"); if (value === "envelope") setEnvelopeRequest(request => request + 1); setTool(value === "envelope" ? "proposal" : value); }, []);
   const inspect = (id: string) => { setSelection(id); open("evidence"); };
 
   function followWorkspaceLink(event: MouseEvent) {
@@ -86,7 +88,7 @@ function LoadedDashboard({ profile, initialTool, surveyEnabled, addressRevision,
     {address && profile.identity.address?.normalized_address && profile.identity.address.normalized_address !== address.label ? <p className="dashboard-address-alias" data-testid="representative-address">Searched address retained · PLUTO representative address: {profile.identity.address.normalized_address}</p> : null}
     <DashboardPanels profile={profile} scenario={scenario} evaluation={evaluation} condo={condo} label={label} map={<DashboardMap bbl={bbl} condo={condo} compact/>} onOpen={open} onInspect={inspect}/>
     {DASHBOARD_TOOLS.filter(value => value !== "envelope").map(value => <FloatingWorkspaceWindow key={value} id={`workspace-${value}`} title={TOOL_LABELS[value]} open={tool === value} onClose={() => setTool(null)} wide={["map", "proposal", "study", "report", "evidence"].includes(value)}>
-      {tool === value || PERSISTENT_TOOLS.includes(value) ? <DashboardTools tool={value} profile={profile} scenario={scenario} evaluation={evaluation} returnedScenario={returnedScenario} returnedEvaluation={returnedEvaluation} condo={condo} address={address} label={label} selection={selection} onSelectEvidence={setSelection} onInspect={inspect} onOpen={open} surveyEnabled={surveyEnabled}/> : null}
+      {tool === value || PERSISTENT_TOOLS.includes(value) ? <DashboardTools tool={value} profile={profile} scenario={scenario} evaluation={evaluation} returnedScenario={returnedScenario} returnedEvaluation={returnedEvaluation} condo={condo} address={address} label={label} selection={selection} onSelectEvidence={setSelection} onInspect={inspect} onOpen={open} surveyEnabled={surveyEnabled} focusEnvelope={focusEnvelope} envelopeRequest={envelopeRequest}/> : null}
     </FloatingWorkspaceWindow>)}
   </div>;
 }

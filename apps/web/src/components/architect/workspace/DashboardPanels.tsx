@@ -62,10 +62,10 @@ function DashboardFact({ field, fact, profile, onInspect, onOpen }: {
   return <tr>
     <th scope="row">{fieldLabel(field)}</th>
     <td>
-      <span className="bd-fact-value">{fact?.value != null ? <>{formatValue(fact.value)}{fact.units ? ` ${fact.units}` : ""}</> : "Unknown"}</span>
+      <div className="bd-fact-cell"><span className="bd-fact-value">{fact?.value != null ? <>{formatValue(fact.value)}{fact.units ? ` ${fact.units === "square feet" ? "sq ft" : fact.units === "feet" ? "ft" : fact.units}` : ""}</> : "Unknown"}</span>
       <button type="button" className={`bd-source-status${conflict || sourceAmbiguous ? " bd-source-conflict" : ""}`}
         aria-label={`${fieldLabel(field)}: ${status}; inspect source`}
-        onClick={() => records.length === 1 ? onInspect(records[0].provenance_id) : onOpen("facts")}>{status} <span aria-hidden="true">↗</span></button>
+        onClick={() => records.length === 1 ? onInspect(records[0].provenance_id) : onOpen("facts")}>{status} <span aria-hidden="true">↗</span></button></div>
     </td>
   </tr>;
 }
