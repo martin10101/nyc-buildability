@@ -1,10 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 import profileFixture from "../../../packages/contracts/fixtures/valid/property_profile/builder_output_m1_t005.json";
-import outlineFixture from "../../../packages/contracts/fixtures/valid/lot_geometry/single_lot_polygon.json";
+import dof32 from "../../../packages/contracts/fixtures/valid/lot_geometry/single_lot_dof_base_3022640032.json";
+import dof33 from "../../../packages/contracts/fixtures/valid/lot_geometry/single_lot_dof_base_3022640033.json";
 
-// Synthetic UI transport scaffolding only. Wallabout identifiers reproduce the
-// reported membership; fixture dimensions/geography are NOT Wallabout evidence
-// and are never used to prove zoning or mathematical correctness.
+// Recorded DOF Wallabout base geometries, unchanged. The property profiles
+// and entitlements below remain synthetic UI scaffolding and prove no
+// Wallabout dimensions, development allowance or legal-site arrangement.
 const BILLING = "3022647515";
 const LOTS = ["3022640032", "3022640033"];
 
@@ -28,14 +29,10 @@ async function installStudy(page: Page) {
     provenance: { source_id: "test-only", dataset_ids: [], retrieved_at: null, dataset_version: null, queries: [] },
     site_definition: { status: "unconfirmed", active_confirmation: null, confirmation_count: 0, parcel_discrepancy: null },
   } }));
-  await page.route("**/api/v1/properties/*/lot-geometry", async route => {
+  await page.route(/\/api\/v1\/properties\/\d{10}\/lot-geometry(?:\?.*)?$/, async route => {
     const bbl = new URL(route.request().url()).pathname.split("/").at(-2)!;
     if (!LOTS.includes(bbl)) return route.continue();
-    const outline = structuredClone(outlineFixture);
-    outline.bbl = bbl;
-    // Translate the second synthetic display polygon only so both outlines are
-    // visible. This is test scaffolding, never production spatial computation.
-    if (bbl === LOTS[1]) for (const ring of outline.geometry.coordinates) for (const point of ring) point[0] += 0.0004;
+    const outline = structuredClone(bbl === LOTS[0] ? dof32 : dof33);
     await route.fulfill({ json: outline });
   });
 }

@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { LotOutlineOutcome, ValidatedGeometry } from "@/lib/lot-geometry-api";
 import { ParcelStudyMap, type ParcelStudyOutline } from "../ParcelStudyMap";
@@ -16,6 +16,7 @@ interface TestMap {
 const runtime = vi.hoisted(() => ({
   maps: [] as TestMap[],
   markers: [] as HTMLElement[],
+  attributions: [] as unknown[],
   renderAvailable: true,
   styleReady: true,
   observerDisconnect: vi.fn(),
@@ -56,8 +57,11 @@ vi.mock("maplibre-gl", () => {
     remove() {}
   }
   class ControlMock {}
+  class AttributionMock {
+    constructor(options: unknown) { runtime.attributions.push(options); }
+  }
   return { default: { Map: MapMock, Marker: MarkerMock,
-    AttributionControl: ControlMock, NavigationControl: ControlMock, setWorkerUrl: vi.fn() } };
+    AttributionControl: AttributionMock, NavigationControl: ControlMock, setWorkerUrl: vi.fn() } };
 });
 
 const LOT_A = "3022640032";
@@ -106,6 +110,7 @@ function features(index = runtime.maps.length - 1) {
 beforeEach(() => {
   runtime.maps.length = 0;
   runtime.markers.length = 0;
+  runtime.attributions.length = 0;
   runtime.renderAvailable = true;
   runtime.styleReady = true;
   runtime.observerDisconnect.mockReset();
@@ -216,7 +221,7 @@ describe("ParcelStudyMap display-only identity and geometry", () => {
   });
 
   it("draws all polygons and holes verbatim, with numbered lot and BBL labels", async () => {
-    render(<ParcelStudyMap arrangement="separate" outlines={[outline(LOT_A), outline(LOT_B, result(LOT_B, multipolygon))]} />);
+    render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A), outline(LOT_B, result(LOT_B, multipolygon))]} />);
     await screen.findByText("2 of 2 approximate parcel outlines shown.");
     expect(features()).toHaveLength(2);
     expect(features()[0].geometry).toEqual(polygon);
@@ -323,5 +328,140 @@ describe("ParcelStudyMap display-only identity and geometry", () => {
     expect(screen.getByText(/Some street context could not load/)).toBeInTheDocument();
     expect(screen.getByText("1 of 1 approximate parcel outlines shown.")).toBeInTheDocument();
     expect(runtime.maps[0].remove).not.toHaveBeenCalled();
+  });
+
+  it("lets the compact dashboard focus either real parcel and return to all without changing source geometry", async () => {
+    render(<ParcelStudyMap compact arrangement="compare" outlines={[outline(LOT_A), outline(LOT_B, result(LOT_B, multipolygon))]} />);
+    await screen.findByText("2 of 2 approximate parcel outlines shown.");
+    expect(screen.getByRole("button", { name: "View all parcels" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-state", "ready");
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-kind", "parcels");
+    fireEvent.click(screen.getByRole("button", { name: "View all parcels" }));
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-state", "ready");
+    expect(runtime.maps).toHaveLength(1);
+    fireEvent.click(screen.getByRole("button", { name: "View Parcel 1, Lot 32" }));
+    await screen.findByText("Parcel 1 · Lot 32 approximate outline shown.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual([LOT_A]);
+    expect(features()[0].geometry).toEqual(polygon);
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-focus", LOT_A);
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-visible-bbls", LOT_A);
+    fireEvent.click(screen.getByRole("button", { name: "View Parcel 2, Lot 33" }));
+    await screen.findByText("Parcel 2 · Lot 33 approximate outline shown.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual([LOT_B]);
+    expect(features()[0].geometry).toEqual(multipolygon);
+    expect(screen.getByRole("button", { name: "View Parcel 2, Lot 33" })).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(screen.getByRole("button", { name: "View all parcels" }));
+    await screen.findByText("2 of 2 approximate parcel outlines shown.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual([LOT_A, LOT_B]);
+    expect(screen.getByLabelText("Parcel outline availability").children).toHaveLength(2);
+  });
+
+  it.each([2, 5])("distinguishes %i parcels in Compare, groups them in Together, and resets Separate to the first parcel", async count => {
+    const outlines = Array.from({ length: count }, (_, index) => outline(`30226400${32 + index}`));
+    const { rerender } = render(<ParcelStudyMap arrangement="compare" outlines={outlines} />);
+    await screen.findByText(`${count} of ${count} approximate parcel outlines shown.`);
+    expect(new Set(features().map(feature => feature.properties.color)).size).toBe(count);
+    expect(screen.getAllByRole("button", { name: /^View Parcel/ })).toHaveLength(count);
+    fireEvent.click(screen.getByRole("button", { name: `View Parcel ${count}, Lot ${31 + count}` }));
+    await screen.findByText(`Parcel ${count} · Lot ${31 + count} approximate outline shown.`);
+    rerender(<ParcelStudyMap arrangement="together" outlines={outlines} />);
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-focus", "all");
+    await screen.findByText(`${count} of ${count} approximate parcel outlines shown.`);
+    expect(features()).toHaveLength(count);
+    expect(new Set(features().map(feature => feature.properties.color)).size).toBe(1);
+    expect(features().map(feature => feature.properties.bbl)).toEqual(outlines.map(entry => entry.bbl));
+    expect(features().every(feature => JSON.stringify(feature.geometry) === JSON.stringify(polygon))).toBe(true);
+    rerender(<ParcelStudyMap arrangement="separate" outlines={outlines} />);
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-focus", LOT_A);
+    await screen.findByText("Parcel 1 · Lot 32 approximate outline shown.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual([LOT_A]);
+    expect(screen.getByRole("button", { name: "View Parcel 1, Lot 32" })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("requires the newly focused parcel to paint before reusing a ready status", async () => {
+    render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A), outline(LOT_B)]} />);
+    await screen.findByText("2 of 2 approximate parcel outlines shown.");
+    runtime.renderAvailable = false;
+    fireEvent.click(screen.getByRole("button", { name: "View Parcel 2, Lot 33" }));
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-state", "loading");
+    await waitFor(() => expect(runtime.maps).toHaveLength(2));
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-state", "loading");
+    expect(screen.queryByText("Parcel 2 · Lot 33 approximate outline shown.")).not.toBeInTheDocument();
+    runtime.renderAvailable = true;
+    act(() => runtime.maps[1].emit("render"));
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-state", "ready");
+    expect(screen.getByRole("status")).toHaveTextContent("Parcel 2 · Lot 33 approximate outline shown.");
+  });
+
+  it("shows the selected missing parcel state instead of another parcel or the billing outline", async () => {
+    render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A), missing(LOT_B)]} contextOutline={condoContext()} />);
+    await screen.findByText("1 of 2 approximate parcel outlines shown.");
+    const previousMap = runtime.maps[0];
+    fireEvent.click(screen.getByRole("button", { name: "View Parcel 2, Lot 33" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Parcel 2 · Lot 33: No outline in the source record.");
+    expect(screen.queryByTestId("parcel-study-map-canvas")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("parcel-study-context-outline")).not.toBeInTheDocument();
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-visible-bbls", "");
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-state", "unavailable");
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-kind", "unavailable");
+    expect(previousMap.remove).toHaveBeenCalledOnce();
+    expect(screen.getByRole("link", { name: "View Lot 33 in ZoLa" })).toBeInTheDocument();
+  });
+
+  it("never presents the condo context as a selected individual parcel, including Separate's default", async () => {
+    const outlines = [missing(LOT_A), missing(LOT_B)];
+    const contextOutline = condoContext();
+    const { rerender } = render(<ParcelStudyMap arrangement="compare" outlines={outlines} contextOutline={contextOutline} />);
+    await screen.findByText("Condo tax-map outline shown for context; individual parcel boundaries unavailable.");
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-kind", "condo-context");
+    fireEvent.click(screen.getByRole("button", { name: "View Parcel 1, Lot 32" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Parcel 1 · Lot 32: No outline in the source record.");
+    expect(screen.queryByTestId("parcel-study-map-canvas")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("parcel-study-context-outline")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "View all parcels" }));
+    await screen.findByText("Condo tax-map outline shown for context; individual parcel boundaries unavailable.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual([BILLING]);
+    rerender(<ParcelStudyMap arrangement="separate" outlines={outlines} contextOutline={contextOutline} />);
+    expect(screen.getByRole("status")).toHaveTextContent("Parcel 1 · Lot 32: No outline in the source record.");
+    expect(screen.queryByTestId("parcel-study-map-canvas")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("parcel-study-context-outline")).not.toBeInTheDocument();
+  });
+
+  it("resets a selected parcel synchronously when the property membership changes", async () => {
+    const { rerender } = render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A), outline(LOT_B)]} />);
+    await screen.findByText("2 of 2 approximate parcel outlines shown.");
+    fireEvent.click(screen.getByRole("button", { name: "View Parcel 2, Lot 33" }));
+    await screen.findByText("Parcel 2 · Lot 33 approximate outline shown.");
+    rerender(<ParcelStudyMap arrangement="compare" outlines={[outline("3022640034"), outline("3022640035")]} />);
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-focus", "all");
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-visible-bbls", "3022640034,3022640035");
+    expect(screen.queryByRole("button", { name: "View Parcel 2, Lot 33" })).not.toBeInTheDocument();
+    await screen.findByText("2 of 2 approximate parcel outlines shown.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual(["3022640034", "3022640035"]);
+  });
+
+  it("attributes the displayed DOF geometry to DOF without inventing MapPLUTO accuracy", async () => {
+    const dof = result(LOT_A);
+    if (dof.kind !== "document") throw new Error("Fixture must be a document");
+    Object.assign(dof.view, {
+      attribution: "NYC Department of Finance (DOF), Digital Tax Map",
+      accuracyNote: "Approximate tax-map geometry; not a boundary survey.",
+      source: { sourceId: "nyc-dof-digital-tax-map", datasetVersion: "1.1.0", retrievedAt: "2026-09-26T20:00:00Z" },
+    });
+    render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A, dof)]} />);
+    await screen.findByText("1 of 1 approximate parcel outlines shown.");
+    expect(runtime.attributions).toEqual([{ customAttribution: ["NYC Department of Finance (DOF), Digital Tax Map"] }]);
+    expect(screen.getByText(/Source: nyc-dof-digital-tax-map/)).toHaveTextContent("Version: 1.1.0");
+    expect(screen.queryByText(/MapPLUTO|20 feet/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Approximate official tax-map outlines/)).toBeInTheDocument();
+  });
+
+  it("treats source attribution as plain text before passing it to MapLibre's HTML control", async () => {
+    const source = result(LOT_A);
+    if (source.kind !== "document") throw new Error("Fixture must be a document");
+    source.view.attribution = 'Official <source> & "record"';
+    render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A, source)]} />);
+    await screen.findByText("1 of 1 approximate parcel outlines shown.");
+    expect(runtime.attributions).toEqual([{ customAttribution: ["Official &lt;source&gt; &amp; &quot;record&quot;"] }]);
   });
 });

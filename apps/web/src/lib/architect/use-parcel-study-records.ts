@@ -87,7 +87,7 @@ export function useParcelStudyRecords(baseBbls: readonly string[], billingBbl: s
             outcome => update(bbl, { profileOutcome: matchProfile(bbl, outcome) }),
             () => update(bbl, { profileOutcome: { kind: "network_error", message: "Property records could not be loaded. Retry this study." } }),
           ),
-          fetchLotGeometry(bbl, options).then(
+          fetchLotGeometry(bbl, { ...options, source: "tax-map" }).then(
             outcome => update(bbl, { outlineOutcome: matchOutline(bbl, outcome) }),
             () => update(bbl, { outlineOutcome: { kind: "network_error", message: "The parcel outline could not be loaded. Retry this study." } }),
           ),

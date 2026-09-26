@@ -37,7 +37,7 @@ export interface LotIdentity {
   condo_no: number | null;
 }
 export interface LotOutlineSource {
-  source_id: "nyc-dcp-mappluto-arcgis";
+  source_id: "nyc-dcp-mappluto-arcgis" | "nyc-dof-digital-tax-map";
   service_root: NonEmptyString;
   layer: NonEmptyString;
   endpoint: NonEmptyString;
@@ -45,7 +45,7 @@ export interface LotOutlineSource {
   retrieved_at: DateTime;
 }
 export interface LotGeometry {
-  contract_version: "1.0.0";
+  contract_version: "1.0.0" | "1.1.0";
   document_kind: "lot_outline";
   bbl: Bbl;
   outcome: "single_lot" | "no_outline" | "multiple_features" | "invalid_geometry";

@@ -165,6 +165,8 @@ export interface LotGeometryLookupOptions {
   fetchImpl?: typeof fetch;
   signal?: AbortSignal;
   timeoutMs?: number;
+  /** Explicit individual tax-map read; omitted preserves the MapPLUTO path. */
+  source?: "tax-map";
 }
 
 function apiBaseUrl(): string {
@@ -274,11 +276,11 @@ function documentView(record: Record<string, unknown>): LotOutlineView {
     ),
     attribution: boundedText(
       record.attribution,
-      "NYC Department of City Planning (DCP), MapPLUTO",
+      "Source attribution not supplied; see source details.",
     ),
     disclaimer: boundedText(
       record.disclaimer,
-      "Provided by NYC DCP for informational purposes only; not a legal boundary survey.",
+      "Display only; not a legal boundary survey. The source disclaimer was not supplied.",
     ),
     notes: stringArray(record.notes),
     source: {
@@ -308,7 +310,8 @@ export async function fetchLotGeometry(
 ): Promise<LotOutlineOutcome> {
   const fetchImpl = options.fetchImpl ?? fetch;
   const timeoutMs = options.timeoutMs ?? DEFAULT_LOT_GEOMETRY_TIMEOUT_MS;
-  const url = `${apiBaseUrl()}/api/v1/properties/${encodeURIComponent(bbl)}/lot-geometry`;
+  const query = options.source === "tax-map" ? "?source=tax-map" : "";
+  const url = `${apiBaseUrl()}/api/v1/properties/${encodeURIComponent(bbl)}/lot-geometry${query}`;
 
   const controller = new AbortController();
   let timedOut = false;
@@ -393,6 +396,19 @@ export async function fetchLotGeometry(
             record && typeof record.outcome === "string"
               ? boundedToken(record.outcome, 48)
               : null,
+          correlationId,
+        };
+      }
+      // An older API may ignore an unknown query parameter. Never let its
+      // MapPLUTO billing/complex shape masquerade as the requested DOF lot.
+      if (options.source === "tax-map" && (
+        record.contract_version !== "1.1.0" ||
+        asRecord(record.source)?.source_id !== "nyc-dof-digital-tax-map" ||
+        record.bbl !== bbl
+      )) {
+        return {
+          kind: "error", state: "result_mismatch", httpStatus: 200,
+          message: "The returned outline does not identify the requested tax-map parcel and source.",
           correlationId,
         };
       }

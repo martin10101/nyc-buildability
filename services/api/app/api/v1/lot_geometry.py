@@ -14,8 +14,9 @@ scenario / evidence routes EXACTLY:
   correlation header, no hint the feature exists). ``include_in_schema=False`` so
   it never appears in OpenAPI.
 - No authentication yet (service is internal/dev only; must not be public).
-- BODY-LESS: only the ``bbl`` path parameter, so the untrusted-input surface is
-  exactly zero. The BBL flows through ``normalize_bbl`` before any I/O; the query
+- BODY-LESS: ``bbl`` plus an optional allowlisted ``source`` query. The default
+  remains MapPLUTO; ``source=tax-map`` explicitly selects DOF individual tax-lot
+  display polygons. The BBL flows through ``normalize_bbl`` before any I/O; the query
   URL is built from the canonical BBL only and can never be injected.
 
 DISPLAY-ONLY, NEVER MEASUREMENT. The transported 4326 geometry is for drawing an
@@ -56,6 +57,12 @@ from fastapi.responses import JSONResponse
 
 from app.config import internal_rule_eval_enabled
 from app.connectors.bbl import BBLValidationError, normalize_bbl
+from app.connectors.dtm_lot_outline import (
+    build_lot_outline as build_dtm_lot_outline,
+)
+from app.connectors.dtm_lot_outline import (
+    default_fetch as default_dtm_fetch,
+)
 from app.connectors.mappluto_lot_outline import (
     LotOutlineContractError,
     LotOutlineError,
@@ -79,6 +86,7 @@ __all__ = [
     "RECORD_ADDRESS_STATUS_STATE_MATRIX",
     "STATUS_STATE_MATRIX",
     "get_lot_outline_fetcher",
+    "get_tax_map_outline_fetcher",
     "get_pluto_record_fetch",
     "router",
 ]
@@ -124,6 +132,11 @@ def get_lot_outline_fetcher() -> LotOutlineFetcher:
     tests). Production uses the live keyless GET; tests inject recorded
     fixtures via ``app.dependency_overrides`` so the suite runs offline."""
     return default_fetch
+
+
+def get_tax_map_outline_fetcher() -> LotOutlineFetcher:
+    """Independent display-only DOF transport; no MapPLUTO measurement fallback."""
+    return default_dtm_fetch
 
 
 def _json(status_code: int, body: dict, correlation_id: str) -> JSONResponse:
@@ -189,7 +202,9 @@ def _assert_json_safe(document: dict) -> None:
 @router.get("/properties/{bbl}/lot-geometry", include_in_schema=False)
 def get_lot_geometry(
     bbl: str,
+    source: str = "mappluto",
     fetch: LotOutlineFetcher = Depends(get_lot_outline_fetcher),  # noqa: B008
+    tax_map_fetch: LotOutlineFetcher = Depends(get_tax_map_outline_fetcher),  # noqa: B008
 ) -> JSONResponse:
     """Transport the display-only 4326 lot outline for one BBL. Feature-flag
     gated OFF by default (reuses INTERNAL_RULE_EVAL_ENABLED)."""
@@ -200,6 +215,18 @@ def get_lot_geometry(
         return _not_found()
 
     correlation_id = uuid.uuid4().hex
+
+    if source not in {"mappluto", "tax-map"}:
+        return _json(
+            422,
+            {
+                "state": "validation_error",
+                "message": "source must be mappluto or tax-map",
+                "correlation_id": correlation_id,
+                "detail": {"code": "invalid_outline_source"},
+            },
+            correlation_id,
+        )
 
     # 1. Validate the BBL BEFORE any connector call (typed 422; zero network I/O).
     try:
@@ -224,8 +251,10 @@ def get_lot_geometry(
     # 2. Fetch + transport through the injected seam. The four honest outline
     #    outcomes are NORMAL 200 documents; only genuine faults become errors.
     try:
-        outline = build_lot_outline(
-            normalized.canonical, fetch=fetch, correlation_id=correlation_id
+        builder = build_dtm_lot_outline if source == "tax-map" else build_lot_outline
+        selected_fetch = tax_map_fetch if source == "tax-map" else fetch
+        outline = builder(
+            normalized.canonical, fetch=selected_fetch, correlation_id=correlation_id
         )
     except LotOutlineContractError:
         logger.error(

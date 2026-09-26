@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/lot_geometry.schema.json",
   "title": "Lot Outline (display-only EPSG:4326)",
-  "description": "v1 CLOSED contract for a DISPLAY-ONLY tax-lot outline (task M5-T020, D-040-R001). Deterministic transport of the official NYC DCP MapPLUTO parcel geometry, reprojected SERVER-SIDE by the ArcGIS FeatureServer to EPSG:4326 (WGS84 lng/lat GeoJSON, requested via outSR=4326) so a web map (MapLibre GL JS) can draw the outline. It is TRANSPORT FOR DISPLAY ONLY: display_only is always true, crs is always EPSG:4326, and NO area/dimension/measurement is derived from these degree coordinates anywhere - the authoritative EPSG:2263 (US survey feet) path (services/api/app/connectors/mappluto_geometry_arcgis.py) remains the sole owner of measurement, canonical geometry digests, and legal provenance and is NEVER edited or re-routed by this contract. The four typed outcomes are surfaced HONESTLY: single_lot (one feature, a Polygon or MultiPolygon outline); no_outline (zero features - a condominium UNIT lot 1001-6999 has no polygon of its own, or the BBL matched no lot - never a fabricated shape); multiple_features (more than one feature for one BBL - REVIEW REQUIRED, never a silent first-pick, geometry withheld); invalid_geometry (a feature whose geometry is null/empty/non-polygon - a typed outcome, never a 500). Every outcome carries the +/-20 ft source-accuracy note, NYC DCP attribution, the informational-purposes-only disclaimer, and the source provenance (source_id, endpoint URL, per-feature dataset Version, retrieval timestamp). coordinates are GeoJSON [longitude, latitude] pairs exactly as the official service emits them (verbatim, never re-rounded).",
+  "description": "Closed display-only EPSG:4326 tax-lot outline contract. Version 1.0.0 transports NYC DCP MapPLUTO; additive 1.1.0 also admits NYC DOF Digital Tax Map outlines from an explicitly selected source. Coordinates are transported verbatim for drawing, never measurement, legal zoning-lot determination, parcel merger, or a buildable envelope. The authoritative EPSG:2263 measurement path is unchanged. Four typed outcomes preserve missing, invalid, and ambiguous data without invented geometry. Each outcome carries source-specific provenance, accuracy notes, attribution, and disclaimers; the MapPLUTO tolerance is not asserted for DOF.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -27,8 +27,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0"],
-      "description": "CLOSED enum of published lot_geometry contract versions. 1.0.0 = M5-T020 initial display-only outline shape. New versions are admitted only by an accepted contract task that appends to this enum."
+      "enum": ["1.0.0", "1.1.0"],
+      "description": "Published versions: 1.0.0 MapPLUTO; additive 1.1.0 admits explicitly selected DOF Digital Tax Map display outlines while retaining older payloads."
     },
     "document_kind": {
       "type": "string",
@@ -89,15 +89,15 @@
     },
     "accuracy_note": {
       "$ref": "common.schema.json#/$defs/non_empty_string",
-      "description": "The source's own +/-20 ft horizontal-accuracy statement plus the display-only boundary note (an outline is approximate; no measurement is derived from these coordinates)."
+      "description": "Source-specific accuracy and display-only limitations. MapPLUTO carries its existing plus-or-minus 20 ft statement; DOF has no numerical tolerance established here. Never transfer one source tolerance to another."
     },
     "attribution": {
       "$ref": "common.schema.json#/$defs/non_empty_string",
-      "description": "NYC Department of City Planning (DCP) MapPLUTO attribution string, expected on any map display of this outline."
+      "description": "Attribution to the agency and dataset actually supplying this outline."
     },
     "disclaimer": {
       "$ref": "common.schema.json#/$defs/non_empty_string",
-      "description": "The permanent DCP informational-purposes-only disclaimer; not a legal boundary survey."
+      "description": "Source-specific informational-use disclaimer and boundary-survey limitation."
     },
     "notes": {
       "type": "array",
@@ -109,6 +109,16 @@
       "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid contract fixture (packages/contracts README convention). The builder NEVER emits this key; it is allowed (optional) so an invalid fixture fails only for its stated defect under additionalProperties:false, and valid fixtures - which omit it - stay clean."
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source": { "properties": { "source_id": { "const": "nyc-dof-digital-tax-map" } } }
+        }
+      },
+      "then": { "properties": { "contract_version": { "const": "1.1.0" } } }
+    }
+  ],
   "$defs": {
     "position": {
       "type": "array",
@@ -167,7 +177,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": ["classification", "condo_no", "note"],
-      "description": "Condominium semantics mirrored VERBATIM from the authoritative connector's _condo_classification (research section 2.5): billing lots 7501-7599 carry the merged complex polygon; unit lots 1001-6999 carry no polygon of their own.",
+      "description": "Source-specific identity description. MapPLUTO retains its billing/unit semantics. DOF exact tax-lot polygons use standard_lot without asserting a legal zoning-lot status; CONDO_FLAG=C is preserved in the note and does not identify the polygon as a unit or whole complex.",
       "properties": {
         "classification": {
           "type": "string",
@@ -221,11 +231,11 @@
         "dataset_version",
         "retrieved_at"
       ],
-      "description": "Provenance of the transported outline: the official DCP_GIS ArcGIS MapPLUTO feature service, the exact bounded query URL, the per-feature dataset release Version, and the retrieval timestamp.",
+      "description": "Provenance of the selected official display source: exact bounded query URL, source identity, retrieval timestamp, and actual dataset release if exposed. DOF EFFECTIVE_TAX_YEAR is not a dataset release; its dataset_version remains null.",
       "properties": {
         "source_id": {
           "type": "string",
-          "enum": ["nyc-dcp-mappluto-arcgis"]
+          "enum": ["nyc-dcp-mappluto-arcgis", "nyc-dof-digital-tax-map"]
         },
         "service_root": { "$ref": "common.schema.json#/$defs/non_empty_string" },
         "layer": { "$ref": "common.schema.json#/$defs/non_empty_string" },
@@ -234,7 +244,7 @@
           "description": "The exact bounded FeatureServer query URL (f=geojson&outSR=4326) this outline was transported from."
         },
         "dataset_version": {
-          "description": "The per-feature MapPLUTO release Version string (e.g. '26v2'); null when no feature was returned.",
+          "description": "Actual dataset release identifier, if exposed. MapPLUTO Version is preserved. DOF Digital Tax Map does not expose a release identifier in these features, so null; effective tax year is preserved only as a source attribute.",
           "anyOf": [
             { "$ref": "common.schema.json#/$defs/non_empty_string" },
             { "type": "null" }

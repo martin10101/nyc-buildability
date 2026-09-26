@@ -1834,3 +1834,38 @@ The initial dashboard integration switched to base-only map requests after recog
 - Require remote regression evidence for the exact missing-base/available-billing response pattern, actual painted map geometry on desktop and phone layouts, the floating tools, foreign/review-required billing results, partial base success, and late responses after retry or property changes. Fixture geometry proves UI behavior, never Wallabout's real geography.
 
 The proposal editor's site-definition restriction and all development-allowance withholding remain separate from this display correction. The fix's PR and deployment record carry its final test and live verification evidence; these requirements do not claim a legal-site or calculation capability.
+
+
+## September 26 — individual parcel comparison correction
+
+### Owner-observed defect and corrected diagnosis
+
+The owner reported that switching between a single parcel and both parcels kept showing the same overall shape. This was a real gap in the previous correction: PR #245 restored a labeled condo billing outline when MapPLUTO supplied no base-lot geometry, but it did not supply individual parcel boundaries or a map selection control. A grouping label and a color change cannot stand in for distinct parcel geometry.
+
+The source investigation now resolves that specific gap. The current published NYC Department of Finance Digital Tax Map service returns separate exact-BBL polygons for `3022640032` (Lot 32) and `3022640033` (Lot 33). The existing MapPLUTO no-feature responses therefore describe MapPLUTO coverage; they do not establish that individual official outlines are unavailable from all city sources. Earlier wording about unavailable individual boundaries must be read in that narrower source context.
+
+### Verified source evidence and its limits
+
+- Official NYC Open Data catalog: https://data.cityofnewyork.us/City-Government/TAX_LOT_POLYGON/i38t-6if2 . Its catalog metadata attributes the data to DOF and links the current service below.
+- Exact geometry service: `https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/0/query`. BBL is a string field. Exact quoted-BBL queries with `f=geojson`, `returnGeometry=true`, and `outSR=4326` return a 5-position closed ring for Lot 32 and a 10-position closed ring for Lot 33, including closing positions. These are independently returned source shapes, not a fabricated split of the billing outline.
+- Both source records contain `CONDO_FLAG=C` and `BILL_BBL_FLAG=0`. The service's CONDO table independently relates both base BBLs to billing BBL `3022647515`, condo number `1313` and key `301313`. This is source-record association, not a legal zoning-lot determination.
+- The service layer metadata observed on September 26 reports `dataLastEditDate=1790410012940` (2026-09-26 08:06:52.940 UTC). Dataset release version is not supplied by this geometry layer and remains unknown. A tax-year field must not be relabeled as a release version. Metadata contains inconsistent cadence descriptions, so the application must not promise a daily/monthly refresh cadence.
+- These are shapes in the current published service. They do not prove a historical before/after merger, an approved zoning lot, surveyed dimensions, remaining development rights, or a buildable envelope. The MapPLUTO +/-20 ft accuracy statement cannot be attributed to DOF's different geometry source.
+
+### Bounded implementation and visual behavior
+
+Use an explicit `source=tax-map` option on the existing display-only lot-geometry route for validated individual base lots. The default MapPLUTO route remains available for ordinary lookups and the separately identified billing context. The canonical outline contract admits the DOF source additively in version 1.1.0 while retaining older 1.0.0 payloads. Preserve exact identity, CRS, finite closed rings, source coordinates, typed missing/multiple/invalid/error outcomes, bounded requests and attribution. Do not alter the authoritative EPSG:2263 measurement path.
+
+The map gets a visible wrapping parcel picker: all parcels, then each numbered lot. It works in the compact dashboard, floating map and parcel study. Separately initially focuses an individual parcel; Compare shows the individual boundaries in distinct colors; Together displays the parcels as one study selection while preserving each original boundary. A user may focus any individual lot without navigating away. Colors supplement lot labels and numbers. The same list supports three, four, five and larger bounded source sets without a two-parcel special case.
+
+An unavailable selected parcel must show its own missing/error state. The overall condo outline may remain as explicitly labeled context in an all-parcels view when no base outlines are available; it may never masquerade as the selected individual parcel. Successful base outlines remain usable if another source request fails. A property change or retry must hide stale geometry immediately. The browser must also reject a MapPLUTO response if an older server silently ignores the explicit DOF query.
+
+Attribution and expandable source details follow the geometry actually returned. A short approximate-tax-map note remains visible; the full accuracy, disclaimer, source ID, version/unknown-version and retrieval details remain accessible. A missing PLUTO property profile does not erase a separately available DOF map outline. Site-definition review and withheld development allowances remain separate and visible.
+
+### Verification and orchestrator handoff
+
+Before release, require source/parser/API cases for both real recorded base polygons, exact-identity mismatches, schema/CRS drift, ambiguous/truncated results, unusable geometry, unavailable responses and source selection; client cases for query routing and an older backend ignoring the query; component cases for selecting each parcel, returning to all, switching arrangements, five-parcel lists and missing selected geometry; and browser cases proving distinct painted shapes and mobile layout while the development-limit gate remains intact. Reuse the recorded Wallabout geometry without translation in its dedicated browser regression. Profile/entitlement scaffolding remains explicitly synthetic and proves no property dimensions or allowances.
+
+Deploy the compatible API before the frontend, then verify the live Wallabout dashboard and its floating tools. Remote CI, independent source/visual reviews, exact commit and deployment outcomes belong in the fix PR. No local npm/npx/node, project-control file access or project-control execution is part of this correction. The orchestrator owns recording the task and its gate disposition.
+
+This increment repairs parcel visualization and selection. It does not close the remaining backend work for established site arrangements, reviewed height/yard rules, rights allocation, dimensional envelopes or combined-site proposal approval described earlier in this assessment.
