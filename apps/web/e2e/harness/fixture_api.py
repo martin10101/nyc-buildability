@@ -55,13 +55,14 @@ import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.address_resolution import get_address_resolver
-from app.api.v1.lot_geometry import get_lot_outline_fetcher
+from app.api.v1.lot_geometry import get_lot_outline_fetcher, get_tax_map_outline_fetcher
 from app.api.v1.properties import get_pluto_fetcher
 from app.api.v1.rule_evaluation import get_spatial_substrate_provider
 from app.config import (
     INTERNAL_RULE_EVAL_ENABLED_ENV_VAR,
     INTERNAL_SCENARIO_ENABLED_ENV_VAR,
 )
+from app.connectors.dtm_lot_outline import build_outline_query_url as dtm_outline_query_url
 from app.connectors.geoclient_address import AddressResolution
 from app.connectors.mappluto_lot_outline import (
     LotOutlineTransport,
@@ -315,6 +316,21 @@ def harness_lot_outline_fetcher(canonical_bbl: str, correlation_id: str) -> LotO
     )
 
 
+def harness_tax_map_outline_fetcher(canonical_bbl: str, correlation_id: str) -> LotOutlineTransport:
+    """Recorded DOF bytes through the real parser/route; never live test I/O."""
+    fixture_dir = REPO_ROOT / "services/api/tests/fixtures/dtm_lot_outline"
+    manifest = json.loads((fixture_dir / "MANIFEST.json").read_text(encoding="utf-8"))
+    capture = next((item for item in manifest["captures"] if item["bbl"] == canonical_bbl), None)
+    body = (
+        (fixture_dir / capture["file"]).read_text(encoding="utf-8") if capture
+        else '{"type":"FeatureCollection","features":[]}'
+    )
+    return LotOutlineTransport(
+        url=dtm_outline_query_url(canonical_bbl), status=200, body=body,
+        retrieved_at=capture["retrieved_at"] if capture else "2026-09-26T20:22:01Z",
+    )
+
+
 # Test street name -> canonical BBL the resolver returns. The e2e fills these
 # exact street names to drive each lot-outline outcome through the real address
 # confirm card. Any other street resolves to the single_lot outline BBL.
@@ -407,6 +423,9 @@ def build_app():
     # off (INTERNAL_RULE_EVAL_ENABLED, enabled above for this process).
     app.dependency_overrides[get_lot_outline_fetcher] = (
         lambda: harness_lot_outline_fetcher
+    )
+    app.dependency_overrides[get_tax_map_outline_fetcher] = (
+        lambda: harness_tax_map_outline_fetcher
     )
     app.dependency_overrides[get_address_resolver] = (
         lambda: harness_address_resolver

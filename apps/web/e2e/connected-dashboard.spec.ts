@@ -88,7 +88,7 @@ test("address confirmation populates the same dashboard and floating tools retai
 
 // Recorded DOF Wallabout geometry, unchanged. Profiles and entitlements are
 // synthetic UI scaffolding and prove no Wallabout dimensions or allowances.
-async function condoRecords(page: Page) {
+async function condoRecords(page: Page, mockOutlines = true) {
   await page.route("**/api/v1/properties/*", async route => {
     const bbl = new URL(route.request().url()).pathname.split("/").at(-1)!;
     if (![BILLING, ...LOTS].includes(bbl)) return route.continue();
@@ -106,7 +106,7 @@ async function condoRecords(page: Page) {
     provenance: { source_id: "test-only", dataset_ids: [], retrieved_at: null, dataset_version: null, queries: [] },
     site_definition: { status: "unconfirmed", active_confirmation: null, confirmation_count: 0, parcel_discrepancy: null },
   } }));
-  await page.route(/\/api\/v1\/properties\/\d{10}\/lot-geometry(?:\?.*)?$/, route => {
+  if (mockOutlines) await page.route(/\/api\/v1\/properties\/\d{10}\/lot-geometry(?:\?.*)?$/, route => {
     const bbl = new URL(route.request().url()).pathname.split("/").at(-2)!;
     if (!LOTS.includes(bbl)) return route.continue();
     const outline = structuredClone(bbl === LOTS[0] ? dof32 : dof33);
@@ -144,7 +144,8 @@ test("recorded Wallabout tax-map polygons can be viewed individually and togethe
       taxMapRequests.push(url.pathname.split("/").at(-2)!);
     }
   });
-  await condoRecords(page);
+  // Use the real backend route/parser over recorded DOF bytes in the harness.
+  await condoRecords(page, false);
   await page.setViewportSize({ width: 1440, height: 960 });
   await page.goto(`/property/workspace?ruleeval=on&bbl=${BILLING}`);
   const compact = page.locator(".bd-map-slot").getByTestId("parcel-study-map");
