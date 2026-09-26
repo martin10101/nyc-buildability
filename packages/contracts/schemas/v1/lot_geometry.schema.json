@@ -109,15 +109,13 @@
       "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid contract fixture (packages/contracts README convention). The builder NEVER emits this key; it is allowed (optional) so an invalid fixture fails only for its stated defect under additionalProperties:false, and valid fixtures - which omit it - stay clean."
     }
   },
-  "allOf": [
+  "anyOf": [
     {
-      "if": {
-        "properties": {
-          "source": { "properties": { "source_id": { "const": "nyc-dof-digital-tax-map" } } }
-        }
-      },
-      "then": { "properties": { "contract_version": { "const": "1.1.0" } } }
-    }
+      "properties": {
+        "source": { "properties": { "source_id": { "const": "nyc-dcp-mappluto-arcgis" } } }
+      }
+    },
+    { "properties": { "contract_version": { "const": "1.1.0" } } }
   ],
   "$defs": {
     "position": {

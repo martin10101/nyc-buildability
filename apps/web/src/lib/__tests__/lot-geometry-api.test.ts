@@ -47,7 +47,7 @@ async function run(response: Response): Promise<LotOutlineOutcome> {
 
 describe("fetchLotGeometry — 200 outline documents", () => {
   it("requests a DOF parcel explicitly and preserves its source and geometry", async () => {
-    const fx = { ...fixture("single_lot_polygon"), contract_version: "1.1.0",
+    const fx: Record<string, unknown> = { ...fixture("single_lot_polygon"), contract_version: "1.1.0",
       bbl: BBL, source: { source_id: "nyc-dof-digital-tax-map", dataset_version: null,
         retrieved_at: "2026-09-26T20:00:00Z" },
       attribution: "NYC Department of Finance, Digital Tax Map",
