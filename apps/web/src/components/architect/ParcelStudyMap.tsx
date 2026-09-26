@@ -319,7 +319,7 @@ export function ParcelStudyMap({ outlines, contextOutline = null, arrangement, c
     <p id={statusId} className="parcel-study-map__status" role="status">{mapMessage}</p>
     {needsContext && context ? <div data-testid="parcel-study-context-outline"
       data-context-state={context.loading ? "loading" : displayContext ? (webgl && mapStatus === "ready" ? "rendered" : "available") : "unavailable"}>
-      <strong>Condo tax-map outline · context only</strong>
+      <strong>Condo tax-map outline · context only</strong>{" "}
       {!displayContext ? <p className="section-note">{context.message}</p> : null}
       {zolaLotUrl(context.bbl) ? <a href={zolaLotUrl(context.bbl)!} target="_blank" rel="noopener noreferrer">View condo context in ZoLa</a> : null}
     </div> : null}

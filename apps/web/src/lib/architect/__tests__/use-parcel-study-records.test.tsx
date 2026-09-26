@@ -177,6 +177,8 @@ function missing(bbl: string): LotOutlineOutcome {
 }
 
 describe("parcel study context requests", () => {
+  beforeEach(() => { vi.mocked(fetchLotGeometry).mockImplementation(async bbl => missing(bbl)); });
+
   it("fetches billing geometry separately without adding billing land or a billing profile request", async () => {
     const { result } = renderHook(() => useParcelStudyRecords(BASES, BILLING));
     await waitFor(() => expect(result.current.loading).toBe(false));
