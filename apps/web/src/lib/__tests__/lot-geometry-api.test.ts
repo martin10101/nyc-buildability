@@ -46,6 +46,49 @@ async function run(response: Response): Promise<LotOutlineOutcome> {
 }
 
 describe("fetchLotGeometry — 200 outline documents", () => {
+  it("requests a DOF parcel explicitly and preserves its source and geometry", async () => {
+    const fx: Record<string, unknown> = { ...fixture("single_lot_polygon"), contract_version: "1.1.0",
+      bbl: BBL, source: { source_id: "nyc-dof-digital-tax-map", dataset_version: null,
+        retrieved_at: "2026-09-26T20:00:00Z" },
+      attribution: "NYC Department of Finance, Digital Tax Map",
+      accuracy_note: "Approximate tax-map geometry; accuracy is not specified here.",
+      disclaimer: "Display only; not a boundary survey." };
+    const fetchImpl = fetchReturning(jsonResponse(fx));
+    const result = await fetchLotGeometry(BBL, { source: "tax-map", fetchImpl });
+    expect(vi.mocked(fetchImpl).mock.calls[0][0]).toMatch(/\/lot-geometry\?source=tax-map$/);
+    expect(result.kind).toBe("document");
+    if (result.kind !== "document") throw new Error("expected document");
+    expect(result.view.geometry).toEqual(fx.geometry);
+    expect(result.view.source.sourceId).toBe("nyc-dof-digital-tax-map");
+    expect(result.view.attribution).toContain("Finance");
+    expect(result.view.accuracyNote).not.toContain("20 ft");
+  });
+
+  it("withholds the shape when an older server ignores the tax-map query", async () => {
+    const result = await fetchLotGeometry(BBL, { source: "tax-map",
+      fetchImpl: fetchReturning(jsonResponse(fixture("single_lot_polygon"))) });
+    expect(result).toMatchObject({ kind: "error", state: "result_mismatch" });
+  });
+
+  it("never supplies a DCP attribution or disclaimer for a malformed DOF document", async () => {
+    const fx = { ...fixture("single_lot_polygon"), contract_version: "1.1.0", bbl: BBL,
+      source: { source_id: "nyc-dof-digital-tax-map" }, attribution: null, disclaimer: "" };
+    const result = await fetchLotGeometry(BBL, { source: "tax-map", fetchImpl: fetchReturning(jsonResponse(fx)) });
+    if (result.kind !== "document") throw new Error("expected document");
+    expect(result.view.attribution).toContain("not supplied");
+    expect(result.view.disclaimer).toContain("not supplied");
+    expect(result.view.attribution + result.view.disclaimer).not.toMatch(/DCP|MapPLUTO/);
+  });
+
+  it("rejects a foreign BBL or unsupported tax-map version", async () => {
+    for (const change of [{ bbl: "3022640032" }, { contract_version: "9.0.0" }]) {
+      const fx = { ...fixture("single_lot_polygon"), contract_version: "1.1.0", bbl: BBL,
+        source: { source_id: "nyc-dof-digital-tax-map" }, ...change };
+      const result = await fetchLotGeometry(BBL, { source: "tax-map", fetchImpl: fetchReturning(jsonResponse(fx)) });
+      expect(result).toMatchObject({ kind: "error", state: "result_mismatch" });
+    }
+  });
+
   it("single_lot: returns a document with the fixture geometry structurally UNCHANGED", async () => {
     const fx = fixture("single_lot_polygon");
     const outcome = await run(jsonResponse(fx, 200));

@@ -185,6 +185,9 @@ describe("parcel study context requests", () => {
     expect(result.current.records.map(record => record.bbl)).toEqual(BASES);
     expect(vi.mocked(fetchPropertyProfile).mock.calls.map(([bbl]) => bbl)).toEqual(BASES);
     expect(vi.mocked(fetchLotGeometry).mock.calls.map(([bbl]) => bbl).sort()).toEqual([...BASES, BILLING]);
+    for (const bbl of BASES) expect(outlineFetch).toHaveBeenCalledWith(bbl,
+      expect.objectContaining({ source: "tax-map", signal: expect.any(AbortSignal) }));
+    expect(outlineFetch.mock.calls.find(([bbl]) => bbl === BILLING)?.[1]?.source).toBeUndefined();
     expect(result.current.contextOutline).toEqual({ bbl: BILLING, outcome: missing(BILLING), loading: false });
   });
 

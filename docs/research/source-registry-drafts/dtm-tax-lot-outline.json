@@ -1,0 +1,55 @@
+[
+  {
+    "source_id": "nyc-dof-digital-tax-map",
+    "agency": "NYC Department of Finance (DOF)",
+    "name": "Digital Tax Map — TAX_LOT_POLYGON display outlines",
+    "official_url": "https://data.cityofnewyork.us/City-Government/TAX_LOT_POLYGON/i38t-6if2",
+    "source_type": "official_arcgis_feature_service",
+    "api_dataset_identifier": "DTM_ETL_DAILY_view/FeatureServer layer 0, TAX_LOT_POLYGON",
+    "service_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/0",
+    "authentication": {
+      "required": false,
+      "evidence": "Anonymous exact-BBL requests captured 2026-09-26; services/api/tests/fixtures/dtm_lot_outline/MANIFEST.json records exact URLs, response hashes and timestamps."
+    },
+    "rate_limits": {
+      "notes": "No numeric request-rate limit established. Published maxRecordCount is 1000; this connector requests at most two records for one BBL. One request per lookup, no paging or automatic retry; HTTP 429 is a typed upstream error and never a no-outline result.",
+      "throttle_signal": "HTTP 429"
+    },
+    "update_frequency": "Unresolved: catalog cadence statements conflict (Daily/Weekly metadata versus monthly extraction description). The DAILY service name does not establish a refresh guarantee. Layer dataLastEditDate 1790410012940 (2026-09-26T08:06:52.940Z) was observed at capture; it is an edit timestamp, not a release version.",
+    "geographic_coverage": "All five boroughs; individual DOF tax-lot polygons. This is a tax-map display layer, not a zoning-lot or development-rights source. For the Wallabout condo case the live service returned distinct exact polygons for 3022640032 and 3022640033, and no feature for billing 3022647515; no historical or retired-lot endpoint was used.",
+    "fields_available": {
+      "note": "Bounded fields verified against recorded layer metadata. Source spatial reference 102100/latestWkid 3857; query explicitly requests server reprojection to EPSG:4326 via outSR=4326 and GeoJSON. Coordinates are transported unchanged, never used for measurement.",
+      "columns": [
+        "OBJECTID (OID)",
+        "BBL (string length 10)",
+        "BORO (string length 1)",
+        "BLOCK (integer)",
+        "LOT (smallInteger)",
+        "CONDO_FLAG (string length 1)",
+        "BILL_BBL_FLAG (smallInteger)",
+        "EFFECTIVE_TAX_YEAR (nullable string length 255)"
+      ],
+      "identity_validation": "BBL and BORO/BLOCK/LOT must all exactly match the canonical requested BBL, including verified field types. Missing, conflicting or coerced identifiers fail closed. CONDO_FLAG=C is preserved as a source attribute, never interpreted as a condo-unit polygon, billing complex outline, or legal site definition.",
+      "version_semantics": "No dataset release field is exposed; dataset_version is null. EFFECTIVE_TAX_YEAR is preserved in source notes, never relabeled as release version, current status, or freshness."
+    },
+    "terms_usage_notes": "DOF Digital Tax Map information may not reflect the latest changes in other City systems and is provided for informational purposes. Not a boundary survey or zoning-lot determination. No numerical positional tolerance is established here; the MapPLUTO plus-or-minus 20 ft statement is not attributed to this source.",
+    "connector_implementation": "services/api/app/connectors/dtm_lot_outline.py. Explicit GET /api/v1/properties/{bbl}/lot-geometry?source=tax-map; default MapPLUTO path and authoritative EPSG:2263 measurement path unchanged. Fixed host, exact canonical-BBL equality, fixed field list, record cap 2, returnGeometry=true, f=geojson and outSR=4326; timeout 20 seconds, response ceiling 2 MiB. No bulk import, joins, union, spatial calculations or repair. Four typed outcomes: single_lot, no_outline, multiple_features requiring review, invalid_geometry. Wrong CRS, identity mismatch, malformed/truncated collection and service faults fail closed.",
+    "contract": "Additive lot_geometry 1.1.0 admits this source ID; old 1.0.0 MapPLUTO payloads remain valid. Canonical schema, generated TypeScript and runtime bundle are synchronized.",
+    "last_successful_ingestion": "2026-09-26 fixture capture only; this connector is request-driven and does not ingest citywide data.",
+    "latest_source_version": null,
+    "health_status": "Verified live fixture capture on 2026-09-26, exact timestamps in manifest; not a promise of current service health.",
+    "known_limitations": [
+      "Tax-map geometry is approximate and does not establish a legal boundary or a zoning lot.",
+      "A current service response is not proof that every parcel/legal record is current; resolve source conflicts through qualified review.",
+      "The two-base-lot association still comes from the separate condo records resolver, not geometry or visual adjacency.",
+      "More than one feature for a requested BBL withholds all geometry and requires review; no first-feature pick or fabricated split.",
+      "Display ring validation checks finite in-range closed rings only; it does not certify topology, survey accuracy, buildability or legal merge eligibility.",
+      "Dataset release version and refresh SLA are unknown."
+    ],
+    "fallback_source": "No automatic source failover. The separately requested MapPLUTO condo billing outline remains context only when all individual outlines are unavailable.",
+    "open_questions": [
+      "Reconcile conflicting catalog refresh-cadence statements before asserting a freshness SLA.",
+      "Obtain an official source-specific numeric accuracy statement before assigning any tolerance."
+    ]
+  }
+]

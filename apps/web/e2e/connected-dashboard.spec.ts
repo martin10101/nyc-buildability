@@ -1,6 +1,8 @@
-import { expect, test, type Page, type TestInfo } from "@playwright/test";
+import { expect, test, type Locator, type Page, type TestInfo } from "@playwright/test";
 import profileFixture from "../../../packages/contracts/fixtures/valid/property_profile/builder_output_m1_t005.json";
 import outlineFixture from "../../../packages/contracts/fixtures/valid/lot_geometry/single_lot_polygon.json";
+import dof32 from "../../../packages/contracts/fixtures/valid/lot_geometry/single_lot_dof_base_3022640032.json";
+import dof33 from "../../../packages/contracts/fixtures/valid/lot_geometry/single_lot_dof_base_3022640033.json";
 
 const BBL = "1000010010";
 const BILLING = "3022647515";
@@ -12,6 +14,18 @@ async function capture(page: Page, info: TestInfo, name: string, fullPage = fals
   const path = info.outputPath(`${name}.png`);
   await page.screenshot({ path, fullPage });
   await info.attach(name, { path, contentType: "image/png" });
+}
+
+async function expectLabelsAboveSourceCredit(map: Locator) {
+  const credit = await map.locator(".maplibregl-ctrl-attrib").boundingBox();
+  expect(credit).not.toBeNull();
+  const labels = await map.locator(".parcel-study-map__marker").all();
+  expect(labels.length).toBeGreaterThan(0);
+  for (const label of labels) {
+    const box = await label.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.y + box!.height).toBeLessThan(credit!.y);
+  }
 }
 
 test("address confirmation populates the same dashboard and floating tools retain work", async ({ page }, info) => {
@@ -84,9 +98,9 @@ test("address confirmation populates the same dashboard and floating tools retai
   await capture(page, info, "connected-proposal-mobile");
 });
 
-// Transport scaffolding only: actual fixture shapes, synthetic Wallabout
-// identities. Neither dimensions nor geometry here are Wallabout evidence.
-async function condoRecords(page: Page) {
+// Recorded DOF Wallabout geometry, unchanged. Profiles and entitlements are
+// synthetic UI scaffolding and prove no Wallabout dimensions or allowances.
+async function condoRecords(page: Page, mockOutlines = true) {
   await page.route("**/api/v1/properties/*", async route => {
     const bbl = new URL(route.request().url()).pathname.split("/").at(-1)!;
     if (![BILLING, ...LOTS].includes(bbl)) return route.continue();
@@ -104,10 +118,10 @@ async function condoRecords(page: Page) {
     provenance: { source_id: "test-only", dataset_ids: [], retrieved_at: null, dataset_version: null, queries: [] },
     site_definition: { status: "unconfirmed", active_confirmation: null, confirmation_count: 0, parcel_discrepancy: null },
   } }));
-  await page.route("**/api/v1/properties/*/lot-geometry", route => {
+  if (mockOutlines) await page.route(/\/api\/v1\/properties\/\d{10}\/lot-geometry(?:\?.*)?$/, route => {
     const bbl = new URL(route.request().url()).pathname.split("/").at(-2)!;
     if (!LOTS.includes(bbl)) return route.continue();
-    const outline = structuredClone(outlineFixture); outline.bbl = bbl;
+    const outline = structuredClone(bbl === LOTS[0] ? dof32 : dof33);
     return route.fulfill({ json: outline });
   });
 }
@@ -134,6 +148,70 @@ test("multi-parcel dashboard shows source outlines and preserves study choices w
   await expect(page.getByRole("dialog", { name: "Proposal editor" }).getByRole("heading", { name: "Site definition required" })).toBeVisible();
 });
 
+test("recorded Wallabout tax-map polygons can be viewed individually and together", async ({ page }, info) => {
+  const taxMapRequests: string[] = [];
+  page.on("request", request => {
+    const url = new URL(request.url());
+    if (url.pathname.endsWith("/lot-geometry") && url.searchParams.get("source") === "tax-map") {
+      taxMapRequests.push(url.pathname.split("/").at(-2)!);
+    }
+  });
+  // Use the real backend route/parser over recorded DOF bytes in the harness.
+  await condoRecords(page, false);
+  await page.setViewportSize({ width: 1440, height: 960 });
+  await page.goto(`/property/workspace?ruleeval=on&bbl=${BILLING}`);
+  const compact = page.locator(".bd-map-slot").getByTestId("parcel-study-map");
+  await expect(compact).toHaveAttribute("data-map-state", "ready", { timeout: 15_000 });
+  await expect(compact).toHaveAttribute("data-visible-bbls", LOTS.join(","));
+  expect(taxMapRequests).toEqual(expect.arrayContaining(LOTS));
+  expect(taxMapRequests).not.toContain(BILLING);
+  await compact.getByRole("button", { name: "View Parcel 1, Lot 32" }).click();
+  await expect(compact).toHaveAttribute("data-map-focus", LOTS[0]);
+  await expect(compact).toHaveAttribute("data-visible-bbls", LOTS[0]);
+  await expect(compact).toHaveAttribute("data-map-state", "ready");
+  const lot32Pixels = await compact.getByTestId("parcel-study-map-canvas").locator("canvas").screenshot();
+  await expectLabelsAboveSourceCredit(compact);
+  await capture(page, info, "connected-wallabout-lot32", true);
+  await compact.getByRole("button", { name: "View Parcel 2, Lot 33" }).click();
+  await expect(compact).toHaveAttribute("data-visible-bbls", LOTS[1]);
+  await expect(compact).toHaveAttribute("data-map-state", "ready");
+  const lot33Pixels = await compact.getByTestId("parcel-study-map-canvas").locator("canvas").screenshot();
+  await expectLabelsAboveSourceCredit(compact);
+  expect(lot32Pixels.equals(lot33Pixels)).toBe(false);
+  await capture(page, info, "connected-wallabout-lot33", true);
+  await compact.getByRole("button", { name: "View all parcels" }).click();
+  await expect(compact).toHaveAttribute("data-visible-bbls", LOTS.join(","));
+  await expect(compact).toHaveAttribute("data-map-state", "ready");
+  await capture(page, info, "connected-wallabout-all-parcels", true);
+  await expectLabelsAboveSourceCredit(compact);
+  await page.getByRole("region", { name: "Quick actions" }).getByRole("button", { name: /Parcel study/ }).click();
+  const study = page.getByRole("dialog", { name: "Parcel study" });
+  const map = study.getByTestId("parcel-study-map");
+  await study.getByRole("radio", { name: /Separately/ }).check();
+  await expect(map).toHaveAttribute("data-visible-bbls", LOTS[0]);
+  await expect(map).toHaveAttribute("data-map-state", "ready", { timeout: 15_000 });
+  await map.getByRole("button", { name: "View Parcel 2, Lot 33" }).click();
+  await expect(map).toHaveAttribute("data-visible-bbls", LOTS[1]);
+  await expect(map).toHaveAttribute("data-map-state", "ready");
+  await study.getByRole("radio", { name: /Together/ }).check();
+  await expect(map).toHaveAttribute("data-visible-bbls", LOTS.join(","));
+  await expect(map).toHaveAttribute("data-map-state", "ready");
+  await expect(study.getByText("Not established here", { exact: true })).toBeVisible();
+  await capture(page, info, "connected-wallabout-study-together");
+  await study.getByRole("radio", { name: /Compare/ }).check();
+  await expect(map).toHaveAttribute("data-visible-bbls", LOTS.join(","));
+  await expect(map).toHaveAttribute("data-map-state", "ready");
+  await capture(page, info, "connected-wallabout-study-compare");
+  await study.getByRole("button", { name: "Close Parcel study window" }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await compact.getByRole("button", { name: "View Parcel 2, Lot 33" }).click();
+  await expect(compact).toHaveAttribute("data-map-state", "ready");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await capture(page, info, "connected-wallabout-parcel-mobile", true);
+  await expectLabelsAboveSourceCredit(compact);
+  await expect(page.getByTestId("dashboard-cap")).toHaveText("Not calculated");
+});
+
 test("dashboard route keeps the server gate and the explicit kill switch", async ({ page }) => {
   let requests = 0;
   page.on("request", request => { if (new URL(request.url()).pathname.startsWith("/api/v1/properties/")) requests++; });
@@ -143,15 +221,15 @@ test("dashboard route keeps the server gate and the explicit kill switch", async
   expect(requests).toBe(0);
 });
 
-// Reproduces the live failure's RESPONSE PATTERN, not Wallabout's geography:
-// DTM supplies base IDs, both base geometry/profile reads are empty, and only
-// the separate condo billing record has a display outline.
+// Synthetic outage pattern: both DOF base outlines/profile reads are empty
+// and only the separate MapPLUTO condo billing record has display context.
+// This is not the current observed DOF response for Wallabout.
 async function missingBaseOutlines(page: Page, mismatchedContext = false) {
   await condoRecords(page);
   for (const bbl of LOTS) await page.route(`**/api/v1/properties/${bbl}`, route => route.fulfill({
     status: 404, json: { state: "no_match", bbl, message: "Synthetic missing base profile" },
   }));
-  await page.route("**/api/v1/properties/*/lot-geometry", route => {
+  await page.route(/\/api\/v1\/properties\/\d{10}\/lot-geometry(?:\?.*)?$/, route => {
     const bbl = new URL(route.request().url()).pathname.split("/").at(-2)!;
     if (![BILLING, ...LOTS].includes(bbl)) return route.continue();
     const fixture = structuredClone(outlineFixture);
@@ -160,7 +238,7 @@ async function missingBaseOutlines(page: Page, mismatchedContext = false) {
       condo_classification: { classification: "condo_billing_lot", note: "Synthetic billing-record context; not a base parcel." },
     } });
     return route.fulfill({ json: {
-      ...fixture, bbl, outcome: "no_outline", geometry: null, feature_count: 0,
+      ...dof32, bbl, outcome: "no_outline", geometry: null, feature_count: 0,
       review_required: false, no_outline_reason: "no_feature_for_bbl",
     } });
   });

@@ -6,6 +6,7 @@ import { MAPLIBRE_WORKER_URL } from "@/lib/architect/map-runtime";
 import { isMapContainerVisible, observeMapContainer } from "@/lib/architect/map-container";
 import { NYC_CONTEXT_STYLE, contextLayerName } from "@/lib/map-context";
 import { zolaLotUrl } from "@/lib/provenance-link";
+import { ParcelMapViewPicker } from "./ParcelMapViewPicker";
 
 export interface ParcelStudyOutline {
   bbl: string;
@@ -60,9 +61,16 @@ interface StudyMapLibrary {
 
 const SOURCE = "parcel-study-outlines";
 const LAYERS = ["parcel-study-fill", "parcel-study-line"];
-const COLORS = ["#a4680c", "#24699a", "#4f6d49", "#82549a"];
-const DCP_ATTRIBUTION = "NYC Department of City Planning (DCP), MapPLUTO";
+const COLORS = ["#a4680c", "#24699a", "#4f6d49", "#82549a", "#a04452", "#276e70"];
 const CONTEXT_COLOR = "#24699a";
+
+// MapLibre renders attribution as HTML. Source notes are plain text, not markup.
+function attributionText(value: string) {
+  const entities: Record<string, string> = {
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  };
+  return value.replace(/[&<>"']/g, character => entities[character]);
+}
 
 function outlineState(entry: ParcelStudyOutline, duplicate: boolean): {
   geometry: ValidatedGeometry | null; message: string;
@@ -130,13 +138,29 @@ function MapRecordList({ compact, children }: { compact: boolean; children: Reac
   return compact ? <details className="provenance-details"><summary>Parcel identities, availability &amp; ZoLa links</summary>{children}</details> : <>{children}</>;
 }
 
-export function ParcelStudyMap({ outlines, contextOutline = null, arrangement, compact = false }: ParcelStudyMapProps) {
+export function ParcelStudyMap(props: ParcelStudyMapProps) {
+  // A mode or property change resets map focus before any new view renders.
+  // Focus is not persisted as a study choice and cannot alter site membership.
+  const scope = JSON.stringify([props.arrangement, props.outlines.map(entry => entry.bbl), props.contextOutline?.bbl]);
+  return <ParcelStudyMapView key={scope} {...props} />;
+}
+
+function ParcelStudyMapView({ outlines, contextOutline = null, arrangement, compact = false }: ParcelStudyMapProps) {
   const titleId = useId();
   const statusId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const [webgl, setWebgl] = useState<boolean | null>(null);
-  const [mapStatus, setMapStatus] = useState<"loading" | "ready" | "failed">("loading");
+  const [renderState, setRenderState] = useState<{
+    features: StudyFeature[] | null;
+    status: "loading" | "ready" | "failed";
+  }>({ features: null, status: "loading" });
   const [contextMissing, setContextMissing] = useState(false);
+  const [selectedBbl, setSelectedBbl] = useState<string | null>(() =>
+    arrangement === "separate" && outlines.length > 1 ? outlines[0].bbl : null);
+  function selectParcel(bbl: string | null) {
+    if (bbl === selectedBbl) return;
+    setSelectedBbl(bbl);
+  }
   useEffect(() => { setWebgl(hasWebgl()); }, []);
 
   // Parents may recreate the array while editing unrelated study fields. A
@@ -162,17 +186,28 @@ export function ParcelStudyMap({ outlines, contextOutline = null, arrangement, c
     properties: { bbl: entry.bbl, color: entry.color, contextOnly: false },
     geometry: entry.geometry,
   }] : []), [parcels]);
+  const visibleParcels = useMemo(() => selectedBbl === null ? parcels
+    : parcels.filter(entry => entry.bbl === selectedBbl), [parcels, selectedBbl]);
+  const visibleFeatures = useMemo(() => selectedBbl === null ? parcelFeatures
+    : parcelFeatures.filter(feature => feature.properties.bbl === selectedBbl), [parcelFeatures, selectedBbl]);
+  const selectedParcel = selectedBbl === null ? null : visibleParcels[0];
   const context = useMemo(() => contextSnapshot
     ? { ...contextSnapshot, ...condoContextState(contextSnapshot, snapshot.map(entry => entry.bbl)) }
     : null, [contextSnapshot, snapshot]);
   // A useful base outline always wins. The billing shape never substitutes for
   // a missing member of a partial set, or appears as a numbered extra parcel.
-  const needsContext = parcels.length > 0 && parcelFeatures.length === 0 && !parcels.some(entry => entry.loading);
+  const needsContext = selectedBbl === null && parcels.length > 0 && parcelFeatures.length === 0 && !parcels.some(entry => entry.loading);
   const displayContext = needsContext && context?.geometry ? context : null;
   const features = useMemo<StudyFeature[]>(() => displayContext?.geometry ? [{
     type: "Feature", properties: { bbl: displayContext.bbl, color: CONTEXT_COLOR, contextOnly: true },
     geometry: displayContext.geometry,
-  }] : parcelFeatures, [displayContext, parcelFeatures]);
+  }] : visibleFeatures, [displayContext, visibleFeatures]);
+  // A previous map's successful render says nothing about a newly focused or
+  // refreshed feature set. Readiness always belongs to this exact snapshot.
+  const mapStatus = renderState.features === features ? renderState.status : "loading";
+  const attributions = useMemo(() => [...new Set((displayContext ? [displayContext] : visibleParcels)
+    .flatMap(entry => entry.geometry && entry.outcome?.kind === "document" && entry.outcome.view.attribution
+      ? [attributionText(entry.outcome.view.attribution)] : []))], [displayContext, visibleParcels]);
 
   useEffect(() => {
     if (!webgl || features.length === 0 || !containerRef.current) return;
@@ -180,14 +215,20 @@ export function ParcelStudyMap({ outlines, contextOutline = null, arrangement, c
     // Camera margins are screen pixels, never parcel measurements.
     const fitOptions = () => {
       const shortestSide = Math.min(container.clientWidth, container.clientHeight);
-      return { padding: shortestSide > 0 ? Math.min(72, shortestSide * 0.2) : 24, duration: 0, maxZoom: 19.5 };
+      const margin = shortestSide > 0 ? Math.min(72, shortestSide * 0.2) : 24;
+      // The compact map's source credit wraps. Keep its full text and the
+      // parcel labels clear of one another; this changes camera framing only.
+      const padding = compact
+        ? { top: margin, left: margin, right: margin, bottom: margin + 32 }
+        : margin;
+      return { padding, duration: 0, maxZoom: 19.5 };
     };
     let cancelled = false, failed = false, ready = false, drawn = false;
     let map: StudyMap | null = null;
     let containerWatch: ReturnType<typeof observeMapContainer> | null = null;
     const markers: StudyMarker[] = [];
     let stopRenderWatch = () => {};
-    setMapStatus("loading");
+    setRenderState({ features, status: "loading" });
     setContextMissing(false);
     const dispose = () => {
       stopRenderWatch();
@@ -200,7 +241,7 @@ export function ParcelStudyMap({ outlines, contextOutline = null, arrangement, c
     const fail = () => {
       if (cancelled || failed) return;
       failed = true;
-      setMapStatus("failed");
+      setRenderState({ features, status: "failed" });
       dispose();
     };
     let resizeMap = () => {};
@@ -221,7 +262,7 @@ export function ParcelStudyMap({ outlines, contextOutline = null, arrangement, c
         if (cancelled || failed) return;
         try { current.resize?.(); } catch { fail(); }
       };
-      current.addControl(new gl.AttributionControl({ customAttribution: DCP_ATTRIBUTION }), "bottom-right");
+      current.addControl(new gl.AttributionControl({ customAttribution: attributions }), "bottom-right");
       current.addControl(new gl.NavigationControl({ showCompass: false }), "top-right");
       current.on("error", event => {
         if (cancelled || failed) return;
@@ -239,7 +280,7 @@ export function ParcelStudyMap({ outlines, contextOutline = null, arrangement, c
             paint: { "line-color": ["get", "color"], "line-width": 3,
               ...(displayContext ? { "line-dasharray": [2, 2] } : {}) } });
           current.fitBounds(bounds, fitOptions());
-          for (const parcel of parcels) if (parcel.geometry) {
+          for (const parcel of visibleParcels) if (parcel.geometry) {
             const label = document.createElement("span");
             label.className = "parcel-study-map__marker";
             label.textContent = `${parcel.number} · Lot ${parcel.lot}`;
@@ -268,7 +309,7 @@ export function ParcelStudyMap({ outlines, contextOutline = null, arrangement, c
               ready = true;
               containerWatch?.markReady();
               stopRenderWatch();
-              setMapStatus("ready");
+              setRenderState({ features, status: "ready" });
             } catch { fail(); }
           };
           stopRenderWatch = () => current.off("render", checkRender);
@@ -289,29 +330,37 @@ export function ParcelStudyMap({ outlines, contextOutline = null, arrangement, c
       if (current.isStyleLoaded()) draw();
     })().catch(fail);
     return () => { cancelled = true; dispose(); };
-  }, [features, parcels, displayContext, webgl]);
+  }, [features, visibleParcels, displayContext, attributions, webgl, compact]);
 
-  const loading = outlines.some(entry => entry.loading) || (needsContext && context?.loading);
+  const loading = visibleParcels.some(entry => entry.loading) || (needsContext && context?.loading);
   const allMissing = parcels.length > 0 && parcels.every(entry => entry.outcome?.kind === "document" && entry.outcome.view.outcome === "no_outline");
   const sourceFailure = parcels.some(entry => entry.outcome && entry.outcome.kind !== "document");
   const unavailableMessage = allMissing ? "Individual parcel boundaries unavailable in the source records."
     : sourceFailure ? "Individual parcel outlines could not be loaded. Retry to check availability."
     : "Individual parcel outlines withheld for review. See parcel availability below.";
   const mapMessage = features.length === 0
-    ? loading ? "Loading parcel outlines…" : unavailableMessage
+    ? selectedParcel ? `Parcel ${selectedParcel.number}${selectedParcel.lot === null ? "" : ` · Lot ${selectedParcel.lot}`}: ${selectedParcel.message}`
+      : loading ? "Loading parcel outlines…" : unavailableMessage
     : webgl === false ? "Interactive map unavailable in this browser. Parcel records and ZoLa links remain available below."
     : mapStatus === "failed" ? "Interactive map could not render. Parcel records and ZoLa links remain available below."
     : mapStatus === "ready" ? displayContext ? allMissing ? "Condo tax-map outline shown for context; individual parcel boundaries unavailable."
       : sourceFailure ? "Condo tax-map outline shown for context; individual parcel requests failed. Retry to check availability."
       : "Condo tax-map outline shown for context; individual parcel outlines withheld for review."
+      : selectedParcel ? `Parcel ${selectedParcel.number} · Lot ${selectedParcel.lot} approximate outline shown.`
       : `${parcelFeatures.length} of ${parcels.length} approximate parcel outlines shown.`
     : "Loading interactive parcel map…";
+  const mapState = features.length === 0 ? loading ? "loading" : "unavailable"
+    : webgl === false ? "unavailable" : mapStatus;
 
-  return <section className="parcel-study-map" aria-labelledby={titleId}>
+  return <section className="parcel-study-map" aria-labelledby={titleId}
+    data-testid="parcel-study-map" data-arrangement={arrangement} data-map-focus={selectedBbl ?? "all"}
+    data-visible-bbls={features.map(feature => feature.properties.bbl).join(",")}
+    data-map-state={mapState} data-map-kind={displayContext ? "condo-context" : features.length ? "parcels" : "unavailable"}>
     <h3 id={titleId}>Parcel study map</h3>
-    <p className="section-note">{arrangement === "together" ? "Together: parcels share one study color."
-      : arrangement === "compare" ? "Compare: numbered parcels distinguish the study options."
-      : "Separately: each numbered parcel is a study option."} Study grouping only.</p>
+    <p className="section-note">{arrangement === "together" ? "Together: one study group; individual boundaries retained."
+      : arrangement === "compare" ? "Compare: distinct colors and numbers identify each parcel."
+      : "Separately: choose a parcel to inspect its outline."} Study grouping only.</p>
+    <ParcelMapViewPicker parcels={parcels} selectedBbl={selectedBbl} onSelect={selectParcel} />
     {features.length > 0 && webgl !== false ? <div ref={containerRef}
       className="parcel-study-map__canvas" data-testid="parcel-study-map-canvas"
       role="region" aria-label="Interactive approximate parcel outlines" aria-describedby={statusId}
@@ -334,10 +383,11 @@ export function ParcelStudyMap({ outlines, contextOutline = null, arrangement, c
         </div>
       </li>)}
     </ol></MapRecordList>
-    <p className="section-note">Approximate MapPLUTO outlines · Display only, not a boundary survey or buildable envelope.</p>
+    <p className="section-note">Approximate official tax-map outlines · Display only, not a boundary survey or buildable envelope.</p>
     <details className="provenance-details">
       <summary>Map sources and limitations</summary>
       <p className="section-note">Grouping does not merge tax lots, establish a zoning lot, or change zoning. No area, width, depth, height, or development allowance is calculated from this map.</p>
+      <p className="section-note">Map view changes only which outlines are shown. It does not change the parcels in your study.</p>
       {contextSnapshot ? <p className="section-note">Billing BBL {contextSnapshot.bbl} · Not an additional parcel or a confirmed development site. The condo tax-map outline does not establish individual parcel boundaries.</p> : null}
       {[...outlines, ...(contextSnapshot ? [contextSnapshot] : [])].map((entry, index) => entry.outcome?.kind === "document" ? <div key={`${entry.bbl}-${index}`}>
         <strong>{index < outlines.length ? "Requested BBL" : "Condo context requested BBL"} {entry.bbl}</strong>

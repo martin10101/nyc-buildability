@@ -63,7 +63,8 @@
 .dashboard-shell .workspace-window .parcel-study-decisions { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .dashboard-shell .bd-property-title { margin:0; font-size:17px; line-height:1.35; font-weight:650; }
 .dashboard-shell .bd-map-slot { padding:9px; }
-.dashboard-shell .bd-map-slot .lot-outline-map,.dashboard-shell .bd-map-slot .parcel-study-map__canvas { height:160px; min-height:160px; }
+.dashboard-shell .bd-map-slot .lot-outline-map { height:160px; min-height:160px; }
+.dashboard-shell .bd-map-slot .parcel-study-map__canvas { height:220px; min-height:220px; }
 .dashboard-shell .bd-map-slot :is(.section-note,.architect-map-status,.provenance-details,.parcel-study-map__status) { font-size:11px; line-height:1.35; margin:5px 0; }
 .dashboard-shell .bd-map-slot .parcel-study-map h3 { font-size:13px; margin:0 0 4px; }
 .dashboard-shell .bd-map-slot .parcel-study-map { border:0; padding:0; }
@@ -101,7 +102,7 @@
   .dashboard-shell .bd-property { grid-row:2; }
   .dashboard-shell .bd-calculation { grid-row:3; }
   .dashboard-shell .bd-actions { grid-template-columns:repeat(3,minmax(0,1fr)); }
-  .dashboard-shell .bd-map-slot .lot-outline-map,.dashboard-shell .bd-map-slot .parcel-study-map__canvas { height:180px; min-height:180px; }
+  .dashboard-shell .bd-map-slot .lot-outline-map { height:180px; min-height:180px; }
 }
 @container (max-width:640px) {
   .dashboard-shell .workspace-window .architect-evidence-layout,.dashboard-shell .workspace-window .parcel-study-decisions,.dashboard-shell .workspace-window .architect-proposal-grid { grid-template-columns:minmax(0,1fr); }

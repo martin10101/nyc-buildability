@@ -1,0 +1,87 @@
+{
+  "contract_version": "1.1.0",
+  "document_kind": "lot_outline",
+  "bbl": "3022640033",
+  "outcome": "single_lot",
+  "display_only": true,
+  "crs": "EPSG:4326",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          -73.9505415229674,
+          40.7001111344734
+        ],
+        [
+          -73.9505531126344,
+          40.70010980229
+        ],
+        [
+          -73.950642268659,
+          40.7000995585257
+        ],
+        [
+          -73.9507363663268,
+          40.7000887476526
+        ],
+        [
+          -73.9508209305679,
+          40.7000790315905
+        ],
+        [
+          -73.9509146292989,
+          40.7000682660741
+        ],
+        [
+          -73.9509574561614,
+          40.700063346032
+        ],
+        [
+          -73.9509729116537,
+          40.7001358418757
+        ],
+        [
+          -73.9506152938952,
+          40.700176929542
+        ],
+        [
+          -73.9505415229674,
+          40.7001111344734
+        ]
+      ]
+    ]
+  },
+  "feature_count": 1,
+  "review_required": false,
+  "no_outline_reason": null,
+  "condo_classification": {
+    "classification": "standard_lot",
+    "condo_no": null,
+    "note": "DOF CONDO_FLAG=C on this exact tax-lot polygon. This may be a condo base parcel; it is not classified as a unit or the whole complex from this flag."
+  },
+  "lot_identity": {
+    "boro_code": 3,
+    "borough": null,
+    "block": 2264,
+    "lot": 33,
+    "condo_no": null
+  },
+  "source": {
+    "source_id": "nyc-dof-digital-tax-map",
+    "service_root": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer",
+    "layer": "TAX_LOT_POLYGON (0)",
+    "endpoint": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/0/query?where=BBL%3D%273022640033%27&outFields=OBJECTID%2CBBL%2CBORO%2CBLOCK%2CLOT%2CCONDO_FLAG%2CBILL_BBL_FLAG%2CEFFECTIVE_TAX_YEAR&orderByFields=OBJECTID+ASC&resultRecordCount=2&resultOffset=0&returnGeometry=true&f=geojson&outSR=4326",
+    "dataset_version": null,
+    "retrieved_at": "2026-09-26T20:21:57Z"
+  },
+  "accuracy_note": "Approximate DOF Digital Tax Map outline for display only. A numerical horizontal-accuracy tolerance is not established for this source here. No area, dimension, or measurement is derived from these EPSG:4326 coordinates.",
+  "attribution": "NYC Department of Finance (DOF), Digital Tax Map",
+  "disclaimer": "DOF Digital Tax Map data is provided for informational purposes and may not reflect the latest changes in other City systems. This is not a boundary survey, a zoning-lot determination, or permission to combine parcels.",
+  "notes": [
+    "Exact requested DOF tax-lot identity only; no zoning-lot boundary, merger, buildable envelope, or development-rights determination is established.",
+    "The source does not expose a dataset release version in this response. EFFECTIVE_TAX_YEAR is a source attribute, not a dataset release or freshness date.",
+    "DOF source attributes: {\"BBL\": \"3022640033\", \"BILL_BBL_FLAG\": 0, \"BLOCK\": 2264, \"BORO\": \"3\", \"CONDO_FLAG\": \"C\", \"EFFECTIVE_TAX_YEAR\": null, \"LOT\": 33, \"OBJECTID\": 194447}",
+    "DOF CONDO_FLAG=C on this exact tax-lot polygon. This may be a condo base parcel; it is not classified as a unit or the whole complex from this flag."
+  ]
+}

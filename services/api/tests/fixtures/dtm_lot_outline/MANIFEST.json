@@ -1,0 +1,44 @@
+{
+  "source_id": "nyc-dof-digital-tax-map",
+  "purpose": "Recorded official display-only tax-lot outlines. No measurement, parcel merger, or zoning-lot determination.",
+  "captures": [
+    {
+      "file": "DTM_3022640032.geojson",
+      "kind": "recorded_official",
+      "bbl": "3022640032",
+      "url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/0/query?where=BBL%3D%273022640032%27&outFields=OBJECTID%2CBBL%2CBORO%2CBLOCK%2CLOT%2CCONDO_FLAG%2CBILL_BBL_FLAG%2CEFFECTIVE_TAX_YEAR&orderByFields=OBJECTID+ASC&resultRecordCount=2&resultOffset=0&returnGeometry=true&f=geojson&outSR=4326",
+      "retrieved_at": "2026-09-26T20:21:53Z",
+      "http_status": 200,
+      "sha256": "d1146380bbdb14f2e9477e6a7ede49c75953d6eed88135d66cff61930a2c599a",
+      "feature_count": 1
+    },
+    {
+      "file": "DTM_3022640033.geojson",
+      "kind": "recorded_official",
+      "bbl": "3022640033",
+      "url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/0/query?where=BBL%3D%273022640033%27&outFields=OBJECTID%2CBBL%2CBORO%2CBLOCK%2CLOT%2CCONDO_FLAG%2CBILL_BBL_FLAG%2CEFFECTIVE_TAX_YEAR&orderByFields=OBJECTID+ASC&resultRecordCount=2&resultOffset=0&returnGeometry=true&f=geojson&outSR=4326",
+      "retrieved_at": "2026-09-26T20:21:57Z",
+      "http_status": 200,
+      "sha256": "a77fdd5774299ba4f91aff4bd7744627c8d15cf3f2953151bed12dbb5d3520de",
+      "feature_count": 1
+    },
+    {
+      "file": "DTM_3022647515.geojson",
+      "kind": "recorded_official",
+      "bbl": "3022647515",
+      "url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/0/query?where=BBL%3D%273022647515%27&outFields=OBJECTID%2CBBL%2CBORO%2CBLOCK%2CLOT%2CCONDO_FLAG%2CBILL_BBL_FLAG%2CEFFECTIVE_TAX_YEAR&orderByFields=OBJECTID+ASC&resultRecordCount=2&resultOffset=0&returnGeometry=true&f=geojson&outSR=4326",
+      "retrieved_at": "2026-09-26T20:22:01Z",
+      "http_status": 200,
+      "sha256": "1ce7eb457779acd1dc230a1bcb4692d06f27533481f26cbfe0e9e599134c0cd4",
+      "feature_count": 0
+    }
+  ],
+  "metadata_capture": {
+    "file": "DTM_layer_metadata.json",
+    "url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/0?f=json",
+    "retrieved_at": "2026-09-26T20:21:41Z",
+    "sha256": "f58441694f67554ea777c0d3f6405a98d2eb4f864e98417611001e023087cb25",
+    "observed_data_last_edit_date": 1790410012940,
+    "limitation": "Service edit timestamp, not a dataset release ID or refresh guarantee. No historical parcel endpoint was used."
+  }
+}
