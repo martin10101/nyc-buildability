@@ -203,6 +203,10 @@ export interface CondoRecordsView {
   /** Every recorded base tax lot as a RECORD (empty on non-condo / unresolved /
    * error). */
   baseLots: CondoBaseLotRecord[];
+  /** True only when every raw identity survived exact validation before display
+   * sanitization. Optional for legacy callers; a study must require === true.
+   * This establishes transport integrity only, never legal site membership. */
+  studyIdentityIntegrity?: boolean;
   /** The billing->base substitution record, present only on resolved-single. */
   substitution: CondoSubstitutionRecord | null;
   condoKey: string | null;
@@ -355,6 +359,22 @@ function baseLotRecords(value: unknown): CondoBaseLotRecord[] {
     records.push({ bbl, recordedZoning: zoning, recordedZoningStatus: status });
   }
   return records;
+}
+
+/** A study must not accept a partial or sanitized parcel set. Display parsing
+ * remains compatible, while this separate marker checks every ORIGINAL row.
+ * Duplicate and entered/billing membership checks belong to the study scope. */
+function studyIdentityIntegrity(record: Record<string, unknown>): boolean {
+  const canonical = (value: unknown): value is string =>
+    typeof value === "string" && /^[1-5][0-9]{9}$/.test(value)
+      && value.slice(1, 6) !== "00000" && value.slice(6) !== "0000";
+  return canonical(record.entered_bbl)
+    && (record.billing_bbl === undefined || record.billing_bbl === null || canonical(record.billing_bbl))
+    && Array.isArray(record.base_lots)
+    && record.base_lots.every((value: unknown) => {
+      const lot = asRecord(value);
+      return lot !== null && canonical(lot.bbl);
+    });
 }
 
 function substitutionRecord(value: unknown): CondoSubstitutionRecord | null {
@@ -525,6 +545,7 @@ function documentView(record: Record<string, unknown>): CondoRecordsView {
     billingBbl: boundedBbl(record.billing_bbl),
     billingBblStatus: boundedToken(record.billing_bbl_status, 16),
     baseLots: baseLotRecords(record.base_lots),
+    studyIdentityIntegrity: studyIdentityIntegrity(record),
     substitution: substitutionRecord(record.substitution),
     condoKey: boundedToken(record.condo_key, 32),
     condoNumber: boundedToken(record.condo_number, 32),
