@@ -1,10 +1,18 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import profileFixture from "../../../packages/contracts/fixtures/valid/property_profile/builder_output_m1_t005.json";
 import outlineFixture from "../../../packages/contracts/fixtures/valid/lot_geometry/single_lot_polygon.json";
 
 const BBL = "1000010010";
 const BILLING = "3022647515";
 const LOTS = ["3022640032", "3022640033"];
+
+async function capture(page: Page, info: TestInfo, name: string, fullPage = false) {
+  // Persist a named PNG as well as the HTML-report attachment so thin-client
+  // reviewers can download pictures without the complete trace archive.
+  const path = info.outputPath(`${name}.png`);
+  await page.screenshot({ path, fullPage });
+  await info.attach(name, { path, contentType: "image/png" });
+}
 
 test("address confirmation populates the same dashboard and floating tools retain work", async ({ page }, info) => {
   await page.setViewportSize({ width: 1440, height: 960 });
@@ -32,7 +40,7 @@ test("address confirmation populates the same dashboard and floating tools retai
   await page.getByRole("button", { name: /Draw a proposal/ }).click();
   await expect(editor.getByLabel("Proposal label", { exact: true })).toHaveValue("Persistent courtyard sketch");
   await editor.getByRole("button", { name: "Close Proposal editor window" }).click();
-  await info.attach("connected-dashboard-desktop", { body: await page.screenshot({ fullPage: true }), contentType: "image/png" });
+  await capture(page, info, "connected-dashboard-desktop", true);
   await page.getByRole("region", { name: "Quick actions" }).getByRole("button", { name: /Open map/ }).click();
   const map = page.getByRole("dialog", { name: "Property map" });
   await expect(map.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "rendered", { timeout: 15_000 });
@@ -41,7 +49,7 @@ test("address confirmation populates the same dashboard and floating tools retai
   await map.getByRole("button", { name: "Restore Property map window" }).click();
   await map.getByRole("button", { name: "Move Property map window" }).focus();
   await page.keyboard.press("ArrowRight");
-  await info.attach("connected-floating-map", { body: await page.screenshot(), contentType: "image/png" });
+  await capture(page, info, "connected-floating-map");
   await page.keyboard.press("Escape");
   await expect(map).toBeHidden();
   await page.getByRole("button", { name: /Report preview/ }).click();
@@ -50,11 +58,11 @@ test("address confirmation populates the same dashboard and floating tools retai
   await page.getByRole("button", { name: "Close Property report window" }).click();
   await page.setViewportSize({ width: 1024, height: 768 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await info.attach("connected-dashboard-tablet", { body: await page.screenshot({ fullPage: true }), contentType: "image/png" });
+  await capture(page, info, "connected-dashboard-tablet", true);
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(search).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await info.attach("connected-dashboard-mobile", { body: await page.screenshot({ fullPage: true }), contentType: "image/png" });
+  await capture(page, info, "connected-dashboard-mobile", true);
   await page.getByRole("button", { name: /Draw a proposal/ }).click();
   await expect(editor.getByLabel("Proposal label", { exact: true })).toHaveValue("Persistent courtyard sketch");
   const frame = await editor.boundingBox();
@@ -62,7 +70,7 @@ test("address confirmation populates the same dashboard and floating tools retai
   expect(frame!.x).toBeGreaterThanOrEqual(0);
   expect(frame!.x + frame!.width).toBeLessThanOrEqual(390);
   expect(frame!.y + frame!.height).toBeLessThanOrEqual(844);
-  await info.attach("connected-proposal-mobile", { body: await page.screenshot(), contentType: "image/png" });
+  await capture(page, info, "connected-proposal-mobile");
 });
 
 // Transport scaffolding only: actual fixture shapes, synthetic Wallabout
@@ -109,7 +117,7 @@ test("multi-parcel dashboard shows source outlines and preserves study choices w
   await expect(study.getByRole("radio", { name: /Together/ })).toBeChecked();
   await expect(study.getByLabel("Existing buildings on Lot 32", { exact: true })).toHaveValue("retain");
   await expect(study.getByText("Not established here", { exact: true })).toBeVisible();
-  await info.attach("connected-parcel-study", { body: await page.screenshot(), contentType: "image/png" });
+  await capture(page, info, "connected-parcel-study");
   await study.getByRole("button", { name: "Close Parcel study window" }).click();
   await page.getByRole("button", { name: /Draw a proposal/ }).click();
   await expect(page.getByRole("dialog", { name: "Proposal editor" }).getByRole("heading", { name: "Site definition required" })).toBeVisible();
