@@ -16,6 +16,20 @@ export type FloatingWorkspaceWindowProps = {
 
 let lastWindowLayer = 40;
 const GUTTER = 8;
+// Tool-to-tool navigation must retain a dashboard return target even when the
+// previous window has already become hidden before the next opening effect.
+const dashboardOpeners = new WeakMap<Element, HTMLElement>();
+
+function availableFocusTarget(element: HTMLElement | null | undefined): element is HTMLElement {
+  if (!element?.isConnected || element === document.body
+    || element.closest('[hidden], [inert], [aria-hidden="true"]')
+    || element.matches(':disabled, [aria-disabled="true"]')) return false;
+  for (let current: HTMLElement | null = element; current; current = current.parentElement) {
+    const style = window.getComputedStyle(current);
+    if (style.display === "none" || style.visibility === "hidden" || style.visibility === "collapse") return false;
+  }
+  return true;
+}
 
 function viewport() {
   const visual = window.visualViewport;
@@ -65,19 +79,27 @@ export function FloatingWorkspaceWindow({ id, title, open, onClose, children, wi
   const restoreFrame = useRef<Frame | null>(null);
 
   useEffect(() => {
+    const shell = windowRef.current?.closest(".architect-shell");
+    const dashboardOpener = shell ? dashboardOpeners.get(shell) : undefined;
     if (open) {
       setHasOpened(true);
       const active = document.activeElement;
-      if (active instanceof HTMLElement && !windowRef.current?.contains(active)) openerRef.current = active;
+      if (active instanceof HTMLElement && availableFocusTarget(active) && !windowRef.current?.contains(active)) {
+        openerRef.current = active;
+        if (shell?.contains(active) && !active.closest(".workspace-window")) dashboardOpeners.set(shell, active);
+      } else {
+        openerRef.current = availableFocusTarget(dashboardOpener) ? dashboardOpener : null;
+      }
       setFrame(value => fitFrame(value ?? initialFrame(wide)));
       setLayer(++lastWindowLayer);
       closeRef.current?.focus({ preventScroll: true });
     } else if (wasOpen.current) {
       gesture.current = null;
       // An external dashboard action can close a window without losing its focus.
-      if ((windowRef.current?.contains(document.activeElement) || document.activeElement === document.body)
-        && openerRef.current?.isConnected) {
-        openerRef.current.focus({ preventScroll: true });
+      if (windowRef.current?.contains(document.activeElement) || document.activeElement === document.body) {
+        const target = availableFocusTarget(openerRef.current) ? openerRef.current
+          : availableFocusTarget(dashboardOpener) ? dashboardOpener : null;
+        target?.focus({ preventScroll: true });
       }
     }
     wasOpen.current = open;

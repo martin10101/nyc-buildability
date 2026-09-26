@@ -48,10 +48,21 @@ test("address confirmation populates the same dashboard and floating tools retai
   await expect(page.getByRole("dialog", { name: "Property report" }).getByRole("button", { name: "Print property brief" })).toBeVisible();
   expect(new URL(page.url()).pathname).toBe("/property/workspace");
   await page.getByRole("button", { name: "Close Property report window" }).click();
+  await page.setViewportSize({ width: 1024, height: 768 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await info.attach("connected-dashboard-tablet", { body: await page.screenshot({ fullPage: true }), contentType: "image/png" });
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(search).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await info.attach("connected-dashboard-mobile", { body: await page.screenshot({ fullPage: true }), contentType: "image/png" });
+  await page.getByRole("button", { name: /Draw a proposal/ }).click();
+  await expect(editor.getByLabel("Proposal label", { exact: true })).toHaveValue("Persistent courtyard sketch");
+  const frame = await editor.boundingBox();
+  expect(frame).not.toBeNull();
+  expect(frame!.x).toBeGreaterThanOrEqual(0);
+  expect(frame!.x + frame!.width).toBeLessThanOrEqual(390);
+  expect(frame!.y + frame!.height).toBeLessThanOrEqual(844);
+  await info.attach("connected-proposal-mobile", { body: await page.screenshot(), contentType: "image/png" });
 });
 
 // Transport scaffolding only: actual fixture shapes, synthetic Wallabout

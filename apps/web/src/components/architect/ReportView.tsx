@@ -87,9 +87,9 @@ export function ReportView({ profile, scenario: returnedScenario, evaluation: re
     <AnalysisIdentityNotice label="Scenario" requestedBbl={bbl} document={returnedScenario}/>
     <AnalysisIdentityNotice label="Rule evaluation" requestedBbl={bbl} document={returnedEvaluation}/>
     <IncompleteEvaluationNotice evaluation={identityEvaluation}/>
-    {condoWithholds ? <section className="card"><h2>Withheld analysis records</h2><p>Original returned evidence only. These figures are not allowances for the unresolved site.</p>
-      {returnedEvaluation ? <CapturedRecord value={returnedEvaluation} label="Original rule-evaluation record · site allowance withheld"/> : null}
-      {returnedScenario ? <CapturedRecord value={returnedScenario} label="Original scenario record · site allowance withheld"/> : null}
+    {condoWithholds || associationMismatch ? <section className="card" aria-label="Withheld analysis records"><h2>Withheld analysis records</h2><p>Original returned evidence only. {associationMismatch ? "At least one analysis record does not identify the selected property. " : null}{condoWithholds ? "The legal analysis site is unresolved. " : null}These figures are not development allowances for this property.</p>
+      {returnedEvaluation ? <CapturedRecord value={returnedEvaluation} label="Original rule-evaluation record · allowances withheld"/> : null}
+      {returnedScenario ? <CapturedRecord value={returnedScenario} label="Original scenario record · allowances withheld"/> : null}
     </section> : null}
     {/* [ORCH-CORRECTED per M5-T037 HJ F1] The report feeds DevelopmentLimits the same
         inspectability-GATED evaluation every screen surface uses (and that

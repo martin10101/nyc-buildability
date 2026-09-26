@@ -45,6 +45,8 @@ export interface DashboardToolsProps {
 export function DashboardTools(props: DashboardToolsProps) {
   const { tool, profile, scenario, evaluation, returnedScenario, returnedEvaluation, condo, address, label, selection, onSelectEvidence, onInspect, onOpen, surveyEnabled } = props;
   const bbl = profile.identity.bbl;
+  const associationMismatch = !!((returnedScenario && returnedScenario.evaluated_input.bbl !== bbl)
+    || (returnedEvaluation && returnedEvaluation.evaluated_input.bbl !== bbl));
   switch (tool) {
     case "map": return <DashboardMap bbl={bbl} condo={condo}/>;
     case "facts": return <PropertyFacts profile={profile} onInspect={onInspect}/>;
@@ -54,9 +56,9 @@ export function DashboardTools(props: DashboardToolsProps) {
       ? <ParcelStudyPanel requestedBbl={bbl} records={condo.recordsView} recordsConflict={condo.conflict}/>
       : <section className="card"><h2>Parcel study</h2><p>A validated multi-parcel record is required for combined and separate studies.</p><button type="button" className="secondary-button" onClick={() => onOpen("records")}>Inspect parcel records</button></section>;
     case "evidence": return <><EvidenceWorkspace profile={profile} evaluation={evaluation} scenario={scenario} address={address} selection={selection} onSelect={onSelectEvidence}/>
-      {condo.withholdAllowances ? <section className="card"><h2>Withheld analysis records</h2><p>Original returned evidence only. These figures are not allowances for the unresolved site.</p>
-        {returnedEvaluation ? <CapturedRecord value={returnedEvaluation} label="Original rule-evaluation record · site allowance withheld"/> : null}
-        {returnedScenario ? <CapturedRecord value={returnedScenario} label="Original scenario record · site allowance withheld"/> : null}
+      {condo.withholdAllowances || associationMismatch ? <section className="card" aria-label="Withheld analysis records"><h2>Withheld analysis records</h2><p>Original returned evidence only. {associationMismatch ? "At least one analysis record does not identify the selected property. " : null}{condo.withholdAllowances ? "The legal analysis site is unresolved. " : null}These figures are not development allowances for this property.</p>
+        {returnedEvaluation ? <CapturedRecord value={returnedEvaluation} label="Original rule-evaluation record · allowances withheld"/> : null}
+        {returnedScenario ? <CapturedRecord value={returnedScenario} label="Original scenario record · allowances withheld"/> : null}
       </section> : null}</>;
     case "issues": return <><OpenIssues profile={profile}/><CondoRecordsChannelSection decision={condo}/></>;
     case "scenarios": return scenario ? <ScenarioWorkspace document={scenario} evaluation={evaluation} bbl={bbl}/> : <section className="card"><h2>Scenario results unavailable</h2><p>{condo.withholdAllowances ? "Computed allowances are withheld until the legal analysis site is resolved." : "No matching, usable scenario was supplied."}</p>{returnedScenario ? <CapturedRecord value={returnedScenario} label="Returned scenario record · not a site allowance"/> : null}</section>;

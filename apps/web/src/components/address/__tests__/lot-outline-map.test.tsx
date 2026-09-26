@@ -424,7 +424,7 @@ describe("LotOutlineMap — honest states without a drawn map", () => {
   it("multiple_features: review posture, never a first-pick outline", async () => {
     render(
       <LotOutlineMap
-        bbl="1008350096"
+        bbl="1008350041"
         fetchImpl={fetchReturning(jsonResponse(fixture("multiple_features_review")))}
       />,
     );

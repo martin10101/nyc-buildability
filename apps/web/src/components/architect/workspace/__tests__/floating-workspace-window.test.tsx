@@ -20,6 +20,22 @@ function Editor({ onMount }: { onMount: () => void }) {
   return <label>Proposal name<input value={name} onChange={event => setName(event.target.value)} /></label>;
 }
 
+function ToolSwitchHarness({ reverse, blurOnSwitch }: { reverse: boolean; blurOnSwitch: boolean }) {
+  const [tool, setTool] = useState<string | null>(null);
+  const order = reverse ? ["Records", "Map"] : ["Map", "Records"];
+  return <div className="architect-shell">
+    <button type="button" onClick={() => setTool("Map")}>Open workspace</button>
+    {order.map(title => <FloatingWorkspaceWindow key={title} id={`switch-${title}`} title={title}
+      open={tool === title} onClose={() => setTool(null)}>
+      <button type="button" onClick={event => {
+        // Browsers can clear focus as the originating window becomes hidden.
+        if (blurOnSwitch) event.currentTarget.blur();
+        setTool(title === "Map" ? "Records" : "Map");
+      }}>Switch to {title === "Map" ? "Records" : "Map"}</button>
+    </FloatingWorkspaceWindow>)}
+  </div>;
+}
+
 function openMap() {
   const opener = screen.getByRole("button", { name: "Open map" });
   opener.focus();
@@ -83,6 +99,27 @@ describe("FloatingWorkspaceWindow", () => {
     fireEvent.keyDown(outside, { key: "Escape" });
     expect(outside).toHaveFocus();
     expect(screen.getByRole("dialog", { name: "Map" })).toBeVisible();
+  });
+
+  it.each([
+    { order: "forward", reverse: false, blurOnSwitch: false },
+    { order: "reverse", reverse: true, blurOnSwitch: false },
+    { order: "reverse after browser focus clearing", reverse: true, blurOnSwitch: true },
+  ])("returns to the dashboard after switching tools in $order effect order", ({ reverse, blurOnSwitch }) => {
+    render(<ToolSwitchHarness reverse={reverse} blurOnSwitch={blurOnSwitch} />);
+    const opener = screen.getByRole("button", { name: "Open workspace" });
+    opener.focus();
+    fireEvent.click(opener);
+    const switcher = screen.getByRole("button", { name: "Switch to Records" });
+    switcher.focus();
+    fireEvent.click(switcher);
+    expect(screen.getByRole("dialog", { name: "Records" })).toBeVisible();
+    expect(switcher).not.toBeVisible();
+    const close = screen.getByRole("button", { name: "Close Records window" });
+    expect(close).toHaveFocus();
+    fireEvent.keyDown(close, { key: "Escape" });
+    expect(opener).toHaveFocus();
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
   it("leaves handled Escape and nested dialogs to their own controls", () => {

@@ -124,7 +124,7 @@ export function DashboardEntry({ surveyEnabled = false }: { surveyEnabled?: bool
         : property.loading ? <section className="card" role="status" aria-busy="true"><h1>Retrieving property facts…</h1><p>BBL {bbl}</p></section>
         : profile ? <LoadedDashboard key={bbl} profile={profile} initialTool={readDashboardTool(params.get("tool"))} surveyEnabled={surveyEnabled} addressRevision={addressRevision} onSelect={select}/>
         : mismatch && property.outcome?.kind === "profile" ? <section className="card" role="alert"><h1>Property identity mismatch</h1><p>Requested BBL {bbl}; returned BBL {property.outcome.profile.identity.bbl}. This record cannot be used for the selected property.</p><CapturedRecord value={property.outcome.profile} label="Returned property record"/></section>
-        : property.outcome ? <OutcomeFailureStates outcome={property.outcome} onRetry={property.retry}/> : null}
+        : property.outcome && property.outcome.kind !== "profile" ? <OutcomeFailureStates outcome={property.outcome} onRetry={property.retry}/> : null}
     </div>
   </div>;
 }
