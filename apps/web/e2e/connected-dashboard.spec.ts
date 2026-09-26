@@ -142,3 +142,88 @@ test("dashboard route keeps the server gate and the explicit kill switch", async
   await expect(page.getByTestId("connected-dashboard")).toHaveCount(0);
   expect(requests).toBe(0);
 });
+
+// Reproduces the live failure's RESPONSE PATTERN, not Wallabout's geography:
+// DTM supplies base IDs, both base geometry/profile reads are empty, and only
+// the separate condo billing record has a display outline.
+async function missingBaseOutlines(page: Page, mismatchedContext = false) {
+  await condoRecords(page);
+  for (const bbl of LOTS) await page.route(`**/api/v1/properties/${bbl}`, route => route.fulfill({
+    status: 404, json: { state: "no_match", bbl, message: "Synthetic missing base profile" },
+  }));
+  await page.route("**/api/v1/properties/*/lot-geometry", route => {
+    const bbl = new URL(route.request().url()).pathname.split("/").at(-2)!;
+    if (![BILLING, ...LOTS].includes(bbl)) return route.continue();
+    const fixture = structuredClone(outlineFixture);
+    if (bbl === BILLING) return route.fulfill({ json: {
+      ...fixture, bbl: mismatchedContext ? "3022647516" : BILLING,
+      condo_classification: { classification: "condo_billing_lot", note: "Synthetic billing-record context; not a base parcel." },
+    } });
+    return route.fulfill({ json: {
+      ...fixture, bbl, outcome: "no_outline", geometry: null, feature_count: 0,
+      review_required: false, no_outline_reason: "no_feature_for_bbl",
+    } });
+  });
+}
+
+test("missing base outlines retain a separately labeled condo context on dashboard and floating tools", async ({ page }, info) => {
+  const requested: string[] = [];
+  page.on("request", request => {
+    const path = new URL(request.url()).pathname;
+    if (path.endsWith("/lot-geometry")) requested.push(path.split("/").at(-2)!);
+  });
+  await missingBaseOutlines(page);
+  await page.setViewportSize({ width: 1440, height: 960 });
+  await page.goto(`/property/workspace?ruleeval=on&bbl=${BILLING}`);
+  const compact = page.locator(".bd-map-slot");
+  await expect(compact.getByTestId("parcel-study-context-outline")).toHaveAttribute("data-context-state", "rendered", { timeout: 15_000 });
+  await expect(compact.getByText("Condo tax-map outline · context only", { exact: true })).toBeVisible();
+  expect(requested).toEqual(expect.arrayContaining([BILLING, ...LOTS]));
+  await expect(page.getByTestId("dashboard-cap")).toHaveText("Not calculated");
+  await expect(page.getByRole("button", { name: /2 base parcel records.*Review parcels/ })).toBeVisible();
+  await expect(compact.getByText(/No parcel outlines available to draw/)).toHaveCount(0);
+  await capture(page, info, "connected-condo-context-desktop", true);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(compact.getByTestId("parcel-study-context-outline")).toHaveAttribute("data-context-state", "rendered");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  // Canvas pixels prove the context boundary was painted, not merely fetched.
+  const png = await compact.getByTestId("parcel-study-map-canvas").locator("canvas").screenshot();
+  const boundaryPixels = await page.evaluate(async encoded => {
+    const img = new Image(); img.src = `data:image/png;base64,${encoded}`; await img.decode();
+    const canvas = document.createElement("canvas"); canvas.width = img.width; canvas.height = img.height;
+    const context = canvas.getContext("2d")!; context.drawImage(img, 0, 0);
+    const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+    let count = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      if (Math.abs(data[i] - 36) <= 3 && Math.abs(data[i + 1] - 105) <= 3 && Math.abs(data[i + 2] - 154) <= 3 && data[i + 3] === 255) count++;
+    }
+    return count;
+  }, png.toString("base64"));
+  expect(boundaryPixels).toBeGreaterThan(50);
+  await capture(page, info, "connected-condo-context-mobile", true);
+  await page.getByRole("region", { name: "Quick actions" }).getByRole("button", { name: /Open map/ }).click();
+  const map = page.getByRole("dialog", { name: "Property map" });
+  await expect(map.getByTestId("parcel-study-context-outline")).toHaveAttribute("data-context-state", "rendered", { timeout: 15_000 });
+  await map.getByRole("button", { name: "Close Property map window" }).click();
+  await page.getByRole("region", { name: "Quick actions" }).getByRole("button", { name: /Parcel study/ }).click();
+  const study = page.getByRole("dialog", { name: "Parcel study" });
+  await expect(study.getByTestId("parcel-study-context-outline")).toHaveAttribute("data-context-state", "rendered", { timeout: 15_000 });
+  await expect(study.getByRole("list", { name: "Parcel outline availability" }).getByRole("listitem")).toHaveCount(2);
+  await expect(study.getByRole("article", { name: `Source records for BBL ${LOTS[0]}` })).toContainText("No property record found");
+  await study.getByRole("radio", { name: /Together/ }).check();
+  await expect(study.getByText("1 proposed site", { exact: true })).toBeVisible();
+  await expect(study.getByText("Not established here", { exact: true })).toBeVisible();
+  await expect(study.getByRole("region", { name: "Study comparison" }).getByText("Not calculated", { exact: true })).toHaveCount(3);
+  await study.getByRole("button", { name: "Close Parcel study window" }).click();
+  await page.getByRole("button", { name: /Draw a proposal/ }).click();
+  await expect(page.getByRole("dialog", { name: "Proposal editor" }).getByRole("heading", { name: "Site definition required" })).toBeVisible();
+});
+
+test("a foreign condo outline remains withheld instead of filling the missing parcel map", async ({ page }) => {
+  await missingBaseOutlines(page, true);
+  await page.goto(`/property/workspace?ruleeval=on&bbl=${BILLING}`);
+  const compact = page.locator(".bd-map-slot");
+  await expect(compact.getByTestId("parcel-study-context-outline")).toHaveAttribute("data-context-state", "unavailable", { timeout: 15_000 });
+  await expect(compact.getByTestId("parcel-study-map-canvas")).toHaveCount(0);
+  await expect(page.getByTestId("dashboard-cap")).toHaveText("Not calculated");
+});

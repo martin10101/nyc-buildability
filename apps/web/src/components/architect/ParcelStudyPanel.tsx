@@ -51,7 +51,7 @@ function StudyWorkspace({ scope, records }: { scope: ParcelStudyScope; records: 
   const fileInput = useRef<HTMLInputElement>(null);
   const basisDetails = useRef<HTMLDetailsElement>(null);
   const importSequence = useRef(0);
-  const source = useParcelStudyRecords(scope.baseBbls);
+  const source = useParcelStudyRecords(scope.baseBbls, scope.billingBbl);
   const scenarios = deriveParcelStudyScenarios(draft);
   const outlines = source.records.map(record => ({ bbl: record.bbl, outcome: record.outlineOutcome, loading: record.outlineOutcome === null }));
   const confirmation = records.siteDefinition?.activeConfirmation;
@@ -103,7 +103,7 @@ function StudyWorkspace({ scope, records }: { scope: ParcelStudyScope; records: 
       </label>)}
     </fieldset>
     <div className="parcel-study-canvas">
-      <ParcelStudyMap outlines={outlines} arrangement={draft.arrangement}/>
+      <ParcelStudyMap outlines={outlines} contextOutline={source.contextOutline} arrangement={draft.arrangement}/>
       <div className="parcel-study-decisions">
         {draft.arrangement !== "separate" ? <fieldset>
           <legend>Buildings on the combined site</legend>

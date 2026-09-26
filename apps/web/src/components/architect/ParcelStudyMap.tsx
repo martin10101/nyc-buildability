@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
-import type { LotOutlineOutcome, ValidatedGeometry } from "@/lib/lot-geometry-api";
+import { validateOutlineGeometry, type LotOutlineOutcome, type ValidatedGeometry } from "@/lib/lot-geometry-api";
 import { MAPLIBRE_WORKER_URL } from "@/lib/architect/map-runtime";
 import { isMapContainerVisible, observeMapContainer } from "@/lib/architect/map-container";
 import { NYC_CONTEXT_STYLE, contextLayerName } from "@/lib/map-context";
@@ -15,13 +15,15 @@ export interface ParcelStudyOutline {
 
 export interface ParcelStudyMapProps {
   outlines: ParcelStudyOutline[];
+  /** Recorded billing outline, never a land parcel or a legal site geometry. */
+  contextOutline?: ParcelStudyOutline | null;
   arrangement: "together" | "separate" | "compare";
   compact?: boolean;
 }
 
 interface StudyFeature {
   type: "Feature";
-  properties: { bbl: string; color: string };
+  properties: { bbl: string; color: string; contextOnly: boolean };
   geometry: ValidatedGeometry;
 }
 
@@ -60,6 +62,7 @@ const SOURCE = "parcel-study-outlines";
 const LAYERS = ["parcel-study-fill", "parcel-study-line"];
 const COLORS = ["#a4680c", "#24699a", "#4f6d49", "#82549a"];
 const DCP_ATTRIBUTION = "NYC Department of City Planning (DCP), MapPLUTO";
+const CONTEXT_COLOR = "#24699a";
 
 function outlineState(entry: ParcelStudyOutline, duplicate: boolean): {
   geometry: ValidatedGeometry | null; message: string;
@@ -83,10 +86,21 @@ function outlineState(entry: ParcelStudyOutline, duplicate: boolean): {
   if (view.outcome === "multiple_features" || view.reviewRequired) {
     return unavailable("Parcel geometry needs review; outline withheld.");
   }
-  if (view.outcome !== "single_lot" || view.geometryUnusable || !view.geometry) {
+  const geometry = validateOutlineGeometry(view.geometry);
+  if (view.outcome !== "single_lot" || view.geometryUnusable || !geometry) {
     return unavailable("Source geometry is unusable; outline withheld.");
   }
-  return { geometry: view.geometry, message: "Approximate outline available." };
+  return { geometry, message: "Approximate outline available." };
+}
+
+function condoContextState(entry: ParcelStudyOutline, baseBbls: string[]) {
+  const state = outlineState(entry, baseBbls.includes(entry.bbl));
+  if (!state.geometry) return state;
+  if (entry.outcome?.kind !== "document" || entry.outcome.view.featureCount !== 1
+    || entry.outcome.view.condoClassification.classification !== "condo_billing_lot") {
+    return { geometry: null, message: "Condo billing identity needs review; context outline withheld." };
+  }
+  return state;
 }
 
 function hasWebgl(): boolean {
@@ -116,7 +130,7 @@ function MapRecordList({ compact, children }: { compact: boolean; children: Reac
   return compact ? <details className="provenance-details"><summary>Parcel identities, availability &amp; ZoLa links</summary>{children}</details> : <>{children}</>;
 }
 
-export function ParcelStudyMap({ outlines, arrangement, compact = false }: ParcelStudyMapProps) {
+export function ParcelStudyMap({ outlines, contextOutline = null, arrangement, compact = false }: ParcelStudyMapProps) {
   const titleId = useId();
   const statusId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -131,6 +145,8 @@ export function ParcelStudyMap({ outlines, arrangement, compact = false }: Parce
   // structurally unchanged; this performs no spatial operation.
   const outlineKey = JSON.stringify(outlines);
   const snapshot = useMemo(() => JSON.parse(outlineKey) as ParcelStudyOutline[], [outlineKey]);
+  const contextKey = JSON.stringify(contextOutline);
+  const contextSnapshot = useMemo(() => JSON.parse(contextKey) as ParcelStudyOutline | null, [contextKey]);
   const parcels = useMemo(() => {
     const counts = new Map<string, number>();
     for (const entry of snapshot) counts.set(entry.bbl, (counts.get(entry.bbl) ?? 0) + 1);
@@ -141,11 +157,22 @@ export function ParcelStudyMap({ outlines, arrangement, compact = false }: Parce
       color: arrangement === "together" ? COLORS[0] : COLORS[index % COLORS.length],
     }));
   }, [snapshot, arrangement]);
-  const features = useMemo<StudyFeature[]>(() => parcels.flatMap(entry => entry.geometry ? [{
+  const parcelFeatures = useMemo<StudyFeature[]>(() => parcels.flatMap(entry => entry.geometry ? [{
     type: "Feature" as const,
-    properties: { bbl: entry.bbl, color: entry.color },
+    properties: { bbl: entry.bbl, color: entry.color, contextOnly: false },
     geometry: entry.geometry,
   }] : []), [parcels]);
+  const context = useMemo(() => contextSnapshot
+    ? { ...contextSnapshot, ...condoContextState(contextSnapshot, snapshot.map(entry => entry.bbl)) }
+    : null, [contextSnapshot, snapshot]);
+  // A useful base outline always wins. The billing shape never substitutes for
+  // a missing member of a partial set, or appears as a numbered extra parcel.
+  const needsContext = parcels.length > 0 && parcelFeatures.length === 0 && !parcels.some(entry => entry.loading);
+  const displayContext = needsContext && context?.geometry ? context : null;
+  const features = useMemo<StudyFeature[]>(() => displayContext?.geometry ? [{
+    type: "Feature", properties: { bbl: displayContext.bbl, color: CONTEXT_COLOR, contextOnly: true },
+    geometry: displayContext.geometry,
+  }] : parcelFeatures, [displayContext, parcelFeatures]);
 
   useEffect(() => {
     if (!webgl || features.length === 0 || !containerRef.current) return;
@@ -207,9 +234,10 @@ export function ParcelStudyMap({ outlines, arrangement, compact = false }: Parce
         try {
           current.addSource(SOURCE, { type: "geojson", data: { type: "FeatureCollection", features } });
           current.addLayer({ id: LAYERS[0], type: "fill", source: SOURCE,
-            paint: { "fill-color": ["get", "color"], "fill-opacity": 0.24 } });
+            paint: { "fill-color": ["get", "color"], "fill-opacity": displayContext ? 0.12 : 0.24 } });
           current.addLayer({ id: LAYERS[1], type: "line", source: SOURCE,
-            paint: { "line-color": ["get", "color"], "line-width": 3 } });
+            paint: { "line-color": ["get", "color"], "line-width": 3,
+              ...(displayContext ? { "line-dasharray": [2, 2] } : {}) } });
           current.fitBounds(bounds, fitOptions());
           for (const parcel of parcels) if (parcel.geometry) {
             const label = document.createElement("span");
@@ -219,6 +247,15 @@ export function ParcelStudyMap({ outlines, arrangement, compact = false }: Parce
             // Anchor to a returned exterior vertex, never a guessed centroid.
             const first = parcel.geometry.type === "Polygon"
               ? parcel.geometry.coordinates[0][0] : parcel.geometry.coordinates[0][0][0];
+            markers.push(new gl.Marker({ element: label }).setLngLat([first[0], first[1]]).addTo(current));
+          }
+          if (displayContext?.geometry) {
+            const label = document.createElement("span");
+            label.className = "parcel-study-map__marker";
+            label.textContent = "Condo context";
+            label.setAttribute("aria-label", `Condo tax-map outline, context only, billing BBL ${displayContext.bbl}`);
+            const first = displayContext.geometry.type === "Polygon"
+              ? displayContext.geometry.coordinates[0][0] : displayContext.geometry.coordinates[0][0][0];
             markers.push(new gl.Marker({ element: label }).setLngLat([first[0], first[1]]).addTo(current));
           }
           const checkRender = () => {
@@ -252,14 +289,22 @@ export function ParcelStudyMap({ outlines, arrangement, compact = false }: Parce
       if (current.isStyleLoaded()) draw();
     })().catch(fail);
     return () => { cancelled = true; dispose(); };
-  }, [features, parcels, webgl]);
+  }, [features, parcels, displayContext, webgl]);
 
-  const loading = outlines.some(entry => entry.loading);
+  const loading = outlines.some(entry => entry.loading) || (needsContext && context?.loading);
+  const allMissing = parcels.length > 0 && parcels.every(entry => entry.outcome?.kind === "document" && entry.outcome.view.outcome === "no_outline");
+  const sourceFailure = parcels.some(entry => entry.outcome && entry.outcome.kind !== "document");
+  const unavailableMessage = allMissing ? "Individual parcel boundaries unavailable in the source records."
+    : sourceFailure ? "Individual parcel outlines could not be loaded. Retry to check availability."
+    : "Individual parcel outlines withheld for review. See parcel availability below.";
   const mapMessage = features.length === 0
-    ? loading ? "Loading parcel outlines…" : "No parcel outlines available to draw."
+    ? loading ? "Loading parcel outlines…" : unavailableMessage
     : webgl === false ? "Interactive map unavailable in this browser. Parcel records and ZoLa links remain available below."
     : mapStatus === "failed" ? "Interactive map could not render. Parcel records and ZoLa links remain available below."
-    : mapStatus === "ready" ? `${features.length} of ${parcels.length} approximate parcel outlines shown.`
+    : mapStatus === "ready" ? displayContext ? allMissing ? "Condo tax-map outline shown for context; individual parcel boundaries unavailable."
+      : sourceFailure ? "Condo tax-map outline shown for context; individual parcel requests failed. Retry to check availability."
+      : "Condo tax-map outline shown for context; individual parcel outlines withheld for review."
+      : `${parcelFeatures.length} of ${parcels.length} approximate parcel outlines shown.`
     : "Loading interactive parcel map…";
 
   return <section className="parcel-study-map" aria-labelledby={titleId}>
@@ -272,6 +317,12 @@ export function ParcelStudyMap({ outlines, arrangement, compact = false }: Parce
       role="region" aria-label="Interactive approximate parcel outlines" aria-describedby={statusId}
       hidden={mapStatus === "failed"} /> : null}
     <p id={statusId} className="parcel-study-map__status" role="status">{mapMessage}</p>
+    {needsContext && context ? <div data-testid="parcel-study-context-outline"
+      data-context-state={context.loading ? "loading" : displayContext ? (webgl && mapStatus === "ready" ? "rendered" : "available") : "unavailable"}>
+      <strong>Condo tax-map outline · context only</strong>{" "}
+      {!displayContext ? <p className="section-note">{context.message}</p> : null}
+      {zolaLotUrl(context.bbl) ? <a href={zolaLotUrl(context.bbl)!} target="_blank" rel="noopener noreferrer">View condo context in ZoLa</a> : null}
+    </div> : null}
     {contextMissing ? <p className="section-note">Some street context could not load; parcel outlines are separate source data.</p> : null}
     <MapRecordList compact={compact}><ol className="parcel-study-map__legend" aria-label="Parcel outline availability">
       {parcels.map((entry, index) => <li className="parcel-study-map__parcel" key={`${entry.bbl}-${index}`}>
@@ -287,8 +338,9 @@ export function ParcelStudyMap({ outlines, arrangement, compact = false }: Parce
     <details className="provenance-details">
       <summary>Map sources and limitations</summary>
       <p className="section-note">Grouping does not merge tax lots, establish a zoning lot, or change zoning. No area, width, depth, height, or development allowance is calculated from this map.</p>
-      {outlines.map((entry, index) => entry.outcome?.kind === "document" ? <div key={`${entry.bbl}-${index}`}>
-        <strong>Requested BBL {entry.bbl}</strong>
+      {contextSnapshot ? <p className="section-note">Billing BBL {contextSnapshot.bbl} · Not an additional parcel or a confirmed development site. The condo tax-map outline does not establish individual parcel boundaries.</p> : null}
+      {[...outlines, ...(contextSnapshot ? [contextSnapshot] : [])].map((entry, index) => entry.outcome?.kind === "document" ? <div key={`${entry.bbl}-${index}`}>
+        <strong>{index < outlines.length ? "Requested BBL" : "Condo context requested BBL"} {entry.bbl}</strong>
         <p className="section-note">Returned BBL: {entry.outcome.view.bbl ?? "Unknown"}. {entry.outcome.view.attribution}</p>
         <p className="section-note">{entry.outcome.view.accuracyNote} {entry.outcome.view.disclaimer}</p>
         <p className="section-note">Source: {entry.outcome.view.source.sourceId ?? "Unknown"} · Version: {entry.outcome.view.source.datasetVersion ?? "Unknown"} · Retrieved: {entry.outcome.view.source.retrievedAt ?? "Unknown"}</p>
