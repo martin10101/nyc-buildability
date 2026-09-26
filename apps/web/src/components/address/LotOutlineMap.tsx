@@ -171,6 +171,13 @@ export function lotOutlineFitBoundsOptions(): {
   return { padding: 24, duration: 0, maxZoom: LOT_OUTLINE_MAX_ZOOM };
 }
 
+/** Screen-pixel camera margin only. Compact previews must retain useful map
+ * space; a fixed 72px margin leaves just 16px in a 160px-tall dashboard map. */
+export function contextLotOutlineFitBoundsOptions(container: Pick<HTMLElement, "clientWidth" | "clientHeight"> | null) {
+  const shortestSide = container ? Math.min(container.clientWidth, container.clientHeight) : 0;
+  return { padding: shortestSide > 0 ? Math.min(72, shortestSide * 0.2) : 24, duration: 0, maxZoom: 18.5 };
+}
+
 /** Detect a usable WebGL context WITHOUT importing maplibre-gl. Any failure
  * (no document, no context, a throwing getContext) is treated as unavailable so
  * the honest fallback renders instead of a crash. */
@@ -568,7 +575,7 @@ export function LotOutlineMap({
           paint: { "line-color": context ? "#a4680c" : "#1d4e79", "line-width": context ? 3 : 2 },
         });
         if (bounds) {
-          map.fitBounds(bounds, context ? { padding: 72, duration: 0, maxZoom: 18.5 } : lotOutlineFitBoundsOptions());
+          map.fitBounds(bounds, context ? contextLotOutlineFitBoundsOptions(container) : lotOutlineFitBoundsOptions());
         }
         const watchParcel = () => {
           stopParcelWatch();
@@ -581,11 +588,11 @@ export function LotOutlineMap({
         resizeMap = () => {
           if (cancelled || failed) return;
           try {
+            map.resize?.();
             if (!parcelRendered) {
               watchParcel();
-              if (bounds) map.fitBounds(bounds, context ? { padding: 72, duration: 0, maxZoom: 18.5 } : lotOutlineFitBoundsOptions());
+              if (bounds) map.fitBounds(bounds, context ? contextLotOutlineFitBoundsOptions(container) : lotOutlineFitBoundsOptions());
             }
-            map.resize?.();
           } catch { failRender(); }
         };
         watchParcel();
@@ -649,7 +656,7 @@ export function LotOutlineMap({
     >
       {context && drawable && !mapRenderFailed ? <div className="architect-map-toolbar">
         <span className="architect-map-key">Selected lot</span>
-        <button className="secondary-button" type="button" onClick={() => { const bounds = geometry ? geometryBounds(geometry) : null; if (bounds) mapRef.current?.fitBounds(bounds, { padding: 72, duration: 0, maxZoom: 18.5 }); }}>Recenter lot</button>
+        <button className="secondary-button" type="button" onClick={() => { const bounds = geometry ? geometryBounds(geometry) : null; if (bounds) mapRef.current?.fitBounds(bounds, contextLotOutlineFitBoundsOptions(containerRef.current)); }}>Recenter lot</button>
       </div> : null}
       {context && drawable && mapReady && mapRef.current && contextBounds && !mapRenderFailed ? <ZoningContextControl map={mapRef.current} bounds={contextBounds} /> : null}
       {context && drawable && !mapRenderFailed ? <p className="architect-map-status" role="status">{!mapReady ? "Preparing map… " : ""}{Object.entries(contextLayers).map(([key, status]) => `${contextLayerName(key)}: ${status === "ready" ? "loaded" : status === "error" ? "unavailable" : "loading"}`).join(" · ")}</p> : null}

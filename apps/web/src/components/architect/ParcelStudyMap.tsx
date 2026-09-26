@@ -150,6 +150,11 @@ export function ParcelStudyMap({ outlines, arrangement, compact = false }: Parce
   useEffect(() => {
     if (!webgl || features.length === 0 || !containerRef.current) return;
     const container = containerRef.current;
+    // Camera margins are screen pixels, never parcel measurements.
+    const fitOptions = () => {
+      const shortestSide = Math.min(container.clientWidth, container.clientHeight);
+      return { padding: shortestSide > 0 ? Math.min(72, shortestSide * 0.2) : 24, duration: 0, maxZoom: 19.5 };
+    };
     let cancelled = false, failed = false, ready = false, drawn = false;
     let map: StudyMap | null = null;
     let containerWatch: ReturnType<typeof observeMapContainer> | null = null;
@@ -205,7 +210,7 @@ export function ParcelStudyMap({ outlines, arrangement, compact = false }: Parce
             paint: { "fill-color": ["get", "color"], "fill-opacity": 0.24 } });
           current.addLayer({ id: LAYERS[1], type: "line", source: SOURCE,
             paint: { "line-color": ["get", "color"], "line-width": 3 } });
-          current.fitBounds(bounds, { padding: 72, duration: 0, maxZoom: 19.5 });
+          current.fitBounds(bounds, fitOptions());
           for (const parcel of parcels) if (parcel.geometry) {
             const label = document.createElement("span");
             label.className = "parcel-study-map__marker";
@@ -234,8 +239,8 @@ export function ParcelStudyMap({ outlines, arrangement, compact = false }: Parce
           resizeMap = () => {
             if (cancelled || failed) return;
             try {
-              if (!ready) current.fitBounds(bounds, { padding: 72, duration: 0, maxZoom: 19.5 });
               current.resize?.();
+              if (!ready) current.fitBounds(bounds, fitOptions());
               checkRender();
             } catch { fail(); }
           };

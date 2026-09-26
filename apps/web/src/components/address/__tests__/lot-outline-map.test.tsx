@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   LOT_OUTLINE_MAX_ZOOM,
   LotOutlineMap,
+  contextLotOutlineFitBoundsOptions,
   lotOutlineFitBoundsOptions,
   runOnStyleReady,
 } from "@/components/address/LotOutlineMap";
@@ -228,6 +229,7 @@ function addedLayerIds(): string[] {
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
   vi.clearAllMocks();
   mocks.setStyleAlreadyLoaded(false);
   mocks.state.errorListeners.length = 0;
@@ -243,6 +245,38 @@ afterEach(() => {
 
 describe("LotOutlineMap — single_lot with WebGL", () => {
   beforeEach(() => enableWebgl());
+
+  it("frames compact and large context maps from their real size, resizes before fitting, and preserves a ready camera", async () => {
+    let width = 400, height = 160;
+    vi.spyOn(Element.prototype, "clientWidth", "get").mockImplementation(() => width);
+    vi.spyOn(Element.prototype, "clientHeight", "get").mockImplementation(() => height);
+    let resized: ResizeObserverCallback | null = null;
+    vi.stubGlobal("ResizeObserver", class {
+      constructor(callback: ResizeObserverCallback) { resized = callback; }
+      observe() {}
+      disconnect() {}
+    });
+    mocks.state.autoRender = false;
+    render(<LotOutlineMap bbl="1008350041" context fetchImpl={fetchReturning(jsonResponse(fixture("single_lot_polygon")))} />);
+    await waitFor(() => expect(mocks.fitBounds).toHaveBeenCalled());
+    expect(mocks.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: 32, duration: 0, maxZoom: 18.5 });
+
+    mocks.fitBounds.mockClear();
+    mocks.resize.mockClear();
+    width = 900; height = 600;
+    act(() => resized?.([], {} as ResizeObserver));
+    expect(mocks.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: 72, duration: 0, maxZoom: 18.5 });
+    expect(mocks.resize.mock.invocationCallOrder[0]).toBeLessThan(mocks.fitBounds.mock.invocationCallOrder[0]);
+
+    act(() => { [...mocks.state.renderListeners].forEach(listener => listener()); });
+    expect(screen.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "rendered");
+    mocks.fitBounds.mockClear();
+    height = 160;
+    act(() => resized?.([], {} as ResizeObserver));
+    expect(mocks.fitBounds).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Recenter lot" }));
+    expect(mocks.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: 32, duration: 0, maxZoom: 18.5 });
+  });
 
   it("withholds an otherwise drawable response for a different or absent BBL", async () => {
     const fx = fixture("single_lot_polygon");
@@ -553,6 +587,15 @@ describe("runOnStyleReady — pure unit tests (D-056-R002 root-cause fix)", () =
 });
 
 describe("lotOutlineFitBoundsOptions — D-056-R002 framing fix", () => {
+  it.each([
+    [400, 160, 32],
+    [160, 500, 32],
+    [640, 480, 72],
+    [0, 0, 24],
+  ])("context framing at %i × %i pixels uses %i pixels of padding without changing its zoom cap", (clientWidth, clientHeight, padding) => {
+    expect(contextLotOutlineFitBoundsOptions({ clientWidth, clientHeight })).toEqual({ padding, duration: 0, maxZoom: 18.5 });
+  });
+
   it("raises maxZoom above the prior fingernail-size cap of 18", () => {
     const options = lotOutlineFitBoundsOptions();
     expect(options.maxZoom).toBe(LOT_OUTLINE_MAX_ZOOM);
@@ -916,6 +959,9 @@ describe("M5-T029 source-backed street context", () => {
     expect(screen.getByText(/Street basemap: unavailable/)).toBeInTheDocument();
     expect(screen.getByTestId("lot-outline-map")).toBeInTheDocument();
     expect(screen.queryByTestId("lot-outline-render-error")).not.toBeInTheDocument();
+    Object.defineProperties(screen.getByTestId("lot-outline-map"), {
+      clientWidth: { value: 640 }, clientHeight: { value: 480 },
+    });
     fireEvent.click(screen.getByRole("button", { name: "Recenter lot" }));
     expect(mocks.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: 72, duration: 0, maxZoom: 18.5 });
   });
