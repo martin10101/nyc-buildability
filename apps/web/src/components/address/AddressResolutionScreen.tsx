@@ -11,6 +11,7 @@ import {
 import { announcementForAddressOutcome } from "@/lib/announce";
 import {
   resolveAddress,
+  type AddressDocumentOutcome,
   type AddressOutcome,
   type AddressQuery,
 } from "@/lib/address-api";
@@ -88,7 +89,13 @@ function ResolvingCard({ focusOnMount }: { focusOnMount: boolean }) {
   );
 }
 
-export function AddressResolutionScreen({ architect = false }: { architect?: boolean } = {}) {
+export function AddressResolutionScreen({ architect = false, compact = false, onConfirmLot }: {
+  architect?: boolean;
+  /** Embedded search keeps its input mounted within the dashboard heading hierarchy. */
+  compact?: boolean;
+  /** Optional same-page handoff; candidate resolution alone never selects a lot. */
+  onConfirmLot?: (bbl: string, outcome: AddressDocumentOutcome) => void;
+} = {}) {
   const [values, setValues] = useState<AddressFormValues>(EMPTY_ADDRESS_FORM);
   /** Query currently being resolved, or null when nothing is in flight. */
   const [loadingQuery, setLoadingQuery] = useState<AddressQuery | null>(null);
@@ -249,6 +256,10 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
                 onNotMyProperty={notMyProperty}
                 architect={architect}
                 typedInput={result?.typedInput}
+                onConfirmLot={onConfirmLot ? (bbl, acceptedOutcome) => {
+                  onConfirmLot(bbl, acceptedOutcome);
+                  if (compact) setResult(null);
+                } : undefined}
               />
             );
           case "ambiguous":
@@ -298,13 +309,14 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
     <div data-testid="address-resolution-screen">
       <OutcomeAnnouncer message={announcement} testId="address-outcome-announcer" />
       <section className="card">
-        {/* h1: the address surface is the page's primary lookup whenever it
-            is mounted (G3 F1 — the document outline must not open on an h2;
-            PropertyLookup demotes its own heading when the flag is on). */}
-        <h1 className="section-title" style={{ fontSize: "1.4rem" }}>
-          {architect ? "Find a property" : "Address lookup"}
-        </h1>
-        <p className="section-note">{architect ? "Search an address, then confirm the official lot match." : "Enter a street address for the city’s official Geoclient lot match."}</p>
+        {/* Full-page lookup owns the h1; compact embedded search belongs under
+            the dashboard's page heading and retains a named h2. */}
+        {compact ? <h2 className="visually-hidden">Search property</h2> : <>
+          <h1 className="section-title" style={{ fontSize: "1.4rem" }}>
+            {architect ? "Find a property" : "Address lookup"}
+          </h1>
+          <p className="section-note">{architect ? "Search an address, then confirm the official lot match." : "Enter a street address for the city’s official Geoclient lot match."}</p>
+        </>}
         {architect ? <AddressAutocomplete inputRef={autocompleteRef} onPick={(query, typedText) => {
           setValues({ houseNumber: query.houseNumber, street: query.street, borough: query.borough ?? "", zip: query.zip ?? "" });
           void runResolve(query, typedText);
@@ -314,7 +326,7 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
 
       {loadingQuery !== null ? <ResolvingCard focusOnMount={retryFocus} /> : null}
 
-      <div ref={outcomeRef}>
+      <div ref={outcomeRef} className={compact ? "dashboard-search-result" : undefined}>
         {loadingQuery === null && result ? renderOutcome(result.outcome) : null}
       </div>
     </div>

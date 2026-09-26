@@ -81,6 +81,16 @@ function stub(response: Response): typeof fetch {
   return (async () => response) as typeof fetch;
 }
 
+
+/** Deliberately ignores abort, exercising publication guards after transport cancellation. */
+function deferredFetch() {
+  const calls: Array<{ resolve: (response: Response) => void; signal: AbortSignal | null | undefined }> = [];
+  const fetchImpl = vi.fn((_input: RequestInfo | URL, init?: RequestInit) =>
+    new Promise<Response>((resolve) => calls.push({ resolve, signal: init?.signal })),
+  );
+  return { calls, fetchImpl: fetchImpl as typeof fetch };
+}
+
 function bridged200(): Response {
   return bridgeResponse(
     {
@@ -636,5 +646,94 @@ describe("ProposalOutlineDraw — blocked presses never rewrite the outcome card
       release(bridged200());
     });
     await screen.findByTestId("outline-draw-bridged");
+  });
+});
+
+describe("ProposalOutlineDraw — only the current conversion may publish or adopt", () => {
+  it("keeps completed omission counts intact when a later conversion is cancelled", async () => {
+    const { calls, fetchImpl } = deferredFetch();
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={fetchImpl} />);
+    addFinitePoints(3);
+    fireEvent.click(screen.getByTestId("outline-draw-convert"));
+    await act(async () => { calls[0].resolve(bridged200()); });
+    const counts = await screen.findByTestId("outline-draw-convert-counts");
+    const originalCounts = counts.textContent;
+    addPoints(1);
+    fireEvent.click(screen.getByTestId("outline-draw-convert"));
+    expect(counts.textContent).toBe(originalCounts);
+    fillPoint(0, -73.9988, 40.7004);
+    await act(async () => { calls[1].resolve(bridged200()); });
+    expect(counts.textContent).toBe(originalCounts);
+  });
+
+  it.each([
+    ["keyboard edit", () => fillPoint(0, -73.9988, 40.7004)],
+    ["keyboard add", () => addPoints(1)],
+    ["keyboard delete", () => fireEvent.click(screen.getByLabelText("Delete drawn point 2"))],
+    ["map placement", () => mapClick({ lng: -73.9988, lat: 40.7004 })],
+    ["map move", () => { mapVertexClick(0); mapClick({ lng: -73.9988, lat: 40.7004 }); }],
+  ] as const)("aborts and ignores a pending bridge after %s", async (_label, edit) => {
+    const { calls, fetchImpl } = deferredFetch();
+    const onAdopt = vi.fn();
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={onAdopt} fetchImpl={fetchImpl} />);
+    addFinitePoints(3);
+    fireEvent.click(screen.getByTestId("outline-draw-convert"));
+    edit();
+    expect(calls[0].signal?.aborted).toBe(true);
+    await act(async () => { calls[0].resolve(bridged200()); });
+    expect(onAdopt).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("outline-draw-status")).toBeNull();
+    expect(screen.getByTestId("outline-draw-announcer")).toBeEmptyDOMElement();
+    expect(screen.getByTestId("outline-draw-convert")).not.toHaveTextContent("Converting");
+  });
+
+  it.each(["success", "refusal"] as const)("keeps the newer result when an old %s arrives last", async (lateKind) => {
+    const { calls, fetchImpl } = deferredFetch();
+    const onAdopt = vi.fn();
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={onAdopt} fetchImpl={fetchImpl} />);
+    addFinitePoints(3);
+    fireEvent.click(screen.getByTestId("outline-draw-convert"));
+    fillPoint(0, -73.9988, 40.7004);
+    fireEvent.click(screen.getByTestId("outline-draw-convert"));
+    await act(async () => { calls[1].resolve(bridged200()); });
+    await screen.findByTestId("outline-draw-bridged");
+    const cardText = screen.getByTestId("outline-draw-status").textContent;
+    const announced = screen.getByTestId("outline-draw-announcer").textContent;
+    await act(async () => {
+      calls[0].resolve(lateKind === "success"
+        ? bridged200()
+        : bridgeResponse({ detail: "Not Found" }, 404));
+    });
+    expect(onAdopt).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("outline-draw-status").textContent).toBe(cardText);
+    expect(screen.getByTestId("outline-draw-announcer").textContent).toBe(announced);
+  });
+
+  it.each(["site", "receiving draft"] as const)("supersedes pending conversion when the %s changes", async (changed) => {
+    const { calls, fetchImpl } = deferredFetch();
+    const onAdopt = vi.fn();
+    const { rerender } = render(
+      <ProposalOutlineDraw bbl={BBL} adoptionRevision={0} onAdopt={onAdopt} fetchImpl={fetchImpl} />,
+    );
+    addFinitePoints(3);
+    fireEvent.click(screen.getByTestId("outline-draw-convert"));
+    rerender(<ProposalOutlineDraw bbl={changed === "site" ? "1000010011" : BBL}
+      adoptionRevision={changed === "receiving draft" ? 1 : 0} onAdopt={onAdopt} fetchImpl={fetchImpl} />);
+    expect(calls[0].signal?.aborted).toBe(true);
+    await act(async () => { calls[0].resolve(bridged200()); });
+    expect(onAdopt).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("outline-draw-status")).toBeNull();
+  });
+
+  it("aborts on unmount and never adopts a late successful response", async () => {
+    const { calls, fetchImpl } = deferredFetch();
+    const onAdopt = vi.fn();
+    const { unmount } = render(<ProposalOutlineDraw bbl={BBL} onAdopt={onAdopt} fetchImpl={fetchImpl} />);
+    addFinitePoints(3);
+    fireEvent.click(screen.getByTestId("outline-draw-convert"));
+    unmount();
+    expect(calls[0].signal?.aborted).toBe(true);
+    await act(async () => { calls[0].resolve(bridged200()); });
+    expect(onAdopt).not.toHaveBeenCalled();
   });
 });

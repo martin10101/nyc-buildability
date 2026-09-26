@@ -1,0 +1,111 @@
+.buildability-dashboard {
+  --bd-blue: #1762d6;
+  --bd-ink: #17243a;
+  --bd-muted: #536276;
+  --bd-line: #d8e1ea;
+  --bd-light-blue: #e8f0f8;
+  color: var(--bd-ink);
+  color-scheme: light;
+  display: grid;
+  grid-template-columns: minmax(250px, .95fr) minmax(380px, 1.5fr) minmax(210px, .72fr);
+  align-items: start;
+  gap: 14px;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.buildability-dashboard *, .buildability-dashboard *::before, .buildability-dashboard *::after { box-sizing: border-box; }
+.buildability-dashboard .bd-column { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.buildability-dashboard .bd-card { min-width: 0; overflow: hidden; border: 1px solid var(--bd-line); border-radius: 6px; background: #fff; box-shadow: 0 2px 5px #22334c07; }
+.buildability-dashboard .bd-card-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; padding: 10px 12px; border-bottom: 1px solid #e8edf2; }
+.buildability-dashboard h2 { margin: 0; font-size: 15px; font-weight: 650; line-height: 1.35; }
+.buildability-dashboard .bd-card-body { padding: 12px; }
+.buildability-dashboard button { color: inherit; font: inherit; cursor: pointer; }
+.buildability-dashboard button:focus-visible, .buildability-dashboard summary:focus-visible { outline: 3px solid #0b58bc; outline-offset: 2px; position: relative; z-index: 1; }
+.buildability-dashboard button:hover { filter: brightness(.96); }
+.buildability-dashboard .bd-text-button, .buildability-dashboard .bd-inline-actions button, .buildability-dashboard .bd-table-link { padding: 3px 0; background: none; border: 0; color: #1457b1; font-size: 12px; text-align: left; text-decoration: underline; text-underline-offset: 3px; }
+.buildability-dashboard .bd-inline-actions { display: flex; flex-wrap: wrap; gap: 4px 13px; }
+.buildability-dashboard .bd-property-title { font-size: 16px; overflow-wrap: anywhere; }
+.buildability-dashboard .bd-meta { margin: 5px 0 7px; font-size: 12px; color: var(--bd-muted); overflow-wrap: anywhere; }
+.buildability-dashboard .bd-map-slot { min-width: 0; border-bottom: 1px solid var(--bd-line); background: #e8eef3; }
+.buildability-dashboard .bd-map-slot > * { min-width: 0; max-width: 100%; }
+.buildability-dashboard .bd-parcel-summary { display: flex; justify-content: space-between; gap: 10px; width: 100%; margin-top: 10px; padding: 8px; border: 1px solid #d9d2ef; border-radius: 4px; background: #f5f0ff; color: #4d3a7a; font-size: 12px; text-align: left; }
+.buildability-dashboard .bd-zoning-body { padding-top: 10px; padding-bottom: 6px; }
+.buildability-dashboard .bd-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.buildability-dashboard .bd-tag { border: 1px solid transparent; border-radius: 4px; padding: 4px 8px; font-size: 12px; font-weight: 650; }
+.buildability-dashboard .bd-district-tag { background: #ffe0bb; color: #853c07; border-color: #eab783; }
+.buildability-dashboard .bd-overlay-tag { background: #e7d8ff; color: #4c277c; border-color: #cdb4ef; }
+.buildability-dashboard .bd-special-tag { background: #e3dfff; color: #413681; border-color: #c4beef; }
+.buildability-dashboard .bd-record-label { border-radius: 3px; padding: 2px 5px; background: #edf2f7; font-size: 11px; color: #536276; }
+.buildability-dashboard .bd-record-scope { margin: 0; padding: 6px 12px; background: #fafbfd; color: var(--bd-muted); font-size: 12px; }
+.buildability-dashboard .bd-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0; font-size: 13px; }
+.buildability-dashboard .bd-table th, .buildability-dashboard .bd-table td { text-align: left; vertical-align: top; padding: 9px 10px; border-bottom: 1px solid #e7edf2; overflow-wrap: anywhere; }
+.buildability-dashboard .bd-table th { font-weight: 550; }
+.buildability-dashboard .bd-table thead th { background: #f6f9fc; font-size: 12px; font-weight: 650; }
+.buildability-dashboard .bd-table tbody tr:nth-child(even) { background: #f1f6fa; }
+.buildability-dashboard .bd-facts-table th { width: 46%; }
+.buildability-dashboard .bd-fact-value { display: block; font-variant-numeric: tabular-nums; }
+.buildability-dashboard .bd-source-status { display: inline-block; padding: 1px 0 0; border: 0; background: transparent; color: #526479; font-size: 11px; text-align: left; text-decoration: underline; text-underline-offset: 2px; }
+.buildability-dashboard .bd-source-status.bd-source-conflict { color: #a52c34; font-weight: 600; }
+.buildability-dashboard .bd-card-link { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 12px; background: #fff; border: 0; color: #1457b1; text-align: left; font-size: 12px; }
+.buildability-dashboard .bd-building-details { border-top: 1px solid var(--bd-line); }
+.buildability-dashboard .bd-building-details summary { padding: 11px 12px; font-size: 12px; cursor: pointer; }
+.buildability-dashboard .bd-blue-heading { background: var(--bd-light-blue); }
+.buildability-dashboard .bd-draft { color: #a12830; font-size: 11px; font-weight: 700; }
+.buildability-dashboard .bd-detail-shortcuts { display: flex; flex-wrap: wrap; gap: 2px; padding: 5px; background: #f4f8fc; border-bottom: 1px solid var(--bd-line); }
+.buildability-dashboard .bd-detail-shortcuts button { flex: 1 1 auto; padding: 7px 8px; background: transparent; border: 1px solid transparent; border-radius: 3px; color: #325273; font-size: 12px; }
+.buildability-dashboard .bd-detail-shortcuts button:hover { background: #fff; border-color: #d5e1ed; }
+.buildability-dashboard .bd-assessment-note { display: flex; align-items: center; gap: 6px; width: 100%; padding: 9px 11px; border: 0; border-bottom: 1px solid #eadbaf; background: #fff3cc; color: #785711; text-align: left; font-size: 12px; }
+.buildability-dashboard .bd-assessment-note > :last-child { margin-left: auto; }
+.buildability-dashboard .bd-results-table th:first-child { width: 43%; }
+.buildability-dashboard .bd-results-table th:nth-child(2) { width: 32%; }
+.buildability-dashboard .bd-results-table th:nth-child(3) { width: 25%; }
+.buildability-dashboard .bd-results-table td:nth-child(2) { font-weight: 650; font-variant-numeric: tabular-nums; }
+.buildability-dashboard .bd-results-table .bd-cap-row { background: #def4e5; }
+.buildability-dashboard .bd-result-scope { margin: 0; padding: 7px 11px; color: #536276; background: #f8fafc; font-size: 12px; border-bottom: 1px solid #e7edf2; }
+.buildability-dashboard .bd-wide-street, .buildability-dashboard .bd-bulk-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 11px; border: 0; border-bottom: 1px solid #e7edf2; background: #fff; text-align: left; font-size: 13px; }
+.buildability-dashboard .bd-wide-street > span, .buildability-dashboard .bd-bulk-row > span:last-child { max-width: 50%; text-align: right; color: #536276; font-size: 12px; }
+.buildability-dashboard .bd-bulk-row:nth-child(even) { background: #f5f8fb; }
+.buildability-dashboard .bd-calculation-links { padding: 9px 11px; }
+.buildability-dashboard .bd-review-needed { background: #fdebec; border-color: #eed0d4; }
+.buildability-dashboard .bd-review-needed h2 { color: #8e2831; }
+.buildability-dashboard .bd-review-list { list-style: none; padding: 3px 10px 8px; margin: 0; }
+.buildability-dashboard .bd-review-list button { display: grid; grid-template-columns: 15px minmax(0,1fr) 10px; align-items: center; gap: 7px; width: 100%; border: 0; padding: 6px 0; background: transparent; font-size: 12px; text-align: left; }
+.buildability-dashboard .bd-review-symbol { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; border: 1px solid #bd6670; border-radius: 50%; color: #922b37; font-weight: 700; font-size: 10px; }
+.buildability-dashboard .bd-resource-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.buildability-dashboard .bd-resource-grid h2 { font-size: 13px; }
+.buildability-dashboard .bd-resource-links { display: grid; gap: 6px; padding: 7px 12px 11px; }
+.buildability-dashboard .bd-resource-links button { display: flex; justify-content: space-between; gap: 6px; padding: 3px 0; border: 0; background: none; color: #1457b1; text-align: left; font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+.buildability-dashboard .bd-actions { display: grid; gap: 8px; padding: 10px; }
+.buildability-dashboard .bd-actions button, .buildability-dashboard .bd-secondary-action { display: flex; align-items: center; gap: 8px; padding: 10px; border: 1px solid #d3dfeb; border-radius: 4px; background: #f7faff; font-size: 13px; text-align: left; }
+.buildability-dashboard .bd-actions button.bd-primary-action { background: var(--bd-blue); border-color: var(--bd-blue); color: #fff; }
+.buildability-dashboard .bd-actions button > span { width: 17px; text-align: center; font-size: 16px; }
+.buildability-dashboard .bd-status-list { display: grid; gap: 12px; margin: 0; list-style: none; padding: 12px; }
+.buildability-dashboard .bd-status-list li { display: flex; align-items: flex-start; gap: 8px; }
+.buildability-dashboard .bd-status-dot { flex: 0 0 8px; height: 8px; margin-top: 5px; border-radius: 50%; background: #8c99aa; }
+.buildability-dashboard .bd-status-record { background: #30945b; }
+.buildability-dashboard .bd-status-review { background: #c79323; }
+.buildability-dashboard .bd-status-list button { flex: 1; min-width: 0; border: 0; padding: 0; background: transparent; font-size: 12px; text-align: left; }
+.buildability-dashboard .bd-status-list button > span { display: block; color: #607083; font-size: 11px; }
+.buildability-dashboard .bd-study-body { display: grid; gap: 10px; }
+.buildability-dashboard .bd-study-count { margin: 0; font-size: 13px; }
+.buildability-dashboard .bd-study-count strong { font-size: 20px; }
+.buildability-dashboard .bd-secondary-action { justify-content: space-between; width: 100%; font-size: 12px; }
+.buildability-dashboard .bd-muted { color: var(--bd-muted); }
+.buildability-dashboard .bd-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (max-width: 1120px) {
+  .buildability-dashboard { grid-template-columns: minmax(240px, .85fr) minmax(340px, 1.3fr); }
+  .buildability-dashboard .bd-actions-column { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); align-items: start; }
+}
+@media (max-width: 720px) {
+  .buildability-dashboard { grid-template-columns: minmax(0,1fr); gap: 12px; }
+  .buildability-dashboard .bd-actions-column { grid-column: auto; grid-template-columns: minmax(0,1fr); }
+  .buildability-dashboard .bd-column { gap: 12px; }
+  .buildability-dashboard .bd-fact-value { font-size: 14px; }
+  .buildability-dashboard .bd-table th, .buildability-dashboard .bd-table td { padding: 9px 8px; }
+  .buildability-dashboard .bd-resource-grid { gap: 8px; }
+  .buildability-dashboard .bd-text-button, .buildability-dashboard .bd-inline-actions button, .buildability-dashboard .bd-source-status { padding-top: 6px; padding-bottom: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .buildability-dashboard * { scroll-behavior: auto; }
+}

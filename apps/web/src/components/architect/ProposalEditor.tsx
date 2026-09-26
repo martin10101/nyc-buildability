@@ -70,7 +70,8 @@ export function ProposalEditor({
    * manual entry is unchanged. */
   adoptedDraft?: ProposalDraft | null;
 }) {
-  const [draft, setDraft] = useState<ProposalDraft>(() => rectangleSampleDraft());
+  const [draft, setDraftState] = useState<ProposalDraft>(() => rectangleSampleDraft());
+  const [draftRevision, setDraftRevision] = useState(0);
   const [outcome, setOutcome] = useState<ProposalCheckOutcome | null>(null);
   const [checking, setChecking] = useState(false);
   const [announcement, setAnnouncement] = useState("");
@@ -80,9 +81,36 @@ export function ProposalEditor({
   // Mirror of the current draft so adoption can report exactly which walls it
   // reconciles WITHOUT reading stale closure state or nesting setState calls.
   const draftRef = useRef(draft);
+  const revisionRef = useRef(0);
+  const pendingCheck = useRef<{ revision: number; controller: AbortController } | null>(null);
+  const mounted = useRef(false);
+  const cancelCheck = useCallback(() => {
+    const request = pendingCheck.current;
+    pendingCheck.current = null;
+    request?.controller.abort();
+  }, []);
   useEffect(() => {
-    draftRef.current = draft;
-  }, [draft]);
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      cancelCheck();
+    };
+  }, [cancelCheck]);
+
+  // Invalidate synchronously at every edit/adoption/variation switch. Aborting
+  // transport alone is insufficient: a response may already be parsing.
+  const setDraft = useCallback((update: ProposalDraft | ((current: ProposalDraft) => ProposalDraft)) => {
+    const next = typeof update === "function" ? update(draftRef.current) : update;
+    draftRef.current = next;
+    revisionRef.current += 1;
+    setDraftRevision(revisionRef.current);
+    cancelCheck();
+    setChecking(false);
+    setOutcome(null);
+    setDraftProblems([]);
+    setAnnouncement("");
+    setDraftState(next);
+  }, [cancelCheck]);
 
   // Adopt the Generated building option (task M5-T070, D-083-R002 / AS-4): when a
   // NEW adopted draft arrives, seed THIS draft model from it and clear stale
@@ -100,29 +128,44 @@ export function ProposalEditor({
       "Adopted the Generated building option as a proposed starting draft. Every value here is " +
         "proposed — edit it in the table, or keep entering your own; run the check when ready.",
     );
-  }, [adoptedDraft]);
+  }, [adoptedDraft, setDraft]);
 
   const runCheck = useCallback(async () => {
-    const problems = validateDraft(draft);
+    cancelCheck();
+    const checkedDraft = draftRef.current;
+    const problems = validateDraft(checkedDraft);
     setDraftProblems(problems);
     if (problems.length > 0) {
       // Mirror validation blocked the draft client-side (each problem names its
       // route constant). The server refusal remains the truth; this only spares
       // an obviously-doomed POST.
+      setChecking(false);
       setOutcome(null);
       setAnnouncement("Proposal not sent: the draft has input problems, listed below.");
       return;
     }
+    const request = { revision: revisionRef.current, controller: new AbortController() };
+    pendingCheck.current = request;
     setChecking(true);
     setAnnouncement("");
-    const result = await fetchProposalCheck(toProposalCheckRequest(draft), { fetchImpl });
+    const result = await fetchProposalCheck(toProposalCheckRequest(checkedDraft), {
+      fetchImpl,
+      signal: request.controller.signal,
+    });
+    if (!mounted.current || pendingCheck.current !== request ||
+        revisionRef.current !== request.revision || request.controller.signal.aborted) return;
+    pendingCheck.current = null;
     setChecking(false);
     setOutcome(result);
     setAnnouncement(announcementForProposalCheck(result));
     if (result.kind === "report" && activeId) {
-      setVariations((vs) => vs.map((v) => (v.id === activeId ? { ...v, report: result.report } : v)));
+      // Saved variations are snapshots; a working edit must not attach its
+      // report to a different saved draft that happens to retain the active id.
+      setVariations((vs) => vs.map((v) =>
+        v.id === activeId && v.draft === checkedDraft ? { ...v, report: result.report } : v,
+      ));
     }
-  }, [draft, fetchImpl, activeId]);
+  }, [fetchImpl, activeId, cancelCheck]);
 
   const saveVariation = useCallback(() => {
     variationSeq += 1;
@@ -142,6 +185,9 @@ export function ProposalEditor({
   // visible/editable authority, and a fresh check must be run on the adopted
   // shape (the old outcome no longer describes the current draft).
   const adoptDrawnOutline = useCallback((vertices: DraftVertex[]) => {
+    // Also guard the receiving draft: numeric edits can supersede a bridge
+    // request before the drawing component observes the new revision prop.
+    if (revisionRef.current !== draftRevision) return;
     // DB-045(f)/HJ-2: adopting an outline with a different vertex count would
     // orphan exterior walls that reference removed vertices. adoptOutlineVertices
     // reconciles by dropping them; announce exactly which so the change is never
@@ -156,7 +202,7 @@ export function ProposalEditor({
           ? ` Removed ${dropped.length} wall${dropped.length === 1 ? "" : "s"} that referenced deleted vertices (${dropped.join(", ")}); re-add walls if needed.`
           : ""),
     );
-  }, []);
+  }, [draftRevision, setDraft]);
 
   const selectVariation = useCallback(
     (id: string) => {
@@ -172,7 +218,7 @@ export function ProposalEditor({
       );
       setAnnouncement(`Loaded variation ${found.label}.`);
     },
-    [variations],
+    [variations, setDraft],
   );
 
   return (
@@ -427,7 +473,7 @@ export function ProposalEditor({
         <aside className="proposal-editor-aside">
           {bbl ? (
             <div className="proposal-map-context" data-testid="proposal-map-context">
-              <ProposalOutlineDraw bbl={bbl} onAdopt={adoptDrawnOutline} fetchImpl={fetchImpl} />
+              <ProposalOutlineDraw bbl={bbl} onAdopt={adoptDrawnOutline} fetchImpl={fetchImpl} adoptionRevision={draftRevision} />
             </div>
           ) : null}
           <ProposalCheckReport outcome={outcome} checking={checking} />
@@ -443,3 +489,4 @@ export function ProposalEditor({
     </div>
   );
 }
+

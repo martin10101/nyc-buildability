@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import type { LotOutlineOutcome, ValidatedGeometry } from "@/lib/lot-geometry-api";
 import { MAPLIBRE_WORKER_URL } from "@/lib/architect/map-runtime";
+import { isMapContainerVisible, observeMapContainer } from "@/lib/architect/map-container";
 import { NYC_CONTEXT_STYLE, contextLayerName } from "@/lib/map-context";
 import { zolaLotUrl } from "@/lib/provenance-link";
 
@@ -15,6 +16,7 @@ export interface ParcelStudyOutline {
 export interface ParcelStudyMapProps {
   outlines: ParcelStudyOutline[];
   arrangement: "together" | "separate" | "compare";
+  compact?: boolean;
 }
 
 interface StudyFeature {
@@ -36,7 +38,7 @@ interface StudyMap {
   addLayer(layer: unknown): void;
   addControl(control: unknown, position: string): void;
   fitBounds(bounds: [[number, number], [number, number]], options: unknown): void;
-  resize(): void;
+  resize?(): void;
   remove(): void;
 }
 
@@ -110,7 +112,11 @@ function cameraBounds(features: StudyFeature[]): [[number, number], [number, num
 /** The parent owns requests. This component draws only the matching display
  * geometry, preserving every polygon and hole exactly as returned. The study
  * grouping changes colors and labels only; it never creates a legal site. */
-export function ParcelStudyMap({ outlines, arrangement }: ParcelStudyMapProps) {
+function MapRecordList({ compact, children }: { compact: boolean; children: ReactNode }) {
+  return compact ? <details className="provenance-details"><summary>Parcel identities, availability &amp; ZoLa links</summary>{children}</details> : <>{children}</>;
+}
+
+export function ParcelStudyMap({ outlines, arrangement, compact = false }: ParcelStudyMapProps) {
   const titleId = useId();
   const statusId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -146,14 +152,14 @@ export function ParcelStudyMap({ outlines, arrangement }: ParcelStudyMapProps) {
     const container = containerRef.current;
     let cancelled = false, failed = false, ready = false, drawn = false;
     let map: StudyMap | null = null;
-    let observer: ResizeObserver | null = null;
+    let containerWatch: ReturnType<typeof observeMapContainer> | null = null;
     const markers: StudyMarker[] = [];
     let stopRenderWatch = () => {};
     setMapStatus("loading");
     setContextMissing(false);
     const dispose = () => {
       stopRenderWatch();
-      observer?.disconnect();
+      containerWatch?.dispose();
       markers.forEach(marker => marker.remove());
       markers.length = 0;
       map?.remove();
@@ -162,11 +168,13 @@ export function ParcelStudyMap({ outlines, arrangement }: ParcelStudyMapProps) {
     const fail = () => {
       if (cancelled || failed) return;
       failed = true;
-      clearTimeout(timer);
       setMapStatus("failed");
       dispose();
     };
-    const timer = setTimeout(() => { if (!ready) fail(); }, 10_000);
+    let resizeMap = () => {};
+    containerWatch = observeMapContainer(container, {
+      onResize: () => resizeMap(), onTimeout: () => { if (!ready) fail(); },
+    });
     void (async () => {
       const imported = await import("maplibre-gl") as unknown as { default?: StudyMapLibrary } & StudyMapLibrary;
       if (cancelled || failed) return;
@@ -177,6 +185,10 @@ export function ParcelStudyMap({ outlines, arrangement }: ParcelStudyMapProps) {
         center: [(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2],
         zoom: 16, attributionControl: false, interactive: true });
       map = current;
+      resizeMap = () => {
+        if (cancelled || failed) return;
+        try { current.resize?.(); } catch { fail(); }
+      };
       current.addControl(new gl.AttributionControl({ customAttribution: DCP_ATTRIBUTION }), "bottom-right");
       current.addControl(new gl.NavigationControl({ showCompass: false }), "top-right");
       current.on("error", event => {
@@ -205,34 +217,36 @@ export function ParcelStudyMap({ outlines, arrangement }: ParcelStudyMapProps) {
             markers.push(new gl.Marker({ element: label }).setLngLat([first[0], first[1]]).addTo(current));
           }
           const checkRender = () => {
-            if (cancelled || failed || ready) return;
+            if (cancelled || failed || ready || !isMapContainerVisible(container)) return;
             try {
               if (!LAYERS.every(id => current.getLayer(id)) || !current.isSourceLoaded(SOURCE)) return;
               const rendered = current.queryRenderedFeatures({ layers: LAYERS });
               if (!features.every(feature => LAYERS.every(id => rendered.some(item =>
                 item.source === SOURCE && item.layer?.id === id && item.properties?.bbl === feature.properties.bbl)))) return;
               ready = true;
-              clearTimeout(timer);
+              containerWatch?.markReady();
               stopRenderWatch();
               setMapStatus("ready");
             } catch { fail(); }
           };
           stopRenderWatch = () => current.off("render", checkRender);
           current.on("render", checkRender);
+          resizeMap = () => {
+            if (cancelled || failed) return;
+            try {
+              if (!ready) current.fitBounds(bounds, { padding: 72, duration: 0, maxZoom: 19.5 });
+              current.resize?.();
+              checkRender();
+            } catch { fail(); }
+          };
           checkRender();
         } catch { fail(); }
       };
       current.on("load", draw);
       current.on("style.load", draw);
       if (current.isStyleLoaded()) draw();
-      if (!failed && typeof ResizeObserver !== "undefined") {
-        observer = new ResizeObserver(() => {
-          if (!cancelled && !failed) { try { current.resize(); } catch { fail(); } }
-        });
-        observer.observe(container);
-      }
     })().catch(fail);
-    return () => { cancelled = true; clearTimeout(timer); dispose(); };
+    return () => { cancelled = true; dispose(); };
   }, [features, parcels, webgl]);
 
   const loading = outlines.some(entry => entry.loading);
@@ -254,7 +268,7 @@ export function ParcelStudyMap({ outlines, arrangement }: ParcelStudyMapProps) {
       hidden={mapStatus === "failed"} /> : null}
     <p id={statusId} className="parcel-study-map__status" role="status">{mapMessage}</p>
     {contextMissing ? <p className="section-note">Some street context could not load; parcel outlines are separate source data.</p> : null}
-    <ol className="parcel-study-map__legend" aria-label="Parcel outline availability">
+    <MapRecordList compact={compact}><ol className="parcel-study-map__legend" aria-label="Parcel outline availability">
       {parcels.map((entry, index) => <li className="parcel-study-map__parcel" key={`${entry.bbl}-${index}`}>
         <span className="parcel-study-map__swatch" style={{ backgroundColor: entry.color }} aria-hidden="true">{entry.number}</span>
         <div><strong>Parcel {entry.number}{entry.lot !== null ? ` · Lot ${entry.lot}` : ""}</strong>
@@ -263,7 +277,7 @@ export function ParcelStudyMap({ outlines, arrangement }: ParcelStudyMapProps) {
             View Lot {entry.lot} in ZoLa</a> : null}
         </div>
       </li>)}
-    </ol>
+    </ol></MapRecordList>
     <p className="section-note">Approximate MapPLUTO outlines · Display only, not a boundary survey or buildable envelope.</p>
     <details className="provenance-details">
       <summary>Map sources and limitations</summary>

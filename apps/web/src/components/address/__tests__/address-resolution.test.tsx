@@ -1030,3 +1030,52 @@ describe("DB-007b — architect 'Not my property' returns focus to the search bo
     expect(screen.queryByTestId("address-confirm-card")).toBeNull();
   });
 });
+
+describe("Compact persistent dashboard search", () => {
+  it("keeps the labelled search mounted and clears its result only after explicit confirmation", async () => {
+    const doc = warningsDoc();
+    const fetchSpy = stubFetchOnce(jsonResponse(doc, 200));
+    const onConfirmLot = vi.fn(() => {
+      // The complete candidate stays visible up to the user's explicit acceptance.
+      expect(screen.getByTestId("address-confirm-card")).toBeInTheDocument();
+      expect(screen.getByTestId("warning-grc-message").textContent).toBe(doc.grc_message);
+    });
+    render(<AddressResolutionScreen architect compact onConfirmLot={onConfirmLot} />);
+    const searchBox = screen.getByLabelText("Street address");
+    const typedText = "120 Broadway, New York";
+    fireEvent.change(searchBox, { target: { value: typedText } });
+    expect(screen.getByRole("heading", { level: 2, name: "Search property" })).toHaveClass("visually-hidden");
+    expect(screen.queryByRole("heading", { level: 1 })).toBeNull();
+    expect(screen.queryByText("Search an address, then confirm the official lot match.")).toBeNull();
+
+    // The stubbed suggestion failure leaves the accepted manual resolver available.
+    fillAndSubmit();
+    await screen.findByTestId("address-confirm-card");
+    expect(onConfirmLot).not.toHaveBeenCalled();
+    const requestCount = fetchSpy.mock.calls.length;
+
+    fireEvent.click(screen.getByRole("button", { name: "Continue with this lot" }));
+
+    expect(onConfirmLot).toHaveBeenCalledOnce();
+    expect(onConfirmLot).toHaveBeenCalledWith(
+      doc.canonical.bbl,
+      expect.objectContaining({
+        kind: "document",
+        correlationId: HTTP_CID,
+        view: expect.objectContaining({
+          status: "resolved_with_warnings",
+          grcMessage: doc.grc_message,
+          grc2Message: doc.grc2_message,
+          canonical: expect.objectContaining({ bbl: doc.canonical.bbl }),
+        }),
+      }),
+    );
+    expect(screen.queryByTestId("address-confirm-card")).toBeNull();
+    expect(screen.getByLabelText("Street address")).toBe(searchBox);
+    expect(searchBox).toHaveValue(typedText);
+    expect(screen.getByLabelText("Street")).toHaveValue("BROADWAY");
+    expect(screen.getByTestId("address-outcome-announcer").textContent).toBe("");
+    expect(fetchSpy).toHaveBeenCalledTimes(requestCount);
+    sessionStorage.removeItem(`nyc-buildability:confirmed-address:${doc.canonical.bbl}`);
+  });
+});

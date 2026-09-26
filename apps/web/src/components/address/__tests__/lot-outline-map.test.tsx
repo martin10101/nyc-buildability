@@ -38,6 +38,7 @@ const mocks = vi.hoisted(() => {
   const addControl = vi.fn();
   const fitBounds = vi.fn();
   const remove = vi.fn();
+  const resize = vi.fn();
   const attributionCtor = vi.fn();
   const navigationCtor = vi.fn();
   const setWorkerUrl = vi.fn();
@@ -125,6 +126,9 @@ const mocks = vi.hoisted(() => {
     remove() {
       remove();
     }
+    resize() {
+      resize();
+    }
   }
   class MockAttributionControl {
     constructor(options: unknown) {
@@ -143,6 +147,7 @@ const mocks = vi.hoisted(() => {
     addControl,
     fitBounds,
     remove,
+    resize,
     attributionCtor,
     navigationCtor,
     setWorkerUrl,
@@ -238,6 +243,39 @@ afterEach(() => {
 
 describe("LotOutlineMap — single_lot with WebGL", () => {
   beforeEach(() => enableWebgl());
+
+  it("withholds an otherwise drawable response for a different or absent BBL", async () => {
+    const fx = fixture("single_lot_polygon");
+    fx.bbl = "3022640032";
+    const { rerender } = render(<LotOutlineMap bbl="1008350041" fetchImpl={fetchReturning(jsonResponse(fx))} />);
+    expect(await screen.findByTestId("lot-outline-unavailable")).toHaveTextContent("does not match");
+    expect(mocks.mapCtor).not.toHaveBeenCalled();
+    delete fx.bbl;
+    rerender(<LotOutlineMap bbl="1008350041" fetchImpl={fetchReturning(jsonResponse(fx))} />);
+    expect(await screen.findByTestId("lot-outline-unavailable")).toHaveTextContent("does not match");
+    expect(mocks.mapCtor).not.toHaveBeenCalled();
+  });
+
+  it("keeps an initializing map pending while its floating panel is hidden and resizes the same map on reveal", async () => {
+    vi.useFakeTimers();
+    mocks.state.autoRender = false;
+    const fetchImpl = fetchReturning(jsonResponse(fixture("single_lot_polygon")));
+    const { container, rerender } = render(<div hidden><LotOutlineMap bbl="1008350041" fetchImpl={fetchImpl} /></div>);
+    await act(async () => { await vi.advanceTimersByTimeAsync(1); await vi.dynamicImportSettled(); });
+    const mapCount = mocks.mapCtor.mock.calls.length;
+    expect(mapCount).toBeGreaterThan(0);
+    act(() => { [...mocks.state.renderListeners].forEach(listener => listener()); });
+    expect(container.querySelector('[data-testid="lot-outline"]')).toHaveAttribute("data-parcel-state", "loading");
+    await act(async () => { await vi.advanceTimersByTimeAsync(30_000); });
+    expect(mocks.remove).not.toHaveBeenCalled();
+    rerender(<div><LotOutlineMap bbl="1008350041" fetchImpl={fetchImpl} /></div>);
+    await act(async () => { await Promise.resolve(); });
+    expect(mocks.resize).toHaveBeenCalled();
+    act(() => { [...mocks.state.renderListeners].forEach(listener => listener()); });
+    expect(screen.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "rendered");
+    expect(mocks.mapCtor).toHaveBeenCalledTimes(mapCount);
+    expect(fetchImpl).toHaveBeenCalledOnce();
+  });
 
   it("S1: draws the fixture geometry VERBATIM as a GeoJSON source, fits bounds, and puts NYC DCP attribution on the map", async () => {
     const fx = fixture("single_lot_polygon");

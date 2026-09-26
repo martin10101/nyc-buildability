@@ -2,6 +2,8 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AddressResolutionScreen } from "@/components/address/AddressResolutionScreen";
 import { zolaLotUrl } from "@/lib/provenance-link";
+import type { AddressDocumentOutcome } from "@/lib/address-api";
+import { recalledAddress } from "@/lib/architect/selected-address";
 import {
   ABSENT_BBL_MAP_LINK_NOTE,
   ZOLA_LOT_LINK_LABEL,
@@ -169,9 +171,12 @@ function resolvedDoc() {
   };
 }
 
-async function renderResolved(doc = resolvedDoc()) {
+async function renderResolved(
+  doc = resolvedDoc(),
+  onConfirmLot?: (bbl: string, outcome: AddressDocumentOutcome) => void,
+) {
   const fetchSpy = stubFetchOnce(jsonResponse(doc, 200));
-  const view = render(<AddressResolutionScreen />);
+  const view = render(<AddressResolutionScreen onConfirmLot={onConfirmLot} />);
   fillAndSubmit();
   await screen.findByTestId("address-confirm-card");
   return { doc, fetchSpy, container: view.container };
@@ -316,6 +321,88 @@ describe("S3 — Continue handoff", () => {
     // Nothing else leaks into the query string.
     expect(href).not.toContain("street");
     expect(href).not.toContain("borough");
+  });
+});
+
+
+describe("Optional same-page confirmation handoff", () => {
+  afterEach(() => {
+    sessionStorage.removeItem("nyc-buildability:confirmed-address:1000477501");
+  });
+
+  it("waits for explicit confirmation, remembers the address, and hands off without a navigation link", async () => {
+    const doc = resolvedDoc();
+    const onConfirmLot = vi.fn((bbl: string, outcome: AddressDocumentOutcome) => {
+      // Presentation context is available before the dashboard receives the lot.
+      expect(recalledAddress(bbl)?.sourceRecord).toEqual(outcome.view);
+    });
+    const { fetchSpy } = await renderResolved(doc, onConfirmLot);
+
+    expect(onConfirmLot).not.toHaveBeenCalled();
+    const action = screen.getByRole("button", { name: "Continue with this lot" });
+    expect(action).not.toHaveAttribute("href");
+    expect(screen.queryByRole("link", { name: "Continue with this lot" })).toBeNull();
+    const requestsBeforeConfirm = fetchSpy.mock.calls.length;
+
+    fireEvent.click(action);
+
+    expect(onConfirmLot).toHaveBeenCalledOnce();
+    expect(onConfirmLot).toHaveBeenCalledWith(
+      doc.canonical.bbl,
+      expect.objectContaining({
+        kind: "document",
+        correlationId: HTTP_CID,
+        view: expect.objectContaining({
+          status: "resolved",
+          canonical: expect.objectContaining({ bbl: doc.canonical.bbl }),
+        }),
+      }),
+    );
+    expect(fetchSpy).toHaveBeenCalledTimes(requestsBeforeConfirm);
+  });
+
+  it("keeps both source warnings visible before the nonblocking callback action", async () => {
+    const doc = resolvedDoc();
+    doc.status = "resolved_with_warnings";
+    doc.grc_message = "VERIFY HOUSE NUMBER";
+    doc.grc2_message = "SECOND PASS WARNING";
+    const onConfirmLot = vi.fn();
+    await renderResolved(doc, onConfirmLot);
+
+    const action = screen.getByRole("button", { name: "Continue with this lot" });
+    const warnings = screen.getByTestId("address-warnings");
+    expect(warnings).toHaveTextContent(doc.grc_message);
+    expect(warnings).toHaveTextContent(doc.grc2_message);
+    expect(warnings.compareDocumentPosition(action) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(action).not.toBeDisabled();
+    expect(onConfirmLot).not.toHaveBeenCalled();
+    fireEvent.click(action);
+    expect(onConfirmLot).toHaveBeenCalledOnce();
+  });
+
+  it.each([null, "12345", HOSTILE_BBL])("does not offer or invoke the callback for invalid BBL %s", async bbl => {
+    const doc = resolvedDoc();
+    doc.canonical.bbl = bbl;
+    const onConfirmLot = vi.fn();
+    await renderResolved(doc, onConfirmLot);
+
+    expect(screen.queryByTestId("confirm-continue")).toBeNull();
+    expect(screen.queryByTestId("zola-link")).toBeNull();
+    expect(onConfirmLot).not.toHaveBeenCalled();
+  });
+
+  it("allows Not my property to return to editing without accepting the lot", async () => {
+    const onConfirmLot = vi.fn();
+    const { fetchSpy } = await renderResolved(resolvedDoc(), onConfirmLot);
+    const requestsBeforeEdit = fetchSpy.mock.calls.length;
+
+    fireEvent.click(screen.getByTestId("not-my-property"));
+
+    expect(onConfirmLot).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("address-confirm-card")).toBeNull();
+    expect(screen.getByLabelText("Street")).toHaveValue("BROADWAY");
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByLabelText("Street")));
+    expect(fetchSpy).toHaveBeenCalledTimes(requestsBeforeEdit);
   });
 });
 

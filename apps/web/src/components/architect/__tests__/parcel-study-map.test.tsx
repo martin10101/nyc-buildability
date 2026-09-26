@@ -104,6 +104,28 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 describe("ParcelStudyMap display-only identity and geometry", () => {
+  it("keeps a hidden initializing map pending past the deadline, then resizes and verifies real features on reveal", async () => {
+    vi.useFakeTimers();
+    const outlines = [outline(LOT_A)];
+    const { container, rerender } = render(<div hidden><ParcelStudyMap arrangement="together" outlines={outlines} /></div>);
+    await act(async () => { await vi.dynamicImportSettled(); });
+    expect(runtime.maps).toHaveLength(1);
+    act(() => runtime.maps[0].emit("render"));
+    expect(container).toHaveTextContent("Loading interactive parcel map…");
+    expect(container).not.toHaveTextContent("1 of 1 approximate parcel outlines shown.");
+    await act(async () => { await vi.advanceTimersByTimeAsync(30_000); });
+    expect(runtime.maps[0].remove).not.toHaveBeenCalled();
+    runtime.renderAvailable = false;
+    rerender(<div><ParcelStudyMap arrangement="together" outlines={outlines} /></div>);
+    await act(async () => { await Promise.resolve(); });
+    expect(runtime.maps[0].resize).toHaveBeenCalledOnce();
+    expect(screen.getByText("Loading interactive parcel map…")).toBeInTheDocument();
+    runtime.renderAvailable = true;
+    act(() => runtime.maps[0].emit("render"));
+    expect(screen.getByText("1 of 1 approximate parcel outlines shown.")).toBeInTheDocument();
+    expect(runtime.maps).toHaveLength(1);
+  });
+
   it("draws all polygons and holes verbatim, with numbered lot and BBL labels", async () => {
     render(<ParcelStudyMap arrangement="separate" outlines={[outline(LOT_A), outline(LOT_B, result(LOT_B, multipolygon))]} />);
     await screen.findByText("2 of 2 approximate parcel outlines shown.");

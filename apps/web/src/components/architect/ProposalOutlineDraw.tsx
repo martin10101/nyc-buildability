@@ -105,10 +105,13 @@ export function ProposalOutlineDraw({
   bbl,
   onAdopt,
   fetchImpl,
+  adoptionRevision = 0,
 }: {
   bbl: string;
   onAdopt: (vertices: DraftVertex[]) => void;
   fetchImpl?: typeof fetch;
+  /** A receiving numeric-draft edit supersedes any conversion still in flight. */
+  adoptionRevision?: number;
 }) {
   const [points, setPoints] = useState<DrawnPoint[]>([]);
   const [converting, setConverting] = useState(false);
@@ -141,7 +144,33 @@ export function ProposalOutlineDraw({
       reannounceTimer.current = null;
     }
   }, []);
-  useEffect(() => cancelReannounce, [cancelReannounce]);
+  const revisionRef = useRef(0);
+  const pendingConversion = useRef<{ revision: number; controller: AbortController } | null>(null);
+  const mounted = useRef(false);
+  const cancelConversion = useCallback(() => {
+    revisionRef.current += 1;
+    const request = pendingConversion.current;
+    pendingConversion.current = null;
+    request?.controller.abort();
+    cancelReannounce();
+  }, [cancelReannounce]);
+  const invalidateConversion = useCallback(() => {
+    cancelConversion();
+    setConverting(false);
+    setAnnouncement("");
+    // Keep the last completed outcome, including its refusal/provenance.
+    // A superseded pending response must never replace that historical result.
+  }, [cancelConversion]);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      cancelConversion();
+    };
+  }, [cancelConversion]);
+  useEffect(() => {
+    if (pendingConversion.current !== null) invalidateConversion();
+  }, [bbl, adoptionRevision, invalidateConversion]);
 
   useEffect(() => {
     if (pendingFocus === null) return;
@@ -157,32 +186,34 @@ export function ProposalOutlineDraw({
   }, [pendingFocus]);
 
   const addPoint = useCallback(() => {
+    invalidateConversion();
     setPoints((ps) => [...ps, { lng: Number.NaN, lat: Number.NaN }]);
-  }, []);
+  }, [invalidateConversion]);
 
   // Place a point from a map click (finite display 4326 position). Appends into
   // the SAME points state the keyboard path uses (AS-1) — one drawn-outline
   // model. No selection is made, so consecutive clicks keep placing.
   const placePoint = useCallback((lngLat: { lng: number; lat: number }) => {
+    invalidateConversion();
     setPoints((ps) => [...ps, { lng: lngLat.lng, lat: lngLat.lat }]);
-  }, []);
+  }, [invalidateConversion]);
 
   const updatePoint = useCallback((index: number, patch: Partial<DrawnPoint>) => {
+    invalidateConversion();
     setPoints((ps) => ps.map((p, i) => (i === index ? { ...p, ...patch } : p)));
-  }, []);
+  }, [invalidateConversion]);
 
   // Move the currently-selected point to a clicked map position (AS-2 adjust via
   // the map). The keyboard equivalent is editing the row's lng/lat inputs.
   const moveSelectedPoint = useCallback(
     (lngLat: { lng: number; lat: number }) => {
-      setSelectedIndex((sel) => {
-        if (sel !== null) {
-          setPoints((ps) => ps.map((p, i) => (i === sel ? { lng: lngLat.lng, lat: lngLat.lat } : p)));
-        }
-        return sel;
-      });
+      if (selectedIndex === null) return;
+      invalidateConversion();
+      setPoints((ps) => ps.map((p, i) =>
+        i === selectedIndex ? { lng: lngLat.lng, lat: lngLat.lat } : p,
+      ));
     },
-    [],
+    [selectedIndex, invalidateConversion],
   );
 
   // Toggle selection of a point (AS-2 select) — from a map-vertex click or the
@@ -192,6 +223,7 @@ export function ProposalOutlineDraw({
   }, []);
 
   const deletePoint = useCallback((index: number) => {
+    invalidateConversion();
     setPoints((ps) => {
       const next = ps.filter((_, i) => i !== index);
       // Keep focus on a delete control: the row that slid up into this index,
@@ -205,7 +237,7 @@ export function ProposalOutlineDraw({
       if (sel === index) return null;
       return sel > index ? sel - 1 : sel;
     });
-  }, []);
+  }, [invalidateConversion]);
 
   const drawnCount = points.length;
   // DB-047(e): Convert gates on the count of FINITE points (both ordinates a
@@ -236,13 +268,21 @@ export function ProposalOutlineDraw({
     // (a) Record how many rows are being left out so the post-convert status can
     // name the omitted count — never a silent drop.
     const omitted = points.length - drawn.length;
-    setOmittedOnConvert(omitted);
-    cancelReannounce();
+    cancelConversion();
+    const request = { revision: revisionRef.current, controller: new AbortController() };
+    pendingConversion.current = request;
     setConverting(true);
     setAnnouncement("");
-    const result = await fetchOutlineBridge({ bbl, drawn_vertices: drawn }, { fetchImpl });
+    const result = await fetchOutlineBridge({ bbl, drawn_vertices: drawn }, {
+      fetchImpl,
+      signal: request.controller.signal,
+    });
+    if (!mounted.current || pendingConversion.current !== request ||
+        revisionRef.current !== request.revision || request.controller.signal.aborted) return;
+    pendingConversion.current = null;
     cancelReannounce();
     setConverting(false);
+    setOmittedOnConvert(omitted);
     setOutcome(result);
     // G3-A4/HJ-5: a successful conversion that left rows out says so in the
     // announcement too (the result card is not reliably spoken when it mounts).
@@ -253,7 +293,7 @@ export function ProposalOutlineDraw({
     if (result.kind === "bridged") {
       onAdopt(result.report.vertices.map((v) => ({ x: v.x, y: v.y })));
     }
-  }, [points, bbl, fetchImpl, onAdopt, cancelReannounce]);
+  }, [points, bbl, fetchImpl, onAdopt, cancelReannounce, cancelConversion]);
 
   // (e) Convert is aria-disabled (not `disabled`) while not convertible, so it
   // stays in the tab order (A7). Activating it in that state announces WHY
