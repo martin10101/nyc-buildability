@@ -215,7 +215,13 @@ function ParcelStudyMapView({ outlines, contextOutline = null, arrangement, comp
     // Camera margins are screen pixels, never parcel measurements.
     const fitOptions = () => {
       const shortestSide = Math.min(container.clientWidth, container.clientHeight);
-      return { padding: shortestSide > 0 ? Math.min(72, shortestSide * 0.2) : 24, duration: 0, maxZoom: 19.5 };
+      const margin = shortestSide > 0 ? Math.min(72, shortestSide * 0.2) : 24;
+      // The compact map's source credit wraps. Keep its full text and the
+      // parcel labels clear of one another; this changes camera framing only.
+      const padding = compact
+        ? { top: margin, left: margin, right: margin, bottom: margin + 32 }
+        : margin;
+      return { padding, duration: 0, maxZoom: 19.5 };
     };
     let cancelled = false, failed = false, ready = false, drawn = false;
     let map: StudyMap | null = null;
@@ -324,7 +330,7 @@ function ParcelStudyMapView({ outlines, contextOutline = null, arrangement, comp
       if (current.isStyleLoaded()) draw();
     })().catch(fail);
     return () => { cancelled = true; dispose(); };
-  }, [features, visibleParcels, displayContext, attributions, webgl]);
+  }, [features, visibleParcels, displayContext, attributions, webgl, compact]);
 
   const loading = visibleParcels.some(entry => entry.loading) || (needsContext && context?.loading);
   const allMissing = parcels.length > 0 && parcels.every(entry => entry.outcome?.kind === "document" && entry.outcome.view.outcome === "no_outline");

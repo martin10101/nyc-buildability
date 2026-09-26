@@ -174,19 +174,19 @@ describe("ParcelStudyMap display-only identity and geometry", () => {
   });
 
   it("uses compact camera padding, resizes before a pending fit, and preserves camera after readiness", async () => {
-    let width = 400, height = 160;
+    let width = 400, height = 220;
     vi.spyOn(Element.prototype, "clientWidth", "get").mockImplementation(() => width);
     vi.spyOn(Element.prototype, "clientHeight", "get").mockImplementation(() => height);
     runtime.renderAvailable = false;
-    render(<ParcelStudyMap arrangement="together" outlines={[outline(LOT_A)]} />);
+    render(<ParcelStudyMap compact arrangement="together" outlines={[outline(LOT_A)]} />);
     await waitFor(() => expect(runtime.maps).toHaveLength(1));
     const map = runtime.maps[0];
-    expect(map.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: 32, duration: 0, maxZoom: 19.5 });
+    expect(map.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: { top: 44, left: 44, right: 44, bottom: 76 }, duration: 0, maxZoom: 19.5 });
     map.fitBounds.mockClear();
     map.resize.mockClear();
     width = 900; height = 600;
     act(() => runtime.observerCallback?.([], {} as ResizeObserver));
-    expect(map.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: 72, duration: 0, maxZoom: 19.5 });
+    expect(map.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: { top: 72, left: 72, right: 72, bottom: 104 }, duration: 0, maxZoom: 19.5 });
     expect(map.resize.mock.invocationCallOrder[0]).toBeLessThan(map.fitBounds.mock.invocationCallOrder[0]);
     runtime.renderAvailable = true;
     act(() => map.emit("render"));

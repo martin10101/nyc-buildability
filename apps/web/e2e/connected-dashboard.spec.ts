@@ -1,4 +1,4 @@
-import { expect, test, type Page, type TestInfo } from "@playwright/test";
+import { expect, test, type Locator, type Page, type TestInfo } from "@playwright/test";
 import profileFixture from "../../../packages/contracts/fixtures/valid/property_profile/builder_output_m1_t005.json";
 import outlineFixture from "../../../packages/contracts/fixtures/valid/lot_geometry/single_lot_polygon.json";
 import dof32 from "../../../packages/contracts/fixtures/valid/lot_geometry/single_lot_dof_base_3022640032.json";
@@ -14,6 +14,18 @@ async function capture(page: Page, info: TestInfo, name: string, fullPage = fals
   const path = info.outputPath(`${name}.png`);
   await page.screenshot({ path, fullPage });
   await info.attach(name, { path, contentType: "image/png" });
+}
+
+async function expectLabelsAboveSourceCredit(map: Locator) {
+  const credit = await map.locator(".maplibregl-ctrl-attrib").boundingBox();
+  expect(credit).not.toBeNull();
+  const labels = await map.locator(".parcel-study-map__marker").all();
+  expect(labels.length).toBeGreaterThan(0);
+  for (const label of labels) {
+    const box = await label.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.y + box!.height).toBeLessThan(credit!.y);
+  }
 }
 
 test("address confirmation populates the same dashboard and floating tools retain work", async ({ page }, info) => {
@@ -158,17 +170,20 @@ test("recorded Wallabout tax-map polygons can be viewed individually and togethe
   await expect(compact).toHaveAttribute("data-visible-bbls", LOTS[0]);
   await expect(compact).toHaveAttribute("data-map-state", "ready");
   const lot32Pixels = await compact.getByTestId("parcel-study-map-canvas").locator("canvas").screenshot();
+  await expectLabelsAboveSourceCredit(compact);
   await capture(page, info, "connected-wallabout-lot32", true);
   await compact.getByRole("button", { name: "View Parcel 2, Lot 33" }).click();
   await expect(compact).toHaveAttribute("data-visible-bbls", LOTS[1]);
   await expect(compact).toHaveAttribute("data-map-state", "ready");
   const lot33Pixels = await compact.getByTestId("parcel-study-map-canvas").locator("canvas").screenshot();
+  await expectLabelsAboveSourceCredit(compact);
   expect(lot32Pixels.equals(lot33Pixels)).toBe(false);
   await capture(page, info, "connected-wallabout-lot33", true);
   await compact.getByRole("button", { name: "View all parcels" }).click();
   await expect(compact).toHaveAttribute("data-visible-bbls", LOTS.join(","));
   await expect(compact).toHaveAttribute("data-map-state", "ready");
   await capture(page, info, "connected-wallabout-all-parcels", true);
+  await expectLabelsAboveSourceCredit(compact);
   await page.getByRole("region", { name: "Quick actions" }).getByRole("button", { name: /Parcel study/ }).click();
   const study = page.getByRole("dialog", { name: "Parcel study" });
   const map = study.getByTestId("parcel-study-map");
@@ -193,6 +208,7 @@ test("recorded Wallabout tax-map polygons can be viewed individually and togethe
   await expect(compact).toHaveAttribute("data-map-state", "ready");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await capture(page, info, "connected-wallabout-parcel-mobile", true);
+  await expectLabelsAboveSourceCredit(compact);
   await expect(page.getByTestId("dashboard-cap")).toHaveText("Not calculated");
 });
 
