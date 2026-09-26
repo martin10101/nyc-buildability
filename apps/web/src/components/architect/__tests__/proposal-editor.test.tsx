@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import { ProposalEditor } from "../ProposalEditor";
-import { draftFromCandidate } from "@/lib/architect/proposal-draft";
+import { draftFromCandidate, rectangleSampleDraft } from "@/lib/architect/proposal-draft";
 import { attestedReportBody, checkResponse, stubFetch } from "@/test-support/proposal-check-fixtures";
 
 /**
@@ -19,6 +19,47 @@ vi.mock("@/components/address/LotOutlineMap", () => ({
 }));
 
 const stub = () => stubFetch(checkResponse(attestedReportBody(), 200));
+
+/** Deliberately ignores abort, exercising publication guards after transport cancellation. */
+function deferredFetch() {
+  const calls: Array<{ resolve: (response: Response) => void; signal: AbortSignal | null | undefined }> = [];
+  const fetchImpl = vi.fn((_input: RequestInfo | URL, init?: RequestInit) =>
+    new Promise<Response>((resolve) => calls.push({ resolve, signal: init?.signal })),
+  );
+  return { calls, fetchImpl: fetchImpl as typeof fetch };
+}
+
+function bridgedResponse(): Response {
+  const bridgeBody = {
+    document_kind: "outline_bridge",
+    bbl: "1000010010",
+    srid: 2263,
+    vertices: [
+      { x: 1000020, y: 200010 },
+      { x: 1000080, y: 200010 },
+      { x: 1000080, y: 200030 },
+    ],
+    correspondence: {
+      method: "affine_least_squares_2d",
+      alignment: "forward+offset0",
+      alignment_winding: "forward",
+      alignment_offset: 0,
+      control_point_count: 4,
+      candidates_evaluated: 8,
+      rms_residual_ft: 0.0004,
+      max_residual_ft: 0.0009,
+      residual_bound_ft: 2.0,
+      runner_up_rms_residual_ft: 55.2,
+      alignment_separation_ft: 55.19,
+      alignment_separation_min_ft: 2.0,
+      source_display_ring: { crs: "EPSG:4326", source_id: "nyc-dcp-mappluto-lot-outline", representation: "lot_outline_display" },
+      source_authoritative_ring: { crs: "EPSG:2263", source_id: "nyc-dcp-mappluto-arcgis", representation: "lot_geometry_authoritative" },
+    },
+    disclosure: "Approximate PROPOSED input, not a survey and not a city record.",
+    correlation_id: "cid",
+  };
+  return checkResponse(bridgeBody, 200);
+}
 
 describe("ProposalEditor", () => {
   it("edits the numeric draft, runs a check, renders the AS-1 arithmetic, and saves an ephemeral variation", async () => {
@@ -103,44 +144,7 @@ describe("ProposalEditor", () => {
   });
 
   it("adopts map-drawn vertices into the numeric outline table exactly as if typed (M5-T065)", async () => {
-    const bridgeBody = {
-      document_kind: "outline_bridge",
-      bbl: "1000010010",
-      srid: 2263,
-      vertices: [
-        { x: 1000020, y: 200010 },
-        { x: 1000080, y: 200010 },
-        { x: 1000080, y: 200030 },
-      ],
-      correspondence: {
-        method: "affine_least_squares_2d",
-        alignment: "forward+offset0",
-        alignment_winding: "forward",
-        alignment_offset: 0,
-        control_point_count: 4,
-        candidates_evaluated: 8,
-        rms_residual_ft: 0.0004,
-        max_residual_ft: 0.0009,
-        residual_bound_ft: 2.0,
-        runner_up_rms_residual_ft: 55.2,
-        alignment_separation_ft: 55.19,
-        alignment_separation_min_ft: 2.0,
-        source_display_ring: { crs: "EPSG:4326", source_id: "nyc-dcp-mappluto-lot-outline", representation: "lot_outline_display" },
-        source_authoritative_ring: { crs: "EPSG:2263", source_id: "nyc-dcp-mappluto-arcgis", representation: "lot_geometry_authoritative" },
-      },
-      disclosure: "Approximate PROPOSED input, not a survey and not a city record.",
-      correlation_id: "cid",
-    };
-    const text = JSON.stringify(bridgeBody);
-    const bridgeStub = (async () =>
-      new Response(text, {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Content-Length": String(new TextEncoder().encode(text).length),
-          "X-Correlation-ID": "cid",
-        },
-      })) as typeof fetch;
+    const bridgeStub = stubFetch(bridgedResponse());
 
     render(<ProposalEditor bbl="1000010010" fetchImpl={bridgeStub} />);
     // The rectangle seed starts with 5 numeric vertices (the authority).
@@ -222,4 +226,106 @@ describe("ProposalEditor", () => {
   });
 });
 
+
+describe("ProposalEditor — responses belong to the submitted draft", () => {
+  it.each(["success", "refusal"] as const)("ignores an old %s after an edit while a newer check stays pending", async (lateKind) => {
+    const { calls, fetchImpl } = deferredFetch();
+    render(<ProposalEditor bbl={null} fetchImpl={fetchImpl} />);
+    fireEvent.click(screen.getByTestId("run-check"));
+    fireEvent.change(screen.getByLabelText("Level 0 floor count"), { target: { value: "4" } });
+    expect(calls[0].signal?.aborted).toBe(true);
+    expect(screen.getByTestId("run-check")).not.toBeDisabled();
+    fireEvent.click(screen.getByTestId("run-check"));
+
+    await act(async () => {
+      calls[0].resolve(lateKind === "success"
+        ? checkResponse(attestedReportBody(), 200, "older-check")
+        : checkResponse({ detail: "Not Found" }, 404));
+    });
+    expect(screen.getByTestId("run-check")).toBeDisabled();
+    expect(screen.queryByTestId("proposal-check-summary")).toBeNull();
+    expect(screen.queryByTestId("proposal-check-failure")).toBeNull();
+    expect(screen.getByTestId("proposal-check-announcer")).toBeEmptyDOMElement();
+
+    await act(async () => { calls[1].resolve(checkResponse(attestedReportBody(), 200, "newer-check")); });
+    expect(await screen.findByTestId("proposal-check-summary")).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Proposal check report" })).toHaveTextContent("newer-check");
+    expect(screen.getByTestId("run-check")).not.toBeDisabled();
+  });
+
+  it("does not save an old report with edited values or attach a working report to a different saved snapshot", async () => {
+    render(<ProposalEditor bbl={null} fetchImpl={stub()} />);
+    fireEvent.click(screen.getByTestId("save-variation"));
+    fireEvent.change(screen.getByLabelText("Proposal label"), { target: { value: "edited-draft" } });
+    fireEvent.click(screen.getByTestId("run-check"));
+    await screen.findByTestId("proposal-check-summary");
+    expect(screen.getByRole("button", { name: "scenario-A-baseline" }).closest("li")).toHaveTextContent("not checked yet");
+
+    fireEvent.change(screen.getByLabelText("Level 0 floor count"), { target: { value: "4" } });
+    expect(screen.queryByTestId("proposal-check-summary")).toBeNull();
+    fireEvent.click(screen.getByTestId("save-variation"));
+    expect(screen.getByRole("button", { name: "edited-draft" }).closest("li")).toHaveTextContent("not checked yet");
+  });
+
+  it("keeps a loaded variation's report when a superseded check later fails", async () => {
+    const { calls, fetchImpl } = deferredFetch();
+    render(<ProposalEditor bbl={null} fetchImpl={fetchImpl} />);
+    fireEvent.click(screen.getByTestId("run-check"));
+    await act(async () => { calls[0].resolve(checkResponse(attestedReportBody(), 200, "saved-check")); });
+    await screen.findByTestId("proposal-check-summary");
+    fireEvent.click(screen.getByTestId("save-variation"));
+    fireEvent.change(screen.getByLabelText("Proposal label"), { target: { value: "working-copy" } });
+    fireEvent.click(screen.getByTestId("run-check"));
+    fireEvent.click(screen.getByRole("button", { name: "scenario-A-baseline" }));
+    expect(calls[1].signal?.aborted).toBe(true);
+    await act(async () => { calls[1].resolve(checkResponse({ detail: "Not Found" }, 404)); });
+    expect(screen.getByRole("region", { name: "Proposal check report" })).toHaveTextContent("saved-check");
+    expect(screen.queryByTestId("proposal-check-failure")).toBeNull();
+    expect(screen.getByTestId("proposal-check-announcer")).toHaveTextContent("Loaded variation scenario-A-baseline.");
+    expect(screen.getByLabelText("Proposal label")).toHaveValue("scenario-A-baseline");
+  });
+
+  it("does not promote a pending check after a Generated building option replaces the draft", async () => {
+    const { calls, fetchImpl } = deferredFetch();
+    const { rerender } = render(<ProposalEditor bbl={null} fetchImpl={fetchImpl} />);
+    fireEvent.click(screen.getByTestId("run-check"));
+    const adopted = { ...rectangleSampleDraft(), scenario_label: "generated-new" };
+    rerender(<ProposalEditor bbl={null} fetchImpl={fetchImpl} adoptedDraft={adopted} />);
+    expect(calls[0].signal?.aborted).toBe(true);
+    await act(async () => { calls[0].resolve(checkResponse(attestedReportBody(), 200)); });
+    expect(screen.queryByTestId("proposal-check-summary")).toBeNull();
+    expect(screen.getByLabelText("Proposal label")).toHaveValue("generated-new");
+    expect(screen.getByTestId("proposal-check-announcer")).toHaveTextContent("Adopted the Generated building option");
+  });
+
+  it("does not let a pending bridge overwrite a newer numeric edit", async () => {
+    const { calls, fetchImpl } = deferredFetch();
+    render(<ProposalEditor bbl="1000010010" fetchImpl={fetchImpl} />);
+    for (let i = 0; i < 3; i += 1) {
+      fireEvent.click(screen.getByRole("button", { name: "Add drawn point" }));
+      fireEvent.change(screen.getByLabelText(`Drawn point ${i} longitude`), { target: { value: String(-73.999 + i * 0.0003) } });
+      fireEvent.change(screen.getByLabelText(`Drawn point ${i} latitude`), { target: { value: String(40.7 + i * 0.0002) } });
+    }
+    fireEvent.click(screen.getByTestId("outline-draw-convert"));
+    fireEvent.change(screen.getByLabelText("Vertex 0 X coordinate"), { target: { value: "1000005" } });
+    expect(calls[0].signal?.aborted).toBe(true);
+    await act(async () => { calls[0].resolve(bridgedResponse()); });
+    expect(screen.getByLabelText("Vertex 0 X coordinate")).toHaveValue(1000005);
+    expect(screen.getAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(5);
+    expect(screen.queryByTestId("outline-draw-bridged")).toBeNull();
+    expect(screen.getByTestId("proposal-check-announcer")).toBeEmptyDOMElement();
+  });
+
+  it("aborts the pending check when the editor unmounts", async () => {
+    const { calls, fetchImpl } = deferredFetch();
+    const { unmount } = render(<ProposalEditor bbl={null} fetchImpl={fetchImpl} />);
+    fireEvent.click(screen.getByTestId("run-check"));
+    unmount();
+    expect(calls[0].signal?.aborted).toBe(true);
+    await act(async () => { calls[0].resolve(checkResponse(attestedReportBody(), 200)); });
+    expect(screen.queryByTestId("proposal-editor")).toBeNull();
+  });
+});
+
 afterEach(cleanup);
+

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ZoningContextControl, type ZoningContextMap } from "@/components/architect/ZoningContextControl";
 import { NYC_CONTEXT_STYLE, contextLayerName } from "@/lib/map-context";
 import { MAPLIBRE_WORKER_URL, observeParcelRender, type ParcelRenderMap } from "@/lib/architect/map-runtime";
+import { isMapContainerVisible, observeMapContainer } from "@/lib/architect/map-container";
 import {
   fetchLotGeometry,
   type LotOutlineOutcome,
@@ -57,6 +58,7 @@ interface MapLike extends Omit<ZoningContextMap, "on" | "off">, ParcelRenderMap 
   getSource(id: string): { setData(data: unknown): void } | undefined;
   addControl(control: unknown, position?: string): void;
   fitBounds(bounds: [[number, number], [number, number]], options?: unknown): void;
+  resize?(): void;
   remove(): void;
 }
 
@@ -167,6 +169,13 @@ export function lotOutlineFitBoundsOptions(): {
   maxZoom: number;
 } {
   return { padding: 24, duration: 0, maxZoom: LOT_OUTLINE_MAX_ZOOM };
+}
+
+/** Screen-pixel camera margin only. Compact previews must retain useful map
+ * space; a fixed 72px margin leaves just 16px in a 160px-tall dashboard map. */
+export function contextLotOutlineFitBoundsOptions(container: Pick<HTMLElement, "clientWidth" | "clientHeight"> | null) {
+  const shortestSide = container ? Math.min(container.clientWidth, container.clientHeight) : 0;
+  return { padding: shortestSide > 0 ? Math.min(72, shortestSide * 0.2) : 24, duration: 0, maxZoom: 18.5 };
 }
 
 /** Detect a usable WebGL context WITHOUT importing maplibre-gl. Any failure
@@ -315,6 +324,7 @@ function outcomeSummary(
     case "client_timeout":
     case "error":
     case "unexpected_response":
+      if (outcome.kind === "error" && outcome.state === "result_mismatch") return "The returned parcel does not match the requested BBL. Its outline is withheld.";
       return "The lot outline could not be loaded. The address details above are unaffected. Use the ZoLa map link for the authoritative outline.";
     case "aborted":
       return "";
@@ -393,7 +403,12 @@ export function LotOutlineMap({
     setOutcome(null);
     void fetchLotGeometry(bbl, { fetchImpl, signal: controller.signal }).then(
       (result) => {
-        if (active && result.kind !== "aborted") setOutcome(result);
+        if (!active || result.kind === "aborted") return;
+        setOutcome(result.kind === "document" && result.view.bbl !== bbl ? {
+          kind: "error", state: "result_mismatch", httpStatus: 200,
+          correlationId: result.correlationId,
+          message: "The returned parcel does not match the requested BBL. Its outline is withheld.",
+        } : result);
       },
     );
     return () => {
@@ -425,20 +440,23 @@ export function LotOutlineMap({
     let parcelRendered = false;
     let failed = false;
     let stopParcelWatch: () => void = () => undefined;
+    let resizeMap: () => void = () => undefined;
+    let containerWatch: ReturnType<typeof observeMapContainer> | null = null;
     const failRender = () => {
       if (cancelled || failed) return;
       failed = true;
+      containerWatch?.dispose();
       stopParcelWatch();
       setMapRenderFailed(true);
       mapRef.current?.remove();
       mapRef.current = null;
     };
-    const readinessTimer = setTimeout(() => {
+    containerWatch = observeMapContainer(container, { onResize: () => resizeMap(), onTimeout: () => {
       if (!cancelled) {
         if (!parcelRendered) failRender();
         setContextLayers(current => Object.fromEntries(Object.entries(current).map(([key, value]) => [key, value === "loading" ? "error" : value])));
       }
-    }, 10_000);
+    } });
 
     void (async () => {
       const mod = (await import("maplibre-gl")) as unknown as {
@@ -459,6 +477,10 @@ export function LotOutlineMap({
         zoom: 15,
       });
       mapRef.current = map;
+      resizeMap = () => {
+        if (cancelled || failed) return;
+        try { map.resize?.(); } catch { failRender(); }
+      };
       // G5 F-1: pass the CONSTANT (MapLibre renders this as HTML). The
       // reflected view.attribution is shown only as React-escaped text.
       map.addControl(
@@ -553,19 +575,33 @@ export function LotOutlineMap({
           paint: { "line-color": context ? "#a4680c" : "#1d4e79", "line-width": context ? 3 : 2 },
         });
         if (bounds) {
-          map.fitBounds(bounds, context ? { padding: 72, duration: 0, maxZoom: 18.5 } : lotOutlineFitBoundsOptions());
+          map.fitBounds(bounds, context ? contextLotOutlineFitBoundsOptions(container) : lotOutlineFitBoundsOptions());
         }
-        stopParcelWatch = observeParcelRender(map, () => {
+        const watchParcel = () => {
+          stopParcelWatch();
+          stopParcelWatch = observeParcelRender(map, () => {
+            if (cancelled || failed || !isMapContainerVisible(container)) return;
+            parcelRendered = true;
+            setMapReady(true);
+          });
+        };
+        resizeMap = () => {
           if (cancelled || failed) return;
-          parcelRendered = true;
-          setMapReady(true);
-        });
+          try {
+            map.resize?.();
+            if (!parcelRendered) {
+              watchParcel();
+              if (bounds) map.fitBounds(bounds, context ? contextLotOutlineFitBoundsOptions(container) : lotOutlineFitBoundsOptions());
+            }
+          } catch { failRender(); }
+        };
+        watchParcel();
       });
     })().catch(failRender);
 
     return () => {
-      clearTimeout(readinessTimer);
       cancelled = true;
+      containerWatch?.dispose();
       stopParcelWatch();
       mapRef.current?.remove();
       mapRef.current = null;
@@ -620,7 +656,7 @@ export function LotOutlineMap({
     >
       {context && drawable && !mapRenderFailed ? <div className="architect-map-toolbar">
         <span className="architect-map-key">Selected lot</span>
-        <button className="secondary-button" type="button" onClick={() => { const bounds = geometry ? geometryBounds(geometry) : null; if (bounds) mapRef.current?.fitBounds(bounds, { padding: 72, duration: 0, maxZoom: 18.5 }); }}>Recenter lot</button>
+        <button className="secondary-button" type="button" onClick={() => { const bounds = geometry ? geometryBounds(geometry) : null; if (bounds) mapRef.current?.fitBounds(bounds, contextLotOutlineFitBoundsOptions(containerRef.current)); }}>Recenter lot</button>
       </div> : null}
       {context && drawable && mapReady && mapRef.current && contextBounds && !mapRenderFailed ? <ZoningContextControl map={mapRef.current} bounds={contextBounds} /> : null}
       {context && drawable && !mapRenderFailed ? <p className="architect-map-status" role="status">{!mapReady ? "Preparing map… " : ""}{Object.entries(contextLayers).map(([key, status]) => `${contextLayerName(key)}: ${status === "ready" ? "loaded" : status === "error" ? "unavailable" : "loading"}`).join(" · ")}</p> : null}
@@ -731,6 +767,8 @@ export function LotOutlineMap({
         <p className="section-note" data-testid="lot-outline-unavailable">
           {outcome.kind === "route_absent"
             ? "The lot outline is not available in this environment. Open the city's ZoLa map above for the authoritative outline."
+            : outcome.kind === "error" && outcome.state === "result_mismatch"
+            ? "The returned parcel does not match the requested BBL. Its outline is withheld. Open the city's ZoLa map above."
             : "The lot outline could not be loaded (the address details above are unaffected). Open the city's ZoLa map above for the authoritative outline."}
         </p>
       ) : null}

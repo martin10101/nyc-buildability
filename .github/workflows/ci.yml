@@ -113,6 +113,16 @@ jobs:
             apps/web/test-results/
           retention-days: 7
           if-no-files-found: ignore
+      # Keep connected-dashboard captures small enough for thin-client review.
+      # The full trace/report archive above remains available and unchanged.
+      - name: Upload connected dashboard screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: connected-dashboard-screenshots
+          path: apps/web/test-results/**/connected-*.png
+          retention-days: 7
+          if-no-files-found: ignore
 
   # Task M0-T019 (ADDITIVE job; existing jobs untouched): the permanent,
   # machine-enforced dependency-security suite for the web app. BLOCKING on

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { dashboardHref } from "./workspace/types";
 import { InternalBanner } from "@/components/property/InternalBanner";
 import { useState, type ReactNode } from "react";
 import { propertyHref, VIEW_LABELS, type WorkspaceView } from "@/lib/architect/navigation";
@@ -50,6 +51,7 @@ export function ArchitectShell({ bbl, active, children, surveyEnabled = false }:
       <div className="architect-body">
         <nav id="architect-navigation" className={`architect-nav ${menuOpen ? "is-open" : ""}`} aria-label="Architect workspace">
           <Link href={propertyHref()} aria-current={active === "search" ? "page" : undefined} onClick={() => setMenuOpen(false)}>Search property</Link>
+          <Link href={dashboardHref(bbl)} onClick={() => setMenuOpen(false)}>Single-page dashboard</Link>
           <p className="architect-nav-label">Property workspace</p>
           {PRIMARY.map(view => bbl ? <Link key={view} href={propertyHref(bbl, view)} aria-current={active === view ? "page" : undefined} aria-disabled={!bbl || undefined} onClick={() => setMenuOpen(false)}>
           {VIEW_LABELS[view]}
@@ -72,3 +74,4 @@ export function ArchitectShell({ bbl, active, children, surveyEnabled = false }:
       </div>
     </div>);
 }
+

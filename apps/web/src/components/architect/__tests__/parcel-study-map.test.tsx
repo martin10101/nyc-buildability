@@ -11,6 +11,7 @@ interface TestMap {
   emit: (event: string, payload?: { sourceId?: string }) => void;
   remove: ReturnType<typeof vi.fn>;
   resize: ReturnType<typeof vi.fn>;
+  fitBounds: ReturnType<typeof vi.fn>;
 }
 const runtime = vi.hoisted(() => ({
   maps: [] as TestMap[],
@@ -28,6 +29,7 @@ vi.mock("maplibre-gl", () => {
     events = new Map<string, Set<(payload?: { sourceId?: string }) => void>>();
     remove = vi.fn();
     resize = vi.fn();
+    fitBounds = vi.fn();
     constructor() { runtime.maps.push(this); }
     on(event: string, callback: (payload?: { sourceId?: string }) => void) {
       if (!this.events.has(event)) this.events.set(event, new Set());
@@ -41,7 +43,6 @@ vi.mock("maplibre-gl", () => {
     addSource(id: string, source: TestSource) { this.sources.set(id, source); }
     addLayer(layer: { id: string }) { this.layers.add(layer.id); }
     addControl() {}
-    fitBounds() {}
     queryRenderedFeatures({ layers }: { layers: string[] }) {
       if (!runtime.renderAvailable) return [];
       return [...this.sources].flatMap(([source, data]) => data.data.features.flatMap(feature =>
@@ -104,6 +105,53 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 describe("ParcelStudyMap display-only identity and geometry", () => {
+  it("uses compact camera padding, resizes before a pending fit, and preserves camera after readiness", async () => {
+    let width = 400, height = 160;
+    vi.spyOn(Element.prototype, "clientWidth", "get").mockImplementation(() => width);
+    vi.spyOn(Element.prototype, "clientHeight", "get").mockImplementation(() => height);
+    runtime.renderAvailable = false;
+    render(<ParcelStudyMap arrangement="together" outlines={[outline(LOT_A)]} />);
+    await waitFor(() => expect(runtime.maps).toHaveLength(1));
+    const map = runtime.maps[0];
+    expect(map.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: 32, duration: 0, maxZoom: 19.5 });
+    map.fitBounds.mockClear();
+    map.resize.mockClear();
+    width = 900; height = 600;
+    act(() => runtime.observerCallback?.([], {} as ResizeObserver));
+    expect(map.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: 72, duration: 0, maxZoom: 19.5 });
+    expect(map.resize.mock.invocationCallOrder[0]).toBeLessThan(map.fitBounds.mock.invocationCallOrder[0]);
+    runtime.renderAvailable = true;
+    act(() => map.emit("render"));
+    expect(screen.getByText("1 of 1 approximate parcel outlines shown.")).toBeInTheDocument();
+    map.fitBounds.mockClear();
+    height = 160;
+    act(() => runtime.observerCallback?.([], {} as ResizeObserver));
+    expect(map.fitBounds).not.toHaveBeenCalled();
+    expect(features()[0].geometry).toEqual(polygon);
+  });
+
+  it("keeps a hidden initializing map pending past the deadline, then resizes and verifies real features on reveal", async () => {
+    vi.useFakeTimers();
+    const outlines = [outline(LOT_A)];
+    const { container, rerender } = render(<div hidden><ParcelStudyMap arrangement="together" outlines={outlines} /></div>);
+    await act(async () => { await vi.dynamicImportSettled(); });
+    expect(runtime.maps).toHaveLength(1);
+    act(() => runtime.maps[0].emit("render"));
+    expect(container).toHaveTextContent("Loading interactive parcel map…");
+    expect(container).not.toHaveTextContent("1 of 1 approximate parcel outlines shown.");
+    await act(async () => { await vi.advanceTimersByTimeAsync(30_000); });
+    expect(runtime.maps[0].remove).not.toHaveBeenCalled();
+    runtime.renderAvailable = false;
+    rerender(<div><ParcelStudyMap arrangement="together" outlines={outlines} /></div>);
+    await act(async () => { await Promise.resolve(); });
+    expect(runtime.maps[0].resize).toHaveBeenCalledOnce();
+    expect(screen.getByText("Loading interactive parcel map…")).toBeInTheDocument();
+    runtime.renderAvailable = true;
+    act(() => runtime.maps[0].emit("render"));
+    expect(screen.getByText("1 of 1 approximate parcel outlines shown.")).toBeInTheDocument();
+    expect(runtime.maps).toHaveLength(1);
+  });
+
   it("draws all polygons and holes verbatim, with numbered lot and BBL labels", async () => {
     render(<ParcelStudyMap arrangement="separate" outlines={[outline(LOT_A), outline(LOT_B, result(LOT_B, multipolygon))]} />);
     await screen.findByText("2 of 2 approximate parcel outlines shown.");

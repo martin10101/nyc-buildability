@@ -60,6 +60,7 @@ export function AddressConfirmCard({
   onNotMyProperty,
   architect = false,
   typedInput,
+  onConfirmLot,
 }: {
   outcome: AddressDocumentOutcome;
   onNotMyProperty: () => void;
@@ -70,6 +71,8 @@ export function AddressConfirmCard({
    * as what was typed. Absent on the manual/BBL paths, where the server
    * input_echo IS the verbatim entry. */
   typedInput?: string;
+  /** Optional same-page handoff after explicit confirmation of a validated BBL. */
+  onConfirmLot?: (bbl: string, outcome: AddressDocumentOutcome) => void;
 }) {
   const view = outcome.view;
   const validation =
@@ -387,14 +390,28 @@ export function AddressConfirmCard({
       </details>
 
       {canonicalBbl ? (
-        <Link
-          className="primary-button next-action-link"
-          href={`/property/confirm?bbl=${encodeURIComponent(canonicalBbl)}${architect ? "&ruleeval=on" : ""}`}
-          onClick={() => rememberAddress(outcome)}
-          data-testid="confirm-continue"
-        >
-          Continue with this lot
-        </Link>
+        onConfirmLot ? (
+          <button
+            type="button"
+            className="primary-button next-action-link"
+            onClick={() => {
+              rememberAddress(outcome);
+              onConfirmLot(canonicalBbl, outcome);
+            }}
+            data-testid="confirm-continue"
+          >
+            Continue with this lot
+          </button>
+        ) : (
+          <Link
+            className="primary-button next-action-link"
+            href={`/property/confirm?bbl=${encodeURIComponent(canonicalBbl)}${architect ? "&ruleeval=on" : ""}`}
+            onClick={() => rememberAddress(outcome)}
+            data-testid="confirm-continue"
+          >
+            Continue with this lot
+          </Link>
+        )
       ) : (
         <p className="section-note" data-testid="confirm-continue-absent">
           Without a valid lot identifier this result cannot continue — use
@@ -444,3 +461,4 @@ export function AddressConfirmCard({
     </section>
   );
 }
+
