@@ -18,7 +18,8 @@ identity belongs. Three consequences, all reproduced:
    (a repository-wide search found exactly one writer: the `doctor` capability
    probe). A "completed rotation" therefore launched a FRESH, UNRESUMED session
    while recording rotation success.
-2. `RotationLedger.assert_ready_checkpoint` compares the READY checkpoint's
+2. `RotationLedger.assert_ready_checkpoint` (since REMOVED) compared the READY
+   checkpoint's
    `claude_session_id` - a PROVIDER id the worker reports - against the invented
    `sup-...` id, so the READY gate could never match on a real session.
 3. Nothing durable carried the real provider session id past the unit that

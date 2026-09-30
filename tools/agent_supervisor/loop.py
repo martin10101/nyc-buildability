@@ -998,10 +998,10 @@ class SupervisedLoop:
         # M0-T080: the FULL S11.3 turnover path all three rotation seams take -
         # safe-seam check, handoff build, verify, durable persist, READY gate,
         # post-launch identity check. `handoff_verifier` is the live review-model
-        # seam; with none injected the supervisor verifies DETERMINISTICALLY by
-        # re-deriving every field from its own durable facts and records that it
-        # did (S3.3 permits review_model OR deterministic verification), so the
-        # handoff is never simply asserted.
+        # seam; with none injected the supervisor runs the DETERMINISTIC arm -
+        # completeness over all 14 fields plus value-consistency for the 6 whose
+        # authority it owns, NOT independent re-derivation (turnover_seam §3);
+        # S3.3 permits review_model OR deterministic verification.
         self._seam = ts.SeamTurnover(
             journal=journal, audit=audit, run_id=run_id,
             verifier=handoff_verifier, review_model=review_model,

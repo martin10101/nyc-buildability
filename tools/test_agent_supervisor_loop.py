@@ -211,6 +211,12 @@ class LoopTestBase(unittest.TestCase):
         gate and the post-launch identity check now require the real thing, so
         the fake models it - which makes the fixture MORE faithful to a live
         worker, not less demanding of one.
+
+        M0-T080 correction V1: the MODEL axis is judged the same way, so a fixture
+        whose stream names no model now fails the post-launch check. Callers whose
+        run must continue past the successor pass
+        `observed_models=(<the commanded id>,)` - which is what a real successor's
+        stream carries.
         """
         cp = checkpoint(status="READY", checkpoint_id=checkpoint_id,
                         claude_session_id=session_id,
@@ -2067,11 +2073,17 @@ class ModelChainSwitchTests(LoopTestBase):
             run_result(model_mismatch=True, mismatch_detail="reported substitute"),
             # Both post-rotation units are re-oriented successors and answer with
             # the S11.3 READY checkpoint (M0-T080). Distinct checkpoint ids: a
-            # repeated id is the no-progress livelock signal.
+            # repeated id is the no-progress livelock signal. Each also reports
+            # the model it is actually running - the switch lands on NEXT_1, the
+            # return lands back on PIN - because correction V1 made stream
+            # silence a mismatch on the model axis too: a real successor names
+            # its model, and a fixture that stays silent is not modelling one.
             self.successor_result(checkpoint_id="cp-successor-1",
-                                  session_id="sess-successor-1"),
+                                  session_id="sess-successor-1",
+                                  observed_models=(NEXT_1,)),
             self.successor_result(checkpoint_id="cp-successor-2",
-                                  session_id="sess-successor-2"),
+                                  session_id="sess-successor-2",
+                                  observed_models=(PIN,)),
             model=PIN)
         # First seam: the pin is exhausted and NEXT_1 answers. Second seam: the pin
         # is available again.

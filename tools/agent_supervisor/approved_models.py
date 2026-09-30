@@ -421,6 +421,23 @@ class ModelRouter:
                 f"substitute is chosen for it",
                 {"model": model_id, "reason_code": record.reason_code,
                  "detail": record.detail})
+        if not record.matches(config_identity=self.ledger.config_identity,
+                              cli_version=self.ledger.cli_version):
+            # M0-T080 correction V-minor (G5 round-2 residual #1). A fresh record
+            # was returned without re-checking the identity it was stored under,
+            # so a probe REPORTING a different CLI version authorized that one
+            # selection while writing a record that could never authorize another
+            # - selectable once, unselectable forever after, from one probe. The
+            # ledger's read path already refuses such a record; the write path now
+            # applies the same rule instead of trusting what it just wrote.
+            raise ModelRoutingError(
+                MODEL_PROBE_FAILED,
+                f"the launch probe for {model_id!r} came up but reported provider CLI "
+                f"{record.cli_version!r}, not the {self.ledger.cli_version!r} this "
+                f"selection is being made under; a probe of a different binary proves "
+                f"nothing about this one",
+                {"model": model_id, "probe_cli_version": record.cli_version,
+                 "expected_cli_version": self.ledger.cli_version})
         return record
 
     # -- the two selection acts ---------------------------------------------

@@ -7,7 +7,7 @@ unsafe-moment refusal list (`assert_safe_to_rotate`), the structured handoff
 schema (`Handoff`, `validate_handoff`), review-model-only verification
 (`verify_handoff`), durable storage of the VERIFIED handoff
 (`RotationLedger.store_verified_handoff`), and the mandatory READY checkpoint
-gate (`assert_ready_checkpoint`).
+gate (`assert_ready_checkpoint`, since REMOVED - see below).
 
 The live loop used almost none of it. All three of its rotation seams
 (`_rotate_at_seam`, `_switch_at_seam`, `_return_to_pinned`) wrote a SMALLER,
@@ -21,7 +21,9 @@ worktree, reason, outgoing session id, pinned model, cycle - and then called
   exist anywhere;
 * never verified a handoff, so `verify_handoff` had no production caller;
 * never stored a VERIFIED handoff, so `store_verified_handoff` had none either;
-* never gated on a READY checkpoint, so `assert_ready_checkpoint` had none; and
+* never gated on a READY checkpoint, so `assert_ready_checkpoint` had none - it
+  was removed outright in the M0-T080 correction round and `require_ready` below
+  is the single live gate; and
 * never checked afterwards that the successor was on the expected task, branch,
   HEAD, or model.
 
@@ -220,7 +222,7 @@ def build_handoff(facts: SeamFacts) -> rotation.Handoff:
 
 
 # --------------------------------------------------------------------------
-# 3. Verification: a live review model, or the supervisor's own re-derivation
+# 3. Verification: a live review model, or the supervisor's own consistency check
 # --------------------------------------------------------------------------
 
 #: A live verifier: hand it the handoff, get back the S11.3 reviewer verdict
@@ -258,33 +260,54 @@ def deterministic_verdict(handoff: rotation.Handoff, facts: SeamFacts,
     built from - and the returned `scope` says so rather than implying otherwise.
     """
     findings: list[str] = []
-    source: Mapping[str, str] = independent if independent is not None else {
+    # M0-T080 correction V2. The first version replaced this baseline WHOLESALE
+    # with whatever the fact source returned, skipped every key the source
+    # omitted, and stamped the STRONGER label regardless. A source returning `{}`
+    # therefore produced a check WEAKER than no source at all - a wrong-branch
+    # handoff that the consistency check CAUGHT was passed and labelled
+    # "independent". That is the I-1 defect reproduced inside the fix for I-1.
+    #
+    # Now: the supervisor's own facts are always the baseline, independent values
+    # OVERLAY it per key, and the record reports exactly which keys came from
+    # where. An empty or None return is a REFUSAL (handled in `verify`), because a
+    # source that derived nothing did not do its job.
+    baseline: dict[str, str] = {
         "task_and_stage": f"{facts.task_id} @ {facts.stage}",
         "branch": facts.branch,
         "worktree": facts.worktree,
         "exact_next_action": facts.exact_next_action,
         "head_sha": facts.head_sha,
     }
-    origin = "independent re-derivation" if independent is not None \
-        else "the supervisor's own in-memory record"
+    supplied = {k: v for k, v in dict(independent or {}).items() if k in baseline}
+    source = {**baseline, **supplied}
+    independently = sorted(supplied)
+    consistency_only = sorted(k for k in baseline if k not in supplied)
+
+    def origin_of(key: str) -> str:
+        return ("an independent re-derivation" if key in supplied
+                else "the supervisor's own in-memory record")
+
     for field_name in ("task_and_stage", "branch", "worktree", "exact_next_action"):
-        if field_name not in source:
-            continue
         actual = getattr(handoff, field_name)
         if actual != source[field_name]:
             findings.append(
-                f"{field_name} says {actual!r} but {origin} says {source[field_name]!r}")
-    if "head_sha" in source and handoff.authoritative_shas.get("HEAD") != source["head_sha"]:
+                f"{field_name} says {actual!r} but {origin_of(field_name)} says "
+                f"{source[field_name]!r}")
+    if handoff.authoritative_shas.get("HEAD") != source["head_sha"]:
         findings.append(
             f"authoritative_shas.HEAD says "
-            f"{handoff.authoritative_shas.get('HEAD')!r} but {origin} says "
+            f"{handoff.authoritative_shas.get('HEAD')!r} but {origin_of('head_sha')} says "
             f"{source['head_sha']!r}")
     missing = [entry for entry in STRUCTURAL_FORBIDDEN_SCOPE
                if entry not in handoff.forbidden_scope]
     if missing:
         findings.append(f"forbidden_scope dropped the structural prohibitions {missing}")
+    # The stronger label is earned only by FULL independent coverage. A source
+    # that re-derived three of the five keys verified three of them, and the
+    # record says exactly that rather than rounding up.
+    fully_independent = not consistency_only
     return {
-        "model_used": (DETERMINISTIC_INDEPENDENT_VERIFIER if independent is not None
+        "model_used": (DETERMINISTIC_INDEPENDENT_VERIFIER if fully_independent
                        else DETERMINISTIC_VERIFIER),
         "handoff_digest": handoff.digest(),
         "verified": not findings,
@@ -295,7 +318,8 @@ def deterministic_verdict(handoff: rotation.Handoff, facts: SeamFacts,
             "value_checked": ["task_and_stage", "branch", "worktree",
                               "exact_next_action", "authoritative_shas.HEAD",
                               "forbidden_scope"],
-            "value_source": origin,
+            "independently_rederived": independently,
+            "consistency_only": consistency_only + ["forbidden_scope"],
             "not_re_derived": ["completed_work", "changed_files", "tests_and_ci",
                                "pull_request_state", "reviews_and_findings",
                                "open_blockers", "owner_gates", "evidence_digests"],
@@ -329,7 +353,7 @@ def verify(
         independent: Mapping[str, str] | None = None
         if fact_source is not None:
             try:
-                independent = dict(fact_source() or {})
+                returned = fact_source()
             except Exception as exc:
                 raise SeamTurnoverError(
                     "handoff_fact_source_failed",
@@ -337,6 +361,22 @@ def verify(
                     f"asked for an independent re-derivation and could not get one refuses "
                     f"rather than silently falling back to the weaker consistency check"
                 ) from exc
+            independent = {k: str(v) for k, v in dict(returned or {}).items()
+                           if isinstance(k, str) and v}
+            if not independent:
+                # M0-T080 correction V2: an empty or None return is the SAME
+                # condition as a raise - the source was asked to re-derive and
+                # produced nothing - and it is the shape a real implementation
+                # fails into (a `git rev-parse` wrapper returning {} when git is
+                # absent). It used to be read as "an independent source that
+                # agrees about nothing", which passed handoffs the weaker check
+                # would have caught, under the stronger label.
+                raise SeamTurnoverError(
+                    "handoff_fact_source_empty",
+                    "the independent fact source returned no usable facts; a source that "
+                    "re-derived nothing has not verified anything, so the rotation refuses "
+                    "rather than treating silence as agreement",
+                    {"returned": repr(returned)[:200]})
         verdict = deterministic_verdict(handoff, facts, independent=independent)
         return rotation.verify_handoff(handoff, reviewer_verdict=verdict,
                                        review_model="", advisory_model="")
@@ -546,13 +586,24 @@ class SeamTurnover:
         worktree, or SHA passed. Where the supervisor WROTE DOWN an expectation,
         an empty report is now a mismatch: the successor has to say who it is.
 
-        The MODEL axis keeps the `observed_models` guard deliberately, and is the
-        one exception: it is independently backstopped by the D-004-R739
-        per-event `expected_model` stream check in `claude_runner.inspect_stream`,
-        which sets `RunResult.model_mismatch` from the provider's own events
-        rather than from anything the checkpoint claims. A stream that reported no
-        model at all is caught there, not here; duplicating it here would fail a
-        cycle whose `run_result` this caller did not supply.
+        The MODEL axis is checked the same way (M0-T080 correction V1). The
+        round-1 fix carved it out on the stated grounds that the D-004-R739
+        per-event stream check backstopped it. That justification was FALSE and is
+        withdrawn: `claude_runner.inspect_stream` sets `RunResult.model_mismatch`
+        only when an event reports a model DIFFERING from `expected_model`, so a
+        stream naming no model at all - and an empty event list - yields
+        `observed_models=()` with `model_mismatch=False`. R739 backstops
+        DIVERGENCE, never SILENCE. The package already has the right rule one
+        layer down (`claude_runner` returns `PROBE_MODEL_NOT_REPORTED` ->
+        unavailable when a probed process exits without naming a model), so
+        treating the same signal as "commanded model confirmed" here contradicted
+        it. Reachable without an impostor: a truncated stream, a provider CLI
+        format change, or any degraded path leaving the default `observed_models`
+        empty silently disabled the axis.
+
+        The ONE skip that remains is `run_result is None`: a caller that supplied
+        no run result has not observed the stream at all and must not fail a cycle
+        it cannot judge. That is absence of an OBSERVER, not absence of an answer.
         """
         gate = expectation.to_dict() if expectation is not None else (self.armed_gate() or {})
         if not gate:
@@ -580,18 +631,32 @@ class SeamTurnover:
         expected_model = str(gate.get("model_id", "") or "")
         observed_models = tuple(str(m) for m in
                                 (getattr(run_result, "observed_models", ()) or ()))
-        if expected_model and observed_models:
-            wrong = [m for m in observed_models if m and m != expected_model]
-            if wrong:
+        model_judged = run_result is not None and bool(expected_model)
+        if model_judged:
+            named = [m for m in observed_models if m]
+            if not named:
                 mismatches.append(
-                    f"model: the successor reported running {wrong!r}, not the commanded "
-                    f"{expected_model!r}")
+                    f"model: commanded {expected_model!r}, the stream reported NOTHING; a "
+                    f"stream that names no model does not confirm the commanded one "
+                    f"(claude_runner treats the same silence as PROBE_MODEL_NOT_REPORTED)")
+            else:
+                wrong = [m for m in named if m != expected_model]
+                if wrong:
+                    mismatches.append(
+                        f"model: the successor reported running {wrong!r}, not the "
+                        f"commanded {expected_model!r}")
         detail = {"expectation": dict(gate), "observed_models": list(observed_models),
-                  "mismatches": mismatches}
+                  "mismatches": mismatches, "model_axis_judged": model_judged}
         if mismatches:
             return False, ("the successor is not the session that was commanded: "
                            + "; ".join(mismatches)), detail
-        return True, "the successor reported the commanded task, branch, HEAD, and model", detail
+        # The success string names only what was actually checked: claiming the
+        # model was confirmed when no run result was supplied is the same
+        # overstatement V1 removed from the code.
+        axes = "task, branch, worktree, and HEAD"
+        return True, (f"the successor reported the commanded {axes}"
+                      + (" and model" if model_judged
+                         else "; the model axis was not judged (no run result supplied)")), detail
 
     # -- the whole path ------------------------------------------------------
 

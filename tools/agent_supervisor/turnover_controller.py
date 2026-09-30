@@ -555,5 +555,5 @@ class TurnoverController:
         """
         try:
             return self._audit.append(record)
-        except Exception as exc:  # pragma: no cover - damaged/unwritable chain
+        except Exception as exc:  # a damaged or unwritable chain
             return f"(unaudited: {exc})"

@@ -537,6 +537,61 @@ class SeamTurnoverTests(unittest.TestCase):
                             ts.DETERMINISTIC_VERIFIER,
                             "the two checks must be labelled differently")
 
+    def test_a_fact_source_that_derives_nothing_is_a_refusal(self) -> None:
+        """M0-T080 correction V2 (G3 R-1) — the I-1 defect inside the fix for I-1.
+
+        `independent = dict(fact_source() or {})` turned a None/{} return into "an
+        independent source that agrees about nothing": it replaced the facts
+        baseline WHOLESALE, skipped every omitted key, and stamped the STRONGER
+        label. Demonstrated at the reviewed identity: a wrong-branch handoff that
+        the plain consistency check CAUGHT was PASSED, and labelled independent,
+        when the source returned {}. A real implementation - a `git rev-parse`
+        wrapper returning {} when git is absent - lands there on its first bad day.
+        """
+        wrong = ts.build_handoff(good_facts(branch="task/somewhere-else"))
+        # Without a source, the plain consistency check catches it.
+        self.assertFalse(ts.deterministic_verdict(wrong, good_facts())["verified"])
+        # A source that derived nothing must therefore never make it pass.
+        for returns in ({}, None, [], ""):
+            with self.subTest(returns=repr(returns)):
+                seam = ts.SeamTurnover(journal=MemoryJournal(), run_id="run-1",
+                                       fact_source=lambda r=returns: r)
+                with self.assertRaises(ts.SeamTurnoverError) as raised:
+                    seam.execute(facts=good_facts(branch="task/somewhere-else"),
+                                 safety_state=self._safe(),
+                                 continuity=reorientation_decision(),
+                                 previous_provider_session_id="prov-1",
+                                 successor_model=APPROVED_B)
+                self.assertEqual(raised.exception.code, "handoff_fact_source_empty")
+                self.assertIsNone(seam.ledger.stored_handoff())
+
+    def test_a_partial_fact_source_never_earns_the_stronger_label(self) -> None:
+        # A source that re-derived three of five keys verified three of them. The
+        # baseline is NOT replaced for the other two (they stay consistency-checked
+        # rather than silently skipped), and the record says exactly which is which.
+        facts = good_facts()
+        partial = {"branch": facts.branch, "head_sha": facts.head_sha}
+        verdict = ts.deterministic_verdict(ts.build_handoff(facts), facts,
+                                           independent=partial)
+        self.assertTrue(verdict["verified"])
+        self.assertEqual(verdict["model_used"], ts.DETERMINISTIC_VERIFIER,
+                         "partial coverage must not be labelled independent")
+        self.assertEqual(verdict["scope"]["independently_rederived"],
+                         ["branch", "head_sha"])
+        self.assertIn("task_and_stage", verdict["scope"]["consistency_only"])
+        self.assertIn("worktree", verdict["scope"]["consistency_only"])
+
+    def test_a_partial_source_still_catches_a_field_it_did_not_cover(self) -> None:
+        # The key the source omitted is still compared against the baseline, so a
+        # partial source can never be WEAKER than no source at all - which is what
+        # the wholesale replacement made it.
+        facts = good_facts()
+        wrong = ts.build_handoff(good_facts(worktree="/somewhere/else"))
+        verdict = ts.deterministic_verdict(
+            wrong, facts, independent={"branch": facts.branch})
+        self.assertFalse(verdict["verified"])
+        self.assertTrue(any("worktree" in f for f in verdict["findings"]))
+
     def test_a_fact_source_that_raises_refuses_instead_of_downgrading(self) -> None:
         def exploding():
             raise RuntimeError("git is unavailable")
@@ -557,7 +612,13 @@ class SeamTurnoverTests(unittest.TestCase):
         self.assertEqual(verdict["model_used"], ts.DETERMINISTIC_VERIFIER)
         self.assertIn("consistency", verdict["model_used"])
         scope = verdict["scope"]
-        self.assertIn("in-memory", scope["value_source"])
+        # V2 replaced the single `value_source` string with a per-key split, so a
+        # partial independent source cannot be reported as a whole one.
+        self.assertEqual(scope["independently_rederived"], [],
+                         "no fact source ran, so nothing was independently re-derived")
+        for key in ("task_and_stage", "branch", "worktree", "exact_next_action",
+                    "head_sha", "forbidden_scope"):
+            self.assertIn(key, scope["consistency_only"])
         self.assertEqual(len(scope["not_re_derived"]), 8)
         self.assertIn("completed_work", scope["not_re_derived"])
         self.assertIn("14", scope["completeness"])
@@ -797,6 +858,66 @@ class SeamTurnoverTests(unittest.TestCase):
                 self.assertEqual(len(detail["mismatches"]), 1, detail["mismatches"])
                 self.assertIn("NOTHING", detail["mismatches"][0])
 
+    def test_a_stream_naming_no_model_does_not_confirm_the_commanded_one(self) -> None:
+        """M0-T080 correction V1 (G5 blocking / G3 R-2) — the last fail-open axis.
+
+        Round 1 carved the model axis out on the stated grounds that the R739
+        per-event stream check backstopped it. It does not:
+        `claude_runner.inspect_stream` sets `model_mismatch` only when an event
+        reports a model DIFFERING from `expected_model`, so a stream naming no
+        model yields `observed_models=()` with `mismatch=False` and the gate
+        returned ok=True with a success string asserting a model report that never
+        happened. Reachable without an impostor — a truncated stream or a degraded
+        path leaving the default empty disables the axis.
+        """
+        result = self.seam.execute(
+            facts=good_facts(), safety_state=self._safe(),
+            continuity=reorientation_decision(),
+            previous_provider_session_id="prov-1", successor_model=APPROVED_B)
+        correct = make_checkpoint(task_id="M0-T080", branch="task/M0-T080",
+                                  worktree="/repo/wt", starting_sha="a" * 40)
+        for silent in ((), ("",), ("", "")):
+            with self.subTest(observed_models=silent):
+                ok, reason, detail = self.seam.verify_post_launch(
+                    checkpoint=correct, run_result=run_result(observed_models=silent),
+                    expectation=result.expectation)
+                self.assertFalse(ok, "stream silence must not confirm the model")
+                self.assertTrue(any("model" in m and "NOTHING" in m
+                                    for m in detail["mismatches"]), detail["mismatches"])
+                self.assertTrue(detail["model_axis_judged"])
+
+    def test_no_run_result_still_skips_the_model_axis_and_says_so(self) -> None:
+        # The ONE skip V1 keeps: a caller that supplied no run result has not
+        # observed the stream and must not fail a cycle it cannot judge. But the
+        # success string may no longer claim the model was confirmed.
+        result = self.seam.execute(
+            facts=good_facts(), safety_state=self._safe(),
+            continuity=reorientation_decision(),
+            previous_provider_session_id="prov-1", successor_model=APPROVED_B)
+        ok, reason, detail = self.seam.verify_post_launch(
+            checkpoint=make_checkpoint(task_id="M0-T080", branch="task/M0-T080",
+                                       worktree="/repo/wt", starting_sha="a" * 40),
+            run_result=None, expectation=result.expectation)
+        self.assertTrue(ok)
+        self.assertFalse(detail["model_axis_judged"])
+        self.assertIn("not judged", reason)
+        self.assertNotIn("and model", reason)
+
+    def test_a_correctly_reported_model_still_passes(self) -> None:
+        # V1 is not fail-noisy: the honest successor is unaffected.
+        result = self.seam.execute(
+            facts=good_facts(), safety_state=self._safe(),
+            continuity=reorientation_decision(),
+            previous_provider_session_id="prov-1", successor_model=APPROVED_B)
+        ok, reason, detail = self.seam.verify_post_launch(
+            checkpoint=make_checkpoint(task_id="M0-T080", branch="task/M0-T080",
+                                       worktree="/repo/wt", starting_sha="a" * 40),
+            run_result=run_result(observed_models=(APPROVED_B,)),
+            expectation=result.expectation)
+        self.assertTrue(ok, detail)
+        self.assertTrue(detail["model_axis_judged"])
+        self.assertIn("and model", reason)
+
     def test_an_axis_the_supervisor_never_commanded_is_not_invented(self) -> None:
         # Fail-closed is not fail-noisy: where the supervisor wrote down NO
         # expectation there is nothing to mismatch against, so a blank is fine.
@@ -922,6 +1043,22 @@ class ApprovedModelRoutingTests(unittest.TestCase):
         self.assertEqual(record.cli_version, "cli-v1")
         self.assertEqual(record.config_identity, "config-identity-1")
         self.assertTrue(record.probed_at_utc)
+
+    def test_a_probe_reporting_another_cli_authorizes_nothing(self) -> None:
+        # M0-T080 round-2 G5 residual #1. `probe_record` returned the record it
+        # had just written without re-checking `matches()`, so a probe REPORTING a
+        # different CLI version authorized that one selection while writing a
+        # record that could never authorize another - selectable once,
+        # unselectable forever after, from a single probe. The read path already
+        # refused such a record; the write path now applies the same rule.
+        router = self._router(
+            probe=lambda _m: am.ProbeOutcome(ok=True, cli_version="cli-SOMETHING-ELSE"))
+        with self.assertRaises(am.ModelRoutingError) as raised:
+            router.select(APPROVED_A)
+        self.assertEqual(raised.exception.code, am.MODEL_PROBE_FAILED)
+        self.assertIn("cli-SOMETHING-ELSE", raised.exception.message)
+        # And the stored record is likewise unusable, so the state is consistent.
+        self.assertIsNone(router.ledger.successful(APPROVED_A))
 
     def test_a_probe_from_another_config_or_cli_makes_the_model_unselectable(self) -> None:
         journal = MemoryJournal()
