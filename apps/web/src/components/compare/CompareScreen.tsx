@@ -33,13 +33,18 @@ import { ScenarioFailureStates } from "./ScenarioFailureStates";
  *
  * `fetchImpl` is injectable so the whole screen runs OFFLINE under vitest with
  * committed M5-T003 fixtures — no network, no Supabase, no Geoclient (AS-7).
+ *
+ * `unusedFloorAreaSectionEnabled` is the server-read
+ * INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED (D-06, plan §3 step 4); absent -> off.
  */
 export function CompareScreen({
   bbl,
   fetchImpl,
+  unusedFloorAreaSectionEnabled = false,
 }: {
   bbl: string;
   fetchImpl?: typeof fetch;
+  unusedFloorAreaSectionEnabled?: boolean;
 }) {
   const [loading, setLoading] = useState(true);
   const [outcome, setOutcome] = useState<ScenarioOutcome | null>(null);
@@ -136,7 +141,11 @@ export function CompareScreen({
       <div ref={outcomeRef}>
         {!loading && outcome ? (
           outcome.kind === "scenario" ? (
-            <ScenarioResult document={outcome.document} bbl={bbl} />
+            <ScenarioResult
+              document={outcome.document}
+              bbl={bbl}
+              unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}
+            />
           ) : outcome.kind === "aborted" ? null : (
             <>
               <ScenarioFailureStates outcome={outcome} onRetry={retry} />
@@ -158,8 +167,13 @@ export function CompareScreen({
  * Entry component reading ?bbl= from the URL (client-side). An absent or
  * format-invalid parameter renders an honest error card with the way back —
  * never a silent default lookup. Mirrors ConfirmEntry.
+ * `unusedFloorAreaSectionEnabled` comes from the route page (server-read, D-06).
  */
-export function CompareEntry() {
+export function CompareEntry({
+  unusedFloorAreaSectionEnabled = false,
+}: {
+  unusedFloorAreaSectionEnabled?: boolean;
+} = {}) {
   const params = useSearchParams();
   const raw = params.get("bbl") ?? "";
   const validation = validateBblInput(raw);
@@ -167,7 +181,10 @@ export function CompareEntry() {
     <div className="property-shell">
       <InternalBanner />
       {validation.ok ? (
-        <CompareScreen bbl={validation.canonical} />
+        <CompareScreen
+          bbl={validation.canonical}
+          unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}
+        />
       ) : (
         <section className="card failure-state" data-testid="compare-bad-param">
           <h1 className="failure-title">No property selected</h1>

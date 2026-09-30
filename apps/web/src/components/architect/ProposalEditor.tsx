@@ -8,6 +8,7 @@ import {
   addWall,
   adoptOutlineVertices,
   danglingWallIds,
+  emptyDraft,
   rectangleSampleDraft,
   removeLevel,
   removeVertex,
@@ -46,6 +47,14 @@ import { ProposalVariations } from "./ProposalVariations";
  * and the converted vertices land in this numeric draft EXACTLY as if typed —
  * the table stays the visible, editable authority (manual remains the option,
  * D-082-R003). Scenario emission stays deferred.
+ *
+ * D-01 (M1-06b, plan §9 "no example data in real work"): a real property ALWAYS
+ * starts from the empty draft — every lot input and outline value is unknown until
+ * the analyst enters it, and "Add vertex" / "Add level" leave the new coordinates
+ * and floor-to-floor height unknown (never 0 or a sample height). The worked
+ * rectangle example (rectangleSampleDraft) is reachable only through the explicit
+ * `example` prop, which is ignored whenever a BBL is mounted. The whole editor is
+ * set aside behind the default-off INTERNAL_PROPOSAL_EDITOR_ENABLED flag (plan §7).
  */
 
 let variationSeq = 0;
@@ -61,16 +70,21 @@ export function ProposalEditor({
   bbl,
   fetchImpl,
   adoptedDraft,
+  example = false,
 }: {
   bbl?: string | null;
   fetchImpl?: typeof fetch;
+  /** Explicit example/demo path only: start from the worked rectangle example. Ignored
+   * when a real property (`bbl`) is mounted — a real property never starts from it. */
+  example?: boolean;
   /** A draft adopted from the Generated building option (task M5-T070, D-083-R002).
    * When it changes to a new non-null draft it REPLACES the working draft as the
    * proposed starting point; the numeric table stays the editable authority and
    * manual entry is unchanged. */
   adoptedDraft?: ProposalDraft | null;
 }) {
-  const [draft, setDraftState] = useState<ProposalDraft>(() => rectangleSampleDraft());
+  const [exampleSeeded] = useState(() => example && !bbl);
+  const [draft, setDraftState] = useState<ProposalDraft>(() => (exampleSeeded ? rectangleSampleDraft() : emptyDraft()));
   const [draftRevision, setDraftRevision] = useState(0);
   const [outcome, setOutcome] = useState<ProposalCheckOutcome | null>(null);
   const [checking, setChecking] = useState(false);
@@ -230,6 +244,11 @@ export function ProposalEditor({
           Proposed — your input, not a city record. You enter the numbers; the check compares them
           against the rules and returns a preliminary result that requires professional review.
         </p>
+        {exampleSeeded ? (
+          <p className="proposal-honesty" data-testid="editor-example-note">
+            Worked example — sample values for a fictional lot, not a real property.
+          </p>
+        ) : null}
       </header>
 
       <div className="proposal-editor-grid">
@@ -263,6 +282,7 @@ export function ProposalEditor({
             <input
               id="proposal-zoning-district"
               className="text-input"
+              placeholder="Unknown"
               value={draft.zoning_district}
               onChange={(e) => setDraft((d) => ({ ...d, zoning_district: e.target.value }))}
             />
@@ -292,6 +312,7 @@ export function ProposalEditor({
               id="proposal-lot-area"
               type="number"
               className="text-input"
+              placeholder="Unknown"
               value={draft.lot_area_sq_ft === null ? "" : numInputValue(draft.lot_area_sq_ft)}
               onChange={(e) =>
                 setDraft((d) => ({ ...d, lot_area_sq_ft: e.target.value.trim() === "" ? null : parseNum(e.target.value) }))
@@ -317,6 +338,7 @@ export function ProposalEditor({
                     <input
                       type="number"
                       aria-label={`Vertex ${i} X coordinate`}
+                      placeholder="Unknown"
                       value={numInputValue(v.x)}
                       onChange={(e) => setDraft((d) => updateVertex(d, i, { x: parseNum(e.target.value) }))}
                     />
@@ -325,6 +347,7 @@ export function ProposalEditor({
                     <input
                       type="number"
                       aria-label={`Vertex ${i} Y coordinate`}
+                      placeholder="Unknown"
                       value={numInputValue(v.y)}
                       onChange={(e) => setDraft((d) => updateVertex(d, i, { y: parseNum(e.target.value) }))}
                     />
@@ -338,7 +361,9 @@ export function ProposalEditor({
               ))}
             </tbody>
           </table>
-          <button type="button" className="secondary-button" onClick={() => setDraft((d) => addVertex(d, { x: 0, y: 0 }))}>
+          {/* D-01: a new vertex is UNKNOWN until typed (never a 0,0 default); the mirror
+              validation blocks sending until both coordinates are finite. */}
+          <button type="button" className="secondary-button" onClick={() => setDraft((d) => addVertex(d, { x: Number.NaN, y: Number.NaN }))}>
             Add vertex
           </button>
 
@@ -375,6 +400,7 @@ export function ProposalEditor({
                     <input
                       type="number"
                       aria-label={`Level ${i} floor to floor height`}
+                      placeholder="Unknown"
                       value={numInputValue(l.floor_to_floor_ft)}
                       onChange={(e) => setDraft((d) => updateLevel(d, i, { floor_to_floor_ft: parseNum(e.target.value) }))}
                     />
@@ -388,10 +414,12 @@ export function ProposalEditor({
               ))}
             </tbody>
           </table>
+          {/* D-01: the floor-to-floor height is UNKNOWN until typed (never a sample 10 ft);
+              the mirror validation blocks sending until it is finite. */}
           <button
             type="button"
             className="secondary-button"
-            onClick={() => setDraft((d) => addLevel(d, { level_index: d.levels.length, floor_count: 1, floor_to_floor_ft: 10 }))}
+            onClick={() => setDraft((d) => addLevel(d, { level_index: d.levels.length, floor_count: 1, floor_to_floor_ft: Number.NaN }))}
           >
             Add level
           </button>
