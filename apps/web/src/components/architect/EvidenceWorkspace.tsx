@@ -7,13 +7,15 @@ import type { SelectedAddress } from "@/lib/architect/selected-address";
 import { fieldLabel } from "@/lib/format";
 import { CapturedRecord, EvidenceRecord } from "./EvidenceRecord";
 import { CalculationEvidence } from "./CalculationEvidence";
-export function EvidenceWorkspace({ profile, evaluation, scenario, address, selection, onSelect }: {
+export function EvidenceWorkspace({ profile, evaluation, scenario, address, selection, onSelect, unusedFloorAreaSectionEnabled = false }: {
     profile: PropertyProfile;
     evaluation: RuleEvaluation | null;
     scenario: Scenario | null;
     address: SelectedAddress | null;
     selection: string;
     onSelect: (id: string) => void;
+    /** Server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED (D-06); absent -> off. */
+    unusedFloorAreaSectionEnabled?: boolean;
 }) {
     const [query, setQuery] = useState("");
     const records = profile.provenance.filter(record => `${record.original_field_name} ${record.source_id}`.toLowerCase().includes(query.toLowerCase()));
@@ -49,7 +51,7 @@ export function EvidenceWorkspace({ profile, evaluation, scenario, address, sele
         </p>
         <p className="section-note">Selected in this browser session at {address.confirmedAt}. BBL {address.bbl} remains the property identity.</p>
         <CapturedRecord value={address.sourceRecord} label="Original address match and source facts"/>
-      </> : <CalculationEvidence evaluation={evaluation} scenario={scenario}/>}
+      </> : <CalculationEvidence evaluation={evaluation} scenario={scenario} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/>}
     </section>
   </div>;
 }
