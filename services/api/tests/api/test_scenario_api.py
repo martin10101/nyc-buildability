@@ -60,6 +60,7 @@ from app.connectors.pluto_soda import (
 )
 from app.main import app
 from app.rules.response import RuleEvaluationContractError
+from app.scenario import INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED_ENV_VAR
 from app.scenario.contract import ScenarioContractError, validate_scenario_document
 
 FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "pluto"
@@ -297,6 +298,9 @@ def test_as1_confident_r5_cap_surfaces_trace_value_verbatim(client, monkeypatch)
     # verbatim (not a locally recomputed number).
     monkeypatch.setenv(INTERNAL_SCENARIO_ENABLED_ENV_VAR, "1")
     monkeypatch.setenv(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, "1")
+    # A-03 (D-090): the recorded-building-area subtraction is set aside behind a
+    # default-off flag; this test keeps proving the legacy path with it on.
+    monkeypatch.setenv(INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED_ENV_VAR, "1")
     install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
     install_substrate(confident_r5_substrate())
 
@@ -354,6 +358,31 @@ def test_as1_confident_r5_cap_surfaces_trace_value_verbatim(client, monkeypatch)
     assert [a["key"] for a in section["assumptions"]] == ["zoning_lot_extent"]
     # A positive remainder does not itself force professional review.
     assert doc["professional_review_required"] is False
+
+
+def test_as1_default_unused_floor_area_not_taken_from_recorded_building_area(
+    client, monkeypatch
+):
+    """A-03 (D-090; plan section 3 step 4, M2-07): by default the recorded (DOF/PLUTO)
+    building area is never subtracted - the section is not computable and the draft
+    cap still shows."""
+    monkeypatch.setenv(INTERNAL_SCENARIO_ENABLED_ENV_VAR, "1")
+    monkeypatch.setenv(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, "1")
+    monkeypatch.delenv(INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED_ENV_VAR, raising=False)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_r5_substrate())
+
+    response = client.get(f"/api/v1/properties/{BBL}/scenario")
+    assert response.status_code == 200
+    doc = response.json()
+    validate_scenario_document(doc)
+    section = doc["unused_draft_zoning_floor_area"]
+    assert section["state"] == "not_computable"
+    assert section["unused_draft_zoning_floor_area_sq_ft"] is None
+    cap = _constraints_by_key(doc)["residential_far_cap"]["value"]
+    assert section["inputs"]["draft_zoning_floor_area_cap"]["value_sq_ft"] == cap
+    keys = [a["key"] for a in section["assumptions"]]
+    assert "unused_floor_area_not_available" in keys
 
 
 # ==========================================================================

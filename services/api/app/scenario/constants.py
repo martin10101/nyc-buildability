@@ -130,6 +130,71 @@ UNUSED_FLOOR_AREA_FORMULA = (
 # fails closed to a typed not_computable outcome with the status echoed verbatim.
 USABLE_EXISTING_AREA_COVERAGE_STATUSES = frozenset({"conditional"})
 
+# ---------------------------------------------------------------------------
+# A-03 (plan section 3 step 4, section 8, M2-07; set-aside list item 6): the
+# DEFAULT output of the C1 section. Existing floor area is never taken from
+# city-recorded (DOF/PLUTO) building area, because that figure does not follow
+# the zoning definition of floor area (ZR 12-10). Until an existing ZONING floor
+# area input exists (M2-07: a Buildings Department filing / certificate of
+# occupancy, or a value the architect enters as a stated assumption), the section
+# says "Not available - needs existing zoning floor area" and the draft allowance
+# still shows. The legacy cap - bldgarea subtraction above is kept behind the
+# default-off INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED flag (unused_floor_area.py).
+# ---------------------------------------------------------------------------
+
+# The plan's own words for the result (plan section 3 step 4), verbatim.
+UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT = "Not available — needs existing zoning floor area"
+
+# Machine-readable reason token for the default outcome. The closed scenario
+# contract's not_computable_reason enum cannot express it yet (a Lane C schema
+# request), so it rides as the value of the not_available basis assumption record.
+UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_CODE = "needs_existing_zoning_floor_area"
+
+# Machine label for the section on the default outcome.
+UNUSED_FLOOR_AREA_NOT_AVAILABLE_LABEL = (
+    f"Unused floor area on the lot: {UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT}. "
+    "The draft floor-area allowance still shows. City-recorded building area "
+    "is not zoning floor area and is never subtracted."
+)
+
+# The scope note (a document field) on the default outcome.
+UNUSED_FLOOR_AREA_NOT_AVAILABLE_SCOPE_NOTE = (
+    "Scope: no difference is stated. It needs the existing zoning floor area "
+    "(ZR 12-10 definition of floor area), from a Buildings Department filing or "
+    "certificate of occupancy, or a value entered as a stated assumption; "
+    "neither is available to this calculation. City-recorded building area "
+    "(DOF/PLUTO bldgarea) does not follow the zoning definition of floor area, "
+    "so it is never subtracted and no over-built result is derived from it. "
+    "Building geometry - height, yards, setbacks, layout, lot coverage, open "
+    "space - has NOT been assessed."
+)
+
+
+def unused_floor_area_not_available_assumption() -> dict:
+    """The machine-readable basis record for the default (not available) C1
+    outcome, shaped like a scenario assumption ({key, assumption_type, value,
+    unit, rationale}). Its ``value`` is the reason token
+    :data:`UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_CODE`.
+
+    Returned as a FRESH dict each call so a caller can never mutate a shared
+    module constant. It is a DOCUMENT FIELD, never display text."""
+    return {
+        "key": "unused_floor_area_not_available",
+        "assumption_type": "not_computable_basis",
+        "value": UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_CODE,
+        "unit": None,
+        "rationale": (
+            f"{UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT}. Existing floor area is "
+            "taken only from a Buildings Department filing or certificate of "
+            "occupancy, or from a value the architect enters as a stated "
+            "assumption; neither is available to this calculation. "
+            "City-recorded building area (DOF/PLUTO bldgarea) is never "
+            "subtracted because it does not follow the zoning definition of "
+            "floor area (ZR 12-10). The draft floor-area allowance is "
+            "unaffected and still shows."
+        ),
+    }
+
 
 def zoning_lot_extent_assumption() -> dict:
     """The machine-readable ZR 12-10 assumption record for the C1 section, shaped

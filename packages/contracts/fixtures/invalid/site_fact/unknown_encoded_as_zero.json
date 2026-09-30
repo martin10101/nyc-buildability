@@ -1,0 +1,18 @@
+{
+  "contract_version": "1.0.0",
+  "fact_id": "fact-lot-area",
+  "key": "lot_area",
+  "lot_bbl": "5999999999",
+  "street": null,
+  "value": 0,
+  "unit": "square_feet",
+  "measurement": {
+    "rank": "city_records",
+    "label": "City records"
+  },
+  "source": null,
+  "blocks": [],
+  "editable": true,
+  "note": "Synthetic fixture (test-fixture-synthetic); not a real lot.",
+  "_expected_failure": "An unknown lot area encoded as 0 without rank 'unknown': a known rank ('city_records') needs a non-null source, and a lot area must be strictly positive, so a bare 0 can never pass as a value (plan section 9)."
+}

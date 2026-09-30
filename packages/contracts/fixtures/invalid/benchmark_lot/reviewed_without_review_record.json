@@ -1,0 +1,654 @@
+{
+  "contract_version": "1.0.0",
+  "benchmark_id": "northern-blvd-215-16",
+  "purpose": "benchmark",
+  "basis": "Plan section 9a item 6: the benchmark lot; every check C-1..C-12 must pass on it before results are shown to an architect (directive D-090-R002).",
+  "identity": {
+    "bbls": [
+      "4073340070"
+    ],
+    "billing_bbl": null,
+    "address": "215-16 Northern Boulevard",
+    "borough": "Queens",
+    "identity_source": "Directive D-090-R002 and docs/lanes/LOOP_LAUNCH_PROMPTS.md Prompt 0 step 5 (BBL 4073340070); address from the competitor review title."
+  },
+  "expected_values": [
+    {
+      "key": "lot_area",
+      "label": "Lot area",
+      "value": 10075,
+      "unit": "square_feet",
+      "source": {
+        "kind": "public_record",
+        "ref": "Public records; report p. 5",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "10,075 sq ft, about 100.8 × 100 ft, corner lot (215 Place & Northern Blvd)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "lot_dimension_1",
+      "label": "Lot dimension (first)",
+      "value": 100.8,
+      "unit": "feet",
+      "source": {
+        "kind": "public_record",
+        "ref": "Public records; report p. 5",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "10,075 sq ft, about 100.8 × 100 ft, corner lot (215 Place & Northern Blvd)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": "About. The review gives 'about 100.8 × 100 ft' and does not say which dimension fronts which street."
+    },
+    {
+      "key": "lot_dimension_2",
+      "label": "Lot dimension (second)",
+      "value": 100,
+      "unit": "feet",
+      "source": {
+        "kind": "public_record",
+        "ref": "Public records; report p. 5",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "10,075 sq ft, about 100.8 × 100 ft, corner lot (215 Place & Northern Blvd)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": "About. The review gives 'about 100.8 × 100 ft' and does not say which dimension fronts which street."
+    },
+    {
+      "key": "lot_type",
+      "label": "Lot type",
+      "value": "corner",
+      "unit": null,
+      "source": {
+        "kind": "public_record",
+        "ref": "Public records; report p. 5",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "10,075 sq ft, about 100.8 × 100 ft, corner lot (215 Place & Northern Blvd)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "corner_streets",
+      "label": "Corner of",
+      "value": "215 Place & Northern Blvd",
+      "unit": null,
+      "source": {
+        "kind": "public_record",
+        "ref": "Public records; report p. 5",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "10,075 sq ft, about 100.8 × 100 ft, corner lot (215 Place & Northern Blvd)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "zoning_district",
+      "label": "Zoning district",
+      "value": "R6B",
+      "unit": null,
+      "source": {
+        "kind": "competitor_review",
+        "ref": "Report p. 5–6 (verify in ZoLa)",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "R6B with a C2-2 commercial overlay"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": "The review says 'verify in ZoLa'."
+    },
+    {
+      "key": "commercial_overlay",
+      "label": "Commercial overlay",
+      "value": "C2-2",
+      "unit": null,
+      "source": {
+        "kind": "competitor_review",
+        "ref": "Report p. 5–6 (verify in ZoLa)",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "R6B with a C2-2 commercial overlay"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": "The review says 'verify in ZoLa'."
+    },
+    {
+      "key": "max_residential_far",
+      "label": "Maximum residential FAR (standard)",
+      "value": 2.0,
+      "unit": "ratio",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-22",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "2.00 standard (20,150 sq ft); 2.40 with qualifying affordable or senior housing (24,180 sq ft). R6B has no wide-street increase."
+      },
+      "verification_state": "reviewed",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "max_residential_floor_area",
+      "label": "Maximum residential floor area (standard)",
+      "value": 20150,
+      "unit": "square_feet",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-22",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "2.00 standard (20,150 sq ft); 2.40 with qualifying affordable or senior housing (24,180 sq ft). R6B has no wide-street increase."
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "max_residential_far_qualifying_affordable_or_senior",
+      "label": "Maximum residential FAR with qualifying affordable or senior housing",
+      "value": 2.4,
+      "unit": "ratio",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-22",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "2.00 standard (20,150 sq ft); 2.40 with qualifying affordable or senior housing (24,180 sq ft). R6B has no wide-street increase."
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "max_residential_floor_area_qualifying_affordable_or_senior",
+      "label": "Maximum residential floor area with qualifying affordable or senior housing",
+      "value": 24180,
+      "unit": "square_feet",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-22",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "2.00 standard (20,150 sq ft); 2.40 with qualifying affordable or senior housing (24,180 sq ft). R6B has no wide-street increase."
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "wide_street_far_increase",
+      "label": "Wide-street FAR increase",
+      "value": "none",
+      "unit": null,
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-22",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "2.00 standard (20,150 sq ft); 2.40 with qualifying affordable or senior housing (24,180 sq ft). R6B has no wide-street increase."
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": "R6B has no wide-street increase."
+    },
+    {
+      "key": "min_base_height",
+      "label": "Minimum base height",
+      "value": 30,
+      "unit": "feet",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-432",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "Minimum base 30 ft; maximum base 45 ft; maximum height 55 ft. With qualifying affordable or senior housing: maximum base 45 ft, maximum height 65 ft."
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "max_base_height",
+      "label": "Maximum base height",
+      "value": 45,
+      "unit": "feet",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-432",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "Minimum base 30 ft; maximum base 45 ft; maximum height 55 ft. With qualifying affordable or senior housing: maximum base 45 ft, maximum height 65 ft."
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "max_building_height",
+      "label": "Maximum building height",
+      "value": 55,
+      "unit": "feet",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-432",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "Minimum base 30 ft; maximum base 45 ft; maximum height 55 ft. With qualifying affordable or senior housing: maximum base 45 ft, maximum height 65 ft."
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "max_base_height_qualifying_affordable_or_senior",
+      "label": "Maximum base height with qualifying affordable or senior housing",
+      "value": 45,
+      "unit": "feet",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-432",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "Minimum base 30 ft; maximum base 45 ft; maximum height 55 ft. With qualifying affordable or senior housing: maximum base 45 ft, maximum height 65 ft."
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "max_building_height_qualifying_affordable_or_senior",
+      "label": "Maximum building height with qualifying affordable or senior housing",
+      "value": 65,
+      "unit": "feet",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-432",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "Minimum base 30 ft; maximum base 45 ft; maximum height 55 ft. With qualifying affordable or senior housing: maximum base 45 ft, maximum height 65 ft."
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "max_lot_coverage",
+      "label": "Maximum lot coverage (corner lot)",
+      "value": 100,
+      "unit": "percent",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-362",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "Corner lot: up to 100%"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": "Up to 100%."
+    },
+    {
+      "key": "rear_yard_within_100_ft_of_corner",
+      "label": "Rear yard within 100 ft of the corner",
+      "value": "not required",
+      "unit": null,
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-344(a)",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "Not required within 100 ft of the corner"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "dwelling_unit_factor",
+      "label": "Dwelling-unit factor",
+      "value": 680,
+      "unit": "square_feet_per_dwelling_unit",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-52",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "20,150 ÷ 680 = 29.63, rounds to 29 (rounds up only at .75 or more)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "dwelling_units_standard_unrounded",
+      "label": "Dwelling units before rounding (standard)",
+      "value": 29.63,
+      "unit": "dwelling_units",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-52",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "20,150 ÷ 680 = 29.63, rounds to 29 (rounds up only at .75 or more)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": "20,150 ÷ 680 = 29.63"
+    },
+    {
+      "key": "dwelling_units_standard",
+      "label": "Dwelling units (standard)",
+      "value": 29,
+      "unit": "dwelling_units",
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-52",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "20,150 ÷ 680 = 29.63, rounds to 29 (rounds up only at .75 or more)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "dwelling_unit_rounding_rule",
+      "label": "Dwelling-unit rounding rule",
+      "value": "rounds up only at .75 or more",
+      "unit": null,
+      "source": {
+        "kind": "zoning_resolution",
+        "ref": "ZR 23-52",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "20,150 ÷ 680 = 29.63, rounds to 29 (rounds up only at .75 or more)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "existing_building_stories",
+      "label": "Existing building stories",
+      "value": 5,
+      "unit": "stories",
+      "source": {
+        "kind": "competitor_review",
+        "ref": "Report p. 5; public records",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "5 stories, about 54,488 sq ft, 38 apartments plus 1 store (existing FAR about 5.4)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "existing_building_recorded_floor_area",
+      "label": "Existing building floor area (recorded)",
+      "value": 54488,
+      "unit": "square_feet",
+      "source": {
+        "kind": "competitor_review",
+        "ref": "Report p. 5; public records",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "5 stories, about 54,488 sq ft, 38 apartments plus 1 store (existing FAR about 5.4)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": "About. Recorded building area, not existing ZONING floor area: it is never subtracted from the allowance (plan section 3 step 4, section 8)."
+    },
+    {
+      "key": "existing_apartments",
+      "label": "Existing apartments",
+      "value": 38,
+      "unit": "dwelling_units",
+      "source": {
+        "kind": "competitor_review",
+        "ref": "Report p. 5; public records",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "5 stories, about 54,488 sq ft, 38 apartments plus 1 store (existing FAR about 5.4)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "existing_stores",
+      "label": "Existing stores",
+      "value": 1,
+      "unit": null,
+      "source": {
+        "kind": "competitor_review",
+        "ref": "Report p. 5; public records",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "5 stories, about 54,488 sq ft, 38 apartments plus 1 store (existing FAR about 5.4)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": "1 store."
+    },
+    {
+      "key": "existing_far",
+      "label": "Existing FAR",
+      "value": 5.4,
+      "unit": "ratio",
+      "source": {
+        "kind": "competitor_review",
+        "ref": "Report p. 5; public records",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "5 stories, about 54,488 sq ft, 38 apartments plus 1 store (existing FAR about 5.4)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": "About."
+    },
+    {
+      "key": "zoning_lot_records",
+      "label": "Zoning-lot records",
+      "value": "A zoning lot description and a certificate recorded for the property",
+      "unit": null,
+      "source": {
+        "kind": "public_record",
+        "ref": "ACRIS entries via PropertyShark",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "A zoning lot description and a certificate recorded for the property (documents dated 2016, recorded 2022)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": "Check C-9: recorded zoning-lot documents are flagged."
+    },
+    {
+      "key": "zoning_lot_documents_dated",
+      "label": "Zoning-lot documents dated",
+      "value": "2016",
+      "unit": null,
+      "source": {
+        "kind": "public_record",
+        "ref": "ACRIS entries via PropertyShark",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "A zoning lot description and a certificate recorded for the property (documents dated 2016, recorded 2022)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "zoning_lot_documents_recorded",
+      "label": "Zoning-lot documents recorded",
+      "value": "2022",
+      "unit": null,
+      "source": {
+        "kind": "public_record",
+        "ref": "ACRIS entries via PropertyShark",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section A",
+        "quote": "A zoning lot description and a certificate recorded for the property (documents dated 2016, recorded 2022)"
+      },
+      "verification_state": "expected_unverified",
+      "review": null,
+      "note": null
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "C-1",
+      "title": "One source for heights",
+      "applicability": "applies",
+      "reason": "Competitor review section D: each check must pass on this lot before the result is shown to an architect (plan section 9a item 6).",
+      "pass_when": "Every height shown anywhere comes from the same ZR 23-432 lookup: 30 / 45 / 55, or 45 / 65 with affordable housing"
+    },
+    {
+      "check_id": "C-2",
+      "title": "Allowance vs. building",
+      "applicability": "applies",
+      "reason": "Competitor review section D: each check must pass on this lot before the result is shown to an architect (plan section 9a item 6).",
+      "pass_when": "Allowance = 24,180 sq ft (affordable) and 20,150 sq ft (standard). If the fitting building is smaller, the shortfall reason is computed from real constraints and is true."
+    },
+    {
+      "check_id": "C-3",
+      "title": "Existing building",
+      "applicability": "applies",
+      "reason": "Competitor review section D: each check must pass on this lot before the result is shown to an architect (plan section 9a item 6).",
+      "pass_when": "The existing zoning floor area is shown. When it exceeds the new allowance, one flag says so: \"Existing building is larger than today's zoning allows; demolition would reduce floor area.\""
+    },
+    {
+      "check_id": "C-4",
+      "title": "Drawings match numbers",
+      "applicability": "applies",
+      "reason": "Competitor review section D: each check must pass on this lot before the result is shown to an architect (plan section 9a item 6).",
+      "pass_when": "Footprint ≤ lot; floors drawn = floors in the table; per-floor areas match; every label inside a picture (width, depth, yards, floor names and areas) is read from the results, never fixed text"
+    },
+    {
+      "check_id": "C-5",
+      "title": "Consistency sweep",
+      "applicability": "applies",
+      "reason": "Competitor review section D: each check must pass on this lot before the result is shown to an architect (plan section 9a item 6).",
+      "pass_when": "An automated check over the whole report finds no value that differs between pages (heights, floors, parking, flood, elevators, units)"
+    },
+    {
+      "check_id": "C-6",
+      "title": "No duplicate options",
+      "applicability": "applies",
+      "reason": "Competitor review section D: each check must pass on this lot before the result is shown to an architect (plan section 9a item 6).",
+      "pass_when": "Two options producing the same building are merged or explained"
+    },
+    {
+      "check_id": "C-7",
+      "title": "Current sources",
+      "applicability": "applies",
+      "reason": "Competitor review section D: each check must pass on this lot before the result is shown to an architect (plan section 9a item 6).",
+      "pass_when": "Data versions shown and current; every ZR citation exists in the current Resolution"
+    },
+    {
+      "check_id": "C-8",
+      "title": "Same rule everywhere",
+      "applicability": "applies",
+      "reason": "Competitor review section D: each check must pass on this lot before the result is shown to an architect (plan section 9a item 6).",
+      "pass_when": "Parking or transit status is applied identically across all options"
+    },
+    {
+      "check_id": "C-9",
+      "title": "Zoning lot",
+      "applicability": "applies",
+      "reason": "Competitor review section D: each check must pass on this lot before the result is shown to an architect (plan section 9a item 6).",
+      "pass_when": "The report states that the lots are the architect's selection and the zoning lot is not verified; recorded zoning lot documents, if known, are flagged"
+    },
+    {
+      "check_id": "C-10",
+      "title": "Lot-split ideas",
+      "applicability": "applies",
+      "reason": "Competitor review section D: each check must pass on this lot before the result is shown to an architect (plan section 9a item 6).",
+      "pass_when": "Each resulting lot is evaluated with its own lot type (corner or interior), and the subdivision requirement is stated"
+    },
+    {
+      "check_id": "C-11",
+      "title": "No template sentences",
+      "applicability": "applies",
+      "reason": "Competitor review section D: each check must pass on this lot before the result is shown to an architect (plan section 9a item 6).",
+      "pass_when": "Explanations such as \"another floor would exceed the height limit\" appear only when computed as true"
+    },
+    {
+      "check_id": "C-12",
+      "title": "Units in one place",
+      "applicability": "applies",
+      "reason": "Competitor review section D: each check must pass on this lot before the result is shown to an architect (plan section 9a item 6).",
+      "pass_when": "The unit estimate appears once, with its formula, and matches everywhere it is repeated"
+    }
+  ],
+  "recorded_fixtures": [],
+  "reference_documents": [
+    {
+      "path": "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md",
+      "sha256": "893fbe9fdd910a7063a21800b5883690d1bb45e0bc519a7f2738e240ba9bbb53",
+      "role": "Expected values (section A), their sources, and checks C-1..C-12 (section D)"
+    },
+    {
+      "path": "docs/PRODUCT_PLAN_CURRENT_2026-09-28.md",
+      "sha256": "0e1cb834d686a9a3fe310519fd6c8b7e598314a8f34b259c849d5b300761544f",
+      "role": "Plan section 9a item 6: the benchmark lot"
+    }
+  ],
+  "open_items": [
+    "Parking / transit-zone status.",
+    "Whether ground-floor commercial is really required here.",
+    "Unit cap with the affordable bonus.",
+    "FRESH-zone eligibility.",
+    "Zoning district and overlay: the review says 'verify in ZoLa' (section A).",
+    "No recorded city data for this lot exists in the repo yet: every value stays expected_unverified until recorded fixtures with provenance exist (Lane B, after GO; D-090-R009).",
+    "Existing zoning floor area is not known: 54,488 sq ft is recorded building area and is never subtracted (plan section 3 step 4). Task M2-08 (path 1 keeps more floor area than path 3) needs an established or entered existing zoning floor area.",
+    "Frontage on each street and the street widths of 215 Place and Northern Blvd are not stated in the review."
+  ],
+  "_expected_failure": "A value marked 'reviewed' with no qualified-reviewer record (review null): nothing is marked reviewed without one (D-090-R010; CLAUDE.md principle 12)."
+}

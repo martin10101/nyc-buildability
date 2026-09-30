@@ -1,0 +1,393 @@
+{
+  "contract_version": "1.0.0",
+  "export_id": "test-fixture-synthetic-export-001",
+  "format": "pdf",
+  "created_at": "2026-09-30T12:08:00Z",
+  "study_id": "test-fixture-synthetic-study-001",
+  "option_id": "opt-a",
+  "revision": 3,
+  "inputs": {
+    "study": {
+      "contract_version": "1.0.0",
+      "study_id": "test-fixture-synthetic-study-001",
+      "property": {
+        "bbl": "5999999999",
+        "address": "1 Synthetic Test Street (test-fixture-synthetic)"
+      },
+      "lots": [
+        {
+          "bbl": "5999999999",
+          "approximate_lot_area_sq_ft": 5000,
+          "size_measurement": {
+            "rank": "approximate_tax_map",
+            "label": "Approximate — tax map"
+          },
+          "selected": true
+        }
+      ],
+      "lot_selection": {
+        "mode": "all",
+        "statement": "Based on the lots you selected — the app does not verify the zoning lot",
+        "combination": {
+          "status": "single_lot",
+          "reason": null
+        }
+      },
+      "site": {
+        "facts": [
+          {
+            "contract_version": "1.0.0",
+            "fact_id": "fact-lot-area",
+            "key": "lot_area",
+            "lot_bbl": "5999999999",
+            "street": null,
+            "value": 5000,
+            "unit": "square_feet",
+            "measurement": {
+              "rank": "approximate_tax_map",
+              "label": "Approximate — tax map"
+            },
+            "source": {
+              "kind": "tax_map_computation",
+              "dataset": "test-fixture-synthetic DOF Digital Tax Map outline (EPSG:2263 measurement path)",
+              "dataset_version": null,
+              "retrieved_at": "2026-09-30T12:00:00Z",
+              "query_ref": "test-fixture-synthetic://dtm/5999999999",
+              "document_ref": null,
+              "statement": null
+            },
+            "blocks": [],
+            "editable": true,
+            "note": "Synthetic fixture (test-fixture-synthetic); not a real lot."
+          },
+          {
+            "contract_version": "1.0.0",
+            "fact_id": "fact-frontage-a",
+            "key": "lot_frontage",
+            "lot_bbl": "5999999999",
+            "street": "Synthetic Street A",
+            "value": 50,
+            "unit": "feet",
+            "measurement": {
+              "rank": "approximate_tax_map",
+              "label": "Approximate — tax map"
+            },
+            "source": {
+              "kind": "tax_map_computation",
+              "dataset": "test-fixture-synthetic DOF Digital Tax Map outline (EPSG:2263 measurement path)",
+              "dataset_version": null,
+              "retrieved_at": "2026-09-30T12:00:00Z",
+              "query_ref": "test-fixture-synthetic://dtm/5999999999",
+              "document_ref": null,
+              "statement": null
+            },
+            "blocks": [],
+            "editable": true
+          },
+          {
+            "contract_version": "1.0.0",
+            "fact_id": "fact-frontage-b",
+            "key": "lot_frontage",
+            "lot_bbl": "5999999999",
+            "street": "Synthetic Street B",
+            "value": 100,
+            "unit": "feet",
+            "measurement": {
+              "rank": "approximate_tax_map",
+              "label": "Approximate — tax map"
+            },
+            "source": {
+              "kind": "tax_map_computation",
+              "dataset": "test-fixture-synthetic DOF Digital Tax Map outline (EPSG:2263 measurement path)",
+              "dataset_version": null,
+              "retrieved_at": "2026-09-30T12:00:00Z",
+              "query_ref": "test-fixture-synthetic://dtm/5999999999",
+              "document_ref": null,
+              "statement": null
+            },
+            "blocks": [],
+            "editable": true
+          },
+          {
+            "contract_version": "1.0.0",
+            "fact_id": "fact-lot-depth",
+            "key": "lot_depth",
+            "lot_bbl": "5999999999",
+            "street": null,
+            "value": 100,
+            "unit": "feet",
+            "measurement": {
+              "rank": "approximate_tax_map",
+              "label": "Approximate — tax map"
+            },
+            "source": {
+              "kind": "tax_map_computation",
+              "dataset": "test-fixture-synthetic DOF Digital Tax Map outline (EPSG:2263 measurement path)",
+              "dataset_version": null,
+              "retrieved_at": "2026-09-30T12:00:00Z",
+              "query_ref": "test-fixture-synthetic://dtm/5999999999",
+              "document_ref": null,
+              "statement": null
+            },
+            "blocks": [],
+            "editable": true
+          },
+          {
+            "contract_version": "1.0.0",
+            "fact_id": "fact-lot-type",
+            "key": "lot_type",
+            "lot_bbl": "5999999999",
+            "street": null,
+            "value": "corner",
+            "unit": null,
+            "measurement": {
+              "rank": "city_records",
+              "label": "City records"
+            },
+            "source": {
+              "kind": "city_dataset",
+              "dataset": "test-fixture-synthetic PLUTO-shaped record",
+              "dataset_version": "test-fixture-synthetic",
+              "retrieved_at": "2026-09-30T12:00:00Z",
+              "query_ref": "test-fixture-synthetic://pluto/5999999999",
+              "document_ref": null,
+              "statement": null,
+              "provenance_refs": [
+                "test-fixture-synthetic-prov-pluto-5999999999"
+              ]
+            },
+            "blocks": [],
+            "editable": true
+          },
+          {
+            "contract_version": "1.0.0",
+            "fact_id": "fact-zoning-district",
+            "key": "zoning_district",
+            "lot_bbl": "5999999999",
+            "street": null,
+            "value": "R6B",
+            "unit": null,
+            "measurement": {
+              "rank": "city_records",
+              "label": "City records"
+            },
+            "source": {
+              "kind": "city_dataset",
+              "dataset": "test-fixture-synthetic PLUTO-shaped record",
+              "dataset_version": "test-fixture-synthetic",
+              "retrieved_at": "2026-09-30T12:00:00Z",
+              "query_ref": "test-fixture-synthetic://pluto/5999999999",
+              "document_ref": null,
+              "statement": null,
+              "provenance_refs": [
+                "test-fixture-synthetic-prov-pluto-5999999999"
+              ]
+            },
+            "blocks": [],
+            "editable": true
+          },
+          {
+            "contract_version": "1.0.0",
+            "fact_id": "fact-street-width-a",
+            "key": "street_width",
+            "lot_bbl": null,
+            "street": "Synthetic Street A",
+            "value": 60,
+            "unit": "feet",
+            "measurement": {
+              "rank": "entered",
+              "label": "Entered"
+            },
+            "source": {
+              "kind": "architect_entry",
+              "dataset": null,
+              "dataset_version": null,
+              "retrieved_at": "2026-09-30T12:02:00Z",
+              "query_ref": null,
+              "document_ref": null,
+              "statement": null
+            },
+            "blocks": [],
+            "editable": true
+          },
+          {
+            "contract_version": "1.0.0",
+            "fact_id": "fact-street-width-b",
+            "key": "street_width",
+            "lot_bbl": null,
+            "street": "Synthetic Street B",
+            "value": 60,
+            "unit": "feet",
+            "measurement": {
+              "rank": "entered",
+              "label": "Entered"
+            },
+            "source": {
+              "kind": "architect_entry",
+              "dataset": null,
+              "dataset_version": null,
+              "retrieved_at": "2026-09-30T12:02:00Z",
+              "query_ref": null,
+              "document_ref": null,
+              "statement": null
+            },
+            "blocks": [],
+            "editable": true
+          }
+        ]
+      },
+      "options": [
+        {
+          "option_id": "opt-a",
+          "name": "Option A",
+          "addon_selection": [
+            {
+              "addon_id": "qualifying_affordable_or_senior_housing",
+              "on": false
+            }
+          ],
+          "goal": {
+            "kind": "most_residential_floor_area",
+            "text": null
+          },
+          "program": [
+            "market_rate_residential"
+          ],
+          "floor_to_floor_heights": {
+            "ground_floor": {
+              "height_ft": 12,
+              "basis": "stated_default",
+              "statement": "Default ground-floor height: 12 ft (editable)"
+            },
+            "typical_floor": {
+              "height_ft": 10,
+              "basis": "stated_default",
+              "statement": "Default typical floor height: 10 ft (editable)"
+            },
+            "per_floor_overrides": []
+          },
+          "assumptions": [],
+          "existing_building_plan": "no_existing_building"
+        },
+        {
+          "option_id": "opt-b",
+          "name": "Option B",
+          "addon_selection": [
+            {
+              "addon_id": "qualifying_affordable_or_senior_housing",
+              "on": true
+            }
+          ],
+          "goal": {
+            "kind": "most_total_floor_area",
+            "text": null
+          },
+          "program": [
+            "market_rate_residential",
+            "affordable_residential"
+          ],
+          "floor_to_floor_heights": {
+            "ground_floor": {
+              "height_ft": 14,
+              "basis": "entered",
+              "statement": "Entered: ground floor 14 ft"
+            },
+            "typical_floor": {
+              "height_ft": 10,
+              "basis": "stated_default",
+              "statement": "Default typical floor height: 10 ft (editable)"
+            },
+            "per_floor_overrides": [
+              {
+                "floor": 2,
+                "height_ft": 11
+              }
+            ]
+          },
+          "assumptions": [
+            {
+              "assumption_id": "asm-qualifying-site",
+              "statement": "The affordable units meet the qualifying-site requirements (to be confirmed with the owner).",
+              "value": null,
+              "unit": null
+            }
+          ],
+          "existing_building_plan": "no_existing_building"
+        }
+      ],
+      "selected_option_id": "opt-a",
+      "revision": {
+        "number": 3,
+        "created_at": "2026-09-30T12:05:00Z",
+        "parent": 2
+      },
+      "origin": {
+        "kind": "new",
+        "export_id": null
+      }
+    },
+    "study_digest": "sha256:f11e5b7032a71f5bacf8654a810a477f294add6e6f67e443f884b1c4c75ff8fe"
+  },
+  "sources": [
+    {
+      "kind": "tax_map_computation",
+      "dataset": "test-fixture-synthetic DOF Digital Tax Map outline (EPSG:2263 measurement path)",
+      "dataset_version": null,
+      "retrieved_at": "2026-09-30T12:00:00Z",
+      "query_ref": "test-fixture-synthetic://dtm/5999999999",
+      "document_ref": null,
+      "statement": null
+    },
+    {
+      "kind": "city_dataset",
+      "dataset": "test-fixture-synthetic PLUTO-shaped record",
+      "dataset_version": "test-fixture-synthetic",
+      "retrieved_at": "2026-09-30T12:00:00Z",
+      "query_ref": "test-fixture-synthetic://pluto/5999999999",
+      "document_ref": null,
+      "statement": null,
+      "provenance_refs": [
+        "test-fixture-synthetic-prov-pluto-5999999999"
+      ]
+    },
+    {
+      "kind": "architect_entry",
+      "dataset": null,
+      "dataset_version": null,
+      "retrieved_at": "2026-09-30T12:02:00Z",
+      "query_ref": null,
+      "document_ref": null,
+      "statement": null
+    }
+  ],
+  "rule_versions": [
+    {
+      "rule_id": "test-fixture-synthetic-r6b-far",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "test-fixture-synthetic-r6b-height-setback",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "test-fixture-synthetic-r6b-coverage-yards",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "test-fixture-synthetic-r6b-dwelling-units",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
+    }
+  ],
+  "results": {
+    "results_id": "test-fixture-synthetic-results-001",
+    "results_digest": "sha256:d654cba96c4f486018f6075546ac39ebb64e1ee7eeacb9c6834116fa03503a26",
+    "snapshot_ref": "test-fixture-synthetic://exports/test-fixture-synthetic-export-001/results.json"
+  },
+  "read_only": false,
+  "restore_policy": "copy_inputs_only",
+  "_expected_failure": "read_only false: reopening an export is read-only history (plan section 9 'Historical exports')."
+}
