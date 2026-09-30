@@ -88,6 +88,8 @@ class OwnershipTests(unittest.TestCase):
         "services/api/app/rules/registry.py": "A",
         "services/api/app/scenario/unused_floor_area.py": "A",
         "tests/fixtures/residential_validation/23-22.txt": "A",
+        "docs/research/zr-snapshots/v1/zr-23-22.json": "A",
+        "services/api/app/_zr_snapshots/v1/zr-23-22.json": "A",
         "services/api/app/connectors/pluto_soda.py": "B",
         "services/api/tests/fixtures/dtm_lot_outline/DTM_3022640032.geojson": "B",
         "docs/research/condo-base-lot-resolution-sources.md": "B",

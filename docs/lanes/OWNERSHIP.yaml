@@ -126,6 +126,7 @@ rules:
       - services/api/tests/rules/**
       - services/api/tests/scenario/**
       - services/api/scripts/sync_zr_snapshots.py
+      - docs/research/zr-snapshots/**
       - tools/residential_validation.py
       - tools/test_residential_validation.py
       - tests/fixtures/residential_validation/**
