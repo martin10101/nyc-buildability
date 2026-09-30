@@ -466,6 +466,21 @@ jobs:
         run: python3 tools/validate_mcp_policy.py --check
       - name: Run MCP default-deny policy validator tests
         run: python3 tools/test_mcp_policy.py
+      # Task M0-T164 (ADDITIVE step, D-090-R004; existing steps untouched): lane path check.
+      # Stdlib only. Always: checker tests + every tracked file owned by exactly one lane in
+      # docs/lanes/OWNERSHIP.yaml. On pull_request from a lane-<x>/ branch: every changed file
+      # must be owned by lane x (base SHA vs GitHub's merge commit; the checkout stays shallow).
+      - name: Lane path check (docs/lanes/OWNERSHIP.yaml)
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          python3 scripts/lanes/test_check_lane_paths.py
+          python3 scripts/lanes/check_lane_paths.py --coverage
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            python3 scripts/lanes/check_lane_paths.py --branch "$HEAD_REF" --base-sha "$BASE_SHA" --fetch
+          fi
 
   # Task M0-T022 (ADDITIVE job; existing jobs untouched): integrity gate for the
   # owner dashboard's one new metadata file, project-control/product-map.json.
