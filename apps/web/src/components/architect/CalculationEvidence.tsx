@@ -3,10 +3,18 @@ import type { Scenario } from "@/lib/scenario-contract";
 import { officialZoningTextUrl } from "@/lib/architect/source-links";
 import { formatValue } from "@/lib/format";
 import { CoverageBadge } from "@/components/property/CoverageBadge";
+import { needsExistingZoningFloorArea, UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT } from "@/lib/architect/unused-floor-area";
+import { UnusedFloorAreaNotAvailableLine } from "@/components/compare/UnusedFloorAreaNotAvailable";
 import { CapturedRecord } from "./EvidenceRecord";
-export function CalculationEvidence({ evaluation, scenario }: {
+/** `unusedFloorAreaSectionEnabled` is the server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED
+ * (D-06, plan §3 step 4); absent -> off. Off, the set-aside remainder (scope note,
+ * formula, section record) is replaced by one "Not available — needs existing
+ * zoning floor area" line; the scenario assumptions and the complete scenario
+ * record (the audit copy of the whole document) stay. */
+export function CalculationEvidence({ evaluation, scenario, unusedFloorAreaSectionEnabled = false }: {
     evaluation: RuleEvaluation | null;
     scenario: Scenario | null;
+    unusedFloorAreaSectionEnabled?: boolean;
 }) {
     const traces = evaluation ? [...evaluation.evaluations].sort((a, b) => Number(b.applicability_outcome) - Number(a.applicability_outcome)) : [];
     // DB-025(a,b): the wide-street review label and the "withheld" FAR gate on
@@ -139,15 +147,21 @@ export function CalculationEvidence({ evaluation, scenario }: {
       <CapturedRecord value={evaluation} label="Full rule-evaluation document"/>
     </> : <p>Rule evaluation has not returned a usable document. No calculation trace is available.</p>}
     {scenario ? <section className="architect-trace">
-      <h3>Scenario assumptions and area remainder</h3>
-      <p>
-        {scenario.unused_draft_zoning_floor_area.scope_note}
-      </p>
-      <p className="architect-formula">
-        {scenario.unused_draft_zoning_floor_area.formula ?? "No supported remainder formula"}
-      </p>
+      {unusedFloorAreaSectionEnabled ? <>
+        <h3>Scenario assumptions and area remainder</h3>
+        <p>
+          {scenario.unused_draft_zoning_floor_area.scope_note}
+        </p>
+        <p className="architect-formula">
+          {scenario.unused_draft_zoning_floor_area.formula ?? (needsExistingZoningFloorArea(scenario.unused_draft_zoning_floor_area) ? UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT : "No supported remainder formula")}
+        </p>
+      </> : <>
+        <h3>Scenario assumptions</h3>
+        <h4>Unused floor area on the lot</h4>
+        <UnusedFloorAreaNotAvailableLine/>
+      </>}
       <CapturedRecord value={scenario.assumptions} label="All scenario assumptions"/>
-      <CapturedRecord value={scenario.unused_draft_zoning_floor_area} label="Remainder inputs, result and provenance"/>
+      {unusedFloorAreaSectionEnabled ? <CapturedRecord value={scenario.unused_draft_zoning_floor_area} label="Remainder inputs, result and provenance"/> : null}
       <CapturedRecord value={scenario} label="Complete scenario record"/>
     </section> : null}
   </div>;

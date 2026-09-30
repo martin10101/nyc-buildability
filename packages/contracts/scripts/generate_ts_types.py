@@ -41,9 +41,11 @@ managed block within apps/web/src/lib/contract.ts.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 SCHEMA_DIR = Path(__file__).resolve().parents[1] / "schemas" / "v1"
 OUTPUT_PATH = Path(__file__).resolve().parents[1] / "generated" / "property_profile.ts"
@@ -283,6 +285,25 @@ def ts_scalar(schema_type: str) -> str:
     }.get(schema_type, "unknown")
 
 
+def is_object_literal(expr: str) -> bool:
+    """True only for ONE object literal - not a union/intersection that merely
+    starts with one (``{...} | {...}`` is a type alias, never an interface, and
+    is parenthesized inside an array or combiner). String-literal aware."""
+    if not expr.startswith("{"):
+        return False
+    depth, in_string, escaped = 0, False, False
+    for index, ch in enumerate(expr):
+        if in_string:
+            escaped, in_string = (ch == "\\" and not escaped), (ch != '"' or escaped)
+        elif ch == '"':
+            in_string = True
+        elif ch in "{}":
+            depth += 1 if ch == "{" else -1
+            if depth == 0:
+                return index == len(expr) - 1
+    return False
+
+
 def type_expr(node: dict, resolver: Resolver, indent: int, named_defs: dict | None = None) -> str:
     """Return a TS type expression for a schema node (inline).
 
@@ -316,7 +337,7 @@ def type_expr(node: dict, resolver: Resolver, indent: int, named_defs: dict | No
         items = node.get("items", {})
         inner = type_expr(items, resolver, indent, named_defs) if items else "unknown"
         # Parenthesize unions inside array element position.
-        if " | " in inner and not inner.startswith("{"):
+        if " | " in inner and not is_object_literal(inner):
             inner = f"({inner})"
         return f"{inner}[]"
 
@@ -337,7 +358,7 @@ def type_expr(node: dict, resolver: Resolver, indent: int, named_defs: dict | No
                 expr = type_expr(sub, resolver, indent, named_defs)
                 if expr == "unknown" or expr in parts:
                     continue
-                if " | " in expr and not expr.startswith("{"):
+                if " | " in expr and not is_object_literal(expr):
                     expr = f"({expr})"
                 parts.append(expr)
             if parts:
@@ -393,7 +414,7 @@ def emit_named_defs(schemas: dict[str, dict], named_defs: dict | None = None) ->
         for part in [p for p in pointer.split("/") if p]:
             node = node[part]
         expr = type_expr(node, resolver, 0, named_defs)
-        if expr.startswith("{"):
+        if is_object_literal(expr):
             blocks.append(f"export interface {name} {expr}\n")
         else:
             blocks.append(f"export type {name} = {expr};\n")
@@ -711,6 +732,43 @@ def write_lot_geometry() -> int:
 
 
 # ---------------------------------------------------------------------------
+# Study contract set (task C-03, plan M1-09): site_fact, study, results,
+# report_model, export_record, benchmark_lot -> generated/<stem>.ts
+# ---------------------------------------------------------------------------
+# Emitted by the sibling study_contract_types.py (this file is at its
+# modularity baseline) through the SAME shared emission functions above. It is
+# loaded by path and handed an emitter namespace built at call time, so a
+# monkeypatched SCHEMA_DIR is honored and nothing imports this script back.
+
+
+def _study_contract_types():
+    path = Path(__file__).with_name("study_contract_types.py")
+    spec = importlib.util.spec_from_file_location("study_contract_types", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _study_emitter() -> SimpleNamespace:
+    return SimpleNamespace(
+        SCHEMA_DIR=SCHEMA_DIR, Resolver=Resolver, emit_named_defs=emit_named_defs,
+        object_expr=object_expr, check=_check_generated, write=_write_generated,
+    )
+
+
+def generate_study_contract(stem: str) -> str:
+    return _study_contract_types().generate(_study_emitter(), stem)
+
+
+def check_study_contracts() -> int:
+    return _study_contract_types().check_all(_study_emitter())
+
+
+def write_study_contracts() -> int:
+    return _study_contract_types().write_all(_study_emitter())
+
+
+# ---------------------------------------------------------------------------
 # Client SUPPORTED_CONTRACT_VERSIONS block (task M2-T010)
 # ---------------------------------------------------------------------------
 
@@ -866,7 +924,8 @@ def main() -> int:
         rc_scenario = check_scenario()
         rc_survey = check_survey_evidence()
         rc_lot = check_lot_geometry()
-        return rc_client or rc_rule or rc_scenario or rc_survey or rc_lot
+        rc_study = check_study_contracts()
+        return rc_client or rc_rule or rc_scenario or rc_survey or rc_lot or rc_study
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(generated, encoding="utf-8", newline="\n")
@@ -876,7 +935,8 @@ def main() -> int:
     rc_scenario = write_scenario()
     rc_survey = write_survey_evidence()
     rc_lot = write_lot_geometry()
-    return rc_client or rc_rule or rc_scenario or rc_survey or rc_lot
+    rc_study = write_study_contracts()
+    return rc_client or rc_rule or rc_scenario or rc_survey or rc_lot or rc_study
 
 
 if __name__ == "__main__":

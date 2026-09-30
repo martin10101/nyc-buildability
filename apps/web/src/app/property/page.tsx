@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { ArchitectEntry } from "@/components/architect/ArchitectEntry";
 import { surveyReviewEnabled } from "@/lib/surveyReview/config";
 import { proposalEditorEnabled } from "@/lib/architect/proposal-editor-flag";
+import { unusedFloorAreaSectionEnabled } from "@/lib/architect/unused-floor-area-flag";
 import { InternalBanner } from "@/components/property/InternalBanner";
 import { PropertyLookup } from "@/components/property/PropertyLookup";
 import { ruleEvaluationSurfaceEnabled } from "@/lib/rule-evaluation";
@@ -35,6 +36,10 @@ export const metadata: Metadata = {
  * D-01 (plan §7): the set-aside proposal editor is read the same way, from the
  * default-off server flag INTERNAL_PROPOSAL_EDITOR_ENABLED, and passed down as a
  * plain boolean (`@/lib/architect/proposal-editor-flag`).
+ *
+ * D-06 (plan §3 step 4): the set-aside unused-floor-area section is read the same
+ * way, from the default-off server flag INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED
+ * (`@/lib/architect/unused-floor-area-flag`).
  */
 export default async function PropertyPage({
   searchParams,
@@ -43,7 +48,7 @@ export default async function PropertyPage({
 }) {
   const params = await searchParams;
   const ruleEvalEnabled = ruleEvaluationSurfaceEnabled({ ruleeval: params.ruleeval });
-  if (ruleEvalEnabled) return <Suspense fallback={null}><ArchitectEntry surveyEnabled={surveyReviewEnabled()} proposalEditorEnabled={proposalEditorEnabled()} /></Suspense>;
+  if (ruleEvalEnabled) return <Suspense fallback={null}><ArchitectEntry surveyEnabled={surveyReviewEnabled()} proposalEditorEnabled={proposalEditorEnabled()} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled()} /></Suspense>;
   return (
     <div className="property-shell">
       <InternalBanner />

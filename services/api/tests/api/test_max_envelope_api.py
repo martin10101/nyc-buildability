@@ -39,9 +39,12 @@ _JSON_HEADERS = {"content-type": "application/json"}
 #: A supported axis-aligned rectangular lot (80 x 100 = 8000 sq ft) at a real interior 2263 SW
 #: corner, so the engine can fit + contain a candidate to it (not a fixed-anchor schematic).
 _LOT_ANCHOR = (985000.0, 195000.0)
+#: C-04 / M1-06a: every caller-attested value carries a site_fact measurement rank, which the
+#: real-property guard (LANE_C_ENABLED) requires once a request carries ``lot.bbl`` and ignores
+#: otherwise; the suite runs with that flag off AND on (see ``client``).
 _LOT = {
     "area_sq_ft": 8000.0,
-    "area_provenance": {"source_id": "synthetic"},
+    "area_provenance": {"source_id": "synthetic", "rank": "entered"},
     "lot_line_segments": [
         {"id": "L-S", "start": [985000.0, 195000.0], "end": [985080.0, 195000.0]},
         {"id": "L-E", "start": [985080.0, 195000.0], "end": [985080.0, 195100.0]},
@@ -60,6 +63,10 @@ def _enable(monkeypatch) -> None:
 def _body(**overrides) -> dict:
     body = {"lot": _LOT, "lot_rule_facts": _FACTS, "label": "env-A"}
     body.update(overrides)
+    facts = body["lot_rule_facts"]
+    if "lot_rule_facts_provenance" not in overrides and isinstance(facts, dict):
+        # C-04: one ranked provenance entry per caller fact (ignored unless the guard applies).
+        body["lot_rule_facts_provenance"] = {key: {"rank": "entered"} for key in facts}
     return body
 
 
@@ -83,10 +90,16 @@ def mounted_app() -> FastAPI:
     return app
 
 
-@pytest.fixture
-def client(mounted_app, monkeypatch, fixture_registry):
-    """A client over a fresh app with the flag ON and the SYNTHETIC fixture registry injected."""
+@pytest.fixture(params=["lane_c_off", "lane_c_on"])
+def client(request, mounted_app, monkeypatch, fixture_registry):
+    """A client over a fresh app with the flag ON and the SYNTHETIC fixture registry injected.
+    C-04: every test using it runs twice - LANE_C_ENABLED unset and set - so the real-property
+    guard's flag-on state of this whole suite is explicit and tested."""
     _enable(monkeypatch)
+    if request.param == "lane_c_on":
+        monkeypatch.setenv("LANE_C_ENABLED", "1")
+    else:
+        monkeypatch.delenv("LANE_C_ENABLED", raising=False)
     monkeypatch.setattr(mod, "get_max_envelope_registry", lambda: fixture_registry)
     with TestClient(mounted_app, raise_server_exceptions=False) as test_client:
         yield test_client
@@ -805,7 +818,7 @@ def test_recorded_single_lot_derives_but_is_honestly_unfittable(client, monkeypa
     recorded_lot = {
         # The recorded Shape__Area attribute of the same capture (sq ft), not a synthetic number.
         "area_sq_ft": 97113.6875,
-        "area_provenance": {"source_id": "nyc-dcp-mappluto-arcgis"},
+        "area_provenance": {"source_id": "nyc-dcp-mappluto-arcgis", "rank": "approximate_tax_map"},
         "lot_line_segments": [],
         "street_lines": [],
         "bbl": "1008350041",
@@ -844,7 +857,7 @@ def test_recorded_multipolygon_is_reported_over_cap_not_invalid(client, monkeypa
     )
     recorded_lot = {
         "area_sq_ft": 174572369.0070343,  # the recorded Shape__Area attribute (sq ft)
-        "area_provenance": {"source_id": "nyc-dcp-mappluto-arcgis"},
+        "area_provenance": {"source_id": "nyc-dcp-mappluto-arcgis", "rank": "approximate_tax_map"},
         "lot_line_segments": [],
         "street_lines": [],
         "bbl": "4142600001",
