@@ -36,11 +36,14 @@ TASK LIFECYCLE (docs/GATES_AND_CHECKPOINTS.md)
     blocked -> awaiting_gate is the one progress exception). `accepted` and
     `canceled` are terminal: no subcommand modifies a terminal task.
     A task leaving `blocked` for any active status (every target except
-    `canceled`) must first carry a valid roster: a real producer_agent (not
-    the reserved "orchestrator") and at least one reviewer in reviewer_agents
-    that is neither empty, "orchestrator", nor the producer. A blocked task
-    with an empty/invalid roster (e.g. legacy M0-T007/M0-T008) cannot re-enter
-    the workflow until the orchestrator amends its packet (M0-T014 G3 OBS-3).
+    `canceled`) must first carry a valid roster: a real producer_agent and at
+    least one reviewer in reviewer_agents that is neither empty,
+    "orchestrator", nor the producer. A blocked task with an empty/invalid
+    roster (e.g. legacy M0-T007/M0-T008) cannot re-enter the workflow until
+    the orchestrator amends its packet (M0-T014 G3 OBS-3). producer_agent ==
+    the reserved "orchestrator" is invalid EXCEPT in one narrow case: a
+    `governance` task that also requires an independent gate and rosters a
+    usable independent reviewer (see invalid_unblock_roster; M0-T033).
 
 ACCEPT PRECONDITIONS (all required)
     1. --agent orchestrator (procedural label, see above);
@@ -121,6 +124,12 @@ INDEPENDENT_GATES = frozenset({"G1", "G3", "G4", "G5", "G6"})
 # Enforced on WRITE only (M0-T014 G5 defect D1); stored history is never
 # retro-rejected.
 RESERVED_ORCHESTRATOR = "orchestrator"
+
+# The ONE task_type whose evidence the main-session orchestrator legitimately
+# produces itself (ADR-005: only the orchestrator runs the control plane), and
+# therefore the only type admitted by the narrow exception in
+# invalid_unblock_roster. Named here so the guard never carries a bare literal.
+GOVERNANCE_TASK_TYPE = "governance"
 
 CLAIMABLE_STATUSES = frozenset({"ready", "rework"})
 SUBMITTABLE_STATUSES = frozenset({"claimed", "in_progress", "self_check", "rework"})
@@ -636,6 +645,58 @@ def claim(a):
     return 0
 
 
+def _roster_strings(value, field: str):
+    """Return (items, error) for a packet field that must hold a list of names.
+
+    Fails CLOSED. None reads as the empty list (the historical `or []` read),
+    but a bare string, a dict, or any non-string element is malformed and
+    returns an explanatory error instead of being iterated or silently
+    coerced: a bare "rev-a" would otherwise iterate into single characters and
+    read as a usable roster.
+    """
+    if value is None:
+        return [], None
+    if not isinstance(value, (list, tuple)):
+        return None, (f"{field} is malformed (expected a list of strings, got "
+                      f"{type(value).__name__}); amend the packet before unblocking.")
+    for item in value:
+        if not isinstance(item, str):
+            return None, (f"{field} is malformed (entry {item!r} is not a string); "
+                          f"amend the packet before unblocking.")
+    return [item.strip() for item in value], None
+
+
+def _orchestrator_governance_exception(task: dict):
+    """Return None when the ONE narrow case that lets the reserved orchestrator
+    stand as producer_agent at the unblock transition applies, else an
+    explanatory refusal string.
+
+    Conditions 1 and 2 of that case: task_type is exactly the governance type,
+    and the packet requires at least one INDEPENDENT gate. Condition 3 (a
+    usable independent reviewer) is the general roster check every task must
+    already pass in invalid_unblock_roster, and condition 4 is that nothing
+    else changes: this guard governs only the blocked-exit transition, so the
+    gate classes, submit, accept, directive-regime, evidence-identity and
+    producer-versus-reviewer rules apply to such a task exactly as before.
+    """
+    task_type = task.get("task_type")
+    if not isinstance(task_type, str) or task_type.strip() != GOVERNANCE_TASK_TYPE:
+        return (f"producer_agent is the reserved {RESERVED_ORCHESTRATOR!r} and task_type is "
+                f"{task_type!r}, not {GOVERNANCE_TASK_TYPE!r}; amend the packet with a real "
+                f"producer before unblocking.")
+    gates, gerr = _roster_strings(task.get("required_gates"), "required_gates")
+    if gerr:
+        return (f"producer_agent is the reserved {RESERVED_ORCHESTRATOR!r} and the governance "
+                f"exception cannot be established: {gerr}")
+    if not set(gates) & INDEPENDENT_GATES:
+        return (f"producer_agent is the reserved {RESERVED_ORCHESTRATOR!r} and required_gates "
+                f"{gates} requires no independent gate "
+                f"({'/'.join(sorted(INDEPENDENT_GATES))}), so independent review of "
+                f"orchestrator-produced evidence is not structurally possible; amend the "
+                f"packet before unblocking.")
+    return None
+
+
 def invalid_unblock_roster(task: dict):
     """Return an explanatory string when a task's packet does not carry a valid
     producer + independent-reviewer roster, else None.
@@ -644,26 +705,48 @@ def invalid_unblock_roster(task: dict):
     status must not be able to re-enter the active workflow until its packet is
     amended with a real producer and at least one usable independent reviewer.
     A valid roster requires:
-      - a non-empty producer_agent that is not the reserved orchestrator; and
+      - a non-empty producer_agent; and
       - at least one reviewer in reviewer_agents that is neither empty, the
         reserved orchestrator, nor equal to the producer (an independent gate
         recorded by such a reviewer would otherwise be impossible to satisfy).
+
+    producer_agent == the reserved orchestrator is invalid EXCEPT in ONE narrow
+    case: a governance task that ALSO requires an independent gate
+    (G1/G3/G4/G5/G6) and ALSO rosters a usable independent reviewer. The four
+    conditions are conjunctive - the reviewer condition is the general check
+    below, task_type and the independent gate are checked in
+    _orchestrator_governance_exception, and every other control is untouched.
+    The prohibition exists because an independent gate would otherwise be
+    unsatisfiable; where the packet proves it IS satisfiable, the main-session
+    orchestrator is recognized as the truthful producer of orchestrator-produced
+    governance evidence instead of being forced into a fictional producer label.
+    There is no special-cased task id, no flag, and no environment override.
+
+    Malformed packet data fails CLOSED: every branch returns an explanatory
+    string, and no shape of producer_agent, reviewer_agents, required_gates or
+    task_type raises.
+
     Enforced on WRITE only at the unblock transition; stored history untouched.
     """
-    producer = (task.get("producer_agent") or "").strip()
+    producer_raw = task.get("producer_agent")
+    if producer_raw is not None and not isinstance(producer_raw, str):
+        return (f"producer_agent is malformed (expected a string, got "
+                f"{type(producer_raw).__name__}); amend the packet before unblocking.")
+    producer = (producer_raw or "").strip()
     if not producer:
         return ("no producer_agent is set; amend the packet with a producer before "
                 "unblocking.")
-    if producer == RESERVED_ORCHESTRATOR:
-        return (f"producer_agent is the reserved {RESERVED_ORCHESTRATOR!r}; amend the "
-                f"packet with a real producer before unblocking.")
-    reviewers = task.get("reviewer_agents") or []
+    reviewers, rerr = _roster_strings(task.get("reviewer_agents"), "reviewer_agents")
+    if rerr:
+        return rerr
     usable = [r for r in reviewers
               if r and r != RESERVED_ORCHESTRATOR and r != producer]
     if not usable:
         return ("reviewer_agents has no usable independent reviewer (must be non-empty "
                 f"and contain a reviewer that is neither {RESERVED_ORCHESTRATOR!r} nor "
                 f"the producer {producer!r}); amend the packet before unblocking.")
+    if producer == RESERVED_ORCHESTRATOR:
+        return _orchestrator_governance_exception(task)
     return None
 
 

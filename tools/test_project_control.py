@@ -47,14 +47,32 @@ the M0-T014 hardening scenarios:
       transition out of blocked until the packet is amended, after which the
       unblock path works; canceling a blocked task is always allowed. No
       retro-rejection of stored ledger history.
+  S10 M0-T033 governance-orchestrator unblock semantics: the reserved
+      "orchestrator" may stand as producer_agent at the blocked-exit
+      transition ONLY when all four conditions hold together - task_type is
+      exactly "governance", required_gates contains at least one INDEPENDENT
+      gate, reviewer_agents holds a usable independent reviewer, and nothing
+      else about the packet's controls changes. Every prior default is
+      re-proven: a non-governance orchestrator producer is still refused, an
+      empty/orchestrator-only/producer-only roster is still refused, a
+      governance packet with no independent gate is still refused, malformed
+      packet data fails CLOSED with an explanatory refusal instead of a
+      traceback or a silent allow, blocked -> canceled stays unconditional,
+      and gate() is unchanged. Source-level proofs assert the correction is
+      GENERAL: the guard's executable code (docstrings stripped, so prose
+      provenance stays allowed) names no ledger task id, reuses the existing
+      INDEPENDENT_GATES constant rather than re-listing gate ids, and carries
+      no environment/bypass/override token; `progress` gains no new option.
 
 Stdlib only. Run directly (`python tools/test_project_control.py`) or via
 pytest. Exit code 0 = all assertions passed.
 """
 from __future__ import annotations
 
+import ast
 import importlib.util
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -1587,6 +1605,357 @@ def test_s9_regime_bypass_closed_and_migration() -> None:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
+# ---------------------------------------------------------------------------
+# S10 (M0-T033) — governance-orchestrator unblock-roster semantics.
+# The ONE narrow case, its four conjunctive conditions, every preserved
+# default, fail-closed malformed handling, and source-level generality proofs.
+# ---------------------------------------------------------------------------
+def test_s10_governance_orchestrator_unblock() -> None:
+    tmpdir = tempfile.mkdtemp(prefix="pc-s10-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        pc = tmp / "project-control"
+        seq = [100]
+
+        def blocked_task(**fields):
+            """A fresh task forced into `blocked` with an arbitrary packet shape.
+            edit_task writes raw JSON, so malformed shapes new-task would reject
+            can still be staged - which is exactly the fail-closed surface."""
+            seq[0] += 1
+            tid = f"M9-T{seq[0]}"
+            r = run(tmp, "new-task", "--task-id", tid, "--title", "t",
+                    "--task-type", "research", "--milestone", "M0",
+                    "--objective", "o", "--gates", "G0,G3")
+            assert r.returncode == 0, f"new-task {tid} failed: {r.stderr}"
+            fields.setdefault("status", "blocked")
+            edit_task(tmp, tid, **fields)
+            return tid
+
+        def unblock(tid, target="in_progress"):
+            return run(tmp, "progress", "--task-id", tid, "--agent", "orchestrator",
+                       "--percent", "10", "--status", target, "--message", "unblock")
+
+        def status_of(tid):
+            return read_json(pc / "tasks" / f"{tid}.json")["status"]
+
+        ACTIVE_TARGETS = ("backlog", "ready", "in_progress", "awaiting_gate")
+
+        # D-004-R413/R414 execution proof. Each numbered block appends
+        # (label, cases) only when control flow REACHES ITS END, so a block that
+        # is skipped, short-circuited, or never invoked is detectable rather than
+        # silently counting as "passing because the file contains it". The exact
+        # expected label sequence is asserted at the end of this function and the
+        # per-block case counts are printed with the group's OK line.
+        executed = []
+
+        def _rec(label, cases):
+            assert cases > 0, f"S10 block {label!r} reached its end having executed ZERO cases"
+            executed.append((label, cases))
+
+        # --- (1) D-004-R362: a NON-governance task with an orchestrator producer
+        # is still REFUSED, for several task types and every active target. ---
+        n = 0
+        for ttype in ("engineering", "research", "infrastructure", "documentation",
+                      "Governance", "governance-extra", "gov", ""):
+            tid = blocked_task(task_type=ttype, producer_agent="orchestrator",
+                               required_gates=["G0", "G3"], reviewer_agents=["rev-a"])
+            for target in ACTIVE_TARGETS:
+                r = unblock(tid, target)
+                assert r.returncode != 0, \
+                    f"task_type {ttype!r} + orchestrator producer must not unblock to {target}"
+                assert "amend" in r.stderr, f"refusal must ask for an amendment: {r.stderr}"
+                assert "governance" in r.stderr, \
+                    f"refusal must explain the governance condition: {r.stderr}"
+                assert status_of(tid) == "blocked", \
+                    f"refused unblock must leave status blocked ({ttype!r} -> {target})"
+                n += 1
+        _rec("1-non-governance-orchestrator-refused", n)
+
+        # --- (2) D-004-R363: governance + orchestrator + an INDEPENDENT gate +
+        # a usable independent reviewer CAN leave blocked. Every independent
+        # gate id is exercised, and every active target. ---
+        n = 0
+        for gid in ("G1", "G3", "G4", "G5", "G6"):
+            tid = blocked_task(task_type="governance", producer_agent="orchestrator",
+                               required_gates=["G0", gid], reviewer_agents=["rev-a"])
+            r = unblock(tid, "in_progress")
+            assert r.returncode == 0, \
+                f"governance + orchestrator + {gid} + usable reviewer must unblock: {r.stderr}"
+            assert status_of(tid) == "in_progress", \
+                f"successful unblock must apply the target status ({gid})"
+            n += 1
+        assert n == 5, f"every independent gate id must be exercised, got {n}"
+        for target in ACTIVE_TARGETS:
+            tid = blocked_task(task_type="governance", producer_agent="orchestrator",
+                               required_gates=["G0", "G2", "G3", "G5"],
+                               reviewer_agents=["code-reviewer", "security-reviewer"])
+            r = unblock(tid, target)
+            assert r.returncode == 0, f"governance unblock to {target} must work: {r.stderr}"
+            assert status_of(tid) == target, f"status must become {target}"
+            n += 1
+        _rec("2-governance-orchestrator-unblocks", n)
+
+        # --- (3) D-004-R364: governance + orchestrator + NO reviewers FAILS. ---
+        n = 0
+        for roster in ([], None):
+            tid = blocked_task(task_type="governance", producer_agent="orchestrator",
+                               required_gates=["G0", "G3"], reviewer_agents=roster)
+            r = unblock(tid)
+            assert r.returncode != 0, f"empty roster {roster!r} must not unblock"
+            assert "usable independent reviewer" in r.stderr, \
+                f"refusal must name the missing reviewer: {r.stderr}"
+            assert status_of(tid) == "blocked"
+            n += 1
+        _rec("3-governance-orchestrator-no-reviewers-refused", n)
+
+        # --- (4) D-004-R365: a roster of only the reserved orchestrator FAILS. ---
+        n = 0
+        for roster in (["orchestrator"], ["orchestrator", "orchestrator"], ["", "orchestrator"]):
+            tid = blocked_task(task_type="governance", producer_agent="orchestrator",
+                               required_gates=["G0", "G3"], reviewer_agents=roster)
+            r = unblock(tid)
+            assert r.returncode != 0, f"roster {roster!r} has no usable independent reviewer"
+            assert "usable independent reviewer" in r.stderr, \
+                f"refusal must name the missing reviewer: {r.stderr}"
+            assert status_of(tid) == "blocked"
+            n += 1
+        _rec("4-orchestrator-only-roster-refused", n)
+
+        # --- (5) D-004-R366: governance + orchestrator with NO independent gate
+        # FAILS, and the refusal names the missing independent-gate class. ---
+        n = 0
+        for gates in ([], ["G0"], ["G2"], ["G7"], ["G0", "G2", "G7"], None):
+            tid = blocked_task(task_type="governance", producer_agent="orchestrator",
+                               required_gates=gates, reviewer_agents=["rev-a"])
+            r = unblock(tid)
+            assert r.returncode != 0, f"required_gates {gates!r} has no independent gate"
+            assert "no independent gate" in r.stderr, \
+                f"refusal must name the missing independent gate: {r.stderr}"
+            for gid in ("G1", "G3", "G4", "G5", "G6"):
+                assert gid in r.stderr, \
+                    f"refusal must list the independent gate class ({gid}): {r.stderr}"
+            assert status_of(tid) == "blocked"
+            n += 1
+        _rec("5-governance-no-independent-gate-refused", n)
+
+        # --- (6) D-004-R367: malformed packet data FAILS CLOSED - an explanatory
+        # refusal, never a traceback and never a silent allow. ---
+        malformed = []
+        for bad in ("rev-a", {"a": 1}, 5, ["rev-a", None], [["rev-a"]], [{"n": "rev-a"}],
+                    True, 3.5):
+            malformed.append(("reviewer_agents", dict(
+                task_type="governance", producer_agent="orchestrator",
+                required_gates=["G0", "G3"], reviewer_agents=bad)))
+            malformed.append(("reviewer_agents/normal-producer", dict(
+                task_type="research", producer_agent="backend-x",
+                required_gates=["G0", "G3"], reviewer_agents=bad)))
+        for bad in ("G3", {"g": "G3"}, ["G3", None], [["G3"]], [{"g": "G3"}], 7):
+            malformed.append(("required_gates", dict(
+                task_type="governance", producer_agent="orchestrator",
+                required_gates=bad, reviewer_agents=["rev-a"])))
+        for bad in (5, None, {"t": "governance"}, ["governance"], 1.5):
+            malformed.append(("task_type", dict(
+                task_type=bad, producer_agent="orchestrator",
+                required_gates=["G0", "G3"], reviewer_agents=["rev-a"])))
+        for bad in (["orchestrator"], {"p": "x"}, 5, 2.5):
+            malformed.append(("producer_agent", dict(
+                task_type="governance", producer_agent=bad,
+                required_gates=["G0", "G3"], reviewer_agents=["rev-a"])))
+        n = 0
+        for label, fields in malformed:
+            tid = blocked_task(**fields)
+            r = unblock(tid)
+            assert r.returncode != 0, \
+                f"malformed {label} {fields!r} must fail closed, not unblock"
+            assert "Traceback" not in r.stderr, \
+                f"malformed {label} must not raise: {r.stderr}"
+            assert "amend" in r.stderr, \
+                f"malformed {label} must return an explanatory refusal: {r.stderr}"
+            assert status_of(tid) == "blocked", \
+                f"malformed {label} must leave the task blocked"
+            n += 1
+        _rec("6-malformed-fails-closed", n)
+
+        # --- (7) D-004-R368: a NON-orchestrator producer behaves exactly as before. ---
+        # missing / blank producer still refused
+        n = 0
+        for bad_producer in (None, "", "   "):
+            tid = blocked_task(task_type="research", producer_agent=bad_producer,
+                               required_gates=["G0", "G3"], reviewer_agents=["rev-a"])
+            r = unblock(tid)
+            assert r.returncode != 0 and "producer" in r.stderr, \
+                f"producer {bad_producer!r} must be refused: {r.stderr}"
+            assert status_of(tid) == "blocked"
+            n += 1
+        # a roster naming only the producer is still refused
+        tid = blocked_task(task_type="research", producer_agent="backend-x",
+                           required_gates=["G0", "G3"], reviewer_agents=["backend-x"])
+        r = unblock(tid)
+        assert r.returncode != 0 and "usable independent reviewer" in r.stderr, \
+            f"roster equal to the producer must be refused: {r.stderr}"
+        n += 1
+        # a real producer + a usable reviewer still unblocks, for governance and
+        # non-governance, WITH and WITHOUT an independent gate. The without-case
+        # is the deliberate scope boundary: required_gates is consulted ONLY on
+        # the orchestrator-producer path, so normal producers are untouched.
+        for ttype in ("research", "governance"):
+            for gates in (["G0", "G3"], ["G0"], ["G2", "G7"], []):
+                tid = blocked_task(task_type=ttype, producer_agent="backend-x",
+                                   required_gates=gates, reviewer_agents=["rev-a"])
+                r = unblock(tid)
+                assert r.returncode == 0, \
+                    f"normal producer ({ttype}, gates {gates}) must still unblock: {r.stderr}"
+                assert status_of(tid) == "in_progress"
+                n += 1
+        _rec("7-normal-producer-unchanged", n)
+
+        # --- (8) D-004-R369: blocked -> canceled is unconditional, and a
+        # message-only progress on a blocked task is never roster-gated. ---
+        cancel_shapes = [
+            dict(producer_agent=None, reviewer_agents=[]),
+            dict(producer_agent="orchestrator", reviewer_agents=["orchestrator"]),
+            dict(producer_agent="orchestrator", reviewer_agents=[], task_type="engineering"),
+            dict(producer_agent="backend-x", reviewer_agents=["backend-x"]),
+            dict(producer_agent=["bad"], reviewer_agents="rev-a"),
+            dict(producer_agent={"p": 1}, reviewer_agents={"r": 1}, required_gates="G3"),
+        ]
+        n = 0
+        for shape in cancel_shapes:
+            tid = blocked_task(**shape)
+            r = unblock(tid, "canceled")
+            assert r.returncode == 0, \
+                f"blocked -> canceled must always be allowed ({shape!r}): {r.stderr}"
+            assert status_of(tid) == "canceled"
+            n += 1
+        for shape in cancel_shapes:
+            tid = blocked_task(**shape)
+            r = run(tmp, "progress", "--task-id", tid, "--agent", "orchestrator",
+                    "--percent", "10", "--message", "note only, no status change")
+            assert r.returncode == 0, \
+                f"message-only progress must not be roster-gated ({shape!r}): {r.stderr}"
+            assert status_of(tid) == "blocked"
+            n += 1
+        _rec("8-cancel-and-message-only-ungated", n)
+
+        # --- (9) D-004-R370: gate() is UNCHANGED on a task that used the new case. ---
+        tid = blocked_task(task_type="governance", producer_agent="orchestrator",
+                           required_gates=["G0", "G2", "G3", "G5"],
+                           reviewer_agents=["rev-a", "rev-b"])
+        assert unblock(tid, "awaiting_gate").returncode == 0
+        rep = write_report(tmp, f"{tid}-g3.json", '{"verdict": "PASS"}')
+        # the orchestrator producer still cannot record an independent gate...
+        n = 0
+        for gid in ("G1", "G3", "G4", "G5", "G6"):
+            r = run(tmp, "gate", "--task-id", tid, "--gate-id", gid,
+                    "--reviewer", "orchestrator", "--result", "PASS", "--report", rep)
+            assert r.returncode != 0, \
+                f"orchestrator must never record independent gate {gid}"
+            assert "reserved" in r.stderr, f"refusal must cite the reserved identity: {r.stderr}"
+            assert not (pc / "gates" / f"{tid}-{gid}.json").exists(), \
+                f"a refused gate must write no record ({gid})"
+            n += 1
+        # ...an unrostered reviewer is still refused...
+        r = run(tmp, "gate", "--task-id", tid, "--gate-id", "G3",
+                "--reviewer", "stranger", "--result", "PASS", "--report", rep)
+        assert r.returncode != 0 and "reviewer_agents" in r.stderr, \
+            f"unrostered reviewer must be refused: {r.stderr}"
+        assert not (pc / "gates" / f"{tid}-G3.json").exists()
+        # ...and the rostered independent reviewer still succeeds, honestly labeled.
+        r = run(tmp, "gate", "--task-id", tid, "--gate-id", "G3",
+                "--reviewer", "rev-a", "--result", "PASS", "--report", rep)
+        assert r.returncode == 0, f"rostered independent reviewer must succeed: {r.stderr}"
+        assert read_json(pc / "gates" / f"{tid}-G3.json")["role"] == "independent_review"
+        # a producer still cannot independently gate its own task
+        tid2 = blocked_task(task_type="research", producer_agent="backend-x",
+                            required_gates=["G0", "G3"],
+                            reviewer_agents=["backend-x", "rev-a"])
+        assert unblock(tid2, "awaiting_gate").returncode == 0
+        r = run(tmp, "gate", "--task-id", tid2, "--gate-id", "G3",
+                "--reviewer", "backend-x", "--result", "PASS", "--report", rep)
+        assert r.returncode != 0 and "own task" in r.stderr, \
+            f"producer must not independently gate its own task: {r.stderr}"
+        n += 3  # unrostered-refused, rostered-succeeded, producer-refused
+        _rec("9-gate-unchanged", n)
+
+        # --- source-level proofs that the correction is GENERAL (D-004-R345/R346) ---
+        src = (HERE / "project_control.py").read_text(encoding="utf-8")
+        tree = ast.parse(src)
+        guard_names = ("_roster_strings", "_orchestrator_governance_exception",
+                       "invalid_unblock_roster")
+        bodies = {}
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef) and node.name in guard_names:
+                body = list(node.body)
+                if (body and isinstance(body[0], ast.Expr)
+                        and isinstance(body[0].value, ast.Constant)
+                        and isinstance(body[0].value.value, str)):
+                    body = body[1:]  # strip docstring: prose provenance stays allowed
+                bodies[node.name] = "\n".join(ast.unparse(s) for s in body)
+        assert set(bodies) == set(guard_names), \
+            f"every guard function must be present: found {sorted(bodies)}"
+        code = "\n".join(bodies[n] for n in guard_names)
+        assert not re.search(r"M\d+-T\d{3}", code), \
+            f"guard executable code must name no ledger task id:\n{code}"
+        assert "INDEPENDENT_GATES" in code, \
+            "the guard must reuse the existing INDEPENDENT_GATES constant"
+        assert "GOVERNANCE_TASK_TYPE" in code and "RESERVED_ORCHESTRATOR" in code, \
+            "the guard must use the named constants, not bare literals"
+        assert not re.search(r"""['"]G[0-7]['"]""", code), \
+            f"the guard must not re-list gate-id literals:\n{code}"
+        assert not re.search(r"""['"]governance['"]""", code), \
+            f"the guard must not carry a bare governance literal:\n{code}"
+        for tok in ("getenv", "environ", "force", "bypass", "override", "skip"):
+            assert tok not in code.lower(), \
+                f"guard executable code must carry no {tok!r} token:\n{code}"
+        assert "os.environ" not in src and "getenv" not in src, \
+            "project_control.py must never read the environment"
+        assert "M0-T027" not in src, \
+            "the correction must not name the motivating task anywhere in the module"
+        # `progress` gains no new option: no flag, no override, no bypass argument.
+        r = run(tmp, "progress", "-h")
+        assert r.returncode == 0, f"progress -h failed: {r.stderr}"
+        opts = set(re.findall(r"--[a-z][a-z0-9-]*", r.stdout))
+        assert opts == {"--help", "--task-id", "--agent", "--percent", "--status",
+                        "--message"}, \
+            f"progress must expose exactly the pre-existing options: {sorted(opts)}"
+        _rec("10-source-level-generality-proofs", len(guard_names))
+
+        # --- D-004-R413/R414: prove every block above actually RAN, in order. ---
+        # EXACT expected (label, case-count) pairs, in order. Exact counts rather
+        # than a floor: a block that is skipped, reordered, short-circuited, or
+        # silently loses cases then FAILS here instead of passing quietly. If a
+        # case is deliberately added, this expectation must be updated with it -
+        # that is the point (D-004-R413/R414: presence of code is not evidence of
+        # execution).
+        expected_blocks = [
+            ("1-non-governance-orchestrator-refused", 32),   # 8 task types x 4 targets
+            ("2-governance-orchestrator-unblocks", 9),       # 5 gate ids + 4 targets
+            ("3-governance-orchestrator-no-reviewers-refused", 2),
+            ("4-orchestrator-only-roster-refused", 3),
+            ("5-governance-no-independent-gate-refused", 6),
+            ("6-malformed-fails-closed", 31),                # 16 roster + 6 gates + 5 type + 4 producer
+            ("7-normal-producer-unchanged", 12),             # 3 bad + 1 self-roster + 2x4 still-unblocks
+            ("8-cancel-and-message-only-ungated", 12),       # 6 cancel + 6 message-only
+            ("9-gate-unchanged", 8),                         # 5 reserved + 3 roster/producer
+            ("10-source-level-generality-proofs", 3),        # 3 guard functions parsed
+        ]
+        assert executed == expected_blocks, \
+            ("S10 did not execute every mandatory block, in order, with every "
+             f"case.\n  expected: {expected_blocks}\n  actual:   {executed}")
+        total = sum(cases for _, cases in executed)
+        assert total == 118, f"S10 total executed cases changed: {total}"
+        print("OK: S10 governance-orchestrator unblock semantics (4 conjunctive "
+              "conditions, preserved defaults, fail-closed malformed data, "
+              "gate() unchanged, source-level generality proofs)")
+        print(f"    S10 [D-004-R413/R414]: {len(executed)}/{len(expected_blocks)} blocks "
+              f"executed, {total} assertion cases")
+        print("    S10 per-block case counts: "
+              + ", ".join(f"{label}={cases}" for label, cases in executed))
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
 ALL_TESTS = [
     test_original_workflow,
     test_s1_transitions,
@@ -1597,6 +1966,7 @@ ALL_TESTS = [
     test_s6_spoofing,
     test_s7_backward_compatibility,
     test_s8_hardening_followup,
+    test_s10_governance_orchestrator_unblock,
     test_docs_honesty,
     test_s9_directive_claim_and_governance,
     test_s9_submit_evidence_and_git_identity,
