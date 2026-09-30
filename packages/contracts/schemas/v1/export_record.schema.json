@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/export_record.schema.json",
+  "title": "Export Record",
+  "description": "v1 contract (task M5-T125, directive D-090 Wave 0; derived lane plan docs/lanes/PARALLEL_BUILD_PLAN.md section 5) for ONE historical export - a PDF report, Excel calculation file or DXF (plan docs/PRODUCT_PLAN_CURRENT_2026-09-28.md section 3 step 7, section 9 'Historical exports'; task M1-19). It records the export's inputs (the study as it stood, with its digest), the sources, the rule versions and the results (snapshot reference plus canonical digest). Reopening it is read-only history (read_only is always true), and 'Start a new study from this' copies INPUTS ONLY (restore_policy is always 'copy_inputs_only'): facts are re-fetched and results recalculated, with the differences listed; nothing imported becomes a current fact or result.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "export_id",
+    "format",
+    "created_at",
+    "study_id",
+    "option_id",
+    "revision",
+    "inputs",
+    "sources",
+    "rule_versions",
+    "results",
+    "read_only",
+    "restore_policy"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published export_record contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "export_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+    "format": {
+      "type": "string",
+      "enum": ["pdf", "xlsx", "dxf"],
+      "description": "The three export files (plan section 3 step 7). DWG is not produced (native-DWG libraries stay an owner licensing decision)."
+    },
+    "created_at": { "$ref": "common.schema.json#/$defs/date_time" },
+    "study_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+    "option_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+    "revision": { "type": "integer", "minimum": 1 },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["study", "study_digest"],
+      "description": "The inputs as they stood at export: the whole study (lots, selection, site facts with their sources, options). This is the ONLY part 'Start a new study from this' copies.",
+      "properties": {
+        "study": { "$ref": "study.schema.json" },
+        "study_digest": {
+          "$ref": "common.schema.json#/$defs/digest_sha256",
+          "description": "canonical-json-1 digest of inputs.study."
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "description": "Every source behind the exported values (dataset, version, date, query or document), in the site_fact source shape.",
+      "items": { "$ref": "site_fact.schema.json#/$defs/source" }
+    },
+    "rule_versions": {
+      "type": "array",
+      "description": "Every rule table version the exported results used.",
+      "items": { "$ref": "results.schema.json#/$defs/rule_version" }
+    },
+    "results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["results_id", "results_digest", "snapshot_ref"],
+      "description": "The results as exported, by reference and digest. Historical results are shown as history only and never become current results.",
+      "properties": {
+        "results_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "results_digest": {
+          "$ref": "common.schema.json#/$defs/digest_sha256",
+          "description": "canonical-json-1 digest of the exported results document."
+        },
+        "snapshot_ref": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Storage reference of the frozen results snapshot."
+        }
+      }
+    },
+    "read_only": {
+      "type": "boolean",
+      "const": true,
+      "description": "Always true: reopening an export shows it read-only, as history (plan section 9)."
+    },
+    "restore_policy": {
+      "type": "string",
+      "const": "copy_inputs_only",
+      "description": "Always 'copy_inputs_only': a new study copies inputs only; facts are re-fetched and results recalculated, with the differences listed (plan section 9)."
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key."
+    }
+  }
+}
