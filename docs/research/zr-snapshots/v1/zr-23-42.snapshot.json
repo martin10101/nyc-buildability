@@ -1,0 +1,32 @@
+{
+  "snapshot_id": "zr-23-42",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "23-42",
+  "section_title": "Height and Setback Requirements in R1 Through R5 Districts - overview, routing, base-plane measurement",
+  "article": "II",
+  "chapter": "3",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-42",
+    "retrieved_at": "2026-09-13T00:00:00Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "Captured fresh in-task for M4-T014 by direct HTTPS GET of the official DCP Zoning Resolution portal on 2026-09-13 (curl -A Mozilla/5.0 -> HTTP 200); the legal text lives in the field--name-body container and the section carries a machine-readable <time datetime=\"2024-12-05T12:00:00Z\">12/5/2024</time> Last-Amended stamp (City of Yes for Housing Opportunity). The site-wide currency banner was not separately captured and is a needs_review item.",
+    "section_last_amended": "2024-12-05",
+    "section_last_amended_source_text": "Last Amended 12/5/2024",
+    "capture_method": "rules_engineer_in_task_curl_capture_2026-09-13",
+    "raw_html_verified": false,
+    "verification_required": "Captured by direct curl of the official portal HTML on 2026-09-13 and tag-stripped to the verbatim excerpt below; NOT re-verified byte-for-byte against the raw HTML bytes, so raw_html_verified is false and extraction_status is extracted_draft. The routing to Sections 23-421/23-422/23-423, the qualifying-site/large-site increase pointers (23-424/23-425), the additional-provision pointers (23-426/23-44), and the base-plane measurement rule MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
+  },
+  "verbatim_excerpt": "R1 R2 R3 R4 R5\n\nIn the districts indicated, the height and setback regulations of a building or other structure shall be as set forth in Section 23-421 (Basic pitched-roof envelopes for certain districts) and 23-422 (Basic flat-roof envelopes for certain districts). Where applicable, standard setback provisions are set forth in Section 23-423.\n\nSuch heights may be increased on qualifying residential sites or on zoning lots containing qualifying senior housing, or for certain large sites, pursuant to Sections 23-424 or 23-425, respectively.\n\nThe height of all buildings or other structures shall be measured from the base plane.",
+  "content_digest_sha256": "3fea4ca54cfee304698506e83f126949863b6a539b2e6de8731a58cfb494070d",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Overview / routing section for R1-R5 height and setback: pitched-roof envelopes are set forth in 23-421, flat-roof envelopes in 23-422, and standard setback provisions in 23-423 where applicable. Heights may be increased on qualifying residential sites / qualifying senior housing / certain large sites (23-424, 23-425) and additional provisions appear in 23-426 and 23-44 - all of these are CONDITIONAL provisions (geography / lot-eligibility / overlay dependent) that are A2 gaps here (D-045-R008), never applied as numeric values in M4-T014.",
+    "All R1-R5 heights are measured from the base plane; the base-plane determination is a separate professional input, not a value this snapshot supplies.",
+    "Captured fresh in-task for M4-T014 as the routing/base-plane provenance for the R3/R4-series height DRAFT rule family (needs_review).",
+    "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule plus G6 qualified-human approval (owner directive item 5)."
+  ]
+}
