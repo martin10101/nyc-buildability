@@ -29,6 +29,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.address_resolution import router as address_resolution_v1_router
+from app.api.v1.build_info import router as build_info_v1_router
 from app.api.v1.condo_records import router as condo_records_v1_router
 from app.api.v1.evidence import router as evidence_v1_router
 from app.api.v1.lot_geometry import router as lot_geometry_v1_router
@@ -216,6 +217,10 @@ def create_app() -> FastAPI:
     # app.api.v1.site_definition.
     if site_definition_write_enabled():
         application.include_router(site_definition_v1_router)
+    # Read-only build-info record (queue C-02, plan M1-02). Ungated like health: it returns
+    # only the deployed commit SHA, API_VERSION and a fixed allowlist of flags as booleans,
+    # and reads no other env var. See app.api.v1.build_info.
+    application.include_router(build_info_v1_router)
 
     @application.get("/api/v1/health")
     def health() -> dict[str, str]:
