@@ -140,7 +140,7 @@
   border-radius: var(--radius-control, 6px);
   background: var(--status-conditional-bg, #f5f0e4);
   color: var(--status-conditional-fg, #6b5416);
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 

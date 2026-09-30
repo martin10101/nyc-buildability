@@ -1,6 +1,9 @@
 import { Fragment } from "react";
-import type { ThreeAnswersResults } from "@/lib/architect/results-document";
-import { statusStripItems, streetWidthCaseLines } from "@/lib/architect/three-answers";
+import {
+  statusStripItems,
+  streetWidthCaseLines,
+  type ThreeAnswersResults,
+} from "@/lib/architect/three-answers";
 
 /**
  * The one status strip at the top of the results (queue D-05; plan §5a items 1, 2 and 6): a

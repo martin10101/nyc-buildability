@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import type { ExceptionLabel, Unit } from "@/lib/architect/results-document";
 import {
   ANSWER_TITLES,
   REACHES_ALLOWANCE_TEXT,
@@ -8,8 +7,10 @@ import {
   uniqueSections,
   type AnswerKey,
   type AnswerView,
+  type ExceptionLabel,
   type ShortfallView,
   type SupplementView,
+  type Unit,
 } from "@/lib/architect/three-answers";
 
 /**

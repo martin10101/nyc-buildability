@@ -1,6 +1,5 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import type { AnswerValue, ThreeAnswersResults } from "@/lib/architect/results-document";
 import {
   ANSWER_KEYS,
   ANSWER_TITLES,
@@ -11,6 +10,7 @@ import {
   notAvailableText,
   quantityText,
   type AnswerKey,
+  type Results,
 } from "@/lib/architect/three-answers";
 import { loadResultsFixture, loadResultsFixtures } from "@/test-support/results-fixtures";
 import { ThreeAnswersPanel } from "../ThreeAnswersPanel";
@@ -51,6 +51,8 @@ const RAW_CODES = [
   "zoning_resolution",
 ];
 const SNAKE_CASE = /\b[a-z0-9]+(?:_[a-z0-9]+)+\b/;
+// A compared number for probe shortfall reasons (never rendered by the panel).
+const PROBE_VALUE = { name: "probe height", value: 1, unit: "feet" as const };
 
 function card(key: AnswerKey): HTMLElement {
   return screen.getByTestId(`answer-${key}`);
@@ -76,12 +78,6 @@ function renderedValues(cardEl: HTMLElement): { label: string; text: string }[] 
       text: row.querySelector<HTMLElement>("dd")?.textContent ?? "",
     }));
   return [{ label: headlineLabel?.textContent ?? "", text: headline.textContent ?? "" }, ...rows];
-}
-
-function sourceRefs(value: AnswerValue): string[] {
-  // `sources` is outside the panel's narrow type; read it only to prove it is not shown.
-  const withSources = value as unknown as { sources?: { ref: string }[] };
-  return (withSources.sources ?? []).map(source => source.ref);
 }
 
 it("loads the committed valid results fixtures (never a vacuous run)", () => {
@@ -219,7 +215,7 @@ for (const { name, doc } of FIXTURES) {
           const answer = doc.answers[key];
           if (answer.status !== "available") continue;
           for (const value of answer.values) {
-            for (const ref of sourceRefs(value)) expect(text).not.toContain(ref);
+            for (const source of value.sources) expect(text).not.toContain(source.ref);
           }
         }
         cleanup();
@@ -260,12 +256,15 @@ describe("fixture-specific behaviour", () => {
   });
 
   it("a shortfall shows the gap and each computed reason (plan §5 answer 3)", () => {
-    const doc: ThreeAnswersResults = {
+    const doc: Results = {
       ...loadResultsFixture(ALL_AVAILABLE),
       shortfall: {
         status: "shortfall",
         sq_ft: 1250,
-        reasons: [{ text: "Probe reason one." }, { text: "Probe reason two." }],
+        reasons: [
+          { text: "Probe reason one.", computed_from: ["probe-constraint"], values: [PROBE_VALUE] },
+          { text: "Probe reason two.", computed_from: ["probe-constraint"], values: [PROBE_VALUE] },
+        ],
       },
     };
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
@@ -279,7 +278,7 @@ describe("fixture-specific behaviour", () => {
   });
 
   it("a shortfall that is not available reads 'Not available — …' beside the option", () => {
-    const doc: ThreeAnswersResults = {
+    const doc: Results = {
       ...loadResultsFixture(ALL_AVAILABLE),
       shortfall: {
         status: "not_available",
@@ -293,9 +292,13 @@ describe("fixture-specific behaviour", () => {
   });
 
   it("a remaining floor area that is available shows beside the allowance", () => {
-    const doc: ThreeAnswersResults = {
+    const doc: Results = {
       ...loadResultsFixture(ENVELOPE_MISSING),
-      remaining_floor_area: { status: "available", value_sf: 1500 },
+      remaining_floor_area: {
+        status: "available",
+        value_sf: 1500,
+        existing_zoning_floor_area_fact_id: "probe-fact-existing-zoning-floor-area",
+      },
     };
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
     const row = within(card("floor_area_allowance")).getByTestId("answer-supplement");
@@ -306,7 +309,7 @@ describe("fixture-specific behaviour", () => {
   it("strip items beyond three move behind the strip (plan §5a items 1 and 6)", () => {
     // The contract caps the strip at three; this probe proves the panel keeps the cap even if a
     // producer ever breaks it.
-    const doc: ThreeAnswersResults = {
+    const doc: Results = {
       ...loadResultsFixture(ALL_AVAILABLE),
       status_strip: ["One", "Two", "Three", "Four", "Five"].map(text => ({ text })),
     };
@@ -327,7 +330,7 @@ describe("fixture-specific behaviour", () => {
   it("a document that is not a draft shows its numbers without the lane-flag option", () => {
     // Synthetic probe: `draft: false` is valid only when every rule version is published; the
     // committed fixtures are all drafts, so the flag is flipped here to prove the gate reads it.
-    const doc: ThreeAnswersResults = { ...loadResultsFixture(ALL_AVAILABLE), draft: false };
+    const doc: Results = { ...loadResultsFixture(ALL_AVAILABLE), draft: false };
     render(<ThreeAnswersPanel results={doc} />);
     for (const key of ANSWER_KEYS) {
       expect(within(card(key)).getByTestId("answer-headline")).toBeInTheDocument();

@@ -1,19 +1,19 @@
 "use client";
 
 import { useId } from "react";
-import type { ThreeAnswersResults } from "@/lib/architect/results-document";
 import {
   DRAFT_PREVIEW_TAG,
   answerView,
   remainingFloorAreaView,
   shortfallView,
+  type ThreeAnswersResults,
 } from "@/lib/architect/three-answers";
 import { AnswerCard, ShortfallBlock, SupplementRow } from "./AnswerCard";
 import { ResultsStatusStrip } from "./ResultsStatusStrip";
 import "./three-answers.css";
 
 export interface ThreeAnswersPanelProps {
-  /** One `results` contract document (packages/contracts/schemas/v1/results.schema.json). */
+  /** One `results` contract document (generated type packages/contracts/generated/results.ts). */
   results: ThreeAnswersResults;
   /**
    * Show numbers computed from rules that are not reviewed yet (`results.draft`). Only a surface

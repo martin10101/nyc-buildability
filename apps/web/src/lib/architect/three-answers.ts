@@ -13,10 +13,35 @@
 
 import type {
   AnswerValue,
+  ExceptionLabel,
+  Results,
   StreetWidthCase,
-  ThreeAnswersResults,
   Unit,
-} from "./results-document";
+} from "../../../../../packages/contracts/generated/results";
+
+// The canonical generated contract types (packages/contracts/generated/results.ts, task C-03),
+// re-exported so the panel and its tests import them from one place.
+export type { AnswerValue, ExceptionLabel, Results, Unit };
+
+/**
+ * The part of a `results` document the panel reads, derived from the generated `Results` type
+ * so the compiler keeps it in step with the contract. A full `Results` document is accepted.
+ */
+export type ThreeAnswersResults = Pick<
+  Results,
+  | "out_of_date"
+  | "out_of_date_reason"
+  | "lot_selection_statement"
+  | "with_approvals_label"
+  | "answers"
+  | "remaining_floor_area"
+  | "shortfall"
+  | "completeness_line"
+  | "status_strip"
+  | "notices_count"
+  | "draft"
+  | "street_width_case"
+>;
 
 export type AnswerKey = keyof ThreeAnswersResults["answers"];
 

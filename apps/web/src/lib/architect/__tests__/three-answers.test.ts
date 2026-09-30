@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import type { AnswerValue, ThreeAnswersResults, Unit } from "@/lib/architect/results-document";
 import {
   NOT_AVAILABLE,
   RULES_NOT_REVIEWED_REASON,
@@ -13,6 +12,9 @@ import {
   statusStripItems,
   streetWidthCaseLines,
   uniqueSections,
+  type AnswerValue,
+  type Results,
+  type Unit,
 } from "@/lib/architect/three-answers";
 import { loadResultsFixture } from "@/test-support/results-fixtures";
 
@@ -123,7 +125,7 @@ describe("answerView — the draft gate and the headline", () => {
     const withoutKey: AnswerValue[] = answer.values.filter(
       value => value.key !== "max_residential_floor_area",
     );
-    const probe: ThreeAnswersResults = {
+    const probe: Results = {
       ...doc,
       answers: { ...doc.answers, floor_area_allowance: { ...answer, values: withoutKey } },
     };
@@ -136,7 +138,7 @@ describe("answerView — the draft gate and the headline", () => {
     const doc = loadResultsFixture("synthetic_all_answers_available");
     const answer = doc.answers.building_option;
     if (answer.status !== "available") throw new Error("fixture changed: option not available");
-    const probe: ThreeAnswersResults = {
+    const probe: Results = {
       ...doc,
       answers: { ...doc.answers, building_option: { ...answer, values: [] } },
     };
@@ -163,9 +165,19 @@ describe("supplements, strip and street-width lines", () => {
   it("shortfall: none reads as reaching the allowance; a shortfall keeps its reasons", () => {
     const doc = loadResultsFixture("synthetic_all_answers_available");
     expect(shortfallView(doc)).toEqual({ kind: "reaches_allowance" });
-    const probe: ThreeAnswersResults = {
+    const probe: Results = {
       ...doc,
-      shortfall: { status: "shortfall", sq_ft: 1250, reasons: [{ text: "Probe reason." }] },
+      shortfall: {
+        status: "shortfall",
+        sq_ft: 1250,
+        reasons: [
+          {
+            text: "Probe reason.",
+            computed_from: ["probe-constraint"],
+            values: [{ name: "probe height", value: 1, unit: "feet" }],
+          },
+        ],
+      },
     };
     expect(shortfallView(probe)).toEqual({
       kind: "shortfall",
@@ -176,7 +188,7 @@ describe("supplements, strip and street-width lines", () => {
 
   it("the strip keeps at most three items and moves the rest behind it", () => {
     const doc = loadResultsFixture("synthetic_all_answers_available");
-    const probe: ThreeAnswersResults = {
+    const probe: Results = {
       ...doc,
       status_strip: ["One", "Two", "Three", "Four", "Five"].map(text => ({ text })),
     };
