@@ -164,6 +164,9 @@ test("S2: KEYBOARD retry on Confirm — focus moves to the loading card, then th
   await tabUntil(page, { textContains: "Retry lookup" });
   await page.keyboard.press("Enter");
 
+  // One instantaneous sample is a valid "never body" check: the screens move
+  // focus in LAYOUT effects, inside the same commit that swaps the cards, so
+  // no instant exists where a card is visible and focus is on <body> (D-flake).
   await expect(page.getByTestId("loading-stages")).toBeVisible();
   const during = await activeElementInfo(page);
   expect(during.isBody).toBe(false);

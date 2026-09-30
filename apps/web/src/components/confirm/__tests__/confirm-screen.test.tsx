@@ -1,6 +1,8 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { Profiler } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ConfirmScreen } from "@/components/confirm/ConfirmScreen";
+import { sampleCommitFocus, type CommitFocus } from "@/test-support/commit-focus";
 import {
   baseProfile,
   cr500NoMatchResponse,
@@ -260,6 +262,60 @@ describe("ConfirmScreen — a11y announcement + focus (M2-T005 S1/S2)", () => {
         screen.getByRole("heading", { name: "BBL 1000010010" }),
       ),
     );
+  });
+
+  it("D-flake: focus is already moved when each commit ends — loading card on keyboard retry, then the outcome heading; never body", async () => {
+    let resolveSecond: ((response: Response) => void) | undefined;
+    const fetchStub = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({ state: "source_unavailable", message: "outage" }, 503),
+      )
+      .mockImplementationOnce(
+        () => new Promise<Response>((resolve) => (resolveSecond = resolve)),
+      );
+    vi.stubGlobal("fetch", fetchStub);
+    // onRender runs inside every commit, after layout effects and before any
+    // passive effect: the instant the e2e activeElement probe raced.
+    const commits: CommitFocus[] = [];
+    render(
+      <Profiler
+        id="confirm"
+        onRender={() => {
+          commits.push(sampleCommitFocus());
+        }}
+      >
+        <ConfirmScreen bbl="1000010010" />
+      </Profiler>,
+    );
+    await screen.findByTestId("state-source_unavailable");
+    // Arrival: the commit that mounts the failure heading also focuses it.
+    expect(commits.find((c) => c.headingMounted)?.active).toBe("outcome-heading");
+
+    // Keyboard retry: the Retry button holds focus when it is activated.
+    const retryButton = screen.getByRole("button", { name: "Retry lookup" });
+    retryButton.focus();
+    commits.length = 0;
+    fireEvent.click(retryButton);
+    await screen.findByTestId("loading-stages");
+    resolveSecond?.(jsonResponse(baseProfile(), 200));
+    await screen.findByTestId("confirm-card");
+
+    // The commit that removes the Retry button and mounts the loading card
+    // leaves focus ON the loading card (Confirm enters loading from its fetch
+    // effect, a non-discrete commit — the case the e2e flake exposed).
+    const loadingAt = commits.findIndex((c) => c.loadingMounted);
+    expect(loadingAt).toBeGreaterThanOrEqual(0);
+    expect(commits[loadingAt]?.active).toBe("loading-stages");
+    // The arrival commit that removes the focused loading card leaves focus
+    // ON the new outcome heading.
+    const arrivalAt = commits.findIndex(
+      (c, i) => i > loadingAt && !c.loadingMounted && c.headingMounted,
+    );
+    expect(arrivalAt).toBeGreaterThan(loadingAt);
+    expect(commits[arrivalAt]?.active).toBe("outcome-heading");
+    // No commit of the retry journey ever ends with focus on <body>.
+    expect(commits.map((c) => c.active)).not.toContain("body");
   });
 });
 
