@@ -18,8 +18,10 @@ from collections.abc import Mapping
 __all__ = [
     "INTERNAL_RULE_EVAL_ENABLED_ENV_VAR",
     "INTERNAL_SCENARIO_ENABLED_ENV_VAR",
+    "LANE_FLAG_ENV_VARS",
     "internal_rule_eval_enabled",
     "internal_scenario_enabled",
+    "lane_enabled",
 ]
 
 # Env var gating the internal GET /properties/{bbl}/rule-evaluation endpoint.
@@ -32,6 +34,13 @@ INTERNAL_RULE_EVAL_ENABLED_ENV_VAR = "INTERNAL_RULE_EVAL_ENABLED"
 # rule-evaluation flag; a distinct name so the two internal endpoints are
 # enabled independently.
 INTERNAL_SCENARIO_ENABLED_ENV_VAR = "INTERNAL_SCENARIO_ENABLED"
+
+# One flag per parallel-build lane (task M0-T164, D-090; docs/lanes/PARALLEL_BUILD_PLAN.md §7).
+# New lane behavior ships behind its lane's flag; production never sets these until the owner
+# releases that lane's work, so absent means off like every flag here. Nothing reads them yet.
+LANE_FLAG_ENV_VARS: Mapping[str, str] = {
+    lane: f"LANE_{lane}_ENABLED" for lane in ("A", "B", "C", "D", "E")
+}
 
 # The closed set of tokens that mean "enabled". Anything not in this set - unset,
 # empty, "0", "false", "off", or an unrecognized value - is DISABLED (fail safe).
@@ -64,3 +73,16 @@ def internal_scenario_enabled(env: Mapping[str, str] | None = None) -> bool:
     (fail safe), so the route is unreachable unless explicitly turned on.
     """
     return _flag_enabled(INTERNAL_SCENARIO_ENABLED_ENV_VAR, env)
+
+
+def lane_enabled(lane: str, env: Mapping[str, str] | None = None) -> bool:
+    """Whether parallel-build lane ``lane`` ("A".."E") has its flag explicitly on.
+
+    Absent/empty/unknown -> False (fail safe). An unknown lane name raises ValueError so a
+    typo can never read as "off" by accident.
+    """
+    try:
+        env_var = LANE_FLAG_ENV_VARS[lane]
+    except KeyError:
+        raise ValueError(f"unknown lane {lane!r}; expected one of A, B, C, D, E") from None
+    return _flag_enabled(env_var, env)
