@@ -36,9 +36,11 @@ Rules (plan ``docs/PRODUCT_PLAN_CURRENT_2026-09-28.md``):
   The contract records frontage per street, so LotFront is returned only as a recorded
   reference. Each street the caller names gets an unknown frontage.
 - Existing zoning floor area may come only from a Buildings Department filing, a
-  certificate of occupancy, an entry, or a stated assumption. It is never taken from
-  PLUTO/DOF building area (section 3 step 4, task M2-07). The builder reads no filing
-  yet, so the value is unknown. PLUTO BldgArea is returned only as a reference.
+  certificate of occupancy, or a stated assumption. It is never taken from PLUTO/DOF
+  building area (section 3 step 4, task M2-07). ``app.profile.existing_floor_area``
+  (queue item B-05) chooses it from the evidence the caller passes; with none, it is
+  unknown. PLUTO BldgArea is returned only as a reference. PLUTO NumBldgs is passed on
+  only as a building count that checks the DOB filings cover the lot, never as an area.
 - Zoning districts and commercial overlays: one fact for each PLUTO zonedist1-4 and
   overlay1-2 value that is present. A missing zonedist1 gives an unknown district. A
   missing zonedist2-4 or overlay gives no fact, because SODA omits null fields, so its
@@ -58,6 +60,14 @@ from typing import Any
 
 from app.connectors.pluto_soda import DATASET_ID as PLUTO_DATASET_ID
 from app.connectors.pluto_soda import SOURCE_ID as PLUTO_SOURCE_ID
+from app.profile.existing_floor_area import (
+    BLOCKED_OUTPUTS as EXISTING_FLOOR_AREA_BLOCKS,
+)
+from app.profile.existing_floor_area import (
+    ExistingFloorAreaEvidence,
+    ExistingFloorAreaResult,
+    resolve_existing_zoning_floor_area,
+)
 from app.profile.measurement import RANK_CITY_RECORDS, RANK_UNKNOWN, measurement
 
 __all__ = [
@@ -97,7 +107,7 @@ BLOCKS: Mapping[str, tuple[str, ...]] = MappingProxyType({
     "lot_type": ("permitted_envelope", "building_option"),
     "zoning_district": _ZONING_OUTPUTS,
     "commercial_overlay": _ZONING_OUTPUTS,
-    "existing_zoning_floor_area": ("remaining_floor_area", "existing_building_paths"),
+    "existing_zoning_floor_area": EXISTING_FLOOR_AREA_BLOCKS,
 })
 
 # PLUTO unit strings (connector FIELD_UNITS, data dictionary p.21-22 and p.29) -> the
@@ -122,11 +132,14 @@ class SiteFactSet:
     ``facts`` are site_fact v1 documents. ``references`` are NOT contract documents:
     they hold city-recorded values that are shown for reference only (PLUTO building
     area and whole-lot frontage), each with a measurement and a site_fact-shaped
-    source, and marked ``"use": "reference_only"``."""
+    source, and marked ``"use": "reference_only"``. ``existing_floor_area`` says how
+    the existing zoning floor area fact was chosen (its basis and the figures set
+    aside)."""
 
     bbl: str
     facts: tuple[dict, ...]
     references: tuple[dict, ...]
+    existing_floor_area: ExistingFloorAreaResult | None = None
 
     def of_key(self, key: str) -> tuple[dict, ...]:
         return tuple(fact for fact in self.facts if fact["key"] == key)
@@ -441,21 +454,29 @@ def _text_facts(
     return facts
 
 
-def _existing_zoning_floor_area(view: _ProfileView) -> dict:
-    return _record(
-        view,
-        "existing_zoning_floor_area",
-        f"{view.bbl}:existing_zoning_floor_area",
-        value=None,
-        unit=None,
-        # The contract admits only a filing, an entry or an assumption here, never a
-        # city dataset, so no source was checked and none is named.
-        source=None,
-        note=(
-            "Needs existing zoning floor area: from a Buildings Department filing or "
-            "certificate of occupancy, or entered as a stated assumption. City-recorded "
-            "building area is never used for it."
-        ),
+def _recorded_building_count(view: _ProfileView) -> int | None:
+    """PLUTO NumBldgs as a whole number, or None when it is missing or unusable. Used
+    only to check that DOB filings cover every building on the lot."""
+    record = view.pluto.get("numbldgs")
+    if record is None or _problem(view, "numbldgs", record) is not None:
+        return None
+    value = record.get("normalized_value")
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, int | float)
+        or not math.isfinite(value)
+        or value < 0
+        or not float(value).is_integer()
+    ):
+        return None
+    return int(value)
+
+
+def _existing_zoning_floor_area(
+    view: _ProfileView, evidence: ExistingFloorAreaEvidence | None
+) -> ExistingFloorAreaResult:
+    return resolve_existing_zoning_floor_area(
+        view.bbl, evidence, recorded_building_count=_recorded_building_count(view)
     )
 
 
@@ -504,7 +525,10 @@ def _checked_streets(frontage_streets: Sequence[str]) -> tuple[str, ...]:
 
 
 def build_site_facts(
-    profile: Mapping[str, Any], *, frontage_streets: Sequence[str] = ()
+    profile: Mapping[str, Any],
+    *,
+    frontage_streets: Sequence[str] = (),
+    existing_floor_area: ExistingFloorAreaEvidence | None = None,
 ) -> SiteFactSet:
     """site_fact v1 records for the lot a built property profile describes.
 
@@ -514,6 +538,9 @@ def build_site_facts(
         frontage_streets: street names the lot fronts (from a later geometry step).
             Each gets a ``lot_frontage`` fact, which is unknown because city records
             give no per-street frontage.
+        existing_floor_area: DOB filing rows, a certificate of occupancy figure and/or
+            a stated assumption for this lot (``app.profile.existing_floor_area``).
+            None means none was supplied, so the existing zoning floor area is unknown.
 
     Returns:
         A :class:`SiteFactSet` with facts in a fixed order: lot area, frontages, lot
@@ -521,11 +548,12 @@ def build_site_facts(
         floor area. It also carries the reference-only values.
 
     Raises:
-        ValueError: the profile has no ``identity.bbl``, or a street name is blank or
-            repeated.
+        ValueError: the profile has no ``identity.bbl``, a street name is blank or
+            repeated, or the existing-floor-area evidence is malformed.
     """
     streets = _checked_streets(frontage_streets)
     view = _view(profile)
+    existing = _existing_zoning_floor_area(view, existing_floor_area)
     facts = [
         _dimension(view, "lot_area", "lotarea"),
         *_frontages(view, streets),
@@ -533,6 +561,11 @@ def build_site_facts(
         _lot_type(view),
         *_text_facts(view, "zoning_district", _ZONING_DISTRICT_COLUMNS, first_required=True),
         *_text_facts(view, "commercial_overlay", _OVERLAY_COLUMNS, first_required=False),
-        _existing_zoning_floor_area(view),
+        existing.fact,
     ]
-    return SiteFactSet(bbl=view.bbl, facts=tuple(facts), references=tuple(_references(view)))
+    return SiteFactSet(
+        bbl=view.bbl,
+        facts=tuple(facts),
+        references=tuple(_references(view)),
+        existing_floor_area=existing,
+    )
