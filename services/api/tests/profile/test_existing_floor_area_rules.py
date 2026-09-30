@@ -77,7 +77,8 @@ def resolve(*job_rows: dict, certificate_rows=(), co=None, assumption=None, coun
     )
     result = resolve_existing_zoning_floor_area(BBL, evidence, recorded_building_count=count)
     assert_valid_site_fact(result.fact)
-    assert result.fact["lot_bbl"] == BBL and result.scope == "tax_lot"
+    assert result.fact["lot_bbl"] == BBL
+    assert (result.scope, result.zoning_lot_scope) == ("tax_lot_as_stated", "not_established")
     return result
 
 
@@ -86,7 +87,8 @@ def assert_unknown(result, *reason_parts: str) -> None:
     assert (fact["value"], fact["unit"], fact["source"]) == (None, None, None)
     assert fact["measurement"] == {"rank": "unknown", "label": "Unknown — enter"}
     assert fact["blocks"] == ["remaining_floor_area", "existing_building_paths"]
-    assert (result.basis, result.basis_label) == ("unknown", "Unknown")
+    assert (result.basis, result.basis_label) == ("unknown", "Unknown — enter")
+    assert result.basis_label == fact["measurement"]["label"]
     assert result.reason
     for part in reason_parts:
         assert part in result.reason, (part, result.reason)
@@ -112,7 +114,14 @@ def test_dob_filing_for_completed_work_is_city_records_from_a_city_filing() -> N
     }
     assert fact["blocks"] == [] and fact["editable"] is True
     assert "signed off 01/15/2020" in fact["note"]
-    assert "covers tax lot 1000010100 only" in fact["note"]
+    assert ("Scope: stated for tax lot 1000010100; whether the figure covers only this tax "
+            "lot or a zoning lot of several tax lots is not established.") in fact["note"]
+    assert "only" not in fact["note"].split("Scope:")[1].split(";")[0]
+    assert result.completion == {
+        "kind": "dob_sign_off", "dataset": "DOB Job Application Filings (ic3t-wcy2)",
+        "query_ref": QUERY, "retrieved_at": AT,
+        "document_ref": "DOB BIS job 100000001, document 01", "job": "100000001",
+        "signed_off": "01/15/2020"}
     # The job's total construction floor area (15,000) is never the value.
     assert "15,000" not in fact["note"]
 
@@ -210,6 +219,12 @@ def test_certificate_row_naming_the_job_shows_the_work_completed() -> None:
     result = resolve(pending, certificate_rows=(issued_co(),))
     assert (result.basis, result.fact["value"]) == ("dob_job_filing", 12000)
     assert "certificate of occupancy 1000001-0000001 issued" in result.fact["note"]
+    assert result.completion == {
+        "kind": "certificate_of_occupancy",
+        "dataset": "DOB NOW: Certificate of Occupancy (pkdm-hqz6)",
+        "query_ref": "test-fixture-synthetic://pkdm-hqz6", "retrieved_at": AT,
+        "document_ref": "1000001-0000001", "job": "100000001",
+        "issued": "03/01/21  9:00:00 AM", "filing_type": "Final"}
 
 
 @pytest.mark.parametrize("co_row", [
@@ -269,9 +284,65 @@ def test_standing_building_without_a_figure_leaves_the_lot_total_unknown() -> No
 
 
 def test_completed_filings_that_disagree_give_unknown() -> None:
-    later = job("100000003", job_type="A1", proposed_zoning_sqft="14000")
+    later = job("100000003", job_type="A1", existing_zoning_sqft="12000",
+                proposed_zoning_sqft="14000", enlargement_sq_footage="2000")
     assert_unknown(resolve(job(), later), "Completed DOB filings for building 1000001 "
                                           "disagree")
+
+
+def test_signed_off_enlargement_alone_gives_its_figure() -> None:
+    enlarged = job("100000003", job_type="A1", existing_zoning_sqft="12000",
+                   proposed_zoning_sqft="14000", enlargement_sq_footage="2000")
+    assert resolve(enlarged).fact["value"] == 14000
+
+
+# ---------------------------------------------------------------------------
+# A figure must be shown to describe one building (zoning-lot figures fail closed)
+# ---------------------------------------------------------------------------
+
+# The shape of recorded DOB BIS job 421803891 (tax lot 4073340001), signed off here.
+ZONING_LOT_TEXT = ("ALTERATION -1 APPLICATION TO BE FILED UNDER TAX LOT #1 TO REFLECT ONE (1) "
+                   "ZONING LOT AND (2) TAX LOTS (LOT #1 &amp; #70). NO WORK TO BE DONE UNDER "
+                   "THIS APPLICATION.")
+
+
+@pytest.mark.parametrize(("overrides", "why"), [
+    ({"job_description": ZONING_LOT_TEXT}, "Its text mentions a zoning lot"),
+    ({"job_description": "NO WORK UNDER THIS APPLICATION."}, "It states no work"),
+    ({}, "states no enlargement but changes the zoning figure from 9,100 to 39,772"),
+])
+def test_filing_not_shown_to_describe_one_building_fails_closed(overrides, why) -> None:
+    alteration = job("100000004", job_type="A1", existing_zoning_sqft="9100",
+                     proposed_zoning_sqft="39772", **overrides)
+    for rows in ((alteration,), (job(), alteration)):  # alone, and beside the NB's 12,000
+        result = resolve(*rows)
+        assert_unknown(result, "DOB BIS job 100000004, document 01 for building 1000001 is "
+                               "not shown to describe this building alone", why)
+        assert 39772 in [entry["value"] for entry in result.considered]
+
+
+def test_new_building_without_zoning_lot_text_is_used() -> None:
+    # An NB changes the figure from 0 by definition; with no zoning-lot text it is used,
+    # but its zoning-lot scope is still stated as not established.
+    result = resolve(job(existing_zoning_sqft=None))
+    assert result.fact["value"] == 12000 and result.zoning_lot_mentions == ()
+
+
+def test_same_block_rows_mentioning_a_zoning_lot_are_cited_not_used() -> None:
+    other_lot = job("100000005", lot="00001", bbl="1000010001", bin__="1000009",
+                    job_type="A1", job_status_descrp="PLAN EXAM - DISAPPROVED",
+                    existing_zoning_sqft="9100", proposed_zoning_sqft="39772",
+                    job_description=ZONING_LOT_TEXT)
+    other_block = job("100000006", block="00002", bbl="1000020001", lot="00001",
+                      job_description=ZONING_LOT_TEXT)
+    result = resolve(job(), other_lot, other_block)
+    assert result.fact["value"] == 12000
+    (mention,) = result.zoning_lot_mentions
+    assert mention == {"document_ref": "DOB BIS job 100000005, document 01",
+                       "tax_lots": ["1000010001"], "text": ZONING_LOT_TEXT,
+                       "query_ref": QUERY, "retrieved_at": AT}
+    assert ("DOB BIS job 100000005, document 01 (tax lot 1000010001) mentions a zoning lot"
+            in result.fact["note"])
 
 
 def test_repeated_rows_that_disagree_are_set_aside() -> None:

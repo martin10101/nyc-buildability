@@ -20,8 +20,11 @@ that is not used is listed in ``considered`` with the reason, and a differing va
 also named in the note, so a disagreement stays visible.
 
 City-recorded building area (PLUTO/DOF BldgArea) is not an input here at all
-(``inputs`` admits no such value). The value covers one tax lot: the zoning lot may
-include other tax lots, which this module does not check or merge.
+(``inputs`` admits no such value). The value is stated for one tax lot as filed or
+given; whether it covers only that tax lot or a zoning lot of several tax lots is not
+established (``zoning_lot_scope`` = ``not_established``), and block rows that mention a
+zoning lot are cited. A zoning-lot step (B-07, B-09, B-11) must not add these values
+across tax lots without establishing their scope. This module does not merge zoning lots.
 
 Pure, deterministic code: no I/O.
 """
@@ -39,6 +42,7 @@ from app.profile.existing_floor_area.inputs import (
     ExistingFloorAreaEvidence,
     dataset_name,
 )
+from app.profile.existing_floor_area.scope import ZONING_LOT_SCOPE
 from app.profile.measurement import RANK_ASSUMED, RANK_CITY_RECORDS, RANK_UNKNOWN, measurement
 
 __all__ = [
@@ -51,6 +55,8 @@ __all__ = [
     "CERTIFICATE_DOCUMENT_DATASET",
     "KEY",
     "PRECEDENCE",
+    "SCOPE",
+    "ZONING_LOT_SCOPE",
     "ExistingFloorAreaResult",
     "resolve_existing_zoning_floor_area",
 ]
@@ -70,8 +76,10 @@ BASIS_LABELS = MappingProxyType({
     BASIS_CERTIFICATE: "Certificate of occupancy",
     BASIS_DOB_FILING: "DOB job filing",
     BASIS_ASSUMPTION: "Stated assumption",
-    BASIS_UNKNOWN: "Unknown",
+    # The site_fact 'unknown' measurement label (plan section 4), so both read the same.
+    BASIS_UNKNOWN: "Unknown — enter",
 })
+SCOPE = "tax_lot_as_stated"
 CERTIFICATE_DOCUMENT_DATASET = "DOB certificate of occupancy (document)"
 
 _BBL = re.compile(r"^[1-5][0-9]{9}$")
@@ -96,7 +104,14 @@ class ExistingFloorAreaResult:
         reason: why the value is unknown; None when it is known.
         considered: every figure seen but not used, each ``{basis, document_ref, bin,
             value, reason}``.
-        scope: always ``tax_lot``: the value never describes a zoning lot.
+        completion: for a DOB filing, the machine-readable evidence that its work was
+            completed (the sign-off or the certificate row, with dataset and query);
+            otherwise None.
+        zoning_lot_mentions: supplied DOB rows on the block whose text mentions a zoning
+            lot, each ``{document_ref, tax_lots, text, query_ref, retrieved_at}``.
+        scope: ``tax_lot_as_stated``: the value is stated for this tax lot.
+        zoning_lot_scope: ``not_established``: whether the value covers only this tax lot
+            or a zoning lot of several tax lots is not known.
     """
 
     fact: dict
@@ -104,7 +119,10 @@ class ExistingFloorAreaResult:
     basis_label: str
     reason: str | None
     considered: tuple[dict, ...]
-    scope: str = "tax_lot"
+    completion: dict | None = None
+    zoning_lot_mentions: tuple[dict, ...] = ()
+    scope: str = SCOPE
+    zoning_lot_scope: str = ZONING_LOT_SCOPE
 
 
 @dataclass(frozen=True)
@@ -211,8 +229,13 @@ def resolve_existing_zoning_floor_area(
                            recorded_building_count=recorded_building_count)
     considered = list(dob.set_aside)
     candidates = _candidates(evidence, dob)
-    scope = (f"It covers tax lot {bbl} only: the zoning lot may include other tax lots, "
-             "which is not checked here.")
+    mentions = dob.zoning_lot_mentions
+    scope = " ".join([
+        f"Scope: stated for tax lot {bbl}; whether the figure covers only this tax lot or a "
+        "zoning lot of several tax lots is not established.",
+        *(f"{m['document_ref']} (tax lot {', '.join(m['tax_lots'])}) mentions a zoning lot: "
+          f"'{m['text']}'." for m in mentions),
+    ])
 
     if not candidates:
         reason = " ".join([
@@ -220,10 +243,12 @@ def resolve_existing_zoning_floor_area(
             "supplied.",
             "No certificate of occupancy figure or stated assumption was entered.",
         ])
-        fact = _fact(bbl, value=None, rank=RANK_UNKNOWN, source=None,
-                     note=f"{_NEEDS} {reason}")
+        note = " ".join([_NEEDS, reason, *(
+            f"{m['document_ref']} (tax lot {', '.join(m['tax_lots'])}) mentions a zoning lot: "
+            f"'{m['text']}'." for m in mentions)])
+        fact = _fact(bbl, value=None, rank=RANK_UNKNOWN, source=None, note=note)
         return ExistingFloorAreaResult(fact, BASIS_UNKNOWN, BASIS_LABELS[BASIS_UNKNOWN],
-                                       reason, tuple(considered))
+                                       reason, tuple(considered), None, mentions)
 
     used, *others = candidates
     also = []
@@ -242,5 +267,6 @@ def resolve_existing_zoning_floor_area(
         also.append(f"DOB filings gave no figure: {dob.reason}")
     note = " ".join([used.description, *also, scope, _REFERENCE_ONLY])
     fact = _fact(bbl, value=used.value, rank=used.rank, source=used.source, note=note)
+    completion = dob.completion if used.basis == BASIS_DOB_FILING else None
     return ExistingFloorAreaResult(fact, used.basis, BASIS_LABELS[used.basis], None,
-                                   tuple(considered))
+                                   tuple(considered), completion, mentions)
