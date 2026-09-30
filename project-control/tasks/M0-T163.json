@@ -28,6 +28,7 @@
   ],
   "producer_agent": "orchestrator",
   "reviewer_agents": [
+    "code-reviewer",
     "security-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
