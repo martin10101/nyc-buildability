@@ -21,8 +21,17 @@ export const DRAFT_RULES_NOTE = "These numbers come from draft rules that a qual
 export const WITHHELD_NOTE = "Results are withheld until the site is confirmed.";
 export const MEASUREMENTS_NOTE = "Lot measurements come from city records, not a survey.";
 
+/** Plan §5a items 1 and 3: the visible mark on the draft-rule numbers (cap and FAR). It is the
+ * first strip item whenever such a number is shown, never beside the number (D-05 marks its
+ * results heading the same way). */
+export const DRAFT_MARK = "Draft — not reviewed";
+
 export const SITE_REVIEW_REASON = "the site needs review first";
 export const NO_RESULTS_REASON = "no rule results for this property";
+export const LOADING_REASON = "the results are still loading";
+export const OTHER_PROPERTY_REASON = "the results belong to another property";
+export const SCENARIO_MISMATCH_REASON = "the scenario belongs to another property";
+export const RULE_DETAILS_REASON = "the rule details are incomplete";
 
 export function notAvailable(reason: string): string {
   return `Not available — ${reason}`;
@@ -38,9 +47,9 @@ export function zoningLotNotice(multiLot: boolean): string {
 // listed are already plain English and are used as they are.
 const CALCULATION_REASONS: Record<string, string> = {
   "Draft assessment": "not calculated for this property yet",
-  "Property identity mismatch": "the results belong to another property",
+  "Property identity mismatch": OTHER_PROPERTY_REASON,
   "Analysis records differ": "the rule and scenario records do not match",
-  "Rule details incomplete": "the rule details are incomplete",
+  "Rule details incomplete": RULE_DETAILS_REASON,
   "Rule result unavailable": "the rule result is unavailable",
   "Scenario integrity check failed": "the scenario check failed",
   "Rule source support incomplete": "the rule sources are incomplete",
@@ -75,6 +84,17 @@ export function referenceReason(status: ResidentialReference["status"]): string 
   return REFERENCE_REASONS[status];
 }
 
+/** Why the entry passes the panels no rule results, or null when the panels' own guard status
+ * applies. Results still loading, or returned for another property, are never "no rule results". */
+export function analysisReason({ loading, evaluationMismatch, scenarioMismatch, evaluationIncomplete }: {
+  loading: boolean; evaluationMismatch: boolean; scenarioMismatch: boolean; evaluationIncomplete: boolean;
+}): string | null {
+  if (evaluationMismatch) return OTHER_PROPERTY_REASON;
+  if (scenarioMismatch) return SCENARIO_MISMATCH_REASON;
+  if (evaluationIncomplete) return RULE_DETAILS_REASON;
+  return loading ? LOADING_REASON : null;
+}
+
 export interface DashboardNotice { text: string; tool: DashboardTool }
 
 function plural(count: number, noun: string): string {
@@ -99,7 +119,7 @@ export function dashboardNotices(profile: PropertyProfile, condo: CondoSurfaceDe
 }
 
 export interface DashboardStatus {
-  /** The strip line: at most STRIP_LIMIT short items. */
+  /** The strip line: exactly STRIP_LIMIT short items. */
   items: string[];
   /** What the strip items mean, shown behind the strip. */
   notes: string[];
@@ -110,11 +130,13 @@ export interface DashboardStatus {
 export function dashboardStatus({ withheld, calculated, multiLot, baseLots }: {
   withheld: boolean; calculated: boolean; multiLot: boolean; baseLots: number;
 }): DashboardStatus {
-  const basis = withheld ? "Results withheld" : calculated ? "Draft zoning maximum" : "Zoning maximum not available";
+  // Fail safe: a shown draft number always carries the draft mark, whatever else is set.
+  const basis = calculated ? DRAFT_MARK : withheld ? "Results withheld" : "Zoning maximum not available";
   const lots = multiLot ? plural(baseLots, "lot") + " on record" : "Lot you entered";
-  const notes = [withheld ? WITHHELD_NOTE : calculated ? DRAFT_RULES_NOTE : null, MEASUREMENTS_NOTE].filter((note): note is string => note !== null);
+  const notes = [calculated ? DRAFT_RULES_NOTE : withheld ? WITHHELD_NOTE : null, MEASUREMENTS_NOTE].filter((note): note is string => note !== null);
   return {
-    items: [basis, "City-record measurements", lots].slice(0, STRIP_LIMIT),
+    // Not trimmed: a fourth item must fail the strip test, not vanish silently.
+    items: [basis, "City-record measurements", lots],
     notes,
     standing: [NOT_AN_APPROVAL, FLOOR_AREA_REMINDER, zoningLotNotice(multiLot), DISTRICT_INCOMPLETE],
   };

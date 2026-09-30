@@ -310,9 +310,14 @@ test("a foreign condo outline remains withheld instead of filling the missing pa
 // Plan §5a item 2, word for word.
 const FLOOR_AREA_REMINDER = "Make sure this floor area is available for use. Confirm with the owner or developer that none of it was sold or merged with another lot.";
 
-// D-03 (M1-17, plan §5a): one status strip at the top of the results with at most three items,
-// standing notices behind it, the supported maximum as a large number with no caution chip,
-// at most three notices on screen, readable text and no internal codes.
+// The mark on the draft-rule numbers (review B1 of PR #267), and the strip line's one name.
+const DRAFT_MARK = "Draft — not reviewed";
+const STRIP_NAME = `${DRAFT_MARK}, City-record measurements, Lot you entered. Details`;
+
+// D-03 (M1-17, plan §5a): one status strip at the top of the results with exactly three items,
+// the first marking the draft-rule numbers without a tap, standing notices behind it, the
+// supported maximum as a large number with no caution chip, at most three notices on screen,
+// readable text and no internal codes.
 test("the dashboard follows plan §5a: one strip, notices behind it, readable text", async ({ page }, info) => {
   await page.setViewportSize({ width: 1440, height: 960 });
   await page.goto("/property/workspace?ruleeval=on&bbl=1000010100");
@@ -321,13 +326,22 @@ test("the dashboard follows plan §5a: one strip, notices behind it, readable te
   const summary = page.getByRole("region", { name: "Development limits summary" });
   for (const chip of ["Conditional", "DRAFT", "Draft rule"]) await expect(summary).not.toContainText(chip);
   await expect(page.getByRole("region", { name: "Results status" })).toHaveCount(1);
+  const strip = page.getByTestId("dashboard-status-strip");
   const items = page.getByTestId("dashboard-status-item");
-  expect(await items.count()).toBeLessThanOrEqual(3);
-  await expect(items.first()).toHaveText("Draft zoning maximum");
-  expect(await page.getByRole("list", { name: "Needs attention" }).getByRole("listitem").count()).toBeLessThanOrEqual(3);
+  // Exactly these three items (a fourth fails), with the draft mark visible before any tap,
+  // on the strip line and not beside the number (plan §5a items 1 and 3).
+  await expect(items).toHaveText([DRAFT_MARK, "City-record measurements", "Lot you entered"]);
+  await expect(strip).toHaveAttribute("aria-expanded", "false");
+  await expect(strip.getByText(DRAFT_MARK, { exact: true })).toBeVisible();
+  await expect(summary.getByText(DRAFT_MARK)).toHaveCount(0);
+  await expect(strip).toHaveAccessibleName(STRIP_NAME);
+  // At most three notices on screen: a fourth list item never appears (auto-retrying).
+  await expect(page.getByRole("list", { name: "Needs attention" }).getByRole("listitem").nth(3)).toHaveCount(0);
   const reminder = page.getByText(FLOOR_AREA_REMINDER, { exact: true });
   await expect(reminder).toBeHidden();
-  await page.getByTestId("dashboard-status-strip").click();
+  await strip.click();
+  await expect(strip).toHaveAttribute("aria-expanded", "true");
+  await expect(strip).toHaveAccessibleName(STRIP_NAME);
   await expect(reminder).toBeVisible();
   await expect(page.getByText("This is not a Buildings Department approval.", { exact: true })).toBeVisible();
   // No visible body or note text under 14 px outside the map (plan §5a item 5).

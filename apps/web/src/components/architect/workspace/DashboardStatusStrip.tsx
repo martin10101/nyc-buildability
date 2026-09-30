@@ -9,6 +9,7 @@ import type { DashboardTool } from "./types";
  * and 6). One line of at most three short items; tapping it opens the details behind it: what
  * the items mean and the standing notices, which are never repeated beside a number. Up to three
  * notices that need attention show under the line; more are grouped as one "Notes (N)" item.
+ * The line's name stays the same when it opens or closes; `aria-expanded` carries that state.
  */
 export function DashboardStatusStrip({ status, notices, onOpen }: {
   status: DashboardStatus;
@@ -18,18 +19,17 @@ export function DashboardStatusStrip({ status, notices, onOpen }: {
   const [open, setOpen] = useState(false);
   const panel = useId();
   const items = status.items.slice(0, STRIP_LIMIT);
-  const toggle = open ? "Hide details" : "Details";
   const grouped = notices.length > STRIP_LIMIT;
   const noticeButton = (notice: DashboardNotice) => <li key={notice.text}>
     <button type="button" onClick={() => onOpen(notice.tool)}>{notice.text} <span aria-hidden="true">↗</span></button>
   </li>;
   return <section className="bd-status-strip" aria-label="Results status">
-    <button type="button" className="bd-strip-line" data-testid="dashboard-status-strip" aria-label={`${items.join(", ")}. ${toggle}`}
+    <button type="button" className="bd-strip-line" data-testid="dashboard-status-strip" aria-label={`${items.join(", ")}. Details`}
       aria-expanded={open} aria-controls={panel} onClick={() => setOpen(value => !value)}>
       <span className="bd-strip-items">{items.map((item, index) => <Fragment key={item}>
         {index ? <span aria-hidden="true"> · </span> : null}<span className="bd-strip-item" data-testid="dashboard-status-item">{item}</span>
       </Fragment>)}</span>
-      <span className="bd-strip-toggle">{toggle}</span>
+      <span className="bd-strip-toggle">Details</span>
     </button>
     {notices.length ? <ul className="bd-strip-notices" aria-label="Needs attention">
       {grouped ? <li><button type="button" aria-controls={panel} aria-expanded={open} onClick={() => setOpen(value => !value)}>Notes ({notices.length})</button></li> : notices.map(noticeButton)}

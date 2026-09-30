@@ -24,6 +24,7 @@ import { DashboardSearch } from "./DashboardSearch";
 import { DashboardPanels } from "./DashboardPanels";
 import { DashboardMap } from "./DashboardMap";
 import { DashboardTools } from "./DashboardTools";
+import { analysisReason } from "./dashboard-status";
 import { FloatingWorkspaceWindow } from "./FloatingWorkspaceWindow";
 import { DASHBOARD_TOOLS, TOOL_LABELS, dashboardHref, readDashboardTool, type DashboardTool } from "./types";
 
@@ -44,6 +45,15 @@ function LoadedDashboard({ profile, initialTool, surveyEnabled, proposalEditorEn
   const associationMismatch = !!((returnedScenario && !matchingScenario) || (returnedEvaluation && !identityEvaluation));
   const scenario = condo.withholdAllowances || associationMismatch ? null : matchingScenario;
   const evaluation = condo.withholdAllowances || associationMismatch ? null : inspectableEvaluation;
+  const analysisLoading = !analysis.scenario || !analysis.evaluation;
+  // Plan §5a item 3: a missing number names its true reason, never "no rule results" while the
+  // analysis loads or when only the scenario belongs to another property.
+  const resultsReason = analysisReason({
+    loading: analysisLoading,
+    evaluationMismatch: !!returnedEvaluation && !identityEvaluation,
+    scenarioMismatch: !!returnedScenario && !matchingScenario,
+    evaluationIncomplete: !!identityEvaluation && !inspectableEvaluation,
+  });
   const [address, setAddress] = useState<SelectedAddress | null>(null);
   const [tool, setTool] = useState<DashboardTool | null>(initialTool === "envelope" ? "proposal" : initialTool);
   const [focusEnvelope, setFocusEnvelope] = useState(initialTool === "envelope");
@@ -83,10 +93,10 @@ function LoadedDashboard({ profile, initialTool, surveyEnabled, proposalEditorEn
       <IncompleteEvaluationNotice evaluation={identityEvaluation}/>
       {analysis.scenario && analysis.scenario.kind !== "scenario" && analysis.scenario.kind !== "aborted" ? <details><summary>Scenario unavailable · retry or inspect</summary><ScenarioFailureStates outcome={analysis.scenario} onRetry={analysis.retryScenario}/></details> : null}
       {analysis.evaluation && analysis.evaluation.kind !== "evaluation" ? <details><summary>Rule evaluation unavailable · retry or inspect</summary><RuleEvaluationFailure outcome={analysis.evaluation} onRetry={analysis.retryEvaluation}/></details> : null}
-      {!analysis.scenario || !analysis.evaluation ? <p className="section-note" role="status">Loading analysis… Property records remain available.</p> : null}
+      {analysisLoading ? <p className="section-note" role="status">Loading analysis… Property records remain available.</p> : null}
     </div>
     {address && profile.identity.address?.normalized_address && profile.identity.address.normalized_address !== address.label ? <p className="dashboard-address-alias" data-testid="representative-address">City records list this lot as {profile.identity.address.normalized_address}</p> : null}
-    <DashboardPanels profile={profile} scenario={scenario} evaluation={evaluation} condo={condo} label={label} map={<DashboardMap bbl={bbl} condo={condo} compact/>} onOpen={open} onInspect={inspect} proposalEditorEnabled={proposalEditorEnabled}/>
+    <DashboardPanels profile={profile} scenario={scenario} evaluation={evaluation} condo={condo} label={label} map={<DashboardMap bbl={bbl} condo={condo} compact/>} onOpen={open} onInspect={inspect} proposalEditorEnabled={proposalEditorEnabled} resultsReason={resultsReason}/>
     {DASHBOARD_TOOLS.filter(value => value !== "envelope").map(value => <FloatingWorkspaceWindow key={value} id={`workspace-${value}`} title={TOOL_LABELS[value]} open={tool === value} onClose={() => setTool(null)} wide={["map", "proposal", "study", "report", "evidence"].includes(value)}>
       {tool === value || PERSISTENT_TOOLS.includes(value) ? <DashboardTools tool={value} profile={profile} scenario={scenario} evaluation={evaluation} returnedScenario={returnedScenario} returnedEvaluation={returnedEvaluation} condo={condo} address={address} label={label} selection={selection} onSelectEvidence={setSelection} onInspect={inspect} onOpen={open} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled} focusEnvelope={focusEnvelope} envelopeRequest={envelopeRequest}/> : null}
     </FloatingWorkspaceWindow>)}

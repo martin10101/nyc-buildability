@@ -42,6 +42,9 @@ export interface DashboardPanelsProps {
   /** Server-read INTERNAL_PROPOSAL_EDITOR_ENABLED (D-01, plan §7). Absent -> off:
    * the "Envelope" and "Draw a proposal" entries are hidden. */
   proposalEditorEnabled?: boolean;
+  /** Why the entry passes no rule results, when it knows (still loading, or returned for another
+   * property); from `analysisReason`. Absent or null: the guard's own status gives the reason. */
+  resultsReason?: string | null;
 }
 
 /** Plan §5a item 3: beside a value, only an exception that changes how to read it. The usual
@@ -100,7 +103,7 @@ function DashboardFact({ field, fact, profile, onInspect, onOpen }: {
  * union, inferred dimensional limit or new legal decision lives in this view.
  * Plan §5a: one status strip on top of the results, standing notices behind it, and
  * "Not available — <reason>" in place of any number the guards withhold. */
-export function DashboardPanels({ profile, scenario, evaluation, condo, label, map, onOpen, onInspect, proposalEditorEnabled = false }: DashboardPanelsProps) {
+export function DashboardPanels({ profile, scenario, evaluation, condo, label, map, onOpen, onInspect, proposalEditorEnabled = false, resultsReason = null }: DashboardPanelsProps) {
   const bbl = profile.identity.bbl;
   // Keep the accepted condo guard monotonic on every computed summary, including
   // the bulk/status rows. A fetched scenario can never override this decision.
@@ -113,10 +116,11 @@ export function DashboardPanels({ profile, scenario, evaluation, condo, label, m
   const reference = residentialReference(profile);
   const sourceAction = () => reference.records.length === 1 && reference.status !== "Conflicting records"
     ? onInspect(reference.records[0].provenance_id) : onOpen("evidence");
-  // The withheld reason reads the guard's own status; a scenario for another record set
+  // The withheld reason is the true one: the site review first, then what the entry knows
+  // (loading, another property), then the guard's own status; a scenario for another record set
   // names that mismatch rather than a generic "not calculated".
-  const reason = condo.withholdAllowances ? SITE_REVIEW_REASON : !shownEvaluation ? NO_RESULTS_REASON
-    : calculationReason(calculationStatus(shownEvaluation, shownScenario, bbl));
+  const reason = condo.withholdAllowances ? SITE_REVIEW_REASON : resultsReason ?? (!shownEvaluation ? NO_RESULTS_REASON
+    : calculationReason(calculationStatus(shownEvaluation, shownScenario, bbl)));
   const records = condo.recordsView;
   const multiLot = records?.outcome === "multi_lot_set";
   const hasDistricts = !!(profile.zoning.districts?.length || profile.zoning.commercial_overlays?.length || profile.zoning.special_districts?.length);
