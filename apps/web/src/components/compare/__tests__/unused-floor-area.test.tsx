@@ -23,6 +23,12 @@ import {
  *   S2/S3/S4 — the three honest render states on the Compare screen, driven by
  *        an injected fetch over the shared fixtures + locally-derived computed /
  *        over_built variants. AS-7 discipline: no network, no Supabase.
+ *
+ * D-06 (plan §3 step 4, M2-07; set-aside item #6): the section is SET ASIDE
+ * behind the default-off server flag INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED.
+ * These tests keep proving the kept component, so they render the Compare screen
+ * with the flag ON. The flag-off default and the A-03 "not available" state are
+ * pinned in unused-floor-area-set-aside.test.tsx.
  */
 
 afterEach(() => {
@@ -32,7 +38,11 @@ afterEach(() => {
 
 function renderCompare(body: Record<string, unknown>) {
   return render(
-    <CompareScreen bbl={FIXTURE_BBL} fetchImpl={stubFetch(jsonResponse(body, 200))} />,
+    <CompareScreen
+      bbl={FIXTURE_BBL}
+      fetchImpl={stubFetch(jsonResponse(body, 200))}
+      unusedFloorAreaSectionEnabled
+    />,
   );
 }
 
