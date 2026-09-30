@@ -34,7 +34,7 @@ function constants(draft: ProposalDraft): string[] {
 }
 
 describe("validateDraft — mirror of the route boundary caps (each names its route constant)", () => {
-  it("passes a clean rectangle sample", () => {
+  it("passes a clean rectangle sample (example fixture only; never a real-property seed)", () => {
     expect(validateDraft(rectangleSampleDraft())).toEqual([]);
   });
 
@@ -110,6 +110,45 @@ describe("validateDraft — mirror of the route boundary caps (each names its ro
   it("flags a non-finite vertex coordinate", () => {
     const draft = updateVertex(rectangleSampleDraft(), 0, { x: Number.NaN });
     expect(constants(draft).some((c) => c.includes("finiteness"))).toBe(true);
+  });
+
+  it("flags an unknown (non-finite) floor-to-floor height naming _validate_levels finiteness (D-01)", () => {
+    const draft = addLevel(emptyDraft(), { level_index: 0, floor_count: 1, floor_to_floor_ft: Number.NaN });
+    expect(constants(draft)).toEqual(["_validate_levels finiteness"]);
+    expect(validateDraft(draft)[0].field).toBe("proposed_massing.levels[0].floor_to_floor_ft");
+  });
+});
+
+describe("emptyDraft — the only starting point for a real property (D-01, M1-06b)", () => {
+  it("carries no example values: no geometry, and every lot input unknown (never 0)", () => {
+    const draft = emptyDraft();
+    expect(draft.vertices).toEqual([]);
+    expect(draft.levels).toEqual([]);
+    expect(draft.exterior_walls).toEqual([]);
+    expect(draft.lot_line_segments).toEqual([]);
+    expect(draft.street_lines).toEqual([]);
+    expect(draft.lot_area_sq_ft).toBeNull();
+    expect(draft.zoning_district).toBe("");
+    expect(draft.street_width_class).toBe("");
+    expect(draft.proposal_id).toBe("");
+    expect(draft.area_provenance_note).toBe("");
+  });
+
+  it("differs from the example rectangle in every example-bearing field", () => {
+    const example = rectangleSampleDraft();
+    const draft = emptyDraft();
+    expect(draft.scenario_label).not.toBe(example.scenario_label);
+    expect(draft.lot_area_sq_ft).not.toBe(example.lot_area_sq_ft);
+    expect(draft.zoning_district).not.toBe(example.zoning_district);
+    expect(draft.street_width_class).not.toBe(example.street_width_class);
+  });
+
+  it("assembles a request that carries no example lot facts", () => {
+    const req = toProposalCheckRequest(emptyDraft());
+    expect(req.lot.area_sq_ft).toBeNull();
+    expect(req.lot_rule_facts).toEqual({});
+    expect(req.proposed_massing.outline.vertices).toEqual([]);
+    expect(req.proposal_id).toBeNull();
   });
 });
 

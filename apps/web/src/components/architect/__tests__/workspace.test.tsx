@@ -122,3 +122,25 @@ describe("M5-T119 — shell phone-width environment + review strip", () => {
     expect(document.querySelector(".architect-environment")).not.toBeNull();
   });
 });
+
+/* D-01 (plan §7 "not a design tool"): the proposal editor is set aside behind the
+ * default-off server flag INTERNAL_PROPOSAL_EDITOR_ENABLED; the shell's primary
+ * navigation offers it only when the flag is on. */
+describe("D-01 — proposal editor set aside from the primary navigation", () => {
+  afterEach(cleanup);
+  it("omits Proposal editor from the primary navigation by default (flag absent = off)", () => {
+    render(<ArchitectShell bbl="1000010010" active="overview"><p>Workspace child</p></ArchitectShell>);
+    const nav = screen.getByRole("navigation", { name: "Architect workspace" });
+    expect(within(nav).queryByText("Proposal editor")).toBeNull();
+    expect(within(nav).getByRole("link", { name: "Report" })).toBeInTheDocument();
+  });
+  it("omits it without a property too (no unavailable placeholder left behind)", () => {
+    render(<ArchitectShell active="search"><p>Search child</p></ArchitectShell>);
+    expect(within(screen.getByRole("navigation", { name: "Architect workspace" })).queryByText("Proposal editor")).toBeNull();
+  });
+  it("offers it only when the server flag is on", () => {
+    render(<ArchitectShell bbl="1000010010" active="overview" proposalEditorEnabled><p>Workspace child</p></ArchitectShell>);
+    const nav = screen.getByRole("navigation", { name: "Architect workspace" });
+    expect(within(nav).getByRole("link", { name: "Proposal editor" })).toHaveAttribute("href", "/property?ruleeval=on&bbl=1000010010&view=proposal");
+  });
+});

@@ -28,6 +28,9 @@ export interface DashboardPanelsProps {
   map: ReactNode;
   onOpen: (tool: DashboardTool) => void;
   onInspect: (id: string) => void;
+  /** Server-read INTERNAL_PROPOSAL_EDITOR_ENABLED (D-01, plan §7). Absent -> off:
+   * the "Envelope", "Draw a proposal" and "Buildable envelope" entries are hidden. */
+  proposalEditorEnabled?: boolean;
 }
 
 const COVERAGE: Record<CoverageStatus, string> = {
@@ -72,7 +75,7 @@ function DashboardFact({ field, fact, profile, onInspect, onOpen }: {
 
 /** A display of existing records and guarded outputs. No FAR arithmetic, parcel
  * union, inferred dimensional limit or new legal decision lives in this view. */
-export function DashboardPanels({ profile, scenario, evaluation, condo, label, map, onOpen, onInspect }: DashboardPanelsProps) {
+export function DashboardPanels({ profile, scenario, evaluation, condo, label, map, onOpen, onInspect, proposalEditorEnabled = false }: DashboardPanelsProps) {
   const bbl = profile.identity.bbl;
   // Keep the accepted condo guard monotonic on every computed summary, including
   // the bulk/status rows. A fetched scenario can never override this decision.
@@ -153,7 +156,7 @@ export function DashboardPanels({ profile, scenario, evaluation, condo, label, m
         <div className="bd-detail-shortcuts" role="group" aria-label="Development details">
           <button type="button" onClick={() => onOpen("zoning")}>FAR &amp; rules</button>
           <button type="button" onClick={() => onOpen("zoning")}>Height &amp; yards</button>
-          <button type="button" onClick={() => onOpen("envelope")}>Envelope</button>
+          {proposalEditorEnabled ? <button type="button" onClick={() => onOpen("envelope")}>Envelope</button> : null}
           <button type="button" onClick={() => onOpen("units")}>Units</button>
         </div>
         <button type="button" className="bd-assessment-note" onClick={() => onOpen("zoning")}><span aria-hidden="true">△</span> {status} <span aria-hidden="true">↗</span></button>
@@ -199,7 +202,7 @@ export function DashboardPanels({ profile, scenario, evaluation, condo, label, m
       <section className="bd-card" aria-label="Quick actions"><div className="bd-card-heading"><h2>Quick actions</h2></div><div className="bd-actions">
         <button type="button" className="bd-primary-action" onClick={() => onOpen("report")}><span aria-hidden="true">▤</span> Report preview</button>
         <button type="button" onClick={() => onOpen("map")}><span aria-hidden="true">⌖</span> Open map</button>
-        <button type="button" onClick={() => onOpen("proposal")}><span aria-hidden="true">◇</span> Draw a proposal</button>
+        {proposalEditorEnabled ? <button type="button" onClick={() => onOpen("proposal")}><span aria-hidden="true">◇</span> Draw a proposal</button> : null}
         <button type="button" onClick={() => onOpen("study")}><span aria-hidden="true">▦</span> Parcel study</button>
         <button type="button" onClick={() => onOpen("scenarios")}><span aria-hidden="true">▥</span> Scenarios</button>
       </div></section>
@@ -208,7 +211,7 @@ export function DashboardPanels({ profile, scenario, evaluation, condo, label, m
         <li><span className="bd-status-dot bd-status-record" aria-hidden="true"/><button type="button" onClick={() => onOpen("facts")}>Property record<span>Loaded</span></button></li>
         <li><span className={`bd-status-dot${stale ? " bd-status-review" : ""}`} aria-hidden="true"/><button type="button" onClick={() => onOpen("evidence")}>Source freshness<span>{stale ? "Stale" : profile.reproducibility?.staleness ? "Not flagged stale" : "Not supplied"}</span></button></li>
         <li><span className="bd-status-dot bd-status-review" aria-hidden="true"/><button type="button" onClick={() => onOpen("zoning")}>FAR calculation<span>{condo.withholdAllowances ? "Withheld" : far ? "Draft result" : "Not calculated"}</span></button></li>
-        <li><span className="bd-status-dot" aria-hidden="true"/><button type="button" onClick={() => onOpen("envelope")}>Buildable envelope<span>Not assessed</span></button></li>
+        {proposalEditorEnabled ? <li><span className="bd-status-dot" aria-hidden="true"/><button type="button" onClick={() => onOpen("envelope")}>Buildable envelope<span>Not assessed</span></button></li> : null}
         <li><span className="bd-status-dot" aria-hidden="true"/><button type="button" onClick={() => onOpen("units")}>Unit estimate<span>Not calculated</span></button></li>
       </ul></section>
 
