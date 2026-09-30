@@ -1,0 +1,431 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/site_fact.schema.json",
+  "title": "Site Fact",
+  "description": "v1 contract (task M5-T125, directive D-090 Wave 0; derived lane plan docs/lanes/PARALLEL_BUILD_PLAN.md section 5) for ONE site value of a study: lot area, frontage on one street, depth, lot type, zoning district, commercial overlay, street width, or existing ZONING floor area (plan docs/PRODUCT_PLAN_CURRENT_2026-09-28.md section 3 steps 3-4, section 4, section 9, task M1-07). A value is either (a) KNOWN - a number or text with its unit, one of five measurement ranks and a non-null source - or (b) UNKNOWN - value null, unit null, rank 'unknown', label 'Unknown — enter', and a non-empty 'blocks' list naming what it blocks (plan section 9: 'Unknowns stay unknown ... name what they block'). An unknown is NEVER encoded as 0: a known value must carry a source, and dimensions (lot area, frontage, depth, street width) must be strictly positive, so a bare 0 fails validation. The display label is tied to its rank (plan section 4 table), and each rank admits only the source kinds that can produce it. Existing zoning floor area may come only from a Buildings Department filing or certificate of occupancy, an architect entry, or a stated assumption - never from a city dataset such as PLUTO/DOF building area (plan section 3 step 4, section 8, task M2-07) - and it is strictly positive: a site without a building uses study option existing_building_plan 'no_existing_building', so a 0 can never silently make remaining capacity equal the full allowance. Coordinates never appear here (plan section 4).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "fact_id",
+    "key",
+    "lot_bbl",
+    "street",
+    "value",
+    "unit",
+    "measurement",
+    "source",
+    "blocks",
+    "editable"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published site_fact contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "fact_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "Stable id of this fact within its study. Results list the fact ids they depend on (results.depends_on_fact_ids) so a change to this fact marks every dependent result out of date (plan section 9, dependency-based invalidation)."
+    },
+    "key": {
+      "type": "string",
+      "enum": [
+        "lot_area",
+        "lot_frontage",
+        "lot_depth",
+        "lot_type",
+        "zoning_district",
+        "commercial_overlay",
+        "street_width",
+        "existing_zoning_floor_area"
+      ],
+      "description": "Which site value this is (plan section 3 step 3: lot area, frontage on each street, depth, lot type, zoning district(s), street widths; step 4: existing zoning floor area). CLOSED enum; new keys are added additively. A site with several districts or streets carries one fact per district or street."
+    },
+    "lot_bbl": {
+      "description": "The tax lot this value belongs to, or null when it describes the whole selected site (a combined multi-lot value, plan section 4 'Multi-lot sites').",
+      "anyOf": [
+        { "$ref": "common.schema.json#/$defs/bbl" },
+        { "type": "null" }
+      ]
+    },
+    "street": {
+      "description": "Street name for per-street values (lot_frontage and street_width REQUIRE it; plan section 3 step 3 'frontage on each street'); null for every other key.",
+      "anyOf": [
+        { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        { "type": "null" }
+      ]
+    },
+    "value": {
+      "type": ["number", "string", "null"],
+      "description": "The value: a number for areas and lengths, text for lot type, district and overlay; null ONLY when the rank is 'unknown'. Never NaN/Infinity (strict JSON)."
+    },
+    "unit": {
+      "description": "Unit of a numeric value: square_feet for areas, feet for lengths; null for text values and for unknowns.",
+      "anyOf": [
+        { "type": "string", "enum": ["square_feet", "feet"] },
+        { "type": "null" }
+      ]
+    },
+    "measurement": {
+      "$ref": "#/$defs/measurement"
+    },
+    "source": {
+      "description": "Where the value came from (dataset, dataset version, retrieval or entry time, query or document reference). REQUIRED (non-null) for every known value; for an unknown it may name the source that was checked and returned nothing, or be null.",
+      "anyOf": [
+        { "$ref": "#/$defs/source" },
+        { "type": "null" }
+      ]
+    },
+    "blocks": {
+      "type": "array",
+      "description": "What this value blocks while it is unknown (plan section 9). Non-empty for rank 'unknown'; empty for every known value. For street_width the blocked outputs are not withheld: they are computed once per wide/narrow case and shown side by side, marked 'Needs street width' (plan section 4), each case a results document carrying results.street_width_case that names this fact.",
+      "items": { "$ref": "#/$defs/blocked_output" }
+    },
+    "editable": {
+      "type": "boolean",
+      "description": "Whether the architect may edit this value on screen (plan section 3 step 3: 'Each shows its source and can be edited'). An edit becomes a new fact with rank 'entered' or 'survey_entered'; the city value is never overwritten in place."
+    },
+    "note": {
+      "type": ["string", "null"],
+      "description": "Optional plain-English note for details (plan section 5a item 4). Never a substitute for the machine-readable fields."
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key; it is allowed (optional) so an invalid fixture fails only for its stated defect under additionalProperties:false."
+    }
+  },
+  "allOf": [
+    {
+      "description": "Rank rules: each rank admits only the source kinds that can produce it; every known rank needs a non-null value, a non-null source and an empty 'blocks' list; 'unknown' needs value null, unit null and a non-empty 'blocks' list.",
+      "oneOf": [
+        {
+          "properties": {
+            "measurement": { "properties": { "rank": { "const": "survey_entered" } } },
+            "value": { "type": ["number", "string"] },
+            "source": { "type": "object", "properties": { "kind": { "const": "survey" } } },
+            "blocks": { "maxItems": 0 }
+          }
+        },
+        {
+          "properties": {
+            "measurement": { "properties": { "rank": { "const": "city_records" } } },
+            "value": { "type": ["number", "string"] },
+            "source": { "type": "object", "properties": { "kind": { "enum": ["city_dataset", "city_filing"] } } },
+            "blocks": { "maxItems": 0 }
+          }
+        },
+        {
+          "properties": {
+            "measurement": { "properties": { "rank": { "const": "approximate_tax_map" } } },
+            "value": { "type": ["number", "string"] },
+            "source": { "type": "object", "properties": { "kind": { "const": "tax_map_computation" } } },
+            "blocks": { "maxItems": 0 }
+          }
+        },
+        {
+          "properties": {
+            "measurement": { "properties": { "rank": { "const": "entered" } } },
+            "value": { "type": ["number", "string"] },
+            "source": { "type": "object", "properties": { "kind": { "const": "architect_entry" } } },
+            "blocks": { "maxItems": 0 }
+          }
+        },
+        {
+          "properties": {
+            "measurement": { "properties": { "rank": { "const": "assumed" } } },
+            "value": { "type": ["number", "string"] },
+            "source": { "type": "object", "properties": { "kind": { "const": "assumption" } } },
+            "blocks": { "maxItems": 0 }
+          }
+        },
+        {
+          "properties": {
+            "measurement": { "properties": { "rank": { "const": "unknown" } } },
+            "value": { "type": "null" },
+            "unit": { "type": "null" },
+            "blocks": { "minItems": 1 }
+          }
+        }
+      ]
+    },
+    {
+      "description": "Key rules: value type, unit and street per key. Dimensions are strictly positive (a 0 is never a real lot area, frontage, depth or street width, so it can only be an unknown in disguise).",
+      "oneOf": [
+        {
+          "properties": {
+            "key": { "const": "lot_area" },
+            "street": { "type": "null" }
+          },
+          "anyOf": [
+            { "properties": { "value": { "type": "number", "exclusiveMinimum": 0 }, "unit": { "const": "square_feet" } } },
+            { "properties": { "value": { "type": "null" }, "unit": { "type": "null" } } }
+          ]
+        },
+        {
+          "properties": {
+            "key": { "enum": ["lot_frontage", "street_width"] },
+            "street": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+          },
+          "anyOf": [
+            { "properties": { "value": { "type": "number", "exclusiveMinimum": 0 }, "unit": { "const": "feet" } } },
+            { "properties": { "value": { "type": "null" }, "unit": { "type": "null" } } }
+          ]
+        },
+        {
+          "properties": {
+            "key": { "const": "lot_depth" },
+            "street": { "type": "null" }
+          },
+          "anyOf": [
+            { "properties": { "value": { "type": "number", "exclusiveMinimum": 0 }, "unit": { "const": "feet" } } },
+            { "properties": { "value": { "type": "null" }, "unit": { "type": "null" } } }
+          ]
+        },
+        {
+          "properties": {
+            "key": { "const": "lot_type" },
+            "street": { "type": "null" },
+            "unit": { "type": "null" },
+            "value": {
+              "anyOf": [
+                { "type": "string", "enum": ["corner", "interior", "through"] },
+                { "type": "null" }
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "key": { "enum": ["zoning_district", "commercial_overlay"] },
+            "street": { "type": "null" },
+            "unit": { "type": "null" },
+            "value": {
+              "anyOf": [
+                { "$ref": "common.schema.json#/$defs/non_empty_string" },
+                { "type": "null" }
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "key": { "const": "existing_zoning_floor_area" },
+            "street": { "type": "null" },
+            "source": {
+              "anyOf": [
+                { "type": "null" },
+                { "type": "object", "properties": { "kind": { "enum": ["city_filing", "architect_entry", "assumption"] } } }
+              ]
+            }
+          },
+          "anyOf": [
+            { "properties": { "value": { "type": "number", "exclusiveMinimum": 0 }, "unit": { "const": "square_feet" } } },
+            { "properties": { "value": { "type": "null" }, "unit": { "type": "null" } } }
+          ]
+        }
+      ]
+    }
+  ],
+  "$defs": {
+    "measurement": {
+      "description": "Measurement rank and its display label, tied one-to-one (plan section 4 table and task M1-07). Labels for ranks 1-3 and 'unknown' are the plan's exact words; 'Entered' and 'Assumed' are the M1-07 status names (the plan gives no longer wording for them).",
+      "oneOf": [
+        { "$ref": "#/$defs/measurement_survey_entered" },
+        { "$ref": "#/$defs/measurement_city_records" },
+        { "$ref": "#/$defs/measurement_approximate_tax_map" },
+        { "$ref": "#/$defs/measurement_entered" },
+        { "$ref": "#/$defs/measurement_assumed" },
+        { "$ref": "#/$defs/measurement_unknown" }
+      ]
+    },
+    "measurement_known": {
+      "description": "Any rank except 'unknown'. Results use it for the label of an answer's weakest input (plan section 4: 'Each result carries the label of its weakest input'); an answer whose weakest input is unknown is not available.",
+      "oneOf": [
+        { "$ref": "#/$defs/measurement_survey_entered" },
+        { "$ref": "#/$defs/measurement_city_records" },
+        { "$ref": "#/$defs/measurement_approximate_tax_map" },
+        { "$ref": "#/$defs/measurement_entered" },
+        { "$ref": "#/$defs/measurement_assumed" }
+      ]
+    },
+    "measurement_survey_entered": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rank", "label"],
+      "description": "Rank 1: survey numbers the architect enters.",
+      "properties": {
+        "rank": { "type": "string", "const": "survey_entered" },
+        "label": { "type": "string", "const": "Survey (entered)" }
+      }
+    },
+    "measurement_city_records": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rank", "label"],
+      "description": "Rank 2: city-recorded dimensions and area (PLUTO, DOF), or a Buildings Department filing / certificate of occupancy for existing zoning floor area.",
+      "properties": {
+        "rank": { "type": "string", "const": "city_records" },
+        "label": { "type": "string", "const": "City records" }
+      }
+    },
+    "measurement_approximate_tax_map": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rank", "label"],
+      "description": "Rank 3: computed from the city tax-map outline on the EPSG:2263 measurement path (never from an EPSG:4326 display outline).",
+      "properties": {
+        "rank": { "type": "string", "const": "approximate_tax_map" },
+        "label": { "type": "string", "const": "Approximate — tax map" }
+      }
+    },
+    "measurement_entered": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rank", "label"],
+      "description": "A value the architect typed that is not from a survey (task M1-07 'entered').",
+      "properties": {
+        "rank": { "type": "string", "const": "entered" },
+        "label": { "type": "string", "const": "Entered" }
+      }
+    },
+    "measurement_assumed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rank", "label"],
+      "description": "A stated assumption, shown as an assumption (plan section 9 'Explicit assumptions'; task M1-07 'assumed').",
+      "properties": {
+        "rank": { "type": "string", "const": "assumed" },
+        "label": { "type": "string", "const": "Assumed" }
+      }
+    },
+    "measurement_unknown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rank", "label"],
+      "description": "No data (plan section 4: 'Unknown — enter').",
+      "properties": {
+        "rank": { "type": "string", "const": "unknown" },
+        "label": { "type": "string", "const": "Unknown — enter" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "dataset",
+        "dataset_version",
+        "retrieved_at",
+        "query_ref",
+        "document_ref",
+        "statement"
+      ],
+      "description": "Where one value came from (lane plan section 5: 'its source, dataset version and date'). Every key is present; a key that does not apply is explicitly null, so absence is a visible statement. Per kind: city_dataset and tax_map_computation need dataset + query_ref; city_filing needs dataset + document_ref (job or certificate number); survey needs document_ref (the survey); assumption needs statement (the stated assumption). Synthetic/test sources use a clearly non-official dataset name (e.g. prefixed 'test-fixture-synthetic').",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "survey",
+            "city_dataset",
+            "city_filing",
+            "tax_map_computation",
+            "architect_entry",
+            "assumption"
+          ],
+          "description": "PLATFORM-DEFINED source kind. survey = survey figures the architect enters; city_dataset = a city dataset record (PLUTO, DOF, DCP, City Map street data); city_filing = a Buildings Department filing or certificate of occupancy; tax_map_computation = computed from the DOF tax-map outline on the EPSG:2263 measurement path; architect_entry = a value the architect typed; assumption = a stated assumption."
+        },
+        "dataset": {
+          "description": "Dataset or record family name (e.g. 'PLUTO', 'DOF Digital Tax Map', 'DOB NOW job filings'); null when not a dataset.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "dataset_version": {
+          "description": "Dataset release identifier (e.g. PLUTO '26v2'); explicitly null when the source exposes none (DOF Digital Tax Map exposes none; see lot_geometry.schema.json).",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "retrieved_at": {
+          "$ref": "common.schema.json#/$defs/date_time",
+          "description": "When the value was retrieved (city sources) or entered (architect, survey, assumption)."
+        },
+        "query_ref": {
+          "description": "The exact bounded query or request URL for a dataset retrieval (secrets never included); null otherwise.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "document_ref": {
+          "description": "Document reference: DOB job or certificate-of-occupancy number, survey document id; null otherwise.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "statement": {
+          "description": "The stated assumption in plain English (required for kind 'assumption'); null otherwise.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "provenance_refs": {
+          "type": "array",
+          "description": "OPTIONAL link to the full PRD section 9 provenance: the provenance_id values of the source_fact.schema.json records this value was normalized from. This source object is the display summary the architect sees; it never replaces the canonical source_fact record (packages/contracts README: no competing schemas).",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "kind": { "enum": ["city_dataset", "tax_map_computation"] },
+            "dataset": { "type": "string" },
+            "query_ref": { "type": "string" }
+          }
+        },
+        {
+          "properties": {
+            "kind": { "const": "city_filing" },
+            "dataset": { "type": "string" },
+            "document_ref": { "type": "string" }
+          }
+        },
+        {
+          "properties": {
+            "kind": { "const": "survey" },
+            "document_ref": { "type": "string" }
+          }
+        },
+        {
+          "properties": {
+            "kind": { "const": "architect_entry" }
+          }
+        },
+        {
+          "properties": {
+            "kind": { "const": "assumption" },
+            "statement": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "blocked_output": {
+      "type": "string",
+      "enum": [
+        "floor_area_allowance",
+        "remaining_floor_area",
+        "permitted_envelope",
+        "building_option",
+        "existing_building_paths",
+        "unit_estimate",
+        "geometry"
+      ],
+      "description": "An output an unknown value blocks: the three answers (plan section 5), remaining capacity after an existing building (section 3 step 4), the section 5b paths, the unit estimate (section 11b) and the drawing geometry (section 5c)."
+    }
+  }
+}
