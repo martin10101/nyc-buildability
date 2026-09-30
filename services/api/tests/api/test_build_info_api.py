@@ -50,7 +50,8 @@ FALSE_TOKENS = ["", "0", "false", "off", "no", "maybe", "enabled", "2", "tru"]
 # Values that must never be echoed. Names are real (render.yaml / CODE_MAP §4) or made up.
 SECRET_ENV = {
     "SUPABASE_SERVICE_ROLE_KEY": "svc-role-SECRET-5f2e1d",  # gitleaks:allow
-    "SUPABASE_DB_URL": "postgres://admin:pw-SECRET-77@db.example:5432/app",  # gitleaks:allow
+    # Fake DSN below exists only to prove it is never echoed.
+    "SUPABASE_DB_URL": "postgres://admin:pw-SECRET-77@db.example:5432/app",  # noqa: E501 gitleaks:allow secretscan:allow fake test value
     "ANTHROPIC_API_KEY": "sk-ant-SECRET-a1b2c3",  # gitleaks:allow
     "GEOCLIENT_SUBSCRIPTION_KEY": "geo-SECRET-9x8y7z",  # gitleaks:allow
     "SOCRATA_APP_TOKEN": "soda-SECRET-q1w2e3",  # gitleaks:allow
