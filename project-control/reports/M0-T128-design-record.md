@@ -173,6 +173,48 @@ successors that are skipped do NOT consume the bound (nothing was dispatched).
 Never unbounded fan-out: the driver only ever iterates the finite owner-supplied
 ordered list, and stops at `max_tasks_reached`.
 
+## 5A. run_id and budget across a multi-task journey (G3-C2)
+
+ONE owner-set run budget bounds the WHOLE journey, not one budget per task. The
+mechanism, traced through the live `cli._run_loop` path:
+
+- **Shared run_id.** The driver passes the SAME `args` to every task's
+  `cli._run_loop` (it re-binds only `task_packet`/`worktree`/`branch`/`repo`,
+  never `run_id`). The commissioning start omits `--run-id`, so each `_run_loop`
+  derives the same run_id from the checkout (`run_{checkout_key(checkout)[:12]}`);
+  when `--run-id` is supplied it is likewise shared. Either way every task in one
+  journey runs under ONE run_id.
+- **Budget clean-resume (not conflict).** Each task's `_run_loop` builds a
+  `RunBudgetLedger(journal, run_id=run_id, budget=RunBudget.from_limits(...))` and
+  calls `budget_ledger.start()`. Task 1 PERSISTS the budget for the run_id; task 2
+  (same run_id, same budget digest, because the driver never changes `--checkout`
+  or any budget-affecting arg) takes the durable ledger's clean RESUME branch
+  (`run_budget.py:341-434`) - NOT a `budget_conflict`. A `budget_conflict` is the
+  ledger's "a run tried to change its own bounds" tamper signal; it fires only if
+  a second start named DIFFERENT bounds for the same run_id, which the driver never
+  does. So the owner's single run budget (wall-clock and counter bounds) is loaded
+  once and then reasserted, bounding the entire multi-task journey.
+- **Between-task backstop.** `between_task_seam` additionally reads the prior
+  run's durable `run_budget.exhausted` report before dispatching the next task, so
+  a journey whose shared budget is spent stops at the seam (`budget_exhausted`)
+  rather than starting another task; the next task's own first-cycle `_budget_stop`
+  is a further backstop.
+- **Close-run on the shared journal.** A task resting at COMPLETE is closed to
+  IDLE by the NEXT task's `_run_loop` via `plan_close_run` (cli.py:2687) firing the
+  existing `run_closed` edge on the SHARED journal, so the successor can start from
+  a cycle-entry state. Closing never merges, accepts, or crosses an owner gate.
+- **D6 dispatch-intent across the boundary.** Each task's real `SupervisedLoop`
+  records a dispatch intent before provider contact and reconciles it when the unit
+  returns (`recovery.record_dispatch_intent` / `reconcile_dispatch_intent`,
+  loop.py:1627/1638) on the shared journal; after a completed multi-task journey no
+  dispatch intent is left unreconciled (`journal.pending_effects()` empty).
+
+Live-path coverage of this section: `LiveRunLoopCrossTaskTests` (drives the real
+`cli._run_loop` across both tasks via the driver) asserts the shared-run_id clean
+budget resume (no `budget_conflict`), the COMPLETE->IDLE close on the shared
+journal between tasks, and the reconciled D6 dispatch intents; `CmdStartDispatchTests`
+drives the same journey through the REAL `cli.cmd_start` routing (cli.py:3069).
+
 ## 6. Crash matrix (exactly-once across crashes, R402) - `run_reached_complete` + CAS
 
 | Crash boundary | Behaviour | Test node |
@@ -191,14 +233,41 @@ durable COMPLETE state AND a last cycle whose Codex decision is COMPLETE carryin
 a reviewed checkpoint id, so a run that stopped for budget/intent/REVISE/ASK/any
 refusal never advances (family 5).
 
-## 7. Owner gate unchanged (R402)
+## 7. Owner gate + driver envelope confinement (R402; G3-C1)
 
-Everything sits behind the pre-existing `bounded_mode_gate(args)` in `cmd_start`
-(`--mode limited-auto --owner-enable-bounded-auto`). The driver is reached only
-inside the existing dispatch branch, after every recovery/containment/manifest
-gate `cmd_start` already runs. No new flag enables autonomy; `--max-tasks` /
-`--packet-queue` are launch inputs that select WHICH bounded work runs, not
-WHETHER the bounded mode is authorized. No R595, broker, or allowlist change.
+The authorized envelope is `--mode limited-auto` AND
+`--owner-enable-bounded-auto`, and it is now enforced in TWO complementary halves
+so the driver can never run outside it:
+
+- **Owner-enable half - `bounded_mode_gate(args)` (pre-dispatch, `cmd_start`).**
+  `--mode limited-auto` without `--owner-enable-bounded-auto` is refused BY NAME
+  before dispatch (exit 16, typed refusal), exactly as today. So a limited-auto
+  start that reaches the driver has already proven the owner enable.
+- **Mode half - `run_task_queue`'s own fail-closed check (this task, G3-C1).**
+  The driver asserts `args.mode == "limited-auto"` as its FIRST act, before any
+  packet is read, snapshotted, or dispatched. A `--mode supervised/shadow
+  --max-tasks 2 --packet-queue q.json` start - which `bounded_mode_gate` does NOT
+  refuse (supervised/shadow are not owner-gated) and which the cli routing ternary
+  (`max_tasks>1 or packet_queue`) WOULD otherwise carry into the driver - is
+  refused fail-closed with the typed code `cross_task_mode_refused` and an audit
+  row (`cross_task_mode_refused`). The refusal rides the existing
+  `next_task.NextTaskError` arm of the `cmd_start` dispatch try/except
+  (cli.py:3070): a report, not a traceback. The driver body never runs.
+
+This closes the G3-C1 gap: the prior claim that "everything sits behind
+`bounded_mode_gate`" was incomplete, because `bounded_mode_gate` only enforces the
+enable half and never confines the driver to limited-auto. The invariant "a start
+WITHOUT (owner-enable-bounded-auto AND limited-auto) cannot reach the queue driver
+body" now HOLDS: the enable half is enforced by `bounded_mode_gate`, the mode half
+by the driver's own check. Removal-sensitive test: `ModeConfinementTests`
+(supervised/shadow with `max_tasks>1`/`--packet-queue` -> typed refusal, nothing
+dispatched, audit row; limited-auto -> proceeds).
+
+The driver is otherwise reached only inside the existing dispatch branch, after
+every recovery/containment/manifest gate `cmd_start` already runs. No new flag
+enables autonomy; `--max-tasks` / `--packet-queue` are launch inputs that select
+WHICH bounded work runs, not WHETHER the bounded mode is authorized. No R595,
+broker, or allowlist change.
 
 ## 8. Audit (R402)
 

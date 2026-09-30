@@ -778,7 +778,29 @@ def run_task_queue(
     resumes without double-advancing or losing work. Ineligible successors are
     skipped with an audited reason; an exhausted eligible set lands
     NO_ELIGIBLE_WORK visibly (R405).
+
+    Envelope confinement (R400/R402, G3-C1): the multi-task driver runs ONLY
+    under ``--mode limited-auto`` (the owner-gated bounded unattended mode). The
+    owner-ENABLE half is already enforced pre-dispatch by ``bounded_mode_gate``
+    (limited-auto without ``--owner-enable-bounded-auto`` never reaches here); this
+    is the complementary MODE half, so a ``--mode supervised/shadow --max-tasks>1``
+    (or ``--packet-queue``) start is refused fail-closed with a typed refusal and
+    an audit row BEFORE any packet is read, snapshotted, or dispatched. The typed
+    ``NextTaskError`` rides the existing ``cmd_start`` refusal path (a report, not
+    a traceback).
     """
+    mode = str(getattr(args, "mode", "") or "")
+    if mode != "limited-auto":
+        _audit(audit, "cross_task_mode_refused", mode=mode,
+               note="the multi-task queue driver runs only under --mode "
+                    "limited-auto; a non-limited-auto multi-task start is refused "
+                    "before any packet is read or dispatched")
+        raise NextTaskError(
+            "cross_task_mode_refused",
+            f"the cross-task queue driver runs only under --mode limited-auto (the "
+            f"owner-gated bounded unattended mode), not {mode!r}; multi-task "
+            f"continuation is refused fail-closed. bounded_mode_gate enforces the "
+            f"owner-enable half pre-dispatch; this is the mode half")
     primary = str(checkout)
     max_tasks = max(1, int(getattr(args, "max_tasks", 1) or 1))
     first_packet, _ = _read_packet_file(str(args.task_packet))
