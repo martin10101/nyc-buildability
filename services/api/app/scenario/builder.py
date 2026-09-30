@@ -311,8 +311,11 @@ def _assemble(
     )
     # C1 (D-041): the unused-draft-zoning-floor-area section rides on EVERY
     # document (preliminary + every no-scenario variant). All C1 logic lives in
-    # unused_floor_area.py; this is a bounded wire-in only. An over-built (negative)
-    # remainder forces the document root professional_review_required true (OR with
+    # unused_floor_area.py; this is a bounded wire-in only. A-03: by default the
+    # section is "Not available - needs existing zoning floor area" and never
+    # raises professional review; only with the default-off legacy flag
+    # (INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED) can an over-built (negative)
+    # remainder force the document root professional_review_required true (OR with
     # the existing rule-evaluation fail-safe trigger).
     unused_section = build_unused_floor_area_section(
         property_profile=property_profile,

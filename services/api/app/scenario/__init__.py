@@ -42,6 +42,7 @@ from .constants import (
     NOT_VERIFIED_DISCLAIMER,
     SCENARIO_CONTRACT_VERSION,
     UNUSED_FLOOR_AREA_LABEL,
+    UNUSED_FLOOR_AREA_NOT_AVAILABLE_LABEL,
 )
 from .contract import (
     ScenarioContractError,
@@ -74,7 +75,11 @@ from .sensitivity import (
     SensitivityVariable,
     analyze_scenario_sensitivity,
 )
-from .unused_floor_area import build_unused_floor_area_section
+from .unused_floor_area import (
+    INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED_ENV_VAR,
+    build_unused_floor_area_section,
+    legacy_unused_floor_area_enabled,
+)
 
 __all__ = [
     "CAP_OUTPUT_NAME",
@@ -90,6 +95,8 @@ __all__ = [
     "SENSITIVITY_LABEL",
     "SENSITIVITY_RESPONSE_METRIC",
     "UNUSED_FLOOR_AREA_LABEL",
+    "UNUSED_FLOOR_AREA_NOT_AVAILABLE_LABEL",
+    "INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED_ENV_VAR",
     "RankingKind",
     "RankingObjective",
     "ScenarioContractError",
@@ -102,6 +109,7 @@ __all__ = [
     "assert_scenario_not_verified",
     "build_scenario",
     "build_unused_floor_area_section",
+    "legacy_unused_floor_area_enabled",
     "derive_practical_usable_range",
     "rank_scenario_assumption_sets",
     "validate_scenario_document",
