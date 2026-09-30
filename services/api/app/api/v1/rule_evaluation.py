@@ -23,6 +23,11 @@ NEVER accepts a request body or a browser-supplied profile - only the ``bbl`` pa
 parameter - so an untrusted caller can never inject the facts a legal
 determination would rest on.
 
+C-04 / M1-06a (plan section 4): with ``LANE_C_ENABLED`` on, a result that depends on a street
+width the provider could not supply (no wide-street determination) carries a "Needs street width"
+reason naming both cases instead of reading as the narrow-street answer
+(:mod:`app.api.v1.street_width_status`). Flag off (the default) -> unchanged.
+
 A legitimate needs-review / unsupported / fail-safe outcome is a NORMAL 200
 rule_evaluation document (coverage_status ``unsupported`` /
 ``professional_review_required`` / ``not_applicable``), never an error - so a
@@ -47,6 +52,10 @@ from app.api.v1.properties import (
     _ERROR_STATUS,
     PlutoFetcher,
     get_pluto_fetcher,
+)
+from app.api.v1.street_width_status import (
+    mark_unknown_street_width,
+    street_width_marking_enabled,
 )
 from app.config import internal_rule_eval_enabled
 from app.connectors.bbl import BBLValidationError, normalize_bbl
@@ -411,6 +420,11 @@ def get_rule_evaluation(
             evaluation,
             profile_contract_version=profile["profile_version"]["contract_version"],
         )
+        # C-04 / M1-06a: no determination means the street width is unknown - mark a
+        # width-dependent result "Needs street width" (both cases named) rather than let the
+        # narrow-street row read as the answer. Reasons only; values and coverage untouched.
+        if wide_street_determination is None and street_width_marking_enabled():
+            document = mark_unknown_street_width(document)
 
         # Strict response validation before send: an invalid 200 is impossible.
         try:
