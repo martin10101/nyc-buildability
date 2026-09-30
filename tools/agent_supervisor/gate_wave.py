@@ -729,6 +729,38 @@ class G2Capture:
         return data
 
 
+#: The registry files a cited directive supplies so an independent verifier can
+#: DERIVE its applicable requirement set INSIDE the bounded packet (design 3.3):
+#: requirements.json carries each requirement's verbatim text and applicability
+#: block; manifest.json carries the integrity digests and locked ids. Both are
+#: TRACKED files `git diff HEAD` never shows, so a fresh read-only reviewer
+#: session sees them only if the packet SUPPLIES them.
+DIRECTIVE_REGISTRY_FILES = ("requirements.json", "manifest.json")
+
+
+def collect_directive_registry(collector: EvidenceCollector, repo_root: str,
+                               directive_ids: Sequence[str]) -> dict[str, Any]:
+    """Render each cited directive's registry files as ONE bounded section.
+
+    The verifier contract tells the reviewer to derive applicability from the
+    cited directive's registry files; a bounded read-only reviewer sees only
+    what the packet carries, so this SUPPLIES them (they are tracked, so no diff
+    does). Each `<directive>/<file>` entry is rendered fail-visibly by
+    `results_section`; a directive dir that does not resolve to exactly one match
+    reads a missing file rather than a silent gap, and accept()/
+    verification_path_for re-resolve the same dir on the authoritative side.
+    """
+    base = pathlib.Path(repo_root) / "project-control" / "directives"
+    results: dict[str, Any] = {}
+    for directive_id in directive_ids:
+        dirs = [m for m in sorted(base.glob(f"{directive_id}-*")) if m.is_dir()]
+        stem = dirs[0].name if len(dirs) == 1 else str(directive_id)
+        for name in DIRECTIVE_REGISTRY_FILES:
+            results[f"{directive_id}/{name}"] = collector.read_file(
+                f"project-control/directives/{stem}/{name}")
+    return results_section(results)
+
+
 def capture_g2(collector: EvidenceCollector,
                documented_commands: Sequence[str]) -> G2Capture:
     """Run the packet's documented test commands and judge them for G2.
@@ -1053,6 +1085,36 @@ def maybe_run_post_complete_stage(
                           policy_result=result.status,
                           detail=result.to_dict())
     return result
+
+
+def terminal_checkpoint_id(run: Mapping[str, Any]) -> str:
+    """The controller-authored terminal checkpoint identity of a finished run.
+
+    Read from the loop's OWN run record (`LoopRun.to_dict()["cycles"]`): each
+    cycle row's `checkpoint_id` was written by the CONTROLLER as a STRING
+    after it parsed and schema-validated that cycle's checkpoint (S8.3) -
+    never re-read from any file or output the worker can edit after the fact.
+    The terminal identity is the LAST cycle's nonempty string id; trailing
+    cycles whose id is empty (a cycle that produced no checkpoint) are
+    skipped. Anything else is corruption and resolves "" - a non-list
+    `cycles`, a non-mapping cycle record, or a non-string `checkpoint_id`
+    value, which is NEVER str()-coerced into an identity and never silently
+    bypassed to bind an OLDER checkpoint. Callers treat "" as UNRESOLVED and
+    fail closed (the acceptance dispatch refuses it by name) rather than
+    inventing an identity or correlating a review to nothing.
+    """
+    cycles = run.get("cycles")
+    if not isinstance(cycles, list):
+        return ""
+    for cycle in reversed(cycles):
+        if not isinstance(cycle, Mapping):
+            return ""
+        value = cycle.get("checkpoint_id", "")
+        if not isinstance(value, str):
+            return ""
+        if value.strip():
+            return value
+    return ""
 
 
 def post_complete_stage(*, run: Mapping[str, Any], packet: Mapping[str, Any],

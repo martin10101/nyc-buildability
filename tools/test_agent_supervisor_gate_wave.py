@@ -32,7 +32,12 @@ proven, keyed to the acceptance scenarios and the G5 M0-T150 conditions:
 * G3 M0-T152 advisory D-2 (closed by M0-T153) - the LIVE wave path re-reads
   the stored verdict transcript between write and gate recording, so a
   post-write tamper parks the wave before any ledger write, with the
-  mutation partner proving the read-back is load-bearing.
+  mutation partner proving the read-back is load-bearing;
+* M0-T153 registry supply - `collect_directive_registry` renders each cited
+  directive's requirements.json/manifest.json as ONE bounded section (the
+  acceptance verifier's applicability source); a missing file, an unresolved
+  directive, and an ambiguous directive dir are all fail-visible, never a
+  silent gap.
 """
 from __future__ import annotations
 
@@ -701,6 +706,69 @@ class G2CaptureTests(Base):
 
 
 # --------------------------------------------------------------------------
+# Directive-registry evidence supply (M0-T153: the acceptance verifier's
+# applicability source, assembled here for a bounded reviewer session)
+# --------------------------------------------------------------------------
+
+
+class CollectDirectiveRegistryTests(Base):
+    DIR_ID = "D-033"
+
+    def write_dir(self, requirements: bool = True, manifest: bool = True,
+                  slug: str = "mgmt") -> pathlib.Path:
+        base = (self.tmp / "project-control" / "directives"
+                / f"{self.DIR_ID}-{slug}")
+        base.mkdir(parents=True, exist_ok=True)
+        if requirements:
+            (base / "requirements.json").write_text(json.dumps(
+                {"directive_id": self.DIR_ID, "requirements": [
+                    {"id": "D-033-R002",
+                     "applicability": {"task_ids": ["M0-T153"]}}]}),
+                encoding="utf-8")
+        if manifest:
+            (base / "manifest.json").write_text(json.dumps(
+                {"directive_id": self.DIR_ID, "state": "active"}),
+                encoding="utf-8")
+        return base
+
+    def test_a_resolved_directive_supplies_its_registry_files_bounded(self):
+        self.write_dir()
+        section = gw.collect_directive_registry(
+            self.collector(), str(self.tmp), [self.DIR_ID])
+        req = section[f"{self.DIR_ID}/requirements.json"]
+        self.assertTrue(req["ok"])
+        self.assertIn("applicability", req["value"])
+        self.assertTrue(req["digest"])
+        self.assertTrue(section[f"{self.DIR_ID}/manifest.json"]["ok"])
+        self.assertEqual(sorted(section),
+                         [f"{self.DIR_ID}/manifest.json",
+                          f"{self.DIR_ID}/requirements.json"])
+
+    def test_a_missing_file_and_unresolved_dir_are_fail_visible(self):
+        self.write_dir(requirements=False)
+        section = gw.collect_directive_registry(
+            self.collector(), str(self.tmp), [self.DIR_ID])
+        entry = section[f"{self.DIR_ID}/requirements.json"]
+        self.assertFalse(entry["ok"])
+        self.assertEqual(entry["error_category"], "missing_file")
+        # An entirely unresolved directive (no dir) is fail-visible too, never a
+        # silent gap: the stem falls back to the bare id and the read misses.
+        missing = gw.collect_directive_registry(
+            self.collector(), str(self.tmp), ["D-999"])
+        self.assertFalse(missing["D-999/requirements.json"]["ok"])
+
+    def test_an_ambiguous_directive_dir_falls_back_to_a_fail_visible_read(self):
+        # Two D-033-* dirs -> the stem is the bare id -> a missing read, never a
+        # silent pick of one dir (accept()/verification_path_for re-resolve on
+        # the authoritative side and refuse an ambiguous registry).
+        self.write_dir(slug="one")
+        self.write_dir(slug="two")
+        section = gw.collect_directive_registry(
+            self.collector(), str(self.tmp), [self.DIR_ID])
+        self.assertFalse(section[f"{self.DIR_ID}/requirements.json"]["ok"])
+
+
+# --------------------------------------------------------------------------
 # S4 / F3 - immunization and injection resistance
 # --------------------------------------------------------------------------
 
@@ -1092,6 +1160,44 @@ class LiveVerdictTamperTests(Base):
         stored = json.loads(next(
             self.out_dir.glob("verdict-*.json")).read_text(encoding="utf-8"))
         self.assertEqual(stored["bound_verdict"]["result"], "PASS")
+
+
+class TerminalCheckpointIdTests(unittest.TestCase):
+    """gate_wave.terminal_checkpoint_id: the controller-authored terminal
+    checkpoint identity read from the loop's OWN cycle records, fail-closed.
+    The acceptance dispatch binds its verifier session to this value and
+    refuses "" by name, so corruption must resolve "" - never a coerced or
+    stale identity."""
+
+    def test_the_last_nonempty_cycle_id_is_the_terminal_identity(self):
+        run = {"cycles": [{"checkpoint_id": "cp-1"}, {"checkpoint_id": "cp-2"}]}
+        self.assertEqual(gw.terminal_checkpoint_id(run), "cp-2")
+
+    def test_a_trailing_empty_id_falls_back_to_the_prior_nonempty_one(self):
+        run = {"cycles": [{"checkpoint_id": "cp-1"},
+                          {"checkpoint_id": "   "}, {"checkpoint_id": ""}]}
+        self.assertEqual(gw.terminal_checkpoint_id(run), "cp-1")
+
+    def test_no_cycles_or_all_empty_ids_resolve_unresolved(self):
+        self.assertEqual(gw.terminal_checkpoint_id({}), "")
+        self.assertEqual(gw.terminal_checkpoint_id({"cycles": []}), "")
+        self.assertEqual(gw.terminal_checkpoint_id(
+            {"cycles": [{"checkpoint_id": ""}, {"checkpoint_id": "  "}]}), "")
+
+    def test_a_non_list_cycles_field_fails_closed(self):
+        self.assertEqual(gw.terminal_checkpoint_id({"cycles": 1}), "")
+        self.assertEqual(gw.terminal_checkpoint_id({"cycles": "cp-x"}), "")
+
+    def test_corruption_is_never_coerced_into_an_identity(self):
+        # A non-mapping cycle or a non-string id is corruption: resolve "" and
+        # let the caller fail closed, never str()-coerce a bogus identity and
+        # never silently bind an OLDER checkpoint past the corrupt terminal row.
+        self.assertEqual(gw.terminal_checkpoint_id(
+            {"cycles": [{"checkpoint_id": "cp-1"}, "junk"]}), "")
+        self.assertEqual(gw.terminal_checkpoint_id(
+            {"cycles": [{"checkpoint_id": 123}]}), "")
+        self.assertEqual(gw.terminal_checkpoint_id(
+            {"cycles": [{"checkpoint_id": None}]}), "")
 
 
 if __name__ == "__main__":

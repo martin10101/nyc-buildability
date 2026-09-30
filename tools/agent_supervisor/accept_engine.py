@@ -7,18 +7,17 @@ D-033-R006 (machine-enforced separation of duties), cited in both the task packe
 and the commit message as section 3 requires. Design:
 `docs/SUPERVISOR_MANAGEMENT_LAYER_DESIGN.md` sections 3, 4, 7 (seam I3).
 
-What lives here, and why it is a NEW module (modularity law; `loop.py` and
-`gate_wave.py` each own one stage): the stage-2 owner switch (DEFAULT OFF,
-refusal-by-name like the T-A wave switch); ONE independent verifier-session
-dispatch over the same bounded `conduct_ephemeral_review` machinery; the
+What lives here (a NEW module; `loop.py`/`gate_wave.py` each own one stage):
+the stage-2 owner switch (DEFAULT OFF, refusal-by-name); ONE independent
+verifier-session dispatch over the bounded `conduct_ephemeral_review`
+machinery, its packet supplying the CITED directive registry (the verifier's
+applicability source, never the whole registry AD-083 prohibits); the
 transcription seam (row extraction under the 64k ceiling, WORST-OF dedup, the
-atomic `task_verifications[]` merge into each cited directive's
-`verification.json`); the I3 content-identity guard (HEAD drift ->
-``restamp_required``, never accept against a stale stamp); and the bounded
-`accept` recorder (allow-set ``{accept}``, pinned to the current queue task,
-invoking the REAL `project_control.py accept` so every fail-closed
-precondition validates on the authoritative side - this module supplies
-inputs and changes NO check).
+atomic `task_verifications[]` merge into each cited `verification.json`); the
+I3 content-identity guard (HEAD drift -> ``restamp_required``); and the
+bounded `accept` recorder (allow-set ``{accept}``, current queue task only,
+invoking the REAL `project_control.py accept` - this module supplies inputs
+and changes NO check).
 
 THE SWITCH IS DEFAULT OFF (D-033-R005). With the flag absent,
 `run_with_post_complete_stage` here IS the T-A call byte-for-byte: no enable
@@ -119,27 +118,24 @@ ROW_SENTINEL = "DCV-ROW:"
 #: `directive_verification_contract`; carries the F3 immunization clause
 #: verbatim so worker-authored packet content can never steer the rows.
 VERIFIER_CONTRACT = (
-    "DIRECTIVE VERIFICATION (independent directive-compliance-verifier "
-    "session): derive the applicable requirement set for THIS task from each "
-    "cited directive's registry files, then verify each applicable requirement "
-    "strictly against the packet evidence at the reviewed content identity. "
-    "Your structured output schema allows verified_facts entries of EXACTLY "
-    'the shape {"fact": "<string>"}. Encode each per-requirement verification '
-    "row as ONE such entry whose fact string is the sentinel prefix "
-    "'" + ROW_SENTINEL + "' followed immediately by ONE minified JSON object "
-    '{"directive_id": ..., "requirement_id": ..., "state": ..., '
-    '"evidence": ..., "note": ...}; state is PASS only for evidence you '
-    "verified yourself, or NOT_APPLICABLE with not_applicable_justification "
-    "and not_applicable_approved_by keys in the same object; anything you "
-    "cannot ground is UNVERIFIABLE, never PASS. A cited directive with an "
-    "EMPTY applicable set gets one row object "
-    '{"directive_id": ..., "applicable_requirement_ids": []} instead. Facts '
-    "without the sentinel are your ordinary findings and are never "
-    "transcribed as rows. Keep the total row payload well under the 64k "
-    "output ceiling; when the applicable set is too large for one output, "
-    "return the rows you verified and state which remain - never truncate "
-    "silently. A producer self-check, checklist, or report is a CLAIM, never "
-    "proof. "
+    "DIRECTIVE VERIFICATION (independent directive-compliance-verifier session): "
+    "derive the applicable requirement set for THIS task from each cited directive's "
+    "registry files, then verify each applicable requirement strictly against the "
+    "packet evidence at the reviewed content identity. Your structured output schema "
+    'allows verified_facts entries of EXACTLY the shape {"fact": "<string>"}. Encode '
+    "each per-requirement verification row as ONE such entry whose fact string is "
+    "the sentinel prefix '" + ROW_SENTINEL + "' followed immediately by ONE "
+    'minified JSON object {"directive_id": ..., "requirement_id": ..., "state": ..., '
+    '"evidence": ..., "note": ...}; state is PASS only for evidence you verified '
+    "yourself, or NOT_APPLICABLE with not_applicable_justification and "
+    "not_applicable_approved_by keys in the same object; anything you cannot ground "
+    "is UNVERIFIABLE, never PASS. A cited directive with an EMPTY applicable set "
+    'gets one row object {"directive_id": ..., "applicable_requirement_ids": []} '
+    "instead. Facts without the sentinel are your ordinary findings and are never "
+    "transcribed as rows. Keep the total row payload well under the 64k output "
+    "ceiling; when the applicable set is too large for one output, return the rows "
+    "you verified and state which remain - never truncate silently. A producer "
+    "self-check, checklist, or report is a CLAIM, never proof. "
     + gate_wave.WORKER_AUTHORED_DATA_CLAUSE)
 
 
@@ -393,6 +389,12 @@ def plan_verifier_dispatch(*, run_id: str, task_id: str, checkpoint_id: str,
                            now: Callable[[], str] = to_utc_iso) -> VerifierDispatch:
     """Build the dispatch record BEFORE any verifier process exists."""
     _assert_verifier_separated(verifier_identity, producer_identity)
+    if not isinstance(checkpoint_id, str) or not checkpoint_id.strip():
+        raise AcceptEngineError(
+            "checkpoint_unresolved",
+            "no terminal checkpoint identity resolved from the run's cycle "
+            "records (gate_wave.terminal_checkpoint_id); an unbindable verifier "
+            "session is refused before any registry write (fail closed)")
     cited = tuple(sorted({str(d) for d in directive_ids if str(d)}))
     if not cited:
         raise AcceptEngineError(
@@ -691,8 +693,7 @@ def build_task_verification(dispatch: VerifierDispatch, directive_id: str,
     `accept()` re-derives and compares independently (selective-citation gap
     fails closed on the authoritative side).
     """
-    own = [dict(r) for r in rows
-           if str(r.get("directive_id", "")) == directive_id]
+    own = [dict(r) for r in rows if str(r.get("directive_id", "")) == directive_id]
     if not own:
         raise AcceptEngineError(
             "no_rows_for_directive",
@@ -1019,8 +1020,7 @@ def _submission_identity(repo_root: str, task_id: str) -> str:
 
 
 def _live_head(collector: EvidenceCollector) -> str:
-    facts = collector.collect_git_facts()
-    head = facts.get("head")
+    head = collector.collect_git_facts().get("head")
     if head is None or not head.ok:
         return ""
     return str(head.value or "").strip()
@@ -1031,11 +1031,11 @@ def run_acceptance_stage(*, packet: Mapping[str, Any], checkpoint_id: str,
                          wave_result: Mapping[str, Any] | None) -> AcceptResult:
     """Run the post-wave acceptance stage for ONE governance-class task.
 
-    Chain (design 3.1): green wave in -> ONE independent verifier session ->
-    worst-of row merge -> clean-rows check -> registry transcription at the
-    reviewed identity -> I3 freshness -> the REAL `accept()`. Every failure is
-    a park or a typed `restamp_required`; nothing here advances the queue,
-    commits, pushes, or touches any owner hold (T-C scope; D-033-R005).
+    Chain (design 3.1): green wave -> ONE verifier session over a bounded packet
+    that SUPPLIES the cited directive registry (applicability evidence) ->
+    worst-of merge -> clean rows -> transcription at the reviewed identity -> I3
+    freshness -> the REAL `accept()`. Every failure parks or typed-restamps and
+    nothing advances the queue, commits, pushes, or crosses a hold (T-C scope).
     """
     assert_acceptance_enabled(owner_value)
     task_id = str(packet.get("task_id", "") or "")
@@ -1083,6 +1083,17 @@ def run_acceptance_stage(*, packet: Mapping[str, Any], checkpoint_id: str,
             git_facts.get("porcelain_status")))
         transcripts = results_section(deps.collector.collect_command_transcripts(
             [str(c) for c in (packet.get("documented_test_commands") or [])]))
+        # The bounded packet SUPPLIES only the CITED directives' registry files
+        # (requirements.json/manifest.json) so the verifier can DERIVE its
+        # applicable set from them: they are TRACKED, so no diff carries them and
+        # a fresh read-only reviewer sees them only here. This is the bounded
+        # cited slice a review needs - NOT the whole directive registry AD-083
+        # (0A.1) prohibits - so the section key names that scope. Only the DCV
+        # contract is an instruction; the registry is evidence the immunization
+        # clause tells the verifier to inspect, not obey. The dispatch's own
+        # cited set is used, so the supply matches exactly the rows' directives.
+        cited_reqs = gate_wave.collect_directive_registry(
+            deps.collector, deps.repo_root, dispatch.directive_ids)
         packet_result = build_packet(
             run_id=run_id, task_id=task_id, checkpoint_id=checkpoint_id,
             checkpoint=None,
@@ -1090,6 +1101,7 @@ def run_acceptance_stage(*, packet: Mapping[str, Any], checkpoint_id: str,
             git_facts=git_facts,
             extra_sections={"untracked_content": untracked,
                             "command_transcripts": transcripts,
+                            "cited_directive_requirements": cited_reqs,
                             "gate_wave_result": dict(wave_result)})
         if not packet_result.ok or packet_result.packet is None:
             return _parked(task_id, f"the verification evidence packet was "
@@ -1118,18 +1130,16 @@ def run_acceptance_stage(*, packet: Mapping[str, Any], checkpoint_id: str,
     outcome = deps.recorder.record_accept(task_id)
     output = f"{getattr(outcome, 'stdout', '')}{getattr(outcome, 'stderr', '')}"
     if getattr(outcome, "returncode", 1) != 0:
-        return AcceptResult(
-            task_id=task_id, status=PARKED,
-            reason="the REAL accept() refused; its reasons are authoritative "
-                   "and the stage parks rather than retrying (design 3.2)",
-            dispatch_id=dispatch.dispatch_id,
-            verifier_record_digest=record.record_digest,
-            transcriptions=tuple(transcriptions), accept_output=output)
+        status, reason = PARKED, (
+            "the REAL accept() refused; its reasons are authoritative and the "
+            "stage parks rather than retrying (design 3.2)")
+    else:
+        status, reason = ACCEPTED, (
+            "accept() succeeded with every precondition validated on the "
+            "authoritative side; queue advance, commit, and integration remain "
+            "with the orchestrator (T-C scope, D-033-R005)")
     return AcceptResult(
-        task_id=task_id, status=ACCEPTED,
-        reason="accept() succeeded with every precondition validated on the "
-               "authoritative side; queue advance, commit, and integration "
-               "remain with the orchestrator (T-C scope, D-033-R005)",
+        task_id=task_id, status=status, reason=reason,
         dispatch_id=dispatch.dispatch_id,
         verifier_record_digest=record.record_digest,
         transcriptions=tuple(transcriptions), accept_output=output)
@@ -1149,13 +1159,12 @@ def run_with_post_complete_stage(args: Any, loop: Any, first_prompt: str, *,
     """The ONE wiring line `cli._run_loop` calls in place of the T-A seam.
 
     OFF==today: with `--owner-enable-managed-acceptance` absent this IS
-    `gate_wave.run_with_post_complete_stage(...)` byte-for-byte - no enable
-    record, no verifier dispatch, no registry write, no accept(). With the
-    flag present it re-asserts the owner-gated stage-2 capability HERE
-    (defense in depth behind `cmd_start`; MUTATION-TESTED), records the
-    durable enable BEFORE the launch (crash-resume disclosure), delegates to
-    the T-A seam for the launch + wave, and runs the acceptance stage only
-    after a wave actually ran.
+    `gate_wave.run_with_post_complete_stage(...)` byte-for-byte. With the flag
+    it re-asserts the owner-gated stage-2 capability HERE (defense in depth
+    behind `cmd_start`; MUTATION-TESTED), records the durable enable BEFORE the
+    launch, binds the stage to the run record's TERMINAL checkpoint identity
+    (`gate_wave.terminal_checkpoint_id`; unresolved -> parked before any
+    registry write), and runs stage 2 only after a wave actually ran.
     """
     owner_value = str(getattr(args, "owner_enable_managed_acceptance", "") or "")
     if owner_value:
@@ -1178,7 +1187,8 @@ def run_with_post_complete_stage(args: Any, loop: Any, first_prompt: str, *,
             repo_root=repo_root),
         repo_root=repo_root, review_journal=None, audit=audit)
     result = run_acceptance_stage(
-        packet=packet, checkpoint_id="", run_id=run_id, deps=deps,
+        packet=packet, checkpoint_id=gate_wave.terminal_checkpoint_id(run),
+        run_id=run_id, deps=deps,
         owner_value=owner_value, wave_result=wave_result)
     journal.set_state(f"managed_acceptance/last_stage/{run_id}",
                       result.to_dict())
