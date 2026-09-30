@@ -8,9 +8,12 @@
  * src/lib/contract.ts consumes property_profile.ts: a type-only relative import,
  * erased at build time, so no schema is forked here.
  *
- * The runtime enum arrays below are LOCKED to the generated unions with
- * `satisfies` plus the two-way `StudyEnumAssertions` proof, so a contract change
- * that adds or removes an enum member fails `tsc` here instead of drifting.
+ * The runtime enum arrays below are LOCKED to the generated unions in both
+ * directions: `satisfies` rejects an array member the union lacks, and the
+ * `STUDY_ENUM_ASSERTIONS` VALUE rejects a union member the array lacks (that
+ * slot's type becomes `never`, and assigning `true` to it fails `tsc`). A type
+ * alias alone would never fail, so the proof is bound to a value (review
+ * correction 3); __tests__/study-vocabulary.test.ts proves a drifted slot fails.
  *
  * No legal logic lives here: these are the contract's words, not rules.
  */
@@ -164,14 +167,10 @@ export const EXISTING_BUILDING_PLANS = [
 
 export const ORIGIN_KINDS = ["new", "copied_from_export"] as const satisfies readonly OriginKind[];
 
-/** Two-way equality proof: `true` only when A and B are the same union. */
-type MutuallyEqual<A, B> = [A] extends [B] ? ([B] extends [A] ? true : never) : never;
+/** Two-way equality proof: `true` only when A and B are the same union, otherwise `never`. */
+export type MutuallyEqual<A, B> = [A] extends [B] ? ([B] extends [A] ? true : never) : never;
 
-/**
- * Compile-time exhaustiveness proof (exported so it is never "unused"). If an
- * array above misses a member of its generated union, its slot becomes `never`
- * and `tsc` fails.
- */
+/** One slot per locked array; a slot is `never` when its array and union differ. */
 export type StudyEnumAssertions = [
   MutuallyEqual<StudyContractVersion, (typeof STUDY_CONTRACT_VERSIONS)[number]>,
   MutuallyEqual<SiteFactContractVersion, (typeof SITE_FACT_CONTRACT_VERSIONS)[number]>,
@@ -187,4 +186,12 @@ export type StudyEnumAssertions = [
   MutuallyEqual<HeightBasis, (typeof HEIGHT_BASES)[number]>,
   MutuallyEqual<ExistingBuildingPlan, (typeof EXISTING_BUILDING_PLANS)[number]>,
   MutuallyEqual<OriginKind, (typeof ORIGIN_KINDS)[number]>,
+];
+
+/**
+ * The binding that makes the proof fail: every slot must accept `true`, which a
+ * `never` slot does not, so an enum drift is a `tsc` error here.
+ */
+export const STUDY_ENUM_ASSERTIONS: StudyEnumAssertions = [
+  true, true, true, true, true, true, true, true, true, true, true, true, true, true,
 ];

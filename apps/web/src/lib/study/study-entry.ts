@@ -80,9 +80,20 @@ export function selectedOption(entry: StudyEntry): Study["options"][number] | nu
   return entry.study.options.find((option) => option.option_id === entry.study.selected_option_id) ?? null;
 }
 
-/** Copy JSON-shaped data so the store never shares an object with its caller. */
-export function cloneJson<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value)) as T;
+/**
+ * Copy JSON-shaped data so the store never shares an object with its caller.
+ * Returns null when the data holds a number JSON cannot carry (NaN, Infinity):
+ * JSON.stringify would silently write it as null, turning an invalid number
+ * into a valid "no value", so it is refused instead (strict JSON, as the
+ * server-side validator requires).
+ */
+export function copyJson<T>(value: T): T | null {
+  let finite = true;
+  const text = JSON.stringify(value, (_key: string, item: unknown) => {
+    if (typeof item === "number" && !Number.isFinite(item)) finite = false;
+    return item;
+  });
+  return finite && typeof text === "string" ? (JSON.parse(text) as T) : null;
 }
 
 export function sameJson(left: unknown, right: unknown): boolean {

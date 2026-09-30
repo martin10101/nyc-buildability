@@ -25,14 +25,13 @@ import {
   type ParcelStudyScope,
 } from "../architect/parcel-study";
 import {
-  sameJson,
   studyFailure,
   type ParcelChoices,
   type StudyEntry,
   type StudyErrorCode,
   type StudyResult,
 } from "./study-entry";
-import { commitStudyChange, createStudyEntry, type NewOption } from "./study-operations";
+import { createStudyEntry, setParcelChoices, type NewOption } from "./study-operations";
 import { MEASUREMENT_LABELS, type Combination, type SiteFact } from "./study-vocabulary";
 
 export interface ParcelStudyInit {
@@ -132,7 +131,5 @@ export function applyParcelStudyDraft(entry: StudyEntry, draft: ParcelStudyDraft
   if (!current.ok) return studyFailure(current.code, current.message);
   const next = canonicalDraft(draft, current.draft.scope);
   if (!next.ok) return studyFailure(next.code, next.message);
-  const choices = choicesOf(next.draft);
-  if (sameJson(choices, entry.parcelChoices)) return { ok: true, entry };
-  return commitStudyChange(entry, entry.study, at, "all", choices);
+  return setParcelChoices(entry, choicesOf(next.draft), at);
 }

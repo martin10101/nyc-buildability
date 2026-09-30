@@ -6,9 +6,11 @@
  *
  * Only the contract document crosses this boundary. The store's out-of-date
  * flags and parcel-study choices are not part of the contract and are not
- * exported. An imported document is a shape-checked study, nothing more: it
- * carries no results, and restoring a HISTORICAL export (copy inputs, re-fetch
- * facts, recalculate - plan section 9) is the export-record path, not this one.
+ * exported. An imported document is a shape-checked FILE, never the current
+ * study (plan section 9: nothing imported becomes a current fact or result).
+ * The only way from a file into the store is ./study-import
+ * startStudyFromImport, which copies the inputs and leaves every fact to be
+ * re-fetched.
  */
 
 import { validateStudyDocument } from "./study-validator";

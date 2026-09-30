@@ -7,8 +7,9 @@
  * Writes go through the pure operations (./study-operations,
  * ./parcel-study-adapter): `ensure` creates the study only when the property
  * has none yet (a second surface gets the first one's study), `update` applies
- * one operation, `replace` installs a study built elsewhere (for example from an
- * imported file). A failed operation changes nothing and notifies nobody.
+ * one operation, `replace` installs a study built elsewhere (for example one
+ * started from a file with ./study-import startStudyFromImport, which copies
+ * inputs only). A failed operation changes nothing and notifies nobody.
  *
  * Browser memory only: no storage, no network. Saved revisions are C-06 / B-001.
  */

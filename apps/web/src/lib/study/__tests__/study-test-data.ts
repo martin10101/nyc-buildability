@@ -7,7 +7,7 @@
 
 import corner from "../../../../../../packages/contracts/fixtures/valid/study/synthetic_corner_lot_two_options.json";
 import type { StudyEntry, StudyResult } from "../study-entry";
-import { createStudyEntry } from "../study-operations";
+import { createStudyEntry, optionInputsOf, type CreateStudyInput } from "../study-operations";
 import type { OptionInputs, SiteFact, Study } from "../study-vocabulary";
 
 export const SYNTHETIC_BBL = "5999999999";
@@ -73,9 +73,9 @@ export function expectOk(result: StudyResult): StudyEntry {
   return result.entry;
 }
 
-/** A one-option study for the synthetic property (revision 1). */
-export function newStudyResult(bbl = SYNTHETIC_BBL): StudyResult {
-  return createStudyEntry({
+/** The input of a one-option study for the synthetic property. */
+export function newStudyInput(bbl = SYNTHETIC_BBL): CreateStudyInput {
+  return {
     studyId: `test-fixture-synthetic-study-${bbl}`,
     property: { bbl, address: null },
     lots: [
@@ -89,6 +89,34 @@ export function newStudyResult(bbl = SYNTHETIC_BBL): StudyResult {
     lotSelection: { mode: "all", combination: { status: "single_lot", reason: null } },
     siteFacts: [],
     initialOption: { optionId: "option-a", name: "Option A", inputs: optionInputs() },
+    at: "2026-09-30T12:00:00Z",
+  };
+}
+
+/** A one-option study for the synthetic property (revision 1). */
+export function newStudyResult(bbl = SYNTHETIC_BBL): StudyResult {
+  return createStudyEntry(newStudyInput(bbl));
+}
+
+/**
+ * The committed two-option fixture's site and options as a new store entry
+ * (revision 1; options opt-a and opt-b, opt-a selected, both out of date).
+ */
+export function twoOptionResult(): StudyResult {
+  const study = cornerStudy();
+  const [first, second] = study.options.map((option) => ({
+    optionId: option.option_id,
+    name: option.name,
+    inputs: optionInputsOf(option),
+  }));
+  return createStudyEntry({
+    studyId: study.study_id,
+    property: study.property,
+    lots: study.lots,
+    lotSelection: { mode: study.lot_selection.mode, combination: study.lot_selection.combination },
+    siteFacts: study.site.facts,
+    initialOption: first,
+    moreOptions: [second],
     at: "2026-09-30T12:00:00Z",
   });
 }

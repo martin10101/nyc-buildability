@@ -2,13 +2,13 @@ import { describe, expect, it } from "vitest";
 import { isOptionStale, selectedOption, type StudyEntry } from "../study-entry";
 import {
   addOption,
+  createStudyEntry,
   duplicateOption,
   markOptionResultsCurrent,
   nextOptionId,
   removeSiteFact,
   renameOption,
   selectOption,
-  studyEntryFromDocument,
   updateOptionInputs,
   upsertSiteFact,
 } from "../study-operations";
@@ -16,16 +16,17 @@ import { LOT_SELECTION_STATEMENT } from "../study-vocabulary";
 import {
   T1,
   T2,
-  cornerStudy,
   enteredStreetWidth,
   expectOk,
+  newStudyInput,
   newStudyResult,
   optionInputs,
+  twoOptionResult,
 } from "./study-test-data";
 
-/** The two-option fixture (opt-a, opt-b; revision 3) with both options' results current. */
+/** The two-option study (opt-a, opt-b; revision 1) with both options' results current. */
 function currentTwoOptions(): StudyEntry {
-  let entry = expectOk(studyEntryFromDocument(cornerStudy()));
+  let entry = expectOk(twoOptionResult());
   entry = expectOk(markOptionResultsCurrent(entry, "opt-a", entry.study.revision.number));
   return expectOk(markOptionResultsCurrent(entry, "opt-b", entry.study.revision.number));
 }
@@ -41,17 +42,18 @@ describe("creating a study", () => {
     expect(entry.parcelChoices).toBeNull();
   });
 
-  it("marks every option of an existing document out of date: results are never imported", () => {
-    const entry = expectOk(studyEntryFromDocument(cornerStudy()));
+  it("creates several options at once; every option starts out of date (no results yet)", () => {
+    const entry = expectOk(twoOptionResult());
+    expect(entry.study.options.map((option) => option.option_id)).toEqual(["opt-a", "opt-b"]);
+    expect(entry.study.selected_option_id).toBe("opt-a");
     expect(entry.staleOptionIds).toEqual(["opt-a", "opt-b"]);
-    expect(entry.study.revision.number).toBe(3);
+    expect(entry.study.revision.number).toBe(1);
   });
 
-  it("refuses an invalid document", () => {
-    const study = cornerStudy();
-    study.options[0].program = [];
-    const result = studyEntryFromDocument(study);
-    expect(result).toMatchObject({ ok: false, code: "invalid_document" });
+  it("refuses a study the contract rejects", () => {
+    const input = newStudyInput();
+    const bad = { ...input, initialOption: { ...input.initialOption, inputs: { ...optionInputs(), program: [] } } };
+    expect(createStudyEntry(bad)).toMatchObject({ ok: false, code: "invalid_document" });
   });
 });
 
@@ -69,7 +71,7 @@ describe("options are independent (plan section 9)", () => {
     expect(next.study.site).toBe(entry.study.site);
     expect(isOptionStale(next, "opt-a")).toBe(true);
     expect(isOptionStale(next, "opt-b")).toBe(false);
-    expect(next.study.revision).toEqual({ number: 4, created_at: T1, parent: 3 });
+    expect(next.study.revision).toEqual({ number: 2, created_at: T1, parent: 1 });
     // The previous entry is untouched.
     expect(entry.study.options[0].program).toEqual(["market_rate_residential"]);
   });
@@ -92,7 +94,9 @@ describe("options are independent (plan section 9)", () => {
 
   it("returns the same entry when an edit changes nothing (no new revision)", () => {
     const entry = currentTwoOptions();
-    const same = expectOk(updateOptionInputs(entry, "opt-b", { program: ["market_rate_residential", "affordable_residential"] }, T1));
+    const same = expectOk(
+      updateOptionInputs(entry, "opt-b", { program: ["market_rate_residential", "affordable_residential"] }, T1),
+    );
     expect(same).toBe(entry);
   });
 
@@ -127,7 +131,7 @@ describe("options are independent (plan section 9)", () => {
     expect(next.study.options[1].name).toBe("Option B (affordable)");
     expect(next.study.options[0]).toBe(entry.study.options[0]);
     expect(next.staleOptionIds).toEqual([]);
-    expect(next.study.revision.number).toBe(4);
+    expect(next.study.revision.number).toBe(2);
     expect(renameOption(entry, "opt-b", "", T1)).toMatchObject({ ok: false, code: "invalid_document" });
   });
 
@@ -149,7 +153,7 @@ describe("the site is shared by every option (plan section 9)", () => {
     expect(next.study.site.facts.find((fact) => fact.fact_id === "fact-street-width-a")?.value).toBe(75);
     expect(next.study.options).toBe(entry.study.options);
     expect(next.staleOptionIds).toEqual(["opt-a", "opt-b"]);
-    expect(next.study.revision).toEqual({ number: 4, created_at: T1, parent: 3 });
+    expect(next.study.revision).toEqual({ number: 2, created_at: T1, parent: 1 });
   });
 
   it("adding and removing a site fact both mark every option out of date", () => {
@@ -158,7 +162,7 @@ describe("the site is shared by every option (plan section 9)", () => {
     expect(added.study.site.facts).toHaveLength(entry.study.site.facts.length + 1);
     expect(added.staleOptionIds).toEqual(["opt-a", "opt-b"]);
     const fresh = expectOk(markOptionResultsCurrent(
-      expectOk(markOptionResultsCurrent(added, "opt-a", 4)), "opt-b", 4,
+      expectOk(markOptionResultsCurrent(added, "opt-a", 2)), "opt-b", 2,
     ));
     const removed = expectOk(removeSiteFact(fresh, "fact-street-width-c", T2));
     expect(removed.study.site.facts).toEqual(entry.study.site.facts);
@@ -168,9 +172,67 @@ describe("the site is shared by every option (plan section 9)", () => {
 
   it("never overwrites a city value in place with an entered one", () => {
     const entry = currentTwoOptions();
-    const edit = { ...enteredStreetWidth("fact-lot-area", "unused", 1), key: "lot_area" as const, street: null, unit: "square_feet" as const, value: 5200 };
+    const edit = {
+      ...enteredStreetWidth("fact-lot-area", "unused", 1),
+      key: "lot_area" as const,
+      street: null,
+      unit: "square_feet" as const,
+      value: 5200,
+    };
     expect(upsertSiteFact(entry, edit, T1)).toMatchObject({ ok: false, code: "city_fact_overwrite" });
     expect(entry.staleOptionIds).toEqual([]);
+  });
+});
+
+describe("non-finite numbers are refused, never rewritten to null (review correction 2)", () => {
+  it("refuses an assumption value of NaN instead of saving it as null", () => {
+    const entry = currentTwoOptions();
+    const result = updateOptionInputs(
+      entry,
+      "opt-a",
+      { assumptions: [{ assumption_id: "a1", statement: "s", value: Number.NaN, unit: null }] },
+      T1,
+    );
+    expect(result).toMatchObject({ ok: false, code: "invalid_document" });
+    expect(entry.study.options[0].assumptions).toEqual([]);
+  });
+
+  it("does not mistake a NaN for the null already stored (no silent no-op)", () => {
+    const entry = currentTwoOptions();
+    const withNaN = entry.study.options[1].assumptions.map((item) => ({ ...item, value: Number.NaN }));
+    expect(entry.study.options[1].assumptions[0].value).toBeNull();
+    expect(updateOptionInputs(entry, "opt-b", { assumptions: withNaN }, T1)).toMatchObject({
+      ok: false,
+      code: "invalid_document",
+    });
+  });
+
+  it("refuses an unknown site value carrying NaN (it would otherwise pass as null)", () => {
+    const entry = currentTwoOptions();
+    const result = upsertSiteFact(
+      entry,
+      {
+        ...enteredStreetWidth("fact-street-width-c", "Synthetic Street C", 1),
+        value: Number.NaN,
+        unit: null,
+        measurement: { rank: "unknown", label: "Unknown — enter" },
+        source: null,
+        blocks: ["permitted_envelope"],
+      },
+      T1,
+    );
+    expect(result).toMatchObject({ ok: false, code: "invalid_document" });
+  });
+
+  it("refuses Infinity when a study is created", () => {
+    const input = newStudyInput();
+    const inputs = optionInputs();
+    inputs.floor_to_floor_heights.typical_floor.height_ft = Number.POSITIVE_INFINITY;
+    expect(createStudyEntry({ ...input, initialOption: { ...input.initialOption, inputs } })).toMatchObject({
+      ok: false,
+      code: "invalid_document",
+      problems: [expect.stringContaining("not finite")],
+    });
   });
 });
 
@@ -178,8 +240,8 @@ describe("out-of-date flags", () => {
   it("results computed for an earlier revision never clear a newer flag (late responses)", () => {
     const entry = currentTwoOptions();
     const edited = expectOk(updateOptionInputs(entry, "opt-a", { existing_building_plan: "remove" }, T1));
-    expect(markOptionResultsCurrent(edited, "opt-a", 3)).toMatchObject({ ok: false, code: "stale_revision" });
-    const current = expectOk(markOptionResultsCurrent(edited, "opt-a", 4));
+    expect(markOptionResultsCurrent(edited, "opt-a", 1)).toMatchObject({ ok: false, code: "stale_revision" });
+    const current = expectOk(markOptionResultsCurrent(edited, "opt-a", 2));
     expect(isOptionStale(current, "opt-a")).toBe(false);
     expect(current.study).toBe(edited.study);
   });

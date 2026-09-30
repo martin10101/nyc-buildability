@@ -2,9 +2,8 @@ import { describe, expect, it } from "vitest";
 import invalidGoalOther from "../../../../../../packages/contracts/fixtures/invalid/study/goal_other_without_text.json";
 import invalidNestedZero from "../../../../../../packages/contracts/fixtures/invalid/study/site_fact_unknown_encoded_as_zero.json";
 import { MAX_STUDY_JSON_LENGTH, exportStudyJson, importStudyJson } from "../study-json";
-import { studyEntryFromDocument } from "../study-operations";
 import type { Study } from "../study-vocabulary";
-import { SYNTHETIC_BBL, cornerStudy, expectOk } from "./study-test-data";
+import { SYNTHETIC_BBL, cornerStudy, expectOk, twoOptionResult } from "./study-test-data";
 
 function withoutAnnotation(value: unknown): Record<string, unknown> {
   const document = JSON.parse(JSON.stringify(value)) as Record<string, unknown>;
@@ -21,10 +20,10 @@ describe("study JSON boundary", () => {
   });
 
   it("exports the store's document, not its out-of-date flags", () => {
-    const entry = expectOk(studyEntryFromDocument(cornerStudy()));
+    const entry = expectOk(twoOptionResult());
     const exported = exportStudyJson(entry.study);
     if (!exported.ok) throw new Error(exported.problems.join("; "));
-    expect(JSON.parse(exported.json)).toEqual(cornerStudy());
+    expect(JSON.parse(exported.json)).toEqual(entry.study);
     expect(exported.json).not.toContain("staleOptionIds");
   });
 
