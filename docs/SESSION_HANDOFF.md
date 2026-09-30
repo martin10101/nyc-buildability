@@ -8,7 +8,7 @@ still open: C: disk-full cleanup, owner-typed D-088 commissioning, the M5-T110 c
 - **Machine:** a cloud sandbox (Linux, 1 CPU, 2 GB RAM), not the owner's PC. Sandbox paths do not persist.
 - **Handoff location:** worktree `/root/project/w-handoff`, branch `task/session-handoff-2026-09-30-cloud` (PR #270).
 - **Integration branch:** `candidate/D-024-mrl-option-b` @ `1b150912`.
-- **Gate 0 deviation:** this session ran from `/root/project`, outside the repo root, with claude.ai connectors attached, so the repo hooks were not loaded. Every PR body discloses this.
+- **Gate 0 deviation:** this session ran from `/root/project`, outside the repo root, with claude.ai connectors attached, so the repo hooks were not loaded. No PR body discloses this yet; record it with tonight's directives.
 
 ## Owner decisions given this evening (verbatim; not yet captured under project-control/directives/)
 - **"1 b"**, option B for merging. A robot may merge into the integration branch only when all of these hold:
@@ -23,7 +23,7 @@ still open: C: disk-full cleanup, owner-typed D-088 commissioning, the M5-T110 c
 - **"yes"** to fix the urllib3 blocker first. **"Road 1"**: cloud robots now, at most 2 at a time on this box.
 - **"update the loop to the new cc"** → this can only be done on the PC. The pin is SHA-256 over the PC's `claude.exe`, so a Linux box cannot produce it. Steps: `docs/CONTROLLER_UPDATE_RUNBOOK.md` §13 and `project-control/reports/M0-T159-recertification.md`.
 - **Zoning math stays owner-gated.** The owner will check `R6B_ZONING_QUESTIONS.md`, a file sent to them, with another LLM.
-- **Request: bring 3 `.claude` files from `control/session14-m0t055-accept`.** Nothing was done: that branch's tip `94e243e4` is an ancestor of the integration branch, and its `.claude` files are older copies.
+- **Request: bring 3 `.claude` files from `control/session14-m0t055-accept`.** At the first check the tip was `94e243e4` (already merged). The owner then pushed `e0c222da` (the directive `FABLE_CODEX_CONTINUOUS_AGENT_LOOP_IMPLEMENTATION_DIRECTIVE_2026-08-24.md`, the backend-engineer note `interrupt-resets-shell-to-primary.md`, and one MEMORY.md index line) and `ad5ab3ba` (archive files, not requested). Only `e0c222da` is cherry-picked, in **PR #277**.
 
 ## Done this evening
 Each PR had an independent review PASS with 0 blocking at the exact head, verified PR body, CI 40/40, and `--match-head-commit`:
@@ -41,9 +41,12 @@ Each PR had an independent review PASS with 0 blocking at the exact head, verifi
 ## Open PRs
 | PR | Head | State |
 |---|---|---|
-| #263 E-01 drawing kit | da9b9f29 | Code PASS; E-2 fixed by #276. A writer agent is rewriting the body (review B1). Next: the reviewer verifies the body and CI at the head, then merge. |
-| #262 A-02a / #269 A-02b R6B | 3234e4ae / 11daf774 | Zoning math, so the owner merges. Delta review pending. Legal questions are open (below). |
-| #268 E-03 DXF | 4fa678ea | Needs A-04; stacked on #263. |
+| #263 E-01 drawing kit | 6718fb17 | The body was verified at `da9b9f29`. That review's B1 (two stale lane docs) is fixed by `6718fb17`, which is not yet reviewed. Next: update the body for `6718fb17`, re-review, green CI, merge. |
+| #277 owner's .claude files | 80994943 | Cherry-pick of `e0c222da` only. Policy/safety review in progress. |
+| #262 A-02a R6B | 3234e4ae | Zoning math. Delta review pending; the owner merges. Legal questions are open (below). |
+| #269 A-02b R6B (draft, stacked on #262) | 11daf774 | Zoning math. Not reviewed; the owner merges. |
+| #268 E-03 DXF (draft) | 4fa678ea | Not reviewed. Needs A-04; stacked on #263. |
+| #64 M0-T019 (against `main`) | — | Old; not touched this evening. |
 | #270 this handoff | — | For the owner. |
 | #241 | — | Never merge. |
 
@@ -56,7 +59,7 @@ Each PR had an independent review PASS with 0 blocking at the exact head, verifi
 - **#275 N8/N9:** `seen_at` tie-break compares text; add a test.
 
 ## Ledger (authoritative) and what is NOT recorded
-- No ledger gates, DCV rows or accepts exist for tonight's merges, or for #247–#250.
+- No ledger gates, DCV rows or accepts exist for tonight's merges. #247–#250 have G0 gates only, no G2–G5.
 - Queue items have no ledger tasks.
 - Tonight's owner words are not yet captured with /directive-compliance.
 
@@ -66,7 +69,7 @@ Each PR had an independent review PASS with 0 blocking at the exact head, verifi
 - Draft engine (in PRs): 20,150/24,180; heights 30/45/55 and 45/65; 100% coverage; rear yard waived; 29 units.
 
 ## Owner decisions pending
-- **Legal (R6B):** does R6B inherit R6–R12 rules via ZR 11-25 (23-362, 23-344, 23-52)? The C2-2 overlay's effect on height, coverage and yards? Wide-street "portions thereof"? The owner is checking these with another LLM; a licensed reviewer is still needed.
+- **Legal (R6B):** does R6B inherit R6–R12 rules via ZR 11-25 (23-362, 23-344, 23-52)? The C2-2 overlay's effect on height, coverage and yards? Wide-street "portions thereof"? The owner is checking these with another LLM, using `R6B_ZONING_QUESTIONS.md`: sent to the owner, not in git. A licensed reviewer is still needed.
 - **Spending limit:** unanswered. The owner did not understand the question; it was explained.
 - **Reviewer (Q12)**, Q4, Q8, #243–#246, and the Q1 pilot.
 - **B-05:** may an assumption outrank a filing? What rank does a CO figure get?
@@ -77,10 +80,10 @@ Each PR had an independent review PASS with 0 blocking at the exact head, verifi
 - Tier D / Section 20 stops. PR #241 is never merged. The expansion §2 hold stands.
 - Commissioning is owner-typed. Never pass `model:`.
 - Dependency security: no waiver. No local npm/node. Producers never write `project-control/`.
-- Always have the reviewer verify the PR body before merging; bodies were wrong 4 times tonight.
+- Always have the reviewer verify the PR body before merging; bodies were wrong at least 6 times tonight (#261, #263, #265, #266, #275, #276).
 
 ## EXACT NEXT ACTION (successor)
-1. Finish #263: apply the writer's body, have the reviewer verify, confirm CI, then merge under option B.
+1. Finish #263: update its body for `6718fb17`, have the reviewer verify that head and its CI, then merge under option B. Finish #277 the same way. It is the owner's own request, and not zoning math.
 2. Next queue items for at most 2 robots: B-10, B-08, C-10/C-13, and the follow-ups above. B-07 (multi-lot) matters for the benchmark.
 3. Capture tonight's directives, and backfill ledger gates from the posted reviews (DCV rows first).
 4. When the owner returns the other LLM's R6B answer, compare it with #262/#269's assumptions and report in plain words.
