@@ -31,6 +31,11 @@ accepted boundary primitives rather than forking them:
   the accepted checker on its own candidate, so a generator-checker inconsistency fails closed
   (500) rather than shipping a maximum the checker refuses.
 
+C-04 / M1-06a (plan section 9): with ``LANE_C_ENABLED`` on, a REAL-PROPERTY request (``lot.bbl``
+present) is refused typed when it carries the example-site values or a caller-attested value
+without a site_fact measurement rank (:mod:`app.api.v1.real_property_guard`); the 422 then also
+names a machine-readable ``reason``. Flag off (the default) -> unchanged.
+
 The emitted (HTTP status, state) pairs are the single source of truth
 :data:`MAX_ENVELOPE_STATUS_STATE_MATRIX`; the 200 envelope carries NO ``state`` (pair
 ``(200, None)``), mirroring the accepted sibling routes.
@@ -68,6 +73,10 @@ from app.api.v1.proposal_validation import (
     _bounded_message,
     _declared_content_length,
     _read_body_within_ceiling,
+)
+from app.api.v1.real_property_guard import (
+    guard_real_property_request,
+    real_property_guard_enabled,
 )
 from app.config import internal_rule_eval_enabled
 from app.rules.proposal_checks import ProposalCheckError
@@ -204,10 +213,11 @@ def _bounded_field(field: str | None) -> str | None:
 
 
 def _validation_error(
-    message: str, correlation_id: str, *, field: str | None = None
+    message: str, correlation_id: str, *, field: str | None = None, reason: str | None = None
 ) -> JSONResponse:
     """Typed (422, "validation_error") with a BOUNDED reason (BP-3), optionally naming the exact
-    ``field`` (itself bounded). Never a traceback / path / secret / internal string."""
+    ``field`` (itself bounded) and, for a real-property guard refusal, its machine-readable
+    ``reason`` (a fixed server constant). Never a traceback / path / secret / internal string."""
     body: dict[str, object] = {
         "state": "validation_error",
         "message": _bounded_message(message),
@@ -215,6 +225,8 @@ def _validation_error(
     }
     if field is not None:
         body["field"] = _bounded_field(field)
+    if reason is not None:
+        body["reason"] = reason
     return _json(422, body, correlation_id)
 
 
@@ -330,10 +342,13 @@ async def post_max_envelope(request: Request) -> JSONResponse:
         _enforce_route_caps(lot)  # BP-4 (cheap, before any heavy work)
         _validate_lot_rule_fact_keys(lot_rule_facts)  # BP-2 discipline on keys
         _validate_lot_rule_fact_types(lot_rule_facts)  # BP-5 (mapped value types)
+        if real_property_guard_enabled():  # C-04 / M1-06a (LANE_C_ENABLED; off by default)
+            guard_real_property_request(body, lot=lot, lot_rule_facts=lot_rule_facts)
     except _FieldRefusal as exc:
-        logger.info("max_envelope_v1 refused field=%s correlation_id=%s",
-                    _bounded_field(exc.field), correlation_id)
-        return _validation_error(exc.message, correlation_id, field=exc.field)
+        reason = getattr(exc, "reason", None)
+        logger.info("max_envelope_v1 refused field=%s reason=%s correlation_id=%s",
+                    _bounded_field(exc.field), reason, correlation_id)
+        return _validation_error(exc.message, correlation_id, field=exc.field, reason=reason)
 
     # Resolve the engine's effective registry ONCE, on the event loop, then run the cheap
     # registry-derived enum/numeric-bound check. Resolution can only fail on a genuine internal
