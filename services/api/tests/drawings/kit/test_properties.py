@@ -95,6 +95,13 @@ def generated_results(seed: int) -> dict:
                          "use": part_use})
     geo["floor_plates"] = {"status": "available", "entries": plates}
     doc["floor_by_floor"] = rows
+    # The envelope must fit this lot (drawn last, so the draws above are unchanged).
+    base = _r2(rnd.uniform(20, 80))
+    geo["envelope"] = {"status": "available", "tiers": [
+        {"bottom_ft": 0, "top_ft": base, "outline": [lot]},
+        {"bottom_ft": base, "top_ft": _r2(base + rnd.uniform(5, 60)),
+         "outline": _rect(ox, oy, ox + w - chamfer, oy + depth)},
+    ]}
     return doc
 
 

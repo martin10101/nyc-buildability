@@ -12,7 +12,14 @@ from importlib import resources
 import pytest
 
 from app.drawings.kit.hatches import hatch_defs, hatch_fill
-from app.drawings.kit.styles import AREA, LINE, STYLE_TABLE, style_for, style_table_as_dict
+from app.drawings.kit.styles import (
+    AREA,
+    LINE,
+    STYLE_TABLE,
+    TEXT,
+    style_for,
+    style_table_as_dict,
+)
 
 USES = ("residential", "commercial", "community_facility", "cellar", "bulkhead_or_mechanical")
 PLAN_KINDS = USES + ("yard", "court", "setback_zone", "lot_line", "envelope")
@@ -77,7 +84,8 @@ def test_every_entry_is_well_formed():
         assert HEX.match(style.outline)
         assert style.line_weight_pt > 0
         assert re.fullmatch(r"[A-Z0-9-]{1,31}", style.cad_layer)
-        assert style.label and style.geometry in (AREA, LINE)
+        assert style.label and style.geometry in (AREA, LINE, TEXT)
+        assert style.cad_color in range(1, 10)  # the nine standard AutoCAD Color Indexes
         if style.geometry == AREA:
             assert HEX.match(style.fill)
         else:
@@ -133,3 +141,17 @@ def test_hatch_patterns_follow_the_table():
     assert cellar[: cellar.index("</pattern>")].count("<line") == 2  # crossed
     assert hatch_fill("residential") is None
     assert hatch_fill("yard") == "url(#hatch-yard)"
+
+
+def test_the_dxf_annotation_layer_is_a_text_kind_outside_the_legend():
+    note = style_for("note")
+    assert note.geometry == TEXT and not note.in_legend
+    assert note.cad_layer == "A-ANNO-NOTE"
+
+
+def test_dxf_colors_follow_the_screen_palette():
+    # residential yellow, commercial vermillion ~ red, community facility blue,
+    # cellar light grey, mechanical reddish purple ~ magenta, lot line black/white
+    assert [style_for(k).cad_color for k in USES] == [2, 1, 5, 9, 6]
+    assert style_for("lot_line").cad_color == 7
+    assert style_for("envelope").cad_color == style_for("community_facility").cad_color

@@ -37,7 +37,24 @@ def test_lot_outline_without_envelope_still_loads():
     assert isinstance(data.floor_plates, LayerUnavailable)
     assert data.floor_plates.reason == doc["geometry"]["floor_plates"]["reason"]
     assert isinstance(data.yards, LayerUnavailable)
+    assert isinstance(data.envelope, LayerUnavailable)
+    assert data.envelope.reason == doc["geometry"]["envelope"]["reason"]
     assert data.streets[0].name == "Synthetic Street C"
+
+
+def test_envelope_tiers_load_with_their_heights_and_sources():
+    data = load_drawing_input(BASE)
+    assert [(t.bottom_ft, t.top_ft) for t in data.envelope] == [(0.0, 45.0), (45.0, 55.0)]
+    assert data.envelope[1].source == "/geometry/envelope/tiers/1"
+    assert data.envelope[1].outline.source == "/geometry/envelope/tiers/1/outline"
+    assert data.envelope[1].outline.exterior[0] == (15.0, 15.0)
+
+
+def test_too_many_envelope_tiers_fails_closed(monkeypatch):
+    monkeypatch.setattr("app.drawings.kit.adapter.MAX_ENVELOPE_TIERS", 1)
+    with pytest.raises(DrawingInputError) as caught:
+        load_drawing_input(BASE)
+    assert caught.value.code == "too_many_envelope_tiers"
 
 
 def test_geometry_not_available_returns_the_results_reason():
@@ -70,6 +87,7 @@ def _set(path: str, value):
 
 LOT = "/geometry/lot_outline/0"
 PLATE0 = "/geometry/floor_plates/entries/0"
+TIER1 = "/geometry/envelope/tiers/1"
 
 INVALID_CASES = [
     ("schema_invalid", lambda d: d.pop("geometry"), ""),
@@ -103,6 +121,14 @@ INVALID_CASES = [
     ("setback_line_outside_lot",
      _set("/geometry/setback_lines_per_level/entries/0/lines/0", [[15, 15], [70, 15]]),
      "/geometry/setback_lines_per_level/entries/0/lines/0"),
+    ("envelope_tier_inverted", _set(f"{TIER1}/top_ft", 45), TIER1),
+    ("envelope_outside_lot",
+     _set(f"{TIER1}/outline", [[[15, 15], [70, 15], [70, 100], [15, 100], [15, 15]]]),
+     f"{TIER1}/outline"),
+    ("coordinate_out_of_range", _set(f"{TIER1}/top_ft", 1e300), f"{TIER1}/top_ft"),
+    ("ring_not_closed",
+     _set(f"{TIER1}/outline/0", [[15, 15], [50, 15], [50, 100], [15, 100], [15, 16]]),
+     f"{TIER1}/outline/0"),
 ]
 
 
