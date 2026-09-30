@@ -1,5 +1,12 @@
 """Deterministic derivation of the C1 unused-draft-zoning-floor-area section (M5-T017, D-041).
 
+A-03 SET-ASIDE (plan section 3 step 4, section 8, M2-07; set-aside list item 6): the
+cap - bldgarea subtraction described below is the LEGACY behavior and runs ONLY when
+the module-local, fail-safe, default-off ``INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED``
+flag is explicitly on. By DEFAULT the section is ``not_computable`` and says "Not
+available - needs existing zoning floor area" (see ``_not_available_section``): existing
+floor area is never taken from city-recorded (DOF/PLUTO) building area.
+
 Gap-list item C1: the honest "unused DRAFT floor area" line for the first screen. This
 module owns ALL of the C1 logic (the ``derive.py`` separate-module precedent); the scenario
 ``builder.py`` only wires the returned section into every document via a thin call in
@@ -51,13 +58,53 @@ Hard guarantees (also enforced by ``tests/scenario/test_unused_floor_area.py``):
 from __future__ import annotations
 
 import math
+import os
+from collections.abc import Mapping
 from typing import Any
 
 from . import constants as C
 from .models import UnusedFloorAreaNotComputableReason as Reason
 from .models import UnusedFloorAreaState as State
 
-__all__ = ["build_unused_floor_area_section"]
+__all__ = [
+    "INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED_ENV_VAR",
+    "build_unused_floor_area_section",
+    "legacy_unused_floor_area_enabled",
+]
+
+
+# ---------------------------------------------------------------------------
+# A-03 set-aside flag (plan section 3 step 4, section 8, M2-07; set-aside list
+# item 6). Everything described in the module docstring above is the LEGACY
+# behavior: cap - PLUTO bldgarea. The plan forbids taking existing floor area
+# from city-recorded (DOF/PLUTO) building area, so that subtraction now runs
+# ONLY when this module-local flag is explicitly on. By DEFAULT (flag absent,
+# empty, or any unknown value) the section is ``not_computable`` with the
+# "Not available - needs existing zoning floor area" label, the draft cap still
+# shows under ``inputs``, no over_built state or professional-review flag is
+# derived from bldgarea, and the recorded building area rides only as a
+# reference-only assumption record, never subtracted (_not_available_section).
+# ---------------------------------------------------------------------------
+
+# Env var name, declared once here. The CODE default, when the variable is
+# absent/empty/unknown, is DISABLED (fail-safe) - see
+# legacy_unused_floor_area_enabled.
+INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED_ENV_VAR = "INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED"
+
+# Same closed token set as app.config: anything else - unset, "", "0", "off",
+# a typo - is DISABLED (fail safe).
+_TRUE_TOKENS = frozenset({"1", "true", "yes", "on"})
+
+
+def legacy_unused_floor_area_enabled(env: Mapping[str, str] | None = None) -> bool:
+    """Whether the LEGACY cap - bldgarea subtraction is enabled. Read from ``env``
+    (default ``os.environ``) on EVERY call so tests flip it with monkeypatch;
+    True only for an explicit true token, absent/non-string/unknown -> False."""
+    source = os.environ if env is None else env
+    raw = source.get(INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED_ENV_VAR)
+    if not isinstance(raw, str):
+        return False
+    return raw.strip().lower() in _TRUE_TOKENS
 
 
 # ---------------------------------------------------------------------------
@@ -291,14 +338,18 @@ def _section(
     formula: str | None,
     assumptions: list[dict],
     inputs: dict,
+    label: str = C.UNUSED_FLOOR_AREA_LABEL,
+    scope_note: str = C.UNUSED_FLOOR_AREA_SCOPE_NOTE,
 ) -> dict:
-    """Assemble the section in a fixed key order (determinism)."""
+    """Assemble the section in a fixed key order (determinism). ``label`` /
+    ``scope_note`` default to the LEGACY wording; the default (set-aside) path
+    passes the not-available wording."""
     return {
         "state": state.value,
         "unused_draft_zoning_floor_area_sq_ft": value,
         "unit": "square_feet" if value is not None else None,
-        "label": C.UNUSED_FLOOR_AREA_LABEL,
-        "scope_note": C.UNUSED_FLOOR_AREA_SCOPE_NOTE,
+        "label": label,
+        "scope_note": scope_note,
         "formula": formula,
         "professional_review_required": professional_review_required,
         "over_built_statement": over_built_statement,
@@ -310,11 +361,108 @@ def _section(
     }
 
 
+def _recorded_building_area_reference(property_profile: dict) -> list[dict]:
+    """The recorded (DOF/PLUTO) building area as a REFERENCE-ONLY assumption record,
+    or ``[]``. Plan section 3 step 4: city-recorded building area may be shown for
+    reference but is never subtracted - it does not follow the zoning definition of
+    floor area (ZR 12-10). Carried ONLY when the bldgarea fact is present with a
+    usable coverage_status, a finite value strictly above zero (a recorded 0 is
+    ambiguous per the PLUTO data dictionary, D-059-R011, so it is not carried), and a
+    provenance_ref that resolves against the profile root ``provenance[]`` array.
+    Units are echoed verbatim from the fact (never guessed)."""
+    fact = _bldgarea_fact(property_profile)
+    if fact is None:
+        return []
+    coverage = fact.get("coverage_status")
+    if not (
+        isinstance(coverage, str) and coverage in C.USABLE_EXISTING_AREA_COVERAGE_STATUSES
+    ):
+        return []
+    value = _positive_finite_float(fact.get("value"))
+    provenance_ref = fact.get("provenance_ref")
+    provenance = _resolve_provenance(property_profile, provenance_ref)
+    if value is None or provenance is None:
+        return []
+    units = fact.get("units")
+    source = (
+        f"source_id={provenance['source_id']}, "
+        f"dataset_version={provenance['dataset_version']}, "
+        f"original_field_name={provenance['original_field_name']}, "
+        f"provenance_ref={provenance_ref}"
+    )
+    return [
+        {
+            "key": "recorded_building_area_reference",
+            "assumption_type": "reference_only_not_zoning_floor_area",
+            "value": value,
+            "unit": units if isinstance(units, str) else None,
+            "rationale": (
+                f"City-recorded building area, carried for reference only ({source}). "
+                "It is NOT zoning floor area: it does not follow the zoning "
+                "definition of floor area (ZR 12-10), so it is never subtracted "
+                "from the draft floor-area allowance and no unused-floor-area or "
+                "over-built result is derived from it."
+            ),
+        }
+    ]
+
+
+def _not_available_section(
+    *,
+    property_profile: dict,
+    cap_value: float | None,
+    cap_provenance: dict | None,
+) -> dict:
+    """The DEFAULT (flag-off) section: "Not available - needs existing zoning floor
+    area" (plan section 3 step 4, section 8, M2-07; set-aside list item 6).
+
+    Never subtracts anything and never reads bldgarea as an existing floor area, so
+    it can never be ``computed`` / ``over_built`` and never raises the section-level
+    professional-review flag. The draft allowance still shows: a positive cap is
+    echoed verbatim (with its provenance) under ``inputs.draft_zoning_floor_area_cap``
+    and the document-root cap is untouched. ``inputs.existing_building_floor_area``
+    is all-null - the input this needs is the existing ZONING floor area, which has
+    no source yet.
+
+    Typed reason: the closed contract enum has no "needs existing zoning floor area"
+    value (a Lane C schema request), so the closest valid one is used -
+    ``no_draft_far_cap`` when no positive cap was surfaced (unchanged), else
+    ``missing_existing_building_area`` - and the precise machine-readable token rides
+    as the value of the ``unused_floor_area_not_available`` assumption record, which
+    is present on every default section."""
+    cap = _positive_finite_float(cap_value)
+    reason = Reason.NO_DRAFT_FAR_CAP if cap is None else Reason.MISSING_EXISTING_BUILDING_AREA
+    return _section(
+        state=State.NOT_COMPUTABLE,
+        value=None,
+        professional_review_required=False,
+        over_built_statement=None,
+        not_computable_reason=reason,
+        formula=None,
+        assumptions=[
+            C.unused_floor_area_not_available_assumption(),
+            *_recorded_building_area_reference(property_profile),
+        ],
+        inputs=_inputs(
+            cap_value=cap,
+            cap_provenance=cap_provenance if cap is not None else None,
+            existing_value=None,
+            existing_unit=None,
+            existing_coverage_status=None,
+            existing_provenance_ref=None,
+            existing_provenance=None,
+        ),
+        label=C.UNUSED_FLOOR_AREA_NOT_AVAILABLE_LABEL,
+        scope_note=C.UNUSED_FLOOR_AREA_NOT_AVAILABLE_SCOPE_NOTE,
+    )
+
+
 def build_unused_floor_area_section(
     *,
     property_profile: dict,
     cap_value: float | None,
     cap_provenance: dict | None,
+    env: Mapping[str, str] | None = None,
 ) -> dict:
     """Derive the ``unused_draft_zoning_floor_area`` section deterministically.
 
@@ -322,12 +470,38 @@ def build_unused_floor_area_section(
     residential zoning-floor-area cap the builder already surfaced (``None`` on every
     no-scenario / unsupported / fail-closed outcome); it is consumed VERBATIM, never
     recomputed or adjusted. ``cap_provenance`` is the builder's cap provenance dict
-    (echoed verbatim), or ``None``.
+    (echoed verbatim), or ``None``. ``env`` (default ``os.environ``) is read for the
+    A-03 set-aside flag: unless ``INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED`` holds an
+    explicit true token, the DEFAULT not-available section is returned and nothing
+    is subtracted.
 
     Returns the section dict. Its ``professional_review_required`` is the SECTION-level
     flag; the builder ORs it into the document root flag so an over-built remainder
-    forces root professional_review_required true.
+    (legacy flag on only) forces root professional_review_required true.
     """
+    property_profile = _as_dict(property_profile)
+    if not legacy_unused_floor_area_enabled(env):
+        return _not_available_section(
+            property_profile=property_profile,
+            cap_value=cap_value,
+            cap_provenance=cap_provenance,
+        )
+    return _legacy_section(
+        property_profile=property_profile,
+        cap_value=cap_value,
+        cap_provenance=cap_provenance,
+    )
+
+
+def _legacy_section(
+    *,
+    property_profile: dict,
+    cap_value: float | None,
+    cap_provenance: dict | None,
+) -> dict:
+    """LEGACY (flag on only): cap - PLUTO bldgarea, with the computed / over_built /
+    not_computable states described in the module docstring. Kept, with its tests,
+    behind the A-03 set-aside flag; never reached by default."""
     property_profile = _as_dict(property_profile)
 
     # Read the existing-building bldgarea fact once.
