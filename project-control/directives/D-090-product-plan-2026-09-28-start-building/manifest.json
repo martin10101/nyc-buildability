@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-09-30T06:05:00+00:00",
+ "updated_at": "2026-09-30T07:10:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -35,10 +35,15 @@
   "D-090-R011",
   "D-090-R012",
   "D-090-R013",
-  "D-090-R014"
+  "D-090-R014",
+  "D-090-R015",
+  "D-090-R016",
+  "D-090-R017",
+  "D-090-R018",
+  "D-090-R019"
  ],
- "requirements_id_digest_sha256": "3b38493e41eab7fa98c1140ad664ee1581d2437b2046775c4d207029662cd954",
- "requirements_content_digest_sha256": "80a30cf16d20f2091577077b45f5e70bc52ccf7237db8633e9e749c591cb1d63",
+ "requirements_id_digest_sha256": "e4b522941ff750e854c1a6539eb38f4dc11588fd3051062117789fc05d8d731d",
+ "requirements_content_digest_sha256": "a9e3e40e66ad58cfbd95aa89c5a6190dc004506ace66c0bb97365a1cc3a88c57",
  "sources": [
   {
    "file": "source-001.md",
@@ -46,9 +51,19 @@
    "sequence": 1,
    "recorded_at": "2026-09-30T05:18:52+00:00",
    "content_digest_sha256": "a7f497c2f5703f20aca19dc30daa045ea333fdc58926521de319ae003a0d32d9"
+  },
+  {
+   "file": "source-002-amendment.md",
+   "kind": "amendment",
+   "sequence": 2,
+   "recorded_at": "2026-09-30T07:10:00+00:00",
+   "content_digest_sha256": "0d7fd2459238b5a7d330157376dc493bfea91ab463eb9a2ccd94c653afd55048",
+   "amends": "source-001.md"
   }
  ],
- "amendments": [],
+ "amendments": [
+  "source-002-amendment.md"
+ ],
  "supersedes": [],
  "superseded_by": null,
  "affected_tasks": [
@@ -84,6 +99,12 @@
    "actor": "orchestrator",
    "action": "scope_binding",
    "note": "Governance scope bound to M0-T164 only: its allowed_paths include .github/workflows/ci.yml for exactly one additive step (the lane path check), which the owner's Prompt 0 authorizes verbatim ('one additive CI step', D-090-R004). No requirement text changed; no other governance path authorized."
+  },
+  {
+   "at": "2026-09-30T07:10:00+00:00",
+   "actor": "orchestrator",
+   "action": "amendment_captured",
+   "note": "Owner message 3 captured verbatim before acting: GO for the lanes (R015 satisfies the R007 hold), fresh-context workers with the orchestrator as last watcher (R016), synchronization (R017), extra guardrails (R018), tooling authorization (R019). Headless bypass-permission loops were refused by the session safety classifier; lanes run as orchestrator-dispatched producers (D-089/B-026 precedent). Reviewer and spending-limit asks unanswered."
   }
  ]
 }
