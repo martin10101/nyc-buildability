@@ -202,9 +202,14 @@ class Ownership:
     @classmethod
     def load(cls, path: Path) -> Ownership:
         try:
-            data = parse_yaml_subset(path.read_text(encoding="utf-8"))
+            text = path.read_text(encoding="utf-8")
         except OSError as exc:
             raise OwnershipError(f"cannot read {path}: {exc}") from exc
+        return cls.from_text(text)
+
+    @classmethod
+    def from_text(cls, text: str) -> Ownership:
+        data = parse_yaml_subset(text)
         if not isinstance(data, dict):
             raise OwnershipError("top level must be a mapping")
         lanes = data.get("lanes")
@@ -274,13 +279,31 @@ def tracked_files() -> list[str]:
     return [line for line in _git("ls-files", "-z").split("\0") if line]
 
 
+def is_shallow() -> bool:
+    return _git("rev-parse", "--is-shallow-repository").strip() == "true"
+
+
+def ownership_at(commit: str, path: Path) -> str | None:
+    """OWNERSHIP.yaml text as committed at ``commit``, or None when that commit has none."""
+    rel = path.resolve().relative_to(REPO_ROOT).as_posix()
+    completed = subprocess.run(
+        ["git", "show", f"{commit}:{rel}"], cwd=REPO_ROOT, capture_output=True, text=True,
+        check=False,
+    )
+    return completed.stdout if completed.returncode == 0 else None
+
+
 def changed_files(base: str, fetch: bool) -> list[str]:
     ref = f"origin/{base}"
     if fetch:
         refspec = f"+refs/heads/{base}:refs/remotes/{ref}"
-        _git("fetch", "--no-tags", "--depth=500", "origin", refspec)
-        if _git("rev-parse", "--is-shallow-repository").strip() == "true":
+        if is_shallow():
+            # Only an already-shallow clone (CI) gets depth-limited fetches; a --depth fetch
+            # would silently make a full clone, and every worktree sharing it, shallow.
+            _git("fetch", "--no-tags", "--depth=500", "origin", refspec)
             _git("fetch", "--no-tags", "--deepen=500", "origin")
+        else:
+            _git("fetch", "--no-tags", "origin", refspec)
     merge_base = _git("merge-base", ref, "HEAD").strip()
     output = _git("diff", "--name-only", "--no-renames", "-z", merge_base, "HEAD")
     return [line for line in output.split("\0") if line]
@@ -293,7 +316,10 @@ def changed_files_vs_sha(base_sha: str, fetch: bool) -> list[str]:
     if not re.fullmatch(r"[0-9a-f]{40}", base_sha or ""):
         raise RuntimeError(f"--base-sha must be a full 40-hex commit id, got {base_sha!r}")
     if fetch:
-        _git("fetch", "--no-tags", "--depth=1", "origin", base_sha)
+        if is_shallow():
+            _git("fetch", "--no-tags", "--depth=1", "origin", base_sha)
+        else:
+            _git("fetch", "--no-tags", "origin", base_sha)
     output = _git("diff", "--name-only", "--no-renames", "-z", base_sha, "HEAD")
     return [line for line in output.split("\0") if line]
 
@@ -357,9 +383,15 @@ def main(argv: list[str] | None = None) -> int:
             files = args.files
         elif args.base_sha:
             files = changed_files_vs_sha(args.base_sha, args.fetch)
+            if lane != "C":
+                # A lane other than C (which owns the map) is judged by the map at its base, so
+                # a PR cannot widen its own paths by editing OWNERSHIP.yaml.
+                base_text = ownership_at(args.base_sha, args.ownership)
+                if base_text is not None:
+                    ownership = Ownership.from_text(base_text)
         else:
             files = changed_files(base, args.fetch)
-    except RuntimeError as exc:
+    except (RuntimeError, OwnershipError) as exc:
         print(f"LANE PATH CHECK ERROR: {exc}")
         return 2
 

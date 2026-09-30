@@ -251,10 +251,75 @@ class GitDiffTests(unittest.TestCase):
             clp.REPO_ROOT = repo
             try:
                 self.assertEqual(clp.changed_files_vs_sha(base_sha, fetch=False), ["b.txt"])
-                with self.assertRaises(RuntimeError):
-                    clp.changed_files_vs_sha("not-a-sha", fetch=False)
+                for bad in ("not-a-sha", "HEAD", "--output=x", base_sha[:12]):
+                    with self.assertRaises(RuntimeError):
+                        clp.changed_files_vs_sha(bad, fetch=False)
             finally:
                 clp.REPO_ROOT = saved
+
+    def test_fetch_keeps_a_full_clone_full(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            origin, work = tmp_path / "origin.git", tmp_path / "work"
+            origin.mkdir()
+            self._git(origin, "init", "-q", "--bare", "-b", "base")
+            self._git(tmp_path, "clone", "-q", str(origin), str(work))
+            self._git(work, "config", "user.email", "t@example.invalid")
+            self._git(work, "config", "user.name", "t")
+            self._git(work, "switch", "-q", "-c", "base")
+            for n in range(3):
+                (work / f"f{n}.txt").write_text(f"{n}\n")
+                self._git(work, "add", f"f{n}.txt")
+                self._git(work, "commit", "-q", "-m", f"c{n}")
+            self._git(work, "push", "-q", "origin", "base")
+            base_sha = self._git(work, "rev-parse", "HEAD").strip()
+            self._git(work, "switch", "-q", "-c", "lane-a/x")
+            (work / "g.txt").write_text("g\n")
+            self._git(work, "add", "g.txt")
+            self._git(work, "commit", "-q", "-m", "lane")
+            saved = clp.REPO_ROOT
+            clp.REPO_ROOT = work
+            try:
+                self.assertEqual(clp.changed_files("base", fetch=True), ["g.txt"])
+                self.assertEqual(clp.changed_files_vs_sha(base_sha, fetch=True), ["g.txt"])
+                self.assertFalse(clp.is_shallow())
+                self.assertEqual(self._git(work, "rev-list", "--count", "HEAD").strip(), "4")
+            finally:
+                clp.REPO_ROOT = saved
+
+    def test_non_c_lane_is_judged_by_the_base_ownership_map(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            self._git(repo, "init", "-q", "-b", "base")
+            self._git(repo, "config", "user.email", "t@example.invalid")
+            self._git(repo, "config", "user.name", "t")
+            own = repo / "docs" / "lanes" / "OWNERSHIP.yaml"
+            own.parent.mkdir(parents=True)
+            real = clp.DEFAULT_OWNERSHIP.read_text(encoding="utf-8")
+            own.write_text(real, encoding="utf-8")
+            self._git(repo, "add", ".")
+            self._git(repo, "commit", "-q", "-m", "base")
+            base_sha = self._git(repo, "rev-parse", "HEAD").strip()
+            self._git(repo, "switch", "-q", "-c", "lane-a/grab")
+            # The lane edits the map to claim main.py, then touches main.py.
+            own.write_text(real.replace("      - services/api/app/main.py\n", "", 1)
+                           .replace("      - services/api/app/rules/**\n",
+                                    "      - services/api/app/rules/**\n"
+                                    "      - services/api/app/main.py\n", 1), encoding="utf-8")
+            main_py = repo / "services" / "api" / "app" / "main.py"
+            main_py.parent.mkdir(parents=True)
+            main_py.write_text("x = 1\n")
+            self._git(repo, "add", ".")
+            self._git(repo, "commit", "-q", "-m", "grab")
+            saved_root, saved_default = clp.REPO_ROOT, clp.DEFAULT_OWNERSHIP
+            clp.REPO_ROOT, clp.DEFAULT_OWNERSHIP = repo, own
+            try:
+                code, out = run_main("--ownership", str(own), "--branch", "lane-a/grab",
+                                     "--base-sha", base_sha)
+            finally:
+                clp.REPO_ROOT, clp.DEFAULT_OWNERSHIP = saved_root, saved_default
+            self.assertEqual(code, 1, out)
+            self.assertIn("services/api/app/main.py (owner: C)", out)
 
 
 class SetupWorktreesTests(unittest.TestCase):
