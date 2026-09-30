@@ -8,7 +8,7 @@ still open: C: disk-full cleanup, owner-typed D-088 commissioning, the M5-T110 c
 - **Machine:** a cloud sandbox (Linux, 1 CPU, 2 GB RAM), not the owner's PC. Sandbox paths do not persist.
 - **Handoff location:** worktree `/root/project/w-handoff`, branch `task/session-handoff-2026-09-30-cloud` (PR #270).
 - **Integration branch:** `candidate/D-024-mrl-option-b` @ `1b150912`.
-- **Gate 0 deviation:** this session ran from `/root/project`, outside the repo root, with claude.ai connectors attached, so the repo hooks were not loaded. No PR body discloses this yet; record it with tonight's directives.
+- **Gate 0 deviation:** this session ran from `/root/project`, outside the repo root, with claude.ai connectors attached, so the repo hooks were not loaded. No PR body discloses this yet; record it with tonight's directives. Because the repo's `.claude/agents` definitions were not loaded, tonight's producers and reviewers were generic subagents that inherited Opus 5.5. They did not run on the D-064/D-085 subagent pin (opus-4-8). Record that deviation too.
 
 ## Owner decisions given this evening (verbatim; not yet captured under project-control/directives/)
 - **"1 b"**, option B for merging. A robot may merge into the integration branch only when all of these hold:
