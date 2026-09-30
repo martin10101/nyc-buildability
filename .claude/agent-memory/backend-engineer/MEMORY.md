@@ -2,6 +2,7 @@
 
 - [Producer sandbox varies per session](env-producer-sandbox-no-exec.md) — probe python/network cheaply at session start; M1-T002 had full exec+network, earlier sessions had none; rm can be denied
 - [2026-07-15 no-exec fallback playbook](sandbox-no-python-exec.md) — stale as a universal rule; keeps the Grep-static/orchestrator-capture playbook for sessions where the probe fails
+- [Extraction pkg 3.12 eager-import blocks local pytest; use a sys.modules shim](extraction-pkg-312-eager-import-shim.md) — app.documents.extraction __init__ pulls units.py 3.12 syntax; un-collectible under 3.11; stub the package chain to run real tests; ruff+modularity still work
 - [Socrata/PLUTO connector gotchas](socrata-pluto-gotchas.md) — checkbox columns are JSON booleans (='Y' gives type-mismatch 400); bbl decimal-serialized in FULL records; SODA omits nulls even under $select
 - [Agent-supervisor rotation + model machinery](agent-supervisor-rotation-and-model-machinery.md) — reuse (never fork) broker_permission_handler, rotation.py seam pieces (observe_mid_unit/RotationLedger/decide_pre_dispatch guard), stream-json model+usage carriers; expected_model mismatch probe; threshold in RotationThresholds
 - [Worktree vs shared checkout: edit the worktree, mind EOL](env-producer-sandbox-no-exec.md) — a worktree-isolated agent must Edit the worktree path (shared-checkout edits + `git -C` redirects are refused); shared and worktree copies can differ only in line endings (git-normalized in `git diff`), so re-read from the worktree before editing a file whose `diff -q` flags it
