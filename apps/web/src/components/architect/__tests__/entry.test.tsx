@@ -500,5 +500,32 @@ describe("max-envelope panel composes additively on the proposal surface (M5-T07
   });
 });
 
+describe("D-06: the unused-floor-area section is set aside behind INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED", () => {
+  // Plan §3 step 4, M2-07: without an existing zoning floor area the views show
+  // exactly this line; the route pages read the server flag and pass it down.
+  const NOT_AVAILABLE = "Not available — needs existing zoning floor area";
+  function withScenario(view: string) {
+    state.params.set("view", view);
+    state.evaluation = draftApplicableDoc();
+    state.evaluation.evaluated_input.bbl = state.profile!.identity.bbl;
+    state.scenario = structuredClone(scenarioFixture) as Scenario;
+    state.scenario.evaluated_input.bbl = state.profile!.identity.bbl;
+  }
+  it.each(["scenarios", "evidence", "report"])("%s: off by default — one not-available line, no section and no remainder record", view => {
+    withScenario(view);
+    render(<ArchitectEntry/>);
+    expect(screen.getAllByTestId("unused-floor-area-not-available").map(line => line.textContent)).toEqual([NOT_AVAILABLE]);
+    expect(screen.queryByTestId("scenario-unused-floor-area")).toBeNull();
+    expect(screen.queryByText("Remainder inputs, result and provenance")).toBeNull();
+  });
+  it.each(["scenarios", "evidence", "report"])("%s: the server flag reaches the kept section", view => {
+    withScenario(view);
+    render(<ArchitectEntry unusedFloorAreaSectionEnabled/>);
+    expect(screen.queryByTestId("unused-floor-area-not-available")).toBeNull();
+    if (view === "scenarios") expect(screen.getByTestId("scenario-unused-floor-area")).toBeInTheDocument();
+    else expect(screen.getByText("Remainder inputs, result and provenance")).toBeInTheDocument();
+  });
+});
+
 afterEach(() => vi.unstubAllGlobals());
 afterEach(cleanup);

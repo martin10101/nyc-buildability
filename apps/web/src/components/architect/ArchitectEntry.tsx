@@ -100,11 +100,12 @@ function PropertySearch() {
     <p className="architect-search-review" data-testid="search-review">Preliminary analysis — professional review required before any reliance.</p>
   </div>;
 }
-function LoadedWorkspace({ profile, view, surveyEnabled, proposalEditorEnabled }: {
+function LoadedWorkspace({ profile, view, surveyEnabled, proposalEditorEnabled, unusedFloorAreaSectionEnabled }: {
     profile: PropertyProfile;
     view: WorkspaceView;
     surveyEnabled: boolean;
     proposalEditorEnabled: boolean;
+    unusedFloorAreaSectionEnabled: boolean;
 }) {
     const router = useRouter();
     const analysis = useAnalysis(profile.identity.bbl);
@@ -145,11 +146,11 @@ function LoadedWorkspace({ profile, view, surveyEnabled, proposalEditorEnabled }
         case "scenarios":
             content = <>
     <PropertyIssuesSummary profile={profile}/>
-    {scenario ? <ScenarioWorkspace document={scenario} evaluation={evaluation} bbl={bbl}/> : null}
+    {scenario ? <ScenarioWorkspace document={scenario} evaluation={evaluation} bbl={bbl} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/> : null}
   </>;
             break;
         case "evidence":
-            content = <EvidenceWorkspace profile={profile} evaluation={evaluation} scenario={scenario} address={address} selection={selection} onSelect={setSelection}/>;
+            content = <EvidenceWorkspace profile={profile} evaluation={evaluation} scenario={scenario} address={address} selection={selection} onSelect={setSelection} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/>;
             break;
         case "issues":
             content = <>
@@ -178,7 +179,7 @@ function LoadedWorkspace({ profile, view, surveyEnabled, proposalEditorEnabled }
   </section>;
             break;
         case "report":
-            content = <ReportView profile={profile} evaluation={returnedEvaluation} scenario={returnedScenario} label={label}/>;
+            content = <ReportView profile={profile} evaluation={returnedEvaluation} scenario={returnedScenario} label={label} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/>;
             break;
         case "proposal":
             // D-01 (plan §7): set aside behind INTERNAL_PROPOSAL_EDITOR_ENABLED; when
@@ -224,12 +225,14 @@ function LoadedWorkspace({ profile, view, surveyEnabled, proposalEditorEnabled }
   </div>;
 }
 /** Route adapter only. Legacy server flags select this tree; no client flag can open it. */
-export function ArchitectEntry({ defaultView = "overview", surveyEnabled = false, requireBbl = false, proposalEditorEnabled = false }: {
+export function ArchitectEntry({ defaultView = "overview", surveyEnabled = false, requireBbl = false, proposalEditorEnabled = false, unusedFloorAreaSectionEnabled = false }: {
     defaultView?: WorkspaceView;
     surveyEnabled?: boolean;
     requireBbl?: boolean;
     /** Server-read INTERNAL_PROPOSAL_EDITOR_ENABLED (D-01); absent -> off. */
     proposalEditorEnabled?: boolean;
+    /** Server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED (D-06); absent -> off. */
+    unusedFloorAreaSectionEnabled?: boolean;
 }) {
     const params = useSearchParams();
     const rawBbl = params.get("bbl") ?? "";
@@ -261,7 +264,7 @@ export function ArchitectEntry({ defaultView = "overview", surveyEnabled = false
       <p>Requested BBL {bbl}; returned BBL {property.outcome.profile.identity.bbl}. This record cannot be used for the selected property.</p>
       <CapturedRecord value={property.outcome.profile} label="Returned property record"/>
       <Link className="secondary-button" href={propertyHref()}>Change property</Link>
-    </section> : property.outcome?.kind === "profile" ? <LoadedWorkspace key={bbl} profile={property.outcome.profile} view={view} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled}/> : property.outcome ? <>
+    </section> : property.outcome?.kind === "profile" ? <LoadedWorkspace key={bbl} profile={property.outcome.profile} view={view} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/> : property.outcome ? <>
       <OutcomeFailureStates outcome={property.outcome} onRetry={property.retry}/>
       <Link href={propertyHref()} className="secondary-button">Change property</Link>
     </> : null}

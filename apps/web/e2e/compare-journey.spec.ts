@@ -119,6 +119,26 @@ test("AS-1: the draft cap renders as a labelled number with a named objective an
   await expect(page.getByTestId("scenario-citations")).toBeVisible();
 });
 
+test("D-06: unused floor area shows only 'Not available — needs existing zoning floor area'; the allowance still shows", async ({
+  page,
+}) => {
+  // Plan §3 step 4 / M2-07: existing floor area is never taken from city-recorded
+  // building area. The section is set aside behind the default-off server flag
+  // INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED, which the e2e web server does not set.
+  await page.goto(`/property/compare?bbl=${COMPARE_BBL}`);
+  await expect(page.getByTestId("scenario-card-1")).toBeVisible({ timeout: 20_000 });
+
+  await expect(page.getByTestId("unused-floor-area-not-available")).toHaveText(
+    "Not available — needs existing zoning floor area",
+  );
+  await expect(page.getByTestId("scenario-unused-floor-area")).toHaveCount(0);
+  await expect(page.getByTestId("scenario-unused-floor-area-value")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Floor-area record comparison" })).toHaveCount(0);
+
+  // The full-site allowance still shows as a number.
+  await expect(page.getByTestId("scenario-cap-value")).toHaveText(/^[0-9][0-9,]*(\.[0-9]+)?$/);
+});
+
 test("AS-8: the outcome is announced, focus lands on the heading, and the next action is keyboard-reachable", async ({
   page,
 }) => {

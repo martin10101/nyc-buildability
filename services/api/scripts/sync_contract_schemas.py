@@ -43,12 +43,26 @@ from pathlib import Path
 
 # The four documents a property_profile $ref registry must load (README:
 # "Consumers that build their own $ref registry ... must load all four").
-SCHEMA_FILES = (
+PROFILE_SCHEMA_FILES = (
     "property_profile.schema.json",
     "source_fact.schema.json",
     "common.schema.json",
     "coverage_status.schema.json",
 )
+
+# The study contract set (task C-03, plan M1-09; contracts added by M5-T125).
+# Loaded at runtime by app/contracts/study_contracts.py. Their $refs resolve
+# only within this set plus common.schema.json (already bundled above).
+STUDY_SCHEMA_FILES = (
+    "site_fact.schema.json",
+    "study.schema.json",
+    "results.schema.json",
+    "report_model.schema.json",
+    "export_record.schema.json",
+    "benchmark_lot.schema.json",
+)
+
+SCHEMA_FILES = PROFILE_SCHEMA_FILES + STUDY_SCHEMA_FILES
 
 # services/api/scripts/sync_contract_schemas.py
 #   parents[0] = scripts, parents[1] = services/api, parents[2] = services,
