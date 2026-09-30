@@ -59,6 +59,9 @@ export default defineConfig({
       // the client bundle; unset in production so the route 404s by default.
       env: {
         INTERNAL_RULE_EVAL_ENABLED: "1",
+        // D-01 (D-090): the proposal editor is set aside behind this default-off flag;
+        // the e2e server turns it on so proposal-editor specs keep exercising it.
+        INTERNAL_PROPOSAL_EDITOR_ENABLED: "1",
         INTERNAL_OWNER_DASHBOARD_ENABLED: "1",
         INTERNAL_SURVEY_REVIEW_ENABLED: "1",
       },
