@@ -7,7 +7,7 @@ still open: C: disk-full cleanup, owner-typed D-088 commissioning, the M5-T110 c
 ## Identity (live at generation)
 - **Machine:** a cloud sandbox (Linux, 1 CPU, 2 GB RAM), not the owner's PC. Sandbox paths do not persist.
 - **Handoff location:** worktree `/root/project/w-handoff`, branch `task/session-handoff-2026-09-30-cloud` (PR #270).
-- **Integration branch:** `candidate/D-024-mrl-option-b` @ `1b150912`.
+- **Integration branch:** `candidate/D-024-mrl-option-b` @ `d44af638`.
 - **Gate 0 deviation:** this session ran from `/root/project`, outside the repo root, with claude.ai connectors attached, so the repo hooks were not loaded. No PR body discloses this yet; record it with tonight's directives. Because the repo's `.claude/agents` definitions were not loaded, tonight's producers and reviewers were generic subagents that inherited Opus 5.5. They did not run on the D-064/D-085 subagent pin (opus-4-8). Record that deviation too.
 
 ## Owner decisions given this evening (verbatim; not yet captured under project-control/directives/)
@@ -23,9 +23,9 @@ still open: C: disk-full cleanup, owner-typed D-088 commissioning, the M5-T110 c
 - **"yes"** to fix the urllib3 blocker first. **"Road 1"**: cloud robots now, at most 2 at a time on this box.
 - **"update the loop to the new cc"** → this can only be done on the PC. The pin is SHA-256 over the PC's `claude.exe`, so a Linux box cannot produce it. Steps: `docs/CONTROLLER_UPDATE_RUNBOOK.md` §13 and `project-control/reports/M0-T159-recertification.md`.
 - **Zoning math stays owner-gated.** The owner will check `R6B_ZONING_QUESTIONS.md`, a file sent to them, with another LLM.
-- **Request: bring 3 `.claude` files from `control/session14-m0t055-accept`.** At the first check the tip was `94e243e4` (already merged). The owner then pushed `e0c222da` (the directive `FABLE_CODEX_CONTINUOUS_AGENT_LOOP_IMPLEMENTATION_DIRECTIVE_2026-08-24.md`, the backend-engineer note `interrupt-resets-shell-to-primary.md`, and one MEMORY.md index line) and `ad5ab3ba` (archive files, not requested). Only `e0c222da` is cherry-picked, in **PR #277**.
+- **Request: bring 3 `.claude` files from `control/session14-m0t055-accept`.** At the first check the tip was `94e243e4` (already merged). The owner then pushed `e0c222da` (the directive `FABLE_CODEX_CONTINUOUS_AGENT_LOOP_IMPLEMENTATION_DIRECTIVE_2026-08-24.md`, the backend-engineer note `interrupt-resets-shell-to-primary.md`, and one MEMORY.md index line) and `ad5ab3ba` (archive files, not requested). Only `e0c222da` was cherry-picked; it merged as **#277**.
 
-## Done this evening
+## Done this evening (12 merged)
 Each PR had an independent review PASS with 0 blocking at the exact head, verified PR body, CI 40/40, and `--match-head-commit`:
 - #272: urllib3 2.8.0 (3 CVEs had turned every PR's pip-audit red).
 - #261: C-04 real-property guard.
@@ -37,15 +37,15 @@ Each PR had an independent review PASS with 0 blocking at the exact head, verifi
 - #265: B-04 street width per frontage.
 - #276: E-2, serializer guard scoped to the serializer.
 - #275: B-06 data versions / "Out of date".
+- #263: E-01 drawing kit (site plan and axonometric SVG from results), after E-2 and lane-doc fixes.
+- #277: the owner's `.claude` files from `e0c222da`. The policy/safety review found no conflict with the safety rules. The directive is byte-identical to `D-024-fable-codex-loop/source-001.md` and is not auto-loaded.
 
 ## Open PRs
 | PR | Head | State |
 |---|---|---|
-| #263 E-01 drawing kit | 6718fb17 | The body was verified at `da9b9f29`. That review's B1 (two stale lane docs) is fixed by `6718fb17`, which is not yet reviewed. Next: update the body for `6718fb17`, re-review, green CI, merge. |
-| #277 owner's .claude files | 80994943 | Cherry-pick of `e0c222da` only. Policy/safety review in progress. |
 | #262 A-02a R6B | 3234e4ae | Zoning math. Delta review pending; the owner merges. Legal questions are open (below). |
 | #269 A-02b R6B (draft, stacked on #262) | 11daf774 | Zoning math. Not reviewed; the owner merges. |
-| #268 E-03 DXF (draft) | 4fa678ea | Not reviewed. Needs A-04; stacked on #263. |
+| #268 E-03 DXF (draft) | 4fa678ea | Not reviewed. Needs A-04. Its base #263 is now merged. |
 | #64 M0-T019 (against `main`) | — | Old; not touched this evening. |
 | #270 this handoff | — | For the owner. |
 | #241 | — | Never merge. |
@@ -53,6 +53,8 @@ Each PR had an independent review PASS with 0 blocking at the exact head, verifi
 ## Review follow-ups (non-blocking, recorded on the PRs)
 - **#271 N1:** focus still moves in passive effects in CompareScreen, AddressResolution, RuleEvaluationPanel and SurveyReview.
 - **#273 N1:** `ownership_at` silently falls back to HEAD's map.
+- **#277 N2:** reword the reflog/reset line in `interrupt-resets-shell-to-primary.md` to "report it; the orchestrator restores it".
+- **#263 N1/N2:** the yard-depth check accepts any adjoining lot line; review findings 5–12 are open.
 - **#276 N1/N3:** flag `__package__`/`sys.modules`/`vars()` reflection in `app/**`, and reword the guard comments.
 - **#274 N7:** Lane C must supply the DOB filings for every tax lot on the block.
 - **#265:** the `results.py:58-61` docstring is stale; N1 wants a `raw_digest` check before wiring.
@@ -83,10 +85,9 @@ Each PR had an independent review PASS with 0 blocking at the exact head, verifi
 - Always have the reviewer verify the PR body before merging; bodies were wrong at least 6 times tonight (#261, #263, #265, #266, #275, #276).
 
 ## EXACT NEXT ACTION (successor)
-1. Finish #263: update its body for `6718fb17`, have the reviewer verify that head and its CI, then merge under option B. Finish #277 the same way. It is the owner's own request, and not zoning math.
-2. Next queue items for at most 2 robots: B-10, B-08, C-10/C-13, and the follow-ups above. B-07 (multi-lot) matters for the benchmark.
-3. Capture tonight's directives, and backfill ledger gates from the posted reviews (DCV rows first).
-4. When the owner returns the other LLM's R6B answer, compare it with #262/#269's assumptions and report in plain words.
+1. Next queue items for at most 2 robots: B-10, B-08, C-10/C-13, and the follow-ups above. B-07 (multi-lot) matters for the benchmark.
+2. Capture tonight's directives, and backfill ledger gates from the posted reviews (DCV rows first).
+3. When the owner returns the other LLM's R6B answer, compare it with #262/#269's assumptions and report in plain words.
 
 ## COPY INTO THE NEW SESSION
 Resume as the NYC Buildability orchestrator (verify the model with /model). Work only from repository
