@@ -130,8 +130,9 @@ test("multi-parcel dashboard shows source outlines and preserves study choices w
   await condoRecords(page);
   await page.goto(`/property/workspace?ruleeval=on&bbl=${BILLING}`);
   await expect(page.getByTestId("connected-dashboard")).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByTestId("dashboard-cap")).toHaveText("Not calculated");
-  await expect(page.getByText("Site definition requires review · allowances withheld")).toBeVisible();
+  // Plan §5a: the withheld number reads "Not available — <reason>"; the strip names the status.
+  await expect(page.getByTestId("dashboard-cap")).toHaveText("Not available — the site needs review first");
+  await expect(page.getByTestId("dashboard-status-item").first()).toHaveText("Results withheld");
   await expect(page.getByTestId("parcel-study-map-canvas")).toBeVisible({ timeout: 15_000 });
   await page.getByRole("region", { name: "Quick actions" }).getByRole("button", { name: /Parcel study/ }).click();
   const study = page.getByRole("dialog", { name: "Parcel study" });
@@ -209,7 +210,7 @@ test("recorded Wallabout tax-map polygons can be viewed individually and togethe
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await capture(page, info, "connected-wallabout-parcel-mobile", true);
   await expectLabelsAboveSourceCredit(compact);
-  await expect(page.getByTestId("dashboard-cap")).toHaveText("Not calculated");
+  await expect(page.getByTestId("dashboard-cap")).toHaveText(/^Not available — /);
 });
 
 test("dashboard route keeps the server gate and the explicit kill switch", async ({ page }) => {
@@ -257,7 +258,7 @@ test("missing base outlines retain a separately labeled condo context on dashboa
   await expect(compact.getByTestId("parcel-study-context-outline")).toHaveAttribute("data-context-state", "rendered", { timeout: 15_000 });
   await expect(compact.getByText("Condo tax-map outline · context only", { exact: true })).toBeVisible();
   expect(requested).toEqual(expect.arrayContaining([BILLING, ...LOTS]));
-  await expect(page.getByTestId("dashboard-cap")).toHaveText("Not calculated");
+  await expect(page.getByTestId("dashboard-cap")).toHaveText(/^Not available — /);
   await expect(page.getByRole("button", { name: /2 base parcel records.*Review parcels/ })).toBeVisible();
   await expect(compact.getByText(/No parcel outlines available to draw/)).toHaveCount(0);
   await capture(page, info, "connected-condo-context-desktop", true);
@@ -303,5 +304,53 @@ test("a foreign condo outline remains withheld instead of filling the missing pa
   const compact = page.locator(".bd-map-slot");
   await expect(compact.getByTestId("parcel-study-context-outline")).toHaveAttribute("data-context-state", "unavailable", { timeout: 15_000 });
   await expect(compact.getByTestId("parcel-study-map-canvas")).toHaveCount(0);
-  await expect(page.getByTestId("dashboard-cap")).toHaveText("Not calculated");
+  await expect(page.getByTestId("dashboard-cap")).toHaveText(/^Not available — /);
+});
+
+// Plan §5a item 2, word for word.
+const FLOOR_AREA_REMINDER = "Make sure this floor area is available for use. Confirm with the owner or developer that none of it was sold or merged with another lot.";
+
+// The mark on the draft-rule numbers (review B1 of PR #267), and the strip line's one name.
+const DRAFT_MARK = "Draft — not reviewed";
+const STRIP_NAME = `${DRAFT_MARK}, City-record measurements, Lot you entered. Details`;
+
+// D-03 (M1-17, plan §5a): one status strip at the top of the results with exactly three items,
+// the first marking the draft-rule numbers without a tap, standing notices behind it, the
+// supported maximum as a large number with no caution chip, at most three notices on screen,
+// readable text and no internal codes.
+test("the dashboard follows plan §5a: one strip, notices behind it, readable text", async ({ page }, info) => {
+  await page.setViewportSize({ width: 1440, height: 960 });
+  await page.goto("/property/workspace?ruleeval=on&bbl=1000010100");
+  await expect(page.getByTestId("connected-dashboard")).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId("dashboard-cap")).toHaveText("15,000 sq ft", { timeout: 15_000 });
+  const summary = page.getByRole("region", { name: "Development limits summary" });
+  for (const chip of ["Conditional", "DRAFT", "Draft rule"]) await expect(summary).not.toContainText(chip);
+  await expect(page.getByRole("region", { name: "Results status" })).toHaveCount(1);
+  const strip = page.getByTestId("dashboard-status-strip");
+  const items = page.getByTestId("dashboard-status-item");
+  // Exactly these three items (a fourth fails), with the draft mark visible before any tap,
+  // on the strip line and not beside the number (plan §5a items 1 and 3).
+  await expect(items).toHaveText([DRAFT_MARK, "City-record measurements", "Lot you entered"]);
+  await expect(strip).toHaveAttribute("aria-expanded", "false");
+  await expect(strip.getByText(DRAFT_MARK, { exact: true })).toBeVisible();
+  await expect(summary.getByText(DRAFT_MARK)).toHaveCount(0);
+  await expect(strip).toHaveAccessibleName(STRIP_NAME);
+  // At most three notices on screen: a fourth list item never appears (auto-retrying).
+  await expect(page.getByRole("list", { name: "Needs attention" }).getByRole("listitem").nth(3)).toHaveCount(0);
+  const reminder = page.getByText(FLOOR_AREA_REMINDER, { exact: true });
+  await expect(reminder).toBeHidden();
+  await strip.click();
+  await expect(strip).toHaveAttribute("aria-expanded", "true");
+  await expect(strip).toHaveAccessibleName(STRIP_NAME);
+  await expect(reminder).toBeVisible();
+  await expect(page.getByText("This is not a Buildings Department approval.", { exact: true })).toBeVisible();
+  // No visible body or note text under 14 px outside the map (plan §5a item 5).
+  const small = await page.locator(".buildability-dashboard").evaluate(root => Array.from(root.querySelectorAll<HTMLElement>("*"))
+    .filter(element => !element.closest(".bd-map-slot") && element.getClientRects().length > 0
+      && Array.from(element.childNodes).some(node => node.nodeType === Node.TEXT_NODE && !!node.textContent?.trim())
+      && parseFloat(getComputedStyle(element).fontSize) < 14)
+    .map(element => `${element.tagName}.${element.className}: ${element.textContent?.trim().slice(0, 40)}`));
+  expect(small).toEqual([]);
+  expect(await page.locator(".bd-analysis-column").innerText()).not.toMatch(/\b[a-z0-9]+(?:_[a-z0-9]+)+\b/);
+  await capture(page, info, "connected-dashboard-status-strip-open", true);
 });

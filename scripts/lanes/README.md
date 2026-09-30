@@ -13,5 +13,8 @@ python3 scripts/lanes/check_lane_paths.py              # diff vs merge-base with
 python3 scripts/lanes/check_lane_paths.py --coverage
 ```
 
-CI runs both in the `control-plane` job; on pull requests it diffs the PR's base SHA against
-GitHub's merge commit.
+CI runs both in the `control-plane` job. On pull requests it runs `--pr-merge --fetch`: HEAD is
+GitHub's merge commit, and the diff is taken from that commit's first parent (read from the commit
+itself, not the event's `base.sha`, which goes stale when the base advances) to HEAD. The parent is
+fetched at depth 1 when the checkout is shallow. The check fails closed (exit 2) if HEAD is not a
+2-parent merge commit or the parent cannot be fetched.
