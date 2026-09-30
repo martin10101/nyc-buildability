@@ -12,6 +12,10 @@ import { attestedReportBody, checkResponse, stubFetch } from "@/test-support/pro
  * route constant without sending, client-local variations + compare, and the
  * grep proof that the packet carries no dangerouslySetInnerHTML and no scenario
  * contract_version token (D-076-R002 / AS-4).
+ *
+ * D-01 (M1-06b, plan §9): a real property (a BBL) ALWAYS starts from the empty
+ * draft — never the worked rectangle example. Tests that need the rectangle opt in
+ * through the explicit `example` path (bbl={null}), which a BBL mount ignores.
  */
 
 vi.mock("@/components/address/LotOutlineMap", () => ({
@@ -68,7 +72,9 @@ describe("ProposalEditor", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Add vertex" }));
     fireEvent.change(screen.getByLabelText("Vertex 0 X coordinate"), { target: { value: "1000000" } });
+    fireEvent.change(screen.getByLabelText("Vertex 0 Y coordinate"), { target: { value: "200000" } });
     fireEvent.click(screen.getByRole("button", { name: "Add level" }));
+    fireEvent.change(screen.getByLabelText("Level 0 floor to floor height"), { target: { value: "10" } });
     fireEvent.click(screen.getByRole("button", { name: "Add wall" }));
 
     fireEvent.click(screen.getByTestId("run-check"));
@@ -79,17 +85,61 @@ describe("ProposalEditor", () => {
     expect(screen.getByTestId("proposal-check-announcer")).toHaveTextContent("proposed values you entered");
 
     fireEvent.click(screen.getByTestId("save-variation"));
-    expect(screen.getByRole("button", { name: "scenario-A-baseline" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "New proposal" })).toBeInTheDocument();
     expect(screen.getByTestId("variations-ephemeral")).toHaveTextContent("this browser session only");
   });
 
+  it("starts a real property from the empty draft: no example values, every input unknown (D-01, M1-06b)", () => {
+    // `example` is ignored when a BBL is mounted: a real property never starts from the sample.
+    render(<ProposalEditor bbl="1000010010" fetchImpl={stub()} example />);
+    expect(screen.queryAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(0);
+    expect(screen.queryAllByLabelText(/^Level \d+ index$/)).toHaveLength(0);
+    expect(screen.queryAllByLabelText(/^Wall \d+ id$/)).toHaveLength(0);
+    expect(screen.getByLabelText("Proposal label")).toHaveValue("New proposal");
+    expect(screen.getByLabelText("Proposal id (optional)")).toHaveValue("");
+    expect(screen.getByLabelText("Zoning district (caller-attested)")).toHaveValue("");
+    expect(screen.getByLabelText("Zoning district (caller-attested)")).toHaveAttribute("placeholder", "Unknown");
+    expect(screen.getByLabelText("Street width class (caller-attested)")).toHaveValue("");
+    expect((screen.getByLabelText("Lot area (sq ft, caller-attested)") as HTMLInputElement).value).toBe("");
+    expect(screen.getByLabelText("Lot area (sq ft, caller-attested)")).toHaveAttribute("placeholder", "Unknown");
+    expect(screen.queryByTestId("editor-example-note")).toBeNull();
+    const text = screen.getByTestId("proposal-editor").textContent ?? "";
+    for (const sample of ["scenario-A-baseline", "prop-0001", "R5"]) expect(text).not.toContain(sample);
+
+    // New rows are UNKNOWN until typed — never a 0,0 vertex or a sample 10 ft height.
+    fireEvent.click(screen.getByRole("button", { name: "Add vertex" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add level" }));
+    expect((screen.getByLabelText("Vertex 0 X coordinate") as HTMLInputElement).value).toBe("");
+    expect((screen.getByLabelText("Vertex 0 Y coordinate") as HTMLInputElement).value).toBe("");
+    expect((screen.getByLabelText("Level 0 floor to floor height") as HTMLInputElement).value).toBe("");
+  });
+
+  it("blocks sending while a new vertex or floor-to-floor height is still unknown", () => {
+    const fetchSpy = vi.fn(async () => checkResponse(attestedReportBody(), 200));
+    render(<ProposalEditor bbl="1000010010" fetchImpl={fetchSpy as typeof fetch} />);
+    fireEvent.click(screen.getByRole("button", { name: "Add vertex" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add level" }));
+    fireEvent.click(screen.getByTestId("run-check"));
+    const problems = screen.getByTestId("draft-problems");
+    expect(problems).toHaveTextContent("derive_proposal finiteness");
+    expect(problems).toHaveTextContent("_validate_levels finiteness");
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("seeds the worked rectangle only on the explicit example path, labelled as an example", () => {
+    render(<ProposalEditor bbl={null} fetchImpl={stub()} example />);
+    expect(screen.getAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(5);
+    expect(screen.getByLabelText("Proposal label")).toHaveValue("scenario-A-baseline");
+    expect(screen.getByTestId("editor-example-note")).toHaveTextContent("not a real property");
+  });
+
   it("adds, edits, and deletes vertices, levels, and walls through the editor UI (add/edit/delete coverage)", () => {
-    render(<ProposalEditor bbl={null} fetchImpl={stub()} />);
+    render(<ProposalEditor bbl={null} fetchImpl={stub()} example />);
     const vertexXs = () => screen.getAllByLabelText(/^Vertex \d+ X coordinate$/);
     const levelIndices = () => screen.getAllByLabelText(/^Level \d+ index$/);
     const wallIds = () => screen.getAllByLabelText(/^Wall \d+ id$/);
 
-    // The rectangle seed: 5 vertices, 1 level, 4 walls.
+    // The explicit example seed: 5 vertices, 1 level, 4 walls.
     expect(vertexXs()).toHaveLength(5);
     expect(levelIndices()).toHaveLength(1);
     expect(wallIds()).toHaveLength(4);
@@ -130,7 +180,7 @@ describe("ProposalEditor", () => {
   });
 
   it("compares two client-local variations side by side", async () => {
-    render(<ProposalEditor bbl={null} fetchImpl={stub()} />);
+    render(<ProposalEditor bbl={null} fetchImpl={stub()} example />);
     fireEvent.click(screen.getByTestId("run-check"));
     await screen.findByTestId("proposal-check-summary");
     fireEvent.click(screen.getByTestId("save-variation"));
@@ -147,8 +197,8 @@ describe("ProposalEditor", () => {
     const bridgeStub = stubFetch(bridgedResponse());
 
     render(<ProposalEditor bbl="1000010010" fetchImpl={bridgeStub} />);
-    // The rectangle seed starts with 5 numeric vertices (the authority).
-    expect(screen.getAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(5);
+    // A real property starts from the EMPTY draft: no numeric vertices yet (D-01).
+    expect(screen.queryAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(0);
 
     // Draw three points and convert them through the (stubbed) bridge.
     const addDrawn = screen.getByRole("button", { name: "Add drawn point" });
@@ -194,8 +244,8 @@ describe("ProposalEditor", () => {
       { lot_area_sq_ft: 8000, zoning_district: "R6" },
     );
     const { rerender } = render(<ProposalEditor bbl={null} fetchImpl={stub()} adoptedDraft={null} />);
-    // The editor starts on the rectangle seed (5 numeric vertices).
-    expect(screen.getAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(5);
+    // The editor starts on the EMPTY draft (no numeric vertices; D-01).
+    expect(screen.queryAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(0);
 
     // A NEW adopted draft REPLACES the working draft as the proposed starting point.
     rerender(<ProposalEditor bbl={null} fetchImpl={stub()} adoptedDraft={adopted} />);
@@ -230,7 +280,7 @@ describe("ProposalEditor", () => {
 describe("ProposalEditor — responses belong to the submitted draft", () => {
   it.each(["success", "refusal"] as const)("ignores an old %s after an edit while a newer check stays pending", async (lateKind) => {
     const { calls, fetchImpl } = deferredFetch();
-    render(<ProposalEditor bbl={null} fetchImpl={fetchImpl} />);
+    render(<ProposalEditor bbl={null} fetchImpl={fetchImpl} example />);
     fireEvent.click(screen.getByTestId("run-check"));
     fireEvent.change(screen.getByLabelText("Level 0 floor count"), { target: { value: "4" } });
     expect(calls[0].signal?.aborted).toBe(true);
@@ -254,7 +304,7 @@ describe("ProposalEditor — responses belong to the submitted draft", () => {
   });
 
   it("does not save an old report with edited values or attach a working report to a different saved snapshot", async () => {
-    render(<ProposalEditor bbl={null} fetchImpl={stub()} />);
+    render(<ProposalEditor bbl={null} fetchImpl={stub()} example />);
     fireEvent.click(screen.getByTestId("save-variation"));
     fireEvent.change(screen.getByLabelText("Proposal label"), { target: { value: "edited-draft" } });
     fireEvent.click(screen.getByTestId("run-check"));
@@ -269,7 +319,7 @@ describe("ProposalEditor — responses belong to the submitted draft", () => {
 
   it("keeps a loaded variation's report when a superseded check later fails", async () => {
     const { calls, fetchImpl } = deferredFetch();
-    render(<ProposalEditor bbl={null} fetchImpl={fetchImpl} />);
+    render(<ProposalEditor bbl={null} fetchImpl={fetchImpl} example />);
     fireEvent.click(screen.getByTestId("run-check"));
     await act(async () => { calls[0].resolve(checkResponse(attestedReportBody(), 200, "saved-check")); });
     await screen.findByTestId("proposal-check-summary");
@@ -301,6 +351,8 @@ describe("ProposalEditor — responses belong to the submitted draft", () => {
   it("does not let a pending bridge overwrite a newer numeric edit", async () => {
     const { calls, fetchImpl } = deferredFetch();
     render(<ProposalEditor bbl="1000010010" fetchImpl={fetchImpl} />);
+    // A real property starts empty (D-01): add the one numeric vertex this test edits.
+    fireEvent.click(screen.getByRole("button", { name: "Add vertex" }));
     for (let i = 0; i < 3; i += 1) {
       fireEvent.click(screen.getByRole("button", { name: "Add drawn point" }));
       fireEvent.change(screen.getByLabelText(`Drawn point ${i} longitude`), { target: { value: String(-73.999 + i * 0.0003) } });
@@ -311,7 +363,7 @@ describe("ProposalEditor — responses belong to the submitted draft", () => {
     expect(calls[0].signal?.aborted).toBe(true);
     await act(async () => { calls[0].resolve(bridgedResponse()); });
     expect(screen.getByLabelText("Vertex 0 X coordinate")).toHaveValue(1000005);
-    expect(screen.getAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(5);
+    expect(screen.getAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(1);
     expect(screen.queryByTestId("outline-draw-bridged")).toBeNull();
     expect(screen.getByTestId("proposal-check-announcer")).toBeEmptyDOMElement();
   });

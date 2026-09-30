@@ -34,7 +34,7 @@ afterEach(cleanup);
 
 describe("connected dashboard composition", () => {
   it("keeps search mounted, opens tools without routing, and preserves proposal edits on close", async () => {
-    render(<DashboardEntry/>);
+    render(<DashboardEntry proposalEditorEnabled/>);
     const input = screen.getByLabelText("Street address");
     fireEvent.change(input, { target: { value: "an address being typed" } });
     const action = screen.getByRole("button", { name: /Draw a proposal/ });
@@ -52,7 +52,7 @@ describe("connected dashboard composition", () => {
     expect(state.replace).not.toHaveBeenCalled();
   });
   it("updates only the dashboard URL after explicit confirmation and resets drafts on a different property", () => {
-    const view = render(<DashboardEntry/>);
+    const view = render(<DashboardEntry proposalEditorEnabled/>);
     const input = screen.getByLabelText("Street address");
     fireEvent.click(screen.getByRole("button", { name: /Draw a proposal/ }));
     fireEvent.change(screen.getByLabelText("Draft for proposal"), { target: { value: "Old property draft" } });
@@ -61,7 +61,7 @@ describe("connected dashboard composition", () => {
     state.params.set("bbl", "1000010100");
     state.profile = { ...baseProfile(), identity: { ...baseProfile().identity, bbl: "1000010100" } };
     state.scenario = null; state.evaluation = null;
-    view.rerender(<DashboardEntry/>);
+    view.rerender(<DashboardEntry proposalEditorEnabled/>);
     expect(screen.getByLabelText("Street address")).toBe(input);
     fireEvent.click(screen.getByRole("button", { name: /Draw a proposal/ }));
     expect(screen.getByLabelText("Draft for proposal")).toHaveValue("");
@@ -83,9 +83,16 @@ describe("connected dashboard composition", () => {
   });
   it("opens a supported deep-linked tool while keeping the property dashboard in place", () => {
     state.params.set("tool", "envelope");
-    render(<DashboardEntry/>);
+    render(<DashboardEntry proposalEditorEnabled/>);
     expect(screen.getByRole("dialog", { name: "Proposal editor" })).toBeVisible();
     expect(screen.getByTestId("buildability-dashboard")).toBeVisible();
     expect(screen.getByLabelText("Street address")).toBeVisible();
+  });
+  it("offers no proposal entry when the server flag is off (the default; D-01, plan §7)", () => {
+    render(<DashboardEntry/>);
+    expect(screen.getByTestId("buildability-dashboard")).toBeVisible();
+    expect(screen.queryByRole("button", { name: /Draw a proposal/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Buildable envelope/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog", { name: "Proposal editor" })).not.toBeInTheDocument();
   });
 });

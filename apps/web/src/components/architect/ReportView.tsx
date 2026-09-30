@@ -18,12 +18,14 @@ import { CapturedRecord } from "./EvidenceRecord";
 import { CalculationEvidence } from "./CalculationEvidence";
 import { ReportSources } from "./ReportSources";
 import { AnalysisIdentityNotice } from "./AnalysisIdentityNotice";
-export function ReportView({ profile, scenario: returnedScenario, evaluation: returnedEvaluation, label, condoDecision }: {
+export function ReportView({ profile, scenario: returnedScenario, evaluation: returnedEvaluation, label, condoDecision, unusedFloorAreaSectionEnabled = false }: {
     profile: PropertyProfile;
     scenario: Scenario | null;
     evaluation: RuleEvaluation | null;
     label: string;
     condoDecision?: CondoSurfaceDecision;
+    /** Server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED (D-06); absent -> off. */
+    unusedFloorAreaSectionEnabled?: boolean;
 }) {
     // Retain original returns inside the print boundary. Only records associated
     // with the selected property may reach its result and calculation views.
@@ -125,7 +127,7 @@ export function ReportView({ profile, scenario: returnedScenario, evaluation: re
     </details>
     <details className="card architect-disclosure architect-report-section" id="brief-calculations">
       <summary>Calculation and rule evidence</summary>
-      <CalculationEvidence evaluation={evaluation} scenario={scenario}/>
+      <CalculationEvidence evaluation={evaluation} scenario={scenario} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/>
     </details>
     <details className="card architect-disclosure architect-report-section" id="brief-sources">
       <summary>Source and review appendix</summary>

@@ -195,9 +195,27 @@ describe("connected architect entry", () => {
     expect(screen.getByRole("heading", { name: "Units is not available in this version" })).toBeInTheDocument();
     expect(screen.queryByTestId("architect-cap")).not.toBeInTheDocument();
   });
-  it("renders the additive proposal-editor view inside the gated architect tree", async () => {
+  it("sets the proposal editor aside when INTERNAL_PROPOSAL_EDITOR_ENABLED is off (the default; D-01, plan §7)", () => {
     state.params.set("view", "proposal");
     render(<ArchitectEntry />);
+    // The deep link renders the plain not-available view: no editor, no envelope fetch.
+    expect(screen.getByRole("heading", { name: "Proposal editor is not available in this version" })).toBeInTheDocument();
+    expect(screen.queryByTestId("proposal-editor")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("max-envelope-panel")).not.toBeInTheDocument();
+    expect(maxEnvelopeFetch).not.toHaveBeenCalled();
+    // The primary navigation no longer offers it.
+    const nav = screen.getByRole("navigation", { name: "Architect workspace" });
+    expect(within(nav).queryByRole("link", { name: "Proposal editor" })).not.toBeInTheDocument();
+    expect(within(nav).getByRole("link", { name: "Zoning" })).toBeInTheDocument();
+  });
+  it("offers the proposal editor in the navigation only when the server flag is on", () => {
+    render(<ArchitectEntry proposalEditorEnabled />);
+    const nav = screen.getByRole("navigation", { name: "Architect workspace" });
+    expect(within(nav).getByRole("link", { name: "Proposal editor" })).toHaveAttribute("href", `/property?ruleeval=on&bbl=${state.profile!.identity.bbl}&view=proposal`);
+  });
+  it("renders the additive proposal-editor view inside the gated architect tree", async () => {
+    state.params.set("view", "proposal");
+    render(<ArchitectEntry proposalEditorEnabled />);
     expect(screen.getByTestId("proposal-editor")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Proposal editor" })).toBeInTheDocument();
     expect(screen.getByTestId("editor-honesty")).toHaveTextContent("not a city record");
@@ -208,7 +226,7 @@ describe("connected architect entry", () => {
 
   it("mounts the max-envelope panel through the STUBBED fetch — never an unstubbed network call (DB-050(h))", async () => {
     state.params.set("view", "proposal");
-    render(<ArchitectEntry />);
+    render(<ArchitectEntry proposalEditorEnabled />);
     expect(screen.getByTestId("proposal-editor")).toBeInTheDocument();
     // The panel's fetch went to the injected stub (not real network), targeting the
     // max-envelope route; settle the outcome to avoid a floating state update.
@@ -421,7 +439,7 @@ describe("max-envelope panel composes additively on the proposal surface (M5-T07
   it("renders the limits panel BEFORE the accepted editor in document order (answer-first, additive)", async () => {
     state.params.set("view", "proposal");
     vi.stubGlobal("fetch", vi.fn(async () => envelopeResponse()));
-    render(<ArchitectEntry />);
+    render(<ArchitectEntry proposalEditorEnabled />);
     // The panel leads with the server disclosure rendered VERBATIM...
     expect(await screen.findByTestId("envelope-disclosure")).toHaveTextContent(ENVELOPE_DISCLOSURE);
     expect(screen.getByRole("heading", { name: "Preliminary development limits" })).toBeInTheDocument();
@@ -438,11 +456,13 @@ describe("max-envelope panel composes additively on the proposal surface (M5-T07
   it("adopts the Generated building option through the panel; manual editing AFTER adoption still mutates the draft", async () => {
     state.params.set("view", "proposal");
     vi.stubGlobal("fetch", vi.fn(async () => envelopeResponse()));
-    render(<ArchitectEntry />);
+    render(<ArchitectEntry proposalEditorEnabled />);
     await screen.findByTestId("envelope-disclosure");
-    // The editor starts on the MANUAL rectangle seed (5 vertices, vertex 0 X 1000000).
-    expect(vertexXInputs()).toHaveLength(5);
-    expect(vertexX0().value).toBe("1000000");
+    // A real property starts from the EMPTY draft — never the rectangle example
+    // (D-01, M1-06b): no vertices, and the lot area is unknown, not 8,000 sq ft.
+    expect(screen.queryAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(0);
+    expect((screen.getByLabelText("Lot area (sq ft, caller-attested)") as HTMLInputElement).value).toBe("");
+    expect(screen.getByLabelText("Zoning district (caller-attested)")).toHaveValue("");
 
     // ONE action adopts the option: the numeric AUTHORITY is reseeded from the
     // candidate (4 vertices, vertex 0 X 1000200) and announced as PROPOSED.
@@ -462,18 +482,48 @@ describe("max-envelope panel composes additively on the proposal surface (M5-T07
   it("degrades the panel to a typed failure card; manual editing AFTER the fetch failure still mutates the draft", async () => {
     state.params.set("view", "proposal");
     vi.stubGlobal("fetch", vi.fn(async () => { throw new Error("network down"); }));
-    render(<ArchitectEntry />);
+    render(<ArchitectEntry proposalEditorEnabled />);
     // A typed failure card (never a dead surface, never a fabricated limit)...
     const failure = await screen.findByTestId("envelope-failure");
     expect(failure).toHaveTextContent("could not be reached");
     expect(screen.queryByTestId("envelope-disclosure")).not.toBeInTheDocument();
-    // ...and the accepted editor below stays fully usable: manual editing changes state.
+    // ...and the accepted editor below stays fully usable: manual editing changes state
+    // (starting from the EMPTY draft, D-01).
     expect(screen.getByTestId("proposal-editor")).toBeInTheDocument();
-    expect(vertexXInputs()).toHaveLength(5);
+    expect(screen.queryAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(0);
+    fireEvent.click(screen.getByRole("button", { name: "Add vertex" }));
+    expect(vertexXInputs()).toHaveLength(1);
     fireEvent.change(vertexX0(), { target: { value: "1000123" } });
     expect(vertexX0().value).toBe("1000123");
     fireEvent.click(screen.getByRole("button", { name: "Add vertex" }));
-    expect(vertexXInputs()).toHaveLength(6);
+    expect(vertexXInputs()).toHaveLength(2);
+  });
+});
+
+describe("D-06: the unused-floor-area section is set aside behind INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED", () => {
+  // Plan §3 step 4, M2-07: without an existing zoning floor area the views show
+  // exactly this line; the route pages read the server flag and pass it down.
+  const NOT_AVAILABLE = "Not available — needs existing zoning floor area";
+  function withScenario(view: string) {
+    state.params.set("view", view);
+    state.evaluation = draftApplicableDoc();
+    state.evaluation.evaluated_input.bbl = state.profile!.identity.bbl;
+    state.scenario = structuredClone(scenarioFixture) as Scenario;
+    state.scenario.evaluated_input.bbl = state.profile!.identity.bbl;
+  }
+  it.each(["scenarios", "evidence", "report"])("%s: off by default — one not-available line, no section and no remainder record", view => {
+    withScenario(view);
+    render(<ArchitectEntry/>);
+    expect(screen.getAllByTestId("unused-floor-area-not-available").map(line => line.textContent)).toEqual([NOT_AVAILABLE]);
+    expect(screen.queryByTestId("scenario-unused-floor-area")).toBeNull();
+    expect(screen.queryByText("Remainder inputs, result and provenance")).toBeNull();
+  });
+  it.each(["scenarios", "evidence", "report"])("%s: the server flag reaches the kept section", view => {
+    withScenario(view);
+    render(<ArchitectEntry unusedFloorAreaSectionEnabled/>);
+    expect(screen.queryByTestId("unused-floor-area-not-available")).toBeNull();
+    if (view === "scenarios") expect(screen.getByTestId("scenario-unused-floor-area")).toBeInTheDocument();
+    else expect(screen.getByText("Remainder inputs, result and provenance")).toBeInTheDocument();
   });
 });
 

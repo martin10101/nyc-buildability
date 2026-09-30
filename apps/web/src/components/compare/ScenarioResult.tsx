@@ -12,6 +12,7 @@ import { IntegrityCheckBlock, ScenarioConstraints } from "./ScenarioConstraints"
 import { ScenarioProvenance } from "./ScenarioProvenance";
 import { ScenarioReasons } from "./ScenarioReasons";
 import { UnusedFloorAreaSection } from "./UnusedFloorAreaSection";
+import { UnusedFloorAreaSetAside } from "./UnusedFloorAreaNotAvailable";
 
 /**
  * Success document renderer for the Compare (Step 3) screen (task M5-T004).
@@ -245,9 +246,12 @@ function NextActionBlock({ bbl }: { bbl: string }) {
 export function ScenarioResult({
   document,
   bbl,
+  unusedFloorAreaSectionEnabled = false,
 }: {
   document: Scenario;
   bbl: string;
+  /** Server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED (D-06); absent -> off. */
+  unusedFloorAreaSectionEnabled?: boolean;
 }) {
   const isPreliminary = document.scenario_kind === "preliminary";
   return (
@@ -263,8 +267,14 @@ export function ScenarioResult({
 
       {/* C1 (D-041): the unused-draft-zoning-floor-area line sits directly under
           the cap line and is present on EVERY branch (its own honest state per
-          document). */}
-      <UnusedFloorAreaSection document={document} />
+          document). D-06 (plan §3 step 4): the section is set aside behind a
+          default-off server flag; when off, one "Not available — needs existing
+          zoning floor area" line takes its place and the cap above still shows. */}
+      {unusedFloorAreaSectionEnabled ? (
+        <UnusedFloorAreaSection document={document} />
+      ) : (
+        <UnusedFloorAreaSetAside />
+      )}
 
       {/* Document-level: mounted on EVERY branch. */}
       <ScenarioReasons document={document} />
