@@ -1,5 +1,14 @@
 # Batch resume note — 2026-08-05 (D-009 + M0-T019 + M2-T014)
 
+> **UPDATE 2026-08-05 (post-lockfile-CI):** M0-T019 is now `blocked` under **B-017** — the regenerated
+> tree carries transitive advisories (sharp <0.35.0, override-fixable; brace-expansion, whose only
+> advisory-free fixes are <7 days old, clearing 2026-08-06T10:17Z). Deep supply-chain search confirms
+> those fixes are clean; there is an active npm publish incident (2026-08-04). M2-T014 review slate is
+> complete (G3 + security leg PASS) but acceptance is enforced-blocked by the M0-T019 dependency.
+> Authoritative next steps + the 6-day-vs-7-day owner decision:
+> `project-control/reports/M0-T019-transitive-advisory-blocker-2026-08-05.md`. The sections below are
+> the ORIGINAL note and are partly superseded by that report and the current ledger.
+
 For a fresh session to resume this batch. Authoritative state is the ledger on branch
 `control/D-009-depsec-and-m0t019-dispatch` (pushed) + git + these worktrees.
 
