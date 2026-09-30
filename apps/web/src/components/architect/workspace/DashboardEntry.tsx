@@ -85,7 +85,7 @@ function LoadedDashboard({ profile, initialTool, surveyEnabled, proposalEditorEn
       {analysis.evaluation && analysis.evaluation.kind !== "evaluation" ? <details><summary>Rule evaluation unavailable · retry or inspect</summary><RuleEvaluationFailure outcome={analysis.evaluation} onRetry={analysis.retryEvaluation}/></details> : null}
       {!analysis.scenario || !analysis.evaluation ? <p className="section-note" role="status">Loading analysis… Property records remain available.</p> : null}
     </div>
-    {address && profile.identity.address?.normalized_address && profile.identity.address.normalized_address !== address.label ? <p className="dashboard-address-alias" data-testid="representative-address">Searched address retained · PLUTO representative address: {profile.identity.address.normalized_address}</p> : null}
+    {address && profile.identity.address?.normalized_address && profile.identity.address.normalized_address !== address.label ? <p className="dashboard-address-alias" data-testid="representative-address">City records list this lot as {profile.identity.address.normalized_address}</p> : null}
     <DashboardPanels profile={profile} scenario={scenario} evaluation={evaluation} condo={condo} label={label} map={<DashboardMap bbl={bbl} condo={condo} compact/>} onOpen={open} onInspect={inspect} proposalEditorEnabled={proposalEditorEnabled}/>
     {DASHBOARD_TOOLS.filter(value => value !== "envelope").map(value => <FloatingWorkspaceWindow key={value} id={`workspace-${value}`} title={TOOL_LABELS[value]} open={tool === value} onClose={() => setTool(null)} wide={["map", "proposal", "study", "report", "evidence"].includes(value)}>
       {tool === value || PERSISTENT_TOOLS.includes(value) ? <DashboardTools tool={value} profile={profile} scenario={scenario} evaluation={evaluation} returnedScenario={returnedScenario} returnedEvaluation={returnedEvaluation} condo={condo} address={address} label={label} selection={selection} onSelectEvidence={setSelection} onInspect={inspect} onOpen={open} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled} focusEnvelope={focusEnvelope} envelopeRequest={envelopeRequest}/> : null}
@@ -116,12 +116,11 @@ export function DashboardEntry({ surveyEnabled = false, proposalEditorEnabled = 
   return <div className="architect-shell dashboard-shell">
     <a className="architect-skip" href="#dashboard-content">Skip to workspace</a>
     <header className="dashboard-topbar">
-      <Link href={dashboardHref()} className="dashboard-brand"><svg width="29" height="32" viewBox="0 0 27 30" fill="none" aria-hidden="true"><path d="M1 28h25M4 28V14h7v14M11 28V2h9v26M20 8h4v20" stroke="currentColor" strokeWidth="1.7"/></svg><span>NYC Buildability<small>Zoning · FAR · Feasibility · Reports · Maps</small></span></Link>
-      <span className="dashboard-internal-label">Internal · Engineering team only</span>
-      <details className="dashboard-environment"><summary>Build & review status</summary><InternalBanner/><p>Preliminary analysis — professional review required before any reliance.</p></details>
+      <Link href={dashboardHref()} className="dashboard-brand"><svg width="29" height="32" viewBox="0 0 27 30" fill="none" aria-hidden="true"><path d="M1 28h25M4 28V14h7v14M11 28V2h9v26M20 8h4v20" stroke="currentColor" strokeWidth="1.7"/></svg><span>NYC Buildability</span></Link>
+      {/* Plan §5a item 2: environment notices sit behind one control, not on every screen line. */}
+      <details className="dashboard-environment"><summary>Internal build</summary><InternalBanner/><p>Preliminary analysis — professional review required before any reliance.</p></details>
     </header>
     <DashboardSearch onSelect={select}/>
-    <p className="dashboard-review-line">Preliminary analysis · Professional review required · No sign-in or access control</p>
     <div id="dashboard-content" className="dashboard-content">
       <OutcomeAnnouncer message={mismatch ? "Property identity mismatch. Results withheld." : property.outcome ? announcementForOutcome(property.outcome) : ""}/>
       {!bbl ? <section className="dashboard-welcome"><h1>Your property workspace</h1><p>{params.get("bbl") ? "Invalid property identifier. Search an address or enter a valid 10-digit BBL." : "Search an address and confirm the lot to load its map, records and available development limits."}</p></section>

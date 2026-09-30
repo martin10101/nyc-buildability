@@ -76,8 +76,8 @@ describe("connected dashboard composition", () => {
   it("withholds both numerical summaries on foreign analysis identity and retains original evidence", () => {
     state.scenario!.evaluated_input.bbl = "1000019999";
     render(<DashboardEntry/>);
-    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("Not calculated");
-    expect(screen.getByTestId("dashboard-evaluated-far")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("Not available — no rule results for this property");
+    expect(screen.getByTestId("dashboard-evaluated-far")).toHaveTextContent("Not available — no rule results for this property");
     const record = screen.getByText("Returned scenario record").closest("details")!;
     expect(JSON.parse(record.querySelector("pre")!.textContent!)).toEqual(state.scenario);
   });
@@ -87,6 +87,13 @@ describe("connected dashboard composition", () => {
     expect(screen.getByRole("dialog", { name: "Proposal editor" })).toBeVisible();
     expect(screen.getByTestId("buildability-dashboard")).toBeVisible();
     expect(screen.getByLabelText("Street address")).toBeVisible();
+  });
+  it("keeps environment notices behind one control and shows one results strip (D-03, plan §5a items 1-2)", () => {
+    render(<DashboardEntry/>);
+    expect(screen.getByTestId("internal-banner")).not.toBeVisible();
+    expect(screen.queryByText(/Engineering team only/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Professional review required · No sign-in/)).not.toBeInTheDocument();
+    expect(screen.getAllByRole("region", { name: "Results status" })).toHaveLength(1);
   });
   it("offers no proposal entry when the server flag is off (the default; D-01, plan §7)", () => {
     render(<DashboardEntry/>);
