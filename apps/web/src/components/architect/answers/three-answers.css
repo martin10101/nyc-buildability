@@ -1,0 +1,190 @@
+/* Three-answers panel (queue D-05; plan §5a item 5 "Readable by default"): comfortable text
+   size, no small grey print, headline numbers large, status never by colour alone. */
+
+.ta-panel {
+  color: var(--text-primary, #1a1a1a);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.ta-panel-title {
+  margin: 0 0 var(--space-3, 0.75rem);
+  font-size: 1.25rem;
+  font-weight: 650;
+}
+
+.ta-draft-tag {
+  font-weight: 600;
+  color: var(--status-conflict-fg, #8a3b1f);
+}
+
+/* ---- The one status strip ---- */
+
+.ta-strip {
+  margin: 0 0 var(--space-4, 1rem);
+  border: 1px solid var(--border-strong, #c9c9c2);
+  border-radius: var(--radius-card, 10px);
+  background: var(--surface-inset, #f4f4f1);
+}
+
+.ta-strip-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.ta-strip-line:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
+}
+
+.ta-strip-hint {
+  color: var(--accent, #1f4f82);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ta-strip-details {
+  padding: 0 var(--space-4, 1rem) var(--space-3, 0.75rem);
+}
+
+.ta-strip-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.ta-notes {
+  margin: var(--space-2, 0.5rem) 0 0;
+  font-weight: 600;
+}
+
+/* ---- The three answers ---- */
+
+.ta-answers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-4, 1rem);
+}
+
+.ta-answer {
+  min-width: 0;
+  padding: var(--space-4, 1rem);
+  border: 1px solid var(--border-quiet, #e4e4df);
+  border-radius: var(--radius-card, 10px);
+  background: var(--surface-card, #ffffff);
+}
+
+.ta-answer-title {
+  margin: 0 0 var(--space-2, 0.5rem);
+  font-size: 1.1rem;
+  font-weight: 650;
+}
+
+.ta-headline {
+  margin: 0 0 var(--space-3, 0.75rem);
+}
+
+.ta-headline-label {
+  display: block;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-headline-number {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-headline-unit {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.ta-headline-unit-tight {
+  margin-left: 0.05em;
+}
+
+.ta-rows {
+  margin: 0 0 var(--space-3, 0.75rem);
+}
+
+.ta-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+  padding: var(--space-1, 0.25rem) 0;
+  border-bottom: 1px solid var(--border-quiet, #e4e4df);
+}
+
+.ta-row dt {
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-row dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-exception {
+  display: inline-block;
+  padding: 0 0.4em;
+  border: 1px solid var(--status-conditional-fg, #6b5416);
+  border-radius: var(--radius-control, 6px);
+  background: var(--status-conditional-bg, #f5f0e4);
+  color: var(--status-conditional-fg, #6b5416);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.ta-not-available {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.ta-shortfall {
+  margin: 0 0 var(--space-3, 0.75rem);
+}
+
+.ta-shortfall p {
+  margin: 0;
+}
+
+.ta-shortfall-reasons {
+  margin: var(--space-1, 0.25rem) 0 0;
+  padding-left: 1.25rem;
+}
+
+.ta-details summary {
+  cursor: pointer;
+  color: var(--accent, #1f4f82);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ta-details summary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
+}
+
+.ta-sections {
+  margin: var(--space-2, 0.5rem) 0 0;
+  padding-left: 1.25rem;
+}
+
+.ta-measurement {
+  margin: var(--space-2, 0.5rem) 0 0;
+}
+
+.ta-completeness {
+  margin: var(--space-4, 1rem) 0 0;
+  font-weight: 600;
+}
