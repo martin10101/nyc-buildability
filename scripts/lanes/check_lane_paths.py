@@ -8,7 +8,10 @@ Two checks, stdlib only:
   construction; a file no rule matches is an orphan and fails the check.
 * branch check (default): on a branch named ``lane-<x>/...`` every file the branch changes
   relative to its base must be owned by lane ``x``. Branches without the ``lane-`` prefix
-  (``task/``, ``control/``, the integration branch) are not lane branches and pass.
+  (``task/``, ``control/``, the integration branch) are not lane branches and pass. Locally
+  the base is the merge-base with ``origin/<integration_branch>``; in a pull_request CI run
+  (``--pr-merge``) it is the first parent recorded in GitHub's merge commit, never the event's
+  ``base.sha``, which is stale when the base advanced before the run.
 
 Exit status: 0 pass, 1 violation, 2 usage or environment error (fail closed).
 """
@@ -26,6 +29,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OWNERSHIP = REPO_ROOT / "docs" / "lanes" / "OWNERSHIP.yaml"
 LANE_BRANCH_RE = re.compile(r"^lane-([a-e])/", re.IGNORECASE)
+SHA_RE = re.compile(r"[0-9a-f]{40}(?:[0-9a-f]{24})?")
 MAX_LISTED = 50
 
 
@@ -309,19 +313,61 @@ def changed_files(base: str, fetch: bool) -> list[str]:
     return [line for line in output.split("\0") if line]
 
 
-def changed_files_vs_sha(base_sha: str, fetch: bool) -> list[str]:
-    """Tree diff from ``base_sha`` to HEAD. In a pull_request CI run HEAD is GitHub's merge
-    commit of the PR into its base, so this is exactly the PR's change set and needs no
-    history beyond the two commits (the CI checkout is shallow)."""
-    if not re.fullmatch(r"[0-9a-f]{40}", base_sha or ""):
-        raise RuntimeError(f"--base-sha must be a full 40-hex commit id, got {base_sha!r}")
-    if fetch:
+def commit_parents(commit: str = "HEAD") -> list[str]:
+    """Parent ids recorded in ``commit``'s own object. Read with ``git cat-file`` rather than
+    ``HEAD^1``: a shallow checkout grafts its boundary commit to have no parents, so revision
+    syntax cannot see them there, while the raw object still lists them."""
+    raw = _git("cat-file", "commit", commit)
+    header = raw.split("\n\n", 1)[0]
+    parents = [line[len("parent "):].strip() for line in header.splitlines()
+               if line.startswith("parent ")]
+    for parent in parents:
+        if not SHA_RE.fullmatch(parent):
+            raise RuntimeError(f"{commit} records a malformed parent id {parent!r}")
+    return parents
+
+
+def _has_commit(sha: str) -> bool:
+    completed = subprocess.run(
+        ["git", "cat-file", "-e", f"{sha}^{{commit}}"], cwd=REPO_ROOT, capture_output=True,
+        check=False,
+    )
+    return completed.returncode == 0
+
+
+def merge_first_parent(fetch: bool) -> str:
+    """First parent of HEAD, where HEAD must be GitHub's pull_request merge commit (the PR head
+    merged onto the base tip). That parent is the base the merge was actually built on; the
+    event payload's ``base.sha`` can be older when the base advanced before the run, and
+    diffing from it pulls other PRs' files into this one (PR #261). Fails closed: HEAD must
+    have exactly two parents and the first must be present locally or fetchable."""
+    head = _git("rev-parse", "HEAD").strip()
+    parents = commit_parents("HEAD")
+    if len(parents) != 2:
+        raise RuntimeError(
+            f"HEAD {head} has {len(parents)} parent(s), not 2: it is not GitHub's pull_request "
+            "merge commit, so the PR's change set cannot be established")
+    first = parents[0]
+    if not _has_commit(first):
+        if not fetch:
+            raise RuntimeError(f"merge commit's first parent {first} is not present locally "
+                               "(pass --fetch to fetch it)")
         if is_shallow():
-            _git("fetch", "--no-tags", "--depth=1", "origin", base_sha)
+            _git("fetch", "--no-tags", "--depth=1", "origin", first)
         else:
-            _git("fetch", "--no-tags", "origin", base_sha)
-    output = _git("diff", "--name-only", "--no-renames", "-z", base_sha, "HEAD")
-    return [line for line in output.split("\0") if line]
+            _git("fetch", "--no-tags", "origin", first)
+        if not _has_commit(first):
+            raise RuntimeError(f"merge commit's first parent {first} is still missing after "
+                               "fetching it")
+    return first
+
+
+def changed_files_vs_merge_parent(fetch: bool) -> tuple[str, list[str]]:
+    """Tree diff from HEAD's first parent to HEAD: exactly the PR's change set when HEAD is
+    GitHub's merge commit. Needs only those two commits, so the CI checkout stays shallow."""
+    parent = merge_first_parent(fetch)
+    output = _git("diff", "--name-only", "--no-renames", "-z", parent, "HEAD")
+    return parent, [line for line in output.split("\0") if line]
 
 
 def current_branch() -> str:
@@ -351,8 +397,12 @@ def main(argv: list[str] | None = None) -> int:
                         help="check that every tracked file has an owning lane")
     parser.add_argument("--branch", help="branch name (default: CI env or current branch)")
     parser.add_argument("--base", help="base branch (default: integration_branch)")
-    parser.add_argument("--base-sha", help="diff from this commit to HEAD (CI pull_request runs)")
-    parser.add_argument("--fetch", action="store_true", help="fetch the base first (CI)")
+    parser.add_argument("--pr-merge", action="store_true",
+                        help="HEAD is GitHub's pull_request merge commit: diff its first parent "
+                             "(read from the commit itself) to HEAD (CI pull_request runs)")
+    parser.add_argument("--fetch", action="store_true",
+                        help="fetch the base branch first, or with --pr-merge the merge's first "
+                             "parent when it is missing (CI)")
     parser.add_argument("--files", nargs="*", help="check these paths instead of a git diff")
     args = parser.parse_args(argv)
 
@@ -381,12 +431,13 @@ def main(argv: list[str] | None = None) -> int:
         base = args.base or ownership.integration_branch
         if args.files is not None:
             files = args.files
-        elif args.base_sha:
-            files = changed_files_vs_sha(args.base_sha, args.fetch)
+        elif args.pr_merge:
+            parent, files = changed_files_vs_merge_parent(args.fetch)
+            print(f"LANE PATH CHECK: diffing merge commit HEAD against its first parent {parent}.")
             if lane != "C":
                 # A lane other than C (which owns the map) is judged by the map at its base, so
                 # a PR cannot widen its own paths by editing OWNERSHIP.yaml.
-                base_text = ownership_at(args.base_sha, args.ownership)
+                base_text = ownership_at(parent, args.ownership)
                 if base_text is not None:
                     ownership = Ownership.from_text(base_text)
         else:
