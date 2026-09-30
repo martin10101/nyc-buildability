@@ -1,22 +1,23 @@
 """Street-adjacency test for each outline edge (queue item B-03, plan §4 frontage).
 
-THE TEST (stated, conservative). From evenly spaced points along an edge, look straight
-out (along the edge's outward normal) up to ``SEARCH_RADIUS_FT`` and take the first street
-center line crossed. A point MATCHES street S when all of these hold:
+THE TEST (stated; thresholds in ``parameters.py``). From evenly spaced points along an edge,
+look straight out (along the edge's outward normal) up to ``SEARCH_RADIUS_FT`` and take the
+first street center line crossed; its "gap" is the distance beyond its street line
+(distance to the center line minus half the mapped width w). A point MATCHES street S when:
 
 * the lot itself does not lie between the point and the center line;
-* S has a plain numeric mapped width w, and the distance d to its center line is within
-  ``STREET_LINE_MATCH_TOLERANCE_FT`` of w/2 (the lot line sits on the street line);
+* S has a plain numeric mapped width and |gap| <= ``STREET_LINE_MATCH_TOLERANCE_FT``;
 * S's center line runs within ``PARALLEL_MAX_ANGLE_DEG`` of the edge;
 * S is a plain mapped street (``status_ok``).
 
-A point is CLEAR when no center line is crossed within the radius, the lot itself is in
-the way, the center line crosses at more than ``STREET_ACROSS_ANGLE_DEG`` (the street runs
-across the view, not along the lot line), or d > w/2 + ``NOT_FRONTING_MARGIN_FT``. Every
-other point is UNCERTAIN.
+A point is CLEAR when no center line is crossed within the radius, the lot itself is in the
+way, the center line crosses at more than ``STREET_ACROSS_ANGLE_DEG``, or
+gap > ``STREET_LINE_UNCERTAINTY_BAND_FT`` (80 ft: the accepted spatial policy's
+positional-uncertainty band; beyond it "no street" rests on that band - see parameters.py).
+Every other point is UNCERTAIN.
 
-An edge FRONTS S only when every point matches S; it has NO STREET only when every point
-is clear; otherwise it is uncertain and the reasons are kept. Unknown is never forced.
+An edge FRONTS S only when every point matches S; it has NO STREET only when every point is
+clear; otherwise it is UNCERTAIN, with plain reasons and machine-readable reason codes.
 """
 
 from __future__ import annotations
@@ -27,16 +28,35 @@ from dataclasses import dataclass
 from .inputs import Point2, StreetCenterline
 from .outline import OutlineEdge, PreparedOutline
 from .parameters import (
-    NOT_FRONTING_MARGIN_FT,
     PARALLEL_MAX_ANGLE_DEG,
     SEARCH_RADIUS_FT,
     STREET_ACROSS_ANGLE_DEG,
     STREET_LINE_MATCH_TOLERANCE_FT,
+    STREET_LINE_UNCERTAINTY_BAND_FT,
 )
 from .rays import line_angle_deg, ray_segment_distance, sample_points, unit
 from .results import EDGE_FRONTS, EDGE_NO_STREET, EDGE_UNCERTAIN, EdgeFinding
 
-__all__ = ["classify_edges", "mapped_width_ft"]
+__all__ = [
+    "CODE_INSIDE_MAPPED_STREET",
+    "CODE_MULTIPLE_STREETS",
+    "CODE_PARTIAL_STREET_LINE",
+    "CODE_STREET_ANGLE",
+    "CODE_STREET_LINE_WITHIN_UNCERTAINTY_BAND",
+    "CODE_STREET_STATUS_REVIEW",
+    "CODE_WIDTH_NOT_A_NUMBER",
+    "classify_edges",
+    "mapped_width_ft",
+]
+
+# Machine-readable reasons an edge is uncertain (EdgeFinding.reason_codes).
+CODE_STREET_LINE_WITHIN_UNCERTAINTY_BAND = "street_line_within_uncertainty_band"
+CODE_INSIDE_MAPPED_STREET = "lot_line_inside_mapped_street"
+CODE_STREET_ANGLE = "street_not_parallel"
+CODE_WIDTH_NOT_A_NUMBER = "mapped_width_not_a_number"
+CODE_STREET_STATUS_REVIEW = "street_status_needs_review"
+CODE_PARTIAL_STREET_LINE = "street_line_along_part_of_lot_line"
+CODE_MULTIPLE_STREETS = "lot_line_faces_several_streets"
 
 _PLAIN_NUMBER_RE = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*$")
 
@@ -115,18 +135,18 @@ def _judge_sample(origin, edge, outline, pieces) -> _Sample:
         return _Sample(_CLEAR)
     width = mapped_width_ft(street.mapped_width_raw)
     if width is None:
-        return _Sample(_UNCERTAIN, street, None, "width")
+        return _Sample(_UNCERTAIN, street, None, CODE_WIDTH_NOT_A_NUMBER)
     gap = distance - width / 2.0
-    if gap > NOT_FRONTING_MARGIN_FT:
+    if gap > STREET_LINE_UNCERTAINTY_BAND_FT:
         return _Sample(_CLEAR)
     if not street.status_ok:
-        return _Sample(_UNCERTAIN, street, gap, "status")
+        return _Sample(_UNCERTAIN, street, gap, CODE_STREET_STATUS_REVIEW)
     if gap < -STREET_LINE_MATCH_TOLERANCE_FT:
-        return _Sample(_UNCERTAIN, street, gap, "inside", -gap)
+        return _Sample(_UNCERTAIN, street, gap, CODE_INSIDE_MAPPED_STREET, -gap)
     if gap > STREET_LINE_MATCH_TOLERANCE_FT:
-        return _Sample(_UNCERTAIN, street, gap, "between", gap)
+        return _Sample(_UNCERTAIN, street, gap, CODE_STREET_LINE_WITHIN_UNCERTAINTY_BAND, gap)
     if angle > PARALLEL_MAX_ANGLE_DEG:
-        return _Sample(_UNCERTAIN, street, gap, "angle", angle)
+        return _Sample(_UNCERTAIN, street, gap, CODE_STREET_ANGLE, angle)
     return _Sample(_MATCH, street, gap)
 
 
@@ -136,19 +156,20 @@ def _name(street: StreetCenterline) -> str:
 
 def _reason(code: str, street: StreetCenterline, worst: float) -> str:
     name = _name(street)
-    if code == "width":
+    if code == CODE_WIDTH_NOT_A_NUMBER:
         return (
             f"{name}: the mapped width {street.mapped_width_raw!r} is not a single number, "
             "so its street line cannot be placed"
         )
-    if code == "status":
+    if code == CODE_STREET_STATUS_REVIEW:
         return f"{name}: {street.status_note or 'not a plain mapped street'}"
-    if code == "inside":
+    if code == CODE_INSIDE_MAPPED_STREET:
         return f"{name}: this lot line lies up to {worst:.1f} ft inside the mapped street"
-    if code == "between":
+    if code == CODE_STREET_LINE_WITHIN_UNCERTAINTY_BAND:
         return (
-            f"{name}: this lot line is up to {worst:.1f} ft from the street line - too far "
-            "to be frontage, too close to rule it out"
+            f"{name}: its street line is up to {worst:.1f} ft beyond this lot line - within "
+            f"the {STREET_LINE_UNCERTAINTY_BAND_FT:.0f} ft positional uncertainty of the "
+            "sources, so this lot line may be on it"
         )
     return f"{name}: the street runs at up to {worst:.0f} degrees to this lot line"
 
@@ -161,14 +182,17 @@ def _uncertain_reasons(samples: list[_Sample], weights: list[float], length: flo
             if key not in worst or sample.worst > worst[key][0]:
                 worst[key] = (sample.worst, sample.street)
     reasons = [_reason(code, street, value) for (_, code), (value, street) in worst.items()]
+    codes = {code for _, code in worst}
     matched = {s.street.street_key: s.street for s in samples if s.kind == _MATCH and s.street}
     if len(matched) > 1:
         reasons.append("this lot line faces more than one street")
+        codes.add(CODE_MULTIPLE_STREETS)
     for key, street in matched.items():
         share = sum(w for s, w in zip(samples, weights, strict=True)
                     if s.kind == _MATCH and s.street and s.street.street_key == key) / length
         reasons.append(f"{_name(street)}: the street line runs along only {share:.0%} of it")
-    return tuple(sorted(set(reasons)))
+        codes.add(CODE_PARTIAL_STREET_LINE)
+    return tuple(sorted(set(reasons))), tuple(sorted(codes))
 
 
 def _edge_finding(edge: OutlineEdge, outline: PreparedOutline, pieces) -> EdgeFinding:
@@ -190,9 +214,9 @@ def _edge_finding(edge: OutlineEdge, outline: PreparedOutline, pieces) -> EdgeFi
     if all(s.kind == _CLEAR for s in samples):
         return EdgeFinding(edge.index, length, EDGE_NO_STREET, None, (), (), 0.0, None)
     candidates = tuple(sorted({s.street.street_key for s in samples if s.street is not None}))
-    reasons = _uncertain_reasons(samples, weights, edge.length_ft)
+    reasons, codes = _uncertain_reasons(samples, weights, edge.length_ft)
     return EdgeFinding(edge.index, length, EDGE_UNCERTAIN, None, candidates, reasons, share,
-                       max_gap, object_ids)
+                       max_gap, object_ids, codes)
 
 
 def classify_edges(

@@ -22,6 +22,10 @@ __all__ = [
     "LABEL_SURVEY",
     "LABEL_TAX_MAP",
     "LABEL_UNKNOWN",
+    "RANK_CITY_RECORDS",
+    "RANK_SURVEY",
+    "RANK_TAX_MAP",
+    "RANK_UNKNOWN",
     "SourcedValue",
     "city_records_value",
     "tax_map_value",
@@ -32,6 +36,19 @@ LABEL_SURVEY = "Survey (entered)"
 LABEL_CITY_RECORDS = "City records"
 LABEL_TAX_MAP = "Approximate — tax map"
 LABEL_UNKNOWN = "Unknown — enter"
+
+# Rank ids of the same labels in the site_fact v1 contract
+# (packages/contracts/schemas/v1/site_fact.schema.json, measurement_* definitions).
+RANK_SURVEY = "survey_entered"
+RANK_CITY_RECORDS = "city_records"
+RANK_TAX_MAP = "approximate_tax_map"
+RANK_UNKNOWN = "unknown"
+_RANK_BY_LABEL = {
+    LABEL_SURVEY: RANK_SURVEY,
+    LABEL_CITY_RECORDS: RANK_CITY_RECORDS,
+    LABEL_TAX_MAP: RANK_TAX_MAP,
+    LABEL_UNKNOWN: RANK_UNKNOWN,
+}
 
 # Output precision: 0.01 ft / 0.01 sq ft - the MapPLUTO connector's canonical coordinate
 # precision (COORD_DECIMALS), far below the source's stated accuracy.
@@ -55,6 +72,11 @@ class SourcedValue:
     @property
     def known(self) -> bool:
         return self.value is not None
+
+    @property
+    def rank(self) -> str:
+        """The label's site_fact v1 rank id."""
+        return _RANK_BY_LABEL[self.label]
 
 
 def tax_map_value(value: float, unit: str, basis: str) -> SourcedValue:

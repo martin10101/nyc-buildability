@@ -1,23 +1,30 @@
 """Geometric lot type from the outline: corner / interior / through / unknown (B-03, §4).
 
-THE TEST (stated; not a Zoning Resolution determination - the ZR 12-10 definitions are
-not snapshotted in this repository, so a qualified reviewer maps this to the legal terms):
+THE TEST (stated; not a Zoning Resolution determination - the 12-10 snapshot in this
+repository holds only the wide/narrow street text, not the corner / through / interior lot
+definitions, so a qualified reviewer maps this to the legal terms). For one set of fronting
+edges:
 
-* unknown - the street data is incomplete, a mapped street crosses the lot, any edge is
-  uncertain, no street is fronted, a frontage bends, or any pair of fronted streets is
-  neither a clear corner nor clearly opposite. The reason is always given.
-* interior - frontage on exactly one street.
-* corner - frontage on two or more streets, and at least one pair of them meets at a lot
-  corner (their frontage edges share a vertex) whose interior angle lies in the
-  clear-corner range ``CORNER_ANGLE_MIN_DEG``..``CORNER_ANGLE_MAX_DEG``.
+* interior - frontage on exactly one street, straight within ``SINGLE_STREET_MAX_BEND_DEG``;
+* corner - frontage on two or more streets, and at least one pair meets at a lot corner (their
+  frontage edges share a vertex) whose interior angle lies in the clear-corner range
+  ``CORNER_ANGLE_MIN_DEG``..``CORNER_ANGLE_MAX_DEG``;
 * through - frontage on exactly two streets on opposite sides (outward directions at least
-  ``THROUGH_MIN_NORMAL_ANGLE_DEG`` apart) that do not meet at a lot corner.
+  ``THROUGH_MIN_NORMAL_ANGLE_DEG`` apart) that do not meet at a lot corner;
+* otherwise unknown.
+
+UNCERTAIN EDGES. Each uncertain edge may front nothing or any street it may face. The type is
+evaluated under every such reading (at most ``MAX_LOT_TYPE_READINGS``). It is stated only when
+every reading gives the same known type - the classification then does not depend on any
+margin - and the uncertain edges are listed as ``unconfirmed_lot_lines``. Otherwise it is
+unknown with ``REASON_DEPENDS_ON_UNCERTAIN_LOT_LINES``.
 """
 
 from __future__ import annotations
 
 import math
-from itertools import combinations
+from dataclasses import dataclass
+from itertools import combinations, product
 
 from .depth import frontage_bend_deg, mean_outward_normal
 from .labels import LABEL_TAX_MAP, LABEL_UNKNOWN
@@ -25,6 +32,7 @@ from .outline import OutlineEdge, PreparedOutline
 from .parameters import (
     CORNER_ANGLE_MAX_DEG,
     CORNER_ANGLE_MIN_DEG,
+    MAX_LOT_TYPE_READINGS,
     SINGLE_STREET_MAX_BEND_DEG,
     THROUGH_MIN_NORMAL_ANGLE_DEG,
 )
@@ -43,16 +51,43 @@ from .results import (
     StreetRelation,
 )
 
-__all__ = ["classify_lot_type", "interior_angle_deg"]
+__all__ = [
+    "BASIS",
+    "REASON_DEPENDS_ON_UNCERTAIN_LOT_LINES",
+    "REASON_FRONTAGE_NOT_STRAIGHT",
+    "REASON_NO_STREET_FRONTAGE",
+    "REASON_OUTLINE_REFUSED",
+    "REASON_STREET_CROSSES_LOT",
+    "REASON_STREET_DATA_INCOMPLETE",
+    "REASON_TOO_MANY_READINGS",
+    "REASON_UNCLEAR_STREET_PAIR",
+    "classify_lot_type",
+    "interior_angle_deg",
+]
 
 BASIS = (
     "Geometric test on the tax-map outline and City Map street center lines "
     "(app.spatial.site_geometry.lot_type); not a Zoning Resolution determination"
 )
 
+# Machine-readable reasons for an unknown lot type (LotType.reason_code).
+REASON_OUTLINE_REFUSED = "outline_refused"
+REASON_STREET_DATA_INCOMPLETE = "street_data_incomplete"
+REASON_STREET_CROSSES_LOT = "street_crosses_lot"
+REASON_DEPENDS_ON_UNCERTAIN_LOT_LINES = "depends_on_uncertain_lot_lines"
+REASON_TOO_MANY_READINGS = "too_many_uncertain_readings"
+REASON_NO_STREET_FRONTAGE = "no_street_frontage"
+REASON_FRONTAGE_NOT_STRAIGHT = "frontage_not_straight"
+REASON_UNCLEAR_STREET_PAIR = "unclear_street_pair"
 
-def _unknown(reason: str, streets: tuple[str, ...] = (), relations=()) -> LotType:
-    return LotType(LOT_TYPE_UNKNOWN, LABEL_UNKNOWN, BASIS, reason, streets, tuple(relations))
+
+@dataclass(frozen=True)
+class _Reading:
+    kind: str
+    reason: str | None
+    reason_code: str | None
+    streets: tuple[str, ...]
+    relations: tuple[StreetRelation, ...] = ()
 
 
 def interior_angle_deg(outline: PreparedOutline, vertex_index: int) -> float:
@@ -106,45 +141,87 @@ def _relation(s1, s2, edges_by_street, outline: PreparedOutline) -> StreetRelati
     )
 
 
-def classify_lot_type(
-    findings: tuple[EdgeFinding, ...],
-    outline: PreparedOutline,
-    blockers: list[str],
-) -> LotType:
-    """``blockers`` are reasons found upstream (incomplete street data, a street crossing
-    the lot); any one of them leaves the type unknown."""
-    if blockers:
-        return _unknown(" ".join(blockers))
-    uncertain = [f for f in findings if f.verdict == EDGE_UNCERTAIN]
-    if uncertain:
-        parts = [f"lot line {f.index + 1} ({f.length_ft:.2f} ft): " + "; ".join(f.reasons)
-                 for f in uncertain]
-        return _unknown("Some lot lines could not be matched to a street. " + " | ".join(parts))
+def _classify(fronting: dict[int, str], outline: PreparedOutline) -> _Reading:
+    """Lot type for one reading: edge index -> street it fronts."""
     edges_by_street: dict[str, list[OutlineEdge]] = {}
-    for finding in findings:
-        if finding.street_key is not None:
-            edges_by_street.setdefault(finding.street_key, []).append(
-                outline.edges[finding.index])
+    for index in sorted(fronting):
+        edges_by_street.setdefault(fronting[index], []).append(outline.edges[index])
     streets = tuple(sorted(edges_by_street))
     if not streets:
-        return _unknown(
+        return _Reading(LOT_TYPE_UNKNOWN, (
             "No street frontage was found. The lot may have no street frontage, or a street "
-            "may be missing from the city street data."
-        )
+            "may be missing from the city street data."), REASON_NO_STREET_FRONTAGE, ())
     for street, edges in edges_by_street.items():
         bend = frontage_bend_deg(edges)
         if bend > SINGLE_STREET_MAX_BEND_DEG:
-            return _unknown(f"The frontage on {street} is not straight (its lot lines turn "
-                            f"by {bend:.0f} degrees).", streets)
+            return _Reading(LOT_TYPE_UNKNOWN, (
+                f"The frontage on {street} is not straight (its lot lines turn by "
+                f"{bend:.0f} degrees)."), REASON_FRONTAGE_NOT_STRAIGHT, streets)
     if len(streets) == 1:
-        return LotType(LOT_TYPE_INTERIOR, LABEL_TAX_MAP, BASIS, None, streets)
-    relations = [_relation(a, b, edges_by_street, outline) for a, b in combinations(streets, 2)]
+        return _Reading(LOT_TYPE_INTERIOR, None, None, streets)
+    relations = tuple(_relation(a, b, edges_by_street, outline)
+                      for a, b in combinations(streets, 2))
     unclear = [r.reason for r in relations if r.relation == RELATION_UNCLEAR]
     if unclear:
-        return _unknown("; ".join(unclear) + ".", streets, relations)
+        return _Reading(LOT_TYPE_UNKNOWN, "; ".join(unclear) + ".", REASON_UNCLEAR_STREET_PAIR,
+                        streets, relations)
     if any(r.relation == RELATION_CORNER for r in relations):
-        return LotType(LOT_TYPE_CORNER, LABEL_TAX_MAP, BASIS, None, streets, tuple(relations))
+        return _Reading(LOT_TYPE_CORNER, None, None, streets, relations)
     if len(streets) == 2:
-        return LotType(LOT_TYPE_THROUGH, LABEL_TAX_MAP, BASIS, None, streets, tuple(relations))
-    return _unknown("Three or more streets face the lot and none meet at a corner.",
-                    streets, relations)
+        return _Reading(LOT_TYPE_THROUGH, None, None, streets, relations)
+    return _Reading(LOT_TYPE_UNKNOWN, "Three or more streets face the lot and none meet at a "
+                    "corner.", REASON_UNCLEAR_STREET_PAIR, streets, relations)
+
+
+def _unknown(reason: str, code: str, reading: _Reading | None = None, lines=()) -> LotType:
+    streets = reading.streets if reading else ()
+    relations = reading.relations if reading else ()
+    return LotType(LOT_TYPE_UNKNOWN, LABEL_UNKNOWN, BASIS, reason, streets, relations, code,
+                   tuple(lines))
+
+
+def _describe(uncertain: list[EdgeFinding]) -> str:
+    return " | ".join(f"lot line {f.index + 1} ({f.length_ft:.2f} ft): " + "; ".join(f.reasons)
+                      for f in uncertain)
+
+
+def classify_lot_type(
+    findings: tuple[EdgeFinding, ...],
+    outline: PreparedOutline,
+    incomplete: tuple[str, ...] = (),
+    crossings: tuple[str, ...] = (),
+) -> LotType:
+    """``incomplete`` (the street data may miss a street) and ``crossings`` (a mapped street
+    runs through the lot) come from ``street_data``; any one leaves the type unknown."""
+    if incomplete:
+        return _unknown(" ".join(incomplete), REASON_STREET_DATA_INCOMPLETE)
+    if crossings:
+        return _unknown(" ".join(crossings), REASON_STREET_CROSSES_LOT)
+    confirmed = {f.index: f.street_key for f in findings if f.street_key is not None}
+    uncertain = [f for f in findings if f.verdict == EDGE_UNCERTAIN]
+    options = [(None, *f.candidate_streets) for f in uncertain]
+    if math.prod(len(o) for o in options) > MAX_LOT_TYPE_READINGS:
+        return _unknown("Too many lot lines are uncertain to compare every reading. "
+                        + _describe(uncertain), REASON_TOO_MANY_READINGS,
+                        lines=[f.index for f in uncertain])
+    base = _classify(confirmed, outline)
+    kinds = {base.kind}
+    for choice in product(*options):
+        fronting = dict(confirmed)
+        fronting.update({f.index: key for f, key in zip(uncertain, choice, strict=True) if key})
+        kinds.add(_classify(fronting, outline).kind)
+    lines = tuple(f.index for f in uncertain)
+    if len(kinds) > 1:
+        possible = ", ".join(sorted(kinds - {LOT_TYPE_UNKNOWN}))
+        if LOT_TYPE_UNKNOWN in kinds:
+            possible += " or undetermined"
+        return _unknown(
+            "The lot type depends on lot lines that could not be matched to a street "
+            f"(possible types: {possible}). " + _describe(uncertain),
+            REASON_DEPENDS_ON_UNCERTAIN_LOT_LINES, base, lines)
+    if base.kind == LOT_TYPE_UNKNOWN:
+        extra = (" Uncertain lot lines: " + _describe(uncertain)) if uncertain else ""
+        return _unknown((base.reason or "") + extra,
+                        base.reason_code or REASON_NO_STREET_FRONTAGE, base, lines)
+    return LotType(base.kind, LABEL_TAX_MAP, BASIS, None, base.streets, base.relations, None,
+                   lines)

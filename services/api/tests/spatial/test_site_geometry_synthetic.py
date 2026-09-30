@@ -20,6 +20,16 @@ from app.spatial.site_geometry import (
     StreetCenterline,
     StreetData,
     derive_site_geometry,
+    lot_type,
+)
+from app.spatial.site_geometry.adjacency import (
+    CODE_INSIDE_MAPPED_STREET,
+    CODE_MULTIPLE_STREETS,
+    CODE_PARTIAL_STREET_LINE,
+    CODE_STREET_ANGLE,
+    CODE_STREET_LINE_WITHIN_UNCERTAINTY_BAND,
+    CODE_STREET_STATUS_REVIEW,
+    CODE_WIDTH_NOT_A_NUMBER,
 )
 from app.spatial.site_geometry.parameters import parameters_snapshot
 from app.spatial.site_geometry.results import (
@@ -273,7 +283,7 @@ def test_missing_city_records_stay_unknown_never_zero():
 def test_every_result_records_parameters_and_method():
     result = derive_site_geometry(lot(RECT), streets(MAIN))
     assert result.parameters == parameters_snapshot()
-    assert result.provenance["method_version"] == "site-geometry-1"
+    assert result.provenance["method_version"] == "site-geometry-2"
 
 
 # --------------------------------------------------------------------------- degenerate inputs
@@ -324,29 +334,31 @@ def test_invalid_shape_reason_names_no_coordinates():
 # --------------------------------------------------------------------------- street data gaps
 
 
-def _assert_unknown_type(result, fragment):
+def _assert_unknown_type(result, fragment, code=None):
     assert result.status == STATUS_PARTIAL
     assert result.lot_type.kind == "unknown" and result.lot_type.label == LABEL_UNKNOWN
     assert fragment in result.lot_type.reason
+    if code is not None:
+        assert result.lot_type.reason_code == code
     assert result.lot_area.value == 2500.0  # the outline area stays known
 
 
 def test_no_street_data():
     result = derive_site_geometry(lot(RECT), None)
-    _assert_unknown_type(result, "No city street data")
+    _assert_unknown_type(result, "No city street data", lot_type.REASON_STREET_DATA_INCOMPLETE)
     assert result.edges == () and result.frontages == ()
 
 
 def test_street_data_in_degrees_is_not_read():
     result = derive_site_geometry(lot(RECT), streets(MAIN, crs={"wkid": 4326}))
-    _assert_unknown_type(result, "not in EPSG:2263")
+    _assert_unknown_type(result, "not in EPSG:2263", lot_type.REASON_STREET_DATA_INCOMPLETE)
     assert result.edges == ()
 
 
 def test_street_data_that_does_not_cover_the_search_radius():
     small = (-10.0, -40.0, 35.0, 110.0)
     result = derive_site_geometry(lot(RECT), streets(MAIN, envelope=small))
-    _assert_unknown_type(result, "does not cover 150 ft")
+    _assert_unknown_type(result, "does not cover 150 ft", lot_type.REASON_STREET_DATA_INCOMPLETE)
     main = result.frontage("Main Street")
     assert main.status == FRONTAGE_UNCERTAIN and main.length.value is None
     assert main.length.reason.startswith("25.00 ft is confirmed, but")
@@ -360,7 +372,10 @@ def test_unusable_street_envelope(envelope):
 
 
 def test_street_wider_than_the_search_reaches():
-    avenue = street_for_edge("Grand Avenue", (0.0, 0.0), (25.0, 0.0), "400")
+    # 140 ft is the widest street whose 80 ft uncertainty band the 150 ft search still sees.
+    fits = street_for_edge("Grand Avenue", (0.0, 0.0), (25.0, 0.0), "140")
+    assert derive_site_geometry(lot(RECT), streets(fits)).lot_type.kind == "interior"
+    avenue = street_for_edge("Grand Avenue", (0.0, 0.0), (25.0, 0.0), "141")
     result = derive_site_geometry(lot(RECT), streets(avenue))
     _assert_unknown_type(result, "Grand Avenue is wider than the search reaches")
 
@@ -377,34 +392,120 @@ def test_malformed_center_line_is_a_blocker():
     _assert_unknown_type(result, "Side Street has unusable center-line geometry")
 
 
+def test_oversized_input_is_refused_not_run_unbounded():
+    # 250 samples x 8001 street pieces is above MAX_RAY_SEGMENT_TESTS (2,000,000).
+    path = tuple((-4000.0 + i, -900.0) for i in range(8002))
+    long_street = StreetCenterline("Long Street", "Long Street", None, (path,), "60", True)
+    result = derive_site_geometry(lot(RECT), streets(MAIN, long_street))
+    _assert_unknown_type(result, "too large to check", lot_type.REASON_STREET_DATA_INCOMPLETE)
+    assert result.edges == ()
+
+
 def test_no_street_found():
-    far = street_for_edge("Main Street", (0.0, 0.0), (25.0, 0.0), extra_offset=30.0)
+    far = street_for_edge("Main Street", (0.0, 0.0), (25.0, 0.0), extra_offset=85.0)
     result = derive_site_geometry(lot(RECT), streets(far))
-    _assert_unknown_type(result, "No street frontage was found")
+    _assert_unknown_type(result, "No street frontage was found",
+                         lot_type.REASON_NO_STREET_FRONTAGE)
     assert all(e.verdict == EDGE_NO_STREET for e in result.edges)
 
 
+# --------------------------------------------------------------------------- the two margins
+
+
+@pytest.mark.parametrize(("offset", "verdict"), [
+    (4.9, EDGE_FRONTS),        # just inside the 5 ft match tolerance
+    (5.0, EDGE_FRONTS),        # exactly at it
+    (5.1, EDGE_UNCERTAIN),     # just outside it
+    (-5.0, EDGE_FRONTS),
+    (-5.1, EDGE_UNCERTAIN),
+    (79.9, EDGE_UNCERTAIN),    # just inside the 80 ft uncertainty band
+    (80.0, EDGE_UNCERTAIN),    # exactly at it
+    (80.1, EDGE_NO_STREET),    # just outside it
+])
+def test_street_line_margins_are_pinned(offset, verdict):
+    street = street_for_edge("Main Street", (0.0, 0.0), (25.0, 0.0), extra_offset=offset)
+    result = derive_site_geometry(lot(RECT), streets(street))
+    assert result.edges[0].verdict == verdict
+    if verdict == EDGE_FRONTS:
+        assert result.lot_type.kind == "interior" and result.status == STATUS_COMPLETE
+    else:
+        assert result.lot_type.kind == "unknown" and result.status == STATUS_PARTIAL
+
+
+def test_uncertainty_band_is_the_spatial_policy_band():
+    from app.spatial.policy import MAPPLUTO_LOT_ACCURACY, SENSITIVITY_BAND_MULTIPLIER
+    from app.spatial.site_geometry import parameters
+
+    expected = SENSITIVITY_BAND_MULTIPLIER * (
+        MAPPLUTO_LOT_ACCURACY.value_ft + parameters.DCM_CENTERLINE_ACCURACY.value_ft)
+    assert parameters.STREET_LINE_UNCERTAINTY_BAND_FT == expected == 80.0
+    assert parameters.DCM_CENTERLINE_ACCURACY.basis == "assumed"
+
+
+FIRST_AVE_EDGE = ((0.0, 100.0), (0.0, 0.0))
+
+
+@pytest.mark.parametrize(("offset", "width"), [(16.0, "80"), (20.0, "80"), (0.0, "40")],
+                         ids=["offset_16", "offset_20", "width_recorded_40_of_80"])
+def test_misplaced_frontage_street_never_gives_a_confident_interior(offset, width):
+    # A corner lot whose First Avenue center line is 16 / 20 ft off, or whose 80 ft width is
+    # recorded as 40: the side is uncertain, and the type depends on it.
+    first_ave = street_for_edge("First Avenue", *FIRST_AVE_EDGE, "80", extra_offset=offset)
+    first_ave = StreetCenterline("First Avenue", "First Avenue", None, first_ave.paths, width,
+                                 True)
+    result = derive_site_geometry(lot(RECT), streets(MAIN, first_ave))
+    _assert_unknown_type(result, "possible types: corner, interior",
+                         lot_type.REASON_DEPENDS_ON_UNCERTAIN_LOT_LINES)
+    assert result.lot_type.unconfirmed_lot_lines == (3,)
+    assert result.edges[3].reason_codes == (CODE_STREET_LINE_WITHIN_UNCERTAINTY_BAND,)
+    assert result.frontage("First Avenue").status == FRONTAGE_UNCERTAIN
+
+
+def test_lot_type_kept_when_every_reading_agrees():
+    # Corner lot with a street line 30 ft behind its rear line: whether or not the rear line
+    # is on Back Street, the lot is a corner lot. The frontage list stays open (partial).
+    first_ave = street_for_edge("First Avenue", *FIRST_AVE_EDGE, "80")
+    back = street_for_edge("Back Street", (25.0, 100.0), (0.0, 100.0), extra_offset=30.0)
+    result = derive_site_geometry(lot(RECT), streets(MAIN, first_ave, back))
+    assert result.lot_type.kind == "corner" and result.lot_type.reason_code is None
+    assert result.lot_type.unconfirmed_lot_lines == (2,)
+    assert result.status == STATUS_PARTIAL
+    assert result.frontage("Back Street").status == FRONTAGE_UNCERTAIN
+    assert any("not ruled out" in note for note in result.notes)
+
+
+def test_too_many_readings_is_unknown(monkeypatch):
+    monkeypatch.setattr(lot_type, "MAX_LOT_TYPE_READINGS", 1)
+    between = street_for_edge("Main Street", (0.0, 0.0), (25.0, 0.0), extra_offset=10.0)
+    result = derive_site_geometry(lot(RECT), streets(between))
+    _assert_unknown_type(result, "Too many lot lines", lot_type.REASON_TOO_MANY_READINGS)
+
+
+# --------------------------------------------------------------------------- uncertain edges
+
+
 @pytest.mark.parametrize(
-    ("street", "fragment"),
+    ("street", "fragment", "code"),
     [
         (street_for_edge("Main Street", (0.0, 0.0), (25.0, 0.0), extra_offset=10.0),
-         "too far to be frontage, too close to rule it out"),
+         "within the 80 ft positional uncertainty", CODE_STREET_LINE_WITHIN_UNCERTAINTY_BAND),
         (street_for_edge("Main Street", (0.0, 0.0), (25.0, 0.0), extra_offset=-10.0),
-         "inside the mapped street"),
+         "inside the mapped street", CODE_INSIDE_MAPPED_STREET),
         (street_for_edge("Main Street", (0.0, 0.0), (25.0, 0.0), "varies"),
-         "is not a single number"),
+         "is not a single number", CODE_WIDTH_NOT_A_NUMBER),
         (street_for_edge("Main Street", (0.0, 0.0), (25.0, 0.0), "60-80"),
-         "is not a single number"),
+         "is not a single number", CODE_WIDTH_NOT_A_NUMBER),
         (street_for_edge("Main Street", (0.0, 0.0), (25.0, 0.0), ok=False,
                          note="the City Map flags it (paper_street='Y'); needs review"),
-         "paper_street"),
+         "paper_street", CODE_STREET_STATUS_REVIEW),
     ],
     ids=["between", "inside", "prose_width", "range_width", "paper_street"],
 )
-def test_uncertain_street_line_leaves_lot_type_unknown(street, fragment):
+def test_uncertain_street_line_leaves_lot_type_unknown(street, fragment, code):
     result = derive_site_geometry(lot(RECT), streets(street))
-    _assert_unknown_type(result, fragment)
+    _assert_unknown_type(result, fragment, lot_type.REASON_DEPENDS_ON_UNCERTAIN_LOT_LINES)
     assert result.edges[0].verdict == EDGE_UNCERTAIN
+    assert result.edges[0].reason_codes == (code,)
     frontage = result.frontage("Main Street")
     assert frontage.status == FRONTAGE_UNCERTAIN
     assert frontage.length.value is None
@@ -420,6 +521,7 @@ def test_street_at_an_angle_is_uncertain():
     skew = StreetCenterline("Skew Street", "Skew Street", None, (path,), "60", True)
     result = derive_site_geometry(lot(RECT), streets(skew))
     _assert_unknown_type(result, "runs at up to 20 degrees")
+    assert result.edges[0].reason_codes == (CODE_STREET_ANGLE,)
 
 
 def test_street_that_ends_part_way_along_a_lot_line():
@@ -427,13 +529,15 @@ def test_street_that_ends_part_way_along_a_lot_line():
                              (((12.0, -30.0), (300.0, -30.0)),), "60", True)
     result = derive_site_geometry(lot(RECT), streets(short))
     _assert_unknown_type(result, "the street line runs along only 52% of it")
+    assert result.edges[0].reason_codes == (CODE_PARTIAL_STREET_LINE,)
 
 
 def test_street_running_through_the_lot():
     through = StreetCenterline("Cut Street", "Cut Street", None,
                                (((-300.0, 50.0), (300.0, 50.0)),), "60", True)
     result = derive_site_geometry(lot(RECT), streets(MAIN, through))
-    _assert_unknown_type(result, "(Cut Street) runs through the lot")
+    _assert_unknown_type(result, "(Cut Street) runs through the lot",
+                         lot_type.REASON_STREET_CROSSES_LOT)
     assert result.street_crossings == ("Cut Street",)
     assert result.frontage("Cut Street").status == FRONTAGE_UNCERTAIN
     assert result.frontage("Main Street").status == FRONTAGE_CONFIRMED
@@ -446,11 +550,12 @@ def test_two_named_segments_along_one_lot_line_are_uncertain():
                              (((12.0, -30.0), (300.0, -30.0)),), "60", True)
     result = derive_site_geometry(lot(RECT), streets(left, right))
     _assert_unknown_type(result, "faces more than one street")
+    assert CODE_MULTIPLE_STREETS in result.edges[0].reason_codes
 
 
 def test_side_line_next_to_a_narrow_corner_lot_is_uncertain():
     # A cross street 10 ft beyond the west lot line: a 10 ft neighbour lot at most.
     cross = street_for_edge("Cross Street", (0.0, 100.0), (0.0, 0.0), extra_offset=10.0)
     result = derive_site_geometry(lot(RECT), streets(MAIN, cross))
-    _assert_unknown_type(result, "Cross Street")
+    _assert_unknown_type(result, "Cross Street", lot_type.REASON_DEPENDS_ON_UNCERTAIN_LOT_LINES)
     assert result.frontage("Main Street").status == FRONTAGE_CONFIRMED
