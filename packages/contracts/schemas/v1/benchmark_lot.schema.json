@@ -1,0 +1,359 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/benchmark_lot.schema.json",
+  "title": "Benchmark Lot",
+  "description": "v1 contract (task M5-T125, directive D-090 Wave 0, D-090-R002; derived lane plan docs/lanes/PARALLEL_BUILD_PLAN.md section 5) for a benchmark, pilot or golden lot: its identity; its expected values, EACH with its source and verification state; the recorded fixtures (repo path + SHA-256 of the file bytes) that back any 'recorded' value; which competitor-review checks C-1..C-12 apply (docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md section D; plan docs/PRODUCT_PLAN_CURRENT_2026-09-28.md section 9a item 6); and the open items. Verification states: expected_unverified = stated by a document (competitor review, Zoning Resolution citation, public record) but not yet backed by recorded city data; recorded = backed by a recorded fixture cited by path and SHA-256; pending = claimed (e.g. by the plan) but not yet backed by any recorded fixture; pending_owner = waits on an owner decision; reviewed = signed by a qualified reviewer, which REQUIRES a review record (reviewer, date, record) - nothing is marked reviewed without one (D-090-R010; CLAUDE.md principle 12). A lot with unknown identity (a placeholder) carries no expected values and at least one open item.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "benchmark_id",
+    "purpose",
+    "basis",
+    "identity",
+    "expected_values",
+    "checks",
+    "recorded_fixtures",
+    "reference_documents",
+    "open_items"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published benchmark_lot contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "benchmark_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$",
+      "description": "Stable id, e.g. 'northern-blvd-215-16'."
+    },
+    "purpose": {
+      "type": "string",
+      "enum": ["benchmark", "pilot", "multi_lot_pilot"],
+      "description": "benchmark = the checklist lot every check must pass on (plan section 9a item 6); pilot = Pilot A, one real single lot independently verified (section 11); multi_lot_pilot = Pilot B, multi-lot and condo behavior (section 11)."
+    },
+    "basis": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "Why this lot is in the set, citing the plan section or directive."
+    },
+    "identity": {
+      "description": "Lot identity, or null while it is unknown (Pilot A before owner decision Q1).",
+      "anyOf": [
+        { "$ref": "#/$defs/identity" },
+        { "type": "null" }
+      ]
+    },
+    "expected_values": {
+      "type": "array",
+      "description": "Expected values, each with its source and verification state. Keys use the same vocabulary as results answer values where one exists.",
+      "items": { "$ref": "#/$defs/expected_value" }
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "description": "Applicability of each competitor-review check C-1..C-12 (review section D), one entry per check. Each id is tied to its review title; uniqueness of ids is checked by consumers (the validator's keyword subset has no uniqueItems).",
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "recorded_fixtures": {
+      "type": "array",
+      "description": "Recorded files already in the repo that back 'recorded' values, each pinned by SHA-256 of its bytes.",
+      "items": { "$ref": "#/$defs/recorded_fixture" }
+    },
+    "reference_documents": {
+      "type": "array",
+      "description": "Documents the expected values were taken from (e.g. the competitor review, the plan), each pinned by SHA-256 of its bytes.",
+      "items": { "$ref": "#/$defs/reference_document" }
+    },
+    "open_items": {
+      "type": "array",
+      "description": "Things still to verify or decide, in plain English.",
+      "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key."
+    }
+  },
+  "oneOf": [
+    {
+      "description": "Known identity.",
+      "properties": {
+        "identity": { "type": "object" }
+      }
+    },
+    {
+      "description": "Placeholder: identity unknown, so no invented values and at least one open item.",
+      "properties": {
+        "identity": { "type": "null" },
+        "expected_values": { "maxItems": 0 },
+        "open_items": { "minItems": 1 }
+      }
+    }
+  ],
+  "$defs": {
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bbls", "billing_bbl", "address", "borough", "identity_source"],
+      "properties": {
+        "bbls": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The tax lots of the site (for a condominium: the base lots, not the billing lot).",
+          "items": { "$ref": "common.schema.json#/$defs/bbl" }
+        },
+        "billing_bbl": {
+          "description": "Condominium billing BBL when the property is a condominium; null otherwise.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/bbl" },
+            { "type": "null" }
+          ]
+        },
+        "address": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "borough": { "$ref": "common.schema.json#/$defs/borough_name" },
+        "identity_source": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Where the identity is stated (directive, plan section, recorded fixture)."
+        }
+      }
+    },
+    "file_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Lowercase hex SHA-256 of a file's committed bytes (LF line endings), the same convention as services/api/tests/fixtures/dtm_lot_outline/MANIFEST.json. Distinct from the canonical-json-1 'sha256:' digests in common.schema.json."
+    },
+    "repo_path": {
+      "type": "string",
+      "pattern": "^(?!.*\\.\\.)[A-Za-z0-9_][A-Za-z0-9_./-]*$",
+      "description": "Repository-relative path (no leading slash, no '..')."
+    },
+    "expected_value": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "label", "value", "unit", "source", "verification_state", "review", "note"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "label": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "value": {
+          "type": ["number", "string", "null"],
+          "description": "The expected value; null only when the value itself is not yet known (e.g. an unconfirmed street width)."
+        },
+        "unit": {
+          "anyOf": [
+            { "$ref": "results.schema.json#/$defs/unit" },
+            { "type": "null" }
+          ]
+        },
+        "source": { "$ref": "#/$defs/source" },
+        "verification_state": {
+          "type": "string",
+          "enum": ["expected_unverified", "recorded", "reviewed", "pending", "pending_owner"]
+        },
+        "review": {
+          "description": "Qualified-reviewer record; REQUIRED for 'reviewed' and null for every other state.",
+          "anyOf": [
+            { "$ref": "#/$defs/review" },
+            { "type": "null" }
+          ]
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Plain-English note (e.g. 'about', or why a value must not be used a certain way)."
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "verification_state": { "const": "expected_unverified" },
+            "source": { "properties": { "kind": { "enum": ["competitor_review", "zoning_resolution", "public_record"] } } },
+            "review": { "type": "null" }
+          }
+        },
+        {
+          "properties": {
+            "verification_state": { "const": "recorded" },
+            "source": { "properties": { "kind": { "const": "recorded_fixture" } } },
+            "review": { "type": "null" }
+          }
+        },
+        {
+          "properties": {
+            "verification_state": { "const": "reviewed" },
+            "source": { "properties": { "kind": { "enum": ["recorded_fixture", "zoning_resolution", "public_record"] } } },
+            "review": { "type": "object" }
+          }
+        },
+        {
+          "properties": {
+            "verification_state": { "enum": ["pending", "pending_owner"] },
+            "review": { "type": "null" }
+          }
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "ref", "sha256", "pointer", "cited_in", "quote"],
+      "description": "The source of one expected value. 'ref' is the source exactly as the citing document gives it (e.g. 'ZR 23-22', 'Report p. 5; public records', 'ACRIS entries via PropertyShark'), or the repo path of a recorded fixture.",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["competitor_review", "zoning_resolution", "public_record", "recorded_fixture", "pending"]
+        },
+        "ref": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "sha256": {
+          "description": "For recorded_fixture: SHA-256 of the fixture file's bytes; null otherwise.",
+          "anyOf": [
+            { "$ref": "#/$defs/file_sha256" },
+            { "type": "null" }
+          ]
+        },
+        "pointer": {
+          "description": "For recorded_fixture: where in the file the value is (JSON path, property or constant name); null otherwise.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "cited_in": {
+          "description": "The repo document (path and section) through which this source reached the benchmark, e.g. the competitor review section A; null when ref is itself the repo file.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "quote": {
+          "description": "The citing document's own words for the value, verbatim; null when not applicable.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "kind": { "const": "recorded_fixture" },
+            "ref": { "$ref": "#/$defs/repo_path" },
+            "sha256": { "type": "string" },
+            "pointer": { "type": "string" }
+          }
+        },
+        {
+          "properties": {
+            "kind": { "enum": ["competitor_review", "zoning_resolution", "public_record", "pending"] },
+            "sha256": { "type": "null" }
+          }
+        }
+      ]
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer", "reviewed_at", "record_ref"],
+      "description": "A qualified reviewer's sign-off (plan section 9a 'Reviewer (Q12)'; section 11 Pilot A golden record).",
+      "properties": {
+        "reviewer": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "reviewed_at": { "$ref": "common.schema.json#/$defs/date_time" },
+        "record_ref": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The signed golden record or gate report."
+        }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["check_id", "title", "applicability", "reason", "pass_when"],
+      "properties": {
+        "check_id": {
+          "type": "string",
+          "enum": ["C-1", "C-2", "C-3", "C-4", "C-5", "C-6", "C-7", "C-8", "C-9", "C-10", "C-11", "C-12"]
+        },
+        "title": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "applicability": {
+          "type": "string",
+          "enum": ["applies", "not_applicable", "pending"],
+          "description": "applies = the check must pass on this lot; not_applicable = the check cannot arise here (reason required); pending = not yet decided (reason required)."
+        },
+        "reason": {
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "pass_when": {
+          "description": "The review's 'Pass when' text, verbatim; null when not restated.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "description": "Each check id is tied to its title in the competitor review section D.",
+          "oneOf": [
+            { "properties": { "check_id": { "const": "C-1" }, "title": { "const": "One source for heights" } } },
+            { "properties": { "check_id": { "const": "C-2" }, "title": { "const": "Allowance vs. building" } } },
+            { "properties": { "check_id": { "const": "C-3" }, "title": { "const": "Existing building" } } },
+            { "properties": { "check_id": { "const": "C-4" }, "title": { "const": "Drawings match numbers" } } },
+            { "properties": { "check_id": { "const": "C-5" }, "title": { "const": "Consistency sweep" } } },
+            { "properties": { "check_id": { "const": "C-6" }, "title": { "const": "No duplicate options" } } },
+            { "properties": { "check_id": { "const": "C-7" }, "title": { "const": "Current sources" } } },
+            { "properties": { "check_id": { "const": "C-8" }, "title": { "const": "Same rule everywhere" } } },
+            { "properties": { "check_id": { "const": "C-9" }, "title": { "const": "Zoning lot" } } },
+            { "properties": { "check_id": { "const": "C-10" }, "title": { "const": "Lot-split ideas" } } },
+            { "properties": { "check_id": { "const": "C-11" }, "title": { "const": "No template sentences" } } },
+            { "properties": { "check_id": { "const": "C-12" }, "title": { "const": "Units in one place" } } }
+          ]
+        },
+        {
+          "description": "not_applicable and pending need a reason.",
+          "anyOf": [
+            { "properties": { "applicability": { "const": "applies" } } },
+            { "properties": { "applicability": { "enum": ["not_applicable", "pending"] }, "reason": { "type": "string" } } }
+          ]
+        }
+      ]
+    },
+    "recorded_fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "dataset", "retrieved_at", "note"],
+      "properties": {
+        "path": { "$ref": "#/$defs/repo_path" },
+        "sha256": { "$ref": "#/$defs/file_sha256" },
+        "dataset": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Source dataset of the recorded content (e.g. 'nyc-dof-digital-tax-map', 'p8u6-a6it (DOF DTM Condominiums)')."
+        },
+        "retrieved_at": {
+          "description": "When the recorded content was retrieved: a timestamp, a date when only the date is recorded, or null when the file records none itself.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/date_time" },
+            { "$ref": "common.schema.json#/$defs/date" },
+            { "type": "null" }
+          ]
+        },
+        "note": { "type": ["string", "null"] }
+      }
+    },
+    "reference_document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "role"],
+      "properties": {
+        "path": { "$ref": "#/$defs/repo_path" },
+        "sha256": { "$ref": "#/$defs/file_sha256" },
+        "role": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+      }
+    }
+  }
+}

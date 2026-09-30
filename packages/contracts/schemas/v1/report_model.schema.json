@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/report_model.schema.json",
+  "title": "Report Model",
+  "description": "v1 contract (task M5-T125, directive D-090 Wave 0; derived lane plan docs/lanes/PARALLEL_BUILD_PLAN.md section 5) for what EVERY export renders - PDF, Excel and the report screen (plan docs/PRODUCT_PLAN_CURRENT_2026-09-28.md section 3 step 7, sections 5a, 5c, 9; tasks M1-19, M1-22). It is bound to ONE results document by id and canonical digest (results_ref), so the report matches the screen and the revision. It holds the identification line ('Option B · revision 7 · date', section 9); the sheet list, keyed by sheet so every listed PDF sheet must be present (M1-22) - cover, dimensioned site plan, section, 3D massing, calculation table, floor-by-floor table, add-on comparison, assumptions page, and the optional Buildings-Department-style sheet marked 'Preliminary — not for filing'; the standing notices, shown ONCE on one page and never beside numbers, including the exact floor-area reminder (section 5a item 2); the calculation-table rows with Zoning Resolution sections and sources; and the assumptions. Every figure is read from the results document (or, for site facts, the study at the same revision) by JSON Pointer (reads / reads_from), never typed (section 5c item 5; checks C-4, C-5).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "report_id",
+    "generated_at",
+    "results_ref",
+    "identification_line",
+    "sheets",
+    "standing_notices",
+    "calculation_rows",
+    "assumptions"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published report_model contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "report_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+    "generated_at": { "$ref": "common.schema.json#/$defs/date_time" },
+    "results_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["results_id", "study_id", "option_id", "revision", "results_digest"],
+      "description": "The one results document this report renders (task M1-19: report bound to a revision).",
+      "properties": {
+        "results_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "study_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "option_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "results_digest": {
+          "$ref": "common.schema.json#/$defs/digest_sha256",
+          "description": "canonical-json-1 digest of the results document (common.schema.json digest_sha256)."
+        }
+      }
+    },
+    "identification_line": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["option_name", "revision", "date", "text"],
+      "description": "The report's one identification line (plan section 9 'Communication').",
+      "properties": {
+        "option_name": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "date": { "$ref": "common.schema.json#/$defs/date" },
+        "text": {
+          "type": "string",
+          "pattern": "^.+ · revision [0-9]+ · [0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Option · revision · date, e.g. 'Option B · revision 7 · 2026-09-30'."
+        }
+      }
+    },
+    "sheets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cover",
+        "site_plan",
+        "section",
+        "massing_3d",
+        "calculation_table",
+        "floor_by_floor_table",
+        "addon_comparison",
+        "assumptions"
+      ],
+      "description": "The PDF sheet list (plan section 3 step 7). Keyed by sheet so each listed sheet is present exactly once (task M1-22: 'The PDF contains every listed sheet'); page_order gives the page sequence. A drawing sheet that cannot be drawn is present as not_available with one line naming what is missing (task M1-16).",
+      "properties": {
+        "cover": { "$ref": "#/$defs/cover_sheet" },
+        "site_plan": { "$ref": "#/$defs/drawing_sheet" },
+        "section": { "$ref": "#/$defs/drawing_sheet" },
+        "massing_3d": { "$ref": "#/$defs/drawing_sheet" },
+        "calculation_table": { "$ref": "#/$defs/table_sheet" },
+        "floor_by_floor_table": { "$ref": "#/$defs/table_sheet" },
+        "addon_comparison": { "$ref": "#/$defs/table_sheet" },
+        "assumptions": { "$ref": "#/$defs/table_sheet" },
+        "dob_style_preliminary": { "$ref": "#/$defs/preliminary_sheet" }
+      }
+    },
+    "standing_notices": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shown_once",
+        "page_order",
+        "not_dob_approval",
+        "floor_area_reminder",
+        "zoning_lot_not_verified",
+        "district_incomplete",
+        "additional"
+      ],
+      "description": "Standing notices live behind the status strip and on ONE page of the report, never repeated beside numbers (plan section 5a item 2; task M1-24).",
+      "properties": {
+        "shown_once": {
+          "type": "boolean",
+          "const": true,
+          "description": "Always true: the notices appear on one report page only."
+        },
+        "page_order": { "type": "integer", "minimum": 1 },
+        "not_dob_approval": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Not a Buildings Department approval (plan section 5a item 2)."
+        },
+        "floor_area_reminder": {
+          "type": "string",
+          "const": "Make sure this floor area is available for use. Confirm with the owner or developer that none of it was sold or merged with another lot.",
+          "description": "The floor-area reminder worded exactly as plan section 5a item 2 requires. No records lookup is made (decision P-2)."
+        },
+        "zoning_lot_not_verified": {
+          "type": "string",
+          "const": "Based on the lots you selected — the app does not verify the zoning lot",
+          "description": "The zoning lot is not verified (plan section 3 step 2, section 5a item 2; check C-9)."
+        },
+        "district_incomplete": {
+          "description": "The district-is-incomplete notice while any output or add-on of the district is not implemented, tested and reviewed (plan sections 5a item 2, 12a 'Honesty rule'); null when the district is complete.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "additional": {
+          "type": "array",
+          "description": "Other standing notices, e.g. the condo line (plan section 8) or recorded zoning-lot documents (check C-9).",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["notice_id", "text"],
+            "properties": {
+              "notice_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+              "text": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+            }
+          }
+        }
+      }
+    },
+    "calculation_rows": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The calculation table (PDF sheet and Excel file): values, units, sources and Zoning Resolution sections (plan section 3 step 7). A row that cannot be calculated shows 'Not available' and the reason in place of the number.",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/calculation_row_available" },
+          { "$ref": "#/$defs/calculation_row_not_available" }
+        ]
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "Everything on the one assumptions page (plan section 3 step 7; section 9 'Explicit assumptions').",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["assumption_id", "statement"],
+        "properties": {
+          "assumption_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+          "statement": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        }
+      }
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key."
+    }
+  },
+  "$defs": {
+    "pointer_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document", "pointer"],
+      "description": "Where a figure or table is read from: a JSON Pointer (RFC 6901) into the referenced results document, the study at the referenced revision (e.g. a site fact such as lot area), or this report model itself (e.g. '/assumptions'). Figures are read, never typed (plan section 5c item 5; checks C-4, C-5).",
+      "properties": {
+        "document": {
+          "type": "string",
+          "enum": ["results", "study", "report_model"]
+        },
+        "pointer": {
+          "type": "string",
+          "pattern": "^(/[A-Za-z0-9_~-]+)+$",
+          "description": "e.g. '/answers/floor_area_allowance/values/1' or '/site/facts/0/value'."
+        }
+      }
+    },
+    "display_value": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "value", "unit", "reads"],
+          "properties": {
+            "status": { "type": "string", "const": "available" },
+            "value": { "type": "number" },
+            "unit": { "$ref": "results.schema.json#/$defs/unit" },
+            "reads": { "$ref": "#/$defs/pointer_ref" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reason"],
+          "properties": {
+            "status": { "type": "string", "const": "not_available" },
+            "reason": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+          }
+        }
+      ]
+    },
+    "cover_sheet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["page_order", "title", "address", "zoning_districts", "lots", "floor_area_allowance", "maximum_height"],
+      "description": "Cover sheet: address, zone, lots, floor-area allowance, maximum height (plan section 3 step 7).",
+      "properties": {
+        "page_order": { "type": "integer", "minimum": 1 },
+        "title": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "address": {
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "zoning_districts": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        },
+        "lots": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "common.schema.json#/$defs/bbl" }
+        },
+        "floor_area_allowance": { "$ref": "#/$defs/display_value" },
+        "maximum_height": { "$ref": "#/$defs/display_value" }
+      }
+    },
+    "drawing_sheet": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["page_order", "title", "status", "reads_from", "measurement_note"],
+          "properties": {
+            "page_order": { "type": "integer", "minimum": 1 },
+            "title": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            "status": { "type": "string", "const": "available" },
+            "reads_from": {
+              "type": "array",
+              "minItems": 1,
+              "description": "Pointers the drawing is drawn from (the results geometry block and the values it labels).",
+              "items": { "$ref": "#/$defs/pointer_ref" }
+            },
+            "measurement_note": {
+              "description": "Note on the drawing when measurements are not from a survey, e.g. 'Approximate — city tax map, not a survey' (plan section 3 step 7); null for survey measurements.",
+              "anyOf": [
+                { "$ref": "common.schema.json#/$defs/non_empty_string" },
+                { "type": "null" }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["page_order", "title", "status", "reason"],
+          "properties": {
+            "page_order": { "type": "integer", "minimum": 1 },
+            "title": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            "status": { "type": "string", "const": "not_available" },
+            "reason": {
+              "$ref": "common.schema.json#/$defs/non_empty_string",
+              "description": "One line naming what is missing (task M1-16)."
+            }
+          }
+        }
+      ]
+    },
+    "table_sheet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["page_order", "title", "reads_from"],
+      "properties": {
+        "page_order": { "type": "integer", "minimum": 1 },
+        "title": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "reads_from": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Pointers the table is filled from.",
+          "items": { "$ref": "#/$defs/pointer_ref" }
+        }
+      }
+    },
+    "preliminary_sheet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["page_order", "title", "marking", "reads_from"],
+      "description": "Optional sheet styled like the Buildings Department zoning diagram (plan section 3 step 7).",
+      "properties": {
+        "page_order": { "type": "integer", "minimum": 1 },
+        "title": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "marking": {
+          "type": "string",
+          "const": "Preliminary — not for filing"
+        },
+        "reads_from": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/pointer_ref" }
+        }
+      }
+    },
+    "calculation_row_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["row_id", "label", "status", "value", "unit", "zr_section", "source", "reads", "exception_label"],
+      "properties": {
+        "row_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "label": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "status": { "type": "string", "const": "available" },
+        "value": { "type": ["number", "string"] },
+        "unit": {
+          "anyOf": [
+            { "$ref": "results.schema.json#/$defs/unit" },
+            { "type": "null" }
+          ]
+        },
+        "zr_section": {
+          "description": "The Zoning Resolution section behind the value; null for a site fact such as lot area (its source is in 'source').",
+          "anyOf": [
+            { "$ref": "results.schema.json#/$defs/zr_section" },
+            { "type": "null" }
+          ]
+        },
+        "source": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Source in words with dataset and version where applicable, e.g. 'City records — PLUTO 26v2' or 'Rule table r6b-far 0.1.0 (draft)'."
+        },
+        "reads": { "$ref": "#/$defs/pointer_ref" },
+        "exception_label": { "$ref": "results.schema.json#/$defs/exception_label" }
+      }
+    },
+    "calculation_row_not_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["row_id", "label", "status", "reason", "reads"],
+      "properties": {
+        "row_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "label": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "status": { "type": "string", "const": "not_available" },
+        "reason": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "reads": { "$ref": "#/$defs/pointer_ref" }
+      }
+    }
+  }
+}

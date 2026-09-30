@@ -1,0 +1,837 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/results.schema.json",
+  "title": "Results",
+  "description": "v1 contract (task M5-T125, directive D-090 Wave 0; derived lane plan docs/lanes/PARALLEL_BUILD_PLAN.md section 5) for the results of ONE option at ONE study revision (plan docs/PRODUCT_PLAN_CURRENT_2026-09-28.md sections 5, 5a, 5b, 5c, 9, 11b; tasks M1-14, M1-25). Holds the three SEPARATE answers - floor-area allowance, permitted envelope, building option - each either available (values with units, Zoning Resolution sections and sources) or 'not_available' with a reason, never a number with a caution label (section 5 'Calculation behavior', section 5a item 3); remaining floor area after a kept building (section 3 step 4); the shortfall between the building option and the allowance, whose reasons are computed from named constraints (section 5 answer 3; competitor-review checks C-2, C-11); optional add-on gains relative to the current selection and 'Best combination' with its goal and exclusions (section 5; M1-25); the completeness line; the status strip (at most three items, section 5a item 1); the floor-by-floor table and floor stack (section 5); the keep / partial-rebuild / full-rebuild paths (section 5b); the unit estimate with its formula, in one place (section 11b; check C-12); ONE geometry block in feet that the screen drawings, PDF and DXF all read (section 5c item 1; checks C-4, C-5); and the rule versions used (section 9). Every drawing label and report figure is read from this document, never typed (section 5c item 5).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "results_id",
+    "study_id",
+    "option_id",
+    "revision",
+    "computed_at",
+    "out_of_date",
+    "out_of_date_reason",
+    "depends_on_fact_ids",
+    "lot_selection_statement",
+    "with_approvals_label",
+    "answers",
+    "remaining_floor_area",
+    "shortfall",
+    "addon_gains",
+    "best_combination",
+    "completeness_line",
+    "status_strip",
+    "notices_count",
+    "floor_by_floor",
+    "floor_stack",
+    "existing_building",
+    "unit_estimate",
+    "geometry",
+    "rule_versions"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published results contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "results_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+    "study_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+    "option_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The study revision these results were computed for (study.revision.number)."
+    },
+    "computed_at": { "$ref": "common.schema.json#/$defs/date_time" },
+    "out_of_date": {
+      "type": "boolean",
+      "description": "True when a site input, this option, or a rule version changed after computation (plan section 9 'Dependency-based invalidation'); rows then carry the 'Out of date' exception (section 5a item 3)."
+    },
+    "out_of_date_reason": {
+      "description": "Why the results are out of date; null when current.",
+      "anyOf": [
+        { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        { "type": "null" }
+      ]
+    },
+    "depends_on_fact_ids": {
+      "type": "array",
+      "description": "The site_fact.fact_id values these results were computed from (plan section 9 invalidation).",
+      "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+    },
+    "lot_selection_statement": {
+      "type": "string",
+      "const": "Based on the lots you selected — the app does not verify the zoning lot",
+      "description": "The exact label results carry (plan section 3 step 2; check C-9)."
+    },
+    "with_approvals_label": {
+      "description": "'With approvals — not guaranteed' while any agreement or approval add-on (catalog groups C, D1) is on; null otherwise (plan section 5).",
+      "anyOf": [
+        { "type": "string", "const": "With approvals — not guaranteed" },
+        { "type": "null" }
+      ]
+    },
+    "answers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["floor_area_allowance", "permitted_envelope", "building_option"],
+      "description": "The three separate answers (plan section 5). Each is shown only when its rules are implemented and reviewed, eligibility is resolved and the site geometry is supported; otherwise it is 'not_available' with the reason. Every supported answer still shows.",
+      "properties": {
+        "floor_area_allowance": {
+          "$ref": "#/$defs/answer",
+          "description": "The most zoning floor area the rules allow on the site (FAR x lot area, with applicable add-ons). The existing-building subtraction is reported separately in remaining_floor_area."
+        },
+        "permitted_envelope": {
+          "$ref": "#/$defs/answer",
+          "description": "The three-dimensional limits: base and maximum heights, setbacks, yards and lot coverage."
+        },
+        "building_option": {
+          "$ref": "#/$defs/answer",
+          "description": "A generated building inside the envelope and within the allowance: achieved floor area, floors, height, footprint width x depth."
+        }
+      }
+    },
+    "remaining_floor_area": {
+      "description": "Allowance minus the existing ZONING floor area when a building stays (plan section 3 step 4, section 5 answer 1). Without an established or entered existing zoning floor area it is not_available ('Not available — needs existing zoning floor area') while the full-site allowance still shows. not_applicable when no building is kept.",
+      "oneOf": [
+        { "$ref": "#/$defs/remaining_available" },
+        { "$ref": "#/$defs/not_available" },
+        { "$ref": "#/$defs/not_applicable" }
+      ]
+    },
+    "shortfall": {
+      "description": "Gap between the building option and the allowance (plan section 5 answer 3; checks C-2 and C-11). 'none' when the option reaches the allowance.",
+      "oneOf": [
+        { "$ref": "#/$defs/shortfall_none" },
+        { "$ref": "#/$defs/shortfall_present" },
+        { "$ref": "#/$defs/not_available" }
+      ]
+    },
+    "addon_gains": {
+      "type": "array",
+      "description": "Each optional add-on with what it would add to (or, when on, contributes to) the CURRENT selection and what it requires (plan section 5). Gains are computed by recalculating everything together, never added up. Group D2 (variances, rezonings) never produces a number and is never listed here.",
+      "items": { "$ref": "#/$defs/addon_gain" }
+    },
+    "best_combination": {
+      "description": "'Best combination' for a stated goal: only supported, quantified group A and B add-ons; shows why anything was left out (plan section 5; M1-25).",
+      "oneOf": [
+        { "$ref": "#/$defs/best_combination_available" },
+        { "$ref": "#/$defs/not_available" }
+      ]
+    },
+    "completeness_line": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "not_yet_covered"],
+      "description": "E.g. 'Add-ons checked for this district: all 12', or 'Not yet covered: X, Y' (plan section 5 'Also shown').",
+      "properties": {
+        "text": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "not_yet_covered": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        }
+      }
+    },
+    "status_strip": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "description": "One status strip at the top of the results: at most three short items, e.g. 'Zoning maximum · approximate measurements · lots you selected' (plan section 5a item 1). Tapping it opens the details and the standing notices.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text"],
+        "properties": {
+          "text": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        }
+      }
+    },
+    "notices_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of standing notices behind the strip, shown as one 'Notes (N)' item (plan section 5a items 2 and 6). The notice texts live in report_model.standing_notices."
+    },
+    "floor_by_floor": {
+      "type": "array",
+      "description": "Floor-by-floor area table computed from the same data as the building option: gross area, deductions and zoning floor area per floor (plan section 5; section 3 step 7). Empty when the building option is not available.",
+      "items": { "$ref": "#/$defs/floor_row" }
+    },
+    "floor_stack": {
+      "description": "How many floors fit under the height limits, with the floor-to-floor heights used and the allowable area of each floor where setbacks shrink upper floors (plan section 5 'Floor stack').",
+      "oneOf": [
+        { "$ref": "#/$defs/floor_stack_available" },
+        { "$ref": "#/$defs/not_available" }
+      ]
+    },
+    "existing_building": {
+      "description": "Keep, partly rebuild, or rebuild (plan section 5b; task M2-08; check C-3).",
+      "oneOf": [
+        { "$ref": "#/$defs/existing_building_none" },
+        { "$ref": "#/$defs/existing_building_present" },
+        { "$ref": "#/$defs/not_available" }
+      ]
+    },
+    "unit_estimate": {
+      "description": "Dwelling-unit estimate with its formula, in ONE place; every screen, sheet and file repeats this value (plan section 11b; check C-12).",
+      "oneOf": [
+        { "$ref": "#/$defs/unit_estimate_available" },
+        { "$ref": "#/$defs/not_available" }
+      ]
+    },
+    "geometry": {
+      "description": "The ONE geometry source the site plan, section, 3D massing, PDF and DXF all read (plan section 5c items 1-3).",
+      "oneOf": [
+        { "$ref": "#/$defs/geometry_available" },
+        { "$ref": "#/$defs/not_available" }
+      ]
+    },
+    "rule_versions": {
+      "type": "array",
+      "description": "Every rule table version these results used (plan section 9: a new rule version marks every result that uses it).",
+      "items": { "$ref": "#/$defs/rule_version" }
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key."
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "out_of_date": { "const": false },
+        "out_of_date_reason": { "type": "null" }
+      }
+    },
+    {
+      "properties": {
+        "out_of_date": { "const": true },
+        "out_of_date_reason": { "type": "string" }
+      }
+    }
+  ],
+  "$defs": {
+    "unit": {
+      "type": "string",
+      "enum": [
+        "square_feet",
+        "feet",
+        "ratio",
+        "percent",
+        "stories",
+        "dwelling_units",
+        "square_feet_per_dwelling_unit"
+      ],
+      "description": "Unit vocabulary shared by results, report_model and benchmark_lot."
+    },
+    "zr_section": {
+      "type": "string",
+      "pattern": "^ZR [0-9]{1,3}-[0-9]{1,4}[0-9A-Za-z().-]*$",
+      "description": "A Zoning Resolution section citation such as 'ZR 23-22', 'ZR 23-432' or 'ZR 23-344(a)' (plan section 9a item 5 traceability). Whether the section exists in the CURRENT Resolution is checked by the validation suite (check C-7), not by this pattern."
+    },
+    "value_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "ref"],
+      "description": "What a number was computed from: a site fact (by fact_id), a rule table (rule_id@version), or a Zoning Resolution section.",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["site_fact", "rule_table", "zoning_resolution"]
+        },
+        "ref": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+      }
+    },
+    "exception_label": {
+      "description": "At most ONE exception beside a number, only one that changes how to read it (plan section 5a item 3); null otherwise.",
+      "anyOf": [
+        { "type": "string", "enum": ["Needs street width", "With approvals", "Out of date"] },
+        { "type": "null" }
+      ]
+    },
+    "not_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reason", "reason_kind"],
+      "description": "'Not available' with the reason, in place of a number (plan section 5, section 8), e.g. 'Envelope not available — height rules for this district are not built yet'.",
+      "properties": {
+        "status": { "type": "string", "const": "not_available" },
+        "reason": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "reason_kind": {
+          "type": "string",
+          "enum": [
+            "missing_input",
+            "rule_not_implemented",
+            "rule_not_reviewed",
+            "eligibility_unresolved",
+            "geometry_unsupported"
+          ],
+          "description": "Which section 5 condition failed: a missing number, a missing or unreviewed rule, unresolved eligibility, or unsupported geometry (plan sections 5 and 8)."
+        }
+      }
+    },
+    "not_applicable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reason"],
+      "properties": {
+        "status": { "type": "string", "const": "not_applicable" },
+        "reason": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+      }
+    },
+    "answer": {
+      "oneOf": [
+        { "$ref": "#/$defs/answer_available" },
+        { "$ref": "#/$defs/not_available" }
+      ]
+    },
+    "answer_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "values", "measurement"],
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/answer_value" }
+        },
+        "measurement": {
+          "$ref": "site_fact.schema.json#/$defs/measurement_known",
+          "description": "The measurement label of this answer's weakest input (plan section 4 'How labels carry through')."
+        }
+      }
+    },
+    "answer_value": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "label", "value", "unit", "zr_sections", "sources", "exception_label"],
+      "description": "One number of an answer with its unit, Zoning Resolution sections and sources (plan section 9a item 5: every number shows its section).",
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Stable machine key, e.g. max_residential_floor_area, max_building_height, achieved_zoning_floor_area. The same keys are used by benchmark_lot expected values."
+        },
+        "label": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "value": { "type": "number" },
+        "unit": { "$ref": "#/$defs/unit" },
+        "zr_sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/zr_section" }
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/value_source" }
+        },
+        "exception_label": { "$ref": "#/$defs/exception_label" }
+      }
+    },
+    "remaining_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value_sf", "existing_zoning_floor_area_fact_id"],
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "value_sf": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Zoning floor area that can still be added; 0 when the existing building already uses or exceeds the allowance (see existing_building.larger_than_allowed_flag)."
+        },
+        "existing_zoning_floor_area_fact_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The site fact (key existing_zoning_floor_area) that was subtracted. Recorded building area is never subtracted (plan section 3 step 4, section 8)."
+        }
+      }
+    },
+    "shortfall_none": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "const": "none" }
+      }
+    },
+    "shortfall_present": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "sq_ft", "reasons"],
+      "properties": {
+        "status": { "type": "string", "const": "shortfall" },
+        "sq_ft": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Allowance minus the building option's achieved zoning floor area."
+        },
+        "reasons": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/shortfall_reason" }
+        }
+      }
+    },
+    "shortfall_reason": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "computed_from", "values"],
+      "description": "One reason, computed from real constraints and true (check C-11: no template sentences such as 'another floor would exceed the height limit' unless computed as true). It names the constraints it was computed from and the numbers compared.",
+      "properties": {
+        "text": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "computed_from": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Constraint ids (answer value keys or rule ids) the reason was computed from.",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The numbers compared, e.g. {name: 'height_with_one_more_floor', value: 62, unit: 'feet'} and {name: 'max_building_height', value: 55, unit: 'feet'}.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "value", "unit"],
+            "properties": {
+              "name": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+              "value": { "type": "number" },
+              "unit": { "$ref": "#/$defs/unit" }
+            }
+          }
+        }
+      }
+    },
+    "addon_gain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["addon_id", "name", "group", "on", "relative_to", "requires", "gain"],
+      "properties": {
+        "addon_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "name": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "group": {
+          "type": "string",
+          "enum": ["A", "B", "C", "D1"],
+          "description": "Add-on catalog group (plan section 6): A as-of-right, B certification, C neighbor, D1 approval with a text maximum. D2 never produces a number."
+        },
+        "on": { "type": "boolean" },
+        "relative_to": {
+          "type": "string",
+          "const": "current_selection",
+          "description": "Gains are always relative to the current selection (plan section 5; M1-25)."
+        },
+        "requires": {
+          "type": "array",
+          "description": "What the add-on requires, in plain English.",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        },
+        "gain": {
+          "oneOf": [
+            { "$ref": "#/$defs/gain_available" },
+            { "$ref": "#/$defs/not_available" }
+          ]
+        }
+      }
+    },
+    "gain_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "floor_area_sf", "height_ft", "floors"],
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "floor_area_sf": {
+          "type": "number",
+          "description": "Change in zoning floor area; may be negative for a trade-off such as ground-floor commercial space (plan section 6)."
+        },
+        "height_ft": { "type": ["number", "null"] },
+        "floors": { "type": ["integer", "null"] }
+      }
+    },
+    "best_combination_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "goal", "selected_addon_ids", "excluded", "goal_value_sf"],
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "goal": { "$ref": "study.schema.json#/$defs/goal" },
+        "selected_addon_ids": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        },
+        "excluded": {
+          "type": "array",
+          "description": "Every add-on left out, with why (plan section 5). Group C and D1 add-ons are never part of Best combination.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["addon_id", "reason"],
+            "properties": {
+              "addon_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+              "reason": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+            }
+          }
+        },
+        "goal_value_sf": {
+          "type": "number",
+          "minimum": 0,
+          "description": "The goal's floor area achieved by the combination (e.g. residential zoning floor area for the default goal)."
+        }
+      }
+    },
+    "floor_use": {
+      "type": "string",
+      "enum": ["residential", "commercial", "community_facility", "cellar", "bulkhead_or_mechanical"],
+      "description": "Use of a floor or plate; the same kinds the drawing style table colors (plan section 5c item 5)."
+    },
+    "floor_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["floor", "floor_label", "gross_sf", "deductions_sf", "zoning_floor_area_sf", "height_ft", "use"],
+      "description": "One row of the floor-by-floor table. zoning_floor_area_sf = gross_sf - deductions_sf (checked by the consistency sweep, check C-5). Phase 1 has no building-code deductions (plan section 2).",
+      "properties": {
+        "floor": {
+          "type": "integer",
+          "description": "1 = ground floor; 0 and below = cellar levels. The same numbering is used by floor_stack and geometry.floor_plates."
+        },
+        "floor_label": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Display name read by every drawing and table (check C-4: floor names come from results)."
+        },
+        "gross_sf": { "type": "number", "minimum": 0 },
+        "deductions_sf": { "type": "number", "minimum": 0 },
+        "zoning_floor_area_sf": { "type": "number", "minimum": 0 },
+        "height_ft": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Floor-to-floor height of this floor."
+        },
+        "use": { "$ref": "#/$defs/floor_use" }
+      }
+    },
+    "floor_stack_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "floors_fit", "height_limit_ft", "levels", "zr_sections"],
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "floors_fit": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How many floors fit under the height limits with the option's floor-to-floor heights."
+        },
+        "height_limit_ft": { "type": "number", "exclusiveMinimum": 0 },
+        "levels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["floor", "floor_to_floor_ft", "top_of_floor_ft", "allowable_area_sf"],
+            "properties": {
+              "floor": { "type": "integer" },
+              "floor_to_floor_ft": { "type": "number", "exclusiveMinimum": 0 },
+              "top_of_floor_ft": { "type": "number", "exclusiveMinimum": 0 },
+              "allowable_area_sf": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Allowable area of this floor inside the envelope, including where setbacks shrink upper floors."
+              }
+            }
+          }
+        },
+        "zr_sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/zr_section" }
+        }
+      }
+    },
+    "existing_building_none": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "const": "no_existing_building" }
+      }
+    },
+    "existing_building_present": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "paths", "headline", "larger_than_allowed_flag"],
+      "properties": {
+        "status": { "type": "string", "const": "present" },
+        "paths": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["keep", "partial_rebuild", "full_rebuild"],
+          "description": "The three paths side by side, each with its floor area, height and rule (plan section 5b table).",
+          "properties": {
+            "keep": { "$ref": "#/$defs/path" },
+            "partial_rebuild": { "$ref": "#/$defs/path" },
+            "full_rebuild": { "$ref": "#/$defs/path" }
+          }
+        },
+        "headline": {
+          "description": "When path 1 or 2 keeps more floor area than path 3, the plain statement 'Keeping the building preserves N sq ft that a new building could not have.' (plan section 5b; task M2-08); null otherwise.",
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^Keeping the building preserves [0-9]{1,3}(,[0-9]{3})* sq ft that a new building could not have\\.$"
+            },
+            { "type": "null" }
+          ]
+        },
+        "larger_than_allowed_flag": {
+          "description": "The one flag shown when the existing building is larger than today's allowance (plan section 8 wording; check C-3); null otherwise.",
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "The existing building is larger than today's zoning allows; demolition would reduce floor area."
+            },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "path": {
+      "oneOf": [
+        { "$ref": "#/$defs/path_available" },
+        { "$ref": "#/$defs/not_available" }
+      ]
+    },
+    "path_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "floor_area_sf", "height_ft", "rule", "zr_sections", "rebuild_budget"],
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "floor_area_sf": { "type": "number", "minimum": 0 },
+        "height_ft": { "type": ["number", "null"] },
+        "rule": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The rule behind the path in plain English (plan section 5b)."
+        },
+        "zr_sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/zr_section" }
+        },
+        "rebuild_budget": {
+          "description": "Path 2 only: the floor area and outer-wall length that may be removed (plan section 5b); null for paths 1 and 3.",
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["floor_area_sf", "perimeter_wall_ft"],
+              "properties": {
+                "floor_area_sf": { "type": "number", "minimum": 0 },
+                "perimeter_wall_ft": { "type": "number", "minimum": 0 }
+              }
+            },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "unit_estimate_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "formula", "factor", "rounding_rule", "zr_sections"],
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "value": { "type": "integer", "minimum": 0 },
+        "formula": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The formula as shown, e.g. '20,150 ÷ 680 = 29.63'."
+        },
+        "factor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "unit"],
+          "properties": {
+            "value": { "type": "number", "exclusiveMinimum": 0 },
+            "unit": { "type": "string", "const": "square_feet_per_dwelling_unit" }
+          }
+        },
+        "rounding_rule": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The rounding rule in words, e.g. 'rounds up only at .75 or more'."
+        },
+        "zr_sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/zr_section" }
+        }
+      }
+    },
+    "point": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "[x, y] in feet in the geometry block's CRS.",
+      "items": { "type": "number" }
+    },
+    "ring": {
+      "type": "array",
+      "minItems": 4,
+      "description": "Closed ring (first and last points equal), at least four points.",
+      "items": { "$ref": "#/$defs/point" }
+    },
+    "polygon": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Exterior ring first, then any holes.",
+      "items": { "$ref": "#/$defs/ring" }
+    },
+    "line": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/point" }
+    },
+    "yard_required": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "status", "depth_ft", "outline", "zr_sections"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["front", "side", "rear"] },
+        "status": { "type": "string", "const": "required" },
+        "depth_ft": { "type": "number", "exclusiveMinimum": 0 },
+        "outline": { "$ref": "#/$defs/polygon" },
+        "zr_sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/zr_section" }
+        }
+      }
+    },
+    "yard_not_required": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "status", "reason", "zr_sections"],
+      "description": "A yard the rules do not require here, stated so no drawing shows it (competitor review: a 20 ft rear yard drawn where none is required).",
+      "properties": {
+        "kind": { "type": "string", "enum": ["front", "side", "rear"] },
+        "status": { "type": "string", "const": "not_required" },
+        "reason": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "zr_sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/zr_section" }
+        }
+      }
+    },
+    "geometry_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "crs",
+        "units",
+        "measurement",
+        "lot_outline",
+        "yards",
+        "setback_lines_per_level",
+        "envelope",
+        "floor_plates"
+      ],
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "crs": {
+          "type": "string",
+          "enum": ["local_feet", "EPSG:2263"],
+          "description": "local_feet = a local plane in feet with its origin at a lot corner; EPSG:2263 = NY State Plane Long Island (US survey feet). Never EPSG:4326 display coordinates (plan section 4 'Coordinates'). Coordinates are never shown to or edited by the architect."
+        },
+        "units": { "type": "string", "const": "feet" },
+        "measurement": {
+          "$ref": "site_fact.schema.json#/$defs/measurement_known",
+          "description": "Measurement label of the lot outline; drives the DXF and drawing note, e.g. 'Approximate — city tax map, not a survey' (plan section 3 step 7)."
+        },
+        "lot_outline": { "$ref": "#/$defs/polygon" },
+        "yards": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "$ref": "#/$defs/yard_required" },
+              { "$ref": "#/$defs/yard_not_required" }
+            ]
+          }
+        },
+        "setback_lines_per_level": {
+          "type": "array",
+          "description": "Setback lines for each floor where a setback applies, in plan (plan section 5 'Floor stack').",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["floor", "lines", "zr_sections"],
+            "properties": {
+              "floor": { "type": "integer" },
+              "lines": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/$defs/line" }
+              },
+              "zr_sections": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/$defs/zr_section" }
+              }
+            }
+          }
+        },
+        "envelope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tiers"],
+          "description": "The permitted envelope as stacked tiers: each tier is an outline extruded from bottom_ft to top_ft.",
+          "properties": {
+            "tiers": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["bottom_ft", "top_ft", "outline"],
+                "properties": {
+                  "bottom_ft": { "type": "number", "minimum": 0 },
+                  "top_ft": { "type": "number", "exclusiveMinimum": 0 },
+                  "outline": { "$ref": "#/$defs/polygon" }
+                }
+              }
+            }
+          }
+        },
+        "floor_plates": {
+          "type": "array",
+          "description": "The building option's floor plate per floor (plan section 5c item 1); gross_sf equals the floor_by_floor row of the same floor (check C-4).",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["floor", "outline", "gross_sf", "use"],
+            "properties": {
+              "floor": { "type": "integer" },
+              "outline": { "$ref": "#/$defs/polygon" },
+              "gross_sf": { "type": "number", "minimum": 0 },
+              "use": { "$ref": "#/$defs/floor_use" }
+            }
+          }
+        }
+      }
+    },
+    "rule_version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_id", "version", "status"],
+      "properties": {
+        "rule_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "version": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "status": {
+          "type": "string",
+          "enum": ["discovered", "extracted_draft", "needs_review", "published"],
+          "description": "Rule lifecycle status, the same vocabulary as rule_evaluation.schema.json rule_status. 'published' requires qualified-reviewer approval (CLAUDE.md principle 12; D-090-R010)."
+        }
+      }
+    }
+  }
+}

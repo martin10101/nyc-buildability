@@ -1,0 +1,18 @@
+{
+  "contract_version": "1.0.0",
+  "fact_id": "fact-lot-area-3022640032",
+  "key": "lot_area",
+  "lot_bbl": "3022640032",
+  "street": null,
+  "value": null,
+  "unit": null,
+  "measurement": {
+    "rank": "unknown",
+    "label": "Unknown — enter"
+  },
+  "source": null,
+  "blocks": [],
+  "editable": true,
+  "note": "Condo base lot 32 of condominium 1313 (billing BBL 3022647515). PLUTO has no separate record for condo base lots (plan section 4), and the recorded DOF Digital Tax Map outline (packages/contracts/fixtures/valid/lot_geometry/single_lot_dof_base_3022640032.json) is EPSG:4326 display-only and is never measured. The area stays unknown until the EPSG:2263 measurement path, DOF dimensions or a survey supplies it.",
+  "_expected_failure": "Rank 'unknown' with an empty 'blocks' list: an unknown must name what it blocks (plan section 9)."
+}
