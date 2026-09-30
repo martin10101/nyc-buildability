@@ -229,35 +229,123 @@ class GitDiffTests(unittest.TestCase):
             finally:
                 clp.REPO_ROOT = saved
 
-    def test_base_sha_diff_against_merge_commit(self):
+    # PR #261: the event's base.sha was stale (the base had advanced), so diffing from it
+    # counted another lane's newly merged files as this PR's changes.
+    LANE_FILE = "scripts/lanes/new_tool.py"                      # lane C
+    FOREIGN_FILE = "services/api/app/profile/measurement.py"     # lane B
+
+    def _commit(self, repo: Path, rel: str, text: str, message: str) -> str:
+        path = repo / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+        self._git(repo, "add", rel)
+        self._git(repo, "commit", "-q", "-m", message)
+        return self._git(repo, "rev-parse", "HEAD").strip()
+
+    def _pr_merge_repo(self, repo: Path) -> tuple[str, str, str]:
+        """Base A; lane-c/x branches from A; another lane's PR then lands on the base (A -> B);
+        HEAD is GitHub's merge commit of the PR head onto B (first parent B). Returns
+        (A = the stale event base.sha, B = the true base, lane head)."""
+        self._git(repo, "init", "-q", "-b", "base")
+        self._git(repo, "config", "user.email", "t@example.invalid")
+        self._git(repo, "config", "user.name", "t")
+        stale = self._commit(repo, "a.txt", "1\n", "base")
+        self._git(repo, "switch", "-q", "-c", "lane-c/x")
+        lane_head = self._commit(repo, self.LANE_FILE, "x = 1\n", "lane")
+        self._git(repo, "switch", "-q", "base")
+        true_base = self._commit(repo, self.FOREIGN_FILE, "y = 1\n", "other lane's PR merged")
+        self._git(repo, "switch", "-q", "--detach", "base")
+        self._git(repo, "merge", "-q", "--no-ff", "-m", "Merge head into base", "lane-c/x")
+        return stale, true_base, lane_head
+
+    def _with_root(self, repo: Path):
+        saved = clp.REPO_ROOT
+        clp.REPO_ROOT = repo
+        self.addCleanup(setattr, clp, "REPO_ROOT", saved)
+
+    def test_pr_merge_diffs_against_the_merge_commits_first_parent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            stale, true_base, lane_head = self._pr_merge_repo(repo)
+            self._with_root(repo)
+            self.assertEqual(clp.commit_parents("HEAD"), [true_base, lane_head])
+            self.assertEqual(clp.merge_first_parent(fetch=False), true_base)
+            self.assertEqual(clp.changed_files_vs_merge_parent(fetch=False),
+                             (true_base, [self.LANE_FILE]))
+            # The defect being fixed: the stale base pulls the other lane's file in.
+            stale_diff = self._git(repo, "diff", "--name-only", stale, "HEAD").split()
+            self.assertIn(self.FOREIGN_FILE, stale_diff)
+            code, out = run_main("--branch", "lane-c/x", "--pr-merge")
+            self.assertEqual(code, 0, out)
+            self.assertIn(true_base, out)
+            self.assertIn("changes 1 file(s)", out)
+            self.assertNotIn(self.FOREIGN_FILE, out)
+
+    def test_base_sha_option_is_gone(self):
+        # The payload's base.sha must not be usable as the diff base any more.
+        with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
+            clp.main(["--branch", "lane-c/x", "--base-sha", "0" * 40])
+
+    def test_pr_merge_fails_closed_without_a_two_parent_merge(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp)
             self._git(repo, "init", "-q", "-b", "base")
             self._git(repo, "config", "user.email", "t@example.invalid")
             self._git(repo, "config", "user.name", "t")
-            (repo / "a.txt").write_text("1\n")
-            self._git(repo, "add", "a.txt")
-            self._git(repo, "commit", "-q", "-m", "base")
-            self._git(repo, "switch", "-q", "-c", "lane-b/x")
-            (repo / "b.txt").write_text("2\n")
-            self._git(repo, "add", "b.txt")
-            self._git(repo, "commit", "-q", "-m", "lane")
+            self._with_root(repo)
+            self._commit(repo, "a.txt", "1\n", "root")                  # 0 parents
+            with self.assertRaisesRegex(RuntimeError, "0 parent"):
+                clp.merge_first_parent(fetch=False)
+            self._commit(repo, self.LANE_FILE, "x = 1\n", "plain")       # 1 parent
+            with self.assertRaisesRegex(RuntimeError, "1 parent"):
+                clp.merge_first_parent(fetch=True)
+            code, out = run_main("--branch", "lane-c/x", "--pr-merge", "--fetch")
+            self.assertEqual(code, 2, out)
+            self.assertIn("LANE PATH CHECK ERROR", out)
+            self.assertIn("not GitHub's pull_request merge commit", out)
+            for name in ("o1", "o2"):                                     # octopus: 3 parents
+                self._git(repo, "switch", "-q", "-c", name, "HEAD~1")
+                self._commit(repo, f"{name}.txt", "o\n", name)
             self._git(repo, "switch", "-q", "base")
-            (repo / "c.txt").write_text("3\n")
-            self._git(repo, "add", "c.txt")
-            self._git(repo, "commit", "-q", "-m", "later base")
-            base_sha = self._git(repo, "rev-parse", "HEAD").strip()
-            # GitHub's pull_request checkout: a merge of the PR head into the base tip.
-            self._git(repo, "merge", "-q", "--no-ff", "-m", "merge", "lane-b/x")
-            saved = clp.REPO_ROOT
-            clp.REPO_ROOT = repo
-            try:
-                self.assertEqual(clp.changed_files_vs_sha(base_sha, fetch=False), ["b.txt"])
-                for bad in ("not-a-sha", "HEAD", "--output=x", base_sha[:12]):
-                    with self.assertRaises(RuntimeError):
-                        clp.changed_files_vs_sha(bad, fetch=False)
-            finally:
-                clp.REPO_ROOT = saved
+            self._git(repo, "merge", "-q", "-m", "octopus", "o1", "o2")
+            with self.assertRaisesRegex(RuntimeError, "3 parent"):
+                clp.merge_first_parent(fetch=False)
+
+    def test_shallow_checkout_fetches_first_parent_at_depth_1(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            dev, origin, ci = tmp_path / "dev", tmp_path / "origin.git", tmp_path / "ci"
+            dev.mkdir()
+            origin.mkdir()
+            _stale, true_base, _head = self._pr_merge_repo(dev)
+            self._git(origin, "init", "-q", "--bare", "-b", "base")
+            self._git(dev, "push", "-q", str(origin), "base", "HEAD:refs/pull/1/merge")
+            # The base moves on again after GitHub built the merge ref.
+            self._git(dev, "switch", "-q", "base")
+            self._commit(dev, "later.txt", "z\n", "later base")
+            self._git(dev, "push", "-q", str(origin), "base")
+            # actions/checkout: a depth-1 fetch of the merge ref, nothing else.
+            ci.mkdir()
+            self._git(ci, "init", "-q")
+            self._git(ci, "remote", "add", "origin", origin.as_uri())
+            self._git(ci, "fetch", "-q", "--no-tags", "--depth=1", "origin",
+                      "+refs/pull/1/merge:refs/remotes/pull/1/merge")
+            self._git(ci, "checkout", "-q", "--detach", "refs/remotes/pull/1/merge")
+            self._with_root(ci)
+            self.assertTrue(clp.is_shallow())
+            with self.assertRaisesRegex(RuntimeError, "not present locally"):
+                clp.merge_first_parent(fetch=False)
+            # An unreachable origin: the fetch fails and the check fails closed.
+            self._git(ci, "remote", "set-url", "origin", (tmp_path / "missing.git").as_uri())
+            code, out = run_main("--branch", "lane-c/x", "--pr-merge", "--fetch")
+            self.assertEqual(code, 2, out)
+            self.assertIn("LANE PATH CHECK ERROR", out)
+            self._git(ci, "remote", "set-url", "origin", origin.as_uri())
+            self.assertEqual(clp.changed_files_vs_merge_parent(fetch=True),
+                             (true_base, [self.LANE_FILE]))
+            self.assertTrue(clp.is_shallow())
+            for commit in ("HEAD", true_base):
+                self.assertEqual(self._git(ci, "rev-list", "--count", commit).strip(), "1")
 
     def test_fetch_keeps_a_full_clone_full(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -283,9 +371,13 @@ class GitDiffTests(unittest.TestCase):
             clp.REPO_ROOT = work
             try:
                 self.assertEqual(clp.changed_files("base", fetch=True), ["g.txt"])
-                self.assertEqual(clp.changed_files_vs_sha(base_sha, fetch=True), ["g.txt"])
                 self.assertFalse(clp.is_shallow())
                 self.assertEqual(self._git(work, "rev-list", "--count", "HEAD").strip(), "4")
+                self._git(work, "switch", "-q", "--detach", "base")
+                self._git(work, "merge", "-q", "--no-ff", "-m", "merge", "lane-a/x")
+                self.assertEqual(clp.changed_files_vs_merge_parent(fetch=True),
+                                 (base_sha, ["g.txt"]))
+                self.assertFalse(clp.is_shallow())
             finally:
                 clp.REPO_ROOT = saved
 
@@ -313,11 +405,15 @@ class GitDiffTests(unittest.TestCase):
             main_py.write_text("x = 1\n")
             self._git(repo, "add", ".")
             self._git(repo, "commit", "-q", "-m", "grab")
+            # GitHub's merge commit: the PR head merged onto the base (first parent base_sha).
+            self._git(repo, "switch", "-q", "--detach", "base")
+            self._git(repo, "merge", "-q", "--no-ff", "-m", "merge", "lane-a/grab")
             saved_root, saved_default = clp.REPO_ROOT, clp.DEFAULT_OWNERSHIP
             clp.REPO_ROOT, clp.DEFAULT_OWNERSHIP = repo, own
             try:
+                self.assertEqual(clp.merge_first_parent(fetch=False), base_sha)
                 code, out = run_main("--ownership", str(own), "--branch", "lane-a/grab",
-                                     "--base-sha", base_sha)
+                                     "--pr-merge")
             finally:
                 clp.REPO_ROOT, clp.DEFAULT_OWNERSHIP = saved_root, saved_default
             self.assertEqual(code, 1, out)
