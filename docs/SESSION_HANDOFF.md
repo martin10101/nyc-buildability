@@ -1,108 +1,100 @@
-# SESSION HANDOFF — seq 130-final (2026-09-30 ~04:40 UTC; owner-invoked /session-handoff, no reason given; session 01DfjZ9jL8Ni9V1LJ1UqcGt2, main claude-opus-5-5)
+# SESSION HANDOFF — seq 132 (2026-09-30 ~21:40 UTC; evening "Road 1" run; Claude Code CLOUD session 01PXWfnLcrZ5cqzDfHbwVTeT, claude-opus-5-5; directive D-090)
 
-Orientation only — the ledger (`python tools/project_control.py status`) and `project-control/`
-WIN over this prose. Campaign NEXT prose is stale (D-024 era); ledger + this file govern.
-
-## STOP FIRST — the C: drive is FULL (83 MB free at 2026-09-30 04:30 UTC; 8 GB RAM, ~0.5 GB free)
-It fell from 1.5 GB (2026-09-25) to 83 MB; the cause was not found (no new project folder after
-09-25; a directory scan was killed by memory pressure). Do NOT create worktrees, spawn isolation
-producers or run heavy scans until space is freed. The owner has NOT yet approved the cleanup:
-~144 task worktrees (`wt-*`) + ~216 leftover isolation sandboxes
-(`nyc-development-feasibility-claude-pack/.claude/worktrees/agent-*`) — roughly 15-20 GB, all
-committed + pushed. On an explicit owner "yes, clean up": verify each is clean and its branch is
-pushed, copy any `.claude/agent-memory` notes into ctl24 first, then `git worktree remove`; keep
-ctl24 and wt-m5t110 (the lane-1 canary).
+Orientation only. The ledger (`python tools/project_control.py status`) and `project-control/` WIN
+over this prose. Previous handoff: seq 131, in git at `24d4722d`. Its PC-only items are UNCHANGED and
+still open: C: disk-full cleanup, owner-typed D-088 commissioning, the M5-T110 canary, and B-026.
 
 ## Identity (live at generation)
-Repo root C:\Users\MLFLL\Downloads\nyc-zoning\ctl24 · branch `candidate/D-024-mrl-option-b` ·
-HEAD = this handoff commit (parent 574432fd, pushed) · origin
-github.com/martin10101/nyc-buildability.git. Tree clean except policy-dirty
-`.claude/agent-memory/**` (reviewer notes, never committed) and untracked `scratchpad/`.
+- **Machine:** a cloud sandbox (Linux, 1 CPU, 2 GB RAM), not the owner's PC. Sandbox paths do not persist.
+- **Handoff location:** worktree `/root/project/w-handoff`, branch `task/session-handoff-2026-09-30-cloud` (PR #270).
+- **Integration branch:** `candidate/D-024-mrl-option-b` @ `d44af638`.
+- **Gate 0 deviation:** this session ran from `/root/project`, outside the repo root, with claude.ai connectors attached, so the repo hooks were not loaded. No PR body discloses this yet; record it with tonight's directives. Because the repo's `.claude/agents` definitions were not loaded, tonight's producers and reviewers were generic subagents that inherited Opus 5.5. They did not run on the D-064/D-085 subagent pin (opus-4-8). Record that deviation too.
 
-## State: 309 ACCEPTED (seq 130 = #295-#309, overnight 2026-09-25 under D-089)
-T109 export service · T114/T115/T119/T122 D-086 P1, P2, P3a, P3b (screen cleanup through the
-overview) · T112 massing split · T111/T117/T123 route limits, limiter fix, per-route body ceilings ·
-T116 GLB concave caps · T113/T118/T120 PDF reading P2-P4 (4 of 6 real architect PDFs read; items
-5-6 are scans) · T121 PDF sheet import · T124 drawing-to-lot alignment. Riders DB-082..DB-096.
-Directives captured: D-088 source-002, D-089 (overnight; no stop condition lifted).
-Honest limits: the drawing-import chain has every pure service but no wiring (DB-096 a, b); 3D
-scene / DXF import / export routes are built but UNMOUNTED (PKT-H needs the sign-in principal +
-instance sizing, DB-093); the live site (https://nyc-buildability.onrender.com, 200 OK) is the
-2026-09-20 release — nothing after it is deployed.
+## Owner decisions given this evening (verbatim; not yet captured under project-control/directives/)
+- **"1 b"**, option B for merging. A robot may merge into the integration branch only when all of these hold:
+  - a different agent's review is PASS with 0 blocking corrections, naming the exact head;
+  - all CI on that head is green;
+  - the merge uses `gh pr merge --match-head-commit`;
+  - the PR touches no Lane A zoning-math path. Those PRs wait for the owner.
+  
+  After such a merge, the next owner-queue item may start.
+- **How B is set:** the owner applied it as `autoMode` rules in `~/.claude/settings.json` of THIS sandbox. The classifier refuses to let a session write these, so on a new machine the owner must re-apply them.
+- **"Save the fix"** → D-flake was pushed and merged as #271.
+- **"yes"** to fix the urllib3 blocker first. **"Road 1"**: cloud robots now, at most 2 at a time on this box.
+- **"update the loop to the new cc"** → this can only be done on the PC. The pin is SHA-256 over the PC's `claude.exe`, so a Linux box cannot produce it. Steps: `docs/CONTROLLER_UPDATE_RUNBOOK.md` §13 and `project-control/reports/M0-T159-recertification.md`.
+- **Zoning math stays owner-gated.** The owner will check `R6B_ZONING_QUESTIONS.md`, a file sent to them, with another LLM.
+- **Request: bring 3 `.claude` files from `control/session14-m0t055-accept`.** At the first check the tip was `94e243e4` (already merged). The owner then pushed `e0c222da` (the directive `FABLE_CODEX_CONTINUOUS_AGENT_LOOP_IMPLEMENTATION_DIRECTIVE_2026-08-24.md`, the backend-engineer note `interrupt-resets-shell-to-primary.md`, and one MEMORY.md index line) and `ad5ab3ba` (archive files, not requested). Only `e0c222da` was cherry-picked; it merged as **#277**.
 
-## UNTRACKED WORK LANDED AFTER THIS SESSION (reconcile before touching those files)
-On 2026-09-25/26 the owner's account merged PRs #243-#246 into this branch (19 commits, 68 files,
-CI green at 574432fd): a hypothetical multi-parcel study workflow, a single-page architect
-dashboard wired to real property data (`apps/web/src/components/architect/workspace/**`), condo
-outline context, and DOF tax-map parcel outlines (`source=tax-map`, outline contract 1.1.0,
-fixtures under services/api/tests/fixtures/dtm_lot_outline). None of it has a ledger task, gate or
-directive record. Run `/replan-project`: ask the owner how it was produced/authorized, capture it
-if it is an owner directive, and decide retro-contracting vs a reconciliation record before any
-new packet touches apps/web/src/components/architect/**, address/** or lib/architect/**.
+## Done this evening (12 merged)
+Each PR had an independent review PASS with 0 blocking at the exact head, verified PR body, CI 40/40, and `--match-head-commit`:
+- #272: urllib3 2.8.0 (3 CVEs had turned every PR's pip-audit red).
+- #261: C-04 real-property guard.
+- #273: lane-path check now diffs from the merge commit's first parent. **The known defect is fixed.**
+- #271: D-flake a11y focus in layout effects.
+- #267: D-03 status strip with an always-visible "Draft — not reviewed" item.
+- #274: B-05 existing ZFA from DOB/CO/assumption, never DOF. Lot 70 now emits **Unknown — enter**; 39,934 is set aside and cited, because job 421803891 shows a two-tax-lot zoning lot.
+- #266: C-05 study store (import copies inputs only).
+- #265: B-04 street width per frontage.
+- #276: E-2, serializer guard scoped to the serializer.
+- #275: B-06 data versions / "Out of date".
+- #263: E-01 drawing kit (site plan and axonometric SVG from results), after E-2 and lane-doc fixes.
+- #277: the owner's `.claude` files from `e0c222da`. The policy/safety review found no conflict with the safety rules. The directive is byte-identical to `D-024-fable-codex-loop/source-001.md` and is not auto-loaded.
 
-## In flight
-- Nothing running; every sub-agent returned and was recorded. Two size scans were killed by
-  memory pressure (not restarted, per the harness rule).
-- **M5-T110** = D-088 lane-1 supervised canary: contracted + CLAIMED at 1983bdd6, worktree
-  C:\Users\MLFLL\Downloads\nyc-zoning\wt-m5t110 — NOT started (owner commissioning pending).
-- Older non-accepted ledger items are unchanged (M0-T021/T034/T080/T109/T133/T145/T153/T155,
-  M4-T001..T006 G6-blocked, M5-T001); open blockers B-001, B-010, B-011, B-026.
+## Open PRs
+| PR | Head | State |
+|---|---|---|
+| #262 A-02a R6B | 3234e4ae | Zoning math. Delta review pending; the owner merges. Legal questions are open (below). |
+| #269 A-02b R6B (draft, stacked on #262) | 11daf774 | Zoning math. Not reviewed; the owner merges. |
+| #268 E-03 DXF (draft) | 4fa678ea | Not reviewed. Needs A-04. Its base #263 is now merged. |
+| #64 M0-T019 (against `main`) | — | Old; not touched this evening. |
+| #270 this handoff | — | For the owner. |
+| #241 | — | Never merge. |
 
-## Loops (D-088) — owner-typed commissioning, NOT yet run (B-026 open)
-Guide: project-control/reports/M0-T161-owner-guide.md. The owner types, one at a time, with `!` and
-`powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\tools\controller_update\commission_lanes.ps1`:
-(1) `-Phase check` → CHECK PASSED; (2) `-Phase update` → UPDATE PASSED; (3) `-Phase lane -Lane 1
--Worktree C:\Users\MLFLL\Downloads\nyc-zoning\wt-m5t110 -PacketId M5-T110` → started DETACHED;
-(4) `-Phase approve` with the same values, first without a digest (one expected STOP prints it),
-then again with `-PromptDigest <digest>`. Then check the canary (M0-T159-recertification.md
-§5.12), contract 4 pairwise-disjoint lane packets + the `commission_lanes_plan/v1` plan file, and
-give step (5) `-Phase lanes -PlanFile <plan>`. The helper's disk floor is 1.0 GiB — commissioning
-cannot pass until space is freed.
+## Review follow-ups (non-blocking, recorded on the PRs)
+- **#271 N1:** focus still moves in passive effects in CompareScreen, AddressResolution, RuleEvaluationPanel and SurveyReview.
+- **#273 N1:** `ownership_at` silently falls back to HEAD's map.
+- **#277 N2:** reword the reflog/reset line in `interrupt-resets-shell-to-primary.md` to "report it; the orchestrator restores it".
+- **#263 N1/N2:** the yard-depth check accepts any adjoining lot line; review findings 5–12 are open.
+- **#276 N1/N3:** flag `__package__`/`sys.modules`/`vars()` reflection in `app/**`, and reword the guard comments.
+- **#274 N7:** Lane C must supply the DOB filings for every tax lot on the block.
+- **#265:** the `results.py:58-61` docstring is stale; N1 wants a `raw_digest` check before wiring.
+- **#275 N8/N9:** `seen_at` tie-break compares text; add a test.
 
-## Session lessons (Tier-2 worthy)
-- Remove an isolation sandbox only AFTER its task is accepted; copy its agent-memory notes first.
-- "PASS with a required correction": tagged [ORCH-CORRECTED] commit in the task worktree →
-  progress --status rework → seam/harvest_rework.py → one delta to every reviewer of the edited
-  file → record all gates once (round-1 parts + delta).
-- web-e2e Playwright focus flake (a11y-announcements.spec.ts:152) on a backend-only head: confirm an
-  empty apps/ diff, tell reviewers up front, let the next push be the zero-delta rerun.
-- DCV c14 digest mismatch while the orchestrator commits = torn read; settle via committed blobs.
-- Python with Windows paths goes through the Write/Edit tools, never a Bash heredoc (\U escape).
+## Ledger (authoritative) and what is NOT recorded
+- No ledger gates, DCV rows or accepts exist for tonight's merges. #247–#250 have G0 gates only, no G2–G5.
+- Queue items have no ledger tasks.
+- Tonight's owner words are not yet captured with /directive-compliance.
 
-## EXACT NEXT ACTION (successor)
-1. Tell the owner the disk is full and get an explicit yes/no on the worktree cleanup; do nothing
-   heavy until space exists.
-2. `/replan-project`: reconcile PRs #243-#246 (above) with the owner and the ledger.
-3. Owner commissioning steps 1-4 (above) once disk allows; then canary + lanes 2-5.
-4. Next packets (disjoint; disk permitting): the drawing-import wiring (DB-096 a, d), the
-   control-point UI (DB-096 b), D-086 P4 proposal/drawing slice — after the reconciliation.
-5. PKT-H (mount) waits on owner decisions: sign-in principal + instance size (DB-093).
+## Benchmark facts (215-16 Northern, BBL 4073340070)
+- Corner lot: 103.88 ft on Northern Blvd (wide) and 99.98 ft on 215 Place (narrow).
+- DOB ZFA 39,934 (set aside, scope not established) vs recorded 54,488. The zoning lot includes tax lot 1.
+- Draft engine (in PRs): 20,150/24,180; heights 30/45/55 and 45/65; 100% coverage; rear yard waived; 29 units.
 
-## Owner decisions pending (simple English, D-064)
-Disk cleanup yes/no (URGENT) · how PRs #243-#246 were authorized · a release to put 2026-09-20+
-work live · R008 "DXF = the middleman?" (docs/samples/cad) · R007 native DWG license (Tier D) ·
-three.js typings (package vs local .d.ts) · more real (computer-drawn) architect PDFs · map-left vs
-numbers-first overview · the August M0-T034 governance job.
+## Owner decisions pending
+- **Legal (R6B):** does R6B inherit R6–R12 rules via ZR 11-25 (23-362, 23-344, 23-52)? The C2-2 overlay's effect on height, coverage and yards? Wide-street "portions thereof"? The owner is checking these with another LLM, using `R6B_ZONING_QUESTIONS.md`: sent to the owner, not in git. A licensed reviewer is still needed.
+- **Spending limit:** unanswered. The owner did not understand the question; it was explained.
+- **Reviewer (Q12)**, Q4, Q8, #243–#246, and the Q1 pilot.
+- **B-05:** may an assumption outrank a filing? What rank does a CO figure get?
+- **B-06 N1:** a lone pin checked only against its own retrieval reads Current.
+- **Sizing:** 5 parallel loops need 4 CPU / 8 GB at minimum; 8 CPU / 16 GB is comfortable.
 
 ## Standing restrictions
-Tier D / Section 20 stops; PR #241 NEVER merged; expansion §2 hold except the D-040/D-076/D-082/D-087
-releases; max-envelope route UNMOUNTED; commissioning + canary approval are OWNER-TYPED (runbook §12);
-never pass `model:` on a dispatch (agents stay opus-4-8); DCVs never run tools/test_directive_compliance.py;
-dependency security with no agent waiver; no local npm/node; owner replies in simple English.
+- Tier D / Section 20 stops. PR #241 is never merged. The expansion §2 hold stands.
+- Commissioning is owner-typed. Never pass `model:`.
+- Dependency security: no waiver. No local npm/node. Producers never write `project-control/`.
+- Always have the reviewer verify the PR body before merging; bodies were wrong at least 6 times tonight (#261, #263, #265, #266, #275, #276).
 
-## FILE MAP (smallest authoritative set)
-project-control/{state.json,tasks/,gates/,blockers/B-026,reports/}; directives D-066/D-083/D-086/D-087/
-D-088/D-089; docs/DISCOVERY_BACKLOG.md (DB-082..DB-096); docs/design/ui-cleanup/;
-docs/design/d087-export-and-3d-viewer-plan.md; project-control/reports/M0-T161-owner-guide.md;
-.claude/rules/PROGRAM_KNOWLEDGE.md; Control Room https://claude.ai/artifact/MnxTLzCxWLSxMf8zaABUgk.
+## EXACT NEXT ACTION (successor)
+1. Next queue items for at most 2 robots: B-10, B-08, C-10/C-13, and the follow-ups above. B-07 (multi-lot) matters for the benchmark.
+2. Capture tonight's directives, and backfill ledger gates from the posted reviews (DCV rows first).
+3. When the owner returns the other LLM's R6B answer, compare it with #262/#269's assumptions and report in plain words.
 
 ## COPY INTO THE NEW SESSION
-Resume as the NYC Buildability orchestrator on claude-opus-5-5 (verify with /model). Work only from
-repository evidence, not assumptions about the old conversation. Verify: cwd IS
-C:\Users\MLFLL\Downloads\nyc-zoning\ctl24 (`git rev-parse --show-toplevel`), branch
-candidate/D-024-mrl-option-b, HEAD == origin, /mcp empty (Bootstrap Gate 0), and FREE DISK SPACE
-(`df -h /c`). Read CLAUDE.md, docs/SESSION_HANDOFF.md and `python tools/project_control.py status`
-(the ledger wins). Report READY TO RESUME or BLOCKED. Then continue from EXACT NEXT ACTION without
-redoing work: 309 accepted; nothing in flight; the disk is full and PRs #243-#246 are untracked
-owner-account work to reconcile first. Never pass `model:`; DCVs never run the 16 h suite; stop for
-Tier D, PR #241, owner holds, the disk cleanup decision, and every owner-typed commissioning step.
+Resume as the NYC Buildability orchestrator (verify the model with /model). Work only from repository
+evidence. Verify: cwd IS the repo worktree root (`git rev-parse --show-toplevel`), branch
+candidate/D-024-mrl-option-b, HEAD == origin, /mcp empty (Bootstrap Gate 0). Read CLAUDE.md,
+docs/SESSION_HANDOFF.md and `python tools/project_control.py status` (the ledger wins). Check open PRs
+with `gh pr list`. Confirm the option-B `autoMode` rules exist (`claude auto-mode config`). If they don't,
+the owner merges. Report READY TO RESUME or BLOCKED, then continue from EXACT NEXT ACTION. Explain things
+to the owner in plain, simple words. Stop for Tier D, PR #241, owner holds, zoning-math merges and
+owner-typed commissioning; never pass `model:`.
