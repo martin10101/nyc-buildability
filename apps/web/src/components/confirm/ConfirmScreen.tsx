@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { announcementForOutcome } from "@/lib/announce";
 import { fetchPropertyProfile, type LookupOutcome } from "@/lib/api";
 import { validateBblInput } from "@/lib/bbl";
@@ -422,8 +422,12 @@ export function ConfirmScreen({ bbl }: { bbl: string }) {
   }, [bbl, attempt]);
 
   // D1 (M2-T005): when an outcome arrives (success or failure), focus
-  // moves deterministically to the outcome heading.
-  useEffect(() => {
+  // moves deterministically to the outcome heading. D-flake: a LAYOUT effect,
+  // so focus moves in the same commit that removes the focused loading card
+  // (an arrival is never a discrete-input commit, so a passive effect could
+  // run after a paint and leave focus on <body> meanwhile). The retry hand-off
+  // to the loading card is a layout effect too (LoadingStages).
+  useLayoutEffect(() => {
     if (!loading && outcome) {
       outcomeRef.current
         ?.querySelector<HTMLElement>("[data-outcome-heading]")
