@@ -11,8 +11,9 @@ Two rules, both fail closed (they only ever withhold a figure):
   work, or an alteration that changes the zoning figure while stating no enlargement, is
   not shown to describe one building, so its figure is not used.
 - :func:`zoning_lot_mentions` - every supplied row on the same tax block whose text
-  mentions a zoning lot. These never change a value; they are cited so a later zoning-lot
-  step (queue items B-07, B-09, B-11) knows the figure's zoning-lot scope is open.
+  mentions a zoning lot. When there is one, ``dob_filings`` sets the DOB figure aside (it
+  may cover the whole zoning lot) and cites the rows, so the value stays unknown until the
+  architect confirms it; a later zoning-lot step (B-07, B-09, B-11) gets the citations.
 
 Zoning-lot scope is never established here: DOB job filings do not state which tax lots a
 figure covers. Text is matched only to withhold or cite, never to derive a number.

@@ -22,9 +22,11 @@ also named in the note, so a disagreement stays visible.
 City-recorded building area (PLUTO/DOF BldgArea) is not an input here at all
 (``inputs`` admits no such value). The value is stated for one tax lot as filed or
 given; whether it covers only that tax lot or a zoning lot of several tax lots is not
-established (``zoning_lot_scope`` = ``not_established``), and block rows that mention a
-zoning lot are cited. A zoning-lot step (B-07, B-09, B-11) must not add these values
-across tax lots without establishing their scope. This module does not merge zoning lots.
+established (``zoning_lot_scope`` = ``not_established``). When a supplied block row
+mentions a zoning lot, the DOB figure is set aside (value unknown; the figure, its source
+and the citations stay in ``considered``) until the architect confirms it as a stated
+assumption. A zoning-lot step (B-07, B-09, B-11) must not add these values across tax
+lots without establishing their scope. This module does not merge zoning lots.
 
 Pure, deterministic code: no I/O.
 """

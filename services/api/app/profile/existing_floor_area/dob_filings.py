@@ -27,15 +27,28 @@ single zoning floor-area figure, or no figure with the plain reason. Fixed rules
    records give a building count for the lot, that count is 1. Otherwise there is no
    figure and the reason says why. Figures are never added, averaged or picked by date.
 
-Zoning-lot scope is never established (``scope.ZONING_LOT_SCOPE``); rows on the block that
-mention a zoning lot are returned for citation. Never read: "total construction floor
-area" (not zoning floor area), any DOB NOW job filing column, and PLUTO/DOF building area.
+6. **A zoning lot on the block sets the figure aside.** DOB filings never state which tax
+   lots a figure covers, so zoning-lot scope is not established
+   (``scope.ZONING_LOT_SCOPE``). When any supplied row on the tax block mentions a zoning
+   lot (the benchmark: job 421803891, "ONE (1) ZONING LOT AND (2) TAX LOTS (LOT #1 & #70)"),
+   the figure may cover the whole zoning lot, so it is not used: there is no figure, and
+   the set-aside entry keeps the value with its source, completion and citations, for the
+   architect to confirm as a stated assumption. Only supplied rows are seen, so callers
+   should supply the filings of every building on the block they queried.
+
+Repeated rows of one filing are compared with their text normalized for case, spacing,
+HTML entities and quote characters (the recorded rows of job 401740595 differ only by a
+quote mark); any other difference sets the filing aside. Never read: "total construction
+floor area" (not zoning floor area), any DOB NOW job filing column, and PLUTO/DOF building
+area.
 
 Pure, deterministic code: no I/O.
 """
 
 from __future__ import annotations
 
+import html
+import re
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
@@ -56,8 +69,18 @@ _SIGNED_OFF = "SIGNED OFF"
 _DEMOLITION = "DM"
 _CO_ISSUED = "CO Issued"
 _USED_FIELDS = ("bin__", "job_type", "job_status_descrp", "signoff_date",
-                "existing_zoning_sqft", "proposed_zoning_sqft", "enlargement_sq_footage",
-                "job_description")
+                "existing_zoning_sqft", "proposed_zoning_sqft", "enlargement_sq_footage")
+_QUOTES = re.compile(r"[\"'`\u2018\u2019\u201c\u201d]")
+_SPACES = re.compile(r"\s+")
+
+
+def _comparable_text(value: Any) -> str | None:
+    """Filing text for the repeated-row check: HTML entities decoded, quote marks unified,
+    spacing collapsed, case folded. Any other difference still counts."""
+    if not isinstance(value, str):
+        return value
+    unified = _QUOTES.sub("'", html.unescape(value))
+    return _SPACES.sub(" ", unified).strip().casefold()
 
 
 @dataclass(frozen=True)
@@ -138,7 +161,11 @@ def _lot_filings(bbl: str, jobs: Sequence[DobRecordSet], set_aside: list[dict]
 
     filings = []
     for (job, doc), rows in sorted(grouped.items()):
-        distinct = {tuple(row.get(column) for column in _USED_FIELDS) for row, _ in rows}
+        distinct = {
+            (*(row.get(column) for column in _USED_FIELDS),
+             _comparable_text(row.get("job_description")))
+            for row, _ in rows
+        }
         row, record_set = rows[0]
         ref = f"DOB BIS job {job}, document {doc}"
         if len(distinct) > 1:
@@ -332,6 +359,27 @@ def read_dob_filings(
     [(bin_, found)] = figures.items()
     filing, (completion_text, completion_ref) = found[0]
     others = [f.document_ref for f, _ in found[1:]]
+    if mentions:
+        cited = "; ".join(f"{m['document_ref']} (tax lot {', '.join(m['tax_lots'])})"
+                          for m in mentions)
+        reason = (
+            f"The completed figure on {filing.document_ref} (building {bin_}) is set aside: "
+            f"DOB rows on this tax block mention a zoning lot ({cited}), so the figure may "
+            "cover the whole zoning lot rather than this tax lot. The architect can confirm "
+            "it as a stated assumption.")
+        set_aside.append({
+            **_set_aside(filing.document_ref, bin_, filing.proposed, reason),
+            "source": {"kind": "city_filing",
+                       "dataset": dataset_name(JOB_FILINGS_DATASET_ID),
+                       "dataset_version": None,
+                       "retrieved_at": filing.record_set.retrieved_at,
+                       "query_ref": filing.record_set.query_ref,
+                       "document_ref": filing.document_ref, "statement": None},
+            "completion": completion_ref,
+            "cited": [m["document_ref"] for m in mentions],
+        })
+        return DobFilingFinding(None, None, None, None, None, reason, tuple(set_aside),
+                                mentions, True)
     description = (
         f"'Proposed Zoning Sqft' {format_area(filing.proposed)} on {filing.document_ref} "
         f"(job type {filing.job_type}, building {bin_}); work completed: {completion_text}."

@@ -15,8 +15,9 @@ building area is 54,488. The trap is taking 54,488 as zoning floor area.
 Zoning-lot scope (C-9): DOB job 421803891 (tax lot 1, plan exam disapproved) states "ONE (1)
 ZONING LOT AND (2) TAX LOTS (LOT #1 & #70)" with existing 9,100 and proposed 39,772 zoning sq
 ft. The pack does not show whether 39,934 covers the NB building alone or the zoning lot
-(39,772 + 162 = 39,934 suggests it may be zoning-lot-wide), so its zoning-lot scope is
-reported as not established and job 421803891 is cited.
+(39,772 + 162 = 39,934 suggests it may be zoning-lot-wide). So lot 70 is Unknown — enter:
+39,934 is set aside with its source and job 421803891 cited, for the architect to confirm
+as a stated assumption.
 """
 
 from __future__ import annotations
@@ -88,15 +89,33 @@ def only(facts, key: str) -> dict:
     return fact
 
 
-def test_benchmark_existing_zoning_floor_area_is_the_dob_filing() -> None:
+def lot_70_dob_entry(result) -> dict:
+    (entry,) = [e for e in result.considered
+                if e["document_ref"] == "DOB BIS job 440608941, document 01"]
+    return entry
+
+
+def test_benchmark_dob_figure_is_set_aside_because_the_zoning_lot_spans_tax_lots() -> None:
     result = resolve_existing_zoning_floor_area(BBL, EVIDENCE, recorded_building_count=1)
     fact = result.fact
     assert_valid_site_fact(fact)
-    assert (fact["value"], fact["unit"]) == (DOB_ZONING_FLOOR_AREA, "square_feet")
-    assert fact["value"] not in NOT_ZONING
-    assert (result.basis, result.basis_label) == ("dob_job_filing", "DOB job filing")
-    assert fact["measurement"] == {"rank": "city_records", "label": "City records"}
-    assert fact["source"] == {
+    # Nothing in the emitted fact reads as a known value.
+    assert (fact["value"], fact["unit"], fact["source"]) == (None, None, None)
+    assert fact["measurement"] == {"rank": "unknown", "label": "Unknown — enter"}
+    assert fact["blocks"] == ["remaining_floor_area", "existing_building_paths"]
+    assert (result.basis, result.basis_label, result.completion) == (
+        "unknown", "Unknown — enter", None)
+    for number in ("39934", "39,934", "54488", "54,488", "45388", "55179"):
+        assert number not in json.dumps(fact), number
+    assert "may cover the whole zoning lot rather than this tax lot" in result.reason
+    assert "confirm it as a stated assumption" in fact["note"]
+    assert ("DOB BIS job 421803891, document 01 (tax lot 4073340001) mentions a zoning lot"
+            in fact["note"])
+
+    # 39,934 is kept in the set-aside list with its source, completion and citation.
+    entry = lot_70_dob_entry(result)
+    assert (entry["value"], entry["bin"]) == (DOB_ZONING_FLOOR_AREA, "4623241")
+    assert entry["source"] == {
         "kind": "city_filing",
         "dataset": "DOB Job Application Filings (ic3t-wcy2)",
         "dataset_version": None,
@@ -105,41 +124,48 @@ def test_benchmark_existing_zoning_floor_area_is_the_dob_filing() -> None:
         "document_ref": "DOB BIS job 440608941, document 01",
         "statement": None,
     }
-    note = fact["note"]
-    assert "certificate of occupancy 4623241-0000001 issued 06/03/26" in note
-    assert "job type NB, building 4623241" in note
     co_file = "dob_now_co_pkdm-hqz6_bbl_4073340070.json"
-    assert result.completion == {
+    assert entry["completion"] == {
         "kind": "certificate_of_occupancy",
         "dataset": "DOB NOW: Certificate of Occupancy (pkdm-hqz6)",
         "query_ref": MANIFEST[co_file]["url"],
         "retrieved_at": MANIFEST[co_file]["retrieved_at"],
         "document_ref": "4623241-0000001", "job": "440608941",
         "issued": "06/03/26  1:40:17 PM", "filing_type": "Initial"}
-    # Zoning-lot scope of 39,934 is not established; job 421803891 (lot 1) is cited.
-    assert result.zoning_lot_scope == "not_established"
-    assert "zoning lot of several tax lots is not established" in note
-    assert "covers tax lot" not in note and " only:" not in note
+    assert entry["cited"] == ["DOB BIS job 421803891, document 01"]
     (mention,) = result.zoning_lot_mentions
     assert (mention["document_ref"], mention["tax_lots"]) == (
         "DOB BIS job 421803891, document 01", [LOT_1])
     assert "ONE (1) ZONING LOT AND (2) TAX LOTS" in mention["text"]
     assert mention["query_ref"] == MANIFEST["dob_bis_jobs_ic3t-wcy2_bin_4157401.json"]["url"]
-    assert "DOB BIS job 421803891, document 01 (tax lot 4073340001) mentions a zoning lot" in note
     # BIN 4616079's A1 row names lot 1 in its lot column and lot 70 in its BBL column.
-    (entry,) = result.considered
-    assert entry["document_ref"] == "DOB BIS job 421240534, document 01"
-    assert "name different lots (4073340001, 4073340070)" in entry["reason"]
+    assert "name different lots (4073340001, 4073340070)" in [
+        e for e in result.considered
+        if e["document_ref"] == "DOB BIS job 421240534, document 01"][0]["reason"]
 
 
-def test_benchmark_site_facts_use_the_filing_and_show_dof_area_only_as_reference() -> None:
+def test_benchmark_architect_confirms_the_dob_figure_as_a_stated_assumption() -> None:
+    confirmed = StatedAssumption(
+        DOB_ZONING_FLOOR_AREA,
+        "DOB job 440608941's 39,934 sq ft covers tax lot 70 only (checked by the architect).",
+        "2026-09-30T12:00:00Z")
+    result = resolve_existing_zoning_floor_area(
+        BBL, ExistingFloorAreaEvidence(JOB_SETS, CERTIFICATE_SETS, assumption=confirmed),
+        recorded_building_count=1)
+    assert_valid_site_fact(result.fact)
+    assert (result.basis, result.fact["value"]) == ("stated_assumption", DOB_ZONING_FLOOR_AREA)
+    assert result.fact["measurement"] == {"rank": "assumed", "label": "Assumed"}
+    assert result.fact["source"]["kind"] == "assumption"
+    assert "DOB filings gave no figure" in result.fact["note"]
+
+
+def test_benchmark_site_facts_show_dof_area_only_as_reference() -> None:
     site = build_site_facts(profile(), existing_floor_area=EVIDENCE)
     existing = only(site.facts, "existing_zoning_floor_area")
     assert_valid_site_fact(existing)
-    assert existing["value"] == DOB_ZONING_FLOOR_AREA
-    assert site.existing_floor_area.basis == "dob_job_filing"
-    # PLUTO NumBldgs (1) was available, so the building-count check ran.
-    assert "not available to check" not in existing["note"]
+    assert (existing["value"], existing["measurement"]["rank"]) == (None, "unknown")
+    assert site.existing_floor_area.basis == "unknown"
+    assert DOB_ZONING_FLOOR_AREA in [e["value"] for e in site.existing_floor_area.considered]
 
     (reference,) = [ref for ref in site.references if ref["key"] == "recorded_building_area"]
     assert (reference["value"], reference["unit"], reference["use"]) == (
@@ -149,6 +175,21 @@ def test_benchmark_site_facts_use_the_filing_and_show_dof_area_only_as_reference
     facts_text = json.dumps(site.facts)
     assert "54488" not in facts_text and "54,488" not in facts_text
     assert all(fact["value"] != DOF_BUILDING_AREA for fact in site.facts)
+
+
+def test_benchmark_figure_is_used_only_when_no_supplied_row_mentions_a_zoning_lot() -> None:
+    # Documents the limit: the zoning-lot text is on lot 1's rows (BIN 4157401). Without
+    # them, nothing supplied mentions a zoning lot and the completed NB figure is used,
+    # with its zoning-lot scope still stated as not established. Callers must supply the
+    # filings of every building on the block.
+    lot_70_only = ExistingFloorAreaEvidence(
+        tuple(rs for rs in JOB_SETS if "4157401" not in rs.query_ref), CERTIFICATE_SETS)
+    result = resolve_existing_zoning_floor_area(BBL, lot_70_only, recorded_building_count=1)
+    assert_valid_site_fact(result.fact)
+    assert (result.basis, result.fact["value"]) == ("dob_job_filing", DOB_ZONING_FLOOR_AREA)
+    assert result.zoning_lot_mentions == ()
+    assert "zoning lot of several tax lots is not established" in result.fact["note"]
+    assert result.completion["document_ref"] == "4623241-0000001"
 
 
 def test_benchmark_without_dob_evidence_is_unknown_although_dof_area_is_recorded() -> None:
@@ -192,9 +233,7 @@ def test_benchmark_tax_lot_is_not_taken_as_the_zoning_lot() -> None:
 
     result = resolve_existing_zoning_floor_area(BBL, EVIDENCE)
     assert (result.scope, result.zoning_lot_scope) == ("tax_lot_as_stated", "not_established")
-    assert ("Scope: stated for tax lot 4073340070; whether the figure covers only this tax "
-            "lot or a zoning lot of several tax lots is not established."
-            in result.fact["note"])
+    assert result.fact["lot_bbl"] == BBL and result.fact["value"] is None
 
 
 def signed_off_variant(name: str, job_number: str) -> DobRecordSet:
@@ -222,10 +261,11 @@ def test_signed_off_zoning_lot_filing_is_not_lot_1s_figure() -> None:
                 "is not shown to describe this building alone: Its text mentions a zoning lot"
                 in result.reason)
         assert 39772 in [entry["value"] for entry in result.considered]
-    # Lot 70's figure is unchanged by the variant, and still cites the zoning-lot text.
+    # Lot 70 stays Unknown with 39,934 set aside, and still cites the zoning-lot text.
     lot_70 = resolve_existing_zoning_floor_area(
         BBL, ExistingFloorAreaEvidence((variant, *others), CERTIFICATE_SETS))
-    assert lot_70.fact["value"] == DOB_ZONING_FLOOR_AREA
+    assert lot_70.fact["value"] is None
+    assert lot_70_dob_entry(lot_70)["value"] == DOB_ZONING_FLOOR_AREA
     assert [m["document_ref"] for m in lot_70.zoning_lot_mentions] == [
         "DOB BIS job 421803891, document 01"]
 
@@ -281,14 +321,14 @@ def test_benchmark_precedence_with_a_certificate_figure_and_an_assumption() -> N
     result = resolve_existing_zoning_floor_area(BBL, evidence, recorded_building_count=1)
     assert_valid_site_fact(result.fact)
     assert (result.basis, result.fact["value"]) == ("certificate_of_occupancy", 39934)
-    reasons = {entry["basis"]: entry["reason"] for entry in result.considered}
-    assert reasons["dob_job_filing"] == (
-        "Not used: Certificate of occupancy comes first and gives the same value.")
-    assert reasons["stated_assumption"] == (
-        "Not used: Certificate of occupancy comes first and gives a different value.")
+    assert "may cover the whole zoning lot" in lot_70_dob_entry(result)["reason"]
+    assert [e["reason"] for e in result.considered if e["basis"] == "stated_assumption"] == [
+        "Not used: Certificate of occupancy comes first and gives a different value."]
+    assert "DOB filings gave no figure" in result.fact["note"]
 
     without_certificate = ExistingFloorAreaEvidence(JOB_SETS, CERTIFICATE_SETS,
                                                     assumption=assumption)
     result = resolve_existing_zoning_floor_area(BBL, without_certificate)
-    assert (result.basis, result.fact["value"]) == ("dob_job_filing", DOB_ZONING_FLOOR_AREA)
-    assert "Stated assumption gives 41,000 sq ft (not used)." in result.fact["note"]
+    assert (result.basis, result.fact["value"]) == ("stated_assumption", 41000)
+    assert result.fact["measurement"]["label"] == "Assumed"
+    assert lot_70_dob_entry(result)["value"] == DOB_ZONING_FLOOR_AREA

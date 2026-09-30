@@ -328,7 +328,7 @@ def test_new_building_without_zoning_lot_text_is_used() -> None:
     assert result.fact["value"] == 12000 and result.zoning_lot_mentions == ()
 
 
-def test_same_block_rows_mentioning_a_zoning_lot_are_cited_not_used() -> None:
+def test_same_block_row_mentioning_a_zoning_lot_sets_the_figure_aside() -> None:
     other_lot = job("100000005", lot="00001", bbl="1000010001", bin__="1000009",
                     job_type="A1", job_status_descrp="PLAN EXAM - DISAPPROVED",
                     existing_zoning_sqft="9100", proposed_zoning_sqft="39772",
@@ -336,7 +336,21 @@ def test_same_block_rows_mentioning_a_zoning_lot_are_cited_not_used() -> None:
     other_block = job("100000006", block="00002", bbl="1000020001", lot="00001",
                       job_description=ZONING_LOT_TEXT)
     result = resolve(job(), other_lot, other_block)
-    assert result.fact["value"] == 12000
+    assert_unknown(result, "The completed figure on DOB BIS job 100000001, document 01 "
+                           "(building 1000001) is set aside", "may cover the whole zoning lot",
+                   "confirm it as a stated assumption")
+    assert "12,000" not in result.fact["note"] and "12000" not in result.fact["note"]
+    (entry,) = [e for e in result.considered if e["value"] == 12000]
+    assert entry["cited"] == ["DOB BIS job 100000005, document 01"]
+    assert entry["source"]["document_ref"] == "DOB BIS job 100000001, document 01"
+    assert entry["completion"]["kind"] == "dob_sign_off"
+    # A mention on another block does not count; without the same-block one, it is used.
+    assert resolve(job(), other_block).fact["value"] == 12000
+    # The architect confirms the figure as a stated assumption.
+    confirmed = resolve(job(), other_lot, assumption=StatedAssumption(
+        12000, "DOB job 100000001's figure covers this tax lot only (checked).", AT))
+    assert (confirmed.basis, confirmed.fact["value"]) == ("stated_assumption", 12000)
+    assert confirmed.fact["measurement"]["label"] == "Assumed"
     (mention,) = result.zoning_lot_mentions
     assert mention == {"document_ref": "DOB BIS job 100000005, document 01",
                        "tax_lots": ["1000010001"], "text": ZONING_LOT_TEXT,
@@ -353,6 +367,17 @@ def test_repeated_rows_that_disagree_are_set_aside() -> None:
 
 def test_identical_repeated_rows_collapse() -> None:
     assert resolve(job(), job()).fact["value"] == 12000
+
+
+def test_repeated_rows_differing_only_in_quotes_spacing_or_case_collapse() -> None:
+    # Recorded job 401740595 repeats with "(200'-0' liner feet)" and "(200'-0\" liner feet)".
+    first = job(job_description="builders pavement plan (200'-0' liner feet) &amp; curb")
+    second = job(job_description='BUILDERS  pavement plan (200\'-0" liner feet) & curb')
+    assert resolve(first, second).fact["value"] == 12000
+    changed = job(job_description="builders pavement plan (300'-0' liner feet) & curb")
+    result = resolve(first, changed)
+    assert result.basis == "unknown"
+    assert "Repeated rows for this filing disagree" in result.considered[0]["reason"]
 
 
 def test_building_count_that_does_not_match_gives_unknown() -> None:
