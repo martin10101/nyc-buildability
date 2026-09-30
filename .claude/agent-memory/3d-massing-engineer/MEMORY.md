@@ -1,0 +1,2 @@
+- [Massing test fixture lessons](massing-test-fixture-lessons.md) — non-star U/comb, non-integer coords + exact Fraction volumes, sys.modules mutant injection, heavy-work spy
+- [Massing performance characteristics](massing-performance-characteristics.md) — measured ear-clip/B0 costs, JSON bytes per vertex, shapely GEOSException on overflow
