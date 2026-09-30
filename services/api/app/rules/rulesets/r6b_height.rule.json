@@ -1,0 +1,84 @@
+{
+  "rule_id": "r6b-height",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_height_setback",
+  "title": "R6B district - minimum base height, maximum base height and maximum building height, standard residences and qualifying affordable or senior housing (ZR 23-432)",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "lane_flag": "A",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_r6b_far_heights.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the R6B row of the ZR 23-432 height table (City of Yes for Housing Opportunity, Last Amended 2024-12-05). This is the ONE height lookup for R6B: every R6B height the engine emits comes from this rule, in family residential_height_setback, the family the maximum-envelope engine and the proposal checks read. Five separately labeled outputs: min_base_height (30 ft, the table's single minimum-base-height column), max_base_height and max_building_height for standard residences (45 ft / 55 ft), and qualifying_max_base_height and qualifying_max_building_height for zoning lots containing qualifying affordable housing or qualifying senior housing (45 ft / 65 ft). The standard outputs are the ones every consumer checks; the qualifying outputs are an alternative surfaced beside them, never substituted for them. The R6B row carries no footnote, so these heights do not depend on street width. Setback depth (ZR 23-433) and every other height provision are out of scope (limitations). NOT a Verified determination: a candidate awaiting independent review and G6 qualified-human legal approval. Behind the lane A flag (lane_flag A): indexed only when LANE_A_ENABLED is on.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-432",
+      "section": "23-432",
+      "quote": "Separate maximum base heights and maximum #building# heights are set forth for #zoning lots# containing standard #residences# and #zoning lots# containing #qualifying affordable housing# or #qualifying senior housing#.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "9fab7be8940498b076f7a88dfdd170d9003907e69cefae62305daf807037c68c"
+    }
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "Residence district governing the lot. Scope is enforced by applicability (in_set R6B), not an input enum: any other district is a visible not_applicable."},
+    {"name": "overlay_present", "type": "boolean", "required": false, "description": "True iff a commercial overlay is mapped on the lot (canonical profile zoning.commercial_overlays[] non-empty). Only adds the commercial-overlay note (see exception commercial_overlay_not_captured); when not supplied the result escalates to professional review (fail-closed, DF-6)."},
+    {"name": "special_district_present", "type": "boolean", "required": false, "description": "True iff a special purpose district is mapped on the lot (canonical profile zoning.special_districts[] non-empty). When true -> professional_review_required; when not supplied -> professional_review_required (fail-closed, DF-6)."}
+  ],
+  "outputs": [
+    {"name": "min_base_height", "type": "number", "unit": "feet", "description": "Minimum base height (ft), ZR 23-432 table. The table has a single minimum-base-height column, placed before (not under) the two program headings, so one value is emitted for the row."},
+    {"name": "max_base_height", "type": "number", "unit": "feet", "description": "Maximum base height (ft) for zoning lots containing standard residences, ZR 23-432 table."},
+    {"name": "max_building_height", "type": "number", "unit": "feet", "description": "Maximum height of buildings or other structures (ft) for zoning lots containing standard residences, ZR 23-432 table. This is the height every consumer (maximum envelope, proposal checks) reads."},
+    {"name": "qualifying_max_base_height", "type": "number", "unit": "feet", "description": "Maximum base height (ft) for zoning lots containing qualifying affordable housing or qualifying senior housing, ZR 23-432 table. An alternative, applicable only when the development qualifies."},
+    {"name": "qualifying_max_building_height", "type": "number", "unit": "feet", "description": "Maximum height of buildings or other structures (ft) for zoning lots containing qualifying affordable housing or qualifying senior housing, ZR 23-432 table. An alternative, applicable only when the development qualifies."}
+  ],
+  "parameters": [
+    {"name": "min_base_height_ft", "value": 30, "citation_ref": "zr-23-432", "note": "R6B row, 'Minimum base height (in feet)' column: 30."},
+    {"name": "standard_max_base_height_ft", "value": 45, "citation_ref": "zr-23-432", "note": "R6B row, 'Standard residences' - 'Maximum base height (in feet)': 45."},
+    {"name": "standard_max_building_height_ft", "value": 55, "citation_ref": "zr-23-432", "note": "R6B row, 'Standard residences' - 'Maximum height of buildings or other structures (in feet)': 55."},
+    {"name": "qualifying_max_base_height_ft", "value": 45, "citation_ref": "zr-23-432", "note": "R6B row, 'Qualifying affordable housing or qualifying senior housing' - 'Maximum base height (in feet)': 45."},
+    {"name": "qualifying_max_building_height_ft", "value": 65, "citation_ref": "zr-23-432", "note": "R6B row, 'Qualifying affordable housing or qualifying senior housing' - 'Maximum height of buildings or other structures (in feet)': 65."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["R6B"]},
+  "computation": {
+    "steps": [
+      {"id": "min_base_h", "op": "identity", "args": [{"param": "min_base_height_ft"}], "note": "R6B minimum base height (ZR 23-432)."},
+      {"id": "base_h", "op": "identity", "args": [{"param": "standard_max_base_height_ft"}], "note": "R6B maximum base height, standard residences (ZR 23-432)."},
+      {"id": "bldg_h", "op": "identity", "args": [{"param": "standard_max_building_height_ft"}], "note": "R6B maximum building height, standard residences (ZR 23-432)."},
+      {"id": "q_base_h", "op": "identity", "args": [{"param": "qualifying_max_base_height_ft"}], "note": "R6B maximum base height, qualifying affordable or senior housing (ZR 23-432)."},
+      {"id": "q_bldg_h", "op": "identity", "args": [{"param": "qualifying_max_building_height_ft"}], "note": "R6B maximum building height, qualifying affordable or senior housing (ZR 23-432)."}
+    ],
+    "outputs": {
+      "min_base_height": {"step": "min_base_h"},
+      "max_base_height": {"step": "base_h"},
+      "max_building_height": {"step": "bldg_h"},
+      "qualifying_max_base_height": {"step": "q_base_h"},
+      "qualifying_max_building_height": {"step": "q_bldg_h"}
+    }
+  },
+  "exceptions": [
+    {"id": "qualifying_housing_heights", "description": "qualifying_max_base_height (45 ft) and qualifying_max_building_height (65 ft) apply only to zoning lots containing qualifying affordable housing or qualifying senior housing (ZR 23-432, second column group). They are an alternative beside the standard max_base_height (45 ft) and max_building_height (55 ft), never a replacement: whether a development qualifies is a separate legal determination not made by this rule.", "condition": null, "effect": "conditional_alternative", "citation_ref": "zr-23-432"},
+    {"id": "no_street_width_dependence", "description": "The R6B row of the ZR 23-432 table carries no footnote marker (footnotes 1-3 are the wide-street / narrow-street / Mandatory Inclusionary Housing conditions), so these R6B heights do not depend on street width.", "condition": null, "effect": "documented_limitation", "citation_ref": "zr-23-432"},
+    {"id": "setback_per_23_433_not_encoded", "description": "Street-wall portions above the maximum base height need a setback at a height between the minimum and maximum base height, 'in accordance with Section 23-433'. The setback depth and any alternative (sky-exposure) envelope are separate provisions not captured or encoded here.", "condition": null, "effect": "documented_limitation", "citation_ref": "zr-23-432"},
+    {"id": "commercial_overlay_not_captured", "description": "A commercial overlay is mapped on this lot. These are the R6B residence-district heights of ZR 23-432. The commercial-district provisions that apply to buildings in a commercial overlay (ZR Article III) have not been captured or encoded, so a reviewer must confirm these heights govern the building proposed, in particular one with non-residential floor area.", "condition": {"op": "equals", "input": "overlay_present", "value": true}, "effect": "documented_limitation", "citation_ref": null},
+    {"id": "special_district_modification", "description": "A special purpose district is mapped on this lot and may modify residence-district heights; its provisions are not captured or evaluated here, so the value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "special_district_present", "value": true}, "effect": "professional_review_required", "citation_ref": null}
+  ],
+  "special_district_interactions": [
+    {"id": "special_purpose_district_height_modifier", "description": "Special Purpose Districts (ZR Articles VIII-XIV) may modify residence-district heights. When one is mapped, its provisions govern and must be evaluated by the corresponding special rule; this rule does not apply the modification and escalates to professional_review_required via special_district_modification.", "interaction_point": "residential_height", "special_rule_stub": "special-district-height-modifier (not yet implemented)", "citation_ref": null}
+  ],
+  "uncertainty_policy": {
+    "geometry_uncertain_coverage": "professional_review_required",
+    "data_conflict_coverage": "data_conflict",
+    "note": "An uncertain, split, sliver, or invalid M2-T013 geometric district assignment is never collapsed into a single definitive district: coverage downgrades to professional_review_required (or data_conflict) and the geometric uncertainty is recorded in the trace."
+  },
+  "limitations": [
+    "Draft extraction pending independent review and G6 qualified-human legal approval; not a Verified determination.",
+    "Only the R6B row of ZR 23-432 is encoded; every other R6-R12 row is captured in the snapshot but not yet a rule.",
+    "Setback depth (ZR 23-433), sky-exposure alternatives, permitted obstructions, yards, lot coverage and dwelling units are not part of this rule.",
+    "Sections 23-434 (height and setback modifications for eligible sites), 23-436 (additional height and setback provisions) and 23-44 (special provisions for certain areas) - titles as shown in the portal navigation - have not been captured or evaluated; where one applies it may change these heights."
+  ]
+}

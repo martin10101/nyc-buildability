@@ -195,6 +195,11 @@
     "determination": {
       "$ref": "#/$defs/determination",
       "description": "M4-T003: optional compliance determination. When present, after the computation the engine compares a proposal input against a computed output (or constant) and records a genuine pass/fail determination in the trace WITHOUT changing coverage (a draft rule stays conditional)."
+    },
+    "lane_flag": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D", "E"],
+      "description": "D-090 (lane A item A-02a): optional parallel-build lane that owns this rule while it is new behavior. The registry VALIDATES the rule at every load like any other, but INDEXES it (makes it visible to evaluation, families and every consumer) only when that lane's flag LANE_<X>_ENABLED holds an explicit true token; absent/empty/unknown = off (fail safe). Absent field = always indexed (every rule written before D-090)."
     }
   },
   "$defs": {
