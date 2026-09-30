@@ -45,13 +45,38 @@ function jsonResponse(
   });
 }
 
+/** M5-T023: the confirm card now mounts LotOutlineMap, which fetches the lot
+ * outline. This pack is about the address RESOLUTION flow, so lot-geometry calls
+ * resolve to the benign flag-off 404 and are served WITHOUT reaching — or
+ * counting against — the resolution spy the tests assert on (its call order and
+ * count are unchanged). Lot-outline behavior is covered in
+ * lot-outline-map.test.tsx. */
+function lotGeometryStub(url: string): Response | null {
+  if (url.includes("/lot-geometry")) {
+    return new Response(JSON.stringify({ detail: "Not Found" }), { status: 404 });
+  }
+  return null;
+}
+
+function installFetch<T extends (...args: never[]) => unknown>(resolutionMock: T): T {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      const lot = lotGeometryStub(String(input));
+      return lot
+        ? Promise.resolve(lot)
+        : (resolutionMock as unknown as (...a: unknown[]) => unknown)(input, init);
+    }),
+  );
+  return resolutionMock;
+}
+
 function stubFetchOnce(...responses: Response[]) {
   const spy = vi.fn();
   for (const response of responses) {
     spy.mockResolvedValueOnce(response);
   }
-  vi.stubGlobal("fetch", spy);
-  return spy;
+  return installFetch(spy);
 }
 
 function deferred<T>() {
@@ -224,7 +249,7 @@ function errorDoc(state: string, extra: Record<string, unknown> = {}) {
 describe("S1 — flag posture (off: today's UI, no address surface, no fetch)", () => {
   it("flag off renders the disabled placeholder, never mounts the address surface, and fires no fetch", () => {
     const fetchSpy = vi.fn();
-    vi.stubGlobal("fetch", fetchSpy);
+    installFetch(fetchSpy);
     render(<PropertyLookup />);
     expect(screen.getByTestId("address-disabled-copy")).toBeInTheDocument();
     expect(screen.queryByTestId("address-resolution-screen")).toBeNull();
@@ -238,7 +263,7 @@ describe("S1 — flag posture (off: today's UI, no address surface, no fetch)", 
 
   it("flag on mounts the address form above the BBL form and removes the placeholder — still no fetch until submit", () => {
     const fetchSpy = vi.fn();
-    vi.stubGlobal("fetch", fetchSpy);
+    installFetch(fetchSpy);
     render(<PropertyLookup ruleEvalEnabled />);
     expect(screen.getByTestId("address-resolution-screen")).toBeInTheDocument();
     expect(screen.getByTestId("address-form")).toBeInTheDocument();
@@ -761,7 +786,7 @@ describe("S7 — state-machine integrity", () => {
       // must win even when the transport does not honor cancellation).
       .mockReturnValueOnce(slow.promise)
       .mockResolvedValueOnce(jsonResponse(fast, 200));
-    vi.stubGlobal("fetch", fetchSpy);
+    installFetch(fetchSpy);
     render(<AddressResolutionScreen />);
 
     fillAndSubmit({ street: "FIRST STREET" });
@@ -805,7 +830,7 @@ describe("S7 — state-machine integrity", () => {
       .fn()
       .mockResolvedValueOnce(jsonResponse(first, 504))
       .mockReturnValueOnce(slow.promise);
-    vi.stubGlobal("fetch", fetchSpy);
+    installFetch(fetchSpy);
     render(<AddressResolutionScreen />);
     fillAndSubmit();
 
@@ -833,7 +858,7 @@ describe("S7 — state-machine integrity", () => {
       .fn()
       .mockResolvedValueOnce(jsonResponse(ambiguousDoc(), 200))
       .mockReturnValueOnce(slow.promise);
-    vi.stubGlobal("fetch", fetchSpy);
+    installFetch(fetchSpy);
     render(<AddressResolutionScreen />);
     fillAndSubmit();
 
@@ -854,7 +879,7 @@ describe("S7 — state-machine integrity", () => {
       .fn()
       .mockReturnValueOnce(slow.promise)
       .mockResolvedValueOnce(jsonResponse(errorDoc("timeout"), 504));
-    vi.stubGlobal("fetch", fetchSpy);
+    installFetch(fetchSpy);
     render(<AddressResolutionScreen />);
 
     const announcer = screen.getByTestId("address-outcome-announcer");

@@ -38,12 +38,30 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
+/** M5-T023: the confirm card now mounts LotOutlineMap, which fetches the lot
+ * outline. This pack is about the ADDRESS confirm surface, so lot-geometry calls
+ * resolve to the benign flag-off 404 (route_absent) and are served WITHOUT
+ * reaching — or counting against — the address-resolution spy the tests assert
+ * on. Full lot-outline coverage lives in lot-outline-map.test.tsx. */
+function lotGeometryStub(url: string): Response | null {
+  if (url.includes("/lot-geometry")) {
+    return new Response(JSON.stringify({ detail: "Not Found" }), { status: 404 });
+  }
+  return null;
+}
+
 function stubFetchOnce(...responses: Response[]) {
   const spy = vi.fn();
   for (const response of responses) {
     spy.mockResolvedValueOnce(response);
   }
-  vi.stubGlobal("fetch", spy);
+  vi.stubGlobal(
+    "fetch",
+    vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      const lot = lotGeometryStub(String(input));
+      return lot ? Promise.resolve(lot) : spy(input, init);
+    }),
+  );
   return spy;
 }
 
@@ -178,9 +196,12 @@ describe("S1 — Confirm card routing and shape", () => {
     );
     expect(screen.getByTestId("confirm-continue")).toBeInTheDocument();
     expect(screen.getByTestId("not-my-property")).toBeInTheDocument();
-    expect(
-      screen.getByTestId("lot-outline-placeholder").textContent,
-    ).toContain("A parcel outline is not drawn here yet");
+    // M5-T023: the Packet-2 placeholder is superseded by the lot-outline
+    // surface (an accessibly-labeled region). Here the lot-geometry call is
+    // stubbed to the flag-off 404, so the surface shows its honest "unavailable"
+    // state; full outcome coverage is in lot-outline-map.test.tsx.
+    expect(screen.getByTestId("lot-outline")).toBeInTheDocument();
+    expect(screen.queryByTestId("lot-outline-placeholder")).toBeNull();
     // HTTP reference id via the Meta idiom.
     expect(screen.getByTestId("correlation-id").textContent).toBe(HTTP_CID);
   });

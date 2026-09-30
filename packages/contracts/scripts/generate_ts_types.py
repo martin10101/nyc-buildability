@@ -111,6 +111,23 @@ SURVEY_EVIDENCE_SCHEMA_FILES = (
     "common.schema.json",
 )
 
+# FIFTH GENERATED TS ARTIFACT (task M5-T023, the recorded M5-T020 follow-up):
+# the lot_geometry display-only outline contract. Generated INDEPENDENTLY of the
+# other four artifacts so property_profile.ts, rule_evaluation.ts, scenario.ts,
+# and survey_evidence.ts all stay byte-identical. lot_geometry only $refs common
+# (never property_profile - it is a SIBLING display-only transport, joined by
+# BBL, never an embedding). The committed generated/lot_geometry.ts was emitted
+# by these same shared functions for M5-T020; wiring the check/write entrypoints
+# here closes the follow-up and puts lot_geometry under the CI drift check
+# (ci.yml runs --check) with NO change to the committed bytes.
+LOT_GEOMETRY_OUTPUT_PATH = (
+    Path(__file__).resolve().parents[1] / "generated" / "lot_geometry.ts"
+)
+LOT_GEOMETRY_SCHEMA_FILES = (
+    "lot_geometry.schema.json",
+    "common.schema.json",
+)
+
 # ---------------------------------------------------------------------------
 # Schema loading + $ref resolution across the four files
 # ---------------------------------------------------------------------------
@@ -233,6 +250,26 @@ SURVEY_EVIDENCE_NAMED_DEFS: dict[tuple[str, str], str] = {
     ("common.schema.json", "/$defs/non_empty_string"): "NonEmptyString",
     ("common.schema.json", "/$defs/date_time"): "DateTime",
     ("survey_evidence.schema.json", "/$defs/raw_bytes_digest_sha256"): "RawBytesDigestSha256",
+}
+
+# Named aliases for the lot_geometry artifact (task M5-T023). A SEPARATE map so
+# the other four emissions are untouched and their .ts files stay byte-identical.
+# Shared scalars are re-declared in lot_geometry.ts so the generated file is
+# standalone. The insertion ORDER here is the emission order and MUST reproduce
+# the committed generated/lot_geometry.ts byte-for-byte (M5-T020 emitted the file
+# with exactly this ordering).
+LOT_GEOMETRY_NAMED_DEFS: dict[tuple[str, str], str] = {
+    ("common.schema.json", "/$defs/bbl"): "Bbl",
+    ("common.schema.json", "/$defs/non_empty_string"): "NonEmptyString",
+    ("common.schema.json", "/$defs/date_time"): "DateTime",
+    ("lot_geometry.schema.json", "/$defs/position"): "LngLatPosition",
+    ("lot_geometry.schema.json", "/$defs/linear_ring"): "LinearRing",
+    ("lot_geometry.schema.json", "/$defs/polygon_geometry"): "PolygonGeometry",
+    ("lot_geometry.schema.json", "/$defs/multipolygon_geometry"): "MultiPolygonGeometry",
+    ("lot_geometry.schema.json", "/$defs/outline_geometry"): "OutlineGeometry",
+    ("lot_geometry.schema.json", "/$defs/condo_classification"): "CondoClassification",
+    ("lot_geometry.schema.json", "/$defs/lot_identity"): "LotIdentity",
+    ("lot_geometry.schema.json", "/$defs/source_provenance"): "LotOutlineSource",
 }
 
 
@@ -438,42 +475,53 @@ def generate_rule_evaluation() -> str:
     return "\n".join(block.rstrip("\n") for block in body) + "\n"
 
 
-def check_rule_evaluation() -> int:
-    """--check half for rule_evaluation.ts: exit non-zero unless the committed
-    file is byte-identical to a fresh generation. Skips (rc 0) when the active
-    schema dir has no rule_evaluation.schema.json - the property_profile drift-
-    test harness copies only the four profile schemas, and real CI always has
-    the file (so drift is always caught there)."""
-    if not (SCHEMA_DIR / "rule_evaluation.schema.json").exists():
+# Shared --check / --write halves for every SECONDARY artifact
+# (rule_evaluation, scenario, survey_evidence, lot_geometry). Each of those is
+# generated INDEPENDENTLY of property_profile.ts and skips when its schema is
+# absent (the property_profile drift-test harness copies only the four profile
+# schemas; real CI always has every schema, so drift is always caught there).
+# property_profile keeps its own inline check/write in main() (byte-locked
+# messages + no missing-schema guard).
+def _check_generated(schema_file: str, generate_fn, output_path: Path, label: str) -> int:
+    if not (SCHEMA_DIR / schema_file).exists():
         return 0
-    generated = generate_rule_evaluation()
-    if not RULE_EVAL_OUTPUT_PATH.exists():
+    generated = generate_fn()
+    if not output_path.exists():
         sys.stderr.write(
-            f"ERROR: {RULE_EVAL_OUTPUT_PATH} is missing; run the generator and commit it.\n"
+            f"ERROR: {output_path} is missing; run the generator and commit it.\n"
         )
         return 1
-    if RULE_EVAL_OUTPUT_PATH.read_text(encoding="utf-8") != generated:
+    if output_path.read_text(encoding="utf-8") != generated:
         sys.stderr.write(
-            "ERROR: generated rule_evaluation TypeScript types are out of date.\n"
+            f"ERROR: generated {label} TypeScript types are out of date.\n"
             "Run: python packages/contracts/scripts/generate_ts_types.py\n"
-            "and commit packages/contracts/generated/rule_evaluation.ts.\n"
+            f"and commit packages/contracts/generated/{label}.ts.\n"
         )
         return 1
-    sys.stdout.write("OK: generated rule_evaluation TypeScript types are up to date.\n")
+    sys.stdout.write(f"OK: generated {label} TypeScript types are up to date.\n")
     return 0
+
+
+def _write_generated(schema_file: str, generate_fn, output_path: Path) -> int:
+    if not (SCHEMA_DIR / schema_file).exists():
+        return 0
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(generate_fn(), encoding="utf-8", newline="\n")
+    sys.stdout.write(f"wrote {output_path}\n")
+    return 0
+
+
+def check_rule_evaluation() -> int:
+    return _check_generated(
+        "rule_evaluation.schema.json", generate_rule_evaluation,
+        RULE_EVAL_OUTPUT_PATH, "rule_evaluation",
+    )
 
 
 def write_rule_evaluation() -> int:
-    """Write mode for rule_evaluation.ts. Skips when the active schema dir has
-    no rule_evaluation.schema.json (see check_rule_evaluation)."""
-    if not (SCHEMA_DIR / "rule_evaluation.schema.json").exists():
-        return 0
-    RULE_EVAL_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    RULE_EVAL_OUTPUT_PATH.write_text(
-        generate_rule_evaluation(), encoding="utf-8", newline="\n"
+    return _write_generated(
+        "rule_evaluation.schema.json", generate_rule_evaluation, RULE_EVAL_OUTPUT_PATH,
     )
-    sys.stdout.write(f"wrote {RULE_EVAL_OUTPUT_PATH}\n")
-    return 0
 
 
 # ---------------------------------------------------------------------------
@@ -525,38 +573,15 @@ def generate_scenario() -> str:
 
 
 def check_scenario() -> int:
-    """--check half for scenario.ts: exit non-zero unless the committed file is
-    byte-identical to a fresh generation. Skips (rc 0) when the active schema dir
-    has no scenario.schema.json (the property_profile drift-test harness copies
-    only the four profile schemas; real CI always has the file)."""
-    if not (SCHEMA_DIR / "scenario.schema.json").exists():
-        return 0
-    generated = generate_scenario()
-    if not SCENARIO_OUTPUT_PATH.exists():
-        sys.stderr.write(
-            f"ERROR: {SCENARIO_OUTPUT_PATH} is missing; run the generator and commit it.\n"
-        )
-        return 1
-    if SCENARIO_OUTPUT_PATH.read_text(encoding="utf-8") != generated:
-        sys.stderr.write(
-            "ERROR: generated scenario TypeScript types are out of date.\n"
-            "Run: python packages/contracts/scripts/generate_ts_types.py\n"
-            "and commit packages/contracts/generated/scenario.ts.\n"
-        )
-        return 1
-    sys.stdout.write("OK: generated scenario TypeScript types are up to date.\n")
-    return 0
+    return _check_generated(
+        "scenario.schema.json", generate_scenario, SCENARIO_OUTPUT_PATH, "scenario",
+    )
 
 
 def write_scenario() -> int:
-    """Write mode for scenario.ts. Skips when the active schema dir has no
-    scenario.schema.json (see check_scenario)."""
-    if not (SCHEMA_DIR / "scenario.schema.json").exists():
-        return 0
-    SCENARIO_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    SCENARIO_OUTPUT_PATH.write_text(generate_scenario(), encoding="utf-8", newline="\n")
-    sys.stdout.write(f"wrote {SCENARIO_OUTPUT_PATH}\n")
-    return 0
+    return _write_generated(
+        "scenario.schema.json", generate_scenario, SCENARIO_OUTPUT_PATH,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -608,41 +633,81 @@ def generate_survey_evidence() -> str:
 
 
 def check_survey_evidence() -> int:
-    """--check half for survey_evidence.ts: exit non-zero unless the committed
-    file is byte-identical to a fresh generation. Skips (rc 0) when the active
-    schema dir has no survey_evidence.schema.json (the property_profile
-    drift-test harness copies only the four profile schemas; real CI always
-    has the file)."""
-    if not (SCHEMA_DIR / "survey_evidence.schema.json").exists():
-        return 0
-    generated = generate_survey_evidence()
-    if not SURVEY_EVIDENCE_OUTPUT_PATH.exists():
-        sys.stderr.write(
-            f"ERROR: {SURVEY_EVIDENCE_OUTPUT_PATH} is missing; run the generator and commit it.\n"
-        )
-        return 1
-    if SURVEY_EVIDENCE_OUTPUT_PATH.read_text(encoding="utf-8") != generated:
-        sys.stderr.write(
-            "ERROR: generated survey_evidence TypeScript types are out of date.\n"
-            "Run: python packages/contracts/scripts/generate_ts_types.py\n"
-            "and commit packages/contracts/generated/survey_evidence.ts.\n"
-        )
-        return 1
-    sys.stdout.write("OK: generated survey_evidence TypeScript types are up to date.\n")
-    return 0
+    return _check_generated(
+        "survey_evidence.schema.json", generate_survey_evidence,
+        SURVEY_EVIDENCE_OUTPUT_PATH, "survey_evidence",
+    )
 
 
 def write_survey_evidence() -> int:
-    """Write mode for survey_evidence.ts. Skips when the active schema dir has
-    no survey_evidence.schema.json (see check_survey_evidence)."""
-    if not (SCHEMA_DIR / "survey_evidence.schema.json").exists():
-        return 0
-    SURVEY_EVIDENCE_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    SURVEY_EVIDENCE_OUTPUT_PATH.write_text(
-        generate_survey_evidence(), encoding="utf-8", newline="\n"
+    return _write_generated(
+        "survey_evidence.schema.json", generate_survey_evidence,
+        SURVEY_EVIDENCE_OUTPUT_PATH,
     )
-    sys.stdout.write(f"wrote {SURVEY_EVIDENCE_OUTPUT_PATH}\n")
-    return 0
+
+
+# ---------------------------------------------------------------------------
+# lot_geometry artifact (task M5-T023, the recorded M5-T020 follow-up)
+# ---------------------------------------------------------------------------
+
+
+def load_lot_geometry_schemas() -> dict[str, dict]:
+    """Return {filename: parsed schema} for the lot_geometry $ref set
+    (lot_geometry + common). Uses SCHEMA_DIR so a monkeypatched schema dir is
+    honored; callers guard the missing-file case (the property_profile drift-test
+    harness copies only the four profile schemas)."""
+    return {
+        name: json.loads((SCHEMA_DIR / name).read_text(encoding="utf-8"))
+        for name in LOT_GEOMETRY_SCHEMA_FILES
+    }
+
+
+def generate_lot_geometry() -> str:
+    """Generate the lot_geometry.ts source. Independent of the other four
+    generate_* functions so their .ts files stay byte-identical.
+
+    The header below is emitted VERBATIM to reproduce the file M5-T020 committed
+    byte-for-byte (the closed-contract byte-identity duty): the generator wiring
+    added in M5-T023 must not change one byte of the committed artifact."""
+    schemas = load_lot_geometry_schemas()
+    root = schemas["lot_geometry.schema.json"]
+    resolver = Resolver(schemas, "lot_geometry.schema.json")
+
+    header = (
+        "// GENERATED FILE - DO NOT EDIT BY HAND.\n"
+        "// Source of truth: packages/contracts/schemas/v1/lot_geometry.schema.json\n"
+        "// (+ common). Emitted by the repo generator's shared emission functions\n"
+        "// (packages/contracts/scripts/generate_ts_types.py) for task M5-T020. Wiring\n"
+        "// a generate_lot_geometry()/check_lot_geometry() entrypoint + CI drift check\n"
+        "// into that script is a documented follow-up (M5-T020 producer report).\n"
+        "//\n"
+        "// One canonical DISPLAY-ONLY lot-outline contract shared by the API and the\n"
+        "// web map (PRD section 32.3). The geometry is EPSG:4326 GeoJSON TRANSPORT FOR\n"
+        "// DISPLAY ONLY - no area/dimension is ever derived from it; the authoritative\n"
+        "// EPSG:2263 path owns all measurement. Coordinates are [longitude, latitude]\n"
+        "// verbatim from the official NYC DCP MapPLUTO feature service.\n"
+    )
+
+    body: list[str] = [header]
+    body.extend(emit_named_defs(schemas, LOT_GEOMETRY_NAMED_DEFS))
+
+    root_expr = object_expr(root, resolver, 0, LOT_GEOMETRY_NAMED_DEFS)
+    body.append(f"export interface LotGeometry {root_expr}\n")
+
+    return "\n".join(block.rstrip("\n") for block in body) + "\n"
+
+
+def check_lot_geometry() -> int:
+    return _check_generated(
+        "lot_geometry.schema.json", generate_lot_geometry,
+        LOT_GEOMETRY_OUTPUT_PATH, "lot_geometry",
+    )
+
+
+def write_lot_geometry() -> int:
+    return _write_generated(
+        "lot_geometry.schema.json", generate_lot_geometry, LOT_GEOMETRY_OUTPUT_PATH,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -800,7 +865,8 @@ def main() -> int:
         rc_rule = check_rule_evaluation()
         rc_scenario = check_scenario()
         rc_survey = check_survey_evidence()
-        return rc_client or rc_rule or rc_scenario or rc_survey
+        rc_lot = check_lot_geometry()
+        return rc_client or rc_rule or rc_scenario or rc_survey or rc_lot
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(generated, encoding="utf-8", newline="\n")
@@ -809,7 +875,8 @@ def main() -> int:
     rc_rule = write_rule_evaluation()
     rc_scenario = write_scenario()
     rc_survey = write_survey_evidence()
-    return rc_client or rc_rule or rc_scenario or rc_survey
+    rc_lot = write_lot_geometry()
+    return rc_client or rc_rule or rc_scenario or rc_survey or rc_lot
 
 
 if __name__ == "__main__":

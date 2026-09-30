@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { AddressDocumentOutcome } from "@/lib/address-api";
 import { validateBblInput } from "@/lib/bbl";
 import { Meta } from "./AddressOutcomeCards";
+import { LotOutlineMap } from "./LotOutlineMap";
 
 /**
  * The Address Confirm card (task M5-T016, design spec sections 1/2-resolved/
@@ -138,11 +139,16 @@ export function AddressConfirmCard({
         </p>
       )}
 
-      <p className="section-note" data-testid="lot-outline-placeholder">
-        A parcel outline is not drawn here yet — a pin would mislead on
-        corner and large lots. Open the city&apos;s ZoLa map for the
-        authoritative outline.
-      </p>
+      {/* M5-T023: the lot-outline surface replaces the Packet-2 placeholder.
+          It fetches the display-only EPSG:4326 outline for the re-validated
+          canonical BBL and renders honest typed outcomes (outline drawn with
+          MapLibre GL JS, honest-empty for condo/no-feature, review posture for
+          multiple features, typed fallback on any failure). It mounts ONLY when
+          a canonical BBL is present — the same gate as the ZoLa link — so no
+          fetch fires for a result that cannot link onward. The whole surface
+          already inherits the server-read INTERNAL_RULE_EVAL_ENABLED flag via
+          PropertyLookup, so there is no second flag read here. */}
+      {canonicalBbl ? <LotOutlineMap bbl={canonicalBbl} /> : null}
 
       <details className="provenance-details" data-testid="address-provenance">
         <summary>Where this came from</summary>
