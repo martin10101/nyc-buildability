@@ -1,12 +1,13 @@
 # Lane E — Outputs and parity: queue
 
-Ordered: take the top unblocked item. Built from `docs/lanes/RECONCILIATION.md` (partial and missing items only) under the derived lane plan `docs/lanes/PARALLEL_BUILD_PLAN.md`. Each item becomes one ledger task `M<x>-T<n>` that cites D-090 and the plan ID; its "Done when" is the plan's text unless marked *derived*. Waves: 1 foundations · 2 Milestone 1 + 2 · 3 breadth and parity (plan §11b: never delays Milestone 1). Owned by Lane C; the lane updates only `docs/lanes/status/E.md`.
+Ordered: take the top unblocked item. Built from `docs/lanes/RECONCILIATION.md` (partial and missing items only) under the derived lane plan `docs/lanes/PARALLEL_BUILD_PLAN.md`. Each item becomes one ledger task `M<x>-T<n>` that cites D-090 and the plan ID; its "Done when" is the plan's text unless marked *derived*. Waves: 1 foundations · 2 Milestone 1 + 2 · 3 breadth and parity (plan §11b: never delays Milestone 1). Owned by Lane C (the integrator); lane E never edits it and, under `docs/lanes/`, updates only `docs/lanes/status/E.md` and its own `docs/lanes/requests/E-<n>.md`.
 
 Nothing here starts before the owner's GO (D-090-R007).
 
 | # | Plan ID | Task | Done when | Depends on | Blocked by | Wave | Size |
 |---|---|---|---|---|---|---|---|
-| E-01 | M1-27 | Drawing kit v0: server-made vector SVG site plan, section and axonometric massing from results geometry; drawing style table (colorblind-safe colors, hatches, line weights, CAD layer names) shared by screen, PDF and DXF; every label read from results; snapshot tests | M1-27: Every figure on a drawing matches the tables; benchmark PDFs match approved snapshots; the same SVGs appear on screen | M5-T125 contracts | — | 1 | L |
+| E-01 | M1-27 | Drawing kit v0: server-made vector SVG site plan and axonometric massing from results geometry; drawing style table (colorblind-safe colors, hatches, line weights, CAD layer names) shared by screen, PDF and DXF; every label read from results; snapshot tests. The section is E-01b | M1-27: Every figure on a drawing matches the tables; benchmark PDFs match approved snapshots; the same SVGs appear on screen | M5-T125 contracts | — | 1 | L |
+| E-01b | M1-27, M1-16 | Section SVG in the drawing kit: server-made vector section from results geometry, using the E-01 style table; every label read from results; snapshot tests | M1-27: Every figure on a drawing matches the tables; benchmark PDFs match approved snapshots; the same SVGs appear on screen · M1-16: Section and massing match the numbers, or one line names what is missing | E-01 | Q8 (section view vs the hold) | 2 | M |
 | E-02 | M1-22 | PDF converter trial (one day, benchmark lots): WeasyPrint vs headless Chromium; admission through the dependency-security gate (7 days, zero advisories, G5) and a Render runtime check | *derived:* A chosen converter admitted, or a blocker naming why not | — | — | 1 | M |
 | E-03 | M1-22 | DXF from results geometry: lot and envelope on separate layers, feet 1:1, the measurement-status note when not surveyed, correct option label, lot-only export allowed | M1-22: The PDF contains every listed sheet; the Excel file matches the screen; the DXF opens correctly in AutoCAD and carries the measurement-status note when measurements are not from a survey | E-01, A-04 | — | 1→2 | M |
 | E-04 | M1-19 | Report from the ReportModel, bound to option + revision; historical export record, read-only; "start a new study from this" copies inputs only | M1-19: Report matches the screen and revision | C-06, E-01, E-02 | — | 2 | L |
@@ -18,5 +19,5 @@ Nothing here starts before the owner's GO (D-090-R007).
 
 ## Blocked by owner or reviewer
 
-- none
+- **E-01b** — Q8 (section view vs the hold)
 

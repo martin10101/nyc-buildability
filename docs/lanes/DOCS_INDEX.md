@@ -7,7 +7,7 @@
 | **Date** | 2026-09-30 |
 | **Governing plan** | `docs/PRODUCT_PLAN_CURRENT_2026-09-28.md` ("the plan"). Benchmark: `docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md`. |
 | **Authority** | D-090-R001 and D-090-R003 (Prompt 0, Step 1); task M0-T162 |
-| **Appendix** | `docs/lanes/DOCS_INDEX_PROJECT_CONTROL.md` lists the 2,704 markdown files under `project-control/`: task, gate and producer reports, and directive sources. They are ledger evidence and all have the status **reference**. |
+| **Appendix** | `docs/lanes/DOCS_INDEX_PROJECT_CONTROL.md` lists the 2,709 markdown files under `project-control/` at `15a6605a`: task, gate and producer reports, and directive sources. They are ledger evidence and all have the status **reference**. |
 
 **Status legend**
 
@@ -31,22 +31,22 @@
 
 | Status | Rows |
 |---|---|
-| current | 108 |
+| current | 130 |
 | reference | 152 |
 | superseded | 17 |
 | conflicts-with-plan | 23 |
-| **total** | **300** |
+| **total** | **322** |
 
 Statuses changed from the recon: `docs/MRL_LAUNCH_RUNBOOK.md` and `tools/agent_supervisor/README.md` are current and pending OD-1, not conflicts, because the plan does not decide the runner. `.claude/skills/orchestration/SKILL.md` is current with a stale line, because its owner-stop conflicts with ADR-006 Tier A, not with the plan.
 
-Wave 0 files that are not yet tracked at `8a813bdd` have no row: this index, its appendix `docs/lanes/DOCS_INDEX_PROJECT_CONTROL.md` and the other `docs/lanes/**` outputs of M0-T162 (for example `docs/lanes/PARALLEL_BUILD_PLAN.md`). Their status is **current — Wave 0 output**. They get rows when this index is next regenerated.
+The 22 Wave 0 files that M0-T162 adds under `docs/lanes/` (this index, its appendix `docs/lanes/DOCS_INDEX_PROJECT_CONTROL.md`, and the code map, reconciliation, lane plan, estimate, prompts, queues, status files and requests README) have rows with the status **current — Wave 0 output**, counted as current.
 
 | Area | current | reference | superseded | conflicts-with-plan | Rows |
 |---|---|---|---|---|---|
 | repo root | 4 | 2 | 3 | 2 | 11 |
 | docs/** (other) | 31 | 58 | 10 | 19 | 118 |
 | plan + benchmark | 2 | 0 | 0 | 0 | 2 |
-| Wave 0 (docs/lanes, scripts/lanes) | 2 | 0 | 0 | 0 | 2 |
+| Wave 0 (docs/lanes, scripts/lanes) | 24 | 0 | 0 | 0 | 24 |
 | packages, services, tests, tools | 11 | 6 | 1 | 0 | 18 |
 | .claude (other) | 55 | 7 | 1 | 1 | 64 |
 | .claude/agent-memory | 3 | 79 | 2 | 1 | 85 |
@@ -434,7 +434,29 @@ The other 22 blockers (B-002 to B-025) are resolved or closed. B-002 is resolved
 | `docs/design/ui-cleanup/P1-VISUAL-STATE-SPEC.md` | D-086 P1 visual/state spec for UI cleanup slices P2–P7 | conflicts-with-plan | §4 l.183 left-rail "Overview · Property records / Zoning · Proposal · Evidence · Report" multi-view shell is against §3 (single page, floating tools). §5.5 l.337-344 "numeric outline table (EPSG:2263 feet) as the authoritative model … always-available manual coordinate path" is against §4 and §7. §2 l.61 "The canonical enum value is always displayed" (incl. `conditional`, l.81) is against §5a.5 ("no internal codes") and §5. §1.3 l.41-43 "always visible at the decision it affects" is against §5a.2 and §5a.6. §4 l.193-203 puts the full disclaimer "every route and every printed page", against §5a.2 (standing notices behind the strip plus one report page). |
 | `docs/design/ui-inspiration/README.md` | Index of owner AI-generated layout mockups (inspiration only) | reference | — |
 | `docs/design/zola-deeplink-url-confirmation.md` | Verified ZoLa deep-link URL research | reference | — |
+| `docs/lanes/CODE_MAP.md` | Code map: modules, routes, flags, contracts, tests and recommended lane owners (M0-T162) | current — Wave 0 output | — (advisory; `docs/lanes/OWNERSHIP.yaml` is the exact ownership map) |
+| `docs/lanes/DOCS_INDEX.md` | This index: every tracked `.md` outside `project-control/`, checked against the plan (M0-T162) | current — Wave 0 output | — (this file) |
+| `docs/lanes/DOCS_INDEX_PROJECT_CONTROL.md` | Appendix: the 2,709 `project-control/` markdown files, all reference (M0-T162) | current — Wave 0 output | — |
+| `docs/lanes/ESTIMATE.md` | Derived estimate for Waves 1–3: item sizes, lane-days per wave, critical path (M0-T162) | current — Wave 0 output | — (derived; ranges, not promises) |
 | `docs/lanes/LOOP_LAUNCH_PROMPTS.md` | Owner's Wave 0 procedure (Prompt 0) and lane prompts A–E | current | None with the plan (D-090-R003). Process limits: Step 0 names files that do not exist (l.48, l.51; D-090-R005 derives `docs/lanes/PARALLEL_BUILD_PLAN.md`); Step 10 agent-run `launch_lanes.sh` (l.165-170) is not permitted — lanes start only by owner-typed commissioning (D-088-R004, D-089-R002, D-090-R012); "rebase" before a PR (l.205) must never force-push (ADR-006 Tier D #1); lane loops opening PRs (l.213) vs orchestrator-only git/gh (ADR-005; OD-2); web ports 3101–3105 (l.110) vs no local npm/node (CLAUDE.md p14). See §2 rows 4, 12, 13. |
+| `docs/lanes/PARALLEL_BUILD_PLAN.md` | Derived lane plan: lanes A–E, ownership summary, task flow, waves, contracts v1, requests, guardrails (M0-T162) | current — Wave 0 output | — (derived under D-090-R005 because the plan's `PARALLEL_BUILD_PLAN_LANES_2026-09-28.md` does not exist; the owner may amend) |
+| `docs/lanes/RECONCILIATION.md` | Evidence-based status of every plan item vs the code, with the §10 claims check and the set-aside list (M0-T162) | current — Wave 0 output | — (authorizes no change; feeds the lane queues) |
+| `docs/lanes/prompts/A.md` | Lane A (Engine) loop prompt: the owner's text plus the governance addendum | current — Wave 0 output | — (launch only after the owner's GO, D-090-R007) |
+| `docs/lanes/prompts/B.md` | Lane B (Data and site facts) loop prompt: the owner's text plus the governance addendum | current — Wave 0 output | — (launch only after the owner's GO, D-090-R007) |
+| `docs/lanes/prompts/C.md` | Lane C (Contracts, study and integration) loop prompt: the owner's text plus the governance addendum | current — Wave 0 output | — (launch only after the owner's GO, D-090-R007) |
+| `docs/lanes/prompts/D.md` | Lane D (Architect interface) loop prompt: the owner's text plus the governance addendum | current — Wave 0 output | — (launch only after the owner's GO, D-090-R007) |
+| `docs/lanes/prompts/E.md` | Lane E (Outputs and parity) loop prompt: the owner's text plus the governance addendum | current — Wave 0 output | — (launch only after the owner's GO, D-090-R007) |
+| `docs/lanes/queues/A.md` | Lane A (Engine) ordered work queue from RECONCILIATION.md; owned by Lane C | current — Wave 0 output | — |
+| `docs/lanes/queues/B.md` | Lane B (Data and site facts) ordered work queue from RECONCILIATION.md; owned by Lane C | current — Wave 0 output | — |
+| `docs/lanes/queues/C.md` | Lane C (Contracts, study and integration) ordered work queue from RECONCILIATION.md; owned by Lane C | current — Wave 0 output | — |
+| `docs/lanes/queues/D.md` | Lane D (Architect interface) ordered work queue from RECONCILIATION.md; owned by Lane C | current — Wave 0 output | — |
+| `docs/lanes/queues/E.md` | Lane E (Outputs and parity) ordered work queue from RECONCILIATION.md; owned by Lane C | current — Wave 0 output | — |
+| `docs/lanes/requests/README.md` | How a lane requests a change to a file it does not own; request template | current — Wave 0 output | — |
+| `docs/lanes/status/A.md` | Lane A (Engine) status: done, next, blocked-by, open owner questions; updated by lane A only | current — Wave 0 output | — |
+| `docs/lanes/status/B.md` | Lane B (Data and site facts) status: done, next, blocked-by, open owner questions; updated by lane B only | current — Wave 0 output | — |
+| `docs/lanes/status/C.md` | Lane C (Contracts, study and integration) status: done, next, blocked-by, open owner questions; updated by lane C only | current — Wave 0 output | — |
+| `docs/lanes/status/D.md` | Lane D (Architect interface) status: done, next, blocked-by, open owner questions; updated by lane D only | current — Wave 0 output | — |
+| `docs/lanes/status/E.md` | Lane E (Outputs and parity) status: done, next, blocked-by, open owner questions; updated by lane E only | current — Wave 0 output | — |
 | `docs/research/3d-web-deps-prescreen-2026-09.md` | Provenance pre-screen of three / @react-three fiber+drei for a later admission | reference | — (note: this feeds an *interactive* web-3D stack. Plan §5c makes Phase-1 3D a server-drawn vector SVG; interactive 3D is "Later (Phase 2)… subject to the Q8 hold". Not Phase-1 work.) |
 | `docs/research/M0-T002-geoclient-address-resolution.md` | Official address/BBL/BIN resolution sources (Geoclient, GeoSearch, Geosupport) | reference | — |
 | `docs/research/M1-T007-dob-now-sources.md` | DOB NOW Open Data family: identities, schemas, join-key pitfalls | reference | — (supports plan §8a existing-building checks and the §9a DOB-filing validation) |
@@ -489,4 +511,4 @@ The other 22 blockers (B-002 to B-025) are resolved or closed. B-002 is resolved
 
 ---
 
-**Completeness check:** 300 rows listed. `git ls-files '*.md' | grep -v '^project-control/'` at `8a813bdd` returns 300 files: 300 of 300 listed, 0 missing, 0 extra, 0 duplicates. The 2,704 `project-control/` markdown files are in `docs/lanes/DOCS_INDEX_PROJECT_CONTROL.md`.
+**Completeness check:** 322 rows listed. `git ls-files '*.md' | grep -v '^project-control/'` at the M0-T162 head (`15a6605a` plus this task's 22 new `docs/lanes/` files) returns 322 files: 322 of 322 listed, 0 missing, 0 extra, 0 duplicates. The 2,709 `project-control/` markdown files (at `15a6605a`) are in `docs/lanes/DOCS_INDEX_PROJECT_CONTROL.md`.

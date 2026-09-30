@@ -67,6 +67,7 @@ S ≤ 1 lane-day · M 2–4 lane-days · L 1–2 lane-weeks. A lane-day includes
 | D-14 | M2-01, M2-02 | M | 2 |
 | D-15 | §11b | M | 3 |
 | E-01 | M1-27 | L | 1 |
+| E-01b | M1-27, M1-16 | M | 2 |
 | E-02 | M1-22 | M | 1 |
 | E-03 | M1-22 | M | 1→2 |
 | E-04 | M1-19 | L | 2 |
@@ -84,7 +85,7 @@ Lane-days per lane and wave (low–high):
 | B | 11.5–23 | 13–26 | 5–10 |
 | C | 18.5–37 | 9.5–19 | — |
 | D | 18.5–37 | 12.5–25 | 2–4 |
-| E | 9–18 | 11–22 | 7–14 |
+| E | 9–18 | 13–26 | 7–14 |
 
 (Items spanning two waves, such as "1→2", are counted in the wave where they start.)
 
@@ -95,7 +96,7 @@ Lane-days per lane and wave (low–high):
 3. **A-04** builds the three-answer generator on the benchmark (L, weeks 2–3).
 4. **M1-05, the golden record,** needs the owner's pilot lot (Q1) and the reviewer (Q12, 1–2 weeks of reviewer time). **This is the pace-setter.**
 5. **C-08** wires engine → API → dashboard (L), and **A-06** adds the add-ons (L), weeks 4–6.
-6. **E-01** builds the drawing kit in parallel from week 1. **E-03, E-04 and E-05** (DXF, report, Excel) follow in weeks 4–7; E-02 must admit a PDF converter first.
+6. **E-01** builds the drawing kit (site plan, axonometric massing, style table) in parallel from week 1; **E-01b** adds the section only after the owner answers Q8 (section view vs the hold). **E-03, E-04 and E-05** (DXF, report, Excel) follow in weeks 4–7; E-02 must admit a PDF converter first.
 7. **C-11** runs the address-to-export journey in CI, then **M1-21**, the observed architect session (owner schedules), weeks 6–9.
 
 Off the critical path but needed for it: the set-asides (**D-01, A-03, D-02**) and the §5a pass (**D-03**) in weeks 1–3; the site geometry and street widths (**B-03, B-04**) in weeks 1–3.

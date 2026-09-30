@@ -12,13 +12,13 @@
 
 | Lane | Name | Mission (lane prompt) | Owns (summary; `docs/lanes/OWNERSHIP.yaml` is exact) | Flag | API port | Web port |
 |---|---|---|---|---|---|---|
-| A | Engine | Correct numbers: rule tables, the three answers, add-ons, floor stack, §5b paths | `services/api/app/rules/**`, `app/_zr_snapshots/**`, `app/scenario/**`, their tests, `tools/residential_validation.py`, root `tests/fixtures/**` | `LANE_A_ENABLED` | 8101 | 3101 |
-| B | Data and site facts | Sourced facts: fixtures with provenance, measurement ranks, site geometry, §8a flags, parity data | `services/api/app/{connectors,profile,spatial,site_definition,resilience}/**`, their tests, `services/api/tests/fixtures/**`, `docs/research/**` | `LANE_B_ENABLED` | 8102 | 3102 |
-| C | Contracts, study and integration | The backbone and traffic control: contracts, study store, invalidation, input channel, wiring, merge queue, every hot file | `packages/contracts/**`, `services/api/app/{main.py,config.py,api/**,contracts/**,_contract_schemas/**}`, web shared state + API clients, CI, manifests/lockfiles, e2e harness, `render.yaml`, `supabase/**`, `tools/**`, `project-control/**`, `.claude/**`, `docs/**` (except the lanes' own files), `scripts/**` | `LANE_C_ENABLED` | 8103 | 3103 |
+| A | Engine | Correct numbers: rule tables, the three answers, add-ons, floor stack, §5b paths | `services/api/app/rules/**`, `app/_zr_snapshots/**`, `app/scenario/**`, their tests, `tools/residential_validation.py`, root `tests/fixtures/**`, `docs/research/zr-snapshots/**` | `LANE_A_ENABLED` | 8101 | 3101 |
+| B | Data and site facts | Sourced facts: fixtures with provenance, measurement ranks, site geometry, §8a flags, parity data | `services/api/app/{connectors,profile,spatial,site_definition,resilience}/**`, their tests, `services/api/tests/fixtures/**`, `docs/research/**` (except `docs/research/zr-snapshots/**`, Lane A) | `LANE_B_ENABLED` | 8102 | 3102 |
+| C | Contracts, study and integration | The backbone and traffic control: contracts, study store, invalidation, input channel, wiring, merge queue, every hot file | `packages/contracts/**`, `services/api/app/{main.py,config.py,api/**,contracts/**,_contract_schemas/**}`, web shared state + API clients, CI, manifests/lockfiles, e2e harness, `render.yaml`, `supabase/**`, `tools/**`, `project-control/**`, `.claude/**`, `docs/**` (including every `docs/lanes/queues/<X>.md`; excluding the docs paths of lanes A, B, D and E and each lane's own status and request files), `scripts/**` | `LANE_C_ENABLED` | 8103 | 3103 |
 | D | Architect interface | The dashboard the architect uses (§3, §5a) | `apps/web/src/app/**` (except the root layout), `apps/web/src/components/**`, UI libraries in `apps/web/src/lib/**`, e2e specs, `apps/web/public/**`, `docs/design/**` | `LANE_D_ENABLED` | 8104 | 3104 |
 | E | Outputs and parity | Everything that leaves the app, plus parity modules (§5c, §11b) | `services/api/app/{cad,drawings,documents}/**` and new output modules, their tests, `docs/samples/**` | `LANE_E_ENABLED` | 8105 | 3105 |
 
-Each lane also owns its own `docs/lanes/status/<X>.md`, `docs/lanes/queues/<X>.md` and `docs/lanes/requests/<X>-<n>.md`. A lane needing a file it does not own writes a request (§6) and moves on (lane prompts, shared rules).
+Each lane also owns exactly two kinds of file under `docs/lanes/`: its own `docs/lanes/status/<X>.md` and the requests it writes, `docs/lanes/requests/<X>-<n>.md`. The queues (`docs/lanes/queues/<X>.md`) are owned by Lane C (the integrator); a lane never edits its queue. A lane needing a file it does not own writes a request (§6) and moves on (lane prompts, shared rules).
 
 ## 2. How a lane task runs (reconciled with the repo's governance)
 
@@ -66,11 +66,11 @@ Additive only within a wave; breaking changes only at wave boundaries, announced
 
 ## 6. Requests between lanes
 
-`docs/lanes/requests/<X>-<n>.md`: who needs what, which file (owned by whom), why, and what is blocked. The owning lane handles it the same day in a small PR (Lane C prompt); hot-file requests always go to Lane C.
+`docs/lanes/requests/<X>-<n>.md`: who needs what, which file (owned by whom), why, and what is blocked. The requesting lane X writes and owns the request file. The lane that owns the requested file handles it the same day in a small PR (Lane C prompt); hot-file requests always go to Lane C. The request's **State** is updated by the requesting lane, or by the integrator (Lane C) on a non-lane branch (`task/`, `control/`); no other lane edits it (`OWNERSHIP.yaml`).
 
 ## 7. Guardrails
 
-- **Lane path check** (`scripts/lanes/check_lane_paths.py`, CI step in `control-plane`): a PR from `lane-<x>/…` fails if it touches a file whose owner in `OWNERSHIP.yaml` is not lane x (the lane's own status/queue/request files excepted). Other branch prefixes (`task/`, `control/`) are not lane branches and pass. It also fails if any tracked file has no owner.
+- **Lane path check** (`scripts/lanes/check_lane_paths.py`, CI step in `control-plane`): a PR from `lane-<x>/…` fails if it touches a file whose owner in `OWNERSHIP.yaml` is not lane x. There is no exception list: the map itself gives lane x its `docs/lanes/status/<X>.md` and `docs/lanes/requests/<X>-*.md`, and gives every queue to Lane C. Other branch prefixes (`task/`, `control/`) are not lane branches and pass. It also fails if any tracked file has no owner.
 - **Lane flags:** `LANE_A_ENABLED` … `LANE_E_ENABLED` in `services/api/app/config.py`, absent means off (fail safe). New behavior goes behind the lane's flag (shared rules). Production never sets them until the owner releases a lane's work.
 - **Ports:** API 8101–8105, web 3101–3105, written to each worktree's `.env.local` by `scripts/lanes/setup_worktrees.sh` (never pushes).
 - **Live city data:** only Lane B, and not in Wave 0 (D-090-R009).

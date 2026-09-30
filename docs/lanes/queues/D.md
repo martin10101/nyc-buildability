@@ -1,6 +1,6 @@
 # Lane D — Architect interface: queue
 
-Ordered: take the top unblocked item. Built from `docs/lanes/RECONCILIATION.md` (partial and missing items only) under the derived lane plan `docs/lanes/PARALLEL_BUILD_PLAN.md`. Each item becomes one ledger task `M<x>-T<n>` that cites D-090 and the plan ID; its "Done when" is the plan's text unless marked *derived*. Waves: 1 foundations · 2 Milestone 1 + 2 · 3 breadth and parity (plan §11b: never delays Milestone 1). Owned by Lane C; the lane updates only `docs/lanes/status/D.md`.
+Ordered: take the top unblocked item. Built from `docs/lanes/RECONCILIATION.md` (partial and missing items only) under the derived lane plan `docs/lanes/PARALLEL_BUILD_PLAN.md`. Each item becomes one ledger task `M<x>-T<n>` that cites D-090 and the plan ID; its "Done when" is the plan's text unless marked *derived*. Waves: 1 foundations · 2 Milestone 1 + 2 · 3 breadth and parity (plan §11b: never delays Milestone 1). Owned by Lane C (the integrator); lane D never edits it and, under `docs/lanes/`, updates only `docs/lanes/status/D.md` and its own `docs/lanes/requests/D-<n>.md`.
 
 Nothing here starts before the owner's GO (D-090-R007).
 
@@ -13,7 +13,7 @@ Nothing here starts before the owner's GO (D-090-R007).
 | D-05 | §5 | Three-answers panel against results fixtures: value, or "Not available" with the reason; completeness line | *derived:* Matches §5 calculation behavior on fixtures | M5-T125 contracts | — | 1 | M |
 | D-06 | M2-07 | Hide the unused-floor-area section behind a flag now (set-aside #6); later the keep/remove step with the existing zoning floor area input and its source | *derived:* §3 step 4 on screen | A-03 | — | 1→2 | M |
 | D-07 | M1-25 | Add-on switches with gains and requirements, Best combination goal picker, exclusions shown | M1-25: Gains relative to the current selection, and the best combination, equal the golden record; the goal and assumptions are saved with the option | A-06 | — | 2 | M |
-| D-08 | M1-15, M1-16 | Plan, section and floor-stack views showing the server SVGs; editable floor-to-floor heights | M1-15: Dimensions match the numbers · M1-16: Section and massing match the numbers, or one line names what is missing | E-01 | Q8 (section view vs the hold) | 2 | M |
+| D-08 | M1-15, M1-16 | Plan, section and floor-stack views showing the server SVGs; editable floor-to-floor heights | M1-15: Dimensions match the numbers · M1-16: Section and massing match the numbers, or one line names what is missing | E-01, E-01b | Q8 (section view vs the hold) | 2 | M |
 | D-09 | M1-24 | Floor-area availability reminder (exact §5a wording) from the status strip | M1-24: Available from the status strip and shown once in the report | D-03 | — | 2 | S |
 | D-10 | M1-18 | Compare options side by side, plans at a common scale | M1-18: Identical rows; plans at a common scale | C-09, D-08 | — | 2 | M |
 | D-11 | M2-08 | Keep / partial rebuild / full rebuild comparison with the headline | M2-08: On the 215-16 Northern Blvd benchmark, path 1 keeps more floor area than path 3, and the app says so | A-07 | — | 2 | M |

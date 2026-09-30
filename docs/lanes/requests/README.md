@@ -1,11 +1,11 @@
 # Requests between lanes
 
 A lane that needs a change to a file it does not own writes a request here and moves on to its next
-unblocked task (lane prompts, shared rules). The owning lane handles it the same day in a small PR;
-hot files always go to Lane C.
+unblocked task (lane prompts, shared rules). The lane that owns the requested file handles it the same
+day in a small PR; hot files always go to Lane C.
 
 **File name:** `docs/lanes/requests/<X>-<n>.md`. X is the requesting lane and n counts up per lane.
-The requesting lane owns the file (`docs/lanes/OWNERSHIP.yaml`).
+The requesting lane owns the file (`docs/lanes/OWNERSHIP.yaml`); queues belong to Lane C (the integrator).
 
 **Template:**
 
@@ -23,4 +23,4 @@ The requesting lane owns the file (`docs/lanes/OWNERSHIP.yaml`).
 | State | open / taken by <lane> in <ledger task> / done in <PR> |
 ```
 
-The owning lane updates **State**; the requesting lane never edits the owner's files.
+**State** is updated by the requesting lane (it owns this file), or by the integrator (Lane C) on a non-lane branch (`task/`, `control/`). The lane that owns the requested files never edits the request, and the requesting lane never edits the owner's files.
