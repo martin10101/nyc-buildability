@@ -41,12 +41,14 @@ class SegmentSource:
 class MappedStreetSegment:
     """One DCM street center-line segment as the width step needs it.
 
+    ``object_id`` is None when the feature came back without an OBJECTID (schema drift): such
+    a segment is kept so the coverage rule can see it, and its width is never read.
     ``mapped_width_raw`` is the DCM ``Streetwidth`` text exactly as served (the mapped width,
     usually property line to property line). ``plain_mapped_street`` is True only for a
     currently mapped street with no special City Map flag; ``status_note`` says why not.
     """
 
-    object_id: int
+    object_id: int | None
     street_name: str | None
     borough: str | None
     mapped_width_raw: str | None

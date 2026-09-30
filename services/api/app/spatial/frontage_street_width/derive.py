@@ -9,9 +9,9 @@ that state only what was actually established:
 
 * source documented - the segment's retrieval (source id, URL, time, body sha256) is on record;
 * street status - the segment is a currently mapped street with no special City Map flag;
-* frontage coverage - B-03 confirmed the frontage (every sample along every fronting lot line
-  sits on this street's street line and the street data is complete); anything less is not
-  coverage;
+* frontage coverage - the stated rule in ``coverage.py``: the segments are identified by
+  OBJECTID along the lot lines (never by street name alone), B-03 confirmed the frontage, and
+  no center line of the street lacks an OBJECTID; anything less is not coverage;
 * exceptions - both ZR 12-10 exception checks returned ``not_applicable`` (``exceptions.py``).
 
 A frontage is ``wide`` / ``narrow`` only when the policy issues that class for every segment
@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from app.connectors.dcm_street_width_classifier import classify_street_width
+from app.connectors.dcm_street_width_classifier import WIDE_THRESHOLD_FT, classify_street_width
 from app.connectors.dcm_street_width_policy import (
     DECISION_NARROW,
     DECISION_WIDE,
@@ -37,13 +37,9 @@ from app.connectors.dcm_street_width_policy import (
 )
 from app.spatial.site_geometry.adjacency import mapped_width_ft
 from app.spatial.site_geometry.labels import SourcedValue, city_records_value, unknown_value
-from app.spatial.site_geometry.results import (
-    FRONTAGE_CONFIRMED,
-    STATUS_REFUSED,
-    SiteGeometry,
-    StreetFrontage,
-)
+from app.spatial.site_geometry.results import STATUS_REFUSED, SiteGeometry, StreetFrontage
 
+from .coverage import FrontageSegments, frontage_segments
 from .exceptions import (
     EXCEPTION_NOT_APPLICABLE,
     ExceptionCheck,
@@ -63,19 +59,31 @@ from .results import (
     SiteStreetWidths,
 )
 
-__all__ = ["FRONTAGE_NOT_CONFIRMED", "METHOD_VERSION", "derive_frontage_street_widths"]
+__all__ = [
+    "FRONTAGE_COVERAGE_NOT_ESTABLISHED",
+    "METHOD_VERSION",
+    "derive_frontage_street_widths",
+]
 
-METHOD_VERSION = "frontage-street-width-1"
+METHOD_VERSION = "frontage-street-width-2"
 
-# Attested frontage-match method when B-03 did not confirm the frontage. Any value other
-# than coverage_established fails the D-052 coverage precondition (R002); this one says why.
-FRONTAGE_NOT_CONFIRMED = "site_geometry_frontage_not_confirmed"
+# Attested frontage-match method when the coverage rule (coverage.py) does not hold. Any value
+# other than coverage_established fails the D-052 coverage precondition (R002).
+FRONTAGE_COVERAGE_NOT_ESTABLISHED = "frontage_coverage_not_established"
 
 _BOTH = (CLASS_WIDE, CLASS_NARROW)
 
 
 def _label(segment: MappedStreetSegment) -> str:
     return f"{segment.street_name or 'Unnamed street'} (City Map segment {segment.object_id})"
+
+
+def _source_version(source) -> str | None:
+    """The layer's last-edit date when known; else the retrieval time, labelled as such so it
+    is never mistaken for a dataset version (review 265 F4)."""
+    if source.dataset_version:
+        return source.dataset_version
+    return f"retrieved_at:{source.retrieved_at}" if source.retrieved_at else None
 
 
 def _reading(segment: MappedStreetSegment, coverage: bool, alternate: ExceptionCheck,
@@ -86,10 +94,10 @@ def _reading(segment: MappedStreetSegment, coverage: bool, alternate: ExceptionC
     source = segment.source
     preconditions = AttestedPreconditions(
         source_documented=source.documented,
-        source_version=source.dataset_version or source.retrieved_at,
+        source_version=_source_version(source),
         street_status_checked=segment.plain_mapped_street,
         frontage_match_method=(FRONTAGE_MATCH_COVERAGE_ESTABLISHED if coverage
-                               else FRONTAGE_NOT_CONFIRMED),
+                               else FRONTAGE_COVERAGE_NOT_ESTABLISHED),
         matched_geometry_ref=f"DCM OBJECTID={segment.object_id}",
         exceptions_checked=(alternate.status == EXCEPTION_NOT_APPLICABLE
                             and named.status == EXCEPTION_NOT_APPLICABLE),
@@ -106,7 +114,7 @@ def _width_reason(reading: SegmentWidthReading) -> str | None:
                 f"({bounds.interval_description})")
     if not bounds.one_sided:
         return (f"{_label(reading.segment)}: the mapped width {raw!r} allows widths on both "
-                f"sides of 75 ft ({bounds.interval_description})")
+                f"sides of {WIDE_THRESHOLD_FT:g} ft ({bounds.interval_description})")
     return None
 
 
@@ -130,18 +138,18 @@ def _listing(readings: tuple[SegmentWidthReading, ...]) -> str:
                      for r in readings)
 
 
-def _mapped_width(frontage: StreetFrontage, readings: tuple[SegmentWidthReading, ...],
-                  coverage: bool) -> SourcedValue:
+def _mapped_width(readings: tuple[SegmentWidthReading, ...],
+                  selection: FrontageSegments) -> SourcedValue:
     if not readings:
-        return unknown_value("ft", "No City Map street center line was matched to this "
-                             "frontage.")
+        reason = (selection.problems[0] if selection.problems
+                  else "No City Map street center line was matched to this frontage.")
+        return unknown_value("ft", reason)
     times = sorted({r.segment.source.retrieved_at or "unknown time" for r in readings})
     ids = ", ".join(str(r.segment.object_id) for r in readings)
     basis = (f"DCP Digital City Map mapped width (Streetwidth) of segment(s) {ids}, "
              f"retrieved {', '.join(times)}")
-    if not coverage:
-        return unknown_value("ft", f"The frontage on {frontage.street_name} is not "
-                             "confirmed.", basis)
+    if not selection.coverage:
+        return unknown_value("ft", selection.problems[0], basis)
     values = {mapped_width_ft(r.segment.mapped_width_raw) for r in readings}
     if len(values) == 1 and None not in values:
         return city_records_value(next(iter(values)), "ft", basis)
@@ -162,12 +170,10 @@ def _street_class(readings: tuple[SegmentWidthReading, ...]) -> str:
 
 
 def _reasons(frontage: StreetFrontage, readings: tuple[SegmentWidthReading, ...],
-             missing: list[int], clashing: list[int], coverage: bool,
+             selection: FrontageSegments, missing: list[int], clashing: list[int],
              alternate: ExceptionCheck) -> list[str]:
     """Every reason this frontage cannot take a class, in plain words (empty = none)."""
-    reasons: list[str] = []
-    if not frontage.segment_object_ids:
-        reasons.append("No City Map street center line was matched to this frontage.")
+    reasons = list(selection.problems)
     if missing:
         reasons.append("City Map segment(s) " + ", ".join(map(str, missing))
                        + " matched to this frontage are not in the street data given.")
@@ -175,12 +181,9 @@ def _reasons(frontage: StreetFrontage, readings: tuple[SegmentWidthReading, ...]
         reasons.append("The street data gives conflicting records for City Map segment(s) "
                        + ", ".join(map(str, clashing)) + ".")
     given = {r.segment.mapped_width_raw for r in readings} - {None}
-    if not missing and not clashing and given != set(frontage.mapped_width_raw):
+    if readings and not missing and not clashing and given != set(frontage.mapped_width_raw):
         reasons.append("The street data given differs from the data the frontage was "
                        "measured with.")
-    if not coverage:
-        reasons.append(f"The frontage on {frontage.street_name} is not confirmed: "
-                       f"{frontage.length.reason or 'see the site geometry'}")
     if alternate.status != EXCEPTION_NOT_APPLICABLE:
         reasons.append(f"{alternate.provision}: {alternate.reason}")
     for reading in readings:
@@ -192,17 +195,19 @@ def _reasons(frontage: StreetFrontage, readings: tuple[SegmentWidthReading, ...]
     return reasons
 
 
-def _frontage(frontage: StreetFrontage, by_id: dict[int, MappedStreetSegment],
-              conflicting: set[int], alternate: ExceptionCheck, exceptions: Zr1210Exceptions,
+def _frontage(frontage: StreetFrontage, site: SiteGeometry,
+              index: tuple[dict[int, MappedStreetSegment], set[int], list[MappedStreetSegment]],
+              alternate: ExceptionCheck, exceptions: Zr1210Exceptions,
               community_district: int | None) -> FrontageStreetWidth:
-    coverage = frontage.status == FRONTAGE_CONFIRMED
-    missing = [i for i in frontage.segment_object_ids if i not in by_id]
-    clashing = [i for i in frontage.segment_object_ids if i in conflicting]
-    segments = tuple(by_id[i] for i in frontage.segment_object_ids
+    by_id, conflicting, unidentified = index
+    selection = frontage_segments(frontage, site.edges, unidentified)
+    missing = [i for i in selection.read_ids if i not in by_id]
+    clashing = [i for i in selection.read_ids if i in conflicting]
+    segments = tuple(by_id[i] for i in selection.read_ids
                      if i in by_id and i not in conflicting)
-    readings = tuple(_reading(s, coverage, alternate, exceptions, community_district)
+    readings = tuple(_reading(s, selection.coverage, alternate, exceptions, community_district)
                      for s in segments)
-    reasons = _reasons(frontage, readings, missing, clashing, coverage, alternate)
+    reasons = _reasons(frontage, readings, selection, missing, clashing, alternate)
     street_class = CLASS_NEEDS_STREET_WIDTH if reasons else _street_class(readings)
     if street_class == CLASS_NEEDS_STREET_WIDTH and not reasons:
         reasons.extend(r.decision.classification_reason for r in readings)
@@ -215,7 +220,7 @@ def _frontage(frontage: StreetFrontage, by_id: dict[int, MappedStreetSegment],
         street_class=street_class,
         marker=MARKER_NEEDS_STREET_WIDTH if needs else None,
         possible_classes=_BOTH if needs else (street_class,),
-        mapped_width=_mapped_width(frontage, readings, coverage),
+        mapped_width=_mapped_width(readings, selection),
         readings=readings,
         exceptions=(alternate, *(r.named_street for r in readings)),
         reasons=tuple(dict.fromkeys(reasons)) if needs else (),
@@ -232,14 +237,20 @@ def _facts(segment: MappedStreetSegment) -> tuple:
 
 
 def _index(segments: Iterable[MappedStreetSegment]):
+    """Segments by OBJECTID, the OBJECTIDs with conflicting records, and the segments that
+    have no OBJECTID (surfaced, never dropped - review 265 F1)."""
     by_id: dict[int, MappedStreetSegment] = {}
     conflicting: set[int] = set()
+    unidentified: list[MappedStreetSegment] = []
     for segment in segments:
+        if segment.object_id is None:
+            unidentified.append(segment)
+            continue
         known = by_id.get(segment.object_id)
         if known is not None and _facts(known) != _facts(segment):
             conflicting.add(segment.object_id)
         by_id.setdefault(segment.object_id, segment)
-    return by_id, conflicting
+    return by_id, conflicting, unidentified
 
 
 def derive_frontage_street_widths(
@@ -255,12 +266,15 @@ def derive_frontage_street_widths(
     from (matched by OBJECTID). Never raises on bad data: gaps become "Needs street width".
     """
     exceptions = exceptions or default_exceptions()
-    by_id, conflicting = _index(segments)
+    index = _index(segments)
     alternate = exceptions.alternate_width(zoning)
     district = zoning.community_district if zoning else None
-    frontages = tuple(_frontage(f, by_id, conflicting, alternate, exceptions, district)
+    frontages = tuple(_frontage(f, site, index, alternate, exceptions, district)
                       for f in site.frontages)
     notes: list[str] = []
+    if index[2]:
+        notes.append(f"The street data has {len(index[2])} City Map segment(s) without a "
+                     "segment number (OBJECTID); no width is read from them.")
     if site.status == STATUS_REFUSED:
         notes.append(f"No frontage could be measured: {site.refusal_reason}")
     elif not frontages:

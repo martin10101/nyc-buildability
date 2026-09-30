@@ -11,11 +11,26 @@ from dataclasses import replace
 import pytest
 
 from app.spatial.frontage_street_width import (
+    CLASS_NARROW,
+    CLASS_NEEDS_STREET_WIDTH,
+    CLASS_WIDE,
+    MARKER_NEEDS_STREET_WIDTH,
+    STATUS_NEEDS_STREET_WIDTH,
     mapped_segments_from_pages,
+    street_widths_from_sources,
     zoning_context_from_pluto,
 )
+from app.spatial.site_geometry import derive_site_geometry_from_sources
 
-from ._northern_replay import DCM_FILE, MANIFEST, manifest_digest, replay_dcm_page, replay_pluto
+from ._northern_replay import (
+    DCM_ENVELOPE,
+    DCM_FILE,
+    MANIFEST,
+    manifest_digest,
+    replay_dcm_page,
+    replay_lot_geometry,
+    replay_pluto,
+)
 
 
 def _with_segment_change(page, target, **changes):
@@ -54,9 +69,25 @@ def test_special_street_status_is_not_a_plain_mapped_street(change, expected):
     assert by_id[11453].plain_mapped_street
 
 
-def test_segment_without_object_id_is_skipped():
-    page = _with_segment_change(replay_dcm_page(), 2821, object_id=None)
-    assert 2821 not in {s.object_id for s in mapped_segments_from_pages([page])}
+def test_segment_without_object_id_is_surfaced_and_fails_closed():
+    # Review 265 F1: a DCM feature with no OBJECTID is kept, never dropped, and the frontage
+    # it lies along gets "Needs street width" - on the recorded pack, end to end.
+    page = _with_segment_change(replay_dcm_page(), 53832, object_id=None)
+    segments = mapped_segments_from_pages([page])
+    unidentified = [s for s in segments if s.object_id is None]
+    assert [(s.street_name, s.mapped_width_raw) for s in unidentified] == [
+        ("Northern Boulevard", "100")]
+    site = derive_site_geometry_from_sources(
+        replay_lot_geometry(), [page], envelope=DCM_ENVELOPE, pluto_result=replay_pluto())
+    result = street_widths_from_sources(site, [page], pluto_result=replay_pluto())
+    northern = result.frontage("Northern Boulevard")
+    assert northern.street_class == CLASS_NEEDS_STREET_WIDTH
+    assert northern.marker == MARKER_NEEDS_STREET_WIDTH
+    assert northern.possible_classes == (CLASS_WIDE, CLASS_NARROW)
+    assert northern.readings == () and northern.mapped_width.value is None
+    assert result.frontage("215 Place").street_class == CLASS_NARROW
+    assert result.status == STATUS_NEEDS_STREET_WIDTH
+    assert "without a segment number" in result.notes[0]
 
 
 def test_zoning_context_from_the_recorded_pluto_row():

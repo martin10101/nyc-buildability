@@ -146,7 +146,8 @@ def test_without_the_zoning_record_both_frontages_need_street_width(site):
         # The recorded width is still reported as a sourced fact.
         assert frontage.mapped_width.label == LABEL_CITY_RECORDS
     assert result.frontage(NORTHERN).mapped_width.value == 100.0
-    # Without the layer metadata the source version falls back to the retrieval time.
+    # Without the layer metadata the source version falls back to the retrieval time,
+    # labelled so it is never mistaken for a dataset version.
     reading = result.frontage(NORTHERN).readings[0]
     assert reading.segment.source.dataset_version is None
-    assert reading.decision.source_version == "2026-09-30T06:10:28Z"
+    assert reading.decision.source_version == "retrieved_at:2026-09-30T06:10:28Z"

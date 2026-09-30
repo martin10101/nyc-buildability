@@ -54,7 +54,8 @@ def _street_status(segment: StreetSegment) -> tuple[bool, str | None]:
 def mapped_segments_from_pages(
     pages: Sequence[SegmentGeometryPage], *, layer_metadata: LayerMetadata | None = None
 ) -> tuple[MappedStreetSegment, ...]:
-    """Every segment on the pages, with the page it was read from as its source."""
+    """Every segment on the pages, with the page it was read from as its source. A segment
+    without an OBJECTID is kept (object_id None), never dropped."""
     version = layer_metadata.source_data_last_edited if layer_metadata else None
     segments = []
     for page in pages:
@@ -68,9 +69,7 @@ def mapped_segments_from_pages(
             raw_digest=page.raw_digest,
         )
         for entry in page.entries:
-            segment = entry.segment
-            if segment.object_id is None:
-                continue
+            segment = entry.segment  # kept even without an OBJECTID (coverage.py rule 3)
             plain, note = _street_status(segment)
             segments.append(MappedStreetSegment(
                 segment.object_id, segment.street_name, segment.borough,

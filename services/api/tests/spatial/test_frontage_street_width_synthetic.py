@@ -206,13 +206,15 @@ def test_bound_straddling_75_needs_street_width(raw):
 
 
 def test_range_width_through_site_geometry_needs_street_width():
-    # B-03 cannot place a street line for "60-75", so the frontage stays unconfirmed.
+    # B-03 cannot place a street line for "60-75": no lot line fronts it, the frontage stays
+    # unconfirmed and its segment is known only by street name, so no width is read.
     result = widths_for("60-75")
     (frontage,) = result.frontages
     assert frontage.frontage_status == FRONTAGE_UNCERTAIN
     assert_needs(frontage)
     assert any("not confirmed" in r for r in frontage.reasons)
-    assert any("both sides of 75 ft" in r for r in frontage.reasons)
+    assert any("by street name only" in r for r in frontage.reasons)
+    assert frontage.readings == ()
     assert frontage.mapped_width.value is None
 
 
@@ -254,10 +256,16 @@ def test_matched_segment_missing_from_the_street_data_needs_street_width():
 
 def test_frontage_without_segment_numbers_needs_street_width():
     site = site_with(centerline("Main Street", None, "100", SOUTH))
-    result = derive_frontage_street_widths(site, [], R6)
+    result = derive_frontage_street_widths(site, [segment(None, "Main Street", "100")], R6)
     (frontage,) = result.frontages
+    assert frontage.frontage_status == FRONTAGE_CONFIRMED
     assert_needs(frontage)
-    assert frontage.reasons[0] == "No City Map street center line was matched to this frontage."
+    assert frontage.readings == ()
+    assert frontage.reasons[0] == ("No City Map street center line with a segment number "
+                                   "(OBJECTID) was matched to this frontage.")
+    assert "without a segment number" in frontage.reasons[1]
+    assert frontage.mapped_width.value is None
+    assert "1 City Map segment(s) without a segment number" in result.notes[0]
 
 
 def test_refused_site_geometry_needs_street_width():
@@ -298,16 +306,127 @@ def test_same_segment_read_twice_with_the_same_facts_is_not_a_conflict():
 # --------------------------------------------------------------------------- coverage, status
 
 
-def test_unconfirmed_frontage_never_takes_a_class():
-    # The lot line sits 8 ft off the street line: B-03 leaves the frontage uncertain.
+def test_lot_line_off_the_street_line_is_a_name_only_match():
+    # The lot line sits 8 ft off the street line: no lot line fronts the street, so B-03
+    # lists the segment by street name only and no width is read.
     site = site_with(centerline("Main Street", 1, "100", SOUTH, extra_offset=8.0))
     result = derive_frontage_street_widths(site, [segment(1, "Main Street", "100")], R6)
     (frontage,) = result.frontages
     assert frontage.frontage_status == FRONTAGE_UNCERTAIN
     assert_needs(frontage)
-    assert frontage.readings[0].decision.decision_state == DECISION_UNRESOLVED
-    assert "frontage coverage not established" in (
-        frontage.readings[0].decision.classification_reason)
+    assert frontage.readings == ()
+    assert any("by street name only" in r for r in frontage.reasons)
+
+
+def test_unconfirmed_frontage_reads_its_segment_but_never_takes_a_class():
+    # The south lot line fronts Main Street (segment 1) exactly; the east lot line may also
+    # face Main Street (segment 2, 8 ft off), so B-03 leaves the frontage unconfirmed.
+    east = ((25.0, 0.0), (25.0, 100.0))
+    site = site_with(centerline("Main Street", 1, "100", SOUTH),
+                     centerline("Main Street", 2, "100", east, extra_offset=8.0))
+    (street,) = site.frontages
+    assert street.status == FRONTAGE_UNCERTAIN and street.segment_object_ids == (1,)
+    result = derive_frontage_street_widths(
+        site, [segment(1, "Main Street", "100"), segment(2, "Main Street", "100")], R6)
+    (frontage,) = result.frontages
+    assert_needs(frontage)
+    (reading,) = frontage.readings
+    assert reading.decision.decision_state == DECISION_UNRESOLVED
+    assert "frontage coverage not established" in reading.decision.classification_reason
+    assert any("not confirmed" in r for r in frontage.reasons)
+    assert frontage.mapped_width.value is None
+
+
+def test_partial_street_line_along_the_lot_line_needs_street_width():
+    # The center line stops half-way along the lot line; the other half has no street.
+    half = StreetCenterline("Main Street", "Main Street", 1, (((-300.0, -30.0), (12.5, -30.0)),),
+                            "60", True)
+    site = site_with(half)
+    (street,) = site.frontages
+    assert street.status == FRONTAGE_UNCERTAIN
+    result = derive_frontage_street_widths(site, [segment(1, "Main Street", "60")], R6)
+    (frontage,) = result.frontages
+    assert_needs(frontage)
+    assert frontage.readings == ()
+    assert any("not confirmed" in r for r in frontage.reasons)
+
+
+# ------------------------------------------------ review 265 F1: segments without an OBJECTID
+
+
+def test_segment_matched_by_street_name_only_never_gives_a_width():
+    # P4: the lot line lies on a 60-ft Main Street center line WITHOUT an OBJECTID; a 100-ft
+    # Main Street segment (7) lies 500 ft away. B-03 lists segment 7 by street name.
+    near = centerline("Main Street", None, "60", SOUTH)
+    far = StreetCenterline("Main Street", "Main Street", 7,
+                           (((-300.0, -500.0), (300.0, -500.0)),), "100", True)
+    site = site_with(near, far)
+    (street,) = site.frontages
+    assert street.status == FRONTAGE_CONFIRMED and street.segment_object_ids == (7,)
+    records = [segment(None, "Main Street", "60"), segment(7, "Main Street", "100")]
+    for given in (records, records[1:]):  # with or without the unidentified record
+        result = derive_frontage_street_widths(site, given, R6)
+        (frontage,) = result.frontages
+        assert_needs(frontage)
+        assert result.status == STATUS_NEEDS_STREET_WIDTH
+        assert frontage.readings == ()
+        assert frontage.mapped_width.value is None
+        assert frontage.mapped_width.label == LABEL_UNKNOWN
+        assert "by street name only" in frontage.reasons[0]
+
+
+def test_part_of_the_frontage_on_a_segment_without_objectid_needs_street_width():
+    # P1: west half on a 60-ft Main Street center line WITHOUT an OBJECTID, east half on a
+    # 100-ft segment (2). B-03 confirms the frontage and lists only segment 2.
+    long_lot = [(0.0, 0.0), (100.0, 0.0), (100.0, 100.0), (0.0, 100.0)]
+    west = StreetCenterline("Main Street", "Main Street", None,
+                            (((-300.0, -30.0), (50.0, -30.0)),), "60", True)
+    east = StreetCenterline("Main Street", "Main Street", 2,
+                            (((50.0, -50.0), (400.0, -50.0)),), "100", True)
+    site = site_with(west, east, points=long_lot)
+    (street,) = site.frontages
+    assert street.status == FRONTAGE_CONFIRMED and street.segment_object_ids == (2,)
+    result = derive_frontage_street_widths(
+        site, [segment(None, "Main Street", "60"), segment(2, "Main Street", "100")], R6)
+    (frontage,) = result.frontages
+    assert_needs(frontage)
+    (reading,) = frontage.readings
+    assert reading.decision.decision_state == DECISION_UNRESOLVED
+    assert "frontage coverage not established" in reading.decision.classification_reason
+    assert any("cannot all be identified" in r for r in frontage.reasons)
+    assert frontage.mapped_width.value is None
+
+
+def test_unnamed_segment_without_objectid_counts_against_every_frontage():
+    site = site_with(centerline("Main Street", 1, "100", SOUTH))
+    result = derive_frontage_street_widths(
+        site, [segment(1, "Main Street", "100"), segment(None, None, "60")], R6)
+    assert_needs(result.frontages[0])
+
+
+def test_other_street_without_objectid_does_not_block_this_frontage():
+    site = site_with(centerline("Main Street", 1, "100", SOUTH))
+    result = derive_frontage_street_widths(
+        site, [segment(1, "Main Street", "100"), segment(None, "Other Street", "60")], R6)
+    assert result.frontages[0].street_class == CLASS_WIDE
+    assert "without a segment number" in result.notes[0]
+
+
+def test_same_class_segments_along_one_frontage_keep_the_class():
+    # 75 ft and 100 ft along one frontage: every segment is wide, so the class is WIDE, but
+    # there is no single mapped width.
+    long_lot = [(0.0, 0.0), (100.0, 0.0), (100.0, 100.0), (0.0, 100.0)]
+    west = StreetCenterline("Main Street", "Main Street", 1,
+                            (((-300.0, -37.5), (50.0, -37.5)),), "75", True)
+    east = StreetCenterline("Main Street", "Main Street", 2,
+                            (((50.0, -50.0), (400.0, -50.0)),), "100", True)
+    site = site_with(west, east, points=long_lot)
+    result = derive_frontage_street_widths(
+        site, [segment(1, "Main Street", "75"), segment(2, "Main Street", "100")], R6)
+    (frontage,) = result.frontages
+    assert frontage.street_class == CLASS_WIDE
+    assert frontage.mapped_width.value is None
+    assert "changes along this frontage" in frontage.mapped_width.reason
 
 
 def test_width_changing_along_one_frontage_needs_street_width():
@@ -360,6 +479,9 @@ def test_exceptions_not_checked_without_zoning_needs_street_width():
     alternate = frontage.exceptions[0]
     assert alternate.status == EXCEPTION_NOT_CHECKED
     assert "zoning districts are not known" in alternate.reason
+    decision = frontage.readings[0].decision
+    assert decision.decision_state == DECISION_UNRESOLVED
+    assert "not checked (D-052-R001)" in decision.classification_reason
     # The mapped width itself is still a sourced fact.
     assert frontage.mapped_width.value == 100.0
     assert frontage.mapped_width.label == LABEL_CITY_RECORDS
@@ -373,6 +495,9 @@ def test_alternate_width_district_needs_street_width(district):
     assert_needs(frontage)
     assert frontage.exceptions[0].status == EXCEPTION_MAY_APPLY
     assert frontage.exceptions[0].provision_id == "zr-12-10-c-district-alternate-width"
+    decision = frontage.readings[0].decision
+    assert decision.decision_state == DECISION_UNRESOLVED
+    assert "not checked (D-052-R001)" in decision.classification_reason
 
 
 def test_named_street_in_manhattan_needs_street_width_until_resolved():
@@ -382,6 +507,9 @@ def test_named_street_in_manhattan_needs_street_width_until_resolved():
     named = frontage.readings[0].named_street
     assert named.status == EXCEPTION_MAY_APPLY
     assert "community district" in named.reason
+    decision = frontage.readings[0].decision
+    assert decision.decision_state == DECISION_UNRESOLVED
+    assert "not checked (D-052-R001)" in decision.classification_reason
 
 
 def test_named_street_in_another_community_district_is_cleared():
@@ -398,6 +526,7 @@ def test_named_street_in_its_community_district_needs_street_width():
     (frontage,) = result.frontages
     assert_needs(frontage)
     assert frontage.readings[0].named_street.provision_id == "zr-12-10-named-street-wide"
+    assert frontage.readings[0].decision.decision_state == DECISION_UNRESOLVED
 
 
 def test_same_street_name_in_another_borough_is_not_a_named_street():

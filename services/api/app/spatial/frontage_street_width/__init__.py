@@ -7,7 +7,8 @@ source, dataset and retrieval time. A width that is unknown, unresolved or not y
 against the ZR 12-10 exceptions is marked "Needs street width" with both classes possible -
 never a silent narrow default.
 
-Modules: ``inputs`` (plain inputs) · ``exceptions`` (ZR 12-10 exception checks through the
+Modules: ``inputs`` (plain inputs) · ``coverage`` (the stated rule for which segments a
+frontage's width is read from) · ``exceptions`` (ZR 12-10 exception checks through the
 accepted matcher) · ``derive`` (pure entry point) · ``results`` · ``adapters`` (from
 connector results). Nothing calls this package yet; a later Lane A/C task wires it and does
 any result doubling. Everything here is DRAFT until qualified review (D-052-R007).
@@ -20,7 +21,12 @@ from .adapters import (
     street_widths_from_sources,
     zoning_context_from_pluto,
 )
-from .derive import FRONTAGE_NOT_CONFIRMED, METHOD_VERSION, derive_frontage_street_widths
+from .coverage import FrontageSegments, frontage_segments
+from .derive import (
+    FRONTAGE_COVERAGE_NOT_ESTABLISHED,
+    METHOD_VERSION,
+    derive_frontage_street_widths,
+)
 from .exceptions import (
     EXCEPTION_MAY_APPLY,
     EXCEPTION_NOT_APPLICABLE,
@@ -49,12 +55,13 @@ __all__ = [
     "EXCEPTION_MAY_APPLY",
     "EXCEPTION_NOT_APPLICABLE",
     "EXCEPTION_NOT_CHECKED",
-    "FRONTAGE_NOT_CONFIRMED",
+    "FRONTAGE_COVERAGE_NOT_ESTABLISHED",
     "MARKER_NEEDS_STREET_WIDTH",
     "METHOD_VERSION",
     "STATUS_COMPLETE",
     "STATUS_NEEDS_STREET_WIDTH",
     "ExceptionCheck",
+    "FrontageSegments",
     "FrontageStreetWidth",
     "LotZoningContext",
     "MappedStreetSegment",
@@ -64,6 +71,7 @@ __all__ = [
     "Zr1210Exceptions",
     "default_exceptions",
     "derive_frontage_street_widths",
+    "frontage_segments",
     "mapped_segments_from_pages",
     "street_widths_from_sources",
     "zoning_context_from_pluto",
