@@ -1,0 +1,61 @@
+{
+  "task_id": "M5-T125",
+  "title": "Wave 0 (D-090) contracts v1 (study, site facts with source labels, option/add-on selection, results with three answers + geometry, report model, export record) + benchmark fixtures (215-16 Northern expected values with sources; 298 Wallabout from recorded fixtures; pilot placeholder)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Prompt 0 step 5, additive only: new schemas under packages/contracts/schemas/v1 with valid/invalid fixtures, validated by the existing validator and typegen/bundle drift checks; no existing contract changed; benchmark values each carry their source; no live city calls.",
+  "business_reason": "Lanes build against shared contracts and fixtures from day one; checks C-1..C-12 need a machine-readable benchmark.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T162"
+  ],
+  "allowed_paths": [
+    "packages/contracts/schemas/v1",
+    "packages/contracts/fixtures",
+    "packages/contracts/generated",
+    "services/api/app/_contract_schemas",
+    "apps/web/src/lib/contract.ts",
+    "project-control/reports/M5-T125-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "editing or deleting any EXISTING schema, fixture or generated file (additive only)",
+    "live city calls",
+    "marking any value reviewed"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-30T05:21:37.806883+00:00",
+  "updated_at": "2026-09-30T05:21:38.213622+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R002",
+        "D-090-R003",
+        "D-090-R004",
+        "D-090-R009",
+        "D-090-R010"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-30T05:21:37.807054+00:00"
+}

@@ -1,0 +1,58 @@
+{
+  "task_id": "M0-T162",
+  "title": "Wave 0 (D-090) lane bootstrap docs: file placement, DOCS_INDEX, CODE_MAP, evidence-only RECONCILIATION, derived lane plan, lane status/requests/prompts, queues A-E, ESTIMATE (docs/lanes/** only)",
+  "task_type": "research",
+  "milestone_id": "M0",
+  "objective": "Prompt 0 steps 0-3, 6, 7 and the docs half of step 4, from the product plan and the competitor review only (D-090-R005): every reconciliation row cites file:line, a CI run or 'unverified', never a doc claim; the set-aside list names a flag-based method per item; the derived lane plan is labeled derived. New files only under docs/ (the two plan docs) and docs/lanes/**.",
+  "business_reason": "Turns the 2026-09-28 plan into a safe parallel build; the owner's GO depends on it.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/PRODUCT_PLAN_CURRENT_2026-09-28.md",
+    "docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md",
+    "docs/lanes",
+    "project-control/reports/M0-T162-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "existing files other than the two plan docs and docs/lanes/LOOP_LAUNCH_PROMPTS.md placed verbatim",
+    "docs/lanes/OWNERSHIP.yaml (M0-T164)",
+    "product code",
+    "competitor PDF or other non-markdown competitor material"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "progress-auditor",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-30T05:21:36.213858+00:00",
+  "updated_at": "2026-09-30T05:21:36.538656+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R001",
+        "D-090-R003",
+        "D-090-R004",
+        "D-090-R005",
+        "D-090-R006",
+        "D-090-R008",
+        "D-090-R011",
+        "D-090-R014"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-30T05:21:36.214068+00:00"
+}

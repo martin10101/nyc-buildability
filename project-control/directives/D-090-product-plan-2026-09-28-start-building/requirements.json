@@ -1,0 +1,462 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-090",
+ "version": 1,
+ "requirement_count": 14,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-30T05:18:52+00:00",
+ "requirements": [
+  {
+   "id": "D-090-R001",
+   "text": "The product plan docs/PRODUCT_PLAN_CURRENT_2026-09-28.md (SHA-256 0e1cb834\u2026544f) is the single current product plan: where any repository document differs on product scope, flow, results, add-ons, measurements, outputs, checks or task order, the plan wins (plan header 'Governs'); the documents it consolidates are kept only as history. Process authority (ledger, gates, ADR-005/ADR-006 tiers) is unchanged.",
+   "source_ref": "source-001.md#owner-message-1-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M0-T162"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "docs/lanes/DOCS_INDEX.md classifies every doc as current/reference/superseded/conflicts-with-plan against the plan; no lane queue item cites a superseded or conflicting instruction.",
+   "required_evidence": "DOCS_INDEX.md + queues cite plan sections.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R002",
+   "text": "The competitor review docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md (SHA-256 893fbe9f\u2026bb53) is the benchmark: 215-16 Northern Blvd (BBL 4073340070) expected values (\u00a7A) and checks C-1..C-12 (\u00a7D) must all pass on that lot before results are shown to an architect (plan \u00a79a item 6).",
+   "source_ref": "source-001.md#owner-message-1-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T125"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "A recorded benchmark fixture with each expected value and its source, and automated checks C-1..C-12 wired into CI as the engine/outputs land.",
+   "required_evidence": "Benchmark fixture path + CI job running the checks.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R003",
+   "text": "Start building by running the owner's Wave 0 bootstrap (docs/lanes/LOOP_LAUNCH_PROMPTS.md Prompt 0, SHA-256 b38162fc\u2026c1fd1): place the files; docs index; code map; evidence-only reconciliation (tasks M1-00..M1-27, M2-00..M2-08, L-1..L-11, P2-1; checks C-1..C-12; \u00a75b paths, \u00a78a groups, \u00a711b rows; set-aside list); ownership + path checker + lane flags + lane status/queue/prompt files + worktree script; contracts v1 + benchmark fixtures; queues; estimate; small PRs.",
+   "source_ref": "source-001.md#pasted-loop-launch-prompts",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M0-T162",
+     "M0-T164",
+     "M5-T125"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Each Wave 0 output exists at its Prompt 0 path and passes CI; reconciliation rows cite file:line, CI run or 'unverified', never doc claims.",
+   "required_evidence": "The Wave 0 PRs and their CI runs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R004",
+   "text": "Wave 0 change scope (Prompt 0): new files only under docs/lanes/**, scripts/lanes/** and new contract files in packages/contracts; one additive CI step; lane flags in config default OFF in production. No product behavior change, no deletion, no edit to an existing feature.",
+   "source_ref": "source-001.md#pasted-loop-launch-prompts",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M0-T162",
+     "M0-T164",
+     "M5-T125"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Diff review of every Wave 0 PR against this allowlist (the lane path checker plus reviewer G3).",
+   "required_evidence": "PR diffs + reviewer reports.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R005",
+   "text": "Work from the product plan and the competitor review only: PARALLEL_BUILD_PLAN_LANES_2026-09-28.md and CC_REEVALUATION_PROMPT.md do not exist. Where Prompt 0 relies on them (lane ownership, the contracts list of its \u00a75, waves), the integrator derives the content from the product plan and the owner's lane prompts and labels it 'derived \u2014 owner may amend'.",
+   "source_ref": "source-001.md#owner-message-2-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M0-T162"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "docs/lanes/PARALLEL_BUILD_PLAN.md exists, is labeled derived, and cites the plan section behind each rule.",
+   "required_evidence": "The derived lane plan file.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R006",
+   "text": "Tell the owner which decisions are needed (message 2), in plain English (D-064), and end Wave 0 with ONE owner message: reconciliation summary, doc conflicts, blocking holds, owner questions (real decisions only), estimate, go/no-go results, and the three asks (GO?; reviewer available and hours per week?; daily spending limit for loops and CI?).",
+   "source_ref": "source-001.md#owner-message-2-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M0-T162"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Owner-facing replies in plain words.",
+   "required_evidence": "The in-channel replies and docs/lanes/status/C.md go/no-go record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R007",
+   "text": "HOLD: lane loops/producers for Waves 1-3 start only after the owner's explicit GO to the Wave 0 go/no-go message.",
+   "source_ref": "source-001.md#pasted-loop-launch-prompts",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "No lane task is claimed before the GO is captured as an amendment.",
+   "required_evidence": "Ledger history.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R008",
+   "text": "Never decide owner questions: Q1 (pilot lot and verifier), Q4 (which property screen), Q5 (scenario endpoint), Q7 (auth/exposure timing), Q8 (section view vs the expansion hold), Q10 (mockup review, property comparison), Q12 (reviewer licensing/time), Q13 pricing; nor the authorization of PRs #243-#246. Surface them with a recommendation.",
+   "source_ref": "source-001.md#pasted-loop-launch-prompts",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M0-T162"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Owner questions listed in the go/no-go message; no code path assumes an answer.",
+   "required_evidence": "Queues mark dependent items 'blocked by owner decision'.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R009",
+   "text": "No live city API calls in Wave 0; use recorded fixtures. After GO only Lane B calls live city data, recording fixtures with provenance (dataset, query, date).",
+   "source_ref": "source-001.md#pasted-loop-launch-prompts",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M0-T164",
+     "M5-T125"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Wave 0 PRs contain no live-call code paths or network tests; fixtures carry provenance.",
+   "required_evidence": "PR diffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R010",
+   "text": "AI drafts rule tables; only a qualified reviewer marks them reviewed; results from unreviewed tables stay behind flags or show 'Not available' with the reason (plan \u00a75, \u00a76, \u00a79a; Section 20 G6 unchanged).",
+   "source_ref": "source-001.md#pasted-loop-launch-prompts",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T125"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "No rule status change to reviewed/published without G6 evidence.",
+   "required_evidence": "Ledger gates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R011",
+   "text": "Set aside, never delete: anything the plan sets aside (coordinate drawing in real-property workflows, example-site defaults, scenario endpoint, the duplicate property screen, zoning-lot evidence features beyond \u00a78) goes behind a flag unless the owner explicitly approves a deletion.",
+   "source_ref": "source-001.md#pasted-loop-launch-prompts",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M0-T162"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Set-aside list in RECONCILIATION.md names a flag-based method per item; PR diffs show no deletions of set-aside features.",
+   "required_evidence": "RECONCILIATION.md + PR diffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R012",
+   "text": "Every existing stop stays in force: Tier D / Section 20 hard stops; PR #241 never merged; owner holds (expansion \u00a72 minus the D-040/D-076/D-082/D-087 releases); owner-typed loop commissioning and canary approval (B-026, D-088); never pass model: on a dispatch; DCVs never run the 16 h suite; dependency security with no agent waiver; no local npm/npx/node; producers do not read or write project-control/; producer never verifies; UI work gets a human walkthrough.",
+   "source_ref": "source-001.md#pasted-resume-block",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M0-T163",
+     "M0-T164"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Every dispatch and PR checked against this list.",
+   "required_evidence": "Dispatch prompts + ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R013",
+   "text": "Authorization (message 2): the owner granted gh access in this cloud session. It covers the orchestrator's Tier A actions (task/control branch pushes, PRs, CI dispatch, ordinary merges after required checks) under ADR-005/ADR-006; it does not extend to Tier D, force-push, or merging PR #241.",
+   "source_ref": "source-001.md#owner-message-2-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "gh actions limited to Tier A/B.",
+   "required_evidence": "gh audit via PR/commit history.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R014",
+   "text": "Do not commit competitor PDF or other non-markdown competitor material; our notes (the review) are enough.",
+   "source_ref": "source-001.md#pasted-loop-launch-prompts",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M0-T162"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Wave 0 PR diffs contain no competitor PDF/binary.",
+   "required_evidence": "PR diffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

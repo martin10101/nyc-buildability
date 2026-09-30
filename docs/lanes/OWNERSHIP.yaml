@@ -1,0 +1,3 @@
+# docs/lanes/OWNERSHIP.yaml - placeholder seeded at the M0-T164 contract seam (D-090).
+# The lane ownership map (lanes A-E, hot files owned by Lane C) lands in the M0-T164 PR.
+lanes: {}

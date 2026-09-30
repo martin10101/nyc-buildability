@@ -1,0 +1,61 @@
+{
+  "task_id": "M0-T164",
+  "title": "Wave 0 (D-090) lane guardrails: docs/lanes/OWNERSHIP.yaml, scripts/lanes/check_lane_paths + tests + one additive CI step, lane flags (default OFF), scripts/lanes/setup_worktrees.sh (never pushes)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "Prompt 0 step 4 (code half): every tracked file maps to exactly one lane A-E (orphans listed); the checker fails a PR from a lane-<x>/ branch that touches files outside lane x; stdlib-only with unit tests; one additive CI step; one config flag per lane, default OFF in production, read nowhere yet; worktree script creates ../nyc-lane-a..e with ports API 8101-8105 / web 3101-3105 and never pushes.",
+  "business_reason": "Parallel lanes must not collide; the checker enforces ownership mechanically.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T162"
+  ],
+  "allowed_paths": [
+    "docs/lanes/OWNERSHIP.yaml",
+    "scripts/lanes",
+    "services/api/app/config.py",
+    "services/api/tests/test_lane_flags.py",
+    ".github/workflows/ci.yml",
+    "project-control/reports/M0-T164-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "any behavior change",
+    "reading a lane flag anywhere yet",
+    "git push from any script",
+    "ci.yml edits beyond one additive step"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-30T05:21:37.011414+00:00",
+  "updated_at": "2026-09-30T05:21:37.377833+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R003",
+        "D-090-R004",
+        "D-090-R009",
+        "D-090-R012"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-30T05:21:37.011663+00:00"
+}

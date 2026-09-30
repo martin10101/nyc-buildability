@@ -1156,7 +1156,24 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-089-overnight-task-after-task/manifest.json"
+  },
+  {
+   "directive_id": "D-090",
+   "slug": "product-plan-2026-09-28-start-building",
+   "title": "Owner 2026-09-30 ('Read PRODUCT_PLAN_CURRENT_2026-09-28.md and COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md, then start building' + 'Work from the product plan and competitor review only. Tell me what decisions you need from me and continue'): the 2026-09-28 product plan governs product scope; 215-16 Northern is the benchmark (C-1..C-12); run the Wave 0 lane bootstrap (Prompt 0) with a derived lane plan, stop for the owner's GO; NO stop condition lifted",
+   "status": "active",
+   "issued_at": "2026-09-30",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T162",
+    "M0-T163",
+    "M0-T164",
+    "M5-T125"
+   ],
+   "manifest": "D-090-product-plan-2026-09-28-start-building/manifest.json"
   }
  ],
- "updated_at": "2026-09-25T04:45:26+00:00"
+ "updated_at": "2026-09-30T05:18:52+00:00"
 }

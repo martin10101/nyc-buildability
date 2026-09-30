@@ -1,0 +1,51 @@
+{
+  "task_id": "M0-T163",
+  "title": "Dependency-security repair: brace-expansion override + lock 1.1.18 -> 1.1.21 (GHSA-q2hr-2g5m-vwhr, GHSA-qhr7-859c-m2p7, GHSA-6j4f-fj2g-mc7p; published 2026-09-29) - no waiver",
+  "task_type": "frontend",
+  "milestone_id": "M0",
+  "objective": "Restore the failing web-dependency-security gate on candidate/D-024-mrl-option-b (run 36669145290): bump the exact-pin override brace-expansion 1.1.18 -> 1.1.21 in apps/web/package.json and the two lock entries (node_modules/brace-expansion; node_modules/@typescript-eslint/typescript-estree/node_modules/minimatch/node_modules/brace-expansion) version/resolved/integrity to the registry values for 1.1.21 (published 2026-09-14T21:59:28Z, >= 7 days; integrity sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==; dependencies unchanged). 1.1.21 is the first version outside all three advisories (<1.1.21, <1.1.20, <1.1.19). Minimal targeted edit (M0-T071 precedent), no npm locally; CI proves npm ci + audit + age gate.",
+  "business_reason": "Every branch's CI is red since the advisories were published 2026-09-29; Wave 0 PRs need a green baseline.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "project-control/reports/M0-T163-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "npm install/npx/node locally",
+    "any lock entry other than the two brace-expansion entries",
+    "any other override value"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "security-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-30T05:21:35.488163+00:00",
+  "updated_at": "2026-09-30T05:21:35.789064+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R012"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-30T05:21:35.488337+00:00"
+}

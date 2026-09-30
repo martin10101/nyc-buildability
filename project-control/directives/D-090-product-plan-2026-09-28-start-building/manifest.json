@@ -1,0 +1,79 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-090",
+ "version": 1,
+ "slug": "product-plan-2026-09-28-start-building",
+ "title": "Owner 2026-09-30 ('Read PRODUCT_PLAN_CURRENT_2026-09-28.md and COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md, then start building' + 'Work from the product plan and competitor review only. Tell me what decisions you need from me and continue'): the 2026-09-28 product plan governs product scope; 215-16 Northern is the benchmark (C-1..C-12); run the Wave 0 lane bootstrap (Prompt 0) with a derived lane plan, stop for the owner's GO; NO stop condition lifted",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-30",
+ "captured_at": "2026-09-30T05:18:52+00:00",
+ "created_at": "2026-09-30T05:18:52+00:00",
+ "updated_at": "2026-09-30T05:18:52+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed both messages in-channel: message 1 instructs reading the plan and competitor review and starting to build (with the owner's pasted Prompt 0); message 2 confirms the two other inbox files do not exist, grants gh access, and instructs working from the plan and the review only and continuing. Wave 0 ends at the owner's GO (R007)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-090-R001",
+  "D-090-R002",
+  "D-090-R003",
+  "D-090-R004",
+  "D-090-R005",
+  "D-090-R006",
+  "D-090-R007",
+  "D-090-R008",
+  "D-090-R009",
+  "D-090-R010",
+  "D-090-R011",
+  "D-090-R012",
+  "D-090-R013",
+  "D-090-R014"
+ ],
+ "requirements_id_digest_sha256": "3b38493e41eab7fa98c1140ad664ee1581d2437b2046775c4d207029662cd954",
+ "requirements_content_digest_sha256": "80a30cf16d20f2091577077b45f5e70bc52ccf7237db8633e9e749c591cb1d63",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-30T05:18:52+00:00",
+   "content_digest_sha256": "a7f497c2f5703f20aca19dc30daa045ea333fdc58926521de319ae003a0d32d9"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M0-T162",
+  "M0-T163",
+  "M0-T164",
+  "M5-T125"
+ ],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "product_plan_and_wave0_bootstrap",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "Wave 0 per Prompt 0: new files under docs/lanes/**, scripts/lanes/**, new contract files in packages/contracts, one additive CI step, lane flags default off; the dependency-security repair needed for a green baseline; ledger/directive records by the orchestrator",
+  "forbidden": "product behavior changes, deletions or edits to existing features in Wave 0; starting lane work before the owner's GO; deciding owner questions; live city API calls in Wave 0; marking rules reviewed; any Tier D action; merging PR #241; lifting any owner hold; running owner-typed commissioning; passing model: on a dispatch; any dependency-security waiver; committing competitor PDF material"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-30T05:18:52+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before the Wave 0 commits. frozen_baseline_sha = 2283c178 (integration head at capture; origin/main d8b3899f). Session: Claude Code cloud sandbox, fresh clone, gh authenticated as the owner after message 2. Relation: D-045's rule-coverage wave order (A1->A2+B2->A3->C->M->A4) differs from the plan's \u00a712a waves; the plan's header says it wins where anything differs - surfaced to the owner for confirmation, D-045 not superseded by the orchestrator. D-088/D-089 stay active; their owner-typed commissioning stays owner-typed."
+  }
+ ]
+}
