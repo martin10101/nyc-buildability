@@ -1329,5 +1329,30 @@ class ProductionChildAccountingTests(RunnerTestBase):
         self.assertTrue(result.ok, result.checkpoint_error)
 
 
+class NativeToolsPresenceD4Tests(RunnerTestBase):
+    """M0-T126 (defect D4): native_tools_guidance_present records sentinel
+    PRESENCE on the dispatched bytes for fresh, old-contract, and pre-seeded
+    prompts (three shapes) - not the degenerate 'appended by this call' flag that
+    the live journey recorded false despite the guidance being present."""
+
+    def _present(self, prompt: str) -> bool:
+        return self.run_fake("normal", prompt=prompt).native_tools_guidance_present
+
+    def test_fresh_prompt_reports_present(self) -> None:
+        # Removal sensitivity: reverting to `SENTINEL not in prompt` (computed
+        # after with_checkpoint_contract folds the sentinel in) would report
+        # False here on a fresh prompt - this assertion catches that.
+        self.assertTrue(self._present("do the work"))
+
+    def test_old_contract_prompt_reports_present(self) -> None:
+        old = f"--- {cr.CHECKPOINT_CONTRACT_SENTINEL} ---\nan old pre-R294 contract body"
+        self.assertNotIn(cr.NATIVE_TOOLS_SENTINEL, old)
+        self.assertTrue(self._present(old))
+
+    def test_pre_seeded_prompt_reports_present(self) -> None:
+        pre = f"work first\n--- {cr.NATIVE_TOOLS_SENTINEL} ---\nnative guidance already here"
+        self.assertTrue(self._present(pre))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

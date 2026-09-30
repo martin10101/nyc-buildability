@@ -1,0 +1,14 @@
+{
+  "provenance": "Derived (M0-T126, D-024-R372) from the byte-for-byte PRESERVED copies of the Amendment-20/21 live journey-2 evidence: audit.jsonl (53 records, head sequence 53, digest 8b6cb79a...) and the worker transcript 0835bb80-0f2e-451f-882d-0b37df6d77d5.jsonl (97 events). The live runtime dir and journal were NEVER opened (R374/R375); these are scrubbed, secrets-free numeric facts only (repo is PUBLIC; scanned: no sk-/ghp- tokens).",
+  "turns_consumed": 12,
+  "turns_note": "12 distinct assistant message ids = 12/12 max_turns; all 36 assistant events stop_reason tool_use; no structured checkpoint emitted (counted stop no_valid_checkpoint).",
+  "live_context_tokens": 72546,
+  "live_context_components": {"input_tokens": 2, "cache_creation_input_tokens": 3962, "cache_read_input_tokens": 67935, "output_tokens": 647},
+  "cumulative_context_tokens_recorded": 694251,
+  "cumulative_context_seq": 50,
+  "rotation_figure": 604772,
+  "rotation_figure_seq": 21,
+  "prior_same_class_stops": [{"seq": 8, "cumulative": 622599}, {"seq": 40, "cumulative": 640224}],
+  "ceiling": 400000,
+  "d5_claim": "The 400k ceiling consumed the CUMULATIVE 694251 while the true LIVE context was 72546; every unit of >= ~7 tool-turns then exceeded 400k cumulative at ~60-72k live, defeating session continuity after nearly every unit."
+}

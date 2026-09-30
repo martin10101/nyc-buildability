@@ -433,11 +433,22 @@ class DecisionRoutingTests(LoopTestBase):
         self.assertEqual(self.machine.current_state, sm.COMPLETE)
         self.assertFalse(result.forwarded)
 
-    def test_rotate_session_prepares_rotation(self) -> None:
-        _, result = self.route(decision(decision="ROTATE_SESSION", next_claude_prompt="",
-                                        rotation_reason="context pressure at a checkpoint"))
+    def test_rotate_session_routes_through_the_seam_not_prepare_rotation(self) -> None:
+        # M0-T126 (D-024-R372; defect D8): a legal ROTATE_SESSION verdict is
+        # routed through the EXISTING rotation seam — rotation_pending is set and
+        # the cycle closes into PREFLIGHT (a legal CYCLE_ENTRY_STATE) — instead of
+        # the dead PREPARE_ROTATION state, which had no exit caller and made the
+        # next start raise `bad_cycle_entry_state`, stranding the journal.
+        loop, result = self.route(decision(
+            decision="ROTATE_SESSION", next_claude_prompt="",
+            rotation_reason="context pressure at a checkpoint"))
         self.assertEqual(result.stopped, "rotate_session")
-        self.assertEqual(self.machine.current_state, sm.PREPARE_ROTATION)
+        self.assertEqual(self.machine.current_state, sm.PREFLIGHT)
+        # PREFLIGHT is a legal cycle-entry state (the strand is gone) and the
+        # rotation is durably pending with the rotate_session reason, so the next
+        # dispatch rotates at the proven seam.
+        self.assertIn(sm.PREFLIGHT, lp.CYCLE_ENTRY_STATES)
+        self.assertTrue(loop.rotation_pending())
 
     def test_a_synchronous_stop_for_owner_is_counted_as_a_stop(self) -> None:
         loop, result = self.route(decision(
@@ -822,6 +833,66 @@ class ForwardedPromptThreadingTests(LoopTestBase):
         self.assertNotIn("sent_prompt", data)
         self.assertEqual(data["sent_prompt_digest"],
                          digest_of(result.forward.sent_prompt))
+
+
+class CrossProcessForwardResumeD10Tests(LoopTestBase):
+    """M0-T126 (defect D10): a run that forwards a CONTINUE prompt and exits at
+    CLAUDE_RUNNING (max_cycles reached) must dispatch THOSE forwarded bytes on the
+    NEXT start - not the generic default - and a cross-process re-decision must
+    not dead-end the run via duplicate suppression (advancing cycle number)."""
+
+    def test_forwarded_bytes_are_dispatched_on_the_next_start(self) -> None:
+        self.at_preflight()
+        runner1 = FakeRunner(run_result())
+        loop1 = self.build(mode="supervised", runner=runner1, max_cycles=1,
+                           approval_gate=lambda d, p: True)
+        run1 = loop1.run("the ORIGINAL first prompt")
+        self.assertEqual(run1.stopped, "max_cycles_reached")
+        self.assertEqual(self.machine.current_state, sm.CLAUDE_RUNNING)
+        # The forwarded bytes are durably pending for the next start.
+        pointer = self.journal.get_state(f"next_unit_prompt/{loop1.run_id}", None)
+        self.assertIsNotNone(pointer)
+        self.assertIn("TASK: M0-T036", pointer["prompt"])
+
+        # Fresh process: a NEW loop on the SAME journal, state CLAUDE_RUNNING.
+        runner2 = FakeRunner(run_result())
+        loop2 = self.build(mode="supervised", runner=runner2, max_cycles=1,
+                           approval_gate=lambda d, p: True)
+        loop2.run("the GENERIC DEFAULT prompt - MUST NOT be dispatched")
+        # Removal sensitivity: without the CLAUDE_RUNNING resume branch, runner2
+        # would have received the generic default (the D10 bug).
+        self.assertEqual(len(runner2.prompts), 1)
+        self.assertNotIn("GENERIC DEFAULT", runner2.prompts[0])
+        self.assertIn("TASK: M0-T036", runner2.prompts[0])
+
+    def test_the_pointer_is_consumed_exactly_once(self) -> None:
+        self.at_preflight()
+        loop1 = self.build(mode="supervised", runner=FakeRunner(run_result()),
+                           max_cycles=1, approval_gate=lambda d, p: True)
+        loop1.run("original")
+        key = f"next_unit_prompt/{loop1.run_id}"
+        self.assertIn("TASK", self.journal.get_state(key)["prompt"])
+        # First consume returns the bytes; the pointer is then cleared.
+        first = loop1._consume_next_unit_prompt()
+        self.assertIsNotNone(first)
+        self.assertIsNone(loop1._consume_next_unit_prompt(),
+                          "a second consume must find nothing (exactly-once)")
+
+    def test_re_decision_uses_an_advancing_cycle_number(self) -> None:
+        # The cross-process resume forwards at cycle 2 (advancing), so its message
+        # id differs from cycle 1's and is not dead-ended by duplicate suppression.
+        self.at_preflight()
+        loop1 = self.build(mode="supervised", runner=FakeRunner(run_result()),
+                           max_cycles=1, approval_gate=lambda d, p: True)
+        run1 = loop1.run("original")
+        self.assertIn("/fwd/1/", run1.cycles[0].forward.message_id)
+        loop2 = self.build(mode="supervised", runner=FakeRunner(run_result()),
+                           max_cycles=1, approval_gate=lambda d, p: True)
+        run2 = loop2.run("generic")
+        self.assertIn("/fwd/2/", run2.cycles[0].forward.message_id,
+                      "the resumed unit must forward at the ADVANCING cycle 2")
+        self.assertNotEqual(run1.cycles[0].forward.message_id,
+                            run2.cycles[0].forward.message_id)
 
 
 # --------------------------------------------------------------------------
@@ -2168,6 +2239,76 @@ class ModelChainSwitchTests(LoopTestBase):
             lp.LoopConfig(mode="supervised", task_id="M0-T036", stage="phase4",
                           session_role="admin")
         self.assertEqual(raised.exception.code, "unknown_session_role")
+
+
+class D5CeilingConsumptionTests(LoopTestBase):
+    """M0-T126 (defect D5): the rotation-threshold branch consumes the LIVE
+    context figure, not the cumulative one. These tests EXECUTE
+    _flag_rotation_if_needed (the branch the orchestrator flagged as untested)."""
+
+    def test_live_below_ceiling_does_not_flag_even_if_cumulative_over(self) -> None:
+        # The exact live-journey shape: live 72546 (< 400000) but cumulative
+        # 694251 (>= 400000). Removal sensitivity: if the ceiling consumed the
+        # cumulative figure (the D5 bug), rotation_pending would be set here.
+        loop = self.build(mode="supervised", context_rotation_threshold=400000)
+        rr = run_result(live_context_tokens=72546, live_context_usage_known=True,
+                        context_tokens=694251, usage_known=True)
+        loop._flag_rotation_if_needed(rr, cycle=1)
+        self.assertFalse(loop.rotation_pending(),
+                         "live 72546 is under the ceiling; the cumulative 694251 "
+                         "must NOT drive the rotation flag (D5)")
+
+    def test_live_over_ceiling_flags_rotation(self) -> None:
+        loop = self.build(mode="supervised", context_rotation_threshold=400000)
+        rr = run_result(live_context_tokens=450000, live_context_usage_known=True,
+                        context_tokens=450000, usage_known=True)
+        loop._flag_rotation_if_needed(rr, cycle=1)
+        self.assertTrue(loop.rotation_pending(),
+                        "live 450000 >= the ceiling must flag rotation")
+
+    def test_live_unknown_falls_back_to_cumulative(self) -> None:
+        # When the stream carried no per-turn usage, the conservative fallback
+        # keeps the cumulative signal (premature rotation is the safe direction).
+        loop = self.build(mode="supervised", context_rotation_threshold=400000)
+        rr = run_result(live_context_tokens=0, live_context_usage_known=False,
+                        context_tokens=500000, usage_known=True)
+        loop._flag_rotation_if_needed(rr, cycle=1)
+        self.assertTrue(loop.rotation_pending())
+
+
+class BetweenCycleIntentStopTests(LoopTestBase):
+    """M0-T126 (defects D11/D12): the between-cycle owner-intent seam."""
+
+    def test_no_intent_permits_dispatch(self) -> None:
+        loop = self.build(mode="supervised")
+        self.assertEqual(loop._intent_stop(), "")
+
+    def test_graceful_stop_blocks_the_next_dispatch(self) -> None:
+        from tools.agent_supervisor import stop_intent as si
+        loop = self.build(mode="supervised")
+        si.set_graceful_stop(self.journal, reason="owner asked to wind down")
+        self.assertEqual(loop._intent_stop(), "owner_intent_graceful_stop")
+
+    def test_pause_blocks_the_next_dispatch(self) -> None:
+        from tools.agent_supervisor.resume_scheduler import MANUAL_PAUSE_KEY
+        loop = self.build(mode="supervised")
+        self.journal.set_state(MANUAL_PAUSE_KEY, True)
+        self.assertEqual(loop._intent_stop(), "owner_intent_manual_pause")
+
+    def test_emergency_outranks_and_blocks(self) -> None:
+        from tools.agent_supervisor.resume_scheduler import EMERGENCY_STOP_KEY
+        loop = self.build(mode="supervised")
+        self.journal.set_state(EMERGENCY_STOP_KEY, True)
+        self.assertEqual(loop._intent_stop(), "owner_intent_emergency_stop")
+
+    def test_a_run_stops_when_an_intent_is_set(self) -> None:
+        # Removal sensitivity: with a durable intent set, run() stops with the
+        # intent reason before dispatching any unit, rather than proceeding.
+        from tools.agent_supervisor import stop_intent as si
+        loop = self.build(mode="supervised", max_cycles=3)
+        si.set_graceful_stop(self.journal, reason="stop between cycles")
+        outcome = loop.run("do the work")
+        self.assertEqual(outcome.stopped, "owner_intent_graceful_stop")
 
 
 if __name__ == "__main__":  # pragma: no cover

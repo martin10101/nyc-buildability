@@ -72,13 +72,21 @@ CWD_UNBOUND = "cwd_unbound"                # no expected worktree, or empty cwd
 CWD_PRIMARY_CHECKOUT = "cwd_primary_checkout"  # cwd is the primary control checkout
 CWD_MISMATCH = "cwd_mismatch"              # cwd is some other unexpected directory
 
+#: repo/evidence-binding guard (M0-T125 defect D2): the evidence collector and
+#: Codex reviewer bind to `repo`. When the packet declares an isolated worktree
+#: but `repo` resolves to the PRIMARY control checkout, the git facts in the
+#: evidence packet and the reviewer's `-C <repo>` tree are the orchestrator's
+#: control checkout, not the worker's tree — the evidence/review half of the
+#: cycle-2 leakage class.
+REPO_PRIMARY_CHECKOUT = "repo_primary_checkout"
+
 #: ceiling guard (R332/R333/R334).
 CEILING_TELEMETRY_MISSING = "ceiling_telemetry_missing"  # unknown usage on a resume
 OVER_CEILING_RESUME_FORBIDDEN = "over_ceiling_resume_forbidden"  # tokens >= ceiling
 
 #: Every code this seam can emit, for the reachability/coverage test to key on.
 REFUSAL_CODES: tuple[str, ...] = (
-    CWD_UNBOUND, CWD_PRIMARY_CHECKOUT, CWD_MISMATCH,
+    CWD_UNBOUND, CWD_PRIMARY_CHECKOUT, CWD_MISMATCH, REPO_PRIMARY_CHECKOUT,
     CEILING_TELEMETRY_MISSING, OVER_CEILING_RESUME_FORBIDDEN,
 )
 
@@ -229,6 +237,51 @@ def evaluate_packet_worktree_binding(
         f"the launch would be bound to {cwd_worktree!r}, which is not the isolated "
         f"worktree {packet_worktree!r} the task packet declares; an unexpected worker "
         f"worktree fails closed before provider contact (D-024-R336).")
+
+
+def evaluate_repo_binding(
+    repo: str, packet_worktree: str, primary_checkout: str = "",
+) -> LaunchDecision | None:
+    """Evidence/review repo binding (M0-T125 defect D2). Refuse or `None`.
+
+    When the packet declares an isolated worktree, the `repo` the evidence
+    collector and Codex reviewer bind to must NOT be the PRIMARY control
+    checkout — otherwise the evidence git facts and the reviewer's working tree
+    describe the orchestrator's control checkout rather than the worker's tree.
+    A packet that declares no worktree (single-checkout runs) is unconstrained
+    here, the same stance as `evaluate_packet_worktree_binding`. A repo that IS
+    the declared worktree (the degenerate single-checkout shape) is allowed.
+    """
+    if not packet_worktree:
+        return None
+    if not primary_checkout or not same_path(repo, primary_checkout):
+        return None
+    if same_path(repo, packet_worktree):
+        return None
+    return LaunchDecision(
+        REFUSE, REPO_PRIMARY_CHECKOUT,
+        f"evidence and Codex review would bind to the PRIMARY control checkout "
+        f"{repo!r}, but the task packet declares the isolated worktree "
+        f"{packet_worktree!r}; the evidence git facts and the reviewer's -C tree "
+        f"would describe the control checkout, not the worker's tree "
+        f"(D-024-R336, defect D2). Pass --repo pointing at the worker's "
+        f"repository, not the control checkout.")
+
+
+def enforce_launch_bindings(
+    cwd_worktree: str, repo: str, packet_worktree: str, primary_checkout: str = "",
+) -> LaunchDecision | None:
+    """The CLI pre-runner bindings: worktree cwd (R336) AND evidence repo (D2).
+
+    Returns the FIRST refusal (worktree binding, then repo binding), or `None`
+    when both bind correctly. One entry point so `cli._run_loop` enforces both
+    seam checks with a single call before the runner is built.
+    """
+    worktree = evaluate_packet_worktree_binding(
+        cwd_worktree, packet_worktree, primary_checkout)
+    if worktree is not None:
+        return worktree
+    return evaluate_repo_binding(repo, packet_worktree, primary_checkout)
 
 
 def evaluate_cwd(

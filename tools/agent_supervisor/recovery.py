@@ -72,6 +72,15 @@ LIMITED_AUTO_KEY = "limited_auto_enabled"
 CHILD_PROCESSES_KEY = "launched_child_processes"
 RESUME_CAPABILITY_KEY = "interrupted_turn_capability_probe"
 LAST_RECOVERY_KEY = "last_recovery_outcome"
+#: M0-T126 (M0-T125 D6): a durable record set the moment a bounded unit is
+#: dispatched and cleared when its outcome is journaled. An UNRECONCILED intent
+#: at recovery time means the supervisor crashed mid-unit (its provider calls and
+#: any brokered AUTO-tier effects may have run ONCE), so recovery classifies
+#: AMBIGUOUS_EFFECT and reconciles rather than blindly re-dispatching the unit.
+UNIT_DISPATCH_INTENT_KEY = "unit_dispatch_intent"
+#: M0-T126 (M0-T125 D16): determined-dead child records from a crashed supervisor
+#: are archived here with provenance instead of being re-probed forever.
+ARCHIVED_DEAD_CHILDREN_KEY = "archived_dead_child_records"
 
 
 class RecoveryError(Exception):
@@ -224,6 +233,80 @@ def recorded_start_token_for(journal: Any, pid: int) -> str:
 
 
 # --------------------------------------------------------------------------
+# Unit dispatch intent (M0-T126; defect D6)
+# --------------------------------------------------------------------------
+
+
+def record_dispatch_intent(journal: Any, *, run_id: str, cycle: int) -> None:
+    """Journal that a bounded unit is ABOUT to be dispatched (D6).
+
+    Set BEFORE the provider is contacted. A crash before ``reconcile_dispatch_
+    intent`` leaves this pending, and recovery then classifies AMBIGUOUS_EFFECT
+    (the unit's provider calls / brokered effects may have run once) instead of
+    re-dispatching over them.
+    """
+    journal.set_state(UNIT_DISPATCH_INTENT_KEY,
+                      {"pending": True, "run_id": run_id, "cycle": cycle,
+                       "dispatched_at_utc": to_utc_iso()})
+
+
+def reconcile_dispatch_intent(journal: Any) -> None:
+    """Clear the dispatch intent once the unit's outcome is durably journaled."""
+    journal.set_state(UNIT_DISPATCH_INTENT_KEY, {"pending": False,
+                                                 "reconciled_at_utc": to_utc_iso()})
+
+
+def pending_dispatch_intent(journal: Any) -> dict | None:
+    """The unreconciled dispatch intent, or None."""
+    value = journal.get_state(UNIT_DISPATCH_INTENT_KEY, None)
+    if isinstance(value, Mapping) and value.get("pending"):
+        return dict(value)
+    return None
+
+
+# --------------------------------------------------------------------------
+# Dead-child archive sweep (M0-T126; defect D16)
+# --------------------------------------------------------------------------
+
+
+def sweep_dead_child_records(journal: Any, *, audit: Any = None) -> tuple[dict, ...]:
+    """Archive DETERMINED-DEAD child records with provenance; keep the rest.
+
+    A child whose liveness was DETERMINED and is NOT alive (and not a
+    same-pid/token survivor) is gone; the launching runner's settle normally
+    clears it, but a record from a CRASHED supervisor persists and is re-probed
+    on every recovery forever. This moves each such record to the archive key
+    with an archived-at stamp, leaving surviving/undetermined records untouched
+    (they still count as drift). Returns the archived records.
+    """
+    recorded = journal.get_state(CHILD_PROCESSES_KEY, []) or []
+    keep: list[dict] = []
+    archived: list[dict] = []
+    for entry in recorded:
+        if not isinstance(entry, Mapping):
+            continue
+        probe = probe_process(int(entry.get("pid", 0) or 0))
+        token = str(entry.get("start_token", ""))
+        reused = (probe.determined and probe.alive and token and probe.start_token
+                  and token != probe.start_token)
+        dead = probe.determined and (not probe.alive or reused)
+        if dead:
+            archived.append({**dict(entry), "archived_at_utc": to_utc_iso(),
+                             "archive_reason": ("pid reused" if reused
+                                                else "determined dead")})
+        else:
+            keep.append(dict(entry))
+    if archived:
+        prior = list(journal.get_state(ARCHIVED_DEAD_CHILDREN_KEY, []) or [])
+        journal.set_state(ARCHIVED_DEAD_CHILDREN_KEY, prior + archived)
+        journal.set_state(CHILD_PROCESSES_KEY, keep)
+        if audit is not None:
+            audit.append("dead_child_records_archived",
+                         detail={"archived": len(archived), "kept": len(keep)})
+    return tuple(archived)
+
+
+# --------------------------------------------------------------------------
 # Revalidation inputs
 # --------------------------------------------------------------------------
 
@@ -258,6 +341,11 @@ class RecoveryContext:
     children: tuple[ChildAccount, ...] = ()
     flags: DurableFlags = dataclasses.field(default_factory=DurableFlags)
     notes: tuple[str, ...] = ()
+    #: M0-T126 (M0-T125 D6): a bounded unit was dispatched and its outcome was
+    #: never reconciled - the supervisor crashed mid-unit. Additive: defaults
+    #: False, so a recovery that records no dispatch intent is classified exactly
+    #: as before.
+    dispatch_intent_pending: bool = False
 
 
 @dataclasses.dataclass(frozen=True)
@@ -337,6 +425,22 @@ def classify(context: RecoveryContext) -> RecoveryOutcome:
             f"read-only evidence and the stable action id - never a blind rerun (S11.5)",
             False, (), (), (), context.pending_effect_ids, context.notes)
 
+    # M0-T126 (M0-T125 D6): a bounded unit was dispatched with no reconciled
+    # outcome - the supervisor crashed mid-unit. Its provider calls and any
+    # brokered AUTO-tier effects may have run ONCE. Classify AMBIGUOUS_EFFECT and
+    # reconcile the unit's effect before any re-dispatch, rather than treating a
+    # determined-dead child as SAFE and dispatching the unit again.
+    if context.dispatch_intent_pending:
+        return RecoveryOutcome(
+            AMBIGUOUS_EFFECT, RECONCILE_EXTERNAL_EFFECT, "recovery_ambiguous_effect",
+            "unit_dispatch_unreconciled",
+            "a bounded unit was dispatched before the discontinuity with no "
+            "reconciled outcome; the supervisor crashed mid-unit. Reconcile "
+            "whether the unit's provider calls and brokered effects took effect "
+            "via read-only evidence before any re-dispatch - never a blind rerun "
+            "(S11.5; M0-T125 D6)",
+            False, (), (), (), (), context.notes)
+
     # --- SAFE_CHECKPOINT ---------------------------------------------------
     permitted, why = autostart_permitted(context.flags)
     if not permitted:
@@ -355,10 +459,19 @@ def classify(context: RecoveryContext) -> RecoveryOutcome:
             "itself: it re-runs preflight and waits for an explicit operator start (S11.5). "
             "Recovery never enables or broadens limited-auto",
             False, notes=context.notes)
+    # M0-T126 (M0-T125 D7): this `safe_auto_resume` branch (resume_permitted=True)
+    # is R595-GATED and therefore UNREACHABLE on this build: it fires only when
+    # `flags.limited_auto_enabled` is True, but that durable key has ONLY
+    # False-writers (broker.py; remote_approvals.py:295/307) until the owner's
+    # R595 activation path sets it, so `autostart_permitted`/the branch above
+    # always land first. It is kept (not deleted) as the exact edge R595 will
+    # enable, and is documented here rather than looking like dead code.
     return RecoveryOutcome(
         SAFE_CHECKPOINT, PREFLIGHT, "recovery_safe_checkpoint", "safe_auto_resume",
         "verified safe checkpoint with limited-auto already owner-enabled and nothing "
-        "forbidding it: resuming automatically. This is a NOTIFY event (S11.5)",
+        "forbidding it: resuming automatically. This is a NOTIFY event (S11.5). "
+        "R595-gated: reachable only once the owner's activation path enables "
+        "limited-auto (M0-T125 D7)",
         True, notes=context.notes)
 
 
@@ -512,8 +625,16 @@ def recover_boot(
         children=children,
         flags=flags,
         notes=tuple(notes),
+        # M0-T126 (D6): an unreconciled dispatch intent means a crash mid-unit.
+        dispatch_intent_pending=pending_dispatch_intent(journal) is not None,
     )
     outcome = classify(context)
+
+    # M0-T126 (D16): archive determined-dead child records with provenance so a
+    # crashed supervisor's stale pid records are not re-probed on every recovery
+    # forever. Runs AFTER classify (which already accounted for them), and never
+    # touches surviving/undetermined records - so it cannot mask drift.
+    sweep_dead_child_records(journal, audit=audit)
 
     # A restored deadline overrides an otherwise-safe resume: no provider work
     # before resume_not_before_utc, even from a clean checkpoint.

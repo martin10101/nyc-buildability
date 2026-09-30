@@ -553,6 +553,33 @@ class CliWorktreeGate(unittest.TestCase):
         self.assertIn(d.code, (ls.CWD_PRIMARY_CHECKOUT, ls.CWD_MISMATCH))
 
 
+class CliRepoBindingGateD2(unittest.TestCase):
+    """M0-T126 (D-024-R372; defect D2): the evidence/review repo must not be the
+    primary control checkout when the packet declares an isolated worktree."""
+
+    def test_repo_on_primary_checkout_with_isolated_worktree_refuses(self) -> None:
+        d = ls.evaluate_repo_binding(PRIMARY, "wt-m0t107", primary_checkout=PRIMARY)
+        self.assertIsNotNone(d)
+        self.assertEqual(d.code, ls.REPO_PRIMARY_CHECKOUT)
+        self.assertFalse(d.ok)
+
+    def test_repo_on_the_pack_repo_is_allowed(self) -> None:
+        # The correct shape (runbook §11): repo = the pack repo, distinct from
+        # both the control checkout and the worktree.
+        self.assertIsNone(ls.evaluate_repo_binding(
+            r"C:\repo\pack", "wt-m0t107", primary_checkout=PRIMARY))
+
+    def test_no_packet_worktree_is_unconstrained(self) -> None:
+        self.assertIsNone(ls.evaluate_repo_binding(PRIMARY, "", primary_checkout=PRIMARY))
+
+    def test_repo_equal_to_worktree_is_allowed(self) -> None:
+        self.assertIsNone(ls.evaluate_repo_binding(
+            "wt-m0t107", "wt-m0t107", primary_checkout=PRIMARY))
+
+    def test_repo_binding_code_is_registered(self) -> None:
+        self.assertIn(ls.REPO_PRIMARY_CHECKOUT, ls.REFUSAL_CODES)
+
+
 # ==========================================================================
 # R342: dedicated tests for the four indirectly-covered matrix items
 # ==========================================================================
@@ -923,17 +950,25 @@ class ReachabilitySweep(unittest.TestCase):
     # -- _run_loop: the production cwd wiring ------------------------------
 
     def test_run_loop_wires_expected_worktree_and_packet_binding(self) -> None:
+        # M0-T126 (D2): the worktree binding and the new repo binding are enforced
+        # together through launch_seam.enforce_launch_bindings, which internally
+        # calls evaluate_packet_worktree_binding then evaluate_repo_binding.
         src = self._func_src(cli._run_loop)
         names = self._names_called(src)
-        self.assertIn("launch_seam.evaluate_packet_worktree_binding", names,
-                      "_run_loop must gate the packet worktree binding")
+        self.assertIn("launch_seam.enforce_launch_bindings", names,
+                      "_run_loop must gate the packet worktree + repo bindings")
         self.assertIn("expected_worktree", src,
                       "_run_loop must bind the runner's expected_worktree")
+        # The combined entry point itself must still call BOTH seam checks.
+        seam_src = self._func_src(ls.enforce_launch_bindings)
+        seam_names = self._names_called(seam_src)
+        self.assertIn("evaluate_packet_worktree_binding", seam_names)
+        self.assertIn("evaluate_repo_binding", seam_names)
 
     def test_RED_run_loop_without_the_gate_is_a_bypass(self) -> None:
         bypass = self._strip_stmts(self._func_src(cli._run_loop),
-                                  "evaluate_packet_worktree_binding")
-        self.assertNotIn("launch_seam.evaluate_packet_worktree_binding",
+                                  "enforce_launch_bindings")
+        self.assertNotIn("launch_seam.enforce_launch_bindings",
                          self._names_called(bypass))
 
     # -- loop.run: the pre-first-dispatch ceiling wiring -------------------
