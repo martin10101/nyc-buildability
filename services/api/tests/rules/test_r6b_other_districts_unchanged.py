@@ -128,10 +128,14 @@ def test_flag_off_registry_is_the_pre_change_registry() -> None:
     ]
 
 
-def test_flag_on_adds_only_the_two_r6b_rules() -> None:
+def test_flag_on_adds_only_the_r6b_rules() -> None:
     on = RuleRegistry(env=_ON).load()
     added = set(on.rule_ids()) - set(_PRE_EXISTING_RULE_IDS)
-    assert added == {"r6b-height", "r6b-qualifying-housing-far"}
+    # A-02a: height + qualifying FAR; A-02b: lot coverage, rear-yard corner waiver, dwelling units.
+    assert added == {
+        "r6b-height", "r6b-qualifying-housing-far", "r6b-lot-coverage",
+        "r6b-rear-yard-corner-waiver", "r6b-dwelling-units",
+    }
     assert set(_PRE_EXISTING_RULE_IDS) <= set(on.rule_ids())
 
 

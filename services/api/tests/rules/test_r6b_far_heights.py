@@ -353,7 +353,9 @@ def test_new_rules_are_draft_needs_review_and_lane_a_gated(registry) -> None:
                                  {"LANE_A_ENABLED": "0"}, {"LANE_B_ENABLED": "1"}])
 def test_flag_off_the_new_rules_are_validated_but_not_indexed(env) -> None:
     off = RuleRegistry(env=env).load()
-    assert off.gated_off_rule_ids() == {rule_id: "A" for rule_id in sorted(_NEW_RULE_FILES)}
+    gated = off.gated_off_rule_ids()
+    # A-02b adds more lane A rules; every gated rule is lane A and these two are among them.
+    assert set(_NEW_RULE_FILES) <= set(gated) and set(gated.values()) == {"A"}
     for rule_id in _NEW_RULE_FILES:
         assert rule_id not in off.rule_ids()
         with pytest.raises(KeyError):
