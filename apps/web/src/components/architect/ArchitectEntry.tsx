@@ -100,10 +100,11 @@ function PropertySearch() {
     <p className="architect-search-review" data-testid="search-review">Preliminary analysis — professional review required before any reliance.</p>
   </div>;
 }
-function LoadedWorkspace({ profile, view, surveyEnabled }: {
+function LoadedWorkspace({ profile, view, surveyEnabled, proposalEditorEnabled }: {
     profile: PropertyProfile;
     view: WorkspaceView;
     surveyEnabled: boolean;
+    proposalEditorEnabled: boolean;
 }) {
     const router = useRouter();
     const analysis = useAnalysis(profile.identity.bbl);
@@ -180,7 +181,9 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
             content = <ReportView profile={profile} evaluation={returnedEvaluation} scenario={returnedScenario} label={label}/>;
             break;
         case "proposal":
-            content = <ProposalSurface bbl={bbl} profile={profile}/>;
+            // D-01 (plan §7): set aside behind INTERNAL_PROPOSAL_EDITOR_ENABLED; when
+            // off, a deep link gets the plain not-available view and no editor mounts.
+            content = proposalEditorEnabled ? <ProposalSurface bbl={bbl} profile={profile}/> : <PlannedView label={VIEW_LABELS.proposal}/>;
             break;
         default: content = <PlannedView label={VIEW_LABELS[view]}/>;
     }
@@ -221,10 +224,12 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
   </div>;
 }
 /** Route adapter only. Legacy server flags select this tree; no client flag can open it. */
-export function ArchitectEntry({ defaultView = "overview", surveyEnabled = false, requireBbl = false }: {
+export function ArchitectEntry({ defaultView = "overview", surveyEnabled = false, requireBbl = false, proposalEditorEnabled = false }: {
     defaultView?: WorkspaceView;
     surveyEnabled?: boolean;
     requireBbl?: boolean;
+    /** Server-read INTERNAL_PROPOSAL_EDITOR_ENABLED (D-01); absent -> off. */
+    proposalEditorEnabled?: boolean;
 }) {
     const params = useSearchParams();
     const rawBbl = params.get("bbl") ?? "";
@@ -236,7 +241,7 @@ export function ArchitectEntry({ defaultView = "overview", surveyEnabled = false
     const message = returnedProfile && bbl && returnedProfile.identity.bbl !== bbl
         ? `Property identity mismatch. Requested BBL ${bbl}; returned BBL ${returnedProfile.identity.bbl}. This record cannot be used for the selected property.`
         : property.outcome ? announcementForOutcome(property.outcome) : "";
-    return <ArchitectShell bbl={bbl} active={bbl ? view : "search"} surveyEnabled={surveyEnabled}>
+    return <ArchitectShell bbl={bbl} active={bbl ? view : "search"} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled}>
     <OutcomeAnnouncer message={message}/>
     {!bbl ? <>
       {rawBbl || requireBbl ? <section className="card failure-state" role="alert">
@@ -256,7 +261,7 @@ export function ArchitectEntry({ defaultView = "overview", surveyEnabled = false
       <p>Requested BBL {bbl}; returned BBL {property.outcome.profile.identity.bbl}. This record cannot be used for the selected property.</p>
       <CapturedRecord value={property.outcome.profile} label="Returned property record"/>
       <Link className="secondary-button" href={propertyHref()}>Change property</Link>
-    </section> : property.outcome?.kind === "profile" ? <LoadedWorkspace key={bbl} profile={property.outcome.profile} view={view} surveyEnabled={surveyEnabled}/> : property.outcome ? <>
+    </section> : property.outcome?.kind === "profile" ? <LoadedWorkspace key={bbl} profile={property.outcome.profile} view={view} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled}/> : property.outcome ? <>
       <OutcomeFailureStates outcome={property.outcome} onRetry={property.retry}/>
       <Link href={propertyHref()} className="secondary-button">Change property</Link>
     </> : null}
