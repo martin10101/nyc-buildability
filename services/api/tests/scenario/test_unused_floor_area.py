@@ -9,6 +9,13 @@ The section is exercised BOTH through the full ``build_scenario`` document (so t
 wire-in, the root professional_review_required widening, and schema validity are
 proven end to end) and directly via ``build_unused_floor_area_section`` for the
 edge cases.
+
+A-03 (plan section 3 step 4, section 8, M2-07; set-aside list item 6): the cap -
+bldgarea subtraction pinned here is the LEGACY behavior, now set aside behind the
+default-off ``INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED`` flag. Every test in this
+module runs with that flag ON (autouse fixture below) so the legacy code stays
+proven; the DEFAULT (flag-off) behavior lives in
+``test_unused_floor_area_default_off.py``.
 """
 
 from __future__ import annotations
@@ -19,6 +26,7 @@ from pathlib import Path
 import pytest
 
 from app.scenario import (
+    INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED_ENV_VAR,
     UNUSED_FLOOR_AREA_LABEL,
     build_scenario,
     build_unused_floor_area_section,
@@ -44,6 +52,13 @@ BUNDLED_SCHEMA = (
 # section can resolve the existing-area provenance the same way lot area is.
 BLDGAREA_PROV_ID = "prov-bldgarea"
 BLDGAREA_SOURCE_ID = "nyc-dcp-mappluto-arcgis"
+
+
+@pytest.fixture(autouse=True)
+def _legacy_flag_on(monkeypatch):
+    """A-03: every test here pins the LEGACY cap - bldgarea behavior, which runs
+    only with the default-off set-aside flag explicitly on."""
+    monkeypatch.setenv(INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED_ENV_VAR, "1")
 
 
 def profile_with_bldgarea(

@@ -1,0 +1,24 @@
+{
+  "contract_version": "1.0.0",
+  "fact_id": "fact-street-width-a",
+  "key": "street_width",
+  "lot_bbl": null,
+  "street": "Synthetic Street A",
+  "value": 60,
+  "unit": "feet",
+  "measurement": {
+    "rank": "entered",
+    "label": "Entered"
+  },
+  "source": {
+    "kind": "architect_entry",
+    "dataset": null,
+    "dataset_version": null,
+    "retrieved_at": "2026-09-30T12:02:00Z",
+    "query_ref": null,
+    "document_ref": null,
+    "statement": null
+  },
+  "blocks": [],
+  "editable": true
+}
