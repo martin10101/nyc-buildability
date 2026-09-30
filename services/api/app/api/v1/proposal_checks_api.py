@@ -54,9 +54,10 @@ enforced here, in order, fail-closed:
   caller string can ride a refusal field, a 200-path provenance echo, or a log record.
 
 * C-04 / M1-06a (plan section 9) - with ``LANE_C_ENABLED`` on, a REAL-PROPERTY request (``lot.bbl``
-  present) is refused typed when it carries the example-site values or a caller-attested value
-  without a site_fact measurement rank (:mod:`app.api.v1.real_property_guard`); the 422 then also
-  names a machine-readable ``reason``. Flag off (the default) -> unchanged.
+  present) is refused typed when it carries the example site's fictional coordinates or a
+  caller-attested value without a site_fact measurement rank
+  (:mod:`app.api.v1.real_property_guard`); the 422 then also names a machine-readable ``reason``.
+  The guard runs after the block and lot shape refusals. Flag off (the default) -> unchanged.
 
 Every non-disabled response carries ``X-Correlation-ID``. The exact emitted (HTTP status, state)
 pairs are the single source of truth :data:`PROPOSAL_CHECKS_STATUS_STATE_MATRIX`; the 200 report
@@ -99,6 +100,7 @@ from app.api.v1.proposal_validation import (
     _read_body_within_ceiling,
 )
 from app.api.v1.real_property_guard import (
+    RealPropertyRefusal,
     guard_real_property_request,
     real_property_guard_enabled,
 )
@@ -550,15 +552,10 @@ async def post_proposal_checks(request: Request) -> JSONResponse:
         _validate_exterior_wall_ids(proposed_massing)  # BP-2/DB-039(h) wall-id charset alignment
         _validate_lot_rule_fact_keys(lot_rule_facts)  # BP-2 discipline on keys ([ORCH-CORRECTED])
         _validate_lot_rule_fact_types(lot_rule_facts)  # BP-5 (mapped value types)
-        if real_property_guard_enabled():  # C-04 / M1-06a (LANE_C_ENABLED; off by default)
-            guard_real_property_request(
-                body, lot=lot, lot_rule_facts=lot_rule_facts, proposed_massing=proposed_massing
-            )
     except _FieldRefusal as exc:
-        reason = getattr(exc, "reason", None)
-        logger.info("proposal_checks_v1 refused field=%s reason=%s correlation_id=%s",
-                    _bounded_field(exc.field), reason, correlation_id)
-        return _validation_error(exc.message, correlation_id, field=exc.field, reason=reason)
+        logger.info("proposal_checks_v1 refused field=%s correlation_id=%s",
+                    _bounded_field(exc.field), correlation_id)
+        return _validation_error(exc.message, correlation_id, field=exc.field)
 
     # BP-5 (domains + bounds) / DB-039(e): resolve the engine's effective registry ONCE and run the
     # CHEAP registry-derived enum-domain + numeric-bound check immediately after the value-type
@@ -584,9 +581,19 @@ async def post_proposal_checks(request: Request) -> JSONResponse:
     # ProposedMassingError naming the exact field with a bounded message. _build_lot_context shapes
     # the lot object (and bounds its caller ids/objects). Both run AFTER the cheap domain check.
     # [ORCH-CORRECTED per G5-F2]: CPU-bound O(n^2) work runs OFF the event loop.
+    # C-04 / M1-06a (LANE_C_ENABLED; off by default): the real-property guard runs AFTER every
+    # block / lot shape refusal, so a malformed request is refused the same with or without a BBL.
     try:
         await run_in_threadpool(validate_proposed_massing_input, proposed_massing)
         lot_context = _build_lot_context(lot)
+        if real_property_guard_enabled():
+            guard_real_property_request(
+                body, lot=lot, lot_rule_facts=lot_rule_facts, proposed_massing=proposed_massing
+            )
+    except RealPropertyRefusal as exc:
+        logger.info("proposal_checks_v1 real_property_refused field=%s reason=%s correlation_id=%s",
+                    _bounded_field(exc.field), exc.reason, correlation_id)
+        return _validation_error(exc.message, correlation_id, field=exc.field, reason=exc.reason)
     except _FieldRefusal as exc:
         logger.info("proposal_checks_v1 lot_refused field=%s correlation_id=%s",
                     _bounded_field(exc.field), correlation_id)

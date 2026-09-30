@@ -32,9 +32,11 @@ accepted boundary primitives rather than forking them:
   (500) rather than shipping a maximum the checker refuses.
 
 C-04 / M1-06a (plan section 9): with ``LANE_C_ENABLED`` on, a REAL-PROPERTY request (``lot.bbl``
-present) is refused typed when it carries the example-site values or a caller-attested value
-without a site_fact measurement rank (:mod:`app.api.v1.real_property_guard`); the 422 then also
-names a machine-readable ``reason``. Flag off (the default) -> unchanged.
+present) is refused typed when it carries the example site's fictional coordinates or a
+caller-attested value without a site_fact measurement rank
+(:mod:`app.api.v1.real_property_guard`); the 422 then also names a machine-readable ``reason``.
+The guard runs after the lot-shape refusals and before the server-side lot-geometry derivation.
+Flag off (the default) -> unchanged.
 
 The emitted (HTTP status, state) pairs are the single source of truth
 :data:`MAX_ENVELOPE_STATUS_STATE_MATRIX`; the 200 envelope carries NO ``state`` (pair
@@ -75,7 +77,9 @@ from app.api.v1.proposal_validation import (
     _read_body_within_ceiling,
 )
 from app.api.v1.real_property_guard import (
+    RealPropertyRefusal,
     guard_real_property_request,
+    lot_bbl_present,
     real_property_guard_enabled,
 )
 from app.config import internal_rule_eval_enabled
@@ -186,10 +190,8 @@ def _should_derive_lot_geometry(lot: dict) -> bool:
         supplied_empty = isinstance(segments, list) and not segments
         if not supplied_empty:
             return False
-    bbl = lot.get("bbl")
-    if isinstance(bbl, str):
-        return bbl.strip() != ""
-    return isinstance(bbl, int | float) and not isinstance(bbl, bool)
+    # One definition of "carries a BBL" for this route, shared with the C-04 real-property guard.
+    return lot_bbl_present(lot)
 
 
 def _json(status_code: int, body: dict, correlation_id: str) -> JSONResponse:
@@ -342,13 +344,10 @@ async def post_max_envelope(request: Request) -> JSONResponse:
         _enforce_route_caps(lot)  # BP-4 (cheap, before any heavy work)
         _validate_lot_rule_fact_keys(lot_rule_facts)  # BP-2 discipline on keys
         _validate_lot_rule_fact_types(lot_rule_facts)  # BP-5 (mapped value types)
-        if real_property_guard_enabled():  # C-04 / M1-06a (LANE_C_ENABLED; off by default)
-            guard_real_property_request(body, lot=lot, lot_rule_facts=lot_rule_facts)
     except _FieldRefusal as exc:
-        reason = getattr(exc, "reason", None)
-        logger.info("max_envelope_v1 refused field=%s reason=%s correlation_id=%s",
-                    _bounded_field(exc.field), reason, correlation_id)
-        return _validation_error(exc.message, correlation_id, field=exc.field, reason=reason)
+        logger.info("max_envelope_v1 refused field=%s correlation_id=%s",
+                    _bounded_field(exc.field), correlation_id)
+        return _validation_error(exc.message, correlation_id, field=exc.field)
 
     # Resolve the engine's effective registry ONCE, on the event loop, then run the cheap
     # registry-derived enum/numeric-bound check. Resolution can only fail on a genuine internal
@@ -364,6 +363,24 @@ async def post_max_envelope(request: Request) -> JSONResponse:
         logger.info("max_envelope_v1 domain_refused field=%s correlation_id=%s",
                     _bounded_field(exc.field), correlation_id)
         return _validation_error(exc.message, correlation_id, field=exc.field)
+
+    # C-04 / M1-06a (LANE_C_ENABLED; off by default): the real-property guard runs on the CALLER's
+    # lot AFTER its shape refusals (the same _build_lot_context check the engine path runs below, so
+    # a malformed lot refuses identically with or without a BBL - DB-051(b)) and BEFORE the
+    # derivation's outbound call, so a refused request never reaches the connector.
+    if real_property_guard_enabled():
+        try:
+            _build_lot_context(lot)  # shape refusals first; rebuilt after any derivation below
+            guard_real_property_request(body, lot=lot, lot_rule_facts=lot_rule_facts)
+        except RealPropertyRefusal as exc:
+            logger.info("max_envelope_v1 real_property_refused field=%s reason=%s "
+                        "correlation_id=%s", _bounded_field(exc.field), exc.reason, correlation_id)
+            return _validation_error(exc.message, correlation_id, field=exc.field,
+                                     reason=exc.reason)
+        except _FieldRefusal as exc:
+            logger.info("max_envelope_v1 lot_refused field=%s correlation_id=%s",
+                        _bounded_field(exc.field), correlation_id)
+            return _validation_error(exc.message, correlation_id, field=exc.field)
 
     # DB-050(a): when the caller supplies NO lot-line geometry but a BBL, derive authoritative
     # EPSG:2263 lot-line segments server-side from the official MapPLUTO connector so the fitted

@@ -3,15 +3,18 @@
 Fully offline. Covers the pure guard (:mod:`app.api.v1.real_property_guard`) and its wiring into
 ``POST /api/v1/proposal-checks`` and ``POST /api/v1/max-envelope``:
 
-- a real-property request (``lot.bbl`` present) carrying the web's former example site
-  (``rectangleSampleDraft``: R5 + 8,000 sq ft + wide, fake EPSG:2263 outline / lot line) is a
-  typed 422 with the machine-readable ``reason`` ``example_site_values_on_real_property`` unless
-  it says ``"example": true``;
+- a real-property request (``lot.bbl`` present) carrying the web's former example site's
+  fictional EPSG:2263 geometry (``rectangleSampleDraft``'s outline corners or lot line) is a typed
+  422 with the machine-readable ``reason`` ``example_site_values_on_real_property`` unless it says
+  ``"example": true``. The example's zoning VALUES (R5 + 8,000 sq ft + wide) are never refused:
+  they are an ordinary real lot ([ORCH-CORRECTED per review 1]);
 - every caller-attested value on such a request needs a site_fact measurement rank;
+- the guard runs after the lot-shape refusals and, on max-envelope, before the derivation's
+  outbound call ([ORCH-CORRECTED per review 2]);
 - requests without a BBL, and every request while ``LANE_C_ENABLED`` is off, are unchanged.
 
-No existing proposal-checks / max-envelope test changes: the guard is flag-gated and applies only
-to requests that carry ``lot.bbl``, which none of them send with the flag on.
+``tests/api/test_max_envelope_api.py`` runs its whole suite with the flag off AND on; its fixtures
+carry ranks for that (the one intended change to an existing test file).
 """
 
 from __future__ import annotations
@@ -159,8 +162,8 @@ def test_measurement_ranks_match_the_site_fact_contract():
 
 
 def test_example_signature_matches_the_web_example_draft():
-    """The signature is the web's rectangleSampleDraft, copied verbatim; if that example ever
-    changes, this fails so the server guard is updated with it."""
+    """The signature is the web's rectangleSampleDraft geometry, copied verbatim; if that example
+    ever changes, this fails so the server guard is updated with it."""
     source = _WEB_DRAFT.read_text(encoding="utf-8")
     start = source.index("export function rectangleSampleDraft")
     body = source[start : source.index("\n}\n", start)]
@@ -169,11 +172,6 @@ def test_example_signature_matches_the_web_example_draft():
         for x, y in re.findall(r"\{ x: (\d+(?:\.\d+)?), y: (\d+(?:\.\d+)?) \}", body)
     }
     assert vertices == guard.EXAMPLE_OUTLINE_CORNERS
-    assert float(re.search(r"lot_area_sq_ft: (\d+)", body).group(1)) == guard.EXAMPLE_LOT_AREA_SQ_FT
-    assert re.search(r'zoning_district: "([^"]+)"', body).group(1) == guard.EXAMPLE_ZONING_DISTRICT
-    assert re.search(r'street_width_class: "([^"]+)"', body).group(1) == (
-        guard.EXAMPLE_STREET_WIDTH_CLASS
-    )
     seg = re.search(
         r"start_x: (\d+), start_y: (\d+), end_x: (\d+), end_y: (\d+)", body
     ).groups()
@@ -189,14 +187,22 @@ def test_example_signature_matches_the_web_example_draft():
         ({"bbl": None}, False),
         ({"bbl": ""}, False),
         ({"bbl": "   "}, False),
+        ({"bbl": False}, False),
+        ({"bbl": {"x": 1}}, False),
+        ({"bbl": ["1008350041"]}, False),
         ({"bbl": _BBL}, True),
         ({"bbl": 1008350041}, True),
-        ({"bbl": "not-a-bbl"}, True),  # a malformed BBL is still a real-property claim
-        ({"bbl": {"x": 1}}, True),
+        ({"bbl": 0}, True),
+        ({"bbl": "not-a-bbl"}, True),  # a malformed BBL string is still a real-property claim
     ],
 )
-def test_is_real_property_request(lot, expected):
-    assert guard.is_real_property_request(lot) is expected
+def test_lot_bbl_present_is_the_one_definition(lot, expected):
+    """One definition of "carries a BBL", shared by the guard and max-envelope's derivation
+    trigger ([ORCH-CORRECTED per review F4])."""
+    assert guard.lot_bbl_present(lot) is expected
+    assert max_envelope_api._should_derive_lot_geometry({**lot, "lot_line_segments": []}) is (
+        expected
+    )
 
 
 def test_guard_is_off_unless_lane_c_flag_is_an_explicit_true_token():
@@ -215,19 +221,25 @@ def test_guard_ignores_a_request_without_a_bbl(example_case):
     )  # no raise
 
 
-def test_fact_triple_needs_all_three_values():
-    lot = {"bbl": _BBL, "area_sq_ft": 8000, "area_provenance": _ranked()}
-    two_of_three = {"zoning_district": "R5"}
+@pytest.mark.parametrize("rank", ["city_records", "survey_entered", "entered"])
+def test_example_zoning_values_alone_never_refuse_a_real_lot(rank):
+    """[ORCH-CORRECTED per review 1]: R5 + 8,000 sq ft + wide is an ordinary real lot (80 x 100 ft
+    on a wide street); with its own geometry and ranked values it passes."""
+    facts = {"zoning_district": "R5", "street_width_class": "wide"}
+    lot = {
+        "bbl": _BBL,
+        "area_sq_ft": 8000.0,
+        "area_provenance": _ranked(rank),
+        "lot_line_segments": [
+            {"id": "L-S", "start": [985000.0, 195000.0], "end": [985080.0, 195000.0]}
+        ],
+        "street_lines": [],
+    }
     guard.guard_real_property_request(
-        {"lot_rule_facts_provenance": {"zoning_district": _ranked()}},
+        {"lot_rule_facts_provenance": {k: _ranked(rank) for k in facts}},
         lot=lot,
-        lot_rule_facts=two_of_three,
-    )  # R5 + 8000 without "wide" is not the signature
-    with pytest.raises(guard.RealPropertyRefusal) as exc:
-        guard.guard_real_property_request(
-            {}, lot=lot, lot_rule_facts={"zoning_district": " r5 ", "street_width_class": "WIDE"}
-        )
-    assert exc.value.reason == guard.REASON_EXAMPLE_VALUES
+        lot_rule_facts=facts,
+    )  # no raise
 
 
 # ---------------------------------------------------------------------------
@@ -245,11 +257,56 @@ def test_pc_flag_on_request_without_bbl_is_unchanged(pc_client, lane_c_on, examp
     assert resp.json()["summary"] == {"pass": 1, "fail": 1, "could_not_check": 2, "total": 4}
 
 
-def test_pc_example_fact_triple_on_real_property_is_refused(pc_client, lane_c_on, example_case):
+def test_pc_example_draft_on_real_property_is_refused(pc_client, lane_c_on, example_case):
     resp = pc_client.post(_PC_URL, json=_example_pc_body(example_case))
-    doc = _assert_refused(resp, reason=guard.REASON_EXAMPLE_VALUES, field="lot_rule_facts")
+    doc = _assert_refused(
+        resp, reason=guard.REASON_EXAMPLE_VALUES, field="proposed_massing.outline.vertices"
+    )
     assert _pair(resp) in PROPOSAL_CHECKS_STATUS_STATE_MATRIX
-    assert "example" in doc["message"]
+    assert "fictional coordinates" in doc["message"]
+    assert "example\": true" not in doc["message"]  # never tells a real lot to mark itself
+
+
+def test_pc_example_level_outline_is_refused(pc_client, lane_c_on, example_case):
+    body = _real_pc_body(example_case)
+    body["proposed_massing"]["levels"][0]["outline"] = {
+        "srid": 2263,
+        "vertices": [list(v) for v in example_case["block"]["outline"]["vertices"]],
+    }
+    resp = pc_client.post(_PC_URL, json=body)
+    _assert_refused(
+        resp,
+        reason=guard.REASON_EXAMPLE_VALUES,
+        field="proposed_massing.levels[0].outline.vertices",
+    )
+
+
+def test_level_outline_signature_unit():
+    massing = {
+        "outline": {"vertices": [[0.0, 0.0], [10.0, 0.0], [10.0, 10.0], [0.0, 0.0]]},
+        "levels": [
+            {"outline": {"vertices": [[1000000, 200000], [1000100, 200000], [1000100, 200050],
+                                      [1000000, 200050], [1000000, 200000]]}}
+        ],
+    }
+    with pytest.raises(guard.RealPropertyRefusal) as exc:
+        guard.guard_real_property_request(
+            {}, lot={"bbl": _BBL}, lot_rule_facts={}, proposed_massing=massing
+        )
+    assert exc.value.field == "proposed_massing.levels[0].outline.vertices"
+    assert exc.value.reason == guard.REASON_EXAMPLE_VALUES
+
+
+def test_pc_example_zoning_values_with_own_geometry_pass(pc_client, lane_c_on, example_case):
+    """[ORCH-CORRECTED per review 1] regression: a real BBL, R5, 8,000 sq ft, wide, every value
+    ranked, with the lot's own geometry -> 200."""
+    body = _real_pc_body(example_case)
+    body["lot"]["area_sq_ft"] = 8000.0
+    body["lot_rule_facts"] = {"zoning_district": "R5", "street_width_class": "wide"}
+    body["lot_rule_facts_provenance"] = {k: _ranked() for k in body["lot_rule_facts"]}
+    resp = pc_client.post(_PC_URL, json=body)
+    assert resp.status_code == 200, resp.json()
+    assert resp.json()["summary"] == {"pass": 1, "fail": 1, "could_not_check": 2, "total": 4}
 
 
 def test_pc_example_outline_alone_is_refused(pc_client, lane_c_on, example_case):
@@ -351,6 +408,17 @@ def test_pc_missing_fact_provenance_object_is_a_missing_rank(pc_client, lane_c_o
     )
 
 
+def test_pc_non_object_fact_provenance_entry_is_refused(pc_client, lane_c_on, example_case):
+    body = _real_pc_body(example_case)
+    body["lot_rule_facts_provenance"] = {"zoning_district": "city_records"}
+    resp = pc_client.post(_PC_URL, json=body)
+    _assert_refused(
+        resp,
+        reason=guard.REASON_PROVENANCE_NOT_AN_OBJECT,
+        field="lot_rule_facts_provenance.zoning_district",
+    )
+
+
 def test_pc_non_object_fact_provenance_is_refused(pc_client, lane_c_on, example_case):
     body = _real_pc_body(example_case)
     body["lot_rule_facts_provenance"] = ["city_records"]
@@ -407,10 +475,69 @@ def test_me_flag_off_example_on_real_property_is_unchanged(me_client):
     assert resp.status_code == 200, resp.json()
 
 
-def test_me_example_values_on_real_property_are_refused(me_client, lane_c_on):
+def test_me_example_zoning_values_on_a_real_lot_pass(me_client, lane_c_on):
+    """[ORCH-CORRECTED per review 1] regression: the accepted max-envelope fixture lot (real
+    EPSG:2263 coordinates, R5, 8,000 sq ft, wide) with a real BBL and ranked values -> 200."""
     resp = me_client.post(_ME_URL, json=_me_body(area=8000.0, facts=_EXAMPLE_FACTS, bbl=_BBL))
-    _assert_refused(resp, reason=guard.REASON_EXAMPLE_VALUES, field="lot_rule_facts")
+    assert resp.status_code == 200, resp.json()
+    assert resp.json()["candidate_placement"]["status"] == "fitted"
+
+
+def test_me_example_lot_line_on_real_property_is_refused(me_client, lane_c_on):
+    body = _me_body(area=7200.0, facts={"zoning_district": "R5"}, bbl=_BBL)
+    body["lot"]["lot_line_segments"].append(
+        {"id": "LL-W", "start": [999990.0, 199990.0], "end": [999990.0, 200060.0]}
+    )
+    resp = me_client.post(_ME_URL, json=body)
+    _assert_refused(resp, reason=guard.REASON_EXAMPLE_VALUES, field="lot.lot_line_segments[4]")
     assert _pair(resp) in MAX_ENVELOPE_STATUS_STATE_MATRIX
+
+
+def _recording_provider(calls: list):
+    def _provider(canonical_bbl):  # pragma: no cover - asserted never invoked
+        calls.append(canonical_bbl)
+        raise AssertionError("the derivation provider must not be reached")
+
+    return _provider
+
+
+def test_me_refused_real_property_request_never_reaches_the_derivation(
+    me_client, lane_c_on, monkeypatch
+):
+    """[ORCH-CORRECTED per review 2]: the guard runs BEFORE the DB-050(a) derivation's outbound
+    call - an unranked geometry-free real-property request is refused with no provider call."""
+    calls: list = []
+    monkeypatch.setattr(max_envelope_api, "get_lot_geometry_provider",
+                        lambda: _recording_provider(calls))
+    body = _me_body(area=8000.0, facts={"zoning_district": "R5"}, ranked=False, bbl=_BBL)
+    body["lot"]["lot_line_segments"] = []
+    resp = me_client.post(_ME_URL, json=body)
+    _assert_refused(resp, reason=guard.REASON_RANK_MISSING, field="lot.area_provenance.rank")
+    assert calls == []
+
+
+@pytest.mark.parametrize("malformed", ["abc", 0, None, {"id": "L-S"}])
+def test_me_malformed_lot_refuses_identically_with_and_without_bbl_when_unranked(
+    me_client, lane_c_on, monkeypatch, malformed
+):
+    """[ORCH-CORRECTED per review 2] / DB-051(b): lot-shape refusals come before the guard, so an
+    UNRANKED malformed request gets the same shape refusal with or without a BBL, and the
+    derivation provider is never reached."""
+    calls: list = []
+    monkeypatch.setattr(max_envelope_api, "get_lot_geometry_provider",
+                        lambda: _recording_provider(calls))
+    without = _me_body(area=8000.0, facts=_EXAMPLE_FACTS, ranked=False)
+    without["lot"]["lot_line_segments"] = malformed
+    with_bbl = copy.deepcopy(without)
+    with_bbl["lot"]["bbl"] = _BBL
+    a = me_client.post(_ME_URL, json=without).json()
+    b = me_client.post(_ME_URL, json=with_bbl).json()
+    assert a["field"] == b["field"] == "lot.lot_line_segments"
+    assert "reason" not in b
+    a.pop("correlation_id")
+    b.pop("correlation_id")
+    assert a == b
+    assert calls == []
 
 
 def test_me_example_values_without_bbl_are_unchanged(me_client, lane_c_on):

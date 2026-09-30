@@ -1,17 +1,23 @@
 """Real-property request guard (queue C-04, plan task M1-06a; plan section 9 "No example data in
 real work").
 
-A request is a REAL-PROPERTY request when its ``lot`` carries a ``bbl`` (any value other than
-``null`` or a blank string - a malformed BBL is still a claim that the request is about a real
-lot, so the guard applies; stricter is the safe side). For such a request, on
-``POST /api/v1/proposal-checks`` and ``POST /api/v1/max-envelope``, this module refuses:
+A request is a REAL-PROPERTY request when ``lot.bbl`` is a usable scalar (:func:`lot_bbl_present`:
+a non-blank string or a non-boolean number) - the SAME test the max-envelope route uses to decide
+server-side lot-geometry derivation (DB-050(a)), so the route has one definition of "carries a
+BBL". For such a request, on ``POST /api/v1/proposal-checks`` and ``POST /api/v1/max-envelope``,
+this module refuses:
 
 1. ``example`` that is present but not a boolean (``example_marker_not_boolean``).
-2. The known EXAMPLE-SITE signature - the web's former ``rectangleSampleDraft``
-   (``apps/web/src/lib/architect/proposal-draft.ts``): the fact triple district ``R5`` + lot area
-   8,000 sq ft + street class ``wide`` all together, or its fake EPSG:2263 outline corners, or
-   its fake lot line - unless the request says ``"example": true``
-   (``example_site_values_on_real_property``).
+2. The EXAMPLE-SITE GEOMETRY - the fictional EPSG:2263 coordinates of the web's former
+   ``rectangleSampleDraft`` (``apps/web/src/lib/architect/proposal-draft.ts``): its exact outline
+   corners (base or any level outline) or its exact lot line - unless the request says
+   ``"example": true`` (``example_site_values_on_real_property``). Only the fictional
+   coordinates are matched, never the example's zoning values: R5 + 8,000 sq ft + wide street is
+   an ordinary real lot (an 80 x 100 ft R5 lot on a wide street has exactly those values), so a
+   value match cannot tell the example from a genuine property and would refuse real lots. The
+   coordinates can only come from the example: real lot lines come from city geometry and a real
+   outline is fitted to it, and the architect never enters coordinates (plan section 4), so an
+   exact match on these round fictional survey-foot values does not occur for a real lot.
 3. A caller-attested value without a provenance label from the closed vocabulary of the
    site_fact contract's measurement ranks (``packages/contracts/schemas/v1/site_fact.schema.json``,
    ``$defs.measurement_*``): the lot area (``lot.area_provenance.rank``), every
@@ -24,7 +30,9 @@ lot, so the guard applies; stricter is the safe side). For such a request, on
 
 Requests without a BBL are untouched, so today's clients are unchanged. The whole guard is OFF
 unless ``LANE_C_ENABLED`` holds an explicit true token (:func:`real_property_guard_enabled`;
-absent / unknown -> off, the lane-flag rule).
+absent / unknown -> off, the lane-flag rule). The routes call it only AFTER their lot-shape
+refusals, so a malformed lot is refused identically with or without a BBL (DB-051(b)), and, on
+max-envelope, BEFORE the server-side derivation's outbound call.
 
 Every refusal is a :class:`RealPropertyRefusal` - a ``_FieldRefusal`` (so the routes' existing
 ``except`` maps it to ``(422, "validation_error")`` naming the exact ``field``) that also carries
@@ -41,11 +49,8 @@ from app.api.v1._proposal_fact_domains import _FieldRefusal
 from app.config import lane_enabled
 
 __all__ = [
-    "EXAMPLE_LOT_AREA_SQ_FT",
     "EXAMPLE_LOT_LINE_ENDPOINTS",
     "EXAMPLE_OUTLINE_CORNERS",
-    "EXAMPLE_STREET_WIDTH_CLASS",
-    "EXAMPLE_ZONING_DISTRICT",
     "KNOWN_VALUE_RANKS",
     "MEASUREMENT_RANKS",
     "REAL_PROPERTY_GUARD_REASONS",
@@ -57,7 +62,7 @@ __all__ = [
     "REASON_RANK_UNKNOWN_WITH_VALUE",
     "RealPropertyRefusal",
     "guard_real_property_request",
-    "is_real_property_request",
+    "lot_bbl_present",
     "real_property_guard_enabled",
 ]
 
@@ -96,12 +101,9 @@ KNOWN_VALUE_RANKS: tuple[str, ...] = tuple(r for r in MEASUREMENT_RANKS if r != 
 
 _RANK_KEY = "rank"
 
-# --- the example-site signature (apps/web/src/lib/architect/proposal-draft.ts) -----------------
-#: ``rectangleSampleDraft()``: a fictional 8,000 sq ft R5 lot on a wide street, with a fake
-#: 100 ft x 50 ft EPSG:2263 building outline and one fake lot line. Values copied verbatim.
-EXAMPLE_ZONING_DISTRICT = "R5"
-EXAMPLE_LOT_AREA_SQ_FT = 8000.0
-EXAMPLE_STREET_WIDTH_CLASS = "wide"
+# --- the example-site geometry (apps/web/src/lib/architect/proposal-draft.ts) ------------------
+#: ``rectangleSampleDraft()``'s fictional EPSG:2263 coordinates, copied verbatim: the 100 ft x
+#: 50 ft building outline corners and the one lot line. A test pins them to the web source.
 EXAMPLE_OUTLINE_CORNERS: frozenset[tuple[float, float]] = frozenset(
     {
         (1000000.0, 200000.0),
@@ -128,14 +130,14 @@ def real_property_guard_enabled(env: Mapping[str, str] | None = None) -> bool:
     return lane_enabled("C", env)
 
 
-def is_real_property_request(lot: Mapping[str, Any]) -> bool:
-    """True when ``lot.bbl`` is present and is not ``null`` or a blank string."""
-    if "bbl" not in lot:
-        return False
-    bbl = lot["bbl"]
-    if bbl is None:
-        return False
-    return not (isinstance(bbl, str) and not bbl.strip())
+def lot_bbl_present(lot: Mapping[str, Any]) -> bool:
+    """True when ``lot.bbl`` is a usable scalar: a non-blank string or a non-boolean number.
+    ``null``, a blank string, a boolean, an object or a list is no BBL. Shared with the
+    max-envelope derivation trigger so both use one definition."""
+    bbl = lot.get("bbl")
+    if isinstance(bbl, str):
+        return bbl.strip() != ""
+    return isinstance(bbl, int | float) and not isinstance(bbl, bool)
 
 
 def guard_real_property_request(
@@ -149,7 +151,7 @@ def guard_real_property_request(
     Raises :class:`RealPropertyRefusal` on the first failing check, in the order listed in the
     module docstring. The caller has already shape-checked ``lot`` / ``lot_rule_facts`` /
     ``proposed_massing`` as objects and type-checked the mapped fact values."""
-    if not is_real_property_request(lot):
+    if not lot_bbl_present(lot):
         return
     example = body.get("example", False)
     if not isinstance(example, bool):
@@ -159,30 +161,24 @@ def guard_real_property_request(
             reason=REASON_EXAMPLE_MARKER_NOT_BOOLEAN,
         )
     if not example:
-        _refuse_example_signature(lot, lot_rule_facts, proposed_massing)
+        _refuse_example_geometry(lot, proposed_massing)
     _require_ranks(body, lot, lot_rule_facts)
 
 
-# --- example signature ---------------------------------------------------------------------------
+# --- example geometry ----------------------------------------------------------------------------
 def _example_refusal(field: str, what: str) -> RealPropertyRefusal:
     return RealPropertyRefusal(
-        f"{what} match the built-in example site (plan section 9: no example data in real "
-        "work); a request for a real property (lot.bbl present) cannot use them. Send the "
-        "property's own values, or mark a demo request \"example\": true",
+        f"{what} are the built-in example site's fictional coordinates (plan section 9: no "
+        "example data in real work); a request for a real property (lot.bbl present) cannot "
+        "carry them. Send this property's own geometry",
         field=field,
         reason=REASON_EXAMPLE_VALUES,
     )
 
 
-def _refuse_example_signature(
-    lot: Mapping[str, Any],
-    lot_rule_facts: Mapping[str, Any],
-    proposed_massing: Mapping[str, Any] | None,
+def _refuse_example_geometry(
+    lot: Mapping[str, Any], proposed_massing: Mapping[str, Any] | None
 ) -> None:
-    if _facts_match_example(lot, lot_rule_facts):
-        raise _example_refusal(
-            "lot_rule_facts", "the lot area, zoning district and street width class together"
-        )
     if isinstance(proposed_massing, Mapping):
         outlines = [("proposed_massing.outline.vertices", proposed_massing.get("outline"))]
         levels = proposed_massing.get("levels")
@@ -200,20 +196,6 @@ def _refuse_example_signature(
         for idx, seg in enumerate(segments):
             if isinstance(seg, Mapping) and _segment_endpoints(seg) == EXAMPLE_LOT_LINE_ENDPOINTS:
                 raise _example_refusal(f"lot.lot_line_segments[{idx}]", "the lot line endpoints")
-
-
-def _facts_match_example(lot: Mapping[str, Any], facts: Mapping[str, Any]) -> bool:
-    area = lot.get("area_sq_ft")
-    district = facts.get("zoning_district")
-    street = facts.get("street_width_class")
-    return (
-        _is_number(area)
-        and float(area) == EXAMPLE_LOT_AREA_SQ_FT
-        and isinstance(district, str)
-        and district.strip().upper() == EXAMPLE_ZONING_DISTRICT
-        and isinstance(street, str)
-        and street.strip().lower() == EXAMPLE_STREET_WIDTH_CLASS
-    )
 
 
 def _is_number(value: object) -> bool:
