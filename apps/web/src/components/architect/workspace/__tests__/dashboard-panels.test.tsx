@@ -32,9 +32,9 @@ describe("real-data dashboard summaries", () => {
     render(<DashboardPanels {...props}/>);
     expect(screen.getByTestId("dashboard-reference-far")).toHaveTextContent("3.44");
     expect(screen.getByTestId("dashboard-evaluated-far")).toHaveTextContent("1.50");
-    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("15,000 sq ft");
-    expect(screen.getByText("FAR only · Buildable envelope not assessed")).toBeInTheDocument();
-    expect(within(screen.getByTestId("dashboard-cap").closest("tr")!).getByRole("button", { name: /Conditional/ })).toBeInTheDocument();
+    // Plan §5a item 3: the supported cap is the headline number alone, with no caution chip.
+    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent(/^15,000 sq ft$/);
+    expect(screen.queryByText(/Conditional/)).not.toBeInTheDocument();
     expect(screen.getByTestId("bbL-bound-map")).toHaveTextContent(props.profile.identity.bbl);
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });
@@ -43,10 +43,11 @@ describe("real-data dashboard summaries", () => {
     const props = inputs();
     props.condo = { ...props.condo, withholdAllowances: true };
     render(<DashboardPanels {...props}/>);
-    expect(screen.getByTestId("dashboard-evaluated-far")).toHaveTextContent("Not calculated");
-    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("Not calculated");
-    expect(screen.getByText("Site definition requires review · allowances withheld")).toBeInTheDocument();
-    expect(screen.getAllByText(/Withheld · site review/)).toHaveLength(3);
+    expect(screen.getByTestId("dashboard-evaluated-far")).toHaveTextContent("Not available — the site needs review first");
+    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("Not available — the site needs review first");
+    expect(screen.getAllByTestId("dashboard-status-item")[0]).toHaveTextContent("Results withheld");
+    // FAR, cap and the three dimensional rows.
+    expect(screen.getAllByText("Not available — the site needs review first")).toHaveLength(5);
     expect(screen.queryByText("15,000 sq ft")).not.toBeInTheDocument();
   });
 
@@ -54,13 +55,13 @@ describe("real-data dashboard summaries", () => {
     const props = inputs();
     props.scenario!.evaluated_input.bbl = "1000019999";
     const view = render(<DashboardPanels {...props}/>);
-    expect(screen.getByTestId("dashboard-evaluated-far")).toHaveTextContent("Not calculated");
-    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("dashboard-evaluated-far")).toHaveTextContent("Not available — the rule and scenario records do not match");
+    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("Not available — the rule and scenario records do not match");
     props.scenario!.evaluated_input.bbl = props.profile.identity.bbl;
     props.evaluation!.evaluations[0].citations = [];
     view.rerender(<DashboardPanels {...props}/>);
-    expect(screen.getByTestId("dashboard-evaluated-far")).toHaveTextContent("Not calculated");
-    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("dashboard-evaluated-far")).toHaveTextContent("Not available — the rule sources are incomplete");
+    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("Not available — the rule sources are incomplete");
   });
 
   it("keeps a conflicting source FAR visible as a conflict instead of selecting a number", () => {
@@ -68,8 +69,8 @@ describe("real-data dashboard summaries", () => {
     const reference = props.profile.provenance.find(record => record.original_field_name === "residfar")!;
     props.profile.provenance.push({ ...reference, provenance_id: `${reference.provenance_id}-duplicate`, normalized_value: 12 });
     render(<DashboardPanels {...props}/>);
-    expect(screen.getByTestId("dashboard-reference-far")).toHaveTextContent("Conflicting records");
-    fireEvent.click(screen.getByRole("button", { name: /City record/ }));
+    expect(screen.getByTestId("dashboard-reference-far")).toHaveTextContent("Not available — city records disagree");
+    fireEvent.click(screen.getByRole("button", { name: /City-listed residential FAR/ }));
     expect(props.onOpen).toHaveBeenCalledWith("evidence");
     expect(props.onInspect).not.toHaveBeenCalled();
   });
@@ -95,7 +96,7 @@ describe("real-data dashboard summaries", () => {
     const actions = within(screen.getByRole("region", { name: "Quick actions" }));
     fireEvent.click(actions.getByRole("button", { name: /Report preview/ }));
     fireEvent.click(actions.getByRole("button", { name: /Draw a proposal/ }));
-    fireEvent.click(screen.getByRole("button", { name: /1 missing input · 1 critical/ }));
+    fireEvent.click(screen.getByRole("button", { name: /1 missing input \(1 critical\)/ }));
     expect(props.onOpen).toHaveBeenNthCalledWith(1, "report");
     expect(props.onOpen).toHaveBeenNthCalledWith(2, "proposal");
     expect(props.onOpen).toHaveBeenNthCalledWith(3, "issues");
@@ -107,16 +108,14 @@ describe("real-data dashboard summaries", () => {
     const view = render(<DashboardPanels {...props}/>);
     expect(screen.queryByRole("button", { name: /Draw a proposal/ })).not.toBeInTheDocument();
     expect(within(screen.getByRole("group", { name: "Development details" })).queryByRole("button", { name: "Envelope" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /Buildable envelope/ })).not.toBeInTheDocument();
-    // The honest FAR-only scope line stays; nothing else changes.
-    expect(screen.getByText("FAR only · Buildable envelope not assessed")).toBeInTheDocument();
+    // The envelope rows still say plainly that they are not available; nothing else changes.
+    expect(screen.getByRole("rowheader", { name: "Height" }).closest("tr")).toHaveTextContent("Not available — not calculated yet");
     expect(within(screen.getByRole("group", { name: "Development details" })).getByRole("button", { name: "Units" })).toBeInTheDocument();
     view.rerender(<DashboardPanels {...props} proposalEditorEnabled/>);
     expect(screen.getByRole("button", { name: /Draw a proposal/ })).toBeInTheDocument();
     fireEvent.click(within(screen.getByRole("group", { name: "Development details" })).getByRole("button", { name: "Envelope" }));
-    fireEvent.click(screen.getByRole("button", { name: /Buildable envelope/ }));
-    expect(props.onOpen).toHaveBeenNthCalledWith(1, "envelope");
-    expect(props.onOpen).toHaveBeenNthCalledWith(2, "envelope");
+    expect(props.onOpen).toHaveBeenCalledTimes(1);
+    expect(props.onOpen).toHaveBeenCalledWith("envelope");
   });
 
   it.each([3, 4, 5])("shows all %i recorded base parcels without assuming exactly two", count => {
@@ -129,6 +128,7 @@ describe("real-data dashboard summaries", () => {
     } as CondoSurfaceDecision;
     render(<DashboardPanels {...props}/>);
     expect(screen.getByRole("button", { name: new RegExp(`${count} base parcel records.*Review parcels`) })).toBeInTheDocument();
-    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("Not available — the site needs review first");
+    expect(screen.getAllByTestId("dashboard-status-item")[2]).toHaveTextContent(`${count} lots on record`);
   });
 });
