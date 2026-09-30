@@ -27,7 +27,7 @@ from pathlib import Path
 
 import pytest
 
-from app.connectors import pluto_soda
+from app.connectors import pluto_soda, ztldb_soda
 from app.connectors.dcm_street_centerline_arcgis import DcmTransport, fetch_layer_metadata
 from app.contracts.study_contracts import validate_results_document
 from app.profile.builder import build_property_profile
@@ -236,10 +236,51 @@ def test_the_competitor_reports_pluto_24v4_is_out_of_date(benchmark_pluto_facts)
     ("2025-12-01T19:39:55Z", "2026-01-05T00:00:00Z", STATUS_OUT_OF_DATE),
     ("2025-12-01T19:39:55Z", "2025-12-01T19:39:55.000Z", STATUS_CURRENT),
     ("2026-04-05T18:46:56Z", "2026-04-05T14:46:56-04:00", STATUS_CURRENT),
+    # Compared as numbers and instants, never as text (review N2): "26v9" > "26v10" and
+    # "...T10:00:00+05:00" > "...T06:00:00Z" as text, but both are older.
+    ("26v9", "26v10", STATUS_OUT_OF_DATE),
+    ("26v10", "26v9", STATUS_CURRENT),
+    ("2026-09-30T10:00:00+05:00", "2026-09-30T06:00:00Z", STATUS_OUT_OF_DATE),
+    ("2026-09-30T06:00:00Z", "2026-09-30T10:00:00+05:00", STATUS_CURRENT),
+    # The ZTLDB connector's rowsUpdatedAt label reads as its timestamp.
+    ("socrata-rows-2026-04-05T18:46:56Z", "socrata-rows-2026-05-01T00:00:00Z", STATUS_OUT_OF_DATE),
+    ("socrata-rows-2026-04-05T18:46:56Z", "socrata-rows-2026-04-05T18:46:56Z", STATUS_CURRENT),
 ])
 def test_versions_compare_within_their_kind(pinned, published, expected) -> None:
     # SYNTHETIC version strings.
     assert assess_source(_pin(pinned), [_seen(published)]).status == expected
+
+
+@pytest.mark.parametrize(("pinned", "tied", "reported"), [
+    ("26v1", ("26v1", "26v1.0"), "26v1.0"),
+    ("2026-04-05T18:46:56Z", ("2026-04-05T18:46:56Z", "2026-04-05T14:46:56-04:00"),
+     "2026-04-05T18:46:56Z"),
+])
+def test_tied_published_versions_are_reported_the_same_whatever_the_order(
+        pinned, tied, reported) -> None:
+    # SYNTHETIC: two spellings of one version, seen at the same time (review N3).
+    for order in (tied, tied[::-1]):
+        status = assess_source(_pin(pinned), [_seen(version) for version in order])
+        assert (status.status, status.latest_known_version) == (STATUS_CURRENT, reported)
+
+
+def test_benchmark_ztldb_rows_updated_label_is_a_pinned_timestamp() -> None:
+    # The recorded ZTLDB metadata (rowsUpdatedAt 1775414816) through the real connector.
+    name = "ztldb_fdkv-4t4z_api_views_metadata.json"
+    entry = MANIFEST[name]
+    body = (PACK / name).read_bytes().decode("utf-8")
+    freshness = ztldb_soda.fetch_source_freshness(
+        transport=lambda url, headers, timeout: TransportResponse(200, body),
+        sleep=lambda _s: None, clock=lambda: datetime.fromisoformat(entry["retrieved_at"]),
+        correlation_id="b06-benchmark")
+    pin = PinnedSource("ZTLDB (fdkv-4t4z)", freshness.version_label, entry["retrieved_at"],
+                       entry["url"])
+    assert pin.version == "socrata-rows-2026-04-05T18:46:56Z"
+    status = assess_source(pin, published_from_pins([pin]))
+    assert (status.status, status.version_basis) == (STATUS_CURRENT, "timestamp")
+    later = PublishedVersion(pin.dataset, "socrata-rows-2026-05-01T00:00:00Z",
+                             "2026-10-01T00:00:00Z", "synthetic://ztldb")  # SYNTHETIC
+    assert assess_source(pin, [later]).status == STATUS_OUT_OF_DATE
 
 
 def test_the_newest_of_several_published_versions_is_used(f09_probe) -> None:
@@ -274,6 +315,11 @@ def test_behind_means_only_a_newer_version_is_known(f01_facts, f09_probe) -> Non
     ("26v2", [_seen("2026-09-30T06:10:20Z")]),             # another kind of version
     ("26v2", [_seen("26v2"), _seen(None)]),               # a published version is unreadable
     ("26v2", [_seen("26v2"), _seen("26v3-beta")]),
+    ("\u0662\u0666v1", [_seen("26v2")]),                   # Arabic-Indic digits (review N6)
+    ("\uff12\uff16v1", [_seen("26v2")]),                   # full-width digits
+    ("26v1", [_seen("26v1"), _seen("\u0662\u0666v2")]),     # a non-ASCII published version
+    ("socrata-rows-26v2", [_seen("26v2")]),                # the ZTLDB label holds a timestamp only
+    ("socrata-rows-2026-04-05", [_seen("2026-04-05T18:46:56Z")]),
 ])
 def test_an_unknown_version_is_never_current(pinned, published) -> None:
     # SYNTHETIC version strings.

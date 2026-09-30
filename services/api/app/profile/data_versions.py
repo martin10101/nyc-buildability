@@ -38,6 +38,13 @@ Version kinds (only the same kind is compared):
   and minors (``24v1.1``) monthly. MapPLUTO uses the same release label. A missing minor
   counts as 0.
 - ``timestamp``: an RFC 3339 date-time with a time zone (the site_fact ``date_time`` shape).
+  Timestamps are compared as instants, so offsets are honoured. The ZTLDB connector records
+  ``rowsUpdatedAt`` as ``socrata-rows-<RFC 3339>`` (``app.connectors.ztldb_soda``
+  ``version_label``), and that label reads as its timestamp.
+
+Digits are ASCII ``0-9`` only. When several published versions tie (``26v1`` and ``26v1.0``, or
+one instant at two offsets), the latest-seen one is reported, then the one whose version text
+sorts last. So the report never depends on input order.
 
 Published versions come from any recorded observation of what a dataset published: a version
 probe (for example the PLUTO ``$select=version`` query, fixture F09), layer metadata, or a
@@ -98,16 +105,27 @@ OUT_OF_DATE_EXCEPTION_LABEL = "Out of date"
 BASIS_RELEASE = "release"
 BASIS_TIMESTAMP = "timestamp"
 
-# PLUTO release format (connector pluto_soda; fixture F09 note).
-_RELEASE_RE = re.compile(r"^(\d{2})v(\d+)(?:\.(\d+))?$")
+# PLUTO release format (connector pluto_soda; fixture F09 note), ASCII digits only.
+_RELEASE_RE = re.compile(r"^([0-9]{2})v([0-9]+)(?:\.([0-9]+))?$")
 # common.schema.json date_time pattern: a time zone is required.
 _TIMESTAMP_RE = re.compile(
     r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$"
 )
+# ZTLDB dataset_version label: f"socrata-rows-{rows_updated_at}" (ztldb_soda version_label).
+_ZTLDB_ROWS_PREFIX = "socrata-rows-"
 
 
 def _text(value: Any) -> str | None:
     return value.strip() if isinstance(value, str) and value.strip() else None
+
+
+def _timestamp(text: str) -> tuple[str, Any] | None:
+    if not _TIMESTAMP_RE.match(text):
+        return None
+    try:
+        return BASIS_TIMESTAMP, datetime.fromisoformat(text)
+    except ValueError:
+        return None
 
 
 def read_version(version: Any) -> tuple[str, Any] | None:
@@ -115,16 +133,13 @@ def read_version(version: Any) -> tuple[str, Any] | None:
     text = _text(version)
     if text is None:
         return None
+    if text.startswith(_ZTLDB_ROWS_PREFIX):
+        return _timestamp(text[len(_ZTLDB_ROWS_PREFIX):])
     match = _RELEASE_RE.match(text)
     if match:
         year, major, minor = match.groups()
         return BASIS_RELEASE, (int(year), int(major), int(minor or 0))
-    if _TIMESTAMP_RE.match(text):
-        try:
-            return BASIS_TIMESTAMP, datetime.fromisoformat(text)
-        except ValueError:
-            return None
-    return None
+    return _timestamp(text)
 
 
 @dataclass(frozen=True)
@@ -323,16 +338,19 @@ def assess_source(pin: PinnedSource, published: Iterable[PublishedVersion]) -> S
         return status(STATUS_VERSION_UNKNOWN,
                       f"{pin.dataset} {what}, so it cannot be shown as current.")
 
-    comparable: list[tuple[Any, str, str, PublishedVersion]] = []
+    comparable: list[tuple[Any, str, str, str, PublishedVersion]] = []
     unreadable: list[PublishedVersion] = []
     for seen in same_dataset:
         reading = read_version(seen.version)
         if reading is None or reading[0] != pinned[0]:
             unreadable.append(seen)
         else:
-            comparable.append((reading[1], seen.seen_at or "", seen.query_ref or "", seen))
-    comparable.sort(key=lambda item: item[:3])
-    latest = comparable[-1][3] if comparable else None
+            # Ties on the version value break on when it was seen, then its text, then the
+            # request, so the reported latest never depends on input order.
+            comparable.append((reading[1], seen.seen_at or "", seen.version.strip(),
+                               seen.query_ref or "", seen))
+    comparable.sort(key=lambda item: item[:4])
+    latest = comparable[-1][-1] if comparable else None
 
     if latest is not None and comparable[-1][0] > pinned[1]:
         seen_at = f" (seen {latest.seen_at})" if latest.seen_at else ""
