@@ -1,13 +1,13 @@
 """Results contract -> :class:`DrawingInput` (validated, fail-closed).
 
-1. The whole results document is validated against the canonical
-   ``results.schema.json`` (strict Draft 2020-12, read-only schema load).
+1. The whole results document is validated by the shared server-side
+   validator :func:`app.contracts.study_contracts.validate_results_document`
+   (task C-03: bundled canonical schema, strict JSON, no fixture-only keys).
 2. The geometry is then checked for what a schema cannot state: closed,
    finite, simple, non-degenerate rings; holes inside their exterior; yards,
    setback lines and floor plates inside the lot outline; street frontages on
-   the lot boundary; floor plates that agree with the floor-by-floor table
-   (same floors and uses, same gross area - check C-4); one floor-to-floor
-   height per floor; floor numbers without gaps.
+   the lot boundary; every printed string well-formed for XML; and the drawn
+   outlines agreeing with the printed numbers (:mod:`.consistency`, check C-4).
 
 Any failure raises :class:`DrawingInputError`; nothing partial is returned.
 ``geometry: not_available`` is not an error - it returns :class:`Unavailable`
@@ -19,9 +19,15 @@ from __future__ import annotations
 import math
 from collections.abc import Mapping, Sequence
 
-from jsonschema.exceptions import best_match
+from app.contracts.study_contracts import StudyContractError, validate_results_document
 
 from . import geometry as geo
+from .consistency import (
+    check_floor_numbers,
+    check_plate_areas,
+    check_plates_match_rows,
+    check_yard_depths,
+)
 from .errors import DrawingInputError
 from .model import (
     CaseAssumption,
@@ -39,7 +45,7 @@ from .model import (
     Yard,
     YardNotRequired,
 )
-from .schema_source import results_validator
+from .svg import xml_illegal
 
 __all__ = [
     "FRONTAGE_TOL_FT",
@@ -53,7 +59,6 @@ MAX_RING_POINTS = 1024  # bounds the O(n^2) simplicity check
 MAX_FLOOR_PLATES = 1000
 MAX_ABS_COORD_FT = 1.0e8  # EPSG:2263 NYC values are ~1e6 ft; anything far beyond is corrupt
 FRONTAGE_TOL_FT = 0.01  # a frontage end point this close to the lot boundary lies on it
-GROSS_SF_TOL = 0.01
 
 
 def load_drawing_input(results: Mapping) -> DrawingInput | Unavailable:
@@ -70,12 +75,15 @@ def load_drawing_input(results: Mapping) -> DrawingInput | Unavailable:
     )
     plates = _floor_plates(geometry["floor_plates"], lot)
     if not isinstance(plates, LayerUnavailable):  # the massing stacks plates by these rows
-        _check_plates_match_rows(plates, rows)
-        _check_floor_numbers(rows)
+        check_plate_areas(plates)
+        check_plates_match_rows(plates, rows)
+        check_floor_numbers(rows)
     yards, not_required = _yards(geometry["yards"], lot)
+    if not isinstance(yards, LayerUnavailable):
+        check_yard_depths(yards, lot)
     return DrawingInput(
         crs=geometry["crs"],
-        measurement_label=geometry["measurement"]["label"],
+        measurement_label=_text(geometry["measurement"]["label"], "/geometry/measurement/label"),
         lot=lot,
         streets=tuple(
             _street(street, f"/geometry/streets/{i}", lot)
@@ -95,9 +103,10 @@ def _street_width_case(raw: Mapping | None) -> StreetWidthCase | None:
         return None
     base = "/street_width_case"
     return StreetWidthCase(
-        marker=raw["marker"],
+        marker=_text(raw["marker"], f"{base}/marker"),
         assumptions=tuple(
-            CaseAssumption(a["street"], a["assumed"], f"{base}/assumptions/{i}")
+            CaseAssumption(_text(a["street"], f"{base}/assumptions/{i}/street"), a["assumed"],
+                           f"{base}/assumptions/{i}")
             for i, a in enumerate(raw["assumptions"])
         ),
         source=base,
@@ -105,12 +114,21 @@ def _street_width_case(raw: Mapping | None) -> StreetWidthCase | None:
 
 
 def _validate_schema(results: Mapping) -> None:
-    if not isinstance(results, Mapping):
-        raise DrawingInputError("schema_invalid", "results must be a JSON object")
-    error = best_match(results_validator().iter_errors(results))
-    if error is not None:
-        pointer = "".join(f"/{part}" for part in error.absolute_path)
-        raise DrawingInputError("schema_invalid", error.message, location=pointer)
+    try:
+        validate_results_document(results)
+    except StudyContractError as exc:
+        pointer = "" if exc.location == "<root>" else "/" + exc.location
+        raise DrawingInputError("schema_invalid", str(exc), location=pointer) from exc
+
+
+def _text(value: str, location: str) -> str:
+    """A string the drawings print: refuse characters XML 1.0 forbids (C0 controls
+    other than tab/LF/CR, lone surrogates, U+FFFE/U+FFFF), which would make the
+    SVG malformed."""
+    if xml_illegal(value):
+        raise DrawingInputError("invalid_text", "text carries a character XML forbids",
+                                location=location)
+    return value
 
 
 def _finite(value: float, location: str) -> float:
@@ -163,15 +181,10 @@ def _polygon(raw: Sequence, location: str) -> Polygon:
 
 def _clear_of_hole(polygon: Polygon, hole: Ring) -> bool:
     """Whether the polygon's solid part stays out of one of the lot's holes."""
-    exterior = polygon.exterior
-    if geo.rings_cross(exterior, hole):
-        return False
-    if any(geo.point_location(p, hole) == "inside" for p in geo.probe_points(exterior)):
-        return False
-    if any(geo.point_location(p, exterior) == "inside" for p in geo.probe_points(hole)):
-        # The lot hole sits within this outline: fine only inside one of its own holes.
-        return any(geo.ring_within(hole, own) for own in polygon.holes)
-    return True
+    if not geo.interiors_overlap(polygon.exterior, hole):
+        return True
+    # The lot hole overlaps this outline: fine only inside one of its own holes.
+    return any(geo.ring_within(hole, own) for own in polygon.holes)
 
 
 def _check_within_lot(polygon: Polygon, lot: Polygon, code: str) -> None:
@@ -181,6 +194,11 @@ def _check_within_lot(polygon: Polygon, lot: Polygon, code: str) -> None:
     if not inside:
         raise DrawingInputError(code, "outline is not inside the lot outline",
                                 location=polygon.source)
+
+
+def _unavailable(layer: str, raw: Mapping, base: str) -> LayerUnavailable:
+    return LayerUnavailable(layer, _text(raw["reason"], f"{base}/reason"), raw["reason_kind"],
+                            base)
 
 
 def _street(raw: Mapping, location: str, lot: Polygon) -> Street:
@@ -196,7 +214,8 @@ def _street(raw: Mapping, location: str, lot: Polygon) -> Street:
     if all(geo.edge_length(frontage[0], p) <= FRONTAGE_TOL_FT for p in frontage[1:]):
         raise DrawingInputError("frontage_degenerate", "frontage has no length",
                                 location=f"{location}/frontage_line")
-    return Street(name=raw["street"], frontage=frontage, source=location)
+    return Street(name=_text(raw["street"], f"{location}/street"), frontage=frontage,
+                  source=location)
 
 
 def _yards(
@@ -204,13 +223,14 @@ def _yards(
 ) -> tuple[tuple[Yard, ...] | LayerUnavailable, tuple[YardNotRequired, ...]]:
     base = "/geometry/yards"
     if raw["status"] == "not_available":
-        return LayerUnavailable("yards", raw["reason"], raw["reason_kind"], base), ()
+        return _unavailable("yards", raw, base), ()
     yards: list[Yard] = []
     not_required: list[YardNotRequired] = []
     for i, entry in enumerate(raw["entries"]):
         location = f"{base}/entries/{i}"
         if entry["status"] == "not_required":
-            not_required.append(YardNotRequired(entry["kind"], entry["reason"], location))
+            not_required.append(YardNotRequired(
+                entry["kind"], _text(entry["reason"], f"{location}/reason"), location))
             continue
         outline = _polygon(entry["outline"], f"{location}/outline")
         _check_within_lot(outline, lot, "yard_outside_lot")
@@ -222,7 +242,7 @@ def _yards(
 def _setback_lines(raw: Mapping, lot: Polygon) -> tuple[SetbackLine, ...] | LayerUnavailable:
     base = "/geometry/setback_lines_per_level"
     if raw["status"] == "not_available":
-        return LayerUnavailable("setback_lines", raw["reason"], raw["reason_kind"], base)
+        return _unavailable("setback_lines", raw, base)
     result: list[SetbackLine] = []
     for i, entry in enumerate(raw["entries"]):
         location = f"{base}/entries/{i}"
@@ -244,7 +264,7 @@ def _setback_lines(raw: Mapping, lot: Polygon) -> tuple[SetbackLine, ...] | Laye
 def _floor_plates(raw: Mapping, lot: Polygon) -> tuple[FloorPlate, ...] | LayerUnavailable:
     base = "/geometry/floor_plates"
     if raw["status"] == "not_available":
-        return LayerUnavailable("floor_plates", raw["reason"], raw["reason_kind"], base)
+        return _unavailable("floor_plates", raw, base)
     if len(raw["entries"]) > MAX_FLOOR_PLATES:
         raise DrawingInputError("too_many_floor_plates", f"more than {MAX_FLOOR_PLATES}",
                                 location=base)
@@ -261,45 +281,9 @@ def _floor_plates(raw: Mapping, lot: Polygon) -> tuple[FloorPlate, ...] | LayerU
 def _row(raw: Mapping, location: str) -> FloorRow:
     return FloorRow(
         floor=raw["floor"],
-        label=raw["floor_label"],
+        label=_text(raw["floor_label"], f"{location}/floor_label"),
         gross_sf=_finite(raw["gross_sf"], f"{location}/gross_sf"),
         height_ft=_finite(raw["height_ft"], f"{location}/height_ft"),
         use=raw["use"],
         source=location,
     )
-
-
-def _sums(items, key) -> dict[tuple[int, str], float]:
-    sums: dict[tuple[int, str], float] = {}
-    for item in items:
-        sums[key(item)] = sums.get(key(item), 0.0) + item.gross_sf
-    return sums
-
-
-def _check_plates_match_rows(plates: tuple[FloorPlate, ...], rows: tuple[FloorRow, ...]) -> None:
-    plate_sums = _sums(plates, lambda p: (p.floor, p.use))
-    row_sums = _sums(rows, lambda r: (r.floor, r.use))
-    for key in sorted(set(plate_sums) | set(row_sums)):
-        a, b = plate_sums.get(key), row_sums.get(key)
-        if a is None or b is None or abs(a - b) > GROSS_SF_TOL:
-            raise DrawingInputError(
-                "plates_rows_mismatch",
-                f"floor {key[0]} {key[1]}: floor plates {a} sf vs floor-by-floor {b} sf",
-                location="/geometry/floor_plates",
-            )
-
-
-def _check_floor_numbers(rows: tuple[FloorRow, ...]) -> None:
-    heights: dict[int, float] = {}
-    for row in rows:
-        if row.floor in heights and heights[row.floor] != row.height_ft:
-            raise DrawingInputError("floor_height_conflict",
-                                    f"floor {row.floor} has two floor-to-floor heights",
-                                    location=row.source)
-        heights[row.floor] = row.height_ft
-    above = sorted(f for f in heights if f >= 1)
-    below = sorted((f for f in heights if f <= 0), reverse=True)
-    if above != list(range(1, len(above) + 1)) or below != list(range(0, -len(below), -1)):
-        raise DrawingInputError("floors_not_contiguous",
-                                "floor numbers must run 1..N above grade and 0, -1, ... below",
-                                location="/floor_by_floor")

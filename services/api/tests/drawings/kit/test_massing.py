@@ -14,6 +14,7 @@ from app.drawings.kit.color import mix, relative_luminance
 from app.drawings.kit.projection import TOP_LIGHTENING
 from app.drawings.kit.styles import style_for
 
+from .drawn_checks import massing_problems
 from .kit_support import (
     CONTRACT_FIXTURES,
     ENV_ON,
@@ -54,6 +55,18 @@ def test_every_label_is_read_from_the_results(path):
     assert label_problems(drawing.svg, doc) == []
     assert numbers_not_in_input(drawing.svg, doc) == []
     assert overlapping_labels(drawing.svg) == []
+
+
+@pytest.mark.parametrize("path", WITH_PLATES, ids=IDS)
+def test_drawn_plate_areas_match_the_printed_areas(path):
+    doc, drawing = _massing(path)
+    assert massing_problems(drawing.svg, doc) == []
+
+
+def test_the_drawn_area_checker_catches_a_mismatch():
+    doc, drawing = _massing(KIT_FIXTURES / "synthetic_interior_lot_mixed_use.json")
+    assert ">4,200 sf<" in drawing.svg
+    assert massing_problems(drawing.svg.replace(">4,200 sf<", ">1,050 sf<", 1), doc)
 
 
 @pytest.mark.parametrize("path", WITH_PLATES, ids=IDS)

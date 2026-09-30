@@ -10,7 +10,9 @@ import pytest
 from app.drawings.kit import Drawing, render_site_plan
 from app.drawings.kit.site_plan import STANDARD_SCALES_FT_PER_IN
 from app.drawings.kit.styles import STYLE_TABLE
+from app.drawings.kit.svg import escape
 
+from .drawn_checks import site_plan_problems
 from .kit_support import (
     CONTRACT_FIXTURES,
     ENV_ON,
@@ -49,6 +51,25 @@ def test_every_label_is_read_from_the_results(path):
     doc, drawing = _plan(path)
     assert label_problems(drawing.svg, doc) == []
     assert numbers_not_in_input(drawing.svg, doc) == []
+
+
+@pytest.mark.parametrize("path", FIXTURES, ids=IDS)
+def test_drawn_footprints_and_yards_match_the_printed_numbers(path):
+    doc, drawing = _plan(path)
+    assert site_plan_problems(drawing.svg, doc) == []
+
+
+def test_the_drawn_geometry_checker_catches_a_mismatch():
+    doc, drawing = _plan(KIT_FIXTURES / "synthetic_interior_lot_mixed_use.json")
+    assert ">30 ft<" in drawing.svg
+    assert site_plan_problems(drawing.svg.replace(">30 ft<", ">10 ft<"), doc)
+
+
+@pytest.mark.parametrize("text", ["Main\x0bStreet", "a\x00", "b\ud800", "c\uffff"])
+def test_svg_text_never_carries_characters_xml_forbids(text):
+    with pytest.raises(ValueError):
+        escape(text)
+    assert escape("Tab\tand\nnewline & <ok>") == "Tab\tand\nnewline &amp; &lt;ok&gt;"
 
 
 @pytest.mark.parametrize("path", FIXTURES, ids=IDS)

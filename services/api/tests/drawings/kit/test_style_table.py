@@ -7,10 +7,10 @@ import itertools
 import json
 import math
 import re
+from importlib import resources
 
 import pytest
 
-from app.drawings.kit import schema_source
 from app.drawings.kit.hatches import hatch_defs, hatch_fill
 from app.drawings.kit.styles import AREA, LINE, STYLE_TABLE, style_for, style_table_as_dict
 
@@ -64,7 +64,8 @@ def test_table_covers_every_plan_kind_once():
 
 
 def test_uses_match_the_results_contract_vocabulary():
-    results = schema_source.schema_documents()[0]
+    bundled = resources.files("app._contract_schemas.v1").joinpath("results.schema.json")
+    results = json.loads(bundled.read_text(encoding="utf-8"))
     assert tuple(results["$defs"]["floor_use"]["enum"]) == USES
     assert all(style_for(use).geometry == AREA for use in USES)
 

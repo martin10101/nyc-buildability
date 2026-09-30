@@ -49,3 +49,32 @@ def test_outward_normal_points_away_from_interior():
 def test_centroid_and_bbox():
     assert geo.centroid(SQUARE) == (5.0, 5.0)
     assert geo.bbox(ELL) == (0.0, 0.0, 6.0, 7.0)
+
+
+NOTCHED_LOT = ((0.0, 0.0), (10.0, 0.0), (10.0, 10.0), (6.0, 10.0), (6.0, 5.0), (5.0, 2.0),
+               (4.0, 5.0), (4.0, 10.0), (0.0, 10.0), (0.0, 0.0))
+
+
+def test_ring_within_sees_a_notch_touching_only_at_vertices():
+    """Review probe: the plate's edge y=5 passes through the notch's vertices
+    (4,5) and (6,5); (5, 2.5) is inside the plate and outside the lot."""
+    plate = ((0.0, 0.0), (10.0, 0.0), (10.0, 5.0), (8.0, 5.0), (0.0, 5.0), (0.0, 0.0))
+    assert geo.point_location((5.0, 2.5), plate) == "inside"
+    assert geo.point_location((5.0, 2.5), NOTCHED_LOT) == "outside"
+    assert not geo.ring_within(plate, NOTCHED_LOT)
+    below_notch = ((0.0, 0.0), (10.0, 0.0), (10.0, 2.0), (0.0, 2.0), (0.0, 0.0))
+    assert geo.ring_within(below_notch, NOTCHED_LOT)  # touches the notch tip only
+
+
+def test_split_probes_cut_edges_at_the_other_rings_vertices():
+    probes = geo.split_probes(((0.0, 0.0), (10.0, 0.0), (10.0, 1.0), (0.0, 1.0), (0.0, 0.0)),
+                              ((4.0, 0.0), (6.0, 0.0), (5.0, -1.0), (4.0, 0.0)))
+    assert (5.0, 0.0) in probes and (2.0, 0.0) in probes and (8.0, 0.0) in probes
+
+
+def test_interiors_overlap():
+    assert geo.interiors_overlap(SQUARE, SQUARE)
+    inner = ((2.0, 2.0), (4.0, 2.0), (4.0, 4.0), (2.0, 4.0), (2.0, 2.0))
+    assert geo.interiors_overlap(SQUARE, inner) and geo.interiors_overlap(inner, SQUARE)
+    beside = ((10.0, 0.0), (20.0, 0.0), (20.0, 10.0), (10.0, 10.0), (10.0, 0.0))
+    assert not geo.interiors_overlap(SQUARE, beside)  # shares an edge only

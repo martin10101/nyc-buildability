@@ -16,6 +16,7 @@ import pytest
 
 from app.drawings.kit import Drawing, render_massing, render_site_plan
 
+from .drawn_checks import massing_problems, site_plan_problems
 from .kit_support import (
     CONTRACT_FIXTURES,
     ENV_ON,
@@ -62,7 +63,7 @@ def generated_results(seed: int) -> dict:
     rear = _r2(rnd.uniform(5, d / 4))
     if rnd.random() < 0.7:
         yard = {"kind": "rear", "status": "required", "depth_ft": rear,
-                "outline": _rect(ox, oy + d - chamfer - rear, ox + w - chamfer, oy + d - chamfer),
+                "outline": _rect(ox, oy + d - rear, ox + w - chamfer, oy + d),
                 "zr_sections": BASE["geometry"]["yards"]["entries"][0]["zr_sections"]}
         geo["yards"] = {"status": "available", "entries": [yard]}
     else:
@@ -108,6 +109,8 @@ def test_generated_drawings_hold_the_c4_properties(seed):
         assert numbers_not_in_input(drawing.svg, doc) == []
         assert overlapping_labels(drawing.svg) == []
         assert render(doc, env=ENV_ON) == drawing
+        checks = site_plan_problems if render is render_site_plan else massing_problems
+        assert checks(drawing.svg, doc) == []
     root = parse(drawing.svg)  # the massing
     drawn = sorted(int(g.get("data-floor")) for g in root.iter(f"{SVG_NS}g") if g.get("data-floor"))
     assert drawn == sorted({row["floor"] for row in doc["floor_by_floor"]})

@@ -6,7 +6,8 @@ import copy
 
 import pytest
 
-from app.drawings.kit import schema_source
+from app.contracts.study_contracts import StudyContractError
+from app.drawings.kit import adapter
 from app.drawings.kit.adapter import load_drawing_input
 from app.drawings.kit.errors import DrawingInputError
 from app.drawings.kit.model import DrawingInput, LayerUnavailable, Unavailable
@@ -78,7 +79,7 @@ INVALID_CASES = [
     ("ring_not_simple", _set(LOT, [[0, 0], [50, 100], [50, 0], [0, 100], [0, 0]]), LOT),
     ("ring_not_simple", _set(LOT, [[0, 0], [50, 0], [25, 0], [0, 100], [0, 0]]), LOT),
     ("ring_not_simple", _set(LOT, [[0, 0], [10, 0], [20, 0], [0, 0]]), LOT),  # zero area
-    ("non_finite_number", _set(LOT, [[0, 0], [float("nan"), 0], [50, 100], [0, 0]]), f"{LOT}/1"),
+    ("schema_invalid", _set(LOT, [[0, 0], [float("nan"), 0], [50, 100], [0, 0]]), ""),  # NaN
     ("coordinate_out_of_range", _set(LOT, [[0, 0], [2e8, 0], [0, 100], [0, 0]]), f"{LOT}/1"),
     ("plate_outside_lot",
      _set(f"{PLATE0}/outline", [[[0, 0], [60, 0], [60, 50], [0, 50], [0, 0]]]),
@@ -86,7 +87,8 @@ INVALID_CASES = [
     ("frontage_off_lot",
      _set("/geometry/streets/0/frontage_line", [[0, -5], [50, -5]]),
      "/geometry/streets/0/frontage_line/0"),
-    ("plates_rows_mismatch", _set(f"{PLATE0}/gross_sf", 2400), "/geometry/floor_plates"),
+    ("plate_area_mismatch", _set(f"{PLATE0}/gross_sf", 2400), PLATE0),
+    ("plates_rows_mismatch", _set("/floor_by_floor/0/gross_sf", 2400), "/geometry/floor_plates"),
     ("plates_rows_mismatch", _set(f"{PLATE0}/use", "commercial"), "/geometry/floor_plates"),
     ("floor_height_conflict", lambda d: d["floor_by_floor"].append(
         dict(d["floor_by_floor"][0], height_ft=99, gross_sf=0, zoning_floor_area_sf=0)),
@@ -144,25 +146,113 @@ def test_not_a_mapping_fails_closed():
     assert caught.value.code == "schema_invalid"
 
 
-def test_schema_unavailable_fails_closed(monkeypatch):
-    monkeypatch.setattr(schema_source, "_bundled_texts", lambda: None)
-    monkeypatch.setattr(schema_source, "_canonical_texts", lambda: None)
-    schema_source.schema_documents.cache_clear()
-    schema_source.results_validator.cache_clear()
-    try:
-        with pytest.raises(DrawingInputError) as caught:
-            load_drawing_input(BASE)
-        assert caught.value.code == "schema_unavailable"
-    finally:
-        schema_source.schema_documents.cache_clear()
-        schema_source.results_validator.cache_clear()
+def test_validation_is_the_shared_results_validator(monkeypatch):
+    def refuse(document):
+        raise StudyContractError("probe", contract="results", location="geometry/units")
+
+    monkeypatch.setattr(adapter, "validate_results_document", refuse)
+    with pytest.raises(DrawingInputError) as caught:
+        load_drawing_input(BASE)
+    assert (caught.value.code, caught.value.location) == ("schema_invalid", "/geometry/units")
 
 
-def test_schemas_come_from_one_source_results_first():
-    docs = schema_source.schema_documents()
-    assert docs[0]["title"] == "Results"
-    assert [d["$id"].rsplit("/", 1)[1] for d in docs] == [
-        "results.schema.json", "common.schema.json", "site_fact.schema.json", "study.schema.json"]
+def test_fixture_only_key_is_refused():
+    doc = _mutated(BASE, lambda d: d.__setitem__("_expected_failure", "probe"))
+    with pytest.raises(DrawingInputError) as caught:
+        load_drawing_input(doc)
+    assert caught.value.code == "schema_invalid"
+
+
+CONTROL_CASES = [
+    ("/geometry/streets/0/street", "Main\x0bStreet"),
+    ("/geometry/yards", {"status": "not_available", "reason": "Yards \x00 not built.",
+                         "reason_kind": "rule_not_implemented"}),
+    ("/floor_by_floor/0/floor_label", "Floor\x1f1"),
+    ("/geometry/yards/entries/0/reason", "Lone surrogate \ud800 here"),
+    ("/street_width_case", {"marker": "Needs street width", "assumptions": [
+        {"street": "Bad\x08Street", "assumed": "narrow", "street_width_fact_id": "f"}],
+        "side_by_side_with": ["other"]}),
+]
+
+
+@pytest.mark.parametrize(("path", "value"), CONTROL_CASES, ids=[c[0] for c in CONTROL_CASES])
+def test_text_xml_cannot_carry_fails_closed(path, value):
+    with pytest.raises(DrawingInputError) as caught:
+        load_drawing_input(_mutated(BASE, _set(path, value)))
+    assert caught.value.code == "invalid_text"
+    assert caught.value.location.startswith(path)
+
+
+def test_tab_and_newline_are_allowed_text():
+    doc = _mutated(BASE, _set("/geometry/streets/0/street", "Main\tStreet"))
+    assert load_drawing_input(doc).streets[0].name == "Main\tStreet"
+
+
+def test_plate_drawn_smaller_than_its_area_fails_closed():
+    """Review probe: floor 2 drawn 30 x 35 ft (1,050 sf) while gross_sf says 4,200."""
+    doc = _mutated(MIXED, _set("/geometry/floor_plates/entries/3/outline",
+                               [[[0, 0], [30, 0], [30, 35], [0, 35], [0, 0]]]))
+    with pytest.raises(DrawingInputError) as caught:
+        load_drawing_input(doc)
+    assert (caught.value.code, caught.value.location) == (
+        "plate_area_mismatch", "/geometry/floor_plates/entries/3")
+
+
+def test_plate_area_tolerates_whole_square_foot_rounding():
+    doc = _mutated(MIXED, _set("/geometry/floor_plates/entries/3/gross_sf", 4200.9))
+    doc["floor_by_floor"][3]["gross_sf"] = 4200.9
+    doc["floor_by_floor"][3]["zoning_floor_area_sf"] = 4200.9
+    assert isinstance(load_drawing_input(doc), DrawingInput)
+
+
+def test_yard_drawn_shallower_than_its_depth_fails_closed():
+    """Review probe: a yard outline 10 ft deep labeled 30 ft."""
+    doc = _mutated(MIXED, _set("/geometry/yards/entries/0/outline",
+                               [[[0, 90], [60, 90], [60, 100], [0, 100], [0, 90]]]))
+    with pytest.raises(DrawingInputError) as caught:
+        load_drawing_input(doc)
+    assert (caught.value.code, caught.value.location) == (
+        "yard_depth_mismatch", "/geometry/yards/entries/0")
+
+
+def test_yard_not_on_any_lot_line_fails_closed():
+    doc = _mutated(MIXED, _set("/geometry/yards/entries/0/outline",
+                               [[[10, 75], [50, 75], [50, 95], [10, 95], [10, 75]]]))
+    doc["geometry"]["yards"]["entries"][0]["depth_ft"] = 20
+    with pytest.raises(DrawingInputError) as caught:
+        load_drawing_input(doc)
+    assert caught.value.code == "yard_depth_mismatch"
+
+
+def test_yard_depth_is_measured_from_the_lot_line_it_runs_along():
+    """A 50-ft rear yard on a 40-ft wide lot: its depth matches the rear line,
+    not the (40-ft) reach from the side lines."""
+    doc = load(CONTRACT_FIXTURES / "synthetic_envelope_not_available_existing_building.json")
+    doc["geometry"]["yards"] = {"status": "available", "entries": [
+        {"kind": "rear", "status": "required", "depth_ft": 50,
+         "outline": [[[0, 50], [40, 50], [40, 100], [0, 100], [0, 50]]],
+         "zr_sections": BASE["geometry"]["yards"]["entries"][0]["zr_sections"]}]}
+    assert load_drawing_input(doc).yards[0].depth_ft == 50
+
+
+def test_plate_through_a_lot_notch_fails_closed():
+    """Review probe: a notch whose sides meet the plate only at vertices."""
+    def mutate(doc):
+        geometry = doc["geometry"]
+        geometry["lot_outline"] = [[[0, 0], [10, 0], [10, 10], [6, 10], [6, 5], [5, 2], [4, 5],
+                                    [4, 10], [0, 10], [0, 0]]]
+        geometry["streets"] = [dict(geometry["streets"][0], frontage_line=[[0, 0], [10, 0]])]
+        geometry["setback_lines_per_level"] = {"status": "not_available", "reason": "n/a",
+                                               "reason_kind": "rule_not_implemented"}
+        geometry["floor_plates"]["entries"] = [
+            {"floor": 1, "outline": [[[0, 0], [10, 0], [10, 5], [8, 5], [0, 5], [0, 0]]],
+             "gross_sf": 50, "use": "residential"}]
+        doc["floor_by_floor"] = [dict(doc["floor_by_floor"][0], gross_sf=50,
+                                      zoning_floor_area_sf=50)]
+    with pytest.raises(DrawingInputError) as caught:
+        load_drawing_input(_mutated(BASE, mutate))
+    assert (caught.value.code, caught.value.location) == (
+        "plate_outside_lot", "/geometry/floor_plates/entries/0/outline")
 
 
 def test_floor_numbering_only_matters_when_floor_plates_are_drawn():

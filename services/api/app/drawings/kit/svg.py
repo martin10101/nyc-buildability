@@ -7,6 +7,7 @@ text is XML-escaped. No third-party library.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable, Sequence
 
 from .model import Point
@@ -24,6 +25,7 @@ __all__ = [
     "stroke_attrs",
     "svg_document",
     "text_element",
+    "xml_illegal",
 ]
 
 Attr = tuple[str, str | float | int | None]
@@ -34,7 +36,20 @@ def num(value: float) -> str:
     return "0.00" if text == "-0.00" else text
 
 
+# Characters XML 1.0 forbids in a document: C0 controls other than tab, LF and
+# CR; lone UTF-16 surrogates; U+FFFE and U+FFFF.
+_XML_ILLEGAL = re.compile("[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff\ufffe\uffff]")
+
+
+def xml_illegal(text: str) -> bool:
+    return _XML_ILLEGAL.search(text) is not None
+
+
 def escape(text: str) -> str:
+    """XML-escape ``text``; refuse characters XML cannot carry at all, so the
+    SVG is always well-formed (the adapter refuses them earlier, typed)."""
+    if xml_illegal(text):
+        raise ValueError("text carries a character XML forbids")
     return (
         text.replace("&", "&amp;")
         .replace("<", "&lt;")

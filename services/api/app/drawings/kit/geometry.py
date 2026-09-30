@@ -19,14 +19,16 @@ __all__ = [
     "centroid",
     "edge_length",
     "edges",
+    "interiors_overlap",
     "is_simple",
     "outward_normal",
     "point_location",
     "point_on_boundary",
-    "probe_points",
+    "ring_area",
     "ring_within",
     "rings_cross",
     "signed_area",
+    "split_probes",
 ]
 
 # Boundary tolerance for "on the line" (1e-6 ft; EPSG:2263 values near 1e6 ft
@@ -146,10 +148,25 @@ def is_simple(ring: Ring, tol: float = BOUNDARY_TOL_FT) -> bool:
     return True
 
 
-def probe_points(ring: Ring) -> list[Point]:
-    """The ring's vertices and edge midpoints (containment probes)."""
+def split_probes(ring: Ring, other: Ring, tol: float = BOUNDARY_TOL_FT) -> list[Point]:
+    """``ring``'s vertices plus the midpoint of every piece of its edges once
+    they are split at ``other``'s vertices lying on them. When the two
+    boundaries never properly cross, each piece lies wholly inside, outside or
+    on ``other``, so these probes classify the whole boundary exactly."""
     probes: list[Point] = list(ring[:-1])
-    probes += [((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0) for a, b in edges(ring)]
+    others = other[:-1]
+    for a, b in edges(ring):
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        length_sq = dx * dx + dy * dy
+        cuts = [0.0, 1.0]
+        for p in others:
+            if _distance_to_segment(p, a, b) <= tol:
+                cuts.append(((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / length_sq)
+        cuts = sorted(min(1.0, max(0.0, t)) for t in cuts)
+        for t0, t1 in zip(cuts, cuts[1:], strict=False):
+            if (t1 - t0) * math.sqrt(length_sq) > tol:
+                tm = (t0 + t1) / 2.0
+                probes.append((a[0] + tm * dx, a[1] + tm * dy))
     return probes
 
 
@@ -164,12 +181,34 @@ def rings_cross(first: Ring, second: Ring, tol: float = BOUNDARY_TOL_FT) -> bool
 def ring_within(inner: Ring, outer: Ring, tol: float = BOUNDARY_TOL_FT) -> bool:
     """Whether ``inner`` lies inside ``outer`` (touching the boundary allowed).
 
-    Every vertex and every edge midpoint of ``inner`` is inside or on ``outer``,
-    and no edge of ``inner`` properly crosses an edge of ``outer``.
+    No edges properly cross; no piece of ``inner``'s boundary lies outside
+    ``outer``; and no piece of ``outer``'s boundary lies strictly inside
+    ``inner`` (which catches an outer notch whose sides pass through the
+    inner boundary only at vertices or collinearly).
     """
-    if any(point_location(p, outer, tol) == "outside" for p in probe_points(inner)):
+    if rings_cross(inner, outer, tol):
         return False
-    return not rings_cross(inner, outer, tol)
+    if any(point_location(p, outer, tol) == "outside" for p in split_probes(inner, outer, tol)):
+        return False
+    return not any(
+        point_location(p, inner, tol) == "inside" for p in split_probes(outer, inner, tol)
+    )
+
+
+def interiors_overlap(first: Ring, second: Ring, tol: float = BOUNDARY_TOL_FT) -> bool:
+    """Whether the areas enclosed by two simple rings share any interior."""
+    if rings_cross(first, second, tol):
+        return True
+    places = [point_location(p, second, tol) for p in split_probes(first, second, tol)]
+    if "inside" in places or all(place == "boundary" for place in places):
+        return True  # part of ``first`` inside ``second``, or the same outline
+    return any(
+        point_location(p, first, tol) == "inside" for p in split_probes(second, first, tol)
+    )
+
+
+def ring_area(ring: Ring) -> float:
+    return abs(signed_area(ring))
 
 
 def outward_normal(a: Point, b: Point, ring_area: float) -> tuple[float, float]:
