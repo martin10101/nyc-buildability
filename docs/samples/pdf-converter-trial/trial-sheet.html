@@ -7,8 +7,10 @@
   network or the disk: no external CSS, fonts, images or scripts, so it can be
   rendered with every URL fetch refused.
   What it exercises: US Letter pages, header and footer margin boxes, "Page X of
-  Y" counters, a forced page break, a repeated table header, and one inline
-  vector SVG with a diagonal hatch pattern, dimension strings and text labels.
+  Y" counters, a forced page break, a table long enough (80 body rows at 9 pt on
+  a fresh page) that it must run onto a further page so the repeated header row
+  is really tested, and one inline vector SVG with a diagonal hatch pattern,
+  dimension strings and text labels.
 -->
 <html lang="en">
 <head>
@@ -137,7 +139,7 @@
 
 <section class="next-page">
   <h2>Floor table (test values)</h2>
-  <p class="note">Test values only. The header row should repeat if the table runs onto another page.</p>
+  <p class="note">Test values only. This short table fits on one page; the header-repeat check is the next table.</p>
   <table>
     <thead>
       <tr><th>Floor</th><th>Use (test label)</th><th class="num">Floor height (ft)</th><th class="num">Floor area (sq ft)</th></tr>
@@ -152,6 +154,100 @@
     <tfoot>
       <tr><th>Total above grade (floors 1-4)</th><th></th><th class="num mono">42.0</th><th class="num mono">9,600</th></tr>
     </tfoot>
+  </table>
+</section>
+
+<section class="next-page">
+  <h2>Header repeat test (filler rows)</h2>
+  <p class="note">Filler rows only, not floors and not results. This table starts on a fresh page
+  and has 80 body rows, more than one Letter page can hold at 9 pt, so it must continue onto the
+  next page. Pass: the header row (Row, Label, Test value) is printed again at the top of that page.</p>
+  <table>
+    <thead>
+      <tr><th class="num">Row</th><th>Label</th><th class="num">Test value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="num mono">1</td><td>Test row 1 (filler)</td><td class="num mono">10.0</td></tr>
+      <tr><td class="num mono">2</td><td>Test row 2 (filler)</td><td class="num mono">20.0</td></tr>
+      <tr><td class="num mono">3</td><td>Test row 3 (filler)</td><td class="num mono">30.0</td></tr>
+      <tr><td class="num mono">4</td><td>Test row 4 (filler)</td><td class="num mono">40.0</td></tr>
+      <tr><td class="num mono">5</td><td>Test row 5 (filler)</td><td class="num mono">50.0</td></tr>
+      <tr><td class="num mono">6</td><td>Test row 6 (filler)</td><td class="num mono">60.0</td></tr>
+      <tr><td class="num mono">7</td><td>Test row 7 (filler)</td><td class="num mono">70.0</td></tr>
+      <tr><td class="num mono">8</td><td>Test row 8 (filler)</td><td class="num mono">80.0</td></tr>
+      <tr><td class="num mono">9</td><td>Test row 9 (filler)</td><td class="num mono">90.0</td></tr>
+      <tr><td class="num mono">10</td><td>Test row 10 (filler)</td><td class="num mono">100.0</td></tr>
+      <tr><td class="num mono">11</td><td>Test row 11 (filler)</td><td class="num mono">110.0</td></tr>
+      <tr><td class="num mono">12</td><td>Test row 12 (filler)</td><td class="num mono">120.0</td></tr>
+      <tr><td class="num mono">13</td><td>Test row 13 (filler)</td><td class="num mono">130.0</td></tr>
+      <tr><td class="num mono">14</td><td>Test row 14 (filler)</td><td class="num mono">140.0</td></tr>
+      <tr><td class="num mono">15</td><td>Test row 15 (filler)</td><td class="num mono">150.0</td></tr>
+      <tr><td class="num mono">16</td><td>Test row 16 (filler)</td><td class="num mono">160.0</td></tr>
+      <tr><td class="num mono">17</td><td>Test row 17 (filler)</td><td class="num mono">170.0</td></tr>
+      <tr><td class="num mono">18</td><td>Test row 18 (filler)</td><td class="num mono">180.0</td></tr>
+      <tr><td class="num mono">19</td><td>Test row 19 (filler)</td><td class="num mono">190.0</td></tr>
+      <tr><td class="num mono">20</td><td>Test row 20 (filler)</td><td class="num mono">200.0</td></tr>
+      <tr><td class="num mono">21</td><td>Test row 21 (filler)</td><td class="num mono">210.0</td></tr>
+      <tr><td class="num mono">22</td><td>Test row 22 (filler)</td><td class="num mono">220.0</td></tr>
+      <tr><td class="num mono">23</td><td>Test row 23 (filler)</td><td class="num mono">230.0</td></tr>
+      <tr><td class="num mono">24</td><td>Test row 24 (filler)</td><td class="num mono">240.0</td></tr>
+      <tr><td class="num mono">25</td><td>Test row 25 (filler)</td><td class="num mono">250.0</td></tr>
+      <tr><td class="num mono">26</td><td>Test row 26 (filler)</td><td class="num mono">260.0</td></tr>
+      <tr><td class="num mono">27</td><td>Test row 27 (filler)</td><td class="num mono">270.0</td></tr>
+      <tr><td class="num mono">28</td><td>Test row 28 (filler)</td><td class="num mono">280.0</td></tr>
+      <tr><td class="num mono">29</td><td>Test row 29 (filler)</td><td class="num mono">290.0</td></tr>
+      <tr><td class="num mono">30</td><td>Test row 30 (filler)</td><td class="num mono">300.0</td></tr>
+      <tr><td class="num mono">31</td><td>Test row 31 (filler)</td><td class="num mono">310.0</td></tr>
+      <tr><td class="num mono">32</td><td>Test row 32 (filler)</td><td class="num mono">320.0</td></tr>
+      <tr><td class="num mono">33</td><td>Test row 33 (filler)</td><td class="num mono">330.0</td></tr>
+      <tr><td class="num mono">34</td><td>Test row 34 (filler)</td><td class="num mono">340.0</td></tr>
+      <tr><td class="num mono">35</td><td>Test row 35 (filler)</td><td class="num mono">350.0</td></tr>
+      <tr><td class="num mono">36</td><td>Test row 36 (filler)</td><td class="num mono">360.0</td></tr>
+      <tr><td class="num mono">37</td><td>Test row 37 (filler)</td><td class="num mono">370.0</td></tr>
+      <tr><td class="num mono">38</td><td>Test row 38 (filler)</td><td class="num mono">380.0</td></tr>
+      <tr><td class="num mono">39</td><td>Test row 39 (filler)</td><td class="num mono">390.0</td></tr>
+      <tr><td class="num mono">40</td><td>Test row 40 (filler)</td><td class="num mono">400.0</td></tr>
+      <tr><td class="num mono">41</td><td>Test row 41 (filler)</td><td class="num mono">410.0</td></tr>
+      <tr><td class="num mono">42</td><td>Test row 42 (filler)</td><td class="num mono">420.0</td></tr>
+      <tr><td class="num mono">43</td><td>Test row 43 (filler)</td><td class="num mono">430.0</td></tr>
+      <tr><td class="num mono">44</td><td>Test row 44 (filler)</td><td class="num mono">440.0</td></tr>
+      <tr><td class="num mono">45</td><td>Test row 45 (filler)</td><td class="num mono">450.0</td></tr>
+      <tr><td class="num mono">46</td><td>Test row 46 (filler)</td><td class="num mono">460.0</td></tr>
+      <tr><td class="num mono">47</td><td>Test row 47 (filler)</td><td class="num mono">470.0</td></tr>
+      <tr><td class="num mono">48</td><td>Test row 48 (filler)</td><td class="num mono">480.0</td></tr>
+      <tr><td class="num mono">49</td><td>Test row 49 (filler)</td><td class="num mono">490.0</td></tr>
+      <tr><td class="num mono">50</td><td>Test row 50 (filler)</td><td class="num mono">500.0</td></tr>
+      <tr><td class="num mono">51</td><td>Test row 51 (filler)</td><td class="num mono">510.0</td></tr>
+      <tr><td class="num mono">52</td><td>Test row 52 (filler)</td><td class="num mono">520.0</td></tr>
+      <tr><td class="num mono">53</td><td>Test row 53 (filler)</td><td class="num mono">530.0</td></tr>
+      <tr><td class="num mono">54</td><td>Test row 54 (filler)</td><td class="num mono">540.0</td></tr>
+      <tr><td class="num mono">55</td><td>Test row 55 (filler)</td><td class="num mono">550.0</td></tr>
+      <tr><td class="num mono">56</td><td>Test row 56 (filler)</td><td class="num mono">560.0</td></tr>
+      <tr><td class="num mono">57</td><td>Test row 57 (filler)</td><td class="num mono">570.0</td></tr>
+      <tr><td class="num mono">58</td><td>Test row 58 (filler)</td><td class="num mono">580.0</td></tr>
+      <tr><td class="num mono">59</td><td>Test row 59 (filler)</td><td class="num mono">590.0</td></tr>
+      <tr><td class="num mono">60</td><td>Test row 60 (filler)</td><td class="num mono">600.0</td></tr>
+      <tr><td class="num mono">61</td><td>Test row 61 (filler)</td><td class="num mono">610.0</td></tr>
+      <tr><td class="num mono">62</td><td>Test row 62 (filler)</td><td class="num mono">620.0</td></tr>
+      <tr><td class="num mono">63</td><td>Test row 63 (filler)</td><td class="num mono">630.0</td></tr>
+      <tr><td class="num mono">64</td><td>Test row 64 (filler)</td><td class="num mono">640.0</td></tr>
+      <tr><td class="num mono">65</td><td>Test row 65 (filler)</td><td class="num mono">650.0</td></tr>
+      <tr><td class="num mono">66</td><td>Test row 66 (filler)</td><td class="num mono">660.0</td></tr>
+      <tr><td class="num mono">67</td><td>Test row 67 (filler)</td><td class="num mono">670.0</td></tr>
+      <tr><td class="num mono">68</td><td>Test row 68 (filler)</td><td class="num mono">680.0</td></tr>
+      <tr><td class="num mono">69</td><td>Test row 69 (filler)</td><td class="num mono">690.0</td></tr>
+      <tr><td class="num mono">70</td><td>Test row 70 (filler)</td><td class="num mono">700.0</td></tr>
+      <tr><td class="num mono">71</td><td>Test row 71 (filler)</td><td class="num mono">710.0</td></tr>
+      <tr><td class="num mono">72</td><td>Test row 72 (filler)</td><td class="num mono">720.0</td></tr>
+      <tr><td class="num mono">73</td><td>Test row 73 (filler)</td><td class="num mono">730.0</td></tr>
+      <tr><td class="num mono">74</td><td>Test row 74 (filler)</td><td class="num mono">740.0</td></tr>
+      <tr><td class="num mono">75</td><td>Test row 75 (filler)</td><td class="num mono">750.0</td></tr>
+      <tr><td class="num mono">76</td><td>Test row 76 (filler)</td><td class="num mono">760.0</td></tr>
+      <tr><td class="num mono">77</td><td>Test row 77 (filler)</td><td class="num mono">770.0</td></tr>
+      <tr><td class="num mono">78</td><td>Test row 78 (filler)</td><td class="num mono">780.0</td></tr>
+      <tr><td class="num mono">79</td><td>Test row 79 (filler)</td><td class="num mono">790.0</td></tr>
+      <tr><td class="num mono">80</td><td>Test row 80 (filler)</td><td class="num mono">800.0</td></tr>
+    </tbody>
   </table>
 </section>
 
