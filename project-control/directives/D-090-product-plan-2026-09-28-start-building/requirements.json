@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 14,
+ "requirement_count": 19,
  "producer": "orchestrator",
- "updated_at": "2026-09-30T05:18:52+00:00",
+ "updated_at": "2026-09-30T07:10:00+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -446,6 +446,161 @@
    "dependencies": [],
    "required_harness": "Wave 0 PR diffs contain no competitor PDF/binary.",
    "required_evidence": "PR diffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R015",
+   "text": "GO (satisfies the D-090-R007 hold): run the lanes continuously overnight ('continue running all night long with as much loops as you can'), as many parallel workers as the machine safely allows, task after task from the lane queues.",
+   "source_ref": "source-002-amendment.md#owner-message-3-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Lane work dispatched after this capture; parallel only with pairwise-disjoint paths.",
+   "required_evidence": "The overnight PR/merge record and the morning report.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R016",
+   "text": "Workers do most of the work; the orchestrator is the last watcher. Each queue item runs in a fresh worker context so no single context grows toward compaction; the orchestrator keeps its own per-task footprint small.",
+   "source_ref": "source-002-amendment.md#owner-message-3-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "One fresh producer agent per queue item; short returns; full reports in files.",
+   "required_evidence": "Dispatch prompts and return sizes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R017",
+   "text": "Synchronized workers: a worker that finishes early and starts the next item must never disturb another worker's files, branch, worktree or merge. Work is planned so parallel workers cannot overlap.",
+   "source_ref": "source-002-amendment.md#owner-message-3-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Pairwise-disjoint lane paths (OWNERSHIP.yaml + lane path check), one worktree and branch per worker, merges one at a time.",
+   "required_evidence": "Path-check results on every PR; merge order.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R018",
+   "text": "Extra guardrails because workers read and write code: no work outside the worker's lane paths and worktree; tests before handing back; independent review and green CI before any merge; every existing stop (D-090-R012) stays.",
+   "source_ref": "source-002-amendment.md#owner-message-3-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Lane path check, focused tests, CI, independent reviewer per PR.",
+   "required_evidence": "PR checks and review reports.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R019",
+   "text": "Authorization: the orchestrator may add to or fix the loop/worker tooling and guardrails as needed.",
+   "source_ref": "source-002-amendment.md#owner-message-3-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Tooling changes go through the normal PR + review path.",
+   "required_evidence": "PRs touching scripts/lanes or docs/lanes.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
