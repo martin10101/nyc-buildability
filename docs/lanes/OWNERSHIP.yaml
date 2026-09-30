@@ -1,3 +1,222 @@
-# docs/lanes/OWNERSHIP.yaml - placeholder seeded at the M0-T164 contract seam (D-090).
-# The lane ownership map (lanes A-E, hot files owned by Lane C) lands in the M0-T164 PR.
-lanes: {}
+# Lane ownership map — Wave 0, task M0-T164 (D-090-R003/R004).
+#
+# Every tracked file belongs to exactly one lane: the FIRST rule whose glob matches the path wins,
+# so specific rules come before general ones. A file no rule matches is an orphan, and the
+# coverage check (scripts/lanes/check_lane_paths.py --coverage) fails on it.
+#
+# Glob syntax: `*` matches within one path segment, `?` one character in a segment,
+# `**` any number of whole segments (including none).
+#
+# Lanes (derived lane plan docs/lanes/PARALLEL_BUILD_PLAN.md §1):
+#   A Engine · B Data and site facts · C Contracts, study and integration (every hot file)
+#   D Architect interface · E Outputs and parity
+#
+# This file is parsed by a small stdlib reader in scripts/lanes/check_lane_paths.py that accepts
+# only the shapes used below (scalars, nested mappings, and lists of mappings/scalars).
+# Owner: Lane C. Change it through a docs/lanes/requests/<X>-<n>.md request.
+
+version: 1
+integration_branch: candidate/D-024-mrl-option-b
+
+lanes:
+  A:
+    name: Engine
+    flag: LANE_A_ENABLED
+    api_port: 8101
+    web_port: 3101
+  B:
+    name: Data and site facts
+    flag: LANE_B_ENABLED
+    api_port: 8102
+    web_port: 3102
+  C:
+    name: Contracts, study and integration
+    flag: LANE_C_ENABLED
+    api_port: 8103
+    web_port: 3103
+  D:
+    name: Architect interface
+    flag: LANE_D_ENABLED
+    api_port: 8104
+    web_port: 3104
+  E:
+    name: Outputs and parity
+    flag: LANE_E_ENABLED
+    api_port: 8105
+    web_port: 3105
+
+# Hot files: many lanes need them, so only Lane C edits them (lane prompt C). Informational list;
+# the rules below are what the checker enforces, and each of these resolves to Lane C there.
+hot_files:
+  - services/api/app/main.py
+  - services/api/app/config.py
+  - services/api/app/api/**
+  - services/api/pyproject.toml
+  - services/api/requirements.txt
+  - services/api/requirements-tools.lock
+  - packages/contracts/**
+  - apps/web/package.json
+  - apps/web/package-lock.json
+  - apps/web/src/app/layout.tsx
+  - apps/web/src/lib/api.ts
+  - apps/web/src/lib/contract.ts
+  - apps/web/e2e/harness/**
+  - .github/workflows/**
+  - render.yaml
+  - docs/lanes/OWNERSHIP.yaml
+
+rules:
+  # ---- lane-owned files inside docs/lanes (before the Lane C docs rule) ----
+  - lane: A
+    globs:
+      - docs/lanes/status/A.md
+      - docs/lanes/requests/A-*.md
+  - lane: B
+    globs:
+      - docs/lanes/status/B.md
+      - docs/lanes/requests/B-*.md
+  - lane: C
+    globs:
+      - docs/lanes/status/C.md
+      - docs/lanes/requests/C-*.md
+  - lane: D
+    globs:
+      - docs/lanes/status/D.md
+      - docs/lanes/requests/D-*.md
+  - lane: E
+    globs:
+      - docs/lanes/status/E.md
+      - docs/lanes/requests/E-*.md
+
+  # ---- services/api: Lane C hot files and integration seams ----
+  - lane: C
+    globs:
+      - services/api/app/main.py
+      - services/api/app/config.py
+      - services/api/app/__init__.py
+      - services/api/app/api/**
+      - services/api/app/contracts/**
+      - services/api/app/_contract_schemas/**
+      - services/api/tests/api/**
+      - services/api/tests/contracts/**
+      - services/api/tests/__init__.py
+      - services/api/tests/test_health.py
+      - services/api/tests/test_security_middleware.py
+      - services/api/tests/test_lane_flags.py
+      - services/api/scripts/dependency_age_gate.py
+      - services/api/scripts/exact_install_smoke.py
+      - services/api/scripts/lock_requirements.sh
+      - services/api/scripts/lock_tools.sh
+      - services/api/scripts/sync_contract_schemas.py
+      - services/api/scripts/tests/**
+      - services/api/pyproject.toml
+      - services/api/requirements.in
+      - services/api/requirements.txt
+      - services/api/requirements-tools.in
+      - services/api/requirements-tools.lock
+      - services/api/.env.example
+      - services/api/README.md
+
+  # ---- Lane A: engine (rules, scenario math, ZR snapshots, validation suite) ----
+  - lane: A
+    globs:
+      - services/api/app/rules/**
+      - services/api/app/scenario/**
+      - services/api/app/_zr_snapshots/**
+      - services/api/tests/rules/**
+      - services/api/tests/scenario/**
+      - services/api/scripts/sync_zr_snapshots.py
+      - tools/residential_validation.py
+      - tools/test_residential_validation.py
+      - tests/fixtures/residential_validation/**
+
+  # ---- Lane B: data and site facts ----
+  - lane: B
+    globs:
+      - services/api/app/connectors/**
+      - services/api/app/profile/**
+      - services/api/app/spatial/**
+      - services/api/app/site_definition/**
+      - services/api/app/resilience/**
+      - services/api/tests/connectors/**
+      - services/api/tests/profile/**
+      - services/api/tests/spatial/**
+      - services/api/tests/site_definition/**
+      - services/api/tests/resilience/**
+      - services/api/tests/fixtures/**
+      - docs/research/**
+
+  # ---- Lane E: outputs (CAD, drawings, documents/PDF, exports) ----
+  - lane: E
+    globs:
+      - services/api/app/cad/**
+      - services/api/app/drawings/**
+      - services/api/app/documents/**
+      - services/api/tests/cad/**
+      - services/api/tests/drawings/**
+      - services/api/tests/documents/**
+      - docs/samples/**
+
+  # ---- apps/web: Lane C hot files, shared state, API clients, owner dashboard, tooling ----
+  - lane: C
+    globs:
+      - apps/web/package.json
+      - apps/web/package-lock.json
+      - apps/web/.npmrc
+      - apps/web/.env.example
+      - apps/web/tsconfig.json
+      - apps/web/next.config.ts
+      - apps/web/eslint.config.mjs
+      - apps/web/vitest.config.ts
+      - apps/web/vitest.setup.ts
+      - apps/web/playwright.config.ts
+      - apps/web/scripts/**
+      - apps/web/e2e/harness/**
+      - apps/web/src/app/layout.tsx
+      - apps/web/src/app/dashboard/**
+      - apps/web/src/components/dashboard/**
+      - apps/web/src/lib/dashboard/**
+      - apps/web/src/test-support/dashboard/**
+      - apps/web/src/lib/study/**
+      - apps/web/src/lib/api.ts
+      - apps/web/src/lib/contract.ts
+      - apps/web/src/lib/contract-matrix.ts
+      - apps/web/src/lib/validate-profile.ts
+      - apps/web/src/lib/rule-evaluation.ts
+      - apps/web/src/lib/*-api.ts
+      - apps/web/src/lib/*-contract.ts
+      - apps/web/src/lib/*-contract-checks.ts
+      - apps/web/src/lib/__tests__/api.test.ts
+      - apps/web/src/lib/__tests__/contract-matrix.test.ts
+      - apps/web/src/lib/__tests__/contract-versions.test.ts
+      - apps/web/src/lib/__tests__/validate-profile.test.ts
+      - apps/web/src/lib/__tests__/rule-evaluation.test.ts
+      - apps/web/src/lib/__tests__/*-api.test.ts
+      - apps/web/src/lib/architect/parcel-study.ts
+      - apps/web/src/lib/architect/use-parcel-study-records.ts
+      - apps/web/src/lib/architect/max-envelope-api.ts
+      - apps/web/src/lib/architect/__tests__/parcel-study.test.ts
+      - apps/web/src/lib/architect/__tests__/use-parcel-study-records.test.tsx
+      - apps/web/src/lib/architect/__tests__/max-envelope-api.test.ts
+
+  # ---- Lane D: the architect interface (everything else in apps/web) ----
+  - lane: D
+    globs:
+      - apps/web/src/**
+      - apps/web/e2e/**
+      - apps/web/public/**
+      - docs/design/**
+
+  # ---- Lane C: contracts, CI, control plane, governance, tooling, docs, root files ----
+  - lane: C
+    globs:
+      - packages/**
+      - .github/**
+      - .claude/**
+      - project-control/**
+      - tools/**
+      - scripts/**
+      - supabase/**
+      - docs/**
+      - render.yaml
+      - "*"
