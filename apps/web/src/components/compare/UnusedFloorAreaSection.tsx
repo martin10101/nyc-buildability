@@ -1,11 +1,28 @@
 import { boundedText } from "@/lib/bounded";
 import { formatValue } from "@/lib/format";
+import { needsExistingZoningFloorArea } from "@/lib/architect/unused-floor-area";
 import type { Scenario } from "@/lib/scenario-contract";
 import { UNUSED_FLOOR_AREA_NOT_COMPUTABLE_REASONS } from "@/lib/scenario-contract";
+import { UnusedFloorAreaNotAvailableLine } from "./UnusedFloorAreaNotAvailable";
 
 /**
  * The C1 unused-draft-zoning-floor-area line for the Compare (Step 3) screen
  * (task M5-T018, directive D-041-R001).
+ *
+ * SET ASIDE (queue D-06; plan §3 step 4, M2-07; RECONCILIATION set-aside item
+ * #6, C-3). Plan §3 step 4: existing floor area is never taken from
+ * city-recorded (DOF) building area. The scenario views mount this component
+ * only when the default-off server flag INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED
+ * is on; otherwise they show UnusedFloorAreaSetAside ("Not available — needs
+ * existing zoning floor area"). The component and its tests are kept.
+ *
+ * NOT AVAILABLE (D-06). When the server's own section carries the
+ * `unused_floor_area_not_available` basis record (A-03 default), the section
+ * shows "Not available — needs existing zoning floor area" in place of the
+ * number and in place of the typed-reason gloss: the closest contract reason
+ * (`missing_existing_building_area`) would otherwise say no building record was
+ * available, which is false when a recorded area exists. The server's basis
+ * record wins over the state, so no number is ever shown beside it.
  *
  * The scenario document carries a REQUIRED `unused_draft_zoning_floor_area`
  * section on EVERY branch (preliminary + no_scenario + unsupported), so this
@@ -96,7 +113,9 @@ export function UnusedFloorAreaSection({ document }: { document: Scenario }) {
         {label}
       </p>
 
-      {section.state === "not_computable" ? (
+      {needsExistingZoningFloorArea(section) ? (
+        <NotAvailableLine />
+      ) : section.state === "not_computable" ? (
         <NotComputableLine reason={section.not_computable_reason} />
       ) : (
         <ComputedLine section={section} />
@@ -177,6 +196,16 @@ function OverBuiltNotice({
         before any reliance.
       </p>
     </>
+  );
+}
+
+/** D-06: the server says the section needs an existing zoning floor area. No
+ * number and no typed-reason gloss; the plan's exact words only. */
+function NotAvailableLine() {
+  return (
+    <div data-testid="scenario-unused-floor-area-not-computable">
+      <UnusedFloorAreaNotAvailableLine />
+    </div>
   );
 }
 

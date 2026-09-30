@@ -4,16 +4,22 @@ import { calculationStatus, scenarioCap } from "@/lib/architect/development-limi
 import { DraftHeadline } from "./PropertyOverview";
 import { CapturedRecord } from "./EvidenceRecord";
 import { UnusedFloorAreaSection } from "@/components/compare/UnusedFloorAreaSection";
+import { UnusedFloorAreaSetAside } from "@/components/compare/UnusedFloorAreaNotAvailable";
 import { ScenarioConstraints, IntegrityCheckBlock } from "@/components/compare/ScenarioConstraints";
 import { CoverageMatrixSection } from "@/components/compare/CoverageMatrixSection";
 import { ScenarioAssumptions } from "@/components/compare/ScenarioAssumptions";
 import { NoScenarioBlock } from "@/components/compare/NoScenarioBlock";
-export function ScenarioWorkspace({ document, evaluation = null, bbl }: {
+/** `unusedFloorAreaSectionEnabled` is the server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED
+ * (D-06, plan §3 step 4); absent -> off: the set-aside section is replaced by one
+ * "Not available — needs existing zoning floor area" line. */
+export function ScenarioWorkspace({ document, evaluation = null, bbl, unusedFloorAreaSectionEnabled = false }: {
     document: Scenario;
     evaluation?: RuleEvaluation | null;
     bbl: string;
+    unusedFloorAreaSectionEnabled?: boolean;
 }) {
     const supportedCap = scenarioCap(document, evaluation, bbl) !== null;
+    const unusedFloorArea = unusedFloorAreaSectionEnabled ? <UnusedFloorAreaSection document={document}/> : <UnusedFloorAreaSetAside/>;
     return <div data-testid="scenario-result">
     <section className="card">
       <DraftHeadline scenario={document} evaluation={evaluation} bbl={bbl}/>
@@ -27,12 +33,12 @@ export function ScenarioWorkspace({ document, evaluation = null, bbl }: {
     </section>
     {document.scenario_kind !== "preliminary" ? <NoScenarioBlock document={document}/> : null}
     {supportedCap ? <>
-      <UnusedFloorAreaSection document={document}/>
+      {unusedFloorArea}
       <ScenarioConstraints document={document}/>
     </> : <details className="card architect-disclosure">
       <summary>Returned scenario figures · association not confirmed</summary>
       <p className="section-note">These are the supplied records. They are not promoted as property limits.</p>
-      <UnusedFloorAreaSection document={document}/>
+      {unusedFloorArea}
       <ScenarioConstraints document={document}/>
     </details>}
     <details className="card architect-disclosure">

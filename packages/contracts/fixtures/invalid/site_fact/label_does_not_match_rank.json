@@ -1,0 +1,26 @@
+{
+  "contract_version": "1.0.0",
+  "fact_id": "fact-lot-area",
+  "key": "lot_area",
+  "lot_bbl": "5999999999",
+  "street": null,
+  "value": 5000,
+  "unit": "square_feet",
+  "measurement": {
+    "rank": "approximate_tax_map",
+    "label": "City records"
+  },
+  "source": {
+    "kind": "tax_map_computation",
+    "dataset": "test-fixture-synthetic DOF Digital Tax Map outline (EPSG:2263 measurement path)",
+    "dataset_version": null,
+    "retrieved_at": "2026-09-30T12:00:00Z",
+    "query_ref": "test-fixture-synthetic://dtm/5999999999",
+    "document_ref": null,
+    "statement": null
+  },
+  "blocks": [],
+  "editable": true,
+  "note": "Synthetic fixture (test-fixture-synthetic); not a real lot.",
+  "_expected_failure": "Label 'City records' on rank 'approximate_tax_map': the display label is tied to its rank (plan section 4 table); an approximate value must never be shown as city records."
+}

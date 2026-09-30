@@ -1,0 +1,375 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/study.schema.json",
+  "title": "Study",
+  "description": "v1 contract (task M5-T125, directive D-090 Wave 0; derived lane plan docs/lanes/PARALLEL_BUILD_PLAN.md section 5) for ONE shared study per property (plan docs/PRODUCT_PLAN_CURRENT_2026-09-28.md section 9 'One shared study per property', task M1-09). The study holds: the property; its tax lots with approximate sizes and the architect's selection (section 3 step 2), carrying the exact statement 'Based on the lots you selected — the app does not verify the zoning lot'; the SHARED site - site facts (site_fact.schema.json) used by every option (section 3 step 3, section 4); the options - each an independent add-on selection plus option inputs (goal, program, floor-to-floor heights, assumptions, existing-building plan; sections 3 steps 4 and 6, 5); the selected option that drives the report; and the revision. Results are NOT part of a study (results.schema.json); a study never contains example values (section 9 'No example data in real work').",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "study_id",
+    "property",
+    "lots",
+    "lot_selection",
+    "site",
+    "options",
+    "selected_option_id",
+    "revision",
+    "origin"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published study contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "study_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "Stable id of the study (one per property, plan section 9)."
+    },
+    "property": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bbl", "address"],
+      "description": "The confirmed property (plan section 3 step 1). For a condominium this is the billing BBL; its tax lots are the base lots (section 3 step 2: 'Lots are tax lots, not condo apartments').",
+      "properties": {
+        "bbl": { "$ref": "common.schema.json#/$defs/bbl" },
+        "address": {
+          "description": "Confirmed address as displayed; null when the property was found by BBL only.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "lots": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Every tax lot of the property, each with its approximate size and whether the architect selected it ('This property has N lots: use all (default), or pick', plan section 3 step 2).",
+      "items": { "$ref": "#/$defs/lot" }
+    },
+    "lot_selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "statement", "combination"],
+      "description": "The architect's statement of the site (plan section 3 step 2; decision Q2).",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["all", "subset"],
+          "description": "'all' (the default) or a picked 'subset' of lots."
+        },
+        "statement": {
+          "type": "string",
+          "const": "Based on the lots you selected — the app does not verify the zoning lot",
+          "description": "The exact label every result carries (plan section 3 step 2; check C-9)."
+        },
+        "combination": { "$ref": "#/$defs/combination" }
+      }
+    },
+    "site": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["facts"],
+      "description": "The site shared by ALL options: facts and site inputs such as street widths and measurements (plan section 9). Changing a site fact marks dependent results in every option out of date.",
+      "properties": {
+        "facts": {
+          "type": "array",
+          "description": "Site facts, each with its measurement rank, label and source (site_fact.schema.json). May be empty while facts are still being fetched.",
+          "items": { "$ref": "site_fact.schema.json" }
+        }
+      }
+    },
+    "options": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Independent options (plan section 9: each option is an add-on selection plus option inputs; changing one option affects only that option).",
+      "items": { "$ref": "#/$defs/option" }
+    },
+    "selected_option_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "The option_id of the option that drives the report (plan section 9). Must equal one options[].option_id (cross-field check done by the study store; not expressible in this validator's keyword subset)."
+    },
+    "revision": { "$ref": "#/$defs/revision" },
+    "origin": { "$ref": "#/$defs/origin" },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key."
+    }
+  },
+  "$defs": {
+    "lot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bbl", "approximate_lot_area_sq_ft", "size_measurement", "selected"],
+      "description": "One tax lot. Its approximate size is either a positive number with a known measurement rank, or null with rank 'unknown' - never 0 (plan section 9).",
+      "properties": {
+        "bbl": { "$ref": "common.schema.json#/$defs/bbl" },
+        "approximate_lot_area_sq_ft": {
+          "type": ["number", "null"],
+          "description": "Approximate lot area in square feet as listed in the lot choice; null when unknown."
+        },
+        "size_measurement": { "$ref": "site_fact.schema.json#/$defs/measurement" },
+        "selected": {
+          "type": "boolean",
+          "description": "Whether the architect included this lot in the site."
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "approximate_lot_area_sq_ft": { "type": "number", "exclusiveMinimum": 0 },
+            "size_measurement": { "$ref": "site_fact.schema.json#/$defs/measurement_known" }
+          }
+        },
+        {
+          "properties": {
+            "approximate_lot_area_sq_ft": { "type": "null" },
+            "size_measurement": { "$ref": "site_fact.schema.json#/$defs/measurement_unknown" }
+          }
+        }
+      ]
+    },
+    "combination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reason"],
+      "description": "Whether the selected lots can be combined: only lots on one block that touch; otherwise the combination is not offered and the reason is shown (plan section 3 step 2, section 8).",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["single_lot", "offered", "not_offered"]
+        },
+        "reason": {
+          "description": "Plain-English reason; required when not_offered, null otherwise.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "status": { "enum": ["single_lot", "offered"] },
+            "reason": { "type": "null" }
+          }
+        },
+        {
+          "properties": {
+            "status": { "const": "not_offered" },
+            "reason": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "option_id",
+        "name",
+        "addon_selection",
+        "goal",
+        "program",
+        "floor_to_floor_heights",
+        "assumptions",
+        "existing_building_plan"
+      ],
+      "description": "One option: an add-on selection plus option inputs. The goal, program and assumptions are saved with the option (plan section 5, task M1-25).",
+      "properties": {
+        "option_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "name": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Display name, e.g. 'Option B' (used in the report identification line, plan section 9)."
+        },
+        "addon_selection": {
+          "type": "array",
+          "description": "The optional add-on switches and their state. Optional add-ons start off (plan section 5); automatic add-ons that follow from the site are always included and are not switches. Add-on ids come from the reviewed add-on catalog (plan section 6) and are not enumerated here.",
+          "items": { "$ref": "#/$defs/addon_switch" }
+        },
+        "goal": { "$ref": "#/$defs/goal" },
+        "program": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Program components of this option, set through the add-on switches (plan section 3 step 6: market-rate, affordable, community facility; section 6: qualifying affordable or senior housing, community facility, ground-floor commercial).",
+          "items": {
+            "type": "string",
+            "enum": [
+              "market_rate_residential",
+              "affordable_residential",
+              "senior_residential",
+              "community_facility",
+              "commercial"
+            ]
+          }
+        },
+        "floor_to_floor_heights": { "$ref": "#/$defs/floor_to_floor_heights" },
+        "assumptions": {
+          "type": "array",
+          "description": "Explicit assumptions of this option (plan section 9 'Explicit assumptions'); shown on the report's assumptions page.",
+          "items": { "$ref": "#/$defs/assumption" }
+        },
+        "existing_building_plan": {
+          "type": "string",
+          "enum": ["no_existing_building", "keep", "remove"],
+          "description": "Keep or remove the existing building (plan section 3 step 4). When kept, the floor-area allowance subtracts the existing ZONING floor area (site fact existing_zoning_floor_area), never recorded building area. The section 5b keep / partial-rebuild / full-rebuild comparison is always computed side by side in results."
+        }
+      }
+    },
+    "addon_switch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["addon_id", "on"],
+      "properties": {
+        "addon_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "on": { "type": "boolean" }
+      }
+    },
+    "goal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "text"],
+      "description": "The stated goal of 'Best combination': by default most residential floor area, or another goal the architect picks such as most total floor area (plan section 5). 'other' requires the goal in words.",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["most_residential_floor_area", "most_total_floor_area", "other"]
+        },
+        "text": {
+          "description": "The goal in words; required for 'other', null otherwise.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "kind": { "enum": ["most_residential_floor_area", "most_total_floor_area"] },
+            "text": { "type": "null" }
+          }
+        },
+        {
+          "properties": {
+            "kind": { "const": "other" },
+            "text": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "floor_to_floor_heights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ground_floor", "typical_floor", "per_floor_overrides"],
+      "description": "Floor-to-floor heights: editable, with stated defaults (plan section 5 'Floor stack', section 3 step 6).",
+      "properties": {
+        "ground_floor": { "$ref": "#/$defs/height_setting" },
+        "typical_floor": { "$ref": "#/$defs/height_setting" },
+        "per_floor_overrides": {
+          "type": "array",
+          "description": "Architect-entered heights for specific floors (1 = ground floor).",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["floor", "height_ft"],
+            "properties": {
+              "floor": { "type": "integer", "minimum": 1 },
+              "height_ft": { "type": "number", "exclusiveMinimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "height_setting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["height_ft", "basis", "statement"],
+      "description": "One floor-to-floor height with its basis. A default is always stated in words so it is shown as a default, never silently applied.",
+      "properties": {
+        "height_ft": { "type": "number", "exclusiveMinimum": 0 },
+        "basis": {
+          "type": "string",
+          "enum": ["stated_default", "entered"]
+        },
+        "statement": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Plain-English statement, e.g. 'Default ground-floor height 12 ft (editable)'."
+        }
+      }
+    },
+    "assumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assumption_id", "statement", "value", "unit"],
+      "properties": {
+        "assumption_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "statement": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "value": { "type": ["number", "string", "boolean", "null"] },
+        "unit": { "type": ["string", "null"] }
+      }
+    },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["number", "created_at", "parent"],
+      "description": "Study revision (task M1-11; the report is bound to a revision, section 9 'Option B · revision 7 · date'). Revision 1 has no parent; every later revision names its parent revision number.",
+      "properties": {
+        "number": { "type": "integer", "minimum": 1 },
+        "created_at": { "$ref": "common.schema.json#/$defs/date_time" },
+        "parent": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "number": { "const": 1 },
+            "parent": { "type": "null" }
+          }
+        },
+        {
+          "properties": {
+            "number": { "minimum": 2 },
+            "parent": { "type": "integer" }
+          }
+        }
+      ]
+    },
+    "origin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "export_id"],
+      "description": "How the study started. 'copied_from_export' = 'Start a new study from this': inputs are copied, facts re-fetched and results recalculated; nothing imported becomes a current fact or result (plan section 9 'Historical exports'; export_record.schema.json restore_policy).",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["new", "copied_from_export"]
+        },
+        "export_id": {
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "kind": { "const": "new" },
+            "export_id": { "type": "null" }
+          }
+        },
+        {
+          "properties": {
+            "kind": { "const": "copied_from_export" },
+            "export_id": { "type": "string" }
+          }
+        }
+      ]
+    }
+  }
+}

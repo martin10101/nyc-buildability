@@ -91,7 +91,7 @@ describe("real-data dashboard summaries", () => {
   it("opens tools and issues in the caller's floating workspace", () => {
     const props = inputs();
     props.profile.missing_inputs = [{ field: "lotarea", criticality: "critical" }];
-    render(<DashboardPanels {...props}/>);
+    render(<DashboardPanels {...props} proposalEditorEnabled/>);
     const actions = within(screen.getByRole("region", { name: "Quick actions" }));
     fireEvent.click(actions.getByRole("button", { name: /Report preview/ }));
     fireEvent.click(actions.getByRole("button", { name: /Draw a proposal/ }));
@@ -100,6 +100,23 @@ describe("real-data dashboard summaries", () => {
     expect(props.onOpen).toHaveBeenNthCalledWith(2, "proposal");
     expect(props.onOpen).toHaveBeenNthCalledWith(3, "issues");
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  });
+
+  it("hides the set-aside proposal and envelope entries unless the server flag is on (D-01, plan §7)", () => {
+    const props = inputs();
+    const view = render(<DashboardPanels {...props}/>);
+    expect(screen.queryByRole("button", { name: /Draw a proposal/ })).not.toBeInTheDocument();
+    expect(within(screen.getByRole("group", { name: "Development details" })).queryByRole("button", { name: "Envelope" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Buildable envelope/ })).not.toBeInTheDocument();
+    // The honest FAR-only scope line stays; nothing else changes.
+    expect(screen.getByText("FAR only · Buildable envelope not assessed")).toBeInTheDocument();
+    expect(within(screen.getByRole("group", { name: "Development details" })).getByRole("button", { name: "Units" })).toBeInTheDocument();
+    view.rerender(<DashboardPanels {...props} proposalEditorEnabled/>);
+    expect(screen.getByRole("button", { name: /Draw a proposal/ })).toBeInTheDocument();
+    fireEvent.click(within(screen.getByRole("group", { name: "Development details" })).getByRole("button", { name: "Envelope" }));
+    fireEvent.click(screen.getByRole("button", { name: /Buildable envelope/ }));
+    expect(props.onOpen).toHaveBeenNthCalledWith(1, "envelope");
+    expect(props.onOpen).toHaveBeenNthCalledWith(2, "envelope");
   });
 
   it.each([3, 4, 5])("shows all %i recorded base parcels without assuming exactly two", count => {

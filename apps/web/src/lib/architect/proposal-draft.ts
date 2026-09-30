@@ -187,6 +187,19 @@ export function validateDraft(draft: ProposalDraft): DraftProblem[] {
     }
   });
 
+  // D-01: "Add level" leaves the floor-to-floor height UNKNOWN (NaN) until typed;
+  // mirror the route's finiteness refusal (services/api/app/scenario/proposal.py
+  // _validate_levels) so an unknown height is never sent as a value.
+  draft.levels.forEach((l, i) => {
+    if (!Number.isFinite(l.floor_to_floor_ft)) {
+      problems.push({
+        field: `proposed_massing.levels[${i}].floor_to_floor_ft`,
+        message: `level ${i} floor-to-floor height must be a finite number of feet`,
+        routeConstant: "_validate_levels finiteness",
+      });
+    }
+  });
+
   return problems;
 }
 
@@ -339,6 +352,8 @@ export function removeWall(draft: ProposalDraft, index: number): ProposalDraft {
 // ---------------------------------------------------------------------------
 // Seed drafts.
 // ---------------------------------------------------------------------------
+/** The starting draft for every real property (D-01, M1-06b): no outline, no
+ * levels, and every lot input unknown (null / "" = not entered, never 0). */
 export function emptyDraft(): ProposalDraft {
   return {
     scenario_label: "New proposal",
@@ -419,9 +434,13 @@ export function draftFromCandidate(
 }
 
 /** The accepted M5-T054 rectangle case as an editable draft (100 ft x 50 ft, 3
- * floors, 8000 sq ft R5 lot). Seeding it makes the editor immediately
- * meaningful; run against the accepted route it reproduces the AS-1 arithmetic
- * (coverage 0.625 vs 0.5; height 30 <= 60). */
+ * floors, 8000 sq ft R5 lot); run against the accepted route it reproduces the
+ * AS-1 arithmetic (coverage 0.625 vs 0.5; height 30 <= 60).
+ *
+ * EXAMPLE DATA ONLY (D-01, plan §9 / M1-06): a fictional lot with fake EPSG:2263
+ * vertices. It must never seed a real property — real-property mounts start from
+ * `emptyDraft()`; this stays for the explicit example path (ProposalEditor
+ * `example`, ignored when a BBL is mounted) and as a test fixture. */
 export function rectangleSampleDraft(): ProposalDraft {
   return {
     scenario_label: "scenario-A-baseline",
