@@ -1,14 +1,31 @@
 #!/usr/bin/env python3
 """Agent Supervisor - deterministic Codex <-> Claude supervisor bridge (D-007).
 
-PHASES 1-4. Phase 1 built the deterministic substrate; Phase 2 added the policy
+PHASES 1-5. Phase 1 built the deterministic substrate; Phase 2 added the policy
 engine and the provider adapters; Phase 3 added endurance - rotation, recovery,
 durable wake scheduling, notifications, retention, and the authenticated
-model-change path; Phase 4 ASSEMBLES them into the loop, adds the replay engine
-and its historical corpus, makes the Windows Job Object the default container,
-and runs the Section 15 matrices against all of it:
+model-change path; Phase 4 ASSEMBLED them into the loop, added the replay engine
+and its historical corpus, made the Windows Job Object the default container, and
+ran the Section 15 matrices against all of it; Phase 5 ran the SHADOW PILOT
+against the real canonical Claude executable and the real Codex CLI, which found
+three defects no fake-executable test could have found and fixed them:
+
+    1. every healthy worker unit consumed its whole timeout and was then reported
+       `timed_out` - a false-positive synchronous stop on EVERY unit, because
+       `--input-format stream-json` keeps the session open after a turn's
+       terminal `result` (claude_runner.run_unit now closes stdin there);
+    2. the live provider REJECTED the canonical decision schema (`'allOf' is not
+       permitted`), so the schema-constrained review path had NEVER worked
+       outside the fakes (codex_reviewer.provider_output_schema now projects a
+       provider-safe view; the canonical contract is unchanged);
+    3. `start` DISPATCHED a full cycle while a durable emergency stop was set
+       (cli.cmd_start now refuses on any durable blocking flag).
+
+Phase 5 adds no new module. It ends at the owner decision packet; limited-auto is
+NOT enabled by it and remains unimplemented.
 
     config.py           immutable controller config + runtime model selection (D-007 S3.1)
+
     models.py           dataclasses for checkpoint / decision / envelope / journal records
     protocol.py         versioned JSON/JSONL envelope, framing, sequence + idempotency
     durable_state.py    transactional SQLite journal (WAL, synchronous=FULL)
@@ -41,9 +58,14 @@ and runs the Section 15 matrices against all of it:
     cli.py              operator commands (S12.1) - none deferred
 
 NOT in this build (deliberately, and named rather than implied): push EXECUTION,
-Option A anchor PUBLICATION, the long-lived named-pipe IPC server loop, and the
-Phase 5 shadow pilot with its decision packet. `limited-auto` is not implemented
-at all.
+Option A anchor PUBLICATION, the long-lived named-pipe IPC server loop, and - the
+Phase 5 pilot's fourth finding, NOT fixed here because closing it would WIDEN
+authority rather than restore a stop - the approval broker is built, tested, and
+digest-bound but is NOT wired into `SupervisedLoop.run_cycle`: the worker runs
+with `deny_everything`, so every tool a live worker requested was denied and no
+tool has ever been approved by the assembled loop. That is fail-closed and safe,
+and it is also why no live run has exercised the AUTO allowlist end to end.
+`limited-auto` is not implemented at all.
 
 The supervisor is a coordinator, evidence collector, and state machine. It is
 NOT a source of project truth: `project-control/` and git remain authoritative.
@@ -63,7 +85,7 @@ __all__ = [
 #: Version of the deterministic controller itself. Recorded in the manifest, in
 #: every audit record, and in the durable journal so a resumed run can refuse to
 #: continue under a different controller build (D-007 S7, S13.1).
-CONTROLLER_VERSION = "0.4.0-phase4"
+CONTROLLER_VERSION = "0.5.0-phase5"
 
 #: Version of the cross-CLI envelope protocol (D-007 S8.5). Bumped whenever the
 #: envelope's required field set or framing rules change.
@@ -73,4 +95,4 @@ PROTOCOL_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
 
 #: Implementation phase this build corresponds to (D-007 S17).
-PHASE = 4
+PHASE = 5

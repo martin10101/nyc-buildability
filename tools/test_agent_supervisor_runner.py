@@ -173,6 +173,14 @@ FAKE_CLAUDE = textwrap.dedent('''
 
     if MODE == "nonzero":
         raise SystemExit(3)
+
+    if MODE == "session_stays_open":
+        # What the REAL CLI does under `--input-format stream-json`: after a
+        # turn's terminal `result` the session stays open waiting for the next
+        # user message. The process exits only when stdin reaches EOF.
+        for _line in sys.stdin:
+            pass
+        raise SystemExit(0)
 ''')
 
 FAKE_CLAUDE_ECHO_ARGV = textwrap.dedent('''
@@ -563,6 +571,38 @@ class ControlProtocolTests(RunnerTestBase):
 # --------------------------------------------------------------------------
 # Session identity
 # --------------------------------------------------------------------------
+
+
+class StreamJsonSessionCloseTests(RunnerTestBase):
+    """The Phase 5 shadow pilot's defect: a healthy unit must not cost the bound.
+
+    Under `--input-format stream-json` the CLI keeps the session open after a
+    turn's terminal `result` and exits only at stdin EOF. Reading stdout to EOF
+    therefore blocks until the watchdog fires, and `RunResult.ok` is False for a
+    unit that already returned a valid checkpoint - a false-positive synchronous
+    stop on every single unit. Measured live: exactly 600.0s, checkpoint
+    `pilot-cp-1` present, reported `timed_out`.
+    """
+
+    def test_a_session_that_stays_open_still_finishes_well_inside_the_bound(self) -> None:
+        result = self.run_fake("session_stays_open", timeout=20.0)
+        self.assertIsNotNone(result.checkpoint)
+        self.assertEqual(result.checkpoint.checkpoint_id, "cp-1")
+        self.assertFalse(result.timed_out,
+                         "the run must end at a real EOF, not at the watchdog")
+        self.assertFalse(result.tree_terminated)
+        self.assertEqual(result.returncode, 0)
+        self.assertTrue(result.ok)
+        self.assertLess(result.duration_seconds, 15.0,
+                        "a healthy unit must not consume its whole timeout")
+
+    def test_the_timeout_still_fires_when_no_result_ever_arrives(self) -> None:
+        """The fix shortens a HEALTHY run and weakens no stop."""
+        result = self.run_fake("hang", timeout=3.0)
+        self.assertTrue(result.timed_out)
+        self.assertTrue(result.tree_terminated)
+        self.assertFalse(result.ok)
+        self.assertIsNone(result.checkpoint)
 
 
 class SessionIdentityTests(RunnerTestBase):

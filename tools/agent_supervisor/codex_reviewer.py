@@ -63,6 +63,102 @@ FORBIDDEN_REVIEWER_FLAGS: frozenset[str] = frozenset({
 
 DEFAULT_REVIEW_TIMEOUT_SECONDS = 600.0
 
+# --------------------------------------------------------------------------
+# Provider schema projection (found by the Phase 5 shadow pilot)
+# --------------------------------------------------------------------------
+#
+# `codex_decision.schema.json` is the SUPERVISOR's contract. Handing that exact
+# file to `--output-schema` fails against the live provider:
+#
+#   {"type":"error","message":"... invalid_json_schema ... Invalid schema for
+#    response_format 'codex_output_schema': In context=(), 'allOf' is not
+#    permitted."}  -> HTTP 400 -> turn.failed -> no last-message file
+#
+# Every test in this repository used a FAKE codex executable, so no test could
+# ever have caught it: the schema-constrained review path had never once worked
+# against a real provider. Measured in the pilot: three bounded attempts, three
+# 400s, `missing_decision_file`, one counted owner touch.
+#
+# The fix is a PROJECTION, not an edit: the canonical schema keeps its
+# conditional `allOf` block (it documents S9 and is covered by the controller
+# manifest), and a provider-safe view of it is generated per invocation.
+#
+# This weakens NOTHING. Every rule the stripped keywords express is already
+# enforced deterministically by `CodexDecision.validate()` and
+# `validate_decision()` in this module - the enum, the six decision values, each
+# decision's required field, "STOP_FOR_OWNER carries no executable next prompt",
+# unknown-field rejection, and the task/checkpoint correlation. The provider
+# schema is a hint to the model; the supervisor's own validator is the gate, and
+# it runs on every returned object either way.
+
+#: Keywords the provider's `response_format` validator rejects outright, each
+#: OBSERVED in a bounded live probe rather than assumed:
+#:
+#:   'allOf' is not permitted                                        (context=())
+#:   'additionalProperties' is required to be supplied and to be false
+#:                                    (context=('properties','verified_facts','items'))
+#:
+#: The remaining names are the same family of assertion keywords that structured
+#: outputs does not evaluate; stripping them costs nothing because none of them
+#: is what the supervisor relies on.
+PROVIDER_UNSUPPORTED_KEYWORDS: frozenset[str] = frozenset({
+    "allOf", "oneOf", "not", "if", "then", "else", "$schema", "$id",
+    "minLength", "maxLength", "minItems", "maxItems", "pattern", "format",
+    "default", "examples",
+})
+
+#: Structured outputs cannot express a free-form object, so a bare
+#: `{"type": "object"}` gets a concrete, provider-legal shape in the projection
+#: ONLY. The canonical schema stays permissive and the supervisor stays tolerant
+#: of any object shape - `CodexDecision` keeps these as plain dicts.
+FREEFORM_OBJECT_SHAPE: dict[str, Any] = {
+    "type": "object",
+    "additionalProperties": False,
+    "properties": {
+        "label": {"type": "string"},
+        "detail": {"type": "string"},
+        "reference": {"type": "string"},
+    },
+    "required": ["label", "detail", "reference"],
+}
+
+
+def provider_output_schema(schema: Mapping[str, Any]) -> dict[str, Any]:
+    """A provider-safe projection of a supervisor schema. Never the gate.
+
+    Three transformations, each forced by an observed provider rejection:
+
+    1. drop the keywords in `PROVIDER_UNSUPPORTED_KEYWORDS`;
+    2. every object node carries `additionalProperties: false`;
+    3. every object node's `required` lists ALL of its properties (strict mode
+       has no notion of an optional key; an inapplicable field is emitted empty,
+       which is exactly what `CodexDecision.validate()` already expects - it
+       requires `next_claude_prompt` to be EMPTY for `STOP_FOR_OWNER`).
+
+    None of this validates anything. `validate_decision()` runs on whatever comes
+    back regardless, and it is the only gate.
+    """
+
+    def project(node: Any) -> Any:
+        if isinstance(node, Mapping):
+            out = {key: project(value) for key, value in node.items()
+                   if key not in PROVIDER_UNSUPPORTED_KEYWORDS}
+            if out.get("type") == "object":
+                properties = out.get("properties")
+                if not isinstance(properties, Mapping) or not properties:
+                    return dict(FREEFORM_OBJECT_SHAPE)
+                out["additionalProperties"] = False
+                out["required"] = sorted(properties)
+            return out
+        if isinstance(node, (list, tuple)):
+            return [project(item) for item in node]
+        return node
+
+    projected = project(dict(schema))
+    if not isinstance(projected, dict):  # pragma: no cover - defensive
+        raise ReviewError("bad_schema", "a schema must be one JSON object")
+    return projected
+
 
 class ReviewError(Exception):
     """The review could not be trusted. Never interpret this as approval."""
@@ -296,6 +392,12 @@ class CodexReviewer:
         packet_body = dict(packet)
         packet_digest = digest_of(packet_body)
         last_error: ReviewError | None = None
+        # A FAILED review used to be recorded with the dataclass default
+        # `returncode=0`, which reads like a clean exit. The pilot's three failed
+        # attempts each really exited 1. Carry the observed code so the audit
+        # record cannot understate the failure.
+        last_returncode = -1
+        last_argv: tuple[str, ...] = ()
 
         for attempt in range(1, self.max_attempts + 1):
             payload = dict(packet_body)
@@ -305,6 +407,8 @@ class CodexReviewer:
                     "instruction": "Return exactly one schema-valid decision object.",
                 }
             argv, result, raw = self._invoke(payload, resolution.model)
+            last_returncode = result.returncode
+            last_argv = tuple(argv)
             if result.timed_out:
                 last_error = ReviewError("review_timeout",
                                          "the reviewer timed out; partial output discarded")
@@ -342,6 +446,7 @@ class CodexReviewer:
                    f"decision; halting rather than forwarding an unreviewed unit")
         outcome = ReviewOutcome(
             None, resolution.model, resolution.selection_digest, self.max_attempts,
+            argv=last_argv, returncode=last_returncode,
             error_code=(last_error.code if last_error else "schema_retry_exhausted"),
             error_message=message, packet_digest=packet_digest,
             tier=PolicyDecision(tier=ASK, reason_code="schema_retry_exhausted",
@@ -356,9 +461,18 @@ class CodexReviewer:
         """One fresh process. The packet goes on stdin; the decision comes from file."""
         handle, output_path = tempfile.mkstemp(prefix="codex_decision_", suffix=".json")
         os.close(handle)
+        schema_handle, provider_schema_path = tempfile.mkstemp(
+            prefix="codex_output_schema_", suffix=".json")
+        os.close(schema_handle)
         try:
+            canonical = json.loads(
+                pathlib.Path(self.schema_path).read_text(encoding="utf-8-sig"))
+            pathlib.Path(provider_schema_path).write_text(
+                json.dumps(provider_output_schema(canonical), indent=2),
+                encoding="utf-8")
             argv = build_argv(self.executable, repo=self.repo, model=model,
-                              schema_path=self.schema_path, output_path=output_path)
+                              schema_path=provider_schema_path,
+                              output_path=output_path)
             result = self._run(argv, cwd=self.repo, env=minimal_env(),
                                timeout=self.timeout_seconds,
                                input_text=json.dumps(payload, ensure_ascii=False))
@@ -375,6 +489,10 @@ class CodexReviewer:
                     raw = None
             return argv, result, raw
         finally:
+            try:
+                os.unlink(provider_schema_path)
+            except OSError:  # pragma: no cover - defensive
+                pass
             try:
                 os.unlink(output_path)
             except OSError:  # pragma: no cover - defensive

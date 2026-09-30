@@ -1971,11 +1971,31 @@ def cmd_start(args: argparse.Namespace) -> int:
             "missing_inputs": missing_inputs,
             "stopped_because": "",
         }
+        # S11.5 / S13.12 invariant 5: a durable emergency stop, a manual pause,
+        # or an open blocking owner gate forbids ACTION, not merely autostart.
+        # Recovery already answers this: when a flag blocks, it classifies
+        # SAFE_CHECKPOINT but routes to PAUSED_RECOVERY, so the classification
+        # ALONE is not the gate.
+        #
+        # Found by the Phase 5 shadow pilot: with a durable emergency stop set,
+        # `start` printed "autostart refused: a durable emergency stop is set",
+        # "next state: PAUSED_RECOVERY", "resume permitted: False" - and then
+        # dispatched a full cycle anyway. The emergency stop did not stop it.
+        blocking_flags = DurableFlags.read(journal).blocking_reasons()
+        payload["durable_blocking_reasons"] = list(blocking_flags)
         if not dispatchable:
             payload["stopped_because"] = (
                 f"`start` will not dispatch until every input is named explicitly. "
                 f"Missing: {missing_inputs}. Nothing is discovered from PATH and no "
                 f"provider is contacted by default.")
+        elif blocking_flags or outcome.next_state != PREFLIGHT_STATE:
+            payload["stopped_because"] = (
+                f"a durable stop condition forbids acting: "
+                f"{'; '.join(blocking_flags) or outcome.reason_code}. Recovery routes to "
+                f"{outcome.next_state}, not {PREFLIGHT_STATE}. A durable stop or pause "
+                f"never clears itself and is never overridden by an operator `start`; "
+                f"clear it deliberately (`stop --clear`, `resume`) after addressing the "
+                f"cause. {outcome.reason}")
         elif outcome.classification != SAFE_CHECKPOINT:
             # NOTE the gate: the CLASSIFICATION, not `resume_permitted`.
             # `resume_permitted` answers "may this run continue AUTOMATICALLY,

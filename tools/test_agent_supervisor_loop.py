@@ -249,6 +249,32 @@ class CyclePathTests(LoopTestBase):
         self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
         self.assertFalse(result.forwarded)
 
+    def test_a_timed_out_unit_that_did_return_a_checkpoint_says_so(self) -> None:
+        """The stop is unchanged; the DIAGNOSTIC must name the real condition.
+
+        The Phase 5 shadow pilot was told "the worker exited without a valid
+        checkpoint" about a unit that had returned checkpoint `pilot-cp-1` and
+        merely timed out - which sends the owner looking for the wrong fault.
+        """
+        self.at_preflight()
+        timed = run_result(timed_out=True)
+        loop = self.build(runner=FakeRunner(timed))
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(result.stopped, "no_valid_checkpoint")
+        self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
+        self.assertIn("exceeded its bound", result.reason)
+        self.assertIn("cp-1", result.reason)
+        self.assertIn("never success", result.reason)
+        self.assertNotIn("exited without a valid checkpoint", result.reason)
+
+    def test_a_missing_checkpoint_still_says_missing(self) -> None:
+        self.at_preflight()
+        loop = self.build(runner=FakeRunner(run_result(checkpoint=None, returncode=2)))
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(result.stopped, "no_valid_checkpoint")
+        self.assertIn("no structured checkpoint was produced", result.reason)
+        self.assertIn("exited 2", result.reason)
+
     def test_a_pending_external_effect_blocks_the_retry_as_ambiguous(self) -> None:
         self.at_preflight()
         self.journal.record_before_effect(
@@ -854,6 +880,59 @@ class CliStartTests(LoopTestBase):
         with self.assertRaises(NotImplementedError) as ctx:
             self.run_cli("start", "--mode", "limited-auto")
         self.assertIn("limited-auto is disabled", str(ctx.exception))
+
+    def _full_start_args(self) -> list[str]:
+        return ["start", "--mode", "shadow",
+                "--claude-executable", sys.executable,
+                "--codex-executable", sys.executable,
+                "--config", str(self.config),
+                "--model-selection", str(self.selection),
+                "--task-packet", str(self.packet),
+                "--repo", str(self.repo), "--worktree", str(self.repo),
+                "--branch", "task/M0-T036-supervisor-bridge",
+                "--stage", "in_progress", "--max-cycles", "1"]
+
+    def test_a_durable_emergency_stop_forbids_dispatch(self) -> None:
+        """The Phase 5 shadow pilot's third defect, measured live.
+
+        With the stop set, `start` printed "autostart refused: a durable
+        emergency stop is set", "next state: PAUSED_RECOVERY", "resume
+        permitted: False" - and then dispatched a full cycle anyway. The
+        emergency stop did not stop it.
+        """
+        self.run_cli("emergency-stop")
+        code, payload = self.run_cli(*self._full_start_args())
+        self.assertEqual(code, 0)
+        self.assertFalse(payload["dispatched"])
+        self.assertEqual(payload["provider_calls_made"], 0)
+        self.assertIn("a durable emergency stop is set",
+                      payload["durable_blocking_reasons"])
+        self.assertIn("durable stop condition forbids acting",
+                      payload["stopped_because"])
+        self.assertNotIn("loop", payload)
+
+    def test_a_durable_manual_pause_forbids_dispatch(self) -> None:
+        self.run_cli("pause")
+        _, payload = self.run_cli(*self._full_start_args())
+        self.assertFalse(payload["dispatched"])
+        self.assertEqual(payload["provider_calls_made"], 0)
+        self.assertIn("a durable manual pause is set",
+                      payload["durable_blocking_reasons"])
+
+    def test_a_clean_runtime_still_dispatches(self) -> None:
+        """The gate must not become a gate on everything (Phase 4 defect 2)."""
+        _, payload = self.run_cli(*self._full_start_args())
+        self.assertEqual(payload["durable_blocking_reasons"], [])
+        self.assertTrue(payload["dispatched"])
+
+    def test_clearing_the_stop_restores_dispatch(self) -> None:
+        self.run_cli("emergency-stop")
+        _, blocked = self.run_cli(*self._full_start_args())
+        self.assertFalse(blocked["dispatched"])
+        self.run_cli("stop", "--clear")
+        _, allowed = self.run_cli(*self._full_start_args())
+        self.assertEqual(allowed["durable_blocking_reasons"], [])
+        self.assertTrue(allowed["dispatched"])
 
     def test_start_never_searches_the_path_for_an_executable(self) -> None:
         source = (REPO / "tools" / "agent_supervisor" / "cli.py").read_text(

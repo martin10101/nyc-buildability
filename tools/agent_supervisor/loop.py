@@ -440,6 +440,32 @@ def is_synchronous_stop(decision: Any) -> bool:
         getattr(decision, "outcome", "") == DENY_AND_HALT
 
 
+def _unusable_unit_reason(run_result: Any, checkpoint: Any) -> str:
+    """Say WHICH condition made the unit unusable, never a generic sentence.
+
+    The stop stays exactly as strict; only the diagnostic changes. Reporting
+    "the worker exited without a valid checkpoint" for a unit that DID return a
+    valid checkpoint and merely timed out sends the owner looking for the wrong
+    fault - the Phase 5 shadow pilot spent a stop on precisely that.
+    """
+    parts: list[str] = []
+    if getattr(run_result, "timed_out", False):
+        parts.append("the unit exceeded its bound and its process tree was terminated")
+    if getattr(run_result, "cancelled", False):
+        parts.append("the unit was cancelled")
+    returncode = getattr(run_result, "returncode", 0)
+    if returncode != 0:
+        parts.append(f"the worker exited {returncode}")
+    if checkpoint is None:
+        parts.append("no structured checkpoint was produced")
+    else:
+        parts.append(f"a structured checkpoint ({checkpoint.checkpoint_id}) WAS "
+                     f"produced but the run itself is not trustworthy")
+    return ("; ".join(parts) +
+            ". A timeout, a cancellation, a nonzero exit, or a missing checkpoint is "
+            "never success (S14).")
+
+
 class SupervisedLoop:
     """One controlled task's supervised or shadow loop.
 
@@ -598,7 +624,7 @@ class SupervisedLoop:
             # success. Reconcile the external-effect journal before any retry.
             unreconciled = list(self.journal.pending_effects())
             reason = (getattr(run_result, "checkpoint_error", "")
-                      or "the worker exited without a valid checkpoint")
+                      or _unusable_unit_reason(run_result, checkpoint))
             if unreconciled:
                 self.machine.transition(
                     PAUSED_RECOVERY, "unsafe_condition",

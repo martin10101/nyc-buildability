@@ -577,6 +577,17 @@ class ClaudeRunner:
                 # Early pipe closure: the CLI already fails closed on its side.
                 pass
 
+        def close_stdin() -> None:
+            """Idempotent. Closing stdin is what lets a stream-json CLI exit."""
+            try:
+                if process.stdin is not None and not process.stdin.closed:
+                    process.stdin.close()
+            except Exception:  # pragma: no cover - defensive
+                pass
+
+        turns_written = 1 + len(extra_turns)
+        results_seen = 0
+
         try:
             write(user_message(prompt))
             for turn in extra_turns:
@@ -593,14 +604,32 @@ class ClaudeRunner:
                         decision = self._answer_control_request(event, handler, write)
                         if decision is not None:
                             decisions.append(decision)
+                    elif kind == "result":
+                        # `--input-format stream-json` keeps the session OPEN after a
+                        # turn's terminal `result`: the CLI waits for the next user
+                        # message and never closes stdout, so reading to EOF blocks
+                        # until the watchdog fires. Every healthy unit then costs the
+                        # whole timeout and is reported `timed_out` - i.e. NOT ok -
+                        # even when a perfectly valid checkpoint was already received.
+                        # (Found by the Phase 5 shadow pilot: a real unit produced
+                        # checkpoint `pilot-cp-1` and was still stopped as a false
+                        # positive at exactly 600.0s. `preflight.py` already breaks on
+                        # `result` for the same reason.)
+                        #
+                        # Closing stdin once every written turn has been answered lets
+                        # the CLI exit; the read loop then ends at a real EOF, so no
+                        # trailing event is dropped. This SHORTENS a healthy run and
+                        # weakens nothing: the watchdog, the timeout, the process-tree
+                        # termination, and `RunResult.ok` are all untouched, and a run
+                        # that never produces its terminal result still times out and
+                        # still fails closed.
+                        results_seen += 1
+                        if results_seen >= turns_written:
+                            close_stdin()
             for event in parser.close():
                 events.append(event)
         finally:
-            try:
-                if process.stdin is not None and not process.stdin.closed:
-                    process.stdin.close()
-            except Exception:  # pragma: no cover - defensive
-                pass
+            close_stdin()
             process.wait()
             watch_thread.join(timeout=2)
             stderr_thread.join(timeout=2)

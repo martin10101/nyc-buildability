@@ -264,6 +264,129 @@ class ReviewerArgvTests(ReviewerTestBase):
 # --------------------------------------------------------------------------
 
 
+class ProviderSchemaProjectionTests(ReviewerTestBase):
+    """The Phase 5 shadow pilot's second defect: the live provider REJECTED the
+    canonical schema, so the schema-constrained review path had never worked.
+
+    Both rejections are quoted from bounded live probes:
+
+      In context=(), 'allOf' is not permitted.
+      In context=('properties','verified_facts','items'),
+        'additionalProperties' is required to be supplied and to be false.
+
+    Every fake-executable test in this repository passed throughout, because a
+    fake never validates the schema it is handed. Only a live call could find it.
+    """
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.canonical = json.loads(self.schema.read_text(encoding="utf-8-sig"))
+        self.projected = rv.provider_output_schema(self.canonical)
+
+    def test_the_canonical_schema_on_disk_is_not_touched(self) -> None:
+        """The contract is projected, never edited."""
+        self.assertIn("allOf", self.canonical)
+        again = json.loads(self.schema.read_text(encoding="utf-8-sig"))
+        self.assertEqual(again, self.canonical)
+        self.assertIn("allOf", again)
+
+    def test_every_rejected_keyword_is_gone_at_every_depth(self) -> None:
+        def walk(node):
+            if isinstance(node, dict):
+                for key, value in node.items():
+                    yield key
+                    yield from walk(value)
+            elif isinstance(node, list):
+                for item in node:
+                    yield from walk(item)
+
+        keys = set(walk(self.projected))
+        for keyword in rv.PROVIDER_UNSUPPORTED_KEYWORDS:
+            self.assertNotIn(keyword, keys, f"{keyword} survived the projection")
+
+    def test_every_object_node_is_closed_and_fully_required(self) -> None:
+        def objects(node):
+            if isinstance(node, dict):
+                if node.get("type") == "object":
+                    yield node
+                for value in node.values():
+                    yield from objects(value)
+            elif isinstance(node, list):
+                for item in node:
+                    yield from objects(item)
+
+        found = list(objects(self.projected))
+        self.assertGreater(len(found), 1)
+        for node in found:
+            self.assertIs(node.get("additionalProperties"), False)
+            self.assertEqual(sorted(node.get("properties", {})),
+                             sorted(node.get("required", [])))
+
+    def test_a_freeform_object_item_gets_a_concrete_shape(self) -> None:
+        items = self.projected["properties"]["verified_facts"]["items"]
+        self.assertEqual(items, rv.FREEFORM_OBJECT_SHAPE)
+        self.assertIs(items["additionalProperties"], False)
+
+    def test_the_projection_removes_nothing_the_validator_enforces(self) -> None:
+        """Each rule the stripped `allOf` encoded is still refused in Python."""
+        base = dict(schema_version="1.0.0", reviewed_task_id="M0-T036",
+                    reviewed_checkpoint_id="cp-1", verified_repo_head="b" * 40,
+                    verified_origin_main="a" * 40, model_used="m")
+        for payload, code in (
+            ({**base, "decision": "CONTINUE", "next_claude_prompt": ""},
+             "missing_next_prompt"),
+            ({**base, "decision": "REVISE", "next_claude_prompt": "   "},
+             "missing_next_prompt"),
+            ({**base, "decision": "STOP_FOR_OWNER", "owner_question": ""},
+             "missing_owner_question"),
+            ({**base, "decision": "STOP_FOR_OWNER", "owner_question": "q?",
+              "next_claude_prompt": "go do it"}, "prompt_with_stop"),
+            ({**base, "decision": "ROTATE_SESSION", "rotation_reason": ""},
+             "missing_rotation_reason"),
+            ({**base, "decision": "COMPLETE", "evidence_refs": []},
+             "missing_completion_evidence"),
+            ({**base, "decision": "HALT_UNSAFE", "blocking_findings": []},
+             "missing_halt_reason"),
+        ):
+            with self.subTest(code=code):
+                with self.assertRaises(rv.ReviewError) as ctx:
+                    rv.validate_decision(payload)
+                self.assertEqual(ctx.exception.code, code)
+
+    def test_an_empty_inapplicable_field_is_accepted(self) -> None:
+        """Strict mode forces every key to be present; empty must still parse."""
+        decision = rv.validate_decision({
+            "schema_version": "1.0.0", "decision": "CONTINUE",
+            "reviewed_task_id": "M0-T036", "reviewed_checkpoint_id": "cp-1",
+            "verified_repo_head": "b" * 40, "verified_origin_main": "a" * 40,
+            "model_used": "m", "next_claude_prompt": "do the next unit",
+            "owner_question": "", "rotation_reason": "", "verified_facts": [],
+            "unverified_claims": [], "blocking_findings": [], "reason_codes": [],
+            "evidence_refs": [],
+        })
+        self.assertEqual(decision.decision, "CONTINUE")
+
+    def test_the_reviewer_hands_the_projection_to_the_cli_not_the_canonical_file(
+            self) -> None:
+        seen: list[list[str]] = []
+        reviewer = self.reviewer()
+        inner = reviewer._run
+
+        def capture(argv, **kwargs):
+            seen.append(list(argv))
+            return inner(argv, **kwargs)
+
+        reviewer._run = capture
+        reviewer.review(self.packet(), expected_task_id="M0-T036",
+                        expected_checkpoint_id="cp-1")
+        self.assertTrue(seen)
+        handed = seen[0][seen[0].index("--output-schema") + 1]
+        self.assertNotEqual(pathlib.Path(handed), self.schema)
+        self.assertIn("codex_output_schema_", pathlib.Path(handed).name)
+        # and it is cleaned up: the projection is per-invocation, never left behind
+        self.assertFalse(pathlib.Path(handed).exists())
+
+
 class DecisionValidationTests(ReviewerTestBase):
     def test_all_six_decisions_validate_with_their_required_fields(self) -> None:
         cases = {

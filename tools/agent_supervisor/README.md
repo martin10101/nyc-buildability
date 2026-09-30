@@ -1,22 +1,22 @@
-# Agent Supervisor — Phase 4 status
+# Agent Supervisor — Phase 5 status
 
 This is the deterministic Codex ↔ Claude supervisor bridge described by owner
-directive **D-007**. It is being built in five phases. **Phases 1, 2, 3 and 4
-exist today.**
+directive **D-007**. It is being built in five phases. **All five phases exist
+today.**
 
-**Nothing in this package runs your project unattended.** The loop exists now,
-but it only runs in the two modes that cannot act on their own: `shadow` (which
-forwards *nothing*) and `supervised` (where you approve every single prompt).
-There is still no push, no merge, and no acceptance. The unattended writing mode
-(`limited-auto`) is not implemented at all, and turning it on later is a
-separate, explicit decision that only you can make.
+**Nothing in this package runs your project unattended.** The loop only runs in
+the two modes that cannot act on their own: `shadow` (which forwards *nothing*)
+and `supervised` (where you approve every single prompt). There is still no push,
+no merge, and no acceptance. The unattended writing mode (`limited-auto`) is not
+implemented at all, and turning it on later is a separate, explicit decision that
+only you can make.
 
-What Phase 4 added — *validation*, the part that proves the first three phases
-actually behave:
+Phases 1–4 built the substrate, the policy engine and adapters, the endurance
+layer, and then assembled and validated the loop:
 
-* **the assembled loop** — the pieces Phases 1–3 built are now wired into one
-  cycle (start Claude → checkpoint → collect evidence → Codex review → validate
-  → policy → forward), with every step a real state-machine transition;
+* **the assembled loop** — start Claude → checkpoint → collect evidence → Codex
+  review → validate → policy → forward, with every step a real state-machine
+  transition;
 * **shadow mode** — runs the whole cycle against a real workflow and forwards
   nothing, recording what it *would* have done and counting how many times it
   would have had to stop and ask you;
@@ -24,10 +24,59 @@ actually behave:
   approve that exact prompt by its digest;
 * **replay** — feeds eight real cases out of this repository's own history back
   through the policy engine and checks that it stops where the humans stopped;
-* **containment** — on Windows, every process the supervisor starts now runs
-  inside a Job Object, so nothing it spawns can outlive it;
+* **containment** — on Windows, every process the supervisor starts runs inside a
+  Job Object, so nothing it spawns can outlive it;
 * **the adversarial matrix** — several hundred tests that attack the supervisor
   the way a compromised worker or a confused CLI would.
+
+## What Phase 5 did: the shadow pilot
+
+Phase 5 pointed the whole thing at a throwaway repository with the **real**
+Claude executable as the worker and the **real** Codex CLI as the reviewer, in
+shadow mode, and watched. That is the entire point of a pilot, and it earned its
+keep: 1042 tests were green before it started and **three defects only a live run
+could find** came out of it. All three had passed every fake-executable test,
+because a fake cannot reject your schema, cannot keep a session open, and cannot
+notice that a stop flag was ignored.
+
+1. **Every healthy unit consumed its entire timeout.** Under
+   `--input-format stream-json` the CLI keeps the session open after a turn's
+   terminal `result`, waiting for your next message. The runner read stdout to
+   EOF, which never came, so a unit that had already returned a perfectly valid
+   checkpoint was killed by the watchdog and reported `timed_out` — i.e. *not
+   ok*. Measured: exactly 600.0 s, checkpoint received, stopped anyway. Fixed by
+   closing stdin once every written turn has been answered. The timeout, the
+   process-tree kill, and the fail-closed rules are untouched; a run that never
+   produces its result still times out.
+
+2. **The live provider rejected our decision schema.** Handing
+   `codex_decision.schema.json` to `--output-schema` came back
+   `invalid_json_schema … 'allOf' is not permitted`, then
+   `'additionalProperties' is required to be supplied and to be false`. Every
+   review returned no decision file, three bounded attempts in a row, and the run
+   stopped for the owner — correctly, but for a reason that had been sitting
+   there unexercised the whole time. **The schema-constrained review path had
+   never once worked against a real provider.** Fixed with a *projection*:
+   the canonical schema is unchanged (it is the supervisor's contract and it is
+   covered by the manifest), and a provider-legal view of it is generated per
+   invocation. Nothing is weakened — every rule the stripped keywords expressed
+   is enforced in Python by `CodexDecision.validate()`, which runs on whatever
+   comes back regardless.
+
+3. **`emergency-stop` did not stop `start`.** With the durable stop set, `start`
+   printed *"autostart refused: a durable emergency stop is set"*, *"next state:
+   PAUSED_RECOVERY"*, *"resume permitted: False"* — and then dispatched a full
+   cycle. The flag blocked *autostart*; it did not block an operator `start`.
+   Fixed: `start` now refuses on any durable blocking flag (emergency stop,
+   manual pause, open owner gate, or an unexpired usage deadline).
+
+A fourth finding is recorded but deliberately **not** fixed here, because closing
+it would *widen* authority rather than restore a stop: the approval broker is
+built, tested and digest-bound, but it is **not wired into the loop's worker
+run**. Every tool a live worker asked for was denied with `no_broker`. That is
+fail-closed and safe — and it means no tool has ever been approved by the
+assembled loop, so the AUTO allowlist has never been exercised end to end. See
+caveat 5.
 
 ---
 
@@ -107,12 +156,20 @@ python -m tools.agent_supervisor uninstall-autostart --confirm-plan-digest <dige
 ### What `start` does, and what it does not
 
 `start --mode shadow` (or `--mode supervised`) takes the single-instance lock,
-runs the full after-a-crash recovery algorithm, checks the journal and the audit
-chain, tells you the classification — and then **stops without contacting any
-provider.** It cannot run the loop, because the loop is Phase 4, and it says so
-in its own output rather than implying otherwise.
+runs the full after-a-crash recovery algorithm, and checks the journal and the
+audit chain — all **before** anything could contact a provider. Then it decides
+whether it may run at all:
 
-`start --mode limited-auto` refuses *by name*.
+* if any of the five inputs is missing, it stops and names the missing one;
+* if a **durable stop condition** is set — `emergency-stop`, `pause`, an open
+  blocking owner gate, or an unexpired usage-limit deadline — it stops and names
+  it. An operator `start` never overrides a durable stop; you clear it
+  deliberately with `stop --clear` or `resume` after addressing the cause;
+* if recovery classifies the checkout `AMBIGUOUS_EFFECT` or `UNSAFE_OR_DRIFTED`,
+  it stops;
+* otherwise it runs the loop, in shadow or supervised only.
+
+`start --mode limited-auto` refuses *by name*, before any of the above.
 
 ### Answering a queued question
 
@@ -217,8 +274,8 @@ Nothing is deferred. Every command in the directive's list is implemented.
 | `process.py` | **complete for Phase 4.** Argv-array-only execution, hard-deny argument refusal, minimal child environment, per-process timeouts, executable identity and repo-shadow refusal, and `ProcessContainer` — the Job Object is now the DEFAULT container on Windows, with breakaway flags refused, nested-job failure detected, and the taskkill fallback recorded rather than silently taken. |
 | `policy.py` | **complete for Phase 2.** The four-tier engine: HARD-DENY (with `DENY_AND_CONTINUE` vs `DENY_AND_HALT`), AUTO, NOTIFY (notify-exactly-once ledger), ASK. Owner standing grants, per-provider model selection, the five-clause independence check, injection labelling, and path canonicalization. A model recommendation may only *stricten*. |
 | `broker.py` | **complete for Phase 2.** Digest-bound approvals over the full Section 13.5 binding, recompute-before-execute invalidation, single-use approvals, the queue, the Codex advisory step bounded to pre-marked categories, and `revoke-all`. Never selects "always allow"; contains no file-write path at all. |
-| `claude_runner.py` | **complete for Phase 2.** The confirmed CLI shape, tolerant stream parsing, checkpoint extraction and validation, and the `can_use_tool` control loop wired to the broker. See the caveat below about the response wrapper. |
-| `codex_reviewer.py` | **complete for Phase 2.** A fresh read-only process per review, the Section 9 decision rules, a bounded schema retry then halt, and model selection with fallback. |
+| `claude_runner.py` | **complete for Phase 2, corrected in Phase 5.** The confirmed CLI shape, tolerant stream parsing, checkpoint extraction and validation, and the `can_use_tool` control loop. Phase 5: stdin closes at the terminal `result`, so a healthy unit ends at a real EOF instead of at the watchdog. |
+| `codex_reviewer.py` | **complete for Phase 2, corrected in Phase 5.** A fresh read-only process per review, the Section 9 decision rules, a bounded schema retry then halt, and model selection with fallback. Phase 5: `--output-schema` is handed a provider-legal projection of the canonical schema, which the live provider had been rejecting outright. |
 | `evidence.py` | **complete for Phase 2.** The deterministic collector (the supervisor runs the status commands, not Claude) and the bounded packet builder with explicit truncation, explicit failed collections, and a STOP_FOR_OWNER path when material will not fit. |
 | `external_effects.py` | **complete for Phase 2.** Stable idempotency keys, before/after records, reconciliation before any retry, and a refusal to retry anything ambiguous. |
 | `push_policy.py` | **checks only.** Every Section 13.6 question is answered; **no push is executed in this phase**, and the module contains no subprocess call at all. |
@@ -234,7 +291,7 @@ Nothing is deferred. Every command in the directive's list is implemented.
 | `preflight.py` | **complete for Phase 3.** Capability probes, including the opt-in live control-response round trip. |
 | `loop.py` | **complete for Phase 4.** The assembled cycle over the real S7 table. Shadow forwards nothing and cannot be made to (`assert_forwarding_allowed` raises). Supervised holds every prompt at `WAIT_FOR_OWNER` until an operator approves that exact digest, and denies when no approval path is reachable. Exactly-once forwarding through the transactional outbox, including the crash window between enqueue and send. The owner-touch ledger counts would-be synchronous stops and can widen nothing. |
 | `replay.py` | **complete for Phase 4.** The replay engine over `replay_corpus/`. No process launch, no provider adapter, no filesystem write — all three proven from the module source. Corpus integrity is checked against a manifest of per-file digests. |
-| `cli.py` | **every S12.1 command is live; `DEFERRED_COMMANDS` is empty.** `start` always runs the pre-dispatch sequence and dispatches only when every input is named explicitly; `limited-auto` refuses by name. |
+| `cli.py` | **every S12.1 command is live; `DEFERRED_COMMANDS` is empty.** `start` always runs the pre-dispatch sequence and dispatches only when every input is named explicitly, no durable stop flag is set, and recovery routes to `PREFLIGHT`; `limited-auto` refuses by name. |
 
 ### Not built yet (and not pretended)
 
@@ -242,13 +299,13 @@ Nothing is deferred. Every command in the directive's list is implemented.
 * **Anchor publication.** The mechanism exists; publishing is gated (caveat 1).
 * **The named-pipe server loop.** Creating a properly restricted pipe is proven;
   running a long-lived unattended pipe server is not built (caveat 4).
-* **The Phase 5 shadow pilot** — one real controlled task run in shadow mode,
-  measured against the owner-touch budget, ending in a decision packet.
+* **The broker's wiring into the loop.** Built and tested; not connected, so the
+  worker is denied every tool (caveat 5).
 * **`limited-auto`.** Not implemented at all, in any form.
 
 ---
 
-## Four honest caveats
+## Five honest caveats
 
 ### 1. The external audit anchor exists as a mechanism, but has never been published
 
@@ -347,6 +404,33 @@ is denied; the change is displayed in full and needs a confirmation token derive
 from that exact change; it applies only at a checkpoint boundary; and it writes a
 complete audit record.
 
+### 5. The approval broker is not wired into the loop — so the worker can do nothing
+
+This is the Phase 5 pilot's fourth finding, and it is the one that most shapes
+what this package can honestly claim.
+
+`broker.py` is complete: digest-bound over the full Section 13.5 binding,
+single-use, invalidated by any change, never "always allow", with fifty tests.
+But `SupervisedLoop.run_cycle` calls `runner.run_unit(prompt)` **without a
+permission handler**, so the runner falls back to `deny_everything`. Every tool
+request a live worker made in the pilot came back
+`deny` / `no_broker`; nothing was written, and `notes/` in the pilot repository is
+still empty.
+
+That is fail-closed and it is safe. It also means:
+
+* **no tool has ever been approved by the assembled loop**, so the AUTO
+  allowlist — the thing limited-auto would act on — is unexercised end to end
+  against a real worker;
+* a live worker cannot complete a unit that needs any tool at all, which makes
+  its checkpoint non-deterministic: in the pilot the same prompt produced a valid
+  checkpoint once and none the next time.
+
+It is left unfixed on purpose. Wiring the broker in is a *widening* of what the
+loop may do, not the restoration of a stop, and Phase 5's job is to end at a
+decision packet — not to expand authority on its own initiative. It belongs in
+its own controlled task with its own security review.
+
 ---
 
 ## If you are not the person who wrote this
@@ -363,8 +447,9 @@ remember one, remember `status`.
 reboot, and blocks any scheduled wake-up. `resume` undoes it. If something feels
 genuinely wrong, use `emergency-stop` instead: it kills any child processes,
 cancels scheduled wake-ups, revokes every pending approval, and sets a flag that
-*nothing* clears by itself — not a restart, not a scheduled task, not recovery.
-To clear it you must deliberately run `stop --clear`.
+*nothing* clears by itself — not a restart, not a scheduled task, not recovery,
+and (since Phase 5) not an operator `start` either. To clear it you must
+deliberately run `stop --clear`.
 
 **What the statuses mean.**
 
@@ -489,7 +574,10 @@ python -m unittest tools.test_agent_supervisor_crash
 python -m unittest tools.test_agent_supervisor_fuzz
 ```
 
-The last six are Phase 4's. Three of them are worth explaining:
+1057 tests across nineteen suites. The last six files are Phase 4's; Phase 5 added
+no suite, only fifteen regression tests inside `runner`, `reviewer` and `loop`,
+one for each thing the pilot found. Three of the Phase 4 files are worth
+explaining:
 
 * **`invariants`** is a register: each of the fifteen executable invariants in
   the directive has a test whose *name* carries its number, and a meta-test
@@ -509,9 +597,15 @@ network call, uses a token, or touches your real runtime directory.
 The only code path in the package that contacts a provider is `doctor --live`,
 which is opt-in, bounded to one turn, and never runs during the test suite.
 
+**And that is exactly why Phase 5 existed.** Fakes are the right default and they
+caught a great deal, but all three Phase 5 defects passed every one of the 1042
+tests that preceded them. A fake executable will accept any schema you hand it,
+will exit when you expect it to, and will never tell you that your stop flag was
+ignored. Some things are only true of the real thing.
+
 ---
 
-## A defect this phase found and fixed
+## A defect Phase 4 found and fixed
 
 The path-normalization fuzzer generated `.env;/nul` and **crashed the policy
 engine**. On Windows, `os.path.realpath` maps a trailing `nul` to the device
