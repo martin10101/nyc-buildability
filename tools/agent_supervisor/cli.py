@@ -3066,8 +3066,8 @@ def cmd_start(args: argparse.Namespace) -> int:
             # (`LimitedAutoRefused` is a LoopError subclass, but limited-auto is
             # already refused by name above, before anything is built.)
             try:
-                run = _run_loop(args, checkout, journal, audit)
-            except (LoopError, IllegalTransitionError) as exc:
+                run = (next_task.run_task_queue(args, checkout, journal, audit, _run_loop) if int(getattr(args, "max_tasks", 1) or 1) > 1 or getattr(args, "packet_queue", None) else _run_loop(args, checkout, journal, audit))
+            except (LoopError, IllegalTransitionError, next_task.NextTaskError) as exc:
                 code = getattr(exc, "code", "illegal_transition")
                 message = getattr(exc, "message", str(exc))
                 payload["loop_refusal"] = {
@@ -3298,10 +3298,10 @@ def build_parser() -> argparse.ArgumentParser:
     start.add_argument("--prompt", default="Report a structured checkpoint for the "
                                            "current authorized stage.",
                        help="the first unit's prompt")
-    start.add_argument("--max-cycles", type=int, default=1,
-                       help="hard bound on supervisor cycles for this invocation")
-    start.add_argument("--max-turns", type=int, default=12,
-                       help="--max-turns passed to each bounded Claude unit")
+    start.add_argument("--max-cycles", type=int, default=1, help="hard bound on supervisor cycles for this invocation")
+    start.add_argument("--max-turns", type=int, default=12, help="--max-turns passed to each bounded Claude unit")
+    start.add_argument("--max-tasks", type=int, default=1, help="D-024-R400/R146: hard bound on the number of BOUNDED tasks one owner-typed start advances across (default 1 = the certified single-task shape; >1 with --packet-queue selects successors)")
+    start.add_argument("--packet-queue", default=None, help="D-024-R400: path to the owner-supplied ordered successor queue JSON ({\"tasks\":[{task_id,packet_path,worktree,branch,repo}...]}); consulted ONLY when --max-tasks>1. Successors are eligibility-gated and fail-closed (R405)")
     start.add_argument("--unit-timeout", type=float, default=900.0)
     start.add_argument("--owner-touch-budget", type=int,
                        default=DEFAULT_OWNER_TOUCH_BUDGET,
