@@ -380,3 +380,21 @@ jobs:
         run: python3 tools/validate_product_map.py --check
       - name: Run product-map validator unit tests
         run: python3 tools/test_product_map.py
+
+  # Task M0-T030 (ADDITIVE job; existing jobs untouched): in-house code-
+  # navigation index (D-005 V1). Stdlib only, no third-party actions beyond
+  # the SHA-pinned checkout already used everywhere in this file, no
+  # dependencies installed, no artifact committed (the graph is generated
+  # into temp/cache dirs OUTSIDE the repo, so no product PR can ever fail
+  # because the graph went stale). --check is the determinism self-proof:
+  # two fresh generations on the runner must be byte-identical. The test
+  # suite runs on temp fixture repos only (never the live repo composition).
+  code-graph:
+    name: code-graph (determinism --check + fixture tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Determinism self-proof (two fresh generations, byte-identical)
+        run: python3 tools/code_graph/generate.py --repo . --check
+      - name: Run code-graph fixture test suite
+        run: python3 tools/test_code_graph.py
