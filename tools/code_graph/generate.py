@@ -38,7 +38,7 @@ import shutil
 import sys
 import tempfile
 
-GENERATOR_VERSION = "1.0.1"
+GENERATOR_VERSION = "1.1.0"
 SCHEMA_VERSION = "1.0.0"
 MODE = "code-only"
 
@@ -822,18 +822,24 @@ def serialize(obj: dict) -> bytes:
 def default_out_dir(repo_root: str) -> str:
     """--out DIR explicit > env CODEGRAPH_CACHE_DIR > platform cache dir.
 
-    The cache is always keyed by the repo-root basename so two checkouts
-    never share artifacts.
+    The cache is keyed by sha256(realpath(repo_root))[:12] + "-" + basename,
+    so two checkouts NEVER share artifacts — even same-named checkouts at
+    different paths get distinct namespaces (M0-T031 hardening; the basename
+    suffix is kept purely for human readability of the cache directory).
     """
     basename = os.path.basename(os.path.abspath(repo_root).rstrip("/\\")) or "repo"
+    path_key = hashlib.sha256(
+        os.path.realpath(repo_root).encode("utf-8")
+    ).hexdigest()[:12]
+    key = path_key + "-" + basename
     env = os.environ.get("CODEGRAPH_CACHE_DIR")
     if env:
-        return os.path.join(env, basename)
+        return os.path.join(env, key)
     if os.name == "nt":
         local = os.environ.get("LOCALAPPDATA")
         if local:
-            return os.path.join(local, "nyc-codegraph", basename)
-    return os.path.join(os.path.expanduser("~"), ".cache", "nyc-codegraph", basename)
+            return os.path.join(local, "nyc-codegraph", key)
+    return os.path.join(os.path.expanduser("~"), ".cache", "nyc-codegraph", key)
 
 
 def _assert_outside_repo(out_dir: str, repo_root: str) -> None:
@@ -853,8 +859,14 @@ def generate_into(repo_root: str, out_dir: str) -> dict:
     _assert_outside_repo(out_dir, repo_root)
     graph, meta, _ = build_graph(repo_root)
     os.makedirs(out_dir, exist_ok=True)
+    # Write order matters (M0-T031 hardening): graph.json first, then hash the
+    # exact bytes written, then record that hash in graph.meta.json so the
+    # query CLI can verify cache integrity on every load. Everything remains
+    # deterministic: the hash is a pure function of the graph bytes.
+    graph_bytes = serialize(graph)
     with open(os.path.join(out_dir, "graph.json"), "wb") as fh:
-        fh.write(serialize(graph))
+        fh.write(graph_bytes)
+    meta["graph_sha256"] = hashlib.sha256(graph_bytes).hexdigest()
     with open(os.path.join(out_dir, "graph.meta.json"), "wb") as fh:
         fh.write(serialize(meta))
     return meta

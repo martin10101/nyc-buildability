@@ -6,7 +6,10 @@ the live repository's composition or the project ledger. Covers AS-2..AS-6:
 determinism, non-self-referential fingerprint, pollution exclusion, honesty
 labels (incl. NO caller/callee edges), resolution correctness (relative py
 imports, ts '@/' alias, unresolved never guessed), bounded query output, and
-the stale-fingerprint regeneration contract.
+the stale-fingerprint regeneration contract — plus the M0-T031 hardening
+contract: hash-bound cache integrity (tamper/corruption/OSError handled like
+staleness, altered caches never served, no traceback leaks), distinct cache
+namespaces for same-named checkouts, and --limit in both CLI positions.
 
 Run: python tools/test_code_graph.py   (exit 0 = pass)
 """
@@ -14,6 +17,7 @@ Run: python tools/test_code_graph.py   (exit 0 = pass)
 from __future__ import annotations
 
 import ast
+import hashlib
 import json
 import os
 import subprocess
@@ -128,6 +132,19 @@ def run_query(repo: str, cache: str, *args: str) -> subprocess.CompletedProcess:
         [sys.executable, QUERY_PY, "--repo", repo] + list(args),
         capture_output=True, text=True, env=env, timeout=120,
     )
+
+
+def cache_out_dir(cache: str, repo: str) -> str:
+    """The exact artifact directory a run_query subprocess uses for `repo`."""
+    old = os.environ.get("CODEGRAPH_CACHE_DIR")
+    os.environ["CODEGRAPH_CACHE_DIR"] = cache
+    try:
+        return generate.default_out_dir(repo)
+    finally:
+        if old is None:
+            os.environ.pop("CODEGRAPH_CACHE_DIR", None)
+        else:
+            os.environ["CODEGRAPH_CACHE_DIR"] = old
 
 
 class CodeGraphTests(unittest.TestCase):
@@ -475,6 +492,134 @@ class CodeGraphTests(unittest.TestCase):
                          "apps/web/src/lib/x.ts", "--depth", "2")
         self.assertIn("apps/web/src/app/page.tsx", proc.stdout)
         self.assertIn("depth=", proc.stdout)
+
+    # ---- M0-T031 AS-1..AS-4: cache integrity, identity, --limit positions ----
+
+    def test_meta_records_graph_sha256_of_written_bytes(self):
+        out = os.path.join(self.base, "out-hash")
+        generate.generate_into(self.repo, out)
+        graph_bytes = read_bytes(os.path.join(out, "graph.json"))
+        with open(os.path.join(out, "graph.meta.json"), "rb") as fh:
+            meta = json.loads(fh.read().decode("utf-8"))
+        self.assertEqual(meta["graph_sha256"],
+                         hashlib.sha256(graph_bytes).hexdigest())
+
+    def test_tampered_graph_regenerated_altered_bytes_never_served(self):
+        proc = run_query(self.repo, self.cache, "find", "helper")  # warm cache
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        gpath = os.path.join(cache_out_dir(self.cache, self.repo), "graph.json")
+        original = read_bytes(gpath)
+        tampered = bytearray(original)
+        tampered[len(tampered) // 2] ^= 0xFF  # flip one byte mid-file
+        with open(gpath, "wb") as fh:
+            fh.write(bytes(tampered))
+        self.assertNotEqual(read_bytes(gpath), original)  # cache really altered
+        # query with UNCHANGED sources: fingerprint alone cannot catch this;
+        # the graph_sha256 verification must trigger regeneration.
+        proc = run_query(self.repo, self.cache, "find", "helper")
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("regenerated (cache integrity)", proc.stdout)
+        self.assertNotIn("Traceback", proc.stderr)
+        self.assertIn("services/api/app/util.py", proc.stdout)
+        # the answer came from a rebuilt cache: generation is deterministic,
+        # so the cache must again hold the ORIGINAL bytes — the tampered
+        # content cannot appear anywhere.
+        self.assertEqual(read_bytes(gpath), original)
+
+    def test_tampered_graph_with_no_regen_exits_3(self):
+        proc = run_query(self.repo, self.cache, "find", "helper")  # warm cache
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        gpath = os.path.join(cache_out_dir(self.cache, self.repo), "graph.json")
+        tampered = bytearray(read_bytes(gpath))
+        tampered[len(tampered) // 2] ^= 0xFF
+        with open(gpath, "wb") as fh:
+            fh.write(bytes(tampered))
+        proc = run_query(self.repo, self.cache, "--no-regen", "find", "helper")
+        self.assertEqual(proc.returncode, 3)
+        self.assertIn("STALE (cache integrity)", proc.stdout)
+        self.assertNotIn("Traceback", proc.stderr)
+        # refused outright: no result line was served from the altered cache
+        self.assertNotIn("services/api/app/util.py", proc.stdout)
+
+    def test_corrupt_meta_treated_as_stale_no_traceback(self):
+        proc = run_query(self.repo, self.cache, "find", "helper")  # warm cache
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        mpath = os.path.join(cache_out_dir(self.cache, self.repo),
+                             "graph.meta.json")
+        data = read_bytes(mpath)
+        with open(mpath, "wb") as fh:
+            fh.write(data[: len(data) // 2])  # truncate -> unparseable JSON
+        proc = run_query(self.repo, self.cache, "--no-regen", "find", "helper")
+        self.assertEqual(proc.returncode, 3)
+        self.assertIn("STALE (cache integrity)", proc.stdout)
+        self.assertNotIn("Traceback", proc.stderr)
+        proc = run_query(self.repo, self.cache, "find", "helper")
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("regenerated (cache integrity)", proc.stdout)
+        self.assertNotIn("Traceback", proc.stderr)
+        self.assertIn("services/api/app/util.py", proc.stdout)
+
+    def test_unreadable_graph_oserror_handled_no_traceback(self):
+        proc = run_query(self.repo, self.cache, "find", "helper")  # warm cache
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        gpath = os.path.join(cache_out_dir(self.cache, self.repo), "graph.json")
+        os.remove(gpath)
+        os.mkdir(gpath)  # same-named directory: OSError on read (win + posix)
+        proc = run_query(self.repo, self.cache, "--no-regen", "find", "helper")
+        self.assertEqual(proc.returncode, 3)
+        self.assertIn("STALE (cache integrity)", proc.stdout)
+        self.assertNotIn("Traceback", proc.stderr)
+        # without --no-regen the rebuild cannot write over the directory
+        # either: the CLI must refuse with a one-line error, never a traceback
+        proc = run_query(self.repo, self.cache, "find", "helper")
+        self.assertEqual(proc.returncode, 3)
+        self.assertIn("cache regeneration failed (cache integrity)",
+                      proc.stdout)
+        self.assertNotIn("Traceback", proc.stderr)
+
+    def test_same_basename_checkouts_get_distinct_cache_dirs(self):
+        repo_a = os.path.join(self.base, "checkout-a", "samename")
+        repo_b = os.path.join(self.base, "checkout-b", "samename")
+        for r in (repo_a, repo_b):
+            os.makedirs(r)
+            build_fixture_repo(r)
+        out_a = cache_out_dir(self.cache, repo_a)
+        out_b = cache_out_dir(self.cache, repo_b)
+        self.assertNotEqual(out_a, out_b,
+                            "same-named checkouts must not share a cache dir")
+        self.assertTrue(os.path.basename(out_a).endswith("-samename"))
+        self.assertTrue(os.path.basename(out_b).endswith("-samename"))
+        # end-to-end: each checkout populates its own namespace
+        self.assertEqual(run_query(repo_a, self.cache, "find", "helper")
+                         .returncode, 0)
+        self.assertEqual(run_query(repo_b, self.cache, "find", "helper")
+                         .returncode, 0)
+        self.assertTrue(os.path.isfile(os.path.join(out_a, "graph.json")))
+        self.assertTrue(os.path.isfile(os.path.join(out_b, "graph.json")))
+
+    def test_limit_accepted_before_and_after_subcommand(self):
+        many = "".join("export const c%d = %d;\n" % (i, i) for i in range(250))
+        _write(self.repo, "apps/web/src/lib/many.ts", many)
+        run_query(self.repo, self.cache, "find", "c")  # warm cache
+        pre = run_query(self.repo, self.cache, "--limit", "2", "find", "c")
+        post = run_query(self.repo, self.cache, "find", "c", "--limit", "2")
+        self.assertEqual(pre.returncode, 0, pre.stderr)
+        self.assertEqual(post.returncode, 0, post.stderr)
+        self.assertEqual(pre.stdout, post.stdout,
+                         "--limit must behave identically in both positions")
+        lines = pre.stdout.strip().split("\n")
+        self.assertEqual(len(lines), 3)  # 2 results + truncation notice
+        self.assertIn("...truncated (", lines[-1])
+        # when both positions are given, the subcommand-level value wins
+        both = run_query(self.repo, self.cache,
+                         "--limit", "5", "find", "c", "--limit", "2")
+        self.assertEqual(both.returncode, 0, both.stderr)
+        self.assertEqual(both.stdout, pre.stdout)
+        # hard cap 200 still enforced in the post-subcommand position
+        cap = run_query(self.repo, self.cache, "find", "c", "--limit", "9999")
+        lines = cap.stdout.strip().split("\n")
+        self.assertLessEqual(len(lines), 201)
+        self.assertIn("...truncated (", lines[-1])
 
     # ---- AS-7: stdlib-only imports ------------------------------------------
 

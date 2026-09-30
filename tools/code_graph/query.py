@@ -7,18 +7,24 @@ relying on it (mandatory for legal semantics, security, control plane,
 contracts, dependency impact, public interfaces, acceptance/gate decisions).
 See tools/code_graph/README.md.
 
-Freshness: the source fingerprint is recomputed FIRST on every invocation.
-On mismatch the graph is regenerated in-process (one line printed:
-"regenerated (stale fingerprint)"); with --no-regen the CLI prints "STALE"
-and exits 3. A stale graph never answers silently.
+Freshness + integrity: the source fingerprint is recomputed FIRST on every
+invocation, and the cached graph.json bytes are verified against the
+graph_sha256 recorded in graph.meta.json on EVERY load (M0-T031 hardening).
+A stale fingerprint prints "regenerated (stale fingerprint)"; a hash
+mismatch, a missing/corrupt/unreadable artifact, or an OSError on either
+read prints "regenerated (cache integrity)". With --no-regen the CLI prints
+a one-line "STALE (...)" error and exits 3 instead. A stale or altered
+graph is NEVER served, and these paths never leak a traceback.
 
 Boundedness: every subcommand emits at most --limit lines (default 40, hard
 cap 200) and every result line starts with a repo-relative path (and :line
-when known). No subcommand can dump the whole graph.
+when known). No subcommand can dump the whole graph. --limit is accepted
+both before and after the subcommand; when both are given, the
+subcommand-level value wins.
 
 Usage:
   python tools/code_graph/query.py [--repo PATH] [--out DIR] [--no-regen]
-      [--limit N] SUBCOMMAND ARGS
+      [--limit N] SUBCOMMAND ARGS [--limit N]
 
 Subcommands:
   find <substring>          symbols/files matching a substring
@@ -35,6 +41,8 @@ Subcommands:
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import os
 import sys
 
@@ -46,30 +54,75 @@ HARD_CAP = 200
 
 
 # --------------------------------------------------------------------------
-# artifact loading with mandatory freshness check
+# artifact loading with mandatory freshness + integrity check
 # --------------------------------------------------------------------------
+
+def _read_cache_attempt(
+    meta_path: str, graph_path: str, fingerprint: str
+) -> tuple[dict | None, str | None]:
+    """(graph, None) when the cache is fresh AND intact, else (None, reason).
+
+    reason is "stale fingerprint" for a source mismatch or a cleanly absent
+    artifact (a cold cache was always "stale"), and "cache integrity" for
+    everything else: corrupt/unparseable meta or graph, an OSError on either
+    read (e.g. the path exists but is not a readable file), a missing
+    graph_sha256, or a hash mismatch between meta.graph_sha256 and the actual
+    cached graph.json bytes. An altered or unreadable cache is treated
+    exactly like a stale one — never served.
+    """
+    if not os.path.exists(meta_path):
+        return None, "stale fingerprint"
+    try:
+        with open(meta_path, "rb") as fh:
+            meta = json.loads(fh.read().decode("utf-8"))
+    except (OSError, ValueError):
+        return None, "cache integrity"
+    if not isinstance(meta, dict):
+        return None, "cache integrity"
+    if meta.get("source_fingerprint") != fingerprint:
+        return None, "stale fingerprint"
+    if not os.path.exists(graph_path):
+        return None, "stale fingerprint"
+    try:
+        with open(graph_path, "rb") as fh:
+            graph_bytes = fh.read()
+    except OSError:
+        return None, "cache integrity"
+    expected = meta.get("graph_sha256")
+    if not expected or hashlib.sha256(graph_bytes).hexdigest() != expected:
+        return None, "cache integrity"
+    try:
+        graph = json.loads(graph_bytes.decode("utf-8"))
+    except ValueError:
+        return None, "cache integrity"
+    if not isinstance(graph, dict):
+        return None, "cache integrity"
+    return graph, None
+
 
 def load_graph(repo_root: str, out_dir: str | None, no_regen: bool) -> dict:
     out = out_dir if out_dir else generate.default_out_dir(repo_root)
     fingerprint = generate.compute_source_fingerprint(repo_root)
     meta_path = os.path.join(out, "graph.meta.json")
     graph_path = os.path.join(out, "graph.json")
-    stale = True
-    if os.path.isfile(meta_path) and os.path.isfile(graph_path):
-        try:
-            with open(meta_path, "rb") as fh:
-                meta = generate.json.loads(fh.read().decode("utf-8"))
-            stale = meta.get("source_fingerprint") != fingerprint
-        except ValueError:
-            stale = True
-    if stale:
-        if no_regen:
-            print("STALE")
-            raise SystemExit(3)
+
+    graph, reason = _read_cache_attempt(meta_path, graph_path, fingerprint)
+    if reason is None:
+        return graph
+    if no_regen:
+        print("STALE (%s): refusing to serve the cached graph" % reason)
+        raise SystemExit(3)
+    try:
         generate.generate_into(repo_root, out)
-        print("regenerated (stale fingerprint)")
-    with open(graph_path, "rb") as fh:
-        return generate.json.loads(fh.read().decode("utf-8"))
+    except OSError as exc:
+        print("cache regeneration failed (%s): %s" % (reason, exc))
+        raise SystemExit(3)
+    print("regenerated (%s)" % reason)
+    graph, reason = _read_cache_attempt(meta_path, graph_path, fingerprint)
+    if reason is not None:
+        print("cache unusable even after regeneration (%s)" % reason)
+        raise SystemExit(3)
+    return graph
 
 
 class GraphIndex:
@@ -357,42 +410,57 @@ def main(argv: list[str] | None = None) -> int:
                         help="max output lines (default %d, hard cap %d)"
                         % (DEFAULT_LIMIT, HARD_CAP))
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("find").add_argument("needle")
-    sub.add_parser("file").add_argument("target")
-    sub.add_parser("module").add_argument("target")
-    sub.add_parser("upstream").add_argument("target")
-    sub.add_parser("downstream").add_argument("target")
-    sub.add_parser("neighbors").add_argument("target")
-    sub.add_parser("contracts").add_argument("target")
-    p_path = sub.add_parser("path")
+
+    def add_sub(name: str) -> argparse.ArgumentParser:
+        # Each subparser also accepts --limit (M0-T031: the flag works both
+        # before AND after the subcommand). A distinct dest keeps argparse
+        # from clobbering an already-parsed global value with the subparser
+        # default; when both positions are given, the subcommand-level value
+        # wins. Default/hard-cap semantics are unchanged (40 / 200).
+        p = sub.add_parser(name)
+        p.add_argument("--limit", dest="limit_sub", type=int, default=None,
+                       help="max output lines (default %d, hard cap %d); "
+                       "overrides a pre-subcommand --limit"
+                       % (DEFAULT_LIMIT, HARD_CAP))
+        return p
+
+    add_sub("find").add_argument("needle")
+    add_sub("file").add_argument("target")
+    add_sub("module").add_argument("target")
+    add_sub("upstream").add_argument("target")
+    add_sub("downstream").add_argument("target")
+    add_sub("neighbors").add_argument("target")
+    add_sub("contracts").add_argument("target")
+    p_path = add_sub("path")
     p_path.add_argument("src")
     p_path.add_argument("dst")
-    p_impact = sub.add_parser("impact")
+    p_impact = add_sub("impact")
     p_impact.add_argument("target")
     p_impact.add_argument("--depth", type=int, default=2,
                           help="downstream hops (1..2, capped at 2)")
     args = parser.parse_args(argv)
+    limit = args.limit_sub if args.limit_sub is not None else args.limit
 
     repo_root = os.path.abspath(args.repo)
     graph = load_graph(repo_root, args.out, args.no_regen)
     gi = GraphIndex(graph)
 
     if args.command == "find":
-        cmd_find(gi, args.needle, args.limit)
+        cmd_find(gi, args.needle, limit)
     elif args.command in ("file", "module"):
-        cmd_file(gi, args.target, args.limit)
+        cmd_file(gi, args.target, limit)
     elif args.command == "upstream":
-        cmd_upstream(gi, args.target, args.limit)
+        cmd_upstream(gi, args.target, limit)
     elif args.command == "downstream":
-        cmd_downstream(gi, args.target, args.limit)
+        cmd_downstream(gi, args.target, limit)
     elif args.command == "neighbors":
-        cmd_neighbors(gi, args.target, args.limit)
+        cmd_neighbors(gi, args.target, limit)
     elif args.command == "contracts":
-        cmd_contracts(gi, args.target, args.limit)
+        cmd_contracts(gi, args.target, limit)
     elif args.command == "path":
-        cmd_path(gi, args.src, args.dst, args.limit)
+        cmd_path(gi, args.src, args.dst, limit)
     elif args.command == "impact":
-        cmd_impact(gi, args.target, args.depth, args.limit)
+        cmd_impact(gi, args.target, args.depth, limit)
     return 0
 
 

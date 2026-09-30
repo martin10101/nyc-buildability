@@ -11,6 +11,9 @@ description: Creates or claims a tightly scoped tracked task with acceptance sce
    - **Exact `allowed_paths` and `forbidden_paths`** — a non-overlapping write scope; a concurrent task may not share production code, schema, workflow, lockfile, ledger, checkpoint, task-packet, or handoff paths.
    - **Acceptance scenarios** — the executable examples per `docs/ACCEPTANCE_SCENARIO_STANDARD.md` (primary, boundary, missing/ambiguous, failure, and any domain pack).
    - **Required gates** — the G0–G7 set the task's risk demands, with reviewer roles that differ from the producer.
+
+   **Code-graph navigation (selective — owner decision, D-005 amendment 2).** When scoping or executing a packet, apply the selective decision model: invoke `python tools/code_graph/query.py` (see `tools/code_graph/README.md`) when relationship/dependency discovery is materially useful — dependency/impact analysis, who-consumes/what-depends-on questions, upstream/downstream, cross-layer traces, reviewer blast-radius analysis, or bounded subsystem neighborhoods for multi-agent scoping; use ordinary direct navigation otherwise (known file opening, simple symbol lookup, packets that already name the exact relevant files, questions answered by authoritative committed docs, small localized edits where search is cheaper). Graph use is never required on every task; graph output is advisory only, and material conclusions must be verified in the actual source.
+
 4. Confirm exclusive file scope and worktree/branch.
 5. Claim through `python tools/project_control.py claim ...` (orchestrator only; ADR-005).
 6. Update progress to 10%, then 20% only after scenarios are recorded.
