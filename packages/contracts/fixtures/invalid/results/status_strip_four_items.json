@@ -479,47 +479,84 @@
         ]
       ]
     ],
-    "yards": [
+    "streets": [
       {
-        "kind": "rear",
-        "status": "not_required",
-        "reason": "Corner lot: a rear yard is not required within 100 ft of the corner.",
-        "zr_sections": [
-          "ZR 23-344(a)"
-        ]
-      }
-    ],
-    "setback_lines_per_level": [
-      {
-        "floor": 5,
-        "lines": [
+        "street": "Synthetic Street A",
+        "frontage_line": [
           [
-            [
-              15,
-              15
-            ],
-            [
-              50,
-              15
-            ]
+            0,
+            0
           ],
           [
-            [
-              15,
-              15
-            ],
-            [
-              15,
-              100
-            ]
+            50,
+            0
           ]
         ],
-        "zr_sections": [
-          "ZR 23-433"
-        ]
+        "street_width_fact_id": "fact-street-width-a"
+      },
+      {
+        "street": "Synthetic Street B",
+        "frontage_line": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            100
+          ]
+        ],
+        "street_width_fact_id": "fact-street-width-b"
       }
     ],
+    "yards": {
+      "status": "available",
+      "entries": [
+        {
+          "kind": "rear",
+          "status": "not_required",
+          "reason": "Corner lot: a rear yard is not required within 100 ft of the corner.",
+          "zr_sections": [
+            "ZR 23-344(a)"
+          ]
+        }
+      ]
+    },
+    "setback_lines_per_level": {
+      "status": "available",
+      "entries": [
+        {
+          "floor": 5,
+          "lines": [
+            [
+              [
+                15,
+                15
+              ],
+              [
+                50,
+                15
+              ]
+            ],
+            [
+              [
+                15,
+                15
+              ],
+              [
+                15,
+                100
+              ]
+            ]
+          ],
+          "zr_sections": [
+            "ZR 23-433"
+          ]
+        }
+      ]
+    },
     "envelope": {
+      "status": "available",
       "tiers": [
         {
           "bottom_ft": 0,
@@ -579,124 +616,127 @@
         }
       ]
     },
-    "floor_plates": [
-      {
-        "floor": 1,
-        "outline": [
-          [
+    "floor_plates": {
+      "status": "available",
+      "entries": [
+        {
+          "floor": 1,
+          "outline": [
             [
-              0,
-              0
-            ],
-            [
-              50,
-              0
-            ],
-            [
-              50,
-              50
-            ],
-            [
-              0,
-              50
-            ],
-            [
-              0,
-              0
+              [
+                0,
+                0
+              ],
+              [
+                50,
+                0
+              ],
+              [
+                50,
+                50
+              ],
+              [
+                0,
+                50
+              ],
+              [
+                0,
+                0
+              ]
             ]
-          ]
-        ],
-        "gross_sf": 2500,
-        "use": "residential"
-      },
-      {
-        "floor": 2,
-        "outline": [
-          [
+          ],
+          "gross_sf": 2500,
+          "use": "residential"
+        },
+        {
+          "floor": 2,
+          "outline": [
             [
-              0,
-              0
-            ],
-            [
-              50,
-              0
-            ],
-            [
-              50,
-              50
-            ],
-            [
-              0,
-              50
-            ],
-            [
-              0,
-              0
+              [
+                0,
+                0
+              ],
+              [
+                50,
+                0
+              ],
+              [
+                50,
+                50
+              ],
+              [
+                0,
+                50
+              ],
+              [
+                0,
+                0
+              ]
             ]
-          ]
-        ],
-        "gross_sf": 2500,
-        "use": "residential"
-      },
-      {
-        "floor": 3,
-        "outline": [
-          [
+          ],
+          "gross_sf": 2500,
+          "use": "residential"
+        },
+        {
+          "floor": 3,
+          "outline": [
             [
-              0,
-              0
-            ],
-            [
-              50,
-              0
-            ],
-            [
-              50,
-              50
-            ],
-            [
-              0,
-              50
-            ],
-            [
-              0,
-              0
+              [
+                0,
+                0
+              ],
+              [
+                50,
+                0
+              ],
+              [
+                50,
+                50
+              ],
+              [
+                0,
+                50
+              ],
+              [
+                0,
+                0
+              ]
             ]
-          ]
-        ],
-        "gross_sf": 2500,
-        "use": "residential"
-      },
-      {
-        "floor": 4,
-        "outline": [
-          [
+          ],
+          "gross_sf": 2500,
+          "use": "residential"
+        },
+        {
+          "floor": 4,
+          "outline": [
             [
-              0,
-              0
-            ],
-            [
-              50,
-              0
-            ],
-            [
-              50,
-              50
-            ],
-            [
-              0,
-              50
-            ],
-            [
-              0,
-              0
+              [
+                0,
+                0
+              ],
+              [
+                50,
+                0
+              ],
+              [
+                50,
+                50
+              ],
+              [
+                0,
+                50
+              ],
+              [
+                0,
+                0
+              ]
             ]
-          ]
-        ],
-        "gross_sf": 2500,
-        "use": "residential"
-      }
-    ]
+          ],
+          "gross_sf": 2500,
+          "use": "residential"
+        }
+      ]
+    }
   },
   "rule_versions": [
     {
@@ -720,5 +760,7 @@
       "status": "needs_review"
     }
   ],
+  "draft": true,
+  "street_width_case": null,
   "_expected_failure": "Status strip with 4 items: at most three short items (plan section 5a item 1)."
 }

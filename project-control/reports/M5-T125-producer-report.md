@@ -7,7 +7,7 @@
 | Producer | orchestrator-dispatched producer (no git write, no ledger CLI, no npm/npx/node, no network) |
 | Change type | **New files only.** No existing schema, fixture, generated file, README or script was edited. |
 
-## 1. Files added (45)
+## 1. Files added (45 at `903cccb0`; 54 after the rework, see section 8)
 
 Schemas (6), `packages/contracts/schemas/v1/`:
 `site_fact.schema.json`, `study.schema.json`, `results.schema.json`, `report_model.schema.json`,
@@ -24,8 +24,10 @@ Fixtures (39), `packages/contracts/fixtures/{valid,invalid}/<stem>/`:
 | export_record | `synthetic_pdf_export` | `read_only_false`, `restore_policy_restores_results`, `format_dwg` |
 | benchmark_lot | `northern_blvd_215_16_queens_4073340070`, `wallabout_298_brooklyn_3022647515`, `pilot_a_placeholder` | `reviewed_without_review_record`, `recorded_without_fixture_hash`, `review_value_marked_recorded`, `placeholder_with_invented_values`, `expected_value_without_source`, `missing_check_c12` |
 
-Plus this report. Every invalid fixture is a valid fixture with exactly one defect (except
-`existing_zfa_from_recorded_building_area`, built fresh; a copy with `kind: city_filing` validates clean).
+Plus this report. Every invalid fixture is a valid fixture with one stated defect, with two exceptions
+[corrected in the rework, G3 m-8]: `existing_zfa_from_recorded_building_area` is built fresh (a copy with
+`kind: city_filing` **and** a `document_ref` validates clean — without `document_ref` it still fails the source
+rule), and the two unknown-as-zero fixtures carry two named defects each (null source and value 0).
 
 ## 2. Conventions followed
 
@@ -121,3 +123,68 @@ Coherence self-check (scratchpad script): every report `reads` pointer resolves 
 - Plan §11 lists "lot 33 as a base lot" as unconfirmed, but the recorded DTM condo response (research §3.3; `test_dtm_condo_soda.py`) lists lot 33 as a base lot of condo 1313 — plan wording to reconcile (recorded as an open item).
 - For 215-16 Northern the review's 54,488 sq ft is recorded building area; M2-08 ("path 1 keeps more floor area than path 3") will need an established or entered existing zoning floor area.
 - R7-1 for both Wallabout base lots is observed in the condo research doc §7 (ZTLDB, 2026-09-18) but no recorded zoning fixture exists; kept `pending` as instructed.
+
+## 8. Rework (G3 data-contract-verifier: PASS with 2 blocking corrections)
+
+Review: `scratchpad/reviews/250-data-contract-verifier.md`, reviewed head `903cccb0`. Edits touch only files
+this PR added (the six new schemas, their fixtures, this report). The `git pull --ff-only` was skipped: the
+worktree was already at `903cccb0` and clean, and the brief forbids network calls.
+
+**RC-1, fixed: geometry was all-or-nothing** (`results.schema.json` `geometry_available`).
+- `lot_outline`, `crs`, `units`, `measurement` and the new `streets` are always present.
+- Each rule-dependent layer is now independently `{status: available, …}` or `not_available` with a reason:
+  `yards {entries}`, `setback_lines_per_level {entries}`, `envelope {tiers}` and `floor_plates {entries}`.
+- So the site plan and the DXF lot layer exist where height rules are not built (plan §3 step 7, §5, M1-15/M1-16, §11).
+- Proof, valid: `results/synthetic_envelope_not_available_existing_building.json` now carries a lot outline and a
+  street, with yards, setbacks, envelope and floor plates `not_available`.
+- Proof, invalid: `results/geometry_envelope_omitted.json`. A layer may not be silently omitted.
+
+**RC-2, fixed: plan §4 "Needs street width"** (`results.schema.json` `street_width_case`, required, nullable).
+- `null` means the results do not depend on an unknown street width.
+- Otherwise the value is `{marker: const "Needs street width", assumptions[{street, assumed: wide|narrow,
+  street_width_fact_id}], side_by_side_with[results_id]}`. There is one results document per case, shown side by
+  side; values that differ carry `exception_label "Needs street width"`.
+- In a case, the assumed width counts as an "assumed" input for the weakest-input label.
+- `site_fact.schema.json` `blocks` now points to this field.
+- Proof, valid:
+  - `study/synthetic_street_width_unknown.json` (Street B width unknown);
+  - `results/synthetic_needs_street_width_wide_case.json` and `…_narrow_case.json`, which link to each other. Their
+    ZR 23-433 setback on Street B is 10 / 15 ft, their floor-5 allowable area is 3,400 / 2,975 sq ft, and their
+    envelope tiers and setback lines differ to match.
+- Proof, invalid: `results/street_width_case_not_wide_or_narrow.json`.
+
+**Also fixed (small and clearly right):**
+
+| ID | Fix | Fixture proof |
+|---|---|---|
+| M-1 | `exception_label` enum appends "Split district" and "Unpermitted work on record" (plan §8) | (enum; no new fixture) |
+| M-2 | `existing_building_present` requires `partial_rebuild_traps[]` (walls_new_development, unsafe_condition_75_percent), `exceptions[]` (one_or_two_family_house, severe_disaster_recovery) and `flags[]` (rent_regulated_apartments, recorded_zoning_lot_documents, recorded_vs_zoning_floor_area_gap). An available path 2 must carry a non-null `rebuild_budget`; paths 1 and 3 carry null. | invalid `results/partial_rebuild_without_budget.json`; valid fixture uses `flags` |
+| M-3 | Geometry `streets[] {street, frontage_line, street_width_fact_id}`. `local_feet` axes are defined as parallel to the EPSG:2263 grid (+x grid east, +y grid north; north arrow = grid north). | all geometry fixtures |
+| M-4 | Required top-level `draft` boolean. `false` is admitted only when every `rule_versions[].status` is `published`. While `true`, surfaces shown to architects render available answers as `not_available` / `rule_not_reviewed` (D-090-R010). | invalid `results/draft_false_with_unreviewed_rules.json` |
+| m-1 | `existing_zoning_floor_area` is `exclusiveMinimum 0` (a site with no building uses `no_existing_building`) | invalid `site_fact/existing_zfa_zero.json` |
+| m-3 | `zr_section` also admits `ZR Appendix X` | (pattern) |
+| m-5 | Leaf-pointer convention stated. Report fixture cover and calculation-row pointers now point at leaves (`…/values/1/value`, `…/gain/reason`). | coherence re-check: 0 mismatches |
+| m-6 | `recorded` and `reviewed` values must be non-null | invalid `benchmark_lot/recorded_value_null.json` |
+| m-7 | `pass_when` is null for Wallabout and Pilot A (it carries Northern's numbers); the schema description says so | valid fixtures updated |
+| m-8 | This report's two inaccurate statements corrected (§1 above) | — |
+
+**Not done (listed for the integrator):**
+- m-2: combined-site values labelled "City records". This is a judgment call because street widths are legitimately
+  city records at site level; it needs a per-key rule decision.
+- m-4: extra `sheets` slots for the location and zoning maps. These are additive later.
+- m-6: check-id uniqueness is not expressible (the validator has no `uniqueItems`).
+- m-9: cross-field rules are not expressible (`selected_option_id` ∈ options, ZFA = gross − deductions, pointer
+  resolution). They are owed to consumer or CI checks.
+- I-2: the report location (plan working rule 3) is for the directive-compliance verifier; the brief placed it here.
+- I-3: README (outside allowed_paths).
+
+**Re-verification (rework head):**
+- `python3 .github/scripts/validate_contracts.py`: exit 0, `Checked 17 schema file(s); 0 failure(s).`
+  - Engines: stdlib-structural + jsonschema 4.10.3, cross-checked; 157 OK, 0 FAIL.
+  - New stems: site_fact 4/5, study 3/4, results 4/9, report_model 1/4, export_record 1/3, benchmark_lot 3/7 (valid/invalid).
+  - The stdlib-only mode also ends `0 failure(s)`.
+- `generate_ts_types.py --check`: exit 0. `sync_contract_schemas.py --check`: exit 0.
+- `python3 .github/scripts/secret_scan.py`: `secret-scan: PASS -- no findings`.
+- Probes (scratchpad): each of the 6 new invalid fixtures validates once its single defect is repaired. Report and
+  export digests equal the canonical-json-1 digests of the referenced fixtures. All leaf pointers resolve to the
+  printed values. The wide and narrow cases name each other.

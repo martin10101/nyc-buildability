@@ -1,10 +1,10 @@
 {
   "contract_version": "1.0.0",
-  "results_id": "test-fixture-synthetic-results-001",
-  "study_id": "test-fixture-synthetic-study-001",
+  "results_id": "test-fixture-synthetic-results-003-wide",
+  "study_id": "test-fixture-synthetic-study-003",
   "option_id": "opt-a",
-  "revision": 3,
-  "computed_at": "2026-09-30T12:06:00Z",
+  "revision": 1,
+  "computed_at": "2026-09-30T14:01:00Z",
   "out_of_date": false,
   "out_of_date_reason": null,
   "depends_on_fact_ids": [
@@ -121,8 +121,8 @@
           "exception_label": null
         },
         {
-          "key": "setback_depth_above_base",
-          "label": "Setback above the base",
+          "key": "setback_depth_above_base_synthetic_street_a",
+          "label": "Setback above the base (Synthetic Street A)",
           "value": 15,
           "unit": "feet",
           "zr_sections": [
@@ -136,13 +136,29 @@
             {
               "kind": "site_fact",
               "ref": "fact-street-width-a"
+            }
+          ],
+          "exception_label": null
+        },
+        {
+          "key": "setback_depth_above_base_synthetic_street_b",
+          "label": "Setback above the base (Synthetic Street B, wide-street case)",
+          "value": 10,
+          "unit": "feet",
+          "zr_sections": [
+            "ZR 23-433"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-height-setback@0.1.0-draft"
             },
             {
               "kind": "site_fact",
               "ref": "fact-street-width-b"
             }
           ],
-          "exception_label": null
+          "exception_label": "Needs street width"
         },
         {
           "key": "max_lot_coverage",
@@ -166,8 +182,8 @@
         }
       ],
       "measurement": {
-        "rank": "approximate_tax_map",
-        "label": "Approximate — tax map"
+        "rank": "assumed",
+        "label": "Assumed"
       }
     },
     "building_option": {
@@ -267,8 +283,8 @@
         }
       ],
       "measurement": {
-        "rank": "approximate_tax_map",
-        "label": "Approximate — tax map"
+        "rank": "assumed",
+        "label": "Assumed"
       }
     }
   },
@@ -344,7 +360,7 @@
       "text": "Approximate measurements"
     },
     {
-      "text": "Lots you selected"
+      "text": "Needs street width"
     }
   ],
   "notices_count": 4,
@@ -419,7 +435,7 @@
         "floor": 5,
         "floor_to_floor_ft": 10,
         "top_of_floor_ft": 52,
-        "allowable_area_sf": 2975
+        "allowable_area_sf": 3400
       }
     ],
     "zr_sections": [
@@ -434,6 +450,7 @@
   "unit_estimate": {
     "status": "available",
     "value": 14,
+    "formula": "10,000 ÷ 680 = 14.71",
     "factor": {
       "value": 680,
       "unit": "square_feet_per_dwelling_unit"
@@ -526,7 +543,7 @@
           "lines": [
             [
               [
-                15,
+                10,
                 15
               ],
               [
@@ -536,11 +553,11 @@
             ],
             [
               [
-                15,
+                10,
                 15
               ],
               [
-                15,
+                10,
                 100
               ]
             ]
@@ -588,7 +605,7 @@
           "outline": [
             [
               [
-                15,
+                10,
                 15
               ],
               [
@@ -600,11 +617,11 @@
                 100
               ],
               [
-                15,
+                10,
                 100
               ],
               [
-                15,
+                10,
                 15
               ]
             ]
@@ -757,6 +774,17 @@
     }
   ],
   "draft": true,
-  "street_width_case": null,
-  "_expected_failure": "Unit estimate without its formula (plan section 11b; check C-12: the estimate appears once, with its formula)."
+  "street_width_case": {
+    "marker": "Needs street width",
+    "assumptions": [
+      {
+        "street": "Synthetic Street B",
+        "assumed": "wide",
+        "street_width_fact_id": "fact-street-width-b"
+      }
+    ],
+    "side_by_side_with": [
+      "test-fixture-synthetic-results-003-narrow"
+    ]
+  }
 }

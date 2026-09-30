@@ -17,7 +17,7 @@
     {
       "key": "billing_bbl",
       "label": "Condominium billing BBL",
-      "value": "3022647515",
+      "value": null,
       "unit": null,
       "source": {
         "kind": "recorded_fixture",
@@ -564,5 +564,6 @@
     "Lot area, frontage and depth of base lots 32 and 33 are unknown: condo base lots have no separate PLUTO record (plan section 4). They need the EPSG:2263 tax-map measurement path or DOF dimensions, never the EPSG:4326 display outlines.",
     "Plan section 11 lists 'lot 33 as a base lot' as unconfirmed, but the recorded DTM condominium response (research section 3.3; test_dtm_condo_soda.py) lists lot 33 as a base lot of condominium 1313: reconcile the plan wording.",
     "Whether lots 32 and 33 touch (so the combination is offered, plan section 3 step 2) is not established by any recorded measurement in the repo."
-  ]
+  ],
+  "_expected_failure": "A 'recorded' value that is null: a recorded fixture backs a concrete value (G3 m-6)."
 }

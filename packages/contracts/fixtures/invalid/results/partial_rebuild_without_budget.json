@@ -124,9 +124,14 @@
         "reason_kind": "missing_input"
       },
       "partial_rebuild": {
-        "status": "not_available",
-        "reason": "Not available — needs existing floor-by-floor areas",
-        "reason_kind": "missing_input"
+        "status": "available",
+        "floor_area_sf": 6000,
+        "height_ft": null,
+        "rule": "Less than 75% of the floor area is demolished; that part may be rebuilt without increasing the non-compliance.",
+        "zr_sections": [
+          "ZR 54-41"
+        ],
+        "rebuild_budget": null
       },
       "full_rebuild": {
         "status": "available",
@@ -139,7 +144,7 @@
         "rebuild_budget": null
       }
     },
-    "headline": "Keeping the building could preserve a lot of floor area.",
+    "headline": null,
     "larger_than_allowed_flag": null,
     "partial_rebuild_traps": [],
     "exceptions": [],
@@ -243,5 +248,5 @@
   ],
   "draft": true,
   "street_width_case": null,
-  "_expected_failure": "Headline not in the plan's form 'Keeping the building preserves N sq ft that a new building could not have.' (plan section 5b)."
+  "_expected_failure": "Path 2 (partial rebuild) available without its rebuild budget (plan section 5b; task M2-08; G3 M-2)."
 }

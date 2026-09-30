@@ -30,7 +30,9 @@
     "existing_building",
     "unit_estimate",
     "geometry",
-    "rule_versions"
+    "rule_versions",
+    "draft",
+    "street_width_case"
   ],
   "properties": {
     "contract_version": {
@@ -183,7 +185,7 @@
       ]
     },
     "geometry": {
-      "description": "The ONE geometry source the site plan, section, 3D massing, PDF and DXF all read (plan section 5c items 1-3).",
+      "description": "The ONE geometry source the site plan, section, 3D massing, PDF and DXF all read (plan section 5c items 1-3). not_available only when not even the lot outline is known; otherwise geometry_available with each rule-dependent layer available or not_available.",
       "oneOf": [
         { "$ref": "#/$defs/geometry_available" },
         { "$ref": "#/$defs/not_available" }
@@ -194,26 +196,95 @@
       "description": "Every rule table version these results used (plan section 9: a new rule version marks every result that uses it).",
       "items": { "$ref": "#/$defs/rule_version" }
     },
+    "draft": {
+      "type": "boolean",
+      "description": "Machine-readable draft marker (G3 M-4). true when ANY rule_versions entry is not 'published' (qualified-reviewer approval). While draft is true, a surface shown to an architect renders every available answer as 'not_available' with reason_kind 'rule_not_reviewed' (plan section 5 'Calculation behavior'; D-090-R010), unless the surface sits behind a lane flag. false is admitted only when every rule_versions entry is 'published'."
+    },
+    "street_width_case": {
+      "description": "Plan section 4 'Needs street width' (G3 RC-2). null = these results do not depend on an unknown street width. Otherwise this document is ONE case of a side-by-side set: it was computed with the stated wide/narrow assumption for each street whose width fact is unknown, and it names the sibling results document(s) of the other case(s) for the same study, option and revision. Surfaces show the cases side by side, marked 'Needs street width'; values that differ between the cases carry exception_label 'Needs street width'. In a case, the assumed width counts as an 'assumed' input for an answer's weakest-input label. The street_width site fact itself stays unknown (site_fact.schema.json).",
+      "anyOf": [
+        { "$ref": "#/$defs/street_width_case" },
+        { "type": "null" }
+      ]
+    },
     "_expected_failure": {
       "type": "string",
       "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key."
     }
   },
-  "oneOf": [
+  "allOf": [
     {
-      "properties": {
-        "out_of_date": { "const": false },
-        "out_of_date_reason": { "type": "null" }
-      }
+      "description": "out_of_date true needs a reason; false has none.",
+      "oneOf": [
+        {
+          "properties": {
+            "out_of_date": { "const": false },
+            "out_of_date_reason": { "type": "null" }
+          }
+        },
+        {
+          "properties": {
+            "out_of_date": { "const": true },
+            "out_of_date_reason": { "type": "string" }
+          }
+        }
+      ]
     },
     {
-      "properties": {
-        "out_of_date": { "const": true },
-        "out_of_date_reason": { "type": "string" }
-      }
+      "description": "draft false only when every rule version is published (D-090-R010: nothing is presented as reviewed without review).",
+      "anyOf": [
+        { "properties": { "draft": { "const": true } } },
+        {
+          "properties": {
+            "draft": { "const": false },
+            "rule_versions": { "items": { "properties": { "status": { "const": "published" } } } }
+          }
+        }
+      ]
     }
   ],
   "$defs": {
+    "street_width_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["marker", "assumptions", "side_by_side_with"],
+      "description": "One case of the plan section 4 side-by-side display for unknown street widths.",
+      "properties": {
+        "marker": {
+          "type": "string",
+          "const": "Needs street width",
+          "description": "The plan section 4 marking, verbatim."
+        },
+        "assumptions": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The width assumed in this case for each street whose width is unknown.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["street", "assumed", "street_width_fact_id"],
+            "properties": {
+              "street": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+              "assumed": {
+                "type": "string",
+                "enum": ["wide", "narrow"],
+                "description": "Wide-street or narrow-street case (ZR 12-10 definitions; the width itself stays unknown)."
+              },
+              "street_width_fact_id": {
+                "$ref": "common.schema.json#/$defs/non_empty_string",
+                "description": "The site fact (key street_width, rank unknown) this case stands in for."
+              }
+            }
+          }
+        },
+        "side_by_side_with": {
+          "type": "array",
+          "minItems": 1,
+          "description": "results_id of the other case document(s) for the same study, option and revision, shown beside this one.",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        }
+      }
+    },
     "unit": {
       "type": "string",
       "enum": [
@@ -229,8 +300,8 @@
     },
     "zr_section": {
       "type": "string",
-      "pattern": "^ZR [0-9]{1,3}-[0-9]{1,4}[0-9A-Za-z().-]*$",
-      "description": "A Zoning Resolution section citation such as 'ZR 23-22', 'ZR 23-432' or 'ZR 23-344(a)' (plan section 9a item 5 traceability). Whether the section exists in the CURRENT Resolution is checked by the validation suite (check C-7), not by this pattern."
+      "pattern": "^ZR ([0-9]{1,3}-[0-9]{1,4}[0-9A-Za-z().-]*|Appendix [A-Z][0-9A-Za-z().-]*)$",
+      "description": "A Zoning Resolution citation such as 'ZR 23-22', 'ZR 23-432', 'ZR 23-344(a)' or 'ZR Appendix F' (plan section 9a item 5 traceability). Whether the section exists in the CURRENT Resolution is checked by the validation suite (check C-7), not by this pattern."
     },
     "value_source": {
       "type": "object",
@@ -246,9 +317,9 @@
       }
     },
     "exception_label": {
-      "description": "At most ONE exception beside a number, only one that changes how to read it (plan section 5a item 3); null otherwise.",
+      "description": "At most ONE exception beside a number, only one that changes how to read it (plan section 5a item 3 examples; plan section 8 short flags for a split district and unpermitted work on record); null otherwise. CLOSED enum; new flags are appended additively.",
       "anyOf": [
-        { "type": "string", "enum": ["Needs street width", "With approvals", "Out of date"] },
+        { "type": "string", "enum": ["Needs street width", "With approvals", "Out of date", "Split district", "Unpermitted work on record"] },
         { "type": "null" }
       ]
     },
@@ -301,7 +372,7 @@
         },
         "measurement": {
           "$ref": "site_fact.schema.json#/$defs/measurement_known",
-          "description": "The measurement label of this answer's weakest input (plan section 4 'How labels carry through')."
+          "description": "The measurement label of this answer's weakest input (plan section 4 'How labels carry through'). In a street_width_case document the assumed width counts as an 'assumed' input."
         }
       }
     },
@@ -559,7 +630,7 @@
     "existing_building_present": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "paths", "headline", "larger_than_allowed_flag"],
+      "required": ["status", "paths", "headline", "larger_than_allowed_flag", "partial_rebuild_traps", "exceptions", "flags"],
       "properties": {
         "status": { "type": "string", "const": "present" },
         "paths": {
@@ -568,9 +639,45 @@
           "required": ["keep", "partial_rebuild", "full_rebuild"],
           "description": "The three paths side by side, each with its floor area, height and rule (plan section 5b table).",
           "properties": {
-            "keep": { "$ref": "#/$defs/path" },
-            "partial_rebuild": { "$ref": "#/$defs/path" },
-            "full_rebuild": { "$ref": "#/$defs/path" }
+            "keep": { "$ref": "#/$defs/path_without_budget" },
+            "partial_rebuild": {
+              "description": "Path 2: an available result always carries its rebuild budget (plan section 5b; task M2-08).",
+              "oneOf": [
+                {
+                  "allOf": [
+                    { "$ref": "#/$defs/path_available" },
+                    { "properties": { "rebuild_budget": { "type": "object" } } }
+                  ]
+                },
+                { "$ref": "#/$defs/not_available" }
+              ]
+            },
+            "full_rebuild": { "$ref": "#/$defs/path_without_budget" }
+          }
+        },
+        "partial_rebuild_traps": {
+          "type": "array",
+          "description": "Traps flagged on path 2 (plan section 5b 'Traps the app flags on path 2'); empty when none applies.",
+          "items": {
+            "type": "string",
+            "enum": ["walls_new_development", "unsafe_condition_75_percent"],
+            "description": "walls_new_development = removing more than 75% of the floor area and more than 25% of the perimeter walls, then replacing them, counts as a new development; unsafe_condition_75_percent = if a Buildings Department order for an unsafe condition brings total removal to 75%, the protection is lost."
+          }
+        },
+        "exceptions": {
+          "type": "array",
+          "description": "Exceptions shown only when they apply (plan section 5b).",
+          "items": {
+            "type": "string",
+            "enum": ["one_or_two_family_house", "severe_disaster_recovery"]
+          }
+        },
+        "flags": {
+          "type": "array",
+          "description": "Section 5b flags: rent-regulated apartments (demolition needs state approval and tenant relocation), recorded zoning-lot documents, and a large gap between recorded building area and zoning floor area.",
+          "items": {
+            "type": "string",
+            "enum": ["rent_regulated_apartments", "recorded_zoning_lot_documents", "recorded_vs_zoning_floor_area_gap"]
           }
         },
         "headline": {
@@ -595,9 +702,15 @@
         }
       }
     },
-    "path": {
+    "path_without_budget": {
+      "description": "Paths 1 and 3: no rebuild budget (null).",
       "oneOf": [
-        { "$ref": "#/$defs/path_available" },
+        {
+          "allOf": [
+            { "$ref": "#/$defs/path_available" },
+            { "properties": { "rebuild_budget": { "type": "null" } } }
+          ]
+        },
         { "$ref": "#/$defs/not_available" }
       ]
     },
@@ -731,17 +844,19 @@
         "units",
         "measurement",
         "lot_outline",
+        "streets",
         "yards",
         "setback_lines_per_level",
         "envelope",
         "floor_plates"
       ],
+      "description": "Available geometry. The lot outline (with its crs, units, measurement label and streets) is always present; each rule-dependent layer - yards, setback lines, envelope, floor plates - is independently available or not_available with its reason (G3 RC-1), so the site plan and the DXF lot layer exist even where height rules are not built yet (plan section 3 step 7 separate DXF layers; section 5 'Every supported answer still shows'; tasks M1-15, M1-16; section 11 Pilot B).",
       "properties": {
         "status": { "type": "string", "const": "available" },
         "crs": {
           "type": "string",
           "enum": ["local_feet", "EPSG:2263"],
-          "description": "local_feet = a local plane in feet with its origin at a lot corner; EPSG:2263 = NY State Plane Long Island (US survey feet). Never EPSG:4326 display coordinates (plan section 4 'Coordinates'). Coordinates are never shown to or edited by the architect."
+          "description": "local_feet = a local plane in feet with its origin at a lot corner and its axes parallel to the EPSG:2263 grid (+x = grid east, +y = grid north; the site plan's north arrow is grid north); EPSG:2263 = NY State Plane Long Island (US survey feet). Never EPSG:4326 display coordinates (plan section 4 'Coordinates'). Coordinates are never shown to or edited by the architect."
         },
         "units": { "type": "string", "const": "feet" },
         "measurement": {
@@ -749,73 +864,139 @@
           "description": "Measurement label of the lot outline; drives the DXF and drawing note, e.g. 'Approximate — city tax map, not a survey' (plan section 3 step 7)."
         },
         "lot_outline": { "$ref": "#/$defs/polygon" },
-        "yards": {
+        "streets": {
           "type": "array",
-          "items": {
-            "oneOf": [
-              { "$ref": "#/$defs/yard_required" },
-              { "$ref": "#/$defs/yard_not_required" }
-            ]
-          }
-        },
-        "setback_lines_per_level": {
-          "type": "array",
-          "description": "Setback lines for each floor where a setback applies, in plan (plan section 5 'Floor stack').",
+          "description": "Each street the lot fronts: its name, its frontage line on the lot outline, and the street_width site fact that labels its width on the site plan (plan section 5c item 2; check C-4: labels are read from results). Empty only when no frontage is known.",
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["floor", "lines", "zr_sections"],
+            "required": ["street", "frontage_line", "street_width_fact_id"],
             "properties": {
-              "floor": { "type": "integer" },
-              "lines": {
-                "type": "array",
-                "minItems": 1,
-                "items": { "$ref": "#/$defs/line" }
-              },
-              "zr_sections": {
-                "type": "array",
-                "minItems": 1,
-                "items": { "$ref": "#/$defs/zr_section" }
+              "street": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+              "frontage_line": { "$ref": "#/$defs/line" },
+              "street_width_fact_id": {
+                "description": "fact_id of the street_width site fact; null when the study has none for this street.",
+                "anyOf": [
+                  { "$ref": "common.schema.json#/$defs/non_empty_string" },
+                  { "type": "null" }
+                ]
               }
             }
           }
         },
-        "envelope": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["tiers"],
-          "description": "The permitted envelope as stacked tiers: each tier is an outline extruded from bottom_ft to top_ft.",
-          "properties": {
-            "tiers": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": ["bottom_ft", "top_ft", "outline"],
-                "properties": {
-                  "bottom_ft": { "type": "number", "minimum": 0 },
-                  "top_ft": { "type": "number", "exclusiveMinimum": 0 },
-                  "outline": { "$ref": "#/$defs/polygon" }
+        "yards": {
+          "description": "Yards layer, or not_available when the yard rules are not built.",
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["status", "entries"],
+              "properties": {
+                "status": { "type": "string", "const": "available" },
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      { "$ref": "#/$defs/yard_required" },
+                      { "$ref": "#/$defs/yard_not_required" }
+                    ]
+                  }
                 }
               }
-            }
-          }
+            },
+            { "$ref": "#/$defs/not_available" }
+          ]
+        },
+        "setback_lines_per_level": {
+          "description": "Setback lines for each floor where a setback applies, in plan (plan section 5 'Floor stack'); not_available when the height and setback rules are not built.",
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["status", "entries"],
+              "properties": {
+                "status": { "type": "string", "const": "available" },
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["floor", "lines", "zr_sections"],
+                    "properties": {
+                      "floor": { "type": "integer" },
+                      "lines": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": { "$ref": "#/$defs/line" }
+                      },
+                      "zr_sections": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": { "$ref": "#/$defs/zr_section" }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            { "$ref": "#/$defs/not_available" }
+          ]
+        },
+        "envelope": {
+          "description": "The permitted envelope as stacked tiers (each an outline extruded from bottom_ft to top_ft), or not_available with its reason - e.g. height rules not built - while the lot outline still shows.",
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["status", "tiers"],
+              "properties": {
+                "status": { "type": "string", "const": "available" },
+                "tiers": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["bottom_ft", "top_ft", "outline"],
+                    "properties": {
+                      "bottom_ft": { "type": "number", "minimum": 0 },
+                      "top_ft": { "type": "number", "exclusiveMinimum": 0 },
+                      "outline": { "$ref": "#/$defs/polygon" }
+                    }
+                  }
+                }
+              }
+            },
+            { "$ref": "#/$defs/not_available" }
+          ]
         },
         "floor_plates": {
-          "type": "array",
-          "description": "The building option's floor plate per floor (plan section 5c item 1); gross_sf equals the floor_by_floor row of the same floor (check C-4).",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["floor", "outline", "gross_sf", "use"],
-            "properties": {
-              "floor": { "type": "integer" },
-              "outline": { "$ref": "#/$defs/polygon" },
-              "gross_sf": { "type": "number", "minimum": 0 },
-              "use": { "$ref": "#/$defs/floor_use" }
-            }
-          }
+          "description": "The building option's floor plate per floor (plan section 5c item 1); gross_sf equals the floor_by_floor row of the same floor (check C-4). not_available when the building option is not available.",
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["status", "entries"],
+              "properties": {
+                "status": { "type": "string", "const": "available" },
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["floor", "outline", "gross_sf", "use"],
+                    "properties": {
+                      "floor": { "type": "integer" },
+                      "outline": { "$ref": "#/$defs/polygon" },
+                      "gross_sf": { "type": "number", "minimum": 0 },
+                      "use": { "$ref": "#/$defs/floor_use" }
+                    }
+                  }
+                }
+              }
+            },
+            { "$ref": "#/$defs/not_available" }
+          ]
         }
       }
     },

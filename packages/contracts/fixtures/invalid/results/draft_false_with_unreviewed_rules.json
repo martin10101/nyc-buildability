@@ -434,6 +434,7 @@
   "unit_estimate": {
     "status": "available",
     "value": 14,
+    "formula": "10,000 ÷ 680 = 14.71",
     "factor": {
       "value": 680,
       "unit": "square_feet_per_dwelling_unit"
@@ -756,7 +757,7 @@
       "status": "needs_review"
     }
   ],
-  "draft": true,
+  "draft": false,
   "street_width_case": null,
-  "_expected_failure": "Unit estimate without its formula (plan section 11b; check C-12: the estimate appears once, with its formula)."
+  "_expected_failure": "draft false while the rule versions are needs_review: results count as reviewed only when every rule version is published (D-090-R010; G3 M-4)."
 }

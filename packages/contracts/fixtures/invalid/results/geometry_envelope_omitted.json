@@ -139,7 +139,7 @@
         "rebuild_budget": null
       }
     },
-    "headline": "Keeping the building could preserve a lot of floor area.",
+    "headline": null,
     "larger_than_allowed_flag": null,
     "partial_rebuild_traps": [],
     "exceptions": [],
@@ -218,11 +218,6 @@
       "reason": "Setbacks not available — height rules for this district are not built yet.",
       "reason_kind": "rule_not_implemented"
     },
-    "envelope": {
-      "status": "not_available",
-      "reason": "Envelope not available — height rules for this district are not built yet.",
-      "reason_kind": "rule_not_implemented"
-    },
     "floor_plates": {
       "status": "not_available",
       "reason": "Floor plates not available — the building option is not available.",
@@ -243,5 +238,5 @@
   ],
   "draft": true,
   "street_width_case": null,
-  "_expected_failure": "Headline not in the plan's form 'Keeping the building preserves N sq ft that a new building could not have.' (plan section 5b)."
+  "_expected_failure": "Geometry available with no envelope entry: each rule-dependent layer is stated as available or not_available with a reason, never silently omitted (G3 RC-1)."
 }

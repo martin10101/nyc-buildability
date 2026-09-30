@@ -384,7 +384,7 @@
   ],
   "results": {
     "results_id": "test-fixture-synthetic-results-001",
-    "results_digest": "sha256:474d087f1ea9bf5ffcbdb50a3ae0399b1ffc0c7b03013dace87844bc2e412ead",
+    "results_digest": "sha256:d654cba96c4f486018f6075546ac39ebb64e1ee7eeacb9c6834116fa03503a26",
     "snapshot_ref": "test-fixture-synthetic://exports/test-fixture-synthetic-export-001/results.json"
   },
   "read_only": false,

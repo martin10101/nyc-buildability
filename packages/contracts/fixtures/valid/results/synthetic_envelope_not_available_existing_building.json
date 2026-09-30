@@ -140,7 +140,12 @@
       }
     },
     "headline": null,
-    "larger_than_allowed_flag": null
+    "larger_than_allowed_flag": null,
+    "partial_rebuild_traps": [],
+    "exceptions": [],
+    "flags": [
+      "recorded_vs_zoning_floor_area_gap"
+    ]
   },
   "unit_estimate": {
     "status": "available",
@@ -156,9 +161,73 @@
     ]
   },
   "geometry": {
-    "status": "not_available",
-    "reason": "Drawings not available — the permitted envelope is not available.",
-    "reason_kind": "rule_not_implemented"
+    "status": "available",
+    "crs": "local_feet",
+    "units": "feet",
+    "measurement": {
+      "rank": "approximate_tax_map",
+      "label": "Approximate — tax map"
+    },
+    "lot_outline": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          40,
+          0
+        ],
+        [
+          40,
+          100
+        ],
+        [
+          0,
+          100
+        ],
+        [
+          0,
+          0
+        ]
+      ]
+    ],
+    "streets": [
+      {
+        "street": "Synthetic Street C",
+        "frontage_line": [
+          [
+            0,
+            0
+          ],
+          [
+            40,
+            0
+          ]
+        ],
+        "street_width_fact_id": null
+      }
+    ],
+    "yards": {
+      "status": "not_available",
+      "reason": "Yards not available — yard rules for this district are not built yet.",
+      "reason_kind": "rule_not_implemented"
+    },
+    "setback_lines_per_level": {
+      "status": "not_available",
+      "reason": "Setbacks not available — height rules for this district are not built yet.",
+      "reason_kind": "rule_not_implemented"
+    },
+    "envelope": {
+      "status": "not_available",
+      "reason": "Envelope not available — height rules for this district are not built yet.",
+      "reason_kind": "rule_not_implemented"
+    },
+    "floor_plates": {
+      "status": "not_available",
+      "reason": "Floor plates not available — the building option is not available.",
+      "reason_kind": "rule_not_implemented"
+    }
   },
   "rule_versions": [
     {
@@ -171,5 +240,7 @@
       "version": "0.1.0-draft",
       "status": "needs_review"
     }
-  ]
+  ],
+  "draft": true,
+  "street_width_case": null
 }

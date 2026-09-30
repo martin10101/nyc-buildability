@@ -181,7 +181,7 @@
         "pointer": {
           "type": "string",
           "pattern": "^(/[A-Za-z0-9_~-]+)+$",
-          "description": "e.g. '/answers/floor_area_allowance/values/1' or '/site/facts/0/value'."
+          "description": "Points at the LEAF value, never at a containing object, so the consistency sweep (checks C-4, C-5) compares values mechanically: e.g. '/answers/floor_area_allowance/values/1/value' or '/site/facts/0/value'. Tables and drawings (reads_from) point at the array or object they are drawn from."
         }
       }
     },

@@ -177,6 +177,7 @@
         {
           "properties": {
             "verification_state": { "const": "recorded" },
+            "value": { "type": ["number", "string"] },
             "source": { "properties": { "kind": { "const": "recorded_fixture" } } },
             "review": { "type": "null" }
           }
@@ -184,6 +185,7 @@
         {
           "properties": {
             "verification_state": { "const": "reviewed" },
+            "value": { "type": ["number", "string"] },
             "source": { "properties": { "kind": { "enum": ["recorded_fixture", "zoning_resolution", "public_record"] } } },
             "review": { "type": "object" }
           }
@@ -289,7 +291,7 @@
           ]
         },
         "pass_when": {
-          "description": "The review's 'Pass when' text, verbatim; null when not restated.",
+          "description": "The review's 'Pass when' text, verbatim, ONLY for the lot the review describes (215-16 Northern: its numbers are that lot's); null for every other lot, whose pass criteria come from its own expected values.",
           "anyOf": [
             { "$ref": "common.schema.json#/$defs/non_empty_string" },
             { "type": "null" }

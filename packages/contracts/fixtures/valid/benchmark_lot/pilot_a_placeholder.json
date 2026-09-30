@@ -11,84 +11,84 @@
       "title": "One source for heights",
       "applicability": "pending",
       "reason": "Pilot A lot not chosen yet (owner decision Q1).",
-      "pass_when": "Every height shown anywhere comes from the same ZR 23-432 lookup: 30 / 45 / 55, or 45 / 65 with affordable housing"
+      "pass_when": null
     },
     {
       "check_id": "C-2",
       "title": "Allowance vs. building",
       "applicability": "pending",
       "reason": "Pilot A lot not chosen yet (owner decision Q1).",
-      "pass_when": "Allowance = 24,180 sq ft (affordable) and 20,150 sq ft (standard). If the fitting building is smaller, the shortfall reason is computed from real constraints and is true."
+      "pass_when": null
     },
     {
       "check_id": "C-3",
       "title": "Existing building",
       "applicability": "pending",
       "reason": "Pilot A lot not chosen yet (owner decision Q1).",
-      "pass_when": "The existing zoning floor area is shown. When it exceeds the new allowance, one flag says so: \"Existing building is larger than today's zoning allows; demolition would reduce floor area.\""
+      "pass_when": null
     },
     {
       "check_id": "C-4",
       "title": "Drawings match numbers",
       "applicability": "pending",
       "reason": "Pilot A lot not chosen yet (owner decision Q1).",
-      "pass_when": "Footprint ≤ lot; floors drawn = floors in the table; per-floor areas match; every label inside a picture (width, depth, yards, floor names and areas) is read from the results, never fixed text"
+      "pass_when": null
     },
     {
       "check_id": "C-5",
       "title": "Consistency sweep",
       "applicability": "pending",
       "reason": "Pilot A lot not chosen yet (owner decision Q1).",
-      "pass_when": "An automated check over the whole report finds no value that differs between pages (heights, floors, parking, flood, elevators, units)"
+      "pass_when": null
     },
     {
       "check_id": "C-6",
       "title": "No duplicate options",
       "applicability": "pending",
       "reason": "Pilot A lot not chosen yet (owner decision Q1).",
-      "pass_when": "Two options producing the same building are merged or explained"
+      "pass_when": null
     },
     {
       "check_id": "C-7",
       "title": "Current sources",
       "applicability": "pending",
       "reason": "Pilot A lot not chosen yet (owner decision Q1).",
-      "pass_when": "Data versions shown and current; every ZR citation exists in the current Resolution"
+      "pass_when": null
     },
     {
       "check_id": "C-8",
       "title": "Same rule everywhere",
       "applicability": "pending",
       "reason": "Pilot A lot not chosen yet (owner decision Q1).",
-      "pass_when": "Parking or transit status is applied identically across all options"
+      "pass_when": null
     },
     {
       "check_id": "C-9",
       "title": "Zoning lot",
       "applicability": "pending",
       "reason": "Pilot A lot not chosen yet (owner decision Q1).",
-      "pass_when": "The report states that the lots are the architect's selection and the zoning lot is not verified; recorded zoning lot documents, if known, are flagged"
+      "pass_when": null
     },
     {
       "check_id": "C-10",
       "title": "Lot-split ideas",
       "applicability": "pending",
       "reason": "Pilot A lot not chosen yet (owner decision Q1).",
-      "pass_when": "Each resulting lot is evaluated with its own lot type (corner or interior), and the subdivision requirement is stated"
+      "pass_when": null
     },
     {
       "check_id": "C-11",
       "title": "No template sentences",
       "applicability": "pending",
       "reason": "Pilot A lot not chosen yet (owner decision Q1).",
-      "pass_when": "Explanations such as \"another floor would exceed the height limit\" appear only when computed as true"
+      "pass_when": null
     },
     {
       "check_id": "C-12",
       "title": "Units in one place",
       "applicability": "pending",
       "reason": "Pilot A lot not chosen yet (owner decision Q1).",
-      "pass_when": "The unit estimate appears once, with its formula, and matches everywhere it is repeated"
+      "pass_when": null
     }
   ],
   "recorded_fixtures": [],

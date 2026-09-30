@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/site_fact.schema.json",
   "title": "Site Fact",
-  "description": "v1 contract (task M5-T125, directive D-090 Wave 0; derived lane plan docs/lanes/PARALLEL_BUILD_PLAN.md section 5) for ONE site value of a study: lot area, frontage on one street, depth, lot type, zoning district, commercial overlay, street width, or existing ZONING floor area (plan docs/PRODUCT_PLAN_CURRENT_2026-09-28.md section 3 steps 3-4, section 4, section 9, task M1-07). A value is either (a) KNOWN - a number or text with its unit, one of five measurement ranks and a non-null source - or (b) UNKNOWN - value null, unit null, rank 'unknown', label 'Unknown — enter', and a non-empty 'blocks' list naming what it blocks (plan section 9: 'Unknowns stay unknown ... name what they block'). An unknown is NEVER encoded as 0: a known value must carry a source, and dimensions (lot area, frontage, depth, street width) must be strictly positive, so a bare 0 fails validation. The display label is tied to its rank (plan section 4 table), and each rank admits only the source kinds that can produce it. Existing zoning floor area may come only from a Buildings Department filing or certificate of occupancy, an architect entry, or a stated assumption - never from a city dataset such as PLUTO/DOF building area (plan section 3 step 4, section 8, task M2-07). Coordinates never appear here (plan section 4).",
+  "description": "v1 contract (task M5-T125, directive D-090 Wave 0; derived lane plan docs/lanes/PARALLEL_BUILD_PLAN.md section 5) for ONE site value of a study: lot area, frontage on one street, depth, lot type, zoning district, commercial overlay, street width, or existing ZONING floor area (plan docs/PRODUCT_PLAN_CURRENT_2026-09-28.md section 3 steps 3-4, section 4, section 9, task M1-07). A value is either (a) KNOWN - a number or text with its unit, one of five measurement ranks and a non-null source - or (b) UNKNOWN - value null, unit null, rank 'unknown', label 'Unknown — enter', and a non-empty 'blocks' list naming what it blocks (plan section 9: 'Unknowns stay unknown ... name what they block'). An unknown is NEVER encoded as 0: a known value must carry a source, and dimensions (lot area, frontage, depth, street width) must be strictly positive, so a bare 0 fails validation. The display label is tied to its rank (plan section 4 table), and each rank admits only the source kinds that can produce it. Existing zoning floor area may come only from a Buildings Department filing or certificate of occupancy, an architect entry, or a stated assumption - never from a city dataset such as PLUTO/DOF building area (plan section 3 step 4, section 8, task M2-07) - and it is strictly positive: a site without a building uses study option existing_building_plan 'no_existing_building', so a 0 can never silently make remaining capacity equal the full allowance. Coordinates never appear here (plan section 4).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -79,7 +79,7 @@
     },
     "blocks": {
       "type": "array",
-      "description": "What this value blocks while it is unknown (plan section 9). Non-empty for rank 'unknown'; empty for every known value. For street_width the blocked outputs are shown side by side for a wide and a narrow street, marked 'Needs street width', rather than withheld (plan section 4).",
+      "description": "What this value blocks while it is unknown (plan section 9). Non-empty for rank 'unknown'; empty for every known value. For street_width the blocked outputs are not withheld: they are computed once per wide/narrow case and shown side by side, marked 'Needs street width' (plan section 4), each case a results document carrying results.street_width_case that names this fact.",
       "items": { "$ref": "#/$defs/blocked_output" }
     },
     "editable": {
@@ -220,7 +220,7 @@
             }
           },
           "anyOf": [
-            { "properties": { "value": { "type": "number", "minimum": 0 }, "unit": { "const": "square_feet" } } },
+            { "properties": { "value": { "type": "number", "exclusiveMinimum": 0 }, "unit": { "const": "square_feet" } } },
             { "properties": { "value": { "type": "null" }, "unit": { "type": "null" } } }
           ]
         }

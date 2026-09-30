@@ -7,7 +7,7 @@
     "study_id": "test-fixture-synthetic-study-001",
     "option_id": "opt-a",
     "revision": 3,
-    "results_digest": "sha256:474d087f1ea9bf5ffcbdb50a3ae0399b1ffc0c7b03013dace87844bc2e412ead"
+    "results_digest": "sha256:d654cba96c4f486018f6075546ac39ebb64e1ee7eeacb9c6834116fa03503a26"
   },
   "identification_line": {
     "option_name": "Option A",
@@ -32,7 +32,7 @@
         "unit": "square_feet",
         "reads": {
           "document": "results",
-          "pointer": "/answers/floor_area_allowance/values/1"
+          "pointer": "/answers/floor_area_allowance/values/1/value"
         }
       },
       "maximum_height": {
@@ -41,7 +41,7 @@
         "unit": "feet",
         "reads": {
           "document": "results",
-          "pointer": "/answers/permitted_envelope/values/2"
+          "pointer": "/answers/permitted_envelope/values/2/value"
         }
       }
     },
@@ -181,7 +181,7 @@
       "source": "Rule table test-fixture-synthetic-r6b-far 0.1.0-draft (needs review)",
       "reads": {
         "document": "results",
-        "pointer": "/answers/floor_area_allowance/values/0"
+        "pointer": "/answers/floor_area_allowance/values/0/value"
       },
       "exception_label": null
     },
@@ -195,7 +195,7 @@
       "source": "Lot area x FAR; rule table test-fixture-synthetic-r6b-far 0.1.0-draft (needs review)",
       "reads": {
         "document": "results",
-        "pointer": "/answers/floor_area_allowance/values/1"
+        "pointer": "/answers/floor_area_allowance/values/1/value"
       },
       "exception_label": null
     },
@@ -209,7 +209,7 @@
       "source": "Rule table test-fixture-synthetic-r6b-height-setback 0.1.0-draft (needs review)",
       "reads": {
         "document": "results",
-        "pointer": "/answers/permitted_envelope/values/1"
+        "pointer": "/answers/permitted_envelope/values/1/value"
       },
       "exception_label": null
     },
@@ -223,7 +223,7 @@
       "source": "Rule table test-fixture-synthetic-r6b-height-setback 0.1.0-draft (needs review)",
       "reads": {
         "document": "results",
-        "pointer": "/answers/permitted_envelope/values/2"
+        "pointer": "/answers/permitted_envelope/values/2/value"
       },
       "exception_label": null
     },
@@ -248,7 +248,7 @@
       "reason": "The neighbor estimate is not built yet.",
       "reads": {
         "document": "results",
-        "pointer": "/addon_gains/1/gain"
+        "pointer": "/addon_gains/1/gain/reason"
       }
     }
   ],
