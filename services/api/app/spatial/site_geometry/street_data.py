@@ -1,8 +1,10 @@
 """Street-data checks before any frontage is claimed (queue item B-03).
 
 Frontage can only be ruled out where the street data is known to be complete. These checks
-turn every gap into a plain reason ("blocker"); any blocker leaves lot type unknown and
-every frontage length uncertain.
+turn every gap into a plain reason. Incomplete data (no or wrong-CRS data, too small an
+envelope, a transfer-limited page, an unusable segment, a street too wide for the search,
+oversized input) leaves lot type unknown and every frontage length uncertain. A mapped street
+running through the lot leaves lot type unknown and that street's frontage uncertain.
 """
 
 from __future__ import annotations
@@ -17,10 +19,12 @@ from .outline import PreparedOutline, crs_is_measurement_grade, finite_point
 from .parameters import (
     ENVELOPE_SLACK_FT,
     MAX_CENTERLINE_VERTICES,
+    MAX_RAY_SEGMENT_TESTS,
     SEARCH_RADIUS_FT,
     STREET_CROSSES_LOT_MIN_FT,
-    STREET_LINE_MATCH_TOLERANCE_FT,
+    STREET_LINE_UNCERTAINTY_BAND_FT,
 )
+from .rays import sample_points
 
 __all__ = ["StreetCheck", "check_street_data"]
 
@@ -68,6 +72,13 @@ def _covers(envelope, outline: PreparedOutline) -> bool:
             and ex1 >= need[2] - slack and ey1 >= need[3] - slack)
 
 
+def _work(outline: PreparedOutline, centerlines: list[StreetCenterline]) -> int:
+    """Ray x segment tests the edge judgement needs (street pieces plus lot edges)."""
+    samples = sum(len(sample_points(edge)) for edge in outline.edges)
+    pieces = sum(max(len(path) - 1, 0) for c in centerlines for path in c.paths)
+    return samples * (pieces + len(outline.edges))
+
+
 def _name(centerline: StreetCenterline) -> str:
     return centerline.street_name or centerline.street_key
 
@@ -94,10 +105,10 @@ def check_street_data(streets: StreetData | None, outline: PreparedOutline) -> S
             centerline.street_key, centerline.street_name, centerline.object_id, paths,
             centerline.mapped_width_raw, centerline.status_ok, centerline.status_note))
         width = mapped_width_ft(centerline.mapped_width_raw)
-        if width is not None and width / 2 + STREET_LINE_MATCH_TOLERANCE_FT > SEARCH_RADIUS_FT:
+        if width is not None and width / 2 + STREET_LINE_UNCERTAINTY_BAND_FT > SEARCH_RADIUS_FT:
             incomplete.append(f"{_name(centerline)} is wider than the search reaches.")
-    if vertices > MAX_CENTERLINE_VERTICES:
-        return StreetCheck(False, (), ("The street data is too large to check.",), ())
+    if vertices > MAX_CENTERLINE_VERTICES or _work(outline, usable) > MAX_RAY_SEGMENT_TESTS:
+        return StreetCheck(False, (), ("The lot and street data are too large to check.",))
     keys: list[str] = []
     notes: list[str] = []
     for centerline in usable:

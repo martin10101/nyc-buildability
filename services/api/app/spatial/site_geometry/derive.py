@@ -7,6 +7,12 @@ geometric lot type (corner / interior / through / unknown); lot depth where defi
 Outline-derived values are labeled "Approximate — tax map", recorded values "City records",
 and anything that cannot be stated is "Unknown — enter" with the reason.
 
+The status is "complete" only when every lot line is either on a street or clear of one, and
+the lot type and depth are known; otherwise "partial" ("refused" when the outline is
+unusable). A "no street" reading rests on the positional-uncertainty band documented in
+``parameters.py``; the lot type is stated only when it does not depend on any uncertain lot
+line (``lot_type.py``).
+
 Pure and deterministic: no I/O, no flags, no callers yet (a later Lane C task wires it).
 """
 
@@ -18,7 +24,7 @@ from .frontage import build_frontages
 from .inputs import CityRecordLot, LotOutline, StreetData
 from .labels import LABEL_UNKNOWN, SourcedValue, tax_map_value, unknown_value
 from .lot_type import BASIS as LOT_TYPE_BASIS
-from .lot_type import classify_lot_type
+from .lot_type import REASON_OUTLINE_REFUSED, classify_lot_type
 from .outline import prepare_outline
 from .parameters import DEPTH_AGREEMENT_FT, METHOD_VERSION, parameters_snapshot
 from .results import (
@@ -41,6 +47,14 @@ __all__ = ["derive_site_geometry", "refused_site_geometry"]
 _APPROXIMATE_NOTE = (
     "Values measured from the tax-map outline are approximate; a survey, once entered, "
     "replaces them."
+)
+_UNCORROBORATED_NOTE = (
+    "Lot lines read as having no street were not checked against the neighbouring lots; "
+    "treat the {kind} lot type as needing confirmation."
+)
+_UNCONFIRMED_NOTE = (
+    "Lot line(s) {lines} could not be matched to a street; the lot type is the same whichever "
+    "way they are read, but a frontage on them is not ruled out."
 )
 
 
@@ -71,7 +85,8 @@ def refused_site_geometry(
         city_records=city_record_values(city_records),
         area_check=None,
         frontages=(),
-        lot_type=LotType(LOT_TYPE_UNKNOWN, LABEL_UNKNOWN, LOT_TYPE_BASIS, reason, ()),
+        lot_type=LotType(LOT_TYPE_UNKNOWN, LABEL_UNKNOWN, LOT_TYPE_BASIS, reason, (),
+                         reason_code=REASON_OUTLINE_REFUSED),
         lot_depth=missing,
         edges=(),
         street_crossings=(),
@@ -146,7 +161,8 @@ def derive_site_geometry(
     findings = classify_edges(prepared, street_check.centerlines) if street_check.usable else ()
     frontages = build_frontages(findings, prepared, street_check.centerlines,
                                 street_check.incomplete, street_check.crossing_keys, lot.source)
-    lot_type = classify_lot_type(findings, prepared, list(street_check.blockers))
+    lot_type = classify_lot_type(findings, prepared, street_check.incomplete,
+                                 street_check.crossings)
     lot_depth = _lot_depth(lot_type, frontages)
     checked_area = area_check(area, records.lot_area)
     notes = [_APPROXIMATE_NOTE]
@@ -155,6 +171,11 @@ def derive_site_geometry(
     records_note = _records_note(lot_type, records)
     if records_note:
         notes.append(records_note)
+    if lot_type.kind in (LOT_TYPE_INTERIOR, LOT_TYPE_THROUGH):
+        notes.append(_UNCORROBORATED_NOTE.format(kind=lot_type.kind))
+    if lot_type.kind != LOT_TYPE_UNKNOWN and lot_type.unconfirmed_lot_lines:
+        lines = ", ".join(str(i + 1) for i in lot_type.unconfirmed_lot_lines)
+        notes.append(_UNCONFIRMED_NOTE.format(lines=lines))
     return SiteGeometry(
         status=_status(lot_type, frontages, lot_depth),
         refusal_reason=None,

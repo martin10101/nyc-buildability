@@ -75,6 +75,7 @@ class EdgeFinding:
     matched_share: float
     max_street_line_gap_ft: float | None
     segment_object_ids: tuple[int, ...] = ()
+    reason_codes: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -113,8 +114,10 @@ class StreetRelation:
 class LotType:
     """Geometric lot type from the outline: corner / interior / through / unknown.
 
-    This is a stated geometric test (see ``parameters.py``), not a Zoning Resolution
-    determination; ``basis`` records the test and ``reason`` explains an unknown.
+    This is a stated geometric test (see ``lot_type.py``), not a Zoning Resolution
+    determination; ``basis`` records the test. For an unknown, ``reason`` explains it in plain
+    words and ``reason_code`` names it (``lot_type.REASON_*``). ``unconfirmed_lot_lines``
+    lists uncertain lot lines (0-based edge indices) that did not change a known type.
     """
 
     kind: str
@@ -123,6 +126,8 @@ class LotType:
     reason: str | None
     streets: tuple[str, ...]
     relations: tuple[StreetRelation, ...] = ()
+    reason_code: str | None = None
+    unconfirmed_lot_lines: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)

@@ -15,6 +15,7 @@ are pinned separately to 0.01 ft.
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 
 import pytest
 
@@ -25,13 +26,18 @@ from app.spatial.site_geometry import (
     LotOutline,
     derive_site_geometry,
     derive_site_geometry_from_sources,
+    lot_outline_from_mappluto,
+    street_data_from_pages,
 )
+from app.spatial.site_geometry.parameters import STREET_LINE_UNCERTAINTY_BAND_FT
 from app.spatial.site_geometry.results import (
     EDGE_FRONTS,
     EDGE_NO_STREET,
     FRONTAGE_CONFIRMED,
+    FRONTAGE_UNCERTAIN,
     RELATION_CORNER,
     STATUS_COMPLETE,
+    STATUS_PARTIAL,
     STATUS_REFUSED,
 )
 
@@ -61,6 +67,9 @@ def test_corner_lot_on_northern_blvd_and_215_place(result):
     assert result.status == STATUS_COMPLETE
     assert result.lot_type.kind == "corner"
     assert result.lot_type.label == LABEL_TAX_MAP
+    assert result.lot_type.reason_code is None
+    # No lot line is uncertain, so no reading of one could change the type.
+    assert result.lot_type.unconfirmed_lot_lines == ()
     assert result.lot_type.streets == (PLACE, NORTHERN)
     (relation,) = result.lot_type.relations
     assert relation.relation == RELATION_CORNER
@@ -86,12 +95,35 @@ def test_frontage_per_street(result, street, outline_ft, segment, width):
 def test_only_the_two_street_sides_front_a_street(result):
     verdicts = sorted(e.verdict for e in result.edges)
     assert verdicts == [EDGE_FRONTS, EDGE_FRONTS, EDGE_NO_STREET, EDGE_NO_STREET, EDGE_NO_STREET]
+    assert all(e.reason_codes == () for e in result.edges)
     assert result.street_crossings == ()
+
+
+def test_west_side_is_clear_of_215_street_beyond_the_uncertainty_band():
+    # The west lot line looks at 215 Street (DCM 3134, width 60): its street line is about
+    # 97 ft away, beyond the 80 ft band, so the west side reads "no street" on that band.
+    streets = street_data_from_pages([replay_dcm_page()], envelope=DCM_ENVELOPE)
+    moved = tuple(
+        c if c.street_key != "215 Street" else replace(
+            c, paths=tuple(tuple((x + 20.0, y) for x, y in path) for path in c.paths))
+        for c in streets.centerlines)
+    lot, _ = lot_outline_from_mappluto(replay_lot_geometry())
+    nearer = derive_site_geometry(lot, replace(streets, centerlines=moved))
+    assert STREET_LINE_UNCERTAINTY_BAND_FT == 80.0
+    # 20 ft closer (about 77 ft): the west side becomes uncertain, but the lot is a corner
+    # lot under either reading, so the type stays corner and the frontage list stays open.
+    assert nearer.lot_type.kind == "corner"
+    assert len(nearer.lot_type.unconfirmed_lot_lines) == 1
+    assert nearer.status == STATUS_PARTIAL
+    assert nearer.frontage("215 Street").status == FRONTAGE_UNCERTAIN
 
 
 def test_area_checked_against_pluto_and_difference_reported(result):
     assert result.lot_area.value == pytest.approx(10387.99, abs=0.01)
     assert result.lot_area.label == LABEL_TAX_MAP
+    assert result.lot_area.rank == "approximate_tax_map"
+    assert result.city_records.lot_area.rank == "city_records"
+    assert result.lot_depth.rank == "unknown"
     recorded = result.city_records.lot_area
     assert (recorded.value, recorded.label) == (10075.0, LABEL_CITY_RECORDS)
     check = result.area_check

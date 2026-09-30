@@ -14,7 +14,7 @@ __all__ = ["area_check", "city_record_values", "outline_area"]
 
 
 def outline_area(area_sq_ft: float, source: str) -> SourcedValue:
-    basis = f"Planar area of the {source} outline in EPSG:2263 feet"
+    basis = f"Planar area of the {source} outline in EPSG:2263 (US survey feet)"
     return tax_map_value(area_sq_ft, "sq ft", basis)
 
 
