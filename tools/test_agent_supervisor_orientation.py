@@ -120,5 +120,47 @@ class IdempotenceAndSafetyTests(unittest.TestCase):
             orient.build_orientation_packet(_inputs(), oversized)
 
 
+class RotatedReorientationTests(unittest.TestCase):
+    """G3-1: oriented_reorientation_prompt front-loads the rotated packet onto a
+    reorientation handoff, and fails safe when no dispatchable budget exists."""
+
+    def _kwargs(self, **over):
+        base = dict(
+            task_id="M0-T107", stage="claimed", run_id="run_abc",
+            worktree="C:/wt", branch="task/M0-T107",
+            allowed_paths=("a.py", "b.py"), rotation_reason="context_threshold",
+            predecessor_session="sid-9")
+        base.update(over)
+        return base
+
+    def test_enriches_the_handoff_with_cadence_paths_and_required_output(self) -> None:
+        budget = _budget()
+        out = orient.oriented_reorientation_prompt(
+            "HANDOFF BODY", budget, **self._kwargs())
+        self.assertIn("HANDOFF BODY", out)
+        self.assertIn(orient.ORIENTATION_SENTINEL, out)
+        self.assertIn("ROTATED successor", out)
+        self.assertIn("context_threshold", out)
+        self.assertIn("CHECKPOINT CADENCE", out)
+        self.assertIn(f"by turn {budget.early_checkpoint_by}", out)
+        self.assertIn("a.py", out)
+        self.assertIn("EXACT REQUIRED OUTPUT", out)
+        # Front-loaded: the packet precedes the handoff body.
+        self.assertLess(out.index(orient.ORIENTATION_SENTINEL),
+                        out.index("HANDOFF BODY"))
+
+    def test_no_budget_returns_the_handoff_unchanged(self) -> None:
+        out = orient.oriented_reorientation_prompt(
+            "HANDOFF BODY", None, **self._kwargs())
+        self.assertEqual(out, "HANDOFF BODY")
+
+    def test_oversized_budget_returns_the_handoff_unchanged(self) -> None:
+        oversized = size_turn_budget(
+            WorkloadClassification(OVERSIZED_SPLIT, "oversized", "spans seams"))
+        out = orient.oriented_reorientation_prompt(
+            "HANDOFF BODY", oversized, **self._kwargs())
+        self.assertEqual(out, "HANDOFF BODY")
+
+
 if __name__ == "__main__":
     unittest.main()

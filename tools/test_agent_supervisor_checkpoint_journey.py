@@ -96,6 +96,35 @@ class TurnBudgetTests(unittest.TestCase):
                          tb.HARD_TURN_CEILING - tb.RESERVED_FINAL_TURNS)
 
 
+class ReservedTurnInjectionTests(unittest.TestCase):
+    """Property 3 (G3-2): the reserved final turn is OCCUPIED by an injected
+    user-turn demand delivered through run_unit's extra_turns channel."""
+
+    def test_dispatchable_budget_yields_exactly_one_demand(self) -> None:
+        budget = tb.size_turn_budget(_classify(COHESIVE_SUBAGENT))
+        injection = tb.reserved_turn_injection(budget)
+        self.assertEqual(len(injection), 1)
+        demand = injection[0]
+        self.assertIn("RESERVED FINAL TURN", demand)
+        self.assertIn("Emit your mandatory checkpoint NOW", demand)
+        self.assertIn("do NOT start any new tool call", demand)
+        self.assertIn(str(budget.total_turns), demand)
+        self.assertIn(str(budget.working_turns), demand)
+
+    def test_none_and_oversized_yield_no_injection(self) -> None:
+        # Removal-sensitive boundary: no demand is injected without a dispatchable
+        # sized budget - run_unit is dispatched exactly as before (12/12 shape).
+        self.assertEqual(tb.reserved_turn_injection(None), ())
+        oversized = tb.size_turn_budget(_classify(OVERSIZED_SPLIT))
+        self.assertEqual(tb.reserved_turn_injection(oversized), ())
+
+    def test_demand_forbids_further_tool_use_and_demands_honesty(self) -> None:
+        demand = tb.reserved_turn_message(tb.size_turn_budget(_classify(MAIN_SESSION)))
+        self.assertIn("incomplete-but-resumable", demand)
+        self.assertIn("never treated as completion", demand)
+        self.assertIn("missing checkpoint is treated as failure", demand)
+
+
 class PreservedArtifactFactsTests(unittest.TestCase):
     def test_journey_facts_fixture_matches_preserved_numbers(self) -> None:
         facts = json.loads((_FIXTURES / "m0t107_journey_facts.json").read_text("utf-8"))

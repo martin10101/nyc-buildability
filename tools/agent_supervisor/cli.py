@@ -2866,7 +2866,7 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         journal=journal, audit=audit, machine=machine, authority=authority,
         runner=runner, reviewer=reviewer, run_id=run_id, collector=collector,
         broker=broker, breakers=breakers,
-        pinned_model=pinned_model,
+        pinned_model=pinned_model, turn_budget=turn_budget,
         context_rotation_threshold=context_rotation_threshold,
         # D-004-R751/R758: the FIXED preference chain, straight out of the
         # IMMUTABLE controller config. Owner-editable only; never a runtime value.

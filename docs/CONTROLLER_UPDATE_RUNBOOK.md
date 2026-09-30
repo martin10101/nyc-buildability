@@ -15,10 +15,10 @@ marked **OWNER**. Everything else is executable by the authorized orchestrator u
 |---|---|
 | Live controller | `C:\SupervisorController` |
 | Protected config (immutable, never modified) | `C:\Program Files\SupervisorConfig\config.toml` |
-| Expected protected-config SHA-256 (raw bytes, `Get-FileHash`) | `6aef12a9f60a6a64d7af77de3c071289c35dfe60977239e901df8d642c3fffde` |
-| Expected protected-config SHA-256 (LF-normalized, as the MANIFEST records it) | `9560f901e40e64cc320698c6cea9d5996e9e8495fb3ed22c6e681a6ebf1581e5` |
+| Expected protected-config SHA-256 (raw bytes, `Get-FileHash`) | `A1F995016B541B9D69F8D78249ED4EF15563B9D7FF59B027ED3B04C1F41D1436` |
+| Expected protected-config SHA-256 (LF-normalized, as the MANIFEST records it) | `4c67875b24be66c3e257270126ee8b109e69542c944f4fb18c48a5e7e3f9e75f` |
 | Mutable model selection (outside the manifest by design) | `C:\SupervisorController\model_selection.toml` |
-| Expected model-selection SHA-256 | `0e2432c0a25632ccb7ef35392c64dc70bd95fac16f2e136e54801e2407a66cf4` |
+| Expected model-selection SHA-256 | `FCBBF70F553AE115FA126183DE9A26134A2F54BC4AC66D726A3F292101ECDD2B` |
 | A1 worktree / journal checkout | `C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t063` |
 | Claude executable (verify with `--version` before use) | `C:\Users\MLFLL\.local\bin\claude.exe` |
 | Codex executable (verify with `--version` before use) | `C:\Users\MLFLL\AppData\Roaming\npm\codex.cmd` |
@@ -87,9 +87,14 @@ less:
 Set-Location C:\SupervisorController
 python -m tools.agent_supervisor record-manifest `
   --config "C:\Program Files\SupervisorConfig\config.toml" `
-  --out tools\agent_supervisor\controller_manifest.json
+  --out "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json"
 ```
 
+The manifest is written OUTSIDE the repo tree, at the certified activation location
+`%LOCALAPPDATA%\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json`
+(M0-T113 §1 item 10), so the certified git tree stays clean and no manifest is ever
+committed into `tools\agent_supervisor\`. Create the directory first if absent
+(`New-Item -ItemType Directory -Force "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation" | Out-Null`).
 The manifest stores the config under its stable logical name `config.toml` with its
 digest; the absolute private path is never written into the manifest.
 `model_selection.toml` stays excluded by design: a model change never invalidates the
@@ -105,7 +110,7 @@ file. Do not "correct" a healthy manifest because the two differ.
 
 ```powershell
 python -m tools.agent_supervisor verify-controller `
-  --manifest tools\agent_supervisor\controller_manifest.json `
+  --manifest "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json" `
   --config "C:\Program Files\SupervisorConfig\config.toml"
 ```
 
@@ -126,7 +131,7 @@ python -m tools.agent_supervisor doctor `
   --checkout C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t063 `
   --config "C:\Program Files\SupervisorConfig\config.toml" `
   --model-selection C:\SupervisorController\model_selection.toml `
-  --manifest tools\agent_supervisor\controller_manifest.json
+  --manifest "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json"
 ```
 
 Expect: `controller_manifest` ok including the external `config.toml` binding; config
@@ -142,7 +147,7 @@ python -m tools.agent_supervisor doctor --live `
   --checkout C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t063 `
   --config "C:\Program Files\SupervisorConfig\config.toml" `
   --model-selection C:\SupervisorController\model_selection.toml `
-  --manifest tools\agent_supervisor\controller_manifest.json `
+  --manifest "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json" `
   --claude-executable C:\Users\MLFLL\.local\bin\claude.exe
 ```
 
@@ -202,7 +207,7 @@ update; or any file outside the accepted delta changed in `C:\SupervisorControll
 $backup = Get-ChildItem C:\SupervisorBackup -Directory |
   Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
 robocopy "$backup\agent_supervisor" C:\SupervisorController\tools\agent_supervisor /E /R:2 /W:2
-Remove-Item C:\SupervisorController\tools\agent_supervisor\controller_manifest.json -ErrorAction SilentlyContinue
+Remove-Item "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json" -ErrorAction SilentlyContinue
 python -m tools.agent_supervisor doctor `
   --checkout C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t063 `
   --config "C:\Program Files\SupervisorConfig\config.toml" `
@@ -213,22 +218,29 @@ python -m tools.agent_supervisor doctor `
 one, set `$backup` to that exact directory instead. Restoring copies over the live
 tree without deleting anything else; journals are untouched.)
 
-## 11. Supervised A1 start (after a fully verified update)
+## 11. Supervised start (after a fully verified update)
+
+The example below is the CURRENT D-024 campaign shape (branch
+`control/D-024-fable-codex-loop`), regenerated from the retired M0-T063 A1
+context-index identities. Substitute the actual task's `--worktree` and
+`--task-packet` for the unit being started; `--run-id` is omitted so the operator
+supplies it (or `start` derives a stable `sha256(checkout)`-keyed default) — this
+runbook never hard-codes a specific run id.
 
 ```powershell
 Set-Location C:\SupervisorController
 python -m tools.agent_supervisor start --mode supervised `
   --checkout C:\SupervisorController `
-  --manifest tools\agent_supervisor\controller_manifest.json `
+  --manifest "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json" `
   --config "C:\Program Files\SupervisorConfig\config.toml" `
   --model-selection model_selection.toml `
   --claude-executable C:\Users\MLFLL\.local\bin\claude.exe `
   --codex-executable C:\Users\MLFLL\AppData\Roaming\npm\codex.cmd `
   --repo C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack `
-  --worktree C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t063 `
-  --branch task/M0-T063-context-index-a1 --stage claimed `
-  --task-packet C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t063\project-control\tasks\M0-T063.json `
-  --run-id run_M0_T063_A1 --max-cycles 1
+  --worktree C:\Users\MLFLL\Downloads\nyc-zoning\wt-d024-a1 `
+  --branch control/D-024-fable-codex-loop --stage claimed `
+  --task-packet C:\Users\MLFLL\Downloads\nyc-zoning\wt-d024-a1\project-control\tasks\M0-T127.json `
+  --max-cycles 1
 ```
 
 `--checkout` is pinned EXPLICITLY (D-024-R372; M0-T125 D1/D15): the runtime
@@ -240,7 +252,7 @@ to carry, so an omission fails CI rather than surfacing as a live refusal.
 
 `--manifest` is now a REQUIRED dispatch input: `start` without it refuses to dispatch,
 and `start` with it verifies the package tree AND the external config before any
-provider contact. The packet's four `documented_test_commands` classify AUTO; altered
+provider contact. The named packet's `documented_test_commands` classify AUTO; altered
 variants stay ASK/HARD_DENY.
 
 ## 12. Owner touchpoints

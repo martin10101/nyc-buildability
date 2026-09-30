@@ -18,6 +18,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Sequence
 
+from . import orientation as orient
 from . import session_continuity as sc
 from . import turnover_seam as ts
 from .errors import LoopError
@@ -348,7 +349,7 @@ def stop_chain_exhausted(loop: Any, *, cycle: int, reason_code: str,
         reason_code=CHAIN_EXHAUSTED_STOP, touch=touch)
 
 
-def with_reorientation(seam: Any, prompt: str) -> str:
+def with_reorientation(loop: Any, seam: Any, prompt: str) -> str:
     """Put the full persisted handoff ahead of the next prompt, when re-orienting.
 
     The successor of a REORIENTATION is a brand-new session that knows nothing
@@ -356,7 +357,22 @@ def with_reorientation(seam: Any, prompt: str) -> str:
     the loop handed the next unit the forwarded prompt alone and the handoff
     stayed in the journal, which is why "the successor was re-oriented" was a
     claim rather than an action. A resume returns the prompt unchanged.
+
+    M0-T126 G3-1: the handoff carries task/lineage/worktree/branch but NOT the
+    property-1 sized checkpoint cadence, allowed-paths file list, or exact-
+    required-output demand. When the loop holds a dispatchable sized budget, the
+    reoriented prompt is FRONT-LOADED with the same ``rotated=True`` orientation
+    packet a fresh worker gets, so the ROTATED worker's dispatched prompt carries
+    the cadence + allowed_paths + required-output too (property 1 for "every
+    fresh OR rotated worker"). Absent a budget the handoff is returned unchanged.
     """
     if not seam.reorientation_prompt:
         return prompt
-    return f"{seam.reorientation_prompt}\n\n---\n\nFORWARDED UNIT PROMPT:\n{prompt}"
+    reoriented = f"{seam.reorientation_prompt}\n\n---\n\nFORWARDED UNIT PROMPT:\n{prompt}"
+    return orient.oriented_reorientation_prompt(
+        reoriented, getattr(loop, "_turn_budget", None),
+        task_id=loop.config.task_id, stage=loop.config.stage, run_id=loop.run_id,
+        worktree=loop.authority.worktree, branch=loop.authority.branch,
+        allowed_paths=loop.config.allowed_paths,
+        rotation_reason=str(getattr(seam, "reason_code", "") or ""),
+        predecessor_session=str(getattr(loop, "_provider_session_id", "") or ""))

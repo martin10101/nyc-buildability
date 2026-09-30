@@ -266,6 +266,45 @@ def size_turn_budget(
     )
 
 
+def reserved_turn_message(budget: TurnBudget) -> str:
+    """The mandatory user turn injected on the reserved final turn (property 3).
+
+    D-024 Amendment 22 property 3 (R380): the reserved final turn is realized as
+    an ACTUAL follow-up user turn delivered through the provider's own input
+    channel (``run_unit``'s ``extra_turns`` stdin channel), not merely as prompt
+    text the worker read at the start and may have forgotten by the time its
+    working turns are spent (the live 12/12 failure mode). Sizing reserves the
+    final turn (``total = working + reserved``); this message is what OCCUPIES it,
+    arriving after the working phase to demand the checkpoint before exhaustion.
+    It is deliberately imperative and forbids new tool use, so the reserved turn
+    is spent emitting the checkpoint rather than on further exploration.
+    """
+    return (
+        f"RESERVED FINAL TURN (D-024-R380 property 3): your {budget.working_turns} "
+        f"working turns are spent and this is the reserved final turn of "
+        f"{budget.total_turns}. Emit your mandatory checkpoint NOW as the single "
+        f"required JSON object (claude_checkpoint.schema.json) and do NOT start any "
+        f"new tool call, file read, edit, or exploration in this turn. If the unit "
+        f"is unfinished, emit an HONEST incomplete-but-resumable checkpoint whose "
+        f"status reflects the real state - it is never treated as completion, and a "
+        f"missing checkpoint is treated as failure (S14), never success.")
+
+
+def reserved_turn_injection(budget: TurnBudget | None) -> tuple[str, ...]:
+    """The ``extra_turns`` sequence for one bounded unit's reserved final turn.
+
+    Returns the single reserved-turn demand when the unit is a sized, dispatchable
+    bounded unit, and an EMPTY tuple otherwise (no budget wired, or an oversized/
+    non-dispatchable class that is surfaced for splitting rather than dispatched).
+    Empty means ``run_unit`` is called exactly as before - the removal-sensitive
+    boundary: without this injection a worker that consumes every working turn
+    receives no checkpoint demand at the boundary (the preserved 12/12 shape).
+    """
+    if not isinstance(budget, TurnBudget) or not budget.dispatchable:
+        return ()
+    return (reserved_turn_message(budget),)
+
+
 def budget_for_packet(
     packet: Mapping[str, Any],
     allowances: TurnAllowances | None = None,
