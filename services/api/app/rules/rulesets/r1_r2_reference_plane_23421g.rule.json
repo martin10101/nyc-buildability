@@ -1,0 +1,77 @@
+{
+  "rule_id": "r1-r2-reference-plane-23421g",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_height_setback_r1_r2",
+  "title": "R1/R2 no-letter-suffix districts (R1-1, R1-2, R2) - section 23-421(g) reference-plane elevation allowance",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_r1_r2_height_setback.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of ZR 23-421 paragraph (g) (City of Yes, Last Amended 2024-12-05), captured via the official print/PDF channel (M4-T012 binding capture-completeness requirement; see project-control/reports/M4-T012-source-capture.md): 'In R1 and R2 Districts without a letter suffix, for zoning lots that either (1) have a lot area of at least 9,500 square feet and lot width of at least 100 feet, or (2) have a slope, as measured from the street wall line level to the rear wall line level, of at least five percent to the horizontal; the reference plane for applying the regulations of this Section may be located up to five feet above the base plane.' This is an EXPLICIT CONDITIONAL, never a silent application or a silent omission (D-049-R003): the applicability trigger is the exact area/width/slope test the source states, and ALL THREE geometry inputs (lot_area_sqft, lot_width_ft, rear_wall_slope_percent) are REQUIRED - a caller missing even one of them (e.g. slope unmeasured) yields professional_review_required with NO value, even in the case where the OTHER two inputs alone would already have resolved the trigger. This is a deliberately CONSERVATIVE design choice disclosed here: the DSL's fail-closed missing-required-input handling is evaluated before applicability, so it cannot selectively ignore an input that happens to be redundant for a particular lot; encoding the OR as two independent competing rules to relax this was considered and rejected for this wave as unnecessary engine-adjacent complexity (no engine change is needed or permitted here; forbidden path). Eligibility is scoped to district symbols WITHOUT A LETTER SUFFIX per the source's own wording - R1-1, R1-2 (numerical suffixes, read by the owner as distinct from letter suffixes) and bare R2 are eligible; R1-2A, R2A, and R2X (letter suffixes) are EXCLUDED (owner's suffix reading, D-049, corroborated by docs/ARCHITECT_REVIEW_QUESTIONS.md section A1/A3). The output is a SEPARATE typed constraint (reference_plane_elevation_max_ft) describing WHERE the reference plane for the 25/35 ft envelope may sit - it does NOT change the 25 ft / 35 ft numeric caps themselves (those are computed by r1-r2-bare-pitched-height / r1-r2-suffix-variants-pitched-height). The full sloping-plane setback geometry this reference plane feeds into remains a typed A2 gap (D-045-R008), never computed here. NOT a Verified determination.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-421-g",
+      "section": "23-421(g)",
+      "quote": "In R1 and R2 Districts without a letter suffix, for zoning lots that either: (1) have a lot area of at least 9,500 square feet and lot width of at least 100 feet; or (2) have a slope ... of at least five percent to the horizontal; the reference plane for applying the regulations of this Section may be located up to five feet above the base plane.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "52dd8aab6e2a7e53f65c953157b70e899f7be94438d0c3456731ff430c626536"
+    }
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "Residence district governing the lot. Applicability is EXACTLY the no-letter-suffix members section 23-421(g) itself names as eligible: R1-1, R1-2, and bare R2 (in_set). R1-2A, R2A, and R2X (letter-suffix variants) are deliberately NOT matched (visible not_applicable), per the owner's D-049 suffix reading. Bare 'R1' is also not matched: it is not among the districts the owner's verbatim reading of (g) or docs/ARCHITECT_REVIEW_QUESTIONS.md lists as eligible."},
+    {"name": "building_type", "type": "string", "required": true, "enum": ["detached", "semi_detached", "zero_lot_line", "attached", "other"], "description": "Building type. REQUIRED and FAIL-CLOSED, matching the pitched-envelope rules this reference plane feeds: paragraph (g) is part of section 23-421, which applies only to single- or two-family detached / semi-detached / zero-lot-line forms. No canonical property_profile field exposes this."},
+    {"name": "lot_area_sqft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "Zoning-lot area in square feet; must be strictly positive. REQUIRED (see description: all three geometry inputs are required by design, even though area+width alone can resolve the trigger). A zero/negative/non-finite value is rejected fail-closed."},
+    {"name": "lot_width_ft", "type": "number", "required": true, "unit": "feet", "exclusive_minimum": 0, "description": "Zoning-lot width in feet; must be strictly positive. REQUIRED (see description)."},
+    {"name": "rear_wall_slope_percent", "type": "number", "required": true, "unit": "percent", "minimum": 0, "description": "Lot slope, measured from the street-wall-line level to the rear-wall-line level, expressed as a percent. REQUIRED (see description: all three geometry inputs are required by design, even though slope alone can resolve the trigger)."}
+  ],
+  "outputs": [
+    {"name": "reference_plane_elevation_max_ft", "type": "number", "unit": "feet", "description": "Maximum elevation (ft) above the base plane at which the section 23-421 reference plane may be located, per paragraph (g), when the district/building-type/geometry trigger is met. Separate typed constraint; does NOT change the 25 ft / 35 ft envelope caps and is not a buildable-envelope result."}
+  ],
+  "parameters": [
+    {"name": "reference_plane_offset_ft", "value": 5, "citation_ref": "zr-23-421-g", "note": "Section 23-421(g): the reference plane 'may be located up to five feet above the base plane'. Candidate value pending raw-HTML verification and G6 approval."}
+  ],
+  "applicability": {
+    "all": [
+      {"op": "in_set", "input": "zoning_district", "values": ["R1-1", "R1-2", "R2"]},
+      {"op": "in_set", "input": "building_type", "values": ["detached", "semi_detached", "zero_lot_line"]},
+      {"any": [
+        {"all": [
+          {"op": "compare", "input": "lot_area_sqft", "compare": "ge", "value": 9500},
+          {"op": "compare", "input": "lot_width_ft", "compare": "ge", "value": 100}
+        ]},
+        {"op": "compare", "input": "rear_wall_slope_percent", "compare": "ge", "value": 5}
+      ]}
+    ]
+  },
+  "computation": {
+    "steps": [
+      {"id": "ref_plane", "op": "identity", "args": [{"param": "reference_plane_offset_ft"}], "note": "Maximum reference-plane elevation above the base plane per section 23-421(g)."}
+    ],
+    "outputs": {
+      "reference_plane_elevation_max_ft": {"step": "ref_plane"}
+    }
+  },
+  "exceptions": [
+    {"id": "feeds_sloping_plane_geometry_professional_review", "description": "This reference-plane elevation feeds into the section 23-421 sloping-plane envelope construction (paragraphs (a)-(f)), which is A2 sloping-plane geometry, not computed by this rule (D-045-R008). The 25 ft perimeter-wall / 35 ft ridge caps this reference plane is measured from are computed by the separate rule r1-r2-bare-pitched-height (for bare R2) or r1-r2-suffix-variants-pitched-height (for R1-1/R1-2, which that rule reaches via ZR 11-25 suffix inheritance even though this reference-plane rule cites section 23-421(g) directly and expressly for R1-1/R1-2).", "condition": null, "effect": "documented_limitation", "citation_ref": "zr-23-421-g"},
+    {"id": "site_specific_modifiers_not_modeled_here", "description": "Overlay, special-district, historic-district, large-site, and transportation-infrastructure modifiers (sections 23-44, 23-425, 23-426(a), 23-443(b), 119-212, 113-523) are modeled on the companion envelope rules (r1-r2-bare-pitched-height), not on this reference-plane rule; their potential interaction with paragraph (g)'s allowance is not evaluated here and is disclosed as a documented limitation rather than silently assumed absent.", "condition": null, "effect": "documented_limitation", "citation_ref": null}
+  ],
+  "uncertainty_policy": {
+    "geometry_uncertain_coverage": "professional_review_required",
+    "data_conflict_coverage": "data_conflict",
+    "note": "An uncertain, split, sliver, or invalid M2-T013 geometric district assignment is never collapsed into a single definitive district: coverage downgrades to professional_review_required (or data_conflict)."
+  },
+  "limitations": [
+    "Draft extraction pending raw-HTML source verification and G6 qualified-human legal approval; not a Verified determination.",
+    "CONSERVATIVE-BY-DESIGN: all three geometry inputs (area, width, slope) are REQUIRED, so a lot known to satisfy the trigger via ONE path (e.g. area+width) but missing the OTHER path's input (slope) still fails closed to professional_review_required rather than emitting a value from the one known-satisfied path. This never produces a wrong answer, but it is more conservative than the source strictly requires; relaxing it would need either a second competing rule (risking a same-family output conflict against this rule) or an engine change (forbidden path) - out of scope for this wave and disclosed rather than silently accepted.",
+    "Eligibility is scoped to R1-1, R1-2, and bare R2 (no-letter-suffix, per the owner's D-049 suffix reading); R1-2A, R2A, R2X, and bare R1 are NOT eligible under this rule.",
+    "The output changes only the REFERENCE PLANE the pitched envelope is measured from; it does not modify the 25 ft / 35 ft numeric caps.",
+    "The full sloping-plane setback geometry (23-421 paragraphs a-f) that this reference plane feeds into remains an A2 gap (D-045-R008) and is not computed here.",
+    "Site-specific modifiers (overlay, special district, historic district, large site, transportation infrastructure) are not modeled on this rule; see the companion envelope rules."
+  ]
+}
