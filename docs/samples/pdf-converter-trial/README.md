@@ -119,7 +119,9 @@ The steps in order. None of them was done here.
    GObject, Pango 1.44 or newer, pangoft2, HarfBuzz with the subset library, and fontconfig. For
    example, run a one-off probe in a staging build that finds each library and reads the Pango
    and HarfBuzz versions:
-   `python -c "import ctypes, ctypes.util as u; n=('gobject-2.0','pango-1.0','pangoft2-1.0','harfbuzz','harfbuzz-subset','fontconfig'); p={k: u.find_library(k) for k in n}; print(p); f=lambda k, s: getattr(ctypes.CDLL(p[k]), s); f('pango-1.0','pango_version_string').restype=ctypes.c_char_p; f('harfbuzz','hb_version_string').restype=ctypes.c_char_p; print(f('pango-1.0','pango_version_string')(), f('harfbuzz','hb_version_string')())"`.
+   `python -c "import ctypes, ctypes.util as u; n=('gobject-2.0','pango-1.0','pangoft2-1.0','harfbuzz','harfbuzz-subset','fontconfig'); p={k: u.find_library(k) for k in n}; print(p); pv=ctypes.CDLL(p['pango-1.0']).pango_version_string; pv.restype=ctypes.c_char_p; hv=ctypes.CDLL(p['harfbuzz']).hb_version_string; hv.restype=ctypes.c_char_p; print(pv().decode(), hv().decode())"`.
+   (Each function is bound once and called through the same object, so its `c_char_p` return type
+   holds; the same pattern prints the glibc version string for `gnu_get_libc_version` on this host.)
    A missing library prints as `None`, and the probe then stops with an error. On this trial
    host it printed `None` for pango-1.0, pangoft2-1.0, harfbuzz and harfbuzz-subset.
    If any library is missing, or Pango is older than 1.44, choose the fallback above. This is a
