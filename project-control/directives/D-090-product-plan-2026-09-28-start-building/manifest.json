@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-09-30T05:18:52+00:00",
+ "updated_at": "2026-09-30T06:05:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -63,8 +63,12 @@
  ],
  "scope": {
   "kind": "product_plan_and_wave0_bootstrap",
-  "task_ids": [],
-  "task_types": [],
+  "task_ids": [
+   "M0-T164"
+  ],
+  "task_types": [
+   "governance"
+  ],
   "allowed": "Wave 0 per Prompt 0: new files under docs/lanes/**, scripts/lanes/**, new contract files in packages/contracts, one additive CI step, lane flags default off; the dependency-security repair needed for a green baseline; ledger/directive records by the orchestrator",
   "forbidden": "product behavior changes, deletions or edits to existing features in Wave 0; starting lane work before the owner's GO; deciding owner questions; live city API calls in Wave 0; marking rules reviewed; any Tier D action; merging PR #241; lifting any owner hold; running owner-typed commissioning; passing model: on a dispatch; any dependency-security waiver; committing competitor PDF material"
  },
@@ -74,6 +78,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured verbatim before the Wave 0 commits. frozen_baseline_sha = 2283c178 (integration head at capture; origin/main d8b3899f). Session: Claude Code cloud sandbox, fresh clone, gh authenticated as the owner after message 2. Relation: D-045's rule-coverage wave order (A1->A2+B2->A3->C->M->A4) differs from the plan's \u00a712a waves; the plan's header says it wins where anything differs - surfaced to the owner for confirmation, D-045 not superseded by the orchestrator. D-088/D-089 stay active; their owner-typed commissioning stays owner-typed."
+  },
+  {
+   "at": "2026-09-30T06:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "scope_binding",
+   "note": "Governance scope bound to M0-T164 only: its allowed_paths include .github/workflows/ci.yml for exactly one additive step (the lane path check), which the owner's Prompt 0 authorizes verbatim ('one additive CI step', D-090-R004). No requirement text changed; no other governance path authorized."
   }
  ]
 }

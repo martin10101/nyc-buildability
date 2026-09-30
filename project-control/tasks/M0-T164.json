@@ -32,19 +32,19 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "orchestrator",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-30T05:21:37.011414+00:00",
-  "updated_at": "2026-09-30T05:21:37.377833+00:00",
+  "updated_at": "2026-09-30T05:31:39.666678+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -57,5 +57,6 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-09-30T05:21:37.011663+00:00"
+  "directive_regime_entered_at": "2026-09-30T05:21:37.011663+00:00",
+  "worktree": "/root/project/w-M0-T164"
 }
