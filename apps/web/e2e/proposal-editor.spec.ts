@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { expectProfile, tabUntil } from "./helpers";
 
 /**
@@ -14,6 +14,14 @@ import { expectProfile, tabUntil } from "./helpers";
  * two COULD_NOT_CHECK). The profile + lot-outline map use the real fixture API.
  * This proves the edit -> check -> read -> save-variation loop, the honesty
  * framing, and the real request contract end-to-end in a browser.
+ *
+ * D-01 (plan §7, M1-06b): the editor is SET ASIDE behind the default-off server
+ * flag INTERNAL_PROPOSAL_EDITOR_ENABLED, so this spec needs the e2e web server to
+ * set it on (playwright.config.ts webServer env, Lane C). A real property always
+ * starts from the EMPTY draft — never the rectangle example — so the journey types
+ * every value itself and the POST carries no example lot facts. The canned report
+ * is display fixture data only; the canonical rectangle request/response pair stays
+ * bound in src/lib/__tests__/proposal-checks-api.test.ts.
  */
 
 const ATTESTED_REPORT = {
@@ -91,23 +99,13 @@ const ATTESTED_REPORT = {
   correlation_id: "e2e-corr",
 };
 
-/** The accepted M5-T054 rectangle, as the editor seeds it (proposal-draft.ts
- * rectangleSampleDraft). The journey re-types vertex 0 X to 1000005 and appends
- * one vertex/level/wall, so the serialized POST body must reflect exactly that. */
-const RECTANGLE_TAIL: Array<[number, number]> = [
-  [1000100, 200000],
-  [1000100, 200050],
-  [1000000, 200050],
-  [1000000, 200000],
-];
-
 /** The parts of the serialized route request this journey asserts (mirrors the
  * ProposalCheckRequest contract; typed locally so the spec needs no app-alias
  * import and no `any`). */
 interface SerializedProposalCheck {
   proposed_massing: {
     outline: { srid: number; vertices: Array<[number, number]> };
-    levels: unknown[];
+    levels: Array<{ level_index: number; floor_count: number; floor_to_floor_ft: number }>;
     exterior_walls: unknown[];
   };
   lot: { area_sq_ft: number | null };
@@ -121,18 +119,33 @@ async function openProposalEditor(page: Page, bbl: string): Promise<void> {
   await page.getByLabel("BBL", { exact: true }).fill(bbl);
   await page.getByRole("button", { name: "Open property", exact: true }).click();
   await expectProfile(page);
-  await page
+  const link = page
     .getByRole("navigation", { name: "Architect workspace" })
-    .getByRole("link", { name: "Proposal editor", exact: true })
-    .click();
+    .getByRole("link", { name: "Proposal editor", exact: true });
+  await expect(
+    link,
+    "the set-aside proposal editor needs INTERNAL_PROPOSAL_EDITOR_ENABLED=1 on the e2e web server (D-01)",
+  ).toBeVisible();
+  await link.click();
+}
+
+/** Walk focus BACKWARD with real Shift+Tab presses until `target` has focus (never
+ * a programmatic focus). A freshly added table row sits just before the "Add ..."
+ * button that created it. */
+async function shiftTabUntilFocused(page: Page, target: Locator, maxPresses = 10): Promise<void> {
+  for (let i = 0; i < maxPresses; i += 1) {
+    if (await target.evaluate((el) => el === document.activeElement)) break;
+    await page.keyboard.press("Shift+Tab");
+  }
+  await expect(target).toBeFocused();
 }
 
 test("AS-5: keyboard-only proposal edit -> check -> read grouped results -> save variation", async ({ page }) => {
   // The stub asserts the FULL request contract BEFORE returning the canned
   // arithmetic, so a wrong or missing POST body can never be papered over by the
   // response. "Run check" is the only trigger for this route and it is pressed
-  // AFTER every keyboard edit below, so the intercepted body already reflects the
-  // retyped vertex 0 X plus the appended vertex/level/wall.
+  // AFTER every keyboard edit below, so the intercepted body reflects exactly the
+  // values typed into the EMPTY starting draft — and no example lot facts (D-01).
   await page.route("**/api/v1/proposal-checks", async (route) => {
     const request = route.request();
     const method = request.method();
@@ -140,15 +153,12 @@ test("AS-5: keyboard-only proposal edit -> check -> read grouped results -> save
     expect(method, "the proposal check must be POSTed").toBe("POST");
     expect(body, "the request must carry a JSON body").not.toBeNull();
     expect(body.proposed_massing.outline.srid, "the 2263 numeric authority must be serialized").toBe(2263);
-    expect(body.proposed_massing.outline.vertices).toHaveLength(6);
-    expect(body.proposed_massing.outline.vertices[0]).toEqual([1000005, 200000]);
-    expect(body.proposed_massing.outline.vertices.slice(1, 5)).toEqual(RECTANGLE_TAIL);
-    expect(body.proposed_massing.outline.vertices[5]).toEqual([0, 0]);
-    expect(body.proposed_massing.levels).toHaveLength(2);
-    expect(body.proposed_massing.exterior_walls).toHaveLength(5);
-    expect(body.lot.area_sq_ft, "the caller-attested lot area must be serialized").toBe(8000);
-    expect(body.scenario_label).toBe("scenario-A-baseline");
-    expect(body.lot_rule_facts).toEqual({ zoning_district: "R5", street_width_class: "wide" });
+    expect(body.proposed_massing.outline.vertices).toEqual([[1000005, 200000]]);
+    expect(body.proposed_massing.levels).toEqual([{ level_index: 0, floor_count: 1, floor_to_floor_ft: 10 }]);
+    expect(body.proposed_massing.exterior_walls).toHaveLength(1);
+    expect(body.lot.area_sq_ft, "a real property never sends an example lot area").toBeNull();
+    expect(body.scenario_label).toBe("New proposal");
+    expect(body.lot_rule_facts, "no example district or street width").toEqual({});
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -161,29 +171,43 @@ test("AS-5: keyboard-only proposal edit -> check -> read grouped results -> save
   await expect(page.getByRole("heading", { name: "Proposal editor" })).toBeVisible();
   await expect(page.getByTestId("editor-honesty")).toContainText("not a city record");
 
-  // --- Edit a coordinate by keyboard: reach the field with REAL Tab navigation
-  // (never a programmatic focus), assert it actually received focus, then
-  // select-all and type. This proves the numeric coordinate input is genuinely
-  // keyboard-reachable, exactly like every other control in this journey. ---
-  const vertexX = page.getByLabel("Vertex 0 X coordinate");
-  for (let i = 0; i < 300; i += 1) {
-    if (await vertexX.evaluate((el) => el === document.activeElement)) break;
-    await page.keyboard.press("Tab");
-  }
-  await expect(vertexX).toBeFocused();
-  await vertexX.press("Control+a");
-  await vertexX.pressSequentially("1000005");
-  await expect(vertexX).toHaveValue("1000005");
+  // --- A real property starts from the EMPTY draft (D-01, M1-06b): no outline,
+  // and the lot inputs are unknown — never the example rectangle's values. ---
+  await expect(page.getByLabel(/^Vertex \d+ X coordinate$/)).toHaveCount(0);
+  await expect(page.getByLabel("Lot area (sq ft, caller-attested)", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Zoning district (caller-attested)", { exact: true })).toHaveValue("");
+  await expect(page.getByTestId("editor-example-note")).toHaveCount(0);
 
   // --- Add a vertex by focus navigation (Tab to the control, Enter). ---
   await tabUntil(page, { textContains: "Add vertex" });
   await expect(page.getByRole("button", { name: "Add vertex", exact: true })).toBeFocused();
   await page.keyboard.press("Enter");
 
-  // --- Add a level by focus navigation. ---
+  // --- Type its coordinates by keyboard: reach the new row with REAL Shift+Tab
+  // navigation (never a programmatic focus). The new vertex starts UNKNOWN
+  // (empty), never 0,0. ---
+  const vertexX = page.getByLabel("Vertex 0 X coordinate");
+  await shiftTabUntilFocused(page, vertexX);
+  await expect(vertexX).toHaveValue("");
+  await vertexX.press("Control+a");
+  await vertexX.pressSequentially("1000005");
+  await expect(vertexX).toHaveValue("1000005");
+  await page.keyboard.press("Tab");
+  const vertexY = page.getByLabel("Vertex 0 Y coordinate");
+  await expect(vertexY).toBeFocused();
+  await vertexY.pressSequentially("200000");
+  await expect(vertexY).toHaveValue("200000");
+
+  // --- Add a level by focus navigation, then type its floor-to-floor height (it
+  // starts UNKNOWN, never a sample 10 ft). ---
   await tabUntil(page, { textContains: "Add level" });
   await expect(page.getByRole("button", { name: "Add level", exact: true })).toBeFocused();
   await page.keyboard.press("Enter");
+  const floorToFloor = page.getByLabel("Level 0 floor to floor height");
+  await shiftTabUntilFocused(page, floorToFloor);
+  await expect(floorToFloor).toHaveValue("");
+  await floorToFloor.pressSequentially("10");
+  await expect(floorToFloor).toHaveValue("10");
 
   // --- Add a wall by focus navigation. ---
   await tabUntil(page, { textContains: "Add wall" });
@@ -203,15 +227,15 @@ test("AS-5: keyboard-only proposal edit -> check -> read grouped results -> save
   await expect(page.getByTestId("proposal-check-announcer")).toContainText("proposed values you entered");
 
   // The serialized request contract (POST + the 2263 draft/lot inputs reflecting
-  // the keyboard edits: vertex 0 X retyped, one vertex/level/wall appended) was
-  // already asserted inside the route stub, BEFORE the canned response was served.
+  // exactly the keyboard entries into the empty draft, with no example lot facts)
+  // was already asserted inside the route stub, BEFORE the canned response was served.
 
   // --- Save a client-local, ephemeral variation by focus navigation. ---
   await tabUntil(page, { textContains: "Save current proposal as a variation" });
   await expect(page.getByTestId("save-variation")).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.getByTestId("variations-ephemeral")).toContainText("this browser session only");
-  await expect(page.getByRole("button", { name: "scenario-A-baseline" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "New proposal" })).toBeVisible();
 });
 
 /** The 2263 vertices the stubbed bridge returns for the drawn shape. After
@@ -443,9 +467,9 @@ const ENVELOPE_DISCLOSURE =
   "Non-commensurable dimensions (residential FAR, rear yard) are disclosed as honest gaps. " +
   "Qualified professional review is required before any reliance.";
 
-/** The Generated building option outline the stub returns — DELIBERATELY DISTINCT
- * from the editor's rectangle seed (5 vertices, vertex 0 X 1000000) so adoption
- * VISIBLY replaces the numeric authority (4 vertices, vertex 0 X 1000200). */
+/** The Generated building option outline the stub returns. The editor starts
+ * EMPTY on a real property (D-01), so adoption VISIBLY fills the numeric authority
+ * (0 -> 4 vertices, vertex 0 X 1000200). */
 const OPTION_2263: Array<[number, number]> = [
   [1000200, 200500],
   [1000260, 200500],
@@ -618,10 +642,10 @@ test("AS-5: the preliminary-development-limits panel leads from the lot context 
   await expect(page.getByTestId("envelope-gap-max_height_ft")).toContainText("Could not check");
   await expect(page.getByTestId("envelope-aggregate")).toHaveAttribute("data-complete", "false");
 
-  // The editor below starts on the MANUAL rectangle seed (5 numeric vertices,
-  // vertex 0 X 1000000): the panel is ADDITIVE and never replaces manual entry.
-  await expect(page.getByLabel(/^Vertex \d+ X coordinate$/)).toHaveCount(5);
-  await expect(page.getByLabel("Vertex 0 X coordinate")).toHaveValue("1000000");
+  // The editor below starts on the EMPTY draft (no numeric vertices, lot area
+  // unknown; D-01): the panel is ADDITIVE and never replaces manual entry.
+  await expect(page.getByLabel(/^Vertex \d+ X coordinate$/)).toHaveCount(0);
+  await expect(page.getByLabel("Lot area (sq ft, caller-attested)", { exact: true })).toHaveValue("");
 
   // ONE action adopts the Generated building option as the proposed starting
   // draft, seeding the numeric AUTHORITY exactly as if typed (4 vertices, vertex

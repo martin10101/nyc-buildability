@@ -18,7 +18,7 @@ import { ProposalEditor } from "../ProposalEditor";
 import { MaxEnvelopePanel } from "../MaxEnvelopePanel";
 import { CapturedRecord } from "../EvidenceRecord";
 import { DashboardMap } from "./DashboardMap";
-import type { DashboardTool } from "./types";
+import { TOOL_LABELS, type DashboardTool } from "./types";
 
 function ProposalTool({ profile, focusEnvelope = false, envelopeRequest = 0 }: { profile: PropertyProfile; focusEnvelope?: boolean; envelopeRequest?: number }) {
   const request = useMemo(() => maxEnvelopeRequestForProfile(profile), [profile]);
@@ -42,6 +42,8 @@ export interface DashboardToolsProps {
   onInspect: (id: string) => void;
   onOpen: (tool: DashboardTool) => void;
   surveyEnabled: boolean;
+  /** Server-read INTERNAL_PROPOSAL_EDITOR_ENABLED (D-01, plan §7); absent -> off. */
+  proposalEditorEnabled?: boolean;
   focusEnvelope?: boolean;
   envelopeRequest?: number;
 }
@@ -67,8 +69,10 @@ export function DashboardTools(props: DashboardToolsProps) {
     case "issues": return <><OpenIssues profile={profile}/><CondoRecordsChannelSection decision={condo}/></>;
     case "scenarios": return scenario ? <ScenarioWorkspace document={scenario} evaluation={evaluation} bbl={bbl}/> : <section className="card"><h2>Scenario results unavailable</h2><p>{condo.withholdAllowances ? "Computed allowances are withheld until the legal analysis site is resolved." : "No matching, usable scenario was supplied."}</p>{returnedScenario ? <CapturedRecord value={returnedScenario} label="Returned scenario record · not a site allowance"/> : null}</section>;
     case "report": return <ReportView profile={profile} scenario={returnedScenario} evaluation={returnedEvaluation} label={label} condoDecision={condo}/>;
+    // D-01 (plan §7): the proposal editor and envelope panel are set aside behind a
+    // default-off server flag; a deep link or tool open gets the plain not-available view.
     case "proposal":
-    case "envelope": return condo.withholdAllowances
+    case "envelope": return !props.proposalEditorEnabled ? <PlannedView label={TOOL_LABELS.proposal}/> : condo.withholdAllowances
       ? <section className="card"><h2>Site definition required</h2><p>Combined-site proposal and envelope checks are unavailable for this unresolved condo site. Recorded base parcels can be studied together or separately without establishing development rights.</p><button type="button" className="primary-button" onClick={() => onOpen("study")}>Open parcel study</button></section>
       : <ProposalTool profile={profile} focusEnvelope={props.focusEnvelope} envelopeRequest={props.envelopeRequest}/>;
     case "documents": return surveyEnabled ? <SurveyReviewClientProvider><ReviewInbox bbl={bbl} embedded/></SurveyReviewClientProvider> : <section className="card"><h2>Document review is unavailable in this environment</h2><p>Survey review must be enabled before document records can be retrieved. No document inventory or upload service is available here.</p></section>;

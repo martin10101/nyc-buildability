@@ -6,13 +6,17 @@ import { useState, type ReactNode } from "react";
 import { propertyHref, VIEW_LABELS, type WorkspaceView } from "@/lib/architect/navigation";
 const PRIMARY: WorkspaceView[] = ["overview", "facts", "zoning", "scenarios", "proposal", "evidence", "documents", "issues", "report"];
 const PLANNED: WorkspaceView[] = ["envelope", "units", "financials"];
-export function ArchitectShell({ bbl, active, children, surveyEnabled = false }: {
+/** D-01 (plan §7): the proposal editor is set aside behind the default-off server
+ * flag INTERNAL_PROPOSAL_EDITOR_ENABLED; when it is off the nav never offers it. */
+export function ArchitectShell({ bbl, active, children, surveyEnabled = false, proposalEditorEnabled = false }: {
     bbl?: string | null;
     active: WorkspaceView | "search" | "survey";
     children: ReactNode;
     surveyEnabled?: boolean;
+    proposalEditorEnabled?: boolean;
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
+    const primary = proposalEditorEnabled ? PRIMARY : PRIMARY.filter(view => view !== "proposal");
     return (<div className="architect-shell">
       <a className="architect-skip" href="#architect-content">Skip to workspace</a>
       <header className="architect-topbar">
@@ -53,7 +57,7 @@ export function ArchitectShell({ bbl, active, children, surveyEnabled = false }:
           <Link href={propertyHref()} aria-current={active === "search" ? "page" : undefined} onClick={() => setMenuOpen(false)}>Search property</Link>
           <Link href={dashboardHref(bbl)} onClick={() => setMenuOpen(false)}>Single-page dashboard</Link>
           <p className="architect-nav-label">Property workspace</p>
-          {PRIMARY.map(view => bbl ? <Link key={view} href={propertyHref(bbl, view)} aria-current={active === view ? "page" : undefined} aria-disabled={!bbl || undefined} onClick={() => setMenuOpen(false)}>
+          {primary.map(view => bbl ? <Link key={view} href={propertyHref(bbl, view)} aria-current={active === view ? "page" : undefined} aria-disabled={!bbl || undefined} onClick={() => setMenuOpen(false)}>
           {VIEW_LABELS[view]}
         </Link> : <span className="architect-nav-unavailable" key={view}>
           {VIEW_LABELS[view]}
