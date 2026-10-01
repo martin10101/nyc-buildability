@@ -43,7 +43,9 @@ from app.spatial.multi_lot_site import (
     derive_multi_lot_site,
     derive_multi_lot_site_if_enabled,
     multi_lot_site_enabled,
+    study_lot_selection,
 )
+from app.spatial.multi_lot_site.zoning_lot import lots_named_in_text
 from app.spatial.site_geometry import (
     LABEL_CITY_RECORDS,
     LABEL_TAX_MAP,
@@ -251,14 +253,26 @@ def test_three_lots_where_one_only_touches_through_another_are_combined(order):
 # ------------------------------------------------------- outline conflicts: nothing measured
 
 
+def _not_offered_without_geometry(site, reason_start: str) -> None:
+    """Touching lots whose outlines cannot be joined: not offered, with the reason, and no
+    outline, geometry or combined area (review #281 N1/N2)."""
+    assert site.combination.status == COMBINATION_NOT_OFFERED
+    assert (site.combination.same_block, site.combination.touching) == (True, True)
+    assert site.combination.reason.startswith(reason_start)
+    assert (site.outline, site.geometry) == (None, None)
+    assert site.combination.reason in site.notes
+    assert site.lot_area_sum.value is None
+    assert site.lot_area_sum.reason.endswith(site.combination.reason)
+    assert study_lot_selection(site)["combination"] == {
+        "status": COMBINATION_NOT_OFFERED, "reason": site.combination.reason}
+
+
 def test_overlapping_outlines_are_not_joined():
-    overlapping = site_lot(11, rect(90, 0, 200, 100))
-    site = derive_multi_lot_site(choice(site_lot(10), overlapping), None, STREETS)
-    assert site.combination.status == COMBINATION_OFFERED
-    assert site.geometry.status == STATUS_REFUSED
-    assert site.geometry.refusal_reason.startswith(
+    overlapping = site_lot(11, rect(90, 0, 200, 100), area=11000.0)
+    site = derive_multi_lot_site(choice(site_lot(10, area=9990.0), overlapping), None, STREETS)
+    _not_offered_without_geometry(
+        site,
         "The tax-map outlines of the selected lots overlap (lots 10 and 11 by 1,000.00 sq ft)")
-    assert site.outline is None
 
 
 def test_lots_around_an_unselected_lot_are_not_measured_with_a_hole():
@@ -266,11 +280,19 @@ def test_lots_around_an_unselected_lot_are_not_measured_with_a_hole():
         [(0, 0), (100, 0), (200, 0), (0, 100), (200, 100), (0, 200), (100, 200), (200, 200)],
         start=1)]
     site = derive_multi_lot_site(choice(*ring), None, None)
-    assert site.combination.status == COMBINATION_OFFERED
-    assert site.geometry.status == STATUS_REFUSED
-    assert site.geometry.refusal_reason.startswith(
-        "The selected lots enclose 10,000.00 sq ft of land that is not selected.")
-    assert site.geometry.refusal_reason in site.notes
+    _not_offered_without_geometry(
+        site, "The selected lots enclose 10,000.00 sq ft of land that is not selected.")
+
+
+@pytest.mark.parametrize("picked", [(10, 12), (10, 21)])
+def test_a_selection_that_is_not_offered_has_no_combined_area(picked):
+    lots = [site_lot(n, area=10000.0) for n in (10, 11, 12, 21)]
+    site = derive_multi_lot_site(choice(*lots), [bbl(n) for n in picked], STREETS)
+    assert site.combination.status == COMBINATION_NOT_OFFERED
+    assert site.lot_area_sum.value is None
+    assert site.lot_area_sum.label == LABEL_UNKNOWN
+    assert site.lot_area_sum.reason == ("The lots are not combined, so no combined area is "
+                                        "given. " + site.combination.reason)
 
 
 def test_lines_within_the_tolerance_are_joined_at_their_true_length():
@@ -336,9 +358,41 @@ def test_zoning_lot_is_check_needed_even_when_a_record_names_exactly_the_selecti
     one = derive_multi_lot_site(ROW, [bbl(10)], STREETS, recorded_zoning_lot_documents=[record])
     assert one.zoning_lot.status == ZONING_LOT_CHECK_NEEDED
     assert one.zoning_lot.named_lots_not_selected == (bbl(11),)
-    assert f"They name tax lot {bbl(11)}, which you did not select." in one.zoning_lot.reason
+    assert (f"They are filed on tax lot {bbl(11)}, which you did not select."
+            in one.zoning_lot.reason)
     with pytest.raises(ValueError, match="zoning-lot record needs"):
         derive_multi_lot_site(ROW, None, STREETS, recorded_zoning_lot_documents=[{"text": "x"}])
+
+
+def test_lots_a_record_names_in_its_text_are_listed_but_never_verify():
+    # The record is filed on lot 10 only; its text names lots 10 and 11 as "LOT #".
+    record = {"document_ref": "synthetic filing", "tax_lots": [bbl(10)],
+              "text": "FILED UNDER TAX LOT #10 FOR ONE ZONING LOT OF TAX LOTS (LOT #10 & #11). "
+                      "NB APPLICATION #440608941.",
+              "query_ref": "test-fixture-synthetic", "retrieved_at": "2026-10-01T00:00:00Z"}
+    one = derive_multi_lot_site(ROW, [bbl(10)], STREETS, recorded_zoning_lot_documents=[record])
+    (mention,) = one.zoning_lot.recorded_mentions
+    assert (mention["tax_lots"], mention["lots_named_in_text"]) == ([bbl(10)],
+                                                                    [bbl(10), bbl(11)])
+    assert one.zoning_lot.named_lots_not_selected == (bbl(11),)
+    assert (f"Their text names tax lot {bbl(11)} (as \"LOT #\" on the record's own block), "
+            "which you did not select.") in one.zoning_lot.reason
+    assert (one.zoning_lot.status, one.zoning_lot.verified) == (ZONING_LOT_CHECK_NEEDED, False)
+    both = derive_multi_lot_site(ROW, [bbl(10), bbl(11)], STREETS,
+                                 recorded_zoning_lot_documents=[record])
+    assert both.zoning_lot.named_lots_not_selected == ()
+    assert (both.zoning_lot.status, both.zoning_lot.verified) == (ZONING_LOT_CHECK_NEEDED, False)
+
+
+@pytest.mark.parametrize(("text", "tax_lots", "named"), [
+    ("ZONING LOT OF LOTS 10 AND 11", [bbl(10)], []),             # no "#": not read
+    ("APPLICATION #4406 FOR JOB #12", [bbl(10)], []),            # "#" not after LOT
+    ("LOTS #5, #6 AND #7", [bbl(10)], [bbl(5), bbl(6), bbl(7)]),
+    ("LOT #10000 AND LOT #0", [bbl(10)], []),                    # 5 digits; lot 0
+    ("LOT #5", [bbl(10), bbl(10, block=101)], []),               # block unclear
+])
+def test_lots_named_in_text_reads_only_lot_hash_numbers(text, tax_lots, named):
+    assert lots_named_in_text(text, tax_lots) == named
 
 
 # ------------------------------------------------------------------ selection and the flag

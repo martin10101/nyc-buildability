@@ -2,9 +2,10 @@
 
 Plan §4 "Multi-lot sites": "The combined outline is built from the selected lots' outlines,
 with the lines between them removed." Built only after the touching check
-(``combination.py``) passed. Each lot is snapped onto the outline built so far within
-``SHARED_LINE_TOLERANCE_FT`` (0.01 ft) and joined; nothing else is moved, no gap is closed.
-The result must be one piece without holes, else nothing is measured and the reason says why:
+(``combination.py``) passed, from the conformed outlines it measured (``conform.py``: the
+shared lines already have the same end points in both lots). They are joined in one union
+and the ring is put in GEOS normal form, so the outline does not depend on lot order. The
+result must be one piece without holes, else nothing is measured and the reason says why:
 B-03 measures single-ring outlines only.
 """
 
@@ -15,6 +16,7 @@ from collections.abc import Sequence
 import shapely
 
 from app.spatial.site_geometry import LotOutline
+from app.spatial.site_geometry.parameters import MIN_LOT_AREA_SQ_FT
 
 from .combination import CombinationCheck, lots_text
 from .inputs import SiteLot
@@ -34,6 +36,18 @@ def _overlap_reason(check: CombinationCheck) -> str | None:
             "combined outline is not built. The tax-map conflict needs review.")
 
 
+def _hole_reason(union: shapely.Polygon) -> str:
+    enclosed = sum(shapely.Polygon(ring).area for ring in union.interiors)
+    if enclosed < MIN_LOT_AREA_SQ_FT:
+        return (f"The selected lots' tax-map lines leave a gap of {enclosed:,.2f} sq ft inside "
+                "the combined outline that is wider than the "
+                f"{SHARED_LINE_TOLERANCE_FT:.2f} ft tolerance, so the combined outline is not "
+                "built. The tax-map lines need review.")
+    return (f"The selected lots enclose {enclosed:,.2f} sq ft of land that is not selected. "
+            "A combined outline with a hole is not measured here; select the enclosed lot "
+            "too, or enter the measurements.")
+
+
 def _source(lots: Sequence[SiteLot]) -> str:
     sources = list(dict.fromkeys(lot.outline.source for lot in lots if lot.outline))
     return f"combined {' + '.join(sources)} ({lots_text([lot.bbl for lot in lots])})"
@@ -46,18 +60,12 @@ def build_combined_outline(
     refusal = _overlap_reason(check)
     if refusal:
         return None, None, refusal
-    union = check.prepared[0].polygon
-    for lot in check.prepared[1:]:
-        union = union.union(shapely.snap(lot.polygon, union, SHARED_LINE_TOLERANCE_FT))
+    union = shapely.normalize(shapely.union_all([lot.conformed for lot in check.prepared]))
     if union.geom_type != "Polygon":
         return None, None, ("The selected lots do not form one piece of land, so the combined "
                             "outline is not built.")
     if union.interiors:
-        enclosed = sum(shapely.Polygon(ring).area for ring in union.interiors)
-        return None, None, (
-            f"The selected lots enclose {enclosed:,.2f} sq ft of land that is not selected. "
-            "A combined outline with a hole is not measured here; select the enclosed lot "
-            "too, or enter the measurements.")
+        return None, None, _hole_reason(union)
     shared = check.combination.shared_lines
     removed = sum(line.length_ft for line in shared)
     lots_area = sum(lot.polygon.area for lot in check.prepared)

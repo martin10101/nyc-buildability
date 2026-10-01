@@ -44,3 +44,8 @@ the combined outline. Street widths (B-04): Northern Boulevard wide (100 ft mapp
 Existing buildings stay per lot (B-05 on the B-01 DOB records): both lots read "Unknown — enter".
 Lot 1 sets aside 14,150 and 39,772 sq ft (DOB jobs 421199072 and 421803891). Lot 70 sets aside
 39,934 sq ft (DOB NB 440608941). These figures are never added together.
+
+Gap in lot 1's evidence: the B-01 pack was captured for lot 70. Its DOB BIS job filings for
+BIN 4157401 do sit on lot 1, but no DOB NOW job filings and no certificates of occupancy (DOB NOW
+`pkdm-hqz6` or DOB BIS `bs8b-p36w`) were recorded for BBL 4073340001. Lot 1 reads "Unknown —
+enter" either way.

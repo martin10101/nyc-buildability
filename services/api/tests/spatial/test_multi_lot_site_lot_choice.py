@@ -91,6 +91,18 @@ def test_condo_billing_lot_is_replaced_by_its_base_lots():
         assert (entry.size.value, entry.size.label) == (None, LABEL_UNKNOWN)
 
 
+def test_condo_base_lots_without_an_outline_are_not_offered_with_the_reason():
+    choice = build_lot_choice([BILLING], {}, condo_resolutions={BILLING: resolution()})
+    site = derive_multi_lot_site(choice, None, None)
+    assert site.selected_bbls == BASE
+    assert site.combination.status == COMBINATION_NOT_OFFERED
+    assert site.combination.reason == (
+        "Whether the lots touch cannot be checked without a usable tax-map outline for each "
+        f"lot. lot 32: {NO_OUTLINE_SUPPLIED} lot 33: {NO_OUTLINE_SUPPLIED}")
+    assert (site.outline, site.geometry, site.lot_area_sum.value) == (None, None, None)
+    assert_valid(study_lot_selection(site), "#/properties/lot_selection")
+
+
 def test_condo_base_lots_without_pluto_use_the_tax_map_area():
     lots = {BASE[0]: outline_lot(BASE[0], rect(0, 50)), BASE[1]: outline_lot(BASE[1], rect(50, 75))}
     choice = build_lot_choice([BILLING], lots, condo_resolutions={BILLING: resolution()})

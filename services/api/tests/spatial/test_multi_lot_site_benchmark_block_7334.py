@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from dataclasses import replace
 from datetime import UTC, datetime
 from pathlib import Path
 from random import Random
@@ -36,18 +37,29 @@ from app.profile.existing_floor_area import (
     resolve_existing_zoning_floor_area,
 )
 from app.resilience.transport import TransportResponse
-from app.spatial.frontage_street_width import CLASS_NARROW, CLASS_WIDE, mapped_segments_from_pages
+from app.spatial.frontage_street_width import (
+    CLASS_NARROW,
+    CLASS_WIDE,
+    EXCEPTION_MAY_APPLY,
+    EXCEPTION_NOT_APPLICABLE,
+    EXCEPTION_NOT_CHECKED,
+    LotZoningContext,
+    mapped_segments_from_pages,
+)
+from app.spatial.frontage_street_width.exceptions import PROVISION_ALTERNATE_WIDTH
 from app.spatial.multi_lot_site import (
     COMBINATION_OFFERED,
     COMBINATION_SINGLE_LOT,
     EXISTING_ATTACHED,
     ZONING_LOT_CHECK_NEEDED,
+    SiteLot,
     build_lot_choice,
     derive_multi_lot_site,
     site_lot_from_sources,
     study_lot_selection,
     study_lots,
 )
+from app.spatial.multi_lot_site.street_widths import combined_zoning
 from app.spatial.site_geometry import LABEL_CITY_RECORDS, LABEL_TAX_MAP, street_data_from_pages
 from app.spatial.site_geometry.results import STATUS_COMPLETE
 from tests.profile.site_fact_contract import assert_valid_site_fact
@@ -206,7 +218,7 @@ def test_both_lots_make_one_corner_site_with_the_shared_line_removed(inputs):
 
 
 @pytest.mark.parametrize(("picked", "not_selected"), [
-    ([LOT_70], (LOT_1,)), ([LOT_1], ()), (None, ())])
+    ([LOT_70], (LOT_1,)), ([LOT_1], (LOT_70,)), (None, ())])
 def test_zoning_lot_stays_check_needed_although_a_filing_names_both_lots(
         inputs, picked, not_selected):
     zoning_lot = _site(inputs, picked).zoning_lot
@@ -214,6 +226,9 @@ def test_zoning_lot_stays_check_needed_although_a_filing_names_both_lots(
         ZONING_LOT_CHECK_NEEDED, "Check needed", False)
     assert [m["document_ref"] for m in zoning_lot.recorded_mentions] == [ZONING_LOT_JOB]
     assert "ONE (1) ZONING LOT AND (2) TAX LOTS" in zoning_lot.recorded_mentions[0]["text"]
+    # The job is filed on lot 1 (its BBL fields); its text names "LOT #1 &amp; #70".
+    assert zoning_lot.recorded_mentions[0]["tax_lots"] == [LOT_1]
+    assert zoning_lot.recorded_mentions[0]["lots_named_in_text"] == [LOT_1, LOT_70]
     assert zoning_lot.named_lots_not_selected == not_selected
     assert "The app does not verify the zoning lot" in zoning_lot.reason
 
@@ -238,6 +253,57 @@ def test_existing_buildings_are_attached_per_lot_unchanged_and_not_added(inputs,
     for figure in figures:
         for text in (str(figure), f"{figure:,}"):
             assert text not in combined_text, text
+
+
+def test_lot_order_does_not_change_the_result(inputs, existing):
+    choice, streets, segments = inputs
+    reversed_choice = build_lot_choice([LOT_70, LOT_1], {e.bbl: e.lot for e in choice.entries})
+    forward = derive_multi_lot_site(choice, None, streets, street_segments=segments)
+    backward = derive_multi_lot_site(reversed_choice, None, streets, street_segments=segments)
+    for name in ("combination", "outline", "geometry", "lot_area_sum", "street_widths",
+                 "zoning_lot"):
+        assert getattr(forward, name) == getattr(backward, name), name
+
+
+def _alternate_width_status(site) -> set[str]:
+    return {check.status for frontage in site.street_widths.frontages
+            for check in frontage.exceptions if check.provision == PROVISION_ALTERNATE_WIDTH}
+
+
+@pytest.mark.parametrize("changed", [LOT_1, LOT_70])
+@pytest.mark.parametrize(("districts", "status", "marker"), [
+    (None, EXCEPTION_NOT_APPLICABLE, None),            # as recorded: R6B, C2-2 on both lots
+    (("C6-4",), EXCEPTION_MAY_APPLY, "Needs street width"),
+    ((), EXCEPTION_NOT_CHECKED, "Needs street width"),
+])
+def test_street_width_check_uses_every_selected_lots_districts(
+        inputs, changed, districts, status, marker):
+    # Review #281 N4: either lot's C6-4 (alternate-width clause) or unknown districts reach
+    # the combined site's street-width check; they are never dropped for the other lot's.
+    choice, streets, segments = inputs
+    lots = {entry.bbl: entry.lot for entry in choice.entries}
+    if districts is not None:
+        zoning = replace(lots[changed].zoning, zoning_districts=districts)
+        lots[changed] = replace(lots[changed], zoning=zoning)
+    site = derive_multi_lot_site(build_lot_choice([LOT_1, LOT_70], lots), None, streets,
+                                 street_segments=segments)
+    assert _alternate_width_status(site) == {status}
+    assert site.street_widths.marker == marker
+
+
+def test_combined_zoning_keeps_all_districts_and_a_shared_community_district():
+    def lot(n: int, districts, community):
+        context = LotZoningContext(districts, community, "synthetic PLUTO", {})
+        return SiteLot(f"40733400{n:02d}", None, "none", zoning=context)
+
+    one, two = lot(1, ("R6B", "C2-2"), 11), lot(2, ("C6-4",), 11)
+    merged = combined_zoning([one, two])
+    assert (merged.zoning_districts, merged.community_district) == (("R6B", "C2-2", "C6-4"), 11)
+    assert combined_zoning([one, lot(2, ("R6B",), 7)]).community_district is None
+    unknown = combined_zoning([one, lot(2, (), 11)])
+    assert (unknown.zoning_districts, unknown.source) == ((), "zoning districts unknown for lot 2")
+    assert combined_zoning([one, SiteLot("4073340002", None, "none")]).zoning_districts == ()
+    assert combined_zoning([one]) is one.zoning
 
 
 def test_study_shapes_for_each_selection(inputs):

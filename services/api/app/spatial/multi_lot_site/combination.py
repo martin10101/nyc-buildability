@@ -5,6 +5,10 @@ is not offered, and the reason is shown." Touching is the stated test in ``param
 on the lots' EPSG:2263 tax-map outlines (B-03 ``prepare_outline`` validates each one). A lot
 without a usable outline cannot be checked, so the combination is not offered (fail closed).
 This is a site-geometry check, not a zoning-lot determination.
+
+Order-free: the lots are taken in BBL order and conformed to each other once
+(``conform.py``) before any shared line is measured, so the answer, the shared lines and the
+reason do not depend on the order the lots were listed or selected in.
 """
 
 from __future__ import annotations
@@ -13,11 +17,11 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from itertools import combinations
 
-import shapely
 from shapely.geometry import Polygon
 
 from app.spatial.site_geometry.outline import prepare_outline
 
+from .conform import conform_outlines
 from .inputs import SiteLot, block_of, lot_number
 from .parameters import MIN_SHARED_LINE_FT, OVERLAP_TOLERANCE_SQ_FT, SHARED_LINE_TOLERANCE_FT
 from .results import (
@@ -33,9 +37,13 @@ __all__ = ["CombinationCheck", "Contact", "PreparedLot", "check_combination", "l
 
 @dataclass(frozen=True)
 class PreparedLot:
+    """``polygon`` is the lot's own outline; ``conformed`` is the same outline after
+    ``conform.py`` matched its lines to the other selected lots within the tolerance."""
+
     bbl: str
     polygon: Polygon
     source: str
+    conformed: Polygon
 
 
 @dataclass(frozen=True)
@@ -78,12 +86,11 @@ def lots_text(bbls: Sequence[str]) -> str:
 
 
 def _contact(a: PreparedLot, b: PreparedLot) -> Contact:
-    """Lot b's line is snapped onto lot a's within the tolerance before the common length is
-    taken, so lines that coincide within 0.01 ft count at their true length."""
-    snapped = shapely.snap(b.polygon, a.polygon, SHARED_LINE_TOLERANCE_FT)
-    shared = a.polygon.boundary.intersection(snapped.boundary)
-    return Contact(a.bbl, b.bbl, a.polygon.distance(b.polygon), shared.length,
-                   a.polygon.intersection(b.polygon).area)
+    """Shared line and overlap from the conformed outlines (symmetric: an intersection);
+    the gap from the lots' own outlines, as recorded."""
+    shared = a.conformed.boundary.intersection(b.conformed.boundary).length
+    return Contact(a.bbl, b.bbl, a.polygon.distance(b.polygon), shared,
+                   a.conformed.intersection(b.conformed).area)
 
 
 def _blocks_reason(lots: Sequence[SiteLot]) -> str:
@@ -131,13 +138,17 @@ def _touching_reason(groups: list[list[str]], contacts: Sequence[Contact]) -> st
 
 
 def check_combination(lots: Sequence[SiteLot]) -> CombinationCheck:
-    """The same-block and touching check for the selected lots, with the reason."""
+    """The same-block and touching check for the selected lots, with the reason.
+
+    The result is the same for every order of ``lots``; ``prepared`` and ``contacts`` are in
+    BBL order."""
+    lots = sorted(lots, key=lambda lot: lot.bbl)
     if len(lots) == 1:
         return CombinationCheck(Combination(COMBINATION_SINGLE_LOT, None, True, None))
     if len({block_of(lot.bbl) for lot in lots}) > 1:
         return CombinationCheck(Combination(COMBINATION_NOT_OFFERED, _blocks_reason(lots),
                                             False, None))
-    prepared: list[PreparedLot] = []
+    outlines: list[tuple[SiteLot, Polygon]] = []
     problems: list[str] = []
     for lot in lots:
         polygon, refusal = (None, lot.outline_refusal) if lot.outline is None else (
@@ -145,11 +156,17 @@ def check_combination(lots: Sequence[SiteLot]) -> CombinationCheck:
         if polygon is None:
             problems.append(f"{lots_text([lot.bbl])}: {refusal}")
         else:
-            prepared.append(PreparedLot(lot.bbl, polygon.polygon, lot.outline.source))
+            outlines.append((lot, polygon.polygon))
     if problems:
         reason = ("Whether the lots touch cannot be checked without a usable tax-map outline "
                   "for each lot. " + " ".join(problems))
         return CombinationCheck(Combination(COMBINATION_NOT_OFFERED, reason, True, None))
+    conformed, refusal = conform_outlines([polygon for _, polygon in outlines],
+                                          [lots_text([lot.bbl]) for lot, _ in outlines])
+    if refusal:
+        return CombinationCheck(Combination(COMBINATION_NOT_OFFERED, refusal, True, None))
+    prepared = [PreparedLot(lot.bbl, polygon, lot.outline.source, shape)
+                for (lot, polygon), shape in zip(outlines, conformed, strict=True)]
     contacts = tuple(_contact(a, b) for a, b in combinations(prepared, 2))
     groups = _components(prepared, contacts)
     if len(groups) > 1:

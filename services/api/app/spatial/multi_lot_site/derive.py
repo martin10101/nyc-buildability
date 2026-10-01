@@ -3,7 +3,8 @@
 From the lot choice and the lots the architect selects (all by default):
 
 1. the same-block and touching check, with the reason when the combination is not offered;
-2. the combined outline, with the lot lines the selected lots share removed;
+2. the combined outline, with the lot lines the selected lots share removed (touching lots
+   whose outlines overlap or enclose a hole are not offered either, with that reason);
 3. the B-03 site geometry of that outline: frontage only along the streets on its outside,
    lot type and depth from the combined outline, and its area against the sum of the
    recorded lot areas ("Combined area is the sum of the lot areas, checked against the
@@ -12,7 +13,9 @@ From the lot choice and the lots the architect selects (all by default):
 5. each lot's existing building (B-05), carried per lot, never added up or subtracted;
 6. the zoning-lot status, always "Check needed": the app does not verify the zoning lot.
 
-Selecting one lot gives exactly B-03's single-lot result for that lot. This step computes
+Selecting one lot gives exactly B-03's single-lot result for that lot. The geometry does not
+depend on the order of the lots (computed in BBL order). A selection that is not offered
+gets no geometry and no combined area. This step computes
 geometry only: no floor area, FAR or capacity. Pure and deterministic, no I/O; reached in
 the product only through ``gate.py`` (Lane B flag, off by default).
 """
@@ -145,34 +148,41 @@ def derive_multi_lot_site(
     """
     mode, entries = _bounded(*_select(choice, selected))
     lots = [entry.lot for entry in entries]
-    area_sum = _lot_area_sum(lots)
-    check = check_combination(lots)
+    # Geometry is computed in BBL order, so it does not depend on the order of the lots.
+    ordered = sorted(lots, key=lambda lot: lot.bbl)
+    check = check_combination(ordered)
+    combination = check.combination
     notes: list[str] = []
-    outline = geometry = None
+    outline = geometry = measured = None
     if len(lots) == 1:
         outline, geometry = _single(lots[0], streets)
-    elif check.combination.status == COMBINATION_NOT_OFFERED:
-        notes.append(check.combination.reason)
-    else:
-        outline, measured, refusal = build_combined_outline(check, lots)
+    elif combination.status != COMBINATION_NOT_OFFERED:
+        outline, measured, refusal = build_combined_outline(check, ordered)
         if measured is None:
-            notes.append(refusal)
-            geometry = refused_site_geometry(refusal, streets=streets)
-        else:
-            notes.append(outline.statement)
-            geometry = _combined_geometry(measured, streets, lots, area_sum)
+            # Touching lots whose outlines cannot be joined into one measurable site (an
+            # overlap or a hole): the combination is not offered, with that reason.
+            combination = replace(combination, status=COMBINATION_NOT_OFFERED, reason=refusal)
+    if combination.status == COMBINATION_NOT_OFFERED:
+        notes.append(combination.reason)
+        area_sum = unknown_value("sq ft", "The lots are not combined, so no combined area is "
+                                          "given. " + combination.reason)
+    else:
+        area_sum = _lot_area_sum(ordered)
+    if measured is not None:
+        notes.append(outline.statement)
+        geometry = _combined_geometry(measured, streets, ordered, area_sum)
         if area_sum.known:
             notes.append(f"Combined area from the city records: {area_sum.basis}.")
     widths = None
     if geometry is not None and street_segments is not None:
-        widths = combined_street_widths(geometry, lots, street_segments)
+        widths = combined_street_widths(geometry, ordered, street_segments)
     notes.append(PER_LOT_NOTE)
     return MultiLotSite(
         selection_mode=mode,
         selected_bbls=tuple(lot.bbl for lot in lots),
         statement=SELECTION_STATEMENT,
         lots=tuple(entries),
-        combination=check.combination,
+        combination=combination,
         outline=outline,
         geometry=geometry,
         lot_area_sum=area_sum,

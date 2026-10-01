@@ -148,8 +148,9 @@ class ZoningLotStatus:
     """The zoning-lot status of the selection: always "Check needed" here.
 
     ``recorded_mentions`` are records that mention a zoning lot (flag only, plan P-2), each
-    ``{document_ref, tax_lots, text, query_ref, retrieved_at}``. ``named_lots_not_selected``
-    are tax lots those records name that the architect did not select.
+    ``{document_ref, tax_lots, text, query_ref, retrieved_at, lots_named_in_text}``.
+    ``named_lots_not_selected`` are tax lots those records point to that the architect did
+    not select: the lots they are filed on, and the "LOT #n" lots their text names.
     """
 
     status: str
