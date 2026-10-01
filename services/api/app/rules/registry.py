@@ -8,11 +8,22 @@ visible ``unsupported`` status (PRD section 12; RE-S7), never silence.
 The registry is family-agnostic: adding a structurally different rule family is
 purely a matter of dropping a new ``*.rule.json`` in the rulesets directory - no
 registry or evaluator code changes (RE-S5).
+
+Lane gating (D-090, lane A item A-02a): a rule file may declare ``"lane_flag": "<X>"``. Such a
+rule is still VALIDATED at every load (so it can never rot unseen), but it is INDEXED - visible
+to ``rule``/``evaluate``/``families``/``family_coverage``/conflict detection and so to every
+consumer - only when lane X's flag (``LANE_<X>_ENABLED``, read through
+:func:`app.config.lane_enabled`) holds an explicit true token in the registry's environment.
+Absent/empty/unknown = off, so a registry built with the flag off is exactly the registry that
+existed before the gated rules were added. The flag is read once, at ``load()``.
 """
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import Path
+
+from app.config import lane_enabled
 
 from . import coverage as cov
 from . import evaluator, lifecycle
@@ -114,27 +125,48 @@ def detect_rule_conflicts(
 
 
 class RuleRegistry:
-    def __init__(self, ruleset_dir: Path | None = None, snapshots: SnapshotStore | None = None):
+    def __init__(
+        self,
+        ruleset_dir: Path | None = None,
+        snapshots: SnapshotStore | None = None,
+        *,
+        env: Mapping[str, str] | None = None,
+    ):
         self.ruleset_dir = Path(ruleset_dir) if ruleset_dir else _RULESET_DIR
         self.snapshots = snapshots or SnapshotStore()
+        # Environment the lane flags are read from at load(); None = os.environ.
+        self._env = env
         self._by_id: dict[str, RuleDefinition] = {}
         self._by_family: dict[str, list[RuleDefinition]] = {}
+        # Validated rules held back because their lane flag is off: rule_id -> lane.
+        self._gated_off: dict[str, str] = {}
         self._loaded = False
 
     def load(self) -> RuleRegistry:
         self._by_id.clear()
         self._by_family.clear()
+        self._gated_off.clear()
         self.snapshots.load()
         if not self.ruleset_dir.is_dir():
             raise FileNotFoundError(f"ruleset directory not found: {self.ruleset_dir}")
         for path in sorted(self.ruleset_dir.glob("*.rule.json")):
             rule = load_rule_file(path, self.snapshots)
-            if rule.rule_id in self._by_id:
+            if rule.rule_id in self._by_id or rule.rule_id in self._gated_off:
                 raise ValueError(f"duplicate rule_id {rule.rule_id!r}")
+            lane = rule.raw.get("lane_flag")
+            if lane is not None and not lane_enabled(lane, self._env):
+                self._gated_off[rule.rule_id] = lane
+                continue
             self._by_id[rule.rule_id] = rule
             self._by_family.setdefault(rule.family, []).append(rule)
         self._loaded = True
         return self
+
+    def gated_off_rule_ids(self) -> dict[str, str]:
+        """Rules that validated at load but are NOT indexed because their lane flag is off
+        (rule_id -> lane). Introspection only; nothing here is evaluable."""
+        self._ensure()
+        return dict(sorted(self._gated_off.items()))
 
     def _ensure(self) -> None:
         if not self._loaded:

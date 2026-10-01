@@ -87,8 +87,11 @@ _FAMILY_RULE_IDS = [
 
 @pytest.fixture
 def registry() -> RuleRegistry:
-    """The REAL registry (packaged snapshots + committed rulesets)."""
-    return RuleRegistry().load()
+    """The REAL registry (packaged snapshots + committed rulesets), with every lane flag OFF
+    (``env={}``) so the family is exactly the accepted R5 set whatever the process environment
+    holds. Lane-gated additions to this family (A-02a ``r6b-height``, ``lane_flag: "A"``) are
+    proven in their own module (test_r6b_far_heights.py)."""
+    return RuleRegistry(env={}).load()
 
 
 # --------------------------------------------------------------------------

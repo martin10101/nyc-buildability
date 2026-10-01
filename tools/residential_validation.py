@@ -19,6 +19,18 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = Path('tests/fixtures/residential_validation')
 FIELDS = {'built_far': 'builtfar', 'reference_far': 'residfar'}
 
+# A rule in TABLE_FAMILY owns ZR 23-21/23-22 districts (both columns, every row). A rule in
+# ALTERNATIVE_FAMILY (A-02a) owns no district: it COMPUTES the ZR 23-22 qualifying affordable /
+# senior housing column for districts a table owner already carries, as a separately labeled
+# alternative. Any other family is refused, never inferred.
+TABLE_FAMILY = 'residential_far'
+ALTERNATIVE_FAMILY = 'residential_far_qualifying_housing'
+ALTERNATIVE_OUTPUTS = {'qualifying_max_residential_far': 'max_residential_far',
+                       'qualifying_max_residential_floor_area_sq_ft':
+                       'max_residential_floor_area_sq_ft'}
+STANDARD_EXCLUSION = {'not': {'op': 'equals', 'input': 'housing_program',
+                              'value': 'standard_residence'}}
+
 
 def number(value):
     """Strict finite decimal, retaining missing separately from explicit zero."""
@@ -258,6 +270,99 @@ def audit_rule_limitations(rule, source):
     return results
 
 
+def alternative_scope(rule):
+    """The districts a qualifying alternative computes, or None when its applicability is not
+    exactly: one zoning_district in_set AND the standard_residence exclusion (it must never
+    apply to a zoning lot declared to hold standard residences only)."""
+    node = rule.get('applicability')
+    if not isinstance(node, dict) or set(node) != {'all'} or not isinstance(node['all'], list):
+        return None
+    scope = [leaf for leaf in node['all'] if isinstance(leaf, dict)
+             and leaf.get('op') == 'in_set' and leaf.get('input') == 'zoning_district']
+    rest = [leaf for leaf in node['all'] if leaf not in scope]
+    if len(scope) != 1 or rest != [STANDARD_EXCLUSION]:
+        return None
+    return list(scope[0].get('values', []))
+
+
+def audit_qualifying_alternative(rule, source, owners):
+    """Audit an ALTERNATIVE_FAMILY rule against the source rows and the table owners: every
+    district it computes must be a flat (single base row) ZR 23-22 district carried by exactly
+    one table owner; its value must equal the source's qualifying column AND the value that
+    owner surfaces; units, provenance and the conditional labels are bound to the source."""
+    rid, results = rule['rule_id'], []
+    districts = alternative_scope(rule)
+    results.append(check('alternative_scope', rid, 'fail' if districts is None else 'pass',
+                         'one zoning_district in_set + standard_residence exclusion',
+                         rule.get('applicability')))
+    if not districts:
+        return results
+    results.append(check('alternative_status', rid,
+                         'pass' if rule.get('status') == 'needs_review' else 'fail',
+                         'needs_review', [rule.get('status'), rule.get('lane_flag')]))
+    units = {'lot_area_sq_ft': source['units']['lot_area_sq_ft'],
+             **{name: source['units'][base] for name, base in ALTERNATIVE_OUTPUTS.items()}}
+    for name, unit in units.items():
+        declarations = rule['inputs'] if name == 'lot_area_sq_ft' else rule['outputs']
+        actual = [d.get('unit') for d in declarations if d.get('name') == name]
+        results.append(check('rule_unit', rid + ':' + name,
+                             'pass' if actual == [unit] else 'fail', [unit], actual))
+    outputs = sorted(rule.get('computation', {}).get('outputs', {}))
+    results.append(check('alternative_structure', rid + ':outputs',
+                         'pass' if outputs == sorted(ALTERNATIVE_OUTPUTS) else 'fail',
+                         sorted(ALTERNATIVE_OUTPUTS), outputs))
+    rows = {d: [r for r in source['rows'] if r['district'] == d] for d in districts}
+    sections = {r['source_section'] for d in districts for r in rows[d]}
+    for param in rule['parameters']:
+        ref = param.get('citation_ref')
+        cited = [c.get('section') for c in rule['citations'] if c.get('snapshot_id') == ref]
+        valid = sections == {'23-22'} and ref == 'zr-23-22' and cited == ['23-22']
+        results.append(check('parameter_provenance', rid + ':' + param['name'],
+                             'pass' if valid else 'fail', ['zr-23-22'], ref))
+    params = {p['name']: p['value'] for p in rule['parameters']}
+    table = params.get('qualifying_far_by_district')
+    table = table if isinstance(table, dict) else {}
+    results.append(check('alternative_structure', rid + ':qualifying_far_by_district',
+                         'pass' if set(table) == set(districts) else 'fail',
+                         sorted(districts), sorted(table)))
+    labels = {e['id']: e for e in rule.get('exceptions', [])}
+    eligibility = labels.get('qualifying_housing_eligibility', {})
+    results.append(check('alternative_label', rid + ':qualifying_housing_eligibility',
+                         'pass' if eligibility.get('effect') == 'conditional_alternative'
+                         and eligibility.get('condition') is None else 'fail',
+                         'unconditional conditional_alternative', eligibility.get('effect')))
+    no_wide = labels.get('no_wide_street_increase', {})
+    for district in districts:
+        flat = len(rows[district]) == 1 and rows[district][0]['condition'] == 'base'
+        results.append(check('alternative_structure', f'{rid}:{district}:flat_source_row',
+                             'pass' if flat else 'fail', 'one base row, no footnote condition',
+                             [r['condition'] for r in rows[district]]))
+        if not flat:
+            continue
+        row = rows[district][0]
+        wide_ok = (not row['notes'] and no_wide.get('effect') == 'documented_limitation'
+                   and 'no wide-street increase' in normalized(no_wide.get('description', ''))
+                   .lower())
+        results.append(check('alternative_label', f'{rid}:{district}:no_wide_street_increase',
+                             'pass' if wide_ok else 'fail', 'source row without footnote',
+                             row['notes']))
+        result = compare_number('alternative_value', f'{district}:qualifying_far',
+                                row['qualifying_far'], table.get(district))
+        if result['status'] == 'gap':
+            result['status'] = 'fail'  # Required alternative entry is missing.
+        results.append(result)
+        matches = owners.get(district, [])
+        surfaced = (matches[0][1].get('qualifying_far_by_district', {}).get(district)
+                    if len(matches) == 1 else None)
+        result = compare_number('alternative_consistency',
+                                f'{district}:owner_surfaced_vs_alternative_computed',
+                                surfaced, table.get(district))
+        if result['status'] == 'gap':
+            result['status'] = 'fail'  # The district needs exactly one table owner.
+        results.append(result)
+    return results
+
+
 def audit_tables(matrix, rules, root=ROOT):
     """Compare both columns, all rows, district ownership and source sections."""
     results, texts = load_source_captures(root, matrix)
@@ -266,8 +371,17 @@ def audit_tables(matrix, rules, root=ROOT):
     except (KeyError, ValueError, IndexError) as exc:
         return results + [check('source_derivation', 'operative_text', 'fail', reason=str(exc))]
     results.extend(audit_reference_metadata(matrix, source))
-    owners, expected_keys = {}, set()
+    owners, expected_keys, alternatives = {}, set(), []
     for rule in rules:
+        family = rule.get('family')
+        if family == ALTERNATIVE_FAMILY:
+            alternatives.append(rule)
+            continue
+        if family != TABLE_FAMILY:
+            results.append(check('rule_family', str(rule.get('rule_id')), 'fail',
+                                 [TABLE_FAMILY, ALTERNATIVE_FAMILY], family,
+                                 'Unrecognized FAR family; no inferred comparison.'))
+            continue
         results.extend(audit_rule_contract(rule, source))
         results.extend(audit_rule_limitations(rule, source))
         params = {p['name']: p['value'] for p in rule['parameters']}
@@ -318,6 +432,8 @@ def audit_tables(matrix, rules, root=ROOT):
     for district in sorted(extra):
         results.append(check('reference_structure', district, 'fail',
                              reason='Rule has a district absent from source expectations.'))
+    for rule in alternatives:
+        results.extend(audit_qualifying_alternative(rule, source, owners))
     return results
 
 
@@ -406,8 +522,10 @@ def audit_engine(matrix, rules, root):
     from app.rules.integration import evaluate_property
 
     registry = RuleRegistry().load()  # Default packaged snapshots; no bypass.
+    alternatives = [r for r in rules if r.get('family') == ALTERNATIVE_FAMILY]
+    rules = [r for r in rules if r.get('family') == TABLE_FAMILY]
     owners = {d: r['rule_id'] for r in rules for d in r['applicability']['values']}
-    results = []
+    results = audit_engine_alternatives(matrix, alternatives, RuleRegistry)
     for row in matrix['rows']:
         if row['condition'] != 'base':
             results.append(check('engine_conditional_coverage', row['district'], 'gap',
@@ -463,6 +581,55 @@ def audit_engine(matrix, rules, root):
     for family in ['height', 'yards', 'lot_coverage']:
         results.append(check('bulk_coverage', family, 'gap',
                              reason='Not established by this residential FAR audit.'))
+    return results
+
+
+def audit_engine_alternatives(matrix, alternatives, registry_class):
+    """Engine layer for ALTERNATIVE_FAMILY rules. A lane-gated rule (``lane_flag``) must be
+    invisible with every lane flag off; its values are then checked with its own lane on, so
+    the audit covers the value the rule emits once released, without guessing eligibility."""
+    results = []
+    off = registry_class(env={}).load()
+    for rule in alternatives:
+        rid, lane = rule['rule_id'], rule.get('lane_flag')
+        hidden = rid not in off.rule_ids()
+        results.append(check('engine_lane_gate', rid,
+                             'pass' if hidden == bool(lane) else 'fail',
+                             'hidden with lanes off' if lane else 'always indexed',
+                             'hidden' if hidden else 'indexed'))
+        registry = registry_class(env={f'LANE_{lane}_ENABLED': '1'} if lane else {}).load()
+        districts = alternative_scope(rule) or []
+        for row in matrix['rows']:
+            if row['district'] not in districts or row['condition'] != 'base':
+                continue
+            district, inputs = row['district'], {'zoning_district': row['district'],
+                                                 'lot_area_sq_ft': 2500}
+            trace = registry.evaluate(rid, inputs, as_of_date='2026-09-15').export()
+            for name, expected in [('qualifying_max_residential_far', row['qualifying_far']),
+                                   ('qualifying_max_residential_floor_area_sq_ft',
+                                    str(number(row['qualifying_far']) * 2500))]:
+                results.append(compare_number('draft_engine_alternative_value',
+                                              f'{district}:{name}', expected,
+                                              trace['outputs'].get(name)))
+            labels = {e['id']: e['effect'] for e in trace['exceptions_applied']}
+            results.append(check('draft_engine_alternative_status', district,
+                                 'pass' if trace['rule_status'] == 'needs_review'
+                                 and trace['coverage_status'] == 'conditional'
+                                 and labels.get('qualifying_housing_eligibility')
+                                 == 'conditional_alternative' else 'fail',
+                                 'needs_review; conditional alternative',
+                                 [trace['rule_status'], trace['coverage_status'], labels]))
+            standard = registry.evaluate(rid, {**inputs, 'housing_program':
+                                               'standard_residence'}).export()
+            results.append(check('engine_refusal', f'{district}:standard_residence',
+                                 'pass' if not standard['outputs'] else 'fail', {},
+                                 standard['outputs'], 'No alternative for standard residences.'))
+        for district in ['R10H', 'M1-2/R6A'] + [d for d in ('R6', 'R6A') if d not in districts]:
+            trace = registry.evaluate(rid, {'zoning_district': district,
+                                            'lot_area_sq_ft': 2400}).export()
+            results.append(check('engine_refusal', f'{rid}:{district}',
+                                 'pass' if not trace['outputs'] else 'fail', {},
+                                 trace['outputs'], 'Refusal is not numerical coverage.'))
     return results
 
 

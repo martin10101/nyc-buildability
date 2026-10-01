@@ -241,5 +241,79 @@ class AuditDriftReworkTests(unittest.TestCase):
         self.assertTrue(failures(audit_tables(MATRIX, changed)))
 
 
+class QualifyingAlternativeTests(unittest.TestCase):
+    """A-02a: the lane-gated rule that COMPUTES the R6B ZR 23-22 qualifying FAR (own family
+    residential_far_qualifying_housing) is audited, not skipped, and owns no district."""
+
+    ALT = 'r6b-qualifying-housing-far'
+
+    def alternative(self, rules):
+        return next(r for r in rules if r['rule_id'] == self.ALT)
+
+    def test_alternative_is_audited_against_source_and_owner(self):
+        checks = audit_tables(MATRIX, RULES)
+        self.assertEqual([], failures(checks))
+        mine = [c for c in checks if c['layer'].startswith('alternative_')]
+        self.assertTrue(mine)
+        by_case = {(c['layer'], c['case']): c for c in mine}
+        value = by_case[('alternative_value', 'R6B:qualifying_far')]
+        self.assertEqual(('pass', '2.40'), (value['status'], value['expected']))
+        self.assertEqual('pass', by_case[('alternative_consistency',
+                                          'R6B:owner_surfaced_vs_alternative_computed')]['status'])
+        # The alternative is not a second owner of R6B: the table layer is unchanged.
+        self.assertEqual(98, len([c for c in checks if c['layer'] == 'reference_value']))
+
+    def test_wrong_alternative_value_is_detected(self):
+        changed = copy.deepcopy(RULES)
+        param = self.alternative(changed)['parameters'][0]
+        param['value']['R6B'] = 2.5
+        self.assertTrue(any(c['case'] == 'R6B:qualifying_far'
+                            for c in failures(audit_tables(MATRIX, changed))))
+
+    def test_owner_and_alternative_cannot_drift_apart(self):
+        changed = copy.deepcopy(RULES)
+        owner = next(r for r in changed if r['rule_id'] == 'r6-r12-residential-far')
+        next(p for p in owner['parameters']
+             if p['name'] == 'qualifying_far_by_district')['value']['R6B'] = 2.5
+        cases = {c['case'] for c in failures(audit_tables(MATRIX, changed))}
+        self.assertIn('R6B:owner_surfaced_vs_alternative_computed', cases)
+
+    def test_alternative_structure_mutations_fail(self):
+        def scope_adds_conditional_district(rule):
+            rule['applicability']['all'][0]['values'].append('R6')
+            rule['parameters'][0]['value']['R6'] = 3.9
+
+        def scope_drops_standard_exclusion(rule):
+            rule['applicability']['all'].pop()
+
+        def eligibility_not_conditional(rule):
+            next(e for e in rule['exceptions']
+                 if e['id'] == 'qualifying_housing_eligibility')['effect'] = 'documented_limitation'
+
+        def no_wide_street_label_removed(rule):
+            rule['exceptions'] = [e for e in rule['exceptions']
+                                  if e['id'] != 'no_wide_street_increase']
+
+        def wrong_unit(rule):
+            rule['outputs'][1]['unit'] = 'far'
+
+        def wrong_citation(rule):
+            rule['parameters'][0]['citation_ref'] = 'zr-23-21'
+
+        def extra_district_in_table(rule):
+            rule['parameters'][0]['value']['R6A'] = 3.9
+
+        def unknown_family(rule):
+            rule['family'] = 'residential_far_bonus'
+
+        for mutate in [scope_adds_conditional_district, scope_drops_standard_exclusion,
+                       eligibility_not_conditional, no_wide_street_label_removed, wrong_unit,
+                       wrong_citation, extra_district_in_table, unknown_family]:
+            with self.subTest(mutation=mutate.__name__):
+                changed = copy.deepcopy(RULES)
+                mutate(self.alternative(changed))
+                self.assertTrue(failures(audit_tables(MATRIX, changed)))
+
+
 if __name__ == '__main__':
     unittest.main()
