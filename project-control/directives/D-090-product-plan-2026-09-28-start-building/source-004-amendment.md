@@ -1,8 +1,8 @@
 # D-090 source 004 — owner amendment, interactive chat (cloud session 66c84a5e), 2026-10-01 (verbatim)
 
-Captured 2026-10-01 by the orchestrator (Claude Code session 180ee26c-de8c-495c-827d-d88e6b584bec, model claude-opus-5-5) from the saved session transcript(s) `~/.claude/projects/-root-project/66c84a5e-6fbe-42af-be42-7468ee037c76.jsonl`. A script copied each message's text; nothing was retyped. Each message is complete and unchanged except for the leading "> " on every line. Times are the transcript's UTC timestamps. `<pasted_content>` tags are the chat tool's wrapper around text the owner pasted; pasted text was written by someone other than the owner (an earlier Claude session or another assistant) and is recorded exactly as the owner sent it.
+Captured 2026-10-01 by the orchestrator (Claude Code session 180ee26c-de8c-495c-827d-d88e6b584bec, model claude-opus-5-5) from the saved session transcript(s) `~/.claude/projects/-root-project/66c84a5e-6fbe-42af-be42-7468ee037c76.jsonl`. A script copied each input's raw text, including `queued_command` attachments the owner typed mid-turn, slash commands and `!` shell commands; nothing was retyped. Each input is complete and byte-identical to the transcript except for the blockquote prefix ("> " on every line, ">" alone on an empty line). Times are the transcript's UTC timestamps. `<pasted_content>` tags are the chat tool's wrapper around text the owner pasted. Text inside them was written by someone other than the owner (an earlier Claude session or another assistant) unless the header says otherwise. Inputs keep the message numbers used in review; inputs added in the correction carry sub-numbers (e.g. 3.1) so the earlier numbers stay stable.
 
-## Owner message 13 — 2026-10-01T02:54:08Z, session 66c84a5e (owner-pasted text) {#owner-message-13-verbatim}
+## Owner message 13 — 2026-10-01T02:54:08.663Z, session 66c84a5e — pasted text {#owner-message-13-verbatim}
 
 > Worked for 3m 33s
 >
@@ -158,7 +158,7 @@ Captured 2026-10-01 by the orchestrator (Claude Code session 180ee26c-de8c-495c-
 >
 > For “about 100 × 100,” the unresolved facts are the exact surveyed dimensions, street angle and adjoining lot-line classifications. Those determine whether any portion actually enters §23-344(c).
 
-## Owner message 14 — 2026-10-01T04:13:52Z, session 66c84a5e (owner-pasted text) {#owner-message-14-verbatim}
+## Owner message 14 — 2026-10-01T04:13:52.313Z, session 66c84a5e — pasted text {#owner-message-14-verbatim}
 
 > Worked for 1m 19s
 >
@@ -190,7 +190,7 @@ Captured 2026-10-01 by the orchestrator (Claude Code session 180ee26c-de8c-495c-
 >
 > My recommendation: merging the reusable R6B rules is reasonable based on the reported checks, provided the screen and exported report identify the parcel calculation as illustrative and leave whole-site capacity and unresolved geometry-dependent results unconfirmed. A generic “Draft — not reviewed” label does not communicate that specific limitation.
 
-## Owner message 15 — 2026-10-01T04:57:58Z, session 66c84a5e (owner-pasted text) {#owner-message-15-verbatim}
+## Owner message 15 — 2026-10-01T04:57:58.081Z, session 66c84a5e — pasted text {#owner-message-15-verbatim}
 
 > Worked for 22s
 >
@@ -211,23 +211,27 @@ Captured 2026-10-01 by the orchestrator (Claude Code session 180ee26c-de8c-495c-
 >
 > I’m assessing the plan you pasted; I haven’t independently inspected the switch or implementation.
 
-## Owner message 16 — 2026-10-01T17:05:29Z, session 66c84a5e {#owner-message-16-verbatim}
+## Owner message 16 — 2026-10-01T17:05:29.510Z, session 66c84a5e {#owner-message-16-verbatim}
 
 > U still didn't explain 2 thinks number 1 how many loops can u run now on new server in one time 2 if I want to able to use 5 or 6 loops at a time what does the cpu or etc need to upgrade how much
 
-## Owner message 17 — 2026-10-01T18:23:16Z, session 66c84a5e (/session-handoff arguments) {#owner-message-17-verbatim}
+## Owner message 17 — 2026-10-01T18:23:16.526Z, session 66c84a5e — /session-handoff with owner-typed arguments {#owner-message-17-verbatim}
 
 > <command-message>session-handoff</command-message>
 > <command-name>/session-handoff</command-name>
 > <command-args>ok I will get more so 5 loops can run meantime our chat got big gonna restart i wanna run now 2 loops</command-args>
 
-## Owner message 18 — 2026-10-01T18:58:40Z, session 66c84a5e {#owner-message-18-verbatim}
+## Owner message 18 — 2026-10-01T18:58:40.535Z, session 66c84a5e {#owner-message-18-verbatim}
 
 > I'm really not understanding this. Because when I make slash handoff, I'm sorry, I mean slash season session handoff, it's supposed to create the handoff MD and update the MD file with the latest um, information including what we learned throughout the the process um, you know the lessons we learned needs to go in in the right MD files obviously there is uh, files that are long-term lessons short-term lessons and then the regular MD session handoff that basically tells all the information about uh, where things stand at the moment so I don't know what's going on over here I imported again I know this is a new server that I spun up that um, and it, uh, session
 
 ## Context (orchestrator notes; the owner text above is the authority)
 
-- Messages 13–15 begin with "Worked for …" and are another assistant's replies that the owner pasted and sent. The session treated messages 14–15 as the owner's R6B decision. #262 merged at 01fa20c7, #269 at 2c6fe7db and step 2 (#278) at 5aa9e735; the owner's words are also posted on #262 and #269.
-- Message 15's conditions: LANE_A_ENABLED stays off (merging is not activation); "Tax-lot-only estimate" on 20,150; "Not confirmed" for whole-site capacity, remaining development capacity, and combined-zoning-lot coverage and rear yard; once the shared zoning lot is verified, the warning names lots 1 and 70 and says the calculation uses lot 70 only.
-- Message 17 ("i wanna run now 2 loops") set at most 2 robots at once until the owner resizes the droplet.
-- Message 18 says what /session-handoff must do: write the handoff file AND file the lessons into the right long-term and short-term documents.
+- **Not captured (housekeeping only):** `/context` at 2026-10-01T17:41Z.
+- **Messages 13–15** begin with "Worked for …". They are another assistant's replies that the owner pasted and sent:
+  - Message 13 is that model's detailed answer to the R6B questions file (R029), checking §§23-362/23-363/23-344/23-52. It is not saved elsewhere in the repo; this capture is its record.
+  - Message 14 is its review of the session's R6B merge plan. The session treated messages 14–15 as the owner's R6B decision (R030–R035, R046, R047). #262 merged at `01fa20c7`, #269 at `2c6fe7db`, and #278 (step 2) at `5aa9e735`. The owner's words are also posted on #262 and #269.
+  - Message 15's "all three" refers to the session's three-step plan (66c84a5e, before 04:57Z): (1) merge both R6B pieces, #262 and #269; (2) the always-visible tax-lot-only warning and labels (#278); (3) the switch stays off until step 2 is in and checked.
+- **Message 16** asked two return questions (R045).
+- **Message 17**'s arguments ("i wanna run now 2 loops") set at most 2 robots at once until the owner resizes the droplet (R036).
+- **Message 18** says what /session-handoff must do: write the handoff file AND file the lessons into the right long-term and short-term documents (R037).

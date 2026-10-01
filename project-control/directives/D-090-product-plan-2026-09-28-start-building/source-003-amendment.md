@@ -1,13 +1,29 @@
 # D-090 source 003 — owner amendment, interactive chat (cloud sessions 3a4f8c54 and 66c84a5e), 2026-09-30 evening (verbatim)
 
-Captured 2026-10-01 by the orchestrator (Claude Code session 180ee26c-de8c-495c-827d-d88e6b584bec, model claude-opus-5-5) from the saved session transcript(s) `~/.claude/projects/-root-project/3a4f8c54-1f5a-4765-991c-9cd23be06322.jsonl`, `~/.claude/projects/-root-project/66c84a5e-6fbe-42af-be42-7468ee037c76.jsonl`. A script copied each message's text; nothing was retyped. Each message is complete and unchanged except for the leading "> " on every line. Times are the transcript's UTC timestamps. `<pasted_content>` tags are the chat tool's wrapper around text the owner pasted; pasted text was written by someone other than the owner (an earlier Claude session or another assistant) and is recorded exactly as the owner sent it.
+Captured 2026-10-01 by the orchestrator (Claude Code session 180ee26c-de8c-495c-827d-d88e6b584bec, model claude-opus-5-5) from the saved session transcript(s) `~/.claude/projects/-root-project/3a4f8c54-1f5a-4765-991c-9cd23be06322.jsonl`, `~/.claude/projects/-root-project/66c84a5e-6fbe-42af-be42-7468ee037c76.jsonl`. A script copied each input's raw text, including `queued_command` attachments the owner typed mid-turn, slash commands and `!` shell commands; nothing was retyped. Each input is complete and byte-identical to the transcript except for the blockquote prefix ("> " on every line, ">" alone on an empty line). Times are the transcript's UTC timestamps. `<pasted_content>` tags are the chat tool's wrapper around text the owner pasted. Text inside them was written by someone other than the owner (an earlier Claude session or another assistant) unless the header says otherwise. Inputs keep the message numbers used in review; inputs added in the correction carry sub-numbers (e.g. 3.1) so the earlier numbers stay stable.
 
-## Owner message 4 — 2026-09-30T19:17:49Z, session 3a4f8c54 {#owner-message-4-verbatim}
+## Owner input 3.1 — 2026-09-30T19:15:36.303Z, session 3a4f8c54 — slash command {#owner-input-3-1-verbatim}
+
+> <command-message>session-handoff</command-message>
+> <command-name>/session-handoff</command-name>
+
+## Owner input 3.2 — 2026-09-30T19:16:30.021Z, session 3a4f8c54 — slash command {#owner-input-3-2-verbatim}
+
+> <command-message>statusline</command-message>
+> <command-name>/statusline</command-name>
+
+## Owner message 4 — 2026-09-30T19:17:49.950Z, session 3a4f8c54 — accepted CLI suggestion (`promptSource: suggestion_accepted`) {#owner-message-4-verbatim}
 
 > 1, refresh PR 270
 
-## Owner message 5 — 2026-09-30T19:21:40Z, session 66c84a5e (owner-pasted text) {#owner-message-5-verbatim}
+## Owner message 4.1 — 2026-09-30T19:18:22.986Z, session 3a4f8c54 — typed mid-turn (`queued_command`, origin human) {#owner-message-4-1-verbatim}
 
+> i want to see the token use at all time this is a new feter in cc how do i make it perment here
+
+## Owner message 5 — 2026-09-30T19:21:40.385Z, session 66c84a5e — pasted text plus one owner line; see context {#owner-message-5-verbatim}
+
+>
+>
 > <pasted_content id="f280">
 > 1. Handoff file: /root/project/w-handoff/docs/SESSION_HANDOFF.md, on branch task/session-handoff-2026-09-30-cloud. It is PR #270, not merged.
 > 2. Saved: commit 24d4722d, pushed. The repo's handoff size check passes. The integration branch is still at e51a2cd1, matching the handoff. The only work that isn't pushed is the flaky-test fix: branch lane-d/D-flake-a11y-focus @ 58634327 in /root/project/nyc-lane-d7. Its push was refused, so it disappears when this sandbox ends unless you push it.
@@ -110,36 +126,54 @@ Captured 2026-10-01 by the orchestrator (Claude Code session 180ee26c-de8c-495c-
 >
 > Want me to write that message for you, in simple words, ready to paste?
 > </pasted_content id="f280">
+>
 
-## Owner message 6 — 2026-09-30T19:26:41Z, session 66c84a5e {#owner-message-6-verbatim}
+## Owner message 6 — 2026-09-30T19:26:41.072Z, session 66c84a5e {#owner-message-6-verbatim}
 
 > 1 b
 > Save the fix
-> Robot money i dont understand
+> Robot money i dont understand 
+>
+>
 
-## Owner message 7 — 2026-09-30T19:35:41Z, session 66c84a5e {#owner-message-7-verbatim}
+## Owner input 6.1 — 2026-09-30T19:34:57.689Z, session 66c84a5e — `!` shell command typed by the owner {#owner-input-6-1-verbatim}
+
+> <bash-input> python3 /tmp/claude-0/-root-project/66c84a5e-6fbe-42af-be42-7468ee037c76/scratchpad/apply_merge_rule.py</bash-input>
+
+## Owner input 6.2 — 2026-09-30T19:34:57.962Z, session 66c84a5e — output of input 6.1 (system output, not owner text) {#owner-input-6-2-verbatim}
+
+> <bash-stdout>Backup saved: /root/.claude/settings.json.bak-20260930-193457
+> Done. The safety guard now knows your rule. It applies to robots started from now on.</bash-stdout><bash-stderr></bash-stderr>
+
+## Owner message 7 — 2026-09-30T19:35:41.825Z, session 66c84a5e {#owner-message-7-verbatim}
 
 > Alao,Just FYI I think our cc is latest vs vs what codex loop have just pointing it out can we now start up the codex loop and run 5 6 loops in parallel so we got a lot done
 
-## Owner message 8 — 2026-09-30T19:43:55Z, session 66c84a5e {#owner-message-8-verbatim}
+## Owner message 8 — 2026-09-30T19:43:55.415Z, session 66c84a5e — opens by quoting the session's question; the owner's words start at "yes  Road 1" {#owner-message-8-verbatim}
 
 > 2. Should I swap in the fixed download first? I'd say yes, because nothing can be added until it's done. yes  Road 1,also update the loop to the new cc and i will check if i can upgrate this server pc for more cpu how much more do i need to fully run 5  loops
 
-## Owner message 9 — 2026-09-30T20:36:02Z, session 66c84a5e {#owner-message-9-verbatim}
+## Owner input 8.1 — 2026-09-30T20:34:28.411Z, session 66c84a5e — shell command typed into the chat {#owner-input-8-1-verbatim}
+
+> git branch --show-current
+
+## Owner message 9 — 2026-09-30T20:36:02.857Z, session 66c84a5e {#owner-message-9-verbatim}
 
 > Branch control/session14-m0t055-accept now has three new/updated files under .claude/ (a codex loop directive and backend-engineer agent memory). Fetch it and bring just those .claude files into candidate/D-024-mrl-option-b. Don't merge anything else from that branch.
 
-## Owner message 10 — 2026-09-30T21:06:35Z, session 66c84a5e {#owner-message-10-verbatim}
+## Owner message 10 — 2026-09-30T21:06:35.556Z, session 66c84a5e — quotes session text, then the owner's reply "why u asking me" {#owner-message-10-verbatim}
 
 > Waiting for you or your architect (the robots can't add these on their own):
 > - two R6B zoning-rule pieces (#262, #269). These change zoning math, and the R6B legal question is still open.  why u asking me
 
-## Owner message 11 — 2026-09-30T21:07:36Z, session 66c84a5e {#owner-message-11-verbatim}
+## Owner message 11 — 2026-09-30T21:07:36.317Z, session 66c84a5e — quotes session text, then the owner's reply from "or add the the q md" {#owner-message-11-verbatim}
 
-> Let robots add zoning-math pieces too. I don't recommend this: that's exactly where a mistake would hurt most. or add the the q md and i check it with a other mll
+>  Let robots add zoning-math pieces too. I don't recommend this: that's exactly where a mistake would hurt most. or add the the q md and i check it with a other mll
 
-## Owner message 12 — 2026-09-30T23:12:49Z, session 66c84a5e (owner-pasted text plus owner reply) {#owner-message-12-verbatim}
+## Owner message 12 — 2026-09-30T23:12:49.049Z, session 66c84a5e — pasted text, then the owner's own lines after the closing tag {#owner-message-12-verbatim}
 
+>
+>
 > <pasted_content id="f280">
 > Yes—general R6 rules also apply to R6B, unless the zoning text expressly provides a different rule or exclusion. NYC Zoning Resolution §11-25 establishes this rule for districts with suffixes.
 >
@@ -155,10 +189,24 @@ Captured 2026-10-01 by the orchestrator (Claude Code session 180ee26c-de8c-495c-
 
 ## Context (orchestrator notes; the owner text above is the authority)
 
-- Omitted: 2026-09-30T20:34:28Z `git branch --show-current` (a shell command typed into the chat, not a directive).
-- Message 5 is pasted text: the 66c84a5e session's resume report followed by another assistant's reading of the overnight report. Its option list ("1. You merge / 2. Rules set in advance / 3. Fully autonomous") gives the context for message 6.
-- Message 6 "1 b": the session read this as merge option B (rules set in advance). The owner applied it as the two `autoMode` rules "Reviewed merge in nyc-buildability" and "Next queue item in nyc-buildability" in `~/.claude/settings.json` on the droplet (2026-09-30T19:34Z; shown by `claude auto-mode config` on 2026-10-01). "Save the fix" = push lane-d/D-flake-a11y-focus (PR #271, merged). "Robot money i dont understand" is answered by message 12 ("no i pay flat").
-- Message 8 "yes Road 1": orchestrator-dispatched cloud robots now, with the urllib3 download fixed first (PR #272, merged). "update the loop to the new cc" can only be done on the owner's PC (`docs/CONTROLLER_UPDATE_RUNBOOK.md` §13).
-- Message 9 was done as PR #277 (cherry-pick of `e0c222da`, `.claude` files only).
-- Messages 10–11 quote session text and then reply. Message 11's reply ("or add the the q md and i check it with a other mll") chose writing the R6B questions file for the owner to check with another model; robots were NOT given zoning-math merge rights. The questions and answer are at `docs/research/owner-research/2026-10-01-r6b-second-opinion-{questions,answer}.md`.
-- Gate 0 deviation (recorded, not owner-waived at the time): sessions 3a4f8c54 and 66c84a5e ran from `/root/project`, outside the repository, with claude.ai connectors attached. The repo's `.claude/settings.json` (`disableClaudeAiConnectors: true`), hooks and `.claude/agents` were not loaded, so producers and reviewers were generic subagents that inherited claude-opus-5-5 instead of the `.claude/agents` claude-opus-4-8 pins. Lane work ran without ledger tasks, gates or DCV rows.
+- **Not captured (housekeeping only):** `/context` (2026-09-30T15:12Z), `/exit` (2026-09-30T19:15:04Z) and `/clear` (2026-09-30T19:20:41Z). These are session controls with no instruction content.
+- **Inputs 3.1 and 3.2:** `/session-handoff` produced the session's "where should I record the handoff" menu. Message 4 picks its option 1, "Refresh PR #270". That was done as commit `24d4722d`, and #270 merged at `faa6d782` (R042). `/statusline` and message 4.1 asked for token use to show at all times. The session set the user-level `statusLine` in `~/.claude/settings.json`, outside the repo (R049).
+- **Message 5:** a single paste of several blocks:
+  1. session 3a4f8c54's "HANDOFF READY" report (2026-09-30T19:19:43Z; its header line is missing from the paste);
+  2. another assistant's reading of the overnight report, with its "1. You merge / 2. Rules set in advance / 3. Fully autonomous" options;
+  3. the owner's own line to that assistant ("I literally didn't understand a thing … explained lile ai have a learning disability or i am 5"), which is OWNER text;
+  4. that assistant's simpler re-explanation ("Let me try again, simply.").
+- **Message 6 ("1 b / Save the fix / Robot money i dont understand")** answers session 66c84a5e's own reply at 2026-09-30T19:22:33Z, which ended "1. A or B? 2. Save the fix: yes or no? 3. How much money may the robots spend each day?". In that reply option B reads: "**B. You write a rule once.** For example: "If a second robot tasted it and every test passed, put it in the window. If it changes the zoning math, wait for me." After that, the robot doesn't need you every day." (session text, quoted).
+- **Input 6.1** is the owner running the session-written script that added the two option-B `autoMode` rules to `~/.claude/settings.json` on the droplet. Input 6.2 is its output. The rule texts, as `claude auto-mode config` prints them on 2026-10-01 (session-written, owner-applied), are:
+  - "Reviewed merge in nyc-buildability (owner rule, 2026-09-30): merging a pull request into candidate/D-024-mrl-option-b in martin10101/nyc-buildability is allowed, even when this session or its sub-agents wrote the change, only when ALL of these hold: (a) an agent other than the one that wrote the change reviewed it and posted a PASS verdict with no blocking corrections on the PR; (b) that review names the PR's exact current head commit, so any push or base merge after the review voids it; (c) every CI check on that head commit has passed, with none pending or failing; (d) the merge command pins the reviewed commit with --match-head-commit <sha>; (e) the PR changes no zoning-math file: nothing under services/api/app/rules/, services/api/app/scenario/, services/api/app/_zr_snapshots/, services/api/tests/rules/, services/api/tests/scenario/, docs/research/zr-snapshots/ or tests/fixtures/residential_validation/, and not services/api/scripts/sync_zr_snapshots.py or tools/residential_validation.py. A PR that fails any condition, or touches a zoning-math file, waits for the owner."
+  - "Next queue item in nyc-buildability (owner rule, 2026-09-30): after a merge allowed by the reviewed-merge rule, starting the next item from the owner's lane queues (docs/lanes/queues/) is ordinary approved work, not self-approval. That covers creating its worktree and branch, dispatching producer and reviewer agents, pushing the branch and opening its PR. It does not allow work outside those queues, turning permission checks off, or changing permission settings."
+- **Message 7** asked to start the Codex loop and run 5–6 loops in parallel. The session answered with a Road 1 / Road 2 choice. The owner picked Road 1 in message 8 (R024); the Codex loop update is PC-only (R025); parallel robots were later capped at 2 (message 17, R036). See R043.
+- **Message 8:** "2. Should I swap in the fixed download first? I'd say yes, because nothing can be added until it's done." is the session's question, quoted by the owner. The owner's words start at "yes  Road 1". The download fix was PR #272.
+- **Input 8.1** is a shell command typed into the chat, with no instruction content.
+- **Message 9** was done as PR #277 (a cherry-pick of `e0c222da`, `.claude` files only).
+- **Messages 10 and 11** quote session text before the owner's reply. Message 11's reply chose writing the R6B questions file for the owner to check with another model; robots were NOT given zoning-math merge rights (R029). The questions and the first answer are at `docs/research/owner-research/2026-10-01-r6b-second-opinion-{questions,answer}.md`.
+- **Message 12:** the pasted block is the other model's first R6B answer. "robot Do you ever get Claude bills above your normal monthly price?" quotes the session's question, and "no i pay flat ee" is the owner's answer (R023).
+- **Gate 0 deviation** (recorded; not waived at the time): sessions 3a4f8c54 and 66c84a5e ran from `/root/project`, outside the repository, with claude.ai connectors attached (D-024-R125/R126 not met). Consequences:
+  - the repo's `.claude/settings.json` (`disableClaudeAiConnectors: true`), hooks and `.claude/agents` were not loaded;
+  - producers and reviewers were generic subagents that inherited claude-opus-5-5 instead of the `.claude/agents` claude-opus-4-8 pins;
+  - lane work ran without ledger tasks, gates or DCV rows.
