@@ -202,3 +202,21 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   on it, seq 127): the authoritative harness evidence is `validate_directive_compliance.py
   --check` w/ a DIRECT exit code + the CI control-plane job at a verified head +
   test_project_control.py + test_directive_reminder.py; the full suite is CI's job.
+- Option-B merge authority (owner, 2026-09-30) lives ONLY in USER-level `autoMode`
+  (`~/.claude/settings.json`). Project settings are ignored. A custom `allow` list REPLACES the
+  built-ins unless it includes `"$defaults"`. The classifier refuses ANY session write to it, even
+  a dry run on a copy, so the OWNER applies it. Verify it with `claude auto-mode config`.
+- Stale merge ref: close/reopen does NOT promptly recompute GitHub's PR merge ref, and the push
+  run on the old head stays red. Instead, merge the base into the branch, then have the reviewer
+  prove the merge empty (`git show --remerge-diff`) and the net diff byte-identical.
+- `gh pr edit --body-file` fails (Projects-classic GraphQL deprecation). Use
+  `gh api -X PATCH repos/<o>/<r>/pulls/N -F body=@file`.
+- PR bodies drift. 8 of the 16 evening PRs (2026-09-30/10-01: #261, #263, #265, #266, #269, #275,
+  #276, #278) misstated behavior in the body, caught only by the reviewer. The reviewer
+  verifies the BODY before every merge, and a separate writer agent (never the
+  orchestrator from memory) rewrites stale bodies.
+- Golden digests pin rule NOTE text: rewording one rule's note breaks stacked PRs' goldens.
+  Recompute them independently, and trace-diff to prove the change is text-only (#262 → #269
+  `cb6f5c77`).
+- Re-run `git ls-remote` before telling the owner a branch lacks something: the owner may push
+  mid-chat (control/session14, 2026-09-30).

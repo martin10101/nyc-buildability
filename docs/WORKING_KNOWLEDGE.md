@@ -539,3 +539,35 @@ route-introspection test = check this FIRST. Canonical fix pattern (two preceden
 Diagnosis method that settled it in ONE round: a THROWAWAY diagnostic branch off the failing
 head with the assert message carrying env/flag/module-file/version/paths (CI runs on every
 push), read the AssertionError payload from the failed log, delete the branch.
+
+## Cloud Road-1 run (2026-09-30/10-01, seq 132–133) — session lessons
+
+- **Owner operating mode (Road 1, option B).** The orchestrator dispatches producer and reviewer
+  agents on a 1 CPU / 2 GB droplet, **at most 2 at once**: load average reached 2.8 with 3. Each
+  PR goes:
+  1. producer;
+  2. independent review (PASS, 0 blocking, naming the exact head);
+  3. a body check;
+  4. CI 40/40;
+  5. `gh pr merge --merge --match-head-commit <sha>`.
+  
+  Zoning-math PRs need the owner's explicit yes. Record their verbatim words on the PR. Sixteen
+  merges in one evening; typical PRs needed 2–3 review rounds, and most corrections were in PR
+  bodies.
+- **Sizing for more lanes.** Comfortable: 8 CPU / 16 GB for 6 robots. Minimum: 4 / 8 for 5.
+  Resize the DO droplet with "CPU and RAM only", which is reversible.
+- **Fail-closed data facts (B-05).** Never emit a number with a caution label (§5a rule 3). If a
+  filing's figure may be zoning-lot-wide, set it aside and cite it, return Unknown — enter, and let
+  the architect confirm it as a stated assumption.
+- **Merging ≠ activation.** The R6B rules shipped hidden: `LANE_A_ENABLED` is unset in every
+  deploy config. Only the owner's word turns a lane flag on. Before ANY lane-A number shows,
+  #278's tax-lot-only warning and labels must be on every surface that shows it.
+- **Second opinions from another LLM.** Give it a question file with the snapshot quotes. Verify
+  its quotes against `docs/research/zr-snapshots/` and list the unverifiable ones. Never treat it
+  as G6: it confirmed the district rules but not the lot boundaries or the code.
+- **Dependency gate red on every PR.** A fresh advisory turned every PR red (urllib3 2.7.0 →
+  2.8.0, #272). The fix was a dedicated `.in` pin under the age gate, with a G5 review posted as a
+  PR comment.
+- **Owner communication.** The owner asked for plain, ELI5 explanations: short sentences, no
+  PR/CI/classifier jargon, one copy-paste line when the owner must act, and at most 2–3 one-word
+  questions.
