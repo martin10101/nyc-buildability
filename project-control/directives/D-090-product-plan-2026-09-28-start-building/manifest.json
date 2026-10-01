@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-09-30T07:10:00+00:00",
+ "updated_at": "2026-10-01T22:45:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -40,10 +40,32 @@
   "D-090-R016",
   "D-090-R017",
   "D-090-R018",
-  "D-090-R019"
+  "D-090-R019",
+  "D-090-R020",
+  "D-090-R021",
+  "D-090-R022",
+  "D-090-R023",
+  "D-090-R024",
+  "D-090-R025",
+  "D-090-R026",
+  "D-090-R027",
+  "D-090-R028",
+  "D-090-R029",
+  "D-090-R030",
+  "D-090-R031",
+  "D-090-R032",
+  "D-090-R033",
+  "D-090-R034",
+  "D-090-R035",
+  "D-090-R036",
+  "D-090-R037",
+  "D-090-R038",
+  "D-090-R039",
+  "D-090-R040",
+  "D-090-R041"
  ],
- "requirements_id_digest_sha256": "e4b522941ff750e854c1a6539eb38f4dc11588fd3051062117789fc05d8d731d",
- "requirements_content_digest_sha256": "a9e3e40e66ad58cfbd95aa89c5a6190dc004506ace66c0bb97365a1cc3a88c57",
+ "requirements_id_digest_sha256": "132cf37e3345b53e913100442a761f0ee19706e7b82c10a450d082fa5a8dc081",
+ "requirements_content_digest_sha256": "f1f069ac51fe0f88f4549e04ec6a07f93279557760d4a26e3e0f998f93fc4b66",
  "sources": [
   {
    "file": "source-001.md",
@@ -59,10 +81,37 @@
    "recorded_at": "2026-09-30T07:10:00+00:00",
    "content_digest_sha256": "0d7fd2459238b5a7d330157376dc493bfea91ab463eb9a2ccd94c653afd55048",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-003-amendment.md",
+   "kind": "amendment",
+   "sequence": 3,
+   "recorded_at": "2026-10-01T22:40:00+00:00",
+   "content_digest_sha256": "bb1dcc6f6358f784773e47a0f51b05c24edcc96128c7982b243e67e2c8cdd9aa",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-004-amendment.md",
+   "kind": "amendment",
+   "sequence": 4,
+   "recorded_at": "2026-10-01T22:40:00+00:00",
+   "content_digest_sha256": "3772a491225c5c21226983b33b1dc4997c6344d128a7a1cc6de4c275140a4f4a",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-005-amendment.md",
+   "kind": "amendment",
+   "sequence": 5,
+   "recorded_at": "2026-10-01T22:40:00+00:00",
+   "content_digest_sha256": "4e1b9f132c843d21e225a221e06bf10da504bf2f9dba68ca6e258ae5fc7d6951",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
-  "source-002-amendment.md"
+  "source-002-amendment.md",
+  "source-003-amendment.md",
+  "source-004-amendment.md",
+  "source-005-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -72,7 +121,14 @@
   "M0-T164",
   "M5-T125"
  ],
- "affected_prs": [],
+ "affected_prs": [
+  262,
+  269,
+  271,
+  272,
+  277,
+  278
+ ],
  "affected_branches": [
   "candidate/D-024-mrl-option-b"
  ],
@@ -105,6 +161,12 @@
    "actor": "orchestrator",
    "action": "amendment_captured",
    "note": "Owner message 3 captured verbatim before acting: GO for the lanes (R015 satisfies the R007 hold), fresh-context workers with the orchestrator as last watcher (R016), synchronization (R017), extra guardrails (R018), tooling authorization (R019). Headless bypass-permission loops were refused by the session safety classifier; lanes run as orchestrator-dispatched producers (D-089/B-026 precedent). Reviewer and spending-limit asks unanswered."
+  },
+  {
+   "at": "2026-10-01T22:45:00+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended sources 003-005 (owner messages 4-21, 2026-09-30 evening to 2026-10-01) and requirements D-090-R020..R041. Captured late: the 2026-09-30/10-01 cloud sessions did not run /directive-compliance. Text extracted by script from the session transcripts, not retyped. All new rows pending until the directive-compliance verifier rules. Gate 0 deviations: sessions 3a4f8c54/66c84a5e (not waived) and 180ee26c (owner-waived, R041) ran from /root/project with claude.ai connectors attached, so repo hooks and .claude/agents pins were not loaded. Capture session: 180ee26c, claude-opus-5-5. Integration head at capture: c81ba14d."
   }
  ]
 }
