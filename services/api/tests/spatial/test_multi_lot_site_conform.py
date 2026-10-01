@@ -13,10 +13,9 @@ from __future__ import annotations
 
 import math
 import random
-from itertools import permutations
 
 import pytest
-from shapely.geometry import Polygon
+from shapely.geometry import Point, Polygon
 
 from app.spatial.multi_lot_site import (
     COMBINATION_OFFERED,
@@ -143,9 +142,10 @@ def test_three_hundred_random_rows_are_all_offered_whatever_the_order():
         site = site_for(lots)
         key = (site.combination.status, site.geometry is not None)
         outcomes[key] = outcomes.get(key, 0) + 1
-        if trial % 25 == 0:
-            for order in list(permutations(lots))[:4]:
-                assert summary(site_for(list(order))) == summary(site)
+        if trial % 25 == 0:  # 12 trials, each re-run in 4 freshly shuffled orders
+            for _ in range(4):
+                order = rng.sample(lots, len(lots))
+                assert summary(site_for(order)) == summary(site)
     assert outcomes == {(COMBINATION_OFFERED, True): 300}
 
 
@@ -163,3 +163,39 @@ def test_a_lot_narrower_than_the_tolerance_is_refused_with_the_reason():
         "Lot 5 is narrower than 0.02 ft in places, so its tax-map lines cannot be matched to "
         "its neighbours'. The tax-map lines need review.")
     assert (site.geometry, site.lot_area_sum.value) == (None, None)
+
+
+def test_swapping_the_lot_numbers_does_not_change_the_measurement():
+    # Review #281 r2 N5: the same shapes with their BBLs swapped give the same outline and
+    # measurements, so the result rests on the geometry, not on the BBL sort.
+    r = rotated(12.82)
+    front_ring = [r(0, 0), r(99.25, 0), r(99.25, 100), r(0, 100)]
+    rear_ring = [r(40, 100), r(80, 100), r(80, 200), r(40, 200)]
+    first = site_for([lot(1, front_ring), lot(3, rear_ring)])
+    swapped = site_for([lot(3, front_ring), lot(1, rear_ring)])
+    assert first.outline.exterior == swapped.outline.exterior
+    for site in (first, swapped):
+        assert site.combination.status == COMBINATION_OFFERED
+        assert [s.length_ft for s in site.combination.shared_lines] == [40.0]
+    assert first.geometry.lot_area == swapped.geometry.lot_area
+    assert first.geometry.edges == swapped.geometry.edges
+
+
+def test_chained_corners_move_further_than_the_tolerance_but_never_join_a_real_gap():
+    # Review #281 r2 (d): corners at x = 100, 100.008 and 100.016 chain into one group, so
+    # lot C's corner moves 0.016 ft. Lots A and C are 0.016 ft apart and still do not touch.
+    a = Polygon([(0, 0), (100, 0), (100, 100), (0, 100)])
+    b = Polygon([(50, 100), (100.008, 100), (100.008, 200), (50, 200)])
+    c = Polygon([(100.016, 0), (200, 0), (200, 100), (100.016, 100)])
+    (_, _, moved_c), refusal = conform_outlines([a, b, c])
+    assert refusal is None
+    largest = max(Point(p).distance(Point(q))
+                  for p, q in zip(c.exterior.coords, moved_c.exterior.coords, strict=True))
+    assert largest == pytest.approx(0.016, abs=1e-9)
+    lots = [lot(1, a.exterior.coords[:-1]), lot(2, b.exterior.coords[:-1]),
+            lot(3, c.exterior.coords[:-1])]
+    pair = site_for([lots[0], lots[2]])
+    assert pair.combination.status == "not_offered"
+    assert "lots 1 and 3 are 0.016 ft apart" in pair.combination.reason
+    assert summary(site_for(lots)) == summary(site_for(lots[::-1]))
+

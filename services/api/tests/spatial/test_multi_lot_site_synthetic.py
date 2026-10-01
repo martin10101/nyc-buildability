@@ -45,7 +45,7 @@ from app.spatial.multi_lot_site import (
     multi_lot_site_enabled,
     study_lot_selection,
 )
-from app.spatial.multi_lot_site.zoning_lot import lots_named_in_text
+from app.spatial.multi_lot_site.zoning_lot import MENTION_KEYS, TEXT_NOT_READ
 from app.spatial.site_geometry import (
     LABEL_CITY_RECORDS,
     LABEL_TAX_MAP,
@@ -304,11 +304,12 @@ def test_lines_within_the_tolerance_are_joined_at_their_true_length():
     assert frontages(site) == {NORTH: 200.0}
 
 
-def test_a_gap_wider_than_the_tolerance_is_not_closed():
-    gap = site_lot(11, rect(100.05, 0, 200, 100))
+@pytest.mark.parametrize(("offset", "shown"), [(0.05, "0.050"), (0.011, "0.011")])
+def test_a_gap_wider_than_the_tolerance_is_not_closed(offset, shown):
+    gap = site_lot(11, rect(100 + offset, 0, 200, 100))
     site = derive_multi_lot_site(choice(site_lot(10), gap), None, STREETS)
     assert site.combination.status == COMBINATION_NOT_OFFERED
-    assert "lots 10 and 11 are 0.05 ft apart" in site.combination.reason
+    assert f"lots 10 and 11 are {shown} ft apart" in site.combination.reason
 
 
 # ------------------------------------------- existing buildings and the zoning lot (owner)
@@ -364,35 +365,35 @@ def test_zoning_lot_is_check_needed_even_when_a_record_names_exactly_the_selecti
         derive_multi_lot_site(ROW, None, STREETS, recorded_zoning_lot_documents=[{"text": "x"}])
 
 
-def test_lots_a_record_names_in_its_text_are_listed_but_never_verify():
-    # The record is filed on lot 10 only; its text names lots 10 and 11 as "LOT #".
-    record = {"document_ref": "synthetic filing", "tax_lots": [bbl(10)],
-              "text": "FILED UNDER TAX LOT #10 FOR ONE ZONING LOT OF TAX LOTS (LOT #10 & #11). "
-                      "NB APPLICATION #440608941.",
-              "query_ref": "test-fixture-synthetic", "retrieved_at": "2026-10-01T00:00:00Z"}
-    one = derive_multi_lot_site(ROW, [bbl(10)], STREETS, recorded_zoning_lot_documents=[record])
-    (mention,) = one.zoning_lot.recorded_mentions
-    assert (mention["tax_lots"], mention["lots_named_in_text"]) == ([bbl(10)],
-                                                                    [bbl(10), bbl(11)])
-    assert one.zoning_lot.named_lots_not_selected == (bbl(11),)
-    assert (f"Their text names tax lot {bbl(11)} (as \"LOT #\" on the record's own block), "
-            "which you did not select.") in one.zoning_lot.reason
-    assert (one.zoning_lot.status, one.zoning_lot.verified) == (ZONING_LOT_CHECK_NEEDED, False)
-    both = derive_multi_lot_site(ROW, [bbl(10), bbl(11)], STREETS,
-                                 recorded_zoning_lot_documents=[record])
-    assert both.zoning_lot.named_lots_not_selected == ()
-    assert (both.zoning_lot.status, both.zoning_lot.verified) == (ZONING_LOT_CHECK_NEEDED, False)
+JOB_421803891_TEXT = (
+    "ALTERATION -1 APPLICATION TO BE FILED UNDER TAX LOT #1 TO REFLECT ONE (1) ZONING LOT AND "
+    "(2) TAX LOTS (LOT #1 &amp; #70). NO WORK TO BE DONE UNDER THIS APPLICATION. NB "
+    "APPLICATION #440608941 HAS BEEN FILED UNDER TAX LOT #70.")
 
 
-@pytest.mark.parametrize(("text", "tax_lots", "named"), [
-    ("ZONING LOT OF LOTS 10 AND 11", [bbl(10)], []),             # no "#": not read
-    ("APPLICATION #4406 FOR JOB #12", [bbl(10)], []),            # "#" not after LOT
-    ("LOTS #5, #6 AND #7", [bbl(10)], [bbl(5), bbl(6), bbl(7)]),
-    ("LOT #10000 AND LOT #0", [bbl(10)], []),                    # 5 digits; lot 0
-    ("LOT #5", [bbl(10), bbl(10, block=101)], []),               # block unclear
+@pytest.mark.parametrize("text", [
+    JOB_421803891_TEXT,                                                    # recorded phrasing
+    "ZONING LOT #2 CONSISTS OF TAX LOTS 5 AND 6",                          # review #281 r2
+    "ZONING LOT COMPRISED OF LOT #1; ACCESSORY PARKING LOT #3 ON SITE",    # review #281 r2
+    "ZONING LOT INCLUDES LOT #1. ADJACENT LOT #5 OF BLOCK 7335 NOT PART OF ZONING LOT",
+    "ZONING LOT: BLOCK 7334 LOTS #1-#5",
+    "ZONING LOT MERGER WITH LOTS #12, 13 AND #14",
 ])
-def test_lots_named_in_text_reads_only_lot_hash_numbers(text, tax_lots, named):
-    assert lots_named_in_text(text, tax_lots) == named
+def test_record_text_is_shown_but_never_read_for_lot_numbers(text):
+    # A record filed on lot 10 whose text names other lots, rightly or wrongly: only the
+    # lot it is filed on can be flagged; the text is carried and the architect checks it.
+    record = {"document_ref": "synthetic filing", "tax_lots": [bbl(10)], "text": text,
+              "query_ref": "test-fixture-synthetic", "retrieved_at": "2026-10-01T00:00:00Z"}
+    for picked, flagged in (([bbl(11)], (bbl(10),)), ([bbl(10)], ())):
+        site = derive_multi_lot_site(ROW, picked, STREETS, recorded_zoning_lot_documents=[record])
+        zoning_lot = site.zoning_lot
+        assert zoning_lot.named_lots_not_selected == flagged
+        assert zoning_lot.recorded_mentions[0]["text"] == text
+        assert set(zoning_lot.recorded_mentions[0]) == set(MENTION_KEYS)
+        assert zoning_lot.reason.endswith(TEXT_NOT_READ)
+        assert (zoning_lot.status, zoning_lot.verified) == (ZONING_LOT_CHECK_NEEDED, False)
+        for wrong in ("0002", "0003", "0005", "0012", "0014", "0070"):
+            assert f"100100{wrong}" not in zoning_lot.reason
 
 
 # ------------------------------------------------------------------ selection and the flag

@@ -14,11 +14,12 @@ What "touching" means here (stated; not a Zoning Resolution determination):
   move to one point (the lowest of the group, joined transitively); and a lot's line is
   given a new vertex wherever another lot's vertex lies within it of that line, so a
   T-junction (one lot's corner on the middle of another lot's line) counts at its true
-  length.
+  length. Because groups chain, a vertex can move further than the tolerance (vertices
+  0.008 ft apart in a row of three move up to 0.016 ft).
 * Lots that meet only at a point, or along less than ``MIN_SHARED_LINE_FT``, do not touch.
 * Lots further apart than ``SHARED_LINE_TOLERANCE_FT`` do not touch; the gap is reported.
-  Such a gap is never closed: there is no buffering, and a vertex only ever moves onto
-  another lot's vertex or line that is within the tolerance of it.
+  Such a gap is never closed: there is no buffering, and a vertex moves only when another
+  lot's vertex or line lies within the tolerance of it (possibly further, along a chain).
 * Outlines that overlap by more than ``OVERLAP_TOLERANCE_SQ_FT`` are a tax-map conflict:
   the combined outline is not built, the combination is not offered and the overlap is the
   reason.

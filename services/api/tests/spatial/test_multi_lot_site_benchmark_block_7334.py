@@ -60,6 +60,7 @@ from app.spatial.multi_lot_site import (
     study_lots,
 )
 from app.spatial.multi_lot_site.street_widths import combined_zoning
+from app.spatial.multi_lot_site.zoning_lot import TEXT_NOT_READ
 from app.spatial.site_geometry import LABEL_CITY_RECORDS, LABEL_TAX_MAP, street_data_from_pages
 from app.spatial.site_geometry.results import STATUS_COMPLETE
 from tests.profile.site_fact_contract import assert_valid_site_fact
@@ -218,7 +219,7 @@ def test_both_lots_make_one_corner_site_with_the_shared_line_removed(inputs):
 
 
 @pytest.mark.parametrize(("picked", "not_selected"), [
-    ([LOT_70], (LOT_1,)), ([LOT_1], (LOT_70,)), (None, ())])
+    ([LOT_70], (LOT_1,)), ([LOT_1], ()), (None, ())])
 def test_zoning_lot_stays_check_needed_although_a_filing_names_both_lots(
         inputs, picked, not_selected):
     zoning_lot = _site(inputs, picked).zoning_lot
@@ -226,10 +227,11 @@ def test_zoning_lot_stays_check_needed_although_a_filing_names_both_lots(
         ZONING_LOT_CHECK_NEEDED, "Check needed", False)
     assert [m["document_ref"] for m in zoning_lot.recorded_mentions] == [ZONING_LOT_JOB]
     assert "ONE (1) ZONING LOT AND (2) TAX LOTS" in zoning_lot.recorded_mentions[0]["text"]
-    # The job is filed on lot 1 (its BBL fields); its text names "LOT #1 &amp; #70".
+    # The job is filed on lot 1 (its BBL fields). Its text ("LOT #1 &amp; #70") is shown as
+    # recorded and never read for lot numbers: the architect is told to check it.
     assert zoning_lot.recorded_mentions[0]["tax_lots"] == [LOT_1]
-    assert zoning_lot.recorded_mentions[0]["lots_named_in_text"] == [LOT_1, LOT_70]
     assert zoning_lot.named_lots_not_selected == not_selected
+    assert zoning_lot.reason.endswith(TEXT_NOT_READ)
     assert "The app does not verify the zoning lot" in zoning_lot.reason
 
 

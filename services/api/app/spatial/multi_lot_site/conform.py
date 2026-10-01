@@ -7,15 +7,20 @@ measured or any outline is joined, every selected lot is conformed against all t
 in two order-free steps, both within ``SHARED_LINE_TOLERANCE_FT``:
 
 1. Vertices of different lots that lie within the tolerance of each other form one group
-   (transitively) and all move to the group's lowest (x, y) vertex.
+   (transitively) and all move to the group's lowest (x, y) vertex. Because groups chain, a
+   vertex can move further than the tolerance: at most the length of the chain of vertices,
+   each within the tolerance of the next, that joins it to that lowest vertex.
 2. Each lot's lines are noded at every other lot's vertex that lies within the tolerance of
    them (GEOS ``snap`` against the other lots' vertices, sorted): the vertex is inserted, so
    the shared stretch of the two lines has the same end points in both lots.
 
-A lot narrower than twice the tolerance somewhere is refused first, with the reason: its
-lines could be matched to its own opposite line instead of a neighbour's.
+A lot that shrinking by the tolerance empties or cuts in two (a lot thinner than twice the
+tolerance throughout, or with such a neck) is refused first, with the reason: its lines
+could be matched to its own opposite line instead of a neighbour's. A thin spike does not
+trip this test; if conforming then makes the lot invalid, the validity check refuses it.
 
-Nothing else moves: a gap or an overlap wider than the tolerance stays as it is. Because the
+Nothing else moves: a vertex with no other lot's vertex or line within the tolerance stays
+where it is, so a gap or overlap between two lines wider than the tolerance stays. Because the
 inputs are treated as a set (vertex groups by coordinates, references sorted), the result
 for each lot does not depend on the order the lots were given in.
 """

@@ -45,7 +45,10 @@ Existing buildings stay per lot (B-05 on the B-01 DOB records): both lots read "
 Lot 1 sets aside 14,150 and 39,772 sq ft (DOB jobs 421199072 and 421803891). Lot 70 sets aside
 39,934 sq ft (DOB NB 440608941). These figures are never added together.
 
-Gap in lot 1's evidence: the B-01 pack was captured for lot 70. Its DOB BIS job filings for
-BIN 4157401 do sit on lot 1, but no DOB NOW job filings and no certificates of occupancy (DOB NOW
-`pkdm-hqz6` or DOB BIS `bs8b-p36w`) were recorded for BBL 4073340001. Lot 1 reads "Unknown —
-enter" either way.
+Gap in lot 1's evidence: the B-01 pack was captured for lot 70. Lot 1's B-05 result reads the
+pack's DOB BIS job filings (`ic3t-wcy2`) for two buildings: BIN 4157401, whose rows sit on lot 1
+(jobs 421199072 and 421803891 among them), and BIN 4616079, whose job 421240534 names lot 1 in
+its lot column and lot 70 in its BBL column. Certificate-of-occupancy lookups for BIN 4157401
+were recorded in both datasets (DOB BIS `bs8b-p36w` and DOB NOW `pkdm-hqz6`) and returned no
+rows. No query keyed on BBL 4073340001 was recorded: no DOB NOW job filings (`w9ak-ipjd`) and
+no certificates of occupancy by BBL. Lot 1 reads "Unknown — enter" either way.

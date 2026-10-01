@@ -65,7 +65,9 @@ class Contact:
     def describe(self) -> str:
         pair = lots_text([self.first, self.second])
         if self.distance_ft > SHARED_LINE_TOLERANCE_FT:
-            return f"{pair} are {self.distance_ft:,.2f} ft apart"
+            # Under 1 ft, 3 decimals: a 0.011 ft gap must not read as the 0.01 ft tolerance.
+            digits = 3 if self.distance_ft < 1.0 else 2
+            return f"{pair} are {self.distance_ft:,.{digits}f} ft apart"
         return (f"{pair} meet only at a point (shared lot line {self.shared_ft:.2f} ft, under "
                 f"the {MIN_SHARED_LINE_FT:.2f} ft minimum)")
 
