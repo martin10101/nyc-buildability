@@ -24,13 +24,14 @@ import { DashboardSearch } from "./DashboardSearch";
 import { DashboardPanels } from "./DashboardPanels";
 import { DashboardMap } from "./DashboardMap";
 import { DashboardTools } from "./DashboardTools";
+import { analysisReason } from "./dashboard-status";
 import { FloatingWorkspaceWindow } from "./FloatingWorkspaceWindow";
 import { DASHBOARD_TOOLS, TOOL_LABELS, dashboardHref, readDashboardTool, type DashboardTool } from "./types";
 
 const PERSISTENT_TOOLS: readonly DashboardTool[] = ["map", "facts", "proposal", "study", "evidence", "documents"];
 
-function LoadedDashboard({ profile, initialTool, surveyEnabled, addressRevision, onSelect }: {
-  profile: PropertyProfile; initialTool: DashboardTool | null; surveyEnabled: boolean; addressRevision: number; onSelect: (bbl: string) => void;
+function LoadedDashboard({ profile, initialTool, surveyEnabled, proposalEditorEnabled, unusedFloorAreaSectionEnabled, addressRevision, onSelect }: {
+  profile: PropertyProfile; initialTool: DashboardTool | null; surveyEnabled: boolean; proposalEditorEnabled: boolean; unusedFloorAreaSectionEnabled: boolean; addressRevision: number; onSelect: (bbl: string) => void;
 }) {
   const bbl = profile.identity.bbl;
   const analysis = useAnalysis(bbl);
@@ -44,6 +45,15 @@ function LoadedDashboard({ profile, initialTool, surveyEnabled, addressRevision,
   const associationMismatch = !!((returnedScenario && !matchingScenario) || (returnedEvaluation && !identityEvaluation));
   const scenario = condo.withholdAllowances || associationMismatch ? null : matchingScenario;
   const evaluation = condo.withholdAllowances || associationMismatch ? null : inspectableEvaluation;
+  const analysisLoading = !analysis.scenario || !analysis.evaluation;
+  // Plan §5a item 3: a missing number names its true reason, never "no rule results" while the
+  // analysis loads or when only the scenario belongs to another property.
+  const resultsReason = analysisReason({
+    loading: analysisLoading,
+    evaluationMismatch: !!returnedEvaluation && !identityEvaluation,
+    scenarioMismatch: !!returnedScenario && !matchingScenario,
+    evaluationIncomplete: !!identityEvaluation && !inspectableEvaluation,
+  });
   const [address, setAddress] = useState<SelectedAddress | null>(null);
   const [tool, setTool] = useState<DashboardTool | null>(initialTool === "envelope" ? "proposal" : initialTool);
   const [focusEnvelope, setFocusEnvelope] = useState(initialTool === "envelope");
@@ -83,18 +93,20 @@ function LoadedDashboard({ profile, initialTool, surveyEnabled, addressRevision,
       <IncompleteEvaluationNotice evaluation={identityEvaluation}/>
       {analysis.scenario && analysis.scenario.kind !== "scenario" && analysis.scenario.kind !== "aborted" ? <details><summary>Scenario unavailable · retry or inspect</summary><ScenarioFailureStates outcome={analysis.scenario} onRetry={analysis.retryScenario}/></details> : null}
       {analysis.evaluation && analysis.evaluation.kind !== "evaluation" ? <details><summary>Rule evaluation unavailable · retry or inspect</summary><RuleEvaluationFailure outcome={analysis.evaluation} onRetry={analysis.retryEvaluation}/></details> : null}
-      {!analysis.scenario || !analysis.evaluation ? <p className="section-note" role="status">Loading analysis… Property records remain available.</p> : null}
+      {analysisLoading ? <p className="section-note" role="status">Loading analysis… Property records remain available.</p> : null}
     </div>
-    {address && profile.identity.address?.normalized_address && profile.identity.address.normalized_address !== address.label ? <p className="dashboard-address-alias" data-testid="representative-address">Searched address retained · PLUTO representative address: {profile.identity.address.normalized_address}</p> : null}
-    <DashboardPanels profile={profile} scenario={scenario} evaluation={evaluation} condo={condo} label={label} map={<DashboardMap bbl={bbl} condo={condo} compact/>} onOpen={open} onInspect={inspect}/>
+    {address && profile.identity.address?.normalized_address && profile.identity.address.normalized_address !== address.label ? <p className="dashboard-address-alias" data-testid="representative-address">City records list this lot as {profile.identity.address.normalized_address}</p> : null}
+    <DashboardPanels profile={profile} scenario={scenario} evaluation={evaluation} condo={condo} label={label} map={<DashboardMap bbl={bbl} condo={condo} compact/>} onOpen={open} onInspect={inspect} proposalEditorEnabled={proposalEditorEnabled} resultsReason={resultsReason}/>
     {DASHBOARD_TOOLS.filter(value => value !== "envelope").map(value => <FloatingWorkspaceWindow key={value} id={`workspace-${value}`} title={TOOL_LABELS[value]} open={tool === value} onClose={() => setTool(null)} wide={["map", "proposal", "study", "report", "evidence"].includes(value)}>
-      {tool === value || PERSISTENT_TOOLS.includes(value) ? <DashboardTools tool={value} profile={profile} scenario={scenario} evaluation={evaluation} returnedScenario={returnedScenario} returnedEvaluation={returnedEvaluation} condo={condo} address={address} label={label} selection={selection} onSelectEvidence={setSelection} onInspect={inspect} onOpen={open} surveyEnabled={surveyEnabled} focusEnvelope={focusEnvelope} envelopeRequest={envelopeRequest}/> : null}
+      {tool === value || PERSISTENT_TOOLS.includes(value) ? <DashboardTools tool={value} profile={profile} scenario={scenario} evaluation={evaluation} returnedScenario={returnedScenario} returnedEvaluation={returnedEvaluation} condo={condo} address={address} label={label} selection={selection} onSelectEvidence={setSelection} onInspect={inspect} onOpen={open} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled} focusEnvelope={focusEnvelope} envelopeRequest={envelopeRequest}/> : null}
     </FloatingWorkspaceWindow>)}
   </div>;
 }
 
-/** Route adapter: the existing API hooks retain their identity and stale-response guards. */
-export function DashboardEntry({ surveyEnabled = false }: { surveyEnabled?: boolean }) {
+/** Route adapter: the existing API hooks retain their identity and stale-response guards.
+ * `proposalEditorEnabled` is the server-read INTERNAL_PROPOSAL_EDITOR_ENABLED (D-01); absent -> off.
+ * `unusedFloorAreaSectionEnabled` is the server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED (D-06); absent -> off. */
+export function DashboardEntry({ surveyEnabled = false, proposalEditorEnabled = false, unusedFloorAreaSectionEnabled = false }: { surveyEnabled?: boolean; proposalEditorEnabled?: boolean; unusedFloorAreaSectionEnabled?: boolean }) {
   const params = useSearchParams();
   const router = useRouter();
   const valid = validateBblInput(params.get("bbl") ?? "");
@@ -114,17 +126,16 @@ export function DashboardEntry({ surveyEnabled = false }: { surveyEnabled?: bool
   return <div className="architect-shell dashboard-shell">
     <a className="architect-skip" href="#dashboard-content">Skip to workspace</a>
     <header className="dashboard-topbar">
-      <Link href={dashboardHref()} className="dashboard-brand"><svg width="29" height="32" viewBox="0 0 27 30" fill="none" aria-hidden="true"><path d="M1 28h25M4 28V14h7v14M11 28V2h9v26M20 8h4v20" stroke="currentColor" strokeWidth="1.7"/></svg><span>NYC Buildability<small>Zoning · FAR · Feasibility · Reports · Maps</small></span></Link>
-      <span className="dashboard-internal-label">Internal · Engineering team only</span>
-      <details className="dashboard-environment"><summary>Build & review status</summary><InternalBanner/><p>Preliminary analysis — professional review required before any reliance.</p></details>
+      <Link href={dashboardHref()} className="dashboard-brand"><svg width="29" height="32" viewBox="0 0 27 30" fill="none" aria-hidden="true"><path d="M1 28h25M4 28V14h7v14M11 28V2h9v26M20 8h4v20" stroke="currentColor" strokeWidth="1.7"/></svg><span>NYC Buildability</span></Link>
+      {/* Plan §5a item 2: environment notices sit behind one control, not on every screen line. */}
+      <details className="dashboard-environment"><summary>Internal build</summary><InternalBanner/><p>Preliminary analysis — professional review required before any reliance.</p></details>
     </header>
     <DashboardSearch onSelect={select}/>
-    <p className="dashboard-review-line">Preliminary analysis · Professional review required · No sign-in or access control</p>
     <div id="dashboard-content" className="dashboard-content">
       <OutcomeAnnouncer message={mismatch ? "Property identity mismatch. Results withheld." : property.outcome ? announcementForOutcome(property.outcome) : ""}/>
       {!bbl ? <section className="dashboard-welcome"><h1>Your property workspace</h1><p>{params.get("bbl") ? "Invalid property identifier. Search an address or enter a valid 10-digit BBL." : "Search an address and confirm the lot to load its map, records and available development limits."}</p></section>
         : property.loading ? <section className="card" role="status" aria-busy="true"><h1>Retrieving property facts…</h1><p>BBL {bbl}</p></section>
-        : profile ? <LoadedDashboard key={bbl} profile={profile} initialTool={readDashboardTool(params.get("tool"))} surveyEnabled={surveyEnabled} addressRevision={addressRevision} onSelect={select}/>
+        : profile ? <LoadedDashboard key={bbl} profile={profile} initialTool={readDashboardTool(params.get("tool"))} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled} addressRevision={addressRevision} onSelect={select}/>
         : mismatch && property.outcome?.kind === "profile" ? <section className="card" role="alert"><h1>Property identity mismatch</h1><p>Requested BBL {bbl}; returned BBL {property.outcome.profile.identity.bbl}. This record cannot be used for the selected property.</p><CapturedRecord value={property.outcome.profile} label="Returned property record"/></section>
         : property.outcome && property.outcome.kind !== "profile" ? <OutcomeFailureStates outcome={property.outcome} onRetry={property.retry}/> : null}
     </div>

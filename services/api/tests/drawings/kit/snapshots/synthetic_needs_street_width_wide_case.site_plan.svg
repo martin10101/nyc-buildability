@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720.00 504.00" width="720.00" height="504.00" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" data-drawing="site_plan" data-kit-version="0">
+<title>Site plan</title>
+<defs></defs>
+<rect x="0.00" y="0.00" width="720.00" height="504.00" fill="#FFFFFF"/>
+<path d="M198.00 372.00 L318.00 372.00 L318.00 252.00 L198.00 252.00 Z" fill="#F0E442" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-source="/geometry/floor_plates/entries/0" data-floor="1"/>
+<path d="M222.00 336.00 L318.00 336.00" fill="none" stroke="#D55E00" stroke-width="1.00" stroke-dasharray="6.00 3.00" stroke-linejoin="round" data-source="/geometry/setback_lines_per_level/entries/0"/>
+<path d="M222.00 336.00 L222.00 132.00" fill="none" stroke="#D55E00" stroke-width="1.00" stroke-dasharray="6.00 3.00" stroke-linejoin="round" data-source="/geometry/setback_lines_per_level/entries/0"/>
+<text x="270.00" y="345.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="setback_floor" data-source="/geometry/setback_lines_per_level/entries/0/floor">Setback, floor 5</text>
+<path d="M198.00 372.00 L318.00 372.00 L318.00 132.00 L198.00 132.00 Z" fill="none" stroke="#000000" stroke-width="1.50" stroke-linejoin="round" fill-rule="evenodd" data-source="/geometry/lot_outline"/>
+<path d="M198.00 374.00 L198.00 387.00 M195.80 381.80 L200.20 386.20 M318.00 374.00 L318.00 387.00 M315.80 381.80 L320.20 386.20 M198.00 384.00 L318.00 384.00" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="258.00" y="392.40" font-size="8.00" text-anchor="middle" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#0">50 ft</text>
+<path d="M320.00 372.00 L333.00 372.00 M327.80 374.20 L332.20 369.80 M320.00 132.00 L333.00 132.00 M327.80 134.20 L332.20 129.80 M330.00 372.00 L330.00 132.00" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="338.40" y="252.00" font-size="8.00" text-anchor="middle" transform="rotate(-90.00 338.40 252.00)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#1">100 ft</text>
+<path d="M318.00 130.00 L318.00 117.00 M320.20 122.20 L315.80 117.80 M198.00 130.00 L198.00 117.00 M200.20 122.20 L195.80 117.80 M318.00 120.00 L198.00 120.00" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="258.00" y="118.00" font-size="8.00" text-anchor="middle" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#2">50 ft</text>
+<path d="M196.00 132.00 L183.00 132.00 M188.20 129.80 L183.80 134.20 M196.00 372.00 L183.00 372.00 M188.20 369.80 L183.80 374.20 M186.00 132.00 L186.00 372.00" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="184.00" y="252.00" font-size="8.00" text-anchor="middle" transform="rotate(-90.00 184.00 252.00)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#3">100 ft</text>
+<text x="258.00" y="415.20" font-size="9.00" text-anchor="middle" font-style="italic" fill="#111111" data-role="street" data-source="/geometry/streets/0/street">Synthetic Street A</text>
+<text x="162.00" y="252.00" font-size="9.00" text-anchor="middle" font-style="italic" transform="rotate(-90.00 162.00 252.00)" fill="#111111" data-role="street" data-source="/geometry/streets/1/street">Synthetic Street B</text>
+<g data-role="north-arrow">
+<path d="M540.00 26.00 L547.00 62.00 L540.00 53.00 L533.00 62.00 Z" fill="#000000" stroke="#000000" stroke-width="0.50"/>
+<text x="540.00" y="22.00" font-size="10.00" text-anchor="middle" font-weight="bold" fill="#111111" data-role="furniture">N</text>
+<text x="554.00" y="58.00" font-size="8.00" text-anchor="start" fill="#111111" data-role="furniture">Grid north</text>
+</g>
+<g data-role="scale-bar" data-x0="520.00" data-px-per-ft="2.400000">
+<rect x="520.00" y="88.00" width="60.00" height="5.00" fill="#000000" stroke="#000000" stroke-width="0.50"/>
+<rect x="580.00" y="88.00" width="60.00" height="5.00" fill="#FFFFFF" stroke="#000000" stroke-width="0.50"/>
+<text x="520.00" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">0</text>
+<text x="580.00" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">25</text>
+<text x="640.00" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">50 ft</text>
+</g>
+<g data-role="legend">
+<text x="520.00" y="126.00" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Legend</text>
+<rect x="520.00" y="132.00" width="18.00" height="10.00" fill="#F0E442" stroke="#222222" stroke-width="0.50" stroke-linejoin="round"/>
+<text x="544.00" y="140.50" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Residential</text>
+<line x1="520.00" y1="153.00" x2="538.00" y2="153.00" stroke="#D55E00" stroke-width="1.00" stroke-dasharray="6.00 3.00" stroke-linejoin="round"/>
+<text x="544.00" y="156.50" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Setback line</text>
+<line x1="520.00" y1="169.00" x2="538.00" y2="169.00" stroke="#000000" stroke-width="1.50" stroke-linejoin="round"/>
+<text x="544.00" y="172.50" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Lot line</text>
+</g>
+<g data-role="notes">
+<text x="520.00" y="198.00" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Notes</text>
+<text x="520.00" y="210.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/street_width_case/marker">Needs street width</tspan></text>
+<text x="520.00" y="224.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/street_width_case/assumptions/0/street">Synthetic Street B </tspan><tspan>width assumed </tspan><tspan data-source="/street_width_case/assumptions/0/assumed">wide</tspan></text>
+<text x="520.00" y="238.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00">Lot outline: </tspan><tspan data-source="/geometry/measurement/label">Approximate — tax map</tspan></text>
+<text x="520.00" y="252.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00">Rear yard not required: </tspan><tspan data-source="/geometry/yards/entries/0/reason">Corner lot: a</tspan><tspan x="520.00" dy="10.00" data-source="/geometry/yards/entries/0/reason">rear yard is not required within 100 ft</tspan><tspan x="520.00" dy="10.00" data-source="/geometry/yards/entries/0/reason">of the corner.</tspan></text>
+</g>
+</svg>

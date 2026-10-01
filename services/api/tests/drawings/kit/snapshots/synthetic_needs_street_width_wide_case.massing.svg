@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720.00 504.00" width="720.00" height="504.00" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" data-drawing="massing" data-kit-version="0">
+<title>Axonometric massing</title>
+<defs></defs>
+<rect x="0.00" y="0.00" width="720.00" height="504.00" fill="#FFFFFF"/>
+<path d="M325.33 404.31 L480.00 315.01 L170.67 136.42 L16.00 225.71 Z" fill="none" stroke="#000000" stroke-width="1.50" stroke-linejoin="round" fill-rule="evenodd" data-source="/geometry/lot_outline"/>
+<g data-floor="1">
+<path d="M325.33 404.31 L480.00 315.01 L480.00 272.15 L325.33 361.44 Z" fill="#B8AF33" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-plate="/geometry/floor_plates/entries/0" data-face="side"/>
+<path d="M170.67 315.01 L325.33 404.31 L325.33 361.44 L170.67 272.15 Z" fill="#C6BC36" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-plate="/geometry/floor_plates/entries/0" data-face="side"/>
+<path d="M325.33 361.44 L480.00 272.15 L325.33 182.85 L170.67 272.15 L325.33 361.44 Z" fill="#F7F097" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-plate="/geometry/floor_plates/entries/0" data-face="top"/>
+</g>
+<g data-floor="2">
+<path d="M325.33 361.44 L480.00 272.15 L480.00 236.43 L325.33 325.72 Z" fill="#B8AF33" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-plate="/geometry/floor_plates/entries/1" data-face="side"/>
+<path d="M170.67 272.15 L325.33 361.44 L325.33 325.72 L170.67 236.43 Z" fill="#C6BC36" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-plate="/geometry/floor_plates/entries/1" data-face="side"/>
+<path d="M325.33 325.72 L480.00 236.43 L325.33 147.13 L170.67 236.43 L325.33 325.72 Z" fill="#F7F097" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-plate="/geometry/floor_plates/entries/1" data-face="top"/>
+</g>
+<g data-floor="3">
+<path d="M325.33 325.72 L480.00 236.43 L480.00 200.71 L325.33 290.01 Z" fill="#B8AF33" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-plate="/geometry/floor_plates/entries/2" data-face="side"/>
+<path d="M170.67 236.43 L325.33 325.72 L325.33 290.01 L170.67 200.71 Z" fill="#C6BC36" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-plate="/geometry/floor_plates/entries/2" data-face="side"/>
+<path d="M325.33 290.01 L480.00 200.71 L325.33 111.41 L170.67 200.71 L325.33 290.01 Z" fill="#F7F097" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-plate="/geometry/floor_plates/entries/2" data-face="top"/>
+</g>
+<g data-floor="4">
+<path d="M325.33 290.01 L480.00 200.71 L480.00 164.99 L325.33 254.29 Z" fill="#B8AF33" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-plate="/geometry/floor_plates/entries/3" data-face="side"/>
+<path d="M170.67 200.71 L325.33 290.01 L325.33 254.29 L170.67 164.99 Z" fill="#C6BC36" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-plate="/geometry/floor_plates/entries/3" data-face="side"/>
+<path d="M325.33 254.29 L480.00 164.99 L325.33 75.69 L170.67 164.99 L325.33 254.29 Z" fill="#F7F097" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-plate="/geometry/floor_plates/entries/3" data-face="top"/>
+</g>
+<text x="516.00" y="28.00" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Floor</text>
+<text x="628.00" y="28.00" font-size="8.00" text-anchor="end" font-weight="bold" fill="#111111" data-role="furniture">Gross area</text>
+<text x="704.00" y="28.00" font-size="8.00" text-anchor="end" font-weight="bold" fill="#111111" data-role="furniture">Floor-to-floor</text>
+<path d="M483.00 182.85 L512.00 182.85" fill="none" stroke="#666666" stroke-width="0.40" data-floor="4"/>
+<rect x="516.00" y="179.15" width="7.00" height="7.00" fill="#F0E442" stroke="#222222" stroke-width="0.50" data-use="residential"/>
+<text x="527.00" y="185.65" font-size="8.00" text-anchor="start" fill="#111111" data-role="floor_name" data-source="/floor_by_floor/3/floor_label">Floor 4</text>
+<text x="628.00" y="185.65" font-size="8.00" text-anchor="end" fill="#111111" data-role="floor_area" data-source="/floor_by_floor/3/gross_sf">2,500 sf</text>
+<text x="704.00" y="185.65" font-size="8.00" text-anchor="end" fill="#111111" data-role="floor_height" data-source="/floor_by_floor/3/height_ft">10 ft</text>
+<path d="M483.00 218.57 L512.00 218.57" fill="none" stroke="#666666" stroke-width="0.40" data-floor="3"/>
+<rect x="516.00" y="214.87" width="7.00" height="7.00" fill="#F0E442" stroke="#222222" stroke-width="0.50" data-use="residential"/>
+<text x="527.00" y="221.37" font-size="8.00" text-anchor="start" fill="#111111" data-role="floor_name" data-source="/floor_by_floor/2/floor_label">Floor 3</text>
+<text x="628.00" y="221.37" font-size="8.00" text-anchor="end" fill="#111111" data-role="floor_area" data-source="/floor_by_floor/2/gross_sf">2,500 sf</text>
+<text x="704.00" y="221.37" font-size="8.00" text-anchor="end" fill="#111111" data-role="floor_height" data-source="/floor_by_floor/2/height_ft">10 ft</text>
+<path d="M483.00 254.29 L512.00 254.29" fill="none" stroke="#666666" stroke-width="0.40" data-floor="2"/>
+<rect x="516.00" y="250.59" width="7.00" height="7.00" fill="#F0E442" stroke="#222222" stroke-width="0.50" data-use="residential"/>
+<text x="527.00" y="257.09" font-size="8.00" text-anchor="start" fill="#111111" data-role="floor_name" data-source="/floor_by_floor/1/floor_label">Floor 2</text>
+<text x="628.00" y="257.09" font-size="8.00" text-anchor="end" fill="#111111" data-role="floor_area" data-source="/floor_by_floor/1/gross_sf">2,500 sf</text>
+<text x="704.00" y="257.09" font-size="8.00" text-anchor="end" fill="#111111" data-role="floor_height" data-source="/floor_by_floor/1/height_ft">10 ft</text>
+<path d="M483.00 293.58 L512.00 293.58" fill="none" stroke="#666666" stroke-width="0.40" data-floor="1"/>
+<rect x="516.00" y="289.88" width="7.00" height="7.00" fill="#F0E442" stroke="#222222" stroke-width="0.50" data-use="residential"/>
+<text x="527.00" y="296.38" font-size="8.00" text-anchor="start" fill="#111111" data-role="floor_name" data-source="/floor_by_floor/0/floor_label">Floor 1</text>
+<text x="628.00" y="296.38" font-size="8.00" text-anchor="end" fill="#111111" data-role="floor_area" data-source="/floor_by_floor/0/gross_sf">2,500 sf</text>
+<text x="704.00" y="296.38" font-size="8.00" text-anchor="end" fill="#111111" data-role="floor_height" data-source="/floor_by_floor/0/height_ft">12 ft</text>
+<g data-role="legend">
+<text x="516.00" y="318.38" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Legend</text>
+<rect x="516.00" y="324.38" width="18.00" height="10.00" fill="#F0E442" stroke="#222222" stroke-width="0.50" stroke-linejoin="round"/>
+<text x="540.00" y="332.88" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Residential</text>
+<line x1="516.00" y1="345.38" x2="534.00" y2="345.38" stroke="#000000" stroke-width="1.50" stroke-linejoin="round"/>
+<text x="540.00" y="348.88" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Lot line</text>
+</g>
+<g data-role="notes">
+<text x="516.00" y="374.38" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Notes</text>
+<text x="516.00" y="386.38" font-size="7.50" fill="#111111" data-role="note"><tspan x="516.00" dy="0.00" data-source="/street_width_case/marker">Needs street width</tspan></text>
+<text x="516.00" y="400.38" font-size="7.50" fill="#111111" data-role="note"><tspan x="516.00" dy="0.00" data-source="/street_width_case/assumptions/0/street">Synthetic Street B </tspan><tspan>width assumed </tspan><tspan data-source="/street_width_case/assumptions/0/assumed">wide</tspan></text>
+</g>
+</svg>

@@ -1,6 +1,8 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { Profiler } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { PropertyLookup } from "@/components/property/PropertyLookup";
+import { sampleCommitFocus, type CommitFocus } from "@/test-support/commit-focus";
 import {
   baseProfile,
   cr500NoMatchResponse,
@@ -510,6 +512,57 @@ describe("PropertyLookup — a11y announcement + focus on every failure state (M
     );
     const headingEl = screen.getByRole("heading", { name: "BBL 1000010010" });
     await waitFor(() => expect(document.activeElement).toBe(headingEl));
+  });
+
+  it("D-flake: focus is already moved when each commit ends — loading card on keyboard retry, then the outcome heading; never body", async () => {
+    let resolveSecond: ((response: Response) => void) | undefined;
+    const fetchStub = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({ state: "source_unavailable", message: "outage" }, 503),
+      )
+      .mockImplementationOnce(
+        () => new Promise<Response>((resolve) => (resolveSecond = resolve)),
+      );
+    vi.stubGlobal("fetch", fetchStub);
+    // onRender runs inside every commit, after layout effects and before any
+    // passive effect: the instant the e2e activeElement probe samples.
+    const commits: CommitFocus[] = [];
+    render(
+      <Profiler
+        id="property"
+        onRender={() => {
+          commits.push(sampleCommitFocus());
+        }}
+      >
+        <PropertyLookup />
+      </Profiler>,
+    );
+    submitBbl("1000010010");
+    await screen.findByTestId("state-source_unavailable");
+    // Arrival: the commit that mounts the failure heading also focuses it.
+    expect(commits.find((c) => c.headingMounted)?.active).toBe("outcome-heading");
+
+    // Keyboard retry: the Retry button holds focus when it is activated.
+    const retryButton = screen.getByRole("button", { name: "Retry lookup" });
+    retryButton.focus();
+    commits.length = 0;
+    fireEvent.click(retryButton);
+    await screen.findByTestId("loading-stages");
+    resolveSecond?.(jsonResponse(baseProfile(), 200));
+    await screen.findByTestId("profile-view");
+
+    const loadingAt = commits.findIndex((c) => c.loadingMounted);
+    expect(loadingAt).toBeGreaterThanOrEqual(0);
+    expect(commits[loadingAt]?.active).toBe("loading-stages");
+    // The arrival commit removes the focused loading card; focus is already
+    // on the new outcome heading when that commit ends.
+    const arrivalAt = commits.findIndex(
+      (c, i) => i > loadingAt && !c.loadingMounted && c.headingMounted,
+    );
+    expect(arrivalAt).toBeGreaterThan(loadingAt);
+    expect(commits[arrivalAt]?.active).toBe("outcome-heading");
+    expect(commits.map((c) => c.active)).not.toContain("body");
   });
 
   it("a client-invalid submit after a result does NOT move focus (D5 preserved)", async () => {

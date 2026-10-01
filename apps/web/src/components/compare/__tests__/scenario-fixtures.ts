@@ -220,6 +220,83 @@ export function notComputableUnusedFloorAreaBody(
   return body;
 }
 
+/** Plan §3 step 4, verbatim — the words the server's A-03 default section uses. */
+const NOT_AVAILABLE_TEXT = "Not available — needs existing zoning floor area";
+
+/**
+ * The server's DEFAULT section since A-03 (INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED
+ * off; plan §3 step 4, M2-07): mirrors `_not_available_section` in
+ * services/api/app/scenario/unused_floor_area.py and the strings in
+ * services/api/app/scenario/constants.py. `not_computable` with the closest
+ * contract reason (`missing_existing_building_area`, since the fixture has a
+ * cap), no formula, the cap echoed under `inputs`, the existing input all null,
+ * the `unused_floor_area_not_available` basis record, and — when a recorded
+ * building area exists — a reference-only record carrying it (never subtracted).
+ * `recordedSqFt` is a test-chosen reference value, not an official one; pass
+ * `null` for a lot with no usable recorded area (no reference record).
+ */
+export function notAvailableUnusedFloorAreaBody(
+  recordedSqFt: number | null = 12000,
+): Record<string, unknown> {
+  const body = preliminaryScenarioBody();
+  const base = body.unused_draft_zoning_floor_area as UnusedSection;
+  const reference =
+    recordedSqFt === null
+      ? []
+      : [
+          {
+            key: "recorded_building_area_reference",
+            assumption_type: "reference_only_not_zoning_floor_area",
+            value: recordedSqFt,
+            unit: "square feet",
+            rationale:
+              "City-recorded building area, carried for reference only (source_id=nyc-dcp-pluto, " +
+              "dataset_version=26v1, original_field_name=bldgarea, provenance_ref=prov-bldgarea). " +
+              "It is NOT zoning floor area: it does not follow the zoning definition of floor area " +
+              "(ZR 12-10), so it is never subtracted from the draft floor-area allowance and no " +
+              "unused-floor-area or over-built result is derived from it.",
+          },
+        ];
+  body.unused_draft_zoning_floor_area = {
+    ...base,
+    state: "not_computable",
+    unused_draft_zoning_floor_area_sq_ft: null,
+    unit: null,
+    label:
+      `Unused floor area on the lot: ${NOT_AVAILABLE_TEXT}. The draft floor-area allowance ` +
+      "still shows. City-recorded building area is not zoning floor area and is never subtracted.",
+    scope_note:
+      "Scope: no difference is stated. It needs the existing zoning floor area (ZR 12-10 " +
+      "definition of floor area), from a Buildings Department filing or certificate of " +
+      "occupancy, or a value entered as a stated assumption; neither is available to this " +
+      "calculation. City-recorded building area (DOF/PLUTO bldgarea) does not follow the " +
+      "zoning definition of floor area, so it is never subtracted and no over-built result " +
+      "is derived from it. Building geometry - height, yards, setbacks, layout, lot " +
+      "coverage, open space - has NOT been assessed.",
+    formula: null,
+    professional_review_required: false,
+    over_built_statement: null,
+    not_computable_reason: "missing_existing_building_area",
+    assumptions: [
+      {
+        key: "unused_floor_area_not_available",
+        assumption_type: "not_computable_basis",
+        value: "needs_existing_zoning_floor_area",
+        unit: null,
+        rationale:
+          `${NOT_AVAILABLE_TEXT}. Existing floor area is taken only from a Buildings ` +
+          "Department filing or certificate of occupancy, or from a value the architect " +
+          "enters as a stated assumption; neither is available to this calculation. " +
+          "City-recorded building area (DOF/PLUTO bldgarea) is never subtracted because it " +
+          "does not follow the zoning definition of floor area (ZR 12-10). The draft " +
+          "floor-area allowance is unaffected and still shows.",
+      },
+      ...reference,
+    ],
+  };
+  return body;
+}
+
 /** A fetch stub that always resolves to `response` (offline; no network). */
 export function stubFetch(response: Response): typeof fetch {
   return (async () => response.clone()) as unknown as typeof fetch;
