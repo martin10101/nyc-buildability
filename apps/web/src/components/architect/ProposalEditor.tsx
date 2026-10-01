@@ -504,7 +504,7 @@ export function ProposalEditor({
               <ProposalOutlineDraw bbl={bbl} onAdopt={adoptDrawnOutline} fetchImpl={fetchImpl} adoptionRevision={draftRevision} />
             </div>
           ) : null}
-          <ProposalCheckReport outcome={outcome} checking={checking} />
+          <ProposalCheckReport outcome={outcome} checking={checking} bbl={bbl ?? ""} />
           <ProposalVariations
             variations={variations}
             activeId={activeId}

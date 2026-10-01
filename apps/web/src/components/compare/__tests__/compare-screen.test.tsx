@@ -2,6 +2,8 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { fireEvent } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CompareScreen } from "@/components/compare/CompareScreen";
+import { ScenarioResult } from "@/components/compare/ScenarioResult";
+import { validateScenarioDocument } from "@/lib/scenario-contract";
 import { ConfirmScreen } from "@/components/confirm/ConfirmScreen";
 import { fetchScenario } from "@/lib/scenario-api";
 import { baseProfile } from "@/test-support/fixtures";
@@ -788,5 +790,59 @@ describe("fetchScenario — offline client hardening (AS-4/AS-5 unit coverage)",
     const note = outcome.document.constraints[0].note;
     expect(note.endsWith("… [truncated]")).toBe(true);
     expect(note.length).toBe(600 + "… [truncated]".length);
+  });
+});
+
+describe("Compare screen — tax-lot-only warning and cap label (owner directive 2026-10-01)", () => {
+  // Word for word, so any drift in the app's wording fails here.
+  const WARNING = "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
+
+  it("shows the warning above the cap card and labels the cap, without interaction", async () => {
+    renderCompare(jsonResponse(preliminaryScenarioBody(), 200));
+    const cap = await screen.findByTestId("scenario-cap-value");
+    // The number itself is unchanged.
+    expect(cap.textContent).toBe("15,000");
+    const warning = screen.getByTestId("tax-lot-only-warning");
+    expect(warning).toBeVisible();
+    expect(warning.closest("details")).toBeNull();
+    expect(warning).toHaveAttribute("role", "note");
+    expect(warning.textContent).toBe(WARNING);
+    // Above the cap card, in reading order.
+    expect(warning.compareDocumentPosition(screen.getByTestId("scenario-card-1")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // The label is a plain line under the cap line, inside the cap block, not a chip.
+    const label = screen.getByTestId("scenario-cap-scope");
+    expect(label.textContent).toBe("Tax-lot-only estimate");
+    expect(label).toBeVisible();
+    expect(label.tagName).toBe("P");
+    expect(screen.getByTestId("scenario-cap")).toContainElement(label);
+    // The same cap restated as the main opportunity carries the same label.
+    expect(screen.getByTestId("scenario-opportunity")).toHaveTextContent("15,000 square feet");
+    expect(screen.getByTestId("scenario-opportunity-scope").textContent).toBe("Tax-lot-only estimate");
+  });
+
+  for (const [kind, build] of CAPLESS_BRANCHES) {
+    it(`states no tax-lot warning or label on the ${kind} branch, where no cap is stated`, async () => {
+      renderCompare(jsonResponse(build(), 200));
+      await screen.findByTestId("scenario-no-scenario");
+      expect(screen.queryByTestId("tax-lot-only-warning")).toBeNull();
+      expect(screen.queryByTestId("scenario-cap-scope")).toBeNull();
+      expect(screen.queryByTestId("scenario-opportunity-scope")).toBeNull();
+    });
+  }
+
+  it("names lots 1 and 70 when a verified zoning lot is passed through", () => {
+    const result = validateScenarioDocument(preliminaryScenarioBody());
+    if (!result.ok) throw new Error(result.problems.join("; "));
+    // Test fixture only: a verified zoning-lot fact shaped for the 215-16 Northern benchmark.
+    render(
+      <ScenarioResult
+        document={result.document}
+        bbl="4073340070"
+        zoningLot={{ taxLotBbls: ["4073340001", "4073340070"], calculatedBbl: "4073340070" }}
+      />,
+    );
+    expect(screen.getByTestId("tax-lot-only-warning").textContent).toMatch(
+      /^This zoning lot includes tax lots 1 and 70\. These numbers use lot 70 only\. /,
+    );
   });
 });

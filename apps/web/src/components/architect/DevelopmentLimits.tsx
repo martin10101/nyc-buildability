@@ -93,7 +93,7 @@ function WideStreetResult({ evaluation, evidenceHref }: { evaluation: RuleEvalua
       ? <p className="architect-development-status" data-testid="wide-street-result">Professional review required — the higher wide-street floor-area ratio is withheld until a qualified reviewer confirms the determination.</p>
       : <>
           <p className="architect-development-value" data-testid="wide-street-result">{wide.governing_max_residential_far != null ? farValue(wide.governing_max_residential_far) : "Not calculated"}</p>
-          <p className="section-note">{valueLabel} — a dimensionless ratio. Floor area = FAR × zoning-lot area (sq ft).</p>
+          <p className="section-note">{valueLabel} — a dimensionless ratio. Floor area = FAR × the area of the tax lot you entered (sq ft).</p>
           <p className="section-note">{within ? "Applies within 100 ft of a wide street." : "Outside 100 ft of a wide street; the conservative floor-area ratio governs."}</p>
         </>}
     {/* [ORCH-CORRECTED per M5-T037 HJ F2] The primary panel keeps only clean,

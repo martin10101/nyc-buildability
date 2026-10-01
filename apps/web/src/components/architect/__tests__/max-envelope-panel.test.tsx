@@ -219,6 +219,21 @@ describe("MaxEnvelopePanel — tax-lot-only warning (owner directive 2026-10-01)
     expect(body).toContainElement(screen.getByTestId("envelope-aggregate"));
   });
 
+  it("names lots 1 and 70 when a verified zoning lot is passed through", async () => {
+    // Test fixture only: a verified zoning-lot fact shaped for the 215-16 Northern benchmark.
+    render(
+      <MaxEnvelopePanel
+        request={REQUEST}
+        fetchImpl={stub(response(envelopeBody()))}
+        bbl="4073340070"
+        zoningLot={{ taxLotBbls: ["4073340001", "4073340070"], calculatedBbl: "4073340070" }}
+      />,
+    );
+    expect((await screen.findByTestId("tax-lot-only-warning")).textContent).toMatch(
+      /^This zoning lot includes tax lots 1 and 70\. These numbers use lot 70 only\. /,
+    );
+  });
+
   it("shows no warning while no limits are shown", () => {
     render(<MaxEnvelopePanel request={null} />);
     expect(screen.getByTestId("envelope-no-context")).toBeInTheDocument();

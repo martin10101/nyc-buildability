@@ -102,7 +102,10 @@ test("the printed property brief carries the tax-lot-only warning and the result
   await expectTaxLotOnlyScope(summary);
   await expect(summary.getByTestId("architect-cap-scope")).toHaveText("Tax-lot-only estimate");
   await expect(summary.getByTestId("architect-cap-scope")).toBeVisible();
-  await page.screenshot({ path: info.outputPath("development-report-print-tax-lot-only.png"), fullPage: true });
+  // Evidence picture of the printed region only. The test has no fixed wait; a full-page capture in
+  // print mode, with every section of the brief opened for printing, is the likely cause of its
+  // former ~14 s run time in CI.
+  await summary.screenshot({ path: info.outputPath("development-report-print-tax-lot-only.png") });
   await page.emulateMedia({ media: "screen" });
   await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
 });

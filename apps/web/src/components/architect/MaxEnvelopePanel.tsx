@@ -19,6 +19,7 @@ import {
 } from "@/lib/architect/max-envelope-api";
 import { draftFromCandidate, type ProposalDraft } from "@/lib/architect/proposal-draft";
 import { TaxLotOnlyNotice } from "./TaxLotOnlyNotice";
+import type { VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
 
 /**
  * Preliminary-development-limits panel (task M5-T070, D-082-R003 + D-083). The
@@ -175,11 +176,15 @@ function EnvelopeBody({
   request,
   onAdopt,
   onAdopted,
+  bbl,
+  zoningLot,
 }: {
   envelope: EnvelopeView;
   request: MaxEnvelopeRequest;
   onAdopt?: (draft: ProposalDraft) => void;
   onAdopted: (message: string) => void;
+  bbl: string;
+  zoningLot: VerifiedZoningLot | null;
 }) {
   const complete = envelopeAggregateIsComplete(envelope);
   const adoptable = candidateIsAdoptable(envelope);
@@ -211,7 +216,7 @@ function EnvelopeBody({
       {/* Owner directive 2026-10-01: these limits are computed from the entered tax lot's area
           only. The server always returns the floor-area dimension as a gap (semantic_gap), so no
           floor-area number shows here; the coverage and height limits carry this warning. */}
-      <TaxLotOnlyNotice />
+      <TaxLotOnlyNotice bbl={bbl} zoningLot={zoningLot} />
 
       <p
         className={`max-envelope-aggregate ${complete ? "is-checked" : "is-incomplete"}`}
@@ -262,9 +267,13 @@ export interface MaxEnvelopePanelProps {
   fetchImpl?: typeof fetch;
   /** Adopt the Generated building option into the editor's ONE draft model. */
   onAdopt?: (draft: ProposalDraft) => void;
+  /** The property's BBL, for the tax-lot-only warning's verified variant. */
+  bbl?: string;
+  /** A VERIFIED zoning-lot fact for this property (owner directive 2026-10-01); none is wired yet. */
+  zoningLot?: VerifiedZoningLot | null;
 }
 
-export function MaxEnvelopePanel({ request, fetchImpl, onAdopt }: MaxEnvelopePanelProps) {
+export function MaxEnvelopePanel({ request, fetchImpl, onAdopt, bbl = "", zoningLot = null }: MaxEnvelopePanelProps) {
   const [outcome, setOutcome] = useState<MaxEnvelopeOutcome | null>(null);
   const [loading, setLoading] = useState(false);
   const [announcement, setAnnouncement] = useState("");
@@ -327,6 +336,8 @@ export function MaxEnvelopePanel({ request, fetchImpl, onAdopt }: MaxEnvelopePan
           request={request}
           onAdopt={onAdopt}
           onAdopted={setAnnouncement}
+          bbl={bbl}
+          zoningLot={zoningLot}
         />
       ) : outcome ? (
         <div className="max-envelope-failure card failure-state" data-testid="envelope-failure" role="alert">

@@ -4,6 +4,7 @@ import { calculationStatus, scenarioCap } from "@/lib/architect/development-limi
 import { DraftHeadline } from "./PropertyOverview";
 import { CapturedRecord } from "./EvidenceRecord";
 import { TaxLotOnlyNotice } from "./TaxLotOnlyNotice";
+import type { VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
 import { UnusedFloorAreaSection } from "@/components/compare/UnusedFloorAreaSection";
 import { UnusedFloorAreaSetAside } from "@/components/compare/UnusedFloorAreaNotAvailable";
 import { ScenarioConstraints, IntegrityCheckBlock } from "@/components/compare/ScenarioConstraints";
@@ -13,11 +14,13 @@ import { NoScenarioBlock } from "@/components/compare/NoScenarioBlock";
 /** `unusedFloorAreaSectionEnabled` is the server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED
  * (D-06, plan §3 step 4); absent -> off: the set-aside section is replaced by one
  * "Not available — needs existing zoning floor area" line. */
-export function ScenarioWorkspace({ document, evaluation = null, bbl, unusedFloorAreaSectionEnabled = false }: {
+export function ScenarioWorkspace({ document, evaluation = null, bbl, unusedFloorAreaSectionEnabled = false, zoningLot = null }: {
     document: Scenario;
     evaluation?: RuleEvaluation | null;
     bbl: string;
     unusedFloorAreaSectionEnabled?: boolean;
+    /** A VERIFIED zoning-lot fact for this property (owner directive 2026-10-01); none is wired yet. */
+    zoningLot?: VerifiedZoningLot | null;
 }) {
     const supportedCap = scenarioCap(document, evaluation, bbl) !== null;
     const unusedFloorArea = unusedFloorAreaSectionEnabled ? <UnusedFloorAreaSection document={document}/> : <UnusedFloorAreaSetAside/>;
@@ -25,7 +28,7 @@ export function ScenarioWorkspace({ document, evaluation = null, bbl, unusedFloo
     <section className="card">
       <DraftHeadline scenario={document} evaluation={evaluation} bbl={bbl}/>
       {/* Owner directive 2026-10-01: the cap above is for the entered tax lot only. */}
-      <TaxLotOnlyNotice bbl={bbl}/>
+      <TaxLotOnlyNotice bbl={bbl} zoningLot={zoningLot}/>
       {!supportedCap ? <p className="section-note">{calculationStatus(evaluation, document, bbl)}</p> : null}
       <p className="section-note">One preliminary scenario is supplied. Alternative optimization, practical usable range and design selection are not available.</p>
       <p>Objective: {document.cap_provenance?.output_name ?? "No supported objective returned"}

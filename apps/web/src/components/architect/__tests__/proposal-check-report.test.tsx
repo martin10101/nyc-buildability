@@ -39,6 +39,21 @@ describe("ProposalCheckReport", () => {
     expect(screen.getByRole("region", { name: "Proposal check report" })).toContainElement(warning);
   });
 
+  it("names lots 1 and 70 when a verified zoning lot is passed through (owner directive 2026-10-01)", async () => {
+    const outcome = await reportOutcome(attestedReportBody());
+    // Test fixture only: a verified zoning-lot fact shaped for the 215-16 Northern benchmark.
+    render(
+      <ProposalCheckReport
+        outcome={outcome}
+        bbl="4073340070"
+        zoningLot={{ taxLotBbls: ["4073340001", "4073340070"], calculatedBbl: "4073340070" }}
+      />,
+    );
+    expect(screen.getByTestId("tax-lot-only-warning").textContent).toMatch(
+      /^This zoning lot includes tax lots 1 and 70\. These numbers use lot 70 only\. /,
+    );
+  });
+
   it("shows no tax-lot-only warning before a report exists", () => {
     render(<ProposalCheckReport outcome={null} />);
     expect(screen.queryByTestId("tax-lot-only-warning")).toBeNull();

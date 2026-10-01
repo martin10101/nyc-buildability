@@ -604,6 +604,19 @@ describe("M5-T037 — wide-street conditional FAR on the development-limits surf
     );
   });
 
+  it("states the floor-area formula for the entered tax lot, never the zoning lot (owner directive 2026-10-01)", () => {
+    const { profile } = inputs();
+    const doc = wideDoc(profile.identity.bbl);
+    const view = show(profile, doc);
+    const panel = screen.getByTestId("development-wide-street");
+    expect(panel).toHaveTextContent("Floor area = FAR × the area of the tax lot you entered (sq ft).");
+    expect(panel).not.toHaveTextContent("zoning-lot area");
+    view.rerender(<CalculationEvidence evaluation={doc} scenario={null}/>);
+    const provenance = screen.getByTestId("wide-street-provenance");
+    expect(provenance).toHaveTextContent("Floor area is derived as FAR × the area of the tax lot you entered (sq ft).");
+    expect(provenance).not.toHaveTextContent("zoning-lot area");
+  });
+
   it("renders the honest professional-review escalation, never the higher FAR, on uncertainty", () => {
     const { profile } = inputs();
     const doc = wideDoc(profile.identity.bbl);
@@ -845,5 +858,18 @@ describe("owner directive 2026-10-01 — tax-lot-only warning and labels on the 
     // A fact for another tax lot never names lots for this one: the generic warning stays.
     view.rerender(<DevelopmentLimits profile={profile} scenario={null} evaluation={null} zoningLot={{ ...ZONING_LOT, calculatedBbl: "4073340001" }}/>);
     expectVisibleWarning(screen.getByRole("region", { name: "Development limits" }));
+  });
+
+  it("passes the verified zoning lot through the scenario view and the calculation evidence", () => {
+    const { evaluation, scenario } = inputs();
+    const view = render(<ScenarioWorkspace document={scenario} evaluation={null} bbl={LOT_70} zoningLot={ZONING_LOT}/>);
+    expectVisibleWarning(screen.getByTestId("scenario-result"), VERIFIED_WARNING);
+    // The evidence view checks the fact against the BBL its evaluation was made for.
+    evaluation.evaluated_input.bbl = LOT_70;
+    view.rerender(<CalculationEvidence evaluation={evaluation} scenario={null} zoningLot={ZONING_LOT}/>);
+    expectVisibleWarning(view.container, VERIFIED_WARNING);
+    evaluation.evaluated_input.bbl = "4073340001";
+    view.rerender(<CalculationEvidence evaluation={structuredClone(evaluation)} scenario={null} zoningLot={ZONING_LOT}/>);
+    expectVisibleWarning(view.container);
   });
 });
