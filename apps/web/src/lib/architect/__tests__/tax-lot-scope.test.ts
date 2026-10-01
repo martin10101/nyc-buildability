@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   NOT_CONFIRMED,
+  REMAINING_CAPACITY_LABEL,
+  REMAINING_CAPACITY_REASON,
   TAX_LOT_ONLY_ESTIMATE,
   TAX_LOT_ONLY_WARNING,
+  ZONING_LOT_ROW_REASONS,
   ZONING_LOT_ROWS,
   taxLotScopeWarning,
   verifiedZoningLotNumbers,
@@ -12,6 +15,8 @@ import {
 // Owner directive 2026-10-01, copied word for word so any drift in the app's wording fails here.
 const GENERIC = "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
 const VERIFIED_1_70 = "This zoning lot includes tax lots 1 and 70. These numbers use lot 70 only. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
+// Owner wording, settled 2026-10-01 (D-090-R038), copied word for word.
+const REMAINING_REASON = "Needs verified zoning-lot boundaries and existing zoning floor area.";
 
 // Test fixture only: the shape of a verified zoning-lot fact for the 215-16 Northern benchmark
 // (block 07334, tax lots 1 and 70). No such verified fact is served to the web yet.
@@ -30,9 +35,16 @@ describe("tax-lot-only wording (owner directive 2026-10-01)", () => {
       "Combined zoning lot: rear yard",
     ]);
     // Plain words: no internal codes in any shown text.
-    for (const text of [GENERIC, VERIFIED_1_70, ...ZONING_LOT_ROWS.map(([, label]) => label)]) {
+    for (const text of [GENERIC, VERIFIED_1_70, REMAINING_REASON, ...ZONING_LOT_ROWS.map(([, label]) => label)]) {
       expect(text).not.toMatch(/\b[a-z0-9]+(?:_[a-z0-9]+)+\b/);
     }
+  });
+
+  it("gives the remaining-capacity row, and only that row, the owner's reason line (D-090-R038)", () => {
+    expect(REMAINING_CAPACITY_LABEL).toBe("Remaining development capacity");
+    expect(REMAINING_CAPACITY_REASON).toBe(REMAINING_REASON);
+    expect(ZONING_LOT_ROW_REASONS).toEqual({ "remaining-capacity": REMAINING_REASON });
+    expect(ZONING_LOT_ROWS.find(([key]) => key === "remaining-capacity")?.[1]).toBe(REMAINING_CAPACITY_LABEL);
   });
 
   it("reads the generic warning when no verified zoning lot is supplied", () => {

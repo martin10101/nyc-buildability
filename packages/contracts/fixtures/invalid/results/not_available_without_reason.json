@@ -76,7 +76,7 @@
   },
   "remaining_floor_area": {
     "status": "not_available",
-    "reason": "Not available — needs existing zoning floor area",
+    "reason": "Needs verified zoning-lot boundaries and existing zoning floor area.",
     "reason_kind": "missing_input"
   },
   "shortfall": {
@@ -119,7 +119,7 @@
     "paths": {
       "keep": {
         "status": "not_available",
-        "reason": "Not available — needs existing zoning floor area",
+        "reason": "Needs verified zoning-lot boundaries and existing zoning floor area.",
         "reason_kind": "missing_input"
       },
       "partial_rebuild": {

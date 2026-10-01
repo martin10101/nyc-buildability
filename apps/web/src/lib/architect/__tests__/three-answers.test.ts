@@ -39,10 +39,10 @@ describe("notAvailableText — exactly 'Not available — <reason>' (plan §5, �
     ).toBe("Not available — it needs the permitted envelope.");
   });
 
-  it("keeps the plan §3 step 4 wording for the remaining floor area unchanged", () => {
+  it("drops a lead that only names the remaining floor area", () => {
     expect(
-      notAvailableText("Not available — needs existing zoning floor area", "remaining_floor_area"),
-    ).toBe("Not available — needs existing zoning floor area");
+      notAvailableText("Remaining floor area not available — the survey is missing", "remaining_floor_area"),
+    ).toBe("Not available — the survey is missing");
   });
 
   it("prefixes a bare reason", () => {
@@ -149,16 +149,19 @@ describe("answerView — the draft gate and the headline", () => {
 });
 
 describe("supplements, strip and street-width lines", () => {
-  it("remaining floor area: not applicable → nothing; not available → the plan wording", () => {
+  it("remaining floor area: not applicable → nothing; not available → the owner's wording (D-090-R038)", () => {
     expect(remainingFloorAreaView(loadResultsFixture("synthetic_all_answers_available"))).toBeNull();
+    // Owner wording, settled 2026-10-01, word for word: "Remaining development capacity" →
+    // "Not confirmed", then the reason line.
     expect(
       remainingFloorAreaView(
         loadResultsFixture("synthetic_envelope_not_available_existing_building"),
       ),
     ).toEqual({
       kind: "not_available",
-      label: "Remaining after the existing building",
-      text: "Not available — needs existing zoning floor area",
+      label: "Remaining development capacity",
+      text: "Not confirmed",
+      reason: "Needs verified zoning-lot boundaries and existing zoning floor area.",
     });
   });
 

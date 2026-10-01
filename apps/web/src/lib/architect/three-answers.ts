@@ -18,6 +18,7 @@ import type {
   StreetWidthCase,
   Unit,
 } from "../../../../../packages/contracts/generated/results";
+import { NOT_CONFIRMED, REMAINING_CAPACITY_LABEL, REMAINING_CAPACITY_REASON } from "./tax-lot-scope";
 
 // The canonical generated contract types (packages/contracts/generated/results.ts, task C-03),
 // re-exported so the panel and its tests import them from one place.
@@ -69,7 +70,8 @@ export const DRAFT_PREVIEW_TAG = "internal preview, rules not reviewed";
 /** Reason shown if an available answer arrives without any value (the contract forbids it). */
 export const NO_VALUE_REASON = "no value was returned for this answer";
 
-/** Row label for the allowance left after a kept building (plan §3 step 4). */
+/** Row label for an available value of the allowance left after a kept building (plan §3
+ * step 4). Without a verified value the row reads REMAINING_CAPACITY_LABEL (D-090-R038). */
 export const REMAINING_LABEL = "Remaining after the existing building";
 
 /** Row label for a building option's gap to the allowance (plan §5 answer 3). */
@@ -209,11 +211,13 @@ export function uniqueSections(sections: readonly string[]): string[] {
 
 export type SupplementView =
   | { kind: "value"; label: string; quantity: DisplayQuantity }
-  | { kind: "not_available"; label: string; text: string };
+  | { kind: "not_available"; label: string; text: string; reason?: string };
 
 /**
  * The allowance left after a kept building (plan §3 step 4). null when no building is kept.
- * Read only while the allowance itself is shown.
+ * Read only while the allowance itself is shown. Without a verified value it reads the owner's
+ * settled wording (D-090-R038), which replaces plan §3 step 4's: "Remaining development
+ * capacity" → "Not confirmed", then the reason line.
  */
 export function remainingFloorAreaView(results: ThreeAnswersResults): SupplementView | null {
   const remaining = results.remaining_floor_area;
@@ -227,8 +231,9 @@ export function remainingFloorAreaView(results: ThreeAnswersResults): Supplement
   if (remaining.status === "not_available") {
     return {
       kind: "not_available",
-      label: REMAINING_LABEL,
-      text: notAvailableText(remaining.reason, "remaining_floor_area"),
+      label: REMAINING_CAPACITY_LABEL,
+      text: NOT_CONFIRMED,
+      reason: REMAINING_CAPACITY_REASON,
     };
   }
   return null;

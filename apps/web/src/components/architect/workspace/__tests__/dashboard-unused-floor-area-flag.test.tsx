@@ -10,9 +10,10 @@ import scenarioFixture from "../../../../../../../packages/contracts/fixtures/va
 /**
  * D-06 (plan §3 step 4, M2-07; set-aside item #6): the dashboard's Scenarios,
  * Evidence and Report tools pass the server-read
- * INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED down. Off (the default): one
- * "Not available — needs existing zoning floor area" line, no section and no
- * remainder record. On: the kept section and remainder record render.
+ * INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED down. Off (the default): the owner's
+ * two lines (D-090-R038), "Remaining development capacity: Not confirmed" and its
+ * reason, no section and no remainder record. On: the kept section and remainder
+ * record render.
  */
 
 vi.mock("@/lib/condo-records", async original => ({
@@ -22,7 +23,8 @@ vi.mock("@/lib/condo-records", async original => ({
 vi.mock("@/components/address/LotOutlineMap", () => ({ LotOutlineMap: () => <div>Map presentation seam</div> }));
 afterEach(cleanup);
 
-const NOT_AVAILABLE = "Not available — needs existing zoning floor area";
+const NOT_AVAILABLE = "Remaining development capacity: Not confirmed";
+const NOT_AVAILABLE_REASON = "Needs verified zoning-lot boundaries and existing zoning floor area.";
 const TOOLS = ["scenarios", "evidence", "report"] as const;
 
 function props(tool: (typeof TOOLS)[number], unusedFloorAreaSectionEnabled?: boolean): DashboardToolsProps {
@@ -43,9 +45,10 @@ function props(tool: (typeof TOOLS)[number], unusedFloorAreaSectionEnabled?: boo
 describe("dashboard unused-floor-area section is set aside behind a default-off server flag", () => {
   for (const tool of TOOLS) {
     for (const flag of [undefined, false] as const) {
-      it(`tool=${tool}, flag ${String(flag)}: one not-available line, no section, no remainder record`, () => {
+      it(`tool=${tool}, flag ${String(flag)}: the owner's two lines, no section, no remainder record`, () => {
         render(<DashboardTools {...props(tool, flag)}/>);
         expect(screen.getAllByTestId("unused-floor-area-not-available").map(line => line.textContent)).toEqual([NOT_AVAILABLE]);
+        expect(screen.getAllByTestId("unused-floor-area-not-available-reason").map(line => line.textContent)).toEqual([NOT_AVAILABLE_REASON]);
         expect(screen.queryByTestId("scenario-unused-floor-area")).toBeNull();
         expect(screen.queryByText("Remainder inputs, result and provenance")).toBeNull();
       });
@@ -54,6 +57,7 @@ describe("dashboard unused-floor-area section is set aside behind a default-off 
     it(`tool=${tool}, flag on: the kept section and remainder record render`, () => {
       render(<DashboardTools {...props(tool, true)}/>);
       expect(screen.queryByTestId("unused-floor-area-not-available")).toBeNull();
+      expect(screen.queryByTestId("unused-floor-area-not-available-reason")).toBeNull();
       if (tool === "scenarios") expect(screen.getByTestId("scenario-unused-floor-area")).toBeInTheDocument();
       else expect(screen.getByText("Remainder inputs, result and provenance")).toBeInTheDocument();
     });

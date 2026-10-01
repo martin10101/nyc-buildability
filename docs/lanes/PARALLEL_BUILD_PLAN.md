@@ -49,7 +49,7 @@ Lower-density (R1–R5), special districts and commercial districts follow the p
 - **The benchmark first.** Every check must pass on 215-16 Northern before results reach an architect (plan §9a-6). Its district is R6B, so Lane A's first rule family is R6B (FAR 23-22 with the qualifying option, heights 23-432, coverage 23-362, rear yard 23-344, units 23-52), as **draft** tables (D-090-R010). The Pilot A family follows once the owner answers Q1.
 - **Contracts before surfaces.** Lanes D and E build against contract fixtures until Lane C wires live data (Lane D prompt; Lane E prompt).
 - **Set aside before building on it.** Example defaults (M1-06a/b) and the coordinate drawing go behind flags early, so no new work lands on them.
-- **The plan contradicts live code.** "Unused floor area" is computed from recorded building area, which the plan forbids (§3 step 4, M2-07). It goes behind a flag and shows "Not available — needs existing zoning floor area" (Lane A + D, wave 1).
+- **The plan contradicts live code.** "Unused floor area" is computed from recorded building area, which the plan forbids (§3 step 4, M2-07). It goes behind a flag and shows "Remaining development capacity: Not confirmed" / "Needs verified zoning-lot boundaries and existing zoning floor area." (owner wording D-090-R038, 2026-10-01; DB-101 option A) (Lane A + D, wave 1).
 
 ## 5. Contracts v1 (the list the missing §5 would have held)
 
