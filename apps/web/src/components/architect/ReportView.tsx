@@ -18,7 +18,8 @@ import { CapturedRecord } from "./EvidenceRecord";
 import { CalculationEvidence } from "./CalculationEvidence";
 import { ReportSources } from "./ReportSources";
 import { AnalysisIdentityNotice } from "./AnalysisIdentityNotice";
-export function ReportView({ profile, scenario: returnedScenario, evaluation: returnedEvaluation, label, condoDecision, unusedFloorAreaSectionEnabled = false }: {
+import type { VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
+export function ReportView({ profile, scenario: returnedScenario, evaluation: returnedEvaluation, label, condoDecision, unusedFloorAreaSectionEnabled = false, zoningLot = null }: {
     profile: PropertyProfile;
     scenario: Scenario | null;
     evaluation: RuleEvaluation | null;
@@ -26,6 +27,9 @@ export function ReportView({ profile, scenario: returnedScenario, evaluation: re
     condoDecision?: CondoSurfaceDecision;
     /** Server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED (D-06); absent -> off. */
     unusedFloorAreaSectionEnabled?: boolean;
+    /** A VERIFIED zoning-lot fact for this property (owner directive 2026-10-01); none is wired
+     * yet, so the brief prints the generic tax-lot-only warning. */
+    zoningLot?: VerifiedZoningLot | null;
 }) {
     // Retain original returns inside the print boundary. Only records associated
     // with the selected property may reach its result and calculation views.
@@ -97,7 +101,10 @@ export function ReportView({ profile, scenario: returnedScenario, evaluation: re
         inspectability-GATED evaluation every screen surface uses (and that
         CalculationEvidence below already receives), so screen and report can never
         quietly disagree on a non-inspectable document (D-073-R003). */}
-    <DevelopmentLimits profile={profile} scenario={scenario} evaluation={evaluation}/>
+    {/* Owner directive 2026-10-01: the tax-lot-only warning and the result labels print with the
+        brief from this one DevelopmentLimits, outside every disclosure. The calculation appendix
+        below does not repeat the warning (plan §5a: on one page of the report). */}
+    <DevelopmentLimits profile={profile} scenario={scenario} evaluation={evaluation} zoningLot={zoningLot}/>
     {/* M5-T052 (D-073-R006): the condo RECORDS reach the printed brief from the
         SAME shared decision and the SAME CondoRecordsChannelSection the screen
         (PropertyOverview) uses, rendered UNDER the professional-review fail-safe
@@ -127,7 +134,7 @@ export function ReportView({ profile, scenario: returnedScenario, evaluation: re
     </details>
     <details className="card architect-disclosure architect-report-section" id="brief-calculations">
       <summary>Calculation and rule evidence</summary>
-      <CalculationEvidence evaluation={evaluation} scenario={scenario} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/>
+      <CalculationEvidence evaluation={evaluation} scenario={scenario} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled} taxLotNotice={false}/>
     </details>
     <details className="card architect-disclosure architect-report-section" id="brief-sources">
       <summary>Source and review appendix</summary>

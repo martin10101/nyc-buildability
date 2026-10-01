@@ -132,3 +132,60 @@ describe("real-data dashboard summaries", () => {
     expect(screen.getAllByTestId("dashboard-status-item")[2]).toHaveTextContent(`${count} lots on record`);
   });
 });
+
+describe("owner directive 2026-10-01: tax-lot-only warning and labels on the dashboard results", () => {
+  // Word for word, so any drift in the app's wording fails here.
+  const WARNING = "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
+  const ZONING_LOT_ROWS = ["Whole-site capacity", "Remaining development capacity", "Combined zoning lot: coverage", "Combined zoning lot: rear yard"];
+
+  function expectZoningLotRows(summary: HTMLElement) {
+    for (const label of ZONING_LOT_ROWS) {
+      const cell = within(summary).getByRole("rowheader", { name: label }).closest("tr")!.querySelector<HTMLElement>("td")!;
+      expect(cell.textContent).toBe("Not confirmed");
+      expect(cell).toBeVisible();
+    }
+  }
+
+  it("shows the warning on the results before any tap and labels the cap and the zoning-lot rows", () => {
+    render(<DashboardPanels {...inputs()}/>);
+    const summary = screen.getByRole("region", { name: "Development limits summary" });
+    // Nothing is tapped: the strip is closed, and the warning is still on screen with the numbers.
+    expect(screen.getByTestId("dashboard-status-strip")).toHaveAttribute("aria-expanded", "false");
+    const warning = within(summary).getByTestId("tax-lot-only-warning");
+    expect(warning).toBeVisible();
+    expect(warning).toHaveAttribute("role", "note");
+    expect(warning.textContent).toBe(WARNING);
+    expect(screen.getByTestId("dashboard-status-details")).not.toContainElement(warning);
+    // The label sits on the value as a plain line under the number: the number itself is unchanged
+    // and the label is not an exception chip.
+    const cap = screen.getByTestId("dashboard-cap");
+    expect(cap).toHaveTextContent(/^15,000 sq ft$/);
+    const label = screen.getByTestId("dashboard-cap-scope");
+    expect(label.textContent).toBe("Tax-lot-only estimate");
+    expect(label).toBeVisible();
+    expect(label.closest(".bd-headline")).toContainElement(cap);
+    expect(label).not.toHaveClass("bd-exception");
+    expectZoningLotRows(summary);
+  });
+
+  it("keeps the warning and the 'Not confirmed' rows when the cap is withheld, without a cap label", () => {
+    const props = inputs();
+    props.condo = { ...props.condo, withholdAllowances: true };
+    render(<DashboardPanels {...props}/>);
+    const summary = screen.getByRole("region", { name: "Development limits summary" });
+    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("Not available — the site needs review first");
+    expect(screen.queryByTestId("dashboard-cap-scope")).toBeNull();
+    expect(within(summary).getByTestId("tax-lot-only-warning").textContent).toBe(WARNING);
+    expectZoningLotRows(summary);
+  });
+
+  it("names lots 1 and 70 and says the numbers use lot 70 only for a verified zoning lot", () => {
+    // Test fixture only: a verified zoning-lot fact shaped for the 215-16 Northern benchmark.
+    const props = inputs();
+    props.profile.identity.bbl = "4073340070";
+    render(<DashboardPanels {...props} zoningLot={{ taxLotBbls: ["4073340001", "4073340070"], calculatedBbl: "4073340070" }}/>);
+    expect(screen.getByTestId("tax-lot-only-warning").textContent).toBe(
+      "This zoning lot includes tax lots 1 and 70. These numbers use lot 70 only. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.",
+    );
+  });
+});

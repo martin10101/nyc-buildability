@@ -310,6 +310,11 @@ test("a foreign condo outline remains withheld instead of filling the missing pa
 // Plan §5a item 2, word for word.
 const FLOOR_AREA_REMINDER = "Make sure this floor area is available for use. Confirm with the owner or developer that none of it was sold or merged with another lot.";
 
+// Owner directive 2026-10-01, word for word: the tax-lot-only warning on the results and the
+// combined-zoning-lot rows that read "Not confirmed".
+const TAX_LOT_ONLY_WARNING = "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
+const ZONING_LOT_ROWS = ["Whole-site capacity", "Remaining development capacity", "Combined zoning lot: coverage", "Combined zoning lot: rear yard"];
+
 // The mark on the draft-rule numbers (review B1 of PR #267), and the strip line's one name.
 const DRAFT_MARK = "Draft — not reviewed";
 const STRIP_NAME = `${DRAFT_MARK}, City-record measurements, Lot you entered. Details`;
@@ -335,6 +340,19 @@ test("the dashboard follows plan §5a: one strip, notices behind it, readable te
   await expect(strip.getByText(DRAFT_MARK, { exact: true })).toBeVisible();
   await expect(summary.getByText(DRAFT_MARK)).toHaveCount(0);
   await expect(strip).toHaveAccessibleName(STRIP_NAME);
+  // Owner directive 2026-10-01 (overrides §5a items 2 and 3 for this fact): before any tap, the
+  // tax-lot-only warning is on the results, the cap carries a plain "Tax-lot-only estimate" line
+  // (the number itself is unchanged) and the combined-zoning-lot rows read "Not confirmed".
+  const warning = summary.getByTestId("tax-lot-only-warning");
+  await expect(warning).toBeVisible();
+  await expect(warning).toHaveText(TAX_LOT_ONLY_WARNING);
+  await expect(summary.getByTestId("dashboard-cap-scope")).toHaveText("Tax-lot-only estimate");
+  await expect(summary.getByTestId("dashboard-cap-scope")).toBeVisible();
+  for (const label of ZONING_LOT_ROWS) {
+    const row = summary.getByRole("row").filter({ has: page.getByRole("rowheader", { name: label, exact: true }) });
+    await expect(row.getByRole("cell")).toHaveText("Not confirmed");
+    await expect(row).toBeVisible();
+  }
   // At most three notices on screen: a fourth list item never appears (auto-retrying).
   await expect(page.getByRole("list", { name: "Needs attention" }).getByRole("listitem").nth(3)).toHaveCount(0);
   const reminder = page.getByText(FLOOR_AREA_REMINDER, { exact: true });
@@ -353,4 +371,18 @@ test("the dashboard follows plan §5a: one strip, notices behind it, readable te
   expect(small).toEqual([]);
   expect(await page.locator(".bd-analysis-column").innerText()).not.toMatch(/\b[a-z0-9]+(?:_[a-z0-9]+)+\b/);
   await capture(page, info, "connected-dashboard-status-strip-open", true);
+  // The report preview carries the same warning and labels, once, on its development limits.
+  await page.getByRole("region", { name: "Quick actions" }).getByRole("button", { name: /Report preview/ }).click();
+  const report = page.getByRole("dialog", { name: "Property report" });
+  const limits = report.getByRole("region", { name: "Development limits", exact: true });
+  await expect(limits.getByTestId("architect-cap").locator(".architect-metric")).toHaveText("15,000 sq ft", { timeout: 15_000 });
+  await expect(report.getByTestId("tax-lot-only-warning")).toHaveCount(1);
+  await expect(limits.getByTestId("tax-lot-only-warning")).toBeVisible();
+  await expect(limits.getByTestId("tax-lot-only-warning")).toHaveText(TAX_LOT_ONLY_WARNING);
+  await expect(limits.getByTestId("architect-cap-scope")).toHaveText("Tax-lot-only estimate");
+  for (const label of ZONING_LOT_ROWS) {
+    await expect(limits.locator("dt", { hasText: new RegExp(`^${label}$`) }).locator("..").locator("dd")).toHaveText("Not confirmed");
+  }
+  await capture(page, info, "connected-report-tax-lot-only");
+  await page.getByRole("button", { name: "Close Property report window" }).click();
 });

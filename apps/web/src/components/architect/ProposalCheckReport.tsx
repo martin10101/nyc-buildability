@@ -3,6 +3,7 @@ import {
   type CheckResultView,
   type ProposalCheckOutcome,
 } from "@/lib/proposal-checks-api";
+import { TaxLotOnlyNotice } from "./TaxLotOnlyNotice";
 
 /**
  * Grouped proposal-check report (task M5-T060). Renders the accepted route's
@@ -194,6 +195,9 @@ export function ProposalCheckReport({
         <p className="proposal-honesty" data-testid="report-honesty">
           Proposed — your input, not a city record. Preliminary result; professional review required.
         </p>
+        {/* Owner directive 2026-10-01: the allowances compared here are rule results for the
+            entered tax lot only. */}
+        <TaxLotOnlyNotice />
         <p className="proposal-check-summary" data-testid="proposal-check-summary">
           {report.summary.fail} did not meet an allowance · {report.summary.couldNotCheck} could not be
           checked · {report.summary.pass} met an allowance

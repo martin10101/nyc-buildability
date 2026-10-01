@@ -18,6 +18,7 @@ import {
   type MaxEnvelopeRequest,
 } from "@/lib/architect/max-envelope-api";
 import { draftFromCandidate, type ProposalDraft } from "@/lib/architect/proposal-draft";
+import { TaxLotOnlyNotice } from "./TaxLotOnlyNotice";
 
 /**
  * Preliminary-development-limits panel (task M5-T070, D-082-R003 + D-083). The
@@ -207,6 +208,10 @@ function EnvelopeBody({
       <p className="max-envelope-disclosure" data-testid="envelope-disclosure">
         {envelope.disclosure}
       </p>
+      {/* Owner directive 2026-10-01: these limits are computed from the entered tax lot's area
+          only. The server always returns the floor-area dimension as a gap (semantic_gap), so no
+          floor-area number shows here; the coverage and height limits carry this warning. */}
+      <TaxLotOnlyNotice />
 
       <p
         className={`max-envelope-aggregate ${complete ? "is-checked" : "is-incomplete"}`}

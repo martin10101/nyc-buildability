@@ -201,6 +201,31 @@ describe("MaxEnvelopePanel — answer-first limits (AS-1) + claim-class vocabula
   });
 });
 
+// Owner directive 2026-10-01, word for word: these limits are computed from the entered tax lot's
+// area only, so the panel carries the warning whenever it shows limits.
+const TAX_LOT_ONLY_WARNING =
+  "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
+
+describe("MaxEnvelopePanel — tax-lot-only warning (owner directive 2026-10-01)", () => {
+  it("shows the warning with the limits, without interaction", async () => {
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(envelopeBody()))} />);
+    const warning = await screen.findByTestId("tax-lot-only-warning");
+    expect(warning).toBeVisible();
+    expect(warning).toHaveAttribute("role", "note");
+    expect(warning.textContent).toBe(TAX_LOT_ONLY_WARNING);
+    // It sits with the limits it qualifies, ahead of the dimension rows.
+    const body = document.querySelector<HTMLElement>(".max-envelope-body")!;
+    expect(body).toContainElement(warning);
+    expect(body).toContainElement(screen.getByTestId("envelope-aggregate"));
+  });
+
+  it("shows no warning while no limits are shown", () => {
+    render(<MaxEnvelopePanel request={null} />);
+    expect(screen.getByTestId("envelope-no-context")).toBeInTheDocument();
+    expect(screen.queryByTestId("tax-lot-only-warning")).toBeNull();
+  });
+});
+
 describe("MaxEnvelopePanel — no unrestricted green (AS-3, D-083-R004, mutation-sensitive)", () => {
   it("stays visibly INCOMPLETE while a gap is present", async () => {
     render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(envelopeBody()))} />);

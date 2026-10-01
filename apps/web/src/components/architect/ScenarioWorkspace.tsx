@@ -3,6 +3,7 @@ import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
 import { calculationStatus, scenarioCap } from "@/lib/architect/development-limits";
 import { DraftHeadline } from "./PropertyOverview";
 import { CapturedRecord } from "./EvidenceRecord";
+import { TaxLotOnlyNotice } from "./TaxLotOnlyNotice";
 import { UnusedFloorAreaSection } from "@/components/compare/UnusedFloorAreaSection";
 import { UnusedFloorAreaSetAside } from "@/components/compare/UnusedFloorAreaNotAvailable";
 import { ScenarioConstraints, IntegrityCheckBlock } from "@/components/compare/ScenarioConstraints";
@@ -23,6 +24,8 @@ export function ScenarioWorkspace({ document, evaluation = null, bbl, unusedFloo
     return <div data-testid="scenario-result">
     <section className="card">
       <DraftHeadline scenario={document} evaluation={evaluation} bbl={bbl}/>
+      {/* Owner directive 2026-10-01: the cap above is for the entered tax lot only. */}
+      <TaxLotOnlyNotice bbl={bbl}/>
       {!supportedCap ? <p className="section-note">{calculationStatus(evaluation, document, bbl)}</p> : null}
       <p className="section-note">One preliminary scenario is supplied. Alternative optimization, practical usable range and design selection are not available.</p>
       <p>Objective: {document.cap_provenance?.output_name ?? "No supported objective returned"}

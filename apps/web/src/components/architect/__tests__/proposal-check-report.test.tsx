@@ -22,7 +22,28 @@ async function reportOutcome(body: unknown): Promise<ProposalCheckOutcome> {
   return fetchProposalCheck(REQUEST, { fetchImpl: stubFetch(checkResponse(body, 200)) });
 }
 
+// Owner directive 2026-10-01, word for word: the allowances in a report are rule results for the
+// entered tax lot only.
+const TAX_LOT_ONLY_WARNING =
+  "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
+
 describe("ProposalCheckReport", () => {
+  it("carries the tax-lot-only warning on a report, visible without interaction (owner directive 2026-10-01)", async () => {
+    const outcome = await reportOutcome(attestedReportBody());
+    render(<ProposalCheckReport outcome={outcome} />);
+    const warning = screen.getByTestId("tax-lot-only-warning");
+    expect(warning).toBeVisible();
+    expect(warning).toHaveAttribute("role", "note");
+    expect(warning.textContent).toBe(TAX_LOT_ONLY_WARNING);
+    // The allowances it qualifies are on the same report.
+    expect(screen.getByRole("region", { name: "Proposal check report" })).toContainElement(warning);
+  });
+
+  it("shows no tax-lot-only warning before a report exists", () => {
+    render(<ProposalCheckReport outcome={null} />);
+    expect(screen.queryByTestId("tax-lot-only-warning")).toBeNull();
+  });
+
   it("renders the AS-1 rectangle arithmetic with the plan-pinned shortfall phrasing", async () => {
     const outcome = await reportOutcome(attestedReportBody());
     render(<ProposalCheckReport outcome={outcome} />);

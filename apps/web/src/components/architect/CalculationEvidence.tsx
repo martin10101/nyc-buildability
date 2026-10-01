@@ -6,15 +6,20 @@ import { CoverageBadge } from "@/components/property/CoverageBadge";
 import { needsExistingZoningFloorArea, UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT } from "@/lib/architect/unused-floor-area";
 import { UnusedFloorAreaNotAvailableLine } from "@/components/compare/UnusedFloorAreaNotAvailable";
 import { CapturedRecord } from "./EvidenceRecord";
+import { TaxLotOnlyNotice } from "./TaxLotOnlyNotice";
 /** `unusedFloorAreaSectionEnabled` is the server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED
  * (D-06, plan §3 step 4); absent -> off. Off, the set-aside remainder (scope note,
  * formula, section record) is replaced by one "Not available — needs existing
  * zoning floor area" line; the scenario assumptions and the complete scenario
- * record (the audit copy of the whole document) stay. */
-export function CalculationEvidence({ evaluation, scenario, unusedFloorAreaSectionEnabled = false }: {
+ * record (the audit copy of the whole document) stay.
+ * `taxLotNotice` (owner directive 2026-10-01): the trace outputs include floor-area and FAR
+ * numbers, so the tax-lot-only warning shows above them. The printed brief passes false: its
+ * DevelopmentLimits already carries the warning outside every disclosure. */
+export function CalculationEvidence({ evaluation, scenario, unusedFloorAreaSectionEnabled = false, taxLotNotice = true }: {
     evaluation: RuleEvaluation | null;
     scenario: Scenario | null;
     unusedFloorAreaSectionEnabled?: boolean;
+    taxLotNotice?: boolean;
 }) {
     const traces = evaluation ? [...evaluation.evaluations].sort((a, b) => Number(b.applicability_outcome) - Number(a.applicability_outcome)) : [];
     // DB-025(a,b): the wide-street review label and the "withheld" FAR gate on
@@ -36,6 +41,7 @@ export function CalculationEvidence({ evaluation, scenario, unusedFloorAreaSecti
     <p className="architect-eyebrow">Deterministic evaluation</p>
     <h2>How this was calculated</h2>
     <p className="architect-status">Draft · Professional review required</p>
+    {taxLotNotice && (evaluation || scenario) ? <TaxLotOnlyNotice/> : null}
     {evaluation ? <>
       <CoverageBadge status={evaluation.coverage_status}/>
       {evaluation.reasons.length > 0 ? <ul className="architect-issue-list">
