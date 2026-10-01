@@ -5,8 +5,10 @@ import type { Scenario } from "@/lib/scenario-contract";
 import { formatValue } from "@/lib/format";
 import { propertyHref } from "@/lib/architect/navigation";
 import { BULK_ROWS, analysisRecordsDiffer, bulkRow, calculationStatus, evaluatedResidentialFar, evaluationIsInspectable, residentialReference, scenarioBlocksPromotion, scenarioCap } from "@/lib/architect/development-limits";
+import { NOT_CONFIRMED, ZONING_LOT_ROWS, type VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
 import { AssessmentCoverage } from "./AssessmentCoverage";
 import { CapturedRecord } from "./EvidenceRecord";
+import { TaxLotOnlyEstimate, TaxLotOnlyNotice } from "./TaxLotOnlyNotice";
 
 function farValue(value: number) {
   return value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 20 });
@@ -43,6 +45,9 @@ export function DraftHeadline({ scenario, evaluation = null, bbl = "" }: { scena
       <p className="architect-metric">{cap != null ? <>{formatValue(cap)}<span> sq ft</span></> : "Not calculated"}</p>
       {scenario ? <span className="architect-status" data-testid="architect-cap-status">{STATUS_LABELS[scenario.coverage_status]}</span> : null}
     </div>
+    {/* Owner directive 2026-10-01: the label sits on the value itself, as a plain-text line
+        under the number (not a chip), and only when a number is shown. */}
+    {cap != null ? <TaxLotOnlyEstimate testId="architect-cap-scope"/> : null}
     <p className="section-note">FAR only · Buildable envelope not assessed</p>
     {scenario ? <details className="provenance-details architect-result-scope">
         <summary>Result scope and source wording</summary>
@@ -88,7 +93,7 @@ function WideStreetResult({ evaluation, evidenceHref }: { evaluation: RuleEvalua
       ? <p className="architect-development-status" data-testid="wide-street-result">Professional review required — the higher wide-street floor-area ratio is withheld until a qualified reviewer confirms the determination.</p>
       : <>
           <p className="architect-development-value" data-testid="wide-street-result">{wide.governing_max_residential_far != null ? farValue(wide.governing_max_residential_far) : "Not calculated"}</p>
-          <p className="section-note">{valueLabel} — a dimensionless ratio. Floor area = FAR × zoning-lot area (sq ft).</p>
+          <p className="section-note">{valueLabel} — a dimensionless ratio. Floor area = FAR × the area of the tax lot you entered (sq ft).</p>
           <p className="section-note">{within ? "Applies within 100 ft of a wide street." : "Outside 100 ft of a wide street; the conservative floor-area ratio governs."}</p>
         </>}
     {/* [ORCH-CORRECTED per M5-T037 HJ F2] The primary panel keeps only clean,
@@ -101,11 +106,14 @@ function WideStreetResult({ evaluation, evidenceHref }: { evaluation: RuleEvalua
   </section>;
 }
 
-export function DevelopmentLimits({ profile, scenario, evaluation, onInspect }: {
+export function DevelopmentLimits({ profile, scenario, evaluation, onInspect, zoningLot = null }: {
   profile: PropertyProfile;
   scenario: Scenario | null;
   evaluation: RuleEvaluation | null;
   onInspect?: (id: string) => void;
+  /** A VERIFIED zoning-lot fact for this property, when one exists. None is wired yet, so every
+   * caller shows the generic tax-lot-only warning. */
+  zoningLot?: VerifiedZoningLot | null;
 }) {
   const bbl = profile.identity.bbl;
   const source = residentialReference(profile);
@@ -117,6 +125,7 @@ export function DevelopmentLimits({ profile, scenario, evaluation, onInspect }: 
   return <section className="card architect-development" aria-label="Development limits">
     <div className="architect-panel-heading"><h2>Development limits</h2><span className="architect-status">Draft</span></div>
     <p className="architect-development-status">{calculationStatus(evaluation, matchedScenario, bbl)}</p>
+    <TaxLotOnlyNotice bbl={bbl} zoningLot={zoningLot}/>
     <div className="architect-far-grid">
       <div className="architect-far-reference">
         <h3>Residential FAR · city record</h3>
@@ -139,6 +148,7 @@ export function DevelopmentLimits({ profile, scenario, evaluation, onInspect }: 
         return <div key={key}><dt>{label}</dt><dd>{row.status}<small><Link href={evidenceHref} aria-label={`Evidence for ${label}`}>Evidence</Link></small></dd></div>;
       })}
       <div><dt>Lot area</dt><dd>{lot?.value != null ? <>{formatValue(lot.value)} {lot.units}</> : "Unknown"}{lot && onInspect ? <button type="button" className="architect-text-button" aria-label="Source for Lot area" onClick={() => onInspect(lot.provenance_ref)}>Source</button> : null}</dd></div>
+      {ZONING_LOT_ROWS.map(([key, label]) => <div key={key}><dt>{label}</dt><dd data-testid={`development-zoning-lot-${key}`}>{NOT_CONFIRMED}</dd></div>)}
     </dl>
     <AssessmentCoverage scenario={matchedScenario}/>
   </section>;

@@ -4,6 +4,8 @@ import { completenessDisplay, coverageDisplay } from "@/lib/coverage";
 import { formatValue } from "@/lib/format";
 import { SCENARIO_KIND_LABELS, envelopeBlockingGaps } from "@/lib/scenario-display";
 import type { Scenario } from "@/lib/scenario-contract";
+import type { VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
+import { TaxLotOnlyEstimate, TaxLotOnlyNotice } from "@/components/architect/TaxLotOnlyNotice";
 import { CoverageMatrixSection } from "./CoverageMatrixSection";
 import { NoScenarioBlock } from "./NoScenarioBlock";
 import { ScenarioAssumptions } from "./ScenarioAssumptions";
@@ -207,6 +209,7 @@ function OpportunityRiskBlock({ document }: { document: Scenario }) {
               )} square feet is available as a starting point for a preliminary study.`
             : "No draft maximum is available for this property today, so there is no quantified opportunity to surface — only the reasons and preserved ranges above."}
         </p>
+        {cap !== null ? <TaxLotOnlyEstimate testId="scenario-opportunity-scope" /> : null}
       </div>
       <div data-testid="scenario-risk">
         <h3 className="section-subtitle">Main risk</h3>
@@ -247,11 +250,15 @@ export function ScenarioResult({
   document,
   bbl,
   unusedFloorAreaSectionEnabled = false,
+  zoningLot = null,
 }: {
   document: Scenario;
   bbl: string;
   /** Server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED (D-06); absent -> off. */
   unusedFloorAreaSectionEnabled?: boolean;
+  /** A VERIFIED zoning-lot fact for this property (owner directive 2026-10-01). None is wired
+   * yet, so the warning reads the generic tax-lot-only text. */
+  zoningLot?: VerifiedZoningLot | null;
 }) {
   const isPreliminary = document.scenario_kind === "preliminary";
   return (
@@ -259,8 +266,14 @@ export function ScenarioResult({
       <ScenarioSummary document={document} requestedBbl={bbl} />
 
       {/* Branch-specific: the cap card, or the informative no-maximum block. */}
+      {/* Owner directive 2026-10-01: the cap card's number is for the entered tax lot only, so
+          the warning sits directly above it, outside any disclosure. The no-maximum branches
+          state no cap, so they carry no warning about one. */}
       {isPreliminary ? (
-        <ScenarioCard document={document} rank={1} />
+        <>
+          <TaxLotOnlyNotice bbl={bbl} zoningLot={zoningLot} />
+          <ScenarioCard document={document} rank={1} />
+        </>
       ) : (
         <NoScenarioBlock document={document} />
       )}

@@ -309,3 +309,8 @@
   .architect-shell-env-note { flex:1 1 240px;min-width:0;color:#6c5425;font-size:12px;line-height:1.55; }
   .architect-shell-review { flex:1 1 100%;margin:0;color:#4a616f;font-size:12px;font-weight:550;line-height:1.5; }
 }
+/* Owner directive 2026-10-01: the tax-lot-only warning and the "Tax-lot-only estimate" label on a cap value.
+   Always visible, plain text at a readable size (plan §5a item 5); the label is a line under the value, never a chip. */
+.tax-lot-only-notice,.architect-shell .tax-lot-only-notice { margin:12px 0;padding:10px 12px;border-left:4px solid var(--arch-accent,#a46d16);background:#fbf4e6;color:#3d2f12;font-size:14px;line-height:1.5; }
+.tax-lot-only-qualifier,.architect-shell .tax-lot-only-qualifier { margin:4px 0 8px;color:#3d2f12;font-size:14px;font-weight:600;line-height:1.4; }
+@media print { .tax-lot-only-notice,.architect-shell .tax-lot-only-notice { background:none;border-left-color:#000;color:#000; } }

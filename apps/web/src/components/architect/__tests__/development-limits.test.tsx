@@ -6,6 +6,7 @@ import { ZoningView } from "../ProfileViews";
 import { ReportView } from "../ReportView";
 import { DevelopmentLimits, DraftHeadline } from "../DevelopmentLimits";
 import { ScenarioWorkspace } from "../ScenarioWorkspace";
+import { CalculationEvidence } from "../CalculationEvidence";
 import type { PropertyProfile } from "@/lib/contract";
 import type { Scenario } from "@/lib/scenario-contract";
 import { validateScenarioDocument } from "@/lib/scenario-contract";
@@ -603,6 +604,19 @@ describe("M5-T037 — wide-street conditional FAR on the development-limits surf
     );
   });
 
+  it("states the floor-area formula for the entered tax lot, never the zoning lot (owner directive 2026-10-01)", () => {
+    const { profile } = inputs();
+    const doc = wideDoc(profile.identity.bbl);
+    const view = show(profile, doc);
+    const panel = screen.getByTestId("development-wide-street");
+    expect(panel).toHaveTextContent("Floor area = FAR × the area of the tax lot you entered (sq ft).");
+    expect(panel).not.toHaveTextContent("zoning-lot area");
+    view.rerender(<CalculationEvidence evaluation={doc} scenario={null}/>);
+    const provenance = screen.getByTestId("wide-street-provenance");
+    expect(provenance).toHaveTextContent("Floor area is derived as FAR × the area of the tax lot you entered (sq ft).");
+    expect(provenance).not.toHaveTextContent("zoning-lot area");
+  });
+
   it("renders the honest professional-review escalation, never the higher FAR, on uncertainty", () => {
     const { profile } = inputs();
     const doc = wideDoc(profile.identity.bbl);
@@ -733,5 +747,129 @@ describe("M5-T119 — A06 readable per-cap status beside the cap value; A09 dist
     expect(cap).toHaveTextContent("15,000 sq ft");
     expect(cap).toHaveTextContent("FAR only · Buildable envelope not assessed");
     expect(within(cap).getByTestId("architect-cap-status")).toHaveTextContent("Conditional");
+  });
+});
+
+describe("owner directive 2026-10-01 — tax-lot-only warning and labels on the results", () => {
+  // Word for word, so any drift in the app's wording fails here.
+  const WARNING = "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
+  const VERIFIED_WARNING = "This zoning lot includes tax lots 1 and 70. These numbers use lot 70 only. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
+  const ZONING_LOT_ROWS = ["Whole-site capacity", "Remaining development capacity", "Combined zoning lot: coverage", "Combined zoning lot: rear yard"];
+  // Test fixture only: a verified zoning-lot fact shaped for the 215-16 Northern benchmark
+  // (tax lots 1 and 70 on block 07334). No such verified fact is served to the web yet.
+  const LOT_70 = "4073340070";
+  const ZONING_LOT = { taxLotBbls: ["4073340001", LOT_70], calculatedBbl: LOT_70 };
+
+  function expectZoningLotRows(region: HTMLElement) {
+    for (const label of ZONING_LOT_ROWS) {
+      const value = within(region).getByText(label, { selector: "dt" }).closest("div")!.querySelector<HTMLElement>("dd")!;
+      expect(value.textContent).toBe("Not confirmed");
+      expect(value).toBeVisible();
+    }
+  }
+
+  function expectVisibleWarning(region: HTMLElement, text = WARNING) {
+    const warning = within(region).getByTestId("tax-lot-only-warning");
+    // Visible without a tap: no closed disclosure, hidden panel or strip stands in front of it.
+    expect(warning).toBeVisible();
+    expect(warning.closest("details")).toBeNull();
+    expect(warning).toHaveAttribute("role", "note");
+    expect(warning.textContent).toBe(text);
+    return warning;
+  }
+
+  it.each(["overview", "zoning", "report"])("shows the warning and the zoning-lot rows without interaction in %s", view => {
+    const { profile, evaluation, scenario } = inputs();
+    const props = { profile, evaluation, scenario, onInspect: vi.fn() };
+    render(view === "overview" ? <PropertyOverview {...props}/> : view === "zoning" ? <ZoningView {...props}/> : <ReportView {...props} label="Test property"/>);
+    const summary = screen.getByRole("region", { name: "Development limits" });
+    expectVisibleWarning(summary);
+    expectZoningLotRows(summary);
+  });
+
+  it("puts 'Tax-lot-only estimate' on the cap value as a plain line under the number, not a chip", () => {
+    const { profile, evaluation, scenario } = inputs();
+    show(profile, evaluation, scenario);
+    const cap = screen.getByTestId("architect-cap");
+    const label = within(cap).getByTestId("architect-cap-scope");
+    expect(label.textContent).toBe("Tax-lot-only estimate");
+    expect(label).toBeVisible();
+    expect(label.tagName).toBe("P");
+    expect(label).not.toHaveClass("architect-status");
+    // The number and its existing status chip are unchanged beside it.
+    expect(cap.querySelector<HTMLElement>(".architect-metric")).toHaveTextContent(/^15,000 sq ft$/);
+    expect(within(cap).getByTestId("architect-cap-status")).toHaveTextContent("Conditional");
+  });
+
+  it("drops the cap label when no number is shown, and keeps the warning and rows", () => {
+    const { profile, scenario } = inputs();
+    show(profile, null, scenario);
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+    expect(screen.queryByTestId("architect-cap-scope")).toBeNull();
+    const summary = screen.getByRole("region", { name: "Development limits" });
+    expectVisibleWarning(summary);
+    expectZoningLotRows(summary);
+  });
+
+  it("prints the warning and every label once in the brief, outside every disclosure", () => {
+    const { profile, evaluation, scenario } = inputs();
+    const { container } = render(<ReportView profile={profile} evaluation={evaluation} scenario={scenario} label="Test property"/>);
+    window.dispatchEvent(new Event("beforeprint"));
+    // The calculation appendix shows the trace numbers but does not repeat the warning (plan §5a).
+    expect(screen.getAllByTestId("tax-lot-only-warning")).toHaveLength(1);
+    const summary = screen.getByRole("region", { name: "Development limits" });
+    const warning = expectVisibleWarning(summary);
+    const label = screen.getByTestId("architect-cap-scope");
+    expect(label.textContent).toBe("Tax-lot-only estimate");
+    for (const element of [warning, label, ...ZONING_LOT_ROWS.map(text => screen.getByText(text, { selector: "dt" }))]) {
+      // The print stylesheet hides buttons, the contents list, the raw records and the audit appendix.
+      expect(element.closest("details, button, .architect-raw, .architect-audit-appendix")).toBeNull();
+      expect(container.querySelector<HTMLElement>(".architect-report")).toContainElement(element);
+    }
+    expectZoningLotRows(summary);
+    window.dispatchEvent(new Event("afterprint"));
+  });
+
+  it("shows the warning and the cap label on the scenario headline", () => {
+    const { profile, evaluation, scenario } = inputs();
+    render(<ScenarioWorkspace document={scenario} evaluation={evaluation} bbl={profile.identity.bbl}/>);
+    expect(screen.getByTestId("architect-cap-scope").textContent).toBe("Tax-lot-only estimate");
+    expectVisibleWarning(screen.getByTestId("scenario-result"));
+  });
+
+  it("shows the warning above the calculation evidence, except where the brief already carries it", () => {
+    const { evaluation, scenario } = inputs();
+    const view = render(<CalculationEvidence evaluation={evaluation} scenario={scenario}/>);
+    expectVisibleWarning(view.container);
+    view.rerender(<CalculationEvidence evaluation={evaluation} scenario={scenario} taxLotNotice={false}/>);
+    expect(screen.queryByTestId("tax-lot-only-warning")).toBeNull();
+    view.rerender(<CalculationEvidence evaluation={null} scenario={null}/>);
+    expect(screen.queryByTestId("tax-lot-only-warning")).toBeNull();
+  });
+
+  it("names lots 1 and 70 and says the numbers use lot 70 only when a verified zoning lot is supplied", () => {
+    const { profile } = inputs();
+    profile.identity.bbl = LOT_70;
+    profile.provenance.forEach(record => { record.bbl = LOT_70; });
+    const view = render(<DevelopmentLimits profile={profile} scenario={null} evaluation={null} zoningLot={ZONING_LOT}/>);
+    expectVisibleWarning(screen.getByRole("region", { name: "Development limits" }), VERIFIED_WARNING);
+    view.rerender(<ReportView profile={profile} scenario={null} evaluation={null} label="Test property" zoningLot={ZONING_LOT}/>);
+    expectVisibleWarning(screen.getByRole("region", { name: "Development limits" }), VERIFIED_WARNING);
+    // A fact for another tax lot never names lots for this one: the generic warning stays.
+    view.rerender(<DevelopmentLimits profile={profile} scenario={null} evaluation={null} zoningLot={{ ...ZONING_LOT, calculatedBbl: "4073340001" }}/>);
+    expectVisibleWarning(screen.getByRole("region", { name: "Development limits" }));
+  });
+
+  it("passes the verified zoning lot through the scenario view and the calculation evidence", () => {
+    const { evaluation, scenario } = inputs();
+    const view = render(<ScenarioWorkspace document={scenario} evaluation={null} bbl={LOT_70} zoningLot={ZONING_LOT}/>);
+    expectVisibleWarning(screen.getByTestId("scenario-result"), VERIFIED_WARNING);
+    // The evidence view checks the fact against the BBL its evaluation was made for.
+    evaluation.evaluated_input.bbl = LOT_70;
+    view.rerender(<CalculationEvidence evaluation={evaluation} scenario={null} zoningLot={ZONING_LOT}/>);
+    expectVisibleWarning(view.container, VERIFIED_WARNING);
+    evaluation.evaluated_input.bbl = "4073340001";
+    view.rerender(<CalculationEvidence evaluation={structuredClone(evaluation)} scenario={null} zoningLot={ZONING_LOT}/>);
+    expectVisibleWarning(view.container);
   });
 });

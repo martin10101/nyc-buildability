@@ -96,3 +96,7 @@
 @media (prefers-reduced-motion: reduce) {
   .buildability-dashboard * { scroll-behavior: auto; }
 }
+/* Owner directive 2026-10-01: the tax-lot-only warning sits on the results, visible without a tap; the cap's
+   "Tax-lot-only estimate" label is a plain line under the number (no chip). Both at least 14 px (plan §5a item 5). */
+.buildability-dashboard .tax-lot-only-notice { margin: 0; padding: 10px 12px; border-bottom: 1px solid #e7edf2; font-size: 14px; }
+.buildability-dashboard .tax-lot-only-qualifier { margin: 4px 0 0; color: var(--bd-muted); font-size: 15px; font-weight: 600; }

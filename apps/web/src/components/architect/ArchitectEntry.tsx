@@ -45,7 +45,7 @@ function ProposalSurface({ bbl, profile }: { bbl: string; profile: PropertyProfi
     const request = useMemo(() => maxEnvelopeRequestForProfile(profile), [profile]);
     const [adoptedDraft, setAdoptedDraft] = useState<ProposalDraft | null>(null);
     return <>
-    <MaxEnvelopePanel request={request} onAdopt={setAdoptedDraft}/>
+    <MaxEnvelopePanel request={request} onAdopt={setAdoptedDraft} bbl={bbl}/>
     <ProposalEditor bbl={bbl} adoptedDraft={adoptedDraft}/>
   </>;
 }

@@ -15,7 +15,9 @@ import {
   scenarioBlocksPromotion,
   scenarioCap,
 } from "@/lib/architect/development-limits";
+import { NOT_CONFIRMED, ZONING_LOT_ROWS, type VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
 import type { CondoSurfaceDecision } from "../CondoRecordsSection";
+import { TaxLotOnlyEstimate, TaxLotOnlyNotice } from "../TaxLotOnlyNotice";
 import { DashboardStatusStrip } from "./DashboardStatusStrip";
 import {
   NO_RESULTS_REASON,
@@ -45,6 +47,9 @@ export interface DashboardPanelsProps {
   /** Why the entry passes no rule results, when it knows (still loading, or returned for another
    * property); from `analysisReason`. Absent or null: the guard's own status gives the reason. */
   resultsReason?: string | null;
+  /** A VERIFIED zoning-lot fact for this property (owner directive 2026-10-01). None is wired
+   * yet: absent, the warning reads the generic tax-lot-only text. */
+  zoningLot?: VerifiedZoningLot | null;
 }
 
 /** Plan §5a item 3: beside a value, only an exception that changes how to read it. The usual
@@ -102,8 +107,11 @@ function DashboardFact({ field, fact, profile, onInspect, onOpen }: {
 /** A display of existing records and guarded outputs. No FAR arithmetic, parcel
  * union, inferred dimensional limit or new legal decision lives in this view.
  * Plan §5a: one status strip on top of the results, standing notices behind it, and
- * "Not available — <reason>" in place of any number the guards withhold. */
-export function DashboardPanels({ profile, scenario, evaluation, condo, label, map, onOpen, onInspect, proposalEditorEnabled = false, resultsReason = null }: DashboardPanelsProps) {
+ * "Not available — <reason>" in place of any number the guards withhold.
+ * Owner directive 2026-10-01 (overrides §5a items 2 and 3 for this one fact): the tax-lot-only
+ * warning shows on the results without a tap, the cap value carries a plain-text
+ * "Tax-lot-only estimate" line (not a chip), and the combined-zoning-lot rows read "Not confirmed". */
+export function DashboardPanels({ profile, scenario, evaluation, condo, label, map, onOpen, onInspect, proposalEditorEnabled = false, resultsReason = null, zoningLot = null }: DashboardPanelsProps) {
   const bbl = profile.identity.bbl;
   // Keep the accepted condo guard monotonic on every computed summary, including
   // the bulk/status rows. A fetched scenario can never override this decision.
@@ -184,11 +192,13 @@ export function DashboardPanels({ profile, scenario, evaluation, condo, label, m
           {proposalEditorEnabled ? <button type="button" onClick={() => onOpen("envelope")}>Envelope</button> : null}
           <button type="button" onClick={() => onOpen("units")}>Units</button>
         </div>
+        <TaxLotOnlyNotice bbl={bbl} zoningLot={zoningLot}/>
         <div className="bd-headline">
           <p className="bd-headline-label">Maximum residential floor area</p>
           <p className={`bd-headline-value${cap != null ? "" : " bd-not-available"}`} data-testid="dashboard-cap">{cap != null ? `${formatValue(cap)} sq ft` : notAvailable(reason)}</p>
+          {cap != null ? <TaxLotOnlyEstimate testId="dashboard-cap-scope"/> : null}
         </div>
-        <table className="bd-table bd-results-table"><caption className="bd-sr-only">Residential FAR and dimensional limits</caption>
+        <table className="bd-table bd-results-table"><caption className="bd-sr-only">Residential FAR, dimensional limits and combined zoning lot results</caption>
           <tbody>
             <tr><th scope="row">Maximum residential FAR</th><td data-testid="dashboard-evaluated-far">{far ? farValue(far.value) : notAvailable(reason)}</td></tr>
             <tr><th scope="row">City-listed residential FAR</th><td data-testid="dashboard-reference-far">
@@ -196,6 +206,7 @@ export function DashboardPanels({ profile, scenario, evaluation, condo, label, m
             </td></tr>
             {BULK_ROWS.map(([key, title]) => <tr key={key}><th scope="row">{title}</th>
               <td>{notAvailable(condo.withholdAllowances ? SITE_REVIEW_REASON : bulkReason(bulkRow(matchedScenario, key, shownEvaluation).status))}</td></tr>)}
+            {ZONING_LOT_ROWS.map(([key, title]) => <tr key={key}><th scope="row">{title}</th><td data-testid={`dashboard-zoning-lot-${key}`}>{NOT_CONFIRMED}</td></tr>)}
           </tbody>
         </table>
         <div className="bd-inline-actions bd-calculation-links"><button type="button" onClick={() => onOpen("evidence")}>How this was calculated <span aria-hidden="true">↗</span></button></div>

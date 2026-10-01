@@ -6,15 +6,23 @@ import { CoverageBadge } from "@/components/property/CoverageBadge";
 import { needsExistingZoningFloorArea, UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT } from "@/lib/architect/unused-floor-area";
 import { UnusedFloorAreaNotAvailableLine } from "@/components/compare/UnusedFloorAreaNotAvailable";
 import { CapturedRecord } from "./EvidenceRecord";
+import { TaxLotOnlyNotice } from "./TaxLotOnlyNotice";
+import type { VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
 /** `unusedFloorAreaSectionEnabled` is the server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED
  * (D-06, plan §3 step 4); absent -> off. Off, the set-aside remainder (scope note,
  * formula, section record) is replaced by one "Not available — needs existing
  * zoning floor area" line; the scenario assumptions and the complete scenario
- * record (the audit copy of the whole document) stay. */
-export function CalculationEvidence({ evaluation, scenario, unusedFloorAreaSectionEnabled = false }: {
+ * record (the audit copy of the whole document) stay.
+ * `taxLotNotice` (owner directive 2026-10-01): the trace outputs include floor-area and FAR
+ * numbers, so the tax-lot-only warning shows above them. The printed brief passes false: its
+ * DevelopmentLimits already carries the warning outside every disclosure. */
+export function CalculationEvidence({ evaluation, scenario, unusedFloorAreaSectionEnabled = false, taxLotNotice = true, zoningLot = null }: {
     evaluation: RuleEvaluation | null;
     scenario: Scenario | null;
     unusedFloorAreaSectionEnabled?: boolean;
+    taxLotNotice?: boolean;
+    /** A VERIFIED zoning-lot fact for this property (owner directive 2026-10-01); none is wired yet. The warning checks it against the BBL the evaluation or scenario was made for. */
+    zoningLot?: VerifiedZoningLot | null;
 }) {
     const traces = evaluation ? [...evaluation.evaluations].sort((a, b) => Number(b.applicability_outcome) - Number(a.applicability_outcome)) : [];
     // DB-025(a,b): the wide-street review label and the "withheld" FAR gate on
@@ -36,6 +44,7 @@ export function CalculationEvidence({ evaluation, scenario, unusedFloorAreaSecti
     <p className="architect-eyebrow">Deterministic evaluation</p>
     <h2>How this was calculated</h2>
     <p className="architect-status">Draft · Professional review required</p>
+    {taxLotNotice && (evaluation || scenario) ? <TaxLotOnlyNotice bbl={evaluation?.evaluated_input?.bbl ?? scenario?.evaluated_input?.bbl ?? ""} zoningLot={zoningLot}/> : null}
     {evaluation ? <>
       <CoverageBadge status={evaluation.coverage_status}/>
       {evaluation.reasons.length > 0 ? <ul className="architect-issue-list">
@@ -49,7 +58,7 @@ export function CalculationEvidence({ evaluation, scenario, unusedFloorAreaSecti
         <h3>{wideValueLabel} · D-052 provenance</h3>
         <p className="architect-status">Draft · {evaluation.wide_street.draft_label}{wideReview ? " · Professional review required" : ""}</p>
         <p>{evaluation.wide_street.reason}</p>
-        <p className="section-note">{wideValueLabel} (dimensionless ratio): {wideReview ? "withheld — professional review required" : (evaluation.wide_street.governing_max_residential_far ?? "Not calculated")}. Floor area is derived as FAR × zoning-lot area (sq ft).</p>
+        <p className="section-note">{wideValueLabel} (dimensionless ratio): {wideReview ? "withheld — professional review required" : (evaluation.wide_street.governing_max_residential_far ?? "Not calculated")}. Floor area is derived as FAR × the area of the tax lot you entered (sq ft).</p>
         <p className="section-note">{evaluation.wide_street.fallback_direction_note}</p>
         <dl className="architect-definition-list">
           <div><dt>Determination</dt><dd>{evaluation.wide_street.determination_state}</dd></div>

@@ -1,6 +1,7 @@
 import { formatValue } from "@/lib/format";
 import { SCENARIO_KIND_LABELS } from "@/lib/scenario-display";
 import type { Scenario } from "@/lib/scenario-contract";
+import { TaxLotOnlyEstimate } from "@/components/architect/TaxLotOnlyNotice";
 
 /**
  * One ranked scenario card for the Compare (Step 3) screen (task M5-T004,
@@ -70,6 +71,9 @@ export function ScenarioCard({
             </span>
           ) : null}
         </p>
+        {/* Owner directive 2026-10-01: the cap is for the entered tax lot only; the label is a
+            plain-text line under the cap line, never a chip, and only when a cap is shown. */}
+        {cap !== null ? <TaxLotOnlyEstimate testId="scenario-cap-scope" /> : null}
         {document.cap_label ? (
           <p className="section-note" data-testid="scenario-cap-label">
             {document.cap_label}

@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import type { PropertyProfile } from "../src/lib/contract";
 
 /** Real application paths over the existing recorded-official-fixture API.
@@ -16,6 +16,20 @@ async function open(page: Page, view: string, bbl = "1000010010") {
   return profile;
 }
 
+// Owner directive 2026-10-01, word for word: every surface with a floor-area or FAR number shows
+// this warning without a tap, and the combined-zoning-lot results read "Not confirmed".
+const TAX_LOT_ONLY_WARNING = "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
+const ZONING_LOT_ROWS = ["Whole-site capacity", "Remaining development capacity", "Combined zoning lot: coverage", "Combined zoning lot: rear yard"];
+
+async function expectTaxLotOnlyScope(summary: Locator) {
+  const warning = summary.getByTestId("tax-lot-only-warning");
+  await expect(warning).toBeVisible();
+  await expect(warning).toHaveText(TAX_LOT_ONLY_WARNING);
+  for (const label of ZONING_LOT_ROWS) {
+    await expect(summary.locator("dt", { hasText: new RegExp(`^${label}$`) }).locator("..").locator("dd")).toHaveText("Not confirmed");
+  }
+}
+
 for (const view of ["overview", "zoning", "report"]) {
   test(`${view}: visible city reference, explicit uncalculated bulk and complete evidence`, async ({ page }, info) => {
     const profile = await open(page, view);
@@ -29,6 +43,9 @@ for (const view of ["overview", "zoning", "report"]) {
     await expect(summary.locator("dt", { hasText: /^Setbacks and yards$/ }).locator("..")).toContainText("Not calculated");
     await expect(summary.locator("dt", { hasText: /^Lot coverage and open space$/ }).locator("..")).toContainText("Not calculated");
     await expect(summary.getByRole("link", { name: "Rules and calculation →" })).toHaveAttribute("href", `/property?ruleeval=on&bbl=${profile.identity.bbl}&view=evidence`);
+    await expectTaxLotOnlyScope(summary);
+    // No number is calculated here, so the cap carries no "Tax-lot-only estimate" label.
+    await expect(summary.getByTestId("architect-cap-scope")).toHaveCount(0);
     await page.screenshot({ path: info.outputPath(`development-${view}.png`), fullPage: true });
   });
 }
@@ -67,6 +84,30 @@ test("canonical evaluated FAR stays distinct from the PLUTO reference and the sq
   await expect(page.getByTestId("architect-cap").locator(".architect-metric")).toHaveText("15,000 sq ft");
   await expect(page.getByRole("region", { name: "Development limits" })).toContainText("PLUTO reference");
   await expect(page.locator(".architect-bulk-rows")).toContainText("Not calculated");
+  // Owner directive 2026-10-01: the cap value carries its label as a plain line under the number.
+  await expect(page.getByTestId("architect-cap").getByTestId("architect-cap-scope")).toHaveText("Tax-lot-only estimate");
+  await expectTaxLotOnlyScope(page.getByRole("region", { name: "Development limits" }));
+});
+
+// Owner directive 2026-10-01: what the brief prints carries the warning and every label, once,
+// outside every disclosure, and printing does not hide them.
+test("the printed property brief carries the tax-lot-only warning and the result labels", async ({ page }, info) => {
+  await open(page, "report", "1000010100");
+  const summary = page.getByRole("region", { name: "Development limits" });
+  await expect(summary.getByTestId("architect-cap").locator(".architect-metric")).toHaveText("15,000 sq ft");
+  await expect(page.locator(".architect-report").getByTestId("tax-lot-only-warning")).toHaveCount(1);
+  await page.evaluate(() => { window.print = () => window.dispatchEvent(new Event("beforeprint")); });
+  await page.getByRole("button", { name: "Print property brief" }).click();
+  await page.emulateMedia({ media: "print" });
+  await expectTaxLotOnlyScope(summary);
+  await expect(summary.getByTestId("architect-cap-scope")).toHaveText("Tax-lot-only estimate");
+  await expect(summary.getByTestId("architect-cap-scope")).toBeVisible();
+  // Evidence picture of the printed region only. The test has no fixed wait; a full-page capture in
+  // print mode, with every section of the brief opened for printing, is the likely cause of its
+  // former ~14 s run time in CI.
+  await summary.screenshot({ path: info.outputPath("development-report-print-tax-lot-only.png") });
+  await page.emulateMedia({ media: "screen" });
+  await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
 });
 
 // M5-T119 (D-086 P3a, ledger A06): the readable per-cap coverage status renders

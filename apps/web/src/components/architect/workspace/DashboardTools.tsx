@@ -25,7 +25,7 @@ function ProposalTool({ profile, focusEnvelope = false, envelopeRequest = 0 }: {
   const [adoptedDraft, setAdoptedDraft] = useState<ProposalDraft | null>(null);
   const [limitsOpen, setLimitsOpen] = useState(focusEnvelope);
   useEffect(() => { setLimitsOpen(focusEnvelope); }, [focusEnvelope, envelopeRequest]);
-  return <><details className="dashboard-tool-details" open={limitsOpen} onToggle={event => setLimitsOpen(event.currentTarget.open)}><summary>Preliminary development limits · inspect status &amp; sources</summary><MaxEnvelopePanel request={request} onAdopt={setAdoptedDraft}/></details><ProposalEditor bbl={profile.identity.bbl} adoptedDraft={adoptedDraft}/></>;
+  return <><details className="dashboard-tool-details" open={limitsOpen} onToggle={event => setLimitsOpen(event.currentTarget.open)}><summary>Preliminary development limits · inspect status &amp; sources</summary><MaxEnvelopePanel request={request} onAdopt={setAdoptedDraft} bbl={profile.identity.bbl}/></details><ProposalEditor bbl={profile.identity.bbl} adoptedDraft={adoptedDraft}/></>;
 }
 export interface DashboardToolsProps {
   tool: DashboardTool;

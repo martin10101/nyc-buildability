@@ -90,6 +90,9 @@ test("the Compare screen states the document's own completeness, reasons, constr
   );
 });
 
+// Owner directive 2026-10-01, word for word: the cap is for the entered tax lot only.
+const TAX_LOT_ONLY_WARNING = "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
+
 test("AS-1: the draft cap renders as a labelled number with a named objective and a citation", async ({
   page,
 }) => {
@@ -99,6 +102,15 @@ test("AS-1: the draft cap renders as a labelled number with a named objective an
   // A real grouped number reached the DOM — not the absence marker.
   const cap = page.getByTestId("scenario-cap-value");
   await expect(cap).toHaveText(/^[0-9][0-9,]*(\.[0-9]+)?$/);
+
+  // Owner directive 2026-10-01: without any interaction, the tax-lot-only warning sits above
+  // the cap card and the cap carries a plain "Tax-lot-only estimate" line under it.
+  const warning = page.getByTestId("tax-lot-only-warning");
+  await expect(warning).toBeVisible();
+  await expect(warning).toHaveText(TAX_LOT_ONLY_WARNING);
+  const scope = page.getByTestId("scenario-cap").getByTestId("scenario-cap-scope");
+  await expect(scope).toBeVisible();
+  await expect(scope).toHaveText("Tax-lot-only estimate");
 
   // The draft caveat accompanies it as TEXT.
   await expect(page.getByTestId("scenario-draft-label")).toBeVisible();

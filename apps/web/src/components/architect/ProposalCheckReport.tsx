@@ -3,6 +3,8 @@ import {
   type CheckResultView,
   type ProposalCheckOutcome,
 } from "@/lib/proposal-checks-api";
+import { TaxLotOnlyNotice } from "./TaxLotOnlyNotice";
+import type { VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
 
 /**
  * Grouped proposal-check report (task M5-T060). Renders the accepted route's
@@ -163,9 +165,15 @@ function describeFailure(outcome: ProposalCheckOutcome): string {
 export function ProposalCheckReport({
   outcome,
   checking = false,
+  bbl = "",
+  zoningLot = null,
 }: {
   outcome: ProposalCheckOutcome | null;
   checking?: boolean;
+  /** The property's BBL, for the tax-lot-only warning's verified variant. */
+  bbl?: string;
+  /** A VERIFIED zoning-lot fact for this property (owner directive 2026-10-01); none is wired yet. */
+  zoningLot?: VerifiedZoningLot | null;
 }) {
   if (checking) {
     return (
@@ -194,6 +202,9 @@ export function ProposalCheckReport({
         <p className="proposal-honesty" data-testid="report-honesty">
           Proposed — your input, not a city record. Preliminary result; professional review required.
         </p>
+        {/* Owner directive 2026-10-01: the allowances compared here are rule results for the
+            entered tax lot only. */}
+        <TaxLotOnlyNotice bbl={bbl} zoningLot={zoningLot} />
         <p className="proposal-check-summary" data-testid="proposal-check-summary">
           {report.summary.fail} did not meet an allowance · {report.summary.couldNotCheck} could not be
           checked · {report.summary.pass} met an allowance
