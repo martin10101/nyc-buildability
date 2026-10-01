@@ -1,0 +1,94 @@
+{
+  "rule_id": "r6b-dwelling-units",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_dwelling_units",
+  "title": "R6B district - maximum number of dwelling units: maximum residential floor area / 680, a fraction of three-quarters or more counting as one unit (ZR 23-52 paragraph (b))",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "lane_flag": "A",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_r6b_coverage_yard_units.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of ZR 23-52 (Last Amended 2024-12-05) for R6B: 'the maximum number of #dwelling units# permitted shall be determined by dividing the maximum #residential# #floor area# permitted on the #zoning lot# by the applicable #dwelling unit# factor'; paragraph (b): the factor is 680 and 'Fractions equal to or greater than three-quarters resulting from this calculation shall be considered to be one #dwelling unit#.' The unit estimate carries its formula in its trace: step units_before_rounding = max_residential_floor_area_sq_ft / 680 (for the benchmark lot 20,150 / 680 = 29.63...), then step max_units = round_threshold(units_before_rounding, 0.75) - the whole number, plus one only when the fraction is 0.75 or more (29.63 -> 29; 29.75 -> 30). The dividend is CONSUMED as the required input max_residential_floor_area_sq_ft (the output of the same name of the residential_far family; never recomputed here). Paragraph (a) - no applicable factor - is honoured: qualifying senior housing or a special density area makes the estimate not applicable; housing_program and special_density_area are required, so an unknown one yields no estimate. For qualifying affordable housing the estimate is computed but sent to professional review (whether the qualifying allowance is the dividend is a reviewer question). The section lists R1 through R12 and does not name R6B: the rule reaches R6B through ZR 11-25 (suffix inheritance), flagged on every result. Own family, read by no consumer yet. NOT a Verified determination. Behind the lane A flag (lane_flag A): indexed only when LANE_A_ENABLED is on.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-52",
+      "section": "23-52",
+      "quote": "the maximum number of #dwelling units# permitted shall be determined by dividing the maximum #residential# #floor area# permitted on the #zoning lot# by the applicable #dwelling unit# factor.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac"
+    },
+    {
+      "snapshot_id": "zr-23-52",
+      "section": "23-52(b)",
+      "quote": "(b) For all other types of # multiple dwelling residences#, the applicable #dwelling unit# factor shall be 680. Fractions equal to or greater than three-quarters resulting from this calculation shall be considered to be one #dwelling unit#.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac"
+    },
+    {
+      "snapshot_id": "zr-11-25",
+      "section": "11-25",
+      "quote": "All regulations applicable to a district designation shall be applicable to such district designation appended with a suffix, except as otherwise set forth in express provisions of this Resolution. If a section lists an R4 District, therefore, the provisions of that section shall also apply to R4-1, R4A and R4B Districts, unless separate provisions for the districts with suffixes are listed within such section.",
+      "last_amended": "1994-06-29",
+      "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+    }
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "Residence district governing the lot. Scope is enforced by applicability (R6B only), not an input enum: any other district is a visible not_applicable."},
+    {"name": "max_residential_floor_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "The maximum residential floor area permitted on the zoning lot (ZR 23-52's dividend): the output of the same name of the residential_far family for this lot (for R6B, rule r6-r12-residential-far: lot area x 2.00). Consumed as an input, never recomputed here. Not supplied, zero, negative or non-finite -> no estimate (professional_review_required)."},
+    {"name": "housing_program", "type": "string", "required": true, "enum": ["standard_residence", "qualifying_affordable_housing", "qualifying_senior_housing"], "description": "Same vocabulary as r6-r12-residential-far. qualifying_senior_housing -> not applicable (ZR 23-52(a)(2): no applicable dwelling unit factor). qualifying_affordable_housing -> computed but professional_review_required (exception qualifying_affordable_dividend_to_verify). Required: the factor's applicability depends on it, so an unknown program yields no estimate."},
+    {"name": "special_density_area", "type": "boolean", "required": true, "description": "True iff the zoning lot is in a #special density area# (ZR 12-10 defined term, not captured). A site fact (Lane B) consumed as an input, never derived here. True -> not applicable (ZR 23-52(a)(1) and (a)(3): no applicable dwelling unit factor). Required: an unknown status yields no estimate."},
+    {"name": "special_district_present", "type": "boolean", "required": false, "description": "True iff a special purpose district is mapped on the lot (canonical profile zoning.special_districts[] non-empty). When true -> professional_review_required; when not supplied -> professional_review_required (fail-closed, DF-6)."}
+  ],
+  "outputs": [
+    {"name": "dwelling_units_before_rounding", "type": "number", "unit": "dwelling_units", "description": "max_residential_floor_area_sq_ft / 680 before the ZR 23-52(b) fraction rule (20,150 / 680 = 29.63... on the benchmark lot)."},
+    {"name": "max_dwelling_units", "type": "integer", "unit": "dwelling_units", "description": "Maximum number of dwelling units (ZR 23-52): the whole number of dwelling_units_before_rounding, plus one only when its fraction is three-quarters (0.75) or more (29.63 -> 29). Formula carried by the trace's computation_steps."}
+  ],
+  "parameters": [
+    {"name": "dwelling_unit_factor", "value": 680, "citation_ref": "zr-23-52", "note": "ZR 23-52(b): 'the applicable #dwelling unit# factor shall be 680'."},
+    {"name": "fraction_counted_as_one_dwelling_unit", "value": 0.75, "citation_ref": "zr-23-52", "note": "ZR 23-52(b): 'Fractions equal to or greater than three-quarters resulting from this calculation shall be considered to be one #dwelling unit#' - three-quarters written 0.75 (exact); 'equal to or greater than' is round_threshold's inclusive comparison."}
+  ],
+  "applicability": {
+    "all": [
+      {"op": "in_set", "input": "zoning_district", "values": ["R6B"]},
+      {"not": {"op": "equals", "input": "housing_program", "value": "qualifying_senior_housing"}},
+      {"not": {"op": "equals", "input": "special_density_area", "value": true}}
+    ]
+  },
+  "computation": {
+    "steps": [
+      {"id": "units_before_rounding", "op": "divide", "args": [{"input": "max_residential_floor_area_sq_ft"}, {"param": "dwelling_unit_factor"}], "note": "ZR 23-52: maximum residential floor area permitted on the zoning lot (sq ft) / dwelling unit factor 680 (paragraph (b))."},
+      {"id": "max_units", "op": "round_threshold", "args": [{"step": "units_before_rounding"}, {"param": "fraction_counted_as_one_dwelling_unit"}], "note": "ZR 23-52(b): a fraction equal to or greater than three-quarters (0.75) counts as one dwelling unit; a smaller fraction is dropped."}
+    ],
+    "outputs": {
+      "dwelling_units_before_rounding": {"step": "units_before_rounding"},
+      "max_dwelling_units": {"step": "max_units"}
+    }
+  },
+  "exceptions": [
+    {"id": "suffix_inheritance_zr_11_25", "description": "ZR 23-52 lists 'R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12' and does not name R6B. This formula reaches R6B through ZR 11-25: provisions of a section that lists an R district also apply to that district with a suffix unless the section lists separate provisions for the suffixed districts, which 23-52 does not. This is a reading of 11-25, not an express naming of R6B and not an owner decision: the reviewer (Q12) must confirm it, including 11-25's 'except as otherwise set forth in express provisions of this Resolution'.", "condition": null, "effect": "documented_limitation", "citation_ref": "zr-11-25"},
+    {"id": "conversions_not_evaluated", "description": "ZR 23-52(a)(3) gives no dwelling unit factor for certain conversions (outside special density areas: conversions of community facility buildings, or portions of buildings containing community facilities, to residences). This estimate is for developments and enlargements; whether the proposal converts such floor area is not evaluated here.", "condition": null, "effect": "documented_limitation", "citation_ref": "zr-23-52"},
+    {"id": "mixed_factor_applicability_not_computed", "description": "ZR 23-52's closing paragraph (zoning lots whose residential uses have different dwelling unit factor applicability: exclude the floor area not subject to a factor, and attribute shared floor area proportionately) is not computed: the supplied max_residential_floor_area_sq_ft is divided as a whole.", "condition": null, "effect": "documented_limitation", "citation_ref": "zr-23-52"},
+    {"id": "qualifying_affordable_dividend_to_verify", "description": "housing_program is qualifying_affordable_housing. The supplied floor area is divided as 'the maximum residential floor area permitted on the zoning lot'; whether the qualifying-housing allowance of ZR 23-22 (second column) is that dividend is a reviewer question (benchmark: 'Unit cap with the affordable bonus' is to verify), so this estimate is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "housing_program", "value": "qualifying_affordable_housing"}, "effect": "professional_review_required", "citation_ref": "zr-23-52"},
+    {"id": "special_district_modification", "description": "A special purpose district is mapped on this lot and may modify residence-district density; its provisions are not captured or evaluated here, so the estimate is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "special_district_present", "value": true}, "effect": "professional_review_required", "citation_ref": null}
+  ],
+  "special_district_interactions": [
+    {"id": "special_purpose_district_density_modifier", "description": "Special Purpose Districts (ZR Articles VIII-XIV) may modify residence-district density. When one is mapped, its provisions govern and must be evaluated by the corresponding special rule; this rule does not apply the modification and escalates to professional_review_required via special_district_modification.", "interaction_point": "residential_dwelling_units", "special_rule_stub": "special-district-density-modifier (not yet implemented)", "citation_ref": null}
+  ],
+  "uncertainty_policy": {
+    "geometry_uncertain_coverage": "professional_review_required",
+    "data_conflict_coverage": "data_conflict",
+    "note": "An uncertain, split, sliver, or invalid M2-T013 geometric district assignment is never collapsed into a single definitive district: coverage downgrades to professional_review_required (or data_conflict) and the geometric uncertainty is recorded in the trace."
+  },
+  "limitations": [
+    "Draft extraction pending independent review and G6 qualified-human legal approval; not a Verified determination.",
+    "Only R6B is encoded; ZR 23-52 states the same factor for the other districts it lists, which are not yet rules.",
+    "Applies to buildings containing #multiple dwelling residences# (defined term, not captured).",
+    "Section 23-51 (Applicability) - title as shown in the portal navigation - has not been captured or evaluated."
+  ]
+}

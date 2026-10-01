@@ -112,7 +112,7 @@
             "required": ["id", "op", "args"],
             "properties": {
               "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
-              "op": {"type": "string", "enum": ["identity", "add", "subtract", "multiply", "divide", "min", "max", "round", "clamp"]},
+              "op": {"type": "string", "enum": ["identity", "add", "subtract", "multiply", "divide", "min", "max", "round", "round_threshold", "clamp"], "description": "round_threshold (D-090 lane A item A-02b; args [value, threshold]): the whole number of value, plus one only when its fractional part is at least threshold; value >= 0 and 0 < threshold <= 1, else fail-closed. Additive: round keeps its half-away-from-zero behaviour."},
               "args": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/ref"}},
               "note": {"type": "string"}
             }
