@@ -4,8 +4,8 @@ Updated by lane E only, after every task (lane prompts, shared rules).
 
 | | |
 |---|---|
-| **State** | Not started — waiting for the owner's GO (D-090-R007) |
-| **Done** | — |
-| **Next** | Top unblocked item in `docs/lanes/queues/E.md` |
-| **Blocked by** | Owner GO |
-| **Open owner questions** | See `docs/lanes/queues/E.md` "Blocked by owner" |
+| **State** | E-01 (M1-27 drawing kit v0) built on `lane-e/E-01-drawing-kit`, handed to the integrator for review |
+| **Done** | E-01: `services/api/app/drawings/kit/` — results loader (shared C-03 `validate_results_document`, then fail-closed geometry and drawn-vs-printed checks), drawing style table, site plan SVG, axonometric massing SVG, approved snapshots and property tests; behind `LANE_E_ENABLED` (off). Review corrections 1–4 applied |
+| **Next** | E-02 (PDF converter trial), then E-03 (DXF from the same geometry and style table) |
+| **Blocked by** | E-01b (section drawing): owner question Q8 |
+| **Open owner questions** | Q8 — whether the section view falls under the expansion hold |

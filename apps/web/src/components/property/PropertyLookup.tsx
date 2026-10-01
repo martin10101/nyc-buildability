@@ -1,7 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import { announcementForOutcome } from "@/lib/announce";
 import { fetchPropertyProfile, type LookupOutcome } from "@/lib/api";
 import { validateBblInput } from "@/lib/bbl";
@@ -199,7 +206,11 @@ export function PropertyLookup({
   // D1 (M2-T005): after an outcome arrives, move focus to the outcome
   // heading. `result` changes ONLY on arrival (a client-invalid submit
   // never calls setResult), so this can never steal focus mid-form-edit.
-  useEffect(() => {
+  // D-flake: a LAYOUT effect, so focus moves in the same commit that removes
+  // the (possibly focused) loading card. An arrival is never a discrete-input
+  // commit, so a passive effect could run only after a paint, with focus left
+  // on <body> in between.
+  useLayoutEffect(() => {
     if (result) {
       outcomeRef.current
         ?.querySelector<HTMLElement>("[data-outcome-heading]")

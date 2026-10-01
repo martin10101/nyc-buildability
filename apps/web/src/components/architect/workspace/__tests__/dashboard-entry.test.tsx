@@ -34,7 +34,7 @@ afterEach(cleanup);
 
 describe("connected dashboard composition", () => {
   it("keeps search mounted, opens tools without routing, and preserves proposal edits on close", async () => {
-    render(<DashboardEntry/>);
+    render(<DashboardEntry proposalEditorEnabled/>);
     const input = screen.getByLabelText("Street address");
     fireEvent.change(input, { target: { value: "an address being typed" } });
     const action = screen.getByRole("button", { name: /Draw a proposal/ });
@@ -52,7 +52,7 @@ describe("connected dashboard composition", () => {
     expect(state.replace).not.toHaveBeenCalled();
   });
   it("updates only the dashboard URL after explicit confirmation and resets drafts on a different property", () => {
-    const view = render(<DashboardEntry/>);
+    const view = render(<DashboardEntry proposalEditorEnabled/>);
     const input = screen.getByLabelText("Street address");
     fireEvent.click(screen.getByRole("button", { name: /Draw a proposal/ }));
     fireEvent.change(screen.getByLabelText("Draft for proposal"), { target: { value: "Old property draft" } });
@@ -61,7 +61,7 @@ describe("connected dashboard composition", () => {
     state.params.set("bbl", "1000010100");
     state.profile = { ...baseProfile(), identity: { ...baseProfile().identity, bbl: "1000010100" } };
     state.scenario = null; state.evaluation = null;
-    view.rerender(<DashboardEntry/>);
+    view.rerender(<DashboardEntry proposalEditorEnabled/>);
     expect(screen.getByLabelText("Street address")).toBe(input);
     fireEvent.click(screen.getByRole("button", { name: /Draw a proposal/ }));
     expect(screen.getByLabelText("Draft for proposal")).toHaveValue("");
@@ -73,19 +73,57 @@ describe("connected dashboard composition", () => {
     expect(screen.queryByTestId("connected-dashboard")).not.toBeInTheDocument();
     expect(screen.getByLabelText("Street address")).toBeVisible();
   });
-  it("withholds both numerical summaries on foreign analysis identity and retains original evidence", () => {
+  it("withholds both numerical summaries on foreign analysis identity, names that reason and retains original evidence", () => {
+    // Only the scenario belongs to another property: the rule results exist, so the reason says so.
     state.scenario!.evaluated_input.bbl = "1000019999";
-    render(<DashboardEntry/>);
-    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent("Not calculated");
-    expect(screen.getByTestId("dashboard-evaluated-far")).toHaveTextContent("Not calculated");
+    const view = render(<DashboardEntry/>);
+    for (const id of ["dashboard-cap", "dashboard-evaluated-far"]) {
+      expect(screen.getByTestId(id)).toHaveTextContent(/^Not available — the scenario belongs to another property$/);
+    }
     const record = screen.getByText("Returned scenario record").closest("details")!;
     expect(JSON.parse(record.querySelector("pre")!.textContent!)).toEqual(state.scenario);
+    state.scenario!.evaluated_input.bbl = state.profile!.identity.bbl;
+    state.evaluation!.evaluated_input.bbl = "1000019999";
+    view.rerender(<DashboardEntry/>);
+    for (const id of ["dashboard-cap", "dashboard-evaluated-far"]) {
+      expect(screen.getByTestId(id)).toHaveTextContent(/^Not available — the results belong to another property$/);
+    }
+  });
+  it("says the results are still loading, never 'no rule results', until the analysis arrives (plan §5a item 3)", () => {
+    state.scenario = null; state.evaluation = null;
+    const view = render(<DashboardEntry/>);
+    expect(screen.getByText("Loading analysis… Property records remain available.")).toBeInTheDocument();
+    for (const id of ["dashboard-cap", "dashboard-evaluated-far"]) {
+      expect(screen.getByTestId(id)).toHaveTextContent(/^Not available — the results are still loading$/);
+    }
+    // The rule results arrive first: the FAR shows under the draft mark; the cap still waits for the scenario.
+    state.evaluation = draftApplicableDoc();
+    state.evaluation.evaluated_input.bbl = state.profile!.identity.bbl;
+    view.rerender(<DashboardEntry/>);
+    expect(screen.getByTestId("dashboard-evaluated-far")).toHaveTextContent(/^1\.50$/);
+    expect(screen.getByTestId("dashboard-cap")).toHaveTextContent(/^Not available — the results are still loading$/);
+    expect(screen.getAllByTestId("dashboard-status-item")[0]).toHaveTextContent(/^Draft — not reviewed$/);
+    expect(screen.queryByText(/no rule results/)).not.toBeInTheDocument();
   });
   it("opens a supported deep-linked tool while keeping the property dashboard in place", () => {
     state.params.set("tool", "envelope");
-    render(<DashboardEntry/>);
+    render(<DashboardEntry proposalEditorEnabled/>);
     expect(screen.getByRole("dialog", { name: "Proposal editor" })).toBeVisible();
     expect(screen.getByTestId("buildability-dashboard")).toBeVisible();
     expect(screen.getByLabelText("Street address")).toBeVisible();
+  });
+  it("keeps environment notices behind one control and shows one results strip (D-03, plan §5a items 1-2)", () => {
+    render(<DashboardEntry/>);
+    expect(screen.getByTestId("internal-banner")).not.toBeVisible();
+    expect(screen.queryByText(/Engineering team only/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Professional review required · No sign-in/)).not.toBeInTheDocument();
+    expect(screen.getAllByRole("region", { name: "Results status" })).toHaveLength(1);
+  });
+  it("offers no proposal entry when the server flag is off (the default; D-01, plan §7)", () => {
+    render(<DashboardEntry/>);
+    expect(screen.getByTestId("buildability-dashboard")).toBeVisible();
+    expect(screen.queryByRole("button", { name: /Draw a proposal/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Buildable envelope/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog", { name: "Proposal editor" })).not.toBeInTheDocument();
   });
 });
