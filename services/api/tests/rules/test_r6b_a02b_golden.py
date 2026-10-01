@@ -4,8 +4,9 @@ the additive ``round_threshold`` op) changes NO other rule's result - A-02a's R6
 GOLDEN: every rule the registry indexed before A-02b with lane A ON - the 18 pre-D-090 rules plus
 A-02a's ``r6b-height`` and ``r6b-qualifying-housing-far`` - evaluated for every ZR 23-21 / 23-22
 district under four input sets exports traces whose canonical JSON hashes to the digest recorded on
-the pre-change tree (commit 04afba9d, A-02a, before any A-02b edit). The fourth input set carries
-every input the A-02b rules read, so the new inputs are proven not to move any other rule.
+the pre-change tree (commit 04afba9d, A-02a, before any A-02b edit), recomputed after #262 b31a2d28
+(overlay note text only). The fourth input set carries every input the A-02b rules read, so the new
+inputs are proven not to move any other rule.
 
 With lane A OFF, A-02a's own golden (``test_r6b_other_districts_unchanged``) still pins the 18
 pre-D-090 rules, and the three A-02b rules are validated but not indexed.
@@ -44,8 +45,9 @@ PRE_A02B_RULE_IDS_LANE_A_ON = (
 )
 
 #: sha256 of the canonical JSON of all 3,600 traces (20 rules x 45 districts x 4 input sets) with
-#: lane A on, computed on the pre-change tree (04afba9d).
-_GOLDEN_DIGEST = "75e74db54fd2a628eec15e89d0cf814a98475dc2d1947ad837a45fb82e7d69e6"
+#: lane A on, computed on the pre-change tree (04afba9d), recomputed after #262 b31a2d28 (overlay
+#: note text only).
+_GOLDEN_DIGEST = "cb6f5c77a5bfe682ec2a4c92d52c01b425abd3c1229b6cc3ccc3b1b73626881b"
 _GOLDEN_RECORDS = 3600
 
 INPUT_SETS = (
