@@ -211,8 +211,9 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   prove the merge empty (`git show --remerge-diff`) and the net diff byte-identical.
 - `gh pr edit --body-file` fails (Projects-classic GraphQL deprecation). Use
   `gh api -X PATCH repos/<o>/<r>/pulls/N -F body=@file`.
-- PR bodies drift. 6 of 16 PRs on 2026-09-30 misstated behavior, caught only by the reviewer. The
-  reviewer verifies the BODY before every merge, and a separate writer agent (never the
+- PR bodies drift. 8 of the 16 evening PRs (2026-09-30/10-01: #261, #263, #265, #266, #269, #275,
+  #276, #278) misstated behavior in the body, caught only by the reviewer. The reviewer
+  verifies the BODY before every merge, and a separate writer agent (never the
   orchestrator from memory) rewrites stale bodies.
 - Golden digests pin rule NOTE text: rewording one rule's note breaks stacked PRs' goldens.
   Recompute them independently, and trace-diff to prove the change is text-only (#262 → #269

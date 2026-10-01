@@ -1,6 +1,6 @@
 # Second-opinion answer to R6B_ZONING_QUESTIONS.md (from another LLM, pasted by the owner 2026-10-01)
 
-Status: a discovery aid only (cf. D-050-R002). It is NOT a licensed professional's ruling. Its quotes for 23-362(a), 23-344(a) and 23-52(b) match the repo's ZR snapshots. Its quotes for 12-10 (corner-lot and special-density definitions; the repo snapshot holds only street-width definitions), 23-363, 23-434, 34-111, 34-24, 35-22, 35-53, 35-63x and 33-301 have no repo snapshot and are unverified.
+Status: a discovery aid only (cf. D-050-R002). It is NOT a licensed professional's ruling. Its quotes for 23-362(a), 23-344(a)/(c) and 23-52(b) match the repo's ZR snapshots. Its quotes for 12-10 (corner-lot and special-density definitions; the repo snapshot holds only street-width definitions), 23-363, 23-434, 34-111, 34-24, 35-22, 35-53, 35-63x and 33-301 have no repo snapshot and are unverified.
 
 ## First answer (short)
 Yes, general R6 rules also apply to R6B unless the zoning text expressly provides a different rule or exclusion (§11-25).

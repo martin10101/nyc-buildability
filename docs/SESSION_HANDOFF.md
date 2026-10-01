@@ -61,7 +61,7 @@ The evening total is 16 merges. The seq-132 list (#261, #265–#267, #271–#276
   - FAR 2.00/2.40 → 20,150/24,180 sq ft;
   - heights 30/45/55, or 30/45/65 qualifying (min base / max base / max building);
   - corner coverage 100% and the corner rear-yard waiver;
-  - units 29 (35 qualifying). §23-52 divides the ZONING LOT's floor area, so these are not the site cap.
+  - units 29 (35 qualifying, sent to professional review, not asserted). §23-52 divides the ZONING LOT's floor area, so these are not the site cap.
 - **Second opinion (an LLM, not licensed; saved at `docs/research/owner-research/2026-10-01-r6b-second-opinion-{questions,answer}.md`):**
   - It agrees with the district rules.
   - C2-2 changes street-wall placement (§35-631(b): at least 70% of the street wall within 8 ft of the street line). Not modeled.
@@ -92,19 +92,23 @@ The evening total is 16 merges. The seq-132 list (#261, #265–#267, #271–#276
 ## Standing restrictions
 - Tier D / Section 20 stops. PR #241 is never merged. The expansion §2 hold stands. Commissioning is owner-typed. Never pass `model:`.
 - Dependency security: no waiver. No local npm/node; CI is the web executor. Producers never write `project-control/`.
-- **`LANE_A_ENABLED` stays off. At most 2 robots at once.** A reviewer verifies every PR body before merge.
+- **`LANE_A_ENABLED` stays off. At most 2 robots at once.** A reviewer verifies every PR body before merge (8 of 16 bodies drifted tonight).
 
 ## EXACT NEXT ACTION (successor)
 1. **Gate 0,** then report READY TO RESUME or BLOCKED. Confirm that `claude auto-mode config` lists the two owner rules; if not, the owner merges.
 2. **Capture the owner words above** via /directive-compliance, including both deviations.
 3. **Two robots:**
    - **B-07 multi-lot site math (Lane B):** it turns the lot-70 numbers into whole-zoning-lot inputs for 1 + 70.
-   - **One cheap follow-up:** #269 N1 (zoning math, so it needs the owner's yes) or #273 N1.
+   - **The second robot** takes the next queue item whose dependencies are met. #269 N1 (zoning math) or #273 N1 only with the owner's yes, since neither is a queue item.
    
    Each goes producer → independent review (body included) → green CI → option-B merge.
 4. **If the owner hasn't answered A/B,** ask once, in plain words.
 
 ## COPY INTO THE NEW SESSION
+Owner, before starting: `cd /root/project/nyc-buildability && git pull --ff-only && claude`. The main checkout is
+behind origin until pulled. Start inside that folder so its settings turn the claude.ai connectors off; `/mcp` must
+list none. Otherwise Gate 0 is BLOCKED.
+
 Resume as the NYC Buildability orchestrator (verify the model with /model). Work only from repository
 evidence. Verify: cwd IS the repo worktree root (`git rev-parse --show-toplevel`), branch
 candidate/D-024-mrl-option-b, HEAD == origin, /mcp empty (Bootstrap Gate 0). Read CLAUDE.md,
