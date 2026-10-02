@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-02T16:22:58+00:00",
+ "updated_at": "2026-10-02T20:02:07+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -100,10 +100,13 @@
   "D-090-R076",
   "D-090-R077",
   "D-090-R078",
-  "D-090-R079"
+  "D-090-R079",
+  "D-090-R080",
+  "D-090-R081",
+  "D-090-R082"
  ],
- "requirements_id_digest_sha256": "87223a177ebc46f4bfe785050528abc1f0a6feb691de66bef02a64de310a5e72",
- "requirements_content_digest_sha256": "4b286877536092f3e78112739f513ec28da2fa426f7b59da7b3a78f78d622128",
+ "requirements_id_digest_sha256": "3d17ed903c8bc95949c1a8605e5d372f193976735a1247adc3b240e0aaac6e3c",
+ "requirements_content_digest_sha256": "2af6e1babe73fa8916e368d06331c52df422d3f10df6940fe5bf0b3e72c80a7e",
  "sources": [
   {
    "file": "source-001.md",
@@ -167,6 +170,14 @@
    "recorded_at": "2026-10-02T16:22:58+00:00",
    "content_digest_sha256": "03848c066a3341141b65c1fe43f9b32317037c543440e3e8555baf284a4d29d2",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-009-amendment.md",
+   "kind": "amendment",
+   "sequence": 9,
+   "recorded_at": "2026-10-02T20:02:07+00:00",
+   "content_digest_sha256": "0f4984801ed260cb9688df77f0d081adaebca683c4812954e6208c78b65902e7",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -176,7 +187,8 @@
   "source-005-amendment.md",
   "source-006-amendment.md",
   "source-007-amendment.md",
-  "source-008-amendment.md"
+  "source-008-amendment.md",
+  "source-009-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -249,6 +261,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-008 (session 08a1e891 message 31, the seq 134 handoff copy block sent by the owner) and requirements D-090-R077..R079, all pending; the other clauses map to rows already in force (table in source-008). Text extracted by script from the session transcript; nothing retyped. No existing row edited. Capture session: 08a1e891 (Gate 0 passed), claude-opus-5-5. Integration head at capture: 4b7ae53b."
+  },
+  {
+   "at": "2026-10-02T20:02:07+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-009 (session 08a1e891 messages 32-33) and requirements D-090-R080..R082, all pending. Message 32 maps to R044 (no new row); message 33's loop clause maps to D-091-R001. Text extracted by script from the session transcript; nothing retyped. No existing row edited. Capture session: 08a1e891, claude-opus-5-5. Integration head at capture: 2e1930f7."
   }
  ]
 }
