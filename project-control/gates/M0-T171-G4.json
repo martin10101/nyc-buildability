@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T171",
+  "gate_id": "G4",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T171-G3G4.md",
+  "reviewed_at": "2026-10-02T09:41:00.486383+00:00",
+  "content_manifest_sha256": "cdcf9842246d401f6dfecfe51ce51f5863c26a67ef8af18a94aa5a3af3f68ded",
+  "reviewed_sha": "f093a6ecb9115d00f04242c5da8817d6a8d179e5",
+  "updated_at": "2026-10-02T09:41:00.635375+00:00"
+}
