@@ -116,8 +116,13 @@ describe("hidden-issue-flags-view — beside-the-results relation and sources", 
     const larger = doc.groups[0].flags[0];
     const relation = factRelationText(larger);
     expect(relation).toBe("Relates to: existing zoning floor area.");
-    expect(relation).not.toContain("_");
-    expect(relation).not.toContain(":");
+    // The raw token "1000010100:existing_zoning_floor_area" (BBL + ":" + snake_case)
+    // must never leak. Beyond the fixed "Relates to: " prefix the fact name is plain
+    // words: no ":" and no "_" survive, and the BBL never appears anywhere in the text.
+    const relationBody = relation!.slice("Relates to: ".length);
+    expect(relationBody).not.toContain("_");
+    expect(relationBody).not.toContain(":");
+    expect(relation).not.toContain("1000010100");
   });
 
   it("returns no relation for a flag with no fact_ref", () => {
