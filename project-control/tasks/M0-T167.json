@@ -51,14 +51,14 @@
     "ci-evidence-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T05:17:57.156953+00:00",
-  "updated_at": "2026-10-02T05:22:08.492736+00:00",
+  "updated_at": "2026-10-02T05:53:17.235191+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -78,6 +78,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Acceptance scenarios recorded in the packet; producer dispatched in /root/project/w-M0-T167"
+    },
+    {
+      "at": "2026-10-02T05:53:16.353395+00:00",
+      "agent": "cloud-architect",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Producer done at c557056e; report and evidence map saved"
     }
   ]
 }
