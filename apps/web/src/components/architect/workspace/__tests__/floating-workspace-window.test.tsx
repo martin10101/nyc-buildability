@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FloatingWorkspaceWindow } from "../FloatingWorkspaceWindow";
+import { DASHBOARD_TOOLS, TOOL_DESCRIPTIONS, TOOL_LABELS } from "../types";
 
 function Harness({ onMount = () => undefined }: { onMount?: () => void }) {
   const [open, setOpen] = useState(false);
@@ -232,6 +233,29 @@ describe("FloatingWorkspaceWindow", () => {
     expect(rectangle(dialog)).toEqual({ left: 28, top: 108, width: 359, height: 284 });
   });
 
+  it("shows a plain description under the title and names it as the dialog description", () => {
+    render(<div className="architect-shell">
+      <FloatingWorkspaceWindow id="test-facts" title="Property facts"
+        description="Recorded lot and building facts, each with its source." open onClose={() => undefined}>
+        <p>Body</p>
+      </FloatingWorkspaceWindow>
+    </div>);
+    const dialog = screen.getByRole("dialog", { name: "Property facts" });
+    const description = screen.getByText("Recorded lot and building facts, each with its source.");
+    expect(description).toBeVisible();
+    expect(description).toHaveClass("workspace-window__description");
+    expect(description).toHaveAttribute("id", "test-facts-desc");
+    expect(dialog).toHaveAttribute("aria-describedby", "test-facts-desc");
+  });
+
+  it("omits the description line and aria-describedby when no description is given", () => {
+    render(<Harness />);
+    openMap();
+    const dialog = screen.getByRole("dialog", { name: "Map" });
+    expect(dialog).not.toHaveAttribute("aria-describedby");
+    expect(dialog.querySelector<HTMLElement>(".workspace-window__description")).toBeNull();
+  });
+
   it("closes only the window that receives Escape", () => {
     const closeMap = vi.fn();
     const closeEvidence = vi.fn();
@@ -242,5 +266,20 @@ describe("FloatingWorkspaceWindow", () => {
     fireEvent.keyDown(within(screen.getByRole("dialog", { name: "Map" })).getByRole("button", { name: "Map action" }), { key: "Escape" });
     expect(closeMap).toHaveBeenCalledTimes(1);
     expect(closeEvidence).not.toHaveBeenCalled();
+  });
+});
+
+describe("tool window descriptions (plan §5a item 5)", () => {
+  it("gives every tool a plain, code-free one-line description", () => {
+    for (const tool of DASHBOARD_TOOLS) {
+      const description = TOOL_DESCRIPTIONS[tool];
+      expect(description.length).toBeGreaterThan(0);
+      expect(description).not.toBe(TOOL_LABELS[tool]);
+      expect(description.endsWith(".")).toBe(true);
+      // No internal codes: zoning codes, dataset ids and BBLs all carry digits/underscores.
+      expect(description).not.toMatch(/\d/);
+      expect(description).not.toMatch(/_/);
+      expect(description).not.toMatch(/bbl|workspace/i);
+    }
   });
 });

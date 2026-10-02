@@ -9,6 +9,25 @@ export const TOOL_LABELS: Record<DashboardTool, string> = {
   records: "Condo & parcel records", study: "Parcel study", envelope: "Preliminary envelope",
   units: "Unit estimate", financials: "Financials",
 };
+/** One plain-English line per floating tool window (queue D-03, plan §5a item 5): it names what
+ * the opened detail surface shows, in plain words with no internal codes. It is the window's
+ * own description; it never repeats a status-strip notice (plan §5a item 2). */
+export const TOOL_DESCRIPTIONS: Record<DashboardTool, string> = {
+  map: "The lot and its surroundings on the map.",
+  facts: "Recorded lot and building facts, each with its source.",
+  zoning: "The zoning districts and the development limits they set.",
+  scenarios: "The worked scenario behind these development limits.",
+  proposal: "A preliminary proposal and envelope check.",
+  evidence: "The sources and calculation steps behind these numbers.",
+  documents: "Plans and documents for this property.",
+  issues: "Items to review before relying on these numbers.",
+  report: "A preview of the property report.",
+  records: "Condo and parcel records for this lot.",
+  study: "Study the recorded parcels together or separately.",
+  envelope: "A preliminary envelope check.",
+  units: "An early unit-count estimate.",
+  financials: "Early financial figures.",
+};
 export function readDashboardTool(value: string | null): DashboardTool | null {
   return DASHBOARD_TOOLS.includes(value as DashboardTool) ? value as DashboardTool : null;
 }
