@@ -50,6 +50,9 @@ export interface DashboardPanelsProps {
   /** Server-read INTERNAL_HIDDEN_ISSUE_FLAGS_UI_ENABLED (D-12, plan M2-06). Absent -> off:
    * the "Hidden issues" entry is hidden. */
   hiddenIssueFlagsEnabled?: boolean;
+  /** Server-read INTERNAL_PARITY_UI_ENABLED (D-15, plan §11b). Absent -> off:
+   * the "Comparable sales & floor area" entry is hidden. */
+  parityUiEnabled?: boolean;
   /** Why the entry passes no rule results, when it knows (still loading, or returned for another
    * property); from `analysisReason`. Absent or null: the guard's own status gives the reason. */
   resultsReason?: string | null;
@@ -117,7 +120,7 @@ function DashboardFact({ field, fact, profile, onInspect, onOpen }: {
  * Owner directive 2026-10-01 (overrides §5a items 2 and 3 for this one fact): the tax-lot-only
  * warning shows on the results without a tap, the cap value carries a plain-text
  * "Tax-lot-only estimate" line (not a chip), and the combined-zoning-lot rows read "Not confirmed". */
-export function DashboardPanels({ profile, scenario, evaluation, condo, label, map, onOpen, onInspect, proposalEditorEnabled = false, lotSiteSetupEnabled = false, hiddenIssueFlagsEnabled = false, resultsReason = null, zoningLot = null }: DashboardPanelsProps) {
+export function DashboardPanels({ profile, scenario, evaluation, condo, label, map, onOpen, onInspect, proposalEditorEnabled = false, lotSiteSetupEnabled = false, hiddenIssueFlagsEnabled = false, parityUiEnabled = false, resultsReason = null, zoningLot = null }: DashboardPanelsProps) {
   const bbl = profile.identity.bbl;
   // Keep the accepted condo guard monotonic on every computed summary, including
   // the bulk/status rows. A fetched scenario can never override this decision.
@@ -230,6 +233,7 @@ export function DashboardPanels({ profile, scenario, evaluation, condo, label, m
           <button type="button" onClick={() => onOpen("documents")}>Documents <span aria-hidden="true">↗</span></button>
           <button type="button" onClick={() => onOpen("issues")}>Items to review <span aria-hidden="true">↗</span></button>
           {hiddenIssueFlagsEnabled ? <button type="button" onClick={() => onOpen("hiddenissues")}>Hidden issues <span aria-hidden="true">↗</span></button> : null}
+          {parityUiEnabled ? <button type="button" onClick={() => onOpen("parity")}>Comparable sales &amp; floor area <span aria-hidden="true">↗</span></button> : null}
         </div></section>
       </div>
     </div>
