@@ -75,6 +75,18 @@ DEFAULT_LOCK_TIMEOUT_S = 10.0
 DEFAULT_LOCK_POLL_S = 0.01
 
 
+def _is_windows() -> bool:
+    """True on Windows (``os.name == 'nt'``).
+
+    The lock's handling of a delete-pending ``PermissionError`` is Windows-only, so
+    the acquire loop branches on this. It is a named indirection over ``os.name`` so
+    the behaviour can be exercised deterministically on either host without patching
+    the global ``os.name`` (which would make ``pathlib`` dispatch ``WindowsPath`` and
+    break on POSIX). Platform never changes mid-process, so this is a pure read.
+    """
+    return os.name == "nt"
+
+
 class SlotError(Exception):
     """A slot could not be reserved safely. Always carries a code; never fails open."""
 
@@ -193,6 +205,14 @@ class _SlotLock:
     reused pid) is taken over with the same temp-write + `os.replace` + re-read
     confirmation `locking.SingleInstanceLock` uses; a holder whose liveness cannot
     be read makes the wait time out and fail closed.
+
+    On Windows the create can also raise `PermissionError` (ERROR_ACCESS_DENIED)
+    while a just-released lock file is delete-pending because a racer still has it
+    open for a liveness read. That is treated as a transient "busy" and waited out
+    to the same deadline (never a stale takeover, since a delete-pending file is
+    unreadable); only a lock that never clears times out and fails closed. POSIX
+    does not produce this for an O_EXCL create, so a PermissionError there stays an
+    immediate fail-closed `slot_lock_error`.
     """
 
     def __init__(self, path: pathlib.Path, *, pid: int, start_token: str,
@@ -213,6 +233,12 @@ class _SlotLock:
         })
 
     def _read_holder(self) -> dict[str, Any] | None:
+        # read_text opens, reads, and closes in the one call, so the read handle is
+        # short-lived by construction. That matters on Windows: the shorter a racer
+        # holds this file open, the narrower the delete-pending window in which a
+        # concurrent O_EXCL create sees PermissionError. Never widen this to a held
+        # handle. A delete-pending or mid-write read raises OSError here and is read
+        # as "unreadable" (None) -> wait, never steal.
         try:
             holder = json.loads(self.path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
@@ -245,6 +271,21 @@ class _SlotLock:
         confirmed = self._read_holder()
         return bool(confirmed and confirmed.get("lock_id") == self._lock_id)
 
+    def _wait_or_fail_closed(self, deadline: float) -> None:
+        """Sleep one poll, or raise slot_lock_timeout once the deadline has passed.
+
+        Shared by every "busy" outcome of the O_EXCL create — an existing lock file
+        we could not take over, or (on Windows) a delete-pending one: real
+        contenders serialize by waiting, and a lock that never clears refuses
+        fail-closed at the timeout rather than guessing a slot is free.
+        """
+        if time.monotonic() >= deadline:
+            raise SlotError(
+                "slot_lock_timeout",
+                f"the slot lock {self.path} was held past {self.timeout_s:g}s; "
+                f"refusing the reservation (fail closed)")
+        time.sleep(self.poll_s)
+
     def acquire(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         deadline = time.monotonic() + self.timeout_s
@@ -253,14 +294,28 @@ class _SlotLock:
             try:
                 fd = os.open(str(self.path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
             except FileExistsError:
+                # The lock file exists: take over only a readable, provably
+                # dead/reused holder; otherwise wait out the deadline.
                 if self._holder_is_stale() and self._take_over():
                     return
-                if time.monotonic() >= deadline:
+                self._wait_or_fail_closed(deadline)
+                continue
+            except PermissionError as exc:
+                # Windows only: O_CREAT|O_EXCL can raise PermissionError
+                # (ERROR_ACCESS_DENIED) while a prior holder's lock file is
+                # delete-pending — a racer's short liveness read still has it open
+                # after the holder unlinked it. That is a transient "busy", not a
+                # real permission fault, so wait to the deadline exactly like
+                # FileExistsError and refuse only at the timeout. NEVER take over on
+                # it: a delete-pending file cannot be read, so it can never be proven
+                # stale, and the pending delete clears on its own. On POSIX, O_EXCL
+                # does not produce this for a delete-pending race, so a PermissionError
+                # there is a real fault and still fails closed at once (unchanged).
+                if not _is_windows():
                     raise SlotError(
-                        "slot_lock_timeout",
-                        f"the slot lock {self.path} was held past {self.timeout_s:g}s; "
-                        f"refusing the reservation (fail closed)")
-                time.sleep(self.poll_s)
+                        "slot_lock_error",
+                        f"could not acquire slot lock {self.path}: {exc}") from exc
+                self._wait_or_fail_closed(deadline)
                 continue
             except OSError as exc:
                 raise SlotError("slot_lock_error",

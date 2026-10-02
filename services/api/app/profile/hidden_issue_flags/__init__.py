@@ -21,7 +21,13 @@ a guess.
   Inclusionary Housing flags, flood flags, landmark / historic district) through the shared
   ``read_pluto_value`` reader; each item is a flag, "No flag" (``splitzone`` recorded false)
   or "Check needed" (unrecorded source / absent categorical column), never a decided rule.
-  The remaining group - site shape and street - is a later B-09 slice.
+- ``site_shape_and_street``: the §8a site-shape-and-street group
+  (:func:`site_shape_and_street_group`), the last §8a group. It reads the B-03 (or B-07
+  combined) ``SiteGeometry`` carried in as an input - the geometric lot type (through lot),
+  a mapped street center line crossing the lot, and the recorded depth - and, for context
+  only, the recorded PLUTO zoning district. Each item is a flag, "No flag" (B-03 records a
+  known non-through lot type) or "Check needed" (a rule determination - yard relief,
+  street-wall line-up - or a survey / City Map source not read here), never a decided rule.
 
 Library only: no route. Lane C wires the flag layer into the study and a contract; Lane D
 renders it beside the affected results (plan section 5a, D-12).
@@ -52,6 +58,15 @@ from app.profile.hidden_issue_flags.model import (
     FlagGroup,
     HiddenIssueFlag,
 )
+from app.profile.hidden_issue_flags.site_shape_and_street import (
+    GROUP_ID as SITE_SHAPE_GROUP_ID,
+)
+from app.profile.hidden_issue_flags.site_shape_and_street import (
+    GROUP_TITLE as SITE_SHAPE_GROUP_TITLE,
+)
+from app.profile.hidden_issue_flags.site_shape_and_street import (
+    site_shape_and_street_group,
+)
 from app.profile.hidden_issue_flags.zoning_lot_history import (
     GROUP_ID as ZONING_LOT_GROUP_ID,
 )
@@ -70,6 +85,8 @@ __all__ = [
     "MAP_BASED_GROUP_ID",
     "MAP_BASED_GROUP_TITLE",
     "RECORD_KEYS",
+    "SITE_SHAPE_GROUP_ID",
+    "SITE_SHAPE_GROUP_TITLE",
     "STATUSES",
     "STATUS_CHECK_NEEDED",
     "STATUS_FLAG",
@@ -82,5 +99,6 @@ __all__ = [
     "HiddenIssueFlag",
     "existing_building_group",
     "map_based_rules_group",
+    "site_shape_and_street_group",
     "zoning_lot_history_group",
 ]
