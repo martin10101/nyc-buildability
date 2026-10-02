@@ -248,4 +248,22 @@ the MainPID (linux_containment), self-group-kill guard (process.terminate_proces
 start_new_session (claude_runner) guards are UNCHANGED by this refactor — their round-1 red demos
 stand and their tests pass green now.
 
+## Rework 2 (new CI job's opt-in R3 step failed; 2026-10-02)
+
+G3 round 2 and the G5 delta PASSED at 7349397b, but the additive `supervisor-linux-containment` ubuntu
+job FAILED on the opt-in R3 step: `test_R3_...` — "the unit's grandchild never started" after 20 s. Root
+cause (reasoned; R3 cannot run here): the transient unit ran `sys.executable`, which on a GitHub runner is
+actions/setup-python's interpreter under `/opt/hostedtoolcache`, linked against a shared libpython found
+via `LD_LIBRARY_PATH` that setup-python exports — a systemd unit starts with a CLEAN environment, so that
+interpreter fails to load libpython and the helper never runs. Fix (R3 harness only; file still POSIX- and
+env-gated; NEVER run here):
+1. `_unit_interpreter()` prefers `/usr/bin/python3` (the helper is stdlib-only) and only falls back to
+   `sys.executable` while carrying `--setenv=LD_LIBRARY_PATH=<cur>` (and `PYTHONHOME` if set) into the unit;
+   paths are already absolute.
+2. `_diag(unit, work)` appends `systemctl status`, `journalctl -u <unit> -n 50` (bounded, check=False) and
+   the workdir listing to EVERY R3 assertion message, so a CI failure explains itself in one round.
+3. The MainPID read now waits (bounded) for `systemctl show -p MainPID --value` to be non-zero before the kill.
+Everything else identical; `.github/workflows/ci.yml` NOT changed (the fix was entirely in the harness).
+Local (R3 NOT run): file `-k "not R3"` 42 passed, 1 deselected (R3); R1 1 passed, R2 1 passed; ruff clean.
+
 END-OF-REPORT

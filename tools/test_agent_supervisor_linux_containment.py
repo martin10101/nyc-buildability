@@ -542,6 +542,36 @@ class R3RealSystemdUnitTests(unittest.TestCase):
         return subprocess.run(["sudo", "-n", *args], capture_output=True, text=True,
                               timeout=30, check=check)
 
+    def _show_value(self, unit: str, prop: str) -> str:
+        return self._sudo("systemctl", "show", unit, "-p", prop, "--value",
+                          check=False).stdout.strip()
+
+    def _diag(self, unit: str, work: pathlib.Path) -> str:
+        """Self-explaining diagnostics appended to any R3 failure (bounded,
+        check=False) so a CI failure explains itself in one round."""
+        status = self._sudo("systemctl", "status", unit, "--no-pager", "-l", check=False)
+        jlog = self._sudo("journalctl", "-u", unit, "--no-pager", "-n", "50", check=False)
+        listing = sorted(p.name for p in work.iterdir()) if work.exists() else "<gone>"
+        return (f"\n--- systemctl status {unit} ---\n{status.stdout}{status.stderr}"
+                f"\n--- journalctl -u {unit} -n 50 ---\n{jlog.stdout}{jlog.stderr}"
+                f"\n--- workdir {work} ---\n{listing}")
+
+    def _unit_interpreter(self) -> tuple[str, list[str]]:
+        """An interpreter + systemd-run `--setenv` args that work in a CLEAN unit
+        environment. The helper is stdlib-only, so prefer the system
+        `/usr/bin/python3`; otherwise fall back to this runner's interpreter
+        (e.g. actions/setup-python under /opt/hostedtoolcache, whose shared
+        libpython is found via LD_LIBRARY_PATH that a clean unit would drop) and
+        carry LD_LIBRARY_PATH / PYTHONHOME into the unit."""
+        if os.path.exists("/usr/bin/python3"):
+            return "/usr/bin/python3", []
+        setenv: list[str] = []
+        for name in ("LD_LIBRARY_PATH", "PYTHONHOME"):
+            value = os.environ.get(name)
+            if value:
+                setenv.append(f"--setenv={name}={value}")
+        return sys.executable, setenv
+
     def test_R3_kill_of_main_pid_reaps_the_whole_control_group(self) -> None:
         import shutil
         import tempfile
@@ -555,29 +585,45 @@ class R3RealSystemdUnitTests(unittest.TestCase):
         unit = f"nyc-sup-r3-{os.urandom(6).hex()}"
         self.addCleanup(lambda: self._sudo("systemctl", "reset-failed", unit, check=False))
         self.addCleanup(lambda: self._sudo("systemctl", "stop", unit, check=False))
+        interpreter, setenv = self._unit_interpreter()
         self._sudo(
             "systemd-run", f"--unit={unit}", "--collect",
             "--property=KillMode=control-group", "--property=ExitType=main",
             "--property=SendSIGKILL=yes", "--property=TimeoutStopSec=15s",
             "--property=ProtectControlGroups=yes",
-            sys.executable, str(helper), str(work))
+            *setenv,
+            interpreter, str(helper), str(work))
         deadline = time.monotonic() + 20
         while time.monotonic() < deadline and not (work / "gc_started").exists():
             time.sleep(0.1)
-        self.assertTrue((work / "gc_started").exists(), "the unit's grandchild never started")
-        main_pid = int(self._sudo("systemctl", "show", unit, "-p", "MainPID",
-                                   "--value").stdout.strip())
+        self.assertTrue((work / "gc_started").exists(),
+                        "the unit's grandchild never started" + self._diag(unit, work))
+        # MainPID can read 0 for a moment after start; wait (bounded) for it to settle.
+        main_pid = 0
+        deadline = time.monotonic() + 20
+        while time.monotonic() < deadline:
+            try:
+                main_pid = int(self._show_value(unit, "MainPID") or "0")
+            except ValueError:
+                main_pid = 0
+            if main_pid > 0:
+                break
+            time.sleep(0.2)
+        self.assertGreater(main_pid, 0,
+                           "the unit MainPID never became non-zero" + self._diag(unit, work))
         worker_pid = int((work / "worker_pid").read_text().strip())
         gc_pid = int((work / "gc_pid").read_text().strip())
         self._sudo("kill", "-9", str(main_pid))
         deadline = time.monotonic() + 20
         while time.monotonic() < deadline and (_pid_alive(worker_pid) or _pid_alive(gc_pid)):
             time.sleep(0.2)
-        self.assertFalse(_pid_alive(worker_pid), "the worker outlived the control-group teardown")
-        self.assertFalse(_pid_alive(gc_pid), "the grandchild outlived the control-group teardown")
-        cgroup = self._sudo("systemctl", "show", unit, "-p", "ControlGroup",
-                             "--value", check=False).stdout.strip()
-        self.assertEqual(cgroup, "", f"the control group was not emptied: {cgroup!r}")
+        self.assertFalse(_pid_alive(worker_pid),
+                         "the worker outlived the control-group teardown" + self._diag(unit, work))
+        self.assertFalse(_pid_alive(gc_pid),
+                         "the grandchild outlived the control-group teardown" + self._diag(unit, work))
+        cgroup = self._show_value(unit, "ControlGroup")
+        self.assertEqual(cgroup, "",
+                         f"the control group was not emptied: {cgroup!r}" + self._diag(unit, work))
 
 
 if __name__ == "__main__":
