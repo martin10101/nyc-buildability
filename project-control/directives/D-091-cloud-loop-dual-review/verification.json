@@ -1,402 +1,409 @@
 {
- "schema": "directive_verification/v2",
- "directive_id": "D-091",
- "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-091-BOOTSTRAP at capture. No completion claim exists at capture time.",
- "verified_by": null,
- "verified_at": null,
- "task_verifications": [
-  {
-   "directive_id": "D-091",
-   "task_id": "M0-T165",
-   "applicable_requirement_ids": [
-    "D-091-R001",
-    "D-091-R007"
-   ],
-   "producer": "backend-engineer",
-   "verifier": "directive-compliance-verifier",
-   "schema_version": "directive_verification/v2",
-   "reviewed_sha": "387a3a08a5cbb649e2c23ae562791a0173a4143b",
-   "reviewed_manifest_sha256": "815ed89c16552b358bb737346596d77bfa6dd6cea1bdbcdff9a8c55bd8624858",
-   "requirements": [
+  "schema": "directive_verification/v2",
+  "directive_id": "D-091",
+  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-091-BOOTSTRAP at capture. No completion claim exists at capture time.",
+  "verified_by": null,
+  "verified_at": null,
+  "task_verifications": [
     {
-     "id": "D-091-R001",
-     "state": "PASS",
-     "evidence": [
-      "tools/agent_supervisor/posix_acl.py + platform_paths.py + os_acl.controller_config_acl_verdict + config.default_config_path + process.py POSIX autoupdater belt @6f80c237 (producer 5740b823)",
-      "tools/test_agent_supervisor_platform_seam.py 34 passed (venv)",
-      "scope = 6 allowed-path files only; identity 815ed89c",
-      "project-control/reports/M0-T165-evidence-map.json D-091-R001"
-     ],
-     "reviewed_sha": "387a3a08a5cbb649e2c23ae562791a0173a4143b"
+      "directive_id": "D-091",
+      "task_id": "M0-T165",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ],
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": "387a3a08a5cbb649e2c23ae562791a0173a4143b",
+      "reviewed_manifest_sha256": "815ed89c16552b358bb737346596d77bfa6dd6cea1bdbcdff9a8c55bd8624858",
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "PASS",
+          "evidence": [
+            "tools/agent_supervisor/posix_acl.py + platform_paths.py + os_acl.controller_config_acl_verdict + config.default_config_path + process.py POSIX autoupdater belt @6f80c237 (producer 5740b823)",
+            "tools/test_agent_supervisor_platform_seam.py 34 passed (venv)",
+            "scope = 6 allowed-path files only; identity 815ed89c",
+            "project-control/reports/M0-T165-evidence-map.json D-091-R001"
+          ],
+          "reviewed_sha": "387a3a08a5cbb649e2c23ae562791a0173a4143b"
+        },
+        {
+          "id": "D-091-R007",
+          "state": "PASS",
+          "evidence": [
+            "gates M0-T165-G{2,3,4,5}.json all PASS, content_manifest 815ed89c",
+            "reports M0-T165-G3G4.md (code-reviewer) + M0-T165-G5.md (security-reviewer): additive, fail-closed preserved, Windows byte-unchanged, no live loop/commissioning",
+            "recertification deferred to a later D-091 task",
+            "CI gh pr checks 288 40/40",
+            "evidence-map D-091-R007"
+          ],
+          "reviewed_sha": "387a3a08a5cbb649e2c23ae562791a0173a4143b"
+        }
+      ],
+      "restamp_note": "DCV reviewed 6f80c23717932eef8baa4a7069df7ca3ed098ffe (project-control/reports/M0-T165-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: identity unchanged (815ed89c) and no non-project-control diff."
     },
     {
-     "id": "D-091-R007",
-     "state": "PASS",
-     "evidence": [
-      "gates M0-T165-G{2,3,4,5}.json all PASS, content_manifest 815ed89c",
-      "reports M0-T165-G3G4.md (code-reviewer) + M0-T165-G5.md (security-reviewer): additive, fail-closed preserved, Windows byte-unchanged, no live loop/commissioning",
-      "recertification deferred to a later D-091 task",
-      "CI gh pr checks 288 40/40",
-      "evidence-map D-091-R007"
-     ],
-     "reviewed_sha": "387a3a08a5cbb649e2c23ae562791a0173a4143b"
+      "directive_id": "D-091",
+      "task_id": "M0-T166",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ],
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": "633b293c7dfcf47218037b49cebd1709a7618612",
+      "reviewed_manifest_sha256": "6afaea11c552889fc0822a59541ee0661c2b9afd48fa98bdb4c626b62dd2051f",
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "PASS",
+          "evidence": [
+            "launch_seam.select_launch_path(): POSIX -> linux/launch.sh + uninstalled systemd template + bash harness; Windows path byte-unchanged; launch.sh fails closed (exit 6 misconfig, 3 missing claude, 4 unset env, 5 gate refusal), never pushes/merges/starts a live run",
+            "M0-T165 call sites: cli.py doctor posture uses os_acl.controller_config_acl_verdict (net -1 line); capability_probe.py and native_runtime.py bare probes carry DISABLE_AUTOUPDATER=1 on Linux only",
+            "tools/test_agent_supervisor_linux_launch.py 19 passed; bash run_sh_tests.sh all mutants detected (reviewed f3c48717)"
+          ],
+          "reviewed_sha": "633b293c7dfcf47218037b49cebd1709a7618612"
+        },
+        {
+          "id": "D-091-R007",
+          "state": "PASS",
+          "evidence": [
+            "gates G0, G2, G3, G4 PASS at content identity 6afaea11 (round-1 G3/G4 FAIL on B1 fixed in the test file only; supervisor-bridge windows-latest green: 3797 passed, 17 skipped)",
+            "nothing installed, commissioned or started; the two live drift checks (CLI 2.1.287 vs 2.1.281 fixtures) are the certification tooth for the later D-091 recertification"
+          ],
+          "reviewed_sha": "633b293c7dfcf47218037b49cebd1709a7618612"
+        }
+      ],
+      "restamp_note": "DCV reviewed f3c487173470ebafa4c5afb299634d0bff16588a (project-control/reports/M0-T166-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (6afaea11); intervening commits are a base merge of disjoint peer work and ledger records."
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T167",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R005"
+      ],
+      "producer": "cloud-architect",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": "c03ec2a7f527f6248edbc324b66ad5c734b89f87",
+      "reviewed_manifest_sha256": "9efc9773f538e977a511a4c23459843d7cced8c81bb3244933a06db283e4c392",
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "PASS",
+          "evidence": [
+            "tools/codex_cli/package.json pins @openai/codex 0.157.0; the binary codex_reviewer.py needs exists repo-locally (codex-cli 0.157.0); every codex exec flag build_argv uses is present (README flags table)",
+            "no sign-in (R006 stays owner-only); no Windows behavior change; node_modules git-ignored (reviewed 8e61d4a7)"
+          ],
+          "reviewed_sha": "c03ec2a7f527f6248edbc324b66ad5c734b89f87"
+        },
+        {
+          "id": "D-091-R005",
+          "state": "PASS",
+          "evidence": [
+            "exact pin 0.157.0; all 7 lock entries integrity-matched to registry.npmjs.org; every package >= 604800 s old (0.157.1 refused); npm audit 0 at every severity; no lifecycle scripts; npm ci --ignore-scripts repo-local only",
+            "G5 provenance PASS (M0-T167-G5-r2.md; round-1 B1 closed); CI codex-cli-dependency-security (every push/PR) and codex-audit (daily) green and fail-closed"
+          ],
+          "reviewed_sha": "c03ec2a7f527f6248edbc324b66ad5c734b89f87"
+        }
+      ],
+      "restamp_note": "DCV reviewed 8e61d4a7a0599a1b661623ce2c89da0ab2f11f95 (project-control/reports/M0-T167-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (9efc9773; no peer change to ci.yml or scheduled-web-audit.yml); intervening commits are a base merge of disjoint peer work and ledger records."
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T168",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R002",
+        "D-091-R007"
+      ],
+      "producer": "ai-pipeline-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423",
+      "reviewed_manifest_sha256": "7ba07667e3d7b1a82bf5a3320cd6306c40324547ad02b52ee68ba6db76f774d1",
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "PASS",
+          "evidence": [
+            "tools/agent_supervisor/claude_reviewer.py implements the design section-2 Claude side; default OFF; loop.py and every non-test module do not reference it; review_packet.py byte-unchanged (reviewed c5efd83b)",
+            "test_loop_does_not_reference_the_claude_reviewer passes; 26/26 tests"
+          ],
+          "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423"
+        },
+        {
+          "id": "D-091-R002",
+          "state": "PASS",
+          "evidence": [
+            "claude_reviewer.py: read-only argv (only -p, --output-format json, --permission-mode plan, --model; write-enabling modes and resume flags refused); same frozen head (assert_head_frozen); never the producer and never sees the Codex review (checked before any process); verdict in the Codex reviewer's ReviewOutcome/CodexDecision shape; malformed/empty/timeout never PASS",
+            "independently re-verified by G3 (code-reviewer) and G5 (security-reviewer adversarial probes)"
+          ],
+          "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423"
+        },
+        {
+          "id": "D-091-R007",
+          "state": "PASS",
+          "evidence": [
+            "gates G0,G2,G3,G4,G5 all PASS at content identity 7ba07667 (producer != reviewers); CI supervisor-bridge and control-plane green",
+            "default off and not wired; live envelope preflight and the D-091 recertification come before it is ever enabled"
+          ],
+          "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423"
+        }
+      ],
+      "restamp_note": "DCV reviewed c5efd83bf0d2ddcd6df9a5cd99bc1dcd776704a7 (project-control/reports/M0-T168-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (7ba07667); intervening commits are a base merge of disjoint peer work and ledger records."
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T169",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R003",
+        "D-091-R007"
+      ],
+      "producer": "ai-pipeline-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": "12b7d765089b17a8a4161a1c71be8a1baf868fff",
+      "reviewed_manifest_sha256": "e2d4588c54ba4b8f15f9d5abaaaf9cd82b8c9688350274c4537a85f00cdec2ec",
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "PASS",
+          "evidence": [
+            "review_combiner.py implements the design section 2/4 combining stage; default off (combiner_disabled); not wired (no non-test importer; loop byte-unchanged) (reviewed 0c88d628)"
+          ],
+          "reviewed_sha": "12b7d765089b17a8a4161a1c71be8a1baf868fff"
+        },
+        {
+          "id": "D-091-R003",
+          "state": "PASS",
+          "evidence": [
+            "combines both reviews of one frozen head: union of findings tagged codex/claude, none ever removed; verdict = worst_verdict(codex, claude) computed in code before any model call; the model adds only advisory, evidence-bound disputes for the human gate (finding stays, verdict unchanged)",
+            "the literal 'model picks the better review and discards findings' reading is deliberately not delivered: round-1 G3-1 and G5 B1/B2 proved it lets a model flip FAIL to PASS; the never-weaker rules (design section 2 rule 4) govern",
+            "47 tests incl. red/green never-weaker cases; G3/G4 and G5 round 2 PASS"
+          ],
+          "reviewed_sha": "12b7d765089b17a8a4161a1c71be8a1baf868fff"
+        },
+        {
+          "id": "D-091-R007",
+          "state": "PASS",
+          "evidence": [
+            "gates G0, G2, G3, G4, G5 PASS at content identity e2d4588c (round-1 FAILs forced the advisory-only rework); nothing wired, started or commissioned; the combining model (D-091-R008) stays the owner's choice: no default, unset refuses"
+          ],
+          "reviewed_sha": "12b7d765089b17a8a4161a1c71be8a1baf868fff"
+        }
+      ],
+      "restamp_note": "DCV reviewed 0c88d6286eba34f0219b0034bb604181149a27b2 (project-control/reports/M0-T169-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (e2d4588c); intervening commits are the evidence-map refresh (outside allowed_paths), a base merge of disjoint peer work and ledger records."
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T170",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ],
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": "a1c1629acb790cf3dbae3b35c53772f035d097c7",
+      "reviewed_manifest_sha256": "448bb55e554e341b9164a32f5f5e3560c56f0f970680005b0085e2b6f504ec35",
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "PASS",
+          "evidence": [
+            "resource_sampling.resolve_memory_ceiling_bytes = min(configured, floor(0.70 * MemTotal)) from /proc/meminfo (5828854169 B on this server, reproduced by the DCV; owner rule D-090-R076); pause at or above, fail closed when meminfo is unreadable; bridged to the unchanged loop gate and breaker",
+            "run_budget.admit_review_or_combine: per-lane 1 then global 2; a third refused; bad counts fail closed; config.py two Limits fields; PC defaults unchanged",
+            "tools/test_agent_supervisor_resource_fit.py 23 passed (reviewed d27e0ddf)"
+          ],
+          "reviewed_sha": "a1c1629acb790cf3dbae3b35c53772f035d097c7"
+        },
+        {
+          "id": "D-091-R007",
+          "state": "PASS",
+          "evidence": [
+            "gates G0, G2, G3, G4 PASS at content identity 448bb55e (G3/G4 by an independent ci-evidence-verifier; producer != reviewers)",
+            "no loop started or commissioned; runtime wiring and recertification are later D-091 tasks"
+          ],
+          "reviewed_sha": "a1c1629acb790cf3dbae3b35c53772f035d097c7"
+        }
+      ],
+      "restamp_note": "DCV reviewed d27e0ddfd2c42d3d57b296bb59a2d05073fffc96 (project-control/reports/M0-T170-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (448bb55e); intervening commits are a base merge of disjoint peer work and ledger records."
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T171",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ],
+      "producer": "backend-engineer",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-091-R007",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T172",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R002",
+        "D-091-R003",
+        "D-091-R007"
+      ],
+      "producer": "backend-engineer",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-091-R002",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-091-R003",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-091-R007",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T173",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ],
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": "10fc1ee5cfc33b61f276b0e7c8f5be82dba597e8",
+      "reviewed_manifest_sha256": "626861666f4e0ade48a47d4e251e7e0a4adba002e9b93f54b8741c8d2ff10c2f",
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "PASS",
+          "evidence": [
+            "On Linux the running controller enforces the 70% memory pause ceiling: cli._run_loop resolves posix_memory_ceiling_bytes (min(int(0.70*MemTotal), configured), so a configured ceiling only tightens) into a copy of config.limits before CircuitBreakers, and builds the sampler through build_resource_sampler, which wires the /proc/meminfo gauge into the unchanged loop resource check; unreadable meminfo refuses launch, an unreadable gauge pauses; Windows unchanged (no gauge, configured ceiling kept)",
+            "tools/test_agent_supervisor_linux_gauge.py 15 passed, reproduced by the DCV (real sampler, real loop gate, real breaker); loop.py, circuit_breakers.py and run_budget.py untouched; CI supervisor-bridge (windows-latest) and web-e2e green at the accept-seam merge head 10fc1ee5"
+          ],
+          "reviewed_sha": "10fc1ee5cfc33b61f276b0e7c8f5be82dba597e8"
+        },
+        {
+          "id": "D-091-R007",
+          "state": "PASS",
+          "evidence": [
+            "gates G0, G2, G3, G4 PASS at content identity 62686166 (G3 by an independent code-reviewer, G4 by an independent ci-evidence-verifier; producer != reviewers)",
+            "no loop started or commissioned; controller-manifest recertification after this cli.py change is M0-T174"
+          ],
+          "reviewed_sha": "10fc1ee5cfc33b61f276b0e7c8f5be82dba597e8"
+        }
+      ],
+      "restamp_note": "DCV reviewed ec8718e1c7fa0bf1f2160dbab4ba66614238741c (project-control/reports/M0-T173-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (62686166); intervening commits are the saved DCV report, a base merge of disjoint peer work, and state.json resolved by meaning. The DCV's added condition (d) holds: CI supervisor-bridge (windows-latest) and web-e2e are green at the accept-seam merge head 10fc1ee5."
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T174",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ],
+      "producer": "backend-engineer",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-091-R007",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T175",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R006",
+        "D-091-R007",
+        "D-091-R008"
+      ],
+      "producer": "cloud-architect",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-091-R006",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-091-R007",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-091-R008",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
     }
-   ],
-   "restamp_note": "DCV reviewed 6f80c23717932eef8baa4a7069df7ca3ed098ffe (project-control/reports/M0-T165-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: identity unchanged (815ed89c) and no non-project-control diff."
-  },
-  {
-   "directive_id": "D-091",
-   "task_id": "M0-T166",
-   "applicable_requirement_ids": [
-    "D-091-R001",
-    "D-091-R007"
-   ],
-   "producer": "backend-engineer",
-   "verifier": "directive-compliance-verifier",
-   "schema_version": "directive_verification/v2",
-   "reviewed_sha": "633b293c7dfcf47218037b49cebd1709a7618612",
-   "reviewed_manifest_sha256": "6afaea11c552889fc0822a59541ee0661c2b9afd48fa98bdb4c626b62dd2051f",
-   "requirements": [
-    {
-     "id": "D-091-R001",
-     "state": "PASS",
-     "evidence": [
-      "launch_seam.select_launch_path(): POSIX -> linux/launch.sh + uninstalled systemd template + bash harness; Windows path byte-unchanged; launch.sh fails closed (exit 6 misconfig, 3 missing claude, 4 unset env, 5 gate refusal), never pushes/merges/starts a live run",
-      "M0-T165 call sites: cli.py doctor posture uses os_acl.controller_config_acl_verdict (net -1 line); capability_probe.py and native_runtime.py bare probes carry DISABLE_AUTOUPDATER=1 on Linux only",
-      "tools/test_agent_supervisor_linux_launch.py 19 passed; bash run_sh_tests.sh all mutants detected (reviewed f3c48717)"
-     ],
-     "reviewed_sha": "633b293c7dfcf47218037b49cebd1709a7618612"
-    },
-    {
-     "id": "D-091-R007",
-     "state": "PASS",
-     "evidence": [
-      "gates G0, G2, G3, G4 PASS at content identity 6afaea11 (round-1 G3/G4 FAIL on B1 fixed in the test file only; supervisor-bridge windows-latest green: 3797 passed, 17 skipped)",
-      "nothing installed, commissioned or started; the two live drift checks (CLI 2.1.287 vs 2.1.281 fixtures) are the certification tooth for the later D-091 recertification"
-     ],
-     "reviewed_sha": "633b293c7dfcf47218037b49cebd1709a7618612"
-    }
-   ],
-   "restamp_note": "DCV reviewed f3c487173470ebafa4c5afb299634d0bff16588a (project-control/reports/M0-T166-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (6afaea11); intervening commits are a base merge of disjoint peer work and ledger records."
-  },
-  {
-   "directive_id": "D-091",
-   "task_id": "M0-T167",
-   "applicable_requirement_ids": [
-    "D-091-R001",
-    "D-091-R005"
-   ],
-   "producer": "cloud-architect",
-   "verifier": "directive-compliance-verifier",
-   "schema_version": "directive_verification/v2",
-   "reviewed_sha": "c03ec2a7f527f6248edbc324b66ad5c734b89f87",
-   "reviewed_manifest_sha256": "9efc9773f538e977a511a4c23459843d7cced8c81bb3244933a06db283e4c392",
-   "requirements": [
-    {
-     "id": "D-091-R001",
-     "state": "PASS",
-     "evidence": [
-      "tools/codex_cli/package.json pins @openai/codex 0.157.0; the binary codex_reviewer.py needs exists repo-locally (codex-cli 0.157.0); every codex exec flag build_argv uses is present (README flags table)",
-      "no sign-in (R006 stays owner-only); no Windows behavior change; node_modules git-ignored (reviewed 8e61d4a7)"
-     ],
-     "reviewed_sha": "c03ec2a7f527f6248edbc324b66ad5c734b89f87"
-    },
-    {
-     "id": "D-091-R005",
-     "state": "PASS",
-     "evidence": [
-      "exact pin 0.157.0; all 7 lock entries integrity-matched to registry.npmjs.org; every package >= 604800 s old (0.157.1 refused); npm audit 0 at every severity; no lifecycle scripts; npm ci --ignore-scripts repo-local only",
-      "G5 provenance PASS (M0-T167-G5-r2.md; round-1 B1 closed); CI codex-cli-dependency-security (every push/PR) and codex-audit (daily) green and fail-closed"
-     ],
-     "reviewed_sha": "c03ec2a7f527f6248edbc324b66ad5c734b89f87"
-    }
-   ],
-   "restamp_note": "DCV reviewed 8e61d4a7a0599a1b661623ce2c89da0ab2f11f95 (project-control/reports/M0-T167-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (9efc9773; no peer change to ci.yml or scheduled-web-audit.yml); intervening commits are a base merge of disjoint peer work and ledger records."
-  },
-  {
-   "directive_id": "D-091",
-   "task_id": "M0-T168",
-   "applicable_requirement_ids": [
-    "D-091-R001",
-    "D-091-R002",
-    "D-091-R007"
-   ],
-   "producer": "ai-pipeline-engineer",
-   "verifier": "directive-compliance-verifier",
-   "schema_version": "directive_verification/v2",
-   "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423",
-   "reviewed_manifest_sha256": "7ba07667e3d7b1a82bf5a3320cd6306c40324547ad02b52ee68ba6db76f774d1",
-   "requirements": [
-    {
-     "id": "D-091-R001",
-     "state": "PASS",
-     "evidence": [
-      "tools/agent_supervisor/claude_reviewer.py implements the design section-2 Claude side; default OFF; loop.py and every non-test module do not reference it; review_packet.py byte-unchanged (reviewed c5efd83b)",
-      "test_loop_does_not_reference_the_claude_reviewer passes; 26/26 tests"
-     ],
-     "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423"
-    },
-    {
-     "id": "D-091-R002",
-     "state": "PASS",
-     "evidence": [
-      "claude_reviewer.py: read-only argv (only -p, --output-format json, --permission-mode plan, --model; write-enabling modes and resume flags refused); same frozen head (assert_head_frozen); never the producer and never sees the Codex review (checked before any process); verdict in the Codex reviewer's ReviewOutcome/CodexDecision shape; malformed/empty/timeout never PASS",
-      "independently re-verified by G3 (code-reviewer) and G5 (security-reviewer adversarial probes)"
-     ],
-     "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423"
-    },
-    {
-     "id": "D-091-R007",
-     "state": "PASS",
-     "evidence": [
-      "gates G0,G2,G3,G4,G5 all PASS at content identity 7ba07667 (producer != reviewers); CI supervisor-bridge and control-plane green",
-      "default off and not wired; live envelope preflight and the D-091 recertification come before it is ever enabled"
-     ],
-     "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423"
-    }
-   ],
-   "restamp_note": "DCV reviewed c5efd83bf0d2ddcd6df9a5cd99bc1dcd776704a7 (project-control/reports/M0-T168-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (7ba07667); intervening commits are a base merge of disjoint peer work and ledger records."
-  },
-  {
-   "directive_id": "D-091",
-   "task_id": "M0-T169",
-   "applicable_requirement_ids": [
-    "D-091-R001",
-    "D-091-R003",
-    "D-091-R007"
-   ],
-   "producer": "ai-pipeline-engineer",
-   "verifier": "directive-compliance-verifier",
-   "schema_version": "directive_verification/v2",
-   "reviewed_sha": "12b7d765089b17a8a4161a1c71be8a1baf868fff",
-   "reviewed_manifest_sha256": "e2d4588c54ba4b8f15f9d5abaaaf9cd82b8c9688350274c4537a85f00cdec2ec",
-   "requirements": [
-    {
-     "id": "D-091-R001",
-     "state": "PASS",
-     "evidence": [
-      "review_combiner.py implements the design section 2/4 combining stage; default off (combiner_disabled); not wired (no non-test importer; loop byte-unchanged) (reviewed 0c88d628)"
-     ],
-     "reviewed_sha": "12b7d765089b17a8a4161a1c71be8a1baf868fff"
-    },
-    {
-     "id": "D-091-R003",
-     "state": "PASS",
-     "evidence": [
-      "combines both reviews of one frozen head: union of findings tagged codex/claude, none ever removed; verdict = worst_verdict(codex, claude) computed in code before any model call; the model adds only advisory, evidence-bound disputes for the human gate (finding stays, verdict unchanged)",
-      "the literal 'model picks the better review and discards findings' reading is deliberately not delivered: round-1 G3-1 and G5 B1/B2 proved it lets a model flip FAIL to PASS; the never-weaker rules (design section 2 rule 4) govern",
-      "47 tests incl. red/green never-weaker cases; G3/G4 and G5 round 2 PASS"
-     ],
-     "reviewed_sha": "12b7d765089b17a8a4161a1c71be8a1baf868fff"
-    },
-    {
-     "id": "D-091-R007",
-     "state": "PASS",
-     "evidence": [
-      "gates G0, G2, G3, G4, G5 PASS at content identity e2d4588c (round-1 FAILs forced the advisory-only rework); nothing wired, started or commissioned; the combining model (D-091-R008) stays the owner's choice: no default, unset refuses"
-     ],
-     "reviewed_sha": "12b7d765089b17a8a4161a1c71be8a1baf868fff"
-    }
-   ],
-   "restamp_note": "DCV reviewed 0c88d6286eba34f0219b0034bb604181149a27b2 (project-control/reports/M0-T169-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (e2d4588c); intervening commits are the evidence-map refresh (outside allowed_paths), a base merge of disjoint peer work and ledger records."
-  },
-  {
-   "directive_id": "D-091",
-   "task_id": "M0-T170",
-   "applicable_requirement_ids": [
-    "D-091-R001",
-    "D-091-R007"
-   ],
-   "producer": "backend-engineer",
-   "verifier": "directive-compliance-verifier",
-   "schema_version": "directive_verification/v2",
-   "reviewed_sha": "a1c1629acb790cf3dbae3b35c53772f035d097c7",
-   "reviewed_manifest_sha256": "448bb55e554e341b9164a32f5f5e3560c56f0f970680005b0085e2b6f504ec35",
-   "requirements": [
-    {
-     "id": "D-091-R001",
-     "state": "PASS",
-     "evidence": [
-      "resource_sampling.resolve_memory_ceiling_bytes = min(configured, floor(0.70 * MemTotal)) from /proc/meminfo (5828854169 B on this server, reproduced by the DCV; owner rule D-090-R076); pause at or above, fail closed when meminfo is unreadable; bridged to the unchanged loop gate and breaker",
-      "run_budget.admit_review_or_combine: per-lane 1 then global 2; a third refused; bad counts fail closed; config.py two Limits fields; PC defaults unchanged",
-      "tools/test_agent_supervisor_resource_fit.py 23 passed (reviewed d27e0ddf)"
-     ],
-     "reviewed_sha": "a1c1629acb790cf3dbae3b35c53772f035d097c7"
-    },
-    {
-     "id": "D-091-R007",
-     "state": "PASS",
-     "evidence": [
-      "gates G0, G2, G3, G4 PASS at content identity 448bb55e (G3/G4 by an independent ci-evidence-verifier; producer != reviewers)",
-      "no loop started or commissioned; runtime wiring and recertification are later D-091 tasks"
-     ],
-     "reviewed_sha": "a1c1629acb790cf3dbae3b35c53772f035d097c7"
-    }
-   ],
-   "restamp_note": "DCV reviewed d27e0ddfd2c42d3d57b296bb59a2d05073fffc96 (project-control/reports/M0-T170-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (448bb55e); intervening commits are a base merge of disjoint peer work and ledger records."
-  },
-  {
-   "directive_id": "D-091",
-   "task_id": "M0-T171",
-   "applicable_requirement_ids": [
-    "D-091-R001",
-    "D-091-R007"
-   ],
-   "producer": "backend-engineer",
-   "verifier": "",
-   "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "requirements": [
-    {
-     "id": "D-091-R001",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    },
-    {
-     "id": "D-091-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    }
-   ]
-  },
-  {
-   "directive_id": "D-091",
-   "task_id": "M0-T172",
-   "applicable_requirement_ids": [
-    "D-091-R001",
-    "D-091-R002",
-    "D-091-R003",
-    "D-091-R007"
-   ],
-   "producer": "backend-engineer",
-   "verifier": "",
-   "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "requirements": [
-    {
-     "id": "D-091-R001",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    },
-    {
-     "id": "D-091-R002",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    },
-    {
-     "id": "D-091-R003",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    },
-    {
-     "id": "D-091-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    }
-   ]
-  },
-  {
-   "directive_id": "D-091",
-   "task_id": "M0-T173",
-   "applicable_requirement_ids": [
-    "D-091-R001",
-    "D-091-R007"
-   ],
-   "producer": "backend-engineer",
-   "verifier": "",
-   "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "requirements": [
-    {
-     "id": "D-091-R001",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    },
-    {
-     "id": "D-091-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    }
-   ]
-  },
-  {
-   "directive_id": "D-091",
-   "task_id": "M0-T174",
-   "applicable_requirement_ids": [
-    "D-091-R001",
-    "D-091-R007"
-   ],
-   "producer": "backend-engineer",
-   "verifier": "",
-   "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "requirements": [
-    {
-     "id": "D-091-R001",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    },
-    {
-     "id": "D-091-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    }
-   ]
-  },
-  {
-   "directive_id": "D-091",
-   "task_id": "M0-T175",
-   "applicable_requirement_ids": [
-    "D-091-R001",
-    "D-091-R006",
-    "D-091-R007",
-    "D-091-R008"
-   ],
-   "producer": "cloud-architect",
-   "verifier": "",
-   "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
-   "requirements": [
-    {
-     "id": "D-091-R001",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    },
-    {
-     "id": "D-091-R006",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    },
-    {
-     "id": "D-091-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    },
-    {
-     "id": "D-091-R008",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
-    }
-   ]
-  }
- ]
+  ]
 }

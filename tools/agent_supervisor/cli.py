@@ -169,7 +169,7 @@ from . import next_task
 from . import orientation as orientation_mod
 from . import os_acl
 from .turn_budget import TurnAllowances, TurnBudgetError, budget_for_packet
-from .resource_sampling import ResourceSampler
+from .resource_sampling import build_resource_sampler, posix_memory_ceiling_bytes
 from .restart_channel import register_restart_verbs
 from .policy import (
     ASK,
@@ -2750,7 +2750,13 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
             timeout_seconds=args.unit_timeout)
     collector = EvidenceCollector(repo_root=str(repo))
     approved = set(args.approve_prompt_digest or [])
-    breakers = CircuitBreakers(config.limits)
+    # D-091 TW3 (owner rule D-090-R076): on Linux the memory breaker ceiling is
+    # <=70% of MEASURED RAM from /proc/meminfo (fail closed if unreadable); on
+    # Windows posix_memory_ceiling_bytes returns None and the ceiling is unchanged.
+    _mem_ceiling = posix_memory_ceiling_bytes(config.limits.max_memory_bytes)
+    _limits = config.limits if _mem_ceiling is None else dataclasses.replace(
+        config.limits, max_memory_bytes=_mem_ceiling)
+    breakers = CircuitBreakers(_limits)
 
     # M0-T079 (D-023 item 1, owner amendment D-023-R037): the DURABLE
     # owner-controlled run budget. `--run-wall-clock-seconds` is optional and has
@@ -2786,7 +2792,7 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     # on Windows, so the sampler reports them as unknown (never a fabricated OK)
     # and doctor's resource_sampling check discloses which gauges are live.
     _runtime_dir = audit.path.parent
-    resource_sampler = ResourceSampler(
+    resource_sampler = build_resource_sampler(
         disk_path=str(_runtime_dir),
         log_paths=(str(audit.path), str(audit.head_path),
                    str(_runtime_dir / DB_FILENAME)))
