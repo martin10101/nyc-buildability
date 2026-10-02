@@ -64,14 +64,14 @@
     "ci-evidence-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
+  "status": "awaiting_gate",
   "progress_percent": 85,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T05:17:56.297263+00:00",
-  "updated_at": "2026-10-02T08:10:11.027695+00:00",
+  "updated_at": "2026-10-02T08:14:52.488863+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -98,6 +98,13 @@
       "percent": 85,
       "status": "in_progress",
       "message": "Producer done at 730dae36"
+    },
+    {
+      "at": "2026-10-02T08:14:51.745662+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "B1 fixed at 2991fda3 (bash tests POSIX-skipped); re-freezing"
     }
   ]
 }
