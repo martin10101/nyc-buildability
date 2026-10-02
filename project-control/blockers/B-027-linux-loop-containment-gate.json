@@ -1,0 +1,20 @@
+{
+ "blocker_id": "B-027",
+ "title": "Linux loop cannot start a live worker: the start/loop containment gates accept only the Windows Job Object, and POSIX worker launches can SIGKILL the supervisor's own process group",
+ "status": "open",
+ "created_at": "2026-10-02T20:45:00+00:00",
+ "created_by": "orchestrator",
+ "affects": [
+  "M0-T175 (D-091 TW5 commissioning: checklist step 4, the supervised canary, ends containment_refused before any worker launches)",
+  "D-091-R001 (move the loop to this server) and D-091-R007 (the moved loop is reviewed and certified before use)",
+  "The M0-T174 Linux recertification scope (it certified local probes only and scoped the containment refusal out as Windows-platform test noise)"
+ ],
+ "detail": "Deficit-convergence closure, 2026-10-02 (evidence and the full causal trace: project-control/reports/B-027-linux-containment-causal-trace.md). Reproduced read-only on this host at a93d6414: process.default_containment_kind() returns process_group on POSIX and cli.containment_precondition() refuses dispatch (cli.py:2466-2500; stop at cli.py:3096-3111, exit 12). Three deficits in one causal cluster: (1) the pre-dispatch gate (cli.py:2491), the post-cycle gate (loop.py:1866-1886/1900-1917) and turnover actuation accept only job_object, so no Linux host can run a live cycle; (2) claude_runner.py:1213/1694 and mrl_one_shot.py:492 launch without start_new_session while terminate_process_tree kills os.getpgid(pid) (process.py:400-401), which is the supervisor's own process group, so a worker timeout, cancel, graceful-close failure or any model probe can SIGKILL the supervisor (matches the exit-137 note, WORKING_KNOWLEDGE.md:583); (3) reviewer/combiner processes have no kill-on-close on POSIX (process.py:716-720) and their review slots are owned by the supervisor pid (review_slots.py:371/471), so a killed supervisor can orphan them and exceed the review cap. The safety requirement behind the gate (M0-T052 G5 C1; ACTIVATION-CHECKLIST PIN 2026-08-08) is unchanged and must hold on Linux: when the supervisor dies by any external means, the worker and every descendant end before any later start can dispatch.",
+ "needs": "ORCHESTRATOR: contract one bounded fix (a systemd control-group containment the gates can prove from inside the process: cgroup-v2 .service membership, KillMode control-group or mixed, ExitType=main, MainPID==self, SendSIGKILL=yes, bounded TimeoutStopSec; start_new_session for POSIX worker launches; an own-group kill guard; the unit template hardening; a Linux CI job; positive/negative/mutation tests and bounded real-process tests), then a Linux recertification that supersedes M0-T174, with the DB-103 combiner model-difference refusal bundled as its own commit. OWNER: approve amending the activation PIN 2026-08-08 so a proved systemd control group counts as containment alongside the Job Object (the property it protects is unchanged); the opt-in kill-the-supervisor proof on a real unit runs in Linux CI or as an owner-typed step, never by an agent on this host.",
+ "workaround_in_effect": "Work continues as orchestrator-dispatched subagent producers and reviewers (Option B lane PRs). The commissioning checklist steps 1-3 stay valid; step 4 waits for this blocker.",
+ "candidate_followup": "M0 tasks: Linux systemd-cgroup containment + self-kill fix; DB-103 combiner model-difference refusal; Linux recertification superseding M0-T174; then M0-T175 step 4.",
+ "scope_corrections": [],
+ "history_note": "Found while preparing M0-T175 commissioning drafts (/root/nyc-loop-drafts/, outside the repo). The refusal had been seen in M0-T173/M0-T174 reports and filed as Windows-platform test noise; CI runs the supervisor suite on windows-latest only (ci.yml:618-640).",
+ "resolved_at": null,
+ "resolution": null
+}
