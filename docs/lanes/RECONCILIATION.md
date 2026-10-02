@@ -335,6 +335,23 @@ The §5b headline ("Keeping the building preserves N sq ft…"), its flags (rent
 
 Each §10 bullet, confirmed or corrected from source.
 
+**Independent M1-01 review — 2026-10-02, worktree head `c81ba14d`.** Every file:line below was
+re-checked against source at this head (the section was first written before several Lane PRs
+merged). 30 claims verified as cited; 5 carried file:line references that had drifted and are
+refreshed in place, each tagged `[M1-01 review …]` in its Evidence cell — the claim text and the
+`confirmed`/`corrected` verdicts are unchanged (so the §10 counts, 30 confirmed / 5 corrected, still
+hold; "refreshed ref" ≠ "corrected verdict", and only the Draft-rule-evaluation row is in both sets):
+
+- Floating tools: `DashboardEntry.tsx:90-92` → `:100-102` (the cited lines were the analysis-notice block).
+- Proposal-editor example site: `proposal-draft.ts:421-451` → `:444-469` (`rectangleSampleDraft`).
+- Two property screens: `DashboardTools.tsx:59-61` → `:64-66` (the `study` case).
+- Draft rule evaluation: `config.py:38-57` → `:45-58,61-66`; `rule_evaluation.py:259` → `:268`.
+- Scenario endpoint: `config.py:60-66` → `:69-75` (that range is now `internal_rule_eval_enabled`).
+
+The `config.py` / `rule_evaluation.py` drift is the M0-T164 (D-090) lane-flag block inserted at
+`config.py:38-43` (≈6–9 lines). Observed but NOT changed (outside §10 per the M1-01 scope): the same
+stale `proposal-draft.ts:421-451` and `config.py:34,60-66` appear in the Set-aside list (items 2, 3).
+
 | §10 bucket | Claim | Verdict | Evidence | Correction / note |
 |---|---|---|---|---|
 | Header | "The branch was at `574432f` on 2026-09-27" | confirmed | `2283c178` = `574432fd` + `docs/SESSION_HANDOFF.md` only (git; B, D) | — |
@@ -344,18 +361,18 @@ Each §10 bullet, confirmed or corrected from source.
 | Working | Per-lot DOF tax-map outlines | confirmed | `lot_geometry.py:202-255` `source=tax-map` → `dtm_lot_outline.build_lot_outline` (`:274`) (B) | Display only; no measurement derived |
 | Working | Parcel picker (each lot or all) | corrected | `ParcelMapViewPicker.tsx:10-30` ("never changes the study's parcel membership"), used at `ParcelStudyMap.tsx:363` (D) | A map camera/focus picker for condo multi-lot outlines only; not the §3 step-2 lot choice; condo base lots have no per-lot size (B) |
 | Working | Together/Separately/Compare study state and JSON export/restore | confirmed | `parcel-study.ts:9,112-121,142-223`; `ParcelStudyPanel.tsx:14-18,59-90` (C, D) | Condo sets with ≥2 base lots only (`ParcelStudyPanel.tsx:29`); default is "compare", not "use all"; component-local on two screens |
-| Working | Floating tools | confirmed | `FloatingWorkspaceWindow.tsx:69-231`; `DashboardEntry.tsx:90-92`; test `floating-workspace-window.test.tsx:68-235` (D) | — |
+| Working | Floating tools | confirmed | `FloatingWorkspaceWindow.tsx:69-231`; rendered at `DashboardEntry.tsx:100-102` (import `:28`); test `floating-workspace-window.test.tsx:68-235` (D) — [M1-01 review @ c81ba14d: ref refreshed, was `DashboardEntry.tsx:90-92`] | — |
 | Working | Honest withholding of unsupported results | confirmed | `development-limits.ts:115-153,198-209`; `DashboardEntry.tsx:44-46`; `web/e2e/development-limits.spec.ts:86-132` (D) | Supported numbers still carry caution labels (§5a rule 3) |
 | Working | Stale-response handling | confirmed | See §9 Invalidation 4 (C, D) | — |
 | Working | Server gate and kill switch | confirmed | `web/src/lib/rule-evaluation.ts:92-138`; `web/src/app/property/workspace/page.tsx:14`; `api/app/config.py:28-57`; `web/e2e/rule-evaluation-flag-off.spec.ts:22,38` (C, D) | One flag (IRE) gates 13 handlers; no per-feature kill |
 | Working | Recorded-official-data test harness | confirmed | `web/e2e/harness/fixture_api.py:1-40,80-137,319-331` (B) | Covers neither benchmark lot, except DTM outlines for Wallabout |
 | Disconnected | Study choices never reach calculations or the report | confirmed | `ParcelStudyPanel.tsx:22-23,139-141`; `use-analysis.ts:6-37` keys on BBL only; `ReportView.tsx:21-27` (C, D) | — |
-| Disconnected | Proposal editor starts from an example site | confirmed | `ProposalEditor.tsx:73` → `proposal-draft.ts:421-451` (C, D) | — |
+| Disconnected | Proposal editor starts from an example site | confirmed | `ProposalEditor.tsx:73,87` (`example` prop → seed) → `proposal-draft.ts:444-469` (`rectangleSampleDraft`) (C, D) — [M1-01 review @ c81ba14d: ref refreshed, was `proposal-draft.ts:421-451`] | — |
 | Disconnected | Envelope request sent without lot or street lines | confirmed | `web/src/lib/architect/max-envelope-api.ts:555-580` (`lot_line_segments: []`, `street_lines: []` at `:570-571`) (C, D) | Worse: request also omits `lot.bbl`, so server lot-line derivation (`max_envelope_api.py:162-182`) never fires; route is unmounted (`api/tests/api/test_max_envelope_api.py:158`); e2e passes only via a browser mock (`proposal-editor.spec.ts:555`) |
 | Disconnected | Site-definition records not connected to combined calculations | confirmed | `api/app/site_definition/records.py:11-19` ("NO calculation path reads a confirmation"); only consumer `condo_records.py:100-103,669-674` (B, C) | — |
-| Disconnected | Two property screens host the study | confirmed | `PropertyOverview.tsx:99` (`/property?…&view=overview`); `DashboardTools.tsx:59-61` (`/property/workspace?…&tool=study`) (C, D) | Plus aliases `/property/confirm` and `/property/compare` (`confirm/page.tsx:24`, `compare/page.tsx:24`); Q4 open |
-| Disabled | Draft rule evaluation behind an internal flag (draft R7 FAR with wide-street branches; R5 path) | corrected | IRE (`config.py:28`, default off `:38-57`, checked `rule_evaluation.py:259`); also needs LSP (`live_provider.py:72-79`) and LWS (`wide_street_live_provider.py:130,209`) (A) | Draft FAR covers **all** R1–R12 ZR 23-21/23-22 rows, not only R7/R5; R7 wide-street only for R7-1/R7-2; `render.yaml` sets none of the three flags |
-| Disabled | Scenario endpoint, default-off | confirmed | `config.py:34,60-66`; `scenario.py:174`; `scenario_analysis.py:652,692,732,770` (C) | Web accepts scenario `1.0.0` only (`scenario-contract.ts:739`) while the schema publishes 1.1.0 (drift) |
+| Disconnected | Two property screens host the study | confirmed | `PropertyOverview.tsx:99` (`/property?…&view=overview`); `DashboardTools.tsx:64-66` (`study` case; `/property/workspace?…&tool=study`) (C, D) — [M1-01 review @ c81ba14d: ref refreshed, was `DashboardTools.tsx:59-61`] | Plus aliases `/property/confirm` and `/property/compare` (`confirm/page.tsx:24`, `compare/page.tsx:24`); Q4 open |
+| Disabled | Draft rule evaluation behind an internal flag (draft R7 FAR with wide-street branches; R5 path) | corrected | IRE (`config.py:28`, default off `:45-58,61-66`, checked `rule_evaluation.py:268`); also needs LSP (`live_provider.py:72-79`) and LWS (`wide_street_live_provider.py:130,209`) (A) — [M1-01 review @ c81ba14d: refs refreshed after the M0-T164 lane-flag insertion, were default off `:38-57` and check `:259`] | Draft FAR covers **all** R1–R12 ZR 23-21/23-22 rows, not only R7/R5; R7 wide-street only for R7-1/R7-2; `render.yaml` sets none of the three flags |
+| Disabled | Scenario endpoint, default-off | confirmed | `config.py:34,69-75`; `scenario.py:174`; `scenario_analysis.py:652,692,732,770` (C) — [M1-01 review @ c81ba14d: `config.py` accessor ref refreshed after the M0-T164 lane-flag insertion, was `:60-66` (now `internal_rule_eval_enabled`)] | Web accepts scenario `1.0.0` only (`scenario-contract.ts:739`) while the schema publishes 1.1.0 (drift) |
 | Disabled | Site-definition lifecycle needs authentication and storage | confirmed | In-memory store (`api/app/site_definition/store.py:1-17`); SDW mount (`main.py:217-218`) (C) | — |
 | Disabled | 3D/expanded UI under an owner hold | corrected | `.claude/rules/expansion-agent-dispatch-hold.md` §2.3 (D-087, 2026-09-24) released 3D massing, DXF and PDF; `three`/`@react-three/fiber` unused (`web/package.json:18,23`); scene route unmounted (D) | What keeps 3D off is missing code and unmounted routes, not a hold; Q8 (section view) still open |
 | Missing | R7 height, setback, yard and coverage rules | confirmed | No height/setback rule for any R6–R12 district; `rear_yard` and `lot_coverage` unsupported; only synthetic fixtures (`api/tests/rules/fixtures/…/pc-*.rule.json`) (A) | Broader than stated: no yard or coverage rule for **any** district |
