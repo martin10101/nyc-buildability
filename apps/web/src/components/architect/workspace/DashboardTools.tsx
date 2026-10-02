@@ -9,6 +9,7 @@ import { maxEnvelopeRequestForProfile } from "@/lib/architect/max-envelope-api";
 import { SurveyReviewClientProvider } from "@/lib/surveyReview/context";
 import { ReviewInbox } from "@/components/survey-review/ReviewInbox";
 import { PropertyFacts, ZoningView, OpenIssues, PlannedView } from "../ProfileViews";
+import { LotSiteSetup } from "../LotSiteSetup";
 import { CondoRecordsChannelSection, type CondoSurfaceDecision } from "../CondoRecordsSection";
 import { ParcelStudyPanel } from "../ParcelStudyPanel";
 import { EvidenceWorkspace } from "../EvidenceWorkspace";
@@ -46,6 +47,8 @@ export interface DashboardToolsProps {
   proposalEditorEnabled?: boolean;
   /** Server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED (D-06, plan §3 step 4); absent -> off. */
   unusedFloorAreaSectionEnabled?: boolean;
+  /** Server-read INTERNAL_LOT_SITE_SETUP_ENABLED (D-04, plan M1-13); absent -> off. */
+  lotSiteSetupEnabled?: boolean;
   focusEnvelope?: boolean;
   envelopeRequest?: number;
 }
@@ -59,6 +62,9 @@ export function DashboardTools(props: DashboardToolsProps) {
   switch (tool) {
     case "map": return <DashboardMap bbl={bbl} condo={condo}/>;
     case "facts": return <PropertyFacts profile={profile} onInspect={onInspect}/>;
+    // D-04 (plan M1-13): lot choice + site facts, behind a default-off server flag.
+    // A deep link or tool open with the flag off gets the plain not-available view.
+    case "lotsite": return props.lotSiteSetupEnabled ? <LotSiteSetup bbl={bbl}/> : <PlannedView label={TOOL_LABELS.lotsite}/>;
     case "zoning": return <ZoningView profile={profile} evaluation={evaluation} scenario={scenario} onInspect={onInspect}/>;
     case "records": return <div id="condo-records"><CondoRecordsChannelSection decision={condo}/>{!condo.showRecords && !condo.showSubstitution ? <p>No separate condo parcel record is available. The entered property record remains available in Property facts.</p> : null}</div>;
     case "study": return condo.recordsView?.outcome === "multi_lot_set"

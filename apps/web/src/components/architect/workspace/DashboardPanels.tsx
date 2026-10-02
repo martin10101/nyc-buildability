@@ -44,6 +44,9 @@ export interface DashboardPanelsProps {
   /** Server-read INTERNAL_PROPOSAL_EDITOR_ENABLED (D-01, plan §7). Absent -> off:
    * the "Envelope" and "Draw a proposal" entries are hidden. */
   proposalEditorEnabled?: boolean;
+  /** Server-read INTERNAL_LOT_SITE_SETUP_ENABLED (D-04, plan M1-13). Absent -> off:
+   * the "Lot & site setup" entry is hidden. */
+  lotSiteSetupEnabled?: boolean;
   /** Why the entry passes no rule results, when it knows (still loading, or returned for another
    * property); from `analysisReason`. Absent or null: the guard's own status gives the reason. */
   resultsReason?: string | null;
@@ -111,7 +114,7 @@ function DashboardFact({ field, fact, profile, onInspect, onOpen }: {
  * Owner directive 2026-10-01 (overrides §5a items 2 and 3 for this one fact): the tax-lot-only
  * warning shows on the results without a tap, the cap value carries a plain-text
  * "Tax-lot-only estimate" line (not a chip), and the combined-zoning-lot rows read "Not confirmed". */
-export function DashboardPanels({ profile, scenario, evaluation, condo, label, map, onOpen, onInspect, proposalEditorEnabled = false, resultsReason = null, zoningLot = null }: DashboardPanelsProps) {
+export function DashboardPanels({ profile, scenario, evaluation, condo, label, map, onOpen, onInspect, proposalEditorEnabled = false, lotSiteSetupEnabled = false, resultsReason = null, zoningLot = null }: DashboardPanelsProps) {
   const bbl = profile.identity.bbl;
   // Keep the accepted condo guard monotonic on every computed summary, including
   // the bulk/status rows. A fetched scenario can never override this decision.
@@ -238,6 +241,7 @@ export function DashboardPanels({ profile, scenario, evaluation, condo, label, m
 
       <section className="bd-card" aria-label="Site study"><div className="bd-card-heading"><h2>Site study</h2></div><div className="bd-card-body bd-study-body">
         <p className="bd-study-count">{records?.baseLots.length ? <><strong>{records.baseLots.length}</strong> base parcel record{records.baseLots.length === 1 ? "" : "s"}</> : "Parcel records not supplied"}</p>
+        {lotSiteSetupEnabled ? <button type="button" className="bd-secondary-action" onClick={() => onOpen("lotsite")}>Lot &amp; site setup <span aria-hidden="true">↗</span></button> : null}
         <button type="button" className="bd-secondary-action" onClick={() => onOpen("study")}>Choose parcels &amp; study mode <span aria-hidden="true">↗</span></button>
         <button type="button" className="bd-text-button" onClick={() => onOpen("records")}>Site definition &amp; record status <span aria-hidden="true">↗</span></button>
       </div></section>
