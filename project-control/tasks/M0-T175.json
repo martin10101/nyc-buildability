@@ -46,14 +46,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T09:02:47.881331+00:00",
-  "updated_at": "2026-10-02T09:04:48.095851+00:00",
+  "updated_at": "2026-10-02T16:25:25.895602+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -66,5 +66,15 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-10-02T09:02:47.881615+00:00"
+  "directive_regime_entered_at": "2026-10-02T09:02:47.881615+00:00",
+  "worktree": "/root/project/w-M0-T175",
+  "progress_log": [
+    {
+      "at": "2026-10-02T16:25:25.895524+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed for cloud-architect: write the Linux commissioning checklist (every server step owner-typed; combiner enable waits on OD-B)"
+    }
+  ]
 }
