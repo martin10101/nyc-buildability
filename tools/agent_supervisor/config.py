@@ -247,6 +247,16 @@ class Limits:
     max_consecutive_hard_denies: int = 3
     max_codex_reviews_per_checkpoint: int = 3
     max_consecutive_revision_loops: int = 4
+    #: Cross-lane concurrency admission for the shared cloud loop (D-091 T7,
+    #: docs/D091_CLOUD_LOOP_DESIGN.md §5). These are fail-closed ADMISSION caps
+    #: enforced by `run_budget.admit_review_or_combine`, NOT sampled gauges, so
+    #: they carry no gauge/counter wiring; they live in the immutable limits like
+    #: every other owner-set bound a model cannot raise. On the single-lane PC
+    #: they are harmless (one lane); on the 4-CPU/8-GiB Linux box running 5 lanes
+    #: the global cap stops all five spiking review/combine work at once (OOM),
+    #: and the per-lane cap keeps one lane from taking both global slots.
+    max_concurrent_reviews_or_combines: int = 2
+    max_concurrent_reviews_or_combines_per_lane: int = 1
     warn_ratio: float = 0.75
 
     @classmethod

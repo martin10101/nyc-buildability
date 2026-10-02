@@ -729,3 +729,91 @@ def load_record(journal: Any, run_id: str) -> dict[str, Any] | None:
     """Read one run's persisted budget record without opening a ledger."""
     data = journal.get_state(f"{RUN_BUDGET_KEY}/{run_id}", None)
     return dict(data) if isinstance(data, Mapping) else None
+
+
+# --------------------------------------------------------------------------
+# Cross-lane concurrency admission (D-091 T7, cloud loop design §5)
+# --------------------------------------------------------------------------
+#
+# The 5-lane cloud loop shares one 4-CPU/8-GiB box. Each lane runs a Claude
+# worker plus bursty Codex-review / Claude-review / combiner processes; the
+# hazard is all five spiking review+combine work at once and OOMing. This is a
+# pure, stateless ADMISSION check — the caller supplies the current active
+# counts (its own process registry is the authority on live children, as the
+# resource sampler notes), and this decides whether ONE more may start. Like
+# every bound in this package it fails closed: at most the limit run at once,
+# and an uncountable (unreadable) active count or a non-positive limit admits
+# NOTHING. Bounds come from the immutable `config.toml [limits]`
+# (`max_concurrent_reviews_or_combines`, `..._per_lane`) so no model can raise
+# them.
+
+#: Design §5 default ceiling, used only when a caller passes no owner limit; the
+#: owner value in `config.toml [limits]` is authoritative and overrides it.
+GLOBAL_REVIEW_OR_COMBINE_DEFAULT = 2
+
+
+@dataclasses.dataclass(frozen=True)
+class AdmissionVerdict:
+    """Whether one more review-or-combine process may start, and why not."""
+
+    admitted: bool
+    scope: str
+    active: int
+    limit: int
+    reason_code: str = ""
+    reason: str = ""
+
+
+def _admit_dimension(active: int, limit: int, scope: str) -> "AdmissionVerdict | None":
+    """A single admission dimension. Returns a REFUSAL verdict when this
+    dimension blocks or cannot be read, else None (this dimension is clear)."""
+    if (not isinstance(active, int) or isinstance(active, bool) or active < 0):
+        return AdmissionVerdict(
+            False, scope, -1, _coerce_limit(limit), "unreadable_active_count",
+            f"the {scope} active review-or-combine count is {active!r}, not a "
+            f"countable non-negative integer; admitting nothing (fail closed)")
+    if (not isinstance(limit, int) or isinstance(limit, bool) or limit <= 0):
+        return AdmissionVerdict(
+            False, scope, active, _coerce_limit(limit), "no_admission_limit",
+            f"the {scope} concurrency limit is {limit!r}, not a positive "
+            f"integer; admitting nothing (fail closed)")
+    if active >= limit:
+        return AdmissionVerdict(
+            False, scope, active, limit, "concurrency_limit_reached",
+            f"{active} review-or-combine process(es) already running at the "
+            f"{scope} limit of {limit}; this request waits rather than "
+            f"over-subscribing the shared box")
+    return None
+
+
+def _coerce_limit(limit: Any) -> int:
+    return limit if isinstance(limit, int) and not isinstance(limit, bool) else 0
+
+
+def admit_review_or_combine(
+    *,
+    global_active: int,
+    lane_active: int,
+    global_limit: int,
+    lane_limit: int,
+    lane: str = "",
+) -> AdmissionVerdict:
+    """Admit (or hold) ONE more review-or-combine process across the lanes.
+
+    A request starts only when BOTH hold: the lane is below its per-lane cap AND
+    the whole box is below the global cap. The per-lane dimension is checked
+    first (a saturated lane waits even when the box has a free global slot), so a
+    single lane can never take both global slots. The returned verdict names the
+    blocking dimension; `admitted=False` means the caller WAITS and retries, it
+    never over-subscribes. Fail closed on an unreadable count or a non-positive
+    limit in either dimension.
+    """
+    lane_scope = (f"lane {lane}".rstrip()) if lane else "lane"
+    refusal = (_admit_dimension(lane_active, lane_limit, lane_scope)
+               or _admit_dimension(global_active, global_limit, "global"))
+    if refusal is not None:
+        return refusal
+    return AdmissionVerdict(
+        True, "global", global_active, global_limit, "admitted",
+        f"admitted: {lane_scope} {lane_active}/{lane_limit}, "
+        f"global {global_active}/{global_limit}")
