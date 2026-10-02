@@ -1,0 +1,15 @@
+{
+  "task_id": "M0-T165",
+  "material_commit": "5740b823 (producer commit in worktree w-M0-T165; 6 files)",
+  "produced_at": "2026-10-02T05:55:00+00:00",
+  "producer": "backend-engineer (orchestrator-dispatched subagent; worktree /root/project/w-M0-T165)",
+  "requirements": {
+    "D-091-R001": [
+      "Linux platform seam for the loop controller, the first code step of moving the loop to this server: tools/agent_supervisor/posix_acl.py (POSIX config-protection verdict, same shape as os_acl), platform_paths.py (Linux config/activation/runtime paths, no Windows path on POSIX), os_acl.controller_config_acl_verdict (POSIX dispatch, Windows unchanged), config.default_config_path, process.py DISABLE_AUTOUPDATER belt for the bare probes (commit 5740b823).",
+      "Tests: tools/test_agent_supervisor_platform_seam.py, 34 passed (venv, this server). Disclosed follow-ups: cli.py doctor wiring and the probe/launcher call sites are outside this packet; they move to M0-T166."
+    ],
+    "D-091-R007": [
+      "Reviewed and gated before use: G0 recorded at a4ca65c9; this submission goes to G2 (orchestrator self-check), G3 code-reviewer, G4 control-plane-verifier, G5 security-reviewer and the directive-compliance-verifier. No fail-closed check weakened (producer report, project-control/reports/M0-T165-producer-report.md). Recertification of the controller is a later D-091 task."
+    ]
+  }
+}
