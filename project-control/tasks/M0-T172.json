@@ -61,14 +61,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T09:02:45.326870+00:00",
-  "updated_at": "2026-10-02T09:03:48.364121+00:00",
+  "updated_at": "2026-10-02T13:07:41.527105+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -81,5 +81,24 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-10-02T09:02:45.327106+00:00"
+  "directive_regime_entered_at": "2026-10-02T09:02:45.327106+00:00",
+  "worktree": "/root/project/w-M0-T172",
+  "progress_log": [
+    {
+      "at": "2026-10-02T10:45:57.020056+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Scenarios in the packet; producer dispatched in /root/project/w-M0-T172"
+    },
+    {
+      "at": "2026-10-02T12:17:01.498973+00:00",
+      "agent": "backend-engineer",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Producer done at def549fc"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-02T13:07:41.526904+00:00"
 }

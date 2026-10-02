@@ -587,7 +587,7 @@ class SupervisedLoop:
         machine: Any,
         authority: TaskAuthority,
         runner: Any,
-        reviewer: Any,
+        reviewer: Any, review_conductor: Any = None,
         run_id: str,
         collector: Any = None,
         broker: Any = None,
@@ -624,7 +624,10 @@ class SupervisedLoop:
         self.machine = machine
         self.authority = authority
         self.runner = runner
-        self.reviewer = reviewer
+        # D-091 TW2 (M0-T172): the OPTIONAL dual-review conductor presents the same
+        # `.review(...)` seam; when injected it replaces the single reviewer at the one
+        # review call. Default None keeps the single-Codex-reviewer path byte-for-byte.
+        self.reviewer = review_conductor or reviewer
         self.run_id = run_id
         self.collector = collector
         self.broker = broker
