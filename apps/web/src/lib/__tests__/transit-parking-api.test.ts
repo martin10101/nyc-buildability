@@ -191,7 +191,17 @@ describe("validateTransitParkingDocument", () => {
     (doc as Record<string, unknown>).parking_spaces = 16;
     const result = validateTransitParkingDocument(doc);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.problems.some((p) => p.includes("parking_spaces"))).toBe(true);
+    // The closed key set (checkKeys -> checkNoUnknownKeys) reports the offending
+    // document by path + "outside the documented key set", not by the key name.
+    // This problem is emitted ONLY when the extra key is rejected, so the test
+    // fails if the validator were weakened to accept it.
+    if (!result.ok) {
+      expect(
+        result.problems.some((p) =>
+          p.includes("transit_parking: carries a key outside the documented key set"),
+        ),
+      ).toBe(true);
+    }
   });
 
   it("rejects an incoherent status (recorded with no transit zone)", () => {
