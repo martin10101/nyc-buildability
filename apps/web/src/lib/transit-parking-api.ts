@@ -47,6 +47,7 @@ import {
   checkObject,
 } from "./study/study-checks";
 import { SOURCE_KINDS } from "./study/study-vocabulary";
+import { checkVersionCheck } from "./study/site-fact-validator";
 import type {
   Source,
   TransitParking,
@@ -175,7 +176,7 @@ function checkTransitParkingSource(problems: Problems, path: string, value: unkn
   if (value === null) return;
   const source = checkObject(problems, path, value);
   if (!source) return;
-  checkKeys(problems, path, source, SOURCE_KEYS, ["provenance_refs"]);
+  checkKeys(problems, path, source, SOURCE_KEYS, ["provenance_refs", "version_check"]);
   checkEnum(problems, `${path}.kind`, source.kind, SOURCE_KINDS);
   for (const field of ["dataset", "dataset_version", "query_ref", "document_ref", "statement"]) {
     checkNullableNonEmptyString(problems, `${path}.${field}`, source[field]);
@@ -186,6 +187,10 @@ function checkTransitParkingSource(problems: Problems, path: string, value: unkn
     refs?.forEach((ref, index) => {
       checkNonEmptyString(problems, `${path}.provenance_refs[${index}]`, ref);
     });
+  }
+  // source.version_check (site_fact contract 1.1.0): the same shared $def check.
+  if (source.version_check !== undefined) {
+    checkVersionCheck(problems, `${path}.version_check`, source.version_check, source.dataset_version);
   }
 }
 

@@ -15,6 +15,13 @@ import invalidZfaZero from "../../../../../../packages/contracts/fixtures/invali
 import invalidLabel from "../../../../../../packages/contracts/fixtures/invalid/site_fact/label_does_not_match_rank.json";
 import invalidFactZero from "../../../../../../packages/contracts/fixtures/invalid/site_fact/unknown_encoded_as_zero.json";
 import invalidNoBlocks from "../../../../../../packages/contracts/fixtures/invalid/site_fact/unknown_without_blocks.json";
+import validVcCurrent from "../../../../../../packages/contracts/fixtures/valid/site_fact/synthetic_lot_area_city_records_current.json";
+import validVcOutOfDate from "../../../../../../packages/contracts/fixtures/valid/site_fact/synthetic_lot_area_city_records_out_of_date.json";
+import validVcVersionUnknown from "../../../../../../packages/contracts/fixtures/valid/site_fact/synthetic_street_width_version_unknown.json";
+import invalidVcLabel from "../../../../../../packages/contracts/fixtures/invalid/site_fact/version_check_label_does_not_match_status.json";
+import invalidVcNullLatest from "../../../../../../packages/contracts/fixtures/invalid/site_fact/version_check_out_of_date_null_latest.json";
+import invalidVcMissingReason from "../../../../../../packages/contracts/fixtures/invalid/site_fact/version_check_missing_reason.json";
+import invalidVcExtraKey from "../../../../../../packages/contracts/fixtures/invalid/site_fact/version_check_extra_key.json";
 import { validateStudyDocument } from "../study-validator";
 import { cornerStudy } from "./study-test-data";
 
@@ -80,6 +87,9 @@ describe("validateStudyDocument: committed site-fact fixtures nested in a study"
     ["synthetic_lot_area_approximate_tax_map", validLotAreaTaxMap],
     ["synthetic_street_width_entered", validStreetWidthEntered],
     ["wallabout_base_lot_32_lot_area_unknown", validWallaboutUnknown],
+    ["synthetic_lot_area_city_records_current", validVcCurrent],
+    ["synthetic_lot_area_city_records_out_of_date", validVcOutOfDate],
+    ["synthetic_street_width_version_unknown", validVcVersionUnknown],
   ])("accepts the valid site fact %s", (_name, fact) => {
     expect(problemsOf(studyWithFact(fact))).toEqual([]);
   });
@@ -90,6 +100,10 @@ describe("validateStudyDocument: committed site-fact fixtures nested in a study"
     ["label_does_not_match_rank", invalidLabel, "site.facts[0].measurement.label"],
     ["unknown_encoded_as_zero", invalidFactZero, "site.facts[0]"],
     ["unknown_without_blocks", invalidNoBlocks, "site.facts[0].blocks"],
+    ["version_check_label_does_not_match_status", invalidVcLabel, "site.facts[0].source.version_check"],
+    ["version_check_out_of_date_null_latest", invalidVcNullLatest, "site.facts[0].source.version_check"],
+    ["version_check_missing_reason", invalidVcMissingReason, "site.facts[0].source.version_check"],
+    ["version_check_extra_key", invalidVcExtraKey, "site.facts[0].source.version_check"],
   ])("rejects the invalid site fact %s at its stated defect", (_name, fact, path) => {
     const problems = problemsOf(studyWithFact(fact));
     expect(problems.length).toBeGreaterThan(0);

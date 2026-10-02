@@ -18,6 +18,7 @@ import {
   isNonEmptyString,
 } from "../scenario-contract-checks";
 import {
+  DATE_TIME_PATTERN,
   checkArray,
   checkDateTime,
   checkKeys,
@@ -37,6 +38,8 @@ import {
   SITE_FACT_KEYS,
   SITE_FACT_UNITS,
   SOURCE_KINDS,
+  VERSION_CHECK_LABELS,
+  VERSION_CHECK_STATUSES,
   type MeasurementRank,
   type SourceKind,
 } from "./study-vocabulary";
@@ -63,6 +66,16 @@ const SOURCE_REQUIRED_KEYS = [
   "query_ref",
   "document_ref",
   "statement",
+] as const;
+
+/** source.version_check (site_fact.schema.json#/$defs/version_check, contract 1.1.0): all six present when the object is. */
+const VERSION_CHECK_REQUIRED_KEYS = [
+  "status",
+  "label",
+  "latest_known_version",
+  "latest_known_seen_at",
+  "latest_known_query_ref",
+  "reason",
 ] as const;
 
 type SourceTextField = "dataset" | "query_ref" | "document_ref" | "statement";
@@ -110,6 +123,50 @@ export function checkMeasurement(
 }
 
 /**
+ * source.version_check (site_fact.schema.json#/$defs/version_check, contract
+ * 1.1.0): the restricted data_versions.py SourceVersionStatus projection. Six
+ * keys when present, no extras; status in its enum with its one-to-one label;
+ * the three latest_known_* nullable (string / RFC 3339 / string or null);
+ * reason non-empty. 'current'/'out_of_date' are reached only with a readable
+ * pinned version, so they require a non-null latest_known_version AND a
+ * non-null source dataset_version (the schema's source allOf). The schema's
+ * oneOf/anyOf/const encode these cross-field rules; this mirror checks the same.
+ */
+export function checkVersionCheck(
+  problems: Problems,
+  path: string,
+  value: unknown,
+  sourceDatasetVersion: unknown,
+): void {
+  const vc = checkObject(problems, path, value);
+  if (!vc) return;
+  checkKeys(problems, path, vc, VERSION_CHECK_REQUIRED_KEYS);
+  if (!isOneOf(VERSION_CHECK_STATUSES, vc.status)) {
+    checkEnum(problems, `${path}.status`, vc.status, VERSION_CHECK_STATUSES);
+  } else {
+    const status = vc.status as keyof typeof VERSION_CHECK_LABELS;
+    if (vc.label !== VERSION_CHECK_LABELS[status]) {
+      problems.add(`${path}.label`, "must be the display label tied to its status (data_versions.py LABELS)");
+    }
+  }
+  checkNullableNonEmptyString(problems, `${path}.latest_known_version`, vc.latest_known_version);
+  if (!(vc.latest_known_seen_at === null
+    || (typeof vc.latest_known_seen_at === "string" && DATE_TIME_PATTERN.test(vc.latest_known_seen_at)))) {
+    problems.add(`${path}.latest_known_seen_at`, "must be an RFC 3339 timestamp or null");
+  }
+  checkNullableNonEmptyString(problems, `${path}.latest_known_query_ref`, vc.latest_known_query_ref);
+  checkNonEmptyString(problems, `${path}.reason`, vc.reason);
+  if (vc.status === "current" || vc.status === "out_of_date") {
+    if (!isNonEmptyString(vc.latest_known_version)) {
+      problems.add(`${path}.latest_known_version`, "must be non-null for a 'current' or 'out_of_date' source");
+    }
+    if (!isNonEmptyString(sourceDatasetVersion)) {
+      problems.add(`${path}`, "a 'current' or 'out_of_date' source requires a non-null dataset_version");
+    }
+  }
+}
+
+/**
  * source: an object or null. Returns the kind, null for an explicit null
  * source, or undefined when the source is invalid (already reported).
  */
@@ -121,7 +178,10 @@ function checkNullableSource(
   if (value === null) return null;
   const source = checkObject(problems, path, value);
   if (!source) return undefined;
-  checkKeys(problems, path, source, SOURCE_REQUIRED_KEYS, ["provenance_refs"]);
+  checkKeys(problems, path, source, SOURCE_REQUIRED_KEYS, ["provenance_refs", "version_check"]);
+  if (source.version_check !== undefined) {
+    checkVersionCheck(problems, `${path}.version_check`, source.version_check, source.dataset_version);
+  }
   for (const field of ["dataset", "dataset_version", "query_ref", "document_ref", "statement"]) {
     checkNullableNonEmptyString(problems, `${path}.${field}`, source[field]);
   }
