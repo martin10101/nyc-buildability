@@ -141,6 +141,67 @@
     }
    ],
    "restamp_note": "DCV reviewed c5efd83bf0d2ddcd6df9a5cd99bc1dcd776704a7 (project-control/reports/M0-T168-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (7ba07667); intervening commits are a base merge of disjoint peer work and ledger records."
+  },
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T169",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R003",
+    "D-091-R007"
+   ],
+   "producer": "ai-pipeline-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R003",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R007",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T170",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R007"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R007",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }

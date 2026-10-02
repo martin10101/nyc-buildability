@@ -1,0 +1,79 @@
+{
+  "task_id": "M0-T170",
+  "title": "D-091 T7: resource fit for 5 loop lanes on the 4 CPU / 8 GB cloud server (memory ceiling under 70%, global review/combine limit)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Tune the loop's fail-closed resource limits for a shared 4 CPU / 8 GB Linux server running 5 lanes: a memory pause ceiling under 70% of physical memory (about 5.6 GiB on this server, derived from the measured total rather than hard-coded), a global limit of at most 2 concurrent review-or-combine processes across all lanes, and per-lane caps, keeping every existing fail-closed gauge. The PC defaults stay as they are; the Linux values are documented in the example config.",
+  "business_reason": "Owner directive D-091: move the loop to the cloud server with Codex and Claude reviews and a combining model.",
+  "inputs": [
+    "docs/D091_CLOUD_LOOP_DESIGN.md section 5",
+    "tools/agent_supervisor/config.example.toml [limits]",
+    "tools/agent_supervisor/config.py",
+    "tools/agent_supervisor/resource_sampling.py",
+    "tools/agent_supervisor/run_budget.py",
+    "owner rule D-090-R076: keep memory under 70%; if it gets close, drop to 4"
+  ],
+  "outputs": [
+    "Linux resource limits and the global review/combine limit in config.py/run_budget.py/resource_sampling.py with tests",
+    "config.example.toml documents the Linux values beside the PC values",
+    "tools/test_agent_supervisor_resource_fit.py",
+    "project-control/reports/M0-T170-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/config.example.toml",
+    "tools/agent_supervisor/config.py",
+    "tools/agent_supervisor/resource_sampling.py",
+    "tools/agent_supervisor/run_budget.py",
+    "tools/test_agent_supervisor_resource_fit.py",
+    "project-control/reports/M0-T170-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "the real controller config outside the repo",
+    "raising any limit above its current PC value on Windows",
+    "M0-T169 paths",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
+    "codex login or handling any owner credential",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
+    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths (M0-T166: launch_seam.py, linux/, cli.py, capability_probe.py, native_runtime.py)"
+  ],
+  "acceptance_scenarios": [
+    "primary: on a host reporting 8 GiB total memory the pause ceiling resolves to no more than 70% of it; at or above it the loop pauses (fail closed)",
+    "boundary: a third concurrent review-or-combine request waits (or is refused) while two are running; per-lane caps hold",
+    "missing/ambiguous: unreadable memory or CPU gauges fail closed (pause), never run unbounded",
+    "regression: the Windows/PC defaults and every existing resource test are unchanged"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "ci-evidence-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T07:27:33.925314+00:00",
+  "updated_at": "2026-10-02T07:27:34.285615+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T07:27:33.925529+00:00"
+}
