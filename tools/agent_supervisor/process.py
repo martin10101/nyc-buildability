@@ -63,7 +63,7 @@ import shutil
 import subprocess
 import sys
 import time
-from typing import Any, Mapping, Sequence
+from typing import Any, Mapping, MutableMapping, Sequence
 
 #: Arguments that are refused unconditionally, whatever any model recommends.
 #: THIS IS A DENY LIST. The supervisor never passes any of these to anything.
@@ -218,7 +218,65 @@ def minimal_env(extra: Mapping[str, str] | None = None,
 #: a manual `claude update`) is deliberately NOT used here (R280). This is
 #: CLAUDE-scoped on purpose - codex children (`codex_channel`) keep `minimal_env`
 #: untouched, so this pair is applied by `claude_child_env`, never by `minimal_env`.
-FORCED_CLAUDE_CHILD_ENV: dict[str, str] = {"DISABLE_AUTOUPDATER": "1"}
+#: The Claude CLI background-autoupdater disable belt. Naming the key once keeps
+#: the per-child injection (`claude_child_env`) and the Linux bare-probe belt
+#: (`posix_autoupdater_belt`) from carrying two spellings of one name.
+AUTOUPDATER_DISABLE_ENV = "DISABLE_AUTOUPDATER"
+
+FORCED_CLAUDE_CHILD_ENV: dict[str, str] = {AUTOUPDATER_DISABLE_ENV: "1"}
+
+
+def posix_autoupdater_belt(*, os_name: str | None = None) -> dict[str, str]:
+    """The Linux autoupdater belt for the TWO BARE `claude --version`/`--help`
+    probes (D-091 T1; runbook §13).
+
+    Those two probes (`capability_probe._run`, `native_runtime` bare version/help)
+    launch the CLI with ``env=None`` and inherit the FULL parent environment, so
+    `claude_child_env`'s per-child injection deliberately does NOT reach them. On
+    Windows they are covered by the owner MACHINE-SCOPE ``DISABLE_AUTOUPDATER``
+    variable (runbook §13 R288). Linux has no per-machine belt, so the Linux
+    equivalent is to carry ``DISABLE_AUTOUPDATER=1`` in the controller's OWN
+    process environment (via the service unit, or `apply_posix_autoupdater_belt`);
+    a child launched with ``env=None`` then inherits it.
+
+    Returns ``{DISABLE_AUTOUPDATER: '1'}`` on POSIX, ``{}`` otherwise - Windows
+    behavior is unchanged (its belt stays `claude_child_env` + the machine-scope
+    variable). The platform is injectable for tests on any host.
+    """
+    name = os.name if os_name is None else os_name
+    return {AUTOUPDATER_DISABLE_ENV: "1"} if name == "posix" else {}
+
+
+def bare_probe_env(parent_env: Mapping[str, str] | None = None, *,
+                   os_name: str | None = None) -> dict[str, str]:
+    """Explicit environment for a bare `claude --version`/`--help` probe: the FULL
+    parent environment (a version/help check needs the real PATH, so it is NOT
+    `minimal_env`) PLUS the Linux autoupdater belt on POSIX. A caller that builds
+    the probe env explicitly uses this instead of ``env=None``."""
+    base = dict(os.environ if parent_env is None else parent_env)
+    base.update(posix_autoupdater_belt(os_name=os_name))
+    return base
+
+
+def apply_posix_autoupdater_belt(environ: MutableMapping[str, str] | None = None,
+                                 *, os_name: str | None = None) -> bool:
+    """Force the Linux bare-probe belt into a process environment (default
+    ``os.environ``) on POSIX, so every child that inherits it via ``env=None`` -
+    the two bare version/help probes included - runs with
+    ``DISABLE_AUTOUPDATER=1``.
+
+    Unconditional on POSIX (the forced value WINS, mirroring `claude_child_env`'s
+    'the forced pair wins' choice): no prior value can leave a bare probe without
+    the disable. No-op on Windows (returns False), so Windows behavior is unchanged.
+    Returns True when the belt was applied. Intended to be called once at Linux
+    controller startup / from the service launcher.
+    """
+    belt = posix_autoupdater_belt(os_name=os_name)
+    if not belt:
+        return False
+    target = os.environ if environ is None else environ
+    target.update(belt)
+    return True
 
 
 def claude_child_env(extra: Mapping[str, str] | None = None,
