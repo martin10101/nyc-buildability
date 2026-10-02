@@ -86,3 +86,47 @@ jobs:
         run: node scripts/dependency_age_gate.mjs package-lock.json
       - name: npm CLI tooling advisory verification (npm@11.18.0, fail-closed)
         run: node scripts/dependency_age_gate.mjs --npm-cli-advisory 11.18.0
+
+  # Task M0-T167 (D-091; ADDITIVE job, existing job untouched): the same daily
+  # re-audit applied to the repo-local Codex CLI admission (tools/codex_cli) on
+  # this workflow's existing schedule, so a newly disclosed advisory against the
+  # pinned @openai/codex lock — or a tampered/too-new package — turns the run red
+  # even when no code changed. Same pinned npm CLI 11.18.0, SHA-pinned actions,
+  # and reused web age gate (apps/web/scripts/dependency_age_gate.mjs) as above.
+  codex-audit:
+    name: codex-cli tree re-audit (blocking on any finding / too-new / outage)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/codex_cli
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/codex_cli/package-lock.json
+      - name: Pin npm CLI to 11.18.0
+        run: |
+          npm install -g npm@11.18.0
+          test "$(npm -v)" = "11.18.0" || { echo "npm pin failed: $(npm -v)"; exit 1; }
+      - name: Deterministic install (npm ci --ignore-scripts; lockfile + integrity verified)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Blocking npm audit (--audit-level=low)
+        run: npm audit --audit-level=low
+      - name: Blocking npm audit (JSON total vulnerabilities must be 0)
+        run: |
+          set -o pipefail
+          npm audit --json > "$RUNNER_TEMP/audit.json" || true
+          node -e '
+            const a = require(process.env.RUNNER_TEMP + "/audit.json");
+            const v = (a.metadata && a.metadata.vulnerabilities) || {};
+            const total = Object.values(v).reduce((s, n) => s + (typeof n === "number" ? n : 0), 0);
+            if (total !== 0) {
+              console.error("npm audit JSON reports " + total + " vulnerabilities:", JSON.stringify(v));
+              process.exit(1);
+            }
+            console.log("npm audit JSON: total vulnerabilities == 0 across all severities");
+          '
+      - name: Committed-lockfile release-age gate (>= 7 days, fail-closed)
+        run: node ../../apps/web/scripts/dependency_age_gate.mjs package-lock.json

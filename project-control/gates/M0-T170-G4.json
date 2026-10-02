@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T170",
+  "gate_id": "G4",
+  "reviewer": "ci-evidence-verifier",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T170-G3G4.md",
+  "reviewed_at": "2026-10-02T08:11:57.957397+00:00",
+  "content_manifest_sha256": "448bb55e554e341b9164a32f5f5e3560c56f0f970680005b0085e2b6f504ec35",
+  "reviewed_sha": "50058cfb42040c1cbabc958624d61fb67b68a559",
+  "updated_at": "2026-10-02T08:11:58.106036+00:00"
+}

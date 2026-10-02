@@ -26,7 +26,7 @@ import { DashboardMap } from "./DashboardMap";
 import { DashboardTools } from "./DashboardTools";
 import { analysisReason } from "./dashboard-status";
 import { FloatingWorkspaceWindow } from "./FloatingWorkspaceWindow";
-import { DASHBOARD_TOOLS, TOOL_LABELS, dashboardHref, readDashboardTool, type DashboardTool } from "./types";
+import { DASHBOARD_TOOLS, TOOL_LABELS, TOOL_DESCRIPTIONS, dashboardHref, readDashboardTool, type DashboardTool } from "./types";
 
 const PERSISTENT_TOOLS: readonly DashboardTool[] = ["map", "facts", "proposal", "study", "evidence", "documents"];
 
@@ -97,7 +97,7 @@ function LoadedDashboard({ profile, initialTool, surveyEnabled, proposalEditorEn
     </div>
     {address && profile.identity.address?.normalized_address && profile.identity.address.normalized_address !== address.label ? <p className="dashboard-address-alias" data-testid="representative-address">City records list this lot as {profile.identity.address.normalized_address}</p> : null}
     <DashboardPanels profile={profile} scenario={scenario} evaluation={evaluation} condo={condo} label={label} map={<DashboardMap bbl={bbl} condo={condo} compact/>} onOpen={open} onInspect={inspect} proposalEditorEnabled={proposalEditorEnabled} resultsReason={resultsReason}/>
-    {DASHBOARD_TOOLS.filter(value => value !== "envelope").map(value => <FloatingWorkspaceWindow key={value} id={`workspace-${value}`} title={TOOL_LABELS[value]} open={tool === value} onClose={() => setTool(null)} wide={["map", "proposal", "study", "report", "evidence"].includes(value)}>
+    {DASHBOARD_TOOLS.filter(value => value !== "envelope").map(value => <FloatingWorkspaceWindow key={value} id={`workspace-${value}`} title={TOOL_LABELS[value]} description={TOOL_DESCRIPTIONS[value]} open={tool === value} onClose={() => setTool(null)} wide={["map", "proposal", "study", "report", "evidence"].includes(value)}>
       {tool === value || PERSISTENT_TOOLS.includes(value) ? <DashboardTools tool={value} profile={profile} scenario={scenario} evaluation={evaluation} returnedScenario={returnedScenario} returnedEvaluation={returnedEvaluation} condo={condo} address={address} label={label} selection={selection} onSelectEvidence={setSelection} onInspect={inspect} onOpen={open} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled} focusEnvelope={focusEnvelope} envelopeRequest={envelopeRequest}/> : null}
     </FloatingWorkspaceWindow>)}
   </div>;

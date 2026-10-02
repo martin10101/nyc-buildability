@@ -79,24 +79,31 @@
     "D-091-R005"
    ],
    "producer": "cloud-architect",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "c03ec2a7f527f6248edbc324b66ad5c734b89f87",
+   "reviewed_manifest_sha256": "9efc9773f538e977a511a4c23459843d7cced8c81bb3244933a06db283e4c392",
    "requirements": [
     {
      "id": "D-091-R001",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "tools/codex_cli/package.json pins @openai/codex 0.157.0; the binary codex_reviewer.py needs exists repo-locally (codex-cli 0.157.0); every codex exec flag build_argv uses is present (README flags table)",
+      "no sign-in (R006 stays owner-only); no Windows behavior change; node_modules git-ignored (reviewed 8e61d4a7)"
+     ],
+     "reviewed_sha": "c03ec2a7f527f6248edbc324b66ad5c734b89f87"
     },
     {
      "id": "D-091-R005",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "exact pin 0.157.0; all 7 lock entries integrity-matched to registry.npmjs.org; every package >= 604800 s old (0.157.1 refused); npm audit 0 at every severity; no lifecycle scripts; npm ci --ignore-scripts repo-local only",
+      "G5 provenance PASS (M0-T167-G5-r2.md; round-1 B1 closed); CI codex-cli-dependency-security (every push/PR) and codex-audit (daily) green and fail-closed"
+     ],
+     "reviewed_sha": "c03ec2a7f527f6248edbc324b66ad5c734b89f87"
     }
-   ]
+   ],
+   "restamp_note": "DCV reviewed 8e61d4a7a0599a1b661623ce2c89da0ab2f11f95 (project-control/reports/M0-T167-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (9efc9773; no peer change to ci.yml or scheduled-web-audit.yml); intervening commits are a base merge of disjoint peer work and ledger records."
   },
   {
    "directive_id": "D-091",
@@ -104,6 +111,50 @@
    "applicable_requirement_ids": [
     "D-091-R001",
     "D-091-R002",
+    "D-091-R007"
+   ],
+   "producer": "ai-pipeline-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423",
+   "reviewed_manifest_sha256": "7ba07667e3d7b1a82bf5a3320cd6306c40324547ad02b52ee68ba6db76f774d1",
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "PASS",
+     "evidence": [
+      "tools/agent_supervisor/claude_reviewer.py implements the design section-2 Claude side; default OFF; loop.py and every non-test module do not reference it; review_packet.py byte-unchanged (reviewed c5efd83b)",
+      "test_loop_does_not_reference_the_claude_reviewer passes; 26/26 tests"
+     ],
+     "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423"
+    },
+    {
+     "id": "D-091-R002",
+     "state": "PASS",
+     "evidence": [
+      "claude_reviewer.py: read-only argv (only -p, --output-format json, --permission-mode plan, --model; write-enabling modes and resume flags refused); same frozen head (assert_head_frozen); never the producer and never sees the Codex review (checked before any process); verdict in the Codex reviewer's ReviewOutcome/CodexDecision shape; malformed/empty/timeout never PASS",
+      "independently re-verified by G3 (code-reviewer) and G5 (security-reviewer adversarial probes)"
+     ],
+     "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423"
+    },
+    {
+     "id": "D-091-R007",
+     "state": "PASS",
+     "evidence": [
+      "gates G0,G2,G3,G4,G5 all PASS at content identity 7ba07667 (producer != reviewers); CI supervisor-bridge and control-plane green",
+      "default off and not wired; live envelope preflight and the D-091 recertification come before it is ever enabled"
+     ],
+     "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423"
+    }
+   ],
+   "restamp_note": "DCV reviewed c5efd83bf0d2ddcd6df9a5cd99bc1dcd776704a7 (project-control/reports/M0-T168-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (7ba07667); intervening commits are a base merge of disjoint peer work and ledger records."
+  },
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T169",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R003",
     "D-091-R007"
    ],
    "producer": "ai-pipeline-engineer",
@@ -119,7 +170,7 @@
      "reviewed_sha": null
     },
     {
-     "id": "D-091-R002",
+     "id": "D-091-R003",
      "state": "pending",
      "evidence": [],
      "reviewed_sha": null
@@ -131,6 +182,41 @@
      "reviewed_sha": null
     }
    ]
+  },
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T170",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R007"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "a1c1629acb790cf3dbae3b35c53772f035d097c7",
+   "reviewed_manifest_sha256": "448bb55e554e341b9164a32f5f5e3560c56f0f970680005b0085e2b6f504ec35",
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "PASS",
+     "evidence": [
+      "resource_sampling.resolve_memory_ceiling_bytes = min(configured, floor(0.70 * MemTotal)) from /proc/meminfo (5828854169 B on this server, reproduced by the DCV; owner rule D-090-R076); pause at or above, fail closed when meminfo is unreadable; bridged to the unchanged loop gate and breaker",
+      "run_budget.admit_review_or_combine: per-lane 1 then global 2; a third refused; bad counts fail closed; config.py two Limits fields; PC defaults unchanged",
+      "tools/test_agent_supervisor_resource_fit.py 23 passed (reviewed d27e0ddf)"
+     ],
+     "reviewed_sha": "a1c1629acb790cf3dbae3b35c53772f035d097c7"
+    },
+    {
+     "id": "D-091-R007",
+     "state": "PASS",
+     "evidence": [
+      "gates G0, G2, G3, G4 PASS at content identity 448bb55e (G3/G4 by an independent ci-evidence-verifier; producer != reviewers)",
+      "no loop started or commissioned; runtime wiring and recertification are later D-091 tasks"
+     ],
+     "reviewed_sha": "a1c1629acb790cf3dbae3b35c53772f035d097c7"
+    }
+   ],
+   "restamp_note": "DCV reviewed d27e0ddfd2c42d3d57b296bb59a2d05073fffc96 (project-control/reports/M0-T170-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (448bb55e); intervening commits are a base merge of disjoint peer work and ledger records."
   }
  ]
 }
