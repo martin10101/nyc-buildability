@@ -166,3 +166,41 @@ worktree, then removed) — NOT introduced by this task
 - No commissioning, no unit install/start, no live provider call, no push/merge,
   no `tools/project_control.py`/`gh` — per scope.
 ```
+
+## Rework (G3/G4 FAIL B1 — 2026-10-02)
+
+**Correction to the original report's Windows claim.** The original report and PR
+body said Windows "keeps passing unchanged" / the Windows surface is safe. That
+was WRONG for CI: the required `supervisor-bridge` job runs
+`pytest tools/test_agent_supervisor_*.py` on `windows-latest`, whose glob now
+collects the new `tools/test_agent_supervisor_linux_launch.py`. Its three
+bash-invoking test classes call `subprocess.run(["bash", ...])` with no platform
+guard; on windows-latest `bash` is the WSL stub with no distro (exits 1), so 7
+tests failed (3 BashHarnessTests, 2 LauncherFailClosedTests, and
+LauncherGateTests.test_launcher_refuses_when_gate_refuses +
+test_launcher_starts_only_through_a_passing_gate). The PRODUCTION Linux launch
+code is unaffected; this was a TEST-portability defect in the new test file only.
+
+**Fix (test file only, inside allowed_paths; nothing else changed).** Added
+`@unittest.skipUnless(os.name == "posix", "POSIX bash launch path")` to class
+`BashHarnessTests`, class `LauncherFailClosedTests`, and the two bash-invoking
+`LauncherGateTests` methods (`test_launcher_refuses_when_gate_refuses`,
+`test_launcher_starts_only_through_a_passing_gate`). The mocked/file-reading tests
+stay running on both platforms: `LaunchPathSelectionTests`,
+`DoctorPostureWiringTests`, `BareProbeEnvTests`, and the two file-reading
+`LauncherGateTests` methods (`test_launcher_has_no_push_merge_or_live_run`,
+`test_systemd_unit_is_an_uninstalled_template`). So on windows-latest the 7
+bash-dependent tests are skipped (not failed) and the Windows-safe tests still
+execute; on Linux all 19 still run.
+
+**Evidence.**
+- `pytest -q tools/test_agent_supervisor_linux_launch.py` on this server → **19
+  passed** (nothing skipped; `os.name == "posix"` here).
+- Decorator inspection: the file contains exactly **4** occurrences of
+  `@unittest.skipUnless(os.name == "posix", "POSIX bash launch path")`; evaluating
+  the module's exact condition as it resolves on windows-latest
+  (`"nt" == "posix"` → `False`) marks a `skipUnless(False, ...)` class
+  `__unittest_skip__ = True` (bash-dependent → SKIPPED), while a True-condition
+  class is not skipped (cross-platform → RUNS).
+- Windows-latest `supervisor-bridge` must be re-run green by the orchestrator;
+  the Linux G3/G4 evidence above is unchanged (no production behavior changed).
