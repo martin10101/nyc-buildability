@@ -77,6 +77,7 @@ __all__ = [
     "SiteFactSet",
     "build_site_facts",
     "read_pluto_text",
+    "read_pluto_value",
 ]
 
 SITE_FACT_CONTRACT_VERSION = "1.0.0"
@@ -599,3 +600,49 @@ def read_pluto_text(
     """
     reading = _read(_view(profile), column, numeric=False)
     return reading.value, reading.source, reading.problem
+
+
+def read_pluto_value(
+    profile: Mapping[str, Any], column: str
+) -> tuple[Any, dict | None, str | None]:
+    """One PLUTO column's raw normalized value from a built property profile.
+
+    Like :func:`read_pluto_text` it applies the same trust rules the site facts use
+    (:func:`_problem`: an identity conflict, a duplicate value, a connector drift signal, a
+    data conflict, a named conflict, or a record with no retrieval time or request all make
+    the value unusable). Unlike :func:`read_pluto_text` it imposes NO type constraint, so it
+    reads a checkbox/boolean column (for example PLUTO ``splitzone``) or a numeric flag
+    column (for example ``firm07_flag``) as well as text - the caller interprets the type.
+    No untrusted PLUTO value is ever returned.
+
+    Args:
+        profile: a document from :func:`build_property_profile` (read, never changed).
+        column: a PLUTO column name (for example ``"splitzone"``).
+
+    Returns:
+        ``(value, source, problem)``. ``value`` is the verbatim normalized value (any type,
+        for example ``False`` for a checkbox) when it can be used, else None. ``source`` is a
+        site_fact ``city_dataset`` source object (``app.profile.data_versions`` pins it) for
+        the value, or the checked source when none was found, or None. ``problem`` is the
+        plain reason the value cannot be used, or None. A missing column (SODA omits null
+        fields) yields ``(None, checked_source, "PLUTO has no <column> value for this lot.")``.
+
+    Raises:
+        ValueError: the profile has no ``identity.bbl`` (from :func:`_view`).
+    """
+    view = _view(profile)
+    record = view.pluto.get(column)
+    if record is None:
+        return None, view.checked_source, f"PLUTO has no {column} value for this lot."
+    source = _pluto_source(
+        dataset_version=record.get("dataset_version"),
+        retrieved_at=record.get("retrieved_at"),
+        query_ref=record.get("request_url") or view.request_url,
+        provenance_id=record.get("provenance_id"),
+    )
+    problem = _problem(view, column, record)
+    if problem is None and source is None:
+        problem = f"The PLUTO {column} record has no retrieval time or request."
+    if problem is not None:
+        return None, source, problem
+    return record.get("normalized_value"), source, None
