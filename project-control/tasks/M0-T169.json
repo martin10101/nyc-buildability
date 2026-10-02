@@ -1,0 +1,87 @@
+{
+  "task_id": "M0-T169",
+  "title": "D-091 T6: review combiner that merges the Codex and Claude reviews into one (model is a setting, unset = refuse; default off)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Add a combiner stage that reads the Codex review and the Claude review of the same frozen head and produces one combined review that can only keep or add findings: every finding either reviewer raised stays unless the combiner cites concrete evidence refuting it; conflicts are resolved only with evidence; every point keeps its source tag; the combined verdict is the worst unrefuted verdict (never FAIL to PASS). The union, source tags and worst-verdict rule are computed in code; the model only proposes evidence-backed refutations, which code accepts only when they cite evidence. The combining model is a required setting with no default (owner choice D-091-R008); unset means the combiner refuses. Behind a switch that defaults off; not wired into the loop.",
+  "business_reason": "Owner directive D-091: move the loop to the cloud server with Codex and Claude reviews and a combining model.",
+  "inputs": [
+    "docs/D091_CLOUD_LOOP_DESIGN.md sections 2 and 4",
+    "tools/agent_supervisor/codex_reviewer.py (ReviewOutcome, validate_decision)",
+    "tools/agent_supervisor/claude_reviewer.py (M0-T168, accepted: same verdict shape; read-only argv pattern)",
+    "tools/agent_supervisor/models.py (CodexDecision)",
+    "project-control/reports/M0-T168-G3G4.md and M0-T168-G5.md (notes N1: a raised launch exception must be treated as a FAIL)"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/review_combiner.py",
+    "tools/test_agent_supervisor_review_combiner.py",
+    "project-control/reports/M0-T169-producer-report.md (orchestrator saves the producer return)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/review_combiner.py",
+    "tools/test_agent_supervisor_review_combiner.py",
+    "project-control/reports/M0-T169-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "codex_reviewer.py, claude_reviewer.py, gate_wave.py, loop.py (read them; do not edit \u2014 wiring is a later task)",
+    "choosing or hard-coding a combining model (D-091-R008 is the owner's choice)",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
+    "codex login or handling any owner credential",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
+    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths (M0-T166: launch_seam.py, linux/, cli.py, capability_probe.py, native_runtime.py)"
+  ],
+  "acceptance_scenarios": [
+    "primary: two well-formed reviews of the same frozen head give one combined review whose findings are the union, each tagged codex or claude, with the worst unrefuted verdict",
+    "boundary: a finding is dropped only when the combiner's refutation cites evidence (file/line, command output or SHA) that code can check is present; an uncited refutation leaves the finding in",
+    "never weaker: if either review is FAIL (or has an unrefuted blocking finding) the combined verdict is never PASS; a combined PASS needs both reviews PASS or every blocking finding refuted with evidence",
+    "missing/ambiguous: a missing, malformed, empty, timed-out or raised-exception review is treated as FAIL/UNVERIFIED, never PASS; reviews of different heads are refused",
+    "independence: the combiner refuses when its identity equals the producer's or either reviewer's",
+    "settings: the combining model has no default; unset means the combiner refuses; the switch defaults off and nothing in the loop calls the combiner"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "ai-pipeline-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 20,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T07:27:33.054991+00:00",
+  "updated_at": "2026-10-02T07:28:27.349706+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R003",
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T07:27:33.055249+00:00",
+  "worktree": "/root/project/w-M0-T169",
+  "progress_log": [
+    {
+      "at": "2026-10-02T07:28:27.349627+00:00",
+      "agent": "ai-pipeline-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Scenarios in the packet; producer dispatched in /root/project/w-M0-T169"
+    }
+  ]
+}
