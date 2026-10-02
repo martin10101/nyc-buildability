@@ -18,6 +18,7 @@ import { CapturedRecord } from "./EvidenceRecord";
 import { CalculationEvidence } from "./CalculationEvidence";
 import { ReportSources } from "./ReportSources";
 import { AnalysisIdentityNotice } from "./AnalysisIdentityNotice";
+import { FLOOR_AREA_REMINDER } from "./workspace/dashboard-status";
 import type { VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
 export function ReportView({ profile, scenario: returnedScenario, evaluation: returnedEvaluation, label, condoDecision, unusedFloorAreaSectionEnabled = false, zoningLot = null }: {
     profile: PropertyProfile;
@@ -89,6 +90,14 @@ export function ReportView({ profile, scenario: returnedScenario, evaluation: re
         <label>
           <input type="checkbox" checked={auditAppendix} onChange={event => setAuditAppendix(event.target.checked)}/> Include full audit appendix</label>
       </div>
+    </section>
+    {/* Plan §5a item 2 (queue D-09, M1-24): the floor-area availability reminder is reachable from
+        the dashboard status strip and appears exactly ONCE here, on the report face — a standing
+        notice, never beside a number and never repeated. The wording is the one shared §5a constant
+        (dashboard-status.ts), verbatim from the plan; no records lookup is made. */}
+    <section className="card architect-report-reminder" aria-label="Floor-area availability">
+      <h2>Floor-area availability</h2>
+      <p data-testid="report-floor-area-reminder">{FLOOR_AREA_REMINDER}</p>
     </section>
     <AnalysisIdentityNotice label="Scenario" requestedBbl={bbl} document={returnedScenario}/>
     <AnalysisIdentityNotice label="Rule evaluation" requestedBbl={bbl} document={returnedEvaluation}/>
