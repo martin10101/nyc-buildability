@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](../PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: §5's next-reader-packet scope (the architect-PDF drawing reader; plan §1.4, §7; §12 has no drawing-import task). The rest still applies.
+
 # Architect-drawing corpus trial of the sheet reader (M5-T093, D-087 PDF-1b)
 
 - **Task:** M5-T093 (research-only; D-087 wave 3). Producer: backend-engineer. Docs only; **no
