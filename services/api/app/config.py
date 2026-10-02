@@ -52,6 +52,21 @@ INTERNAL_SCENARIO_ENABLED_ENV_VAR = "INTERNAL_SCENARIO_ENABLED"
 # the lot choice is Lane B behaviour and is computed only when LANE_B_ENABLED is
 # also on (see app.api.v1.study_inputs), so production (neither flag set) keeps
 # the route a generic 404.
+#
+# ENABLEMENT CHECKLIST (before this route serves real traffic in production, all
+# REQUIRED): enabling the study read, once LANE_B_ENABLED is also on, now fires an
+# OUTBOUND PLUTO version-probe call during assembly (request B-4), on top of the
+# PLUTO record fetch. So before production:
+#   1. Authentication / authorization on the route (blocker B-001: the API ships
+#      with no auth; this internal read must not be reachable unauthenticated).
+#   2. The resilient PLUTO data path (properties.get_pluto_fetcher()), never an
+#      unguarded direct connector call; the version probe is guarded by
+#      app.api.v1.pluto_version_cache.CachedVersionProbe (single attempt, 5 s
+#      timeout, 15-min success cache + 60 s negative cache/breaker, B-4 rework 1).
+#   3. A concurrency bound for the study route (route-local rate limit already
+#      present, plus job slots or a request deadline) so a burst cannot stack the
+#      record fetch + version probe outbound calls.
+# Until these exist, this flag stays OFF in production (security review).
 INTERNAL_STUDY_READ_ENABLED_ENV_VAR = "INTERNAL_STUDY_READ_ENABLED"
 
 # Env vars gating the three lane C packet-W0 §8a / check-C-8 / section-11b read

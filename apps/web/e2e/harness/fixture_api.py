@@ -94,6 +94,10 @@ from app.connectors.pluto_soda import (
     TransportTimeout,
     fetch_by_bbl,
 )
+from app.connectors.pluto_version_probe import (
+    VERSION_PROBE_URL,
+    fetch_published_version,
+)
 from app.main import app
 from app.resilience.transport import TransportResponse as DofTransportResponse
 
@@ -424,8 +428,11 @@ def harness_address_resolver(
 # Northern benchmark PLUTO body (services/api/tests/fixtures/benchmark_215_16_northern,
 # queue item B-01) through the REAL connector and the REAL B-02/B-07 pipeline
 # (app.api.v1.study_inputs.pluto_study_inputs_provider) — the SAME offline pattern
-# the accepted slice-1 route tests use (tests/api/test_study_read_api.py). NO study
-# document byte is hand-written here; route, connector, builder, contract guard and
+# the accepted slice-1 route tests use (tests/api/test_study_read_api.py). The
+# PLUTO published-version probe (request B-4) is injected into that provider and
+# served the recorded F09 observation through a routed fake transport
+# (harness_version_probe) — never the network. NO study document byte is
+# hand-written here; route, connector, builder, probe, contract guard and
 # serialization are the production code paths. Served for the single Northern BBL
 # only: any other requested BBL fails the connector's own result-match and becomes
 # the route's fail-safe 503 (never a fabricated study). Production sets NEITHER
@@ -449,6 +456,31 @@ def harness_study_fetcher(bbl: str, correlation_id: str):
     return fetch_by_bbl(
         bbl,
         transport=lambda url, headers, timeout: TransportResponse(200, body),
+        sleep=lambda seconds: None,  # no real backoff delays in e2e
+        clock=FIXED_CLOCK,
+        correlation_id=correlation_id,
+    )
+
+
+def harness_version_probe(correlation_id: str):
+    """Serve the recorded F09 PLUTO published-version probe (26v1) through a ROUTED
+    fake transport (request B-4) - the same recorded-fixture discipline the parity
+    DOF transport uses, never the network. The transport answers ONLY the exact
+    VERSION_PROBE_URL the probe issues; any other url raises, so no live-shaped
+    request is silently served. The REAL fetch_published_version (parse +
+    VERSION_RE + provenance) runs over the recorded bytes, so no observation byte is
+    hand-written here. For the Northern pin (26v2) this leaves the PLUTO facts
+    ``current`` (26v2 is newer than the probe's 26v1), so the flag-on journey is
+    unchanged; the probe wiring just makes an out-of-date lot observable."""
+    f09 = fixture_response("F09_version_select.json")
+
+    def transport(url, headers, timeout):
+        if url != VERSION_PROBE_URL:
+            raise AssertionError(f"unexpected version-probe url {url!r}")
+        return f09
+
+    return fetch_published_version(
+        transport=transport,
         sleep=lambda seconds: None,  # no real backoff delays in e2e
         clock=FIXED_CLOCK,
         correlation_id=correlation_id,
@@ -540,7 +572,7 @@ def build_app():
     os.environ[INTERNAL_STUDY_READ_ENABLED_ENV_VAR] = "1"
     os.environ[LANE_FLAG_ENV_VARS["B"]] = "1"
     study_inputs_provider = pluto_study_inputs_provider(
-        harness_study_fetcher, clock=FIXED_CLOCK
+        harness_study_fetcher, clock=FIXED_CLOCK, version_probe=harness_version_probe
     )
     app.dependency_overrides[get_study_inputs_provider] = lambda: study_inputs_provider
     # W5: the three W2/W3/W4 internal reads, mounted in app.main (self-gated and
