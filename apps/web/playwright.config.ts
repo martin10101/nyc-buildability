@@ -3,12 +3,15 @@ import { defineConfig, devices } from "@playwright/test";
 /**
  * Playwright human-journey configuration (task M2-T001, scenarios S1–S8).
  *
- * Two real servers are started:
+ * Three real servers are started:
  *  1. The RECORDED-OFFICIAL-FIXTURE API harness (e2e/harness/fixture_api.py)
  *     — the real FastAPI app over committed official PLUTO captures via the
  *     accepted fetcher-dependency seam. NOT a frontend mock.
- *  2. The production Next.js build (`next start`; `next build` must run
- *     first — CI does this in the web-e2e job).
+ *  2. The production Next.js build (`next start` on :3000; `next build` must run
+ *     first — CI does this in the web-e2e job). Flag-off; the `chromium` project.
+ *  3. A second `next start` on :3001 with INTERNAL_LOT_SITE_SETUP_ENABLED=1 for the
+ *     flag-ON lot-&-site-setup journey (D-1 slice 2); the `chromium-flag-on` project.
+ *     Reuses the one build, so there is no second `next build`.
  *
  * Runs in CI only; the owner's PC never installs browsers or node_modules
  * (docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md).
@@ -27,8 +30,24 @@ export default defineConfig({
   },
   projects: [
     {
+      // Flag-OFF journeys against the default :3000 server. Every spec under e2e/
+      // EXCEPT the *.flag-on.spec.ts specs, which need the flag-on :3001 server
+      // (below). So the flag-off lot-site-setup spec keeps proving the production
+      // default and is unaffected by the flag-on journey.
       name: "chromium",
+      testIgnore: /\.flag-on\.spec\.ts$/,
       use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      // D-1 slice 2: the flag-ON lot-&-site-setup journey. Runs ONLY the
+      // *.flag-on.spec.ts specs (lane D writes lot-site-setup.flag-on.spec.ts)
+      // against the SECOND `next start` on :3001, which sets
+      // INTERNAL_LOT_SITE_SETUP_ENABLED=1. A distinct project + baseURL keeps the
+      // flag off for every other spec, so turning it on cannot break the flag-off
+      // spec. baseURL points this project's page.goto() at the flag-on server.
+      name: "chromium-flag-on",
+      testMatch: /\.flag-on\.spec\.ts$/,
+      use: { ...devices["Desktop Chrome"], baseURL: "http://127.0.0.1:3001" },
     },
   ],
   webServer: [
@@ -64,6 +83,28 @@ export default defineConfig({
         INTERNAL_PROPOSAL_EDITOR_ENABLED: "1",
         INTERNAL_OWNER_DASHBOARD_ENABLED: "1",
         INTERNAL_SURVEY_REVIEW_ENABLED: "1",
+        // INTERNAL_LOT_SITE_SETUP_ENABLED is deliberately NOT set here: this :3000
+        // server stays flag-OFF so lot-site-setup.spec.ts keeps proving the default.
+      },
+    },
+    {
+      // D-1 slice 2: a SECOND `next start` on :3001 for the flag-ON lot-&-site-setup
+      // journey. It reuses the one production build (`next build` already ran for the
+      // :3000 server — no second build), so the only added CI cost is one more Next
+      // server process and its boot. It sets INTERNAL_LOT_SITE_SETUP_ENABLED=1 on top
+      // of the same runtime flags as the :3000 server; the chromium-flag-on project
+      // (baseURL :3001) is the only one that talks to it. Both Next servers share the
+      // one recorded-fixture API harness on :8000.
+      command: "npm run start -- -p 3001",
+      url: "http://127.0.0.1:3001",
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+      env: {
+        INTERNAL_RULE_EVAL_ENABLED: "1",
+        INTERNAL_PROPOSAL_EDITOR_ENABLED: "1",
+        INTERNAL_OWNER_DASHBOARD_ENABLED: "1",
+        INTERNAL_SURVEY_REVIEW_ENABLED: "1",
+        INTERNAL_LOT_SITE_SETUP_ENABLED: "1",
       },
     },
   ],
