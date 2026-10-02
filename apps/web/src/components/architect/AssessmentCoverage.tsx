@@ -23,7 +23,11 @@ export function AssessmentCoverage({ scenario }: { scenario: Scenario | null }) 
       <div className="table-scroll"><table className="facts-table">
         <thead><tr><th scope="col">Check</th><th scope="col">Status</th></tr></thead>
         <tbody>{scenario.coverage_matrix.map((row, i) => <tr key={i}>
-          <th scope="row">{LABELS[row.constraint_family] ?? row.constraint_family.replaceAll("_", " ")}<code className="architect-source-key">{row.constraint_family}</code></th>
+          {/* D-03 slice 5 (plan §5a item 5: no internal codes on the face): show only the plain
+              check label. The raw snake_case constraint_family token is an engine identifier; it
+              stays in the full captured record (JSON appendix) and the compare surfaces, never on
+              the brief's results face. */}
+          <th scope="row">{LABELS[row.constraint_family] ?? row.constraint_family.replaceAll("_", " ")}</th>
           <td>{row.rule_status_today}{row.blocks_buildable_envelope ? " · Blocks envelope" : ""}</td>
         </tr>)}</tbody>
       </table></div>
