@@ -1,0 +1,87 @@
+{
+  "task_id": "M0-T171",
+  "title": "D-091 TW1: atomic review-slot reservation around the review/combine admission check (count-check-reserve as one step)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Close M0-T170 review note 1: wrap run_budget.admit_review_or_combine in an atomic reserve/release (a file lock under the runtime directory) so two lanes can never both take the last of the 2 global review-or-combine slots or exceed 1 per lane. Fail closed on lock or state errors (no slot). Stale reservations from dead processes are released safely. Nothing in the loop calls it yet (TW2 does).",
+  "business_reason": "Owner directive D-091: move the loop to the cloud server with Codex and Claude reviews and a combining model.",
+  "inputs": [
+    "docs/D091_WAVE3_WIRING_PLAN.md sections 1 and 4",
+    "tools/agent_supervisor/run_budget.py (admit_review_or_combine)",
+    "tools/agent_supervisor/durable_state.py (runtime directory)",
+    "tools/agent_supervisor/locking.py (existing POSIX lock pattern)",
+    "project-control/reports/M0-T170-G3G4.md (note 1)"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/review_slots.py",
+    "tools/test_agent_supervisor_review_slots.py",
+    "project-control/reports/M0-T171-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T170"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/review_slots.py",
+    "tools/test_agent_supervisor_review_slots.py",
+    "project-control/reports/M0-T171-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "run_budget.py and resource_sampling.py (M0-T170, accepted; call them, do not edit)",
+    "loop.py (TW2)",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
+    "codex login or handling any owner credential",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
+    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths"
+  ],
+  "acceptance_scenarios": [
+    "primary: two reservations succeed and a third is refused while both are held; releasing one lets the next succeed",
+    "race: two processes reserving at the same moment never both get the last slot (test with real concurrent processes or a forced interleaving)",
+    "per-lane: a lane holding a slot cannot take a second",
+    "failure: a lock or state-file error refuses the reservation (fail closed); a reservation left by a dead process is reclaimed safely, never double-counted"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 20,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T09:02:44.484171+00:00",
+  "updated_at": "2026-10-02T09:03:50.880227+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T09:02:44.484409+00:00",
+  "worktree": "/root/project/w-M0-T171",
+  "progress_log": [
+    {
+      "at": "2026-10-02T09:03:50.880121+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Scenarios in the packet; producer dispatched in /root/project/w-M0-T171"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "task_id": "M0-T175",
+  "title": "D-091 TW5: Linux commissioning checklist and certified start (owner-typed steps; orchestrator verification)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Write the owner's Linux commissioning checklist (root-owned config file, Codex sign-in, systemd unit install, supervised certified start of lane 1 as a canary) and the orchestrator's verification after each step, then verify the owner's steps and record the lane-1 canary evidence. Every root, sign-in and start step is owner-typed. Enabling the combiner needs the owner's model choice (D-091-R008).",
+  "business_reason": "Owner directive D-091: move the loop to the cloud server with Codex and Claude reviews and a combining model.",
+  "inputs": [
+    "docs/D091_WAVE3_WIRING_PLAN.md section 3",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md section 12 (owner touchpoints)",
+    "tools/agent_supervisor/linux/README.md and the systemd template"
+  ],
+  "outputs": [
+    "docs/D091_LINUX_COMMISSIONING.md",
+    "project-control/reports/M0-T175-producer-report.md (verification and canary evidence)"
+  ],
+  "dependencies": [
+    "M0-T174"
+  ],
+  "allowed_paths": [
+    "docs/D091_LINUX_COMMISSIONING.md",
+    "project-control/reports/M0-T175-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "running any owner-typed step (root config, codex login, systemd install, start approval)",
+    "choosing the combining model",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
+    "codex login or handling any owner credential",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
+    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths"
+  ],
+  "acceptance_scenarios": [
+    "the checklist names each owner-typed step in plain words with the exact command and what the orchestrator verifies after it",
+    "after the owner's steps: the config verdict is PROTECTED, codex reports its admitted version, the unit parses, and the lane-1 canary shows one clean cycle under the 70% memory ceiling with the review cap honored",
+    "until the owner chooses the combining model, the combiner stays off and the loop runs with the Codex reviewer only"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G4"
+  ],
+  "producer_agent": "cloud-architect",
+  "reviewer_agents": [
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "ready",
+  "progress_percent": 5,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T09:02:47.881331+00:00",
+  "updated_at": "2026-10-02T09:04:48.095851+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R006",
+        "D-091-R008",
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T09:02:47.881615+00:00"
+}

@@ -234,6 +234,169 @@
     }
    ],
    "restamp_note": "DCV reviewed d27e0ddfd2c42d3d57b296bb59a2d05073fffc96 (project-control/reports/M0-T170-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (448bb55e); intervening commits are a base merge of disjoint peer work and ledger records."
+  },
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T171",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R007"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R007",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T172",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R002",
+    "D-091-R003",
+    "D-091-R007"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R002",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R003",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R007",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T173",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R007"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R007",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T174",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R007"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R007",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T175",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R006",
+    "D-091-R007",
+    "D-091-R008"
+   ],
+   "producer": "cloud-architect",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R006",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R007",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R008",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }

@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T174",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T174-G0.md",
+  "reviewed_at": "2026-10-02T09:03:49.052712+00:00",
+  "content_manifest_sha256": "c31f2ce86f7f746f5e6ea49bbfbb6e57553a0301df623d54e945084ffd101a99",
+  "reviewed_sha": "1879cc9ad2a658c7a725de7c8b6025640c701c39",
+  "updated_at": "2026-10-02T09:03:49.169608+00:00"
+}

@@ -10,7 +10,7 @@
  "issued_at": "2026-10-02",
  "captured_at": "2026-10-02T04:56:13+00:00",
  "created_at": "2026-10-02T04:56:13+00:00",
- "updated_at": "2026-10-02T07:27:32+00:00",
+ "updated_at": "2026-10-02T09:02:43+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "c81ba14d6609e5bc892a33090c9311390d5866e4",
  "capture_head_sha": null,
@@ -32,7 +32,7 @@
   "D-091-R008"
  ],
  "requirements_id_digest_sha256": "65577c0bb3d9351bd9f6e806f36567077b76966a0e92b02e39bbf0b6af5683c1",
- "requirements_content_digest_sha256": "036be562fe66717ebfe1dc57d9bb10f96d62617138518e209896c270535d9697",
+ "requirements_content_digest_sha256": "d49bdc104cd6a8c8a97950558adf4e697eb302e560cd7c3b33601c233473da83",
  "sources": [
   {
    "file": "source-001.md",
@@ -51,7 +51,12 @@
   "M0-T167",
   "M0-T168",
   "M0-T169",
-  "M0-T170"
+  "M0-T170",
+  "M0-T171",
+  "M0-T172",
+  "M0-T173",
+  "M0-T174",
+  "M0-T175"
  ],
  "affected_prs": [
   284
@@ -86,6 +91,12 @@
    "actor": "orchestrator",
    "action": "scope_binding",
    "note": "Wave 2 contracted: M0-T169 (T6 review combiner; R003, R001, R007; the combining model is a required setting with no default, so the build does not decide R008, which stays an open owner choice) and M0-T170 (T7 resource fit; R001, R007). Task ids appended to applicability.task_ids and maps_to.tasks (requirement text unchanged); content digest resynced. M0-T165, M0-T167 and M0-T168 are accepted."
+  },
+  {
+   "at": "2026-10-02T09:02:43+00:00",
+   "actor": "orchestrator",
+   "action": "scope_binding",
+   "note": "Wave 3 contracted from docs/D091_WAVE3_WIRING_PLAN.md: M0-T171 (TW1 atomic review slots; R001, R007), M0-T172 (TW2 dual-review conductor in the loop; R002, R003, R001, R007), M0-T173 (TW3 Linux resource wiring; R001, R007), M0-T174 (TW4 Linux recertification; R007, R001), M0-T175 (TW5 commissioning; R006, R008, R001, R007). Task ids appended to applicability.task_ids and maps_to.tasks (requirement text unchanged); content digest resynced. R008 stays the owner's choice (needed only to enable the combiner at TW5); R004 (B-026) is not bound."
   }
  ]
 }

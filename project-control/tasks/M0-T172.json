@@ -1,0 +1,85 @@
+{
+  "task_id": "M0-T172",
+  "title": "D-091 TW2: dual-review conductor behind the loop's single reviewer seam (Codex + Claude reviews, combiner, slots), default off",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Add dual_review.py: a conductor with the same .review() interface the loop already calls that, when enabled, reserves a slot (TW1), runs the Codex and Claude reviewers on the same frozen packet independently, combines them with review_combiner (verdict = the worse of the two; disputes advisory), resolves each model against the controller allowlists (M0-T169 G5 N1), treats the combined verdict as authoritative and surfaces disputed findings for the human gate (N3), and counts a raised reviewer exception as FAIL (M0-T168 N1). Change loop.py only by the minimal injection (one parameter and one swapped call); default off keeps the single-Codex-reviewer path byte-identical. The loop never records gates (ADR-005).",
+  "business_reason": "Owner directive D-091: move the loop to the cloud server with Codex and Claude reviews and a combining model.",
+  "inputs": [
+    "docs/D091_WAVE3_WIRING_PLAN.md section 1",
+    "tools/agent_supervisor/loop.py (reviewer seam)",
+    "tools/agent_supervisor/codex_reviewer.py, claude_reviewer.py, review_combiner.py (M0-T169), review_slots.py (M0-T171)",
+    "tools/agent_supervisor/config.example.toml (allowlists)",
+    "review notes: M0-T168 N1, M0-T169 G5 N1/N3"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/dual_review.py",
+    "the minimal loop.py injection",
+    "tools/test_agent_supervisor_dual_review.py",
+    "project-control/reports/M0-T172-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T171",
+    "M0-T169"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/dual_review.py",
+    "tools/agent_supervisor/loop.py",
+    "tools/test_agent_supervisor_dual_review.py",
+    "project-control/reports/M0-T172-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "loop.py beyond the minimal injection (it is above the modularity ceiling)",
+    "codex_reviewer.py, claude_reviewer.py, review_combiner.py, review_slots.py (call them, do not edit)",
+    "choosing a combining model (D-091-R008 is the owner's choice)",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
+    "codex login or handling any owner credential",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
+    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths"
+  ],
+  "acceptance_scenarios": [
+    "default off: the loop's behavior and outputs are byte-identical to today (single Codex reviewer)",
+    "enabled: both reviewers run on the same frozen packet, neither sees the other, and the loop receives the combined verdict (the worse of the two)",
+    "a reviewer that raises, times out or returns malformed output makes the combined verdict FAIL/UNVERIFIED, never PASS",
+    "a model not in its allowlist is refused before any process; an unset combining model refuses (fail closed)",
+    "slots: if no review slot is available the conductor waits or refuses per TW1 and never runs a third concurrent review",
+    "disputed findings are surfaced in the loop's report for the human gate; the loop never records a gate"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "ready",
+  "progress_percent": 5,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T09:02:45.326870+00:00",
+  "updated_at": "2026-10-02T09:03:48.364121+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R002",
+        "D-091-R003",
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T09:02:45.327106+00:00"
+}
