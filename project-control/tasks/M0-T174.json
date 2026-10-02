@@ -60,14 +60,14 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
+  "status": "in_progress",
   "progress_percent": 80,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T09:02:47.014019+00:00",
-  "updated_at": "2026-10-02T13:47:24.202343+00:00",
+  "updated_at": "2026-10-02T13:47:32.610751+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -101,6 +101,13 @@
       "percent": 80,
       "status": "rework",
       "message": "G3/G4 round 1 FAIL B1: event_bus S8 live tooth red on Linux (catalog still 2.1.281); scope correction adds the event_drift.py catalog re-point and the event_bus test (M0-T159 precedent)"
+    },
+    {
+      "at": "2026-10-02T13:47:32.610664+00:00",
+      "agent": "backend-engineer",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "Producer recaptures the hook-event catalog for 2.1.287 and re-points event_drift.py (scope correction)"
     }
   ]
 }
