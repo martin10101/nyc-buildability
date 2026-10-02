@@ -229,7 +229,7 @@ Captured 2026-10-01 by the orchestrator (Claude Code session 180ee26c-de8c-495c-
 
 - **Not captured (housekeeping only):** `/context` at 2026-10-01T17:41Z.
 - **Messages 13–15** begin with "Worked for …". They are another assistant's replies that the owner pasted and sent:
-  - Message 13 is that model's detailed answer to the R6B questions file (R029), checking §§23-362/23-363/23-344/23-52. It is not saved elsewhere in the repo; this capture is its record.
+  - Message 13 is that model's detailed answer to the R6B questions file (R029), checking §§23-362/23-363/23-344/23-52. Its verbatim text is recorded only here; a condensed version is the "Follow-up answer" section of `docs/research/owner-research/2026-10-01-r6b-second-opinion-answer.md`.
   - Message 14 is its review of the session's R6B merge plan. The session treated messages 14–15 as the owner's R6B decision (R030–R035, R046, R047). #262 merged at `01fa20c7`, #269 at `2c6fe7db`, and #278 (step 2) at `5aa9e735`. The owner's words are also posted on #262 and #269.
   - Message 15's "all three" refers to the session's three-step plan (66c84a5e, before 04:57Z): (1) merge both R6B pieces, #262 and #269; (2) the always-visible tax-lot-only warning and labels (#278); (3) the switch stays off until step 2 is in and checked.
 - **Message 16** asked two return questions (R045).
