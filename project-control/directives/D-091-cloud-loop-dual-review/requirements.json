@@ -1,0 +1,272 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-091",
+ "version": 1,
+ "requirement_count": 8,
+ "producer": "orchestrator",
+ "updated_at": "2026-10-02T04:56:13+00:00",
+ "requirements": [
+  {
+   "id": "D-091-R001",
+   "text": "Move the loop to this cloud server ('Move the loop here'), as option 2 in the session's reply: rework the loop for Linux, get it reviewed and certified, install Codex after the security check, then the owner signs in.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-091-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-091-R004",
+    "D-091-R005",
+    "D-091-R006",
+    "D-091-R007"
+   ],
+   "required_harness": "A design, then ledger tasks under the normal gates; a certified Linux loop that starts on this server.",
+   "required_evidence": "Design document; task packets; gate records; a recorded certified start.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending: design first. Option 2's steps come from the session's reply, which the owner chose.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-091-R002",
+   "text": "Both Codex and Claude review the work that was done ('both codex and you reviewed work? That was done').",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-091-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-091-R001"
+   ],
+   "required_harness": "Each finished piece of work gets two independent reviews, one by Codex and one by Claude; neither reviewer is its producer.",
+   "required_evidence": "Loop design and tests; review records showing both reviewers on the same head.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-091-R003",
+   "text": "An additional, higher-end model reviews both outputs, takes the best of both and combines them ('there'll be an additional model ... that will review both outputs and will take the best of both. And combine them').",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-091-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-091-R002",
+    "D-091-R008"
+   ],
+   "required_harness": "One combined review per piece of work, made from the two reviews, recording which reviewer each point came from.",
+   "required_evidence": "Loop design and tests; combined review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending. ORCHESTRATOR'S READING, not owner wording: 'both outputs' are the two reviews of the same finished work, not two separate builds.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-091-R004",
+   "text": "Resolve blocker B-026 so the loop can be used on this server ('Can u remove the blocker so we can use it here').",
+   "source_ref": "source-001.md#preceding-message-2-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-091-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "B-026 closes only with evidence of the real fix, never to get past it.",
+   "required_evidence": "Blocker record resolution with evidence.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending. The session told the owner it cannot simply be closed.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-091-R005",
+   "text": "Codex is installed on this server only after the dependency-security check (option 2: 'install Codex after the security check').",
+   "source_ref": "source-001.md#session-reply-verbatim",
+   "classification": "dependency",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-091-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "docs/DEPENDENCY_SECURITY_POLICY.md: advisory-free, exact-pinned, integrity-matched, at least 7 days old; a G5 provenance review for a new package; no waiver.",
+   "required_evidence": "Admission record and G5 review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-091-R006",
+   "text": "The owner signs in to Codex on this server (option 2: 'then you sign in'). The orchestrator never handles the owner's credentials.",
+   "source_ref": "source-001.md#session-reply-verbatim",
+   "classification": "dependency",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-091-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-091-R005"
+   ],
+   "required_harness": "One owner action, asked for once when everything else is ready.",
+   "required_evidence": "Owner confirmation; a check that Codex reports it is signed in.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending (owner-only action).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-091-R007",
+   "text": "The moved loop is reviewed and certified before use (option 2: 'get it reviewed and certified').",
+   "source_ref": "source-001.md#session-reply-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-091-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-091-R001"
+   ],
+   "required_harness": "Independent review gates on the loop changes; certification evidence like the existing controller recertification reports; commissioning stays owner-typed.",
+   "required_evidence": "Gate records; certification report.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-091-R008",
+   "text": "Choose the combining model: the owner named two options without choosing ('Let's say fable, or even codex, with a higher end model').",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-091-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "The design recommends one; the owner's choice is recorded when given.",
+   "required_evidence": "Owner's words.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Open owner choice. The design will recommend a default.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

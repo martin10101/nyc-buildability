@@ -1173,7 +1173,19 @@
     "M5-T125"
    ],
    "manifest": "D-090-product-plan-2026-09-28-start-building/manifest.json"
+  },
+  {
+   "directive_id": "D-091",
+   "slug": "cloud-loop-dual-review",
+   "title": "Owner 2026-10-02 ('Move the loop here' + both Codex and Claude review finished work, then a higher-end model combines the best of both reviews): port the loop to the cloud server (option 2: Linux rework, review and certification, Codex after the dependency-security check, owner sign-in) with a dual-review-plus-combiner design; B-026 closes only by the real fix; NO stop condition lifted",
+   "status": "active",
+   "issued_at": "2026-10-02",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-091-cloud-loop-dual-review/manifest.json"
   }
  ],
- "updated_at": "2026-09-30T05:18:52+00:00"
+ "updated_at": "2026-10-02T04:56:13+00:00"
 }

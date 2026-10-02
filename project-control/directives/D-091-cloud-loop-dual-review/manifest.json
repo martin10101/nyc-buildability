@@ -1,0 +1,70 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-091",
+ "version": 1,
+ "slug": "cloud-loop-dual-review",
+ "title": "Owner 2026-10-02 ('Move the loop here' + both Codex and Claude review finished work, then a higher-end model combines the best of both reviews): port the loop to the cloud server (option 2: Linux rework, review and certification, Codex after the dependency-security check, owner sign-in) with a dual-review-plus-combiner design; B-026 closes only by the real fix; NO stop condition lifted",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-10-02",
+ "captured_at": "2026-10-02T04:56:13+00:00",
+ "created_at": "2026-10-02T04:56:13+00:00",
+ "updated_at": "2026-10-02T04:56:13+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "c81ba14d6609e5bc892a33090c9311390d5866e4",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed it in-channel after the session's options reply, choosing option 2 and adding the review design. It lifts no hold and changes no gate. Codex is admitted only through dependency security; the Codex sign-in is the owner's; loop commissioning stays owner-typed; B-026 closes only by the real fix."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-091-R001",
+  "D-091-R002",
+  "D-091-R003",
+  "D-091-R004",
+  "D-091-R005",
+  "D-091-R006",
+  "D-091-R007",
+  "D-091-R008"
+ ],
+ "requirements_id_digest_sha256": "65577c0bb3d9351bd9f6e806f36567077b76966a0e92b02e39bbf0b6af5683c1",
+ "requirements_content_digest_sha256": "28c5436c3a654d7f5acdd8d3bf64341cbfd8afd132ba5d326d7eb94aa6573ebf",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-10-02T04:56:13+00:00",
+   "content_digest_sha256": "efaf51b29b0853c024ec59f5f0e819624d4f662379367f24fffc297fb2ca0f1c"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "loop_port_and_review_design",
+  "task_ids": [],
+  "task_types": [
+   "governance"
+  ],
+  "allowed": "designing and building, through ledger tasks and the normal gates, a Linux version of the loop on the cloud server with Codex and Claude reviews and a combining model; admitting Codex through the dependency-security gate",
+  "forbidden": "closing B-026 without the fix; installing Codex before its admission passes; handling the owner's credentials; doing owner-typed commissioning steps; weakening gates, reviewer independence or the controller's fail-closed checks; lifting any hold; any Tier D action"
+ },
+ "audit_log": [
+  {
+   "at": "2026-10-02T04:56:13+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting, by script from session 9ee08959's transcript; nothing retyped. frozen_baseline_sha = integration head c81ba14d (origin/main d8b3899f). R001-R008 pending and bound to the sentinel D-091-BOOTSTRAP until tasks are contracted. Capture session: 9ee08959, claude-opus-5-5, Gate 0 passed."
+  }
+ ]
+}
