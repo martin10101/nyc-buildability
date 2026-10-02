@@ -1,0 +1,325 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/parity_data.schema.json",
+  "title": "Parity Data",
+  "description": "v1 wiring contract (lane C packet W0; plan section 11b, queue item B-11) for the parity DATA a property carries: a disclosed selection of comparable sales, and the unused-floor-area line. It is DATA, never a valuation and never a capacity. Comparable sales are the publisher's recorded DOF sale rows selected by one simple, disclosed filter (services/api/app/profile/parity/comparable_sales.py ComparableSalesResult / SaleRecord): NO average, NO price-per-square-foot and NO estimate are computed; a disclosure line states it is not a valuation. Unused floor area reports 'Not confirmed' with the owner-settled wording (D-090-R038) and carries only the sourced existing-floor-area INPUT (services/api/app/profile/parity/unused_floor_area.py UnusedFloorAreaData.to_dict()): NO remaining-capacity number, allowance or FAR appears anywhere, because the allowance and the subtraction are the rule engine's (Lane A), which is off, and remaining development capacity reads 'Not confirmed' until the zoning lot and the existing zoning floor area are verified.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "comparable_sales",
+    "unused_floor_area"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published parity_data contract versions. 1.0.0 = lane C packet W0 initial shape. New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "comparable_sales": {
+      "$ref": "#/$defs/comparable_sales",
+      "description": "The disclosed selection of comparable sales (not a valuation)."
+    },
+    "unused_floor_area": {
+      "$ref": "#/$defs/unused_floor_area",
+      "description": "The unused-floor-area line for one lot ('Not confirmed'; no number)."
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key; it is allowed (optional) so an invalid fixture fails only for its stated defect under additionalProperties:false."
+    }
+  },
+  "$defs": {
+    "comparable_sales": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The selected comparable sales and every disclosure around them (ComparableSalesResult). It computes no average, no price-per-square-foot and no estimate.",
+      "required": [
+        "subject",
+        "criteria",
+        "criteria_text",
+        "not_a_valuation",
+        "selected",
+        "excluded",
+        "source"
+      ],
+      "properties": {
+        "subject": {
+          "$ref": "#/$defs/subject_spec",
+          "description": "The subject lot's recorded type and size, the two inputs the filter matches on."
+        },
+        "criteria": {
+          "$ref": "#/$defs/selection_criteria",
+          "description": "The disclosed filter. Defaults are a simple product choice, surfaced verbatim."
+        },
+        "criteria_text": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The disclosed filter in plain words, surfaced verbatim."
+        },
+        "not_a_valuation": {
+          "type": "string",
+          "const": "These are recorded sales selected by a simple, disclosed filter, not a valuation or an appraisal. How \"similar type and size\" should be defined is a product choice to confirm with the owner.",
+          "description": "The verbatim owner-facing not-a-valuation disclosure (comparable_sales.NOT_A_VALUATION_NOTICE). Pinned as a const so the comps can never be presented as a valuation."
+        },
+        "selected": {
+          "type": "array",
+          "description": "The matching recorded sale rows (SaleRecord), most-recent first. Each row carries the publisher's own recorded sale price and date; no derived average or price-per-square-foot.",
+          "items": { "$ref": "#/$defs/comparable_sale" }
+        },
+        "excluded": {
+          "type": "array",
+          "description": "Every candidate not selected, each with a stable reason token, so nothing is hidden.",
+          "items": { "$ref": "#/$defs/excluded_candidate" }
+        },
+        "source": {
+          "description": "The sale rows' shared provenance (a site_fact-style source), or null.",
+          "anyOf": [
+            { "$ref": "site_fact.schema.json#/$defs/source" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "subject_spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The subject lot's OWN recorded DOF type and size (SubjectSpec). Never derived here.",
+      "required": ["bbl", "building_class_category", "gross_square_feet"],
+      "properties": {
+        "bbl": {
+          "description": "The subject lot (10-digit BBL), or null when the row carries none.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/bbl" },
+            { "type": "null" }
+          ]
+        },
+        "building_class_category": {
+          "description": "The subject's recorded DOF building_class_category, or null.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "gross_square_feet": {
+          "type": ["integer", "null"],
+          "description": "The subject's recorded gross floor area (int) or null when none is recorded."
+        }
+      }
+    },
+    "selection_criteria": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The disclosed filter (SelectionCriteria). A simple product choice, surfaced verbatim.",
+      "required": ["size_tolerance_fraction", "exclude_zero_price", "require_recorded_size"],
+      "properties": {
+        "size_tolerance_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "description": "The +/- size tolerance fraction (default 0.5)."
+        },
+        "exclude_zero_price": {
+          "type": "boolean",
+          "description": "Exclude $0 sales (transfers without cash consideration, per DOF)."
+        },
+        "require_recorded_size": {
+          "type": "boolean",
+          "description": "Exclude candidates with no recorded gross floor area from size-matching (listed separately)."
+        }
+      }
+    },
+    "comparable_sale": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One DOF sale row, normalised, with its provenance (SaleRecord). Every value is the publisher's own field; nothing is derived. sale_price is the publisher's recorded number, kept verbatim (a $0 row is a non-arms-length transfer, not a market sale). There is no average and no price-per-square-foot field: those would be a valuation.",
+      "required": [
+        "bbl",
+        "borough",
+        "neighborhood",
+        "block",
+        "lot",
+        "address",
+        "zip_code",
+        "building_class_category",
+        "building_class_at_time_of_sale",
+        "residential_units",
+        "commercial_units",
+        "total_units",
+        "year_built",
+        "land_square_feet",
+        "gross_square_feet",
+        "sale_price",
+        "sale_date",
+        "source"
+      ],
+      "properties": {
+        "bbl": {
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/bbl" },
+            { "type": "null" }
+          ],
+          "description": "The tax lot (10-digit BBL) when the row carries a well-formed one, else null."
+        },
+        "borough": { "type": ["string", "null"], "description": "Publisher's borough field." },
+        "neighborhood": { "type": ["string", "null"], "description": "Publisher's neighborhood field." },
+        "block": { "type": ["string", "null"], "description": "Publisher's tax block field." },
+        "lot": { "type": ["string", "null"], "description": "Publisher's tax lot field." },
+        "address": { "type": ["string", "null"], "description": "Publisher's address field." },
+        "zip_code": { "type": ["string", "null"], "description": "Publisher's ZIP field." },
+        "building_class_category": { "type": ["string", "null"], "description": "Publisher's building_class_category field." },
+        "building_class_at_time_of_sale": { "type": ["string", "null"], "description": "Publisher's building_class_at_time_of_sale field." },
+        "residential_units": { "type": ["integer", "null"], "description": "Publisher's residential_units field." },
+        "commercial_units": { "type": ["integer", "null"], "description": "Publisher's commercial_units field." },
+        "total_units": { "type": ["integer", "null"], "description": "Publisher's total_units field." },
+        "year_built": { "type": ["integer", "null"], "description": "Publisher's year_built field." },
+        "land_square_feet": { "type": ["integer", "null"], "description": "Publisher's land_square_feet field (parsed int; a blank or unparseable size is null)." },
+        "gross_square_feet": { "type": ["integer", "null"], "description": "Publisher's gross_square_feet field (parsed int; a blank or unparseable size is null)." },
+        "sale_price": { "type": ["integer", "null"], "description": "The publisher's recorded sale price, kept verbatim including 0; never a derived value." },
+        "sale_date": { "type": ["string", "null"], "description": "The ISO calendar date of the sale." },
+        "source": {
+          "description": "The sale row's shared provenance (a site_fact-style source), or null.",
+          "anyOf": [
+            { "$ref": "site_fact.schema.json#/$defs/source" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "excluded_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "A candidate not selected, kept with its reason so nothing is hidden.",
+      "required": ["bbl", "address", "sale_date", "reason"],
+      "properties": {
+        "bbl": {
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/bbl" },
+            { "type": "null" }
+          ],
+          "description": "The excluded lot (10-digit BBL), or null."
+        },
+        "address": { "type": ["string", "null"], "description": "The excluded row's address." },
+        "sale_date": { "type": ["string", "null"], "description": "The excluded row's sale date." },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "subject_lot",
+            "zero_price_transfer",
+            "different_building_class_category",
+            "no_recorded_gross_floor_area",
+            "gross_floor_area_out_of_range"
+          ],
+          "description": "The stable machine-readable exclusion reason token (comparable_sales REASON_* constants)."
+        }
+      }
+    },
+    "unused_floor_area": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The unused-floor-area parity data for one lot (UnusedFloorAreaData.to_dict()). Always 'Not confirmed': this layer never computes a capacity. It carries only the sourced existing-floor-area input for the engine; no remaining-capacity number, allowance or FAR appears.",
+      "required": [
+        "lot_bbl",
+        "role",
+        "status",
+        "label",
+        "reason",
+        "existing_floor_area_input",
+        "detail"
+      ],
+      "properties": {
+        "lot_bbl": {
+          "$ref": "common.schema.json#/$defs/bbl",
+          "description": "The tax lot (10-digit BBL)."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["subject", "neighbor"],
+          "description": "subject or neighbor (ROLE_SUBJECT / ROLE_NEIGHBOR)."
+        },
+        "status": {
+          "type": "string",
+          "const": "not_confirmed",
+          "description": "Always not_confirmed (STATUS_NOT_CONFIRMED): this data layer never confirms a capacity."
+        },
+        "label": {
+          "type": "string",
+          "const": "Remaining development capacity: Not confirmed",
+          "description": "The owner-settled line 1 (NOT_CONFIRMED_LABEL; owner, 2026-10-01; D-090-R038). Pinned as a const so remaining capacity reads only 'Not confirmed'."
+        },
+        "reason": {
+          "type": "string",
+          "const": "Needs verified zoning-lot boundaries and existing zoning floor area.",
+          "description": "The owner-settled line 2 (NOT_CONFIRMED_REASON). Pinned as a const."
+        },
+        "existing_floor_area_input": {
+          "$ref": "#/$defs/existing_floor_area_input",
+          "description": "The sourced B-05 existing-floor-area INPUT carried for the engine. Never a computed capacity."
+        },
+        "detail": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The one line shown beside the lot (plan section 5a), stating why there is no number and what input is carried."
+        }
+      }
+    },
+    "existing_floor_area_input": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The sourced existing-floor-area input, read from the B-05 result (never computed). This is the EXISTING zoning floor area on file (a sourced fact), not a remaining capacity.",
+      "required": [
+        "known",
+        "value_sq_ft",
+        "unit",
+        "measurement",
+        "source",
+        "basis",
+        "basis_label",
+        "note"
+      ],
+      "properties": {
+        "known": {
+          "type": "boolean",
+          "description": "Whether a value is on file (fact value is not null)."
+        },
+        "value_sq_ft": {
+          "type": ["number", "null"],
+          "description": "The sourced existing zoning floor area in square feet, or null when not on file. This is an existing-building INPUT, never a remaining capacity or an allowance."
+        },
+        "unit": {
+          "description": "square_feet when known; null otherwise.",
+          "anyOf": [
+            { "type": "string", "enum": ["square_feet"] },
+            { "type": "null" }
+          ]
+        },
+        "measurement": {
+          "$ref": "site_fact.schema.json#/$defs/measurement",
+          "description": "The input's measurement rank and label (site_fact measurement)."
+        },
+        "source": {
+          "description": "The input's provenance (a site_fact source), or null when not on file.",
+          "anyOf": [
+            { "$ref": "site_fact.schema.json#/$defs/source" },
+            { "type": "null" }
+          ]
+        },
+        "basis": {
+          "type": "string",
+          "enum": [
+            "certificate_of_occupancy",
+            "dob_job_filing",
+            "stated_assumption",
+            "unknown"
+          ],
+          "description": "Which source was used (existing_floor_area BASIS_* constants), or unknown."
+        },
+        "basis_label": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The basis's plain label (BASIS_LABELS)."
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Optional plain-English note."
+        }
+      }
+    }
+  }
+}

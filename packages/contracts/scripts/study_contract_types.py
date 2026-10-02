@@ -70,6 +70,18 @@ STUDY_CONTRACTS: tuple[StudyContract, ...] = (
         "benchmark_lot", "BenchmarkLot",
         "A benchmark, pilot or golden lot with sourced expected values.",
     ),
+    StudyContract(
+        "hidden_issue_flags", "HiddenIssueFlags",
+        "The §8a hidden-issue flag groups: flag, opportunity or 'Check needed'.",
+    ),
+    StudyContract(
+        "transit_parking", "TransitParking",
+        "One lot's transit/parking zone, applied to every option; no parking outcome.",
+    ),
+    StudyContract(
+        "parity_data", "ParityData",
+        "Parity data: disclosed comparable sales (not a valuation) and unused floor area.",
+    ),
 )
 
 # common.schema.json names, identical to the names the older artifacts use

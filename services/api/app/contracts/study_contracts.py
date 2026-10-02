@@ -34,11 +34,14 @@ __all__ = [
     "StudyContractError",
     "validate_benchmark_lot_document",
     "validate_export_record_document",
+    "validate_hidden_issue_flags_document",
+    "validate_parity_data_document",
     "validate_report_model_document",
     "validate_results_document",
     "validate_site_fact_document",
     "validate_study_contract_document",
     "validate_study_document",
+    "validate_transit_parking_document",
 ]
 
 _SCHEMA_PACKAGE = "app._contract_schemas.v1"
@@ -50,12 +53,19 @@ STUDY_CONTRACT_STEMS = (
     "report_model",
     "export_record",
     "benchmark_lot",
+    # Lane C packet W0 wiring contracts (plan section 8a / check C-8 / section 11b).
+    "hidden_issue_flags",
+    "transit_parking",
+    "parity_data",
 )
 
-# Every $ref in the six schemas resolves within the set plus common.schema.json
+# Every $ref in the schemas resolves within the set plus common.schema.json
 # (checked against the schemas: site_fact -> common; study -> site_fact;
 # results -> site_fact, study; report_model, benchmark_lot -> results;
-# export_record -> study, site_fact, results). One registry serves all six.
+# export_record -> study, site_fact, results; the W0 wiring contracts
+# hidden_issue_flags, transit_parking and parity_data -> common + site_fact
+# (site_fact.schema.json#/$defs/source, and parity_data also #/$defs/measurement)).
+# One registry serves all of them.
 _REGISTRY_SCHEMA_FILES = tuple(f"{stem}.schema.json" for stem in STUDY_CONTRACT_STEMS) + (
     "common.schema.json",
 )
@@ -182,3 +192,15 @@ def validate_export_record_document(document: Any) -> None:
 
 def validate_benchmark_lot_document(document: Any) -> None:
     validate_study_contract_document("benchmark_lot", document)
+
+
+def validate_hidden_issue_flags_document(document: Any) -> None:
+    validate_study_contract_document("hidden_issue_flags", document)
+
+
+def validate_transit_parking_document(document: Any) -> None:
+    validate_study_contract_document("transit_parking", document)
+
+
+def validate_parity_data_document(document: Any) -> None:
+    validate_study_contract_document("parity_data", document)

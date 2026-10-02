@@ -1,0 +1,18 @@
+{
+  "contract_version": "1.0.0",
+  "lot_bbl": "5999999999",
+  "status": "recorded",
+  "status_label": "Recorded",
+  "transit_zone": "Outer Transit Zone",
+  "source": {
+    "kind": "city_dataset",
+    "dataset": "test-fixture-synthetic PLUTO",
+    "dataset_version": "26v2",
+    "retrieved_at": "2026-09-30T12:00:00Z",
+    "query_ref": "test-fixture-synthetic://pluto/5999999999",
+    "document_ref": null,
+    "statement": null
+  },
+  "detail": "Transit zone: Outer Transit Zone (PLUTO, field 'transitzone', DCP's Transit Zones classification per the PLUTO Data Dictionary 26v1). Every option reads this one recorded value, so the transit/parking status is the same across all options (check C-8). Applying the Zoning Resolution off-street parking rules to this zone (by district, housing type and affordability) is a rule-engine / legal determination, confirmed by a qualified reviewer at G6, that this data layer never makes.",
+  "missing_source": null
+}

@@ -39,9 +39,10 @@ STUDY = _load("study_contract_types")
 STEMS = [contract.stem for contract in STUDY.STUDY_CONTRACTS]
 
 
-def test_registry_lists_exactly_the_six_study_contracts() -> None:
+def test_registry_lists_exactly_the_study_contracts() -> None:
     assert STEMS == [
         "site_fact", "study", "results", "report_model", "export_record", "benchmark_lot",
+        "hidden_issue_flags", "transit_parking", "parity_data",
     ]
     for stem in STEMS:
         assert (SCHEMA_DIR / f"{stem}.schema.json").is_file()

@@ -1,0 +1,18 @@
+{
+  "contract_version": "1.0.0",
+  "lot_bbl": "5999999999",
+  "status": "check_needed",
+  "status_label": "Check needed",
+  "transit_zone": null,
+  "source": {
+    "kind": "city_dataset",
+    "dataset": "test-fixture-synthetic PLUTO",
+    "dataset_version": "26v2",
+    "retrieved_at": "2026-09-30T12:00:00Z",
+    "query_ref": "test-fixture-synthetic://pluto/5999999999",
+    "document_ref": null,
+    "statement": null
+  },
+  "detail": "Transit/parking status: Check needed. PLUTO records no 'transitzone' value for this lot. Transit-zone source to check: DCP Transit Zones (NYC Open Data 6ztr-wgff). Applying the Zoning Resolution off-street parking rules to this zone is a rule-engine / legal determination, confirmed by a qualified reviewer at G6, that this data layer never makes.",
+  "missing_source": "DCP Transit Zones (NYC Open Data 6ztr-wgff), the dataset PLUTO's transitzone field is sourced from; recorded in research, no registered connector in this repository"
+}

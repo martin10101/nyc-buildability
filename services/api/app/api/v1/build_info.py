@@ -56,6 +56,9 @@ COMMIT_ENV_VARS: tuple[str, ...] = ("RENDER_GIT_COMMIT", "GIT_COMMIT_SHA")
 FLAG_ENV_VARS: tuple[str, ...] = (
     "INTERNAL_RULE_EVAL_ENABLED",  # app.config
     "INTERNAL_SCENARIO_ENABLED",  # app.config
+    "INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED",  # app.config (lane C W0)
+    "INTERNAL_TRANSIT_PARKING_READ_ENABLED",  # app.config (lane C W0)
+    "INTERNAL_PARITY_READ_ENABLED",  # app.config (lane C W0)
     "SITE_DEFINITION_WRITE_ENABLED",  # app.api.v1.site_definition (route registration)
     "DXF_IMPORT_ENABLED",  # app.api.v1.dxf_import_api (route unmounted)
     "LIVE_SPATIAL_PROVIDER_ENABLED",  # app.spatial.live_provider
