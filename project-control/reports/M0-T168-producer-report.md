@@ -87,7 +87,7 @@ unchanged until T6 wires it in.
   `fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json`
   `permission_mode_proof.finding` ("acceptEdits, auto, bypassPermissions, manual,
   dontAsk, plan").
-- `--model`: `capability_probe_live_*.json` `claude_flags["--model"]=="supported"`.
+- `--model`: [ORCH-CORRECTED per G3-1] not recorded under `claude_flags` in `capability_probe_live_*.json` (it appears there only under `codex_flags`); grounded by the accepted worker path `claude_runner.py`, which emits `["--model", config.model]` against the installed Claude CLI.
 - `--tools` deliberately NOT used: recorded "supported" but with NO recorded
   allowlist/denylist semantics; using it would mean guessing. Plan mode is the
   sole, fully-grounded read-only primitive.

@@ -33,8 +33,10 @@ never guessed (the task forbids guessing a flag):
   ``fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json``
   ``permission_mode_proof.finding`` ("the installed --permission-mode enum is
   acceptEdits, auto, bypassPermissions, manual, dontAsk, plan").
-* ``--model`` - ``fixtures/capability_probe_live_*.json``
-  ``claude_flags["--model"] == "supported"``.
+* ``--model`` - not recorded under ``claude_flags`` in the capability probe
+  fixtures (``--model`` appears there only under ``codex_flags``, a Codex-side
+  fact). It is grounded by the accepted worker path: ``claude_runner.py``
+  emits ``["--model", config.model]`` against the installed Claude CLI.
 
 No other flag is emitted. In particular ``--tools`` (recorded "supported" but
 with no recorded allowlist/denylist SEMANTICS) is deliberately NOT used, because
