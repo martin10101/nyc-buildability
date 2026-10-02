@@ -55,14 +55,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "recertification: bundled into the same Linux recertification window as M0-T177"
   ],
   "blockers": [],
   "created_at": "2026-10-02T20:48:48.973589+00:00",
-  "updated_at": "2026-10-02T20:50:02.231174+00:00",
+  "updated_at": "2026-10-02T22:54:13.417967+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -73,5 +73,15 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-10-02T20:48:48.973773+00:00"
+  "directive_regime_entered_at": "2026-10-02T20:48:48.973773+00:00",
+  "worktree": "/root/project/w-M0-T178",
+  "progress_log": [
+    {
+      "at": "2026-10-02T22:54:13.417884+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Scenarios in the packet; producer dispatched in /root/project/w-M0-T178 (M0-T177 accepted)"
+    }
+  ]
 }
