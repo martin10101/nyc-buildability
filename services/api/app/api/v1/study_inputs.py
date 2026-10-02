@@ -13,11 +13,13 @@ module only carries them.
 Layering:
 
 - :func:`assemble_study_inputs` is the PURE assembly: a ``PlutoFetchResult`` ->
-  profile -> B-02 site facts, and -> a single B-07 :class:`SiteLot` -> lot choice
-  -> multi-lot site (through the LANE_B-gated entry). It performs no I/O, so the
-  route's tests exercise the real B-02/B-07 pipeline on a recorded PLUTO body. An
-  optional ``selected`` (a sequence of canonical BBLs) is passed VERBATIM to
-  B-07's ``derive_multi_lot_site`` for a re-pick; None is the default "use all".
+  profile -> B-02 site facts (each carrying B-06's ``source.version_check`` status,
+  request B-3; published versions = the retrievals themselves), and -> a single
+  B-07 :class:`SiteLot` -> lot choice -> multi-lot site (through the LANE_B-gated
+  entry). It performs no I/O, so the route's tests exercise the real B-02/B-07
+  pipeline on a recorded PLUTO body. An optional ``selected`` (a sequence of
+  canonical BBLs) is passed VERBATIM to B-07's ``derive_multi_lot_site`` for a
+  re-pick; None is the default "use all".
 - :func:`pluto_study_inputs_provider` turns a PLUTO fetcher (the same
   ``(canonical_bbl, correlation_id) -> PlutoFetchResult`` seam the properties
   route injects) into a :data:`StudyInputsProvider`. Tests inject a fixture
@@ -56,6 +58,12 @@ from app.connectors.pluto_soda import (
     PlutoFetchResult,
 )
 from app.profile.builder import build_property_profile
+from app.profile.data_versions import (
+    assess_data_versions,
+    pins_from_site_facts,
+    published_from_pins,
+)
+from app.profile.fact_version_check import attach_version_check
 from app.profile.site_facts import build_site_facts
 from app.spatial.multi_lot_site import (
     LotChoice,
@@ -82,7 +90,9 @@ class StudyInputs:
 
     ``lot_choice`` and ``site`` are the accepted B-07 result objects (the lot
     choice and the derived multi-lot site for the DEFAULT "use all" selection).
-    ``site_facts`` are B-02 ``site_fact`` v1 documents, carried verbatim.
+    ``site_facts`` are B-02 ``site_fact`` documents, each carrying the B-06
+    ``source.version_check`` status for its source (contract 1.1.0, request B-3;
+    a fact whose source has no dataset version stays 1.0.0 with no key).
     ``address`` is the confirmed address, or None when the property was reached
     by BBL only.
     """
@@ -161,6 +171,18 @@ def assemble_study_inputs(
     builder_kwargs = {} if clock is None else {"clock": clock}
     profile = build_property_profile(pluto_result, **builder_kwargs)
     site_fact_set = build_site_facts(profile)
+    # Attach each source's version status (B-06's "Out of date" rule) to the facts it
+    # covers, so the status travels with the fact to Lane D/E and export_record.sources
+    # (request docs/lanes/requests/B-3.md). Published versions are the retrievals
+    # themselves (published_from_pins): a study is assembled per request with no durable
+    # store yet, so "current" means "the newest version on record as of this retrieval",
+    # and the assessor's reason names the retrieval time so that scope is explicit. A
+    # version probe (e.g. PLUTO F09) that grows the published-on-record set is a later
+    # slice. The bridge is pure: a fact whose source has no dataset version stays 1.0.0
+    # with no version_check; references are not contract facts and carry none.
+    pins = pins_from_site_facts(site_fact_set.facts)
+    report = assess_data_versions(pins, published_from_pins(pins))
+    site_facts = attach_version_check(site_fact_set.facts, report)
     # One tax lot from the PLUTO row (no MapPLUTO outline yet - slice 1). B-07's
     # adapter records the absence of an outline; the lot size is the city-recorded
     # area, or unknown (never 0).
@@ -176,7 +198,7 @@ def assemble_study_inputs(
     return StudyInputs(
         lot_choice=choice,
         site=site,
-        site_facts=tuple(site_fact_set.facts),
+        site_facts=site_facts,
         address=address,
     )
 
