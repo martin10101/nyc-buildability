@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](docs/PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: the code, core and efficiency items (§6, §7.2, §13.1; Phase 2); "Conditional or Professional Review Required" results (§12, §13.4); the four-stage multi-page app (§18, §32.2); outputs without DXF (§20); "≥3 materially different scenarios" (§3, §27); Vercel; line 6 "Primary implementation agent: Claude Code" (the plan's §12 uses Codex lanes). The rest still applies.
+
 # Product Requirements Document
 ## NYC Development Feasibility & Zoning Intelligence Platform
 

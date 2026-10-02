@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md).** Replaced by the `project-control/` ledger and plan §12. Do not take milestones from `IMPLEMENTATION_SEQUENCE.md` (the banner below points there) or the M5 code-feasibility layer, which is Phase 2.
+
 # Master Execution Plan — NYC Buildability (Full Production)
 
 > **HISTORICAL — the task board below is stale (last updated 2026-07-14) and is NOT current status.**

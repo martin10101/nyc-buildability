@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md).** The plan settles its open items. "As-of-right only" is set aside (plan §5, §6 Groups C/D). An unknown street width shows wide and narrow results side by side, marked "Needs street width" (plan §4), never only "the lower value".
+
 # MVP Agenda — owner working list
 
 **What this is:** the running to-do list from owner conversations. Plain bullets, no narrative.

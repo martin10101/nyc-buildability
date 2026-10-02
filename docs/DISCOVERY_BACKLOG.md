@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: entries that route work into drawing, vertex editing or drawing import: DB-034, DB-092 ("NEXT C2 PACKET"), DB-096 (b) control-point UI, and the 2026-09-25 M5-T124 acceptance-seam sweep's "C2 mount" (DB-096 a, d) (plan §1.4, §4, §7, §10). No lane takes a packet from them. The rest still applies.
+
 # DISCOVERY BACKLOG — mid-work findings tracked to resolution (D-069)
 
 NOT auto-injected. This ledger holds product/domain discoveries made mid-work that are not

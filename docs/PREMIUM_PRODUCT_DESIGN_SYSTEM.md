@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: its §2 seven-area navigation and its §3 "3D page" where "the 3D canvas remains visually dominant" (plan §3: one dashboard page with floating tools; §5c), "React Three Fiber for 3D" (its §5) and the "Conditional" status (its §8; plan §5). The rest, including the §15 anti-clutter rules, still applies.
+
 # Premium Product Design System
 
 ## Product-quality objective

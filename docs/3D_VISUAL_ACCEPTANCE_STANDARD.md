@@ -1,3 +1,5 @@
+> **Superseded for Phase 1 — see the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md).** Replaced by plan §5c.6 quality checks and C-1 to C-12. Its "Conditional geometry" state does not apply (plan §5). Kept as reference for the Phase 2 interactive 3D viewer.
+
 # 3D Visual Acceptance Standard
 
 ## Purpose
