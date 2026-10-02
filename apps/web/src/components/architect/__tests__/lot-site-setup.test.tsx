@@ -1,16 +1,37 @@
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import cornerLotStudy from "../../../../../../packages/contracts/fixtures/valid/study/synthetic_corner_lot_two_options.json";
 import { validateStudyDocument } from "@/lib/study/study-validator";
 import { createStudyStore } from "@/lib/study/study-store";
 import { StudyStoreProvider } from "@/lib/study/use-study";
 import { LOT_SELECTION_STATEMENT, MEASUREMENT_LABELS, type Study } from "@/lib/study/study-vocabulary";
 import { LotSiteSetup } from "../LotSiteSetup";
-import { CROSS_BLOCK_REASON, twoLotCrossBlockStudy, twoLotOfferedStudy } from "./lot-site-fixtures";
+import { CROSS_BLOCK_REASON, LOT_A, LOT_B, twoLotCrossBlockStudy, twoLotOfferedStudy } from "./lot-site-fixtures";
 
 afterEach(cleanup);
 
 const corner = cornerLotStudy as unknown as Study;
+const CORNER_BBL = corner.property.bbl; // the single-lot fixture BBL
+const FIXED_NOW = () => "2026-10-02T09:00:00Z";
+
+/** A study-setup document (study_read.py shape) derived from a contract-valid study fixture. */
+function studySetupDoc(study: Study) {
+  return {
+    document_kind: "study_setup",
+    bbl: study.property.bbl,
+    property: study.property,
+    lots: study.lots,
+    lot_selection: study.lot_selection,
+    site: study.site,
+  };
+}
+
+function okResponse(doc: unknown): Response {
+  return { status: 200, headers: { get: () => null }, json: async () => doc } as unknown as Response;
+}
+function notFoundResponse(): Response {
+  return { status: 404, headers: { get: () => null }, json: async () => ({ detail: "off" }) } as unknown as Response;
+}
 
 describe("LotSiteSetup — lot choice + site facts with source labels (D-04, plan M1-13)", () => {
   it("builds against contract-valid studies", () => {
@@ -25,12 +46,10 @@ describe("LotSiteSetup — lot choice + site facts with source labels (D-04, pla
     expect(combination).toHaveTextContent("Lots shown together");
     expect(combination).toHaveTextContent("These are the lots you selected.");
     expect(screen.queryByTestId("lot-combination-refusal")).toBeNull();
-    // The app must not assert that the lots touch, share one block, or are verified.
     const text = (combination.textContent ?? "").toLowerCase();
     expect(text).not.toContain("touch");
     expect(text).not.toContain("one block");
     expect(text).not.toContain("verif");
-    // The pinned zoning-lot statement still carries the caveat.
     expect(screen.getByTestId("lot-site-statement")).toHaveTextContent(LOT_SELECTION_STATEMENT);
   });
 
@@ -48,6 +67,8 @@ describe("LotSiteSetup — lot choice + site facts with source labels (D-04, pla
 
     expect(screen.getByTestId("lot-combination")).toHaveTextContent("One lot");
     expect(screen.queryByTestId("lot-combination-refusal")).toBeNull();
+    // A single lot offers no re-pick.
+    expect(screen.queryByTestId("lot-site-repick")).toBeNull();
 
     expect(screen.getByTestId("site-fact-fact-lot-area")).toHaveTextContent("5,000 sq ft");
     expect(screen.getByTestId("site-fact-fact-lot-area")).toHaveTextContent(MEASUREMENT_LABELS.approximate_tax_map);
@@ -71,6 +92,8 @@ describe("LotSiteSetup — lot choice + site facts with source labels (D-04, pla
 
     expect(screen.getByTestId("lot-row-3001230001")).toHaveTextContent("Lot 1");
     expect(screen.getByTestId("lot-row-3004560070")).toHaveTextContent("Lot 70");
+    // More than one lot: the use-all-or-pick control is offered.
+    expect(screen.getByTestId("lot-site-repick")).toBeInTheDocument();
 
     const unknown = screen.getByTestId("site-fact-fact-street-width-unknown");
     expect(unknown).toHaveTextContent(MEASUREMENT_LABELS.unknown);
@@ -80,7 +103,7 @@ describe("LotSiteSetup — lot choice + site facts with source labels (D-04, pla
 
   it("reads the shared study store when no study is passed (the live path)", () => {
     const store = createStudyStore();
-    store.replace({ ok: true, entry: { study: corner, staleOptionIds: [], parcelChoices: null } });
+    store.replace({ ok: true, entry: { study: structuredClone(corner), staleOptionIds: [], parcelChoices: null } });
     render(
       <StudyStoreProvider store={store}>
         <LotSiteSetup bbl="5999999999" />
@@ -89,15 +112,131 @@ describe("LotSiteSetup — lot choice + site facts with source labels (D-04, pla
     expect(screen.getByTestId("lot-site-setup")).toBeInTheDocument();
     expect(screen.getByText("This property has 1 lot.")).toBeInTheDocument();
   });
+});
 
-  it("shows a plain not-connected card and no guessed numbers when no study exists", () => {
+describe("LotSiteSetup — loading / error / empty states (plan §5a)", () => {
+  it("shows a plain loading state, then the fetched setup", async () => {
+    let resolve!: (response: Response) => void;
+    const pending = new Promise<Response>((r) => {
+      resolve = r;
+    });
+    const fetchImpl = vi.fn(async () => pending) as unknown as typeof fetch;
+    render(<LotSiteSetup bbl={CORNER_BBL} fetchImpl={fetchImpl} />);
+    expect(screen.getByTestId("lot-site-loading")).toBeInTheDocument();
+
+    resolve(okResponse(studySetupDoc(corner)));
+    expect(await screen.findByTestId("lot-site-setup")).toBeInTheDocument();
+    expect(screen.getByText("This property has 1 lot.")).toBeInTheDocument();
+  });
+
+  it("shows the §5a failure notice with a Try again on a reachable fault", async () => {
+    const fetchImpl = vi.fn(async () => {
+      throw new Error("down");
+    }) as unknown as typeof fetch;
+    render(<LotSiteSetup bbl={CORNER_BBL} fetchImpl={fetchImpl} />);
+    expect(await screen.findByTestId("lot-site-failure-notice")).toBeInTheDocument();
+    expect(screen.getByTestId("lot-site-failure-title")).toHaveTextContent("Could not reach the app's service");
+    expect(screen.getByTestId("lot-site-failure-retry")).toBeInTheDocument();
+  });
+
+  it("shows the plain not-connected card (no guessed numbers) when the route is off (404)", async () => {
+    const fetchImpl = vi.fn(async () => notFoundResponse()) as unknown as typeof fetch;
     render(
       <StudyStoreProvider store={createStudyStore()}>
-        <LotSiteSetup bbl="3001230001" study={null} />
+        <LotSiteSetup bbl="3001230001" study={null} fetchImpl={fetchImpl} />
       </StudyStoreProvider>,
     );
-    expect(screen.getByTestId("lot-site-unavailable")).toBeInTheDocument();
+    expect(await screen.findByTestId("lot-site-unavailable")).toBeInTheDocument();
     expect(screen.getByText("Site setup is not connected yet")).toBeInTheDocument();
     expect(screen.queryByTestId("lot-site-setup")).toBeNull();
+  });
+});
+
+describe("LotSiteSetup — per-fact edit records an Entered value beside the city value", () => {
+  it("adds the entered value next to the kept city value (setup path)", async () => {
+    const fetchImpl = vi.fn(async () => okResponse(studySetupDoc(corner))) as unknown as typeof fetch;
+    render(<LotSiteSetup bbl={CORNER_BBL} fetchImpl={fetchImpl} now={FIXED_NOW} />);
+    await screen.findByTestId("lot-site-setup");
+
+    fireEvent.click(screen.getByTestId("site-fact-edit-fact-lot-area"));
+    fireEvent.change(screen.getByTestId("site-fact-input-fact-lot-area"), { target: { value: "10500" } });
+    fireEvent.click(screen.getByTestId("site-fact-save-fact-lot-area"));
+
+    const entered = await screen.findByTestId("site-fact-entered-fact-lot-area");
+    expect(entered).toHaveTextContent(MEASUREMENT_LABELS.entered);
+    expect(entered).toHaveTextContent("10,500 sq ft");
+    // The city value stays visible beside it, and no internal code is shown.
+    const row = screen.getByTestId("site-fact-fact-lot-area");
+    expect(row).toHaveTextContent("5,000 sq ft");
+    expect(row).toHaveTextContent(MEASUREMENT_LABELS.approximate_tax_map);
+    expect(row.textContent ?? "").not.toContain("architect_entry");
+  });
+
+  it("changes nothing and says why in plain words on invalid input", async () => {
+    const fetchImpl = vi.fn(async () => okResponse(studySetupDoc(corner))) as unknown as typeof fetch;
+    render(<LotSiteSetup bbl={CORNER_BBL} fetchImpl={fetchImpl} now={FIXED_NOW} />);
+    await screen.findByTestId("lot-site-setup");
+
+    fireEvent.click(screen.getByTestId("site-fact-edit-fact-lot-area"));
+    fireEvent.change(screen.getByTestId("site-fact-input-fact-lot-area"), { target: { value: "0" } });
+    fireEvent.click(screen.getByTestId("site-fact-save-fact-lot-area"));
+
+    expect(screen.getByTestId("site-fact-error-fact-lot-area")).toHaveTextContent(
+      "Enter a number greater than zero.",
+    );
+    expect(screen.queryByTestId("site-fact-entered-fact-lot-area")).toBeNull();
+  });
+
+  it("records the edit through the C-05 store's enterSiteFactValue when a study exists", async () => {
+    const store = createStudyStore();
+    store.replace({ ok: true, entry: { study: structuredClone(corner), staleOptionIds: [], parcelChoices: null } });
+    render(
+      <StudyStoreProvider store={store}>
+        <LotSiteSetup bbl={CORNER_BBL} now={FIXED_NOW} />
+      </StudyStoreProvider>,
+    );
+    await screen.findByTestId("lot-site-setup");
+
+    fireEvent.click(screen.getByTestId("site-fact-edit-fact-lot-area"));
+    fireEvent.change(screen.getByTestId("site-fact-input-fact-lot-area"), { target: { value: "10500" } });
+    fireEvent.click(screen.getByTestId("site-fact-save-fact-lot-area"));
+
+    const entered = await screen.findByTestId("site-fact-entered-fact-lot-area");
+    expect(entered).toHaveTextContent("10,500 sq ft");
+    // The shared study carries the entered fact (a city value is kept; the edit is a new fact).
+    const stored = store.get(CORNER_BBL)!;
+    const facts = stored.study.site.facts;
+    expect(facts.find((fact) => fact.fact_id === "fact-lot-area")?.value).toBe(5000);
+    expect(facts.find((fact) => fact.fact_id === "fact-lot-area-entered")?.value).toBe(10500);
+  });
+});
+
+describe("LotSiteSetup — re-pick (use all or pick); the server decides the combination", () => {
+  it("sends the selection as `selected`, shows the server's new result, and the web computes no adjacency", async () => {
+    const oneLot: Study = {
+      ...twoLotCrossBlockStudy,
+      lots: [twoLotCrossBlockStudy.lots[0]],
+      lot_selection: { ...twoLotCrossBlockStudy.lot_selection, combination: { status: "single_lot", reason: null } },
+    };
+    const fetchImpl = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      return okResponse(studySetupDoc(url.includes("selected=") ? oneLot : twoLotCrossBlockStudy));
+    }) as unknown as typeof fetch;
+
+    render(<LotSiteSetup bbl={LOT_A} fetchImpl={fetchImpl} now={FIXED_NOW} />);
+    await screen.findByTestId("lot-site-setup");
+    // The initial fetch is the two-lot refusal, shown verbatim.
+    expect(screen.getByText("This property has 2 lots.")).toBeInTheDocument();
+    expect(screen.getByTestId("lot-combination-refusal")).toHaveTextContent(CROSS_BLOCK_REASON);
+
+    // Drop the second lot and re-pick.
+    fireEvent.click(screen.getByTestId(`lot-pick-${LOT_B}`));
+    fireEvent.click(screen.getByTestId("lot-repick-apply"));
+
+    expect(await screen.findByText("This property has 1 lot.")).toBeInTheDocument();
+    expect(screen.queryByTestId("lot-combination-refusal")).toBeNull();
+    // The selection was sent as `selected`; the panel never re-derived a combination.
+    const calls = (fetchImpl as unknown as ReturnType<typeof vi.fn>).mock.calls.map((call) => String(call[0]));
+    expect(calls.some((url) => url.includes(`selected=${LOT_A}`))).toBe(true);
   });
 });
