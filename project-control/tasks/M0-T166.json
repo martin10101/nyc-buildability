@@ -10,13 +10,16 @@
     "tools/agent_supervisor/launch_seam.py",
     "tools/agent_supervisor/routing_probe.py",
     "tools/agent_supervisor/ps_tests/**",
-    "docs/CONTROLLER_UPDATE_RUNBOOK.md (the launch seam section)"
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md (the launch seam section)",
+    "M0-T165 (accepted, merged in #288): os_acl.controller_config_acl_verdict, platform_paths, process.bare_probe_env / apply_posix_autoupdater_belt; its reports M0-T165-G3G4.md and M0-T165-G5.md (follow-ups N1)"
   ],
   "outputs": [
     "tools/agent_supervisor/linux/ (launcher, systemd unit template, bash shell-routing harness and mutants)",
     "launch_seam.py wiring",
     "tools/test_agent_supervisor_linux_launch.py",
-    "project-control/reports/M0-T166-producer-report.md"
+    "project-control/reports/M0-T166-producer-report.md",
+    "cli.py doctor posture uses the cross-platform ACL verdict on Linux (fail-closed UNKNOWN stays UNKNOWN)",
+    "capability_probe.py and native_runtime.py bare probes run with DISABLE_AUTOUPDATER=1 on Linux; Windows unchanged"
   ],
   "dependencies": [
     "M0-T165"
@@ -25,9 +28,13 @@
     "tools/agent_supervisor/launch_seam.py",
     "tools/agent_supervisor/linux/",
     "tools/test_agent_supervisor_linux_launch.py",
-    "project-control/reports/M0-T166-producer-report.md"
+    "project-control/reports/M0-T166-producer-report.md",
+    "tools/agent_supervisor/cli.py",
+    "tools/agent_supervisor/capability_probe.py",
+    "tools/agent_supervisor/native_runtime.py"
   ],
   "forbidden_paths": [
+    "cli.py (3598 lines, above the modularity ceiling): only the call-site swap in _controller_config_acl_posture to os_acl.controller_config_acl_verdict, with no net growth; capability_probe.py and native_runtime.py: only passing the M0-T165 bare_probe_env()/apply_posix_autoupdater_belt() environment to the bare version/help probes; no other change in these three files",
     "tools/agent_supervisor/ps_tests/** (kept for the PC)",
     "tools/agent_supervisor/fixtures/**",
     "M0-T165 and M0-T168 paths",
@@ -42,7 +49,8 @@
     "primary: the bash harness runs the same shell-routing cases as ps_tests and passes on this server",
     "boundary: each mutant in the bash harness is detected (the harness goes red)",
     "missing/ambiguous: a missing claude binary or unset required env fails closed before any provider contact",
-    "failure: the launcher refuses to start when the start gate refuses; it never pushes, merges or starts a live run in tests"
+    "failure: the launcher refuses to start when the start gate refuses; it never pushes, merges or starts a live run in tests",
+    "wiring: on Linux the doctor posture reports the POSIX verdict (PROTECTED / NOT_PROTECTED / UNKNOWN with reasons); on Windows it is byte-unchanged; the bare probes on Linux carry DISABLE_AUTOUPDATER=1 and on Windows keep env=None"
   ],
   "required_gates": [
     "G0",
@@ -56,14 +64,14 @@
     "ci-evidence-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T05:17:56.297263+00:00",
-  "updated_at": "2026-10-02T05:21:54.246604+00:00",
+  "updated_at": "2026-10-02T08:38:20.263195+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -74,5 +82,31 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-10-02T05:17:56.297492+00:00"
+  "directive_regime_entered_at": "2026-10-02T05:17:56.297492+00:00",
+  "worktree": "/root/project/w-M0-T166",
+  "progress_log": [
+    {
+      "at": "2026-10-02T07:05:01.073780+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Scope corrected; acceptance scenarios in the packet; producer dispatched in /root/project/w-M0-T166"
+    },
+    {
+      "at": "2026-10-02T07:52:19.638849+00:00",
+      "agent": "backend-engineer",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Producer done at 730dae36"
+    },
+    {
+      "at": "2026-10-02T08:14:51.745662+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "B1 fixed at 2991fda3 (bash tests POSIX-skipped); re-freezing"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-02T08:38:20.263001+00:00"
 }

@@ -34,12 +34,14 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
 
+from . import process
 from .telemetry_redaction import redact_probe_meta
 
 PROBE_TIMEOUT_S = 30
@@ -92,13 +94,18 @@ def _run(argv: list[str]) -> dict:
     exe = shutil.which(argv[0])
     if exe is None:
         return {"status": "absent", "detail": f"{argv[0]} not on PATH"}
+    # Bare `--version`/`--help` probes launch with env=None on Windows (byte
+    # unchanged). On Linux they carry the DISABLE_AUTOUPDATER belt (M0-T165
+    # process.bare_probe_env; D-091 T1, runbook §13), which a child launched
+    # env=None cannot otherwise get on POSIX (there is no machine-scope belt).
+    env = process.bare_probe_env() if os.name == "posix" else None
     try:
         # Execute the RESOLVED path: bare names bypass PATHEXT under Windows
         # CreateProcess, so an npm ``.cmd`` shim (e.g. codex.cmd) would raise
         # FileNotFoundError and misclassify an installed tool as unknown.
         proc = subprocess.run(
             [exe, *argv[1:]], capture_output=True, text=True,
-            timeout=PROBE_TIMEOUT_S, check=False,
+            timeout=PROBE_TIMEOUT_S, check=False, env=env,
         )
     except subprocess.TimeoutExpired:
         return {"status": "unknown", "detail": f"timeout after {PROBE_TIMEOUT_S}s"}
