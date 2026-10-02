@@ -11,8 +11,12 @@ a guess.
   as an input (this package computes no allowance and interprets no rule).
 - ``existing_building``: the first group built, the §8a existing-building group
   (:func:`existing_building_group`), reusing B-05 existing floor area and B-06 data
-  versions. The other three groups - zoning-lot history, map-based rules, and site shape
-  and street - are later B-09 slices.
+  versions.
+- ``zoning_lot_history``: the §8a zoning-lot-history group (:func:`zoning_lot_history_group`),
+  flag only (plan P-2) - it reminds the architect what recorded sources (B-05 DOB zoning-lot
+  mentions, recorded ACRIS index metadata) are on file to check, or says the source is not
+  connected; it never verifies, concludes or computes anything. The remaining two groups -
+  map-based rules, and site shape and street - are later B-09 slices.
 
 Library only: no route. Lane C wires the flag layer into the study and a contract; Lane D
 renders it beside the affected results (plan section 5a, D-12).
@@ -34,18 +38,32 @@ from app.profile.hidden_issue_flags.model import (
     FlagGroup,
     HiddenIssueFlag,
 )
+from app.profile.hidden_issue_flags.zoning_lot_history import (
+    GROUP_ID as ZONING_LOT_GROUP_ID,
+)
+from app.profile.hidden_issue_flags.zoning_lot_history import (
+    GROUP_TITLE as ZONING_LOT_GROUP_TITLE,
+)
+from app.profile.hidden_issue_flags.zoning_lot_history import (
+    RECORD_KEYS,
+    zoning_lot_history_group,
+)
 
 __all__ = [
     "GROUP_ID",
     "GROUP_TITLE",
     "LABELS",
+    "RECORD_KEYS",
     "STATUSES",
     "STATUS_CHECK_NEEDED",
     "STATUS_FLAG",
     "STATUS_NOT_FLAGGED",
     "STATUS_OPPORTUNITY",
+    "ZONING_LOT_GROUP_ID",
+    "ZONING_LOT_GROUP_TITLE",
     "AsOfRightAllowance",
     "FlagGroup",
     "HiddenIssueFlag",
     "existing_building_group",
+    "zoning_lot_history_group",
 ]
