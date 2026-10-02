@@ -218,9 +218,12 @@ model   = "<owner-chosen-combining-model>"
 
 The combining `model` is required with no default (`review_combiner.py:512-516`;
 `dual_review.py:239-245`) and must be on the `[claude] allowed_models` allowlist — the conductor
-refuses before any process if it is not (`dual_review.py:251-256`). The reviewer/combiner
-independence that the code enforces is by **identity**, not model string
-(`review_combiner.py:572-584` `_assert_independent`).
+refuses before any process if it is not (`dual_review.py:251-256`). It must also DIFFER from the
+`[claude] reviewer_model`, and neither may be empty — the conductor refuses before any process when
+they are equal or either is empty (`dual_review.py` `_check_combiner_distinct_from_claude`, DB-103 /
+D-091-R001,R007). The reviewer/combiner independence that the code enforces is by **identity**, not
+model string (`review_combiner.py:572-584` `_assert_independent`); the distinct-model rule is the
+separate DB-103 backstop.
 
 **Orchestrator check before the owner starts the loop with the combiner ON** (read-only; makes no
 change). This enforces that the combining model and the Claude reviewer model are both set,
@@ -246,10 +249,15 @@ field `:434`), `[claude].reviewer_model` (`claude_reviewer.py:384`), `[claude].a
 (allowlist the conductor enforces, `dual_review.py:251-256`; example `config.example.toml:34`). On
 `PASS` the owner may start with the combiner on; on `STOP` the owner does **not** start.
 
-We could instead put this same rule inside the program code. We are not doing that now. Changing
-any supervisor code would force the whole loop to be certified again (the M0-T174 certification would
-no longer hold). So we run the read-only check above at commissioning for now, and we have written
-down "add the rule in code later" as a future improvement.
+This rule is now also inside the program code (M0-T178, DB-103 / D-091-R001,R007). The dual-review
+conductor refuses before any slot is reserved or any process starts when the combining model equals
+the Claude reviewer model, or when either model is empty (`dual_review.py`
+`_check_combiner_distinct_from_claude`, error codes `review_models_not_distinct` /
+`review_models_unset`). The read-only `tomllib` check above stays as a pre-start confirmation: it
+lets the owner see `PASS`/`STOP` before starting, while the code is the enforcing backstop that
+refuses equal models even if the pre-start check were skipped. Both say the same thing; the code now
+holds the line. (This supervisor edit re-establishes the freeze suite baseline under the standard
+gates per `.claude/rules/supervisor-freeze.md`.)
 
 Sources: certified code lives under `tools/agent_supervisor/**`; the certification is M0-T174.
 

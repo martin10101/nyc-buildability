@@ -504,24 +504,31 @@
         "D-091-R007"
       ],
       "producer": "backend-engineer",
-      "verifier": "",
+      "verifier": "directive-compliance-verifier",
       "schema_version": "directive_verification/v2",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
+      "reviewed_sha": "0dd9095ae4cf6c186e9bb7766b445d54d71c5528",
+      "reviewed_manifest_sha256": "6f30d59f360e26137256a21a2954dca3b7f9cb0d6ac5b888fead8d5d4d063afd",
       "requirements": [
         {
           "id": "D-091-R001",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "This task's share: dual_review._check_combiner_distinct_from_claude runs in _preflight before any slot or process and refuses equal combining and Claude reviewer models (review_models_not_distinct) or empty ones; different allowlisted models proceed unchanged (dual_review.py:193, :263, :282-298)",
+            "Remaining for R001 overall (not claimed): the Linux recertification superseding M0-T174, the owner-applied activation-PIN amendment (R009), the owner's combining-model choice (R008) and the owner-typed commissioning (M0-T175)"
+          ],
+          "reviewed_sha": "0dd9095ae4cf6c186e9bb7766b445d54d71c5528"
         },
         {
           "id": "D-091-R007",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "gates G0, G2, G3, G4, G5 PASS at content identity 6f30d59f (G3/G4 by an independent code-reviewer, G5 by an independent security-reviewer; producer != reviewers)",
+            "Scenario7 tests assert 0 spawns and 0 slots on each refusal; mutation of the equality check turns the equal-models test red; the certification follows in its own task"
+          ],
+          "reviewed_sha": "0dd9095ae4cf6c186e9bb7766b445d54d71c5528"
         }
-      ]
+      ],
+      "restamp_note": "DCV reviewed 6f87b0b6 (project-control/reports/M0-T178-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (6f30d59f; the 4 allowed_paths blobs byte-identical to 6f87b0b6); M0-T178 gate, submission and evidence records unchanged; R001/R007 unchanged and R009 stays D-091-BOOTSTRAP-only; the only intervening commit is the saved DCV report (the integration branch was already included)."
     }
   ]
 }
