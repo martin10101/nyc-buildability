@@ -63,14 +63,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T05:17:55.445438+00:00",
-  "updated_at": "2026-10-02T05:22:08.082638+00:00",
+  "updated_at": "2026-10-02T05:52:47.832348+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -90,6 +90,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Acceptance scenarios recorded in the packet; producer dispatched in /root/project/w-M0-T165"
+    },
+    {
+      "at": "2026-10-02T05:52:46.878360+00:00",
+      "agent": "backend-engineer",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Producer done at 5740b823; report and evidence map saved"
     }
   ]
 }
