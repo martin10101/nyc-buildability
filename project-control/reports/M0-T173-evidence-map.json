@@ -1,0 +1,15 @@
+{
+  "task_id": "M0-T173",
+  "material_commit": "7d5ea246 (producer commit in worktree w-M0-T173; 3 files)",
+  "produced_at": "2026-10-02T10:20:00+00:00",
+  "producer": "backend-engineer (orchestrator-dispatched subagent; worktree /root/project/w-M0-T173)",
+  "requirements": {
+    "D-091-R001": [
+      "Linux resource wiring for the cloud loop: on POSIX the running controller now enforces the 70% memory pause ceiling. cli.py resolves config.limits.max_memory_bytes at launch to at most 70% of the measured /proc/meminfo MemTotal (never above a tighter configured ceiling) and builds the sampler through build_resource_sampler, which wires the /proc/meminfo memory gauge into the unchanged loop resource check and circuit-breaker path. Unreadable meminfo refuses launch; an unreadable gauge at runtime is a sampling outage that pauses. On Windows nothing changes (no gauge, configured ceiling kept).",
+      "Tests: tools/test_agent_supervisor_linux_gauge.py 15 passed (real sampler, real loop gate, real breaker; pause above / dispatch below the ceiling; unreadable gauge pauses; Windows regression). resource_fit 23, resource_sampling 12, phase1 80 passed. loop.py, circuit_breakers.py and run_budget.py untouched."
+    ],
+    "D-091-R007": [
+      "Gated before use: G0 at 12364237; submitted for G2, G3 (code-reviewer), G4 (ci-evidence-verifier) and directive-compliance verification. No loop started; the controller manifest recertification after this cli.py change is M0-T174."
+    ]
+  }
+}
