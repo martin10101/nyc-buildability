@@ -13,6 +13,7 @@ import { DevelopmentLimits } from "../DevelopmentLimits";
 import { draftApplicableDoc } from "@/test-support/rule-evaluation-fixtures";
 import { validateRuleEvaluationDocument } from "@/lib/rule-evaluation-contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
+import { FLOOR_AREA_REMINDER, dashboardStatus } from "../workspace/dashboard-status";
 
 vi.mock("@/components/address/LotOutlineMap", () => ({ LotOutlineMap: () => <div>Map presentation seam</div> }));
 afterEach(() => {
@@ -526,5 +527,49 @@ describe("D-03 slice 5 — the property brief is §5a-shaped (details on tap, co
       expect(record.tagName).toBe("DETAILS");
       expect(record.open).toBe(false);
     });
+  });
+});
+
+describe("D-09 (M1-24) — floor-area availability reminder: strip + report, exact §5a wording", () => {
+  // Plan §5a item 2 (docs/PRODUCT_PLAN_CURRENT_2026-09-28.md line 205), word for word. Declared
+  // independently of the source constant so a reworded constant fails this test, never silently
+  // matches itself.
+  const PLAN_FLOOR_AREA_REMINDER =
+    "Make sure this floor area is available for use. Confirm with the owner or developer that none of it was sold or merged with another lot.";
+
+  it("uses the plan's exact wording as the one shared §5a constant", () => {
+    expect(FLOOR_AREA_REMINDER).toBe(PLAN_FLOOR_AREA_REMINDER);
+  });
+
+  it("is reachable from the status strip as a standing notice behind it (done-when part 1)", () => {
+    // The strip renders status.standing behind it (DashboardStatusStrip); the reminder is one of
+    // those standing notices, once.
+    const standing = dashboardStatus({ withheld: false, calculated: true, multiLot: false, baseLots: 1 }).standing;
+    expect(standing.filter(note => note === PLAN_FLOOR_AREA_REMINDER)).toHaveLength(1);
+  });
+
+  it("shows the reminder exactly once in the report, on the brief face, never beside a number (done-when part 2)", () => {
+    const profile = baseProfile();
+    render(<ReportView profile={profile} scenario={null} evaluation={wideStreetDoc(profile.identity.bbl)} label="Test property" />);
+    const matches = screen.getAllByText(PLAN_FLOOR_AREA_REMINDER, { exact: true });
+    expect(matches).toHaveLength(1);
+    const reminder = matches[0];
+    // On the brief face: not collapsed behind a disclosure (details on tap) and not a raw dump.
+    expect(reminder.closest("details")).toBeNull();
+    expect(reminder.closest(".architect-raw")).toBeNull();
+    // Never beside a number: outside the Development limits numbers region (§5a item 2).
+    expect(reminder.closest(".architect-development")).toBeNull();
+  });
+
+  it("still shows the reminder once even when every development allowance is withheld", () => {
+    // A rule evaluation returned for another BBL withholds all computed allowances on the brief
+    // (AnalysisIdentityNotice). The standing reminder is independent of the numbers and still
+    // appears exactly once.
+    const profile = baseProfile();
+    const doc = draftApplicableDoc();
+    doc.evaluated_input.bbl = "5000010001";
+    render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
+    expect(screen.queryByTestId("wide-street-result")).toBeNull();
+    expect(screen.getAllByText(PLAN_FLOOR_AREA_REMINDER, { exact: true })).toHaveLength(1);
   });
 });

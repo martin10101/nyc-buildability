@@ -388,6 +388,13 @@ test("the dashboard follows plan §5a: one strip, notices behind it, readable te
     await expect(limits.locator("dt", { hasText: new RegExp(`^${label}$`) }).locator("..").locator("dd").first()).toHaveText("Not confirmed");
   }
   await expect(limits.getByTestId("development-zoning-lot-remaining-capacity-reason")).toHaveText(REMAINING_REASON);
+  // D-09 (M1-24, plan §5a item 2): the floor-area availability reminder appears exactly once in the
+  // report, visible on the brief face (not behind a disclosure), with the exact §5a wording. It is
+  // reachable from the dashboard status strip too (asserted above, lines 362-367). Never beside a
+  // number: it is outside the development-limits numbers region.
+  await expect(report.getByText(FLOOR_AREA_REMINDER, { exact: true })).toHaveCount(1);
+  await expect(report.getByText(FLOOR_AREA_REMINDER, { exact: true })).toBeVisible();
+  await expect(limits.getByText(FLOOR_AREA_REMINDER, { exact: true })).toHaveCount(0);
   // D-03 slice 5 (plan §5a item 5): every visible text node in the brief reads at the 14 px floor —
   // no small grey print. Excluded (each still §5a-correct): raw JSON dumps (.architect-raw, §5a
   // item-4 "details"); map attribution (.maplibregl-ctrl-attrib); and screen-reader-only text
