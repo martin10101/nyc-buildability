@@ -24,7 +24,7 @@ from app.profile.data_versions import (
 )
 from app.profile.site_facts import PLUTO_DATASET_NAME
 from app.profile.transit_parking import (
-    MISSING_PARKING_ZONE_SOURCE,
+    MISSING_TRANSIT_ZONE_SOURCE,
     STATUS_CHECK_NEEDED,
     STATUS_RECORDED,
     TRANSIT_ZONE_FIELD,
@@ -96,8 +96,10 @@ def test_recorded_detail_states_the_value_and_the_legal_boundary_not_a_parking_c
     assert "Outer Transit Zone" in detail
     assert TRANSIT_ZONE_FIELD in detail
     assert "check C-8" in detail
-    # The parking consequence is never decided here (platform principle 1).
-    assert "not decided here" in detail
+    # The zone IS the official DCP classification (cite the dictionary), but applying the
+    # ZR parking rules to it is the rule engine's job, confirmed at G6 (platform principle 1).
+    assert "Data Dictionary" in detail
+    assert "rule-engine" in detail
     assert "G6" in detail
     # It never claims a number of spaces or an exemption.
     assert "space" not in detail.lower()
@@ -163,9 +165,9 @@ def test_check_needed_when_pluto_has_no_transit_zone_value() -> None:
     assert status.status == STATUS_CHECK_NEEDED
     assert status.transit_zone is None
     assert status.needs_check is True
-    assert status.missing_source == MISSING_PARKING_ZONE_SOURCE
+    assert status.missing_source == MISSING_TRANSIT_ZONE_SOURCE
     assert "Check needed" in status.detail
-    assert "dpnc-b2hd" in status.detail  # names the parking-zone layers to check
+    assert "6ztr-wgff" in status.detail  # names DCP Transit Zones, the source to check
 
 
 def test_untrusted_pluto_value_is_check_needed_never_surfaced() -> None:

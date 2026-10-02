@@ -13,26 +13,32 @@ status cannot differ between options.
 
 The one source is PLUTO's ``transitzone`` field (NYC Open Data dataset ``64uk-42ks``),
 already recorded and version-pinned for the benchmark lot (queue item B-01) and assessed
-by ``app.profile.data_versions`` (queue item B-06). PLUTO is DCP's published lot dataset;
-the field is its recorded transit-zone classification for the lot (for example "Outer
-Transit Zone"). ``docs/research/pluto-mappluto-2026-07-16.md`` section 3.4 records the
-field as new in the 26v1 release; its value list is not separately enumerated in this
-repository, so the recorded text is passed through verbatim and never re-interpreted.
+by ``app.profile.data_versions`` (queue item B-06). Per the official PLUTO Data Dictionary
+(May 2026, 26v1; ``s-media.nyc.gov/.../bytes/pluto_datadictionary.pdf``, read at G1 -
+``docs/research/pluto-mappluto-2026-07-16.md`` section 4.1), ``TrnstZone`` IS DCP's Transit
+Zones classification: it is sourced from DCP's Transit Zones data and "determines
+residential parking requirements under the Zoning Resolution". Its documented categories
+are Manhattan Core, LIC Parking Area, Inner Transit Zone, Outer Transit Zone, and Beyond
+the Greater Transit Zone; the current ZR section 12-10 Outer Transit Zone definition
+incorporates the 2016 Appendix I area as a component (so this is one transit-zone
+geography, not a separate legal basis). The recorded text is passed through verbatim and
+never re-interpreted.
 
 What this module does NOT do, by design:
 
-- It does not compute a parking requirement, a waiver, or a number of spaces. That is a
-  zoning-rule determination (ZR off-street parking rules; and note the City of Yes
-  transit-zone provisions and the 2016 Appendix I parking Transit Zone are distinct
-  geographies and legal bases). Legal determinations belong to the rule engine (Lane A)
-  and a qualified reviewer at G6, never to this data module (lane prompt B; platform
-  principle 1: deterministic code calculates, qualified humans approve legal
-  interpretations).
-- It does not treat PLUTO's ``transitzone`` as proof of a parking exemption. The
-  parking-specific boundaries - DCP "Appendix I Transit Zones" (``dpnc-b2hd``) and
-  "Greater Transit Zone" (``vhqf-adkz``), recorded in
-  ``docs/research/zoning-features-ztldb-2026-07-16.md`` - have no registered connector
-  in this repository, so any parking-rule use of them is "Check needed".
+- It does not apply the ZR off-street parking rules to produce the actual parking outcome
+  (the number of spaces, or a waiver). That outcome depends on the zoning district, the
+  housing type and affordability, and is a zoning-rule / legal determination that belongs
+  to the rule engine (Lane A) and a qualified reviewer at G6, never to this data module
+  (lane prompt B; platform principle 1: deterministic code calculates, qualified humans
+  approve legal interpretations). The transit zone itself is known from PLUTO; only its
+  parking OUTCOME waits for the rule engine - the status is "Check needed" for that reason,
+  not because the zone is unknown.
+- When PLUTO carries no transit-zone value, the authoritative fallback to check is DCP's
+  Transit Zones dataset (NYC Open Data ``6ztr-wgff``, the source behind PLUTO's field; with
+  its Greater Transit Zone ``vhqf-adkz`` and Appendix I Transit Zones ``dpnc-b2hd``
+  components), recorded in ``docs/research/zoning-features-ztldb-2026-07-16.md`` with no
+  registered connector in this repository yet.
 
 When PLUTO records no transit-zone value for the lot (SODA omits null fields, so an
 absent column means "none or unknown", never a guess) or the value cannot be trusted (an
@@ -74,16 +80,19 @@ STATUS_CHECK_NEEDED = "check_needed"
 CHECK_NEEDED_LABEL = "Check needed"
 RECORDED_LABEL = "Recorded"
 
-# The parking-specific transit-zone layers (recorded in research, no registered
-# connector); named when the parking consequence is "Check needed".
-MISSING_PARKING_ZONE_SOURCE = (
-    "DCP Transit Zone map layers - Appendix I Transit Zones (dpnc-b2hd) and the Greater "
-    "Transit Zone (vhqf-adkz); no registered connector in this repository"
+# The authoritative source behind PLUTO's transitzone field, named when PLUTO carries no
+# value (recorded in research, no registered connector yet).
+MISSING_TRANSIT_ZONE_SOURCE = (
+    "DCP Transit Zones (NYC Open Data 6ztr-wgff), the dataset PLUTO's transitzone field is "
+    "sourced from (with its Greater Transit Zone vhqf-adkz and Appendix I Transit Zones "
+    "dpnc-b2hd components); recorded in research, no registered connector in this repository"
 )
-# The legal boundary this data module never crosses (platform principle 1; lane prompt B).
+# The legal boundary this data module never crosses (platform principle 1; lane prompt B):
+# the zone is known; applying the parking rules to it is the rule engine's job.
 _PARKING_RULE_CAVEAT = (
-    "Whether a parking requirement or waiver follows is a zoning-rule determination "
-    "(the rule engine, confirmed by a qualified reviewer at G6), not decided here."
+    "Applying the Zoning Resolution off-street parking rules to this zone (by district, "
+    "housing type and affordability) is a rule-engine / legal determination, confirmed by a "
+    "qualified reviewer at G6, that this data layer never makes."
 )
 
 
@@ -102,9 +111,10 @@ class TransitParkingStatus:
             value was found. ``app.profile.data_versions`` pins it (queue item B-06), so
             the status carries "Out of date" / "Version unknown" like any sourced value.
         detail: the one line shown beside every option (plan section 5a). It states the
-            legal boundary (the parking consequence is not decided here).
-        missing_source: what a reviewer must check when ``check_needed``; None when
-            ``recorded``.
+            legal boundary (the zone is DCP's classification; applying the ZR parking
+            rules to it is the rule engine's job, not this layer's).
+        missing_source: the source behind the field to check when ``check_needed`` (DCP
+            Transit Zones); None when ``recorded``.
     """
 
     lot_bbl: str
@@ -169,7 +179,8 @@ def resolve_transit_parking_status(profile: Mapping[str, Any]) -> TransitParking
     bbl = _bbl(profile)
     if problem is None and value is not None:
         detail = (
-            f"Transit zone: {value} ({PLUTO_DATASET_NAME}, field '{TRANSIT_ZONE_FIELD}'). "
+            f"Transit zone: {value} ({PLUTO_DATASET_NAME}, field '{TRANSIT_ZONE_FIELD}', "
+            f"DCP's Transit Zones classification per the PLUTO Data Dictionary 26v1). "
             f"Every option reads this one recorded value, so the transit/parking status "
             f"is the same across all options (check C-8). "
             f"{_PARKING_RULE_CAVEAT}"
@@ -184,8 +195,8 @@ def resolve_transit_parking_status(profile: Mapping[str, Any]) -> TransitParking
     reason = problem or f"PLUTO records no '{TRANSIT_ZONE_FIELD}' value for this lot."
     detail = (
         f"Transit/parking status: {CHECK_NEEDED_LABEL}. {reason} "
-        f"{_PARKING_RULE_CAVEAT} "
-        f"Parking-zone boundaries to check: {MISSING_PARKING_ZONE_SOURCE}."
+        f"Transit-zone source to check: {MISSING_TRANSIT_ZONE_SOURCE}. "
+        f"{_PARKING_RULE_CAVEAT}"
     )
     return TransitParkingStatus(
         lot_bbl=bbl,
@@ -193,7 +204,7 @@ def resolve_transit_parking_status(profile: Mapping[str, Any]) -> TransitParking
         transit_zone=None,
         source=source,
         detail=detail,
-        missing_source=MISSING_PARKING_ZONE_SOURCE,
+        missing_source=MISSING_TRANSIT_ZONE_SOURCE,
     )
 
 
