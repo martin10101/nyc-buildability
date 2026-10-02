@@ -60,14 +60,14 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T09:02:47.014019+00:00",
-  "updated_at": "2026-10-02T14:20:44.289548+00:00",
+  "updated_at": "2026-10-02T14:43:48.893579+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -109,5 +109,7 @@
       "status": "in_progress",
       "message": "Producer recaptures the hook-event catalog for 2.1.287 and re-points event_drift.py (scope correction)"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-02T14:43:48.893407+00:00"
 }
