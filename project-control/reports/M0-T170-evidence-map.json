@@ -1,0 +1,15 @@
+{
+  "task_id": "M0-T170",
+  "material_commit": "6d61ceb5 (producer commit in worktree w-M0-T170; 5 files)",
+  "produced_at": "2026-10-02T08:15:00+00:00",
+  "producer": "backend-engineer (orchestrator-dispatched subagent; worktree /root/project/w-M0-T170)",
+  "requirements": {
+    "D-091-R001": [
+      "Resource fit for 5 loop lanes on this server: resource_sampling.py derives the Linux memory pause ceiling as min(configured, floor(0.70 * MemTotal)) from /proc/meminfo (about 5.6 GiB on 8 GiB; owner rule D-090-R076), pausing at or above it and pausing when meminfo is unreadable; run_budget.admit_review_or_combine enforces at most 2 concurrent review-or-combine processes across lanes and 1 per lane (a third waits; bad counts fail closed); config.py adds the two Limits fields; config.example.toml documents the Linux values beside the unchanged PC values.",
+      "Tests: tools/test_agent_supervisor_resource_fit.py 23 passed; phase1 + resource_sampling 92 passed; bounded_mode + bounded_contracts 144 passed. Runtime wiring into the Linux launch is a later task (disclosed)."
+    ],
+    "D-091-R007": [
+      "Gated before use: G0 at 8b300649; submitted for G2, G3/G4 and directive-compliance verification. No PC/Windows default changed; no loop started."
+    ]
+  }
+}
