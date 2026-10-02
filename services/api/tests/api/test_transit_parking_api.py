@@ -15,9 +15,11 @@ Offline and deterministic. The route is driven through its INJECTED provider
   proves the route refuses to ship it (500 ``internal_contract_error``), never a
   partial or invalid 200.
 
-The router under test is NOT mounted in the app (that is packet W5), so the suite
-builds a LOCAL FastAPI app and includes the router directly. Every emitted (HTTP
-status, state) pair is asserted to be in the route's single source of truth
+The router under test is now mounted in the app (packet W5, self-gated and
+default off; the real-app mount is proven in ``tests/api/test_read_router_mounts.py``),
+and this suite builds a LOCAL FastAPI app and includes the router directly to
+isolate its offline provider injection. Every emitted (HTTP status, state) pair is
+asserted to be in the route's single source of truth
 ``TRANSIT_PARKING_STATUS_STATE_MATRIX``, and the suite drives every pair in it
 (exhaustive).
 """

@@ -1,11 +1,12 @@
 """GET /api/v1/properties/{bbl}/hidden-issue-flags - internal §8a hidden-issue
 flags route (lane C, packet W2; plan section 8a, queue item B-09).
 
-Offline and deterministic. The route is NOT mounted in ``app.main`` yet (packet
-W5 mounts the W2-W4 routes), so these tests build a LOCAL FastAPI app with the
-router (the #316 study-setup pattern) and drive it through its INJECTED
-flag-inputs provider (``get_hidden_issue_flag_inputs_provider`` override), so no
-network is touched:
+Offline and deterministic. The route is now mounted in ``app.main`` (packet W5
+mounted the W2-W4 routes, self-gated and default off); the real-app mount posture
+is proven in ``tests/api/test_read_router_mounts.py``. These tests build a LOCAL
+FastAPI app with the router (the #316 study-setup pattern) and drive it through
+its INJECTED flag-inputs provider (``get_hidden_issue_flag_inputs_provider``
+override), so no network is touched:
 
 - the 200 path replays the RECORDED 215-16 Northern benchmark PLUTO body through
   the accepted connector + the real profile / B-07 pipeline
@@ -94,8 +95,9 @@ def _northern_provider():
 
 
 def _client(provider=None) -> TestClient:
-    """A LOCAL FastAPI app with just the W2 router (the route is not mounted in
-    app.main yet). The flag-inputs provider is injected so the suite is offline."""
+    """A LOCAL FastAPI app with just the W2 router (the route is also mounted in
+    app.main as of W5; this local app isolates the offline provider injection).
+    The flag-inputs provider is injected so the suite is offline."""
     app = FastAPI()
     app.include_router(router)
     if provider is not None:

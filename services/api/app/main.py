@@ -32,7 +32,9 @@ from app.api.v1.address_resolution import router as address_resolution_v1_router
 from app.api.v1.build_info import router as build_info_v1_router
 from app.api.v1.condo_records import router as condo_records_v1_router
 from app.api.v1.evidence import router as evidence_v1_router
+from app.api.v1.hidden_issue_flags_read import router as hidden_issue_flags_read_v1_router
 from app.api.v1.lot_geometry import router as lot_geometry_v1_router
+from app.api.v1.parity_read import router as parity_read_v1_router
 from app.api.v1.properties import router as properties_v1_router
 from app.api.v1.proposal_checks_api import router as proposal_checks_v1_router
 from app.api.v1.proposal_validation import router as proposal_validation_v1_router
@@ -42,6 +44,7 @@ from app.api.v1.scenario_analysis import router as scenario_analysis_v1_router
 from app.api.v1.site_definition import router as site_definition_v1_router
 from app.api.v1.site_definition import site_definition_write_enabled
 from app.api.v1.study_read import router as study_read_v1_router
+from app.api.v1.transit_parking_read import router as transit_parking_read_v1_router
 
 API_VERSION = "0.1.0"
 
@@ -230,6 +233,30 @@ def create_app() -> FastAPI:
     # lot choice is Lane B behaviour, produced only when LANE_B_ENABLED is also on, so
     # production (neither flag set) keeps the route a 404. See app.api.v1.study_read.
     application.include_router(study_read_v1_router)
+    # Internal, feature-flag-gated §8a HIDDEN-ISSUE-FLAGS read (lane C, packet W2; mounted W5).
+    # SAME posture as study-read above - ALWAYS registered but a generic 404 (no OpenAPI entry)
+    # unless the NEW default-off INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED flag is an explicit
+    # true token; absent/unknown -> disabled (fail safe). Self-gated at the handler in this
+    # order: flag-off 404, then per-caller 429, then typed 422, then 503 when inputs are
+    # unavailable or Lane B is off. Its data is Lane B behaviour, so production (neither flag
+    # set) keeps the route a 404. See app.api.v1.hidden_issue_flags_read.
+    application.include_router(hidden_issue_flags_read_v1_router)
+    # Internal, feature-flag-gated TRANSIT/PARKING-ZONE read (lane C, packet W3; mounted W5). SAME
+    # posture as study-read above - ALWAYS registered but a generic 404 (no OpenAPI entry) unless
+    # the NEW default-off INTERNAL_TRANSIT_PARKING_READ_ENABLED flag is an explicit true token;
+    # absent/unknown -> disabled (fail safe). Self-gated at the handler (flag-off 404 -> 429 ->
+    # 422 -> 503 when the status is unavailable or Lane B is off). Carries the zone only, never a
+    # parking outcome; its data is Lane B behaviour, so production keeps it a 404. See
+    # app.api.v1.transit_parking_read.
+    application.include_router(transit_parking_read_v1_router)
+    # Internal, feature-flag-gated PARITY-DATA read (lane C, packet W4; mounted W5). SAME posture
+    # as study-read above - ALWAYS registered but a generic 404 (no OpenAPI entry) unless the NEW
+    # default-off INTERNAL_PARITY_READ_ENABLED flag is an explicit true token; absent/unknown ->
+    # disabled (fail safe). Self-gated at the handler (flag-off 404 -> 429 -> 422 -> the Lane B
+    # gate 503 BEFORE any live DOF call -> 503 on upstream/no-subject). Carries recorded sales
+    # and a "Not confirmed" capacity line only, no valuation; production keeps it a 404. See
+    # app.api.v1.parity_read.
+    application.include_router(parity_read_v1_router)
     # Read-only build-info record (queue C-02, plan M1-02). Ungated like health: it returns
     # only the deployed commit SHA, API_VERSION and a fixed allowlist of flags as booleans,
     # and reads no other env var. See app.api.v1.build_info.
