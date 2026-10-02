@@ -19,7 +19,8 @@
   "dependencies": [
     "M0-T171",
     "M0-T172",
-    "M0-T173"
+    "M0-T173",
+    "M0-T176"
   ],
   "allowed_paths": [
     "tools/agent_supervisor/fixtures/",
