@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](../../PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: the §4 left-rail shell, the §5.5 coordinate table, the §2 always-displayed enum, §1.3 always-visible, and §4 disclaimer placement (plan §3, §4, §7, §5a.2, §5a.5, §5a.6, §5). The rest still applies.
+
 # D-086 P1 — Visual / state specification (UI cleanup)
 
 Task **M5-T114** (D-086 phase P1, docs only, presentation-only). Companion static mockup:

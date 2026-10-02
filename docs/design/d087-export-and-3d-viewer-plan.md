@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](../PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: the §3 three/React Three Fiber web viewer, the §4 import side (PKT-F and PKT-K/L) and §2 export formats without Excel (plan §5c, §7, §3.7). The rest still applies.
+
 # D-087 export wiring and 3D viewer plan (M5-T099, PLAN-1)
 
 Status: DESIGN NOTE. This document PROPOSES; it authorizes nothing. Every packet it lists is
