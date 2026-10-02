@@ -68,6 +68,17 @@
 .architect-shell .workspace-window button:focus-visible { outline: 3px solid #1762d6; outline-offset: -2px; }
 .architect-shell .workspace-window__controls button:disabled,
 .architect-shell .workspace-window__resize:disabled { opacity: .4; cursor: default; }
+/* Plan §5a item 5 (floating tool windows): a plain-English line naming what the window shows,
+   under the title. Readable (14 px), never small grey print; it is the window's own description,
+   not a repeat of any status-strip notice (plan §5a item 2). */
+.architect-shell .workspace-window__description {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 8px 18px 0;
+  color: #324258;
+  font-size: 14px;
+  line-height: 1.45;
+}
 .architect-shell .workspace-window__content {
   flex: 1 1 auto;
   min-height: 0;
@@ -76,7 +87,32 @@
   overflow: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
+  /* Plan §5a item 5: comfortable default text inside every tool window. */
+  font-size: 15px;
+  line-height: 1.55;
 }
+/* Plan §5a item 5 (readable text, no small grey print): raise the legacy architect copy that
+   renders inside a floating tool window to a readable floor. Scoped to the window only, so the
+   set-aside multi-page screen (plan §3 #4) keeps its own styling. Raw technical dumps behind a
+   disclosure (.architect-raw pre) stay as they are — those are §5a item 4 "details", not body copy. */
+.architect-shell .workspace-window__content .section-note,
+.architect-shell .workspace-window__content .architect-alert,
+.architect-shell .workspace-window__content .architect-definition-list dt,
+.architect-shell .workspace-window__content .architect-definition-list dd,
+.architect-shell .workspace-window__content .provenance-details,
+.architect-shell .workspace-window__content .architect-fact-metrics p { font-size: 14px; }
+.architect-shell .workspace-window__content .primary-button,
+.architect-shell .workspace-window__content .secondary-button,
+.architect-shell .workspace-window__content .architect-text-button { font-size: 14px !important; }
+.architect-shell .workspace-window__content .architect-eyebrow,
+.architect-shell .workspace-window__content .architect-status,
+.architect-shell .workspace-window__content .failure-meta,
+.architect-shell .workspace-window__content .architect-condo-reference-tag,
+.architect-shell .workspace-window__content .architect-condo-claim-tag,
+.architect-shell .workspace-window__content .architect-map-key,
+.architect-shell .workspace-window__content .architect-map-status,
+.architect-shell .workspace-window__content [data-testid="lot-outline-accuracy"],
+.architect-shell .workspace-window__content [data-testid="lot-outline-attribution"] { font-size: 13px; }
 .architect-shell .workspace-window__resize {
   position: absolute;
   right: 0;
@@ -107,5 +143,6 @@
   .architect-shell .workspace-window__header { flex-wrap: wrap; padding: 4px 6px; }
   .architect-shell .workspace-window__heading { min-width: 120px; font-size: 15px; }
   .architect-shell .workspace-window__controls button { min-width: 40px; min-height: 40px; }
+  .architect-shell .workspace-window__description { padding: 8px 12px 0; }
   .architect-shell .workspace-window__content { padding: 12px 12px 30px; }
 }

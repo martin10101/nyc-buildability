@@ -12,6 +12,9 @@ export type FloatingWorkspaceWindowProps = {
   onClose: () => void;
   children: ReactNode;
   wide?: boolean;
+  /** One plain-English line naming what this detail surface shows (plan §5a item 5). Shown under
+   * the title and announced as the dialog's description; omit it for a bare frame. */
+  description?: string;
 };
 
 let lastWindowLayer = 40;
@@ -66,7 +69,7 @@ function initialFrame(wide: boolean): Frame {
 }
 
 /** A modeless, in-tree workspace surface. Closing never discards a mounted editor. */
-export function FloatingWorkspaceWindow({ id, title, open, onClose, children, wide = false }: FloatingWorkspaceWindowProps) {
+export function FloatingWorkspaceWindow({ id, title, open, onClose, children, wide = false, description }: FloatingWorkspaceWindowProps) {
   const [hasOpened, setHasOpened] = useState(open);
   const [frame, setFrame] = useState<Frame | null>(null);
   const [maximized, setMaximized] = useState(false);
@@ -193,7 +196,8 @@ export function FloatingWorkspaceWindow({ id, title, open, onClose, children, wi
   const style: CSSProperties = { ...(frame ?? {}), zIndex: layer };
   return (
     <section id={id} ref={windowRef} className={`workspace-window${maximized ? " workspace-window--maximized" : ""}`}
-      role="dialog" aria-modal={false} aria-labelledby={`${id}-title`} hidden={!open}
+      role="dialog" aria-modal={false} aria-labelledby={`${id}-title`}
+      aria-describedby={description ? `${id}-desc` : undefined} hidden={!open}
       style={style} onKeyDown={closeWithEscape} onPointerDownCapture={raise} onFocusCapture={raise}>
       <header className="workspace-window__header">
         <h2 className="workspace-window__heading">
@@ -217,6 +221,7 @@ export function FloatingWorkspaceWindow({ id, title, open, onClose, children, wi
             title="Close window — keeps your work" onClick={onClose}>×</button>
         </div>
       </header>
+      {description ? <p id={`${id}-desc`} className="workspace-window__description">{description}</p> : null}
       <p id={`${id}-move-help`} className="workspace-window__sr-only">Drag the title to move this window, or use the arrow keys. Hold Shift for larger steps.</p>
       <div className="workspace-window__content">{children}</div>
       <button className="workspace-window__resize" type="button" aria-label={`Resize ${title} window`}
