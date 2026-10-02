@@ -877,6 +877,107 @@ def default_containment_kind() -> str:
 
 
 # --------------------------------------------------------------------------
+# Shared containment-gate decisions (M0-T177). These live here, not in cli.py /
+# loop.py, so those grandfathered oversized files carry no message-building bulk.
+# --------------------------------------------------------------------------
+
+
+def containment_refusal_detail(kind: str) -> str:
+    """The C1 start-gate refusal message for a non-accepted containment kind."""
+    return (
+        f"this host's default containment is {kind!r}, not one of {sorted(CONTAINMENT_ACCEPT_SET)}. "
+        f"On Windows the supervisor must run under the kill-on-close Job Object; on Linux it must "
+        f"run as the MAIN process of a hardened systemd .service (KillMode=control-group/mixed, "
+        f"ExitType=main, SendSIGKILL=yes, bounded TimeoutStopSec - see "
+        f"tools/agent_supervisor/linux/nyc-supervisor.service.template) so systemd tears down the "
+        f"service control group on stop. Without kill-on-close, an external kill of the supervisor "
+        f"skips the runner's termination path and leaves a live orphaned worker, so a later `start` "
+        f"could double-launch over it (M0-T052 G5 C1; ACTIVATION-RECORD PIN 2026-08-08). "
+        f"Dispatch is REFUSED on this host")
+
+
+def containment_accept_detail(kind: str) -> str:
+    """The C1 start-gate ACCEPT message for an accepted containment kind."""
+    return (
+        f"the host's default containment is {kind!r}, an accepted kill-on-external-death "
+        f"mechanism ({sorted(CONTAINMENT_ACCEPT_SET)}), so a worker cannot outlive an "
+        f"externally killed supervisor")
+
+
+def evaluate_containment_precondition(
+        kind_reader: "Callable[[], str]") -> tuple[bool, str, str]:
+    """The C1 host-containment decision. `kind_reader` is the caller's
+    `default_containment_kind` (passed in so a test that patches cli's copy still
+    drives the gate). Returns ``(ok, kind, detail)``; fail closed — only
+    `CONTAINMENT_ACCEPT_SET` permits dispatch, anything unprovable is a refusal."""
+    try:
+        kind = kind_reader()
+    except Exception as exc:  # pragma: no cover - defensive; unprovable = refused
+        return False, "unknown", (
+            f"the host's default containment could not be determined ({exc}); an "
+            f"unprovable containment is a REFUSAL, never an assumption")
+    if kind in CONTAINMENT_ACCEPT_SET:
+        return True, kind, containment_accept_detail(kind)
+    return False, kind, containment_refusal_detail(kind)
+
+
+def posix_containment_doctor_detail(kind: str) -> str:
+    """doctor's POSIX `containment_default` detail (M0-T177). PASSES either way -
+    it REPORTS the proved kind; the start-path gate, not doctor, decides dispatch."""
+    if kind == CONTAINMENT_SYSTEMD_CGROUP:
+        return (f"default containment on this POSIX host is {kind!r} (hardened systemd service "
+                f"control group, proved from inside the process; the start gate ACCEPTS it)")
+    return (f"default containment on this POSIX host is {kind!r}; the start gate REFUSES dispatch "
+            f"until the supervisor runs as the MAIN process of a hardened systemd .service (see "
+            f"tools/agent_supervisor/linux/nyc-supervisor.service.template)")
+
+
+#: Per-reason basis strings for the loop's post-cycle containment stop (preserved
+#: verbatim through the move out of loop.py).
+CONTAINMENT_STOP_BASIS: dict[str, str] = {
+    "containment_degraded": ("M0-T053 G5 R4 achieved-containment enforcement (2026-08-08 "
+                             "pin criterion 2; S13.2 / S13.12 invariants 10-11)"),
+    "containment_unverified": ("M0-T056 / M0-T060 verified_in_job strengthening (M0-T053 G5 "
+                               "pin P3; S13.2 / S13.12 invariants 10-11)"),
+}
+
+
+def cycle_containment_stop(achieved: str, fallback_reason: str,
+                           verified_in_job: bool) -> "tuple[str, str] | None":
+    """The per-cycle achieved-containment decision. Returns
+    ``(reason_code, reason_text)`` when the cycle must FAIL CLOSED, else None.
+    (M0-T053 G5 R4 achieved-containment + M0-T056/T060 verified_in_job; M0-T177.)"""
+    if achieved not in CONTAINMENT_ACCEPT_SET:
+        text = (
+            f"the cycle achieved {achieved or 'unknown'!r} containment, not one of the "
+            f"kill-on-external-death kinds {sorted(CONTAINMENT_ACCEPT_SET)}: a child that "
+            f"spawns its own process tree can escape a non-contained launch, so an "
+            f"unattended run must fail closed rather than proceed on it")
+        if fallback_reason:
+            text += f" (fallback reason: {fallback_reason})"
+        return "containment_degraded", text
+    if verified_in_job is False:
+        text = (
+            f"the cycle reported {achieved!r} containment but its membership could not "
+            f"be verified (ContainmentReport.verified_in_job is False): an unverified "
+            f"containment assignment is not proof of kill-on-external-death containment, "
+            f"so an unattended run fails closed rather than proceed on an unconfirmed claim")
+        return "containment_unverified", text
+    return None
+
+
+def reprove_systemd_containment_ok() -> bool:
+    """A FRESH, UNCACHED re-proof of the systemd unit properties (G5 NB1).
+
+    The startup proof is cached per process; a mid-run `systemctl set-property`
+    weakening the unit would otherwise go unnoticed. This calls the pure proof
+    DIRECTLY (bypassing the cache) so the loop can re-check each cycle with a
+    cheap bounded `systemctl show`. Returns True only when the fresh proof holds.
+    """
+    return _linux.prove_systemd_containment().ok
+
+
+# --------------------------------------------------------------------------
 # Running
 # --------------------------------------------------------------------------
 

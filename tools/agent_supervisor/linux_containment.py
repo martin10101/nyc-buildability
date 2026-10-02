@@ -121,14 +121,22 @@ def _read_pid_cgroup(pid: int) -> str:
         return handle.read()
 
 
+def systemctl_show_argv(unit: str, properties: Sequence[str]) -> list[str]:
+    """argv for ``systemctl show``. The unit name is placed AFTER ``--`` so an
+    option-like unit name (e.g. ``-x.service``, derived from a crafted cgroup
+    path) can NEVER be parsed as an option (G5 NB3). Options (``-p``) precede
+    ``--``; the unit is the sole positional after it."""
+    return ["systemctl", "show", "-p", ",".join(properties), "--", unit]
+
+
 def _default_show_runner(unit: str, properties: Sequence[str],
                          *, timeout: float = SHOW_TIMEOUT_SECONDS) -> tuple[int, str, str]:
-    """Run ``systemctl show <unit> -p <props>`` via the package's bounded,
+    """Run ``systemctl show -p <props> -- <unit>`` via the package's bounded,
     no-shell `process.run` (imported lazily to avoid an import cycle)."""
     from . import process as _process  # lazy: process.py imports this module
 
-    argv = ["systemctl", "show", unit, "-p", ",".join(properties)]
-    result = _process.run(argv, timeout=timeout, use_job_object=False)
+    result = _process.run(systemctl_show_argv(unit, properties),
+                          timeout=timeout, use_job_object=False)
     return result.returncode, result.stdout or "", result.stderr or ""
 
 

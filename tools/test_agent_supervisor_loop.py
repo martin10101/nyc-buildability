@@ -437,9 +437,18 @@ class AchievedContainmentTests(LoopTestBase):
         self.assertEqual(result.stopped, "containment_degraded")
         self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
 
+    def _reprove(self, ok: bool):
+        # Patch the loop's G5 NB1 per-cycle systemd re-proof (the real one does a
+        # live `systemctl show`, which refuses off a systemd service host).
+        original = lp.reprove_systemd_containment_ok
+        lp.reprove_systemd_containment_ok = lambda: ok  # type: ignore[assignment]
+        self.addCleanup(lambda: setattr(lp, "reprove_systemd_containment_ok", original))
+
     def test_systemd_cgroup_containment_proceeds_normally(self) -> None:
         # M0-T177 (B-027): a cycle reporting a PROVED Linux systemd control group
-        # is an accepted kill-on-external-death kind and proceeds like job_object.
+        # is an accepted kill-on-external-death kind and proceeds like job_object
+        # (the per-cycle NB1 re-proof still holds).
+        self._reprove(True)
         self.at_preflight()
         loop = self.build(mode="supervised",
                           runner=FakeRunner(run_result(containment="systemd_cgroup")),
@@ -448,6 +457,21 @@ class AchievedContainmentTests(LoopTestBase):
         self.assertEqual(result.stopped, "")
         self.assertTrue(result.forwarded)
         self.assertEqual(self.machine.current_state, sm.CLAUDE_RUNNING)
+
+    def test_systemd_cgroup_reproof_failure_on_cycle_stops_containment_unverified(self) -> None:
+        # G5 NB1: the kind + membership held at launch, but a FRESH per-cycle
+        # re-proof of the systemd unit no longer holds (a mid-run `systemctl
+        # set-property` weakening). The cycle fails closed. Mutation: removing the
+        # re-check lets the cycle PROCEED and turns this red.
+        self._reprove(False)
+        self.at_preflight()
+        loop = self.build(mode="supervised",
+                          runner=FakeRunner(run_result(containment="systemd_cgroup")),
+                          approval_gate=lambda digest, prompt: True)
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(result.stopped, "containment_unverified")
+        self.assertIn("re-proof", result.reason)
+        self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
 
     def test_systemd_cgroup_unverified_membership_stops_containment_unverified(self) -> None:
         # M0-T177 (B-027): a systemd_cgroup cycle whose worker could NOT be verified

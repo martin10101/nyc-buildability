@@ -82,6 +82,7 @@ def _prove(pid: int = 4321, euid: int = 1000, *, cgroup: str = VALID_CGROUP,
 # --------------------------------------------------------------------------
 
 
+@POSIX_ONLY
 class PositiveProofTests(unittest.TestCase):
     def test_a_valid_service_cgroup_and_show_prove_containment(self) -> None:
         proof = _prove()
@@ -131,6 +132,7 @@ class PositiveProofTests(unittest.TestCase):
 # --------------------------------------------------------------------------
 
 
+@POSIX_ONLY
 class NegativeRefusalTests(unittest.TestCase):
     def _refused(self, proof: lc.ContainmentProof, needle: str) -> None:
         self.assertFalse(proof.ok, f"expected a refusal, got ok: {proof.reason}")
@@ -241,12 +243,30 @@ class NegativeRefusalTests(unittest.TestCase):
         self.assertFalse(ok)
         self.assertEqual(kind, pc.CONTAINMENT_TASKKILL)
 
+    def test_option_like_unit_name_is_passed_through_not_interpreted(self) -> None:
+        # G5 NB3: a crafted cgroup yielding an option-like unit (`-x.service`) must
+        # be a refusal, and the unit must reach `systemctl show` verbatim (after
+        # `--`), never parsed as a flag.
+        seen: dict[str, str] = {}
+
+        def runner(unit: str, props):
+            seen["unit"] = unit
+            return 1, "", "Failed to show -x.service: no such unit"
+
+        proof = lc.prove_systemd_containment(
+            pid=1, euid=1000, cgroup_reader=lambda: "0::/system.slice/-x.service\n",
+            show_runner=runner)
+        self.assertEqual(seen["unit"], "-x.service")
+        self.assertFalse(proof.ok)
+        self.assertIn("exited 1", proof.reason)
+
 
 # --------------------------------------------------------------------------
 # Parser units (support the negatives above; direct, fast)
 # --------------------------------------------------------------------------
 
 
+@POSIX_ONLY
 class ParserTests(unittest.TestCase):
     def test_parse_cgroup_v2_single_service_line(self) -> None:
         self.assertEqual(lc.parse_cgroup_v2_path(VALID_CGROUP), SERVICE_CGROUP_PATH)
@@ -281,12 +301,22 @@ class ParserTests(unittest.TestCase):
 
         self.assertFalse(lc.pid_in_service_cgroup(1, SERVICE_CGROUP_PATH, reader=explode))
 
+    def test_systemctl_show_argv_puts_unit_after_double_dash(self) -> None:
+        # G5 NB3: options precede `--`; the unit is the sole positional after it,
+        # so an option-like unit name can never be parsed as a flag.
+        argv = lc.systemctl_show_argv("-x.service", lc.SYSTEMCTL_PROPERTIES)
+        self.assertIn("--", argv)
+        self.assertEqual(argv[-1], "-x.service")
+        self.assertLess(argv.index("-p"), argv.index("--"))
+        self.assertGreater(len(argv) - 1, argv.index("--"))
+
 
 # --------------------------------------------------------------------------
 # MUTATION - each guard is load-bearing (scenario 3)
 # --------------------------------------------------------------------------
 
 
+@POSIX_ONLY
 class MutationGuardTests(unittest.TestCase):
     def test_accept_set_is_exactly_the_two_kill_on_death_kinds(self) -> None:
         # If the accept-set is WIDENED (e.g. to include process_group or taskkill),
@@ -485,6 +515,7 @@ class LinuxContainmentRealProcessTests(unittest.TestCase):
 # --------------------------------------------------------------------------
 
 
+@POSIX_ONLY
 @unittest.skipUnless(os.environ.get("NYC_SUP_R3_SYSTEMD") == "1",
                      "R3 real-unit proof is opt-in (set NYC_SUP_R3_SYSTEMD=1 in Linux CI "
                      "or an owner-typed step); NEVER run by an agent on this host")

@@ -139,7 +139,7 @@ python `/root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprov
 
 | file | result |
 |---|---|
-| test_agent_supervisor_linux_containment.py (`-k "not RealProcess"`) | 38 passed, 1 skipped (R3), 2 deselected (R1/R2) |
+| test_agent_supervisor_linux_containment.py (`-k "not RealProcess"`) | 38 passed, 1 skipped (R3), 2 deselected (R1/R2) [round 1; the full file was 40 passed + 1 skip — the 38 figure is under the `-k "not RealProcess"` filter, which deselects R1/R2] |
 | test_agent_supervisor_linux_containment.py R1 (single id) | 1 passed (3.19 s) |
 | test_agent_supervisor_linux_containment.py R2 (single id) | 1 passed (1.87 s) |
 | test_agent_supervisor_process.py | 30 passed, 1 skipped |
@@ -155,10 +155,13 @@ python `/root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprov
 
 Ruff: `ruff check` on all edited supervisor + new test files -> All checks passed (ruff is NOT
 configured for `tools/` — only `services/api` has a config — so this is advisory, run with the venv
-ruff at default settings). Modularity: `python tools/modularity_check.py --check` -> exit 0 (only
-pre-existing warnings; cli.py symbol_ceiling is a pre-existing signal; the new `linux_containment.py`
-is not flagged; cli.py/loop.py were not grown unjustifiably — logic lives in
-linux_containment.py/process.py). YAML: ci.yml parses; new job has 6 steps on ubuntu-latest.
+ruff at default settings).
+
+**CORRECTION (G3 round 1 BLOCKER 1): the round-1 modularity claim above was FALSE.** The round-1 run
+piped the checker through `tail`, so `$?` captured `tail` (0), not `modularity_check` — which actually
+EXITED 1 at ea03ef61: `FAIL baseline_growth: tools/agent_supervisor/cli.py (2972)` (limit 2953). The
+real exit code (no pipe) was 1. See the "Rework 1" section for the fix and the real exit 0.
+YAML: ci.yml parses; new job has 6 steps on ubuntu-latest.
 
 ## The 11 pre-existing failures are NOT mine (proved at the base)
 
@@ -182,10 +185,67 @@ still refused). The new ubuntu CI job deliberately does NOT run loop/model_chain
   OOMs on this Linux host and the Windows path cannot run here. It is a CI responsibility
   (windows-latest `supervisor-bridge` + the new ubuntu `supervisor-linux-containment` job). My changes
   keep Windows byte-for-byte unchanged (Job Object path, terminate_process_tree Windows branch,
-  doctor Windows branch, `posix_session_kwargs()` empty on nt); all new POSIX/real-process tests are
-  POSIX-gated or env-gated so they add skips (not failures) on windows-latest.
+  doctor Windows branch, `posix_session_kwargs()` empty on nt).
+  **CORRECTION (G3 round 1 BLOCKER 2): the round-1 claim "add skips (not failures) on windows-latest"
+  was FALSE** — PositiveProofTests, NegativeRefusalTests and MutationGuardTests.test_main_pid_guard
+  were NOT POSIX-gated, so the windows-latest `supervisor-bridge` glob would have FAILED ~16 tests
+  (prove returns the "not a POSIX host" refusal on nt). Fixed in Rework 1 by gating EVERY class.
 - R3 was NOT run on this host (host-safety; env-gated). It runs in the new CI job.
 - No push, no `tools/project_control.py`, no dependency change. Only project-control write is this
   report.
+
+## Rework 1 (G3 round 1; 2026-10-02)
+
+Independent G3 FAILED at ea03ef61 with 2 blockers; G5 PASSED with 3 non-blocking notes. One bounded
+change fixes all of them. New base ea03ef61; worktree `/root/project/w-M0-T177`.
+
+- **BLOCKER 1 (modularity FAIL + false report claim).** Real `modularity_check --check` exited 1 at
+  ea03ef61: cli.py was 2972 SLOC (limit 2953). FIX: MOVED the containment gate-decision + its ACCEPT/
+  REFUSE messages and the doctor POSIX detail builder OUT of cli.py into `process.py`
+  (`evaluate_containment_precondition(kind_reader)`, `containment_accept_detail`,
+  `containment_refusal_detail`, `posix_containment_doctor_detail`); `cli.containment_precondition`
+  (~cli.py:2484) is now a 1-line delegate passing its own patchable `default_containment_kind`, and
+  `_check_containment_default` (~cli.py:1248) is a 1-line call. Also MOVED the loop post-cycle
+  accept/verify message helper into `process.cycle_containment_stop` + `CONTAINMENT_STOP_BASIS`
+  (loop.py ~:1851 now calls it). Behavior identical (same strings, same reason codes). RESULT:
+  **cli.py 2944 <= 2953; loop.py 2084 <= 2088 (dropped below its ceiling); process.py 834 (< 1000
+  HARD); modularity `--check` REAL exit = 0** (direct `$?`, no pipe).
+- **BLOCKER 2 (Windows regression).** Gated EVERY `unittest.TestCase` class in
+  `tools/test_agent_supervisor_linux_containment.py` with `@POSIX_ONLY`
+  (PositiveProofTests, NegativeRefusalTests, ParserTests, MutationGuardTests, the RealProcess class,
+  and R3). Production `prove_systemd_containment` still returns refused on nt (unchanged). PROOF
+  (throwaway harness, static + dynamic, avoiding a global os.name='nt' that breaks pathlib): all 6
+  classes carry `@POSIX_ONLY`; a `skipUnless(os.name != 'nt')` gate built under os.name=='nt' marks a
+  class skipped -> on windows-latest the whole file SKIPS, 0 failures. The loop/start_reentry edits
+  have NO Windows issue (pure FakeRunner cycles + a patched `reprove`; the start dispatch test stops
+  at `no_valid_checkpoint` before the containment gate on every platform).
+- **G5 NB1 (per-cycle re-proof).** The startup proof is cached per process; a mid-run
+  `systemctl set-property` weakening the unit would go unnoticed. FIX: for a `systemd_cgroup` cycle
+  the loop post-cycle gate now RE-PROVES the unit FRESH (uncached `process.reprove_systemd_containment_ok`
+  -> `linux_containment.prove_systemd_containment`, a cheap bounded `systemctl show`) and stops
+  `containment_unverified` if it no longer holds (loop.py ~:1889). Startup proof kept. Test:
+  `AchievedContainmentTests::test_systemd_cgroup_reproof_failure_on_cycle_stops_containment_unverified`
+  (passes at start, fails on the cycle re-check -> stop). MUTATION: disabling the re-check (`if False
+  and ...`) turns that test RED (demonstrated, restored).
+- **G5 NB3 (`--` before the unit).** `linux_containment.systemctl_show_argv` now emits
+  `systemctl show -p <props> -- <unit>` so an option-like unit name can never be parsed as a flag
+  (linux_containment.py ~:124). `_default_show_runner` uses it. Tests:
+  `ParserTests::test_systemctl_show_argv_puts_unit_after_double_dash` and
+  `NegativeRefusalTests::test_option_like_unit_name_is_passed_through_not_interpreted`
+  (a crafted `-x.service` cgroup is a refusal, unit reaches the runner verbatim).
+- **G5 NB2 (preflight.py:126): OUT OF SCOPE — not touched.** Separate follow-up: the reviewer flagged
+  `preflight.py:126` for a related concern; it is outside this task's allowed_paths and should be
+  handled as its own packet.
+
+Rework test counts (venv pytest, by file; R1/R2 by single id): linux_containment `-k "not RealProcess"`
+= **40 passed, 1 skip (R3), 2 deselected (R1/R2)**; full file = 42 passed + 1 skip; R1 1 passed
+(3.17 s); R2 1 passed (1.93 s); loop `-k "not RealProcess"` = **127 passed, 3 pre-existing failed**
+(the same Linux-only containment refusals proved pre-existing above; +1 new NB1 test); start_reentry
+17 passed; process 30 passed/1 skip; runner 78 passed. Ruff on changed files: All checks passed.
+Modularity `--check`: exit 0. Mutations re-demonstrated after the refactor (RED then restored): gate
+accepts process_group (2 tests RED), loop accept-set widened (1 RED), NB1 re-check removed (1 RED);
+the MainPID (linux_containment), self-group-kill guard (process.terminate_process_tree) and
+start_new_session (claude_runner) guards are UNCHANGED by this refactor — their round-1 red demos
+stand and their tests pass green now.
 
 END-OF-REPORT

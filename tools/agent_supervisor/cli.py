@@ -192,7 +192,6 @@ from .preflight import (
 from .process import (
     CONTAINMENT_ACCEPT_SET,
     CONTAINMENT_JOB_OBJECT,
-    CONTAINMENT_SYSTEMD_CGROUP,
     FORBIDDEN_CREATION_FLAGS,
     FORBIDDEN_JOB_LIMIT_FLAGS,
     HARD_DENY_ARGUMENTS,
@@ -201,8 +200,10 @@ from .process import (
     assert_argv_safe,
     assert_no_breakaway,
     default_containment_kind,
+    evaluate_containment_precondition,
     executable_identity,
     job_objects_available,
+    posix_containment_doctor_detail,
     terminate_process_tree,
 )
 from .replay import (
@@ -1246,21 +1247,10 @@ def _check_containment_default() -> Check:
                      "`taskkill /T /F` and records the fallback reason rather than claiming "
                      "job-strength containment")
     if os.name != "nt":
-        # M0-T177 (B-027): POSIX doctor REPORTS the proved kind. `systemd_cgroup`
-        # (a hardened systemd service control group proved from inside the process)
-        # is the accepted Linux containment; `process_group` is honest but the
-        # `start` gate REFUSES dispatch on it (the LEGACY unhardened host). Either
-        # is a healthy doctor reading — the start-path gate, not doctor, decides
-        # dispatch — so this check PASSES and names which one the host has.
-        proved = kind == CONTAINMENT_SYSTEMD_CGROUP
-        detail = (
-            f"default containment on this POSIX host is {kind!r}"
-            + (" (hardened systemd service control group, proved from inside the process; "
-               "the start gate ACCEPTS it)" if proved else
-               "; the start gate REFUSES dispatch until the supervisor runs as the MAIN process "
-               "of a hardened systemd .service (see tools/agent_supervisor/linux/"
-               "nyc-supervisor.service.template)"))
-        return Check("containment_default", True, detail)
+        # M0-T177 (B-027): POSIX doctor REPORTS the proved kind and PASSES; the
+        # detail builder lives in process.py (modularity). The start-path gate,
+        # not doctor, decides dispatch.
+        return Check("containment_default", True, posix_containment_doctor_detail(kind))
     expected = CONTAINMENT_JOB_OBJECT
     return Check("containment_default", kind == expected,
                  f"default containment on this host is {kind!r} "
@@ -2495,34 +2485,13 @@ def containment_precondition() -> tuple[bool, str, str]:
 
     Fail closed: only a kill-on-external-death mechanism permits dispatch —
     exactly `CONTAINMENT_ACCEPT_SET` (the Windows kill-on-close Job Object, or a
-    PROVED Linux systemd service control group; M0-T177/B-027). `taskkill`
-    (Windows without a job) and `process_group` (an unhardened POSIX host)
-    terminate the worker only from the runner's `finally` block, which an external
-    kill of the supervisor skips - leaving an orphaned worker that a later `start`
-    would launch a second worker over. Anything this function cannot prove is a
-    refusal, never an assumption.
+    PROVED Linux systemd service control group; M0-T177/B-027). It reads
+    containment through the SAME `default_containment_kind()` `doctor` reads, so
+    the two can never disagree; the decision and its messages live in `process`
+    (modularity: cli.py is a grandfathered oversized file). `default_containment_kind`
+    is passed by name so a test patching cli's copy still drives the gate.
     """
-    try:
-        kind = default_containment_kind()
-    except Exception as exc:  # pragma: no cover - defensive; unprovable = refused
-        return False, "unknown", (
-            f"the host's default containment could not be determined ({exc}); an "
-            f"unprovable containment is a REFUSAL, never an assumption")
-    if kind in CONTAINMENT_ACCEPT_SET:
-        return True, kind, (
-            f"the host's default containment is {kind!r}, an accepted kill-on-external-death "
-            f"mechanism ({sorted(CONTAINMENT_ACCEPT_SET)}), so a worker cannot outlive an "
-            f"externally killed supervisor")
-    return False, kind, (
-        f"this host's default containment is {kind!r}, not one of {sorted(CONTAINMENT_ACCEPT_SET)}. "
-        f"On Windows the supervisor must run under the kill-on-close Job Object; on Linux it must "
-        f"run as the MAIN process of a hardened systemd .service (KillMode=control-group/mixed, "
-        f"ExitType=main, SendSIGKILL=yes, bounded TimeoutStopSec - see "
-        f"tools/agent_supervisor/linux/nyc-supervisor.service.template) so systemd tears down the "
-        f"service control group on stop. Without kill-on-close, an external kill of the supervisor "
-        f"skips the runner's termination path and leaves a live orphaned worker, so a later `start` "
-        f"could double-launch over it (M0-T052 G5 C1; ACTIVATION-RECORD PIN 2026-08-08). "
-        f"Dispatch is REFUSED on this host")
+    return evaluate_containment_precondition(default_containment_kind)
 
 
 # --------------------------------------------------------------------------
