@@ -107,30 +107,40 @@
     "D-091-R007"
    ],
    "producer": "ai-pipeline-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423",
+   "reviewed_manifest_sha256": "7ba07667e3d7b1a82bf5a3320cd6306c40324547ad02b52ee68ba6db76f774d1",
    "requirements": [
     {
      "id": "D-091-R001",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "tools/agent_supervisor/claude_reviewer.py implements the design section-2 Claude side; default OFF; loop.py and every non-test module do not reference it; review_packet.py byte-unchanged (reviewed c5efd83b)",
+      "test_loop_does_not_reference_the_claude_reviewer passes; 26/26 tests"
+     ],
+     "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423"
     },
     {
      "id": "D-091-R002",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "claude_reviewer.py: read-only argv (only -p, --output-format json, --permission-mode plan, --model; write-enabling modes and resume flags refused); same frozen head (assert_head_frozen); never the producer and never sees the Codex review (checked before any process); verdict in the Codex reviewer's ReviewOutcome/CodexDecision shape; malformed/empty/timeout never PASS",
+      "independently re-verified by G3 (code-reviewer) and G5 (security-reviewer adversarial probes)"
+     ],
+     "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423"
     },
     {
      "id": "D-091-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "gates G0,G2,G3,G4,G5 all PASS at content identity 7ba07667 (producer != reviewers); CI supervisor-bridge and control-plane green",
+      "default off and not wired; live envelope preflight and the D-091 recertification come before it is ever enabled"
+     ],
+     "reviewed_sha": "22a26a911453d53b9cd58b9cb9305312d8454423"
     }
-   ]
+   ],
+   "restamp_note": "DCV reviewed c5efd83bf0d2ddcd6df9a5cd99bc1dcd776704a7 (project-control/reports/M0-T168-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (7ba07667); intervening commits are a base merge of disjoint peer work and ledger records."
   }
  ]
 }
