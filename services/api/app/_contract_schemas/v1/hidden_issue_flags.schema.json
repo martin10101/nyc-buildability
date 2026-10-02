@@ -203,11 +203,26 @@
           "description": "Plain label for the input."
         },
         "source": {
-          "description": "The input's provenance object (the site_fact source summary), or null for an input with no dataset.",
+          "description": "The input's provenance. Most inputs are a site_fact source (a dataset value); the existing-building 'larger than today' flag instead carries the ENGINE's as-of-right-allowance provenance (existing_building.py sets dict(allowance.source); allowance.py AsOfRightAllowance.source is an open engine-result provenance mapping, not a site_fact source). An input with no dataset carries null.",
           "anyOf": [
             { "$ref": "site_fact.schema.json#/$defs/source" },
+            { "$ref": "#/$defs/engine_provenance" },
             { "type": "null" }
           ]
+        }
+      }
+    },
+    "engine_provenance": {
+      "type": "object",
+      "description": "Provenance of an ENGINE result carried in as an input (allowance.py AsOfRightAllowance.source, a Mapping[str, Any] naming the engine result - its rule version and the evaluation it came from). It is carried through verbatim (existing_building.py dict(allowance.source)) and never derived here, so this schema does not fix a closed shape: it is an open object that typically carries at least a 'kind' (for example 'rule_evaluation') and a plain-English 'statement'. It is NOT a site_fact source (its 'kind' is an engine kind, not a city-data kind).",
+      "properties": {
+        "kind": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The engine provenance kind (for example 'rule_evaluation'). Not a site_fact source kind."
+        },
+        "statement": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "A plain-English statement of the engine result (for example 'R6B as-of-right, rule v1')."
         }
       }
     }

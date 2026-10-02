@@ -56,6 +56,7 @@ COMMIT_ENV_VARS: tuple[str, ...] = ("RENDER_GIT_COMMIT", "GIT_COMMIT_SHA")
 FLAG_ENV_VARS: tuple[str, ...] = (
     "INTERNAL_RULE_EVAL_ENABLED",  # app.config
     "INTERNAL_SCENARIO_ENABLED",  # app.config
+    "INTERNAL_STUDY_READ_ENABLED",  # app.config (lane C, req D-1)
     "INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED",  # app.config (lane C W0)
     "INTERNAL_TRANSIT_PARKING_READ_ENABLED",  # app.config (lane C W0)
     "INTERNAL_PARITY_READ_ENABLED",  # app.config (lane C W0)

@@ -17,7 +17,7 @@ export interface ComparableSales {
   not_a_valuation: "These are recorded sales selected by a simple, disclosed filter, not a valuation or an appraisal. How \"similar type and size\" should be defined is a product choice to confirm with the owner.";
   selected: ComparableSale[];
   excluded: ExcludedCandidate[];
-  source: Source | null;
+  source: DofSource | null;
 }
 export interface SubjectSpec {
   bbl: Bbl | null;
@@ -47,7 +47,16 @@ export interface ComparableSale {
   gross_square_feet: number | null;
   sale_price: number | null;
   sale_date: string | null;
-  source: Source | null;
+  source: DofSource | null;
+}
+export interface DofSource {
+  kind: "city_dataset";
+  source_id: NonEmptyString;
+  dataset_id: NonEmptyString;
+  dataset: NonEmptyString;
+  request_url: NonEmptyString;
+  retrieved_at: DateTime;
+  dataset_last_modified: NonEmptyString | null;
 }
 export interface ExcludedCandidate {
   bbl: Bbl | null;

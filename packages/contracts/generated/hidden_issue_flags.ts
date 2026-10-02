@@ -31,7 +31,11 @@ export interface Flag {
 }
 export interface EvidenceItem {
   label: NonEmptyString;
-  source: Source | null;
+  source: Source | EngineProvenance | null;
+}
+export interface EngineProvenance {
+  kind?: NonEmptyString;
+  statement?: NonEmptyString;
 }
 export interface Source {
   kind: "survey" | "city_dataset" | "city_filing" | "tax_map_computation" | "architect_entry" | "assumption";

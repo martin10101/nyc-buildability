@@ -34,12 +34,12 @@
         "sale_date": "2026-05-01",
         "source": {
           "kind": "city_dataset",
-          "dataset": "test-fixture-synthetic DOF Annualized Sales",
-          "dataset_version": null,
+          "source_id": "nyc-dof-annualized-sales-soda",
+          "dataset_id": "w2pb-icbu",
+          "dataset": "test-fixture-synthetic DOF NYC Citywide Annualized Calendar Sales (w2pb-icbu)",
+          "request_url": "test-fixture-synthetic://data.cityofnewyork.us/resource/w2pb-icbu.json?bbl=5999999988",
           "retrieved_at": "2026-09-30T12:00:00Z",
-          "query_ref": "test-fixture-synthetic://dof-sales/5999999988",
-          "document_ref": null,
-          "statement": null
+          "dataset_last_modified": "2026-09-01"
         }
       }
     ],
@@ -59,12 +59,12 @@
     ],
     "source": {
       "kind": "city_dataset",
-      "dataset": "test-fixture-synthetic DOF Annualized Sales",
-      "dataset_version": null,
+      "source_id": "nyc-dof-annualized-sales-soda",
+      "dataset_id": "w2pb-icbu",
+      "dataset": "test-fixture-synthetic DOF NYC Citywide Annualized Calendar Sales (w2pb-icbu)",
+      "request_url": "test-fixture-synthetic://data.cityofnewyork.us/resource/w2pb-icbu.json?bbl=5999999999",
       "retrieved_at": "2026-09-30T12:00:00Z",
-      "query_ref": "test-fixture-synthetic://dof-sales/bbl/5999999999",
-      "document_ref": null,
-      "statement": null
+      "dataset_last_modified": "2026-09-01"
     }
   },
   "unused_floor_area": {

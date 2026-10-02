@@ -72,9 +72,9 @@
           "items": { "$ref": "#/$defs/excluded_candidate" }
         },
         "source": {
-          "description": "The sale rows' shared provenance (a site_fact-style source), or null.",
+          "description": "The sale rows' shared provenance (the DOF SaleRecord.source), or null. ComparableSalesResult.source defaults to the first row's source.",
           "anyOf": [
-            { "$ref": "site_fact.schema.json#/$defs/source" },
+            { "$ref": "#/$defs/dof_source" },
             { "type": "null" }
           ]
         }
@@ -176,9 +176,57 @@
         "sale_price": { "type": ["integer", "null"], "description": "The publisher's recorded sale price, kept verbatim including 0; never a derived value." },
         "sale_date": { "type": ["string", "null"], "description": "The ISO calendar date of the sale." },
         "source": {
-          "description": "The sale row's shared provenance (a site_fact-style source), or null.",
+          "description": "The sale row's provenance (the DOF SaleRecord.source shared by every row of one fetch), or null.",
           "anyOf": [
-            { "$ref": "site_fact.schema.json#/$defs/source" },
+            { "$ref": "#/$defs/dof_source" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "dof_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The DOF sales provenance shared by every row of one fetch (connectors/dof_sales_soda.py SaleRecord.source). Distinct from a site_fact source: the DOF connector stamps its own source-id / dataset-id / request-url shape, which must not be lost (the W4 serializer carries it verbatim). A dataset vintage the response did not expose is explicitly null.",
+      "required": [
+        "kind",
+        "source_id",
+        "dataset_id",
+        "dataset",
+        "request_url",
+        "retrieved_at",
+        "dataset_last_modified"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "city_dataset",
+          "description": "Always 'city_dataset' (dof_sales_soda.py stamps it literally)."
+        },
+        "source_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The connector source id (dof_sales_soda.SOURCE_ID, 'nyc-dof-annualized-sales-soda')."
+        },
+        "dataset_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The NYC Open Data dataset id (dof_sales_soda.DATASET_ID, 'w2pb-icbu')."
+        },
+        "dataset": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The dataset name (dof_sales_soda.DATASET_NAME)."
+        },
+        "request_url": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The exact SODA request url the rows came from (secrets never included)."
+        },
+        "retrieved_at": {
+          "$ref": "common.schema.json#/$defs/date_time",
+          "description": "When the fetch succeeded (stamped after the response)."
+        },
+        "dataset_last_modified": {
+          "description": "The dataset data vintage the response exposed (SODA truth-last-modified header), or null when the response exposed none.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
             { "type": "null" }
           ]
         }
