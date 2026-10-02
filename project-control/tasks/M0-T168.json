@@ -57,14 +57,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T05:17:58.055714+00:00",
-  "updated_at": "2026-10-02T06:41:34.920723+00:00",
+  "updated_at": "2026-10-02T07:06:33.069708+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -100,5 +100,7 @@
       "status": "in_progress",
       "message": "G3-1 citation corrected (orchestrator); re-freezing"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-02T07:06:33.069471+00:00"
 }
