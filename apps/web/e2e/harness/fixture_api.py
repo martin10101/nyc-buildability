@@ -56,17 +56,32 @@ import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.address_resolution import get_address_resolver
+from app.api.v1.hidden_issue_flags_inputs import pluto_hidden_issue_flag_inputs_provider
+from app.api.v1.hidden_issue_flags_read import get_hidden_issue_flag_inputs_provider
 from app.api.v1.lot_geometry import get_lot_outline_fetcher, get_tax_map_outline_fetcher
+from app.api.v1.parity_read import (
+    CANDIDATE_ROW_LIMIT,
+    SUBJECT_SALES_ROW_LIMIT,
+    get_dof_transport,
+)
 from app.api.v1.properties import get_pluto_fetcher
 from app.api.v1.rule_evaluation import get_spatial_substrate_provider
 from app.api.v1.study_inputs import pluto_study_inputs_provider
 from app.api.v1.study_read import get_study_inputs_provider
+from app.api.v1.transit_parking_read import (
+    get_transit_parking_provider,
+    pluto_transit_parking_provider,
+)
 from app.config import (
+    INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED_ENV_VAR,
+    INTERNAL_PARITY_READ_ENABLED_ENV_VAR,
     INTERNAL_RULE_EVAL_ENABLED_ENV_VAR,
     INTERNAL_SCENARIO_ENABLED_ENV_VAR,
     INTERNAL_STUDY_READ_ENABLED_ENV_VAR,
+    INTERNAL_TRANSIT_PARKING_READ_ENABLED_ENV_VAR,
     LANE_FLAG_ENV_VARS,
 )
+from app.connectors.dof_sales_soda import build_by_bbl_url, build_candidates_url
 from app.connectors.dtm_lot_outline import build_outline_query_url as dtm_outline_query_url
 from app.connectors.geoclient_address import AddressResolution
 from app.connectors.mappluto_lot_outline import (
@@ -80,6 +95,7 @@ from app.connectors.pluto_soda import (
     fetch_by_bbl,
 )
 from app.main import app
+from app.resilience.transport import TransportResponse as DofTransportResponse
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 FIXTURE_DIR = REPO_ROOT / "services" / "api" / "tests" / "fixtures" / "pluto"
@@ -439,6 +455,47 @@ def harness_study_fetcher(bbl: str, correlation_id: str):
     )
 
 
+# ---------------------------------------------------------------------------
+# W5 (lane C): the three W2/W3/W4 internal reads mounted in app.main, served
+# offline for the harness process from recorded official packs — mirroring the
+# study-read seam above. hidden-issue-flags (W2) and transit-parking (W3) replay
+# the SAME recorded 215-16 Northern PLUTO body through ``harness_study_fetcher``
+# (a plain PLUTO fetcher); parity (W4) replays the recorded Bayside DOF pack.
+# ---------------------------------------------------------------------------
+
+PARITY_DOF_PACK = (
+    REPO_ROOT / "services" / "api" / "tests" / "fixtures" / "dof_sales_bayside"
+)
+PARITY_NEIGHBORHOOD = "BAYSIDE"
+PARITY_BUILDING_CLASS = "22 STORE BUILDINGS"
+
+
+def harness_parity_dof_transport():
+    """A routed DOF transport serving the recorded Bayside pack for the exact two
+    request urls the parity route builds for the Northern subject; any other url
+    raises, so no live-shaped request is ever silently served."""
+    by_bbl_url = build_by_bbl_url(NORTHERN_STUDY_BBL, row_limit=SUBJECT_SALES_ROW_LIMIT)
+    candidates_url = build_candidates_url(
+        PARITY_NEIGHBORHOOD, PARITY_BUILDING_CLASS, row_limit=CANDIDATE_ROW_LIMIT
+    )
+    routes = {
+        by_bbl_url: (PARITY_DOF_PACK / "dof_sales_w2pb-icbu_bbl_4073340070.json").read_text(
+            encoding="utf-8"
+        ),
+        candidates_url: (
+            PARITY_DOF_PACK / "dof_sales_w2pb-icbu_bayside_22_store_buildings.json"
+        ).read_text(encoding="utf-8"),
+    }
+    vintage = {"x-soda2-truth-last-modified": "2026-09-01"}
+
+    def transport(url, headers, timeout):
+        if url not in routes:
+            raise AssertionError(f"unexpected url {url!r}")
+        return DofTransportResponse(200, routes[url], dict(vintage))
+
+    return transport
+
+
 def build_app():
     # M4-T005: enable the internal rule-evaluation endpoint's SERVER flag for
     # this test process only (independent of the frontend flag). The no-call
@@ -486,6 +543,25 @@ def build_app():
         harness_study_fetcher, clock=FIXED_CLOCK
     )
     app.dependency_overrides[get_study_inputs_provider] = lambda: study_inputs_provider
+    # W5: the three W2/W3/W4 internal reads, mounted in app.main (self-gated and
+    # default off). Enable each flag FOR THIS PROCESS ONLY and inject the one
+    # provider per route from a recorded official pack, so route/connector/builder/
+    # contract guard are the production paths and no response byte is hand-written.
+    # LANE_B_ENABLED is already on (study block above), so the Lane-B-behaviour data
+    # is produced rather than withheld. Production sets none of these flags, so each
+    # route stays a generic 404. Served for the Northern subject only (the shared
+    # fetcher/pack match that BBL); any other BBL is the route's fail-safe 503.
+    os.environ[INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED_ENV_VAR] = "1"
+    hidden_provider = pluto_hidden_issue_flag_inputs_provider(
+        harness_study_fetcher, clock=FIXED_CLOCK
+    )
+    app.dependency_overrides[get_hidden_issue_flag_inputs_provider] = lambda: hidden_provider
+    os.environ[INTERNAL_TRANSIT_PARKING_READ_ENABLED_ENV_VAR] = "1"
+    transit_provider = pluto_transit_parking_provider(harness_study_fetcher, clock=FIXED_CLOCK)
+    app.dependency_overrides[get_transit_parking_provider] = lambda: transit_provider
+    os.environ[INTERNAL_PARITY_READ_ENABLED_ENV_VAR] = "1"
+    parity_transport = harness_parity_dof_transport()
+    app.dependency_overrides[get_dof_transport] = lambda: parity_transport
     # Test-origin CORS only (see module docstring CORS NOTE). Both e2e web servers
     # are allowed: :3000 (flag-off) and :3001 (D-1 slice 2 flag-on). The browser
     # fetches the API cross-origin (NEXT_PUBLIC_API_BASE_URL -> :8000), so the

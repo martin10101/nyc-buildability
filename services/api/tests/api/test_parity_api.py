@@ -1,11 +1,13 @@
 """GET /api/v1/properties/{bbl}/parity - internal parity-read route (lane C
 packet W4).
 
-Offline and deterministic. The route is NOT mounted (W5 mounts it), so every
-test builds a LOCAL FastAPI app over the W4 router and drives it through its
-INJECTED DOF transport (``get_dof_transport`` override) reading the RECORDED
-Bayside DOF pack (``tests/fixtures/dof_sales_bayside``) for the 215-16 Northern
-subject (BBL 4073340070). No network is touched.
+Offline and deterministic. The route is now mounted in ``app.main`` (packet W5,
+self-gated and default off; the real-app mount is proven in
+``tests/api/test_read_router_mounts.py``), and every test builds a LOCAL FastAPI
+app over the W4 router and drives it through its INJECTED DOF transport
+(``get_dof_transport`` override) reading the RECORDED Bayside DOF pack
+(``tests/fixtures/dof_sales_bayside``) for the 215-16 Northern subject
+(BBL 4073340070). No network is touched.
 
 Coverage:
 
