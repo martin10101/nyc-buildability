@@ -1,0 +1,15 @@
+{
+  "task_id": "M0-T177",
+  "requirements": {
+    "D-091-R001": [
+      "Move the loop to this server: B-027 (reproduced at a93d6414) showed the Linux supervisor could never start a live worker (containment gates accepted only the Windows Job Object; POSIX worker launches could SIGKILL the supervisor's own process group). M0-T177 adds tools/agent_supervisor/linux_containment.py (an in-process proof of a hardened systemd service control group) and wires it through process.py (CONTAINMENT_SYSTEMD_CGROUP; CONTAINMENT_ACCEPT_SET={job_object,systemd_cgroup}), cli.py (start gate), loop.py (post-cycle gate with a fresh per-cycle re-proof) and turnover_wiring.py; POSIX worker/probe launches start a new session (claude_runner.py, mrl_one_shot.py); terminate_process_tree refuses the caller's own group.",
+      "Implementation 4a75244b; rework 1 7349397b (modularity, Windows gating, G5 NB1/NB3); reworks 2-3 d42c8d89/8fc412e0 (R3 harness). Producer report: project-control/reports/M0-T177-producer-report.md.",
+      "The unit template (tools/agent_supervisor/linux/nyc-supervisor.service.template) carries KillMode=control-group, ExitType=main, SendSIGKILL=yes, TimeoutStopSec=15s, ProtectControlGroups=yes; docs/D091_LINUX_COMMISSIONING.md steps 3-4 match. Activation still waits for the owner-applied PIN amendment (D-091-R009), the Linux recertification and the owner-typed commissioning (M0-T175)."
+    ],
+    "D-091-R007": [
+      "Reviewed and proved before use: G3 code review (round 1 FAIL with 2 blockers, round 2 PASS at 7349397b, delta PASS at 8fc412e0) and G5 security review (PASS at ea03ef61, deltas PASS at 7349397b and 8fc412e0, including the sign-off of the activation-PIN amendment text).",
+      "Tests: tools/test_agent_supervisor_linux_containment.py (42 passed + R3 opt-in), positive/negative/mutation tests (five guards demonstrated red when removed; NB1 re-check also mutation-anchored), bounded real-process tests R1 (no self-kill) and R2 (why process_group is refused).",
+      "Real-unit proof: CI job supervisor-linux-containment at 8fc412e0 (run 37072153749, job 111053843200) ran R3 under NYC_SUP_R3_SYSTEMD=1 on a real transient systemd unit: kill -9 of MainPID ended the worker and its setsid grandchild and emptied the control group (1 passed). Windows suite (supervisor-bridge, windows-latest) green at 7349397b. The full recertification superseding M0-T174 follows as its own task."
+    ]
+  }
+}
