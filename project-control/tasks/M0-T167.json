@@ -14,12 +14,16 @@
   "outputs": [
     "tools/codex_cli/package.json and package-lock.json (exact pin)",
     "tools/codex_cli/README.md (provenance record: name, maintainers, lifecycle scripts, registry origin, publish time and age, necessity, audit result, verified flags)",
-    "project-control/reports/M0-T167-producer-report.md"
+    "project-control/reports/M0-T167-producer-report.md",
+    ".github/workflows/ci.yml: one additive fail-closed job auditing tools/codex_cli (npm ci --ignore-scripts, npm audit all severities with JSON total == 0, the repo age gate on tools/codex_cli/package-lock.json, pinned npm 11.18.0), path-filtered on tools/codex_cli/package*.json",
+    ".github/workflows/scheduled-web-audit.yml: the same checks for tools/codex_cli on the existing schedule"
   ],
   "dependencies": [],
   "allowed_paths": [
     "tools/codex_cli/",
-    "project-control/reports/M0-T167-producer-report.md"
+    "project-control/reports/M0-T167-producer-report.md",
+    ".github/workflows/ci.yml",
+    ".github/workflows/scheduled-web-audit.yml"
   ],
   "forbidden_paths": [
     "global installs (npm -g) or any install outside tools/codex_cli/",
@@ -30,15 +34,17 @@
     "codex login or handling any owner credential",
     "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
     "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
-    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
-    "other D-091 tasks' paths"
+    "project-control/** (orchestrator-only), .claude/**, .github/** except the two named workflow files, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths",
+    "any .github change beyond one additive tools/codex_cli audit job in ci.yml and one additive tools/codex_cli entry in scheduled-web-audit.yml; no change to existing jobs, triggers or pins"
   ],
   "acceptance_scenarios": [
     "primary: the pinned version is >= 604800 s old at admission, its integrity matches the registry, and npm audit reports zero advisories",
     "boundary: a version 604799 s old is refused; the newest stable >= 7 days is chosen, never an alpha",
     "missing/ambiguous: registry or audit unreachable or malformed fails closed (no install)",
     "failure: a lifecycle script or advisory found stops admission with a named reason",
-    "flags: every codex exec flag codex_reviewer.py uses is present in the installed binary's --help"
+    "flags: every codex exec flag codex_reviewer.py uses is present in the installed binary's --help",
+    "ci: the new job runs and passes on this PR; it fails closed on an advisory, an age-gate failure, or an audit/registry outage (shown by its logic, not by a live failure); the scheduled workflow runs the same checks for tools/codex_cli"
   ],
   "required_gates": [
     "G0",
@@ -51,14 +57,14 @@
     "ci-evidence-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T05:17:57.156953+00:00",
-  "updated_at": "2026-10-02T05:22:08.492736+00:00",
+  "updated_at": "2026-10-02T07:09:39.179061+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -78,6 +84,29 @@
       "percent": 20,
       "status": "claimed",
       "message": "Acceptance scenarios recorded in the packet; producer dispatched in /root/project/w-M0-T167"
+    },
+    {
+      "at": "2026-10-02T05:53:16.353395+00:00",
+      "agent": "cloud-architect",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Producer done at c557056e; report and evidence map saved"
+    },
+    {
+      "at": "2026-10-02T06:28:21.140487+00:00",
+      "agent": "cloud-architect",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Scope corrected after G5 B1; re-claimed for the CI audit job"
+    },
+    {
+      "at": "2026-10-02T06:34:51.883259+00:00",
+      "agent": "cloud-architect",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "CI audit job added (cbe0b3ea); re-submitting"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-02T07:09:39.178878+00:00"
 }
