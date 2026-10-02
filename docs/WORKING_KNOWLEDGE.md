@@ -573,3 +573,28 @@ push), read the AssertionError payload from the failed log, delete the branch.
 - **Owner communication.** The owner asked for plain, ELI5 explanations: short sentences, no
   PR/CI/classifier jargon, one copy-paste line when the owner must act, and at most 2–3 one-word
   questions.
+
+## Cloud session 2026-10-02 (seq 134; 4 CPU / 8 GB droplet; D-090 + D-091)
+- **Run shape:** up to 5 orchestrator-dispatched robots (producers and reviewers), memory under 70% (peak 16%). 46 PRs merged (#280–#325); the D-091 cloud-loop code is complete (M0-T165–T174, T176 accepted); only commissioning (M0-T175, owner-typed) remains.
+- **Server venv:** `/root/project/lanes-runtime/venv/bin/{python,ruff}`. Its site-packages hold a STALE `app` package, so run api tests from `services/api` (or with `PYTHONPATH=services/api`). System python3 has no pytest.
+- **Producers:** backend-engineer, frontend-engineer or cloud-architect. general-purpose and qa-engineer act read-only. Producers isolated to `.claude/worktrees/agent-*` sometimes cannot run git in the task worktree: the orchestrator commits their files.
+- **Watchers:** a CI watcher must test `.status != COMPLETED`; an empty `conclusion` fooled `conclusion // state`. Never merge with any check pending (the #299 slip).
+- **Windows CI is a real reviewer:** `os.open(O_CREAT|O_EXCL)` on a delete-pending file raises PermissionError on Windows, not FileExistsError. M0-T176 made review_slots wait through it, while locking.py still lets that OSError escape. A failure after accept was undone honestly with `git revert` of the accept commit before merge (M0-T171).
+- **"OOM-killed" producer claims were false twice:** the kernel `oom_kill` count was 0, and memory never went over 16%. Exit 137 is the process-group SIGKILL from the RealProcess test classes (`test_agent_supervisor_model_chain.py`). Do not run that file whole on this host; CI runs it.
+- **Web proves only in CI:** two PRs failed on a wrong import (`checkBoolean` comes from `scenario-contract-checks`, not `study-checks`) and on a shared mutable fixture (an imported JSON mutated in place). Reviewers must grep every import against ITS module.
+- **Recertification needs all three live claude-version teeth** (capability_probe, native_adapter, event_bus S8). The hook catalog is rebuilt from the official hooks docs and re-pointed in `event_drift.py` (the M0-T159 pattern). Codex is installed per worktree with `npm ci --ignore-scripts` in `tools/codex_cli`.
+- **Lane C wiring plan:**
+  - W0 contracts: done.
+  - W1 D-1 slice 2: done.
+  - W2/W3/W4 routes: done, unmounted.
+  - **W5:** mount the three routers in `main.py` (self-gated), add harness flags and mount tests, and run a security review at the mount.
+  - W6 (optional): a study.schema 1.1.0 transit_parking `$ref`, owner-decided.
+  
+  Every route mirrors `study_read.py`:
+  - flag-off 404 first;
+  - 429 before any work;
+  - 422 before I/O;
+  - 503 when inputs are unavailable or Lane B is off;
+  - a contract guard before send;
+  - one status/state matrix.
+- **PLUTO flood flags:** their meaning is verified from the DCP Open Data metadata (64uk-42ks; `docs/research/pluto-firm-flags-2026-10-02.md`), because the 26v1 dictionary PDF is encrypted. A decryption attempt was correctly refused.

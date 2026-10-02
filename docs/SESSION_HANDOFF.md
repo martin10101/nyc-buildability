@@ -1,119 +1,89 @@
-# SESSION HANDOFF — seq 133 (2026-10-01 ~17:20 UTC; owner-invoked /session-handoff; reason: "ok I will get more so 5 loops can run meantime our chat got big gonna restart i wanna run now 2 loops"; Claude Code session 01PXWfnLcrZ5cqzDfHbwVTeT, claude-opus-5-5; directive D-090)
+# SESSION HANDOFF — seq 134 (2026-10-02 ~15:45 UTC; owner-invoked /session-handoff; reason: "at a good seam and then explan to me if codex is already running if yes leave the loops running"; Claude Code session 01AjePR92H83Yc5jH81uya6d, claude-opus-5-5; directives D-090, D-091)
 
 Orientation only. The ledger (`python tools/project_control.py status`) and `project-control/` WIN
-over this prose. Seq 132 is in git at `31e938ad` (#270). The PC-only items are UNCHANGED and still
-open: C: disk cleanup, owner-typed D-088 commissioning, the M5-T110 canary, and B-026.
+over this prose. Seq 133 is in git (#279).
 
 ## Identity (live at generation)
-- **Machine:** a DigitalOcean droplet ("DO-Regular"), Linux, **1 CPU / 2 GB RAM**, 48 GB disk with 31 GB free. Not the owner's PC.
-- **Repos:** main checkout `/root/project/nyc-buildability`. The handoff is written in worktree `/root/project/w-handoff2`, branch `task/session-handoff-2026-10-01-cloud`. Integration branch `candidate/D-024-mrl-option-b` @ `5aa9e735`.
-- **No open work:** no dirty or unpushed worktree, no running agent, no pending merge job.
-- **Gate 0 deviation:** this session ran from `/root/project`, outside the repo, with claude.ai connectors attached. Because of that, the repo hooks and `.claude/agents` were not loaded, and the producers and reviewers were generic subagents that inherited Opus 5.5 instead of the D-064/D-085 opus-4-8 pin. Record this with the directives.
+- **Machine:** the DigitalOcean droplet, resized by the owner to **4 CPU / 8 GB** (Linux). Not the owner's PC.
+- **Repos:** main checkout `/root/project/nyc-buildability`, which is behind origin until you pull. The handoff is written in worktree `/root/project/w-handoff3`, branch `task/session-handoff-2026-10-02`. Integration branch `candidate/D-024-mrl-option-b` @ `8b67a554` before this handoff PR.
+- **Codex / loops:** NO Codex loop and no supervisor process is running; `ps` shows only this session. Codex 0.157.0 is installed only inside task worktrees (`tools/codex_cli/node_modules`, `npm ci --ignore-scripts`), is not on PATH, and is not signed in. The "robots" this session ran were Claude subagents; none is running now.
+- **Server venv:** `/root/project/lanes-runtime/venv/bin/{python,ruff}`. Its site-packages hold a STALE `app` copy, so run api tests from `services/api`.
 
 ## Owner decisions (verbatim) in force
-- **Option B merges.** The owner said "1 b" and applied it as `autoMode` rules in `~/.claude/settings.json` on this droplet: "Reviewed merge in nyc-buildability" and "Next queue item in nyc-buildability". A robot may merge only when all of these hold:
-  - a different agent's review is PASS with 0 blocking, naming the exact head;
-  - all CI on that head is green;
-  - the merge uses `--match-head-commit`;
-  - the PR touches **no Lane A zoning-math path**.
+- **Message 22 / D-090 source-006:** approved #282 and the #280–#282 merges, then "continue the next eligible tasks". Also: the zoning-math switch stays off; nothing claims the combined zoning lot is verified; don't ask again about the wording; report only genuinely new decisions or blockers.
+- **Remaining capacity (SETTLED, never ask):** "Remaining development capacity: Not confirmed" / "Needs verified zoning-lot boundaries and existing zoning floor area." (R039 dropped.)
+- **Message 27:** "Start 5 Codex loops in parallel. Keep memory under 70%; if it gets close, drop to 4." I read this as 5 cloud robots (orchestrator reading). Memory peaked at 16%, and the kernel `oom_kill` count is 0.
+- **D-091 (messages 28–30):** move the Codex/Claude loop to this server. Codex and Claude both review finished work; then a higher-end model reviews both and combines them (R001–R008). For safety, the build is never-weaker: the combined result is the union of both reviews' findings plus the worse verdict, computed in code, and model disputes are advisory only. A model never drops a finding.
+- **Option B merges (seq 133) still apply:** a different agent's review PASS with 0 blocking at the exact head; all CI on that head green; merge with `--match-head-commit`; no Lane A zoning-math path. `LANE_A_ENABLED` stays unset.
+
+## Done this session (merged after independent review + green CI)
+- **D-090:** #280 capture, #281 B-07, #282 option-A wording.
+- **D-091 cloud-loop code: ALL ledger-accepted, with gates and DCV rows; every code task is now merged.**
+  - M0-T165 platform seam (#288);
+  - M0-T166 Linux launcher (#301);
+  - M0-T167 Codex 0.157.0 admission (#289);
+  - M0-T168 Claude reviewer (#291);
+  - M0-T169 combiner (#300);
+  - M0-T170 70% memory ceiling and 2-review cap (#302);
+  - M0-T171 review slots (#308; an accept was reverted before merge when windows-latest failed, then reworked);
+  - M0-T173 Linux resource wiring (#309);
+  - M0-T176 the Windows lock fix (#313);
+  - M0-T172 dual-review conductor, default off (#314);
+  - M0-T174 Linux recertification (#321).
   
-  Zoning-math PRs need the owner's yes.
-- **Spending:** "no i pay flat". There is no spending limit; robots pause when the plan's limit is reached.
-- **Parallelism:** "i wanna run now 2 loops". Run **at most 2 robots at once** until the owner resizes the droplet:
-  - minimum 4 CPU / 8 GB for 5 robots;
-  - 8 CPU / 16 GB for 6 robots;
-  - resize with "CPU and RAM only" (reversible), and stop the robots first.
-- **R6B (#262/#269):** the owner said "Yes—I'd approve all three based on the reported switch being off…". The full quote is on #262 and #269. Its conditions:
-  - **`LANE_A_ENABLED` stays unset; merging ≠ activation.** It is turned on only on the owner's explicit word.
-  - The labels are "Tax-lot-only estimate", and "Not confirmed" for whole-site capacity, remaining capacity, and combined-lot coverage/rear yard.
-  - Once the zoning lot is verified, the warning names lots 1 and 70.
-- **Codex loop to the new CC:** this can only be done on the PC. The pin is a SHA-256 over the PC's `claude.exe`. Steps: `docs/CONTROLLER_UPDATE_RUNBOOK.md` §13.
-
-## Done since seq 132 (merged; independent PASS 0-blocking at the exact head, verified PR body, CI 40/40)
-- #263: E-01 drawing kit.
-- #277: the owner's `.claude` files, cherry-picked from `e0c222da` (the codex-loop directive plus a backend-engineer memory note).
-- #270: handoff seq 132.
-- **#262 A-02a R6B FAR + heights, OWNER-approved.** Its overlay note now names the Article III checks.
-- **#269 A-02b R6B coverage, rear-yard waiver and units, OWNER-approved.** Golden `cb6f5c77…` (note text only).
-- **#278:** an always-visible tax-lot-only warning plus labels on every cap/FAR surface, including print and legacy Compare.
-
-The evening total is 16 merges. The seq-132 list (#261, #265–#267, #271–#276) still stands.
+  Contracts: #284, #298, #304. **Only M0-T175, the commissioning, remains.**
+- **Lanes:**
+  - B: B-08 #283, B-09 slices 1–4 #290 #303 #307 #311, the flood meaning #315, B-10 #294, B-11 slice 1 #312.
+  - C: C-01 #285, C-13 #293, C-10 #306, the D-1 study route #316/#320, W1b #318, W1c harness #317, W0 contracts #319, the W2 flags route #324, the W3 transit route #323, the W4 parity route #325. The W2–W4 routers are NOT mounted yet.
+  - D: D-03 slices 2–5 #287 #292 #295 #299, D-09 #305, D-04 slices 1–2 #310 #322 (the flag-on e2e passes).
+  - E: E-07 #286.
+- **Worktrees removed** per the resume prompt: nyc-lane-b7, nyc-wording-a, w-directive-1001, rv-280, rv-281, rv-282.
 
 ## Open PRs
 | PR | State |
 |---|---|
+| #326 D-12 §8a flags window (first slice, flag off) | Producer done; NOT reviewed; CI pending |
 | #268 E-03 DXF (draft) | Not reviewed; needs A-04 |
 | #241 | Never merge |
 | #64 M0-T019 (against `main`) | Old; untouched |
 
-## Owner decisions pending
-1. **Remaining-capacity wording:** A "Not confirmed" or B "Not available — needs existing zoning floor area"? I recommended B. Both currently print in one brief (#278 N1).
-2. **When to turn on `LANE_A_ENABLED`:** owner only.
-3. **A verified zoning-lot source** to name lots 1 + 70. It may need the architect or a legal opinion.
-4. **G6/Q12 licensed review** of the R6B rules, and the reviewer's name and hours.
-5. Q4, Q8, #243–#246, the Q1 pilot, and the droplet resize timing.
-
-## Benchmark facts (215-16 Northern, BBL 4073340070)
-- **Zoning lot:** tax lots 1 + 70 per DOB A1 421803891. It is about 200 × 100 ft with two corners; Lane B must confirm.
-- **Lot 70 frontages:** 103.88 ft on Northern Blvd (wide) and 99.98 ft on 215 Pl (narrow).
-- **Existing floor area (B-05):** lot 70 = **Unknown — enter**. The DOB figure 39,934 is set aside, because it may be zoning-lot-wide. The recorded figure is 54,488 (reference only). The existing building records 38 units.
-- **R6B draft results, lot 70 only:**
-  - FAR 2.00/2.40 → 20,150/24,180 sq ft;
-  - heights 30/45/55, or 30/45/65 qualifying (min base / max base / max building);
-  - corner coverage 100% and the corner rear-yard waiver;
-  - units 29 (35 qualifying, sent to professional review, not asserted). §23-52 divides the ZONING LOT's floor area, so these are not the site cap.
-- **Second opinion (an LLM, not licensed; saved at `docs/research/owner-research/2026-10-01-r6b-second-opinion-{questions,answer}.md`):**
-  - It agrees with the district rules.
-  - C2-2 changes street-wall placement (§35-631(b): at least 70% of the street wall within 8 ft of the street line). Not modeled.
-  - In mixed buildings the rear yard starts at the lowest dwelling floor (§35-53). Not modeled.
-
-## Follow-ups (non-blocking, on PRs)
-- **#278:** wire the verified zoning lot (a Lane B fact, a Lane C contract field, and the Lane D containers passing `zoningLot`). D-05's ThreeAnswersPanel needs the warning before M1-12.
-- **#262:** A-11 street-wall location (§35-631(b)). A Lane C request for the stale `config.py:40` comment. `tools/residential_validation.py` is 622 SLOC; split it if it grows.
-- **#269:**
-  - N1: an always-shown note that the units dividend is the zoning lot's;
-  - N2: cite 35-53;
-  - N3: define the 100-ft input (corner portion vs radius) with Lane B;
-  - N4: the 23-363 note should say "may increase".
-- **Earlier:**
-  - #271 N1: passive-effect focus in 4 screens;
-  - #273 N1: `ownership_at` fallback;
-  - #276 N1/N3: reflection routes and the comment wording;
-  - #274 N7: Lane C must supply all block filings;
-  - #265: stale `results.py` docstring and the `raw_digest` check;
-  - #275 N8/N9: `seen_at` tie-break;
-  - #277 N2: reword the memory note.
-
-## Ledger (authoritative) and what is NOT recorded
-- No ledger gates, DCV rows or accepts exist for any evening merge. #247–#250 have G0 only.
-- Owner words since D-090 source-002 have not been captured with /directive-compliance.
-- Lessons are recorded in `PROGRAM_KNOWLEDGE.md` (Tier 1), `docs/WORKING_KNOWLEDGE.md` (the "Cloud Road-1 run" section) and `docs/DISCOVERY_BACKLOG.md` (DB-097–DB-102).
+## Owner decisions pending (plain words)
+1. **OD-B, the combining model (D-091-R008):** the loop can't use the combiner until you pick it. My recommendation is Opus 5.5. It must be on the allowlist and DIFFERENT from the Claude reviewer's model; commissioning checks that.
+2. **OD-C, Codex sign-in:** you run `codex` login once on the server, at commissioning.
+3. **OD-D / B-026, keep or retire the PC loop:** `tools/controller_update/source_binding.json` (the PC update pin) is stale and was deliberately not re-pinned. It also contains your Windows user folder path in a public repo; fix that in a separate cleanup once you decide.
+4. **DB-102, a verified zoning-lot source:** needed to name lots 1 + 70 and to compute whole-site capacity.
+5. **B-07 questions (#281):**
+   - Is a 1 ft minimum shared line right (a point contact is not "touching")?
+   - Should a condo base-lot outline be measured?
+   - Lots 1 + 70 front three streets: how does the corner/through test map to the ZR?
+   - Threshold sign-off: 0.01 ft conform, 1 ft shared line, 1 sq ft overlap, the 0.02 ft narrow test, the 100-lot cap.
+   - Should filing text ever be read for lot numbers?
+6. **Lane questions:**
+   - B-09: connectors for widening lines, elevation and neighbors' windows? Engine street-wall result into item 4? Should the transit zone be a §8a flag?
+   - B-11: the comparables filter (±50% size band; recorded DOF category vs PLUTO use; neighborhood scope), and which 485-x source to use.
+   - C D-1: should the address stay null? Is the flag name right? Is a 503 acceptable before the live fetch?
+7. **Carried from seq 133:** when to turn on `LANE_A_ENABLED`, the G6/Q12 licensed review, Q4, Q8, #243–#246, and the Q1 pilot.
 
 ## Standing restrictions
-- Tier D / Section 20 stops. PR #241 is never merged. The expansion §2 hold stands. Commissioning is owner-typed. Never pass `model:`.
-- Dependency security: no waiver. No local npm/node; CI is the web executor. Producers never write `project-control/`.
-- **`LANE_A_ENABLED` stays off. At most 2 robots at once.** A reviewer verifies every PR body before merge (8 of 16 bodies drifted tonight).
+- Tier D / Section 20 stops. PR #241 is never merged. The expansion §2 hold stands. Commissioning is owner-typed (root config, Codex sign-in, systemd, start approval).
+- Never pass `model:`. Dependency security: no waiver. No local npm/node; CI is the web executor.
+- At most 5 robots at once, with memory under 70%. Never merge with any check pending. A reviewer verifies every PR body.
+- Lessons from this session are recorded in `docs/WORKING_KNOWLEDGE.md` "Cloud session 2026-10-02".
 
 ## EXACT NEXT ACTION (successor)
-1. **Gate 0,** then report READY TO RESUME or BLOCKED. Confirm that `claude auto-mode config` lists the two owner rules; if not, the owner merges.
-2. **Capture the owner words above** via /directive-compliance, including both deviations.
-3. **Two robots:**
-   - **B-07 multi-lot site math (Lane B):** it turns the lot-70 numbers into whole-zoning-lot inputs for 1 + 70.
-   - **The second robot** takes the next queue item whose dependencies are met. #269 N1 (zoning math) or #273 N1 only with the owner's yes, since neither is a queue item.
-   
-   Each goes producer → independent review (body included) → green CI → option-B merge.
-4. **If the owner hasn't answered A/B,** ask once, in plain words.
+1. **Gate 0,** then READY TO RESUME or BLOCKED. Run `gh pr list`.
+2. **#326 (D-12):** independent review (body included), then green CI, then merge.
+3. **W5 (Lane C):** mount the W2/W3/W4 routers in `main.py`, self-gated and default off, plus the harness flags and mount tests. Run a security review across all three routes at the mount.
+4. **D-15 parity panels:** after #326 merges, because they share the dashboard wiring files.
+5. **M0-T175 commissioning checklist:** producer cloud-architect. Every server step is owner-typed. It needs OD-B before the combiner can be enabled.
 
 ## COPY INTO THE NEW SESSION
-Owner, before starting: `cd /root/project/nyc-buildability && git pull --ff-only && claude`. The main checkout is
-behind origin until pulled. Start inside that folder so its settings turn the claude.ai connectors off; `/mcp` must
-list none. Otherwise Gate 0 is BLOCKED.
+Owner, before starting: `cd /root/project/nyc-buildability && git pull --ff-only && claude`. `/mcp` must list none.
 
 Resume as the NYC Buildability orchestrator (verify the model with /model). Work only from repository
-evidence. Verify: cwd IS the repo worktree root (`git rev-parse --show-toplevel`), branch
-candidate/D-024-mrl-option-b, HEAD == origin, /mcp empty (Bootstrap Gate 0). Read CLAUDE.md,
-docs/SESSION_HANDOFF.md and `python tools/project_control.py status` (the ledger wins). Check open PRs
-with `gh pr list` and `claude auto-mode config`. Report READY TO RESUME or BLOCKED, then continue from
-EXACT NEXT ACTION without repeating work. Run at most 2 robots at once; keep LANE_A_ENABLED off;
-zoning-math merges need the owner's yes; explain things to the owner in plain, simple words. Stop for
-Tier D, PR #241, owner holds and owner-typed commissioning; never pass `model:`.
+evidence. Verify: cwd IS the repo worktree root, branch candidate/D-024-mrl-option-b, HEAD == origin,
+/mcp empty (Bootstrap Gate 0). Read CLAUDE.md, docs/SESSION_HANDOFF.md and `python tools/project_control.py
+status` (the ledger wins); check `gh pr list`. Report READY TO RESUME or BLOCKED, then continue from EXACT NEXT
+ACTION without repeating work. At most 5 robots, memory under 70%; LANE_A_ENABLED stays off; zoning-math
+merges need the owner's yes; explain things to the owner in plain, simple words. Stop for Tier D, PR #241,
+owner holds and owner-typed commissioning; never pass `model:`.
