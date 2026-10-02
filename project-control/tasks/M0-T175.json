@@ -47,13 +47,13 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 50,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T09:02:47.881331+00:00",
-  "updated_at": "2026-10-02T16:25:25.895602+00:00",
+  "updated_at": "2026-10-02T16:38:17.932861+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -75,6 +75,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed for cloud-architect: write the Linux commissioning checklist (every server step owner-typed; combiner enable waits on OD-B)"
+    },
+    {
+      "at": "2026-10-02T16:38:17.932761+00:00",
+      "agent": "orchestrator",
+      "percent": 50,
+      "status": "in_progress",
+      "message": "Checklist written (33e26662) and reworked (b055cf20: model-difference orchestrator check, Linux paths, start command); independent accuracy check next; owner steps + canary evidence pending"
     }
   ]
 }
