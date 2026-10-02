@@ -706,3 +706,41 @@ jobs:
         run: |
           python3 tools/context_benchmark.py --e2e \
             --baseline project-control/reports/M0-T076-baseline-g0.json
+
+  # Task M1-T026 (C-10; plan M1-26; cites D-090; ADDITIVE job; existing jobs,
+  # triggers, permissions and action pins untouched): run the four previously
+  # orphaned test suites that no workflow executed (RECONCILIATION.md M1-26;
+  # CODE_MAP.md §8) so they stop silently rotting —
+  #   * .github/scripts/tests — the contract-validator test suite (the validator
+  #     itself runs in the `contracts` job; its tests ran in no workflow)
+  #   * tools/test_residential_validation.py — the residential source-audit suite
+  #   * tools/test_gate_runner.py            — the raw gate-evidence recorder suite
+  #   * tools/test_authority_policy.py       — the ADR-006 autonomy-tier suite
+  # Mirrors the `contracts` job: the runner's preinstalled python3, so the
+  # validate_contracts tests run against the CI runner's jsonschema exactly as
+  # the sibling validator does (M0-T009 G4 evidence: the runner ships jsonschema
+  # 4.10.3; that suite self-skips cleanly via importorskip if it is ever absent,
+  # and the other three suites are stdlib-only). pytest is the only tool needed
+  # and installs hash-pinned from the SAME tooling lock the sibling Python jobs
+  # use — no new dependency, no range resolution, no network beyond the pinned
+  # install. Inherits the top-level least-privilege `contents: read` and the
+  # workflow concurrency; no secrets, no new third-party action. Fail-closed:
+  # any suite failure (a non-zero pytest exit) fails the build — nothing here is
+  # warning-only.
+  validation-suite:
+    name: validation-suite (orphaned contracts-validator + residential + gate-runner + authority)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      # pytest from the hash-pinned tooling lock, onto the runner's preinstalled
+      # python3 — the same install pattern the `contracts` job uses for PyYAML.
+      - name: Install pytest from the hash-pinned tooling lock
+        run: python3 -m pip install --require-hashes -r services/api/requirements-tools.lock
+      - name: Contract-validator tests (.github/scripts/tests)
+        run: python3 -m pytest .github/scripts/tests -q
+      - name: Residential source-audit suite (tools/test_residential_validation.py)
+        run: python3 -m pytest tools/test_residential_validation.py -q
+      - name: Gate-evidence recorder suite (tools/test_gate_runner.py)
+        run: python3 -m pytest tools/test_gate_runner.py -q
+      - name: Authority-policy / ADR-006 tier suite (tools/test_authority_policy.py)
+        run: python3 -m pytest tools/test_authority_policy.py -q
