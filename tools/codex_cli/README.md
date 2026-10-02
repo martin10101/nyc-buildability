@@ -142,7 +142,8 @@ To re-verify before trusting it: run the age gate and audit shown above; both mu
 ## Where the owner's sign-in lives (outside the repo, outside git)
 
 Confirmed from OpenAI's official Codex docs, <https://developers.openai.com/codex/auth>
-(fetched 2026-10-02, HTTP 200): "Codex caches login details locally in a plaintext file at
+(fetched 2026-10-02; the URL 308-redirects to the live page and resolved HTTP 200 after
+following the redirect): "Codex caches login details locally in a plaintext file at
 `~/.codex/auth.json` or in your OS-specific credential store... file stores credentials in
 `auth.json` under `CODEX_HOME` (defaults to `~/.codex`)." So the credential is
 **`~/.codex/auth.json`** (or the OS keyring), under `CODEX_HOME`, in the owner's home — never in
@@ -152,18 +153,20 @@ already passes `--ignore-user-config`, so the owner's personal `~/.codex/config.
 leaks into a review (`codex_reviewer.py:8,17`); note that `--ignore-user-config` disables the
 user *config* but, per the same CLI help, auth still resolves via `CODEX_HOME`.
 
-## CI coverage today, and the needed follow-up (CI changes are out of this task's scope)
+## CI coverage (continuous audit is in place)
 
-**CI does not cover `tools/codex_cli/` today.** The `web-dependency-security` job and the
-`scheduled-web-audit.yml` re-audit in `.github/workflows/` are both scoped to
-`apps/web/package-lock.json` (working-directory `apps/web`; path filters list only `apps/web/**`).
-No workflow references `tools/codex_cli`. So this lock is dependency-gated at admission by the
-commands above, but it is **not** continuously re-audited by CI, which the policy requires
-(§1.5: audit on every change AND on a schedule).
+**CI now covers `tools/codex_cli/`** (added by this task, M0-T167 rework, to satisfy policy
+§1 rule 5: audited on every change AND on a schedule). Two additive jobs mirror the web app's
+dependency-security jobs exactly, reuse the same SHA-pinned actions and the same pinned npm CLI
+`11.18.0`, and reuse the web age gate `apps/web/scripts/dependency_age_gate.mjs`:
 
-Needed follow-up (separate, orchestrator-owned task touching `.github/`): add a CI job (and a
-scheduled-audit entry) that, from `tools/codex_cli/`, runs under the pinned npm CLI (11.18.0):
-`npm ci --ignore-scripts --no-audit`, `npm audit --audit-level=low` plus the JSON-total==0 check,
-and `node ../../apps/web/scripts/dependency_age_gate.mjs tools/codex_cli/package-lock.json`,
-fail-closed, with path filters covering `tools/codex_cli/package*.json`. Until that lands, an
-advisory disclosed against this lock after merge would not turn CI red on its own.
+- `.github/workflows/ci.yml` → job **`codex-cli-dependency-security`** — runs on every push and
+  PR (always-run, like `web-dependency-security`). From `tools/codex_cli/`: `npm ci
+  --ignore-scripts --no-audit --no-fund`, `npm audit --audit-level=low`, a JSON-total==0 check,
+  and `node ../../apps/web/scripts/dependency_age_gate.mjs package-lock.json`. All fail-closed.
+- `.github/workflows/scheduled-web-audit.yml` → job **`codex-audit`** — the same checks on the
+  existing daily schedule (and `workflow_dispatch`), so an advisory disclosed against this lock
+  AFTER merge turns a run red with no code change.
+
+Every step fails closed: a finding, a too-new package, an integrity mismatch, an unexpected host,
+or a registry outage fails the build; there is no allowlist, suppression, or warning-only step.
