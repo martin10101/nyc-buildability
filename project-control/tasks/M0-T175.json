@@ -41,7 +41,7 @@
     "G2",
     "G4"
   ],
-  "producer_agent": "orchestrator",
+  "producer_agent": "cloud-architect",
   "reviewer_agents": [
     "control-plane-verifier",
     "directive-compliance-verifier"
