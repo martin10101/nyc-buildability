@@ -27,12 +27,17 @@ from pathlib import Path
 
 import pytest
 
+import app.api.v1.pluto_version_cache as pvc
 from app.api.v1.pluto_version_cache import (
+    NEGATIVE_CACHE_TTL_SECONDS,
+    PROBE_MAX_ATTEMPTS,
+    PROBE_TIMEOUT_SECONDS,
     VERSION_PROBE_TTL_SECONDS,
     CachedVersionProbe,
+    default_version_probe,
     published_versions_for_study,
 )
-from app.api.v1.study_inputs import pluto_study_inputs_provider
+from app.api.v1.study_inputs import StudyInputsUnavailableError, pluto_study_inputs_provider
 from app.connectors.pluto_soda import (
     DATASET_ID,
     SOURCE_ID,
@@ -210,7 +215,7 @@ def test_cache_serves_within_ttl_and_re_probes_after_expiry() -> None:
     assert inner.calls == 2
 
 
-def test_cache_never_caches_a_failure() -> None:
+def test_cache_never_caches_a_success_on_failure_and_breaker_recovers() -> None:
     now = [0.0]
     calls = {"n": 0}
 
@@ -221,11 +226,92 @@ def test_cache_never_caches_a_failure() -> None:
         return _probe_returning("26v1")(correlation_id)
 
     cache = CachedVersionProbe(flaky, clock=lambda: now[0])
+    # Failure: no success is cached and the breaker opens (one outbound call).
     with pytest.raises(SourceUnavailableError):
         cache("c1")
-    # The failure was NOT cached: the next call (same instant) re-probes and succeeds.
-    assert cache("c2").version == "26v1"
+    assert calls["n"] == 1
+    # Within the 60 s negative window: SUPPRESSED - the stored error re-raises with
+    # NO new outbound call.
+    now[0] += NEGATIVE_CACHE_TTL_SECONDS - 1
+    with pytest.raises(SourceUnavailableError):
+        cache("c2")
+    assert calls["n"] == 1
+    # Past the negative window (half-open): a probe runs again and succeeds.
+    now[0] += 2
+    assert cache("c3").version == "26v1"
     assert calls["n"] == 2
+    # The recovered success is cached for the full 15 minutes.
+    now[0] += VERSION_PROBE_TTL_SECONDS - 1
+    assert cache("c4").version == "26v1"
+    assert calls["n"] == 2
+    # ...and re-probes only after the 15-min TTL.
+    now[0] += 2
+    cache("c5")
+    assert calls["n"] == 3
+
+
+def test_negative_cache_hit_is_logged_and_outcome_is_unchanged(caplog) -> None:
+    now = [0.0]
+
+    def always_fail(correlation_id: str) -> PlutoPublishedVersion:
+        raise SourceTimeoutError("down", correlation_id=correlation_id)
+
+    cache = CachedVersionProbe(always_fail, clock=lambda: now[0])
+    with pytest.raises(SourceTimeoutError):
+        cache("c-open")
+    with caplog.at_level(logging.INFO, logger="app.api.v1.pluto_version_cache"):
+        with pytest.raises(SourceTimeoutError):
+            cache("c-suppressed")
+    # The suppression is visible, and the re-raised error keeps its typed error_type
+    # so the caller's fail-closed outcome is unchanged.
+    assert "study_pluto_version_probe_suppressed" in caplog.text
+    assert "c-suppressed" in caplog.text
+    assert "timeout" in caplog.text
+
+
+def test_breaker_fail_closed_yields_version_unknown_without_re_probing() -> None:
+    # The GUARD end-to-end: a failing probe wrapped by the cache. The first study
+    # probes once and fails closed (version_unknown); a second study within 60 s
+    # fails closed WITHOUT any new outbound call.
+    now = [0.0]
+    calls = {"n": 0}
+
+    def failing(correlation_id: str) -> PlutoPublishedVersion:
+        calls["n"] += 1
+        raise SourceUnavailableError("down", correlation_id=correlation_id)
+
+    probe = CachedVersionProbe(failing, clock=lambda: now[0])
+    pins = (_pluto_pin("26v2"),)
+
+    first = published_versions_for_study(pins, version_probe=probe, correlation_id="s1")
+    second = published_versions_for_study(pins, version_probe=probe, correlation_id="s2")
+    # Both fail closed: no PLUTO observation on record -> version_unknown downstream.
+    assert all(pv.dataset != PLUTO_DATASET_NAME for pv in first)
+    assert all(pv.dataset != PLUTO_DATASET_NAME for pv in second)
+    assert assess_data_versions(pins, second).sources[0].status == STATUS_VERSION_UNKNOWN
+    # Only ONE outbound call for the two studies (the breaker suppressed the second).
+    assert calls["n"] == 1
+
+
+def test_cache_constants_are_pinned() -> None:
+    assert VERSION_PROBE_TTL_SECONDS == 900
+    assert NEGATIVE_CACHE_TTL_SECONDS == 60
+
+
+def test_default_probe_uses_single_attempt_and_short_timeout(monkeypatch) -> None:
+    seen: dict = {}
+
+    def fake_fetch(**kwargs):
+        seen.update(kwargs)
+        return _probe_returning("26v1")(kwargs["correlation_id"])
+
+    monkeypatch.setattr(pvc, "fetch_published_version", fake_fetch)
+    default_version_probe("cid-probe")
+    assert PROBE_MAX_ATTEMPTS == 1
+    assert PROBE_TIMEOUT_SECONDS <= 5.0
+    assert seen["max_attempts"] == 1
+    assert seen["timeout"] == PROBE_TIMEOUT_SECONDS
+    assert seen["correlation_id"] == "cid-probe"
 
 
 def test_cache_is_bounded_to_one_entry_and_thread_safe() -> None:
@@ -260,6 +346,22 @@ def _facts(provider, bbl=NORTHERN_BBL, correlation_id="cid", selected=None):
         bbl, correlation_id
     )
     return {fact["key"]: fact for fact in inputs.site_facts}
+
+
+def test_no_probe_call_when_lane_b_is_off() -> None:
+    # Code-review NB: with LANE_B off, assembly withholds BEFORE any probe. A
+    # counting probe proves ZERO outbound calls in that path.
+    inner = _CountingProbe()
+    provider = pluto_study_inputs_provider(
+        _fetcher_over(_northern_body()),
+        clock=FIXED_CLOCK,
+        env={},  # LANE_B_ENABLED off
+        version_probe=inner,
+    )
+    with pytest.raises(StudyInputsUnavailableError) as excinfo:
+        provider(NORTHERN_BBL, "cid-off")
+    assert excinfo.value.reason == "lane_b_disabled"
+    assert inner.calls == 0
 
 
 def test_probe_newer_than_benchmark_pin_is_current() -> None:
