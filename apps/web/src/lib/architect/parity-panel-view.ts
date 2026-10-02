@@ -167,7 +167,7 @@ export function parityStripSummary(data: ParityData): ParityStripSummary {
   const excludedCount = data.comparable_sales.excluded.length;
   const items: string[] = [
     `${selectedCount} recorded ${selectedCount === 1 ? "sale" : "sales"}`,
-    "Remaining capacity: Not confirmed",
+    NOT_CONFIRMED_LABEL,
   ];
   if (excludedCount > 0) {
     items.push(`${excludedCount} not included`);

@@ -89,7 +89,7 @@ describe("parityStripSummary — one §5a strip, at most three items", () => {
     const summary = parityStripSummary(bayside());
     expect(summary.items.length).toBeLessThanOrEqual(3);
     expect(summary.items[0]).toBe("4 recorded sales");
-    expect(summary.items).toContain("Remaining capacity: Not confirmed");
+    expect(summary.items).toContain(NOT_CONFIRMED_LABEL);
     expect(summary.items).toContain("8 not included");
   });
 
