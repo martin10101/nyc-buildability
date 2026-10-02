@@ -14,8 +14,8 @@ import type { PropertyProfile } from "@/lib/contract";
 import { InternalBanner } from "@/components/property/InternalBanner";
 import { OutcomeAnnouncer } from "@/components/property/OutcomeAnnouncer";
 import { DashboardFailureNotice } from "./DashboardFailureNotice";
-import { ScenarioFailureStates } from "@/components/compare/ScenarioFailureStates";
-import { RuleEvaluationFailure } from "@/components/rule-evaluation/RuleEvaluationFailure";
+import { DashboardEnrichmentNotice } from "./DashboardEnrichmentNotice";
+import { SCENARIO_SURFACE, RULE_EVALUATION_SURFACE } from "./dashboard-enrichment-failure";
 import { AnalysisIdentityNotice } from "../AnalysisIdentityNotice";
 import { IncompleteEvaluationNotice } from "../DevelopmentLimits";
 import { CapturedRecord } from "../EvidenceRecord";
@@ -91,8 +91,8 @@ function LoadedDashboard({ profile, initialTool, surveyEnabled, proposalEditorEn
       <AnalysisIdentityNotice label="Scenario" requestedBbl={bbl} document={returnedScenario}/>
       <AnalysisIdentityNotice label="Rule evaluation" requestedBbl={bbl} document={returnedEvaluation}/>
       <IncompleteEvaluationNotice evaluation={identityEvaluation}/>
-      {analysis.scenario && analysis.scenario.kind !== "scenario" && analysis.scenario.kind !== "aborted" ? <details><summary>Scenario unavailable · retry or inspect</summary><ScenarioFailureStates outcome={analysis.scenario} onRetry={analysis.retryScenario}/></details> : null}
-      {analysis.evaluation && analysis.evaluation.kind !== "evaluation" ? <details><summary>Rule evaluation unavailable · retry or inspect</summary><RuleEvaluationFailure outcome={analysis.evaluation} onRetry={analysis.retryEvaluation}/></details> : null}
+      {analysis.scenario && analysis.scenario.kind !== "scenario" && analysis.scenario.kind !== "aborted" ? <DashboardEnrichmentNotice outcome={analysis.scenario} surface={SCENARIO_SURFACE} onRetry={analysis.retryScenario}/> : null}
+      {analysis.evaluation && analysis.evaluation.kind !== "evaluation" && analysis.evaluation.kind !== "aborted" ? <DashboardEnrichmentNotice outcome={analysis.evaluation} surface={RULE_EVALUATION_SURFACE} onRetry={analysis.retryEvaluation}/> : null}
       {analysisLoading ? <p className="section-note" role="status">Loading analysis… Property records remain available.</p> : null}
     </div>
     {address && profile.identity.address?.normalized_address && profile.identity.address.normalized_address !== address.label ? <p className="dashboard-address-alias" data-testid="representative-address">City records list this lot as {profile.identity.address.normalized_address}</p> : null}

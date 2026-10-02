@@ -41,7 +41,9 @@ const NEEDS_PLATFORM =
   "This needs the platform team. Trying again will likely give the same result until it is fixed.";
 const FROM_SOURCE = "This is an answer from the official city source, not an app error.";
 
-function referenceRow(correlationId: string | null): FailureDetail[] {
+/** The "Reference id for support" technical row, or none when the response carried no id.
+ *  Shared with the enrichment-failure mapper so the same row is worded once. */
+export function referenceRow(correlationId: string | null): FailureDetail[] {
   return correlationId ? [{ label: "Reference id for support", value: correlationId }] : [];
 }
 
