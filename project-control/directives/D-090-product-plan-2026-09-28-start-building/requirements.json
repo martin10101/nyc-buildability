@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 76,
+ "requirement_count": 79,
  "producer": "orchestrator",
- "updated_at": "2026-10-02T04:36:35+00:00",
+ "updated_at": "2026-10-02T16:22:58+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -2565,6 +2565,104 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Orchestrator's threshold: 'close' = 60% of memory in use (MemTotal minus MemAvailable), checked every 15 s by a background watcher; at 60% no new robot starts until 4 or fewer run.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R077",
+   "text": "Verify the session's model ('verify the model with /model').",
+   "source_ref": "source-008-amendment.md#owner-message-31-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "The session's model id.",
+   "required_evidence": "Session 08a1e891 transcript: every assistant entry records model claude-opus-5-5.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "/model is an interactive local command the orchestrator cannot type; the model was checked from the transcript's assistant entries (all claude-opus-5-5). The owner can confirm with /model.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R078",
+   "text": "After the checks, report READY TO RESUME or BLOCKED ('Report READY TO RESUME or BLOCKED').",
+   "source_ref": "source-008-amendment.md#owner-message-31-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R077"
+   ],
+   "required_harness": "Bootstrap Gate 0 (D-024-R125, R126, R128) and the start-of-session reads.",
+   "required_evidence": "The session's first owner reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Reported READY TO RESUME in session 08a1e891 after Gate 0 passed (see source-008 context).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R079",
+   "text": "Then continue from the seq 134 handoff's EXACT NEXT ACTION without repeating work ('then continue from EXACT NEXT ACTION without repeating work').",
+   "source_ref": "source-008-amendment.md#owner-message-31-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R054",
+    "D-090-R078"
+   ],
+   "required_harness": "docs/SESSION_HANDOFF.md seq 134 EXACT NEXT ACTION items 2-5.",
+   "required_evidence": "PR and dispatch records of session 08a1e891.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Started with item 2 (#326 review after its one failing web test is fixed) and item 3 (W5 mount).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
