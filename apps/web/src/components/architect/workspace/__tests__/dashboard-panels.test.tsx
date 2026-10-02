@@ -137,13 +137,17 @@ describe("owner directive 2026-10-01: tax-lot-only warning and labels on the das
   // Word for word, so any drift in the app's wording fails here.
   const WARNING = "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
   const ZONING_LOT_ROWS = ["Whole-site capacity", "Remaining development capacity", "Combined zoning lot: coverage", "Combined zoning lot: rear yard"];
+  // Owner wording, settled 2026-10-01 (D-090-R038): the remaining-capacity row's reason line.
+  const REMAINING_REASON = "Needs verified zoning-lot boundaries and existing zoning floor area.";
 
   function expectZoningLotRows(summary: HTMLElement) {
     for (const label of ZONING_LOT_ROWS) {
       const cell = within(summary).getByRole("rowheader", { name: label }).closest("tr")!.querySelector<HTMLElement>("td")!;
-      expect(cell.textContent).toBe("Not confirmed");
+      // Line 2: only the remaining-capacity row carries the reason, under "Not confirmed".
+      expect(cell.textContent).toBe(label === "Remaining development capacity" ? `Not confirmed ${REMAINING_REASON}` : "Not confirmed");
       expect(cell).toBeVisible();
     }
+    expect(within(summary).getByTestId("dashboard-zoning-lot-remaining-capacity-reason").textContent).toBe(REMAINING_REASON);
   }
 
   it("shows the warning on the results before any tap and labels the cap and the zoning-lot rows", () => {

@@ -98,7 +98,7 @@
       }
     },
     "remaining_floor_area": {
-      "description": "Allowance minus the existing ZONING floor area when a building stays (plan section 3 step 4, section 5 answer 1). Without an established or entered existing zoning floor area it is not_available ('Not available — needs existing zoning floor area') while the full-site allowance still shows. not_applicable when no building is kept.",
+      "description": "Allowance minus the existing ZONING floor area when a building stays (plan section 3 step 4, section 5 answer 1). Without an established or entered existing zoning floor area it is not_available with the reason 'Needs verified zoning-lot boundaries and existing zoning floor area.' and shows as 'Remaining development capacity: Not confirmed' (owner wording, D-090-R038), while the full-site allowance still shows. not_applicable when no building is kept.",
       "oneOf": [
         { "$ref": "#/$defs/remaining_available" },
         { "$ref": "#/$defs/not_available" },

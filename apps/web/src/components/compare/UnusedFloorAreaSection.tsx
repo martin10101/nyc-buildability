@@ -13,12 +13,14 @@ import { UnusedFloorAreaNotAvailableLine } from "./UnusedFloorAreaNotAvailable";
  * #6, C-3). Plan §3 step 4: existing floor area is never taken from
  * city-recorded (DOF) building area. The scenario views mount this component
  * only when the default-off server flag INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED
- * is on; otherwise they show UnusedFloorAreaSetAside ("Not available — needs
- * existing zoning floor area"). The component and its tests are kept.
+ * is on; otherwise they show UnusedFloorAreaSetAside ("Remaining development
+ * capacity: Not confirmed" and its reason line; owner wording D-090-R038). The
+ * component and its tests are kept.
  *
  * NOT AVAILABLE (D-06). When the server's own section carries the
  * `unused_floor_area_not_available` basis record (A-03 default), the section
- * shows "Not available — needs existing zoning floor area" in place of the
+ * shows "Remaining development capacity: Not confirmed" and "Needs verified
+ * zoning-lot boundaries and existing zoning floor area." in place of the
  * number and in place of the typed-reason gloss: the closest contract reason
  * (`missing_existing_building_area`) would otherwise say no building record was
  * available, which is false when a recorded area exists. The server's basis
@@ -59,7 +61,9 @@ import { UnusedFloorAreaNotAvailableLine } from "./UnusedFloorAreaNotAvailable";
  * gloss of a typed enum. The D-041 / research forbidden nouns (a buildable-area
  * claim, a development-rights claim, a remaining-capacity claim) and any
  * approval/attestation language are never introduced here; the section is a
- * FAR-derived floor-area difference only.
+ * FAR-derived floor-area difference only. The owner's settled not-available
+ * wording (D-090-R038) names remaining development capacity only to say it is
+ * not confirmed; it states no amount.
  */
 
 type UnusedFloorAreaNotComputableReason =
@@ -200,7 +204,7 @@ function OverBuiltNotice({
 }
 
 /** D-06: the server says the section needs an existing zoning floor area. No
- * number and no typed-reason gloss; the plan's exact words only. */
+ * number and no typed-reason gloss; the owner's exact words only (D-090-R038). */
 function NotAvailableLine() {
   return (
     <div data-testid="scenario-unused-floor-area-not-computable">

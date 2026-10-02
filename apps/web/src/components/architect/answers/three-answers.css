@@ -133,6 +133,12 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* The reason line under a not-available value (D-090-R038): its own line, plain weight. */
+.ta-row .ta-supplement-reason {
+  flex-basis: 100%;
+  font-weight: 400;
+}
+
 .ta-exception {
   display: inline-block;
   padding: 0 0.4em;

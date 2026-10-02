@@ -17,6 +17,13 @@ export const TAX_LOT_ONLY_ESTIMATE = "Tax-lot-only estimate";
 /** The value of every combined-zoning-lot result row the app does not calculate. */
 export const NOT_CONFIRMED = "Not confirmed";
 
+/** Row label for the room left after existing buildings (owner wording, D-090-R038). */
+export const REMAINING_CAPACITY_LABEL = "Remaining development capacity";
+
+/** The reason line under "Remaining development capacity: Not confirmed" wherever no verified
+ * value exists (owner wording, settled 2026-10-01: D-090-R038, DB-101 option A). */
+export const REMAINING_CAPACITY_REASON = "Needs verified zoning-lot boundaries and existing zoning floor area.";
+
 const NOT_CALCULATED_YET = "The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
 
 /** The always-visible warning when no verified zoning-lot fact is supplied. */
@@ -25,10 +32,15 @@ export const TAX_LOT_ONLY_WARNING = `These numbers cover only the tax lot you en
 /** Result rows for the combined zoning lot. Each reads NOT_CONFIRMED until it is calculated. */
 export const ZONING_LOT_ROWS = [
   ["whole-site-capacity", "Whole-site capacity"],
-  ["remaining-capacity", "Remaining development capacity"],
+  ["remaining-capacity", REMAINING_CAPACITY_LABEL],
   ["combined-coverage", "Combined zoning lot: coverage"],
   ["combined-rear-yard", "Combined zoning lot: rear yard"],
 ] as const;
+
+/** The reason line a row shows under its NOT_CONFIRMED value, keyed by row. */
+export const ZONING_LOT_ROW_REASONS: Readonly<Partial<Record<(typeof ZONING_LOT_ROWS)[number][0], string>>> = {
+  "remaining-capacity": REMAINING_CAPACITY_REASON,
+};
 
 /**
  * A VERIFIED zoning-lot fact: every tax lot on the zoning lot and the one tax lot the numbers
