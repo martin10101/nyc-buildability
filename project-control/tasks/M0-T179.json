@@ -56,15 +56,15 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "any later tools/agent_supervisor/** change voids this certification",
     "commissioning stays owner-typed (M0-T175): root config, Codex sign-in, record-manifest/verify-controller, unit install, start"
   ],
   "blockers": [],
   "created_at": "2026-10-02T23:36:05.344526+00:00",
-  "updated_at": "2026-10-02T23:36:05.695685+00:00",
+  "updated_at": "2026-10-02T23:37:04.480336+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -75,5 +75,15 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-10-02T23:36:05.344776+00:00"
+  "directive_regime_entered_at": "2026-10-02T23:36:05.344776+00:00",
+  "worktree": "/root/project/w-M0-T179",
+  "progress_log": [
+    {
+      "at": "2026-10-02T23:37:04.480256+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Scenarios in the packet; producer dispatched in /root/project/w-M0-T179"
+    }
+  ]
 }
