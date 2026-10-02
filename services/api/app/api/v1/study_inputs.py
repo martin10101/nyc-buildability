@@ -12,14 +12,19 @@ module only carries them.
 
 Layering:
 
-- :func:`assemble_study_inputs` is the PURE assembly: a ``PlutoFetchResult`` ->
+- :func:`assemble_study_inputs` is the assembly: a ``PlutoFetchResult`` ->
   profile -> B-02 site facts (each carrying B-06's ``source.version_check`` status,
-  request B-3; published versions = the retrievals themselves), and -> a single
-  B-07 :class:`SiteLot` -> lot choice -> multi-lot site (through the LANE_B-gated
-  entry). It performs no I/O, so the route's tests exercise the real B-02/B-07
-  pipeline on a recorded PLUTO body. An optional ``selected`` (a sequence of
-  canonical BBLs) is passed VERBATIM to B-07's ``derive_multi_lot_site`` for a
-  re-pick; None is the default "use all".
+  requests B-3/B-4), and -> a single B-07 :class:`SiteLot` -> lot choice ->
+  multi-lot site (through the LANE_B-gated entry). Published-on-record = the
+  retrievals themselves PLUS, for PLUTO, the city's currently published release
+  from Lane B's version probe (``published_versions_for_study``, request B-4) when
+  a probe is injected; on any probe failure the PLUTO pins FAIL CLOSED to
+  ``version_unknown``. It performs no I/O itself (the only I/O is the injected
+  ``version_probe``, which route tests and the e2e harness drive from recorded
+  fixtures), so the route's tests exercise the real B-02/B-07 pipeline offline on a
+  recorded PLUTO body. An optional ``selected`` (a sequence of canonical BBLs) is
+  passed VERBATIM to B-07's ``derive_multi_lot_site`` for a re-pick; None is the
+  default "use all".
 - :func:`pluto_study_inputs_provider` turns a PLUTO fetcher (the same
   ``(canonical_bbl, correlation_id) -> PlutoFetchResult`` seam the properties
   route injects) into a :data:`StudyInputsProvider`. Tests inject a fixture
@@ -51,6 +56,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from functools import lru_cache
 
+from app.api.v1.pluto_version_cache import (
+    VersionProbe,
+    cached_default_version_probe,
+    published_versions_for_study,
+)
 from app.connectors.bbl import BBLValidationError, normalize_bbl
 from app.connectors.pluto_soda import (
     CONDO_UNIT_LOT_RANGE,
@@ -61,7 +71,6 @@ from app.profile.builder import build_property_profile
 from app.profile.data_versions import (
     assess_data_versions,
     pins_from_site_facts,
-    published_from_pins,
 )
 from app.profile.fact_version_check import attach_version_check
 from app.profile.site_facts import build_site_facts
@@ -149,11 +158,20 @@ def assemble_study_inputs(
     clock: Callable[[], datetime] | None = None,
     env: Mapping[str, str] | None = None,
     address: str | None = None,
+    version_probe: VersionProbe | None = None,
+    correlation_id: str | None = None,
 ) -> StudyInputs:
-    """Build :class:`StudyInputs` from a successful PLUTO fetch result (PURE).
+    """Build :class:`StudyInputs` from a successful PLUTO fetch result.
 
     ``selected`` is the lot selection; None is the default "use all". ``env``
     supplies the LANE_B_ENABLED gate (defaults to the process environment).
+    ``version_probe`` is the injectable PLUTO published-version probe (request
+    B-4): when present and Lane B is on, the city's currently published release is
+    consulted so a lot pinned to an older release reads ``out_of_date``, and any
+    probe failure fails CLOSED to ``version_unknown`` for the PLUTO pins. When None
+    (no probe by design) the published-on-record set is retrieval-only, as before.
+    The only I/O this function performs is that injected probe; ``correlation_id``
+    ties the probe's provenance and logs to the request.
 
     Raises:
         StudyInputsUnavailableError: the Lane B gate is off (so the lot choice is
@@ -171,21 +189,12 @@ def assemble_study_inputs(
     builder_kwargs = {} if clock is None else {"clock": clock}
     profile = build_property_profile(pluto_result, **builder_kwargs)
     site_fact_set = build_site_facts(profile)
-    # Attach each source's version status (B-06's "Out of date" rule) to the facts it
-    # covers, so the status travels with the fact to Lane D/E and export_record.sources
-    # (request docs/lanes/requests/B-3.md). Published versions are the retrievals
-    # themselves (published_from_pins): a study is assembled per request with no durable
-    # store yet, so "current" means "the newest version on record as of this retrieval",
-    # and the assessor's reason names the retrieval time so that scope is explicit. A
-    # version probe (e.g. PLUTO F09) that grows the published-on-record set is a later
-    # slice. The bridge is pure: a fact whose source has no dataset version stays 1.0.0
-    # with no version_check; references are not contract facts and carry none.
-    pins = pins_from_site_facts(site_fact_set.facts)
-    report = assess_data_versions(pins, published_from_pins(pins))
-    site_facts = attach_version_check(site_fact_set.facts, report)
     # One tax lot from the PLUTO row (no MapPLUTO outline yet - slice 1). B-07's
     # adapter records the absence of an outline; the lot size is the city-recorded
-    # area, or unknown (never 0).
+    # area, or unknown (never 0). Lot choice and multi-lot site are Lane B
+    # behaviour, so derive FIRST: when the LANE_B gate is off the study is withheld
+    # (fail safe) BEFORE any version probe is attempted - the probe (a network call)
+    # runs only when Lane B is enabled (request B-4).
     site_lot = site_lot_from_sources(pluto_result.bbl, None, pluto_result)
     choice = build_lot_choice([pluto_result.bbl], {pluto_result.bbl: site_lot})
     site = derive_multi_lot_site_if_enabled(choice, selected, env=env)
@@ -195,6 +204,22 @@ def assemble_study_inputs(
             "produced; the study setup is withheld rather than fabricated.",
             reason="lane_b_disabled",
         )
+    # Attach each source's version status (B-06's "Out of date" rule) to the facts it
+    # covers, so the status travels with the fact to Lane D/E and export_record.sources
+    # (requests B-3/B-4). Published-on-record = the retrievals themselves PLUS, for the
+    # PLUTO dataset, the city's currently published release from Lane B's version probe
+    # (published_versions_for_study). Retrieval-only can only ever read "current"
+    # (nothing newer than the pin is on record); the probe grows the published set so a
+    # lot pinned to an older PLUTO release reads "out of date". On ANY typed probe
+    # failure the study fails CLOSED: the PLUTO pins read "version unknown", never a
+    # probe-masked "current" (request B-4). The bridge is pure: a fact whose source has
+    # no dataset version stays 1.0.0 with no version_check; references carry none.
+    pins = pins_from_site_facts(site_fact_set.facts)
+    published = published_versions_for_study(
+        pins, version_probe=version_probe, correlation_id=correlation_id or ""
+    )
+    report = assess_data_versions(pins, published)
+    site_facts = attach_version_check(site_fact_set.facts, report)
     return StudyInputs(
         lot_choice=choice,
         site=site,
@@ -208,13 +233,17 @@ def pluto_study_inputs_provider(
     *,
     clock: Callable[[], datetime] | None = None,
     env: Mapping[str, str] | None = None,
+    version_probe: VersionProbe | None = None,
 ) -> StudyInputsProvider:
     """A :data:`StudyInputsProvider` over a PLUTO ``fetcher``.
 
     Fetches the PLUTO record, then assembles the study inputs. A typed PLUTO
     connector failure or a no-record result becomes
     :class:`StudyInputsUnavailableError` (the route's bounded 503), never a
-    partial or fabricated study.
+    partial or fabricated study. ``version_probe`` is threaded to
+    :func:`assemble_study_inputs` (request B-4): the live provider binds the
+    cached live probe; tests and the e2e harness inject a probe over a routed
+    fixture transport so nothing touches the network.
     """
 
     def provider(
@@ -231,7 +260,14 @@ def pluto_study_inputs_provider(
                 "withheld and is safe to retry.",
                 reason=exc.error_type,
             ) from exc
-        return assemble_study_inputs(result, selected=selected, clock=clock, env=env)
+        return assemble_study_inputs(
+            result,
+            selected=selected,
+            clock=clock,
+            env=env,
+            version_probe=version_probe,
+            correlation_id=correlation_id,
+        )
 
     return provider
 
@@ -246,10 +282,18 @@ def _live_study_inputs_provider() -> StudyInputsProvider:
     LAZILY, so importing this module reads no resilience env and makes no network
     call; the first live request builds the process-wide fetcher, and the whole
     process shares its cache/breaker/LKG state. The import is local to avoid any
-    import-time coupling to the properties route."""
+    import-time coupling to the properties route.
+
+    It also binds the process-wide cached PLUTO version probe
+    (``cached_default_version_probe``, request B-4): built once here (this provider
+    is ``lru_cache``-d), so a burst of studies shares one freshness observation and
+    the city API is not hit once per study. No probe call happens here - the cache
+    is cold until the first study assembles."""
     from app.api.v1.properties import get_pluto_fetcher
 
-    return pluto_study_inputs_provider(get_pluto_fetcher())
+    return pluto_study_inputs_provider(
+        get_pluto_fetcher(), version_probe=cached_default_version_probe()
+    )
 
 
 def default_study_inputs_provider(

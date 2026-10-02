@@ -39,10 +39,13 @@ from app.api.v1.study_read import (
 )
 from app.config import INTERNAL_STUDY_READ_ENABLED_ENV_VAR
 from app.connectors.pluto_soda import (
+    DATASET_ID,
+    SOURCE_ID,
     SourceUnavailableError,
     TransportResponse,
     fetch_by_bbl,
 )
+from app.connectors.pluto_version_probe import PlutoPublishedVersion
 from app.contracts.study_contracts import validate_study_document
 from app.main import create_app
 from app.spatial.multi_lot_site import (
@@ -101,6 +104,30 @@ def _northern_fetcher(bbl: str, correlation_id: str):
 
 def _northern_provider():
     return pluto_study_inputs_provider(_northern_fetcher, clock=FIXED_CLOCK, env=LANE_B_ON)
+
+
+def _f09_probe(correlation_id: str) -> PlutoPublishedVersion:
+    """A PLUTO version probe returning the recorded F09 release (26v1). The Northern
+    pin (26v2) is newer, so facts stay ``current`` while proving the probe path and
+    the contract guard both run."""
+    return PlutoPublishedVersion(
+        dataset_id=DATASET_ID,
+        version="26v1",
+        seen_at="2026-09-30T12:00:00Z",
+        query_ref="https://example/probe",
+        source_id=SOURCE_ID,
+        correlation_id=correlation_id,
+    )
+
+
+def _failing_probe(correlation_id: str) -> PlutoPublishedVersion:
+    raise SourceUnavailableError("version probe down", correlation_id=correlation_id)
+
+
+def _northern_provider_with_probe(probe):
+    return pluto_study_inputs_provider(
+        _northern_fetcher, clock=FIXED_CLOCK, env=LANE_B_ON, version_probe=probe
+    )
 
 
 def _client(provider=None) -> TestClient:
@@ -270,6 +297,34 @@ def test_site_facts_carry_version_check_current_for_recorded_pack(monkeypatch) -
     ezfa = facts["existing_zoning_floor_area"]
     assert ezfa["contract_version"] == "1.0.0"
     assert "version_check" not in (ezfa.get("source") or {})
+
+
+def test_route_200_with_version_probe_still_passes_contract_guard(monkeypatch) -> None:
+    """B-4: with the PLUTO version probe injected (offline), the 200 still passes
+    its own contract guard and the PLUTO facts carry version_check. The benchmark
+    pin (26v2) is newer than the probe (26v1), so the status stays ``current``."""
+    _enable(monkeypatch)
+    response = _client(_northern_provider_with_probe(_f09_probe)).get(
+        f"/api/v1/properties/{NORTHERN_BBL}/study"
+    )
+    assert response.status_code == 200
+    facts = {fact["key"]: fact for fact in response.json()["site"]["facts"]}
+    assert facts["lot_area"]["source"]["version_check"]["status"] == "current"
+    _assert_pair_documented(response)
+
+
+def test_route_200_with_version_unknown_on_probe_failure(monkeypatch) -> None:
+    """B-4 fail-closed: a probe failure does NOT 5xx the route. The study still
+    assembles (200) but the PLUTO facts read ``version_unknown`` - never a
+    probe-masked ``current`` - and the document still passes its contract guard."""
+    _enable(monkeypatch)
+    response = _client(_northern_provider_with_probe(_failing_probe)).get(
+        f"/api/v1/properties/{NORTHERN_BBL}/study"
+    )
+    assert response.status_code == 200
+    facts = {fact["key"]: fact for fact in response.json()["site"]["facts"]}
+    assert facts["lot_area"]["source"]["version_check"]["status"] == "version_unknown"
+    _assert_pair_documented(response)
 
 
 def test_setup_composes_into_a_contract_valid_study(monkeypatch) -> None:

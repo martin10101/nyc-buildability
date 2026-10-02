@@ -35,10 +35,12 @@ from app.api.v1.study_inputs import (
     pluto_study_inputs_provider,
 )
 from app.connectors.pluto_soda import TransportResponse, fetch_by_bbl
+from app.connectors.pluto_version_probe import fetch_published_version
 from app.resilience.fetcher import ResilientPlutoFetcher
 from app.spatial.multi_lot_site import LotSelectionError
 
 FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "benchmark_215_16_northern"
+PLUTO_FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "pluto"
 NORTHERN_BBL = "4073340070"
 FIXED_CLOCK = lambda: datetime(2026, 9, 30, 12, 0, 0, tzinfo=UTC)  # noqa: E731
 LANE_B_ON = {"LANE_B_ENABLED": "1"}
@@ -46,6 +48,21 @@ LANE_B_ON = {"LANE_B_ENABLED": "1"}
 
 def _northern_body() -> str:
     return (FIXTURE_DIR / "pluto_64uk-42ks_bbl_4073340070.json").read_text(encoding="utf-8")
+
+
+def _f09_probe(correlation_id: str):
+    """The recorded F09 published-version probe (26v1) over a fake transport, so the
+    live default's version probe (B-4) stays fully offline."""
+    import json
+
+    fixture = json.loads((PLUTO_FIXTURE_DIR / "F09_version_select.json").read_text("utf-8"))
+    response = TransportResponse(fixture["http_status"], fixture["response_body_raw"])
+    return fetch_published_version(
+        transport=lambda url, headers, timeout: response,
+        sleep=lambda seconds: None,
+        clock=FIXED_CLOCK,
+        correlation_id=correlation_id,
+    )
 
 
 def _transport_for(body: str, status: int = 200):
@@ -89,6 +106,10 @@ def test_default_provider_delegates_to_properties_get_pluto_fetcher(monkeypatch)
     # Stand in for the live resilient fetcher with the recorded pack (offline),
     # and prove the default provider reaches it through properties.get_pluto_fetcher.
     monkeypatch.setattr(properties, "get_pluto_fetcher", lambda: _fetcher_over(_northern_body()))
+    # B-4: the live default now ALSO binds the cached PLUTO version probe. Stub it
+    # with the recorded F09 observation (offline) so the live wiring never hits the
+    # network; the Northern pin (26v2) is newer than F09 (26v1), so facts stay current.
+    monkeypatch.setattr(study_inputs, "cached_default_version_probe", lambda: _f09_probe)
     study_inputs._live_study_inputs_provider.cache_clear()
     try:
         inputs = default_study_inputs_provider(NORTHERN_BBL, "cid-live")
@@ -97,6 +118,15 @@ def test_default_provider_delegates_to_properties_get_pluto_fetcher(monkeypatch)
     assert inputs.site is not None
     assert inputs.lot_choice is not None
     assert [lot.bbl for lot in inputs.site.lots] == [NORTHERN_BBL]
+    # The PLUTO facts carry a version_check: the live probe was consulted offline.
+    pluto_facts = [
+        fact for fact in inputs.site_facts
+        if (fact.get("source") or {}).get("version_check")
+    ]
+    assert pluto_facts
+    assert all(
+        fact["source"]["version_check"]["status"] == "current" for fact in pluto_facts
+    )
 
 
 def test_default_provider_is_cached_once(monkeypatch) -> None:
