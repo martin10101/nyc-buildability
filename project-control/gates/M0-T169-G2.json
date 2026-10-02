@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T169",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T169-G2.md",
+  "reviewed_at": "2026-10-02T08:41:35.992276+00:00",
+  "content_manifest_sha256": "e2d4588c54ba4b8f15f9d5abaaaf9cd82b8c9688350274c4537a85f00cdec2ec",
+  "reviewed_sha": "f64855b58cc5fe45ccc470806debdc592247ecac",
+  "updated_at": "2026-10-02T08:41:36.095760+00:00"
+}
