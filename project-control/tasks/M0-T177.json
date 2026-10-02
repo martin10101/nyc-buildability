@@ -78,7 +78,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit voids the M0-T174 certification; a Linux recertification superseding M0-T174 runs after M0-T177 and M0-T178",
     "activation: a proved systemd control group counts as containment only after the owner amends the activation PIN 2026-08-08 (B-027 needs); until then nothing is activated",
@@ -86,7 +86,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-02T20:48:48.109680+00:00",
-  "updated_at": "2026-10-02T22:26:21.073624+00:00",
+  "updated_at": "2026-10-02T22:28:06.416994+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
