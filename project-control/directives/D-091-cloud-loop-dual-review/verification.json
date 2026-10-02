@@ -279,36 +279,45 @@
         "D-091-R007"
       ],
       "producer": "backend-engineer",
-      "verifier": "",
+      "verifier": "directive-compliance-verifier",
       "schema_version": "directive_verification/v2",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
+      "reviewed_sha": "9c77c7006ec7164a2c739b8d4f54288768ec8d4f",
+      "reviewed_manifest_sha256": "5d0dc02015cfb5ae921ef7d91bafc705930e0e0b2170bf93bb04a199b1efe73c",
       "requirements": [
         {
           "id": "D-091-R001",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "loop.py gains one optional review_conductor parameter (keyword-only constructor; self.reviewer = review_conductor or reviewer); default None keeps the single-Codex-reviewer path byte-identical; net 0 SLOC; not wired into cli.py or the launchers yet (TW5)"
+          ],
+          "reviewed_sha": "9c77c7006ec7164a2c739b8d4f54288768ec8d4f"
         },
         {
           "id": "D-091-R002",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "DualReviewConductor runs the Codex and Claude reviewers independently on the same frozen packet (neither sees the other; claude_reviewer refuses a packet carrying a peer review) inside one atomic ReviewSlots reservation released in finally (never a third concurrent review); a raise, timeout or malformed review makes the result UNVERIFIED, never PASS; tools/test_agent_supervisor_dual_review.py 17 passed, reproduced by the DCV"
+          ],
+          "reviewed_sha": "9c77c7006ec7164a2c739b8d4f54288768ec8d4f"
         },
         {
           "id": "D-091-R003",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "Combining goes through the accepted review_combiner: verdict = worst-of-two computed in code before any model call; model disputes advisory only and never remove a finding; every model allowlist-checked before any slot or process; an unset combining model refuses (R008 stays the owner's choice); disputed findings surfaced in the loop report for the human gate; the loop records no gate. Combiner-model distinctness from the Claude reviewer model is carried to M0-T175 commissioning (non-blocking per G3, G5 and DCV)"
+          ],
+          "reviewed_sha": "9c77c7006ec7164a2c739b8d4f54288768ec8d4f"
         },
         {
           "id": "D-091-R007",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "gates G0 (recorded in 12364237, reviewed_sha 1879cc9a), G2, G3, G4, G5 PASS at content identity 5d0dc020 (G3/G4 by an independent code-reviewer, G5 by an independent security-reviewer; producer != reviewers); CI supervisor-bridge and control-plane green at the accept-seam head 9c77c700; no loop started; recertification is M0-T174"
+          ],
+          "reviewed_sha": "9c77c7006ec7164a2c739b8d4f54288768ec8d4f"
         }
-      ]
+      ],
+      "restamp_note": "DCV reviewed 55da566f7f0da8a239dae0c97931658f6702f2a9 (project-control/reports/M0-T172-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (5d0dc020); intervening commits are the saved DCV report, a base merge of disjoint peer work, and state.json resolved by meaning. The DCV's added condition 4 holds: CI supervisor-bridge and control-plane are green at the accept-seam head 9c77c700. Evidence-map note: its 'G0 at 12364237' names the commit that recorded G0; the G0 record's reviewed_sha is 1879cc9a (DCV non-load-bearing note)."
     },
     {
       "directive_id": "D-091",
