@@ -598,3 +598,10 @@ push), read the AssertionError payload from the failed log, delete the branch.
   - a contract guard before send;
   - one status/state matrix.
 - **PLUTO flood flags:** their meaning is verified from the DCP Open Data metadata (64uk-42ks; `docs/research/pluto-firm-flags-2026-10-02.md`), because the 26v1 dictionary PDF is encrypted. A decryption attempt was correctly refused.
+
+## Cloud session 2026-10-02b (08a1e891; seq 134 follow-on)
+- **CI watchers on this host:** `gh pr checks` has no `--json` here. A json-based watcher loops forever silently. Count the tab-separated text instead: `gh pr checks N | awk -F'\t' '$2=="pending"' | wc -l`, and tally `$2` for pass/fail.
+- **Transient age-gate failures:** a PyPI "Connection reset by peer" fails `exact-production-install` closed (correct). Wait for the run to complete, then `gh run rerun <id> --failed`. Never treat it as a code defect.
+- **Settled wording:** a producer shortened the owner-settled "Remaining development capacity: Not confirmed" to "Remaining capacity: Not confirmed" in a status strip (#331); review NB-1 caught it. Dispatch prompts must require the adapter constants (`NOT_CONFIRMED_LABEL` / `NOT_CONFIRMED_REASON`) for settled text, never a literal.
+- **Contract additions break count pins:** adding an enum-lock slot (#332) broke `study-vocabulary.test.ts`, which pinned `toHaveLength(14)`. Producers adding a contract enum or slot must grep for count pins and drift guards in every consumer.
+- **Mirror parity:** a contract change must update the hand-written runtime mirrors in the same PR (`site-fact-validator.ts`, `transit-parking-api.ts`). Otherwise a schema-valid document is rejected at the first real producer.
