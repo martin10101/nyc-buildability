@@ -1,0 +1,77 @@
+{
+  "task_id": "M0-T178",
+  "title": "D-091 / DB-103: the dual-review conductor refuses equal combining and Claude reviewer models before any process",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Enforce in code the D-091 design rule that the combining model differs from the Claude reviewer model: dual_review refuses before any process (typed reason, no slot reserved) when the two are equal or either is empty; different allowlisted models proceed unchanged. Qualifying evidence: DB-103 and D-091-R001/R007; bundled into the Linux recertification window after M0-T177.",
+  "business_reason": "Owner directive D-091: independent reviews combined by a different model; the read-only commissioning check moves into code.",
+  "inputs": [
+    "docs/DISCOVERY_BACKLOG.md DB-103 and docs/D091_LINUX_COMMISSIONING.md step 5 (the read-only STOP check this makes redundant in code)",
+    "tools/agent_supervisor/dual_review.py (allowlist refusal :251-256), review_combiner.py (model :512-516; identity independence :572-584), claude_reviewer.py (reviewer_model :384)",
+    ".claude/rules/supervisor-freeze.md (qualifying evidence: D-091-R001/R007 and DB-103)"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/dual_review.py: refuse before any process (typed reason) when the combining model equals the Claude reviewer model, or either is empty",
+    "tools/test_agent_supervisor_dual_review.py: equal models refused before any spawn; different allowlisted models proceed; mutation (removing the check turns the test red)",
+    "docs/D091_LINUX_COMMISSIONING.md step 5: the code now refuses equal models; the read-only check stays as a pre-start confirmation",
+    "project-control/reports/M0-T178-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T177"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/dual_review.py",
+    "tools/test_agent_supervisor_dual_review.py",
+    "docs/D091_LINUX_COMMISSIONING.md",
+    "project-control/reports/M0-T178-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "weakening or bypassing any fail-closed check or gate; accepting process_group or taskkill as containment",
+    "an agent running a live supervisor start, systemd-run, systemctl, or killing a supervisor on this host (real-unit proofs run in CI or as an owner-typed step)",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12); codex login or handling any owner credential",
+    "project-control/** (orchestrator-only), including project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md (the PIN amendment is the owner's)",
+    ".claude/** and product code (services/**, apps/**, packages/**)",
+    "the reviewer-independence rule and the orchestrator's sole authority (ADR-005)",
+    "review_combiner.py and claude_reviewer.py (accepted; do not edit)",
+    "turning the combiner or the Claude reviewer on (owner choice, D-091-R008)"
+  ],
+  "acceptance_scenarios": [
+    "equal: combining model == Claude reviewer model refuses before any process with a typed reason; no slot reserved",
+    "empty: either model empty refuses before any process",
+    "proceed: different models, both on [claude] allowed_models, proceed exactly as before",
+    "mutation: removing the equality check turns the equal-models test red; regression: every other dual-review and supervisor test passes"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "recertification: bundled into the same Linux recertification window as M0-T177"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T20:48:48.973589+00:00",
+  "updated_at": "2026-10-02T20:48:49.328683+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T20:48:48.973773+00:00"
+}

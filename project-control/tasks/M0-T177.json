@@ -1,0 +1,101 @@
+{
+  "task_id": "M0-T177",
+  "title": "D-091 / B-027: Linux systemd control-group containment the start and loop gates can prove, plus the POSIX worker self-kill fix",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Make the Linux loop able to start a live worker without weakening the containment rule (M0-T052 G5 C1): add a systemd control-group containment the start, post-cycle and turnover gates accept only when proved from inside the process (cgroup-v2 .service membership, KillMode control-group or mixed, ExitType=main, MainPID==self, SendSIGKILL=yes, bounded TimeoutStopSec), launch POSIX workers and probes in their own session, refuse to kill the caller's own process group, harden the unit template, add a Linux CI job, and prove it with positive, negative, mutation and bounded real-process tests. Reproduced defect: B-027 (project-control/reports/B-027-linux-containment-causal-trace.md).",
+  "business_reason": "Owner directive D-091: move the loop to this cloud server (R001) and certify it before use (R007); B-027 blocks the commissioning canary.",
+  "inputs": [
+    "project-control/blockers/B-027-linux-loop-containment-gate.json and project-control/reports/B-027-linux-containment-causal-trace.md (reproduced defect; the full causal trace and the recommended fix)",
+    "project-control/reports/M0-T052-g5-security.md (C1, the safety requirement) and project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md (PIN 2026-08-08, P8)",
+    ".claude/rules/supervisor-freeze.md (qualifying evidence: a reproduced defect, B-027; D-091-R001/R007)",
+    "docs/D091_CLOUD_LOOP_DESIGN.md, docs/D091_WAVE3_WIRING_PLAN.md, docs/D091_LINUX_COMMISSIONING.md",
+    "tools/agent_supervisor/{process.py,cli.py,claude_runner.py,loop.py,mrl_one_shot.py,linux/*}"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/linux_containment.py (new): the in-process proof that the supervisor runs as the main process of a systemd service whose control group the kernel kills (cgroup-v2 .service membership; KillMode control-group or mixed; ExitType=main; MainPID == own pid; ControlGroup == own cgroup; SendSIGKILL=yes; bounded TimeoutStopUSec; root only with ProtectControlGroups=yes); anything unreadable is a refusal; pid_in_service_cgroup(pid)",
+    "tools/agent_supervisor/process.py: CONTAINMENT_SYSTEMD_CGROUP, returned on POSIX only when proved; ProcessContainer on POSIX verifies membership and kills the worker's OWN process group; terminate_process_tree refuses to kill the caller's own process group",
+    "tools/agent_supervisor/claude_runner.py and mrl_one_shot.py: POSIX worker and probe launches start a new session (own process group)",
+    "tools/agent_supervisor/cli.py and loop.py: the start, post-cycle and turnover gates accept exactly {job_object, systemd_cgroup}; doctor reports the proved kind; refusal text names the Linux requirement",
+    "tools/agent_supervisor/linux/nyc-supervisor.service.template and README.md: KillMode=control-group, ExitType=main, SendSIGKILL=yes, TimeoutStopSec=15s, ProtectControlGroups=yes; NYC_SUP_START_CMD execs python directly",
+    "tests (tools/test_agent_supervisor_linux_containment.py new, plus updates): positive, one negative per refusal reason, mutation (each guard goes red when removed), bounded single-id real-process tests R1/R2, and an opt-in env-gated R3 (a real transient unit; Linux CI or owner-typed only)",
+    ".github/workflows/ci.yml: a Linux job running the Linux containment tests (and R3 opt-in under systemd-run on the runner)",
+    "docs/D091_LINUX_COMMISSIONING.md: steps 3-4 match the hardened unit",
+    "project-control/reports/M0-T177-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/linux_containment.py",
+    "tools/agent_supervisor/process.py",
+    "tools/agent_supervisor/cli.py",
+    "tools/agent_supervisor/claude_runner.py",
+    "tools/agent_supervisor/loop.py",
+    "tools/agent_supervisor/mrl_one_shot.py",
+    "tools/agent_supervisor/turnover_wiring.py",
+    "tools/agent_supervisor/linux/nyc-supervisor.service.template",
+    "tools/agent_supervisor/linux/README.md",
+    "tools/test_agent_supervisor_linux_containment.py",
+    "tools/test_agent_supervisor_process.py",
+    "tools/test_agent_supervisor_loop.py",
+    "tools/test_agent_supervisor_start_reentry.py",
+    "tools/test_agent_supervisor_runner.py",
+    "tools/test_agent_supervisor_model_chain.py",
+    ".github/workflows/ci.yml",
+    "docs/D091_LINUX_COMMISSIONING.md",
+    "project-control/reports/M0-T177-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "weakening or bypassing any fail-closed check or gate; accepting process_group or taskkill as containment",
+    "an agent running a live supervisor start, systemd-run, systemctl, or killing a supervisor on this host (real-unit proofs run in CI or as an owner-typed step)",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12); codex login or handling any owner credential",
+    "project-control/** (orchestrator-only), including project-control/reports/M0-T036-ACTIVATION-CHECKLIST.md (the PIN amendment is the owner's)",
+    ".claude/** and product code (services/**, apps/**, packages/**)",
+    "the reviewer-independence rule and the orchestrator's sole authority (ADR-005)",
+    "tools/agent_supervisor/dual_review.py and its test (M0-T178)",
+    "Windows behavior changes: the Job Object path and every existing Windows test must keep passing unchanged"
+  ],
+  "acceptance_scenarios": [
+    "proved: with injected readers showing '0::/system.slice/nyc-supervisor.service' and a matching `systemctl show` (KillMode=control-group, ExitType=main, MainPID=self, ControlGroup=self, SendSIGKILL=yes, TimeoutStopUSec bounded), default_containment_kind() is systemd_cgroup, start dispatches, and a cycle whose worker is verified in the same cgroup proceeds",
+    "refused, one test each: cgroup v1/hybrid; a .scope or user-session path; KillMode=process or none; ExitType=cgroup; MainPID != pid; ControlGroup mismatch; SendSIGKILL=no; systemctl missing, nonzero, timed out or garbled; root without ProtectControlGroups; a worker in a foreign cgroup gives containment_unverified; process_group and taskkill still refuse",
+    "mutation: each of these turns a test red: the gate accepting process_group; the MainPID check dropped; start_new_session removed from a worker launch; the own-process-group kill guard removed; the loop accept-set widened",
+    "self-kill: R1 (bounded single test id, 30 s cap, tearDown kills recorded pids) a harness in its own session runs the real ClaudeRunner against a sleeping fake with a 2 s timeout; the harness exits normally (not -9) and the worker's process group differs from the harness's",
+    "why process_group is refused: R2 kill -9 of a harness leaves a setsid grandchild alive (bounded, cleaned up)",
+    "real unit: R3 opt-in and env-gated, run only in Linux CI (systemd-run on the runner) or as an owner-typed step, never by an agent on this host: kill -9 of the unit's main pid ends the worker and its grandchild within 20 s and empties the control group",
+    "regression: the Windows suite (windows-latest) and every other supervisor test still pass; the supervisor-freeze baseline is re-established (>= 1165 tests, 0 failures)"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit voids the M0-T174 certification; a Linux recertification superseding M0-T174 runs after M0-T177 and M0-T178",
+    "activation: a proved systemd control group counts as containment only after the owner amends the activation PIN 2026-08-08 (B-027 needs); until then nothing is activated",
+    "host safety: real-process tests are bounded single test ids; whole RealProcess classes are never run on this host (WORKING_KNOWLEDGE 'Cloud session 2026-10-02')"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T20:48:48.109680+00:00",
+  "updated_at": "2026-10-02T20:48:48.462194+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T20:48:48.109990+00:00"
+}

@@ -461,6 +461,60 @@
         }
       ],
       "restamp_note": "DCV reviewed 50e91530a14c8d52a585fb58d6f0540b57939baa (project-control/reports/M0-T176-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (d28e1f22); intervening commits are the saved DCV report, a base merge of disjoint peer work, and state.json resolved by meaning. The DCV's added condition 4 holds: CI supervisor-bridge (windows-latest) is green at the accept-seam head 510f8523."
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T177",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ],
+      "producer": "backend-engineer",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-091-R007",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T178",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ],
+      "producer": "backend-engineer",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-091-R007",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
     }
   ]
 }
