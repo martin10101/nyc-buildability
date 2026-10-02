@@ -26,10 +26,12 @@
     "tools/agent_supervisor/fixtures/",
     "tools/test_agent_supervisor_capability_probe.py",
     "tools/test_agent_supervisor_native_adapter.py",
-    "project-control/reports/M0-T174-producer-report.md"
+    "project-control/reports/M0-T174-producer-report.md",
+    "tools/agent_supervisor/event_drift.py",
+    "tools/test_agent_supervisor_event_bus.py"
   ],
   "forbidden_paths": [
-    "any tools/agent_supervisor/*.py source change (a source change after this task voids the certification)",
+    "any tools/agent_supervisor/*.py source change other than the event_drift.py hook-catalog re-point (the M0-T159 recertification precedent); a source change after this task voids the certification",
     "creating /etc/nyc-supervisor/config.toml or installing systemd units (owner-typed, TW5)",
     "any provider call",
     "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
@@ -58,14 +60,14 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "rework",
+  "progress_percent": 80,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T09:02:47.014019+00:00",
-  "updated_at": "2026-10-02T13:36:07.444463+00:00",
+  "updated_at": "2026-10-02T13:47:24.202343+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -92,6 +94,13 @@
       "percent": 85,
       "status": "in_progress",
       "message": "Producer done at 17d35c4c"
+    },
+    {
+      "at": "2026-10-02T13:47:24.202220+00:00",
+      "agent": "backend-engineer",
+      "percent": 80,
+      "status": "rework",
+      "message": "G3/G4 round 1 FAIL B1: event_bus S8 live tooth red on Linux (catalog still 2.1.281); scope correction adds the event_drift.py catalog re-point and the event_bus test (M0-T159 precedent)"
     }
   ]
 }
