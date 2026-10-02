@@ -34,12 +34,11 @@
  */
 
 import { boundedText, boundedToken } from "../bounded";
-import { Problems, checkEnum, isRecord } from "../scenario-contract-checks";
+import { Problems, checkBoolean, checkEnum, isRecord } from "../scenario-contract-checks";
 import { apiBaseUrl } from "../api";
 import {
   checkArray,
   checkBbl,
-  checkBoolean,
   checkNoFixtureAnnotation,
   checkNullableNonEmptyString,
   checkObject,
