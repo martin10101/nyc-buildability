@@ -1,0 +1,30 @@
+# nyc-supervisor.service.template - systemd unit TEMPLATE (M0-T166, D-091 T2).
+#
+# TEMPLATE ONLY. An AGENT NEVER installs, enables, or starts this unit. Placing it
+# under /etc/systemd/system, running `systemctl enable`/`start`, and the live
+# certified start are OWNER-TYPED commissioning steps (runbook section 12 /
+# D-091 T8). Substitute every <...> placeholder before an owner installs it.
+#
+# [Install] is deliberately OMITTED and Restart=no, so a stray `systemctl enable`
+# has no target and nothing auto-restarts: enabling is an explicit owner act.
+
+[Unit]
+Description=NYC Buildability supervisor loop (Codex+Claude dual review, D-091)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=<run-as-user>
+WorkingDirectory=<absolute-controller-checkout>
+# The Linux autoupdater belt for the two bare `claude --version`/`--help` probes
+# (D-091 T1; runbook section 13): a child launched with env=None inherits this.
+Environment=DISABLE_AUTOUPDATER=1
+# The launcher refuses to start when the start gate refuses, fails closed when the
+# claude binary or a required env is missing, and never pushes/merges/starts a
+# live run of its own - it hands the gated start to the controller CLI.
+Environment=NYC_SUP_CLAUDE_BIN=<absolute-path-to-claude>
+Environment=NYC_SUP_GATE_CMD=<owner-configured-start-gate-command>
+Environment=NYC_SUP_START_CMD=<owner-configured-controller-start-command>
+ExecStart=/usr/bin/env bash <absolute-controller-checkout>/tools/agent_supervisor/linux/launch.sh
+Restart=no
