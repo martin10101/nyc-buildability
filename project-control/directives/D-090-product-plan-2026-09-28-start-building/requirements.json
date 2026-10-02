@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 79,
+ "requirement_count": 82,
  "producer": "orchestrator",
- "updated_at": "2026-10-02T16:22:58+00:00",
+ "updated_at": "2026-10-02T20:02:07+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -2663,6 +2663,103 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Started with item 2 (#326 review after its one failing web test is fixed) and item 3 (W5 mount).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R080",
+   "text": "Tell the owner step by step, in plain words, what the owner still has to do so the loop works on this Linux server ('tell me step by step what I still have to do in order for that to happen and easily for me to understand').",
+   "source_ref": "source-009-amendment.md#owner-message-33-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R044"
+   ],
+   "required_harness": "docs/D091_LINUX_COMMISSIONING.md and a read-only readiness check of this server.",
+   "required_evidence": "The session's owner reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending: a read-only readiness audit of the server runs first, so every step is exact.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R081",
+   "text": "Explain in depth the two items owed before enablement (B-001 sign-in; a study-route concurrency bound) and every open owner question: what it was before, how it is now, how it should be ('explain the other two items that you wrote and whatever question you have for me, how it should be, explain in depth like what it was before, how it is before').",
+   "source_ref": "source-009-amendment.md#owner-message-33-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R044"
+   ],
+   "required_harness": "The owner-question list in docs/SESSION_HANDOFF.md and the session's open items.",
+   "required_evidence": "The session's owner reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R082",
+   "text": "On the website, the AI says less and brings the exact information the architect needs, not warnings; the architect does not want long paragraphs, he wants real information ('the AI should say less on the um, actual website, but bring the exact information that we need, not warnings and stuff like that. The architect doesn't want to read long paragraphs of stuff. He wants real information.').",
+   "source_ref": "source-009-amendment.md#owner-message-33-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "Every new or changed interface surface (Lane D/E); reviews check text length and warning count.",
+   "required_evidence": "Review records of interface PRs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force for new interface work from 2026-10-02. It does not by itself remove the owner-approved tax-lot-only warning (R030-R033) or the settled remaining-capacity wording (R038); the owner is asked whether the tax-lot-only warning should shrink.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
