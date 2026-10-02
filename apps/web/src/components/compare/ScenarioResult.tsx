@@ -281,8 +281,9 @@ export function ScenarioResult({
       {/* C1 (D-041): the unused-draft-zoning-floor-area line sits directly under
           the cap line and is present on EVERY branch (its own honest state per
           document). D-06 (plan §3 step 4): the section is set aside behind a
-          default-off server flag; when off, one "Not available — needs existing
-          zoning floor area" line takes its place and the cap above still shows. */}
+          default-off server flag; when off, the owner's two lines (D-090-R038,
+          "Remaining development capacity: Not confirmed" and its reason) take its
+          place and the cap above still shows. */}
       {unusedFloorAreaSectionEnabled ? (
         <UnusedFloorAreaSection document={document} />
       ) : (

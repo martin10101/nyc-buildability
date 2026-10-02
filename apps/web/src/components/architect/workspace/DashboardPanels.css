@@ -57,6 +57,8 @@
 .buildability-dashboard .bd-headline-value.bd-not-available { font-size: 16px; font-weight: 600; }
 .buildability-dashboard .bd-results-table th:first-child { width: 45%; }
 .buildability-dashboard .bd-results-table td { font-variant-numeric: tabular-nums; }
+/* The reason line under a "Not confirmed" value (D-090-R038): its own line, same size. */
+.buildability-dashboard .bd-row-reason { display: block; margin-top: 2px; font-weight: 400; }
 .buildability-dashboard .bd-calculation-links { padding: 9px 11px; }
 .buildability-dashboard .bd-status-strip { min-width: 0; border: 1px solid #c9d8ea; border-radius: 6px; background: #fff; box-shadow: 0 2px 5px #22334c07; }
 .buildability-dashboard .bd-strip-line { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; width: 100%; padding: 10px 12px; border: 0; border-radius: 6px; background: #eef4fb; text-align: left; font-size: 15px; font-weight: 600; }

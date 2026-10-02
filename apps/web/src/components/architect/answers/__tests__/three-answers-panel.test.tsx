@@ -235,12 +235,19 @@ describe("fixture-specific behaviour", () => {
     expect(within(card("building_option")).getByTestId("answer-not-available").textContent).toBe(
       "Not available — it needs the permitted envelope.",
     );
-    // Plan §3 step 4: without an existing zoning floor area the remaining capacity reads
-    // "Not available — needs existing zoning floor area" while the full-site allowance shows.
-    const remaining = within(card("floor_area_allowance")).getByTestId(
-      "answer-supplement-not-available",
+    // Owner wording, settled 2026-10-01 (D-090-R038; replaces plan §3 step 4's): without a
+    // verified value the row reads "Remaining development capacity" → "Not confirmed", then the
+    // reason line, while the full-site allowance shows.
+    const allowance = card("floor_area_allowance");
+    const row = within(allowance).getByTestId("answer-supplement");
+    expect(row.querySelector<HTMLElement>("dt")?.textContent).toBe("Remaining development capacity");
+    expect(within(allowance).getByTestId("answer-supplement-not-available").textContent).toBe("Not confirmed");
+    expect(within(allowance).getByTestId("answer-supplement-reason").textContent).toBe(
+      "Needs verified zoning-lot boundaries and existing zoning floor area.",
     );
-    expect(remaining.textContent).toBe("Not available — needs existing zoning floor area");
+    expect(row.textContent).toBe(
+      "Remaining development capacityNot confirmedNeeds verified zoning-lot boundaries and existing zoning floor area.",
+    );
     // No shortfall is drawn for an option that is not shown.
     expect(screen.queryByTestId("answer-shortfall")).toBeNull();
   });
@@ -289,6 +296,7 @@ describe("fixture-specific behaviour", () => {
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
     const line = within(card("building_option")).getByTestId("answer-supplement-not-available");
     expect(line.textContent).toBe("Not available — the envelope check is not built yet");
+    expect(within(card("building_option")).queryByTestId("answer-supplement-reason")).toBeNull();
   });
 
   it("a remaining floor area that is available shows beside the allowance", () => {
@@ -304,6 +312,7 @@ describe("fixture-specific behaviour", () => {
     const row = within(card("floor_area_allowance")).getByTestId("answer-supplement");
     expect(row).toHaveTextContent("Remaining after the existing building");
     expect(row).toHaveTextContent("1,500 sq ft");
+    expect(within(row).queryByTestId("answer-supplement-reason")).toBeNull();
   });
 
   it("strip items beyond three move behind the strip (plan §5a items 1 and 6)", () => {

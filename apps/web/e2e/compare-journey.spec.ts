@@ -131,17 +131,21 @@ test("AS-1: the draft cap renders as a labelled number with a named objective an
   await expect(page.getByTestId("scenario-citations")).toBeVisible();
 });
 
-test("D-06: unused floor area shows only 'Not available — needs existing zoning floor area'; the allowance still shows", async ({
+test("D-06: unused floor area shows only 'Remaining development capacity: Not confirmed' and its reason; the allowance still shows", async ({
   page,
 }) => {
   // Plan §3 step 4 / M2-07: existing floor area is never taken from city-recorded
   // building area. The section is set aside behind the default-off server flag
   // INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED, which the e2e web server does not set.
+  // Wording: the owner's settled two lines (D-090-R038), word for word.
   await page.goto(`/property/compare?bbl=${COMPARE_BBL}`);
   await expect(page.getByTestId("scenario-card-1")).toBeVisible({ timeout: 20_000 });
 
   await expect(page.getByTestId("unused-floor-area-not-available")).toHaveText(
-    "Not available — needs existing zoning floor area",
+    "Remaining development capacity: Not confirmed",
+  );
+  await expect(page.getByTestId("unused-floor-area-not-available-reason")).toHaveText(
+    "Needs verified zoning-lot boundaries and existing zoning floor area.",
   );
   await expect(page.getByTestId("scenario-unused-floor-area")).toHaveCount(0);
   await expect(page.getByTestId("scenario-unused-floor-area-value")).toHaveCount(0);

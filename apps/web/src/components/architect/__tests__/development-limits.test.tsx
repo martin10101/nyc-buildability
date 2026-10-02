@@ -755,6 +755,8 @@ describe("owner directive 2026-10-01 — tax-lot-only warning and labels on the 
   const WARNING = "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
   const VERIFIED_WARNING = "This zoning lot includes tax lots 1 and 70. These numbers use lot 70 only. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
   const ZONING_LOT_ROWS = ["Whole-site capacity", "Remaining development capacity", "Combined zoning lot: coverage", "Combined zoning lot: rear yard"];
+  // Owner wording, settled 2026-10-01 (D-090-R038): the remaining-capacity row's reason line.
+  const REMAINING_REASON = "Needs verified zoning-lot boundaries and existing zoning floor area.";
   // Test fixture only: a verified zoning-lot fact shaped for the 215-16 Northern benchmark
   // (tax lots 1 and 70 on block 07334). No such verified fact is served to the web yet.
   const LOT_70 = "4073340070";
@@ -762,10 +764,14 @@ describe("owner directive 2026-10-01 — tax-lot-only warning and labels on the 
 
   function expectZoningLotRows(region: HTMLElement) {
     for (const label of ZONING_LOT_ROWS) {
-      const value = within(region).getByText(label, { selector: "dt" }).closest("div")!.querySelector<HTMLElement>("dd")!;
-      expect(value.textContent).toBe("Not confirmed");
-      expect(value).toBeVisible();
+      const row = within(region).getByText(label, { selector: "dt" }).closest("div")!;
+      const values = Array.from(row.querySelectorAll<HTMLElement>("dd"));
+      expect(values[0].textContent).toBe("Not confirmed");
+      expect(values[0]).toBeVisible();
+      // Line 2: only the remaining-capacity row carries the reason, as its own line under the value.
+      expect(values.slice(1).map(value => value.textContent)).toEqual(label === "Remaining development capacity" ? [REMAINING_REASON] : []);
     }
+    expect(within(region).getByTestId("development-zoning-lot-remaining-capacity-reason").textContent).toBe(REMAINING_REASON);
   }
 
   function expectVisibleWarning(region: HTMLElement, text = WARNING) {
