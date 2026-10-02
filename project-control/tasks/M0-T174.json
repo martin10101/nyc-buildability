@@ -58,14 +58,14 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "in_progress",
+  "progress_percent": 85,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T09:02:47.014019+00:00",
-  "updated_at": "2026-10-02T13:17:04.566006+00:00",
+  "updated_at": "2026-10-02T13:36:04.990340+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -85,6 +85,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Scenarios in the packet; producer dispatched in /root/project/w-M0-T174"
+    },
+    {
+      "at": "2026-10-02T13:36:04.990176+00:00",
+      "agent": "backend-engineer",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Producer done at 17d35c4c"
     }
   ]
 }

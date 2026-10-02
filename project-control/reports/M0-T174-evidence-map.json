@@ -1,0 +1,14 @@
+{
+  "task_id": "M0-T174",
+  "material_commit": "17d35c4c (producer commit in worktree w-M0-T174; 4 files)",
+  "produced_at": "2026-10-02T14:10:00+00:00",
+  "producer": "backend-engineer (orchestrator-dispatched subagent; worktree /root/project/w-M0-T174)",
+  "requirements": {
+    "D-091-R001": [
+      "Linux recertification of the controller on the cloud server after all D-091 code tasks (M0-T171/T172/T173/T176): new current capability-probe fixture (claude 2.1.287 at /usr/bin/claude; codex-cli 0.157.0 from the M0-T167 lock-pinned admission installed with npm ci --ignore-scripts) and a Linux native-runtime-detection fixture; the M0-T159 fixtures are kept. The re-baseline invariant pins 2.1.287 / 0.157.0; capability_probe + native_adapter suites 77 passed with 0 skipped, so the live drift teeth ran green; the bash shell-routing harness passed with 3/3 mutants detected."
+    ],
+    "D-091-R007": [
+      "Certification before use: version and help probes only, no provider call, no loop started, no root config or systemd step, no credential; no tools/agent_supervisor source change. Disclosed limits: the shell-routing fixture needs a live provider round-trip and the Codex sign-in, so it is not recaptured and not claimed; the controller source binding (tools/controller_update/source_binding.json) is the Windows PC controller's update pin, outside this packet and already stale since the D-091 merges, so it is not re-pinned here (re-pinning it would authorize the PC loop update, part of the owner's B-026 keep-or-retire decision); the Linux binding is verified at commissioning (M0-T175)."
+    ]
+  }
+}
