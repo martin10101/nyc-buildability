@@ -63,6 +63,7 @@ def _run_launcher(env_overrides: dict[str, str]) -> subprocess.CompletedProcess:
 # --------------------------------------------------------------------------
 # primary + boundary: the bash shell-routing harness
 # --------------------------------------------------------------------------
+@unittest.skipUnless(os.name == "posix", "POSIX bash launch path")
 class BashHarnessTests(unittest.TestCase):
     def test_harness_passes_on_this_server(self) -> None:
         """primary: the bash harness runs the same shell-routing cases as
@@ -106,6 +107,7 @@ class BashHarnessTests(unittest.TestCase):
 # --------------------------------------------------------------------------
 # missing/ambiguous: the launcher fails closed before any provider contact
 # --------------------------------------------------------------------------
+@unittest.skipUnless(os.name == "posix", "POSIX bash launch path")
 class LauncherFailClosedTests(unittest.TestCase):
     def setUp(self) -> None:
         self._tmp = tempfile.TemporaryDirectory()
@@ -150,6 +152,7 @@ class LauncherGateTests(unittest.TestCase):
         self.recorder = self.tmp / "started"
         self.start_cmd = f"touch {self.recorder}"
 
+    @unittest.skipUnless(os.name == "posix", "POSIX bash launch path")
     def test_launcher_refuses_when_gate_refuses(self) -> None:
         proc = _run_launcher({
             "NYC_SUP_CLAUDE_BIN": str(self.exe),
@@ -160,6 +163,7 @@ class LauncherGateTests(unittest.TestCase):
                          "a refused gate must NOT reach the start command")
         self.assertIn("the start gate refused", proc.stderr)
 
+    @unittest.skipUnless(os.name == "posix", "POSIX bash launch path")
     def test_launcher_starts_only_through_a_passing_gate(self) -> None:
         proc = _run_launcher({
             "NYC_SUP_CLAUDE_BIN": str(self.exe),
