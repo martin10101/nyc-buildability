@@ -230,15 +230,26 @@ class FailureAndReclaimTests(unittest.TestCase):
         self.assertEqual(grant.reason_code, "slot_state_unreadable")
 
     def test_lock_error_fails_closed(self) -> None:
+        import os
         slots = ReviewSlots(self.dir, global_limit=2, lane_limit=1, lock_timeout_s=0.2,
                             lock_poll_s=0.01)
-        # A directory at the lock path cannot be O_EXCL-created or read as a holder,
-        # so acquisition times out and refuses rather than inventing a slot.
+        # A directory at the lock path cannot be O_EXCL-created and cannot be read
+        # as a holder, so no slot can be invented. The two OS families surface the
+        # same fail-closed refusal by different paths, and each is pinned here:
+        #   * POSIX: os.open(O_CREAT|O_EXCL) on a directory raises FileExistsError,
+        #     the lock waits for a holder that never clears, and the wait times out
+        #     -> slot_lock_timeout.
+        #   * Windows (nt): the same call raises PermissionError, which refuses at
+        #     once rather than waiting -> slot_lock_error.
         slots.lock_path.parent.mkdir(parents=True, exist_ok=True)
         slots.lock_path.mkdir()
         grant = slots.try_reserve("lane-a")
         self.assertFalse(grant.admitted)
-        self.assertEqual(grant.reason_code, "slot_lock_timeout")
+        self.assertIsNone(grant.reservation)
+        if os.name == "nt":
+            self.assertEqual(grant.reason_code, "slot_lock_error")
+        else:
+            self.assertEqual(grant.reason_code, "slot_lock_timeout")
 
     def test_reused_pid_reservation_is_reclaimed(self) -> None:
         # Same (live) pid but a start-token that does not match this process ->
