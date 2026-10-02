@@ -4,9 +4,18 @@
   "reviewer": "orchestrator",
   "role": "self_check",
   "result": "PASS",
-  "report_file": "project-control/reports/M0-T171-G2.md",
-  "reviewed_at": "2026-10-02T09:40:59.556720+00:00",
-  "content_manifest_sha256": "cdcf9842246d401f6dfecfe51ce51f5863c26a67ef8af18a94aa5a3af3f68ded",
-  "reviewed_sha": "f093a6ecb9115d00f04242c5da8817d6a8d179e5",
-  "updated_at": "2026-10-02T09:40:59.666181+00:00"
+  "report_file": "project-control/reports/M0-T171-G2-rework1.md",
+  "reviewed_at": "2026-10-02T10:14:55.406750+00:00",
+  "content_manifest_sha256": "f2d7412853a81f0103dee1c43aeb2ea08bb21465d29cd7f84831a40258da664c",
+  "reviewed_sha": "bec407aed90a2acc53bc363e16f5e5a10b77a24a",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "self_check",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T171-G2.md",
+      "reviewed_at": "2026-10-02T09:40:59.556720+00:00"
+    }
+  ],
+  "updated_at": "2026-10-02T10:14:55.519126+00:00"
 }
