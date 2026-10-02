@@ -21,10 +21,36 @@ import {
   LOT_SELECTION_STATEMENT,
   MEASUREMENT_LABELS,
   type BlockedOutput,
+  type Lot,
+  type LotSelection,
   type SiteFact,
   type Source,
+  type SourceKind,
   type Study,
 } from "@/lib/study/study-vocabulary";
+import type { StudySetup } from "@/lib/study/study-setup-api";
+
+/**
+ * The display source the panel renders over: the lots, the lot selection (mode +
+ * B-07's combination only — the pinned statement is re-applied here) and the site
+ * facts. BOTH a full `Study` (read from the C-05 store once an option is
+ * confirmed) and a server `StudySetup` (the setup half, before any option exists)
+ * reduce to this shape, so the panel shows the same surface either way. Nothing
+ * here is computed; it only re-keys the fields.
+ */
+export interface LotSiteSource {
+  lots: Lot[];
+  lotSelection: Pick<LotSelection, "mode" | "combination">;
+  siteFacts: SiteFact[];
+}
+
+export function sourceFromStudy(study: Study): LotSiteSource {
+  return { lots: study.lots, lotSelection: study.lot_selection, siteFacts: study.site.facts };
+}
+
+export function sourceFromSetup(setup: StudySetup): LotSiteSource {
+  return { lots: setup.lots, lotSelection: setup.lotSelection, siteFacts: setup.siteFacts };
+}
 
 export interface LotRow {
   bbl: string;
@@ -57,6 +83,8 @@ export interface LotChoiceView {
 
 export interface SiteFactRow {
   factId: string;
+  /** The site_fact key, for a stable display hook and for grouping an entered value with its fact. */
+  key: SiteFact["key"];
   label: string;
   valueText: string;
   sourceLabel: string;
@@ -144,8 +172,8 @@ function lotNumberLabel(bbl: string): string {
 }
 
 /** One display row per lot in the lot choice (plan §3 step 2). */
-export function lotRows(study: Study): LotRow[] {
-  return study.lots.map((lot) => ({
+export function lotRowsOf(lots: Lot[]): LotRow[] {
+  return lots.map((lot) => ({
     bbl: lot.bbl,
     lotLabel: lotNumberLabel(lot.bbl),
     sizeText:
@@ -156,6 +184,9 @@ export function lotRows(study: Study): LotRow[] {
     selected: lot.selected,
   }));
 }
+export function lotRows(study: Study): LotRow[] {
+  return lotRowsOf(study.lots);
+}
 
 /**
  * Whether the selected lots were combined, straight from B-07's recorded result (never
@@ -165,8 +196,8 @@ export function lotRows(study: Study): LotRow[] {
  * only what the architect selected. The pinned zoning-lot statement (`lotChoiceView.statement`)
  * carries the "the app does not verify the zoning lot" caveat.
  */
-export function combinationView(study: Study): CombinationView {
-  const { status, reason } = study.lot_selection.combination;
+export function combinationViewOf(lotSelection: Pick<LotSelection, "combination">): CombinationView {
+  const { status, reason } = lotSelection.combination;
   if (status === "not_offered") {
     return { status, heading: "These lots were not combined", detail: reason, refused: true };
   }
@@ -175,10 +206,13 @@ export function combinationView(study: Study): CombinationView {
   }
   return { status, heading: "One lot", detail: null, refused: false };
 }
+export function combinationView(study: Study): CombinationView {
+  return combinationViewOf(study.lot_selection);
+}
 
 /** The full lot-choice view for the panel header (plan §3 step 2). */
-export function lotChoiceView(study: Study): LotChoiceView {
-  const count = study.lots.length;
+export function lotChoiceViewOf(source: LotSiteSource): LotChoiceView {
+  const count = source.lots.length;
   return {
     count,
     heading: `This property has ${count} lot${count === 1 ? "" : "s"}.`,
@@ -186,18 +220,22 @@ export function lotChoiceView(study: Study): LotChoiceView {
       count === 1
         ? "The site is this one lot."
         : "Use all (default), or pick the lots that make up the site.",
-    lots: lotRows(study),
+    lots: lotRowsOf(source.lots),
     statement: LOT_SELECTION_STATEMENT,
-    combination: combinationView(study),
+    combination: combinationViewOf(source.lotSelection),
   };
+}
+export function lotChoiceView(study: Study): LotChoiceView {
+  return lotChoiceViewOf(sourceFromStudy(study));
 }
 
 /** One display row per site fact, with its source label (plan §3 step 3, §4). */
-export function siteFactRows(study: Study): SiteFactRow[] {
-  return study.site.facts.map((fact) => {
+export function siteFactRowsOf(facts: SiteFact[]): SiteFactRow[] {
+  return facts.map((fact) => {
     const isUnknown = fact.measurement.rank === "unknown";
     return {
       factId: fact.fact_id,
+      key: fact.key,
       label: siteFactLabel(fact),
       valueText: siteFactValueText(fact),
       sourceLabel: MEASUREMENT_LABELS[fact.measurement.rank],
@@ -207,4 +245,151 @@ export function siteFactRows(study: Study): SiteFactRow[] {
       sourceLines: sourceLines(fact.source),
     };
   });
+}
+export function siteFactRows(study: Study): SiteFactRow[] {
+  return siteFactRowsOf(study.site.facts);
+}
+
+export interface SiteFactGroup {
+  /** The city/original (or standalone) value row. */
+  primary: SiteFactRow;
+  /** The architect's "Entered" value shown beside the primary, when one was recorded. */
+  entered: SiteFactRow | null;
+}
+
+const ENTERED_SUFFIX = "-entered";
+
+/**
+ * Group an entered value with the fact it edits, so the city value stays visible BESIDE the entered
+ * one (plan §4). An entered fact carries the id "<fact_id>-entered" (study-operations.ts
+ * enterSiteFactValue, and the setup-only mirror below); it is grouped under its base only when the
+ * base fact is also present. A standalone "-entered" id, or any server fact, is its own primary.
+ * Groups keep each base's first appearance order (the entered fact is always appended after its
+ * base, so the base is seen first).
+ */
+export function groupSiteFactRows(rows: SiteFactRow[]): SiteFactGroup[] {
+  const ids = new Set(rows.map((row) => row.factId));
+  const order: string[] = [];
+  const groups = new Map<string, SiteFactGroup>();
+  for (const row of rows) {
+    const isEntered =
+      row.factId.endsWith(ENTERED_SUFFIX) && ids.has(row.factId.slice(0, -ENTERED_SUFFIX.length));
+    const base = isEntered ? row.factId.slice(0, -ENTERED_SUFFIX.length) : row.factId;
+    let group = groups.get(base);
+    if (!group) {
+      group = { primary: row, entered: null };
+      groups.set(base, group);
+      order.push(base);
+    }
+    if (isEntered) group.entered = row;
+    else group.primary = row;
+  }
+  return order.map((base) => groups.get(base)!);
+}
+
+/**
+ * The unit site_fact.schema.json ties to each key. This MIRRORS study-operations.ts
+ * SITE_FACT_KEY_UNITS, which the C-05 store uses when a study exists; it is duplicated here ONLY
+ * for the setup-only working copy (no study, so no store operation to call). It is contract
+ * reference data, not a computation. The test cross-checks an entered fact against the real
+ * enterSiteFactValue so the two can never drift silently.
+ */
+const SITE_FACT_KEY_UNITS: { readonly [K in SiteFact["key"]]: SiteFact["unit"] } = {
+  lot_area: "square_feet",
+  lot_frontage: "feet",
+  lot_depth: "feet",
+  street_width: "feet",
+  existing_zoning_floor_area: "square_feet",
+  lot_type: null,
+  zoning_district: null,
+  commercial_overlay: null,
+};
+
+/** Source kinds that are a city value (mirrors study-operations.ts CITY_SOURCE_KINDS): a city value
+ * is never overwritten in place — an edit ADDS an "entered" fact beside it (site_fact `editable`). */
+const CITY_SOURCE_KINDS: readonly SourceKind[] = ["city_dataset", "city_filing", "tax_map_computation"];
+
+function isCityFact(fact: SiteFact): boolean {
+  return fact.source !== null && CITY_SOURCE_KINDS.includes(fact.source.kind);
+}
+
+export type FactInputResult =
+  | { ok: true; value: number | string }
+  | { ok: false; reason: string };
+
+/**
+ * Validate the architect's typed value for one fact, in plain words with no internal code. No value
+ * is computed: a measured key (square feet / feet) must be a number greater than zero; lot type must
+ * be one of the three plain words; a district or overlay must be non-empty text. The contract (and,
+ * for a real study, the store's own validation) remains the final guard.
+ */
+export function validateFactInput(fact: SiteFact, raw: string): FactInputResult {
+  const trimmed = raw.trim();
+  if (trimmed === "") return { ok: false, reason: "Enter a value first." };
+  const unit = SITE_FACT_KEY_UNITS[fact.key];
+  if (unit === "square_feet" || unit === "feet") {
+    const value = Number(trimmed);
+    if (!Number.isFinite(value) || value <= 0) {
+      return { ok: false, reason: "Enter a number greater than zero." };
+    }
+    return { ok: true, value };
+  }
+  if (fact.key === "lot_type") {
+    const word = trimmed.toLowerCase();
+    if (word !== "corner" && word !== "interior" && word !== "through") {
+      return { ok: false, reason: "Enter one of: corner, interior or through." };
+    }
+    return { ok: true, value: word };
+  }
+  return { ok: true, value: trimmed };
+}
+
+export type FactEditResult =
+  | { ok: true; source: LotSiteSource }
+  | { ok: false; reason: string };
+
+/**
+ * Record a value on a setup-only working source (no study/store yet). It MIRRORS
+ * study-operations.ts enterSiteFactValue for the no-study case: the value becomes a fact at rank
+ * "entered" sourced to the architect; a CITY value is kept and the entered value is added BESIDE it
+ * under "<fact_id>-entered"; a non-city value (an earlier entry, or an unknown placeholder) is
+ * replaced in place. The key, unit, lot and street are the edited fact's — nothing is computed. When
+ * a real study exists the panel calls enterSiteFactValue itself, so this path is the working copy
+ * only.
+ */
+export function applyEnteredFactToSource(
+  source: LotSiteSource,
+  factId: string,
+  value: number | string,
+  at: string,
+): FactEditResult {
+  const existing = source.siteFacts.find((fact) => fact.fact_id === factId);
+  if (!existing) return { ok: false, reason: "That value is not part of this site." };
+  const entered: SiteFact = {
+    contract_version: existing.contract_version,
+    fact_id: isCityFact(existing) ? `${existing.fact_id}${ENTERED_SUFFIX}` : existing.fact_id,
+    key: existing.key,
+    lot_bbl: existing.lot_bbl,
+    street: existing.street,
+    value,
+    unit: SITE_FACT_KEY_UNITS[existing.key],
+    measurement: { rank: "entered", label: MEASUREMENT_LABELS.entered },
+    source: {
+      kind: "architect_entry",
+      dataset: null,
+      dataset_version: null,
+      retrieved_at: at,
+      query_ref: null,
+      document_ref: null,
+      statement: null,
+    },
+    blocks: [],
+    editable: true,
+  };
+  const index = source.siteFacts.findIndex((fact) => fact.fact_id === entered.fact_id);
+  const siteFacts =
+    index >= 0
+      ? source.siteFacts.map((fact, position) => (position === index ? entered : fact))
+      : [...source.siteFacts, entered];
+  return { ok: true, source: { ...source, siteFacts } };
 }
