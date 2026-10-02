@@ -58,14 +58,14 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
+  "status": "awaiting_gate",
   "progress_percent": 85,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T09:02:47.014019+00:00",
-  "updated_at": "2026-10-02T13:36:04.990340+00:00",
+  "updated_at": "2026-10-02T13:36:07.444463+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
