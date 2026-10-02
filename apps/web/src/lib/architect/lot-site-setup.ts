@@ -20,6 +20,7 @@
 import {
   LOT_SELECTION_STATEMENT,
   MEASUREMENT_LABELS,
+  VERSION_CHECK_LABELS,
   type BlockedOutput,
   type Lot,
   type LotSelection,
@@ -81,6 +82,32 @@ export interface LotChoiceView {
   combination: CombinationView;
 }
 
+/** The version-check status on a fact's source (site_fact.schema.json#/$defs/version_check). */
+type VersionCheckStatus = NonNullable<Source["version_check"]>["status"];
+
+/**
+ * The per-fact data-version status for display (site_fact `source.version_check`, contract 1.1.0;
+ * plan §5a items 3-4). `label` is the vocabulary constant (never a new literal) and `reason` is the
+ * server's plain sentence; the panel always shows the two together in the fact's source details.
+ * `onFace` is true ONLY for an out-of-date version — a stale number must never look current, so its
+ * short marker shows beside the fact without a tap; "current" and "version_unknown" stay in details.
+ * The internal status token and the latest-known query ref are never carried onto the face.
+ */
+export interface SiteFactVersionView {
+  status: VersionCheckStatus;
+  label: string;
+  reason: string;
+  onFace: boolean;
+}
+
+/** The version-check view for a fact whose source records one; null when it does not (renders as today). */
+export function siteFactVersionViewOf(fact: SiteFact): SiteFactVersionView | null {
+  const versionCheck = fact.source?.version_check;
+  if (!versionCheck) return null;
+  const { status, reason } = versionCheck;
+  return { status, label: VERSION_CHECK_LABELS[status], reason, onFace: status === "out_of_date" };
+}
+
 export interface SiteFactRow {
   factId: string;
   /** The site_fact key, for a stable display hook and for grouping an entered value with its fact. */
@@ -93,6 +120,8 @@ export interface SiteFactRow {
   blocks: string[];
   editable: boolean;
   sourceLines: string[];
+  /** The fact's data-version status (plan §5a), or null when its source records none. */
+  versionCheck: SiteFactVersionView | null;
 }
 
 const SITE_FACT_KEY_LABELS: Record<SiteFact["key"], string> = {
@@ -243,6 +272,7 @@ export function siteFactRowsOf(facts: SiteFact[]): SiteFactRow[] {
       blocks: isUnknown ? blockedLabels(fact) : [],
       editable: fact.editable,
       sourceLines: sourceLines(fact.source),
+      versionCheck: siteFactVersionViewOf(fact),
     };
   });
 }

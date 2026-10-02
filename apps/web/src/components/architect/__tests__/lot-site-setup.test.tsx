@@ -1,10 +1,18 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import cornerLotStudy from "../../../../../../packages/contracts/fixtures/valid/study/synthetic_corner_lot_two_options.json";
+import currentFact from "../../../../../../packages/contracts/fixtures/valid/site_fact/synthetic_lot_area_city_records_current.json";
+import outOfDateFact from "../../../../../../packages/contracts/fixtures/valid/site_fact/synthetic_lot_area_city_records_out_of_date.json";
+import versionUnknownFact from "../../../../../../packages/contracts/fixtures/valid/site_fact/synthetic_street_width_version_unknown.json";
 import { validateStudyDocument } from "@/lib/study/study-validator";
 import { createStudyStore } from "@/lib/study/study-store";
 import { StudyStoreProvider } from "@/lib/study/use-study";
-import { LOT_SELECTION_STATEMENT, MEASUREMENT_LABELS, type Study } from "@/lib/study/study-vocabulary";
+import {
+  LOT_SELECTION_STATEMENT,
+  MEASUREMENT_LABELS,
+  VERSION_CHECK_LABELS,
+  type Study,
+} from "@/lib/study/study-vocabulary";
 import { LotSiteSetup } from "../LotSiteSetup";
 import { CROSS_BLOCK_REASON, LOT_A, LOT_B, twoLotCrossBlockStudy, twoLotOfferedStudy } from "./lot-site-fixtures";
 
@@ -13,6 +21,19 @@ afterEach(cleanup);
 const corner = cornerLotStudy as unknown as Study;
 const CORNER_BBL = corner.property.bbl; // the single-lot fixture BBL
 const FIXED_NOW = () => "2026-10-02T09:00:00Z";
+
+type StudySiteFact = Study["site"]["facts"][number];
+
+/**
+ * A contract-valid study (the corner-lot fixture) whose only site fact is one of the committed
+ * version_check site_fact fixtures, deep-cloned so the shared fixture is never mutated. Used to
+ * drive the data-version-status rows (D-04 slice 3).
+ */
+function studyWithFact(fact: unknown): Study {
+  const study = structuredClone(corner);
+  study.site.facts = [structuredClone(fact) as unknown as StudySiteFact];
+  return study;
+}
 
 /** A study-setup document (study_read.py shape) derived from a contract-valid study fixture. */
 function studySetupDoc(study: Study) {
@@ -238,5 +259,70 @@ describe("LotSiteSetup — re-pick (use all or pick); the server decides the com
     // The selection was sent as `selected`; the panel never re-derived a combination.
     const calls = (fetchImpl as unknown as ReturnType<typeof vi.fn>).mock.calls.map((call) => String(call[0]));
     expect(calls.some((url) => url.includes(`selected=${LOT_A}`))).toBe(true);
+  });
+});
+
+describe("LotSiteSetup — each site fact's data-version status (D-04 slice 3, plan C-7 / §5a)", () => {
+  it("builds against contract-valid studies carrying version_check facts", () => {
+    expect(validateStudyDocument(studyWithFact(currentFact)).ok).toBe(true);
+    expect(validateStudyDocument(studyWithFact(outOfDateFact)).ok).toBe(true);
+    expect(validateStudyDocument(studyWithFact(versionUnknownFact)).ok).toBe(true);
+  });
+
+  it("current → label with its reason in the source details only, nothing on the face", () => {
+    render(<LotSiteSetup bbl="5999999999" study={studyWithFact(currentFact)} />);
+    const row = screen.getByTestId("site-fact-fact-lot-area-current");
+    // The label and its reason live only in the source details disclosure.
+    const detail = screen.getByTestId("site-fact-version-fact-lot-area-current");
+    expect(detail).toHaveTextContent(VERSION_CHECK_LABELS.current);
+    expect(detail).toHaveTextContent("is the newest published version on record");
+    // A current fact shows no on-face marker.
+    expect(screen.queryByTestId("site-fact-version-flag-fact-lot-area-current")).toBeNull();
+    // No internal status token and no query ref on the face.
+    const text = row.textContent ?? "";
+    expect(text).not.toContain("out_of_date");
+    expect(text).not.toContain("version_unknown");
+    expect(text).not.toContain("pluto/version");
+  });
+
+  it("out_of_date → a short marker on the face, plus the label with its reason in details", () => {
+    render(<LotSiteSetup bbl="5999999999" study={studyWithFact(outOfDateFact)} />);
+    const row = screen.getByTestId("site-fact-fact-lot-area-out-of-date");
+    const flag = screen.getByTestId("site-fact-version-flag-fact-lot-area-out-of-date");
+    // The stale marker uses the vocabulary label and is visible WITHOUT opening the details.
+    expect(flag).toHaveTextContent(VERSION_CHECK_LABELS.out_of_date);
+    const details = row.querySelector<HTMLDetailsElement>("details.lot-site-fact__detail");
+    expect(details).not.toBeNull();
+    expect(details!.contains(flag)).toBe(false);
+    // The details still carry the label together with the full reason.
+    const detail = screen.getByTestId("site-fact-version-fact-lot-area-out-of-date");
+    expect(detail).toHaveTextContent(VERSION_CHECK_LABELS.out_of_date);
+    expect(detail).toHaveTextContent("a newer version, 26v2, is published");
+    // No internal status token and no query ref on the face.
+    const text = row.textContent ?? "";
+    expect(text).not.toContain("out_of_date");
+    expect(text).not.toContain("pluto/version");
+  });
+
+  it("version_unknown → label with its reason in details only, nothing on the face", () => {
+    render(<LotSiteSetup bbl="5999999999" study={studyWithFact(versionUnknownFact)} />);
+    const row = screen.getByTestId("site-fact-fact-street-width-version-unknown");
+    const detail = screen.getByTestId("site-fact-version-fact-street-width-version-unknown");
+    expect(detail).toHaveTextContent(VERSION_CHECK_LABELS.version_unknown);
+    expect(detail).toHaveTextContent("has no recorded version");
+    // Not out of date, so there is no on-face marker.
+    expect(screen.queryByTestId("site-fact-version-flag-fact-street-width-version-unknown")).toBeNull();
+    // The internal token never appears on the face (the plain reason itself may say "current").
+    const text = row.textContent ?? "";
+    expect(text).not.toContain("version_unknown");
+    expect(text).not.toContain("out_of_date");
+  });
+
+  it("a fact with no version_check renders unchanged — no marker and no version line", () => {
+    render(<LotSiteSetup bbl="5999999999" study={corner} />);
+    expect(screen.queryByTestId("site-fact-version-flag-fact-lot-area")).toBeNull();
+    expect(screen.queryByTestId("site-fact-version-fact-lot-area")).toBeNull();
+    // The fact itself still renders as before.
+    expect(screen.getByTestId("site-fact-fact-lot-area")).toHaveTextContent("5,000 sq ft");
   });
 });
