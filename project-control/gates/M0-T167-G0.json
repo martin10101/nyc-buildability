@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T167",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T167-G0.md",
+  "reviewed_at": "2026-10-02T05:21:54.547577+00:00",
+  "content_manifest_sha256": "5debe373c68c3c4839db4f22aa5b08e8851d34803155f8b596f8287749e43b9c",
+  "reviewed_sha": "a4ca65c92613df21c747d940758867af2dd6b36e",
+  "updated_at": "2026-10-02T05:21:54.645374+00:00"
+}

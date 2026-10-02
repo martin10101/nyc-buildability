@@ -1,0 +1,95 @@
+{
+  "task_id": "M0-T165",
+  "title": "D-091 T1: Linux platform seam for the loop controller (POSIX config hardening check, Linux config/runtime paths, process env)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Make the controller's Windows-only seams work on Linux without weakening them: a POSIX verifier for the protected config (root-owned, not group/world-writable, protected parent dir) with the same fail-closed verdict shape as os_acl.py; a Linux path resolver for config/runtime/activation paths; DISABLE_AUTOUPDATER in the child/probe env. Windows behavior unchanged.",
+  "business_reason": "Owner directive D-091: move the loop to the cloud server with Codex and Claude reviews and a combining model.",
+  "inputs": [
+    "docs/D091_CLOUD_LOOP_DESIGN.md sections 1 (rows 1, 2, 5) and 7",
+    "tools/agent_supervisor/os_acl.py",
+    "tools/agent_supervisor/locking.py (existing POSIX branch precedent)",
+    "tools/agent_supervisor/config.py",
+    "tools/agent_supervisor/process.py",
+    "tools/agent_supervisor/config.example.toml",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md sections 5-6 and 13"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/posix_acl.py",
+    "tools/agent_supervisor/platform_paths.py",
+    "edits to os_acl.py / config.py / process.py behind a platform check",
+    "tools/test_agent_supervisor_platform_seam.py",
+    "project-control/reports/M0-T165-producer-report.md (orchestrator saves the producer return)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/os_acl.py",
+    "tools/agent_supervisor/posix_acl.py",
+    "tools/agent_supervisor/platform_paths.py",
+    "tools/agent_supervisor/config.py",
+    "tools/agent_supervisor/process.py",
+    "tools/test_agent_supervisor_platform_seam.py",
+    "project-control/reports/M0-T165-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/fixtures/** (M0-T166 recapture is later)",
+    "launch scripts and ps_tests/** (M0-T166)",
+    "reviewer modules (M0-T168)",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
+    "codex login or handling any owner credential",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
+    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths"
+  ],
+  "acceptance_scenarios": [
+    "primary: on Linux, a root-owned 0444 config in a root-owned 0755 directory gives the same OK verdict shape os_acl gives on Windows",
+    "boundary: a group- or world-writable config, or a writable parent directory, fails closed with a named reason",
+    "missing/ambiguous: a missing config, an unreadable owner, or an unknown platform returns UNKNOWN and fails closed",
+    "failure: a symlinked config or parent fails closed",
+    "regression: every existing tools/test_agent_supervisor_*.py test that ran before still passes; Windows code paths unchanged"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 20,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T05:17:55.445438+00:00",
+  "updated_at": "2026-10-02T05:22:08.082638+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T05:17:55.445727+00:00",
+  "worktree": "/root/project/w-M0-T165",
+  "progress_log": [
+    {
+      "at": "2026-10-02T05:22:08.082538+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Acceptance scenarios recorded in the packet; producer dispatched in /root/project/w-M0-T165"
+    }
+  ]
+}

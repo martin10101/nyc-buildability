@@ -1,0 +1,78 @@
+{
+  "task_id": "M0-T166",
+  "title": "D-091 T2: Linux launcher and bash shell-routing test harness for the loop (analog of the PowerShell launch and ps_tests)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Give the loop a Linux launch path (a bash launcher and a systemd unit template, never started by an agent) and a bash shell-routing test harness equivalent to tools/agent_supervisor/ps_tests, wired through launch_seam.py, so the controller's shell-routing probe can be certified on Linux.",
+  "business_reason": "Owner directive D-091: move the loop to the cloud server with Codex and Claude reviews and a combining model.",
+  "inputs": [
+    "docs/D091_CLOUD_LOOP_DESIGN.md sections 1 (row 3) and 7",
+    "tools/agent_supervisor/launch_seam.py",
+    "tools/agent_supervisor/routing_probe.py",
+    "tools/agent_supervisor/ps_tests/**",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md (the launch seam section)"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/linux/ (launcher, systemd unit template, bash shell-routing harness and mutants)",
+    "launch_seam.py wiring",
+    "tools/test_agent_supervisor_linux_launch.py",
+    "project-control/reports/M0-T166-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T165"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/launch_seam.py",
+    "tools/agent_supervisor/linux/",
+    "tools/test_agent_supervisor_linux_launch.py",
+    "project-control/reports/M0-T166-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/ps_tests/** (kept for the PC)",
+    "tools/agent_supervisor/fixtures/**",
+    "M0-T165 and M0-T168 paths",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
+    "codex login or handling any owner credential",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
+    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths"
+  ],
+  "acceptance_scenarios": [
+    "primary: the bash harness runs the same shell-routing cases as ps_tests and passes on this server",
+    "boundary: each mutant in the bash harness is detected (the harness goes red)",
+    "missing/ambiguous: a missing claude binary or unset required env fails closed before any provider contact",
+    "failure: the launcher refuses to start when the start gate refuses; it never pushes, merges or starts a live run in tests"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "ci-evidence-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "ready",
+  "progress_percent": 5,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T05:17:56.297263+00:00",
+  "updated_at": "2026-10-02T05:21:54.246604+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T05:17:56.297492+00:00"
+}

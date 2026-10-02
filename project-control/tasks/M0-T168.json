@@ -1,0 +1,90 @@
+{
+  "task_id": "M0-T168",
+  "title": "D-091 T5: independent Claude reviewer path beside the Codex reviewer (fresh read-only instance, same frozen head, default off)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Add a Claude reviewer to the loop that reviews the same frozen head and packet as the Codex reviewer, as a fresh read-only instance that is never the producer and never sees the Codex review; its verdict shape matches the Codex reviewer's so a later combiner (D-091 T6) can read both. Behind a config switch that defaults off.",
+  "business_reason": "Owner directive D-091: move the loop to the cloud server with Codex and Claude reviews and a combining model.",
+  "inputs": [
+    "docs/D091_CLOUD_LOOP_DESIGN.md section 2",
+    "tools/agent_supervisor/codex_reviewer.py (verdict shape, read-only argv)",
+    "tools/agent_supervisor/review_packet.py",
+    "tools/agent_supervisor/review_cadence.py",
+    "tools/agent_supervisor/claude_runner.py (argv built shell=False)",
+    ".claude/ORCHESTRATION_POLICY.md (reviewer independence)"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/claude_reviewer.py",
+    "review_packet.py changes if needed",
+    "tools/test_agent_supervisor_claude_reviewer.py",
+    "project-control/reports/M0-T168-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/claude_reviewer.py",
+    "tools/agent_supervisor/review_packet.py",
+    "tools/test_agent_supervisor_claude_reviewer.py",
+    "project-control/reports/M0-T168-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/codex_reviewer.py and gate_wave.py (above the justification threshold; the combiner is T6)",
+    "tools/agent_supervisor/loop.py",
+    "M0-T165 and M0-T166 paths",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
+    "codex login or handling any owner credential",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
+    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths"
+  ],
+  "acceptance_scenarios": [
+    "primary: given a frozen head and packet, the Claude reviewer argv is read-only, pinned to an allowlisted model, and returns a verdict in the Codex reviewer's shape",
+    "boundary: the reviewer refuses when its identity equals the producer's, or when it is handed the Codex review",
+    "missing/ambiguous: a malformed or empty reviewer output is FAIL/UNVERIFIED, never PASS",
+    "failure: the switch defaults off; with it off nothing changes in the loop"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "ai-pipeline-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 20,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T05:17:58.055714+00:00",
+  "updated_at": "2026-10-02T05:22:08.773733+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R002",
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T05:17:58.056015+00:00",
+  "worktree": "/root/project/w-M0-T168",
+  "progress_log": [
+    {
+      "at": "2026-10-02T05:22:08.773636+00:00",
+      "agent": "ai-pipeline-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Acceptance scenarios recorded in the packet; producer dispatched in /root/project/w-M0-T168"
+    }
+  ]
+}

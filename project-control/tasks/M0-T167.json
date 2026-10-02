@@ -1,0 +1,83 @@
+{
+  "task_id": "M0-T167",
+  "title": "D-091 T4: admit the Codex CLI (@openai/codex) through dependency security for the cloud loop (exact pin >= 7 days, advisory-free, integrity-matched, G5 provenance)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Admit @openai/codex for this server under docs/DEPENDENCY_SECURITY_POLICY.md: pin the newest stable version that is at least 7 complete days old at admission time, integrity-matched to the official npm registry, advisory-free at every severity, lifecycle scripts reviewed; install into a repo-local, git-ignored directory with an exact lockfile; record the G5 provenance facts; re-verify the reviewer flags codex_reviewer.py uses on the installed binary. No sign-in.",
+  "business_reason": "Owner directive D-091: move the loop to the cloud server with Codex and Claude reviews and a combining model.",
+  "inputs": [
+    "docs/D091_CLOUD_LOOP_DESIGN.md section 3",
+    "docs/DEPENDENCY_SECURITY_POLICY.md",
+    "tools/agent_supervisor/codex_reviewer.py (the flags it relies on)",
+    "https://registry.npmjs.org/@openai/codex (official registry metadata)"
+  ],
+  "outputs": [
+    "tools/codex_cli/package.json and package-lock.json (exact pin)",
+    "tools/codex_cli/README.md (provenance record: name, maintainers, lifecycle scripts, registry origin, publish time and age, necessity, audit result, verified flags)",
+    "project-control/reports/M0-T167-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/codex_cli/",
+    "project-control/reports/M0-T167-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "global installs (npm -g) or any install outside tools/codex_cli/",
+    "any version younger than 604800 s or with any advisory",
+    "other lockfiles (apps/web, services/api)",
+    "tools/agent_supervisor/**",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
+    "codex login or handling any owner credential",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
+    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths"
+  ],
+  "acceptance_scenarios": [
+    "primary: the pinned version is >= 604800 s old at admission, its integrity matches the registry, and npm audit reports zero advisories",
+    "boundary: a version 604799 s old is refused; the newest stable >= 7 days is chosen, never an alpha",
+    "missing/ambiguous: registry or audit unreachable or malformed fails closed (no install)",
+    "failure: a lifecycle script or advisory found stops admission with a named reason",
+    "flags: every codex exec flag codex_reviewer.py uses is present in the installed binary's --help"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G5"
+  ],
+  "producer_agent": "cloud-architect",
+  "reviewer_agents": [
+    "security-reviewer",
+    "ci-evidence-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 20,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T05:17:57.156953+00:00",
+  "updated_at": "2026-10-02T05:22:08.492736+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R005",
+        "D-091-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T05:17:57.157176+00:00",
+  "worktree": "/root/project/w-M0-T167",
+  "progress_log": [
+    {
+      "at": "2026-10-02T05:22:08.492614+00:00",
+      "agent": "cloud-architect",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Acceptance scenarios recorded in the packet; producer dispatched in /root/project/w-M0-T167"
+    }
+  ]
+}
