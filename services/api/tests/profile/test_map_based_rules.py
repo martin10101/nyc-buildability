@@ -9,7 +9,9 @@ checked here.
 
 from __future__ import annotations
 
+import hashlib
 import json
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -33,6 +35,25 @@ from tests.spatial._northern_replay import BBL, replay_pluto
 _CLOCK = lambda: datetime(2026, 9, 30, 6, 20, tzinfo=UTC)  # noqa: E731
 PACK = Path(__file__).resolve().parents[1] / "fixtures" / "benchmark_215_16_northern"
 PLUTO_FILE = "pluto_64uk-42ks_bbl_4073340070.json"
+
+# The committed excerpt of DCP's official NYC Open Data PLUTO metadata (api/views 64uk-42ks),
+# fetched 2026-10-02, giving the flood item its sourced meaning (B-09 flood follow-up).
+FIRM_FLAGS_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "pluto_firm_flags"
+FIRM_FLAGS_EXCERPT = FIRM_FLAGS_DIR / "pluto_firm_flags_metadata_excerpt.json"
+
+# The publisher's (DCP) verbatim field descriptions, pinned so a metadata change is visible.
+FIRM07_DESCRIPTION = (
+    "A value of 1 means that some portion of the tax lot falls within the 1% annual chance "
+    "floodplain as determined by FEMA's 2007 Flood Insurance Rate Map.\n\n"
+    "Note that buildings on the tax lot may or may not be in the portion of the tax lot that "
+    "is within the 1% annual chance floodplain."
+)
+PFIRM15_DESCRIPTION = (
+    "A value of 1 means that some portion of the tax lot falls within the 1% annual chance "
+    "floodplain as determined by FEMA's 2015 Preliminary Flood Insurance Rate Map.\n\n"
+    "Note that buildings on the tax lot may or may not be in the portion of the tax lot that "
+    "is within the 1% annual chance floodplain."
+)
 
 # The nine §8a map-based items, in plan order.
 EXPECTED_ITEMS = (
@@ -228,21 +249,65 @@ def test_split_zone_true_flags() -> None:
     assert "splitzone true" in flag.detail
 
 
-def test_present_flood_flag_flags_and_points_to_the_fema_map_no_unverified_meaning() -> None:
+def test_present_flood_flag_states_the_verified_floodplain_meaning_no_zone_letter() -> None:
+    # pfirm15_flag -> the verified 2015 Preliminary FIRM wording.
     record = benchmark_record()
     record["pfirm15_flag"] = 1  # SYNTHETIC: PLUTO records a FEMA flood-map flag on the row
     flag = by_id(map_based_rules_group(BBL, profile=profile_from_record(record)))[
         "map_based_rules.flood"]
     assert flag.status == STATUS_FLAG
     assert "pfirm15_flag" in flag.detail  # the column is surfaced verbatim
-    assert "FEMA" in flag.detail  # points to the FEMA map to confirm the zone
+    # The verified meaning from DCP's official PLUTO metadata (api/views 64uk-42ks): a value
+    # of 1 = some portion of the tax lot is in the 1% annual chance floodplain on the named
+    # FEMA map, and buildings may or may not be in that portion.
+    assert "some portion of this tax lot" in flag.detail
+    assert "1% annual chance floodplain" in flag.detail
+    assert "may or may not be in that portion" in flag.detail  # the required caveat
+    assert "2015 Preliminary Flood Insurance Rate Map" in flag.detail
+    assert "FEMA" in flag.detail  # still defers to the FEMA map for the flood zone
+    assert "flood zone on the FEMA Flood Insurance Rate Map" in flag.detail
     assert "rule check" in flag.detail  # never decides the rule
-    # The firm07_flag / pfirm15_flag meaning is UNVERIFIED (the official PLUTO data
-    # dictionary 26v1 is encrypted and could not be read), so the flag asserts no meaning
-    # beyond "PLUTO records a FEMA flood-map flag; confirm on the FEMA map" (principle 3).
-    assert "floodplain" not in flag.detail.lower()
-    assert "Appendix G" not in flag.detail
-    assert "not verified" in flag.detail.lower()
+    # Says exactly what the publisher's description supports and nothing more:
+    assert "not verified" not in flag.detail.lower()  # the meaning is now sourced
+    assert "Appendix G" not in flag.detail  # no flood-resilience height rule claim
+    assert re.search(r"\bZone\s+[A-Z]", flag.detail) is None  # no flood-zone letter (AE/VE/X)
+
+    # firm07_flag -> the verified 2007 FIRM wording (the only per-column difference).
+    record = benchmark_record()
+    record["firm07_flag"] = 1  # SYNTHETIC
+    flag = by_id(map_based_rules_group(BBL, profile=profile_from_record(record)))[
+        "map_based_rules.flood"]
+    assert flag.status == STATUS_FLAG
+    assert "firm07_flag" in flag.detail
+    assert "2007 Flood Insurance Rate Map" in flag.detail
+    assert "some portion of this tax lot" in flag.detail
+    assert "may or may not be in that portion" in flag.detail
+
+
+def test_firm_flag_fixture_pins_the_publisher_verbatim_descriptions() -> None:
+    # The committed metadata excerpt is the only source of the flood field meaning. Pinning
+    # its sha256 (against the MANIFEST) and the verbatim descriptions makes a metadata change
+    # visible, so the user-facing wording can never drift away from the publisher's text.
+    raw = FIRM_FLAGS_EXCERPT.read_bytes()
+    manifest = json.loads((FIRM_FLAGS_DIR / "MANIFEST.json").read_text("utf-8"))
+    entry = next(
+        f for f in manifest["files"] if f["file"] == "pluto_firm_flags_metadata_excerpt.json"
+    )
+    assert hashlib.sha256(raw).hexdigest() == entry["sha256"]
+
+    excerpt = json.loads(raw)
+    assert excerpt["dataset_id"] == "64uk-42ks"
+    assert excerpt["dataset_name"] == "Primary Land Use Tax Lot Output (PLUTO)"
+    assert excerpt["attribution"] == "Department of City Planning (DCP)"
+    cols = {c["fieldName"]: c for c in excerpt["columns"]}
+    assert set(cols) == {"firm07_flag", "pfirm15_flag"}
+    assert cols["firm07_flag"]["dataTypeName"] == "number"
+    assert cols["pfirm15_flag"]["dataTypeName"] == "number"
+    # Verbatim descriptions pinned, including the "may or may not be" caveat the wording uses.
+    assert cols["firm07_flag"]["description"] == FIRM07_DESCRIPTION
+    assert cols["pfirm15_flag"]["description"] == PFIRM15_DESCRIPTION
+    assert "may or may not be" in FIRM07_DESCRIPTION
+    assert "may or may not be" in PFIRM15_DESCRIPTION
 
 
 def test_present_landmark_and_historic_district_flag_without_deciding_lpc() -> None:
