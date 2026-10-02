@@ -1,14 +1,16 @@
 {
   "task_id": "M0-T174",
-  "material_commit": "17d35c4c (producer commit in worktree w-M0-T174; 4 files)",
+  "material_commit": "17d35c4c (fixtures and capability/native tests) and 4cf24069 (rework 1: hook-event catalog 2.1.287, the event_drift.py catalog re-point, event_bus tests); producer commits in worktree w-M0-T174",
   "produced_at": "2026-10-02T14:10:00+00:00",
   "producer": "backend-engineer (orchestrator-dispatched subagent; worktree /root/project/w-M0-T174)",
   "requirements": {
     "D-091-R001": [
-      "Linux recertification of the controller on the cloud server after all D-091 code tasks (M0-T171/T172/T173/T176): new current capability-probe fixture (claude 2.1.287 at /usr/bin/claude; codex-cli 0.157.0 from the M0-T167 lock-pinned admission installed with npm ci --ignore-scripts) and a Linux native-runtime-detection fixture; the M0-T159 fixtures are kept. The re-baseline invariant pins 2.1.287 / 0.157.0; capability_probe + native_adapter suites 77 passed with 0 skipped, so the live drift teeth ran green; the bash shell-routing harness passed with 3/3 mutants detected."
+      "Linux recertification of the controller on the cloud server after all D-091 code tasks (M0-T171/T172/T173/T176). New fixtures: the capability-probe current fixture (claude 2.1.287 at /usr/bin/claude; codex-cli 0.157.0 from the M0-T167 lock-pinned admission installed with npm ci --ignore-scripts), a Linux native-runtime-detection fixture, and hook_event_catalog_2_1_287.json rebuilt from the re-fetched official hooks documentation (33 events, no drift from 2.1.281). Older fixtures are kept.",
+      "All three live claude-version drift teeth are green on this server: capability_probe + native_adapter 77 passed (0 skipped) and event_bus 38 passed, including test_s8_live_version_matches_catalog_fixture (the G3/G4 round-1 finding). The bash shell-routing harness passed with 3/3 mutants detected."
     ],
     "D-091-R007": [
-      "Certification before use: version and help probes only, no provider call, no loop started, no root config or systemd step, no credential; no tools/agent_supervisor source change. Disclosed limits: the shell-routing fixture needs a live provider round-trip and the Codex sign-in, so it is not recaptured and not claimed; the controller source binding (tools/controller_update/source_binding.json) is the Windows PC controller's update pin, outside this packet and already stale since the D-091 merges, so it is not re-pinned here (re-pinning it would authorize the PC loop update, part of the owner's B-026 keep-or-retire decision); the Linux binding is verified at commissioning (M0-T175)."
+      "Certification before use: version, help and documentation fetches only, no provider call, no loop started, no root config or systemd step, no credential. The one source change is the event_drift.py catalog re-point (M0-T159 precedent, in scope after the recorded scope correction); it moves the activation-manifest digest by that one file.",
+      "Disclosed limits: the shell-routing fixture needs a live provider round-trip and the Codex sign-in, so it is not recaptured and not claimed; tools/controller_update/source_binding.json (the Windows PC controller update pin, already stale since the D-091 merges) is not re-pinned here, because that is part of the owner's B-026 keep-or-retire decision, and the Linux binding is verified at commissioning (M0-T175); the whole supervisor suite is not green on Linux because of a pre-existing Windows-platform cluster (containment, icacls, Windows paths), which is not claimed."
     ]
   }
 }

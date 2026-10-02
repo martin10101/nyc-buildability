@@ -153,11 +153,17 @@ Commands that compute/check it:
   `verify-manifest` / `verify-controller`.
 
 Two facts the orchestrator needs:
-1. **The activation-manifest digest does NOT change from this task.** `manifest.py
-   COVERED_PATTERNS` = `*.py, schemas/*.json, prompts/*.md, config.toml,
-   config.example.toml, launchers/*.cmd, launchers/*.ps1, README.md` — `fixtures/*.json`
-   is not covered, and the `tools/test_*.py` files are outside the manifest root.
-   So the recorded manifest digest is unaffected by the recapture.
+1. **The activation-manifest digest changes by EXACTLY ONE file — `event_drift.py`
+   (rework 1).** `manifest.py COVERED_PATTERNS` = `*.py, schemas/*.json,
+   prompts/*.md, config.toml, config.example.toml, launchers/*.cmd,
+   launchers/*.ps1, README.md`. The recaptured FIXTURES (`fixtures/*.json`,
+   including the new hook-event catalog) are NOT manifest-covered, and the
+   `tools/test_*.py` files are outside the manifest root — those do not move the
+   digest. BUT rework 1 re-points `event_drift.py` (a `*.py`, manifest-covered)
+   to the new catalog, so the recorded activation-manifest digest DOES move by
+   that one file — exactly the M0-T159 pattern where `event_drift.py` was "the
+   ONE manifest-tracked change". The orchestrator's `record-manifest` after
+   integration will show a one-file delta on `event_drift.py`.
 2. **source_binding.json was already stale before this task.** Its pinned
    `subtree_tree_sha 9c0b14ea…` does not match the claim-seam subtree
    (`git rev-parse 409060270…:tools/agent_supervisor` = `41bbd31d3d89e3ae10f22b7e321babce7eb5cbac`);
@@ -182,22 +188,132 @@ Two facts the orchestrator needs:
   and the cert is not claimed on it (§6).
 
 ## 9. Preservation / safety
-No provider/model request was made (only `--version`/`--help` and the read-only
-native-detection help probes). No `/etc/nyc-supervisor/config.toml`, no systemd
-unit, no live loop, no codex login, no credential touched. No
-`tools/agent_supervisor/*.py` source change (cert stays valid). No write outside
+No provider/model request was made (only `--version`/`--help`, the read-only
+native-detection help probes, and a `curl` GET of the public hooks docs). No
+`/etc/nyc-supervisor/config.toml`, no systemd unit, no live loop, no codex login,
+no credential touched. Exactly ONE `tools/agent_supervisor/*.py` change
+(rework 1): the authorized `event_drift.py` hook-catalog re-point — the M0-T159
+recertification precedent, added to `allowed_paths` by the scope correction; no
+other `*.py` under `tools/agent_supervisor/` changed. No write outside
 `allowed_paths` except the git-ignored `tools/codex_cli/node_modules/` (build
 artifact, uncommitted) and this report under the session scratchpad. The
 orchestrator records the ledger and integrates git; nothing was pushed.
 
-## 10. Verdict
-Linux recertification **PASS at this producer commit**
-(`17d35c4cc473c59ec396b454f3ed7fb55a0953b7`, subtree
-`0368b1a997fe1359f989e1a70d2d1462b6ad81d0`; claude `2.1.287` / codex-cli
-`0.157.0`), subject to the independent G0/G2/G3/G4/G5 review wave
-(control-plane-verifier, security-reviewer, directive-compliance-verifier) and to
-the orchestrator-executed source_binding.json re-bind at the integrated candidate
-(§7). Any `tools/agent_supervisor/**` change after this point re-invalidates the
-certification and re-triggers the recert.
+## 10. Verdict (as amended by Rework 1, §11)
+Linux recertification **PASS**, scoped precisely to what was measured on this box:
+
+CERTIFIED (green on this server):
+- installed CLIs: claude `2.1.287 (Claude Code)`, codex-cli `0.157.0`;
+- ALL THREE controller live claude-version drift teeth GREEN: capability_probe
+  (claude + codex version), native_adapter (native detection), event_bus S8
+  (hook-event catalog) — this is the COMPLETE live claude/codex execution surface
+  of the suite (grep-proven: only capability_probe, event_bus, native_adapter,
+  os_acl execute the real CLI; os_acl has no version tooth);
+- the bash shell-routing harness (3/3 mutants detected);
+- the recaptured fixtures (capability, native, hook-event catalog) and the
+  re-baselined version-pinned invariants.
+
+DISCLOSED LIMITS / NOT certified here (deferred, named):
+- the shell-routing FIXTURE (routing_probe.py) is NOT recaptured — it needs a live
+  provider round-trip + codex sign-in (forbidden; owner-typed TW5). No live tooth
+  depends on it (§6);
+- `tools/controller_update/source_binding.json` is NOT re-pinned — outside
+  allowed_paths, needs the integrated commit SHA, and is Windows-path-only
+  (orchestrator step; §7);
+- the WHOLE 95-file supervisor suite does NOT pass green on this Linux box, and
+  this is NOT claimed. Every failure observed is the environmental Windows-platform
+  cluster (host containment is `process_group`, the loop requires Windows
+  `job_object` → golden_run/loop/launch_seam/mrl_exec_chain `containment_refused`;
+  Windows path-normalization and `icacls` tests in checkpoint_envelope/os_acl) —
+  none touches this recert's changed modules (grep-proven independence; §11). The
+  box also exhibits transient OOM-SIGKILL(137) on batched runs, so a complete
+  clean suite count is not obtainable here (the suite was certified green only on
+  Windows at M0-T159).
+
+Subject to the independent G0/G2/G3/G4/G5 review wave (control-plane-verifier,
+security-reviewer, directive-compliance-verifier) and the orchestrator-executed
+source_binding.json re-bind + manifest re-record at the integrated candidate (§7,
+and §7.1 now carries a one-file `event_drift.py` manifest delta). Any further
+`tools/agent_supervisor/**` change after this point re-invalidates the cert.
+
+## 11. Rework 1 — G3/G4 round-1 FAIL B1 cure (the third live drift tooth)
+Round-1 FAIL B1: the controller has THREE live claude-version drift teeth; round 1
+repointed only two families (capability_probe, native_adapter) and left the third
+RED on the box — `test_agent_supervisor_event_bus.py::test_s8_live_version_matches_catalog_fixture`
+(`'2.1.287 (Claude Code)' == '2.1.281 (Claude Code)'`). N2: the scoped wording
+read as if the full live-drift surface was green. Both are cured here.
+
+Files (rework-1 commit `4cf240697e51cefb21db3b63c0fad0fd3c793798`, parent
+`e4c705b0e5aa4439c092473f1ba3a0a5b7e58fa1`; commit tree
+`5e24e092d56339e59c7dfbc65eb76733543746ed`; `tools/agent_supervisor` subtree
+`aed743275db835d4667f30d92a21e3d9d9131c6a`; tree clean):
+- A `tools/agent_supervisor/fixtures/hook_event_catalog_2_1_287.json`
+  (LF sha256 `f84a0f6299c72f696a5d2b5290a21a5e8279ba88ffee1455bb9f9a82975855de`);
+- M `tools/agent_supervisor/event_drift.py` (CATALOG_FIXTURE_PATH + version comment
+  re-pointed `2_1_281` → `2_1_287`; the one manifest-covered change, §7.1);
+- M `tools/test_agent_supervisor_event_bus.py` (CATALOG_FIXTURE constant; S8
+  `test_s8_catalog_fixture_valid_and_masked` → task M0-T174 / claude 2.1.287 /
+  count stays 33). The old 2_1_281 and earlier catalogs stay committed as history.
+
+Catalog provenance (no model call): re-fetched the official hooks docs by
+`curl -sS -L -A "Mozilla/5.0 (recert-probe)" https://code.claude.com/docs/en/hooks`
+on **2026-10-02**, **HTTP 200**, **2,919,589 bytes** (M0-T159 saw 2,900,678 — the
+doc grew ~19KB, entirely in tool/permission prose). **Event count 33, no drift
+vs 2.1.281** — all 33 known events present as their documented `id`-anchor
+sections; the authoritative enumeration is the id-anchor set (hook events) which
+is exactly the 33. The three new PascalCase tokens appearing near hook/event
+context (`SubagentHandback`, `TaskUpdate`, `AskUserQuestion`) are TOOLS, not hook
+events, verified from their doc context (`SubagentHandback` = the subagent
+hand-back tool added in Claude Code v2.1.271 that a PreToolUse/PostToolUse hook
+matches ON; `TaskUpdate` = the tool that fires TaskCreated/TaskCompleted;
+`AskUserQuestion` = a tool `<h5>` under the tools/permission section). The +2
+drift vs the 2.1.220 baseline (PreModelSwitch + PostModelSwitch) carries unchanged.
+
+Evidence:
+- `pytest tools/test_agent_supervisor_event_bus.py -q` → **38 passed** (S8 live
+  tooth `test_s8_live_version_matches_catalog_fixture` GREEN; S8 drift-match green;
+  catalog valid+masked green). Re-verified in the per-file sweep (38 passed).
+- WHOLE-SUITE SWEEP (memory-safe, per-file; single-process whole-suite and large
+  batches OOM-SIGKILL on this 8 GiB box): the complete live claude/codex execution
+  surface is exactly {capability_probe, event_bus, native_adapter, os_acl}
+  (grep: a live tooth must guard on CLI presence or it breaks Windows CI). ALL
+  THREE version-drift teeth GREEN; os_acl has no version tooth (its live teeth are
+  `IS_WINDOWS`-gated powershell/icacls, which SKIP on Linux). Files that ran clean
+  include adversarial, audit*, bootstrap_continuity, bounded_*, broker, c2_binding,
+  capability_probe (77), claude_reviewer, codex_channel, command_*, controller_succession,
+  crash, cross_task, dual_review, endurance, ephemeral_review, event_bus (38), fuzz,
+  gate_wave, github_flow, goal_integration, guardrail_bridge, invariants, ipc,
+  linux_gauge, linux_launch, manifest_binding, model_turnover, mrl_* (launch_path,
+  one_shot, runtime_identity, worker_result, …), native_adapter, next_task,
+  operator_channel, pending_prompt, phase1, policy, protocol, r595_actuation,
+  review_combiner (47), review_slots, reviewer (125), routing_probe (35), and more.
+- Failing files, ALL environmental Windows-platform (independent of this recert —
+  grep shows none import event_drift/catalog/capability fixtures):
+  checkpoint_envelope::test_windows_worktree_normalization_equivalent_paths_match (1);
+  golden_run (7: injected-refusal/quota/restart/rotation/compact/epilogue — all
+  `containment_refused`: host containment `process_group` ≠ Windows `job_object`,
+  dispatch REFUSED `unsupported_platform` exit 12, M0-T052 G5 C1); launch_seam (3);
+  loop (3); mrl_exec_chain (12); os_acl (3: e.g. `test_run_icacls_uses_absolute_system32_path`).
+  model_chain.py excluded as instructed (SIGKILLs on this host).
+- Not completed on this box (no live CLI tooth; transient OOM-SIGKILL blocked a
+  full clean count): quota_classifier (intermittently killed then unrun), recovery,
+  recovery_probes, repair_gate, replay, resource_fit, resource_sampling,
+  restart_channel, rotation, runner, runtime_supervision, scheduler,
+  session_continuity, start_reentry, statusline_handler, subagent_telemetry,
+  telegram_sink, telemetry_core, turnover_* (5). None contains a live claude/codex
+  tooth, so the live-drift recertification is complete regardless.
+
+Self-checks (rework 1): `ruff check` on `event_drift.py` + the event_bus test →
+All checks passed (exit 0); `python3 tools/modularity_check.py --check` → exit 0,
+0 failures (event_drift.py not flagged; the one-line re-point + comment did not
+grow it materially).
+
+Orchestrator follow-ups: (a) tighten the evidence-map D-091-R001 phrase per N2 so
+it does not read as if the full live-drift surface were green under a two-family
+scope (I cannot write `project-control/`); (b) the source_binding re-bind now also
+carries a one-file `event_drift.py` manifest delta (§7.1).
 
 END-OF-REPORT
+
+## Orchestrator correction (recorded at resubmission)
+This report describes some whole-suite batch runs as "OOM-SIGKILL (137)". That is not supported. The server's kernel OOM counter (`/proc/vmstat` `oom_kill`) is 0, and the orchestrator's 15-second memory log never exceeded 16% during the session. Exit 137 is a SIGKILL. The independent M0-T173 G3 reviewer gave the same non-memory cause for model_chain: the real-subprocess test classes kill their process group. The conclusion that matters is unchanged: none of the files that did not finish has a live CLI tooth, and the live-drift recertification rests on the three teeth, all green.
