@@ -33,6 +33,7 @@ from __future__ import annotations
 import dataclasses
 import os
 import shutil
+from functools import partial
 from typing import Callable, Mapping, Sequence
 
 #: Gauge names (must match circuit_breakers.GAUGE_LIMITS) this sampler produces.
@@ -86,11 +87,17 @@ class ResourceSampler:
         log_paths: Sequence[str] = (),
         disk_free_fn: Callable[[str], int] | None = None,
         log_size_fn: Callable[[Sequence[str]], int] | None = None,
+        memory_gauge: Callable[[], "GaugeSample"] | None = None,
     ) -> None:
         self.disk_path = disk_path
         self.log_paths = tuple(log_paths)
         self._disk_free_fn = disk_free_fn or _default_disk_free
         self._log_size_fn = log_size_fn or _default_log_size
+        #: Optional live resident-memory reader (Linux: `linux_memory_gauge_sample`
+        #: against /proc/meminfo). None -> `memory_bytes` stays a structural unknown,
+        #: the unchanged Windows/stdlib behaviour. Set only by `build_resource_sampler`
+        #: on POSIX, so the default sampler is byte-identical to before.
+        self._memory_gauge = memory_gauge
 
     def _sample_measurable(self, gauge: str, fn: Callable[[], int]) -> GaugeSample:
         try:
@@ -110,9 +117,15 @@ class ResourceSampler:
                 GAUGE_RETAINED_LOG, lambda: self._log_size_fn(self.log_paths)),
         ]
         for gauge in STRUCTURAL_UNKNOWN_GAUGES:
-            samples.append(GaugeSample(
-                gauge=gauge, known=False, structural=True,
-                reason=_STDLIB_ONLY_REASON))
+            if gauge == GAUGE_MEMORY_BYTES and self._memory_gauge is not None:
+                # POSIX: a LIVE resident-memory reading (/proc/meminfo) feeds the
+                # unchanged `memory_bytes` breaker; a read failure returns a
+                # sampling outage the loop already treats as a conservative pause.
+                samples.append(self._memory_gauge())
+            else:
+                samples.append(GaugeSample(
+                    gauge=gauge, known=False, structural=True,
+                    reason=_STDLIB_ONLY_REASON))
         return tuple(samples)
 
     def capability_report(self) -> dict[str, list[str]]:
@@ -300,6 +313,54 @@ def linux_memory_gauge_sample(
             gauge=GAUGE_MEMORY_BYTES, known=False, structural=False,
             reason=f"sampling outage: {type(exc).__name__}: {exc}")
     return GaugeSample(gauge=GAUGE_MEMORY_BYTES, known=True, value=used)
+
+
+def posix_memory_ceiling_bytes(
+    configured_ceiling_bytes: int | None,
+    *,
+    meminfo_reader: Callable[[], str] | None = None,
+    fraction: float = MEMORY_PAUSE_FRACTION,
+) -> int | None:
+    """The launch-time `max_memory_bytes` breaker ceiling for THIS host, in bytes.
+
+    On a non-POSIX host (Windows) returns None: resident memory is structurally
+    unmeasurable stdlib-only there, so the caller leaves the configured ceiling
+    untouched and the gauge stays a structural unknown (Windows byte-identical).
+
+    On POSIX returns ``resolve_memory_ceiling_bytes(MemTotal, ...)`` = no more than
+    `fraction` (70%, owner rule D-090-R076) of the MEASURED physical total read
+    from /proc/meminfo, never above a tighter owner-configured ceiling, and never a
+    hard-coded byte count. Fail closed: an unreadable, missing, or implausible
+    /proc/meminfo RAISES rather than inventing or loosening a ceiling, so the loop
+    never launches under an unmeasured memory ceiling (AD-025).
+    """
+    if os.name != "posix":
+        return None
+    physical_total = read_proc_meminfo(meminfo_reader)[MEMINFO_TOTAL]
+    return resolve_memory_ceiling_bytes(
+        physical_total, configured_ceiling_bytes=configured_ceiling_bytes,
+        fraction=fraction)
+
+
+def build_resource_sampler(
+    *,
+    disk_path: str,
+    log_paths: Sequence[str] = (),
+    meminfo_reader: Callable[[], str] | None = None,
+) -> ResourceSampler:
+    """A `ResourceSampler` wired for THIS host's resident-memory capability.
+
+    On POSIX the `memory_bytes` gauge is live from /proc/meminfo
+    (`linux_memory_gauge_sample`), so the unchanged `loop._check_resources` /
+    breaker path enforces the resolved 70% ceiling. Off POSIX (Windows) no memory
+    gauge is attached, so `memory_bytes` stays a structural unknown exactly as the
+    plain `ResourceSampler` reports it — Windows behaviour is byte-identical.
+    """
+    memory_gauge = (
+        partial(linux_memory_gauge_sample, meminfo_reader)
+        if os.name == "posix" else None)
+    return ResourceSampler(
+        disk_path=disk_path, log_paths=log_paths, memory_gauge=memory_gauge)
 
 
 def _default_meminfo_text() -> str:  # pragma: no cover - reads the real host

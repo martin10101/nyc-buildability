@@ -15,8 +15,13 @@ a guess.
 - ``zoning_lot_history``: the §8a zoning-lot-history group (:func:`zoning_lot_history_group`),
   flag only (plan P-2) - it reminds the architect what recorded sources (B-05 DOB zoning-lot
   mentions, recorded ACRIS index metadata) are on file to check, or says the source is not
-  connected; it never verifies, concludes or computes anything. The remaining two groups -
-  map-based rules, and site shape and street - are later B-09 slices.
+  connected; it never verifies, concludes or computes anything.
+- ``map_based_rules``: the §8a map-based-rules group (:func:`map_based_rules_group`), reading
+  the recorded PLUTO map-based columns (overlays, special districts, split-zone, Mandatory
+  Inclusionary Housing flags, flood flags, landmark / historic district) through the shared
+  ``read_pluto_value`` reader; each item is a flag, "No flag" (``splitzone`` recorded false)
+  or "Check needed" (unrecorded source / absent categorical column), never a decided rule.
+  The remaining group - site shape and street - is a later B-09 slice.
 
 Library only: no route. Lane C wires the flag layer into the study and a contract; Lane D
 renders it beside the affected results (plan section 5a, D-12).
@@ -27,6 +32,15 @@ from app.profile.hidden_issue_flags.existing_building import (
     GROUP_ID,
     GROUP_TITLE,
     existing_building_group,
+)
+from app.profile.hidden_issue_flags.map_based_rules import (
+    GROUP_ID as MAP_BASED_GROUP_ID,
+)
+from app.profile.hidden_issue_flags.map_based_rules import (
+    GROUP_TITLE as MAP_BASED_GROUP_TITLE,
+)
+from app.profile.hidden_issue_flags.map_based_rules import (
+    map_based_rules_group,
 )
 from app.profile.hidden_issue_flags.model import (
     LABELS,
@@ -53,6 +67,8 @@ __all__ = [
     "GROUP_ID",
     "GROUP_TITLE",
     "LABELS",
+    "MAP_BASED_GROUP_ID",
+    "MAP_BASED_GROUP_TITLE",
     "RECORD_KEYS",
     "STATUSES",
     "STATUS_CHECK_NEEDED",
@@ -65,5 +81,6 @@ __all__ = [
     "FlagGroup",
     "HiddenIssueFlag",
     "existing_building_group",
+    "map_based_rules_group",
     "zoning_lot_history_group",
 ]
