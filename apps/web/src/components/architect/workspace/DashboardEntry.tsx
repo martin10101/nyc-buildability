@@ -30,8 +30,8 @@ import { DASHBOARD_TOOLS, TOOL_LABELS, TOOL_DESCRIPTIONS, dashboardHref, readDas
 
 const PERSISTENT_TOOLS: readonly DashboardTool[] = ["map", "facts", "proposal", "study", "evidence", "documents"];
 
-function LoadedDashboard({ profile, initialTool, surveyEnabled, proposalEditorEnabled, unusedFloorAreaSectionEnabled, lotSiteSetupEnabled, addressRevision, onSelect }: {
-  profile: PropertyProfile; initialTool: DashboardTool | null; surveyEnabled: boolean; proposalEditorEnabled: boolean; unusedFloorAreaSectionEnabled: boolean; lotSiteSetupEnabled: boolean; addressRevision: number; onSelect: (bbl: string) => void;
+function LoadedDashboard({ profile, initialTool, surveyEnabled, proposalEditorEnabled, unusedFloorAreaSectionEnabled, lotSiteSetupEnabled, hiddenIssueFlagsEnabled, addressRevision, onSelect }: {
+  profile: PropertyProfile; initialTool: DashboardTool | null; surveyEnabled: boolean; proposalEditorEnabled: boolean; unusedFloorAreaSectionEnabled: boolean; lotSiteSetupEnabled: boolean; hiddenIssueFlagsEnabled: boolean; addressRevision: number; onSelect: (bbl: string) => void;
 }) {
   const bbl = profile.identity.bbl;
   const analysis = useAnalysis(bbl);
@@ -96,9 +96,9 @@ function LoadedDashboard({ profile, initialTool, surveyEnabled, proposalEditorEn
       {analysisLoading ? <p className="section-note" role="status">Loading analysis… Property records remain available.</p> : null}
     </div>
     {address && profile.identity.address?.normalized_address && profile.identity.address.normalized_address !== address.label ? <p className="dashboard-address-alias" data-testid="representative-address">City records list this lot as {profile.identity.address.normalized_address}</p> : null}
-    <DashboardPanels profile={profile} scenario={scenario} evaluation={evaluation} condo={condo} label={label} map={<DashboardMap bbl={bbl} condo={condo} compact/>} onOpen={open} onInspect={inspect} proposalEditorEnabled={proposalEditorEnabled} lotSiteSetupEnabled={lotSiteSetupEnabled} resultsReason={resultsReason}/>
+    <DashboardPanels profile={profile} scenario={scenario} evaluation={evaluation} condo={condo} label={label} map={<DashboardMap bbl={bbl} condo={condo} compact/>} onOpen={open} onInspect={inspect} proposalEditorEnabled={proposalEditorEnabled} lotSiteSetupEnabled={lotSiteSetupEnabled} hiddenIssueFlagsEnabled={hiddenIssueFlagsEnabled} resultsReason={resultsReason}/>
     {DASHBOARD_TOOLS.filter(value => value !== "envelope").map(value => <FloatingWorkspaceWindow key={value} id={`workspace-${value}`} title={TOOL_LABELS[value]} description={TOOL_DESCRIPTIONS[value]} open={tool === value} onClose={() => setTool(null)} wide={["map", "proposal", "study", "report", "evidence"].includes(value)}>
-      {tool === value || PERSISTENT_TOOLS.includes(value) ? <DashboardTools tool={value} profile={profile} scenario={scenario} evaluation={evaluation} returnedScenario={returnedScenario} returnedEvaluation={returnedEvaluation} condo={condo} address={address} label={label} selection={selection} onSelectEvidence={setSelection} onInspect={inspect} onOpen={open} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled} lotSiteSetupEnabled={lotSiteSetupEnabled} focusEnvelope={focusEnvelope} envelopeRequest={envelopeRequest}/> : null}
+      {tool === value || PERSISTENT_TOOLS.includes(value) ? <DashboardTools tool={value} profile={profile} scenario={scenario} evaluation={evaluation} returnedScenario={returnedScenario} returnedEvaluation={returnedEvaluation} condo={condo} address={address} label={label} selection={selection} onSelectEvidence={setSelection} onInspect={inspect} onOpen={open} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled} lotSiteSetupEnabled={lotSiteSetupEnabled} hiddenIssueFlagsEnabled={hiddenIssueFlagsEnabled} focusEnvelope={focusEnvelope} envelopeRequest={envelopeRequest}/> : null}
     </FloatingWorkspaceWindow>)}
   </div>;
 }
@@ -106,7 +106,7 @@ function LoadedDashboard({ profile, initialTool, surveyEnabled, proposalEditorEn
 /** Route adapter: the existing API hooks retain their identity and stale-response guards.
  * `proposalEditorEnabled` is the server-read INTERNAL_PROPOSAL_EDITOR_ENABLED (D-01); absent -> off.
  * `unusedFloorAreaSectionEnabled` is the server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED (D-06); absent -> off. */
-export function DashboardEntry({ surveyEnabled = false, proposalEditorEnabled = false, unusedFloorAreaSectionEnabled = false, lotSiteSetupEnabled = false }: { surveyEnabled?: boolean; proposalEditorEnabled?: boolean; unusedFloorAreaSectionEnabled?: boolean; lotSiteSetupEnabled?: boolean }) {
+export function DashboardEntry({ surveyEnabled = false, proposalEditorEnabled = false, unusedFloorAreaSectionEnabled = false, lotSiteSetupEnabled = false, hiddenIssueFlagsEnabled = false }: { surveyEnabled?: boolean; proposalEditorEnabled?: boolean; unusedFloorAreaSectionEnabled?: boolean; lotSiteSetupEnabled?: boolean; hiddenIssueFlagsEnabled?: boolean }) {
   const params = useSearchParams();
   const router = useRouter();
   const valid = validateBblInput(params.get("bbl") ?? "");
@@ -135,7 +135,7 @@ export function DashboardEntry({ surveyEnabled = false, proposalEditorEnabled = 
       <OutcomeAnnouncer message={mismatch ? "Property identity mismatch. Results withheld." : property.outcome ? announcementForOutcome(property.outcome) : ""}/>
       {!bbl ? <section className="dashboard-welcome"><h1>Your property workspace</h1><p>{params.get("bbl") ? "Invalid property identifier. Search an address or enter a valid 10-digit BBL." : "Search an address and confirm the lot to load its map, records and available development limits."}</p></section>
         : property.loading ? <section className="card" role="status" aria-busy="true"><h1>Retrieving property facts…</h1><p>BBL {bbl}</p></section>
-        : profile ? <LoadedDashboard key={bbl} profile={profile} initialTool={readDashboardTool(params.get("tool"))} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled} lotSiteSetupEnabled={lotSiteSetupEnabled} addressRevision={addressRevision} onSelect={select}/>
+        : profile ? <LoadedDashboard key={bbl} profile={profile} initialTool={readDashboardTool(params.get("tool"))} surveyEnabled={surveyEnabled} proposalEditorEnabled={proposalEditorEnabled} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled} lotSiteSetupEnabled={lotSiteSetupEnabled} hiddenIssueFlagsEnabled={hiddenIssueFlagsEnabled} addressRevision={addressRevision} onSelect={select}/>
         : mismatch && property.outcome?.kind === "profile" ? <section className="card" role="alert"><h1>Property identity mismatch</h1><p>Requested BBL {bbl}; returned BBL {property.outcome.profile.identity.bbl}. This record cannot be used for the selected property.</p><CapturedRecord value={property.outcome.profile} label="Returned property record"/></section>
         : property.outcome && property.outcome.kind !== "profile" ? <DashboardFailureNotice outcome={property.outcome} onRetry={property.retry}/> : null}
     </div>
