@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-02T04:36:35+00:00",
+ "updated_at": "2026-10-02T16:22:58+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -97,10 +97,13 @@
   "D-090-R073",
   "D-090-R074",
   "D-090-R075",
-  "D-090-R076"
+  "D-090-R076",
+  "D-090-R077",
+  "D-090-R078",
+  "D-090-R079"
  ],
- "requirements_id_digest_sha256": "fb28cd3c7bf462995b1c7cb4f05d3aa080159fc0719e534a4c14859eebb35d12",
- "requirements_content_digest_sha256": "5a1beb4c5288528169673c3a26353d35828c2b440440fcf46c69c392f790bbf2",
+ "requirements_id_digest_sha256": "87223a177ebc46f4bfe785050528abc1f0a6feb691de66bef02a64de310a5e72",
+ "requirements_content_digest_sha256": "4b286877536092f3e78112739f513ec28da2fa426f7b59da7b3a78f78d622128",
  "sources": [
   {
    "file": "source-001.md",
@@ -156,6 +159,14 @@
    "recorded_at": "2026-10-02T04:36:35+00:00",
    "content_digest_sha256": "083be49935df8d689956df865c4676a482bca2bb30cd1dd2f2a1ffb228f04634",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-008-amendment.md",
+   "kind": "amendment",
+   "sequence": 8,
+   "recorded_at": "2026-10-02T16:22:58+00:00",
+   "content_digest_sha256": "03848c066a3341141b65c1fe43f9b32317037c543440e3e8555baf284a4d29d2",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -164,7 +175,8 @@
   "source-004-amendment.md",
   "source-005-amendment.md",
   "source-006-amendment.md",
-  "source-007-amendment.md"
+  "source-007-amendment.md",
+  "source-008-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -231,6 +243,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-006 (session 180ee26c messages 22-24) and source-007 (session 9ee08959 messages 25-27 and inputs 26.1-26.4), and requirements D-090-R051..R076, all pending. Text extracted by script from the session transcripts; nothing retyped. Body edits to existing rows, recorded here: R036 status_reason (superseded by R075); R038 and R039 status_reason (message 22); R041 status_reason (outcome: not confirmed, proper restart required) and binding true -> false; R043 classification obligation -> decision and status_reason (R2-N8). Review 280 round-2 fixes: R2-N1 (source-004 message-13 note and the source-003 note on messages 10-11), R2-N2 (sources 003-005 recorded_at and the previous audit entry's at set to 2a20c41d's commit time 2026-10-01T23:28:22Z; this entry and sources 006-007 use this commit's time), R2-N5, R2-N6 and R2-N7 (source-003 context text). Source digests 003, 004, 006, 007 and both requirement digests recomputed. affected_prs gains 280. Capture session: 9ee08959 (Gate 0 passed), claude-opus-5-5. Integration head at capture: c81ba14d."
+  },
+  {
+   "at": "2026-10-02T16:22:58+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-008 (session 08a1e891 message 31, the seq 134 handoff copy block sent by the owner) and requirements D-090-R077..R079, all pending; the other clauses map to rows already in force (table in source-008). Text extracted by script from the session transcript; nothing retyped. No existing row edited. Capture session: 08a1e891 (Gate 0 passed), claude-opus-5-5. Integration head at capture: 4b7ae53b."
   }
  ]
 }
