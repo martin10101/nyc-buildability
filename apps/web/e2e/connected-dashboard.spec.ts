@@ -314,6 +314,8 @@ const FLOOR_AREA_REMINDER = "Make sure this floor area is available for use. Con
 // combined-zoning-lot rows that read "Not confirmed".
 const TAX_LOT_ONLY_WARNING = "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
 const ZONING_LOT_ROWS = ["Whole-site capacity", "Remaining development capacity", "Combined zoning lot: coverage", "Combined zoning lot: rear yard"];
+// Owner wording, settled 2026-10-01 (D-090-R038): the reason line under "Remaining development capacity: Not confirmed".
+const REMAINING_REASON = "Needs verified zoning-lot boundaries and existing zoning floor area.";
 
 // The mark on the draft-rule numbers (review B1 of PR #267), and the strip line's one name.
 const DRAFT_MARK = "Draft — not reviewed";
@@ -350,9 +352,11 @@ test("the dashboard follows plan §5a: one strip, notices behind it, readable te
   await expect(summary.getByTestId("dashboard-cap-scope")).toBeVisible();
   for (const label of ZONING_LOT_ROWS) {
     const row = summary.getByRole("row").filter({ has: page.getByRole("rowheader", { name: label, exact: true }) });
-    await expect(row.getByRole("cell")).toHaveText("Not confirmed");
+    await expect(row.getByRole("cell")).toHaveText(label === "Remaining development capacity" ? `Not confirmed ${REMAINING_REASON}` : "Not confirmed");
     await expect(row).toBeVisible();
   }
+  await expect(summary.getByTestId("dashboard-zoning-lot-remaining-capacity-reason")).toHaveText(REMAINING_REASON);
+  await expect(summary.getByTestId("dashboard-zoning-lot-remaining-capacity-reason")).toBeVisible();
   // At most three notices on screen: a fourth list item never appears (auto-retrying).
   await expect(page.getByRole("list", { name: "Needs attention" }).getByRole("listitem").nth(3)).toHaveCount(0);
   const reminder = page.getByText(FLOOR_AREA_REMINDER, { exact: true });
@@ -381,8 +385,9 @@ test("the dashboard follows plan §5a: one strip, notices behind it, readable te
   await expect(limits.getByTestId("tax-lot-only-warning")).toHaveText(TAX_LOT_ONLY_WARNING);
   await expect(limits.getByTestId("architect-cap-scope")).toHaveText("Tax-lot-only estimate");
   for (const label of ZONING_LOT_ROWS) {
-    await expect(limits.locator("dt", { hasText: new RegExp(`^${label}$`) }).locator("..").locator("dd")).toHaveText("Not confirmed");
+    await expect(limits.locator("dt", { hasText: new RegExp(`^${label}$`) }).locator("..").locator("dd").first()).toHaveText("Not confirmed");
   }
+  await expect(limits.getByTestId("development-zoning-lot-remaining-capacity-reason")).toHaveText(REMAINING_REASON);
   await capture(page, info, "connected-report-tax-lot-only");
   await page.getByRole("button", { name: "Close Property report window" }).click();
 });

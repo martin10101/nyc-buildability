@@ -465,9 +465,32 @@ def _combine(file_v: AclVerdict, parent_v: AclVerdict) -> str:
 
 def evaluate_controller_config_acl(
         config_path: str | os.PathLike[str]) -> ControllerConfigAclVerdict:
-    """The single entry point: fail-closed verdict for the config FILE and its
-    PARENT directory. PROTECTED only when BOTH are protected."""
+    """The single WINDOWS entry point: fail-closed verdict for the config FILE and
+    its PARENT directory. PROTECTED only when BOTH are protected. Off Windows every
+    verdict is UNKNOWN (fail closed); use `controller_config_acl_verdict` for the
+    platform-dispatching entry a cross-platform caller wants."""
     p = pathlib.Path(config_path)
     file_v = evaluate_file(p)
     parent_v = evaluate_directory(p.parent)
     return ControllerConfigAclVerdict(_combine(file_v, parent_v), file_v, parent_v)
+
+
+def controller_config_acl_verdict(
+        config_path: str | os.PathLike[str]) -> ControllerConfigAclVerdict:
+    """Cross-platform fail-closed controller-config ACL verdict (D-091 T1).
+
+    Dispatches behind a platform check: on POSIX the root-ownership boundary in
+    `posix_acl` (root-owned, not group/world-writable, protected parent, no
+    symlinks); on Windows the existing icacls boundary above. Both return the same
+    `ControllerConfigAclVerdict` shape, so one caller reads one shape on either
+    platform.
+
+    This is PURELY ADDITIVE: it changes nothing in `evaluate_controller_config_acl`
+    or the `evaluate_file`/`evaluate_directory` functions the existing tests pin,
+    and the Windows path is byte-identical to the former single entry point. The
+    POSIX dependency is imported lazily so `os_acl` has no import-time dependency on
+    `posix_acl` (which imports `os_acl` for the shared verdict dataclasses)."""
+    if os.name == "posix":
+        from . import posix_acl
+        return posix_acl.evaluate_controller_config_acl(config_path)
+    return evaluate_controller_config_acl(config_path)

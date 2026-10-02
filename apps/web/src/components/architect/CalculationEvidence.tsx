@@ -3,16 +3,16 @@ import type { Scenario } from "@/lib/scenario-contract";
 import { officialZoningTextUrl } from "@/lib/architect/source-links";
 import { formatValue } from "@/lib/format";
 import { CoverageBadge } from "@/components/property/CoverageBadge";
-import { needsExistingZoningFloorArea, UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT } from "@/lib/architect/unused-floor-area";
+import { needsExistingZoningFloorArea } from "@/lib/architect/unused-floor-area";
 import { UnusedFloorAreaNotAvailableLine } from "@/components/compare/UnusedFloorAreaNotAvailable";
 import { CapturedRecord } from "./EvidenceRecord";
 import { TaxLotOnlyNotice } from "./TaxLotOnlyNotice";
 import type { VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
 /** `unusedFloorAreaSectionEnabled` is the server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED
  * (D-06, plan §3 step 4); absent -> off. Off, the set-aside remainder (scope note,
- * formula, section record) is replaced by one "Not available — needs existing
- * zoning floor area" line; the scenario assumptions and the complete scenario
- * record (the audit copy of the whole document) stay.
+ * formula, section record) is replaced by the owner's two lines (D-090-R038):
+ * "Remaining development capacity: Not confirmed" and its reason; the scenario
+ * assumptions and the complete scenario record (the audit copy of the whole document) stay.
  * `taxLotNotice` (owner directive 2026-10-01): the trace outputs include floor-area and FAR
  * numbers, so the tax-lot-only warning shows above them. The printed brief passes false: its
  * DevelopmentLimits already carries the warning outside every disclosure. */
@@ -161,12 +161,11 @@ export function CalculationEvidence({ evaluation, scenario, unusedFloorAreaSecti
         <p>
           {scenario.unused_draft_zoning_floor_area.scope_note}
         </p>
-        <p className="architect-formula">
-          {scenario.unused_draft_zoning_floor_area.formula ?? (needsExistingZoningFloorArea(scenario.unused_draft_zoning_floor_area) ? UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT : "No supported remainder formula")}
-        </p>
+        {scenario.unused_draft_zoning_floor_area.formula === null && needsExistingZoningFloorArea(scenario.unused_draft_zoning_floor_area) ? <UnusedFloorAreaNotAvailableLine/> : <p className="architect-formula">
+          {scenario.unused_draft_zoning_floor_area.formula ?? "No supported remainder formula"}
+        </p>}
       </> : <>
         <h3>Scenario assumptions</h3>
-        <h4>Unused floor area on the lot</h4>
         <UnusedFloorAreaNotAvailableLine/>
       </>}
       <CapturedRecord value={scenario.assumptions} label="All scenario assumptions"/>

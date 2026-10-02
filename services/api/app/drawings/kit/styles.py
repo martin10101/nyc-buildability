@@ -128,6 +128,18 @@ STYLE_TABLE: tuple[ShapeStyle, ...] = (
                None, "C-PROP-LINE", True),
     ShapeStyle("dimension", "Dimension", LINE, None, "#333333", 0.5, (),
                None, "A-ANNO-DIMS", False),
+    # Location and zoning maps (task E-07, plan section 5c item 2) - context drawn
+    # from city open data. Neutral washes so no map kind implies a use color, and
+    # each carries a unique hatch so the map reads in black-and-white print. The
+    # subject lot is emphasised (bold outline, cross-hatch) so it stands out on
+    # both maps; the zoning district fill is a single neutral wash (the exact
+    # district symbol is the label, never a color-coded classification).
+    ShapeStyle("subject_lot", "Subject lot", AREA, "#FDE9D0", "#C8500A", 1.5, (),
+               _hatch(0, 3.0, True, "#C8500A"), "A-PROP-SUBJ", True),
+    ShapeStyle("zoning_district", "Zoning district", AREA, "#EAF0F6", "#4A6572", 0.75, (),
+               _hatch(135, 3.0, False, "#4A6572"), "A-ZONE-DIST", True),
+    ShapeStyle("building_footprint", "Building footprint", AREA, "#E0E0E0", "#9E9E9E", 0.4, (),
+               _hatch(90, 3.0, False, "#9E9E9E"), "A-BLDG-FTPR", True),
 )
 
 _BY_KIND = {style.kind: style for style in STYLE_TABLE}

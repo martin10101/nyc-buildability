@@ -3,9 +3,9 @@
 //
 // Plan §3 step 4: existing floor area is never taken from city-recorded (DOF)
 // building area. Until an existing ZONING floor area exists (M2-07), the
-// scenario views show "Not available — needs existing zoning floor area" in
-// place of the section. The section component (UnusedFloorAreaSection) and its
-// tests are kept; it renders only when the non-public runtime flag
+// scenario views show "Remaining development capacity: Not confirmed" and its
+// reason line (owner wording D-090-R038) in place of the section. The section
+// component (UnusedFloorAreaSection) and its tests are kept; it renders only when the non-public runtime flag
 // INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED holds an explicit true token.
 // Absent, empty or unknown -> off (fail safe). Same pattern as
 // INTERNAL_PROPOSAL_EDITOR_ENABLED (./proposal-editor-flag.ts): never prefixed

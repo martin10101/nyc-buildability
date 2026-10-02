@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Task order comes from plan §12. Set aside: M5 "Practical code-feasibility/efficiency layer" (Phase 2) and "Conditional and professional-review paths" (plan §5); the M2 Property/Confirm screens (plan §3); M6 outputs without DXF; M7 massing/Revit; line 5 folding the GDS into M5 (set aside with the GDS, OD-11). These M1–M7 ids are not the plan's M1-xx labels. The rest still applies.
+
 # Full Production Implementation Sequence
 
 Each milestone is delivered through controlled tasks and gates. The project proceeds directly toward the complete citywide architecture; milestones are controlled integration boundaries for the production system.

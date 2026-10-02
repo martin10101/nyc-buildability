@@ -6,6 +6,7 @@ import { CalculationEvidence } from "@/components/architect/CalculationEvidence"
 import { scenarioCap } from "@/lib/architect/development-limits";
 import {
   UNUSED_FLOOR_AREA_NOT_AVAILABLE_KEY,
+  UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON,
   UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT,
   needsExistingZoningFloorArea,
 } from "@/lib/architect/unused-floor-area";
@@ -26,12 +27,14 @@ import {
 /**
  * D-06 (plan §3 step 4 "Existing building", M2-07; RECONCILIATION set-aside
  * item #6, C-3). Plan §3 step 4: existing floor area is never taken from
- * city-recorded (DOF) building area; without an existing zoning floor area,
- * remaining capacity shows "Not available — needs existing zoning floor area"
- * and the full-site allowance still shows.
+ * city-recorded (DOF) building area; without a verified value, remaining
+ * capacity shows the owner's settled wording (D-090-R038, 2026-10-01, which
+ * replaces plan §3 step 4's): "Remaining development capacity: Not confirmed",
+ * then "Needs verified zoning-lot boundaries and existing zoning floor area."
+ * The full-site allowance still shows.
  *
  *   OFF (default) — the unused-floor-area section is set aside: the scenario
- *     views show no unused-floor-area number, only that one line.
+ *     views show no unused-floor-area number, only those two lines.
  *   ON  — the kept section renders; when the server's section carries the
  *     `unused_floor_area_not_available` basis record (A-03 default), the line
  *     replaces the misleading "No existing building floor-area record" gloss.
@@ -40,8 +43,9 @@ import {
 vi.mock("@/components/address/LotOutlineMap", () => ({ LotOutlineMap: () => <div>Map presentation seam</div> }));
 afterEach(cleanup);
 
-// Plan §3 step 4, retyped on purpose so a drift in the constant is caught.
-const NOT_AVAILABLE = "Not available — needs existing zoning floor area";
+// Owner wording (D-090-R038), retyped on purpose so a drift in either constant is caught.
+const NOT_AVAILABLE = "Remaining development capacity: Not confirmed";
+const NOT_AVAILABLE_REASON = "Needs verified zoning-lot boundaries and existing zoning floor area.";
 const MISLEADING_GLOSS = "No existing building floor-area record";
 
 function renderCompare(body: Record<string, unknown>, enabled?: boolean) {
@@ -70,11 +74,17 @@ function expectOneNotAvailableLine() {
   const lines = screen.getAllByTestId("unused-floor-area-not-available");
   expect(lines).toHaveLength(1);
   expect(lines[0].textContent).toBe(NOT_AVAILABLE);
+  // Line 2, the reason, directly under line 1.
+  const reasons = screen.getAllByTestId("unused-floor-area-not-available-reason");
+  expect(reasons).toHaveLength(1);
+  expect(reasons[0].textContent).toBe(NOT_AVAILABLE_REASON);
+  expect(lines[0].nextElementSibling).toBe(reasons[0]);
 }
 
 describe("vocabulary", () => {
-  it("uses the plan's exact words and the server's basis-record key", () => {
+  it("uses the owner's exact words and the server's basis-record key", () => {
     expect(UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT).toBe(NOT_AVAILABLE);
+    expect(UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON).toBe(NOT_AVAILABLE_REASON);
     expect(UNUSED_FLOOR_AREA_NOT_AVAILABLE_KEY).toBe("unused_floor_area_not_available");
   });
 
@@ -100,7 +110,7 @@ describe("Compare screen — flag OFF (default): the section is set aside", () =
   ];
 
   for (const [name, build] of CASES) {
-    it(`shows only the not-available line and no unused-floor-area number: ${name}`, async () => {
+    it(`shows only the owner's two lines and no unused-floor-area number: ${name}`, async () => {
       renderCompare(build());
       await screen.findByTestId("scenario-result");
 
@@ -112,9 +122,12 @@ describe("Compare screen — flag OFF (default): the section is set aside", () =
       expect(screen.queryByText(new RegExp(MISLEADING_GLOSS))).toBeNull();
 
       const card = screen.getByTestId("scenario-unused-floor-area-set-aside");
-      expect(within(card).getByRole("heading", { name: "Unused floor area on the lot" })).toBeInTheDocument();
+      // The two lines carry their own row label; no other label names the same quantity.
+      expect(within(card).queryByRole("heading")).toBeNull();
+      expect(card.textContent).toBe(`${NOT_AVAILABLE}${NOT_AVAILABLE_REASON}`);
       expectOneNotAvailableLine();
       expect(card).toContainElement(screen.getByTestId("unused-floor-area-not-available"));
+      expect(card).toContainElement(screen.getByTestId("unused-floor-area-not-available-reason"));
     });
   }
 
@@ -140,7 +153,7 @@ describe("Compare screen — flag OFF (default): the section is set aside", () =
 });
 
 describe("Compare screen — flag ON: the server's not-available state", () => {
-  it("replaces the misleading gloss with the plan's line, keeps the document's own label and scope note", async () => {
+  it("replaces the misleading gloss with the owner's two lines, keeps the document's own label and scope note", async () => {
     const body = notAvailableUnusedFloorAreaBody();
     renderCompare(body, true);
     await screen.findByTestId("scenario-result");
@@ -149,6 +162,7 @@ describe("Compare screen — flag ON: the server's not-available state", () => {
     expect(block).toHaveAttribute("data-state", "not_computable");
     expectOneNotAvailableLine();
     expect(block).toContainElement(screen.getByTestId("unused-floor-area-not-available"));
+    expect(block).toContainElement(screen.getByTestId("unused-floor-area-not-available-reason"));
 
     // The gloss for missing_existing_building_area would be false here: a
     // recorded building area exists (carried for reference only).
@@ -182,6 +196,7 @@ describe("Compare screen — flag ON: the server's not-available state", () => {
     renderCompare(body, true);
     await screen.findByTestId("scenario-result");
     expect(screen.queryByTestId("unused-floor-area-not-available")).toBeNull();
+    expect(screen.queryByTestId("unused-floor-area-not-available-reason")).toBeNull();
     expect(screen.getByTestId("scenario-unused-floor-area-reason")).toHaveTextContent(MISLEADING_GLOSS);
   });
 
@@ -208,7 +223,7 @@ function workspaceInputs(body: Record<string, unknown>) {
 }
 
 describe("Architect Scenarios view (ScenarioWorkspace)", () => {
-  it("flag off, supported cap: one not-available line, no section, the audit record stays complete", () => {
+  it("flag off, supported cap: the owner's two lines, no section, the audit record stays complete", () => {
     const { bbl, evaluation, scenario } = workspaceInputs(computedUnusedFloorAreaBody());
     expect(scenarioCap(scenario, evaluation, bbl)).toBe(15000);
     render(<ScenarioWorkspace document={scenario} evaluation={evaluation} bbl={bbl}/>);
@@ -219,16 +234,17 @@ describe("Architect Scenarios view (ScenarioWorkspace)", () => {
     expect(JSON.parse(raw.textContent!)).toEqual(scenario);
   });
 
-  it("flag off, unconfirmed association: the line sits with the returned figures", () => {
+  it("flag off, unconfirmed association: the lines sit with the returned figures", () => {
     const { bbl, scenario } = workspaceInputs(notAvailableUnusedFloorAreaBody());
     render(<ScenarioWorkspace document={scenario} evaluation={null} bbl={bbl} unusedFloorAreaSectionEnabled={false}/>);
     const disclosure = screen.getByText("Returned scenario figures · association not confirmed").closest("details")!;
     expect(disclosure).toContainElement(screen.getByTestId("unused-floor-area-not-available"));
+    expect(disclosure).toContainElement(screen.getByTestId("unused-floor-area-not-available-reason"));
     expect(screen.queryByTestId("scenario-unused-floor-area")).toBeNull();
     expectOneNotAvailableLine();
   });
 
-  it("flag on: the kept section renders with the plan's line for the A-03 state", () => {
+  it("flag on: the kept section renders with the owner's two lines for the A-03 state", () => {
     const { bbl, evaluation, scenario } = workspaceInputs(notAvailableUnusedFloorAreaBody());
     render(<ScenarioWorkspace document={scenario} evaluation={evaluation} bbl={bbl} unusedFloorAreaSectionEnabled/>);
     const block = screen.getByTestId("scenario-unused-floor-area");
@@ -239,13 +255,14 @@ describe("Architect Scenarios view (ScenarioWorkspace)", () => {
 });
 
 describe("Calculation evidence (evidence view and report)", () => {
-  it("flag off: no remainder scope note, formula or section record; one line; assumptions and the complete record stay", () => {
+  it("flag off: no remainder scope note, formula or section record; the owner's two lines; assumptions and the complete record stay", () => {
     const body = computedUnusedFloorAreaBody();
     const scenario = asScenario(body);
     render(<CalculationEvidence evaluation={null} scenario={scenario}/>);
     expect(screen.getByRole("heading", { name: "Scenario assumptions" })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Scenario assumptions and area remainder" })).toBeNull();
-    expect(screen.getByRole("heading", { name: "Unused floor area on the lot" })).toBeInTheDocument();
+    // The two lines carry their own row label; the old "Unused floor area on the lot" heading is gone.
+    expect(screen.queryByRole("heading", { name: "Unused floor area on the lot" })).toBeNull();
     expectOneNotAvailableLine();
     expect(screen.queryByText(section(body).formula as string)).toBeNull();
     expect(screen.queryByText(section(body).scope_note as string)).toBeNull();
@@ -255,13 +272,14 @@ describe("Calculation evidence (evidence view and report)", () => {
     expect(JSON.parse(raw.textContent!)).toEqual(scenario);
   });
 
-  it("flag on, A-03 state: the formula slot says the plan's line, the section record stays inspectable", () => {
+  it("flag on, A-03 state: the formula slot shows the owner's two lines, the section record stays inspectable", () => {
     const body = notAvailableUnusedFloorAreaBody();
     render(<CalculationEvidence evaluation={null} scenario={asScenario(body)} unusedFloorAreaSectionEnabled/>);
     expect(screen.getByRole("heading", { name: "Scenario assumptions and area remainder" })).toBeInTheDocument();
     expect(screen.getByText(section(body).scope_note as string)).toBeInTheDocument();
-    const formula = document.querySelector<HTMLElement>(".architect-formula")!;
-    expect(formula.textContent).toBe(NOT_AVAILABLE);
+    // The two lines stand in the formula's place; no formula paragraph is drawn.
+    expect(document.querySelector<HTMLElement>(".architect-formula")).toBeNull();
+    expectOneNotAvailableLine();
     expect(screen.queryByText("No supported remainder formula")).toBeNull();
     expect(screen.getByText("Remainder inputs, result and provenance")).toBeInTheDocument();
   });
@@ -270,5 +288,6 @@ describe("Calculation evidence (evidence view and report)", () => {
     render(<CalculationEvidence evaluation={null} scenario={asScenario(preliminaryScenarioBody())} unusedFloorAreaSectionEnabled/>);
     expect(document.querySelector<HTMLElement>(".architect-formula")!.textContent).toBe("No supported remainder formula");
     expect(screen.queryByTestId("unused-floor-area-not-available")).toBeNull();
+    expect(screen.queryByTestId("unused-floor-area-not-available-reason")).toBeNull();
   });
 });

@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: the editable coordinate tables (its §5.2 PE-03 and §5.9; plan §4, §7), "Do not impose a warning-count cap" and draft/review scope "always visible" (its §12; plan §5a.2, §5a.6), Property→Confirm→Compare→Evidence as intent (its §11; plan §3), and MP6 proposal-editor adoption. The rest still applies.
+
 # NYC Buildability — UI Deep Dive Assessment
 
 **Assessment only · 23 September 2026 · Uncommitted handoff for the orchestrator**

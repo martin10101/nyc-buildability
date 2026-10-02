@@ -212,6 +212,8 @@
 .architect-bulk-rows>div { display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 18px;padding:10px 0;border-bottom:1px solid #e6e9e7;font-size:12px; }
 .architect-bulk-rows dt { color:var(--arch-muted); }
 .architect-bulk-rows dd { margin:0;text-align:right;overflow-wrap:anywhere; }
+/* The reason line under a "Not confirmed" value (D-090-R038): full row width, under the label and value. */
+.architect-bulk-rows dd.architect-row-reason { grid-column:1 / -1;text-align:left;color:var(--arch-muted); }
 .architect-bulk-rows small,.architect-bulk-rows button { display:block;margin:3px 0 0 auto; }
 .architect-existing-building { margin-top:20px!important; }
 .architect-existing-building .card { margin-bottom:10px; }

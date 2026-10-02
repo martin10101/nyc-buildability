@@ -501,9 +501,10 @@ describe("max-envelope panel composes additively on the proposal surface (M5-T07
 });
 
 describe("D-06: the unused-floor-area section is set aside behind INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED", () => {
-  // Plan §3 step 4, M2-07: without an existing zoning floor area the views show
-  // exactly this line; the route pages read the server flag and pass it down.
-  const NOT_AVAILABLE = "Not available — needs existing zoning floor area";
+  // Owner wording (D-090-R038; replaces plan §3 step 4's): without a verified value the views
+  // show exactly these two lines; the route pages read the server flag and pass it down.
+  const NOT_AVAILABLE = "Remaining development capacity: Not confirmed";
+  const NOT_AVAILABLE_REASON = "Needs verified zoning-lot boundaries and existing zoning floor area.";
   function withScenario(view: string) {
     state.params.set("view", view);
     state.evaluation = draftApplicableDoc();
@@ -511,10 +512,11 @@ describe("D-06: the unused-floor-area section is set aside behind INTERNAL_UNUSE
     state.scenario = structuredClone(scenarioFixture) as Scenario;
     state.scenario.evaluated_input.bbl = state.profile!.identity.bbl;
   }
-  it.each(["scenarios", "evidence", "report"])("%s: off by default — one not-available line, no section and no remainder record", view => {
+  it.each(["scenarios", "evidence", "report"])("%s: off by default — the owner's two lines, no section and no remainder record", view => {
     withScenario(view);
     render(<ArchitectEntry/>);
     expect(screen.getAllByTestId("unused-floor-area-not-available").map(line => line.textContent)).toEqual([NOT_AVAILABLE]);
+    expect(screen.getAllByTestId("unused-floor-area-not-available-reason").map(line => line.textContent)).toEqual([NOT_AVAILABLE_REASON]);
     expect(screen.queryByTestId("scenario-unused-floor-area")).toBeNull();
     expect(screen.queryByText("Remainder inputs, result and provenance")).toBeNull();
   });
@@ -522,6 +524,7 @@ describe("D-06: the unused-floor-area section is set aside behind INTERNAL_UNUSE
     withScenario(view);
     render(<ArchitectEntry unusedFloorAreaSectionEnabled/>);
     expect(screen.queryByTestId("unused-floor-area-not-available")).toBeNull();
+    expect(screen.queryByTestId("unused-floor-area-not-available-reason")).toBeNull();
     if (view === "scenarios") expect(screen.getByTestId("scenario-unused-floor-area")).toBeInTheDocument();
     else expect(screen.getByText("Remainder inputs, result and provenance")).toBeInTheDocument();
   });

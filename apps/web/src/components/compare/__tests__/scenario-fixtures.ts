@@ -220,8 +220,10 @@ export function notComputableUnusedFloorAreaBody(
   return body;
 }
 
-/** Plan §3 step 4, verbatim — the words the server's A-03 default section uses. */
-const NOT_AVAILABLE_TEXT = "Not available — needs existing zoning floor area";
+/** The owner's settled wording (D-090-R038), verbatim — the words the server's A-03 default
+ * section uses: line 1, then the reason. */
+const NOT_AVAILABLE_TEXT = "Remaining development capacity: Not confirmed";
+const NOT_AVAILABLE_REASON = "Needs verified zoning-lot boundaries and existing zoning floor area.";
 
 /**
  * The server's DEFAULT section since A-03 (INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED
@@ -263,7 +265,7 @@ export function notAvailableUnusedFloorAreaBody(
     unused_draft_zoning_floor_area_sq_ft: null,
     unit: null,
     label:
-      `Unused floor area on the lot: ${NOT_AVAILABLE_TEXT}. The draft floor-area allowance ` +
+      `${NOT_AVAILABLE_TEXT}. ${NOT_AVAILABLE_REASON} The draft floor-area allowance ` +
       "still shows. City-recorded building area is not zoning floor area and is never subtracted.",
     scope_note:
       "Scope: no difference is stated. It needs the existing zoning floor area (ZR 12-10 " +
@@ -284,7 +286,7 @@ export function notAvailableUnusedFloorAreaBody(
         value: "needs_existing_zoning_floor_area",
         unit: null,
         rationale:
-          `${NOT_AVAILABLE_TEXT}. Existing floor area is taken only from a Buildings ` +
+          `${NOT_AVAILABLE_TEXT}. ${NOT_AVAILABLE_REASON} Existing floor area is taken only from a Buildings ` +
           "Department filing or certificate of occupancy, or from a value the architect " +
           "enters as a stated assumption; neither is available to this calculation. " +
           "City-recorded building area (DOF/PLUTO bldgarea) is never subtracted because it " +
