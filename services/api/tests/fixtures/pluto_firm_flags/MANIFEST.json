@@ -1,0 +1,32 @@
+{
+  "manifest_version": 1,
+  "task": "B-09 flood-meaning follow-up (Lane B; plan section 8a map-based rules; directive D-090)",
+  "benchmark_id": "pluto_firm_flags",
+  "dataset": "Primary Land Use Tax Lot Output (PLUTO) (NYC Open Data 64uk-42ks)",
+  "attribution": "Department of City Planning (DCP)",
+  "current_version": "26v2",
+  "purpose": "The publisher's (DCP) official field descriptions for the two PLUTO FEMA flood-map flag columns, firm07_flag and pfirm15_flag, used to give the B-09 flood hidden-issue item an accurate, sourced meaning. The 26v1 PLUTO data-dictionary PDF is permissions-encrypted and was not read or bypassed; this machine-readable api/views metadata is the official substitute. Research note: docs/research/pluto-firm-flags-2026-10-02.md.",
+  "authentication": "none (keyless); no SOCRATA_APP_TOKEN used at capture",
+  "capture_method": "curl GET, one request, metadata (api/views) endpoint. The committed file is a VERBATIM EXCERPT, not the whole body: the two column objects are copied byte-faithfully from the live response body's columns[] array, wrapped with dataset-level provenance. The full 202,683-byte body is not committed (not small); its sha256 is recorded below as full_body_sha256.",
+  "retrieved_at_basis": "the HTTP Date response header (UTC)",
+  "digest_algorithm": "sha256",
+  "full_body_sha256": "e2898060ad159147f2c8c4a333c9689b5e9234cb86239106c5ca48941680d4c2",
+  "full_body_bytes": 202683,
+  "files": [
+    {
+      "file": "pluto_firm_flags_metadata_excerpt.json",
+      "kind": "recorded_official_excerpt",
+      "source_id": "nyc-pluto-soda",
+      "dataset_id": "64uk-42ks",
+      "documented_in": "docs/research/pluto-firm-flags-2026-10-02.md",
+      "url": "https://data.cityofnewyork.us/api/views/64uk-42ks.json",
+      "http_status": 200,
+      "http_date": "Fri, 02 Oct 2026 11:51:43 GMT",
+      "retrieved_at": "2026-10-02T11:51:43Z",
+      "rows_updated_at": "2026-08-24T20:48:51Z",
+      "bytes": 3494,
+      "sha256": "11b36fd3982444e79a0585775c3bd0757c24f52ccc4c48fc380b42d0a64f039f",
+      "purpose": "Verbatim excerpt: the firm07_flag and pfirm15_flag column objects (fieldName, dataTypeName number, and the publisher's verbatim description) plus dataset-level provenance (name, attribution, current_version 26v2, retrieved_at, the full body's sha256). The only source of field meaning the B-09 flood item relies on (platform principle 3)."
+    }
+  ]
+}

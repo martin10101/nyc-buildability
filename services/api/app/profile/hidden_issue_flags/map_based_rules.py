@@ -22,9 +22,12 @@ signal, a data conflict or a named conflict makes a value unusable). PLUTO carri
 map-based columns with provenance: ``overlay1``/``overlay2`` (commercial overlays),
 ``spdist1``-``spdist3`` (special districts), ``mih_opt1``-``mih_opt4`` (Mandatory
 Inclusionary Housing option flags), ``splitzone`` (lot split by a district line),
-``firm07_flag``/``pfirm15_flag`` (FEMA flood-map flags; the fields' exact meaning is NOT
-verified against the PLUTO data dictionary here, so the flood item claims no more than
-"PLUTO records a FEMA flood-map flag; confirm on the FEMA map" - CLAUDE.md principle 3) and
+``firm07_flag``/``pfirm15_flag`` (FEMA flood-map flags; field meaning per DCP's official
+NYC Open Data PLUTO metadata: dataset 64uk-42ks, retrieved 2026-10-02, body sha256
+e2898060ad159147f2c8c4a333c9689b5e9234cb86239106c5ca48941680d4c2, recorded in
+docs/research/pluto-firm-flags-2026-10-02.md - a value of 1 means some portion of the lot is
+in the 1% annual chance floodplain on the named FEMA map, and buildings on the lot may or
+may not be in that portion; no flood-zone letter and no Appendix G claim) and
 ``landmark``/``histdist`` (landmark / historic district). An item whose source is not
 recorded in this repository
 (inclusionary-housing designated areas beyond the PLUTO flag, lot-vs-boundary proximity,
@@ -284,25 +287,38 @@ def _near_district_line() -> HiddenIssueFlag:
 def _flood(profile: Mapping[str, Any] | None) -> HiddenIssueFlag:
     item_id = "flood"
     title = "Flood zones and flood-resilience height rules"
-    # The PLUTO data dictionary (26v1) could not be read to confirm what firm07_flag /
-    # pfirm15_flag mean (the official PDF is fetched but encrypted, and no in-policy text
-    # extractor is available), so the field meaning is UNVERIFIED and this item claims no
-    # more than "PLUTO records a FEMA flood-map flag; confirm on the FEMA map" (CLAUDE.md
-    # principle 3: never guess a source meaning). PDF sha256
-    # d587cbe90bafad128c88f7dfab0ec6741d2735b20695e99b931fa0607aeaf3fe. See docs/lanes/status/B.md.
+    # Field meaning is confirmed against DCP's official NYC Open Data PLUTO metadata (dataset
+    # 64uk-42ks, api/views), retrieved 2026-10-02, body sha256
+    # e2898060ad159147f2c8c4a333c9689b5e9234cb86239106c5ca48941680d4c2, excerpted in
+    # services/api/tests/fixtures/pluto_firm_flags/ and recorded in
+    # docs/research/pluto-firm-flags-2026-10-02.md. The named 26v1 data-dictionary PDF is
+    # permissions-encrypted and was not read or bypassed (PDF sha256
+    # d587cbe90bafad128c88f7dfab0ec6741d2735b20695e99b931fa0607aeaf3fe); this machine-readable
+    # metadata is the official substitute. firm07_flag = FEMA 2007 FIRM, pfirm15_flag = FEMA
+    # 2015 Preliminary FIRM; a value of 1 means some portion of the tax lot is in the 1% annual
+    # chance floodplain, and buildings on the lot may or may not be in that portion. No flood-
+    # zone letter and no Appendix G claim (neither is in the metadata). See docs/lanes/status/B.md.
     typical = (
         "FEMA Flood Insurance Rate Maps; PLUTO firm07_flag / pfirm15_flag (recorded when "
-        "present; the fields' exact meaning is not verified against the PLUTO data dictionary)"
+        "present; field meaning from DCP's official NYC Open Data PLUTO metadata, dataset "
+        "64uk-42ks, retrieved 2026-10-02, body sha256 "
+        "e2898060ad159147f2c8c4a333c9689b5e9234cb86239106c5ca48941680d4c2)"
     )
+    # Per the official DCP metadata: firm07_flag = the 2007 FIRM, pfirm15_flag = the 2015
+    # Preliminary FIRM; a value of 1 is lot-level (some portion of the lot), not building-level.
+    fema_map = {
+        "firm07_flag": "FEMA's 2007 Flood Insurance Rate Map",
+        "pfirm15_flag": "FEMA's 2015 Preliminary Flood Insurance Rate Map",
+    }
     problems: list[str] = []
     for column in ("firm07_flag", "pfirm15_flag"):
         value, source, problem = _read(profile, column)
         if problem is None and value not in (None, 0, 0.0, False):
             detail = (
-                f"PLUTO records a FEMA flood-map flag for this lot (PLUTO {column}). The "
-                "flag's exact meaning is not verified against the PLUTO data dictionary here, "
-                "so confirm the lot's flood zone on the FEMA Flood Insurance Rate Map. "
-                f"{_RULE_CHECK}"
+                "PLUTO records that some portion of this tax lot falls within the 1% annual "
+                f"chance floodplain on {fema_map[column]} (PLUTO {column}); buildings on the "
+                "lot may or may not be in that portion. Confirm the lot's flood zone on the "
+                f"FEMA Flood Insurance Rate Map. {_RULE_CHECK}"
             )
             return HiddenIssueFlag(
                 f"{GROUP_ID}.{item_id}", GROUP_ID, title, STATUS_FLAG, detail, typical,
