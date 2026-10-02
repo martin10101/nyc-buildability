@@ -1183,7 +1183,12 @@
    "issued_by": "owner",
    "supersedes": [],
    "superseded_by": null,
-   "affected_tasks": [],
+   "affected_tasks": [
+    "M0-T165",
+    "M0-T166",
+    "M0-T167",
+    "M0-T168"
+   ],
    "manifest": "D-091-cloud-loop-dual-review/manifest.json"
   }
  ],

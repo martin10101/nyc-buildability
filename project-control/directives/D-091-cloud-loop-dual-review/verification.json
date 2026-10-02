@@ -4,5 +4,121 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-091-BOOTSTRAP at capture. No completion claim exists at capture time.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T165",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R007"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R007",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T166",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R007"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R007",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T167",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R005"
+   ],
+   "producer": "cloud-architect",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R005",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-091",
+   "task_id": "M0-T168",
+   "applicable_requirement_ids": [
+    "D-091-R001",
+    "D-091-R002",
+    "D-091-R007"
+   ],
+   "producer": "ai-pipeline-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-091-R001",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R002",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-091-R007",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  }
+ ]
 }

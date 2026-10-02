@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 8,
  "producer": "orchestrator",
- "updated_at": "2026-10-02T04:56:13+00:00",
+ "updated_at": "2026-10-02T05:17:54+00:00",
  "requirements": [
   {
    "id": "D-091-R001",
@@ -14,7 +14,11 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-091-BOOTSTRAP"
+     "D-091-BOOTSTRAP",
+     "M0-T165",
+     "M0-T166",
+     "M0-T167",
+     "M0-T168"
     ],
     "task_types": [],
     "milestones": [],
@@ -39,7 +43,12 @@
    "maps_to": {
     "files": [],
     "tests": [],
-    "tasks": []
+    "tasks": [
+     "M0-T165",
+     "M0-T166",
+     "M0-T167",
+     "M0-T168"
+    ]
    }
   },
   {
@@ -50,7 +59,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-091-BOOTSTRAP"
+     "D-091-BOOTSTRAP",
+     "M0-T168"
     ],
     "task_types": [],
     "milestones": [],
@@ -72,7 +82,9 @@
    "maps_to": {
     "files": [],
     "tests": [],
-    "tasks": []
+    "tasks": [
+     "M0-T168"
+    ]
    }
   },
   {
@@ -148,7 +160,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-091-BOOTSTRAP"
+     "D-091-BOOTSTRAP",
+     "M0-T167"
     ],
     "task_types": [],
     "milestones": [],
@@ -168,7 +181,9 @@
    "maps_to": {
     "files": [],
     "tests": [],
-    "tasks": []
+    "tasks": [
+     "M0-T167"
+    ]
    }
   },
   {
@@ -212,7 +227,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-091-BOOTSTRAP"
+     "D-091-BOOTSTRAP",
+     "M0-T165",
+     "M0-T166",
+     "M0-T168"
     ],
     "task_types": [],
     "milestones": [],
@@ -234,7 +252,11 @@
    "maps_to": {
     "files": [],
     "tests": [],
-    "tasks": []
+    "tasks": [
+     "M0-T165",
+     "M0-T166",
+     "M0-T168"
+    ]
    }
   },
   {

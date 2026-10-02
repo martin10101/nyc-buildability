@@ -10,7 +10,7 @@
  "issued_at": "2026-10-02",
  "captured_at": "2026-10-02T04:56:13+00:00",
  "created_at": "2026-10-02T04:56:13+00:00",
- "updated_at": "2026-10-02T04:56:13+00:00",
+ "updated_at": "2026-10-02T05:17:54+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "c81ba14d6609e5bc892a33090c9311390d5866e4",
  "capture_head_sha": null,
@@ -32,7 +32,7 @@
   "D-091-R008"
  ],
  "requirements_id_digest_sha256": "65577c0bb3d9351bd9f6e806f36567077b76966a0e92b02e39bbf0b6af5683c1",
- "requirements_content_digest_sha256": "28c5436c3a654d7f5acdd8d3bf64341cbfd8afd132ba5d326d7eb94aa6573ebf",
+ "requirements_content_digest_sha256": "4c29fb2c4fe3907adb4f775ca21dbc1ebd518c93c431ec97d05683da37544187",
  "sources": [
   {
    "file": "source-001.md",
@@ -45,8 +45,15 @@
  "amendments": [],
  "supersedes": [],
  "superseded_by": null,
- "affected_tasks": [],
- "affected_prs": [],
+ "affected_tasks": [
+  "M0-T165",
+  "M0-T166",
+  "M0-T167",
+  "M0-T168"
+ ],
+ "affected_prs": [
+  284
+ ],
  "affected_branches": [
   "candidate/D-024-mrl-option-b"
  ],
@@ -65,6 +72,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured verbatim before acting, by script from session 9ee08959's transcript; nothing retyped. frozen_baseline_sha = integration head c81ba14d (origin/main d8b3899f). R001-R008 pending and bound to the sentinel D-091-BOOTSTRAP until tasks are contracted. Capture session: 9ee08959, claude-opus-5-5, Gate 0 passed."
+  },
+  {
+   "at": "2026-10-02T05:17:54+00:00",
+   "actor": "orchestrator",
+   "action": "scope_binding",
+   "note": "First wave contracted from the design (docs/D091_CLOUD_LOOP_DESIGN.md): M0-T165 (T1 platform seam; R001, R007), M0-T166 (T2 Linux launcher + bash shell-routing harness; R001, R007; depends M0-T165), M0-T167 (T4 Codex admission; R005, R001), M0-T168 (T5 Claude reviewer path; R002, R001, R007). Task ids appended to applicability.task_ids and maps_to.tasks of those rows (requirement text unchanged); content digest resynced. Design change: the recertification runs after all D-091 code tasks, not before T5/T6. R003/R008 wait for the owner's combiner choice; R004/R006 later."
   }
  ]
 }
