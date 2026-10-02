@@ -33,7 +33,7 @@ from __future__ import annotations
 import dataclasses
 import os
 import shutil
-from typing import Callable, Sequence
+from typing import Callable, Mapping, Sequence
 
 #: Gauge names (must match circuit_breakers.GAUGE_LIMITS) this sampler produces.
 GAUGE_FREE_DISK = "free_disk_bytes"
@@ -126,6 +126,185 @@ class ResourceSampler:
             "live_sampled": list(MEASURABLE_GAUGES),
             "structurally_unmonitored": list(STRUCTURAL_UNKNOWN_GAUGES),
         }
+
+
+# --------------------------------------------------------------------------
+# Linux working-memory pause ceiling (D-091 T7, cloud loop design §5)
+# --------------------------------------------------------------------------
+#
+# On Windows the resident-memory gauge is structurally unmeasurable stdlib-only
+# (above), so it is reported as unknown and never pauses a cycle. On the shared
+# Linux cloud box memory IS measurable from `/proc/meminfo`, and owner rule
+# D-090-R076 requires the loop stay under 70% of physical memory (dropping from
+# 5 lanes to 4 as it approaches). This block supplies that measurement and the
+# pause ceiling, stdlib-only and injectable, WITHOUT changing the Windows
+# sampler (`ResourceSampler.sample`) or the breaker (`circuit_breakers.py`): the
+# existing gauge path enforces it when a Linux launcher feeds it these readings.
+
+#: Owner rule D-090-R076 / design §5: pause at 70% of the MEASURED physical
+#: total. The fraction encodes the owner rule; the ceiling in BYTES is DERIVED
+#: from /proc/meminfo at resolve time, never a hard-coded byte count.
+MEMORY_PAUSE_FRACTION = 0.70
+
+#: The /proc/meminfo rows this module reads. MemAvailable is the kernel's own
+#: estimate of memory obtainable without swapping; its ABSENCE (older kernels)
+#: is a fail-closed condition, never an assumption that all memory is free.
+MEMINFO_TOTAL = "MemTotal"
+MEMINFO_AVAILABLE = "MemAvailable"
+
+
+@dataclasses.dataclass(frozen=True)
+class MemoryPauseVerdict:
+    """Linux working-memory checked against the 70%-of-physical pause ceiling.
+
+    `pause` is the fail-closed decision the loop acts on: True at/above the
+    ceiling AND True whenever the gauge could not be read. `known` is False only
+    in that unreadable case, so an operator can tell a real over-ceiling pause
+    from a measurement failure.
+    """
+
+    known: bool
+    pause: bool
+    used_bytes: int | None = None
+    total_bytes: int | None = None
+    ceiling_bytes: int | None = None
+    reason: str = ""
+
+
+def read_proc_meminfo(reader: Callable[[], str] | None = None) -> dict[str, int]:
+    """`/proc/meminfo` as a ``{row name: BYTES}`` mapping. Raises on any failure.
+
+    `reader` returns the raw file text; the default reads `/proc/meminfo`. The
+    kernel reports these rows in kB, so a ``kB`` value is converted to bytes and
+    a unit-less value is taken verbatim. Injectable so a test drives any host's
+    numbers (or a read failure) without touching the real host. Fail closed: a
+    malformed row is skipped and a read error propagates to the caller, which
+    pauses rather than inventing a reading.
+    """
+    text = (reader or _default_meminfo_text)()
+    out: dict[str, int] = {}
+    for line in text.splitlines():
+        name, sep, rest = line.partition(":")
+        if not sep:
+            continue
+        fields = rest.split()
+        if not fields:
+            continue
+        try:
+            amount = int(fields[0])
+        except ValueError:
+            continue
+        unit = fields[1].lower() if len(fields) > 1 else ""
+        out[name.strip()] = amount * 1024 if unit == "kb" else amount
+    return out
+
+
+def _working_memory(info: Mapping[str, int]) -> tuple[int, int]:
+    """(physical total, working memory used) in bytes, or raise (fail closed).
+
+    Used = MemTotal - MemAvailable. A missing row, a non-positive total, or an
+    implausible pair (available negative or above total) raises rather than
+    yielding a flattering low reading.
+    """
+    total = info[MEMINFO_TOTAL]
+    available = info[MEMINFO_AVAILABLE]
+    if (not isinstance(total, int) or not isinstance(available, int)
+            or total <= 0 or available < 0 or available > total):
+        raise ValueError(
+            f"implausible /proc/meminfo: {MEMINFO_TOTAL}={total!r} "
+            f"{MEMINFO_AVAILABLE}={available!r}")
+    return total, total - available
+
+
+def resolve_memory_ceiling_bytes(
+    physical_total_bytes: int,
+    *,
+    configured_ceiling_bytes: int | None = None,
+    fraction: float = MEMORY_PAUSE_FRACTION,
+) -> int:
+    """The memory pause ceiling in BYTES: no more than `fraction` of the MEASURED
+    physical total, and never above a tighter owner-configured ceiling.
+
+    ``min(configured, floor(fraction * physical))`` guarantees the loop pauses at
+    or below 70% of real RAM regardless of what the config names, so leaving the
+    8-GiB PC default in config.toml still yields ~5.6 GiB on an 8-GiB Linux box —
+    the ceiling is derived from the box, not hard-coded (design §5). Raises on an
+    implausible physical total or fraction (fail closed: no ceiling is invented).
+    """
+    if not isinstance(physical_total_bytes, int) or physical_total_bytes <= 0:
+        raise ValueError(
+            f"physical memory total must be a positive int, got "
+            f"{physical_total_bytes!r}")
+    if not isinstance(fraction, (int, float)) or not 0 < float(fraction) <= 1:
+        raise ValueError(
+            f"memory pause fraction must be in (0, 1], got {fraction!r}")
+    ceiling = int(physical_total_bytes * float(fraction))
+    if configured_ceiling_bytes is not None:
+        if not isinstance(configured_ceiling_bytes, int) or configured_ceiling_bytes <= 0:
+            raise ValueError(
+                f"configured memory ceiling must be a positive int, got "
+                f"{configured_ceiling_bytes!r}")
+        ceiling = min(ceiling, configured_ceiling_bytes)
+    return ceiling
+
+
+def evaluate_linux_memory(
+    *,
+    meminfo_reader: Callable[[], str] | None = None,
+    configured_ceiling_bytes: int | None = None,
+    fraction: float = MEMORY_PAUSE_FRACTION,
+) -> MemoryPauseVerdict:
+    """Decide whether the loop must pause on memory, from `/proc/meminfo` alone.
+
+    PAUSE when working memory (MemTotal - MemAvailable) is at or above the
+    `resolve_memory_ceiling_bytes` ceiling (≤ 70% of measured physical). FAIL
+    CLOSED (pause, `known=False`) when `/proc/meminfo` cannot be read or is
+    missing/implausible — a guard that cannot read memory never assumes memory
+    is fine (AD-025).
+    """
+    try:
+        total, used = _working_memory(read_proc_meminfo(meminfo_reader))
+        ceiling = resolve_memory_ceiling_bytes(
+            total, configured_ceiling_bytes=configured_ceiling_bytes,
+            fraction=fraction)
+    except Exception as exc:
+        return MemoryPauseVerdict(
+            known=False, pause=True,
+            reason=(f"/proc/meminfo unreadable ({type(exc).__name__}: {exc}); "
+                    f"pausing rather than assuming memory is within limits "
+                    f"(fail closed)"))
+    pause = used >= ceiling
+    pct = f"{fraction:.0%}"
+    reason = (
+        f"working memory {used} bytes {'>= ' if pause else 'below '}pause "
+        f"ceiling {ceiling} bytes ({pct} of {total} physical)")
+    return MemoryPauseVerdict(True, pause, used, total, ceiling, reason)
+
+
+def linux_memory_gauge_sample(
+    meminfo_reader: Callable[[], str] | None = None,
+) -> GaugeSample:
+    """A ``memory_bytes`` GaugeSample for the EXISTING loop resource gate on Linux.
+
+    Returns the working-memory reading (``known=True``) so `_check_resources`
+    trips it against `max_memory_bytes` with no change to loop.py or
+    circuit_breakers.py — set that ceiling to `resolve_memory_ceiling_bytes(...)`
+    and the unchanged breaker enforces the 70% pause ceiling. A read failure
+    returns a sampling OUTAGE (``known=False, structural=False``), which the loop
+    already treats as a conservative pause.
+    """
+    try:
+        _total, used = _working_memory(read_proc_meminfo(meminfo_reader))
+    except Exception as exc:
+        return GaugeSample(
+            gauge=GAUGE_MEMORY_BYTES, known=False, structural=False,
+            reason=f"sampling outage: {type(exc).__name__}: {exc}")
+    return GaugeSample(gauge=GAUGE_MEMORY_BYTES, known=True, value=used)
+
+
+def _default_meminfo_text() -> str:  # pragma: no cover - reads the real host
+    with open("/proc/meminfo", "r", encoding="utf-8") as handle:
+        return handle.read()
 
 
 def _default_disk_free(path: str) -> int:

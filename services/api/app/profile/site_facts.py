@@ -76,6 +76,7 @@ __all__ = [
     "SITE_FACT_CONTRACT_VERSION",
     "SiteFactSet",
     "build_site_facts",
+    "read_pluto_text",
 ]
 
 SITE_FACT_CONTRACT_VERSION = "1.0.0"
@@ -569,3 +570,32 @@ def build_site_facts(
         references=tuple(_references(view)),
         existing_floor_area=existing,
     )
+
+
+def read_pluto_text(
+    profile: Mapping[str, Any], column: str
+) -> tuple[str | None, dict | None, str | None]:
+    """One PLUTO text column from a built property profile, read the one way the site
+    facts read it.
+
+    Applies the same trust rules as the facts above (:func:`_problem`): an identity
+    conflict, a duplicate value, a connector drift signal, a data conflict, a missing
+    value or an empty value all make the value unusable, so no untrusted PLUTO text is
+    ever surfaced as a value.
+
+    Args:
+        profile: a document from :func:`build_property_profile` (read, never changed).
+        column: a PLUTO column name (for example ``"transitzone"``).
+
+    Returns:
+        ``(value, source, problem)``. ``value`` is the verbatim normalized text when it
+        can be used, else None. ``source`` is a site_fact ``city_dataset`` source object
+        (``app.profile.data_versions`` pins it) for the value, or the checked source
+        when none was found, or None. ``problem`` is the plain reason the value cannot be
+        used, or None.
+
+    Raises:
+        ValueError: the profile has no ``identity.bbl`` (from :func:`_view`).
+    """
+    reading = _read(_view(profile), column, numeric=False)
+    return reading.value, reading.source, reading.problem

@@ -1,0 +1,5 @@
+# The Codex CLI is installed here locally via `npm ci --ignore-scripts` but NEVER
+# committed. Only package.json, package-lock.json, .gitignore and README.md are
+# tracked (dependency-security policy: the committed exact lock is the admission
+# record; the installed tree is reproducible from it).
+node_modules/
