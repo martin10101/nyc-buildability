@@ -1,0 +1,16 @@
+{
+  "task_id": "M0-T166",
+  "material_commit": "730dae36 (producer commit in worktree w-M0-T166; 16 files)",
+  "produced_at": "2026-10-02T08:05:00+00:00",
+  "producer": "backend-engineer (orchestrator-dispatched subagent; worktree /root/project/w-M0-T166)",
+  "requirements": {
+    "D-091-R001": [
+      "Linux launch path for the loop: launch_seam.select_launch_path() picks the bash launcher, the uninstalled systemd template and the bash harness on POSIX (Windows path unchanged); tools/agent_supervisor/linux/launch.sh fails closed on a start-gate refusal, a missing claude binary or an unset required env, and never pushes, merges or starts a live run; the bash shell-routing harness mirrors ps_tests with mutants that must go red.",
+      "M0-T165's deferred call sites: cli.py doctor posture uses os_acl.controller_config_acl_verdict (3598 -> 3597 lines); capability_probe.py and native_runtime.py bare probes carry DISABLE_AUTOUPDATER=1 on Linux, Windows keeps env=None.",
+      "Tests: tools/test_agent_supervisor_linux_launch.py 19 passed; bash run_sh_tests.sh exit 0 with all mutants detected."
+    ],
+    "D-091-R007": [
+      "Gated before use: G0 re-recorded after the scope correction; submitted for G2, G3/G4 and directive-compliance verification. Nothing installed or started. Two live drift tests fail on this server because its Claude CLI is 2.1.287 against the committed 2.1.281 fixtures; that is the certification tooth working, resolved by the later D-091 recertification task."
+    ]
+  }
+}
