@@ -1,0 +1,21 @@
+{
+  "task_id": "M0-T171",
+  "gate_id": "G3",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T171-G3G4-delta.md",
+  "reviewed_at": "2026-10-02T10:14:55.822375+00:00",
+  "content_manifest_sha256": "f2d7412853a81f0103dee1c43aeb2ea08bb21465d29cd7f84831a40258da664c",
+  "reviewed_sha": "bec407aed90a2acc53bc363e16f5e5a10b77a24a",
+  "history": [
+    {
+      "reviewer": "code-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T171-G3G4.md",
+      "reviewed_at": "2026-10-02T09:40:59.978174+00:00"
+    }
+  ],
+  "updated_at": "2026-10-02T10:14:55.929033+00:00"
+}
