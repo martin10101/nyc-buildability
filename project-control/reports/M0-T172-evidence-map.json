@@ -1,0 +1,20 @@
+{
+  "task_id": "M0-T172",
+  "material_commit": "def549fc (producer commit in worktree w-M0-T172; 3 files)",
+  "produced_at": "2026-10-02T12:50:00+00:00",
+  "producer": "backend-engineer (orchestrator-dispatched subagent; worktree /root/project/w-M0-T172)",
+  "requirements": {
+    "D-091-R001": [
+      "The cloud loop can run dual review behind its existing reviewer seam: loop.py gains one optional review_conductor parameter (default None keeps the single-Codex-reviewer path byte-identical; net 0 SLOC) and tools/agent_supervisor/dual_review.py adds DualReviewConductor with the same .review(...) interface. Not wired into cli.py or the launchers yet (TW5)."
+    ],
+    "D-091-R002": [
+      "When enabled, the conductor runs the Codex and Claude reviewers independently on the same frozen packet (neither sees the other) inside one atomic review slot (ReviewSlots, never a third concurrent review); a reviewer that raises, times out or returns malformed output makes the combined verdict UNVERIFIED, never PASS (M0-T168 N1)."
+    ],
+    "D-091-R003": [
+      "The conductor combines both reviews with the accepted review_combiner (verdict = the worse of the two, computed in code; model disputes advisory), resolves every model against its allowlist before any slot or process, and refuses when the combining model is unset (D-091-R008 stays the owner's choice); disputed findings and verdicts are surfaced in the loop report for the human gate and the loop records no gate (ADR-005)."
+    ],
+    "D-091-R007": [
+      "Tests: tools/test_agent_supervisor_dual_review.py 17 passed (one class per acceptance scenario, fake reviewers, real loop and real combiner); reviewer, combiner, slots, bounded suites 372 passed. Gated before use: G0 at 12364237; submitted for G2, G3/G4 (code-reviewer), G5 (security-reviewer) and directive-compliance verification. No loop started; recertification is M0-T174."
+    ]
+  }
+}
