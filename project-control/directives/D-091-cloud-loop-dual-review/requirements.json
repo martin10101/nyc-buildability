@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-091",
  "version": 1,
- "requirement_count": 8,
+ "requirement_count": 9,
  "producer": "orchestrator",
- "updated_at": "2026-10-02T20:48:54+00:00",
+ "updated_at": "2026-10-02T21:24:08+00:00",
  "requirements": [
   {
    "id": "D-091-R001",
@@ -341,6 +341,39 @@
     "tasks": [
      "M0-T175"
     ]
+   }
+  },
+  {
+   "id": "D-091-R009",
+   "text": "Amend the activation PIN 2026-08-08 so that a systemd control-group containment, proved from inside the supervisor process, counts as containment alongside the Windows Job Object; process_group and taskkill stay refused, and the protected property is unchanged (owner: 'Yes I approve the Linux', answering the session's question about the proved Linux systemd guarantee).",
+   "source_ref": "source-002-amendment.md#owner-message-34-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-091-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-091-R007"
+   ],
+   "required_harness": "M0-T177's in-process proof and gates; the G5 security review signs off the amended PIN text; the Linux recertification.",
+   "required_evidence": "The amended activation checklist, the M0-T177 gate records, and the recertification report.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Authorized 2026-10-02. The PIN text is amended at the M0-T177 accept seam, with the G5 reviewer's sign-off; nothing activates before the Linux recertification and the owner-typed commissioning.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
    }
   }
  ]
