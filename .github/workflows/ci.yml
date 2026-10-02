@@ -193,6 +193,69 @@ jobs:
       - name: npm CLI tooling advisory verification (npm@11.18.0, fail-closed)
         run: node scripts/dependency_age_gate.mjs --npm-cli-advisory 11.18.0
 
+  # Task M0-T167 (D-091; ADDITIVE job, existing jobs untouched): the same
+  # permanent, machine-enforced dependency-security suite applied to the
+  # repo-local Codex CLI admission (tools/codex_cli). BLOCKING on every push and
+  # PR — a finding, a too-new package, an integrity mismatch, an unexpected host,
+  # or a registry outage fails the build. No warning-only step, no allowlist, no
+  # suppression, no agent waiver. This closes the continuous-audit gap for the
+  # admitted Codex lock (DEPENDENCY_SECURITY_POLICY.md §1 rule 5: audited on every
+  # change AND on a schedule). The daily re-audit is the companion job in
+  # scheduled-web-audit.yml. Reuses the web app's committed age gate
+  # (apps/web/scripts/dependency_age_gate.mjs, Node built-ins only), the SAME
+  # SHA-pinned actions, and the SAME pinned npm CLI 11.18.0 as web-dependency-security.
+  codex-cli-dependency-security:
+    name: codex-cli-dependency-security (audit + committed-lock age gate)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/codex_cli
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/codex_cli/package-lock.json
+      # The exact reviewed npm CLI (FE-S4), pinned the same way web-dependency-security does.
+      - name: Pin npm CLI to 11.18.0
+        run: |
+          npm install -g npm@11.18.0
+          test "$(npm -v)" = "11.18.0" || { echo "npm pin failed: $(npm -v)"; exit 1; }
+      # Deterministic install from the committed lock. --ignore-scripts because the
+      # Codex CLI pulls a platform binary package; it publishes no lifecycle scripts
+      # and none are permitted to run. `npm ci` fails if the committed lock is
+      # missing or does not match package.json, and verifies every tarball integrity.
+      - name: Deterministic install (npm ci --ignore-scripts; lockfile + integrity verified)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      # The canonical blocking audit. Exits non-zero on ANY finding at low or above,
+      # across runtime AND dev dependencies. No --omit=dev.
+      - name: Blocking npm audit (--audit-level=low)
+        run: npm audit --audit-level=low
+      # Stricter belt-and-suspenders — parse the audit JSON and fail if the total
+      # across EVERY severity bucket (info..critical) is non-zero.
+      - name: Blocking npm audit (JSON total vulnerabilities must be 0)
+        run: |
+          set -o pipefail
+          npm audit --json > "$RUNNER_TEMP/audit.json" || true
+          node -e '
+            const a = require(process.env.RUNNER_TEMP + "/audit.json");
+            const v = (a.metadata && a.metadata.vulnerabilities) || {};
+            const total = Object.values(v).reduce((s, n) => s + (typeof n === "number" ? n : 0), 0);
+            if (total !== 0) {
+              console.error("npm audit JSON reports " + total + " vulnerabilities:", JSON.stringify(v));
+              process.exit(1);
+            }
+            console.log("npm audit JSON: total vulnerabilities == 0 across all severities");
+          '
+      # Independent committed-lockfile release-age gate: reuse the web app's gate
+      # against the Codex lock. Re-verifies every registry package resolves to
+      # registry.npmjs.org with a registry-matching integrity and is >= 7 complete
+      # days old, against the registry's own UTC clock. Fails closed on any
+      # outage/malformed/mismatch/unexpected-host condition.
+      - name: Committed-lockfile release-age gate (>= 7 days, fail-closed)
+        run: node ../../apps/web/scripts/dependency_age_gate.mjs package-lock.json
+
   api:
     name: api (ruff + pytest)
     runs-on: ubuntu-latest
