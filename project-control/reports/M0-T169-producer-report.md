@@ -57,3 +57,26 @@ Not wired in: nothing in loop.py / gate_wave.py / codex_reviewer.py / claude_rev
 - Did not run the full supervisor glob or test_directive_compliance (memory/time; CI runs the full glob). Did not push/merge/gh/project_control (orchestrator-only).
 
 END-OF-REPORT
+
+---
+
+# Rework (M0-T169 G3/G5 FAIL — advisory-only redesign)
+
+Both independent reviews FAILED the same safety property (G3-1, G5 B1/B2): the old evidence check verified only that a cited token was PRESENT somewhere, not RELEVANT. The frozen head SHA is present for every unit, so a model could drop ANY refutable finding (even a HALT_UNSAFE) and flip combined FAIL -> PASS — a prompt-injection hole breaking design §2 rule 4 (never upgrade FAIL to PASS). Orchestrator decision: make model proposals ADVISORY ONLY.
+
+What changed in tools/agent_supervisor/review_combiner.py:
+1. Model proposals are ADVISORY disputes, never refutations. A dispute whose evidence passes the hardened checks is RECORDED on the finding as `disputed=True` with the cited evidence + the model's reason + an "ADVISORY ONLY" note, but the finding is NEVER removed and the combined verdict is NEVER changed by it. Renamed CombinedFinding.refutable/refuted/refutation -> disputable/disputed/dispute; CombinedReview.refutations_* -> disputes_recorded/disputes_rejected.
+2. The combined verdict is computed in code as `worst_verdict(review_verdict(codex), review_verdict(claude))` (PASS<FAIL<UNVERIFIED) — the worst of the two reviews' verdicts (union). FAIL+anything is never PASS; a single FAIL is never upgraded; the model cannot move it.
+3. Hardened, finding-bound evidence (`evidence_supports_dispute(evidence, finding, inputs)`): `sha` counts ONLY when it is a supervisor-vouched `extra_shas` member AND is not the frozen head or any prefix of it (dropped `head.startswith` and the diff/outputs substring path — the G5 B1 primitive is gone); `file_line` must EQUAL the finding's own reported location (`_finding_location`: {file,line} or "path:line") AND be a real new-side diff line; `command_output` must be a substring of >= MIN_COMMAND_OUTPUT_EVIDENCE_CHARS (20) of a supplied output.
+4. Synthetic `verdict` findings and `unverified` findings are non-disputable (disputable=False); only reviewer `blocking` findings can be disputed.
+5. When enabled, an empty combiner identity is refused (`combiner_identity_required`) so the independence guard always runs; `_assert_independent` no longer early-returns on empty.
+6. Docstring rewritten to state the true, stronger guarantee: the model can never drop a finding or change the verdict; disputes are advisory annotations for the human gate.
+7. Prompt/instructions (COMBINER_INSTRUCTIONS, `_dispute_prompt`) rewritten: state the advisory role, hand the model `vouched_shas` (not the head as evidence), and require finding-bound evidence; model output key is `disputes` (legacy `refutations` still parsed).
+
+Tests (tools/test_agent_supervisor_review_combiner.py, 47 cases) flipped/added per the orchestrator:
+- Flipped the enshrining tests: the old test_command_output_substring_refutes / test_short_sha_prefix_of_head_refutes / the "aaaaaaa" case now assert REJECTION (no drop, verdict unchanged).
+- Red/green: test_halt_unsafe_with_head_sha_citation_stays_fail_finding_present and test_full_frozen_head_sha_citation_is_rejected (B1); test_present_but_unrelated_file_line_is_rejected and test_present_but_trivial_command_output_is_rejected and test_file_line_not_in_diff_is_rejected_even_if_it_equals_location (B2); test_bound_file_line_records_an_advisory_dispute / _long_command_output_substring / _vouched_non_head_sha (valid bound citation -> disputed=True, finding present, verdict unchanged); test_a_valid_dispute_does_not_drop_the_finding_or_flip_to_pass and test_fail_plus_pass_is_always_fail (mutations); test_verdict_finding_cannot_be_disputed; test_unverified_finding_cannot_be_disputed; test_enabled_combiner_with_empty_identity_is_refused; evidence_supports_dispute/worst_verdict units.
+
+Commands (venv): pytest tools/test_agent_supervisor_review_combiner.py -> 47 passed; pytest tools/test_agent_supervisor_claude_reviewer.py -> 26 passed; ruff check (both files) -> All checks passed!; modularity_check --check -> selected 640 files; failures 0; EXIT=0; review_combiner.py not flagged.
+
+END-OF-REPORT
