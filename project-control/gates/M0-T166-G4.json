@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T166",
+  "gate_id": "G4",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "FAIL",
+  "report_file": "project-control/reports/M0-T166-G3G4.md",
+  "reviewed_at": "2026-10-02T08:10:10.854067+00:00",
+  "content_manifest_sha256": "08b9b46956c187fdc8863f8b3858d92a9ce0d1c7b7d0e0d0b7cc216cf27a3da0",
+  "reviewed_sha": "9b1ee43d50c73a6048b466ee4b06dbc146a6e30e",
+  "updated_at": "2026-10-02T08:10:11.026836+00:00"
+}
