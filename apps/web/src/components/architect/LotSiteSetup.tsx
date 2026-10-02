@@ -381,6 +381,7 @@ function SiteFactGroupRow({
   onEdit: (fact: SiteFact, raw: string) => string | null;
 }) {
   const { primary, entered } = group;
+  const version = primary.versionCheck;
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -417,6 +418,14 @@ function SiteFactGroupRow({
           {primary.valueText}
         </span>
         <span className="lot-site-fact__source">{primary.sourceLabel}</span>
+        {version?.onFace ? (
+          <span
+            className="lot-site-fact__version-flag"
+            data-testid={`site-fact-version-flag-${primary.factId}`}
+          >
+            {`${version.label} — see details`}
+          </span>
+        ) : null}
         {entered ? (
           <span className="lot-site-fact__entered" data-testid={`site-fact-entered-${primary.factId}`}>
             {entered.sourceLabel}: {entered.valueText}
@@ -432,6 +441,13 @@ function SiteFactGroupRow({
               <li key={index}>{line}</li>
             ))}
           </ul>
+          {version ? (
+            <p className="lot-site-fact__version" data-testid={`site-fact-version-${primary.factId}`}>
+              <span className="lot-site-fact__version-label">{version.label}</span>
+              {" — "}
+              {version.reason}
+            </p>
+          ) : null}
         </details>
         {primary.editable ? (
           editing ? (
