@@ -51,9 +51,20 @@ python -m tools.agent_supervisor verify-controller \
 Expect `controller verified, including the external config.toml binding` (runbook section 6;
 `config.toml` is a bound logical name, `manifest.py:47,54`).
 
-> NOT FOUND — orchestrator to confirm: `doctor`/`verify-controller` need `--manifest` and
-> (for a full doctor) `--model-selection` paths. The runbook's examples are Windows paths
-> (runbook section 6-7); the owner/orchestrator supplies the Linux equivalents.
+Linux paths for these checks (the CLI defaults are `None`, so the owner/orchestrator passes them):
+
+- `--config /etc/nyc-supervisor/config.toml` — the POSIX default (`platform_paths.py:41`
+  `POSIX_CONFIG_DIR`, resolved by `:67-77` `default_config_path`).
+- `--manifest "${XDG_CONFIG_HOME:-$HOME/.config}/nyc-supervisor/ctl24-activation/controller_manifest.json"`
+  — the POSIX default activation location (`platform_paths.py:80-97` `default_activation_dir`,
+  `:101-107` `default_manifest_path`; filename `controller_manifest.json`, `manifest.py:38`). This
+  manifest file is produced by the controller's record-manifest step at activation, not invented
+  here; `verify-controller` without `--manifest` verifies nothing and fails closed for production
+  dispatch (`cli.py:480-489`).
+- `--model-selection <runtime model_selection.toml>` (full doctor only) — there is **no** platform
+  default path in the code (`platform_paths.py` resolves config/manifest/runtime only). The owner
+  supplies the runtime `model_selection.toml` path explicitly (`cli.py:3250-3251`); it lives outside
+  the controller manifest so a model change never invalidates the controller. Never invent this path.
 
 ## 2. Codex sign-in on the server (OD-C; owner types; orchestrator checks)
 
@@ -120,12 +131,21 @@ sudo systemctl start nyc-supervisor.service   # runs the gated launcher; owner a
                                               # certified-start prompt-digest when shown
 ```
 
-The unit runs `launch.sh`, which runs the owner-configured controller start command
-(`NYC_SUP_START_CMD`, `template:28`) only after the start gate passes.
+The unit runs `launch.sh`, which runs `NYC_SUP_START_CMD` only after the start gate passes.
 
-> NOT FOUND — orchestrator to confirm: the exact controller start command and how lane 1 is
-> selected are owner-configured in `NYC_SUP_START_CMD` (`template:28`), not a fixed command in the
-> repo. The orchestrator confirms the configured start command with the owner before this step.
+What `NYC_SUP_START_CMD` must be: launch.sh requires it to be **the gated controller start**, run
+only on a passing gate; the launcher adds no push, merge, or live run of its own (`launch.sh:28-29`,
+`:84-88`). The gated controller start is the `start` subcommand in supervised mode:
+`python -m tools.agent_supervisor start --mode supervised --config /etc/nyc-supervisor/config.toml
+--model-selection <path> --approve-prompt-digest <digest>` (`--mode supervised` `cli.py:3289`,
+`--config` `:3309`, `--model-selection` `:3310`, `--approve-prompt-digest` `:3335`). The canary = one supervised
+single-task start: `--max-tasks` defaults to `1`, the certified single-task shape (`cli.py:3329`);
+there is no `--lane` flag in the repo, so "lane 1" means this single canary start, not a CLI option.
+
+> The repo does **not** define a fixed, concrete `NYC_SUP_START_CMD` value — it is environment-driven
+> (`launch.sh:23-29`) and a `<...>` placeholder in the unit (`template:28`). The exact flag string
+> (the `model_selection.toml` path and the supervised `--approve-prompt-digest`) is prepared by the
+> orchestrator and shown to the owner before this step; it is not invented here.
 
 **Orchestrator checks** — verify the stored lane-1 canary evidence shows one clean cycle:
 
@@ -154,8 +174,9 @@ reviewer_enabled = false      # absence already = off; this is an explicit belt
 enabled = false               # absence already = off; this is an explicit belt
 ```
 
-> NOT FOUND — these two keys are **not** present in `config.example.toml`; off is the default, so
-> the safe act is to leave them out.
+> Note (resolved): these two keys are **not** present in `config.example.toml`; the readers treat
+> absence as off (`review_combiner.py:459-467`, `claude_reviewer.py:395-403`), so the safe act is to
+> leave them out — no key to set to keep the combiner off.
 
 **Later step — the owner names the model (do not do this during steps 1-4).** When the owner gives
 the combining model, add under `/etc/nyc-supervisor/config.toml`:
@@ -171,14 +192,37 @@ model   = "<owner-chosen-combining-model>"
 
 The combining `model` is required with no default (`review_combiner.py:512-516`;
 `dual_review.py:239-245`) and must be on the `[claude] allowed_models` allowlist — the conductor
-refuses before any process if it is not (`dual_review.py:251-256`).
+refuses before any process if it is not (`dual_review.py:251-256`). The reviewer/combiner
+independence that the code enforces is by **identity**, not model string
+(`review_combiner.py:572-584` `_assert_independent`).
 
-> NOT FOUND — orchestrator to confirm: a code check that the combining model is literally
-> **different** from the Claude reviewer model. The enforced independence is by reviewer/combiner
-> **identity**, not model string (`review_combiner.py:572-584` `_assert_independent`), plus the
-> allowlist check above. "Distinct models for reviewer vs combiner" is a design mitigation
-> (`D091_WAVE3_WIRING_PLAN.md:174-175`), not a string-equality gate. The orchestrator confirms
-> whether a model-string check is added before enabling.
+**Orchestrator check before the owner starts the loop with the combiner ON** (read-only; makes no
+change). This enforces that the combining model and the Claude reviewer model are both set,
+different, and both allowlisted — the "distinct models" independence the design calls for
+(`D091_WAVE3_WIRING_PLAN.md:174-175`):
+
+```
+python3 -c '
+import tomllib
+c = tomllib.load(open("/etc/nyc-supervisor/config.toml","rb"))
+combiner = c.get("review_combiner",{}).get("model","")
+reviewer = c.get("claude",{}).get("reviewer_model","")
+allowed  = c.get("claude",{}).get("allowed_models",[])
+ok = bool(combiner) and bool(reviewer) and combiner != reviewer \
+     and combiner in allowed and reviewer in allowed
+print("PASS" if ok else "STOP",
+      {"combiner": combiner, "reviewer": reviewer, "allowed": allowed})
+'
+```
+
+Keys checked (verified against the code): `[review_combiner].model` (`review_combiner.py:512-516`,
+field `:434`), `[claude].reviewer_model` (`claude_reviewer.py:384`), `[claude].allowed_models`
+(allowlist the conductor enforces, `dual_review.py:251-256`; example `config.example.toml:34`). On
+`PASS` the owner may start with the combiner on; on `STOP` the owner does **not** start.
+
+A code-level gate that refuses an equal combiner/reviewer model would touch
+`tools/agent_supervisor/**` and so void the M0-T174 certification; it is therefore logged as a later
+improvement, and this read-only orchestrator check covers it at commissioning in the meantime.
 
 The orchestrator's recommendation (Opus 5.5) is already recorded in
 `docs/SESSION_HANDOFF.md:51`; this checklist recommends nothing further.

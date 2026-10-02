@@ -73,22 +73,44 @@ only read-only `grep`/`sed`/`ls` to verify facts.
   be on the `[claude]` allowlist `dual_review.py:251-256`.
 - OD-B recommendation (Opus 5.5) already recorded: `docs/SESSION_HANDOFF.md:51`.
 
-## NOT FOUND items (orchestrator to confirm)
+## NOT FOUND items — resolution (rework 1)
 
-1. **A code check that the combining model is literally DIFFERENT from the Claude reviewer model.**
-   Not found. The code enforces reviewer/combiner **identity** independence
-   (`review_combiner.py:572-584` `_assert_independent`) and the allowlist (`dual_review.py:251-256`),
-   not a model-string inequality. "Distinct models for reviewer vs combiner" is a design mitigation
-   (`D091_WAVE3_WIRING_PLAN.md:174-175`), and `SESSION_HANDOFF.md:51` says "commissioning checks that".
-   The checklist flags this and asks the orchestrator to confirm whether a model-string check is added
-   before enabling.
-2. **`review_combiner.enabled` / `claude.reviewer_enabled` keys are not present in
-   `config.example.toml`.** Off is the default (absence = off), so the checklist's "keep it off" act is
-   to leave them absent; an explicit `enabled = false` belt is optional.
-3. **The exact controller start command and lane-1 selection** are owner-configured in
-   `NYC_SUP_START_CMD` (`template:28`), not a fixed command in the repo. Orchestrator confirms with the owner.
-4. **`doctor`/`verify-controller` Linux paths** for `--manifest` and `--model-selection`: the runbook's
-   examples are Windows (runbook section 6-7); the Linux equivalents are supplied by the owner/orchestrator.
+1. **Combining model DIFFERENT from the Claude reviewer model — RESOLVED by a read-only
+   orchestrator check (no code change now).** A code-level gate would touch `tools/agent_supervisor/**`
+   and void the M0-T174 certification, so it is logged as a later improvement. The checklist's step 5
+   now carries an explicit `python3 -c` (tomllib) check run before the owner starts with the combiner
+   on: it reads `/etc/nyc-supervisor/config.toml` and prints `PASS` only when `[review_combiner].model`
+   and `[claude].reviewer_model` are both present, non-empty, DIFFERENT, and both in
+   `[claude].allowed_models`; otherwise `STOP` and the owner does not start. Keys verified against the
+   code: `[review_combiner].model` (`review_combiner.py:512-516`, field `:434`), `[claude].reviewer_model`
+   (`claude_reviewer.py:384`), `[claude].allowed_models` (conductor allowlist `dual_review.py:251-256`,
+   example `config.example.toml:34`). The already-written identity-independence
+   (`review_combiner.py:572-584`) and allowlist facts are kept.
+2. **`doctor`/`verify-controller` Linux paths — RESOLVED with code defaults.** The CLI arg defaults
+   are `None`, so the owner/orchestrator passes them: `--config /etc/nyc-supervisor/config.toml`
+   (`platform_paths.py:41`, `:67-77`); `--manifest "${XDG_CONFIG_HOME:-$HOME/.config}/nyc-supervisor/
+   ctl24-activation/controller_manifest.json"` (POSIX default `platform_paths.py:80-97`, `:101-107`;
+   filename `manifest.py:38`; the manifest file is produced by record-manifest at activation, and
+   `verify-controller` without `--manifest` fails closed, `cli.py:480-489`). `--model-selection` has
+   **no** platform default in code — the owner supplies the runtime `model_selection.toml` path
+   explicitly (`cli.py:3250-3251`); it lives outside the manifest. No path invented.
+3. **`NYC_SUP_START_CMD` — RESOLVED as far as the repo defines it; the concrete value stays
+   orchestrator-prepared.** launch.sh requires the value to be the **gated controller start**, run only
+   on a passing gate, adding no push/merge/run of its own (`launch.sh:28-29`, `:84-88`). The gated start
+   is the supervised `start` subcommand: `python -m tools.agent_supervisor start --mode supervised
+   --config /etc/nyc-supervisor/config.toml --model-selection <path> --approve-prompt-digest <digest>`
+   (`cli.py:3289` mode, `:3309` config, `:3310` model-selection, `:3335` approve-prompt-digest); the canary is
+   one single-task start (`--max-tasks` default `1`, `cli.py:3329`); there is **no** `--lane` flag, so
+   "lane 1" means this single canary start. The repo does NOT define a fixed concrete value — it is
+   environment-driven (`launch.sh:23-29`) and a `<...>` placeholder (`template:28`); the exact flag
+   string (model-selection path, prompt-digest) is orchestrator-prepared and shown to the owner before
+   step 4, not invented.
+4. **`review_combiner.enabled` / `claude.reviewer_enabled` not in `config.example.toml` —
+   RESOLVED (informational).** The readers treat absence as off (`review_combiner.py:459-467`,
+   `claude_reviewer.py:395-403`), so the safe act is to leave them out; an explicit `= false` belt is
+   optional. Reworded in the doc as a resolved note, not an open NOT FOUND.
+
+Nothing remains open: all four are resolved in-place with file:line evidence.
 
 ## Self-checks run
 
@@ -97,7 +119,12 @@ only read-only `grep`/`sed`/`ls` to verify facts.
 - Verified every cited key/path/flag/line against the repo with `grep`/`sed` (POSIX ACL rules,
   config keys and line numbers, codex version pin and fixture, systemd template lines, launcher exit
   codes, memory 70% constants, admission caps, combiner/reviewer switch defaults, CLI subcommands).
-- Ran no commissioning command, no `systemctl`, no `codex login`, no `sudo`, installed nothing.
+- Rework 1: verified `platform_paths.py` POSIX defaults (config/manifest/activation/runtime),
+  `MANIFEST_FILENAME` (`manifest.py:38`), the `start` subcommand flags (`cli.py:3289/3309/3310/3329/3335`),
+  the absence of a `--lane` flag, the tomllib check's key names against the code, and the no-code-change
+  (certification-preserving) decision for the model-difference gate.
+- Ran no commissioning command, no `systemctl`, no `codex login`, no `sudo`, installed nothing. The
+  tomllib check in step 5 is read-only and was NOT run (there is no live `/etc/nyc-supervisor/config.toml`).
 
 ## Pending (not in this increment)
 
