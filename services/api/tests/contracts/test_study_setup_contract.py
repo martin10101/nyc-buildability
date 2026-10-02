@@ -81,6 +81,24 @@ def test_every_emitted_site_fact_is_site_fact_contract_valid() -> None:
         assert not errors, (fact.get("fact_id"), errors)
 
 
+def test_version_check_facts_validate_against_the_canonical_site_fact_schema() -> None:
+    """B-3: the emitted facts now carry ``source.version_check`` at contract 1.1.0.
+    Prove the versioned facts validate against the CANONICAL packages/contracts
+    site_fact schema (not only the route's bundled copy), and that the recorded
+    Northern pack yields at least one such fact."""
+    document = _setup_document()
+    facts = document["site"]["facts"]
+    site_fact_validator = jsonschema.Draft202012Validator(
+        {"$ref": SITE_FACT_ID}, registry=_registry()
+    )
+    versioned = [fact for fact in facts if (fact.get("source") or {}).get("version_check")]
+    assert versioned, "the recorded Northern pack carries at least one version_check fact"
+    for fact in versioned:
+        assert fact["contract_version"] == "1.1.0", fact.get("fact_id")
+        errors = [error.message for error in site_fact_validator.iter_errors(fact)]
+        assert not errors, (fact.get("fact_id"), errors)
+
+
 def test_lots_and_lot_selection_match_the_study_defs() -> None:
     document = _setup_document()
     for lot in document["lots"]:

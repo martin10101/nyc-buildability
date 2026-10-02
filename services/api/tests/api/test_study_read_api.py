@@ -239,6 +239,39 @@ def test_study_setup_site_facts_carry_rank_label_and_source(monkeypatch) -> None
     assert ezfa["blocks"]
 
 
+def test_site_facts_carry_version_check_current_for_recorded_pack(monkeypatch) -> None:
+    """B-3: each PLUTO-sourced site fact carries ``source.version_check`` (the B-06
+    status) and is stamped contract 1.1.0. For the recorded 215-16 Northern pack the
+    status is ``current``, since the only published version on record is the
+    retrieval itself (published versions = the retrievals; a version probe is a later
+    slice). A fact with no dataset version stays 1.0.0 with no key. The route already
+    passed its own contract guard to return this 200, so these facts are contract-valid."""
+    _enable(monkeypatch)
+    body = _client(_northern_provider()).get(f"/api/v1/properties/{NORTHERN_BBL}/study").json()
+    facts = {fact["key"]: fact for fact in body["site"]["facts"]}
+
+    # A PLUTO-sourced fact: current version_check, label "Current", contract 1.1.0.
+    lot_area = facts["lot_area"]
+    assert lot_area["contract_version"] == "1.1.0"
+    version_check = lot_area["source"]["version_check"]
+    assert version_check["status"] == "current"
+    assert version_check["label"] == "Current"
+    # The reason names the retrieval time, so the "current as of this retrieval"
+    # scope is explicit (studies are assembled per request; no durable store yet).
+    assert lot_area["source"]["retrieved_at"] in version_check["reason"]
+
+    # Every PLUTO-sourced fact is current and 1.1.0 (one PLUTO pin for the pack).
+    for key in ("lot_area", "lot_depth", "lot_type", "zoning_district", "commercial_overlay"):
+        assert facts[key]["contract_version"] == "1.1.0"
+        assert facts[key]["source"]["version_check"]["status"] == "current"
+
+    # A fact with no dataset version (existing_zoning_floor_area is UNKNOWN, no
+    # city source) stays 1.0.0 and carries no version_check key.
+    ezfa = facts["existing_zoning_floor_area"]
+    assert ezfa["contract_version"] == "1.0.0"
+    assert "version_check" not in (ezfa.get("source") or {})
+
+
 def test_setup_composes_into_a_contract_valid_study(monkeypatch) -> None:
     """The real parts (property, lots, lot_selection, site.facts) slot into a
     full study.schema.json Study - proven by composing one with a TEST-ONLY
