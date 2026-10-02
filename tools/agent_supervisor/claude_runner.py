@@ -74,6 +74,7 @@ from .process import (
     assert_argv_safe,
     claude_child_env,
     executable_identity,
+    posix_session_kwargs,
     terminate_process_tree,
 )
 from .recovery import (
@@ -1214,7 +1215,8 @@ class ClaudeRunner:
             argv, shell=False,
             cwd=self.config.cwd or None, env=env,
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            text=True, encoding="utf-8", errors="replace", bufsize=1)
+            text=True, encoding="utf-8", errors="replace", bufsize=1,
+            **posix_session_kwargs())  # M0-T177 (B-027): POSIX worker leads its own session
         container.adopt(process.pid)
         # M0-T053 (M0-T052 G5 C2): journal the pid the moment it exists AND is
         # contained, before a single byte is written to it. From here on, a
@@ -1694,7 +1696,8 @@ def probe_model_launch(
         process = subprocess.Popen(  # noqa: S603 - argv array, shell=False
             argv, shell=False, cwd=probe_config.cwd or None, env=env,
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            text=True, encoding="utf-8", errors="replace", bufsize=1)
+            text=True, encoding="utf-8", errors="replace", bufsize=1,
+            **posix_session_kwargs())  # M0-T177 (B-027): POSIX probe leads its own session
     except OSError as exc:
         container.close()
         return LaunchProbe(model=model, available=False, reason_code=PROBE_NO_PROCESS,

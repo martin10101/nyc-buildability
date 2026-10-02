@@ -107,7 +107,7 @@ from .policy import (
 )
 from . import stop_intent
 from . import turn_budget as tb
-from .process import CONTAINMENT_JOB_OBJECT
+from .process import CONTAINMENT_ACCEPT_SET
 from .protocol import build_envelope
 from .resume_scheduler import EMERGENCY_STOP_KEY
 from .state_machine import (
@@ -1861,16 +1861,17 @@ class SupervisedLoop:
         # silent continue (S13.2 / S13.12 invariants 10 and 11). Placed AFTER the
         # S14 checkpoint/effect reconciliation so a paramount ambiguous-effect or
         # no-checkpoint stop is never masked by this one; a cycle whose checkpoint
-        # already failed stops for that reason. A cycle reporting `job_object`
-        # proceeds unchanged.
+        # already failed stops for that reason. A cycle reporting a kill-on-external
+        # -death kind (`job_object` on Windows, proved `systemd_cgroup` on Linux;
+        # M0-T177/B-027) proceeds unchanged.
         achieved = str(getattr(run_result, "containment", "") or "")
-        if achieved != CONTAINMENT_JOB_OBJECT:
+        if achieved not in CONTAINMENT_ACCEPT_SET:
             fallback = str(getattr(run_result, "containment_fallback_reason", "") or "")
             containment_reason = (
-                f"the cycle achieved {achieved or 'unknown'!r} containment, not "
-                f"job-strength {CONTAINMENT_JOB_OBJECT!r}: a child that spawns its "
-                f"own process tree can escape a non-job container, so an unattended "
-                f"run must fail closed rather than proceed on it")
+                f"the cycle achieved {achieved or 'unknown'!r} containment, not one of the "
+                f"kill-on-external-death kinds {sorted(CONTAINMENT_ACCEPT_SET)}: a child that "
+                f"spawns its own process tree can escape a non-contained launch, so an "
+                f"unattended run must fail closed rather than proceed on it")
             if fallback:
                 containment_reason += f" (fallback reason: {fallback})"
             self.machine.transition(
@@ -1886,25 +1887,27 @@ class SupervisedLoop:
             return stop("containment_degraded", containment_reason, PAUSED_RECOVERY)
 
         # M0-T056 fold-in of the carried M0-T060 residual (M0-T053 G5 pin P3): a
-        # reported `job_object` KIND is not proof that the child is actually inside
-        # the job. `ProcessContainer.adopt` records `ContainmentReport.verified_in_job`
-        # from a real `is_process_in_job` membership probe; a kind that says
-        # job_object while membership could NOT be confirmed gives no more real
-        # containment than taskkill, so it must fail closed under an unattended loop
-        # rather than proceed on an unverified claim. The strengthening is ADDITIVE
-        # and freeze-safe: the runner reports the boolean explicitly, and a
-        # run_result that does not carry the field at all (every pre-existing test
-        # fake, and any non-Windows cycle that never reaches this job_object branch)
-        # reads the True default and proceeds exactly as before. ONLY an explicit
-        # `verified_in_job == False` on an otherwise job_object cycle stops here.
+        # reported accepted KIND is not proof the child is actually CONTAINED.
+        # `ProcessContainer.adopt` records `ContainmentReport.verified_in_job` from
+        # a real membership probe — `is_process_in_job` on Windows, cgroup-v2
+        # membership (`pid_in_service_cgroup`) under `systemd_cgroup` (M0-T177).
+        # A kind that claims containment while membership could NOT be confirmed
+        # gives no more real protection than taskkill/process_group, so it must
+        # fail closed under an unattended loop rather than proceed on an unverified
+        # claim. The strengthening is ADDITIVE and freeze-safe: the runner reports
+        # the boolean explicitly, and a run_result that does not carry the field at
+        # all (every pre-existing test fake, and any cycle that never reaches an
+        # accepted-containment branch) reads the True default and proceeds exactly
+        # as before. ONLY an explicit `verified_in_job == False` on an
+        # otherwise-accepted cycle stops here.
         verified_in_job = getattr(run_result, "containment_verified_in_job", True)
         if verified_in_job is False:
             unverified_reason = (
-                f"the cycle reported {CONTAINMENT_JOB_OBJECT!r} containment but its "
-                f"in-job membership could not be verified (ContainmentReport."
-                f"verified_in_job is False): an unverified job assignment is not proof "
-                f"of kill-on-close containment, so an unattended run fails closed rather "
-                f"than proceed on an unconfirmed claim")
+                f"the cycle reported {achieved!r} containment but its membership could "
+                f"not be verified (ContainmentReport.verified_in_job is False): an "
+                f"unverified containment assignment is not proof of kill-on-external-death "
+                f"containment, so an unattended run fails closed rather than proceed on an "
+                f"unconfirmed claim")
             self.machine.transition(
                 PAUSED_RECOVERY, "unsafe_condition",
                 detail={"cycle": cycle, "reason": "containment_unverified",

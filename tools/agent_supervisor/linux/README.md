@@ -30,6 +30,40 @@ A template with `<...>` placeholders, no `[Install]` section and `Restart=no`, s
 a stray `systemctl enable` has no target. An owner substitutes the placeholders
 and installs/enables it at commissioning; an agent never does.
 
+### Control-group containment the start gate proves (M0-T177, B-027)
+
+The unit is HARDENED so that systemd is the Linux kill-on-external-death
+mechanism the M0-T052 G5 C1 safety property requires: when the main process dies
+by any external means (SIGKILL/OOM), systemd stops the unit and tears down the
+service control group, reaping the worker and every `setsid`/double-fork
+descendant without anything inside the supervisor running, before any later
+`start`. The in-process gate (`linux_containment.prove_systemd_containment`)
+REFUSES dispatch unless `systemctl show` reports exactly these, so they are
+load-bearing, not cosmetic:
+
+- `KillMode=control-group` - stop kills the whole cgroup (`process`/`none` would
+  leave descendants alive);
+- `ExitType=main` - the unit's lifetime is tied to the main process dying;
+- `SendSIGKILL=yes` - a member that ignores SIGTERM is still SIGKILLed;
+- `TimeoutStopSec=15s` - a finite, short bound (the gate caps it at 60 s);
+- `ProtectControlGroups=yes` - `/sys/fs/cgroup` read-only, so even a root member
+  cannot rewrite its cgroup to escape the kill (the gate REQUIRES this when the
+  unit runs as root).
+
+**`NYC_SUP_START_CMD` must exec python directly.** `launch.sh` ends with
+`exec $NYC_SUP_START_CMD` (line 88), and `exec` REPLACES the launcher's process
+image while keeping the same PID. The chain is: systemd forks the unit, which
+runs `/usr/bin/env bash launch.sh` - `env` execs `bash`, `bash` runs `launch.sh`,
+and `launch.sh`'s final `exec` replaces that same PID with the start command. So
+the unit's `MainPID` is whatever that final `exec` becomes. If
+`NYC_SUP_START_CMD` is a DIRECT python invocation (e.g.
+`.../python -m tools.agent_supervisor start ...`), `MainPID` is the python
+controller and the gate's `MainPID == os.getpid()` check passes. If it were a
+wrapper shell (`bash -c "python ..."`), `MainPID` would be that shell and the
+real controller a child, so the gate would REFUSE. Confirmed: `launch.sh:88`
+uses `exec`, so python is kept as `MainPID` provided the start command is a
+direct python exec.
+
 ## `sh_tests/` - the bash shell-routing harness
 
 The bash analog of `ps_tests`. The only honest carrier of a child's exit code is

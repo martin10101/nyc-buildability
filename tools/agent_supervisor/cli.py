@@ -190,7 +190,9 @@ from .preflight import (
     resolve_canonical_claude,
 )
 from .process import (
+    CONTAINMENT_ACCEPT_SET,
     CONTAINMENT_JOB_OBJECT,
+    CONTAINMENT_SYSTEMD_CGROUP,
     FORBIDDEN_CREATION_FLAGS,
     FORBIDDEN_JOB_LIMIT_FLAGS,
     HARD_DENY_ARGUMENTS,
@@ -1243,7 +1245,23 @@ def _check_containment_default() -> Check:
                      "this Windows host refuses a Job Object; the container falls back to "
                      "`taskkill /T /F` and records the fallback reason rather than claiming "
                      "job-strength containment")
-    expected = CONTAINMENT_JOB_OBJECT if os.name == "nt" else "process_group"
+    if os.name != "nt":
+        # M0-T177 (B-027): POSIX doctor REPORTS the proved kind. `systemd_cgroup`
+        # (a hardened systemd service control group proved from inside the process)
+        # is the accepted Linux containment; `process_group` is honest but the
+        # `start` gate REFUSES dispatch on it (the LEGACY unhardened host). Either
+        # is a healthy doctor reading — the start-path gate, not doctor, decides
+        # dispatch — so this check PASSES and names which one the host has.
+        proved = kind == CONTAINMENT_SYSTEMD_CGROUP
+        detail = (
+            f"default containment on this POSIX host is {kind!r}"
+            + (" (hardened systemd service control group, proved from inside the process; "
+               "the start gate ACCEPTS it)" if proved else
+               "; the start gate REFUSES dispatch until the supervisor runs as the MAIN process "
+               "of a hardened systemd .service (see tools/agent_supervisor/linux/"
+               "nyc-supervisor.service.template)"))
+        return Check("containment_default", True, detail)
+    expected = CONTAINMENT_JOB_OBJECT
     return Check("containment_default", kind == expected,
                  f"default containment on this host is {kind!r} "
                  f"(expected {expected!r}); breakaway limit flags "
@@ -2475,11 +2493,13 @@ def containment_precondition() -> tuple[bool, str, str]:
     SAME `default_containment_kind()` that `doctor`'s `containment_default` check
     reads, so the two can never disagree.
 
-    Fail closed: only a proven `job_object` permits dispatch. `taskkill`
-    (Windows without a job) and `process_group` (POSIX, incl. Render) terminate
-    the worker from the runner's `finally` block, which an external kill of the
-    supervisor skips - leaving an orphaned worker that a later `start` would
-    launch a second worker over. Anything this function cannot prove is a
+    Fail closed: only a kill-on-external-death mechanism permits dispatch —
+    exactly `CONTAINMENT_ACCEPT_SET` (the Windows kill-on-close Job Object, or a
+    PROVED Linux systemd service control group; M0-T177/B-027). `taskkill`
+    (Windows without a job) and `process_group` (an unhardened POSIX host)
+    terminate the worker only from the runner's `finally` block, which an external
+    kill of the supervisor skips - leaving an orphaned worker that a later `start`
+    would launch a second worker over. Anything this function cannot prove is a
     refusal, never an assumption.
     """
     try:
@@ -2488,15 +2508,20 @@ def containment_precondition() -> tuple[bool, str, str]:
         return False, "unknown", (
             f"the host's default containment could not be determined ({exc}); an "
             f"unprovable containment is a REFUSAL, never an assumption")
-    if kind == CONTAINMENT_JOB_OBJECT:
-        return True, kind, ("the host's default containment is the kill-on-close Job "
-                            "Object, so a worker cannot outlive an externally killed "
-                            "supervisor")
+    if kind in CONTAINMENT_ACCEPT_SET:
+        return True, kind, (
+            f"the host's default containment is {kind!r}, an accepted kill-on-external-death "
+            f"mechanism ({sorted(CONTAINMENT_ACCEPT_SET)}), so a worker cannot outlive an "
+            f"externally killed supervisor")
     return False, kind, (
-        f"this host's default containment is {kind!r}, not {CONTAINMENT_JOB_OBJECT!r}. "
-        f"Without kill-on-close, an external kill of the supervisor skips the runner's "
-        f"termination path and leaves a live orphaned worker, so a later `start` could "
-        f"double-launch over it (M0-T052 G5 C1; ACTIVATION-RECORD PIN 2026-08-08). "
+        f"this host's default containment is {kind!r}, not one of {sorted(CONTAINMENT_ACCEPT_SET)}. "
+        f"On Windows the supervisor must run under the kill-on-close Job Object; on Linux it must "
+        f"run as the MAIN process of a hardened systemd .service (KillMode=control-group/mixed, "
+        f"ExitType=main, SendSIGKILL=yes, bounded TimeoutStopSec - see "
+        f"tools/agent_supervisor/linux/nyc-supervisor.service.template) so systemd tears down the "
+        f"service control group on stop. Without kill-on-close, an external kill of the supervisor "
+        f"skips the runner's termination path and leaves a live orphaned worker, so a later `start` "
+        f"could double-launch over it (M0-T052 G5 C1; ACTIVATION-RECORD PIN 2026-08-08). "
         f"Dispatch is REFUSED on this host")
 
 
@@ -3101,14 +3126,14 @@ def cmd_start(args: argparse.Namespace) -> int:
                 f"containment_refused: {containment_detail}")
             audit.append("containment_gate_refused", policy_result="REFUSED",
                          detail={"containment_kind": containment_kind,
-                                 "required": CONTAINMENT_JOB_OBJECT,
+                                 "accepted": sorted(CONTAINMENT_ACCEPT_SET),
                                  "mode": args.mode,
                                  "reason": containment_detail})
             refusal = refusals.refusal(
                 refusals.UNSUPPORTED_PLATFORM, reason_code="containment_refused",
                 message=containment_detail,
                 detail={"containment_kind": containment_kind,
-                        "required": CONTAINMENT_JOB_OBJECT})
+                        "accepted": sorted(CONTAINMENT_ACCEPT_SET)})
         else:
             # V1.1 correction B-2: a loop REFUSAL is a report, not a traceback.
             # This covers both the loop's own refusals (LoopError, e.g.

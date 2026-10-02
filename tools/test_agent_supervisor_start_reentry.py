@@ -462,7 +462,9 @@ class ContainmentGateTests(unittest.TestCase):
         # environment input of its own - it reports what the host actually does.
         ok, kind, _ = self.cli.containment_precondition()
         self.assertEqual(kind, self.proc.default_containment_kind())
-        self.assertEqual(ok, kind == self.proc.CONTAINMENT_JOB_OBJECT)
+        # M0-T177 (B-027): the gate accepts the shared kill-on-external-death set
+        # (Windows job_object or a PROVED Linux systemd_cgroup), not job_object alone.
+        self.assertEqual(ok, kind in self.proc.CONTAINMENT_ACCEPT_SET)
 
     def test_a_posix_process_group_host_refuses_to_dispatch(self) -> None:
         with self.host_containment(self.proc.CONTAINMENT_PROCESS_GROUP):
@@ -513,6 +515,22 @@ class ContainmentGateTests(unittest.TestCase):
                         "the gate must not block the verified live host shape")
         # sys.executable is not a real worker, so the cycle ends in the honest
         # no_valid_checkpoint stop; what C1 requires is that dispatch RAN.
+        self.assertEqual(payload["stopped_because"], "no_valid_checkpoint")
+        self.assertNotIn("containment_gate_refused", self.audit_events())
+
+    def test_a_proved_systemd_cgroup_host_permits_the_dispatch(self) -> None:
+        # M0-T177 (B-027): a PROVED Linux systemd control group is an accepted
+        # containment, so the start gate dispatches exactly as a job_object host
+        # does. sys.executable is not a real worker, so the cycle ends in the
+        # honest no_valid_checkpoint stop (reached BEFORE the post-cycle
+        # achieved-containment gate); what C1 requires is that dispatch RAN.
+        with self.host_containment(self.proc.CONTAINMENT_SYSTEMD_CGROUP):
+            code, payload = self.run_cli(*self.full_inputs())
+        self.assertEqual(code, 0)
+        self.assertTrue(payload["containment"]["ok"])
+        self.assertEqual(payload["containment"]["kind"], self.proc.CONTAINMENT_SYSTEMD_CGROUP)
+        self.assertTrue(payload["dispatched"],
+                        "a proved systemd_cgroup host must be allowed to dispatch")
         self.assertEqual(payload["stopped_because"], "no_valid_checkpoint")
         self.assertNotIn("containment_gate_refused", self.audit_events())
 

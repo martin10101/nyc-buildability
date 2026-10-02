@@ -426,13 +426,41 @@ class AchievedContainmentTests(LoopTestBase):
                             for t in result.owner_touches))
 
     def test_process_group_containment_also_fails_closed(self) -> None:
-        # Anything short of job_object fails closed; process_group is not enough.
+        # Anything short of the accept-set fails closed; process_group is not enough.
+        # M0-T177 (B-027) mutation anchor: if CONTAINMENT_ACCEPT_SET were widened to
+        # include process_group, this stop would vanish and the test go red.
         self.at_preflight()
         loop = self.build(mode="supervised",
                           runner=FakeRunner(run_result(containment="process_group")),
                           approval_gate=lambda digest, prompt: True)
         result = loop.run_cycle("first unit", cycle=1)
         self.assertEqual(result.stopped, "containment_degraded")
+        self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
+
+    def test_systemd_cgroup_containment_proceeds_normally(self) -> None:
+        # M0-T177 (B-027): a cycle reporting a PROVED Linux systemd control group
+        # is an accepted kill-on-external-death kind and proceeds like job_object.
+        self.at_preflight()
+        loop = self.build(mode="supervised",
+                          runner=FakeRunner(run_result(containment="systemd_cgroup")),
+                          approval_gate=lambda digest, prompt: True)
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(result.stopped, "")
+        self.assertTrue(result.forwarded)
+        self.assertEqual(self.machine.current_state, sm.CLAUDE_RUNNING)
+
+    def test_systemd_cgroup_unverified_membership_stops_containment_unverified(self) -> None:
+        # M0-T177 (B-027): a systemd_cgroup cycle whose worker could NOT be verified
+        # in the service control group (a foreign cgroup) fails closed, exactly as
+        # an unverified job_object cycle does.
+        self.at_preflight()
+        unverified = run_result(containment="systemd_cgroup",
+                                containment_verified_in_job=False)
+        loop = self.build(mode="supervised",
+                          runner=FakeRunner(unverified),
+                          approval_gate=lambda digest, prompt: True)
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(result.stopped, "containment_unverified")
         self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
 
 

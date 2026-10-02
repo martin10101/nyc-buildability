@@ -63,7 +63,9 @@ import shutil
 import subprocess
 import sys
 import time
-from typing import Any, Mapping, MutableMapping, Sequence
+from typing import Any, Callable, Mapping, MutableMapping, Sequence
+
+from . import linux_containment as _linux
 
 #: Arguments that are refused unconditionally, whatever any model recommends.
 #: THIS IS A DENY LIST. The supervisor never passes any of these to anything.
@@ -386,7 +388,15 @@ def terminate_process_tree(pid: int, *, timeout: float = 15.0) -> bool:
     """Terminate a process and all of its descendants. Returns True on success.
 
     Windows uses `taskkill /PID <pid> /T /F`, invoked as an argv array (never a
-    shell string). POSIX kills the process group.
+    shell string). POSIX kills the WORKER's process group.
+
+    M0-T177 (B-027) self-kill guard: on POSIX this refuses — fail-closed with a
+    typed `ProcessError` — to `killpg` the CALLER's OWN process group. Every
+    worker/probe is now launched with `start_new_session=True`, so a worker leads
+    its own group and `getpgid(worker) != getpgrp()`; the only way `pid`'s group
+    equals ours is a worker that was NOT session-isolated (the exact B-027 defect:
+    a timeout then killed the supervisor's own group, SIGKILLing the service). We
+    never kill our own group, so that can never recur even if a launch regresses.
     """
     if os.name == "nt":
         taskkill = shutil.which("taskkill")
@@ -398,7 +408,18 @@ def terminate_process_tree(pid: int, *, timeout: float = 15.0) -> bool:
         # 128 = "process not found" (already exited): treat as success.
         return completed.returncode in (0, 128)
     try:
-        os.killpg(os.getpgid(pid), 9)
+        target_group = os.getpgid(pid)
+    except (ProcessLookupError, PermissionError):
+        return False
+    if target_group == os.getpgrp():
+        raise ProcessError(
+            "refuse_self_group_kill",
+            f"refusing to killpg process group {target_group}: it is the CALLER's own "
+            f"process group, so the kill would SIGKILL the supervisor itself (B-027). "
+            f"pid {pid} is not session-isolated — a worker must be launched with "
+            f"start_new_session=True so it leads its own group")
+    try:
+        os.killpg(target_group, 9)
         return True
     except (ProcessLookupError, PermissionError):
         return False
@@ -434,8 +455,81 @@ _ERROR_ACCESS_DENIED = 5
 
 #: Containment kinds, strongest first.
 CONTAINMENT_JOB_OBJECT = "job_object"
+#: M0-T177 (B-027): the POSIX kill-on-external-death mechanism. Returned on POSIX
+#: ONLY when `linux_containment.prove_systemd_containment()` PROVES the supervisor
+#: is the main process of a hardened systemd .service whose control group the
+#: kernel reaps on stop. Never on Windows; never assumed.
+CONTAINMENT_SYSTEMD_CGROUP = "systemd_cgroup"
 CONTAINMENT_PROCESS_GROUP = "process_group"
 CONTAINMENT_TASKKILL = "taskkill"
+
+#: The ONE shared set of containment kinds that satisfy the M0-T052 G5 C1 safety
+#: property (a worker cannot outlive an externally killed supervisor). Every gate
+#: — `cli.containment_precondition`, the loop post-cycle gate, and the turnover
+#: wiring — accepts EXACTLY this set, so none can widen independently. `taskkill`
+#: and `process_group` are deliberately absent: both terminate the worker only
+#: from the runner's `finally` block, which an external SIGKILL/OOM skips.
+CONTAINMENT_ACCEPT_SET: frozenset[str] = frozenset({
+    CONTAINMENT_JOB_OBJECT, CONTAINMENT_SYSTEMD_CGROUP})
+
+
+# --------------------------------------------------------------------------
+# POSIX systemd control-group proof (M0-T177, B-027)
+# --------------------------------------------------------------------------
+#
+# The in-process proof is PURE and injectable in `linux_containment`. Here we
+# add only the per-process caching and the re-entrancy guard the production host
+# needs, plus a test seam. The proof is computed at most once per process (it is
+# a property of how the process was STARTED, which cannot change under us) and
+# cached. The re-entrancy guard breaks the cycle
+#   default_containment_kind -> prove -> systemctl show via process.run
+#   -> ProcessContainer() -> default_containment_kind
+# by returning the honest `process_group` fallback for the NESTED call (the
+# short-lived systemctl child does not need systemd-strength containment), while
+# the OUTER proof result is the one that gets cached and returned.
+
+_systemd_proof_cache: "_linux.ContainmentProof | None" = None
+_systemd_proving = False
+
+
+def _systemd_containment_proof() -> "_linux.ContainmentProof":
+    """The cached systemd proof for THIS process (POSIX only)."""
+    global _systemd_proof_cache, _systemd_proving
+    if os.name == "nt":
+        return _linux.ContainmentProof.refused("not a POSIX host")
+    if _systemd_proof_cache is not None:
+        return _systemd_proof_cache
+    if _systemd_proving:  # re-entrant call from process.run launched BY the proof
+        return _linux.ContainmentProof.refused("re-entrant containment probe")
+    _systemd_proving = True
+    try:
+        proof = _linux.prove_systemd_containment()
+    except Exception as exc:  # pragma: no cover - defensive; unprovable = refused
+        proof = _linux.ContainmentProof.refused(f"the containment proof raised ({exc})")
+    finally:
+        _systemd_proving = False
+    _systemd_proof_cache = proof
+    return proof
+
+
+def set_systemd_containment_proof_for_testing(
+        proof: "_linux.ContainmentProof | None") -> None:
+    """Test seam: pin (or, with None, clear) the cached systemd proof so a test
+    can exercise the POSIX `systemd_cgroup` paths on any host without real systemd."""
+    global _systemd_proof_cache
+    _systemd_proof_cache = proof
+
+
+def reset_systemd_containment_cache() -> None:
+    """Test seam: clear the cached proof so the next read recomputes it."""
+    global _systemd_proof_cache
+    _systemd_proof_cache = None
+
+
+#: Membership checker seam. Production uses the real `/proc/<pid>/cgroup` reader;
+#: tests replace `ProcessContainer(membership_check=...)` or patch this name.
+def _default_membership_check(pid: int, expected_cgroup: str) -> bool:
+    return _linux.pid_in_service_cgroup(pid, expected_cgroup)
 
 
 def assert_no_breakaway(*, limit_flags: int = 0, creation_flags: int = 0) -> None:
@@ -653,14 +747,29 @@ class ProcessContainer:
     `killpg`), which `run()` already establishes.
     """
 
-    def __init__(self, *, prefer_job_object: bool = True) -> None:
+    def __init__(self, *, prefer_job_object: bool = True,
+                 posix_proof: "_linux.ContainmentProof | None" = None,
+                 membership_check: "Callable[[int, str], bool] | None" = None) -> None:
         self.prefer_job_object = prefer_job_object
         self._job: "WindowsJobObject | None" = None
         self._pids: list[int] = []
         self._fallback_reason = ""
         self._verified = False
+        #: On POSIX, the service control-group path a proof established, so an
+        #: adopted worker's membership can be VERIFIED against it.
+        self._service_cgroup = ""
+        self._membership_check = membership_check or _default_membership_check
         if os.name != "nt":
-            self.kind = CONTAINMENT_PROCESS_GROUP
+            # M0-T177 (B-027): `systemd_cgroup` when PROVED (the supervisor is the
+            # main process of a hardened systemd .service the kernel reaps on stop),
+            # else the honest `process_group` fallback. The proof is injectable for
+            # tests; production reads the cached per-process proof.
+            proof = posix_proof if posix_proof is not None else _systemd_containment_proof()
+            if proof.ok:
+                self.kind = CONTAINMENT_SYSTEMD_CGROUP
+                self._service_cgroup = proof.cgroup_path
+            else:
+                self.kind = CONTAINMENT_PROCESS_GROUP
             return
         if not prefer_job_object:
             self.kind = CONTAINMENT_TASKKILL
@@ -681,6 +790,18 @@ class ProcessContainer:
     def adopt(self, pid: int) -> str:
         """Put a running child under containment. Returns the kind achieved."""
         self._pids.append(pid)
+        if os.name != "nt":
+            # M0-T177 (B-027): under systemd_cgroup, VERIFY (never assume) the
+            # worker is really a member of the supervisor's own service cgroup —
+            # only then does the kernel's stop-time control-group kill cover it. A
+            # worker found in a foreign cgroup leaves `verified_in_job` False and
+            # the loop's post-cycle gate fails closed (`containment_unverified`).
+            if self.kind == CONTAINMENT_SYSTEMD_CGROUP and self._service_cgroup:
+                try:
+                    self._verified = bool(self._membership_check(pid, self._service_cgroup))
+                except Exception:
+                    self._verified = False
+            return self.kind
         if self._job is None:
             return self.kind
         try:
@@ -714,10 +835,17 @@ class ProcessContainer:
         return ok
 
     def close(self) -> None:
-        """Release the container. On Windows this KILLS anything still inside."""
+        """Release the container. On Windows this KILLS anything still inside; on
+        POSIX it terminates each adopted WORKER's own process group (kill-on-close
+        parity — the self-group guard in `terminate_process_tree` refuses to touch
+        our own group, so a session-isolated worker is reaped and the supervisor
+        is never harmed)."""
         if self._job is not None:
             self._job.close()
             self._job = None
+            return
+        if os.name != "nt":
+            self.terminate_all()
 
     def report(self) -> ContainmentReport:
         return ContainmentReport(
@@ -736,9 +864,15 @@ class ProcessContainer:
 
 
 def default_containment_kind() -> str:
-    """The containment `run()` uses on this host with no configuration at all."""
+    """The containment `run()` uses on this host with no configuration at all.
+
+    POSIX (M0-T177, B-027): `systemd_cgroup` ONLY when the in-process proof holds
+    (the supervisor is the main process of a hardened systemd .service), otherwise
+    the honest `process_group` fallback. Windows is byte-for-byte unchanged.
+    """
     if os.name != "nt":
-        return CONTAINMENT_PROCESS_GROUP
+        return (CONTAINMENT_SYSTEMD_CGROUP if _systemd_containment_proof().ok
+                else CONTAINMENT_PROCESS_GROUP)
     return CONTAINMENT_JOB_OBJECT if job_objects_available() else CONTAINMENT_TASKKILL
 
 
@@ -860,6 +994,22 @@ def run(
         stdout_truncated=stdout_truncated,
         stderr_truncated=stderr_truncated,
     )
+
+
+def posix_session_kwargs() -> dict[str, bool]:
+    """`Popen` kwargs that put a launched child in its OWN session / process group
+    on POSIX (`start_new_session=True`), and NOTHING on Windows (byte-for-byte
+    unchanged).
+
+    M0-T177 (B-027): the worker and the model probe MUST lead their own process
+    group. The timeout/cancel path kills the worker with
+    `killpg(getpgid(worker), 9)`; without session isolation the worker shares the
+    supervisor's group, so that kill SIGKILLed the service itself (the reproduced
+    self-kill defect). With session isolation `getpgid(worker) != getpgrp()`, so
+    the kill hits only the worker's tree and `terminate_process_tree`'s self-group
+    guard is never even reached.
+    """
+    return {"start_new_session": True} if os.name != "nt" else {}
 
 
 def python_argv(script: str | os.PathLike[str], *args: str) -> list[str]:
