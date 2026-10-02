@@ -26,7 +26,7 @@ from .durable_state import DurableJournal, checkout_key, runtime_dir_for
 from .locking import SingleInstanceLock
 from .model_turnover import TurnoverEvidence, classify_exhaustion
 from .models import sha256_hex
-from .process import CONTAINMENT_JOB_OBJECT
+from .process import CONTAINMENT_ACCEPT_SET
 from .recovery import account_for_children
 from .turnover_adapters import (
     HashChainedAuditSink,
@@ -182,7 +182,7 @@ def build_worker_actuation_channel(
         return None, {
             "authorized": True, "wired": False, "containment_ok": False,
             "containment_kind": kind,
-            "reason": f"C1 job-object containment gate REFUSES actuation: {detail}"}
+            "reason": f"C1 containment gate REFUSES actuation: {detail}"}
     launcher = SupervisorLauncher(
         command_runner=make_subprocess_command_runner(
             new_successor_id=lambda: f"opus-worker-{os.urandom(8).hex()}"),
@@ -287,10 +287,10 @@ def run_orchestrator_watchdog(
     if not contained:
         record_id = audit.append(
             "orchestrator_watchdog_containment_refused", policy_result="REFUSED",
-            detail={"containment_kind": kind, "required": CONTAINMENT_JOB_OBJECT,
+            detail={"containment_kind": kind, "accepted": sorted(CONTAINMENT_ACCEPT_SET),
                     "reason": detail}).digest
         payload.update({"refused": True, "audit_record_id": record_id,
-                        "note": f"C1 job-object containment gate REFUSES actuation: {detail}"})
+                        "note": f"C1 containment gate REFUSES actuation: {detail}"})
         return payload
     controller = TurnoverController(
         launcher=SupervisorLauncher(

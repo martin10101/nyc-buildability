@@ -15,6 +15,27 @@ Wants=network-online.target
 
 [Service]
 Type=simple
+# --- M0-T177 / B-027: control-group containment the loop's start gate PROVES ---
+# These five directives make systemd the kill-on-external-death mechanism the
+# M0-T052 G5 C1 safety property requires on Linux. On SIGKILL/OOM of the main
+# process systemd stops the unit and tears down the service control group, so the
+# worker AND every setsid/double-fork descendant are reaped WITHOUT anything
+# inside the supervisor running, before any later `start`. The in-process gate
+# (linux_containment.prove_systemd_containment) REFUSES dispatch unless it can
+# read exactly these back from `systemctl show`, so they are load-bearing:
+#   KillMode=control-group  -> stop kills the WHOLE cgroup (process/none would not)
+#   ExitType=main           -> the unit's lifetime is tied to THIS process dying
+#   SendSIGKILL=yes         -> a member that ignores SIGTERM is still SIGKILLed
+#   TimeoutStopSec=15s      -> a finite, short bound (gate cap is 60 s); the reap
+#                              completes before a later start can dispatch
+#   ProtectControlGroups=yes-> /sys/fs/cgroup read-only, so even a root member
+#                              cannot rewrite its cgroup to escape the kill
+#                              (REQUIRED by the gate when the unit runs as root)
+KillMode=control-group
+ExitType=main
+SendSIGKILL=yes
+TimeoutStopSec=15s
+ProtectControlGroups=yes
 User=<run-as-user>
 WorkingDirectory=<absolute-controller-checkout>
 # The Linux autoupdater belt for the two bare `claude --version`/`--help` probes
@@ -23,6 +44,13 @@ Environment=DISABLE_AUTOUPDATER=1
 # The launcher refuses to start when the start gate refuses, fails closed when the
 # claude binary or a required env is missing, and never pushes/merges/starts a
 # live run of its own - it hands the gated start to the controller CLI.
+# NYC_SUP_START_CMD MUST exec python DIRECTLY (e.g. an absolute
+# `.../python -m tools.agent_supervisor start ...`), NOT wrapped in a second
+# shell: launch.sh ends with `exec $NYC_SUP_START_CMD`, so the start command
+# REPLACES launch.sh's process image and keeps the unit's MainPID as python. If
+# the start command were itself a wrapper shell (`bash -c "python ..."`), MainPID
+# would be that shell and the real python controller a child, so the gate's
+# MainPID==getpid() check would REFUSE (M0-T177/B-027).
 Environment=NYC_SUP_CLAUDE_BIN=<absolute-path-to-claude>
 Environment=NYC_SUP_GATE_CMD=<owner-configured-start-gate-command>
 Environment=NYC_SUP_START_CMD=<owner-configured-controller-start-command>

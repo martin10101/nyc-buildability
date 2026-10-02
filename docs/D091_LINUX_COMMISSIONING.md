@@ -101,24 +101,43 @@ sudo systemctl daemon-reload
 sudo systemctl enable nyc-supervisor.service
 ```
 
-The placeholders the owner fills: `User` (`template:18`), `WorkingDirectory` (`template:19`),
-`NYC_SUP_CLAUDE_BIN` (`template:26`), `NYC_SUP_GATE_CMD` (`template:27`), `NYC_SUP_START_CMD`
-(`template:28`). The template ships with no `[Install]` section and `Restart=no`
-(`template:8-9,30`), so a stray `enable` has no target and nothing auto-restarts.
+The placeholders the owner fills: `User` (`template:39`), `WorkingDirectory` (`template:40`),
+`NYC_SUP_CLAUDE_BIN` (`template:54`), `NYC_SUP_GATE_CMD` (`template:55`), `NYC_SUP_START_CMD`
+(`template:56`). The template ships with no `[Install]` section and `Restart=no`
+(`template:8,58`), so a stray `enable` has no target and nothing auto-restarts.
+
+**Control-group containment the start gate PROVES (M0-T177, B-027).** The unit is HARDENED so that
+systemd is the Linux kill-on-external-death mechanism the M0-T052 G5 C1 safety property requires:
+on a SIGKILL/OOM of the main process, systemd stops the unit and tears down the service control
+group, reaping the worker and every `setsid`/double-fork descendant without anything inside the
+supervisor running, before any later `start`. The in-process gate
+(`linux_containment.prove_systemd_containment`) REFUSES dispatch unless `systemctl show` reports
+exactly these five, so they are load-bearing, not cosmetic: `KillMode=control-group` (`template:34`),
+`ExitType=main` (`:35`), `SendSIGKILL=yes` (`:36`), `TimeoutStopSec=15s` (`:37`, a finite short bound
+— the gate caps it at 60 s), and `ProtectControlGroups=yes` (`:38`, required by the gate when the
+unit runs as root). The owner must keep all five when substituting the placeholders.
 
 **Orchestrator checks** (read-only):
 
 ```
 systemd-analyze verify /etc/systemd/system/nyc-supervisor.service   # unit parses
 grep -n 'DISABLE_AUTOUPDATER=1' /etc/systemd/system/nyc-supervisor.service
+grep -nE 'KillMode=control-group|ExitType=main|SendSIGKILL=yes|TimeoutStopSec=|ProtectControlGroups=yes' \
+  /etc/systemd/system/nyc-supervisor.service
 grep -n 'launch.sh'             /etc/systemd/system/nyc-supervisor.service
+# after `systemctl start` (step 4), the live unit must report the proved shape:
+systemctl show nyc-supervisor.service \
+  -p KillMode,ExitType,MainPID,ControlGroup,SendSIGKILL,TimeoutStopUSec,ProtectControlGroups
 ```
 
-Expect: the unit parses with no errors; it carries `DISABLE_AUTOUPDATER=1` (template `:22`); and
-`ExecStart` runs the gated launcher `.../linux/launch.sh` (`template:29`). The launcher is
-fail-closed: it refuses to start when the start gate refuses (exit 5, `launch.sh:78-82`), when the
-claude binary is missing (exit 3, `launch.sh:62-64`), or when a required env var is empty (exit 4,
-`launch.sh:67-72`), and it never pushes, merges, or starts a run of its own.
+Expect: the unit parses with no errors; it carries `DISABLE_AUTOUPDATER=1` (template `:43`); it carries
+all five containment directives above; and `ExecStart` runs the gated launcher `.../linux/launch.sh`
+(`template:57`). `systemctl show` (after start) must report `KillMode=control-group` (or `mixed`),
+`ExitType=main`, `MainPID` equal to the controller's own pid, `ControlGroup` ending in
+`nyc-supervisor.service`, `SendSIGKILL=yes`, and a finite `TimeoutStopUSec` — the exact facts the gate
+reads. The launcher is fail-closed: it refuses to start when the start gate refuses (exit 5,
+`launch.sh:78-82`), when the claude binary is missing (exit 3, `launch.sh:62-64`), or when a required
+env var is empty (exit 4, `launch.sh:67-72`), and it never pushes, merges, or starts a run of its own.
 
 > `systemd-analyze verify` is a standard systemd command, not a repo file.
 
@@ -136,11 +155,16 @@ The unit runs `launch.sh`, which runs `NYC_SUP_START_CMD` only after the start g
 
 What `NYC_SUP_START_CMD` must be: launch.sh requires it to be **the gated controller start**, run
 only on a passing gate; the launcher adds no push, merge, or live run of its own (`launch.sh:28-29`,
-`:84-88`). The gated controller start is the `start` subcommand in supervised mode:
+`:84-88`). It MUST be a **direct python exec**, not a wrapper shell: launch.sh ends with
+`exec $NYC_SUP_START_CMD` (`launch.sh:88`), so the start command replaces the launcher's process image
+and KEEPS the unit's `MainPID`. A direct `python -m tools.agent_supervisor start ...` keeps python as
+`MainPID`, which the containment gate requires (`MainPID == os.getpid()`); a wrapper like
+`bash -c "python ..."` would make the shell the `MainPID` and the controller a child, and the gate
+would REFUSE (M0-T177/B-027). The gated controller start is the `start` subcommand in supervised mode:
 `python -m tools.agent_supervisor start --mode supervised --config /etc/nyc-supervisor/config.toml
---model-selection <path> --approve-prompt-digest <digest>` (`--mode supervised` `cli.py:3289`,
-`--config` `:3309`, `--model-selection` `:3310`, `--approve-prompt-digest` `:3335`). The canary = one supervised
-single-task start: `--max-tasks` defaults to `1`, the certified single-task shape (`cli.py:3329`);
+--model-selection <path> --approve-prompt-digest <digest>` (`--mode supervised` `cli.py:3314`,
+`--config` `:3334`, `--model-selection` `:3335`, `--approve-prompt-digest` `:3360`). The canary = one supervised
+single-task start: `--max-tasks` defaults to `1`, the certified single-task shape (`cli.py:3354`);
 there is no `--lane` flag in the repo, so "lane 1" means this single canary start, not a CLI option.
 
 > The repo does **not** define a fixed, concrete `NYC_SUP_START_CMD` value — it is environment-driven

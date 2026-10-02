@@ -470,24 +470,31 @@
         "D-091-R007"
       ],
       "producer": "backend-engineer",
-      "verifier": "",
+      "verifier": "directive-compliance-verifier",
       "schema_version": "directive_verification/v2",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
+      "reviewed_sha": "e4a30187bc2030458b8695ccea1086f3d4da82a8",
+      "reviewed_manifest_sha256": "5a156cf392cc463657e5919119de9a09111fcf830f6222092f8a7b79650c880c",
       "requirements": [
         {
           "id": "D-091-R001",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "This task's share: the Linux loop can start a live worker if and only if it runs as a PROVED hardened systemd service (linux_containment.prove_systemd_containment; process.CONTAINMENT_ACCEPT_SET = {job_object, systemd_cgroup}; wired through cli.py start gate, loop.py post-cycle gate with a fresh per-cycle re-proof, turnover_wiring.py); process_group and taskkill still refuse",
+            "Remaining for R001 overall (not claimed): the Linux recertification superseding M0-T174, the owner-applied activation-PIN amendment (R009) and the owner-typed commissioning (M0-T175)"
+          ],
+          "reviewed_sha": "e4a30187bc2030458b8695ccea1086f3d4da82a8"
         },
         {
           "id": "D-091-R007",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "gates G0, G2, G3, G4, G5 PASS at content identity 5a156cf3 (G3/G4 by an independent code-reviewer after a round-1 FAIL and rework; G5 by an independent security-reviewer with two delta attestations; producer != reviewers)",
+            "real-unit proof R3 passed in CI (supervisor-linux-containment, run 37072153749): kill -9 of a hardened unit's MainPID ended the worker and its setsid grandchild and emptied the control group; supervisor-bridge (windows-latest) green; the certification itself follows in its own task"
+          ],
+          "reviewed_sha": "e4a30187bc2030458b8695ccea1086f3d4da82a8"
         }
-      ]
+      ],
+      "restamp_note": "DCV reviewed 1aaf7170 (project-control/reports/M0-T177-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (5a156cf3; the 18 allowed_paths blobs byte-identical to 1aaf7170); M0-T177 gate, submission and evidence records unchanged; R001/R007 bodies and applicability unchanged and R009 stays D-091-BOOTSTRAP-only; intervening commits are the saved DCV report and a clean merge of the integration branch (disjoint peer work incl. D-091 source-002/R009)."
     },
     {
       "directive_id": "D-091",

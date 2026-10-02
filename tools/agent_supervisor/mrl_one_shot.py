@@ -70,6 +70,7 @@ from .process import (
     ProcessError,
     assert_argv_safe,
     claude_child_env,
+    posix_session_kwargs,
     terminate_process_tree,
 )
 from .recovery import clear_child_record, record_launched_child, recorded_start_token_for
@@ -492,7 +493,8 @@ class _ContainedSpawn:
             process = self.runner._popen(  # noqa: S603 - argv array, shell=False
                 list(argv), shell=False, cwd=config.cwd or None, env=dict(self.env),
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                text=True, encoding="utf-8", errors="replace")
+                text=True, encoding="utf-8", errors="replace",
+                **posix_session_kwargs())  # M0-T177 (B-027): POSIX worker leads its own session
         except OSError as exc:
             container.close()
             raise ContractError("spawn_failed", f"the claude executable did not start: {exc}") from exc

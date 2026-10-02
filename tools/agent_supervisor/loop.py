@@ -107,7 +107,12 @@ from .policy import (
 )
 from . import stop_intent
 from . import turn_budget as tb
-from .process import CONTAINMENT_JOB_OBJECT
+from .process import (
+    CONTAINMENT_STOP_BASIS,
+    CONTAINMENT_SYSTEMD_CGROUP,
+    cycle_containment_stop,
+    reprove_systemd_containment_ok,
+)
 from .protocol import build_envelope
 from .resume_scheduler import EMERGENCY_STOP_KEY
 from .state_machine import (
@@ -1848,73 +1853,51 @@ class SupervisedLoop:
                 reason=reason, cycle=cycle, basis="S14"))
             return stop("no_valid_checkpoint", reason, PAUSED_RECOVERY)
 
-        # M0-T060 (M0-T053 G5 R4 enforcement half; 2026-08-08 pin criterion 2):
-        # criterion (1) pins the host DEFAULT containment at doctor time; the
-        # ACHIEVED per-cycle containment is enforced HERE, on the OTHERWISE-OK path
-        # - the only path that would PROCEED. `ProcessContainer.adopt` can honestly
-        # DEGRADE to taskkill at launch (job-object creation denied), and that
-        # degradation was previously only RECORDED on the `claude_process_started`
-        # transition detail above. Recording is not enough: unattended, nobody reads
-        # the audit line, and a child that spawns its own tree can ESCAPE a non-job
-        # container. A cycle that did not actually get job-strength containment is
-        # therefore a FAIL-CLOSED stop with an explicit recorded reason - never a
-        # silent continue (S13.2 / S13.12 invariants 10 and 11). Placed AFTER the
-        # S14 checkpoint/effect reconciliation so a paramount ambiguous-effect or
-        # no-checkpoint stop is never masked by this one; a cycle whose checkpoint
-        # already failed stops for that reason. A cycle reporting `job_object`
-        # proceeds unchanged.
+        # M0-T053 G5 R4 + M0-T056/T060 + M0-T177: the ACHIEVED per-cycle containment
+        # is enforced HERE, on the OTHERWISE-OK path (the only one that would PROCEED).
+        # The kind-accept and verified-membership decision + its messages live in
+        # `process.cycle_containment_stop` (modularity: loop.py is grandfathered).
+        # Placed AFTER the S14 checkpoint/effect reconciliation so a paramount
+        # ambiguous-effect or no-checkpoint stop is never masked. A cycle reporting a
+        # kill-on-external-death kind (`job_object` on Windows, proved `systemd_cgroup`
+        # on Linux) with verified membership proceeds unchanged.
         achieved = str(getattr(run_result, "containment", "") or "")
-        if achieved != CONTAINMENT_JOB_OBJECT:
-            fallback = str(getattr(run_result, "containment_fallback_reason", "") or "")
-            containment_reason = (
-                f"the cycle achieved {achieved or 'unknown'!r} containment, not "
-                f"job-strength {CONTAINMENT_JOB_OBJECT!r}: a child that spawns its "
-                f"own process tree can escape a non-job container, so an unattended "
-                f"run must fail closed rather than proceed on it")
-            if fallback:
-                containment_reason += f" (fallback reason: {fallback})"
-            self.machine.transition(
-                PAUSED_RECOVERY, "unsafe_condition",
-                detail={"cycle": cycle, "reason": "containment_degraded",
-                        "containment": achieved,
-                        "containment_fallback_reason": fallback})
-            touches.append(self._touch(
-                TOUCH_SYNCHRONOUS_STOP, reason_code="containment_degraded",
-                reason=containment_reason, cycle=cycle,
-                basis="M0-T053 G5 R4 achieved-containment enforcement (2026-08-08 "
-                      "pin criterion 2; S13.2 / S13.12 invariants 10-11)"))
-            return stop("containment_degraded", containment_reason, PAUSED_RECOVERY)
-
-        # M0-T056 fold-in of the carried M0-T060 residual (M0-T053 G5 pin P3): a
-        # reported `job_object` KIND is not proof that the child is actually inside
-        # the job. `ProcessContainer.adopt` records `ContainmentReport.verified_in_job`
-        # from a real `is_process_in_job` membership probe; a kind that says
-        # job_object while membership could NOT be confirmed gives no more real
-        # containment than taskkill, so it must fail closed under an unattended loop
-        # rather than proceed on an unverified claim. The strengthening is ADDITIVE
-        # and freeze-safe: the runner reports the boolean explicitly, and a
-        # run_result that does not carry the field at all (every pre-existing test
-        # fake, and any non-Windows cycle that never reaches this job_object branch)
-        # reads the True default and proceeds exactly as before. ONLY an explicit
-        # `verified_in_job == False` on an otherwise job_object cycle stops here.
+        fallback = str(getattr(run_result, "containment_fallback_reason", "") or "")
         verified_in_job = getattr(run_result, "containment_verified_in_job", True)
-        if verified_in_job is False:
-            unverified_reason = (
-                f"the cycle reported {CONTAINMENT_JOB_OBJECT!r} containment but its "
-                f"in-job membership could not be verified (ContainmentReport."
-                f"verified_in_job is False): an unverified job assignment is not proof "
-                f"of kill-on-close containment, so an unattended run fails closed rather "
-                f"than proceed on an unconfirmed claim")
+        containment_stop = cycle_containment_stop(achieved, fallback, verified_in_job)
+        if containment_stop is not None:
+            stop_code, stop_reason = containment_stop
+            detail = {"cycle": cycle, "reason": stop_code, "containment": achieved}
+            if stop_code == "containment_degraded":
+                detail["containment_fallback_reason"] = fallback
+            else:
+                detail["verified_in_job"] = False
+            self.machine.transition(PAUSED_RECOVERY, "unsafe_condition", detail=detail)
+            touches.append(self._touch(
+                TOUCH_SYNCHRONOUS_STOP, reason_code=stop_code, reason=stop_reason,
+                cycle=cycle, basis=CONTAINMENT_STOP_BASIS[stop_code]))
+            return stop(stop_code, stop_reason, PAUSED_RECOVERY)
+
+        # G5 NB1: the kind + membership above were proved when the worker launched;
+        # a mid-run `systemctl set-property` could weaken the unit AFTER that, and the
+        # startup proof is cached per process. For a systemd_cgroup cycle, RE-PROVE the
+        # unit FRESH (uncached, a cheap bounded `systemctl show`) and fail closed if it
+        # no longer holds. Windows (job_object) is unaffected; the fresh proof is never
+        # run on a non-systemd cycle.
+        if achieved == CONTAINMENT_SYSTEMD_CGROUP and not reprove_systemd_containment_ok():
+            revoked_reason = (
+                f"the cycle reported {achieved!r} containment but a FRESH re-proof of the "
+                f"systemd unit no longer holds (a mid-run weakening of the service unit): an "
+                f"unattended run fails closed rather than proceed on a revoked claim")
             self.machine.transition(
                 PAUSED_RECOVERY, "unsafe_condition",
                 detail={"cycle": cycle, "reason": "containment_unverified",
-                        "containment": achieved, "verified_in_job": False})
+                        "containment": achieved, "reproof": "failed"})
             touches.append(self._touch(
                 TOUCH_SYNCHRONOUS_STOP, reason_code="containment_unverified",
-                reason=unverified_reason, cycle=cycle,
-                basis="M0-T056 / M0-T060 verified_in_job strengthening (M0-T053 G5 "
-                      "pin P3; S13.2 / S13.12 invariants 10-11)"))
-            return stop("containment_unverified", unverified_reason, PAUSED_RECOVERY)
+                reason=revoked_reason, cycle=cycle,
+                basis="M0-T177 G5 NB1 per-cycle fresh systemd re-proof"))
+            return stop("containment_unverified", revoked_reason, PAUSED_RECOVERY)
 
         self.machine.transition(
             CHECKPOINT_RECEIVED, "valid_checkpoint_received",
