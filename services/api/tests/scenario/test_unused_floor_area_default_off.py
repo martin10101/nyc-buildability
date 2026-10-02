@@ -4,10 +4,11 @@ set-aside list item 6).
 
 "Existing floor area is never taken from DOF building area" (M2-07). By DEFAULT
 (the ``INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED`` flag absent, empty or unknown)
-the section says "Not available - needs existing zoning floor area" with a
-machine-readable reason, the draft allowance still shows, nothing is subtracted,
-and no over-built / professional-review outcome is derived from the recorded
-(DOF/PLUTO) building area. The recorded building area rides only as a
+the section says "Remaining development capacity: Not confirmed" followed by
+"Needs verified zoning-lot boundaries and existing zoning floor area." (owner
+wording D-090-R038) with a machine-readable reason, the draft allowance still
+shows, nothing is subtracted, and no over-built / professional-review outcome is
+derived from the recorded (DOF/PLUTO) building area. The recorded building area rides only as a
 reference-only assumption record, never subtracted. The legacy behavior itself is
 pinned (flag on) in ``test_unused_floor_area.py``; the contrast tests here prove
 each default-off assertion would move if the flag were on.
@@ -46,9 +47,10 @@ from . import _support as S
 
 PROV_ID = "prov-bldgarea"
 SOURCE_ID = "nyc-dcp-mappluto-arcgis"
-# The plan's own words (plan section 3 step 4), retyped here on purpose so a
-# drift in the constant is caught.
-NOT_AVAILABLE = "Not available — needs existing zoning floor area"
+# The owner's settled words (D-090-R038, 2026-10-01), retyped here on purpose so a
+# drift in either constant is caught. They replace the plan section 3 step 4 wording.
+NOT_AVAILABLE = "Remaining development capacity: Not confirmed"
+NOT_AVAILABLE_REASON = "Needs verified zoning-lot boundaries and existing zoning floor area."
 REASON_CODE = "needs_existing_zoning_floor_area"
 BASIS_KEY = "unused_floor_area_not_available"
 REFERENCE_KEY = "recorded_building_area_reference"
@@ -165,7 +167,7 @@ def test_flag_reader_defaults_to_process_env_and_is_off_when_absent(monkeypatch)
 
 
 # ---------------------------------------------------------------------------
-# Default: "Not available - needs existing zoning floor area"; allowance shows.
+# Default: "Remaining development capacity: Not confirmed" + reason; allowance shows.
 # ---------------------------------------------------------------------------
 
 
@@ -190,10 +192,11 @@ def test_default_is_not_available_with_machine_readable_reason_and_allowance_sho
     # Closest valid typed reason in the closed contract enum.
     assert section["not_computable_reason"] == Reason.MISSING_EXISTING_BUILDING_AREA.value
 
-    # The plan's wording, verbatim, on the section label.
+    # The owner's wording, verbatim, on the section label: line 1, then the reason.
     assert section["label"] == UNUSED_FLOOR_AREA_NOT_AVAILABLE_LABEL
-    assert NOT_AVAILABLE in section["label"]
+    assert section["label"].startswith(f"{NOT_AVAILABLE}. {NOT_AVAILABLE_REASON} ")
     assert C.UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT == NOT_AVAILABLE
+    assert C.UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_TEXT == NOT_AVAILABLE_REASON
     assert section["scope_note"] == C.UNUSED_FLOOR_AREA_NOT_AVAILABLE_SCOPE_NOTE
     assert "never subtracted" in section["scope_note"]
 
@@ -220,7 +223,7 @@ def test_default_is_not_available_with_machine_readable_reason_and_allowance_sho
     assert basis["key"] == BASIS_KEY
     assert basis["value"] == REASON_CODE == C.UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_CODE
     assert basis["assumption_type"] == "not_computable_basis"
-    assert NOT_AVAILABLE in basis["rationale"]
+    assert basis["rationale"].startswith(f"{NOT_AVAILABLE}. {NOT_AVAILABLE_REASON} ")
 
     # No legacy-only record (the ZR 12-10 zoning-lot assumption is only asserted
     # when a value is computed).
@@ -500,5 +503,9 @@ def test_default_wording_has_no_forbidden_nouns_or_verified_language():
         low = text.lower()
         for phrase in forbidden:
             assert phrase not in low, (phrase, text)
-        assert "verified" not in low, text
+        # D-090-R038: the owner's reason line says verified zoning-lot boundaries are
+        # still NEEDED; it claims nothing is verified. Only that exact sentence is set
+        # aside before the verified-language check; any other "verified" still fails.
+        unclaimed = text.replace(C.UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_TEXT, "").lower()
+        assert "verified" not in unclaimed, text
         assert "compliant" not in low, text

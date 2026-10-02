@@ -137,13 +137,20 @@ USABLE_EXISTING_AREA_COVERAGE_STATUSES = frozenset({"conditional"})
 # the zoning definition of floor area (ZR 12-10). Until an existing ZONING floor
 # area input exists (M2-07: a Buildings Department filing / certificate of
 # occupancy, or a value the architect enters as a stated assumption), the section
-# says "Not available - needs existing zoning floor area" and the draft allowance
+# says "Remaining development capacity: Not confirmed" followed by "Needs verified
+# zoning-lot boundaries and existing zoning floor area." and the draft allowance
 # still shows. The legacy cap - bldgarea subtraction above is kept behind the
 # default-off INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED flag (unused_floor_area.py).
 # ---------------------------------------------------------------------------
 
-# The plan's own words for the result (plan section 3 step 4), verbatim.
-UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT = "Not available — needs existing zoning floor area"
+# The owner's settled wording (D-090-R038, 2026-10-01; DB-101 option A), verbatim. It
+# replaces the plan section 3 step 4 wording. Line 1: the row label and its value.
+UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT = "Remaining development capacity: Not confirmed"
+
+# Line 2: the reason.
+UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_TEXT = (
+    "Needs verified zoning-lot boundaries and existing zoning floor area."
+)
 
 # Machine-readable reason token for the default outcome. The closed scenario
 # contract's not_computable_reason enum cannot express it yet (a Lane C schema
@@ -152,7 +159,7 @@ UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_CODE = "needs_existing_zoning_floor_area"
 
 # Machine label for the section on the default outcome.
 UNUSED_FLOOR_AREA_NOT_AVAILABLE_LABEL = (
-    f"Unused floor area on the lot: {UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT}. "
+    f"{UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT}. {UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_TEXT} "
     "The draft floor-area allowance still shows. City-recorded building area "
     "is not zoning floor area and is never subtracted."
 )
@@ -184,7 +191,8 @@ def unused_floor_area_not_available_assumption() -> dict:
         "value": UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_CODE,
         "unit": None,
         "rationale": (
-            f"{UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT}. Existing floor area is "
+            f"{UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT}. "
+            f"{UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_TEXT} Existing floor area is "
             "taken only from a Buildings Department filing or certificate of "
             "occupancy, or from a value the architect enters as a stated "
             "assumption; neither is available to this calculation. "

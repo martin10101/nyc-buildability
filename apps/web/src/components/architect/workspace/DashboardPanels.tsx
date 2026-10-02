@@ -15,7 +15,7 @@ import {
   scenarioBlocksPromotion,
   scenarioCap,
 } from "@/lib/architect/development-limits";
-import { NOT_CONFIRMED, ZONING_LOT_ROWS, type VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
+import { NOT_CONFIRMED, ZONING_LOT_ROW_REASONS, ZONING_LOT_ROWS, type VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
 import type { CondoSurfaceDecision } from "../CondoRecordsSection";
 import { TaxLotOnlyEstimate, TaxLotOnlyNotice } from "../TaxLotOnlyNotice";
 import { DashboardStatusStrip } from "./DashboardStatusStrip";
@@ -206,7 +206,8 @@ export function DashboardPanels({ profile, scenario, evaluation, condo, label, m
             </td></tr>
             {BULK_ROWS.map(([key, title]) => <tr key={key}><th scope="row">{title}</th>
               <td>{notAvailable(condo.withholdAllowances ? SITE_REVIEW_REASON : bulkReason(bulkRow(matchedScenario, key, shownEvaluation).status))}</td></tr>)}
-            {ZONING_LOT_ROWS.map(([key, title]) => <tr key={key}><th scope="row">{title}</th><td data-testid={`dashboard-zoning-lot-${key}`}>{NOT_CONFIRMED}</td></tr>)}
+            {ZONING_LOT_ROWS.map(([key, title]) => <tr key={key}><th scope="row">{title}</th><td data-testid={`dashboard-zoning-lot-${key}`}>{NOT_CONFIRMED}
+              {ZONING_LOT_ROW_REASONS[key] ? <>{" "}<span className="bd-row-reason" data-testid={`dashboard-zoning-lot-${key}-reason`}>{ZONING_LOT_ROW_REASONS[key]}</span></> : null}</td></tr>)}
           </tbody>
         </table>
         <div className="bd-inline-actions bd-calculation-links"><button type="button" onClick={() => onOpen("evidence")}>How this was calculated <span aria-hidden="true">↗</span></button></div>

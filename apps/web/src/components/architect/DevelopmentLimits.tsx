@@ -5,7 +5,7 @@ import type { Scenario } from "@/lib/scenario-contract";
 import { formatValue } from "@/lib/format";
 import { propertyHref } from "@/lib/architect/navigation";
 import { BULK_ROWS, analysisRecordsDiffer, bulkRow, calculationStatus, evaluatedResidentialFar, evaluationIsInspectable, residentialReference, scenarioBlocksPromotion, scenarioCap } from "@/lib/architect/development-limits";
-import { NOT_CONFIRMED, ZONING_LOT_ROWS, type VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
+import { NOT_CONFIRMED, ZONING_LOT_ROW_REASONS, ZONING_LOT_ROWS, type VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
 import { AssessmentCoverage } from "./AssessmentCoverage";
 import { CapturedRecord } from "./EvidenceRecord";
 import { TaxLotOnlyEstimate, TaxLotOnlyNotice } from "./TaxLotOnlyNotice";
@@ -148,7 +148,8 @@ export function DevelopmentLimits({ profile, scenario, evaluation, onInspect, zo
         return <div key={key}><dt>{label}</dt><dd>{row.status}<small><Link href={evidenceHref} aria-label={`Evidence for ${label}`}>Evidence</Link></small></dd></div>;
       })}
       <div><dt>Lot area</dt><dd>{lot?.value != null ? <>{formatValue(lot.value)} {lot.units}</> : "Unknown"}{lot && onInspect ? <button type="button" className="architect-text-button" aria-label="Source for Lot area" onClick={() => onInspect(lot.provenance_ref)}>Source</button> : null}</dd></div>
-      {ZONING_LOT_ROWS.map(([key, label]) => <div key={key}><dt>{label}</dt><dd data-testid={`development-zoning-lot-${key}`}>{NOT_CONFIRMED}</dd></div>)}
+      {ZONING_LOT_ROWS.map(([key, label]) => <div key={key}><dt>{label}</dt><dd data-testid={`development-zoning-lot-${key}`}>{NOT_CONFIRMED}</dd>
+        {ZONING_LOT_ROW_REASONS[key] ? <dd className="architect-row-reason" data-testid={`development-zoning-lot-${key}-reason`}>{ZONING_LOT_ROW_REASONS[key]}</dd> : null}</div>)}
     </dl>
     <AssessmentCoverage scenario={matchedScenario}/>
   </section>;

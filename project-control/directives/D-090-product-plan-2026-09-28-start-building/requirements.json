@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 19,
+ "requirement_count": 76,
  "producer": "orchestrator",
- "updated_at": "2026-09-30T07:10:00+00:00",
+ "updated_at": "2026-10-02T04:36:35+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -605,6 +605,1966 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R020",
+   "text": "Merge option B ('1 b'): a pull request into candidate/D-024-mrl-option-b may merge without the owner only under the owner-applied autoMode rule 'Reviewed merge in nyc-buildability': (a) an agent other than the producer posted a PASS review with no blocking corrections; (b) that review names the exact current head; (c) every CI check on that head passed; (d) the merge pins the head with --match-head-commit; (e) the PR changes no zoning-math file. Otherwise it waits for the owner.",
+   "source_ref": "source-003-amendment.md#owner-message-6-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "The owner-applied autoMode rule (source-003 input 6.1; rule text in the source-003 context); claude auto-mode config.",
+   "required_evidence": "PR review comment naming the head SHA, green checks, and the merge command, for each merged PR.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Conditions (a)-(e) are worded from the session-written, owner-applied rule text (input 6.1), not from message 6 itself; message 6 chose option B as offered in the session's 19:22:33Z reply.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R021",
+   "text": "Any pull request that touches a Lane A zoning-math path waits for the owner's explicit yes before merging, even when reviewed and green (option B as offered: 'If it changes the zoning math, wait for me').",
+   "source_ref": "source-003-amendment.md#owner-message-6-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "services/api/app/rules/**",
+     "services/api/app/scenario/**",
+     "services/api/app/_zr_snapshots/**",
+     "services/api/tests/rules/**",
+     "services/api/tests/scenario/**",
+     "docs/research/zr-snapshots/**",
+     "tests/fixtures/residential_validation/**",
+     "tools/residential_validation.py",
+     "services/api/scripts/sync_zr_snapshots.py"
+    ],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Owner yes quoted on the PR before merge.",
+   "required_evidence": "Owner words on the PR.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing; restated in message 19.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R022",
+   "text": "'Save the fix': push lane-d/D-flake-a11y-focus as a PR for independent review.",
+   "source_ref": "source-003-amendment.md#owner-message-6-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Normal PR and review.",
+   "required_evidence": "PR #271.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done as PR #271 (merged under option B); awaiting independent verification.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R023",
+   "text": "Spending: the owner pays a flat subscription ('no i pay flat').",
+   "source_ref": "source-003-amendment.md#owner-message-12-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "None.",
+   "required_evidence": "Owner words (message 12).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Orchestrator note, not owner text: with a flat plan there is no daily spending limit to set; robots stop when the plan's usage limit is reached.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R024",
+   "text": "Road 1: run orchestrator-dispatched cloud robots now, swapping in the fixed download (urllib3) first ('yes  Road 1').",
+   "source_ref": "source-003-amendment.md#owner-message-8-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "PR flow.",
+   "required_evidence": "PR #272 (urllib3 2.8.0) then the lane PRs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done: #272 merged before the lane PRs; awaiting independent verification.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R025",
+   "text": "Update the Codex/supervisor loop to the current Claude Code version ('also update the loop to the new cc').",
+   "source_ref": "source-003-amendment.md#owner-message-8-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "docs/CONTROLLER_UPDATE_RUNBOOK.md section 13; owner-typed steps on the owner's PC.",
+   "required_evidence": "A recertification report like project-control/reports/M0-T159-recertification.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Cannot be done from a cloud session: the pin hashes the PC's claude.exe; must run on the owner's Windows PC with owner-typed steps.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R026",
+   "text": "Tell the owner how much more CPU/RAM the server needs to run 5 loops.",
+   "source_ref": "source-003-amendment.md#owner-message-8-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Plain-language answer in chat and the handoff.",
+   "required_evidence": "Handoff seq 133 parallelism section.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Answered: minimum 4 CPU / 8 GB for 5 robots (handoff seq 133). See also R045.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R027",
+   "text": "Bring only the three new/updated .claude files from control/session14-m0t055-accept into candidate/D-024-mrl-option-b.",
+   "source_ref": "source-003-amendment.md#owner-message-9-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     ".claude/**"
+    ],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Cherry-pick, PR and review.",
+   "required_evidence": "PR #277 (cherry-pick of e0c222da).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done as PR #277; awaiting independent verification.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R028",
+   "text": "Do not merge anything else from control/session14-m0t055-accept.",
+   "source_ref": "source-003-amendment.md#owner-message-9-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Diff of the integration branch against that branch.",
+   "required_evidence": "PR #277 diff limited to .claude files.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R029",
+   "text": "Zoning-math pieces are not merged by robots on their own; instead write the R6B questions file so the owner can check it with another model ('or add the the q md and i check it with a other mll').",
+   "source_ref": "source-003-amendment.md#owner-message-11-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "services/api/app/rules/**",
+     "services/api/app/scenario/**",
+     "services/api/app/_zr_snapshots/**",
+     "services/api/tests/rules/**",
+     "services/api/tests/scenario/**",
+     "docs/research/zr-snapshots/**",
+     "tests/fixtures/residential_validation/**",
+     "tools/residential_validation.py",
+     "services/api/scripts/sync_zr_snapshots.py"
+    ],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Questions file plus the owner-relayed answers.",
+   "required_evidence": "docs/research/owner-research/2026-10-01-r6b-second-opinion-questions.md and -answer.md; source-004 message 13.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done; awaiting independent verification.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R030",
+   "text": "R6B approval ('I'd approve all three'): the three steps of the session's plan are (1) merge both R6B pieces, #262 A-02a and #269 A-02b; (2) the always-visible tax-lot-only warning and labels (#278); (3) the switch stays off until step 2 is in and checked (R031). The code may merge while the new results stay hidden.",
+   "source_ref": "source-004-amendment.md#owner-message-15-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "services/api/app/rules/**",
+     "services/api/app/scenario/**",
+     "services/api/app/_zr_snapshots/**",
+     "services/api/tests/rules/**",
+     "services/api/tests/scenario/**",
+     "docs/research/zr-snapshots/**",
+     "tests/fixtures/residential_validation/**",
+     "tools/residential_validation.py",
+     "services/api/scripts/sync_zr_snapshots.py"
+    ],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [
+    "D-090-R031"
+   ],
+   "required_harness": "Owner words posted on #262 and #269 before merge.",
+   "required_evidence": "#262 merged 01fa20c7, #269 merged 2c6fe7db, #278 merged 5aa9e735.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done; awaiting independent verification.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R031",
+   "text": "Keep the switch (LANE_A_ENABLED) off until the step-2 changes (R032, R033) are verified across the screens and reports; merging the code does not authorize activating it.",
+   "source_ref": "source-004-amendment.md#owner-message-15-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "services/api/app/rules/**",
+     "services/api/app/scenario/**",
+     "services/api/app/_zr_snapshots/**",
+     "services/api/tests/rules/**",
+     "services/api/tests/scenario/**",
+     "docs/research/zr-snapshots/**",
+     "tests/fixtures/residential_validation/**",
+     "tools/residential_validation.py",
+     "services/api/scripts/sync_zr_snapshots.py"
+    ],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [
+    "D-090-R032",
+    "D-090-R033"
+   ],
+   "required_harness": "Flag default-off tests; no deploy config sets LANE_A_ENABLED; step-2 verification evidence before any activation.",
+   "required_evidence": "Grep of deploy config and flag tests; verification of R032/R033.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing. See R048 for the standing owner-sent 'keep it off' (messages 19 and 20).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R032",
+   "text": "Labels on the results themselves, alongside the visible warning: 20,150 sq ft carries 'Tax-lot-only estimate'; whole-site capacity and remaining development capacity read 'Not confirmed'; the combined zoning lot's coverage and rear yard read 'Not confirmed'. The screen AND the exported report identify the parcel calculation as illustrative; a generic 'Draft \u2014 not reviewed' label is not enough (message 14).",
+   "source_ref": "source-004-amendment.md#owner-message-15-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "apps/web/**"
+    ],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [],
+   "required_harness": "Web unit and e2e tests in CI; print/report surfaces covered.",
+   "required_evidence": "PR #278.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done as PR #278; awaiting independent verification. The 'generic label is not enough' and 'screen and exported report' clauses come from message 14.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R033",
+   "text": "If the shared zoning lot is verified, the warning specifically names tax lots 1 and 70 and explains that the calculation uses lot 70 only.",
+   "source_ref": "source-004-amendment.md#owner-message-15-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "apps/web/**",
+     "packages/contracts/**",
+     "services/api/**"
+    ],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [],
+   "required_harness": "A Lane B verified zoning-lot fact, a Lane C contract field, and Lane D containers passing zoningLot.",
+   "required_evidence": "Tests showing the verified variant wired end to end.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending: the variant is built and unit-tested in #278 but has no verified data source yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R034",
+   "text": "Combining the lots does not automatically make all their capacity available: existing buildings on the combined zoning lot consume floor area, and total permitted capacity and remaining development capacity are calculated separately.",
+   "source_ref": "source-004-amendment.md#owner-message-14-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "services/api/app/rules/**",
+     "services/api/app/scenario/**",
+     "services/api/app/_zr_snapshots/**",
+     "services/api/tests/rules/**",
+     "services/api/tests/scenario/**",
+     "docs/research/zr-snapshots/**",
+     "tests/fixtures/residential_validation/**",
+     "tools/residential_validation.py",
+     "services/api/scripts/sync_zr_snapshots.py"
+    ],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [],
+   "required_harness": "Engine tests on the 215-16 Northern benchmark (lots 1 + 70).",
+   "required_evidence": "Future Lane A/B tasks.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending. Restated in message 20 ('account for existing buildings').",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R035",
+   "text": "Being 'almost all near a corner' does not establish 'no rear yard' or '100% coverage' for the whole site; the combined boundary, street geometry and adjoining lot lines must be checked, and the 103.88-ft frontage alone does not establish the shape or requirements of a remaining strip.",
+   "source_ref": "source-004-amendment.md#owner-message-14-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "services/api/app/rules/**",
+     "services/api/app/scenario/**",
+     "services/api/app/_zr_snapshots/**",
+     "services/api/tests/rules/**",
+     "services/api/tests/scenario/**",
+     "docs/research/zr-snapshots/**",
+     "tests/fixtures/residential_validation/**",
+     "tools/residential_validation.py",
+     "services/api/scripts/sync_zr_snapshots.py"
+    ],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [],
+   "required_harness": "Geometry-dependent tests.",
+   "required_evidence": "Future Lane A/B tasks.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R036",
+   "text": "Run at most 2 robots at once until the owner resizes the server ('i wanna run now 2 loops'; the owner intends to get more so 5 loops can run).",
+   "source_ref": "source-004-amendment.md#owner-message-17-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [],
+   "required_harness": "Orchestrator dispatch count.",
+   "required_evidence": "Session records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing until the owner says the server is resized. Restated in message 19 ('Run at most 2 robots at once'). Superseded 2026-10-02 by R075 (message 27: 5 at once after the resize to 4 CPU / 8 GB, R074).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R037",
+   "text": "/session-handoff writes the handoff file AND files the lessons learned into the right long-term and short-term documents, not only the handoff.",
+   "source_ref": "source-004-amendment.md#owner-message-18-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "docs/SESSION_HANDOFF.md",
+     ".claude/rules/PROGRAM_KNOWLEDGE.md",
+     "docs/WORKING_KNOWLEDGE.md",
+     "docs/DISCOVERY_BACKLOG.md"
+    ],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [],
+   "required_harness": "Handoff PR diff.",
+   "required_evidence": "Handoff PRs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done in seq 133 (#279); applies to every future handoff.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R038",
+   "text": "SETTLED (option A): remaining capacity reads exactly 'Remaining development capacity: Not confirmed' followed by 'Needs verified zoning-lot boundaries and existing zoning floor area.' This replaces 'Not available \u2014 needs existing zoning floor area' on every surface (screen, print, brief, engine reason text, contract fixtures).",
+   "source_ref": "source-005-amendment.md#owner-message-20-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "apps/web/**",
+     "packages/contracts/**",
+     "services/api/**"
+    ],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [],
+   "required_harness": "Web unit and e2e tests in CI; no test or code still expects the old wording.",
+   "required_evidence": "The wording PR (#282) and its tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "PR #282 (zoning-math wording) has the owner's yes: message 22, R051. It merges under R052 and R053.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R039",
+   "text": "Record the wording as a settled decision so future sessions don't ask again: never ask the owner the remaining-capacity wording question again; close DB-101 as decided A and remove it from the handoff's pending decisions.",
+   "source_ref": "source-005-amendment.md#owner-message-20-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "docs/DISCOVERY_BACKLOG.md",
+     "docs/SESSION_HANDOFF.md"
+    ],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [],
+   "required_harness": "Grep of the handoff and the backlog.",
+   "required_evidence": "DB-101 closed; the next handoff omits it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Message 22 restates it ('settled decisions'; R060). DB-101 is closed in PR #282; the handoff change waits for the next handoff (R070).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R040",
+   "text": "Verify the shared zoning lot before calculating combined capacity.",
+   "source_ref": "source-005-amendment.md#owner-message-20-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "services/api/app/rules/**",
+     "services/api/app/scenario/**",
+     "services/api/app/_zr_snapshots/**",
+     "services/api/tests/rules/**",
+     "services/api/tests/scenario/**",
+     "docs/research/zr-snapshots/**",
+     "tests/fixtures/residential_validation/**",
+     "tools/residential_validation.py",
+     "services/api/scripts/sync_zr_snapshots.py",
+     "services/api/app/spatial/**"
+    ],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [
+    "D-090-R034",
+    "D-090-R048"
+   ],
+   "required_harness": "No combined-capacity calculation before a verified zoning-lot fact exists; site geometry for a lot selection never declares a zoning lot.",
+   "required_evidence": "B-07 (PR #281) and later combined-capacity PRs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending; bound to B-07 (M2-05). The same paragraph's 'account for existing buildings' is R034 and 'keep the zoning-math switch off' is R048.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R041",
+   "text": "ORCHESTRATOR'S INTERPRETATION, not owner wording: message 21 ('Why can't you keep going right now? There's no reason that you shouldn't be able to run the loop right now.') is read as the owner waiving, for session 180ee26c only, the Bootstrap Gate 0 stop of D-024-R125-R128, including R127's bar on repository writes, commits and pushes. That covers this session's PRs #280, #281 and #282. The owner did not say 'waive' or 'Gate 0'.",
+   "source_ref": "source-005-amendment.md#owner-message-21-verbatim",
+   "classification": "authorization",
+   "binding": false,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [
+    "D-024-R125",
+    "D-024-R126",
+    "D-024-R127",
+    "D-024-R128"
+   ],
+   "required_harness": "Explicit owner confirmation; no connector or MCP tool used; every repo change through PR, independent review and green CI; no merge until the owner confirms.",
+   "required_evidence": "Owner's confirming words (to be captured as a later source).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Outcome (R063): the owner did not confirm this reading. Message 22 (2026-10-02T01:45:18Z) required resolving startup 'in a correctly started project session' and said it 'does not authorize disabling safeguards or creating a permanent exception to startup rules' (R055, R056). Nothing merged in session 180ee26c. The owner restarted in the repository folder (session 9ee08959, message 25), where Gate 0 passed. binding is false: an unconfirmed reading authorizes nothing. History: the session asked at 2026-10-01T23:31:21Z (180ee26c line 847) and again at lines 872, 880 and 908; support was the 22:11:09Z reply; counter-evidence was message 20's restart advice.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R042",
+   "text": "Refresh PR #270, the handoff (option 1 of the /session-handoff menu): bring that branch's handoff up to date; nothing gets merged by that step.",
+   "source_ref": "source-003-amendment.md#owner-message-4-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "docs/SESSION_HANDOFF.md"
+    ],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Handoff PR flow.",
+   "required_evidence": "Commit 24d4722d; PR #270 merged at faa6d782.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done; awaiting independent verification. Message 4 was an accepted CLI suggestion.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R043",
+   "text": "Request: start up the Codex loop and run 5-6 loops in parallel.",
+   "source_ref": "source-003-amendment.md#owner-message-7-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [
+    "D-090-R024",
+    "D-090-R025",
+    "D-090-R036"
+   ],
+   "required_harness": "Disposition recorded.",
+   "required_evidence": "Session reply (Road 1 / Road 2).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Superseded by R024 (Road 1), R025 (the Codex loop update is PC-only) and R036 (2 at once); reclassified from obligation to decision (R066, review 280 R2-N8). Disposition: the session offered Road 1 / Road 2; the owner chose Road 1 (R024). The Codex loop update is PC-only (R025). Parallel robots were capped at 2 until a resize (R036). Message 27 (R075) now runs 5 cloud robots.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R044",
+   "text": "Explain things to the owner in plain, simple words, as if to a 5-year-old, without jargon (owner line in message 5: 'explained lile ai have a learning disability or i am 5'; message 19: 'explain things to the owner in plain, simple words').",
+   "source_ref": "source-003-amendment.md#owner-message-5-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [
+    "D-090-R006"
+   ],
+   "required_harness": "Owner-facing replies use short sentences and everyday words.",
+   "required_evidence": "Chat replies; PR bodies keep the technical detail.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing. Related: D-090-R006, D-064 (plain-English owner communication).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R045",
+   "text": "Answer both questions: (1) how many loops can run at once on the current server; (2) what CPU/RAM upgrade is needed to run 5 or 6 loops at a time.",
+   "source_ref": "source-004-amendment.md#owner-message-16-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [],
+   "required_harness": "Plain-language answer in chat and the handoff.",
+   "required_evidence": "Handoff seq 133 parallelism section.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Answered: 2 at once on the current 1 CPU / 2 GB droplet; minimum 4 CPU / 8 GB for 5; 8 CPU / 16 GB for 6 (handoff seq 133).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R046",
+   "text": "Height correction: the affordable-housing (qualifying) height sequence reads 30 / 45 / 65 feet, in the order minimum base / maximum base / maximum building.",
+   "source_ref": "source-004-amendment.md#owner-message-14-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "services/api/app/rules/**",
+     "services/api/app/scenario/**",
+     "services/api/app/_zr_snapshots/**",
+     "services/api/tests/rules/**",
+     "services/api/tests/scenario/**",
+     "docs/research/zr-snapshots/**",
+     "tests/fixtures/residential_validation/**",
+     "tools/residential_validation.py",
+     "services/api/scripts/sync_zr_snapshots.py",
+     "docs/SESSION_HANDOFF.md"
+    ],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [],
+   "required_harness": "Wherever R6B qualifying heights are stated (engine notes, docs, handoff).",
+   "required_evidence": "Handoff seq 133 (docs/SESSION_HANDOFF.md at c81ba14d) states 30/45/65.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Applied in handoff seq 133; awaiting independent verification of the other surfaces.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R047",
+   "text": "Do not describe the second opinion as agreeing with every number: it verified the district rules only, not this address's zoning-lot boundaries, supplied land area, PR code or reported test results.",
+   "source_ref": "source-004-amendment.md#owner-message-14-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [],
+   "required_harness": "PR bodies, handoffs and owner messages.",
+   "required_evidence": "Grep of handoffs and PR bodies.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R048",
+   "text": "Keep LANE_A_ENABLED (the zoning-math switch) off (message 19: 'keep LANE_A_ENABLED off'; message 20: 'keep the zoning-math switch off').",
+   "source_ref": "source-005-amendment.md#owner-message-19-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "services/api/app/rules/**",
+     "services/api/app/scenario/**",
+     "services/api/app/_zr_snapshots/**",
+     "services/api/tests/rules/**",
+     "services/api/tests/scenario/**",
+     "docs/research/zr-snapshots/**",
+     "tests/fixtures/residential_validation/**",
+     "tools/residential_validation.py",
+     "services/api/scripts/sync_zr_snapshots.py"
+    ],
+    "effective_date": "2026-10-01"
+   },
+   "dependencies": [
+    "D-090-R031"
+   ],
+   "required_harness": "Flag default-off tests; no deploy config sets it.",
+   "required_evidence": "Grep of deploy config and flag tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing. The owner releases a lane's flag (docs/lanes/PARALLEL_BUILD_PLAN.md:74: production never sets lane flags until the owner releases that lane's work).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R049",
+   "text": "Show token use at all times in Claude Code and make it permanent on this machine ('i want to see the token use at all time \u2026 how do i make it perment here').",
+   "source_ref": "source-003-amendment.md#owner-message-4-1-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [],
+   "required_harness": "Local Claude Code configuration only; no repository change.",
+   "required_evidence": "~/.claude/settings.json statusLine on the droplet.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done locally in session 3a4f8c54 (after the owner's /statusline, input 3.2); outside the repo.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R050",
+   "text": "Next queue item (owner-applied autoMode rule 'Next queue item in nyc-buildability'): after a merge allowed under R020, starting the next item from the owner's lane queues (docs/lanes/queues/) is approved work: creating its worktree and branch, dispatching producer and reviewer agents, pushing the branch and opening its PR. It does not allow work outside those queues, turning permission checks off, or changing permission settings.",
+   "source_ref": "source-003-amendment.md#owner-input-6-1-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "docs/lanes/queues/**"
+    ],
+    "effective_date": "2026-09-30"
+   },
+   "dependencies": [
+    "D-090-R020"
+   ],
+   "required_harness": "claude auto-mode config shows the rule.",
+   "required_evidence": "Rule text in the source-003 context.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "The owner applied it with input 6.1 (backup ~/.claude/settings.json.bak-20260930-193457, input 6.2).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R051",
+   "text": "Approve the wording-only change in PR #282, including the sentence in the engine ('I approve the wording-only change in #282, including the sentence in the engine.'). This is the owner's yes that R021 requires for #282.",
+   "source_ref": "source-006-amendment.md#owner-message-22-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R021",
+    "D-090-R038"
+   ],
+   "required_harness": "#282 merges only under R052 and R053.",
+   "required_evidence": "Message 22; the #282 merge record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Given 2026-10-02T01:45:18Z. #282 is not merged at capture.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R052",
+   "text": "Merge PRs #280, #281 and #282 once the existing required reviews and tests pass on their final versions ('I approve merging #280, #281 and #282 once the existing required reviews and tests pass on their final versions.').",
+   "source_ref": "source-006-amendment.md#owner-message-22-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R020",
+    "D-090-R021",
+    "D-090-R051"
+   ],
+   "required_harness": "Each PR's PASS review names its final head; CI is green on that head; the merge uses --match-head-commit (R069).",
+   "required_evidence": "PR review comments; gh pr checks; the merge commits.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "At capture: #281 has PASS at bfda7d09 and #282 has PASS at 023d229e, both with 40/40 checks green; #280 changes with this commit and needs a new verifier pass (R067).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R053",
+   "text": "Merge them in dependency order ('Merge them in dependency order').",
+   "source_ref": "source-006-amendment.md#owner-message-22-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R052"
+   ],
+   "required_harness": "Merge order in git history.",
+   "required_evidence": "The three merge commits.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Orchestrator note: message 25 sets the order as #280 first, then #281 and #282. #280 carries the owner's yes for #282 (R051) and R041's outcome.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R054",
+   "text": "Continue the work: after the merges, continue the next eligible tasks ('Continue the work.'; 'then continue the next eligible tasks').",
+   "source_ref": "source-006-amendment.md#owner-message-22-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R053",
+    "D-090-R050"
+   ],
+   "required_harness": "Queue items from docs/lanes/queues/ whose dependencies are met.",
+   "required_evidence": "Lane worktrees, branches and PRs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "ORCHESTRATOR'S READING, not owner wording: message 27 (R075) asked to start 5 robots now, so four queue items that do not depend on #280\u2013#282 (B-08, C-01, D-03 slice 2, E-07) started in session 9ee08959 before the merges. Their PRs merge only after #280\u2013#282.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R055",
+   "text": "Resolve the startup configuration: restore the required project controls, or resume the saved work in a correctly started project session.",
+   "source_ref": "source-006-amendment.md#owner-message-22-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-024-R125",
+    "D-024-R126",
+    "D-024-R127",
+    "D-024-R128"
+   ],
+   "required_harness": "Gate 0 passes in the new session.",
+   "required_evidence": "Session 9ee08959: cwd and toplevel /root/project/nyc-buildability; branch candidate/D-024-mrl-option-b; HEAD == origin (c81ba14d); `claude mcp list` prints 'No MCP servers configured.'",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done by restart: the owner relaunched in the repository folder (session 9ee08959, 2026-10-02T04:10Z) with the prompt of message 25. Gate 0 passed then and again after the server resize (04:27:53Z).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R056",
+   "text": "This instruction does not authorize disabling safeguards or creating a permanent exception to startup rules.",
+   "source_ref": "source-006-amendment.md#owner-message-22-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R055"
+   ],
+   "required_harness": "No safeguard disabled; no startup exception recorded.",
+   "required_evidence": "Session records; settings unchanged.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing. R041's reading was not confirmed (see R041).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R057",
+   "text": "If restarting requires an action only the owner can perform, give the owner that single action.",
+   "source_ref": "source-006-amendment.md#owner-message-22-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R055"
+   ],
+   "required_harness": "One owner action in chat.",
+   "required_evidence": "Session 180ee26c replies at 2026-10-02T01:50:03Z and 01:51:37Z.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Given in session 180ee26c: type /exit, then run the one-line launch command that loads /root/project/RESUME_2026-10-02.md. The owner did so (message 25).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R058",
+   "text": "Keep the zoning-math switch off ('Keep the zoning-math switch off.').",
+   "source_ref": "source-006-amendment.md#owner-message-22-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R031",
+    "D-090-R048"
+   ],
+   "required_harness": "The flag's default stays off; no PR turns it on.",
+   "required_evidence": "Flag defaults in code; PR diffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing. Orchestrator note: the switch is LANE_A_ENABLED (messages 19 and 25).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R059",
+   "text": "These merges do not authorize activation or claims that the combined zoning lot is verified.",
+   "source_ref": "source-006-amendment.md#owner-message-22-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R052",
+    "D-090-R058"
+   ],
+   "required_harness": "No code, text or report states the combined zoning lot is verified.",
+   "required_evidence": "PR diffs and reviews.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing. #281's reviews record that its zoning-lot status stays 'Check needed' with `verified` False.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R060",
+   "text": "Do not ask again about the wording approval or whether the owner wants work to continue ('Do not ask again about the wording approval or whether I want work to continue.').",
+   "source_ref": "source-006-amendment.md#owner-message-22-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R039"
+   ],
+   "required_harness": "Owner-facing messages.",
+   "required_evidence": "Session transcripts.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R061",
+   "text": "Bring the owner one consolidated report only when a genuinely new decision or blocker requires the owner's input.",
+   "source_ref": "source-006-amendment.md#owner-message-22-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "Owner-facing messages.",
+   "required_evidence": "Session transcripts.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R062",
+   "text": "Capture message 22 as D-090 source-006 by script, never retyped, and add rows for its instructions.",
+   "source_ref": "source-007-amendment.md#owner-message-25-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "Byte comparison of source-006 with the transcript.",
+   "required_evidence": "source-006-amendment.md; R051\u2013R061.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done in this commit; awaiting independent verification.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R063",
+   "text": "Record R041's outcome: the owner did not confirm the waiver reading and required a proper restart.",
+   "source_ref": "source-007-amendment.md#owner-message-25-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R041"
+   ],
+   "required_harness": "R041's status_reason.",
+   "required_evidence": "requirements.json R041.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done in this commit (R041 status_reason).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R064",
+   "text": "Fix the source-004 note on message 13: a shortened copy of message 13 is in docs/research/owner-research/2026-10-01-r6b-second-opinion-answer.md (review 280 round 2, R2-N1).",
+   "source_ref": "source-007-amendment.md#owner-message-25-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "Note text matches the repository.",
+   "required_evidence": "source-004-amendment.md context note; source-003 note on messages 10 and 11.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done in this commit; the matching source-003 note was corrected too.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R065",
+   "text": "Use real commit-time timestamps in the D-090 records (review 280 round 2, R2-N2).",
+   "source_ref": "source-007-amendment.md#owner-message-25-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "Timestamps equal the commit times.",
+   "required_evidence": "manifest.json, requirements.json; git log.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done in this commit: sources 003\u2013005 and the 003\u2013005 audit entry use 2026-10-01T23:28:22+00:00 (commit 2a20c41d); this commit's entries use its own commit time.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R066",
+   "text": "Reclassify R043, which R024, R025 and R036 superseded (review 280 round 2, R2-N8).",
+   "source_ref": "source-007-amendment.md#owner-message-25-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R043"
+   ],
+   "required_harness": "R043 classification and status_reason.",
+   "required_evidence": "requirements.json R043.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done in this commit: obligation -> decision, marked superseded.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R067",
+   "text": "Then get one directive-compliance-verifier pass at the new head, with green CI.",
+   "source_ref": "source-007-amendment.md#owner-message-25-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R062",
+    "D-090-R063",
+    "D-090-R064",
+    "D-090-R065",
+    "D-090-R066"
+   ],
+   "required_harness": "Independent verifier report naming the new head; CI green on it.",
+   "required_evidence": "PR #280 comment; gh pr checks 280.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R068",
+   "text": "For #281 and #282, confirm cheaply that each PASS comment names the current head and CI is green; re-review only if a head changed.",
+   "source_ref": "source-007-amendment.md#owner-message-25-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R052"
+   ],
+   "required_harness": "gh pr view (head, comments) and check results.",
+   "required_evidence": "Session 9ee08959 commands.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Checked 2026-10-02 in session 9ee08959: #281's round-3 PASS names bfda7d09 and #282's round-2 PASS names 023d229e, both the current heads; both 40/40 checks green. No re-review needed.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R069",
+   "text": "Merge #280, then #281 and #282, each with --match-head-commit and green CI; #282 is under the owner's yes.",
+   "source_ref": "source-007-amendment.md#owner-message-25-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R051",
+    "D-090-R052",
+    "D-090-R053"
+   ],
+   "required_harness": "gh pr merge --match-head-commit <head>.",
+   "required_evidence": "Merge commits.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R070",
+   "text": "Next handoff: drop the wording question (R039), and add DB-102 (from #282's review) and the B-07 questions from #281's body.",
+   "source_ref": "source-007-amendment.md#owner-message-25-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R039"
+   ],
+   "required_harness": "docs/SESSION_HANDOFF.md content.",
+   "required_evidence": "The next handoff PR.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R071",
+   "text": "Next handoff: remove the worktrees nyc-lane-b7, nyc-wording-a, w-directive-1001, rv-280, rv-281 and rv-282.",
+   "source_ref": "source-007-amendment.md#owner-message-25-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "git worktree list.",
+   "required_evidence": "Session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Pending (after the merges).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R072",
+   "text": "Stop the robots while the owner resizes the CPU ('stop the robots, I'm resizing the cpu').",
+   "source_ref": "source-007-amendment.md#owner-message-26-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "No robot running during the resize.",
+   "required_evidence": "Session 9ee08959 transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "No robot was running: session 9ee08959 had dispatched none by 2026-10-02T04:13:30Z, and session 180ee26c's transcript ended at 01:51:37Z. The server restarted for the resize (uptime 3 min at 04:27:53Z).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R073",
+   "text": "The owner set this session's model to Opus 5.5 and its effort to xhigh (local commands /model and /effort).",
+   "source_ref": "source-007-amendment.md#owner-input-26-1-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "Session model.",
+   "required_evidence": "Inputs 26.1\u201326.4.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "The tool's output says both are saved as defaults for new sessions and that .claude/settings.json pins Fable 5, which applies on restart. No repository setting was changed. Subagent dispatches still never pass `model:`.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R074",
+   "text": "The server is resized to 4 CPU / 8 GB ('The server is back and resized to 4 CPU / 8 GB.').",
+   "source_ref": "source-007-amendment.md#owner-message-27-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [],
+   "required_harness": "nproc; free -m.",
+   "required_evidence": "Session 9ee08959 at 2026-10-02T04:27:53Z: nproc 4; total memory 7941 MB.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Checked in session 9ee08959.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R075",
+   "text": "Start 5 Codex loops in parallel ('Start 5 Codex loops in parallel.'). ORCHESTRATOR'S READING, not owner wording: the loops are orchestrator-dispatched cloud robots (Road 1, R024), because the Codex supervisor loop runs only on the owner's PC (R025, B-026). This replaces R036's cap of 2.",
+   "source_ref": "source-007-amendment.md#owner-message-27-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R024",
+    "D-090-R036",
+    "D-090-R074",
+    "D-090-R076"
+   ],
+   "required_harness": "At most 5 robots run at once.",
+   "required_evidence": "Session 9ee08959 dispatch records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Running: four lane producers (B-08, C-01, D-03 slice 2, E-07) started 2026-10-02 in session 9ee08959; the fifth slot is for the #280 verifier (R067) and the reviewers. R043's request for 5\u20136 loops is met at 5.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R076",
+   "text": "Keep memory under 70%; if it gets close, drop to 4.",
+   "source_ref": "source-007-amendment.md#owner-message-27-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-02"
+   },
+   "dependencies": [
+    "D-090-R075"
+   ],
+   "required_harness": "Memory watcher.",
+   "required_evidence": "Watcher log in the session scratchpad.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Orchestrator's threshold: 'close' = 60% of memory in use (MemTotal minus MemAvailable), checked every 15 s by a background watcher; at 60% no new robot starts until 4 or fewer run.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

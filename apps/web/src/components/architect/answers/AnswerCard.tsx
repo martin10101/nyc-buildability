@@ -106,7 +106,8 @@ function ExceptionTag({ label }: { label: ExceptionLabel }) {
   );
 }
 
-/** A value row added to an available answer, or its own "Not available — …" line. */
+/** A value row added to an available answer, or its own not-available line and, when the view
+ * carries one, its reason line under it (D-090-R038). */
 export function SupplementRow({ view }: { view: SupplementView }) {
   return (
     <dl className="ta-rows ta-supplement" data-testid="answer-supplement">
@@ -121,6 +122,11 @@ export function SupplementRow({ view }: { view: SupplementView }) {
             </span>
           )}
         </dd>
+        {view.kind === "not_available" && view.reason ? (
+          <dd className="ta-supplement-reason" data-testid="answer-supplement-reason">
+            {view.reason}
+          </dd>
+        ) : null}
       </div>
     </dl>
   );
