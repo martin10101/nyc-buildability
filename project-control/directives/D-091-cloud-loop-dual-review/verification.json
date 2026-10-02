@@ -411,6 +411,40 @@
           "reviewed_sha": null
         }
       ]
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T176",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ],
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": "510f8523aab81df371ba2af4d5145672b2a6c808",
+      "reviewed_manifest_sha256": "d28e1f226c90637b00078374c171183feb730e4b21b6abdd3f6601556f3a4a18",
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "PASS",
+          "evidence": [
+            "review_slots._SlotLock.acquire treats a PermissionError from the O_EXCL lock create on Windows (a delete-pending lock file under contention) as busy and waits to the deadline, refusing only at the timeout (slot_lock_timeout) and never taking over; every other OSError still refuses at once; POSIX unchanged. Fixes the windows-latest flake RaceTests::test_global_last_slot_never_double_taken (1 != 2, PR #312 CI run 37001721581)",
+            "tools/test_agent_supervisor_review_slots.py 17 passed + 2 subtests, reproduced by the DCV (4 new deterministic Windows sharing-violation tests via an _is_windows seam); CI supervisor-bridge (windows-latest) green at the accept-seam head 510f8523"
+          ],
+          "reviewed_sha": "510f8523aab81df371ba2af4d5145672b2a6c808"
+        },
+        {
+          "id": "D-091-R007",
+          "state": "PASS",
+          "evidence": [
+            "gates G0, G2, G3, G4, G5 PASS at content identity d28e1f22 (G3/G4 by an independent code-reviewer, G5 by an independent security-reviewer; producer != reviewers)",
+            "no loop started or commissioned; M0-T174 recertification now depends on M0-T176"
+          ],
+          "reviewed_sha": "510f8523aab81df371ba2af4d5145672b2a6c808"
+        }
+      ],
+      "restamp_note": "DCV reviewed 50e91530a14c8d52a585fb58d6f0540b57939baa (project-control/reports/M0-T176-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (d28e1f22); intervening commits are the saved DCV report, a base merge of disjoint peer work, and state.json resolved by meaning. The DCV's added condition 4 holds: CI supervisor-bridge (windows-latest) is green at the accept-seam head 510f8523."
     }
   ]
 }

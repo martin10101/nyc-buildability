@@ -1,0 +1,96 @@
+{
+  "task_id": "M0-T176",
+  "title": "D-091 TW1 follow-up: the review-slot lock waits through Windows sharing violations instead of refusing at once (windows-latest race-test flake)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "On Windows, os.open(O_CREAT|O_EXCL) on the review-slot lock file can raise PermissionError while another process still has a just-deleted lock file open (delete-pending), and review_slots._SlotLock.acquire treats any non-FileExistsError OSError as an immediate slot_lock_error refusal. Under real contention a racer that should get a free slot is refused: RaceTests::test_global_last_slot_never_double_taken failed 1 != 2 on windows-latest in PR #312 CI (run 37001721581, job 110820703299) after M0-T171 merged (M0-T171 G3/G4 delta note (d) predicted this). Treat PermissionError on Windows as busy and retry to the deadline (never a stale takeover on it), refusing only at the timeout; keep POSIX behavior and every fail-closed outcome; keep holder reads short-lived. Update test_lock_error_fails_closed accordingly and add deterministic tests that inject transient and persistent PermissionError.",
+  "business_reason": "Owner directive D-091: move the loop to the cloud server with Codex and Claude reviews and a combining model.",
+  "inputs": [
+    "docs/D091_WAVE3_WIRING_PLAN.md sections 1 and 4",
+    "tools/agent_supervisor/review_slots.py and its test (M0-T171, accepted)",
+    "project-control/reports/M0-T171-G3G4-delta.md (note (d))",
+    "PR #312 CI supervisor-bridge log (run 37001721581, job 110820703299)"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/review_slots.py (Windows busy-wait)",
+    "tools/test_agent_supervisor_review_slots.py",
+    "project-control/reports/M0-T176-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T171"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/review_slots.py",
+    "tools/test_agent_supervisor_review_slots.py",
+    "project-control/reports/M0-T176-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "locking.py, run_budget.py, resource_sampling.py (accepted; do not edit)",
+    "loop.py and dual_review.py (M0-T172, in progress)",
+    "any change that lets a reservation be granted without the lock or without a durable record",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
+    "codex login or handling any owner credential",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
+    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths"
+  ],
+  "acceptance_scenarios": [
+    "primary: a transient PermissionError on lock creation (simulated, both platforms) makes the reservation wait and then succeed; no refusal",
+    "persistent: a lock path that stays unusable (a directory) refuses at the deadline with admitted False and no reservation (slot_lock_timeout on both platforms)",
+    "race: the separate-process races still give exactly 2 global winners and exactly 1 per lane, repeated; no over-admission ever",
+    "regression: POSIX behavior and every other review-slot test unchanged; a lock error other than a sharing violation still fails closed"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "control-plane-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T11:45:02.381265+00:00",
+  "updated_at": "2026-10-02T12:41:20.503052+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T11:45:02.381512+00:00",
+  "worktree": "/root/project/w-M0-T176",
+  "progress_log": [
+    {
+      "at": "2026-10-02T11:46:04.539695+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Scenarios in the packet; producer dispatched in /root/project/w-M0-T176"
+    },
+    {
+      "at": "2026-10-02T12:10:36.238535+00:00",
+      "agent": "backend-engineer",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Producer done at 5ba0b528"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-02T12:41:20.502841+00:00"
+}
