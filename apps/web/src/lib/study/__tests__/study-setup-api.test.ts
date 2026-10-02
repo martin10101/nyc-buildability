@@ -20,9 +20,14 @@ import type { NewOption } from "@/lib/study/study-operations";
 
 const PROPERTY_BBL = "5999999999";
 
-/** A contract-valid study-setup document, from the committed corner fixture. */
+/**
+ * A fresh, contract-valid study-setup document built from the committed corner
+ * fixture. Deep-cloned every call so a test that deliberately mutates its copy
+ * (the validation_failure case) cannot corrupt the shared imported fixture for
+ * the tests that run after it.
+ */
 function setupDocument(): Record<string, unknown> {
-  const study = corner as unknown as {
+  const study = JSON.parse(JSON.stringify(corner)) as {
     property: unknown;
     lots: unknown;
     lot_selection: unknown;
