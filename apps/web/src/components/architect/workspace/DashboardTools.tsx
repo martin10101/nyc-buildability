@@ -10,6 +10,7 @@ import { SurveyReviewClientProvider } from "@/lib/surveyReview/context";
 import { ReviewInbox } from "@/components/survey-review/ReviewInbox";
 import { PropertyFacts, ZoningView, OpenIssues, PlannedView } from "../ProfileViews";
 import { LotSiteSetup } from "../LotSiteSetup";
+import { HiddenIssueFlags } from "../HiddenIssueFlags";
 import { CondoRecordsChannelSection, type CondoSurfaceDecision } from "../CondoRecordsSection";
 import { ParcelStudyPanel } from "../ParcelStudyPanel";
 import { EvidenceWorkspace } from "../EvidenceWorkspace";
@@ -49,6 +50,8 @@ export interface DashboardToolsProps {
   unusedFloorAreaSectionEnabled?: boolean;
   /** Server-read INTERNAL_LOT_SITE_SETUP_ENABLED (D-04, plan M1-13); absent -> off. */
   lotSiteSetupEnabled?: boolean;
+  /** Server-read INTERNAL_HIDDEN_ISSUE_FLAGS_UI_ENABLED (D-12, plan M2-06); absent -> off. */
+  hiddenIssueFlagsEnabled?: boolean;
   focusEnvelope?: boolean;
   envelopeRequest?: number;
 }
@@ -76,6 +79,9 @@ export function DashboardTools(props: DashboardToolsProps) {
         {returnedScenario ? <CapturedRecord value={returnedScenario} label="Original scenario record · allowances withheld"/> : null}
       </section> : null}</>;
     case "issues": return <><OpenIssues profile={profile}/><CondoRecordsChannelSection decision={condo}/></>;
+    // D-12 (plan M2-06, §8a): hidden-issue flags, behind a default-off server flag.
+    // A deep link or tool open with the flag off gets the plain not-available view.
+    case "hiddenissues": return props.hiddenIssueFlagsEnabled ? <HiddenIssueFlags bbl={bbl}/> : <PlannedView label={TOOL_LABELS.hiddenissues}/>;
     case "scenarios": return scenario ? <ScenarioWorkspace document={scenario} evaluation={evaluation} bbl={bbl} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/> : <section className="card"><h2>Scenario results unavailable</h2><p>{condo.withholdAllowances ? "Computed allowances are withheld until the legal analysis site is resolved." : "No matching, usable scenario was supplied."}</p>{returnedScenario ? <CapturedRecord value={returnedScenario} label="Returned scenario record · not a site allowance"/> : null}</section>;
     case "report": return <ReportView profile={profile} scenario={returnedScenario} evaluation={returnedEvaluation} label={label} condoDecision={condo} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/>;
     // D-01 (plan §7): the proposal editor and envelope panel are set aside behind a
