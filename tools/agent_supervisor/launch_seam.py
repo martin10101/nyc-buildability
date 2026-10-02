@@ -389,3 +389,69 @@ def enforce_or_raise(ctx: WorkerLaunchContext) -> LaunchDecision:
     if decision.ok:
         return decision
     raise LaunchSeamError(decision.code, decision.message, decision.action)
+
+
+# -- platform launch-path selection (D-091 T2) -----------------------------
+#
+# The guards above (ceiling + cwd binding) are platform-neutral and unchanged on
+# either OS. This additive seam answers a DIFFERENT question: which launcher
+# script and which shell-routing test harness THIS platform uses. POSIX selects
+# the bash launcher, the systemd unit TEMPLATE, and the bash harness under
+# `tools/agent_supervisor/linux/`; every other platform (Windows) keeps the
+# existing PowerShell launch path (`docs/MRL_LAUNCH_RUNBOOK.md` + `ps_tests`),
+# byte-unchanged. It is pure: it returns the selection and launches nothing,
+# installs nothing, and starts no run.
+
+#: Repo-root-relative POSIX-style paths to the Linux launch artifacts (D-091 T2).
+POSIX_LAUNCHER = "tools/agent_supervisor/linux/launch.sh"
+POSIX_SYSTEMD_UNIT_TEMPLATE = (
+    "tools/agent_supervisor/linux/nyc-supervisor.service.template")
+POSIX_SHELL_ROUTING_HARNESS = (
+    "tools/agent_supervisor/linux/sh_tests/run_sh_tests.sh")
+
+#: The existing Windows launch path, left byte-unchanged by this task.
+WINDOWS_LAUNCH_RUNBOOK = "docs/MRL_LAUNCH_RUNBOOK.md"
+WINDOWS_SHELL_ROUTING_HARNESS = (
+    "tools/agent_supervisor/ps_tests/run_ps_tests.ps1")
+
+
+@dataclasses.dataclass(frozen=True)
+class LaunchPath:
+    """Which launcher + shell-routing harness one platform uses.
+
+    `systemd_unit_template` is POSIX-only (empty string on Windows); it names the
+    unit TEMPLATE that an OWNER installs/enables at commissioning (never an agent).
+    """
+
+    platform: str                   # "posix" | "windows"
+    launcher: str                   # launcher script / documented launch path
+    shell_routing_harness: str      # the shell-routing test harness runner
+    systemd_unit_template: str = ""
+
+    def as_dict(self) -> dict[str, Any]:
+        return dataclasses.asdict(self)
+
+
+def select_launch_path(os_name: str | None = None) -> LaunchPath:
+    """Select the platform launch path (D-091 T2). Pure; launches nothing.
+
+    POSIX (`os.name == "posix"`) selects the bash launcher, the systemd unit
+    TEMPLATE, and the bash shell-routing harness under
+    `tools/agent_supervisor/linux/`. Every other platform (Windows) keeps the
+    existing PowerShell launch path and `ps_tests` harness, byte-unchanged and
+    with no systemd template. The platform is injectable so the selection can be
+    certified on either host.
+    """
+    name = os.name if os_name is None else os_name
+    if name == "posix":
+        return LaunchPath(
+            platform="posix",
+            launcher=POSIX_LAUNCHER,
+            shell_routing_harness=POSIX_SHELL_ROUTING_HARNESS,
+            systemd_unit_template=POSIX_SYSTEMD_UNIT_TEMPLATE,
+        )
+    return LaunchPath(
+        platform="windows",
+        launcher=WINDOWS_LAUNCH_RUNBOOK,
+        shell_routing_harness=WINDOWS_SHELL_ROUTING_HARNESS,
+    )

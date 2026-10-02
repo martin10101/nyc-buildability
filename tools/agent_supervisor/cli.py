@@ -168,7 +168,6 @@ from . import launch_seam
 from . import next_task
 from . import orientation as orientation_mod
 from . import os_acl
-from .os_acl import evaluate_controller_config_acl
 from .turn_budget import TurnAllowances, TurnBudgetError, budget_for_packet
 from .resource_sampling import ResourceSampler
 from .restart_channel import register_restart_verbs
@@ -526,7 +525,7 @@ def _controller_config_acl_posture(config_path: str | None) -> dict[str, Any]:
                     "OS-ACL boundary posture. A skipped posture is not 'protected'.",
         }
     try:
-        verdict = evaluate_controller_config_acl(config_path)
+        verdict = os_acl.controller_config_acl_verdict(config_path)
     except Exception as exc:  # noqa: BLE001 - any inspection failure fails closed
         return {
             "state": os_acl.UNKNOWN, "protected": False,

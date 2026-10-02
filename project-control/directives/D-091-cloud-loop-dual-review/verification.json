@@ -52,24 +52,32 @@
     "D-091-R007"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "633b293c7dfcf47218037b49cebd1709a7618612",
+   "reviewed_manifest_sha256": "6afaea11c552889fc0822a59541ee0661c2b9afd48fa98bdb4c626b62dd2051f",
    "requirements": [
     {
      "id": "D-091-R001",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "launch_seam.select_launch_path(): POSIX -> linux/launch.sh + uninstalled systemd template + bash harness; Windows path byte-unchanged; launch.sh fails closed (exit 6 misconfig, 3 missing claude, 4 unset env, 5 gate refusal), never pushes/merges/starts a live run",
+      "M0-T165 call sites: cli.py doctor posture uses os_acl.controller_config_acl_verdict (net -1 line); capability_probe.py and native_runtime.py bare probes carry DISABLE_AUTOUPDATER=1 on Linux only",
+      "tools/test_agent_supervisor_linux_launch.py 19 passed; bash run_sh_tests.sh all mutants detected (reviewed f3c48717)"
+     ],
+     "reviewed_sha": "633b293c7dfcf47218037b49cebd1709a7618612"
     },
     {
      "id": "D-091-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "gates G0, G2, G3, G4 PASS at content identity 6afaea11 (round-1 G3/G4 FAIL on B1 fixed in the test file only; supervisor-bridge windows-latest green: 3797 passed, 17 skipped)",
+      "nothing installed, commissioned or started; the two live drift checks (CLI 2.1.287 vs 2.1.281 fixtures) are the certification tooth for the later D-091 recertification"
+     ],
+     "reviewed_sha": "633b293c7dfcf47218037b49cebd1709a7618612"
     }
-   ]
+   ],
+   "restamp_note": "DCV reviewed f3c487173470ebafa4c5afb299634d0bff16588a (project-control/reports/M0-T166-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (6afaea11); intervening commits are a base merge of disjoint peer work and ledger records."
   },
   {
    "directive_id": "D-091",

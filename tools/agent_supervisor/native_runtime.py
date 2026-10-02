@@ -43,12 +43,14 @@ from __future__ import annotations
 
 import dataclasses
 import json
+import os
 import re
 import shutil
 import subprocess
 import uuid
 from collections.abc import Callable, Mapping, Sequence
 
+from . import process
 from .capability_probe import PROBE_TIMEOUT_S, classify_flags
 from .telemetry_redaction import redact_user_paths
 
@@ -94,6 +96,13 @@ def run_command(argv: Sequence[str], *, env: Mapping[str, str] | None = None,
     exe = shutil.which(argv[0])
     if exe is None:
         return CommandResult(STATUS_ABSENT, None, "", f"{argv[0]} not on PATH")
+    # Bare `claude --version/--help/<verb> --help` probes launch with env=None on
+    # Windows (byte unchanged). On Linux a probe with no explicit env carries the
+    # DISABLE_AUTOUPDATER belt (M0-T165 process.bare_probe_env; D-091 T1, runbook
+    # §13), which a child launched env=None cannot otherwise get on POSIX. An
+    # explicit env from the caller is honoured unchanged on both platforms.
+    if env is None and os.name == "posix":
+        env = process.bare_probe_env()
     try:
         # encoding is pinned: the CLI emits UTF-8 (e.g. the arrow in the
         # attach help), which crashes the default cp1252 reader thread on
