@@ -155,18 +155,49 @@ def test_item_2_is_a_p2_reminder_that_never_concludes_a_transfer():
     assert "sq ft" not in flag.detail and "transferred:" not in flag.detail
 
 
-# --- codes are not interpreted: the output ignores the recorded text ---------------------
+# --- codes are not interpreted: the recorded text is surfaced but never drives the output -
 
-def test_recorded_text_and_codes_do_not_change_the_output():
-    """"Codes not interpreted": a document typed DECL, MTGE or ZONE yields the same flags."""
-    base = zoning_lot_history_group(
-        BBL, recorded_documents=[record("ACRIS document A", text="doc_type DECL")])
-    other = zoning_lot_history_group(
-        BBL, recorded_documents=[record("ACRIS document A", text="doc_type MTGE zoning lot")])
-    assert base.to_dict() == other.to_dict()
-    # No recorded code leaks into a human category in any detail line.
-    for flag in base.flags:
-        lowered = flag.detail.lower()
+def _non_text(group: FlagGroup) -> dict:
+    """A deep copy of the group payload with the verbatim recorded text removed from every
+    evidence source, so what remains is every NON-text field. A JSON round-trip keeps the
+    live flag objects untouched (``to_dict`` shares the nested ``source`` mapping)."""
+    payload = json.loads(json.dumps(group.to_dict()))
+    for flag in payload["flags"]:
+        for ev in flag["evidence"]:
+            ev["source"].pop("text", None)
+    return payload
+
+
+def test_recorded_text_is_surfaced_verbatim_but_the_code_never_drives_the_output():
+    """"Codes not interpreted": DECL, MTGE and ZONE records yield identical flags in every
+    non-text field; only the verbatim recorded text differs, and it is surfaced unchanged in
+    each reminder's evidence. The recorded code never leaks into any other field."""
+    variants = {
+        "DECL": "doc_type DECL",
+        "MTGE": "doc_type MTGE zoning lot",
+        "ZONE": "doc_type ZONE zoning lot merger",
+    }
+    groups = {code: zoning_lot_history_group(
+        BBL, recorded_documents=[record("ACRIS document A", text=text)])
+        for code, text in variants.items()}
+
+    # Every non-text field (status, item_id, title, detail, typical_source, tax_lots, ...) is
+    # identical across the three codes: the recorded code changes nothing but the text.
+    scrubbed = [_non_text(group) for group in groups.values()]
+    assert scrubbed[0] == scrubbed[1] == scrubbed[2]
+
+    for code, text in variants.items():
+        group = groups[code]
+        # The verbatim recorded text is surfaced unchanged in every reminder's evidence.
+        for flag in group.flags:
+            if flag.status == STATUS_FLAG:
+                assert flag.evidence
+                assert all(ev["source"]["text"] == text for ev in flag.evidence)
+        # The recorded code / phrase appears ONLY inside the verbatim text field, nowhere else.
+        elsewhere = json.dumps(_non_text(group))
+        assert code not in elsewhere and "zoning lot merger" not in elsewhere
+        # No interpreted category word is invented from a code (these are not plan item names).
+        lowered = elsewhere.lower()
         assert "mortgage" not in lowered and "deed" not in lowered
 
 

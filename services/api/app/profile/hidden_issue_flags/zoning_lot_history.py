@@ -24,10 +24,12 @@ What it surfaces is only what the recorded sources already say, as a reminder:
   metadata already recorded by B-01/B-08 (and any other recorded instruments), in the same
   ``{document_ref, tax_lots, text, query_ref, retrieved_at}`` shape the multi-lot zoning-lot
   reminder uses (``app.spatial.multi_lot_site.zoning_lot``). These back items 1-3. The
-  ``text`` is shown verbatim and is **never read**: no ACRIS ``doc_type`` or other recorded
-  code is interpreted here, and no lot number is parsed from the text, so a reminder never
+  ``text`` is carried through verbatim in each reminder flag's ``evidence`` (so the reviewer
+  can read it at the source) and is **never read here**: no ACRIS ``doc_type`` or other
+  recorded code is interpreted, and no lot number is parsed from the text, so a reminder never
   decides that a document *is* a merger, a development-rights transfer or a declaration -
-  that is for the reviewer to confirm at the source.
+  that is for the reviewer to confirm at the source. The one-line detail lists only the
+  document references (plan section 5a); the verbatim text lives in the evidence.
 
 Item 4 (E-designations) has no Lane B source at all - E-designations come from the zoning
 map's E-designation list / ZR Appendix C and CEQR records, none connected, and ACRIS
@@ -70,8 +72,8 @@ _LIST_CAP = 6
 # The constant caution shared by every reminder: this group never verifies the zoning lot and
 # the recorded text is never read. Mirrors app.spatial.multi_lot_site.zoning_lot (B-07, P-2).
 _NOT_VERIFIED = (
-    "This does not verify the zoning lot: no source read here establishes it, and the "
-    "recorded text is shown as recorded, not read for lot numbers or document meaning."
+    "This does not verify the zoning lot: no source read here establishes it. The recorded "
+    "text is carried verbatim in the evidence, not read for lot numbers or document meaning."
 )
 
 
@@ -108,11 +110,14 @@ def _mentions(efa: ExistingFloorAreaResult | None) -> tuple[dict[str, object], .
 
 
 def _evidence(records: Sequence[Mapping[str, object]]) -> tuple[dict, ...]:
+    # The recorded ``text`` is carried through verbatim (as B-07's zoning_lot.py returns the
+    # full mentions): surfaced for the reviewer, never read, parsed or interpreted here.
     return tuple({
         "label": str(record["document_ref"]),
         "source": {"query_ref": record.get("query_ref"),
                    "retrieved_at": record.get("retrieved_at"),
-                   "tax_lots": list(record["tax_lots"])},
+                   "tax_lots": list(record["tax_lots"]),
+                   "text": record.get("text")},
     } for record in records)
 
 
