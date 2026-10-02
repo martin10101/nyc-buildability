@@ -214,3 +214,11 @@
   .architect-shell .workspace-window__description { padding: 8px 12px 0; }
   .architect-shell .workspace-window__content { padding: 12px 12px 30px; }
 }
+
+/* Plan §5a item 5 (review #299 round 3): two relative sizes the readable floor missed — the
+   headline metric's unit suffix (.46em of the 26px metric) and <small>-wrapped links (e.g. the
+   development-limits "Evidence" link). The headline number itself stays large. */
+.architect-shell .workspace-window__content .architect-metric > span,
+.architect-shell .workspace-window__content small {
+  font-size: 14px;
+}
