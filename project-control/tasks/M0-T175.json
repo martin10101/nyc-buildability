@@ -47,13 +47,13 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 50,
+  "progress_percent": 60,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T09:02:47.881331+00:00",
-  "updated_at": "2026-10-02T16:38:17.932861+00:00",
+  "updated_at": "2026-10-02T16:49:00.858280+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -82,6 +82,13 @@
       "percent": 50,
       "status": "in_progress",
       "message": "Checklist written (33e26662) and reworked (b055cf20: model-difference orchestrator check, Linux paths, start command); independent accuracy check next; owner steps + canary evidence pending"
+    },
+    {
+      "at": "2026-10-02T16:49:00.858149+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Checklist rework 2 (62cf8cae: citation nits + plain words); interim accuracy check PASS 0 blocking at 0f3a0228 saved; owner steps + canary evidence pending"
     }
   ]
 }
