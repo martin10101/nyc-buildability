@@ -388,6 +388,22 @@ test("the dashboard follows plan §5a: one strip, notices behind it, readable te
     await expect(limits.locator("dt", { hasText: new RegExp(`^${label}$`) }).locator("..").locator("dd").first()).toHaveText("Not confirmed");
   }
   await expect(limits.getByTestId("development-zoning-lot-remaining-capacity-reason")).toHaveText(REMAINING_REASON);
+  // D-03 slice 5 (plan §5a item 5): the brief itself reads at the 14 px floor — no small grey print
+  // on its face. Raw JSON dumps stay behind their disclosure (§5a item 4), so exclude .architect-raw;
+  // closed <details> content is not rendered, so it is naturally out of scope.
+  const brief = report.locator(".architect-report");
+  const smallBrief = await brief.evaluate(root => Array.from(root.querySelectorAll<HTMLElement>("*"))
+    .filter(element => !element.closest(".architect-raw, .maplibregl-ctrl-attrib") && element.getClientRects().length > 0
+      && Array.from(element.childNodes).some(node => node.nodeType === Node.TEXT_NODE && !!node.textContent?.trim())
+      && parseFloat(getComputedStyle(element).fontSize) < 14)
+    .map(element => `${element.tagName}.${element.className}: ${element.textContent?.trim().slice(0, 40)}`));
+  expect(smallBrief).toEqual([]);
+  // No internal codes on the results face (plan §5a item 5): the development-limits region's visible
+  // text carries no snake_case engine identifier; such codes stay behind the evidence disclosures,
+  // which innerText (reading only visible text) excludes.
+  expect(await limits.innerText()).not.toMatch(/\b[a-z0-9]+(?:_[a-z0-9]+)+\b/);
+  // The status strip is a dashboard-panel surface, not part of the brief — the brief never repeats it.
+  await expect(brief.getByTestId("dashboard-status-strip")).toHaveCount(0);
   await capture(page, info, "connected-report-tax-lot-only");
   await page.getByRole("button", { name: "Close Property report window" }).click();
 });

@@ -92,18 +92,18 @@
   line-height: 1.55;
 }
 /* Plan §5a item 5 (readable text, no small grey print): raise the legacy architect copy that
-   renders inside a floating tool window to a readable floor. Scoped to the window only, so the
-   set-aside multi-page screen (plan §3 #4) keeps its own styling. Raw technical dumps behind a
-   disclosure (.architect-raw pre) stay as they are — those are §5a item 4 "details", not body copy. */
+   renders inside a floating tool window to ONE readable 14 px floor. Scoped to the window only, so
+   the set-aside multi-page screen (plan §3 #4) keeps its own styling. Raw technical dumps behind a
+   disclosure (.architect-raw pre) stay as they are — those are §5a item 4 "details", not body copy.
+   D-03 slice 5 (PR #295 review N2): the former 13 px tier (eyebrow, status chip, failure meta,
+   condo tags, map labels) now shares the 14 px floor, so the windows and the dashboard panels read
+   at one floor — no small grey print below it. */
 .architect-shell .workspace-window__content .section-note,
 .architect-shell .workspace-window__content .architect-alert,
 .architect-shell .workspace-window__content .architect-definition-list dt,
 .architect-shell .workspace-window__content .architect-definition-list dd,
 .architect-shell .workspace-window__content .provenance-details,
-.architect-shell .workspace-window__content .architect-fact-metrics p { font-size: 14px; }
-.architect-shell .workspace-window__content .primary-button,
-.architect-shell .workspace-window__content .secondary-button,
-.architect-shell .workspace-window__content .architect-text-button { font-size: 14px !important; }
+.architect-shell .workspace-window__content .architect-fact-metrics p,
 .architect-shell .workspace-window__content .architect-eyebrow,
 .architect-shell .workspace-window__content .architect-status,
 .architect-shell .workspace-window__content .failure-meta,
@@ -112,7 +112,27 @@
 .architect-shell .workspace-window__content .architect-map-key,
 .architect-shell .workspace-window__content .architect-map-status,
 .architect-shell .workspace-window__content [data-testid="lot-outline-accuracy"],
-.architect-shell .workspace-window__content [data-testid="lot-outline-attribution"] { font-size: 13px; }
+.architect-shell .workspace-window__content [data-testid="lot-outline-attribution"] { font-size: 14px; }
+/* The .primary-button / .secondary-button base (architect.css) is NOT !important, so this more
+   specific selector wins the 14 px floor without !important (PR #295 review N3). Only
+   .architect-text-button's base IS declared !important there, so that one alone still needs
+   !important to win. */
+.architect-shell .workspace-window__content .primary-button,
+.architect-shell .workspace-window__content .secondary-button { font-size: 14px; }
+.architect-shell .workspace-window__content .architect-text-button { font-size: 14px !important; }
+/* D-03 slice 5 (plan §5a item 5): bring the Property report tool window and its print view to the
+   same 14 px floor. The brief's development-limits density copy, its contents nav and its print
+   controls were still small grey print. The print path keeps .workspace-window__content, so these
+   apply on paper too. Only the size is raised — every number, label and warning text is unchanged. */
+.architect-shell .workspace-window__content .architect-development-status,
+.architect-shell .workspace-window__content .architect-far-grid h3,
+.architect-shell .workspace-window__content .architect-far-grid a,
+.architect-shell .workspace-window__content .architect-draft-headline h2,
+.architect-shell .workspace-window__content .architect-bulk-rows > div,
+.architect-shell .workspace-window__content .architect-coverage-status,
+.architect-shell .workspace-window__content .architect-determination > summary,
+.architect-shell .workspace-window__content .architect-report-contents,
+.architect-shell .workspace-window__content .architect-print-controls label { font-size: 14px; }
 .architect-shell .workspace-window__resize {
   position: absolute;
   right: 0;

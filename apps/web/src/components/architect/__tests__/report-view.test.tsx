@@ -500,3 +500,31 @@ describe("M5-T045/M5-T052 — condo records reach the printed brief through the 
     expect(screen.queryByTestId("condo-substitution-record")).toBeNull();
   });
 });
+
+describe("D-03 slice 5 — the property brief is §5a-shaped (details on tap, codes behind a disclosure)", () => {
+  // The readable-text floor (plan §5a item 5) is CSS and cannot be asserted in jsdom; it is proven
+  // in CI by connected-dashboard.spec. Here we lock the structural §5a properties jsdom CAN prove:
+  // a plain-English contents nav, body sections collapsed by default (details on tap), and every
+  // raw JSON dump (internal codes) kept behind a closed disclosure — never on the brief face.
+  it("keeps the body behind collapsible sections and raw records behind a closed disclosure, with a plain contents nav", () => {
+    const profile = baseProfile();
+    const { container } = render(
+      <ReportView profile={profile} scenario={null} evaluation={wideStreetDoc(profile.identity.bbl)} label="Test property" />,
+    );
+    const contents = screen.getByRole("navigation", { name: "Property brief contents" });
+    expect(within(contents).getByRole("link", { name: "Facts" })).toBeInTheDocument();
+    expect(within(contents).getByRole("link", { name: "Calculations" })).toBeInTheDocument();
+    const sections = container.querySelectorAll<HTMLDetailsElement>(".architect-report-section");
+    expect(sections.length).toBeGreaterThanOrEqual(5);
+    sections.forEach(section => {
+      expect(section.tagName).toBe("DETAILS");
+      expect(section.open).toBe(false);
+    });
+    const raw = container.querySelectorAll<HTMLDetailsElement>(".architect-raw");
+    expect(raw.length).toBeGreaterThan(0);
+    raw.forEach(record => {
+      expect(record.tagName).toBe("DETAILS");
+      expect(record.open).toBe(false);
+    });
+  });
+});
