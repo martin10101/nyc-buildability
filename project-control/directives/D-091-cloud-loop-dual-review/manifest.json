@@ -10,7 +10,7 @@
  "issued_at": "2026-10-02",
  "captured_at": "2026-10-02T04:56:13+00:00",
  "created_at": "2026-10-02T04:56:13+00:00",
- "updated_at": "2026-10-02T20:48:54+00:00",
+ "updated_at": "2026-10-02T21:24:08+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "c81ba14d6609e5bc892a33090c9311390d5866e4",
  "capture_head_sha": null,
@@ -29,10 +29,11 @@
   "D-091-R005",
   "D-091-R006",
   "D-091-R007",
-  "D-091-R008"
+  "D-091-R008",
+  "D-091-R009"
  ],
- "requirements_id_digest_sha256": "65577c0bb3d9351bd9f6e806f36567077b76966a0e92b02e39bbf0b6af5683c1",
- "requirements_content_digest_sha256": "5b2833e572498d99c145e6360f2deba57efd9ae10e84af08ebb6c0c6fd5f1015",
+ "requirements_id_digest_sha256": "30029590036b56e20e0c3deeb15ad8186ab2acb0a69499f4c10aad49e51d5285",
+ "requirements_content_digest_sha256": "bec2b2ec800586de0dbcfb69f6f1daa5fb370684d7ba218ca495cbbae02aa1ba",
  "sources": [
   {
    "file": "source-001.md",
@@ -40,9 +41,19 @@
    "sequence": 1,
    "recorded_at": "2026-10-02T04:56:13+00:00",
    "content_digest_sha256": "efaf51b29b0853c024ec59f5f0e819624d4f662379367f24fffc297fb2ca0f1c"
+  },
+  {
+   "file": "source-002-amendment.md",
+   "kind": "amendment",
+   "sequence": 2,
+   "recorded_at": "2026-10-02T21:24:08+00:00",
+   "content_digest_sha256": "75e479ccf050bc1acea5e668505ea850a9e1d20e8fd57dfa0e9a2623d8485d07",
+   "amends": "source-001.md"
   }
  ],
- "amendments": [],
+ "amendments": [
+  "source-002-amendment.md"
+ ],
  "supersedes": [],
  "superseded_by": null,
  "affected_tasks": [
@@ -112,6 +123,12 @@
    "actor": "orchestrator",
    "action": "scope_binding",
    "note": "M0-T177 contracted (B-027, reproduced defect: the Linux loop cannot start a live worker; systemd control-group containment the gates can prove + the POSIX self-kill fix; R001, R007) and M0-T178 (DB-103: dual_review refuses equal combining and Claude reviewer models; R001, R007; depends on M0-T177). Task ids appended to applicability.task_ids and maps_to.tasks (requirement text unchanged); content digest resynced. A Linux recertification superseding M0-T174 follows both; the activation-PIN amendment is the owner's."
+  },
+  {
+   "at": "2026-10-02T21:24:08+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-002 (session 08a1e891 message 34: the owner approves amending the activation PIN so a proved systemd control group counts as containment) and requirement D-091-R009 (authorization, pending). Text extracted by script from the session transcript; nothing retyped. No existing row edited. Capture session: 08a1e891, claude-opus-5-5."
   }
  ]
 }
