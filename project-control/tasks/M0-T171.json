@@ -55,14 +55,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T09:02:44.484171+00:00",
-  "updated_at": "2026-10-02T10:14:57.015267+00:00",
+  "updated_at": "2026-10-02T10:38:04.583360+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -104,5 +104,7 @@
       "status": "in_progress",
       "message": "Producer reworks the test assertion for the Windows error path"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-02T10:38:04.583175+00:00"
 }

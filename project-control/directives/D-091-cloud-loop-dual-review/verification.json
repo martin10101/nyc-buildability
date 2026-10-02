@@ -243,24 +243,31 @@
         "D-091-R007"
       ],
       "producer": "backend-engineer",
-      "verifier": "",
+      "verifier": "directive-compliance-verifier",
       "schema_version": "directive_verification/v2",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
+      "reviewed_sha": "fd810a9dae9f44ba43f7fa96fa984467f4a2d6e1",
+      "reviewed_manifest_sha256": "f2d7412853a81f0103dee1c43aeb2ea08bb21465d29cd7f84831a40258da664c",
       "requirements": [
         {
           "id": "D-091-R001",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "review_slots.try_reserve runs count, run_budget.admit_review_or_combine and the reservation under one exclusive O_CREAT|O_EXCL lock, so two lanes can never both take the last of the 2 global slots nor exceed 1 per lane (closes M0-T170 note 1); dead or reused-pid owners reclaimed, an undetermined owner kept, malformed state and lock errors refuse with no slot",
+            "tools/test_agent_supervisor_review_slots.py 13 passed, reproduced by the DCV, including separate-process races (6 racers / 2 global slots -> exactly 2 win; 6 racers / 1 lane -> exactly 1); the lock-error test pins each platform's fail-closed code (POSIX slot_lock_timeout, Windows slot_lock_error); CI supervisor-bridge (windows-latest) green at the accept-seam head fd810a9d; not yet called by the loop (M0-T172 wires it)"
+          ],
+          "reviewed_sha": "fd810a9dae9f44ba43f7fa96fa984467f4a2d6e1"
         },
         {
           "id": "D-091-R007",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "gates G0, G2, G3, G4, G5 PASS at content identity f2d74128 after rework 1 (G3/G4 by an independent code-reviewer, G5 by an independent security-reviewer, both by delta attestation; producer != reviewers); a premature acceptance at d6c47fd2 was reverted before merge when CI windows-latest failed",
+            "no loop started or commissioned; recertification is M0-T174"
+          ],
+          "reviewed_sha": "fd810a9dae9f44ba43f7fa96fa984467f4a2d6e1"
         }
-      ]
+      ],
+      "restamp_note": "DCV reviewed 88aed799f62697005de79de3fd582d4818373fac (project-control/reports/M0-T171-DCV-delta.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (f2d74128); intervening commits are the saved DCV report, a base merge of disjoint peer work, and state.json resolved by meaning. The DCV's added condition 4 holds: CI supervisor-bridge (windows-latest) is green at the accept-seam head fd810a9d."
     },
     {
       "directive_id": "D-091",
