@@ -41,6 +41,7 @@ from app.api.v1.scenario import router as scenario_v1_router
 from app.api.v1.scenario_analysis import router as scenario_analysis_v1_router
 from app.api.v1.site_definition import router as site_definition_v1_router
 from app.api.v1.site_definition import site_definition_write_enabled
+from app.api.v1.study_read import router as study_read_v1_router
 
 API_VERSION = "0.1.0"
 
@@ -217,6 +218,18 @@ def create_app() -> FastAPI:
     # app.api.v1.site_definition.
     if site_definition_write_enabled():
         application.include_router(site_definition_v1_router)
+    # Internal, feature-flag-gated STUDY-READ endpoint (lane C, request D-1 slice 1). SAME
+    # posture as the condo-records / rule-evaluation reads above - ALWAYS registered but
+    # unreachable (generic 404, no OpenAPI entry) unless the NEW default-off
+    # INTERNAL_STUDY_READ_ENABLED flag is an explicit true token (a DISTINCT flag so this
+    # surface is enabled independently); absent/unknown -> disabled (fail safe). It returns the
+    # lot-choice + site-facts SETUP half of a study (study.schema.json property/lots/
+    # lot_selection/site) for one confirmed BBL: lots and lot_selection come verbatim from
+    # B-07's study adapters, site.facts from B-02/B-03, through an injected provider so tests
+    # run offline. It computes NO allowance, capacity or rule output and invents no option. The
+    # lot choice is Lane B behaviour, produced only when LANE_B_ENABLED is also on, so
+    # production (neither flag set) keeps the route a 404. See app.api.v1.study_read.
+    application.include_router(study_read_v1_router)
     # Read-only build-info record (queue C-02, plan M1-02). Ungated like health: it returns
     # only the deployed commit SHA, API_VERSION and a fixed allowlist of flags as booleans,
     # and reads no other env var. See app.api.v1.build_info.

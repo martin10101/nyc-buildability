@@ -18,9 +18,11 @@ from collections.abc import Mapping
 __all__ = [
     "INTERNAL_RULE_EVAL_ENABLED_ENV_VAR",
     "INTERNAL_SCENARIO_ENABLED_ENV_VAR",
+    "INTERNAL_STUDY_READ_ENABLED_ENV_VAR",
     "LANE_FLAG_ENV_VARS",
     "internal_rule_eval_enabled",
     "internal_scenario_enabled",
+    "internal_study_read_enabled",
     "lane_enabled",
 ]
 
@@ -34,6 +36,17 @@ INTERNAL_RULE_EVAL_ENABLED_ENV_VAR = "INTERNAL_RULE_EVAL_ENABLED"
 # rule-evaluation flag; a distinct name so the two internal endpoints are
 # enabled independently.
 INTERNAL_SCENARIO_ENABLED_ENV_VAR = "INTERNAL_SCENARIO_ENABLED"
+
+# Env var gating the internal GET /properties/{bbl}/study endpoint (lane C,
+# request D-1 slice 1). This read-only route returns the lot-choice + site-facts
+# setup half of a study (study.schema.json property/lots/lot_selection/site) for
+# one BBL. A DISTINCT name so this surface is enabled independently of the
+# rule-evaluation / scenario reads; same fail-safe posture as every flag here
+# (absent/empty/unknown -> disabled). It gates REACHABILITY only: even when on,
+# the lot choice is Lane B behaviour and is computed only when LANE_B_ENABLED is
+# also on (see app.api.v1.study_inputs), so production (neither flag set) keeps
+# the route a generic 404.
+INTERNAL_STUDY_READ_ENABLED_ENV_VAR = "INTERNAL_STUDY_READ_ENABLED"
 
 # One flag per parallel-build lane (task M0-T164, D-090; docs/lanes/PARALLEL_BUILD_PLAN.md §7).
 # New lane behavior ships behind its lane's flag; production never sets these until the owner
@@ -73,6 +86,15 @@ def internal_scenario_enabled(env: Mapping[str, str] | None = None) -> bool:
     (fail safe), so the route is unreachable unless explicitly turned on.
     """
     return _flag_enabled(INTERNAL_SCENARIO_ENABLED_ENV_VAR, env)
+
+
+def internal_study_read_enabled(env: Mapping[str, str] | None = None) -> bool:
+    """Whether the internal study-read endpoint is enabled (lane C, request D-1).
+
+    Returns True ONLY for an explicit true token; absent/empty/unknown -> False
+    (fail safe), so the route is a generic 404 unless explicitly turned on.
+    """
+    return _flag_enabled(INTERNAL_STUDY_READ_ENABLED_ENV_VAR, env)
 
 
 def lane_enabled(lane: str, env: Mapping[str, str] | None = None) -> bool:
