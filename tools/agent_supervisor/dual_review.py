@@ -20,7 +20,9 @@ from a model):
   controller allowlist BEFORE a slot is taken or any reviewer runs. An unset
   combining model refuses (D-091-R008: the combining model is the owner's choice with
   NO default — this module never picks or defaults one). An un-allowlisted model
-  refuses. A packet not pinned to a full 40-char frozen head refuses.
+  refuses. The combining model MUST differ from the Claude reviewer model (DB-103 /
+  D-091-R001,R007): two equal models, or either model empty, refuse before any
+  process. A packet not pinned to a full 40-char frozen head refuses.
 * **One atomic slot (D-091 TW1 / M0-T171).** The whole dual review holds ONE
   review-or-combine slot reserved through `ReviewSlots`, so the per-lane cap (1) and
   the global cap (2) are honoured atomically and a third concurrent review can never
@@ -258,7 +260,43 @@ class DualReviewConductor:
         claude_refusal = self._check_claude_reviewer_model()
         if claude_refusal is not None:
             return claude_refusal
+        distinct_refusal = self._check_combiner_distinct_from_claude()
+        if distinct_refusal is not None:
+            return distinct_refusal
         return self._check_codex_reviewer_model()
+
+    def _check_combiner_distinct_from_claude(self) -> "ReviewOutcome | None":
+        """DB-103 (D-091-R001/R007): the combining model MUST differ from the Claude
+        reviewer model. The read-only commissioning tomllib check (D091 step 5) is
+        now enforced IN CODE here — before any slot is reserved or any process starts.
+        Two equal models, or either model empty, refuses fail-closed; two different,
+        allowlisted models proceed exactly as before.
+
+        An empty combining model is also caught earlier (`combiner_model_unset`) and an
+        empty Claude reviewer model earlier still (`claude_reviewer_model_unset`); the
+        empty branch here is the explicit DB-103 "either empty" guard, kept fail-closed.
+        A reviewer that does not expose its model (`None`) defers to its own review-time
+        guard, mirroring `_check_claude_reviewer_model` — there is nothing to compare.
+        """
+        reviewer_model = getattr(self._claude_reviewer, "model", None)
+        if reviewer_model is None:
+            return None
+        combiner_model = str(getattr(self._combiner.config, "model", "") or "")
+        reviewer_model = str(reviewer_model or "")
+        if not combiner_model or not reviewer_model:
+            return self._refuse(
+                "review_models_unset",
+                "the combining model and the Claude reviewer model must both be set "
+                "so the conductor can prove them distinct; an empty model refuses "
+                "before any process (DB-103 / D-091-R001,R007; fail closed)")
+        if combiner_model == reviewer_model:
+            return self._refuse(
+                "review_models_not_distinct",
+                f"the combining model and the Claude reviewer model are both "
+                f"{combiner_model!r}; D-091 requires each independent review be combined "
+                f"by a DIFFERENT model (DB-103 / D-091-R001,R007); refusing before any "
+                f"process (fail closed)")
+        return None
 
     def _check_claude_reviewer_model(self) -> "ReviewOutcome | None":
         model = getattr(self._claude_reviewer, "model", None)

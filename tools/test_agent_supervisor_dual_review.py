@@ -575,6 +575,74 @@ class Scenario6DisputesSurfacedNoGate(ConductorBase):
                          "the loop never records a gate (ADR-005)")
 
 
+# --------------------------------------------------------------------------
+# Scenario 7 (DB-103 / D-091-R001,R007) — the combining model MUST differ from the
+# Claude reviewer model: equal models, or either empty, are refused before any
+# process (no slot reserved); two different allowlisted models proceed unchanged.
+# --------------------------------------------------------------------------
+
+
+class Scenario7CombinerDiffersFromClaudeReviewer(ConductorBase):
+    def _assert_refused_before_process(self, conductor, codex, claude, runner,
+                                       expect_code):
+        result = conductor.review(_packet())
+        self.assertFalse(result.ok)
+        self.assertEqual(result.error_code, expect_code)
+        # NAIVE-IMPL CATCH: a conductor that combined equal models anyway would have
+        # called a reviewer or the combining model. `assertEqual(..., 0)` fails it.
+        self.assertEqual(codex.calls, 0, "no Codex review may start on a refusal")
+        self.assertEqual(claude.calls, 0, "no Claude review may start on a refusal")
+        self.assertEqual(runner.calls, 0, "no combining model may start")
+        # And no slot was reserved (the refusal is before `_acquire_slot`).
+        self.assertEqual(len(self.slots().active()), 0,
+                         "no review-or-combine slot may be reserved on a refusal")
+
+    def test_equal_combiner_and_claude_models_refused_before_any_process(self) -> None:
+        # Both models are 'claude-r' (both ON the claude allowlist, so neither the
+        # combiner nor the reviewer allowlist check fires first): the distinctness
+        # guard is what refuses — before any slot or process.
+        codex = FakeCodexReviewer()
+        claude = FakeClaudeReviewer(model="claude-r")
+        runner = FakeModelRunner()
+        conductor = self.conductor(
+            codex, claude, combiner=self.combiner(model="claude-r", runner=runner))
+        self._assert_refused_before_process(conductor, codex, claude, runner,
+                                            "review_models_not_distinct")
+
+    def test_empty_combining_model_refused_before_any_process(self) -> None:
+        # DB-103 'either empty' — combiner side (caught at `combiner_model_unset`).
+        codex, claude = FakeCodexReviewer(), FakeClaudeReviewer()
+        runner = FakeModelRunner()
+        conductor = self.conductor(
+            codex, claude, combiner=self.combiner(model="", runner=runner))
+        self._assert_refused_before_process(conductor, codex, claude, runner,
+                                            "combiner_model_unset")
+
+    def test_empty_claude_reviewer_model_refused_before_any_process(self) -> None:
+        # DB-103 'either empty' — reviewer side (caught at `claude_reviewer_model_unset`).
+        codex = FakeCodexReviewer()
+        claude = FakeClaudeReviewer(model="")
+        runner = FakeModelRunner()
+        conductor = self.conductor(codex, claude, combiner=self.combiner(runner=runner))
+        self._assert_refused_before_process(conductor, codex, claude, runner,
+                                            "claude_reviewer_model_unset")
+
+    def test_different_allowlisted_models_proceed_unchanged(self) -> None:
+        # combiner 'claude-c' != reviewer 'claude-r', both on the claude allowlist:
+        # the distinctness guard lets them through and both reviews run as before.
+        codex = FakeCodexReviewer(outcome(decision(decision="CONTINUE")))
+        claude = FakeClaudeReviewer(outcome(decision(decision="CONTINUE")),
+                                    model="claude-r")
+        runner = FakeModelRunner()
+        result = self.conductor(
+            codex, claude, combiner=self.combiner(runner=runner)).review(_packet())
+        self.assertTrue(result.ok)
+        self.assertEqual((codex.calls, claude.calls), (1, 1),
+                         "different allowlisted models proceed: both reviews run")
+        self.assertEqual(result.combined_review.verdict, PASS)
+        self.assertEqual(result.decision.decision, "CONTINUE")
+
+
 class _HeadCollector:
     """A minimal evidence collector that yields a git section with a frozen head
     (and an optional diff) so the loop's real packet carries a 40-char head."""
