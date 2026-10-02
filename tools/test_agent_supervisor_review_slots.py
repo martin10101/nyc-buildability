@@ -18,18 +18,22 @@ on POSIX and Windows. No live provider calls anywhere.
 """
 from __future__ import annotations
 
+import errno
 import json
+import os
 import pathlib
 import subprocess
 import sys
 import tempfile
 import time
 import unittest
+from unittest import mock
 
 HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parent
 sys.path.insert(0, str(REPO))
 
+from tools.agent_supervisor import review_slots  # noqa: E402
 from tools.agent_supervisor.review_slots import (  # noqa: E402
     Reservation,
     ReviewSlots,
@@ -230,26 +234,24 @@ class FailureAndReclaimTests(unittest.TestCase):
         self.assertEqual(grant.reason_code, "slot_state_unreadable")
 
     def test_lock_error_fails_closed(self) -> None:
-        import os
         slots = ReviewSlots(self.dir, global_limit=2, lane_limit=1, lock_timeout_s=0.2,
                             lock_poll_s=0.01)
-        # A directory at the lock path cannot be O_EXCL-created and cannot be read
-        # as a holder, so no slot can be invented. The two OS families surface the
-        # same fail-closed refusal by different paths, and each is pinned here:
-        #   * POSIX: os.open(O_CREAT|O_EXCL) on a directory raises FileExistsError,
-        #     the lock waits for a holder that never clears, and the wait times out
-        #     -> slot_lock_timeout.
-        #   * Windows (nt): the same call raises PermissionError, which refuses at
-        #     once rather than waiting -> slot_lock_error.
+        # A directory at the lock path can never be O_EXCL-created and can never be
+        # read as a holder, so no slot can be invented -- it only ever fails closed.
+        # After M0-T176 both OS families land on the SAME refusal code by different
+        # internal paths, so one assertion pins both platforms:
+        #   * POSIX: os.open(O_CREAT|O_EXCL) on a directory raises FileExistsError;
+        #     the holder read of the directory fails, so it is never "stale", and the
+        #     wait runs to the deadline -> slot_lock_timeout.
+        #   * Windows (nt): the same call raises PermissionError; the delete-pending
+        #     busy-wait treats it as busy (never a takeover) and also runs to the
+        #     deadline -> slot_lock_timeout (was slot_lock_error before M0-T176).
         slots.lock_path.parent.mkdir(parents=True, exist_ok=True)
         slots.lock_path.mkdir()
         grant = slots.try_reserve("lane-a")
         self.assertFalse(grant.admitted)
         self.assertIsNone(grant.reservation)
-        if os.name == "nt":
-            self.assertEqual(grant.reason_code, "slot_lock_error")
-        else:
-            self.assertEqual(grant.reason_code, "slot_lock_timeout")
+        self.assertEqual(grant.reason_code, "slot_lock_timeout")
 
     def test_reused_pid_reservation_is_reclaimed(self) -> None:
         # Same (live) pid but a start-token that does not match this process ->
@@ -308,6 +310,113 @@ class FailureAndReclaimTests(unittest.TestCase):
         grant = slots.try_reserve("x")
         self.assertTrue(grant.admitted)  # reclaimed the dead slot
         self.assertEqual(len(slots.active()), 1)  # never two
+
+
+class WindowsSharingViolationTests(unittest.TestCase):
+    """WINDOWS DELETE-PENDING: a sharing-violation PermissionError on the lock
+    create is a transient 'busy', not a terminal refusal (M0-T176).
+
+    On windows-latest, ``os.open(O_CREAT|O_EXCL)`` can raise ``PermissionError``
+    (ERROR_ACCESS_DENIED) while a just-released lock file is delete-pending because a
+    racer still has it open for a short liveness read. ``acquire`` must wait through
+    that to the deadline exactly like ``FileExistsError`` and refuse only at the
+    timeout (``slot_lock_timeout``) -- never a one-shot ``slot_lock_error`` and never
+    an over-admission. POSIX never produces this for ``O_EXCL``, so a PermissionError
+    there stays a genuine fault that refuses at once. Every case is injected
+    deterministically on BOTH hosts by patching ``review_slots._is_windows`` (the
+    platform seam) and ``os.open`` -- no real Windows-only syscall is ever made, so
+    these run identically everywhere. (``_is_windows`` is patched, not the global
+    ``os.name``: setting ``os.name='nt'`` would make ``pathlib`` build ``WindowsPath``
+    and raise on POSIX, so the seam isolates just the platform read.)
+    """
+
+    def setUp(self) -> None:
+        self.dir = _temp_runtime(self)
+
+    @staticmethod
+    def _failing_open(error: OSError, *, fail_times: int):
+        """A stand-in for ``os.open`` that raises ``error`` on the first
+        ``fail_times`` lock creates, then delegates to the real ``os.open``.
+
+        Returns ``(fake_open, state)``; ``state['calls']`` counts invocations so a
+        test can prove it retried (waited) or refused one-shot. A huge ``fail_times``
+        models a fault that never clears.
+        """
+        real_open = os.open
+        state = {"calls": 0}
+
+        def fake_open(path, flags, *args, **kwargs):  # type: ignore[no-untyped-def]
+            state["calls"] += 1
+            if state["calls"] <= fail_times:
+                raise error
+            return real_open(path, flags, *args, **kwargs)
+
+        return fake_open, state
+
+    def test_transient_permission_error_waits_then_succeeds_as_nt(self) -> None:
+        # Fail the O_EXCL create twice with a Windows delete-pending PermissionError,
+        # then let it succeed: the reservation WAITS and is then granted (no refusal).
+        fake_open, state = self._failing_open(
+            PermissionError(errno.EACCES, "delete pending"), fail_times=2)
+        slots = ReviewSlots(self.dir, global_limit=2, lane_limit=1,
+                            lock_timeout_s=5.0, lock_poll_s=0.001)
+        with mock.patch.object(review_slots, "_is_windows", lambda: True), \
+                mock.patch.object(review_slots.os, "open", fake_open):
+            grant = slots.try_reserve("lane-a")
+        self.assertTrue(grant.admitted)
+        self.assertIsNotNone(grant.reservation)
+        self.assertEqual(state["calls"], 3)  # 2 busy retries + 1 success
+        self.assertEqual(len(slots.active()), 1)  # exactly one slot, never lost
+
+    def test_persistent_permission_error_times_out_as_nt(self) -> None:
+        # A delete-pending PermissionError that never clears must refuse at the
+        # deadline with slot_lock_timeout -- admitted False, no reservation.
+        fake_open, state = self._failing_open(
+            PermissionError(errno.EACCES, "delete pending"), fail_times=10 ** 9)
+        slots = ReviewSlots(self.dir, global_limit=2, lane_limit=1,
+                            lock_timeout_s=0.2, lock_poll_s=0.01)
+        with mock.patch.object(review_slots, "_is_windows", lambda: True), \
+                mock.patch.object(review_slots.os, "open", fake_open):
+            grant = slots.try_reserve("lane-a")
+        self.assertFalse(grant.admitted)
+        self.assertEqual(grant.reason_code, "slot_lock_timeout")
+        self.assertIsNone(grant.reservation)
+        self.assertGreater(state["calls"], 1)  # it retried; not a one-shot refusal
+
+    def test_non_sharing_oserror_fails_closed_immediately(self) -> None:
+        # An OSError that is NOT a sharing violation (EIO) is a real fault: refuse at
+        # once with slot_lock_error on BOTH platforms -- no wait, no timeout.
+        self.assertNotIsInstance(  # pin that EIO is a plain OSError, not a subclass
+            OSError(errno.EIO, "x"), (PermissionError, FileExistsError))
+        for on_windows in (False, True):
+            with self.subTest(os_name="nt" if on_windows else "posix"):
+                slots = ReviewSlots(_temp_runtime(self), global_limit=2, lane_limit=1,
+                                    lock_timeout_s=5.0, lock_poll_s=0.01)
+                fake_open, state = self._failing_open(
+                    OSError(errno.EIO, "simulated I/O error"), fail_times=10 ** 9)
+                with mock.patch.object(review_slots, "_is_windows",
+                                       lambda ow=on_windows: ow), \
+                        mock.patch.object(review_slots.os, "open", fake_open):
+                    grant = slots.try_reserve("lane-a")
+                self.assertFalse(grant.admitted)
+                self.assertEqual(grant.reason_code, "slot_lock_error")
+                self.assertIsNone(grant.reservation)
+                self.assertEqual(state["calls"], 1)  # immediate, no retry/wait
+
+    def test_permission_error_on_posix_fails_closed_immediately(self) -> None:
+        # POSIX O_EXCL never yields a delete-pending PermissionError; a real one is a
+        # genuine permission fault, so POSIX still refuses at once (unchanged).
+        fake_open, state = self._failing_open(
+            PermissionError(errno.EACCES, "real permission fault"), fail_times=10 ** 9)
+        slots = ReviewSlots(_temp_runtime(self), global_limit=2, lane_limit=1,
+                            lock_timeout_s=5.0, lock_poll_s=0.01)
+        with mock.patch.object(review_slots, "_is_windows", lambda: False), \
+                mock.patch.object(review_slots.os, "open", fake_open):
+            grant = slots.try_reserve("lane-a")
+        self.assertFalse(grant.admitted)
+        self.assertEqual(grant.reason_code, "slot_lock_error")
+        self.assertIsNone(grant.reservation)
+        self.assertEqual(state["calls"], 1)  # no wait on POSIX
 
 
 if __name__ == "__main__":  # pragma: no cover
