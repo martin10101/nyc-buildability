@@ -191,24 +191,32 @@
     "D-091-R007"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "a1c1629acb790cf3dbae3b35c53772f035d097c7",
+   "reviewed_manifest_sha256": "448bb55e554e341b9164a32f5f5e3560c56f0f970680005b0085e2b6f504ec35",
    "requirements": [
     {
      "id": "D-091-R001",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "resource_sampling.resolve_memory_ceiling_bytes = min(configured, floor(0.70 * MemTotal)) from /proc/meminfo (5828854169 B on this server, reproduced by the DCV; owner rule D-090-R076); pause at or above, fail closed when meminfo is unreadable; bridged to the unchanged loop gate and breaker",
+      "run_budget.admit_review_or_combine: per-lane 1 then global 2; a third refused; bad counts fail closed; config.py two Limits fields; PC defaults unchanged",
+      "tools/test_agent_supervisor_resource_fit.py 23 passed (reviewed d27e0ddf)"
+     ],
+     "reviewed_sha": "a1c1629acb790cf3dbae3b35c53772f035d097c7"
     },
     {
      "id": "D-091-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "gates G0, G2, G3, G4 PASS at content identity 448bb55e (G3/G4 by an independent ci-evidence-verifier; producer != reviewers)",
+      "no loop started or commissioned; runtime wiring and recertification are later D-091 tasks"
+     ],
+     "reviewed_sha": "a1c1629acb790cf3dbae3b35c53772f035d097c7"
     }
-   ]
+   ],
+   "restamp_note": "DCV reviewed d27e0ddfd2c42d3d57b296bb59a2d05073fffc96 (project-control/reports/M0-T170-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (448bb55e); intervening commits are a base merge of disjoint peer work and ledger records."
   }
  ]
 }

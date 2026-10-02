@@ -105,6 +105,20 @@ max_external_writes_per_day = 200
 # Resource gauges. CPU is a whole-percent ceiling (a busy multi-core box can
 # exceed 100, so this is an owner policy ceiling, not a hardware fact); memory
 # is a resident-bytes ceiling. Both trip at or above the ceiling.
+#
+# PC vs Linux cloud (D-091 T7, docs/D091_CLOUD_LOOP_DESIGN.md §5). The values
+# below are the one-PC values and are NOT changed by the cloud move. On the
+# shared 4-CPU / 8-GiB Linux box running 5 loop lanes:
+#   * max_memory_bytes stays 8 GiB here, but the EFFECTIVE memory pause ceiling
+#     on Linux is DERIVED at launch from the measured physical total, never
+#     hard-coded: resource_sampling.resolve_memory_ceiling_bytes() caps it at
+#     70% of /proc/meminfo MemTotal (~5.6 GiB on an 8-GiB box; owner rule
+#     D-090-R076). Leaving this at 8 GiB therefore still pauses at ~5.6 GiB on
+#     Linux; a smaller value here would only tighten it further.
+#   * max_cpu_percent stays the 90% policy ceiling. CPU is not stdlib-measurable
+#     (no psutil), so it stays fail-closed-on-outage, not silently OK.
+#   * max_processes = 24 remains an adequate whole-box ceiling for 5 workers
+#     plus at most 2 review/combine processes.
 max_cpu_percent = 90
 max_memory_bytes = 8589934592
 max_processes = 24
@@ -113,6 +127,15 @@ max_consecutive_no_progress = 3
 max_consecutive_hard_denies = 3
 max_codex_reviews_per_checkpoint = 3
 max_consecutive_revision_loops = 4
+# Cross-lane concurrency admission for the 5-lane cloud loop (D-091 T7, §5).
+# Fail-closed ADMISSION caps (run_budget.admit_review_or_combine), not sampled
+# gauges. The global cap stops all five lanes spiking Codex-review /
+# Claude-review / combiner work at once and OOMing the shared box; the per-lane
+# cap keeps one lane from taking both global slots. Harmless on the single-lane
+# PC. When memory still approaches 70%, the operator drops 5 lanes to 4
+# (owner rule D-090-R076).
+max_concurrent_reviews_or_combines = 2
+max_concurrent_reviews_or_combines_per_lane = 1
 # Fraction of a hard limit at which a NOTIFY warning is emitted.
 warn_ratio = 0.75
 
