@@ -10,7 +10,7 @@ import {
   sourceLines,
 } from "../lot-site-setup";
 import { LOT_SELECTION_STATEMENT, MEASUREMENT_LABELS, type SiteFact, type Source, type Study } from "@/lib/study/study-vocabulary";
-import { CROSS_BLOCK_REASON, twoLotCrossBlockStudy } from "@/components/architect/__tests__/lot-site-fixtures";
+import { CROSS_BLOCK_REASON, twoLotCrossBlockStudy, twoLotOfferedStudy } from "@/components/architect/__tests__/lot-site-fixtures";
 
 const factById = (id: string): SiteFact =>
   twoLotCrossBlockStudy.site.facts.find((fact) => fact.fact_id === id)!;
@@ -81,11 +81,17 @@ describe("combinationView — the refusal comes from B-07, never recomputed here
     expect(view.detail).toBe(CROSS_BLOCK_REASON);
   });
 
-  it("states a combined site without claiming verification", () => {
-    const view = combinationView(withCombination("offered", null));
+  it("states the offered selection as a neutral fact, with no adjacency or verification claim", () => {
+    const view = combinationView(twoLotOfferedStudy);
     expect(view.refused).toBe(false);
-    expect(view.heading).toBe("Shown as one site");
-    expect(view.detail).toContain("on one block and touch");
+    expect(view.heading).toBe("Lots shown together");
+    expect(view.detail).toBe("These are the lots you selected.");
+    // B-07 gives no reason for an offered combination, so the app must not author an
+    // adjacency ("touch", "one block") or verification conclusion in its own voice.
+    const text = `${view.heading} ${view.detail}`.toLowerCase();
+    expect(text).not.toContain("touch");
+    expect(text).not.toContain("one block");
+    expect(text).not.toContain("verif");
   });
 
   it("names one lot with no combination", () => {

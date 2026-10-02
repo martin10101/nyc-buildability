@@ -157,19 +157,21 @@ export function lotRows(study: Study): LotRow[] {
   }));
 }
 
-/** Whether the selected lots were combined, straight from B-07's recorded result (never recomputed). */
+/**
+ * Whether the selected lots were combined, straight from B-07's recorded result (never
+ * recomputed). B-07 supplies a `reason` ONLY when the combination is not offered; for an offered
+ * or single-lot combination the reason is null. This function therefore makes no geometry,
+ * adjacency ("one block", "touch") or verification claim of its own for those cases — it states
+ * only what the architect selected. The pinned zoning-lot statement (`lotChoiceView.statement`)
+ * carries the "the app does not verify the zoning lot" caveat.
+ */
 export function combinationView(study: Study): CombinationView {
   const { status, reason } = study.lot_selection.combination;
   if (status === "not_offered") {
     return { status, heading: "These lots were not combined", detail: reason, refused: true };
   }
   if (status === "offered") {
-    return {
-      status,
-      heading: "Shown as one site",
-      detail: "The selected lots are on one block and touch, so the app shows them together.",
-      refused: false,
-    };
+    return { status, heading: "Lots shown together", detail: "These are the lots you selected.", refused: false };
   }
   return { status, heading: "One lot", detail: null, refused: false };
 }

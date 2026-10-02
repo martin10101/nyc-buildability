@@ -20,9 +20,15 @@
 import { LOT_SELECTION_STATEMENT, MEASUREMENT_LABELS, type Study } from "@/lib/study/study-vocabulary";
 
 export const LOT_A = "3001230001"; // borough 3, block 123, lot 1
+export const LOT_A2 = "3001230002"; // borough 3, block 123, lot 2 (same block as LOT_A)
 export const LOT_B = "3004560070"; // borough 3, block 456, lot 70
 
-/** B-07 cross-block refusal, verbatim from combination.py `_blocks_reason` for LOT_A + LOT_B. */
+/**
+ * B-07 cross-block refusal, COPIED VERBATIM from
+ * services/api/app/spatial/multi_lot_site/combination.py `_blocks_reason` for LOT_A + LOT_B.
+ * If that function's wording ever changes, this string (and the test asserting it) must change
+ * with it — the web shows B-07's reason, it never re-derives one.
+ */
 export const CROSS_BLOCK_REASON =
   "Lots can be combined only if they are on one block. The selection is on block 123 (lot 1) and block 456 (lot 70).";
 
@@ -143,4 +149,23 @@ export const twoLotCrossBlockStudy: Study = {
   selected_option_id: "opt-a",
   revision: { number: 1, created_at: "2026-09-30T12:00:00Z", parent: null },
   origin: { kind: "new", export_id: null },
+};
+
+/**
+ * Two tax lots whose combination B-07 OFFERS (status "offered", reason null — B-07 gives no
+ * reason when a combination is offered). The panel must state only the selection, never an
+ * adjacency or verification conclusion.
+ */
+export const twoLotOfferedStudy: Study = {
+  ...twoLotCrossBlockStudy,
+  study_id: "test-fixture-synthetic-study-d04-offered",
+  lots: [
+    { bbl: LOT_A, approximate_lot_area_sq_ft: 4000, size_measurement: TAX_MAP, selected: true },
+    { bbl: LOT_A2, approximate_lot_area_sq_ft: 3000, size_measurement: TAX_MAP, selected: true },
+  ],
+  lot_selection: {
+    mode: "all",
+    statement: LOT_SELECTION_STATEMENT,
+    combination: { status: "offered", reason: null },
+  },
 };

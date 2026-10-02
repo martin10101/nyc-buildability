@@ -6,7 +6,7 @@ import { createStudyStore } from "@/lib/study/study-store";
 import { StudyStoreProvider } from "@/lib/study/use-study";
 import { LOT_SELECTION_STATEMENT, MEASUREMENT_LABELS, type Study } from "@/lib/study/study-vocabulary";
 import { LotSiteSetup } from "../LotSiteSetup";
-import { CROSS_BLOCK_REASON, twoLotCrossBlockStudy } from "./lot-site-fixtures";
+import { CROSS_BLOCK_REASON, twoLotCrossBlockStudy, twoLotOfferedStudy } from "./lot-site-fixtures";
 
 afterEach(cleanup);
 
@@ -16,6 +16,22 @@ describe("LotSiteSetup — lot choice + site facts with source labels (D-04, pla
   it("builds against contract-valid studies", () => {
     expect(validateStudyDocument(cornerLotStudy).ok).toBe(true);
     expect(validateStudyDocument(twoLotCrossBlockStudy).ok).toBe(true);
+    expect(validateStudyDocument(twoLotOfferedStudy).ok).toBe(true);
+  });
+
+  it("states an offered combination as the architect's selection, with no adjacency or verification claim", () => {
+    render(<LotSiteSetup bbl="3001230001" study={twoLotOfferedStudy} />);
+    const combination = screen.getByTestId("lot-combination");
+    expect(combination).toHaveTextContent("Lots shown together");
+    expect(combination).toHaveTextContent("These are the lots you selected.");
+    expect(screen.queryByTestId("lot-combination-refusal")).toBeNull();
+    // The app must not assert that the lots touch, share one block, or are verified.
+    const text = (combination.textContent ?? "").toLowerCase();
+    expect(text).not.toContain("touch");
+    expect(text).not.toContain("one block");
+    expect(text).not.toContain("verif");
+    // The pinned zoning-lot statement still carries the caveat.
+    expect(screen.getByTestId("lot-site-statement")).toHaveTextContent(LOT_SELECTION_STATEMENT);
   });
 
   it("shows one lot with its source, every site fact with its source, and no refusal (Pilot A)", () => {
