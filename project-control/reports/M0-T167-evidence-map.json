@@ -1,0 +1,15 @@
+{
+  "task_id": "M0-T167",
+  "material_commit": "c557056e (producer commit in worktree w-M0-T167; 4 files under tools/codex_cli/)",
+  "produced_at": "2026-10-02T06:00:00+00:00",
+  "producer": "cloud-architect (orchestrator-dispatched subagent; worktree /root/project/w-M0-T167)",
+  "requirements": {
+    "D-091-R005": [
+      "@openai/codex pinned exactly at 0.157.0 in tools/codex_cli/package.json and package-lock.json: the newest stable version at least 604800 s old at admission (615752 s); 0.157.1 (534500 s) refused. The repo's own release-age gate (apps/web/scripts/dependency_age_gate.mjs) PASS on all 7 packages with registry integrity matched; npm audit 0 at every severity; no lifecycle scripts; installed with npm ci --ignore-scripts into tools/codex_cli/node_modules only (git-ignored). G5 provenance record in tools/codex_cli/README.md.",
+      "Disclosed gaps: no CI job re-audits tools/codex_cli yet (needs a .github follow-up, Tier B); the lock was generated with npm 10.9.9, CI pins 11.18.0."
+    ],
+    "D-091-R001": [
+      "The Codex binary the loop's reviewer needs now exists on this server (codex-cli 0.157.0); every flag codex_reviewer.py uses is present in `codex exec --help`. No sign-in was done (D-091-R006 stays with the owner); the sign-in location (~/.codex/auth.json under CODEX_HOME, outside the repo) is cited from developers.openai.com/codex/auth."
+    ]
+  }
+}
