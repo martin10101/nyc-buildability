@@ -77,7 +77,7 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
+  "status": "awaiting_gate",
   "progress_percent": 85,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit voids the M0-T174 certification; a Linux recertification superseding M0-T174 runs after M0-T177 and M0-T178",
@@ -86,7 +86,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-02T20:48:48.109680+00:00",
-  "updated_at": "2026-10-02T21:36:44.542878+00:00",
+  "updated_at": "2026-10-02T22:26:21.073624+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
