@@ -76,6 +76,31 @@ def by_id(group: FlagGroup) -> dict[str, HiddenIssueFlag]:
     return {flag.item_id: flag for flag in group.flags}
 
 
+def single_column_profile(column: str, value: object, *, conflict_status: str = "none") -> dict:
+    """A SYNTHETIC minimal profile recording one PLUTO column (never official data).
+
+    ``conflict_status="conflicting"`` makes the recorded value present-but-untrusted (the
+    same trust rule the site facts apply); ``"none"`` makes it a trusted recorded value.
+    """
+    return {
+        "identity": {"bbl": BBL},
+        "provenance": [
+            {
+                "source_id": PLUTO_SOURCE_ID,
+                "bbl": BBL,
+                "original_field_name": column,
+                "normalized_value": value,
+                "conflict_status": conflict_status,
+                "dataset_version": "26v2",
+                "retrieved_at": "2026-09-30T06:20:00Z",
+                "request_url": (
+                    "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=" + BBL),
+                "provenance_id": "pluto-64uk-42ks-26v2-" + BBL + "-" + column,
+            }
+        ],
+    }
+
+
 # ---------------------------------------------------------------------------
 # Shape and order
 # ---------------------------------------------------------------------------
@@ -203,15 +228,21 @@ def test_split_zone_true_flags() -> None:
     assert "splitzone true" in flag.detail
 
 
-def test_present_flood_flag_flags_but_defers_the_zone_letter_and_rule() -> None:
+def test_present_flood_flag_flags_and_points_to_the_fema_map_no_unverified_meaning() -> None:
     record = benchmark_record()
-    record["pfirm15_flag"] = 1  # SYNTHETIC: lot in the Preliminary FIRM floodplain
+    record["pfirm15_flag"] = 1  # SYNTHETIC: PLUTO records a FEMA flood-map flag on the row
     flag = by_id(map_based_rules_group(BBL, profile=profile_from_record(record)))[
         "map_based_rules.flood"]
     assert flag.status == STATUS_FLAG
-    assert "pfirm15_flag" in flag.detail
-    assert "FEMA" in flag.detail  # the zone letter still comes from FEMA
-    assert "Appendix G" in flag.detail  # the resilience rule is a rule check, not decided
+    assert "pfirm15_flag" in flag.detail  # the column is surfaced verbatim
+    assert "FEMA" in flag.detail  # points to the FEMA map to confirm the zone
+    assert "rule check" in flag.detail  # never decides the rule
+    # The firm07_flag / pfirm15_flag meaning is UNVERIFIED (the official PLUTO data
+    # dictionary 26v1 is encrypted and could not be read), so the flag asserts no meaning
+    # beyond "PLUTO records a FEMA flood-map flag; confirm on the FEMA map" (principle 3).
+    assert "floodplain" not in flag.detail.lower()
+    assert "Appendix G" not in flag.detail
+    assert "not verified" in flag.detail.lower()
 
 
 def test_present_landmark_and_historic_district_flag_without_deciding_lpc() -> None:
@@ -256,6 +287,53 @@ def test_untrusted_overlay_value_is_check_needed_never_surfaced() -> None:
     assert flag.status == STATUS_CHECK_NEEDED
     assert "C2-2" not in flag.detail  # the conflicting value is never surfaced as a fact
     assert "conflict" in flag.detail.lower()
+
+
+def test_untrusted_inclusionary_value_surfaces_could_not_be_used_not_the_generic_reason() -> None:
+    # SYNTHETIC: a Mandatory Inclusionary Housing option flag is recorded but untrusted.
+    profile = single_column_profile("mih_opt1", True, conflict_status="conflicting")
+    flag = by_id(map_based_rules_group(BBL, profile=profile))[
+        "map_based_rules.inclusionary_housing"]
+    assert flag.status == STATUS_CHECK_NEEDED
+    # The honest reason: a recorded value could not be used, with the problem text - NOT the
+    # generic "records no X" (old code reported the SODA omit-null reason here).
+    assert "could not be used" in flag.detail
+    assert "conflict" in flag.detail.lower()
+    assert "PLUTO records no Mandatory Inclusionary Housing option flag" not in flag.detail
+
+
+def test_untrusted_flood_value_surfaces_could_not_be_used_not_the_generic_reason() -> None:
+    # SYNTHETIC: a FEMA flood-map flag is recorded but untrusted.
+    profile = single_column_profile("firm07_flag", 1, conflict_status="conflicting")
+    flag = by_id(map_based_rules_group(BBL, profile=profile))["map_based_rules.flood"]
+    assert flag.status == STATUS_CHECK_NEEDED
+    assert "could not be used" in flag.detail
+    assert "conflict" in flag.detail.lower()
+    assert "PLUTO records no FEMA flood-map flag" not in flag.detail
+
+
+def test_untrusted_landmark_value_surfaces_could_not_be_used_not_the_generic_reason() -> None:
+    # SYNTHETIC: a landmark value is recorded but untrusted.
+    profile = single_column_profile("landmark", "Individual Landmark",
+                                    conflict_status="conflicting")
+    flag = by_id(map_based_rules_group(BBL, profile=profile))[
+        "map_based_rules.landmarks_historic"]
+    assert flag.status == STATUS_CHECK_NEEDED
+    assert "could not be used" in flag.detail
+    assert "conflict" in flag.detail.lower()
+    assert "Individual Landmark" not in flag.detail  # the untrusted value is never surfaced
+    assert "PLUTO records no landmark or historic-district value" not in flag.detail
+
+
+def test_trusted_empty_landmark_string_does_not_flag_and_is_check_needed() -> None:
+    # SYNTHETIC: PLUTO serves a trusted but empty/whitespace landmark string. An empty
+    # recorded "nothing here" must be treated like an absent column, never a flag.
+    profile = single_column_profile("landmark", "   ", conflict_status="none")
+    flag = by_id(map_based_rules_group(BBL, profile=profile))[
+        "map_based_rules.landmarks_historic"]
+    assert flag.status == STATUS_CHECK_NEEDED  # old code flagged the empty string
+    assert "'   '" not in flag.detail  # the empty value is never surfaced as a landmark
+    assert "no landmark or historic-district value" in flag.detail
 
 
 # ---------------------------------------------------------------------------

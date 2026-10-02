@@ -22,8 +22,11 @@ signal, a data conflict or a named conflict makes a value unusable). PLUTO carri
 map-based columns with provenance: ``overlay1``/``overlay2`` (commercial overlays),
 ``spdist1``-``spdist3`` (special districts), ``mih_opt1``-``mih_opt4`` (Mandatory
 Inclusionary Housing option flags), ``splitzone`` (lot split by a district line),
-``firm07_flag``/``pfirm15_flag`` (FEMA floodplain flags) and ``landmark``/``histdist``
-(landmark / historic district). An item whose source is not recorded in this repository
+``firm07_flag``/``pfirm15_flag`` (FEMA flood-map flags; the fields' exact meaning is NOT
+verified against the PLUTO data dictionary here, so the flood item claims no more than
+"PLUTO records a FEMA flood-map flag; confirm on the FEMA map" - CLAUDE.md principle 3) and
+``landmark``/``histdist`` (landmark / historic district). An item whose source is not
+recorded in this repository
 (inclusionary-housing designated areas beyond the PLUTO flag, lot-vs-boundary proximity,
 waterfront/coastal, transit easements, airport height) is "Check needed" naming the missing
 source, never a guess (lane prompt B).
@@ -71,7 +74,7 @@ from app.profile.hidden_issue_flags.model import (
     FlagGroup,
     HiddenIssueFlag,
 )
-from app.profile.site_facts import read_pluto_value
+from app.profile.site_facts import _text, read_pluto_value
 from app.profile.transit_parking import (
     STATUS_RECORDED as TRANSIT_STATUS_RECORDED,
 )
@@ -124,6 +127,27 @@ def _check_needed(
     )
 
 
+def _untrusted(
+    profile: Mapping[str, Any] | None, value: Any, problem: str | None
+) -> str | None:
+    """The problem text when a recorded PLUTO value is PRESENT but could not be used, or
+    None when the value is usable or simply absent.
+
+    ``read_pluto_value`` returns ``(None, source, problem)`` both when a column is absent
+    (SODA omit-null: ``"PLUTO has no <column> value for this lot."``) and when a recorded
+    value exists but the site facts' trust rules reject it (an identity conflict, a
+    duplicate, a connector drift signal, a data conflict or a named conflict). The two must
+    not be reported the same way: an absent column is the generic "PLUTO records no X" check,
+    but a present-but-untrusted value must surface "a recorded value could not be used" with
+    the reason (the way :func:`_special_districts_and_overlays` keeps it visible) so a real
+    recorded value is never hidden behind an omit-null reason. The untrusted value itself is
+    never surfaced.
+    """
+    if profile is not None and value is None and problem is not None and "has no" not in problem:
+        return problem
+    return None
+
+
 def _special_districts_and_overlays(profile: Mapping[str, Any] | None) -> HiddenIssueFlag:
     item_id = "special_districts_and_overlays"
     title = "Special districts and overlays"
@@ -142,11 +166,10 @@ def _special_districts_and_overlays(profile: Mapping[str, Any] | None) -> Hidden
         ("special district {} (PLUTO {})", "spdist3"),
     ):
         value, source, problem = _read(profile, column)
-        if problem is not None and profile is not None and value is None and (
-            "has no" not in problem
-        ):
+        untrusted = _untrusted(profile, value, problem)
+        if untrusted is not None:
             # Present but untrusted (conflict/drift/duplicate): keep it visible, never surfaced.
-            problems.append(problem)
+            problems.append(untrusted)
         if value is not None:
             mapped.append(label_fmt.format(value, column))
             evidence.append({"label": label_fmt.format(value, column), "source": source})
@@ -181,6 +204,7 @@ def _inclusionary_housing(profile: Mapping[str, Any] | None) -> HiddenIssueFlag:
         "DCP Mandatory / Voluntary Inclusionary Housing Designated Areas; "
         "PLUTO mih_opt1-4 (recorded when present)"
     )
+    problems: list[str] = []
     for column in ("mih_opt1", "mih_opt2", "mih_opt3", "mih_opt4"):
         value, source, problem = _read(profile, column)
         if problem is None and value:
@@ -192,6 +216,16 @@ def _inclusionary_housing(profile: Mapping[str, Any] | None) -> HiddenIssueFlag:
                 f"{GROUP_ID}.{item_id}", GROUP_ID, title, STATUS_FLAG, detail, typical,
                 _evidence(f"PLUTO {column}", source),
             )
+        untrusted = _untrusted(profile, value, problem)
+        if untrusted is not None:
+            problems.append(untrusted)
+    if problems:
+        return _check_needed(
+            item_id, title, typical,
+            f"A recorded PLUTO Mandatory Inclusionary Housing option value could not be used: "
+            f"{' '.join(problems)} A reviewer must confirm it on the DCP Inclusionary "
+            f"Housing data.",
+        )
     reason = (
         "PLUTO records no Mandatory Inclusionary Housing option flag (mih_opt) for this lot "
         f"({_OMIT_NULL}). Whether the lot is in an Inclusionary Housing Designated Area "
@@ -250,27 +284,43 @@ def _near_district_line() -> HiddenIssueFlag:
 def _flood(profile: Mapping[str, Any] | None) -> HiddenIssueFlag:
     item_id = "flood"
     title = "Flood zones and flood-resilience height rules"
+    # The PLUTO data dictionary (26v1) could not be read to confirm what firm07_flag /
+    # pfirm15_flag mean (the official PDF is fetched but encrypted, and no in-policy text
+    # extractor is available), so the field meaning is UNVERIFIED and this item claims no
+    # more than "PLUTO records a FEMA flood-map flag; confirm on the FEMA map" (CLAUDE.md
+    # principle 3: never guess a source meaning). PDF sha256
+    # d587cbe90bafad128c88f7dfab0ec6741d2735b20695e99b931fa0607aeaf3fe. See docs/lanes/status/B.md.
     typical = (
-        "FEMA Flood Insurance Rate Maps (FIRM 2007 / Preliminary FIRM 2015); "
-        "PLUTO firm07_flag / pfirm15_flag (recorded when present)"
+        "FEMA Flood Insurance Rate Maps; PLUTO firm07_flag / pfirm15_flag (recorded when "
+        "present; the fields' exact meaning is not verified against the PLUTO data dictionary)"
     )
+    problems: list[str] = []
     for column in ("firm07_flag", "pfirm15_flag"):
         value, source, problem = _read(profile, column)
         if problem is None and value not in (None, 0, 0.0, False):
             detail = (
-                "PLUTO records this lot in a FEMA flood-insurance-rate-map floodplain "
-                f"(PLUTO {column}). The flood zone letter (for example A, AE, X, VE) comes "
-                "from the FEMA map, and the flood-resilience height rules (ZR Appendix G) are "
-                f"a rule check. {_RULE_CHECK}"
+                f"PLUTO records a FEMA flood-map flag for this lot (PLUTO {column}). The "
+                "flag's exact meaning is not verified against the PLUTO data dictionary here, "
+                "so confirm the lot's flood zone on the FEMA Flood Insurance Rate Map. "
+                f"{_RULE_CHECK}"
             )
             return HiddenIssueFlag(
                 f"{GROUP_ID}.{item_id}", GROUP_ID, title, STATUS_FLAG, detail, typical,
                 _evidence(f"PLUTO {column}", source),
             )
+        untrusted = _untrusted(profile, value, problem)
+        if untrusted is not None:
+            problems.append(untrusted)
+    if problems:
+        return _check_needed(
+            item_id, title, typical,
+            f"A recorded PLUTO FEMA flood-map flag value could not be used: "
+            f"{' '.join(problems)} A reviewer must check the FEMA Flood Insurance Rate Map.",
+        )
     reason = (
-        "PLUTO records no FEMA floodplain flag (firm07_flag / pfirm15_flag) for this lot "
-        f"({_OMIT_NULL}), and no FEMA flood-map source is connected to confirm the flood "
-        "zone letter. A reviewer must check the FEMA Flood Insurance Rate Map."
+        "PLUTO records no FEMA flood-map flag (firm07_flag / pfirm15_flag) for this lot "
+        f"({_OMIT_NULL}), and no FEMA flood-map source is connected to confirm the lot's "
+        "flood zone. A reviewer must check the FEMA Flood Insurance Rate Map."
         if profile is not None else _NO_PROFILE
     )
     return _check_needed(item_id, title, typical, reason)
@@ -319,12 +369,19 @@ def _landmarks_historic(profile: Mapping[str, Any] | None) -> HiddenIssueFlag:
     )
     mapped: list[str] = []
     evidence: list[Mapping] = []
+    problems: list[str] = []
     for label_fmt, column in (
         ("landmark {!r} (PLUTO {})", "landmark"),
         ("historic district {!r} (PLUTO {})", "histdist"),
     ):
         value, source, problem = _read(profile, column)
-        if problem is None and value is not None:
+        untrusted = _untrusted(profile, value, problem)
+        if untrusted is not None:
+            problems.append(untrusted)
+            continue
+        # A trusted empty or whitespace-only string is a recorded "nothing here": treat it
+        # like an absent column (Check needed), never a flag, using the shared text helper.
+        if problem is None and _text(value) is not None:
             mapped.append(label_fmt.format(value, column))
             evidence.append({"label": label_fmt.format(value, column), "source": source})
     if mapped:
@@ -332,9 +389,17 @@ def _landmarks_historic(profile: Mapping[str, Any] | None) -> HiddenIssueFlag:
             f"PLUTO records this lot as: {'; '.join(mapped)}. Landmarks Preservation "
             f"Commission jurisdiction and what it requires is a determination. {_RULE_CHECK}"
         )
+        if problems:
+            detail += f" (Also check: {' '.join(problems)})"
         return HiddenIssueFlag(
             f"{GROUP_ID}.{item_id}", GROUP_ID, title, STATUS_FLAG, detail, typical,
             tuple(evidence),
+        )
+    if problems:
+        return _check_needed(
+            item_id, title, typical,
+            f"A recorded PLUTO landmark / historic-district value could not be used: "
+            f"{' '.join(problems)} A reviewer must check it on the LPC data.",
         )
     reason = (
         "PLUTO records no landmark or historic-district value for this lot "
