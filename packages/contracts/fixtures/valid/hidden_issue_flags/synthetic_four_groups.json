@@ -1,0 +1,115 @@
+{
+  "contract_version": "1.0.0",
+  "groups": [
+    {
+      "group_id": "existing_building",
+      "title": "Existing building",
+      "lot_bbl": "5999999999",
+      "flags": [
+        {
+          "item_id": "existing_building.larger_than_today",
+          "group": "existing_building",
+          "title": "Existing building larger than today's rules allow",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "Existing zoning floor area is not on file; a Buildings Department filing or certificate of occupancy is needed.",
+          "typical_source": "DOB job filing or certificate of occupancy",
+          "evidence": [
+            { "label": "Existing zoning floor area on file", "source": null }
+          ],
+          "fact_refs": ["5999999999:existing_zoning_floor_area"],
+          "exception_label": null,
+          "phase": "1"
+        }
+      ]
+    },
+    {
+      "group_id": "zoning_lot_history",
+      "title": "Zoning-lot history",
+      "lot_bbl": "5999999999",
+      "flags": [
+        {
+          "item_id": "zoning_lot_history.recorded_mentions",
+          "group": "zoning_lot_history",
+          "title": "Recorded zoning-lot mentions to check",
+          "status": "flag",
+          "status_label": "Flag",
+          "detail": "DOB records mention this lot in a zoning-lot context; check the recorded sources. This does not verify a combined zoning lot.",
+          "typical_source": "DOB zoning-lot filings; ACRIS recorded documents index",
+          "evidence": [
+            {
+              "label": "DOB zoning-lot mention",
+              "source": {
+                "kind": "city_dataset",
+                "dataset": "test-fixture-synthetic DOB NOW job filings",
+                "dataset_version": null,
+                "retrieved_at": "2026-09-30T12:00:00Z",
+                "query_ref": "test-fixture-synthetic://dob/5999999999",
+                "document_ref": null,
+                "statement": null
+              }
+            }
+          ],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        }
+      ]
+    },
+    {
+      "group_id": "map_based_rules",
+      "title": "Map-based rules",
+      "lot_bbl": "5999999999",
+      "flags": [
+        {
+          "item_id": "map_based_rules.commercial_overlay",
+          "group": "map_based_rules",
+          "title": "Commercial overlay recorded",
+          "status": "flag",
+          "status_label": "Flag",
+          "detail": "PLUTO records a commercial overlay on this lot; the rule effect is the rule engine's job, not this layer's.",
+          "typical_source": "PLUTO overlay columns",
+          "evidence": [
+            {
+              "label": "PLUTO overlay1",
+              "source": {
+                "kind": "city_dataset",
+                "dataset": "test-fixture-synthetic PLUTO",
+                "dataset_version": "26v2",
+                "retrieved_at": "2026-09-30T12:00:00Z",
+                "query_ref": "test-fixture-synthetic://pluto/5999999999",
+                "document_ref": null,
+                "statement": null
+              }
+            }
+          ],
+          "fact_refs": [],
+          "exception_label": "Out of date",
+          "phase": "1"
+        }
+      ]
+    },
+    {
+      "group_id": "site_shape_and_street",
+      "title": "Site shape and street",
+      "lot_bbl": "5999999999",
+      "flags": [
+        {
+          "item_id": "site_shape_and_street.through_lot",
+          "group": "site_shape_and_street",
+          "title": "Through lot",
+          "status": "not_flagged",
+          "status_label": "No flag",
+          "detail": "The recorded lot type is not a through lot (B-03 SiteGeometry).",
+          "typical_source": "B-03 (or B-07 combined) SiteGeometry lot type",
+          "evidence": [
+            { "label": "Recorded lot type", "source": null }
+          ],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        }
+      ]
+    }
+  ]
+}

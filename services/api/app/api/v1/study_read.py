@@ -31,12 +31,25 @@ Route posture mirrors the accepted flag-gated internal reads
   REACHABILITY; the lot choice itself is Lane B behaviour and is produced only
   when LANE_B_ENABLED is also on (``app.api.v1.study_inputs``), so production
   (neither flag set) keeps the route a 404.
-- No authentication yet (service is internal/dev only).
+- No authentication yet (service is internal/dev only). Because the default
+  provider now reaches LIVE PLUTO, a per-caller rate limit (NB1) runs right
+  after the flag check, BEFORE any validation or upstream work, returning a
+  typed ``429`` so one unauthenticated GET cannot drive unbounded live SODA
+  calls. The real per-caller isolation is the authenticated principal (B-001),
+  which is why this route family stays effectively dev-only until auth lands.
 - The BBL flows through ``normalize_bbl`` BEFORE any provider call, so a
-  malformed BBL is a typed ``422`` with zero I/O.
+  malformed BBL is a typed ``422`` with zero I/O. An optional ``selected`` lot
+  re-pick (a repeatable query of canonical BBLs) is validated for SHAPE the same
+  way (typed ``422`` before any I/O) and passed VERBATIM to B-07's derive; a
+  re-pick B-07 rejects (a BBL not in this property's lot choice) is a typed
+  ``422`` too. The route never computes geometry or adjacency itself.
 - The study inputs come through an INJECTED provider (``get_study_inputs_provider``)
   so the tests run fully offline on recorded fixtures (the 215-16 Northern pack).
-  Live city data is reached ONLY through the existing connectors behind that seam.
+  The DEFAULT provider binds the resilient PLUTO fetcher the properties route
+  uses (``app.resilience.fetcher.build_default_resilient_fetcher``); live city
+  data is reached ONLY through that existing connector behind the seam. Every
+  upstream failure (and a no-match, including a condo unit-lot) maps to the typed
+  ``503``; nothing is ever fabricated.
 
 ZONING MATH STAYS OFF (plan / lane rule). This route carries NO allowance,
 capacity, FAR or rule output: a study setup holds the user's lot selection plus
@@ -58,13 +71,15 @@ import uuid
 from functools import lru_cache
 from importlib import resources
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import JSONResponse
 
 from app.config import internal_study_read_enabled
 from app.connectors.bbl import BBLValidationError, normalize_bbl
 from app.contracts.study_contracts import StudyContractError, validate_site_fact_document
-from app.spatial.multi_lot_site import study_lot_selection, study_lots
+from app.resilience.rate_limit import SlidingWindowRateLimiter, caller_key
+from app.spatial.multi_lot_site import LotSelectionError, study_lot_selection, study_lots
+from app.spatial.multi_lot_site.parameters import MAX_SELECTED_LOTS
 
 from .study_inputs import (
     StudyInputs,
@@ -74,7 +89,11 @@ from .study_inputs import (
 )
 
 __all__ = [
+    "RATE_LIMIT_MAX_KEYS",
+    "RATE_LIMIT_MAX_REQUESTS",
+    "RATE_LIMIT_WINDOW_SECONDS",
     "STUDY_READ_STATUS_STATE_MATRIX",
+    "get_rate_limiter",
     "get_study_inputs_provider",
     "router",
 ]
@@ -91,6 +110,34 @@ DOCUMENT_KIND = "study_setup"
 MAX_RAW_VALUE_REPR_CHARS = 256
 _RAW_VALUE_TRUNCATION_MARKER = "...[truncated]"
 
+# Server-side length cap on every 422 ``message`` (security review NB3). The
+# sibling routes only capped detail.raw_value; this caps the message too so no
+# 422 body can grow unbounded with reflected (even if already sanitized) text.
+MAX_MESSAGE_CHARS = 256
+
+# Per-caller sliding-window rate limit for THIS route (NB1): one unauthenticated
+# GET on the LIVE default provider now drives a live SODA call, so the route
+# needs a bound BEFORE any upstream work. The SAME reviewed primitive the D-087
+# routes use (app.resilience.rate_limit.SlidingWindowRateLimiter), keyed by
+# caller_key (authenticated principal when present, else client host; see that
+# module for the proxy-collapse limit that keeps this route UNMOUNTED until
+# B-001 auth lands). State is per-route and process-wide; tests reset/tighten it
+# through get_rate_limiter(). Values mirror the export sibling (30 / 60 s).
+RATE_LIMIT_MAX_REQUESTS = 30
+RATE_LIMIT_WINDOW_SECONDS = 60.0
+RATE_LIMIT_MAX_KEYS = 8192
+_RATE_LIMITER = SlidingWindowRateLimiter(
+    max_requests=RATE_LIMIT_MAX_REQUESTS,
+    window_seconds=RATE_LIMIT_WINDOW_SECONDS,
+    max_keys=RATE_LIMIT_MAX_KEYS,
+)
+
+
+def get_rate_limiter() -> SlidingWindowRateLimiter:
+    """The shared, bounded per-caller limiter for this route. Tests reset/tighten
+    it via this getter; it is NOT a client-controlled input."""
+    return _RATE_LIMITER
+
 # Bundled canonical schemas (byte-identical to packages/contracts/schemas/v1,
 # kept so by services/api/scripts/sync_contract_schemas.py). Loaded read-only via
 # importlib.resources, the same package-data path app.contracts.study_contracts
@@ -105,16 +152,17 @@ _STUDY_SCHEMA_ID = (
 # EXACT (HTTP status, state) pair matrix. Every success is a 200 with NO
 # ``state`` field (the document speaks for itself); the disabled sentinel is a
 # 404 with NO state (byte-identical to an unmounted path). A malformed BBL is a
-# typed 422; inputs that cannot be produced (upstream unavailable, the Lane B
-# gate off, or the live fetch shell not wired yet) are a bounded 503; an
-# unexpected defect is a generic 500; a built document that fails its contract
-# before send is a typed 500 (an invalid 200 is impossible).
+# typed 422; a per-caller rate-limit refusal is a typed 429; inputs that cannot
+# be produced (upstream unavailable/no-match, the Lane B gate off) are a bounded
+# 503; an unexpected defect is a generic 500; a built document that fails its
+# contract before send is a typed 500 (an invalid 200 is impossible).
 # ---------------------------------------------------------------------------
 STUDY_READ_STATUS_STATE_MATRIX: frozenset[tuple[int, str | None]] = frozenset(
     {
         (200, None),  # study-setup document
         (404, None),  # flag off / unmounted-path sentinel (generic Not Found)
-        (422, "validation_error"),  # malformed BBL, no provider call
+        (422, "validation_error"),  # malformed BBL OR an invalid lot re-pick
+        (429, "rate_limited"),  # per-caller rate limit exceeded (NB1)
         (503, "inputs_unavailable"),  # inputs could not be produced (fail safe)
         (500, "internal_error"),  # unexpected internal defect (generic)
         (500, "internal_contract_error"),  # built document failed its contract
@@ -125,8 +173,9 @@ STUDY_READ_STATUS_STATE_MATRIX: frozenset[tuple[int, str | None]] = frozenset(
 def get_study_inputs_provider() -> StudyInputsProvider:
     """Dependency returning the study-inputs provider (test override point).
 
-    The default fails safe (the live fetch shell is a later slice); tests inject
-    a fixture-backed provider so the whole suite runs offline."""
+    The default is the LIVE PLUTO path through the resilient fetcher the
+    properties route uses (NB1); tests inject a fixture-backed provider so the
+    whole suite runs offline."""
     return default_study_inputs_provider
 
 
@@ -176,6 +225,86 @@ def _capped_raw_value(raw_value_repr: str) -> str:
     if len(raw_value_repr) <= MAX_RAW_VALUE_REPR_CHARS:
         return raw_value_repr
     return raw_value_repr[:MAX_RAW_VALUE_REPR_CHARS] + _RAW_VALUE_TRUNCATION_MARKER
+
+
+def _capped_message(message: str) -> str:
+    """Length-cap a 422 ``message`` server-side (security review NB3)."""
+    if len(message) <= MAX_MESSAGE_CHARS:
+        return message
+    return message[:MAX_MESSAGE_CHARS] + _RAW_VALUE_TRUNCATION_MARKER
+
+
+class _SelectedInvalid(Exception):
+    """A ``selected`` re-pick is malformed in SHAPE (empty, duplicated or over the
+    lot cap). Carries a bounded ``code`` + ``message`` for a typed 422; raised
+    BEFORE any I/O. A selected BBL that is syntactically invalid surfaces as the
+    connector's :class:`BBLValidationError` instead (reusing the path-BBL shape)."""
+
+    def __init__(self, code: str, message: str) -> None:
+        super().__init__(message)
+        self.code = code
+        self.message = message
+
+
+def _validate_selected(selected: list[str] | None) -> list[str] | None:
+    """Validate the optional ``selected`` re-pick query to CANONICAL BBLs, BEFORE
+    any I/O (the typed-422 contract). None is the default "use all". Checks the
+    SHAPE only - syntactic BBLs (reusing ``normalize_bbl``), no duplicates, and at
+    most ``MAX_SELECTED_LOTS`` lots; whether each BBL is actually in THIS
+    property's lot choice is B-07's call and is checked downstream (post-fetch),
+    surfaced verbatim as a typed 422. No geometry or adjacency is computed here.
+
+    Raises:
+        BBLValidationError: a selected entry is not a syntactically valid BBL.
+        _SelectedInvalid: the selection is empty, duplicated, or over the cap.
+    """
+    if selected is None:
+        return None
+    if not selected:
+        raise _SelectedInvalid("empty_selection", "select at least one lot")
+    canonical = [normalize_bbl(entry).canonical for entry in selected]
+    if len(set(canonical)) != len(canonical):
+        raise _SelectedInvalid("duplicate_selection", "a lot is selected more than once")
+    if len(canonical) > MAX_SELECTED_LOTS:
+        raise _SelectedInvalid(
+            "too_many_lots", f"at most {MAX_SELECTED_LOTS} lots may be selected"
+        )
+    return canonical
+
+
+def _validation_error_422(
+    correlation_id: str, *, code: str, message: str, raw_value: str | None = None
+) -> JSONResponse:
+    """A typed ``(422, validation_error)`` with a bounded message (NB3). ``detail``
+    always carries the bounded ``code``; ``raw_value`` is included (capped) only
+    when the source error reflected one (a malformed BBL)."""
+    detail: dict[str, object] = {"code": code}
+    if raw_value is not None:
+        detail["raw_value"] = _capped_raw_value(raw_value)
+    return _json(
+        422,
+        {
+            "state": "validation_error",
+            "message": _capped_message(message),
+            "correlation_id": correlation_id,
+            "detail": detail,
+        },
+        correlation_id,
+    )
+
+
+def _rate_limited_429(correlation_id: str) -> JSONResponse:
+    """A typed ``(429, rate_limited)`` consistent with the sibling routes: a
+    server-minted correlation id, a bounded message, no caller text."""
+    return _json(
+        429,
+        {
+            "state": "rate_limited",
+            "message": "per-caller rate limit exceeded; retry later",
+            "correlation_id": correlation_id,
+        },
+        correlation_id,
+    )
 
 
 def _internal_error_500(correlation_id: str) -> JSONResponse:
@@ -290,18 +419,31 @@ def _contract_guard(document: dict) -> None:
 
 @router.get("/properties/{bbl}/study", include_in_schema=False)
 def get_study(
+    request: Request,
     bbl: str,
+    selected: list[str] | None = Query(default=None),  # noqa: B008
     provide_inputs: StudyInputsProvider = Depends(get_study_inputs_provider),  # noqa: B008
 ) -> JSONResponse:
     """Read the study setup (lot choice + site facts) for one BBL. Feature-flag
     gated OFF by default (INTERNAL_STUDY_READ_ENABLED), mirroring the sibling
-    internal reads."""
+    internal reads. ``selected`` is an optional lot re-pick (repeatable query of
+    canonical BBLs) passed VERBATIM to B-07's derive; omitted means "use all"."""
     # Guard 1 (fail-safe disable): absent/unknown flag -> 404 with no hint the
-    # feature exists. Checked FIRST, before a correlation id is minted.
+    # feature exists. Checked FIRST, before a correlation id is minted (the
+    # flag-off 404 is byte-identical to an unmounted path and is unchanged by
+    # the rate limit / re-pick below).
     if not internal_study_read_enabled():
         return _not_found()
 
     correlation_id = uuid.uuid4().hex
+
+    # Guard 2 (NB1): per-caller rate limit BEFORE any validation or upstream
+    # work, so one unauthenticated GET that would now drive a LIVE SODA call is
+    # bounded. Keyed by caller_key (principal when present, else host). A typed
+    # 429, consistent with the sibling routes.
+    if not get_rate_limiter().allow(caller_key(request)):
+        logger.info("study_read_v1 rate_limited correlation_id=%s", correlation_id)
+        return _rate_limited_429(correlation_id)
 
     # 1. Validate the BBL BEFORE any provider call (typed 422; zero I/O).
     try:
@@ -312,33 +454,68 @@ def get_study(
             "study_read_v1 validation_error code=%s correlation_id=%s",
             payload["code"], correlation_id,
         )
-        return _json(
-            422,
-            {
-                "state": "validation_error",
-                "message": payload["message"],
-                "correlation_id": correlation_id,
-                "detail": {
-                    "code": payload["code"],
-                    "raw_value": _capped_raw_value(payload["raw_value"]),
-                },
-            },
+        return _validation_error_422(
             correlation_id,
+            code=payload["code"],
+            message=payload["message"],
+            raw_value=payload["raw_value"],
         )
 
     canonical = normalized.canonical
 
-    # 2. Produce the inputs through the injected provider. A typed unavailability
-    #    is a bounded 503 (fail safe, nothing fabricated); any other exception is
-    #    a generic 500.
+    # 1b. Validate the optional re-pick BEFORE any provider call (typed 422; zero
+    #     I/O). Shape only: whether each BBL is in THIS property's lot choice is
+    #     B-07's call, checked post-fetch (step 2).
     try:
-        inputs = provide_inputs(canonical, correlation_id)
+        selected_bbls = _validate_selected(selected)
+    except BBLValidationError as exc:
+        payload = exc.to_payload()
+        logger.info(
+            "study_read_v1 validation_error stage=selected code=%s correlation_id=%s",
+            payload["code"], correlation_id,
+        )
+        return _validation_error_422(
+            correlation_id,
+            code=payload["code"],
+            message=payload["message"],
+            raw_value=payload["raw_value"],
+        )
+    except _SelectedInvalid as exc:
+        logger.info(
+            "study_read_v1 validation_error stage=selected code=%s correlation_id=%s",
+            exc.code, correlation_id,
+        )
+        return _validation_error_422(correlation_id, code=exc.code, message=exc.message)
+
+    # 2. Produce the inputs through the injected provider. A typed unavailability
+    #    is a bounded 503 (fail safe, nothing fabricated); a lot re-pick B-07
+    #    rejects (a BBL not in this property's lot choice) is a typed 422; any
+    #    other exception is a generic 500. ``selected`` is passed ONLY on a
+    #    re-pick, so a default "use all" provider keeps its two-argument shape.
+    try:
+        if selected_bbls is None:
+            inputs = provide_inputs(canonical, correlation_id)
+        else:
+            inputs = provide_inputs(canonical, correlation_id, selected=selected_bbls)
     except StudyInputsUnavailableError as exc:
         logger.info(
             "study_read_v1 inputs_unavailable reason=%s correlation_id=%s",
             exc.reason, correlation_id,
         )
         return _inputs_unavailable_503(correlation_id)
+    except LotSelectionError:
+        # B-07 rejected the selection (e.g. a BBL not in this property's lot
+        # choice). A client re-pick error, not a 503/500. Fixed, bounded message:
+        # the caller's BBLs are not echoed (they are logged only by classifier).
+        logger.info(
+            "study_read_v1 validation_error stage=re_pick correlation_id=%s",
+            correlation_id,
+        )
+        return _validation_error_422(
+            correlation_id,
+            code="invalid_lot_selection",
+            message="the selected lots are not a valid selection for this property",
+        )
     except Exception:
         logger.error(
             "study_read_v1 unexpected_error stage=provide correlation_id=%s",

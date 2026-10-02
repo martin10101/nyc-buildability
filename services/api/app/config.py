@@ -16,13 +16,19 @@ import os
 from collections.abc import Mapping
 
 __all__ = [
+    "INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED_ENV_VAR",
+    "INTERNAL_PARITY_READ_ENABLED_ENV_VAR",
     "INTERNAL_RULE_EVAL_ENABLED_ENV_VAR",
     "INTERNAL_SCENARIO_ENABLED_ENV_VAR",
     "INTERNAL_STUDY_READ_ENABLED_ENV_VAR",
+    "INTERNAL_TRANSIT_PARKING_READ_ENABLED_ENV_VAR",
     "LANE_FLAG_ENV_VARS",
+    "internal_hidden_issue_flags_read_enabled",
+    "internal_parity_read_enabled",
     "internal_rule_eval_enabled",
     "internal_scenario_enabled",
     "internal_study_read_enabled",
+    "internal_transit_parking_read_enabled",
     "lane_enabled",
 ]
 
@@ -47,6 +53,28 @@ INTERNAL_SCENARIO_ENABLED_ENV_VAR = "INTERNAL_SCENARIO_ENABLED"
 # also on (see app.api.v1.study_inputs), so production (neither flag set) keeps
 # the route a generic 404.
 INTERNAL_STUDY_READ_ENABLED_ENV_VAR = "INTERNAL_STUDY_READ_ENABLED"
+
+# Env vars gating the three lane C packet-W0 §8a / check-C-8 / section-11b read
+# surfaces: the hidden-issue flag layer, the transit/parking status, and the
+# parity data (comparable sales + unused floor area). Each gates REACHABILITY
+# only, with the same fail-safe posture as every flag here (absent/empty/unknown
+# -> disabled), and a distinct name so each surface is enabled independently. The
+# data they read is Lane B behaviour, computed only when LANE_B_ENABLED is also
+# on, so production (neither flag set) keeps each route a generic 404.
+#
+# ENABLEMENT CHECKLIST (before any of these routes serves real traffic in
+# production, all three are REQUIRED, none is built in packet W0):
+#   1. Authentication / authorization on the route (blocker B-001: the API ships
+#      with no auth; these internal reads must not be reachable unauthenticated
+#      in production).
+#   2. A route-local rate limit (the app.resilience.rate_limit SlidingWindowRateLimiter
+#      export_api.py pattern) - parity makes live DOF SODA calls per request.
+#   3. The resilient fetcher (properties.get_pluto_fetcher()) for the live data
+#      path, never an unguarded direct connector call.
+# Until all three exist, these flags stay OFF in production (security review NB2).
+INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED_ENV_VAR = "INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED"
+INTERNAL_TRANSIT_PARKING_READ_ENABLED_ENV_VAR = "INTERNAL_TRANSIT_PARKING_READ_ENABLED"
+INTERNAL_PARITY_READ_ENABLED_ENV_VAR = "INTERNAL_PARITY_READ_ENABLED"
 
 # One flag per parallel-build lane (task M0-T164, D-090; docs/lanes/PARALLEL_BUILD_PLAN.md §7).
 # New lane behavior ships behind its lane's flag; production never sets these until the owner
@@ -95,6 +123,33 @@ def internal_study_read_enabled(env: Mapping[str, str] | None = None) -> bool:
     (fail safe), so the route is a generic 404 unless explicitly turned on.
     """
     return _flag_enabled(INTERNAL_STUDY_READ_ENABLED_ENV_VAR, env)
+
+
+def internal_hidden_issue_flags_read_enabled(env: Mapping[str, str] | None = None) -> bool:
+    """Whether the internal hidden-issue-flags read endpoint is enabled (lane C, W0).
+
+    Returns True ONLY for an explicit true token; absent/empty/unknown -> False
+    (fail safe), so the route is a generic 404 unless explicitly turned on.
+    """
+    return _flag_enabled(INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED_ENV_VAR, env)
+
+
+def internal_transit_parking_read_enabled(env: Mapping[str, str] | None = None) -> bool:
+    """Whether the internal transit/parking read endpoint is enabled (lane C, W0).
+
+    Returns True ONLY for an explicit true token; absent/empty/unknown -> False
+    (fail safe), so the route is a generic 404 unless explicitly turned on.
+    """
+    return _flag_enabled(INTERNAL_TRANSIT_PARKING_READ_ENABLED_ENV_VAR, env)
+
+
+def internal_parity_read_enabled(env: Mapping[str, str] | None = None) -> bool:
+    """Whether the internal parity read endpoint is enabled (lane C, W0).
+
+    Returns True ONLY for an explicit true token; absent/empty/unknown -> False
+    (fail safe), so the route is a generic 404 unless explicitly turned on.
+    """
+    return _flag_enabled(INTERNAL_PARITY_READ_ENABLED_ENV_VAR, env)
 
 
 def lane_enabled(lane: str, env: Mapping[str, str] | None = None) -> bool:

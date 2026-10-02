@@ -1,0 +1,19 @@
+{
+  "contract_version": "1.0.0",
+  "lot_bbl": "5999999999",
+  "status": "recorded",
+  "status_label": "Recorded",
+  "transit_zone": null,
+  "source": {
+    "kind": "city_dataset",
+    "dataset": "test-fixture-synthetic PLUTO",
+    "dataset_version": "26v2",
+    "retrieved_at": "2026-09-30T12:00:00Z",
+    "query_ref": "test-fixture-synthetic://pluto/5999999999",
+    "document_ref": null,
+    "statement": null
+  },
+  "detail": "Transit zone recorded but the value is null.",
+  "missing_source": null,
+  "_expected_failure": "status 'recorded' with transit_zone null: a recorded status must carry the verbatim PLUTO transit-zone text and no missing_source, so the allOf/oneOf 'status, status_label, transit_zone and missing_source move together' rejects it."
+}
