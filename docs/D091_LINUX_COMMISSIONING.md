@@ -51,20 +51,21 @@ python -m tools.agent_supervisor verify-controller \
 Expect `controller verified, including the external config.toml binding` (runbook section 6;
 `config.toml` is a bound logical name, `manifest.py:47,54`).
 
-Linux paths for these checks (the CLI defaults are `None`, so the owner/orchestrator passes them):
+These commands do not know the file paths on their own, so type the paths in. Use these three:
 
-- `--config /etc/nyc-supervisor/config.toml` — the POSIX default (`platform_paths.py:41`
-  `POSIX_CONFIG_DIR`, resolved by `:67-77` `default_config_path`).
-- `--manifest "${XDG_CONFIG_HOME:-$HOME/.config}/nyc-supervisor/ctl24-activation/controller_manifest.json"`
-  — the POSIX default activation location (`platform_paths.py:80-97` `default_activation_dir`,
-  `:101-107` `default_manifest_path`; filename `controller_manifest.json`, `manifest.py:38`). This
-  manifest file is produced by the controller's record-manifest step at activation, not invented
-  here; `verify-controller` without `--manifest` verifies nothing and fails closed for production
-  dispatch (`cli.py:480-489`).
-- `--model-selection <runtime model_selection.toml>` (full doctor only) — there is **no** platform
-  default path in the code (`platform_paths.py` resolves config/manifest/runtime only). The owner
-  supplies the runtime `model_selection.toml` path explicitly (`cli.py:3250-3251`); it lives outside
-  the controller manifest so a model change never invalidates the controller. Never invent this path.
+- The config file: `--config /etc/nyc-supervisor/config.toml`. That is the standard Linux spot.
+  Sources: `platform_paths.py:41` (`POSIX_CONFIG_DIR`), `:67-77` (`default_config_path`).
+- The manifest file:
+  `--manifest "${XDG_CONFIG_HOME:-$HOME/.config}/nyc-supervisor/ctl24-activation/controller_manifest.json"`.
+  The manifest was written earlier by the record-manifest step; it is not made here. Always pass it:
+  if you leave `--manifest` off, `verify-controller` checks nothing, prints `HALT`, and exits with an
+  error.
+  Sources: `platform_paths.py:80-98` (`default_activation_dir`), `:101-107` (`default_manifest_path`),
+  filename `manifest.py:38`; the fail-closed `HALT` is `cli.py:1696-1714`.
+- The model-list file (full doctor only): `--model-selection <your model_selection.toml>`. The code
+  has no standard spot for this one, so give the path to your own file. Do not make up a path. This
+  file sits outside the manifest, so changing a model never breaks the controller.
+  Sources: `cli.py:3250-3251`.
 
 ## 2. Codex sign-in on the server (OD-C; owner types; orchestrator checks)
 
@@ -156,7 +157,8 @@ there is no `--lane` flag in the repo, so "lane 1" means this single canary star
 - the **review cap was honored** — at most 2 review/combine processes across all lanes and 1 per
   lane, reserved atomically before each spawn and fail-closed (`run_budget.py:793`
   `admit_review_or_combine`; caps `config.example.toml:137` global `= 2`, `:138` per-lane `= 1`;
-  atomic reservation `review_slots.py:28-30`).
+  atomic reservation `review_slots.py:449` `try_reserve` (count-decide-reserve under the exclusive
+  lock) via the `reserve` context manager `:501`).
 
 ## 5. Combiner stays OFF until the owner picks the combining model (D-091-R008 / OD-B)
 
@@ -220,9 +222,12 @@ field `:434`), `[claude].reviewer_model` (`claude_reviewer.py:384`), `[claude].a
 (allowlist the conductor enforces, `dual_review.py:251-256`; example `config.example.toml:34`). On
 `PASS` the owner may start with the combiner on; on `STOP` the owner does **not** start.
 
-A code-level gate that refuses an equal combiner/reviewer model would touch
-`tools/agent_supervisor/**` and so void the M0-T174 certification; it is therefore logged as a later
-improvement, and this read-only orchestrator check covers it at commissioning in the meantime.
+We could instead put this same rule inside the program code. We are not doing that now. Changing
+any supervisor code would force the whole loop to be certified again (the M0-T174 certification would
+no longer hold). So we run the read-only check above at commissioning for now, and we have written
+down "add the rule in code later" as a future improvement.
+
+Sources: certified code lives under `tools/agent_supervisor/**`; the certification is M0-T174.
 
 The orchestrator's recommendation (Opus 5.5) is already recorded in
 `docs/SESSION_HANDOFF.md:51`; this checklist recommends nothing further.

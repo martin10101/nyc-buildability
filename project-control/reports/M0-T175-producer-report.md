@@ -46,7 +46,8 @@ only read-only `grep`/`sed`/`ls` to verify facts.
 - `doctor` emits the ACL posture: `cli.py:1419` (compute), `:1435` (payload key), `:510-533` (builder),
   `:1456-1459` (printed line). `doctor`/`verify-controller` module entry `python -m tools.agent_supervisor`
   (`__main__.py` present; subcommands `cli.py:13`, verify-controller parser `cli.py:3468`).
-- Manifest binds config: `manifest.py:47,54` (`CONFIG_LOGICAL_NAME = "config.toml"`); verify-controller
+- Manifest binds config: `CONFIG_LOGICAL_NAME = "config.toml"` (`manifest.py:47`) and the `config.toml`
+  entry in `COVERED_PATTERNS` (`manifest.py:54`); verify-controller
   expectation runbook section 6 (`docs/CONTROLLER_UPDATE_RUNBOOK.md:177-195`).
 - Codex admitted version `0.157.0`: pin `tools/codex_cli/package-lock.json:16`; certified fixture
   `tools/agent_supervisor/fixtures/capability_probe_live_2026-10-02_m0t174_2_1_287.json:62`
@@ -63,7 +64,8 @@ only read-only `grep`/`sed`/`ls` to verify facts.
   (`resolve_memory_ceiling_bytes`), `:297` (`linux_memory_gauge_sample`); config note
   `config.example.toml:112-118`, `max_memory_bytes` `:123`.
 - Review cap: `run_budget.py:793` (`admit_review_or_combine`); caps `config.example.toml:137`
-  (global `= 2`), `:138` (per-lane `= 1`); atomic, fail-closed reservation `review_slots.py:28-30`;
+  (global `= 2`), `:138` (per-lane `= 1`); atomic, fail-closed reservation `review_slots.py:449`
+  (`try_reserve`, count-decide-reserve under the exclusive lock) via `reserve` ctx `:501`;
   conductor acquires a slot before each spawn `dual_review.py:309-313`.
 - Combiner/reviewer OFF by default: `review_combiner.py:459-467` (reader), `:420` (key
   `"review_combiner"`), `:433-434` (dataclass defaults `enabled=False`, `model=""`);
@@ -89,9 +91,10 @@ only read-only `grep`/`sed`/`ls` to verify facts.
 2. **`doctor`/`verify-controller` Linux paths — RESOLVED with code defaults.** The CLI arg defaults
    are `None`, so the owner/orchestrator passes them: `--config /etc/nyc-supervisor/config.toml`
    (`platform_paths.py:41`, `:67-77`); `--manifest "${XDG_CONFIG_HOME:-$HOME/.config}/nyc-supervisor/
-   ctl24-activation/controller_manifest.json"` (POSIX default `platform_paths.py:80-97`, `:101-107`;
+   ctl24-activation/controller_manifest.json"` (POSIX default `platform_paths.py:80-98`, `:101-107`;
    filename `manifest.py:38`; the manifest file is produced by record-manifest at activation, and
-   `verify-controller` without `--manifest` fails closed, `cli.py:480-489`). `--model-selection` has
+   `verify-controller` without `--manifest` fails closed — HALT, returns 1, reason `missing_manifest`,
+   `cli.py:1696-1714`). `--model-selection` has
    **no** platform default in code — the owner supplies the runtime `model_selection.toml` path
    explicitly (`cli.py:3250-3251`); it lives outside the manifest. No path invented.
 3. **`NYC_SUP_START_CMD` — RESOLVED as far as the repo defines it; the concrete value stays
