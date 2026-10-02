@@ -12,8 +12,8 @@ import { CoverageMatrixSection } from "@/components/compare/CoverageMatrixSectio
 import { ScenarioAssumptions } from "@/components/compare/ScenarioAssumptions";
 import { NoScenarioBlock } from "@/components/compare/NoScenarioBlock";
 /** `unusedFloorAreaSectionEnabled` is the server-read INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED
- * (D-06, plan §3 step 4); absent -> off: the set-aside section is replaced by one
- * "Not available — needs existing zoning floor area" line. */
+ * (D-06, plan §3 step 4); absent -> off: the set-aside section is replaced by the owner's two
+ * lines (D-090-R038): "Remaining development capacity: Not confirmed" and its reason. */
 export function ScenarioWorkspace({ document, evaluation = null, bbl, unusedFloorAreaSectionEnabled = false, zoningLot = null }: {
     document: Scenario;
     evaluation?: RuleEvaluation | null;

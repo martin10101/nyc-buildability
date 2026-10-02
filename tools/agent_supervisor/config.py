@@ -362,6 +362,17 @@ class ControllerConfig:
         return digest_of(self.raw)
 
 
+def default_config_path(*, os_name: str | None = None) -> pathlib.Path:
+    """Platform-correct default location of the IMMUTABLE controller config
+    (D-091 T1): Windows -> %ProgramFiles%\\SupervisorConfig\\config.toml; POSIX ->
+    /etc/nyc-supervisor/config.toml. Delegates to `platform_paths` so there is one
+    resolver and no hardcoded Windows path is ever used on Linux. Callers still
+    pass an explicit path to `load_controller_config`; this is the default a Linux
+    launcher/runbook resolves instead of hardcoding a Windows location."""
+    from . import platform_paths
+    return platform_paths.default_config_path(os_name=os_name)
+
+
 def load_controller_config(path: str | os.PathLike[str]) -> ControllerConfig:
     """Load and validate `config.toml`."""
     source = str(path)

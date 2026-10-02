@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside only the G6-split text letting the architect pilot use draft rules while "UI/reports clearly show the draft/provisional state": a draft result shows as "Not available" (plan §5, §5a.3). The gates, including engineering acceptance before G6, still apply.
+
 # Gates and Checkpoints
 
 ## Principle

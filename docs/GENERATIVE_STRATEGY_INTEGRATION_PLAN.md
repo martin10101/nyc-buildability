@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md).** This draft was never approved. Replaced by plan §5 (three answers, Best combination) and §12 Milestone 1. Its evaluator proxies are Phase 2, and its Three.js viewer is set aside (plan §5c).
+
 # Generative Development Strategy — Section 15 Integration Plan
 
 - **Status:** DRAFT FOR OWNER REVIEW — no tasks contracted, no code authorized by this document

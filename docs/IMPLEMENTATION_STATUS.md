@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md).** Replaced by the `project-control/` ledger, `SESSION_HANDOFF.md` and plan §10 (program state).
+
 # Implementation Status
 
 > **HISTORICAL — DO NOT USE FOR CURRENT STATUS.** The task tables below are stale (last updated

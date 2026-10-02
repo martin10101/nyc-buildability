@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md).** Replaced by `project-control/blockers/` and `SESSION_HANDOFF.md`; the statuses below are stale. The "Later" items are replaced by the plan's interim reviewer (§9a, Q12) and pilots (§11, M1-00b).
+
 # Human Actions Required
 
 Only actions requiring ownership or private authority are listed. Everything else proceeds without you. Each action maps to a blocker record in `project-control/blockers/`.

@@ -20,14 +20,18 @@ async function open(page: Page, view: string, bbl = "1000010010") {
 // this warning without a tap, and the combined-zoning-lot results read "Not confirmed".
 const TAX_LOT_ONLY_WARNING = "These numbers cover only the tax lot you entered. The full zoning lot may include other lots. The whole-site limit, the room left after existing buildings, and the combined lot's rear yard and coverage are not calculated yet.";
 const ZONING_LOT_ROWS = ["Whole-site capacity", "Remaining development capacity", "Combined zoning lot: coverage", "Combined zoning lot: rear yard"];
+// Owner wording, settled 2026-10-01 (D-090-R038): the reason line under "Remaining development capacity: Not confirmed".
+const REMAINING_REASON = "Needs verified zoning-lot boundaries and existing zoning floor area.";
 
 async function expectTaxLotOnlyScope(summary: Locator) {
   const warning = summary.getByTestId("tax-lot-only-warning");
   await expect(warning).toBeVisible();
   await expect(warning).toHaveText(TAX_LOT_ONLY_WARNING);
   for (const label of ZONING_LOT_ROWS) {
-    await expect(summary.locator("dt", { hasText: new RegExp(`^${label}$`) }).locator("..").locator("dd")).toHaveText("Not confirmed");
+    await expect(summary.locator("dt", { hasText: new RegExp(`^${label}$`) }).locator("..").locator("dd").first()).toHaveText("Not confirmed");
   }
+  await expect(summary.getByTestId("development-zoning-lot-remaining-capacity-reason")).toHaveText(REMAINING_REASON);
+  await expect(summary.getByTestId("development-zoning-lot-remaining-capacity-reason")).toBeVisible();
 }
 
 for (const view of ["overview", "zoning", "report"]) {

@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: "Three.js / React Three Fiber / Drei" as the 3D experience and the "GLB … Three.js viewer" end of its §4 pipeline (Phase 1 is server-drawn vector SVG, plan §5c), and its §6 amber "Conditional/uncertain" treatment (plan §5). The geometry-truth model and the rest still apply.
+
 # 3D Massing Engine Architecture
 
 ## Decision

@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](../../docs/PRODUCT_PLAN_CURRENT_2026-09-28.md).** The code under `app/` and the root `ARCHITECTURE.md` now describe the API. The remote-first development note below still applies.
+
 # NYC Buildability API (M0 placeholder)
 
 FastAPI service skeleton. Versioned REST endpoints live under `/api/v1`

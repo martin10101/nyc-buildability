@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md).** Replaced by [ADR-004](adr/ADR-004-frontend-hosting-render.md), the `project-control/` ledger and `SESSION_HANDOFF.md`. Every status below is a 2026-07-14 snapshot.
+
 # Connection Audit
 
 Audited 2026-07-14 by the orchestrator. Statuses: Connected and tested / Connected but not yet tested / Not connected / Authentication required / Human action required.

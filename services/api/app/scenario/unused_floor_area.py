@@ -3,8 +3,9 @@
 A-03 SET-ASIDE (plan section 3 step 4, section 8, M2-07; set-aside list item 6): the
 cap - bldgarea subtraction described below is the LEGACY behavior and runs ONLY when
 the module-local, fail-safe, default-off ``INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED``
-flag is explicitly on. By DEFAULT the section is ``not_computable`` and says "Not
-available - needs existing zoning floor area" (see ``_not_available_section``): existing
+flag is explicitly on. By DEFAULT the section is ``not_computable`` and says "Remaining
+development capacity: Not confirmed" / "Needs verified zoning-lot boundaries and existing
+zoning floor area." (owner wording D-090-R038; see ``_not_available_section``): existing
 floor area is never taken from city-recorded (DOF/PLUTO) building area.
 
 Gap-list item C1: the honest "unused DRAFT floor area" line for the first screen. This
@@ -80,10 +81,11 @@ __all__ = [
 # from city-recorded (DOF/PLUTO) building area, so that subtraction now runs
 # ONLY when this module-local flag is explicitly on. By DEFAULT (flag absent,
 # empty, or any unknown value) the section is ``not_computable`` with the
-# "Not available - needs existing zoning floor area" label, the draft cap still
-# shows under ``inputs``, no over_built state or professional-review flag is
-# derived from bldgarea, and the recorded building area rides only as a
-# reference-only assumption record, never subtracted (_not_available_section).
+# "Remaining development capacity: Not confirmed" label and its reason line
+# (owner wording D-090-R038), the draft cap still shows under ``inputs``, no
+# over_built state or professional-review flag is derived from bldgarea, and
+# the recorded building area rides only as a reference-only assumption record,
+# never subtracted (_not_available_section).
 # ---------------------------------------------------------------------------
 
 # Env var name, declared once here. The CODE default, when the variable is
@@ -413,8 +415,10 @@ def _not_available_section(
     cap_value: float | None,
     cap_provenance: dict | None,
 ) -> dict:
-    """The DEFAULT (flag-off) section: "Not available - needs existing zoning floor
-    area" (plan section 3 step 4, section 8, M2-07; set-aside list item 6).
+    """The DEFAULT (flag-off) section: "Remaining development capacity: Not
+    confirmed" / "Needs verified zoning-lot boundaries and existing zoning floor
+    area." (owner wording D-090-R038; plan section 3 step 4, section 8, M2-07;
+    set-aside list item 6).
 
     Never subtracts anything and never reads bldgarea as an existing floor area, so
     it can never be ``computed`` / ``over_built`` and never raises the section-level
@@ -424,8 +428,9 @@ def _not_available_section(
     is all-null - the input this needs is the existing ZONING floor area, which has
     no source yet.
 
-    Typed reason: the closed contract enum has no "needs existing zoning floor area"
-    value (a Lane C schema request), so the closest valid one is used -
+    Typed reason: the closed contract enum has no value for this reason (token
+    ``needs_existing_zoning_floor_area``; a Lane C schema request), so the closest
+    valid one is used -
     ``no_draft_far_cap`` when no positive cap was surfaced (unchanged), else
     ``missing_existing_building_area`` - and the precise machine-readable token rides
     as the value of the ``unused_floor_area_not_available`` assumption record, which

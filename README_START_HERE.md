@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](docs/PRODUCT_PLAN_CURRENT_2026-09-28.md).** Replaced by the start-of-session routine in `CLAUDE.md` and `AGENTS.md`, and by the plan. Do not follow these setup steps.
+
 # NYC Buildability — Full Production Claude Build Pack
 
 This repository pack is an operating system for Claude Code to build the complete NYC Development Feasibility and Zoning Intelligence Platform.

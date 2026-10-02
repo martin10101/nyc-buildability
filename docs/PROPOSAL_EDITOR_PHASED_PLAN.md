@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: the vertex-list outline, "Draw/adjust the outline", "Move one wall segment" and "the architect draws an outline … moves a wall two feet" (plan §1.4, §4, §7, §10), plus phase C (PDF import) and phase D (DWG) (plan §7). No lane takes a packet from these; the plan is still authorized by hold §2.2 (D-076) and their fate is owner question OD-4. The rest still applies.
+
 # Proposal-Editor Phased Plan (D-076, owner "Plan it" 2026-09-19)
 
 Owner-endorsed order (source: the owner's research conversation + D-076 capture):
