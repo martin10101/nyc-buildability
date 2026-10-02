@@ -158,30 +158,39 @@
     "D-091-R007"
    ],
    "producer": "ai-pipeline-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "12b7d765089b17a8a4161a1c71be8a1baf868fff",
+   "reviewed_manifest_sha256": "e2d4588c54ba4b8f15f9d5abaaaf9cd82b8c9688350274c4537a85f00cdec2ec",
    "requirements": [
     {
      "id": "D-091-R001",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "review_combiner.py implements the design section 2/4 combining stage; default off (combiner_disabled); not wired (no non-test importer; loop byte-unchanged) (reviewed 0c88d628)"
+     ],
+     "reviewed_sha": "12b7d765089b17a8a4161a1c71be8a1baf868fff"
     },
     {
      "id": "D-091-R003",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "combines both reviews of one frozen head: union of findings tagged codex/claude, none ever removed; verdict = worst_verdict(codex, claude) computed in code before any model call; the model adds only advisory, evidence-bound disputes for the human gate (finding stays, verdict unchanged)",
+      "the literal 'model picks the better review and discards findings' reading is deliberately not delivered: round-1 G3-1 and G5 B1/B2 proved it lets a model flip FAIL to PASS; the never-weaker rules (design section 2 rule 4) govern",
+      "47 tests incl. red/green never-weaker cases; G3/G4 and G5 round 2 PASS"
+     ],
+     "reviewed_sha": "12b7d765089b17a8a4161a1c71be8a1baf868fff"
     },
     {
      "id": "D-091-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "gates G0, G2, G3, G4, G5 PASS at content identity e2d4588c (round-1 FAILs forced the advisory-only rework); nothing wired, started or commissioned; the combining model (D-091-R008) stays the owner's choice: no default, unset refuses"
+     ],
+     "reviewed_sha": "12b7d765089b17a8a4161a1c71be8a1baf868fff"
     }
-   ]
+   ],
+   "restamp_note": "DCV reviewed 0c88d6286eba34f0219b0034bb604181149a27b2 (project-control/reports/M0-T169-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (e2d4588c); intervening commits are the evidence-map refresh (outside allowed_paths), a base merge of disjoint peer work and ledger records."
   },
   {
    "directive_id": "D-091",
