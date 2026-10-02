@@ -45,7 +45,7 @@ import {
   isJsonNumber,
 } from "./study-checks";
 import { checkMeasurement, checkSiteFact } from "./site-fact-validator";
-import { createStudyEntry, type NewOption } from "./study-operations";
+import { createStudyEntry, setLotSelection, type NewOption } from "./study-operations";
 import type { StudyResult } from "./study-entry";
 import type { StudyStore } from "./study-store";
 import {
@@ -145,6 +145,13 @@ export interface FetchStudySetupOptions {
   fetchImpl?: typeof fetch;
   signal?: AbortSignal;
   timeoutMs?: number;
+  /**
+   * The BBLs the architect re-picked, passed as repeated `selected` query params
+   * (`?selected=<bbl>&selected=<bbl>`). Empty or absent asks for the server's
+   * default "use all" selection. The SERVER (B-07) decides the combination from
+   * these; the web never computes one.
+   */
+  selected?: readonly string[];
 }
 
 export type StudySetupValidation =
@@ -163,11 +170,29 @@ export function validateStudySetupDocument(body: unknown): StudySetupValidation 
   if (!doc) return { ok: false, problems: problems.list };
   checkNoFixtureAnnotation(problems, "study_setup", doc);
 
+  // document_kind (review NB): the document names its own kind; a body that is
+  // not a study_setup is refused before any field is trusted.
+  if (doc.document_kind !== "study_setup") {
+    problems.add("document_kind", 'must be the string "study_setup"');
+  }
+
   // property
   const property = checkObject(problems, "property", doc.property);
   if (property) {
     checkBbl(problems, "property.bbl", property.bbl);
     checkNullableNonEmptyString(problems, "property.address", property.address);
+  }
+
+  // top-level bbl (review NB): a valid BBL that equals property.bbl, so a body
+  // whose envelope and its property disagree on the lot is refused.
+  checkBbl(problems, "bbl", doc.bbl);
+  if (
+    typeof doc.bbl === "string" &&
+    property !== null &&
+    typeof property.bbl === "string" &&
+    doc.bbl !== property.bbl
+  ) {
+    problems.add("bbl", "must equal property.bbl");
   }
 
   // lots (>= 1), each a contract lot (the oneOf: positive size + known rank, or null + unknown).
@@ -247,7 +272,10 @@ export async function fetchStudySetup(
 ): Promise<StudySetupFetchOutcome> {
   const fetchImpl = options.fetchImpl ?? fetch;
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
-  const url = `${apiBaseUrl()}/api/v1/properties/${encodeURIComponent(bbl)}/study`;
+  const query = (options.selected ?? [])
+    .map((selectedBbl) => `selected=${encodeURIComponent(selectedBbl)}`)
+    .join("&");
+  const url = `${apiBaseUrl()}/api/v1/properties/${encodeURIComponent(bbl)}/study${query ? `?${query}` : ""}`;
 
   const controller = new AbortController();
   let timedOut = false;
@@ -390,4 +418,42 @@ export function ensureStudyFromSetup(
       at: options.at,
     }),
   );
+}
+
+/** The server fetch failed; `outcome` is the non-`setup` transport outcome. */
+export interface RepickFetchFailed {
+  kind: "fetch_failed";
+  outcome: Exclude<StudySetupFetchOutcome, StudySetupOutcome>;
+}
+/** The server returned a setup; `result` is the store update (which itself may be a StudyFailure). */
+export interface RepickUpdated {
+  kind: "updated";
+  result: StudyResult;
+  correlationId: string | null;
+}
+export type RepickOutcome = RepickFetchFailed | RepickUpdated;
+
+/**
+ * Re-pick the site's lots for a property that already has a study. The adapter
+ * FETCHES the setup for the re-picked BBLs (`?selected=<bbl>&selected=<bbl>`);
+ * the SERVER (B-07) decides the lots and the combination. The store then
+ * replaces only `lots` and `lot_selection` (./study-operations setLotSelection),
+ * re-applying the pinned statement and marking every option out of date. The web
+ * computes no combination, adjacency or geometry. A non-`setup` fetch outcome is
+ * returned as `fetch_failed` and the store is untouched; a `setup` that the full
+ * study contract rejects surfaces as a `StudyFailure` in `result`.
+ */
+export async function repickLots(
+  store: StudyStore,
+  bbl: string,
+  selected: readonly string[],
+  at: string,
+  options: FetchStudySetupOptions = {},
+): Promise<RepickOutcome> {
+  const outcome = await fetchStudySetup(bbl, { ...options, selected });
+  if (outcome.kind !== "setup") return { kind: "fetch_failed", outcome };
+  const result = store.update(bbl, (entry) =>
+    setLotSelection(entry, outcome.setup.lots, outcome.setup.lotSelection, at),
+  );
+  return { kind: "updated", result, correlationId: outcome.correlationId };
 }

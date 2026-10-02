@@ -4,15 +4,17 @@ import {
   addOption,
   createStudyEntry,
   duplicateOption,
+  enterSiteFactValue,
   markOptionResultsCurrent,
   nextOptionId,
   removeSiteFact,
   renameOption,
   selectOption,
+  setLotSelection,
   updateOptionInputs,
   upsertSiteFact,
 } from "../study-operations";
-import { LOT_SELECTION_STATEMENT } from "../study-vocabulary";
+import { LOT_SELECTION_STATEMENT, MEASUREMENT_LABELS, type Lot } from "../study-vocabulary";
 import {
   T1,
   T2,
@@ -244,6 +246,144 @@ describe("out-of-date flags", () => {
     const current = expectOk(markOptionResultsCurrent(edited, "opt-a", 2));
     expect(isOptionStale(current, "opt-a")).toBe(false);
     expect(current.study).toBe(edited.study);
+  });
+});
+
+describe("re-picking lots (setLotSelection, request D-1 slice 2)", () => {
+  /** Two lots as the SERVER (B-07) would return them; the web never builds this. */
+  function serverTwoLots(): Lot[] {
+    return [
+      {
+        bbl: "5999999999",
+        approximate_lot_area_sq_ft: 5000,
+        size_measurement: { rank: "approximate_tax_map", label: MEASUREMENT_LABELS.approximate_tax_map },
+        selected: true,
+      },
+      {
+        bbl: "5999999998",
+        approximate_lot_area_sq_ft: 4000,
+        size_measurement: { rank: "approximate_tax_map", label: MEASUREMENT_LABELS.approximate_tax_map },
+        selected: true,
+      },
+    ];
+  }
+
+  it("replaces lots and combination from the server, keeps the pinned statement, marks every option out of date", () => {
+    const entry = currentTwoOptions();
+    expect(entry.study.lots).toHaveLength(1);
+    const next = expectOk(
+      setLotSelection(entry, serverTwoLots(), { mode: "all", combination: { status: "offered", reason: null } }, T1),
+    );
+    // The lots and the combination are the server's, verbatim.
+    expect(next.study.lots.map((lot) => lot.bbl)).toEqual(["5999999999", "5999999998"]);
+    expect(next.study.lot_selection.combination).toEqual({ status: "offered", reason: null });
+    // The pinned statement is re-applied by the store, never computed or taken from the input.
+    expect(next.study.lot_selection.statement).toBe(LOT_SELECTION_STATEMENT);
+    // The site changed, so every option is out of date; the option objects are untouched.
+    expect(next.staleOptionIds).toEqual(["opt-a", "opt-b"]);
+    expect(next.study.options).toBe(entry.study.options);
+    expect(next.study.revision).toEqual({ number: 2, created_at: T1, parent: 1 });
+    // The previous entry is untouched.
+    expect(entry.study.lots).toHaveLength(1);
+  });
+
+  it("re-picking to the same lots and selection changes nothing (no new revision)", () => {
+    const entry = currentTwoOptions();
+    const sameLots = JSON.parse(JSON.stringify(entry.study.lots)) as Lot[];
+    const sameCombination = JSON.parse(JSON.stringify(entry.study.lot_selection.combination));
+    const same = expectOk(
+      setLotSelection(entry, sameLots, { mode: entry.study.lot_selection.mode, combination: sameCombination }, T1),
+    );
+    expect(same).toBe(entry);
+  });
+
+  it("refuses an invalid lot (a 0 area with a known rank) and changes nothing", () => {
+    const entry = currentTwoOptions();
+    const badLots: Lot[] = [
+      {
+        bbl: "5999999999",
+        approximate_lot_area_sq_ft: 0,
+        size_measurement: { rank: "approximate_tax_map", label: MEASUREMENT_LABELS.approximate_tax_map },
+        selected: true,
+      },
+    ];
+    const result = setLotSelection(entry, badLots, { mode: "all", combination: { status: "single_lot", reason: null } }, T1);
+    expect(result).toMatchObject({ ok: false, code: "invalid_document" });
+    expect(entry.study.lots).toHaveLength(1);
+    expect(entry.study.lots[0].approximate_lot_area_sq_ft).toBe(5000);
+  });
+});
+
+describe("per-fact edit (enterSiteFactValue, request D-1 slice 2)", () => {
+  it("edits a city fact into a NEW entered fact and leaves the city fact intact", () => {
+    const entry = currentTwoOptions();
+    const cityArea = entry.study.site.facts.find((fact) => fact.fact_id === "fact-lot-area");
+    expect(cityArea?.source?.kind).toBe("tax_map_computation");
+    const next = expectOk(enterSiteFactValue(entry, { factId: "fact-lot-area", value: 6200 }, T1));
+    // The city value is never overwritten in place: the original fact is still present, unchanged.
+    expect(next.study.site.facts.find((fact) => fact.fact_id === "fact-lot-area")).toEqual(cityArea);
+    // The edit is a new fact at rank "entered", sourced to the architect, following the contract.
+    const entered = next.study.site.facts.find((fact) => fact.fact_id === "fact-lot-area-entered");
+    expect(entered?.value).toBe(6200);
+    expect(entered?.unit).toBe("square_feet");
+    expect(entered?.key).toBe("lot_area");
+    expect(entered?.measurement).toEqual({ rank: "entered", label: MEASUREMENT_LABELS.entered });
+    expect(entered?.source?.kind).toBe("architect_entry");
+    expect(entered?.source?.retrieved_at).toBe(T1);
+    expect(entered?.blocks).toEqual([]);
+    // The site is shared, so every option's results are out of date.
+    expect(next.staleOptionIds).toEqual(["opt-a", "opt-b"]);
+    expect(next.study.revision).toEqual({ number: 2, created_at: T1, parent: 1 });
+  });
+
+  it("edits a text-valued city fact (lot type) into an entered fact with a null unit", () => {
+    const entry = currentTwoOptions();
+    const next = expectOk(enterSiteFactValue(entry, { factId: "fact-lot-type", value: "interior" }, T1));
+    const entered = next.study.site.facts.find((fact) => fact.fact_id === "fact-lot-type-entered");
+    expect(entered?.value).toBe("interior");
+    expect(entered?.unit).toBeNull();
+    expect(entered?.measurement.rank).toBe("entered");
+    expect(entered?.source?.kind).toBe("architect_entry");
+  });
+
+  it("edits a non-city fact in place under its own id", () => {
+    const entry = currentTwoOptions();
+    const before = entry.study.site.facts.find((fact) => fact.fact_id === "fact-street-width-a");
+    expect(before?.source?.kind).toBe("architect_entry");
+    expect(before?.value).toBe(60);
+    const next = expectOk(enterSiteFactValue(entry, { factId: "fact-street-width-a", value: 75 }, T2));
+    // No new fact: the non-city value is replaced in place.
+    expect(next.study.site.facts).toHaveLength(entry.study.site.facts.length);
+    const edited = next.study.site.facts.find((fact) => fact.fact_id === "fact-street-width-a");
+    expect(edited?.value).toBe(75);
+    expect(edited?.street).toBe("Synthetic Street A");
+    expect(edited?.unit).toBe("feet");
+    expect(edited?.measurement).toEqual({ rank: "entered", label: MEASUREMENT_LABELS.entered });
+    expect(next.staleOptionIds).toEqual(["opt-a", "opt-b"]);
+  });
+
+  it("uses a caller-supplied id for the new entered fact", () => {
+    const entry = currentTwoOptions();
+    const next = expectOk(
+      enterSiteFactValue(entry, { factId: "fact-lot-area", value: 6000, enteredFactId: "fact-lot-area-mine" }, T1),
+    );
+    expect(next.study.site.facts.some((fact) => fact.fact_id === "fact-lot-area-mine")).toBe(true);
+  });
+
+  it("refuses an invalid value (a 0 lot area) and changes nothing", () => {
+    const entry = currentTwoOptions();
+    const result = enterSiteFactValue(entry, { factId: "fact-lot-area", value: 0 }, T1);
+    expect(result).toMatchObject({ ok: false, code: "invalid_document" });
+    expect(entry.study.site.facts.some((fact) => fact.fact_id === "fact-lot-area-entered")).toBe(false);
+    expect(entry.staleOptionIds).toEqual([]);
+  });
+
+  it("refuses an edit to a fact that is not in the study", () => {
+    const entry = currentTwoOptions();
+    expect(enterSiteFactValue(entry, { factId: "fact-missing", value: 10 }, T1)).toMatchObject({
+      ok: false,
+      code: "unknown_fact",
+    });
   });
 });
 

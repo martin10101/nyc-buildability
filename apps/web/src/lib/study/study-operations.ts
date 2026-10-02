@@ -34,6 +34,7 @@ import {
 import { validateStudyDocument } from "./study-validator";
 import {
   LOT_SELECTION_STATEMENT,
+  MEASUREMENT_LABELS,
   type Lot,
   type LotSelection,
   type OptionInputs,
@@ -73,6 +74,22 @@ type StaleMark = "all" | "none" | readonly string[];
 
 /** Source kinds of a city value: an edit is a new fact, never an in-place overwrite (site_fact.schema.json `editable`). */
 const CITY_SOURCE_KINDS: readonly SourceKind[] = ["city_dataset", "city_filing", "tax_map_computation"];
+
+/**
+ * The unit site_fact.schema.json ties to each key: square_feet for areas, feet
+ * for lengths, null for text values (lot type, district, overlay). An entered
+ * value is built with its key's unit, never a unit the caller invents.
+ */
+const SITE_FACT_KEY_UNITS: { readonly [K in SiteFact["key"]]: SiteFact["unit"] } = {
+  lot_area: "square_feet",
+  lot_frontage: "feet",
+  lot_depth: "feet",
+  street_width: "feet",
+  existing_zoning_floor_area: "square_feet",
+  lot_type: null,
+  zoning_district: null,
+  commercial_overlay: null,
+};
 
 function ok(entry: StudyEntry): StudyResult {
   return { ok: true, entry };
@@ -263,6 +280,35 @@ export function selectOption(entry: StudyEntry, optionId: string, at: string): S
   return commitStudyChange(entry, { ...entry.study, selected_option_id: optionId }, at, "none");
 }
 
+/**
+ * Re-pick the site's lots. The server (B-07) decides the lots and whether the
+ * combination is offered; the web takes BOTH VERBATIM and NEVER computes a
+ * combination, adjacency or geometry. Only `lots` and `lot_selection` change;
+ * the pinned statement is always re-applied by the store (so a server statement
+ * can never displace it), and only `mode` and `combination` are read from the
+ * caller. The lots define the shared site, so every option's results are marked
+ * out of date (plan section 9). Re-picking to the same lots and selection
+ * changes nothing. An invalid composition changes nothing.
+ */
+export function setLotSelection(
+  entry: StudyEntry,
+  lots: Lot[],
+  lotSelection: Pick<LotSelection, "mode" | "combination">,
+  at: string,
+): StudyResult {
+  const nextLots = copyJson<Lot[]>(lots);
+  const nextSelection = copyJson<LotSelection>({
+    mode: lotSelection.mode,
+    statement: LOT_SELECTION_STATEMENT,
+    combination: lotSelection.combination,
+  });
+  if (nextLots === null || nextSelection === null) return nonFinite();
+  if (sameJson(nextLots, entry.study.lots) && sameJson(nextSelection, entry.study.lot_selection)) {
+    return ok(entry);
+  }
+  return commitStudyChange(entry, { ...entry.study, lots: nextLots, lot_selection: nextSelection }, at, "all");
+}
+
 function fromCity(fact: SiteFact): boolean {
   return fact.source !== null && CITY_SOURCE_KINDS.includes(fact.source.kind);
 }
@@ -289,6 +335,62 @@ export function upsertSiteFact(entry: StudyEntry, fact: SiteFact, at: string): S
   }
   const nextFacts = index >= 0 ? facts.map((existing, position) => (position === index ? next : existing)) : [...facts, next];
   return commitStudyChange(entry, { ...entry.study, site: { ...entry.study.site, facts: nextFacts } }, at, "all");
+}
+
+/** A per-fact edit: which displayed fact, and the value the architect typed. */
+export interface SiteFactValueEdit {
+  /** The fact being edited, found by id in the study's site. */
+  factId: string;
+  /** The value typed: a number for areas and lengths, text for lot type, district or overlay. */
+  value: number | string;
+  /**
+   * Id for the NEW entered fact when the edited one is a CITY value (a city
+   * value is never overwritten in place, so the edit is a new fact). Ignored
+   * when the edited fact is not a city value - that one is replaced in place
+   * under its own id. Defaults to "<factId>-entered".
+   */
+  enteredFactId?: string;
+}
+
+/**
+ * The architect edits one displayed site value. The edit becomes a fact at
+ * measurement rank "entered" (its tied label "Entered") sourced to the architect
+ * (kind "architect_entry"), following site_fact.schema.json exactly - the key,
+ * street and lot stay the edited fact's; the unit is the key's unit; nothing is
+ * computed. A CITY value is never overwritten in place: editing one ADDS an
+ * entered fact under its own id and leaves the city fact intact (site_fact
+ * `editable`); editing a non-city value (an unknown placeholder or an earlier
+ * entry) replaces it in place. The site is shared, so every option's results go
+ * out of date - the C-05 store flags options wholesale on any site change
+ * (per-fact dependency invalidation is C-06, plan M1-11). An edit the contract
+ * rejects (wrong value type for the key, a non-positive dimension) changes
+ * nothing, via upsertSiteFact's validation.
+ */
+export function enterSiteFactValue(entry: StudyEntry, edit: SiteFactValueEdit, at: string): StudyResult {
+  const existing = entry.study.site.facts.find((fact) => fact.fact_id === edit.factId);
+  if (!existing) return studyFailure("unknown_fact", "This site fact is not part of the study.");
+  const entered: SiteFact = {
+    contract_version: existing.contract_version,
+    fact_id: fromCity(existing) ? (edit.enteredFactId ?? `${existing.fact_id}-entered`) : existing.fact_id,
+    key: existing.key,
+    lot_bbl: existing.lot_bbl,
+    street: existing.street,
+    value: edit.value,
+    unit: SITE_FACT_KEY_UNITS[existing.key],
+    measurement: { rank: "entered", label: MEASUREMENT_LABELS.entered },
+    source: {
+      kind: "architect_entry",
+      dataset: null,
+      dataset_version: null,
+      retrieved_at: at,
+      query_ref: null,
+      document_ref: null,
+      statement: null,
+    },
+    blocks: [],
+    editable: true,
+  };
+  return upsertSiteFact(entry, entered, at);
 }
 
 /** Remove a site fact; every option is marked out of date. */
