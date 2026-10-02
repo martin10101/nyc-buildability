@@ -194,4 +194,55 @@ Committed to the task branch (for orchestrator cherry-pick): package.json, packa
   mitigated by OIDC trusted-publisher signal + scheduled re-audit.
 - Sandbox-boundary behavior of 0.157.0 not measured here (recertification task owns that).
 
+---
+
+## REWORK ADDENDUM (G5 B1: continuous-audit CI coverage) — HEAD cbe0b3ea
+
+G5 (project-control/reports/M0-T167-G5.md) passed every provenance check but FAILED admission on
+B1: no CI job re-audited tools/codex_cli, so policy §1 rule 5 ("audited on every change AND on a
+schedule") was unmet. The packet was scope-corrected to also allow `.github/workflows/ci.yml` and
+`.github/workflows/scheduled-web-audit.yml`. Rework base HEAD ab1dfabc; new commit cbe0b3ea (worked
+on top, no reset).
+
+Files changed (3, all in allowed scope): `.github/workflows/ci.yml`,
+`.github/workflows/scheduled-web-audit.yml`, `tools/codex_cli/README.md`. Both workflow edits are
+purely additive (no deletions; no existing job/trigger/permission/pin changed) — mirror the web
+dependency-security jobs, same SHA-pinned `actions/checkout@34e1148...` and
+`actions/setup-node@49933ea...`, same pinned npm `11.18.0`, reuse the web age gate.
+
+ci.yml — new job **`codex-cli-dependency-security`** (always-run on push/PR, like
+web-dependency-security), working-directory `tools/codex_cli`. Steps:
+1. `actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1`
+2. `actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0` (cache-dependency-path tools/codex_cli/package-lock.json)
+3. `Pin npm CLI to 11.18.0`
+4. `Deterministic install (npm ci --ignore-scripts; lockfile + integrity verified)` → `npm ci --ignore-scripts --no-audit --no-fund`
+5. `Blocking npm audit (--audit-level=low)`
+6. `Blocking npm audit (JSON total vulnerabilities must be 0)`
+7. `Committed-lockfile release-age gate (>= 7 days, fail-closed)` → `node ../../apps/web/scripts/dependency_age_gate.mjs package-lock.json`
+
+scheduled-web-audit.yml — new job **`codex-audit`** (runs on the workflow's existing daily cron
+`41 6 * * *` + workflow_dispatch; trigger block untouched), working-directory `tools/codex_cli`,
+with the identical 7 steps above. The existing `audit` job is unchanged.
+
+Every added step fails closed (a finding, too-new package, integrity mismatch, unexpected host, or
+registry outage fails the build); no allowlist/suppression/warning-only step.
+
+README.md CI-coverage section rewritten from "does not cover / needed follow-up" to record the two
+jobs now exist; N3 cosmetic fix applied (auth URL 308-redirects then resolves 200).
+
+Validation / tests run:
+- `python -c yaml.safe_load` on both workflow files → PARSED OK; ci.yml jobs now include
+  `codex-cli-dependency-security`, scheduled now includes `codex-audit`; new-job working-dirs and
+  step names asserted (lanes venv python).
+- `tools/validate_mcp_policy.py --check` → EXIT 0 (ci.yml still contains the two required p10
+  control-plane steps; my additive job did not disturb them).
+- `tools/test_mcp_policy.py` → Ran 42 tests, OK, EXIT 0 (the "policy INVALID" line is a
+  negative-path fixture's own stdout, not a suite failure).
+
+Limitations: workflows are YAML-validated and guard-checked locally; the jobs themselves only
+execute on GitHub runners (thin-client / no act here), so first green is proven in CI on the pushed
+head. The scheduled-audit PR trigger still lists only apps/web paths (I did not modify the existing
+trigger per the "change nothing else" rule); per-change coverage of tools/codex_cli is provided by
+the always-run ci.yml job, and the daily cron covers the scheduled re-audit.
+
 END-OF-REPORT
