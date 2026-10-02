@@ -2,15 +2,15 @@
   "task_id": "M0-T169",
   "producer_agent": "ai-pipeline-engineer",
   "report_file": "project-control/reports/M0-T169-producer-report.md",
-  "submitted_at": "2026-10-02T07:50:05.310161+00:00",
+  "submitted_at": "2026-10-02T08:32:35.521030+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T169-evidence-map.json",
-  "content_manifest_sha256": "609dcdfd4367f1c21fff5837fe13f0588101aadc0c4e18bfcb0c3251cf0b7de9",
-  "reviewed_sha": "07cd4a54165c7f5b3c0b35798ef07e2e573cfb2c",
+  "content_manifest_sha256": "e2d4588c54ba4b8f15f9d5abaaaf9cd82b8c9688350274c4537a85f00cdec2ec",
+  "reviewed_sha": "4a673712f4437f6034fc05896ee39c03bfba5ede",
   "applicable_requirements": [
     "D-091-R001",
     "D-091-R003",
     "D-091-R007"
   ],
-  "updated_at": "2026-10-02T07:50:05.869554+00:00"
+  "updated_at": "2026-10-02T08:32:36.033957+00:00"
 }
