@@ -1,0 +1,26 @@
+{
+  "contract_version": "1.0.0",
+  "groups": [
+    {
+      "group_id": "zoning_lot_history",
+      "title": "Zoning-lot history",
+      "lot_bbl": "5999999999",
+      "flags": [
+        {
+          "item_id": "zoning_lot_history.recorded_mentions",
+          "group": "zoning_lot_history",
+          "title": "Recorded zoning-lot mentions to check",
+          "status": "opportunity",
+          "status_label": "Opportunity",
+          "detail": "DOB records mention this lot in a zoning-lot context.",
+          "typical_source": "DOB zoning-lot filings; ACRIS recorded documents index",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        }
+      ]
+    }
+  ],
+  "_expected_failure": "The zoning-lot-history group is a reminder only (plan P-2): its items are a flag or 'Check needed', never 'opportunity' or 'not_flagged'. This flag's group is zoning_lot_history with status 'opportunity', which the second allOf/oneOf rejects."
+}
