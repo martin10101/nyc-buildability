@@ -57,14 +57,14 @@
     "ci-evidence-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T07:27:33.925314+00:00",
-  "updated_at": "2026-10-02T07:27:34.285615+00:00",
+  "updated_at": "2026-10-02T07:28:27.628717+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -75,5 +75,15 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-10-02T07:27:33.925529+00:00"
+  "directive_regime_entered_at": "2026-10-02T07:27:33.925529+00:00",
+  "worktree": "/root/project/w-M0-T170",
+  "progress_log": [
+    {
+      "at": "2026-10-02T07:28:27.628629+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Scenarios in the packet; producer dispatched in /root/project/w-M0-T170"
+    }
+  ]
 }

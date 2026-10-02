@@ -54,14 +54,14 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T07:27:33.054991+00:00",
-  "updated_at": "2026-10-02T07:27:33.440735+00:00",
+  "updated_at": "2026-10-02T07:28:27.349706+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -73,5 +73,15 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-10-02T07:27:33.055249+00:00"
+  "directive_regime_entered_at": "2026-10-02T07:27:33.055249+00:00",
+  "worktree": "/root/project/w-M0-T169",
+  "progress_log": [
+    {
+      "at": "2026-10-02T07:28:27.349627+00:00",
+      "agent": "ai-pipeline-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Scenarios in the packet; producer dispatched in /root/project/w-M0-T169"
+    }
+  ]
 }
