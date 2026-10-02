@@ -64,14 +64,14 @@
     "ci-evidence-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T05:17:56.297263+00:00",
-  "updated_at": "2026-10-02T05:21:54.246604+00:00",
+  "updated_at": "2026-10-02T07:05:01.073937+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -82,5 +82,15 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-10-02T05:17:56.297492+00:00"
+  "directive_regime_entered_at": "2026-10-02T05:17:56.297492+00:00",
+  "worktree": "/root/project/w-M0-T166",
+  "progress_log": [
+    {
+      "at": "2026-10-02T07:05:01.073780+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Scope corrected; acceptance scenarios in the packet; producer dispatched in /root/project/w-M0-T166"
+    }
+  ]
 }
