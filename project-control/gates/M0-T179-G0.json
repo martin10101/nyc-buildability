@@ -5,8 +5,17 @@
   "role": "administrative",
   "result": "PASS",
   "report_file": "project-control/reports/M0-T179-G0.md",
-  "reviewed_at": "2026-10-02T23:37:03.362500+00:00",
-  "content_manifest_sha256": "90c3e30e09bc9079a9c4661974493e80a418197b272a1621301264f30c07f5cd",
-  "reviewed_sha": "7f829202d91f76a819eff694d58325592e9ff147",
-  "updated_at": "2026-10-02T23:37:03.531829+00:00"
+  "reviewed_at": "2026-10-02T23:48:43.536456+00:00",
+  "content_manifest_sha256": "63a9debfeb829d3b37b1d349306c60cda86a6e80b0698522c39e99c6b2977461",
+  "reviewed_sha": "ae1d4fb2de59b4753b23bdb9f99b6c857360bdbd",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T179-G0.md",
+      "reviewed_at": "2026-10-02T23:37:03.362500+00:00"
+    }
+  ],
+  "updated_at": "2026-10-02T23:48:43.733889+00:00"
 }
