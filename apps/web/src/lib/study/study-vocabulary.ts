@@ -75,6 +75,7 @@ type OriginKind = Origin["kind"];
 export const STUDY_CONTRACT_VERSIONS = ["1.0.0"] as const satisfies readonly StudyContractVersion[];
 export const SITE_FACT_CONTRACT_VERSIONS = [
   "1.0.0",
+  "1.1.0",
 ] as const satisfies readonly SiteFactContractVersion[];
 
 /** The exact label every result carries (study.schema.json lot_selection.statement; plan section 3 step 2). */

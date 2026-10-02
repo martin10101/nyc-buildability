@@ -19,6 +19,15 @@ export interface Source {
   document_ref: NonEmptyString | null;
   statement: NonEmptyString | null;
   provenance_refs?: NonEmptyString[];
+  version_check?: VersionCheck;
+}
+export interface VersionCheck {
+  status: "current" | "out_of_date" | "version_unknown";
+  label: "Current" | "Out of date" | "Version unknown";
+  latest_known_version: NonEmptyString | null;
+  latest_known_seen_at: DateTime | null;
+  latest_known_query_ref: NonEmptyString | null;
+  reason: NonEmptyString;
 }
 export interface TransitParking {
   contract_version: "1.0.0";

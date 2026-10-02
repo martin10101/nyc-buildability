@@ -51,7 +51,7 @@
     "computed_at": { "$ref": "common.schema.json#/$defs/date_time" },
     "out_of_date": {
       "type": "boolean",
-      "description": "True when a site input, this option, or a rule version changed after computation (plan section 9 'Dependency-based invalidation'); rows then carry the 'Out of date' exception (section 5a item 3)."
+      "description": "True when a site input, this option, or a rule version changed after computation (plan section 9 'Dependency-based invalidation'); rows then carry the 'Out of date' exception (section 5a item 3). A source a fact uses being behind a newer published version (check C-7, data side; services/api/app/profile/data_versions.py) is also an 'Out of date' condition: it is surfaced per row through the exception_label 'Out of date' from DataVersionReport.fact_exception_labels(). Whether a behind source also sets this top-level out_of_date flag is left to the wiring step (request docs/lanes/requests/B-1.md) and is not fixed by this contract; the per-source status itself travels on site_fact source.version_check (site_fact contract 1.1.0)."
     },
     "out_of_date_reason": {
       "description": "Why the results are out of date; null when current.",
