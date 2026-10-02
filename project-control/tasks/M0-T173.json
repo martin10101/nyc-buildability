@@ -1,0 +1,76 @@
+{
+  "task_id": "M0-T173",
+  "title": "D-091 TW3: Linux resource wiring (feed the 70% memory gauge into the sampler; set the resolved ceiling)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Wire M0-T170's primitives into the running controller on Linux: the resource sampler's POSIX branch emits linux_memory_gauge_sample, and the controller's max_memory_bytes is set to resolve_memory_ceiling_bytes (no more than 70% of measured memory, owner rule D-090-R076), with the minimal cli.py change. Windows behavior unchanged; fail closed when the gauge is unreadable.",
+  "business_reason": "Owner directive D-091: move the loop to the cloud server with Codex and Claude reviews and a combining model.",
+  "inputs": [
+    "docs/D091_WAVE3_WIRING_PLAN.md section 1",
+    "tools/agent_supervisor/resource_sampling.py (M0-T170 primitives)",
+    "tools/agent_supervisor/cli.py",
+    "project-control/reports/M0-T170-G3G4.md"
+  ],
+  "outputs": [
+    "resource_sampling.py POSIX sample branch",
+    "minimal cli.py wiring",
+    "tools/test_agent_supervisor_linux_gauge.py",
+    "project-control/reports/M0-T173-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T170"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/resource_sampling.py",
+    "tools/agent_supervisor/cli.py",
+    "tools/test_agent_supervisor_linux_gauge.py",
+    "project-control/reports/M0-T173-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "cli.py beyond the minimal ceiling/gauge wiring (it is above the modularity ceiling; no net growth beyond a few lines)",
+    "run_budget.py, loop.py, circuit_breakers.py",
+    "M0-T171 and M0-T172 paths",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
+    "codex login or handling any owner credential",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
+    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths"
+  ],
+  "acceptance_scenarios": [
+    "primary: on Linux the sampler reports memory_bytes from /proc/meminfo and the loop pauses at or above the resolved 70% ceiling",
+    "missing/ambiguous: an unreadable gauge pauses (fail closed)",
+    "regression: Windows sampling and every existing resource/phase1 test unchanged"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "ci-evidence-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T09:02:46.182545+00:00",
+  "updated_at": "2026-10-02T09:02:46.530069+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T09:02:46.182778+00:00"
+}

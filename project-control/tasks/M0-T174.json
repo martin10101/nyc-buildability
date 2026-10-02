@@ -1,0 +1,79 @@
+{
+  "task_id": "M0-T174",
+  "title": "D-091 TW4: Linux recertification of the controller (recapture fixtures for the installed claude and codex, update the re-baseline tests, cert report)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "After TW1-TW3 merge, recertify the controller on this Linux server: recapture the capability-probe fixture (installed claude and codex versions, [HOME]-masked), the shell-routing and native-runtime-detection fixtures, run the bash shell-routing harness, update the version-pinned re-baseline tests so the live drift checks pass, and write the certification report. All local probes; no provider call; no root or systemd step (those are owner-typed in TW5).",
+  "business_reason": "Owner directive D-091: move the loop to the cloud server with Codex and Claude reviews and a combining model.",
+  "inputs": [
+    "docs/D091_WAVE3_WIRING_PLAN.md section 2",
+    "project-control/reports/M0-T159-recertification.md (the precedent)",
+    "tools/agent_supervisor/capability_probe.py, routing_probe.py, native_runtime.py",
+    "tools/agent_supervisor/linux/sh_tests/"
+  ],
+  "outputs": [
+    "recaptured fixtures under tools/agent_supervisor/fixtures/",
+    "updated re-baseline tests",
+    "project-control/reports/M0-T174-producer-report.md (certification report)"
+  ],
+  "dependencies": [
+    "M0-T171",
+    "M0-T172",
+    "M0-T173"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/fixtures/",
+    "tools/test_agent_supervisor_capability_probe.py",
+    "tools/test_agent_supervisor_native_adapter.py",
+    "project-control/reports/M0-T174-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "any tools/agent_supervisor/*.py source change (a source change after this task voids the certification)",
+    "creating /etc/nyc-supervisor/config.toml or installing systemd units (owner-typed, TW5)",
+    "any provider call",
+    "starting or commissioning a live loop, or any owner-typed step (runbook section 12)",
+    "codex login or handling any owner credential",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "Windows behavior changes: existing Windows paths and tests must keep passing unchanged",
+    "project-control/** (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "other D-091 tasks' paths"
+  ],
+  "acceptance_scenarios": [
+    "primary: the live re-probe tests for claude and codex pass on this server against the new fixtures",
+    "the re-baseline invariant pins the new versions; the old fixtures are kept, not deleted",
+    "the bash shell-routing harness passes with all mutants detected",
+    "failure: a probe that cannot run fails closed and the certification is not claimed"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "control-plane-verifier",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T09:02:47.014019+00:00",
+  "updated_at": "2026-10-02T09:02:47.391027+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R007",
+        "D-091-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T09:02:47.014257+00:00"
+}

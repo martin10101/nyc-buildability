@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 8,
  "producer": "orchestrator",
- "updated_at": "2026-10-02T07:27:32+00:00",
+ "updated_at": "2026-10-02T09:02:43+00:00",
  "requirements": [
   {
    "id": "D-091-R001",
@@ -20,7 +20,12 @@
      "M0-T167",
      "M0-T168",
      "M0-T169",
-     "M0-T170"
+     "M0-T170",
+     "M0-T171",
+     "M0-T172",
+     "M0-T173",
+     "M0-T174",
+     "M0-T175"
     ],
     "task_types": [],
     "milestones": [],
@@ -51,7 +56,12 @@
      "M0-T167",
      "M0-T168",
      "M0-T169",
-     "M0-T170"
+     "M0-T170",
+     "M0-T171",
+     "M0-T172",
+     "M0-T173",
+     "M0-T174",
+     "M0-T175"
     ]
    }
   },
@@ -64,7 +74,8 @@
    "applicability": {
     "task_ids": [
      "D-091-BOOTSTRAP",
-     "M0-T168"
+     "M0-T168",
+     "M0-T172"
     ],
     "task_types": [],
     "milestones": [],
@@ -87,7 +98,8 @@
     "files": [],
     "tests": [],
     "tasks": [
-     "M0-T168"
+     "M0-T168",
+     "M0-T172"
     ]
    }
   },
@@ -100,7 +112,8 @@
    "applicability": {
     "task_ids": [
      "D-091-BOOTSTRAP",
-     "M0-T169"
+     "M0-T169",
+     "M0-T172"
     ],
     "task_types": [],
     "milestones": [],
@@ -124,7 +137,8 @@
     "files": [],
     "tests": [],
     "tasks": [
-     "M0-T169"
+     "M0-T169",
+     "M0-T172"
     ]
    }
   },
@@ -201,7 +215,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-091-BOOTSTRAP"
+     "D-091-BOOTSTRAP",
+     "M0-T175"
     ],
     "task_types": [],
     "milestones": [],
@@ -223,7 +238,9 @@
    "maps_to": {
     "files": [],
     "tests": [],
-    "tasks": []
+    "tasks": [
+     "M0-T175"
+    ]
    }
   },
   {
@@ -239,7 +256,12 @@
      "M0-T166",
      "M0-T168",
      "M0-T169",
-     "M0-T170"
+     "M0-T170",
+     "M0-T171",
+     "M0-T172",
+     "M0-T173",
+     "M0-T174",
+     "M0-T175"
     ],
     "task_types": [],
     "milestones": [],
@@ -266,7 +288,12 @@
      "M0-T166",
      "M0-T168",
      "M0-T169",
-     "M0-T170"
+     "M0-T170",
+     "M0-T171",
+     "M0-T172",
+     "M0-T173",
+     "M0-T174",
+     "M0-T175"
     ]
    }
   },
@@ -278,7 +305,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-091-BOOTSTRAP"
+     "D-091-BOOTSTRAP",
+     "M0-T175"
     ],
     "task_types": [],
     "milestones": [],
@@ -298,7 +326,9 @@
    "maps_to": {
     "files": [],
     "tests": [],
-    "tasks": []
+    "tasks": [
+     "M0-T175"
+    ]
    }
   }
  ]
