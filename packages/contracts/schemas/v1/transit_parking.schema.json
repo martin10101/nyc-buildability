@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/transit_parking.schema.json",
+  "title": "Transit Parking Status",
+  "description": "v1 wiring contract (lane C packet W0; plan check C-8, queue item B-10) for one lot's transit/parking-zone status, read ONCE from one official source and applied identically to every option (so the transit/parking status cannot differ between options). The document is the serialized resolve_transit_parking_status(...) output of services/api/app/profile/transit_parking.py (TransitParkingStatus.to_dict()), wrapped in a version envelope. It carries the PLUTO transitzone classification VERBATIM (DCP's Transit Zones per the PLUTO Data Dictionary 26v1) or says the source is 'Check needed'. It states NO parking OUTCOME: applying the Zoning Resolution off-street parking rules to the zone (the number of spaces, a waiver, or an exemption) is a rule-engine / legal determination made by the engine (Lane A) and a qualified reviewer at G6, never here. There is deliberately no parking-outcome field.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "lot_bbl",
+    "status",
+    "status_label",
+    "transit_zone",
+    "source",
+    "detail",
+    "missing_source"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published transit_parking contract versions. 1.0.0 = lane C packet W0 initial shape. New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "lot_bbl": {
+      "$ref": "common.schema.json#/$defs/bbl",
+      "description": "The tax lot (10-digit BBL) this status is for. resolve_transit_parking_status runs once per BBL and every option reads that one object."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["recorded", "check_needed"],
+      "description": "transit_parking STATUSES: recorded = PLUTO has a usable transit-zone value; check_needed = no usable value (the reason is in detail). Neither states a parking requirement."
+    },
+    "status_label": {
+      "type": "string",
+      "enum": ["Recorded", "Check needed"],
+      "description": "The display label, tied one-to-one to status. 'Check needed' is the plan section 8a wording, copied exactly."
+    },
+    "transit_zone": {
+      "description": "The verbatim PLUTO transitzone text (for example 'Outer Transit Zone'), or null when check_needed. Passed through, never re-interpreted.",
+      "anyOf": [
+        { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        { "type": "null" }
+      ]
+    },
+    "source": {
+      "description": "A site_fact city_dataset source for PLUTO (dataset, dataset version, retrieved_at, query_ref, provenance_refs), or the checked source when no value was found; may be null.",
+      "anyOf": [
+        { "$ref": "site_fact.schema.json#/$defs/source" },
+        { "type": "null" }
+      ]
+    },
+    "detail": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "The one line shown beside every option (plan section 5a). It states the legal boundary: the zone is DCP's classification; applying the ZR parking rules to it is the rule engine's job, not this layer's."
+    },
+    "missing_source": {
+      "description": "The source behind the field to check when check_needed (DCP Transit Zones, NYC Open Data 6ztr-wgff); null when recorded.",
+      "anyOf": [
+        { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        { "type": "null" }
+      ]
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key; it is allowed (optional) so an invalid fixture fails only for its stated defect under additionalProperties:false."
+    }
+  },
+  "allOf": [
+    {
+      "description": "status, status_label, transit_zone and missing_source move together. recorded carries a transit zone and no missing source; check_needed carries no transit zone and names the source to check.",
+      "oneOf": [
+        {
+          "properties": {
+            "status": { "const": "recorded" },
+            "status_label": { "const": "Recorded" },
+            "transit_zone": { "type": "string" },
+            "missing_source": { "type": "null" }
+          }
+        },
+        {
+          "properties": {
+            "status": { "const": "check_needed" },
+            "status_label": { "const": "Check needed" },
+            "transit_zone": { "type": "null" },
+            "missing_source": { "type": "string" }
+          }
+        }
+      ]
+    }
+  ]
+}

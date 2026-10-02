@@ -37,10 +37,11 @@ Any other (valid) BBL serves F03b's empty result -> 404 no_match.
 
 CORS NOTE (test infrastructure, documented in the producer report): the
 deployed API currently has no CORS policy, and services/** may not be
-edited by this task. The browser page (127.0.0.1:3000) calls the API
-(127.0.0.1:8000) cross-origin, so this harness adds CORSMiddleware for the
-test origin only. A reviewed CORS/proxy decision is required before any
-real cross-origin deployment; flagged as a follow-up in the report.
+edited by this task. The browser pages (127.0.0.1:3000 flag-off and, for
+D-1 slice 2, 127.0.0.1:3001 flag-on) call the API (127.0.0.1:8000)
+cross-origin, so this harness adds CORSMiddleware for those test origins
+only. A reviewed CORS/proxy decision is required before any real
+cross-origin deployment; flagged as a follow-up in the report.
 """
 
 from __future__ import annotations
@@ -58,9 +59,13 @@ from app.api.v1.address_resolution import get_address_resolver
 from app.api.v1.lot_geometry import get_lot_outline_fetcher, get_tax_map_outline_fetcher
 from app.api.v1.properties import get_pluto_fetcher
 from app.api.v1.rule_evaluation import get_spatial_substrate_provider
+from app.api.v1.study_inputs import pluto_study_inputs_provider
+from app.api.v1.study_read import get_study_inputs_provider
 from app.config import (
     INTERNAL_RULE_EVAL_ENABLED_ENV_VAR,
     INTERNAL_SCENARIO_ENABLED_ENV_VAR,
+    INTERNAL_STUDY_READ_ENABLED_ENV_VAR,
+    LANE_FLAG_ENV_VARS,
 )
 from app.connectors.dtm_lot_outline import build_outline_query_url as dtm_outline_query_url
 from app.connectors.geoclient_address import AddressResolution
@@ -394,6 +399,46 @@ def harness_address_resolver(
     )
 
 
+# ---------------------------------------------------------------------------
+# D-1 slice 2 (lane C): the study-setup read behind the flag-on lot-&-site-setup
+# journey. ONE seam is overridden — the study-inputs provider — and TWO flags are
+# enabled FOR THIS HARNESS PROCESS ONLY: INTERNAL_STUDY_READ_ENABLED (so the route
+# is reachable at all) and LANE_B_ENABLED (so the lot choice, Lane B behaviour, is
+# produced rather than withheld). The provider replays the RECORDED 215-16
+# Northern benchmark PLUTO body (services/api/tests/fixtures/benchmark_215_16_northern,
+# queue item B-01) through the REAL connector and the REAL B-02/B-07 pipeline
+# (app.api.v1.study_inputs.pluto_study_inputs_provider) — the SAME offline pattern
+# the accepted slice-1 route tests use (tests/api/test_study_read_api.py). NO study
+# document byte is hand-written here; route, connector, builder, contract guard and
+# serialization are the production code paths. Served for the single Northern BBL
+# only: any other requested BBL fails the connector's own result-match and becomes
+# the route's fail-safe 503 (never a fabricated study). Production sets NEITHER
+# flag, so the route stays a generic 404.
+# ---------------------------------------------------------------------------
+
+STUDY_FIXTURE_DIR = (
+    REPO_ROOT / "services" / "api" / "tests" / "fixtures" / "benchmark_215_16_northern"
+)
+NORTHERN_STUDY_BBL = "4073340070"
+
+
+def harness_study_fetcher(bbl: str, correlation_id: str):
+    """Replay the recorded 215-16 Northern PLUTO body through the real connector
+    (the accepted slice-1 test's ``_northern_fetcher``). The requested ``bbl`` is
+    validated by the connector's own result-match, so only the Northern BBL yields
+    an ``ok`` record; any other BBL resolves to ``no_match`` -> the route's 503."""
+    body = (STUDY_FIXTURE_DIR / "pluto_64uk-42ks_bbl_4073340070.json").read_text(
+        encoding="utf-8"
+    )
+    return fetch_by_bbl(
+        bbl,
+        transport=lambda url, headers, timeout: TransportResponse(200, body),
+        sleep=lambda seconds: None,  # no real backoff delays in e2e
+        clock=FIXED_CLOCK,
+        correlation_id=correlation_id,
+    )
+
+
 def build_app():
     # M4-T005: enable the internal rule-evaluation endpoint's SERVER flag for
     # this test process only (independent of the frontend flag). The no-call
@@ -430,10 +475,27 @@ def build_app():
     app.dependency_overrides[get_address_resolver] = (
         lambda: harness_address_resolver
     )
-    # Test-origin CORS only (see module docstring CORS NOTE).
+    # D-1 slice 2: enable the study-read route and the Lane B lot-choice gate for
+    # THIS harness process only, and serve the study inputs from the recorded
+    # 215-16 Northern pack through the real B-02/B-07 pipeline. The flags gate only
+    # this process (production sets neither, so the route 404s); the override is the
+    # single seam, so route/connector/builder/contract are the production paths.
+    os.environ[INTERNAL_STUDY_READ_ENABLED_ENV_VAR] = "1"
+    os.environ[LANE_FLAG_ENV_VARS["B"]] = "1"
+    study_inputs_provider = pluto_study_inputs_provider(
+        harness_study_fetcher, clock=FIXED_CLOCK
+    )
+    app.dependency_overrides[get_study_inputs_provider] = lambda: study_inputs_provider
+    # Test-origin CORS only (see module docstring CORS NOTE). Both e2e web servers
+    # are allowed: :3000 (flag-off) and :3001 (D-1 slice 2 flag-on). The browser
+    # fetches the API cross-origin (NEXT_PUBLIC_API_BASE_URL -> :8000), so the
+    # flag-on page on :3001 needs its origin here to reach the study endpoint.
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://127.0.0.1:3000", "http://localhost:3000"],
+        allow_origins=[
+            "http://127.0.0.1:3000", "http://localhost:3000",
+            "http://127.0.0.1:3001", "http://localhost:3001",
+        ],
         allow_methods=["GET"],
         allow_headers=["Accept"],
         expose_headers=["X-Correlation-ID"],

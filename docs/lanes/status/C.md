@@ -14,3 +14,5 @@ Updated by lane C only, after every task (lane prompts, shared rules).
 ## Wave 0 (integrator)
 
 See the go/no-go record below once Wave 0 finishes.
+
+- W0 (wiring contracts) built in `lane-c/C-W0-wiring-contracts`: three 1.0.0 contracts `hidden_issue_flags` / `transit_parking` (no parking outcome) / `parity_data` (not a valuation; remaining capacity reads only "Not confirmed", no capacity number), with valid+invalid fixtures, generated TS + bundled copies, and three default-off server flags `INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED` / `INTERNAL_TRANSIT_PARKING_READ_ENABLED` / `INTERNAL_PARITY_READ_ENABLED` (auth B-001 / rate-limit / resilient-fetcher checklist at the flag site); handed back for the integrator to push/review.

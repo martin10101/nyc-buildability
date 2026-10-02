@@ -4,11 +4,13 @@ import { jsonResponse } from "@/test-support/fixtures";
 import {
   ensureStudyFromSetup,
   fetchStudySetup,
+  repickLots,
   validateStudySetupDocument,
   type StudySetup,
 } from "@/lib/study/study-setup-api";
 import { createStudyStore } from "@/lib/study/study-store";
 import type { NewOption } from "@/lib/study/study-operations";
+import { LOT_SELECTION_STATEMENT, MEASUREMENT_LABELS } from "@/lib/study/study-vocabulary";
 
 /**
  * Typed client + store adapter for GET /api/v1/properties/{bbl}/study
@@ -19,6 +21,7 @@ import type { NewOption } from "@/lib/study/study-operations";
  */
 
 const PROPERTY_BBL = "5999999999";
+const SECOND_BBL = "5999999998";
 
 /**
  * A fresh, contract-valid study-setup document built from the committed corner
@@ -249,5 +252,135 @@ describe("ensureStudyFromSetup", () => {
       at: "2026-09-30T12:00:00Z",
     });
     expect(store.get(PROPERTY_BBL)).not.toBeNull();
+  });
+});
+
+describe("validateStudySetupDocument — document_kind and bbl hardening (review NB)", () => {
+  it("rejects a body whose document_kind is not 'study_setup'", () => {
+    const doc = setupDocument();
+    doc.document_kind = "property_profile";
+    const result = validateStudySetupDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.problems.some((problem) => problem.includes("document_kind"))).toBe(true);
+  });
+
+  it("rejects a body whose top-level bbl does not equal property.bbl", () => {
+    const doc = setupDocument();
+    // Displace ONLY the top-level bbl; property.bbl stays PROPERTY_BBL. Reverting
+    // this restores acceptance (the next test), so the bbl guard is under test.
+    doc.bbl = SECOND_BBL;
+    const result = validateStudySetupDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.problems.some((problem) => problem.includes("bbl"))).toBe(true);
+  });
+
+  it("accepts a body whose top-level bbl equals property.bbl", () => {
+    expect(validateStudySetupDocument(setupDocument()).ok).toBe(true);
+  });
+});
+
+describe("fetchStudySetup — the re-pick selected query (request D-1 slice 2)", () => {
+  it("passes re-picked BBLs as repeated selected query params", async () => {
+    let seenUrl = "";
+    const fetchImpl = (async (input: Parameters<typeof fetch>[0]) => {
+      seenUrl = String(input);
+      return jsonResponse(setupDocument(), 200);
+    }) as typeof fetch;
+    const outcome = await fetchStudySetup(PROPERTY_BBL, {
+      fetchImpl,
+      selected: [PROPERTY_BBL, SECOND_BBL],
+    });
+    expect(outcome.kind).toBe("setup");
+    expect(seenUrl).toContain(
+      `/api/v1/properties/${PROPERTY_BBL}/study?selected=${PROPERTY_BBL}&selected=${SECOND_BBL}`,
+    );
+  });
+
+  it("sends no query when no BBLs are re-picked (server default 'use all')", async () => {
+    let seenUrl = "";
+    const fetchImpl = (async (input: Parameters<typeof fetch>[0]) => {
+      seenUrl = String(input);
+      return jsonResponse(setupDocument(), 200);
+    }) as typeof fetch;
+    await fetchStudySetup(PROPERTY_BBL, { fetchImpl });
+    expect(seenUrl.includes("?")).toBe(false);
+    expect(seenUrl.endsWith("/study")).toBe(true);
+  });
+});
+
+describe("repickLots — fetch + store update (request D-1 slice 2)", () => {
+  /** The server's re-pick response: two lots and B-07's combination, NOT the web's. */
+  function repickDocument(): Record<string, unknown> {
+    const doc = setupDocument();
+    doc.lots = [
+      {
+        bbl: PROPERTY_BBL,
+        approximate_lot_area_sq_ft: 5000,
+        size_measurement: { rank: "approximate_tax_map", label: MEASUREMENT_LABELS.approximate_tax_map },
+        selected: true,
+      },
+      {
+        bbl: SECOND_BBL,
+        approximate_lot_area_sq_ft: 4000,
+        size_measurement: { rank: "approximate_tax_map", label: MEASUREMENT_LABELS.approximate_tax_map },
+        selected: true,
+      },
+    ];
+    doc.lot_selection = {
+      mode: "all",
+      statement: LOT_SELECTION_STATEMENT,
+      combination: { status: "offered", reason: null },
+    };
+    return doc;
+  }
+
+  function storeWithStudy() {
+    const store = createStudyStore();
+    const result = validateStudySetupDocument(setupDocument());
+    if (!result.ok) throw new Error(`setup invalid: ${result.problems.join("; ")}`);
+    ensureStudyFromSetup(store, result.setup, {
+      studyId: "s1",
+      initialOption: callerOption(),
+      at: "2026-09-30T12:00:00Z",
+    });
+    return store;
+  }
+
+  it("fetches with the selected BBLs, then replaces the store's lots and lot_selection from the server", async () => {
+    const store = storeWithStudy();
+    expect(store.get(PROPERTY_BBL)?.study.lots).toHaveLength(1);
+    let seenUrl = "";
+    const fetchImpl = (async (input: Parameters<typeof fetch>[0]) => {
+      seenUrl = String(input);
+      return jsonResponse(repickDocument(), 200, "corr-repick");
+    }) as typeof fetch;
+    const outcome = await repickLots(store, PROPERTY_BBL, [PROPERTY_BBL, SECOND_BBL], "2026-09-30T13:00:00Z", {
+      fetchImpl,
+    });
+    expect(seenUrl).toContain(`?selected=${PROPERTY_BBL}&selected=${SECOND_BBL}`);
+    expect(outcome.kind).toBe("updated");
+    if (outcome.kind === "updated") {
+      expect(outcome.correlationId).toBe("corr-repick");
+      expect(outcome.result.ok).toBe(true);
+    }
+    const entry = store.get(PROPERTY_BBL);
+    // The store took the SERVER's lots and combination verbatim.
+    expect(entry?.study.lots.map((lot) => lot.bbl)).toEqual([PROPERTY_BBL, SECOND_BBL]);
+    expect(entry?.study.lot_selection.combination).toEqual({ status: "offered", reason: null });
+    // The pinned statement stays, and the change is a new revision.
+    expect(entry?.study.lot_selection.statement).toBe(LOT_SELECTION_STATEMENT);
+    expect(entry?.study.revision.number).toBe(2);
+  });
+
+  it("returns fetch_failed and leaves the store untouched when the server returns no setup", async () => {
+    const store = storeWithStudy();
+    const before = store.get(PROPERTY_BBL);
+    const outcome = await repickLots(store, PROPERTY_BBL, [PROPERTY_BBL], "2026-09-30T13:00:00Z", {
+      fetchImpl: (async () => jsonResponse({ detail: "Not Found" }, 404)) as typeof fetch,
+    });
+    expect(outcome.kind).toBe("fetch_failed");
+    if (outcome.kind === "fetch_failed") expect(outcome.outcome.kind).toBe("not_available");
+    // The store is unchanged: the same frozen entry is still there.
+    expect(store.get(PROPERTY_BBL)).toBe(before);
   });
 });

@@ -34,6 +34,7 @@ from app.api.v1.study_inputs import (
 )
 from app.api.v1.study_read import (
     STUDY_READ_STATUS_STATE_MATRIX,
+    get_rate_limiter,
     get_study_inputs_provider,
 )
 from app.config import INTERNAL_STUDY_READ_ENABLED_ENV_VAR
@@ -120,6 +121,27 @@ def _assert_pair_documented(response) -> None:
         response.status_code,
         state,
     )
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limiter():
+    """The per-route limiter is MODULE-level state keyed by the shared TestClient
+    host; reset its windows around every test so cases do not accumulate stamps
+    into a spurious 429. ``max_requests`` is mutated (and auto-restored) by
+    monkeypatch only in the dedicated 429 test."""
+    get_rate_limiter().reset()
+    yield
+    get_rate_limiter().reset()
+
+
+def _unavailable_provider(reason: str = "no_match"):
+    """An offline provider that fails safe (no network), for the typed-503 path.
+    Accepts the optional ``selected`` keyword so it is a valid provider."""
+
+    def provider(bbl: str, correlation_id: str, *, selected=None):
+        raise StudyInputsUnavailableError("withheld (test)", reason=reason)
+
+    return provider
 
 
 # ---------------------------------------------------------------------------
@@ -302,10 +324,12 @@ def test_multi_lot_not_offered_reason_is_verbatim(monkeypatch) -> None:
 # ---------------------------------------------------------------------------
 # Inputs unavailable - fail-safe 503, nothing fabricated
 # ---------------------------------------------------------------------------
-def test_default_provider_is_inputs_unavailable_503(monkeypatch) -> None:
+def test_inputs_unavailable_is_fail_safe_503(monkeypatch) -> None:
+    # A provider that cannot produce inputs (upstream no-match/outage) -> a
+    # bounded 503, nothing fabricated. Offline: the live default is proven in
+    # tests/api/test_study_inputs_live.py.
     _enable(monkeypatch)
-    # The route's real default dependency (no override): live fetch is deferred.
-    response = _client().get(f"/api/v1/properties/{NORTHERN_BBL}/study")
+    response = _client(_unavailable_provider()).get(f"/api/v1/properties/{NORTHERN_BBL}/study")
     assert response.status_code == 503
     body = response.json()
     assert body["state"] == "inputs_unavailable"
@@ -379,10 +403,10 @@ def test_unexpected_provider_error_is_generic_500(monkeypatch) -> None:
 # ---------------------------------------------------------------------------
 # The route default is the deferred fail-safe provider (not a live fetch yet).
 # ---------------------------------------------------------------------------
-def test_route_default_provider_raises_unavailable() -> None:
-    with pytest.raises(StudyInputsUnavailableError) as excinfo:
-        default_study_inputs_provider(NORTHERN_BBL, "cid")
-    assert excinfo.value.reason == "live_fetch_not_configured"
+def test_route_default_provider_is_the_live_binding() -> None:
+    # The route default is the LIVE PLUTO path (slice 2). Its offline wiring to
+    # the properties resilient fetcher is proven in test_study_inputs_live.py;
+    # here we only pin that the dependency still resolves to it.
     assert get_study_inputs_provider() is default_study_inputs_provider
 
 
@@ -408,7 +432,7 @@ def test_status_state_matrix_is_exhaustively_driven(monkeypatch) -> None:
     # (200, None)
     record(_client(_northern_provider()).get(f"/api/v1/properties/{NORTHERN_BBL}/study"))
     # (503, inputs_unavailable)
-    record(_client().get(f"/api/v1/properties/{NORTHERN_BBL}/study"))
+    record(_client(_unavailable_provider()).get(f"/api/v1/properties/{NORTHERN_BBL}/study"))
     # (500, internal_contract_error)
     good = assemble_study_inputs(
         _northern_fetcher(NORTHERN_BBL, "cid"), clock=FIXED_CLOCK, env=LANE_B_ON
@@ -424,4 +448,147 @@ def test_status_state_matrix_is_exhaustively_driven(monkeypatch) -> None:
 
     record(_client(boom).get(f"/api/v1/properties/{NORTHERN_BBL}/study"))
 
+    # (429, rate_limited): refuse every caller, then one request trips the limit.
+    limiter = get_rate_limiter()
+    monkeypatch.setattr(limiter, "max_requests", 0)
+    limiter.reset()
+    record(_client(_northern_provider()).get(f"/api/v1/properties/{NORTHERN_BBL}/study"))
+
     assert observed == STUDY_READ_STATUS_STATE_MATRIX
+
+
+# ---------------------------------------------------------------------------
+# Per-caller rate limit (NB1) - a typed 429 consistent with the sibling routes.
+# ---------------------------------------------------------------------------
+def test_rate_limit_returns_typed_429(monkeypatch) -> None:
+    _enable(monkeypatch)
+    limiter = get_rate_limiter()
+    monkeypatch.setattr(limiter, "max_requests", 2)
+    limiter.reset()
+    client = _client(_northern_provider())
+    assert client.get(f"/api/v1/properties/{NORTHERN_BBL}/study").status_code == 200
+    assert client.get(f"/api/v1/properties/{NORTHERN_BBL}/study").status_code == 200
+    limited = client.get(f"/api/v1/properties/{NORTHERN_BBL}/study")
+    assert limited.status_code == 429
+    body = limited.json()
+    assert body["state"] == "rate_limited"
+    assert limited.headers["X-Correlation-ID"] == body["correlation_id"]
+    _assert_pair_documented(limited)
+    # Mutation (loosen the CONSUMING limiter): a large limit removes the 429.
+    monkeypatch.setattr(limiter, "max_requests", 1000)
+    limiter.reset()
+    assert client.get(f"/api/v1/properties/{NORTHERN_BBL}/study").status_code == 200
+
+
+def test_rate_limit_precedes_validation_and_io(monkeypatch) -> None:
+    """The limiter refuses BEFORE validation/I-O: an over-limit caller with a
+    malformed BBL still gets the 429, never the 422."""
+    _enable(monkeypatch)
+    limiter = get_rate_limiter()
+    monkeypatch.setattr(limiter, "max_requests", 0)  # refuse every caller
+    limiter.reset()
+
+    def exploding_provider(bbl, correlation_id, *, selected=None):
+        raise AssertionError("provider must not run when rate limited")
+
+    resp = _client(exploding_provider).get("/api/v1/properties/NOT-A-BBL/study")
+    assert resp.status_code == 429
+    assert resp.json()["state"] == "rate_limited"
+
+
+def test_rate_limit_is_after_the_flag_off_404(monkeypatch) -> None:
+    """Hard rule: the flag-off 404 is unchanged - even an over-limit caller gets
+    the generic 404 (byte-identical to an unmounted path), never a 429."""
+    monkeypatch.delenv(INTERNAL_STUDY_READ_ENABLED_ENV_VAR, raising=False)
+    limiter = get_rate_limiter()
+    monkeypatch.setattr(limiter, "max_requests", 0)
+    limiter.reset()
+    resp = _client(_northern_provider()).get(f"/api/v1/properties/{NORTHERN_BBL}/study")
+    assert resp.status_code == 404
+    assert resp.json() == {"detail": "Not Found"}
+    assert "X-Correlation-ID" not in resp.headers
+
+
+# ---------------------------------------------------------------------------
+# Re-pick: an optional `selected` query, validated before any I/O, passed to
+# B-07 verbatim. The route never computes geometry/adjacency itself.
+# ---------------------------------------------------------------------------
+def test_selected_single_lot_matches_use_all(monkeypatch) -> None:
+    _enable(monkeypatch)
+    url = f"/api/v1/properties/{NORTHERN_BBL}/study?selected={NORTHERN_BBL}"
+    response = _client(_northern_provider()).get(url)
+    assert response.status_code == 200
+    body = response.json()
+    assert [lot["bbl"] for lot in body["lots"]] == [NORTHERN_BBL]
+    # One entered lot, re-picked explicitly: B-07 still reports the "all" mode.
+    assert body["lot_selection"]["mode"] == "all"
+    _assert_pair_documented(response)
+
+
+def test_selected_unknown_lot_is_typed_422(monkeypatch) -> None:
+    """A BBL not in this property's lot choice is B-07's rejection, surfaced as a
+    typed 422 (not a 500/503). The caller's BBLs are not echoed into the body."""
+    _enable(monkeypatch)
+    url = f"/api/v1/properties/{NORTHERN_BBL}/study?selected=1000010001"
+    response = _client(_northern_provider()).get(url)
+    assert response.status_code == 422
+    body = response.json()
+    assert body["state"] == "validation_error"
+    assert body["detail"]["code"] == "invalid_lot_selection"
+    assert "1000010001" not in body["message"]
+    _assert_pair_documented(response)
+
+
+def test_selected_malformed_bbl_is_422_before_io(monkeypatch) -> None:
+    _enable(monkeypatch)
+
+    def exploding_provider(bbl, correlation_id, *, selected=None):
+        raise AssertionError("provider must not be called for a malformed selected BBL")
+
+    url = f"/api/v1/properties/{NORTHERN_BBL}/study?selected=NOT-A-BBL"
+    response = _client(exploding_provider).get(url)
+    assert response.status_code == 422
+    body = response.json()
+    assert body["state"] == "validation_error"
+    assert "code" in body["detail"]
+    _assert_pair_documented(response)
+
+
+def test_selected_empty_value_is_422(monkeypatch) -> None:
+    _enable(monkeypatch)
+
+    def exploding_provider(bbl, correlation_id, *, selected=None):
+        raise AssertionError("provider must not be called for an empty selected value")
+
+    response = _client(exploding_provider).get(
+        f"/api/v1/properties/{NORTHERN_BBL}/study?selected="
+    )
+    assert response.status_code == 422
+    assert response.json()["state"] == "validation_error"
+
+
+def test_selected_duplicate_is_422(monkeypatch) -> None:
+    _enable(monkeypatch)
+
+    def exploding_provider(bbl, correlation_id, *, selected=None):
+        raise AssertionError("provider must not be called for a duplicate selection")
+
+    url = (
+        f"/api/v1/properties/{NORTHERN_BBL}/study"
+        f"?selected={NORTHERN_BBL}&selected={NORTHERN_BBL}"
+    )
+    response = _client(exploding_provider).get(url)
+    assert response.status_code == 422
+    body = response.json()
+    assert body["state"] == "validation_error"
+    assert body["detail"]["code"] == "duplicate_selection"
+
+
+def test_422_message_is_length_capped_server_side(monkeypatch) -> None:
+    """Security review NB3: the 422 message is length-capped server-side."""
+    from app.api.v1.study_read import _RAW_VALUE_TRUNCATION_MARKER, MAX_MESSAGE_CHARS
+
+    _enable(monkeypatch)
+    response = _client(_northern_provider()).get("/api/v1/properties/NOT-A-BBL/study")
+    assert response.status_code == 422
+    assert len(response.json()["message"]) <= MAX_MESSAGE_CHARS + len(_RAW_VALUE_TRUNCATION_MARKER)

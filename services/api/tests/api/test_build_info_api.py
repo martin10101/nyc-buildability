@@ -33,6 +33,10 @@ SHA_40 = "0127fef0" + "3a4f8c54" * 4
 EXPECTED_FLAGS = [
     "INTERNAL_RULE_EVAL_ENABLED",
     "INTERNAL_SCENARIO_ENABLED",
+    "INTERNAL_STUDY_READ_ENABLED",
+    "INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED",
+    "INTERNAL_TRANSIT_PARKING_READ_ENABLED",
+    "INTERNAL_PARITY_READ_ENABLED",
     "SITE_DEFINITION_WRITE_ENABLED",
     "DXF_IMPORT_ENABLED",
     "LIVE_SPATIAL_PROVIDER_ENABLED",
@@ -251,6 +255,14 @@ def test_security_headers_present(clean_env) -> None:
 _OWNER_READERS = {
     config.INTERNAL_RULE_EVAL_ENABLED_ENV_VAR: config.internal_rule_eval_enabled,
     config.INTERNAL_SCENARIO_ENABLED_ENV_VAR: config.internal_scenario_enabled,
+    config.INTERNAL_STUDY_READ_ENABLED_ENV_VAR: config.internal_study_read_enabled,
+    config.INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED_ENV_VAR: (
+        config.internal_hidden_issue_flags_read_enabled
+    ),
+    config.INTERNAL_TRANSIT_PARKING_READ_ENABLED_ENV_VAR: (
+        config.internal_transit_parking_read_enabled
+    ),
+    config.INTERNAL_PARITY_READ_ENABLED_ENV_VAR: config.internal_parity_read_enabled,
     site_definition.SITE_DEFINITION_WRITE_ENABLED_ENV_VAR: (
         site_definition.site_definition_write_enabled
     ),

@@ -1,16 +1,34 @@
 import { describe, expect, it } from "vitest";
+import cornerLotStudy from "../../../../../../packages/contracts/fixtures/valid/study/synthetic_corner_lot_two_options.json";
 import { LOT_SITE_SETUP_FLAG, lotSiteSetupEnabled } from "../lot-site-setup-flag";
 import {
+  applyEnteredFactToSource,
   combinationView,
+  combinationViewOf,
+  groupSiteFactRows,
   lotChoiceView,
+  lotChoiceViewOf,
   lotRows,
   siteFactLabel,
   siteFactRows,
+  siteFactRowsOf,
   siteFactValueText,
+  sourceFromSetup,
+  sourceFromStudy,
   sourceLines,
+  validateFactInput,
+  type LotSiteSource,
 } from "../lot-site-setup";
+import { enterSiteFactValue } from "@/lib/study/study-operations";
 import { LOT_SELECTION_STATEMENT, MEASUREMENT_LABELS, type SiteFact, type Source, type Study } from "@/lib/study/study-vocabulary";
+import type { StudySetup } from "@/lib/study/study-setup-api";
 import { CROSS_BLOCK_REASON, twoLotCrossBlockStudy, twoLotOfferedStudy } from "@/components/architect/__tests__/lot-site-fixtures";
+
+const corner = cornerLotStudy as unknown as Study;
+const EDIT_AT = "2026-10-02T09:00:00Z";
+/** A deep-cloned source so no test shares a mutable fixture. */
+const cornerSource = (): LotSiteSource =>
+  sourceFromStudy(structuredClone(corner) as unknown as Study);
 
 const factById = (id: string): SiteFact =>
   twoLotCrossBlockStudy.site.facts.find((fact) => fact.fact_id === id)!;
@@ -154,5 +172,124 @@ describe("sourceLines (plain English, internal query URL never surfaced)", () =>
     expect(sourceLines({ ...base, kind: "survey", document_ref: "Survey 2026-14" })).toContain("Survey: Survey 2026-14");
     expect(sourceLines({ ...base, kind: "city_filing", dataset: "DOB NOW", document_ref: "Job 123" })).toContain("Filing: Job 123");
     expect(sourceLines(null)).toEqual(["No source recorded — this value was not found and must be entered."]);
+  });
+});
+
+describe("LotSiteSource — a study and a server setup reduce to the same display source", () => {
+  it("re-keys a study into lots, selection and site facts", () => {
+    const source = sourceFromStudy(twoLotCrossBlockStudy);
+    expect(source.lots).toBe(twoLotCrossBlockStudy.lots);
+    expect(source.lotSelection.combination).toEqual({ status: "not_offered", reason: CROSS_BLOCK_REASON });
+    expect(source.siteFacts).toBe(twoLotCrossBlockStudy.site.facts);
+  });
+
+  it("re-keys a setup, and the source-based views match the study-based views", () => {
+    const setup: StudySetup = {
+      property: twoLotCrossBlockStudy.property,
+      lots: twoLotCrossBlockStudy.lots,
+      lotSelection: twoLotCrossBlockStudy.lot_selection,
+      siteFacts: twoLotCrossBlockStudy.site.facts,
+    };
+    const source = sourceFromSetup(setup);
+    expect(lotChoiceViewOf(source)).toEqual(lotChoiceView(twoLotCrossBlockStudy));
+    expect(combinationViewOf(source.lotSelection)).toEqual(combinationView(twoLotCrossBlockStudy));
+    expect(siteFactRowsOf(source.siteFacts)).toEqual(siteFactRows(twoLotCrossBlockStudy));
+  });
+});
+
+describe("validateFactInput (plain words, no computation)", () => {
+  const area = corner.site.facts.find((fact) => fact.key === "lot_area")!;
+  const lotType = corner.site.facts.find((fact) => fact.key === "lot_type")!;
+  const district = corner.site.facts.find((fact) => fact.key === "zoning_district")!;
+
+  it("accepts a positive measured number and rejects zero, negatives and non-numbers", () => {
+    expect(validateFactInput(area, "10500")).toEqual({ ok: true, value: 10500 });
+    expect(validateFactInput(area, " 4200.5 ")).toEqual({ ok: true, value: 4200.5 });
+    expect(validateFactInput(area, "0")).toEqual({ ok: false, reason: "Enter a number greater than zero." });
+    expect(validateFactInput(area, "-5")).toEqual({ ok: false, reason: "Enter a number greater than zero." });
+    expect(validateFactInput(area, "wide")).toEqual({ ok: false, reason: "Enter a number greater than zero." });
+    expect(validateFactInput(area, "   ")).toEqual({ ok: false, reason: "Enter a value first." });
+  });
+
+  it("holds lot type to the three plain words and keeps other text non-empty", () => {
+    expect(validateFactInput(lotType, "Interior")).toEqual({ ok: true, value: "interior" });
+    expect(validateFactInput(lotType, "cul-de-sac")).toEqual({
+      ok: false,
+      reason: "Enter one of: corner, interior or through.",
+    });
+    expect(validateFactInput(district, "R7A")).toEqual({ ok: true, value: "R7A" });
+  });
+});
+
+describe("applyEnteredFactToSource — the setup-only mirror of enterSiteFactValue", () => {
+  it("keeps a city value and adds the entered value beside it under <id>-entered", () => {
+    const source = cornerSource();
+    const result = applyEnteredFactToSource(source, "fact-lot-area", 10500, EDIT_AT);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    // The original city fact is untouched…
+    const original = result.source.siteFacts.find((fact) => fact.fact_id === "fact-lot-area")!;
+    expect(original.value).toBe(5000);
+    expect(original.source?.kind).toBe("tax_map_computation");
+    // …and the entered fact sits beside it.
+    const entered = result.source.siteFacts.find((fact) => fact.fact_id === "fact-lot-area-entered")!;
+    expect(entered.value).toBe(10500);
+    expect(entered.unit).toBe("square_feet");
+    expect(entered.measurement).toEqual({ rank: "entered", label: MEASUREMENT_LABELS.entered });
+    expect(entered.source?.kind).toBe("architect_entry");
+  });
+
+  it("produces the SAME entered fact the C-05 store's enterSiteFactValue produces (anti-drift)", () => {
+    const entry = { study: structuredClone(corner) as unknown as Study, staleOptionIds: [], parcelChoices: null };
+    const stored = enterSiteFactValue(entry, { factId: "fact-lot-area", value: 10500 }, EDIT_AT);
+    expect(stored.ok).toBe(true);
+    if (!stored.ok) return;
+    const storeEntered = stored.entry.study.site.facts.find((fact) => fact.fact_id === "fact-lot-area-entered")!;
+
+    const local = applyEnteredFactToSource(cornerSource(), "fact-lot-area", 10500, EDIT_AT);
+    expect(local.ok).toBe(true);
+    if (!local.ok) return;
+    const localEntered = local.source.siteFacts.find((fact) => fact.fact_id === "fact-lot-area-entered")!;
+
+    expect(localEntered).toEqual(storeEntered);
+  });
+
+  it("replaces a non-city value in place rather than adding a sibling", () => {
+    // The corner study's street-width facts are architect entries (non-city).
+    const source = cornerSource();
+    const before = source.siteFacts.length;
+    const result = applyEnteredFactToSource(source, "fact-street-width-a", 80, EDIT_AT);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.source.siteFacts.length).toBe(before); // replaced, not added
+    const edited = result.source.siteFacts.find((fact) => fact.fact_id === "fact-street-width-a")!;
+    expect(edited.value).toBe(80);
+    expect(edited.measurement.rank).toBe("entered");
+  });
+
+  it("refuses an unknown fact id without changing anything", () => {
+    expect(applyEnteredFactToSource(cornerSource(), "fact-missing", 1, EDIT_AT)).toEqual({
+      ok: false,
+      reason: "That value is not part of this site.",
+    });
+  });
+});
+
+describe("groupSiteFactRows — the entered value groups with its city fact", () => {
+  it("pairs <id> and <id>-entered into one group and leaves others standalone", () => {
+    const edited = applyEnteredFactToSource(cornerSource(), "fact-lot-area", 10500, EDIT_AT);
+    expect(edited.ok).toBe(true);
+    if (!edited.ok) return;
+    const groups = groupSiteFactRows(siteFactRowsOf(edited.source.siteFacts));
+    const lotArea = groups.find((group) => group.primary.factId === "fact-lot-area")!;
+    expect(lotArea.primary.valueText).toBe("5,000 sq ft");
+    expect(lotArea.entered?.factId).toBe("fact-lot-area-entered");
+    expect(lotArea.entered?.valueText).toBe("10,500 sq ft");
+    expect(lotArea.entered?.sourceLabel).toBe(MEASUREMENT_LABELS.entered);
+    // No "-entered" row is rendered as its own group.
+    expect(groups.some((group) => group.primary.factId === "fact-lot-area-entered")).toBe(false);
+    // An un-edited fact has no entered sibling.
+    const district = groups.find((group) => group.primary.key === "zoning_district")!;
+    expect(district.entered).toBeNull();
   });
 });

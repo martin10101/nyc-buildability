@@ -60,6 +60,12 @@ STUDY_SCHEMA_FILES = (
     "report_model.schema.json",
     "export_record.schema.json",
     "benchmark_lot.schema.json",
+    # Lane C packet W0 wiring contracts. Each $refs within the study set plus
+    # common (hidden_issue_flags, transit_parking and parity_data all $ref
+    # site_fact.schema.json#/$defs/source, already bundled above).
+    "hidden_issue_flags.schema.json",
+    "transit_parking.schema.json",
+    "parity_data.schema.json",
 )
 
 SCHEMA_FILES = PROFILE_SCHEMA_FILES + STUDY_SCHEMA_FILES
