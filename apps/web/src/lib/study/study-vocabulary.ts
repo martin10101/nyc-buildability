@@ -60,6 +60,8 @@ export type StudyProperty = Study["property"];
 export type LotSelection = Study["lot_selection"];
 export type MeasurementRank = Measurement["rank"];
 export type SourceKind = Source["kind"];
+type VersionCheckStatus = NonNullable<Source["version_check"]>["status"];
+type VersionCheckLabel = NonNullable<Source["version_check"]>["label"];
 type StudyContractVersion = Study["contract_version"];
 type SiteFactContractVersion = SiteFact["contract_version"];
 type SiteFactKey = SiteFact["key"];
@@ -75,6 +77,7 @@ type OriginKind = Origin["kind"];
 export const STUDY_CONTRACT_VERSIONS = ["1.0.0"] as const satisfies readonly StudyContractVersion[];
 export const SITE_FACT_CONTRACT_VERSIONS = [
   "1.0.0",
+  "1.1.0",
 ] as const satisfies readonly SiteFactContractVersion[];
 
 /** The exact label every result carries (study.schema.json lot_selection.statement; plan section 3 step 2). */
@@ -112,6 +115,19 @@ export const SITE_FACT_KEYS = [
 ] as const satisfies readonly SiteFactKey[];
 
 export const SITE_FACT_UNITS = ["square_feet", "feet"] as const satisfies readonly SiteFactUnit[];
+
+/** Display label tied one-to-one to its version-check status (site_fact.schema.json source.version_check; data_versions.py LABELS). */
+export const VERSION_CHECK_LABELS = {
+  current: "Current",
+  out_of_date: "Out of date",
+  version_unknown: "Version unknown",
+} as const satisfies { readonly [S in VersionCheckStatus]: VersionCheckLabel };
+
+export const VERSION_CHECK_STATUSES = [
+  "current",
+  "out_of_date",
+  "version_unknown",
+] as const satisfies readonly VersionCheckStatus[];
 
 /** site_fact.schema.json key rule for lot_type (the generated type widens the value to string). */
 export const LOT_TYPE_VALUES = ["corner", "interior", "through"] as const;
@@ -177,6 +193,7 @@ export type StudyEnumAssertions = [
   MutuallyEqual<MeasurementRank, (typeof MEASUREMENT_RANKS)[number]>,
   MutuallyEqual<SiteFactKey, (typeof SITE_FACT_KEYS)[number]>,
   MutuallyEqual<SiteFactUnit, (typeof SITE_FACT_UNITS)[number]>,
+  MutuallyEqual<VersionCheckStatus, (typeof VERSION_CHECK_STATUSES)[number]>,
   MutuallyEqual<SourceKind, (typeof SOURCE_KINDS)[number]>,
   MutuallyEqual<BlockedOutput, (typeof BLOCKED_OUTPUTS)[number]>,
   MutuallyEqual<LotSelectionMode, (typeof LOT_SELECTION_MODES)[number]>,
@@ -193,5 +210,5 @@ export type StudyEnumAssertions = [
  * `never` slot does not, so an enum drift is a `tsc` error here.
  */
 export const STUDY_ENUM_ASSERTIONS: StudyEnumAssertions = [
-  true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+  true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
 ];

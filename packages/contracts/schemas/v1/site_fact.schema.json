@@ -21,8 +21,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0"],
-      "description": "CLOSED enum of published site_fact contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). New versions are admitted only by an accepted contract task that appends to this enum."
+      "enum": ["1.0.0", "1.1.0"],
+      "description": "CLOSED enum of published site_fact contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). 1.1.0 (request docs/lanes/requests/B-1.md) adds the OPTIONAL source.version_check object so each source's version status can travel with the fact; every 1.0.0 instance stays valid unchanged (version_check is optional and nothing else changed). New versions are admitted only by an accepted contract task that appends to this enum."
     },
     "fact_id": {
       "$ref": "common.schema.json#/$defs/non_empty_string",
@@ -378,6 +378,10 @@
           "type": "array",
           "description": "OPTIONAL link to the full PRD section 9 provenance: the provenance_id values of the source_fact.schema.json records this value was normalized from. This source object is the display summary the architect sees; it never replaces the canonical source_fact record (packages/contracts README: no competing schemas).",
           "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        },
+        "version_check": {
+          "$ref": "#/$defs/version_check",
+          "description": "OPTIONAL per-source version status (contract 1.1.0, request docs/lanes/requests/B-1.md; check C-7 data side). Absent on every 1.0.0 fact and on any source with no dataset version to check (an architect entry, survey or assumption); when present it is the restricted projection of services/api/app/profile/data_versions.py SourceVersionStatus.to_dict() (status, label, latest_known_version, latest_known_seen_at, latest_known_query_ref, reason) that lets the status travel with the fact to details, the report appendix and export_record.sources. A 'current'/'out_of_date' status is only reached with a readable pinned version, so it co-requires a non-null dataset_version (enforced in this source's allOf)."
         }
       },
       "oneOf": [
@@ -411,6 +415,92 @@
             "kind": { "const": "assumption" },
             "statement": { "type": "string" }
           }
+        }
+      ],
+      "allOf": [
+        {
+          "description": "A version_check status of 'current' or 'out_of_date' is reached only with a readable pinned version (services/api/app/profile/data_versions.py assess_source), so dataset_version is non-null. An absent version_check or a 'version_unknown' status leaves dataset_version free (it may be null), so every 1.0.0 source and every unversioned source stays valid. Expressed with anyOf/const (not if/then) because the contracts validator's keyword allowlist excludes if/then.",
+          "anyOf": [
+            {
+              "properties": {
+                "version_check": {
+                  "properties": { "status": { "const": "version_unknown" } }
+                }
+              }
+            },
+            {
+              "properties": {
+                "dataset_version": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "version_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "label",
+        "latest_known_version",
+        "latest_known_seen_at",
+        "latest_known_query_ref",
+        "reason"
+      ],
+      "description": "OPTIONAL version status of ONE source against the published versions on record (contract 1.1.0, request docs/lanes/requests/B-1.md; producer services/api/app/profile/data_versions.py SourceVersionStatus with LABELS and the 'Out of date' rule; check C-7 data side). The restricted projection of SourceVersionStatus.to_dict() that travels with a site fact: the status, its one-to-one label, the newest known published version with where and when it was seen, and the plain reason. All six keys are present when the object is present; a key that does not apply is explicitly null, so absence is a visible statement. Only 'out_of_date' takes the results exception_label 'Out of date' (results.schema.json exception_label; DataVersionReport.fact_exception_labels). Cross-field rules (status-to-label tie, non-null latest_known_version for 'current'/'out_of_date') are expressed with oneOf/anyOf/const (not if/then) because the contracts validator's keyword allowlist excludes if/then.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["current", "out_of_date", "version_unknown"],
+          "description": "The version verdict (data_versions.py STATUS_CURRENT / STATUS_OUT_OF_DATE / STATUS_VERSION_UNKNOWN). 'current' = the pinned version is the newest published version on record; 'out_of_date' = a newer published version is known; 'version_unknown' = no readable pinned or published version to compare. The rule fails closed to 'version_unknown', never to 'current'."
+        },
+        "label": {
+          "type": "string",
+          "enum": ["Current", "Out of date", "Version unknown"],
+          "description": "Display label tied one-to-one to status (data_versions.py LABELS): current -> 'Current', out_of_date -> 'Out of date', version_unknown -> 'Version unknown'. The tie is enforced in this object's allOf."
+        },
+        "latest_known_version": {
+          "description": "Newest published version found on record for this source's dataset; null when none was found. Non-null for 'current' and 'out_of_date' (both compared a readable published version), enforced in this object's allOf.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "latest_known_seen_at": {
+          "description": "When that newest published version was seen (RFC 3339); null when none was found or the observation recorded no time.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/date_time" },
+            { "type": "null" }
+          ]
+        },
+        "latest_known_query_ref": {
+          "description": "The bounded query or request where that newest published version was seen (secrets never included); null when none was found or the observation recorded no request.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "reason": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Plain-English reason for the status (SourceVersionStatus.reason), naming the versions compared and, for 'out_of_date', where the newer one was seen. Also the text results.out_of_date_reason is built from (DataVersionReport.out_of_date_reason)."
+        }
+      },
+      "allOf": [
+        {
+          "description": "status and label are tied one-to-one (data_versions.py LABELS).",
+          "oneOf": [
+            { "properties": { "status": { "const": "current" }, "label": { "const": "Current" } } },
+            { "properties": { "status": { "const": "out_of_date" }, "label": { "const": "Out of date" } } },
+            { "properties": { "status": { "const": "version_unknown" }, "label": { "const": "Version unknown" } } }
+          ]
+        },
+        {
+          "description": "'current' and 'out_of_date' compared a readable published version, so latest_known_version is non-null; 'version_unknown' may leave it null.",
+          "anyOf": [
+            { "properties": { "status": { "const": "version_unknown" } } },
+            { "properties": { "latest_known_version": { "$ref": "common.schema.json#/$defs/non_empty_string" } } }
+          ]
         }
       ]
     },

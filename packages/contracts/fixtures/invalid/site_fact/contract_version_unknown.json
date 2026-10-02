@@ -1,0 +1,34 @@
+{
+  "contract_version": "1.2.0",
+  "fact_id": "fact-lot-area-current",
+  "key": "lot_area",
+  "lot_bbl": "5999999999",
+  "street": null,
+  "value": 5000,
+  "unit": "square_feet",
+  "measurement": {
+    "rank": "city_records",
+    "label": "City records"
+  },
+  "source": {
+    "kind": "city_dataset",
+    "dataset": "test-fixture-synthetic PLUTO",
+    "dataset_version": "26v2",
+    "retrieved_at": "2026-09-30T12:00:00Z",
+    "query_ref": "test-fixture-synthetic://pluto/5999999999",
+    "document_ref": null,
+    "statement": null,
+    "version_check": {
+      "status": "current",
+      "label": "Current",
+      "latest_known_version": "26v2",
+      "latest_known_seen_at": "2026-09-30T12:00:00Z",
+      "latest_known_query_ref": "test-fixture-synthetic://pluto/version",
+      "reason": "test-fixture-synthetic PLUTO 26v2 is the newest published version on record."
+    }
+  },
+  "blocks": [],
+  "editable": true,
+  "note": "Synthetic fixture (test-fixture-synthetic); not a real lot.",
+  "_expected_failure": "contract_version '1.2.0' is not in the CLOSED published enum ['1.0.0','1.1.0'] (the never-published next-version rejection exemplar, mirroring property_profile/contract_version_unknown.json); the rest of the document is a valid 1.1.0 shape."
+}

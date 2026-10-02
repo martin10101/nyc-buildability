@@ -45,10 +45,19 @@ export interface Source {
   document_ref: NonEmptyString | null;
   statement: NonEmptyString | null;
   provenance_refs?: NonEmptyString[];
+  version_check?: VersionCheck;
+}
+export interface VersionCheck {
+  status: "current" | "out_of_date" | "version_unknown";
+  label: "Current" | "Out of date" | "Version unknown";
+  latest_known_version: NonEmptyString | null;
+  latest_known_seen_at: DateTime | null;
+  latest_known_query_ref: NonEmptyString | null;
+  reason: NonEmptyString;
 }
 export type BlockedOutput = "floor_area_allowance" | "remaining_floor_area" | "permitted_envelope" | "building_option" | "existing_building_paths" | "unit_estimate" | "geometry";
 export interface SiteFact {
-  contract_version: "1.0.0";
+  contract_version: "1.0.0" | "1.1.0";
   fact_id: NonEmptyString;
   key: "lot_area" | "lot_frontage" | "lot_depth" | "lot_type" | "zoning_district" | "commercial_overlay" | "street_width" | "existing_zoning_floor_area";
   lot_bbl: Bbl | null;
