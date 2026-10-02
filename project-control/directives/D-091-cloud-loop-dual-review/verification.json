@@ -529,6 +529,33 @@
         }
       ],
       "restamp_note": "DCV reviewed 6f87b0b6 (project-control/reports/M0-T178-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (6f30d59f; the 4 allowed_paths blobs byte-identical to 6f87b0b6); M0-T178 gate, submission and evidence records unchanged; R001/R007 unchanged and R009 stays D-091-BOOTSTRAP-only; the only intervening commit is the saved DCV report (the integration branch was already included)."
+    },
+    {
+      "directive_id": "D-091",
+      "task_id": "M0-T179",
+      "applicable_requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ],
+      "producer": "backend-engineer",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-091-R001",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-091-R007",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
     }
   ]
 }
