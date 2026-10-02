@@ -63,14 +63,14 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit invalidates the frozen certification; one recertification task runs after all D-091 code tasks"
   ],
   "blockers": [],
   "created_at": "2026-10-02T05:17:55.445438+00:00",
-  "updated_at": "2026-10-02T06:33:14.928658+00:00",
+  "updated_at": "2026-10-02T06:53:55.336579+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -98,5 +98,7 @@
       "status": "in_progress",
       "message": "Producer done at 5740b823; report and evidence map saved"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-02T06:53:55.336443+00:00"
 }

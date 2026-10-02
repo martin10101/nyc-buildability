@@ -13,24 +13,36 @@
     "D-091-R007"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "387a3a08a5cbb649e2c23ae562791a0173a4143b",
+   "reviewed_manifest_sha256": "815ed89c16552b358bb737346596d77bfa6dd6cea1bdbcdff9a8c55bd8624858",
    "requirements": [
     {
      "id": "D-091-R001",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "tools/agent_supervisor/posix_acl.py + platform_paths.py + os_acl.controller_config_acl_verdict + config.default_config_path + process.py POSIX autoupdater belt @6f80c237 (producer 5740b823)",
+      "tools/test_agent_supervisor_platform_seam.py 34 passed (venv)",
+      "scope = 6 allowed-path files only; identity 815ed89c",
+      "project-control/reports/M0-T165-evidence-map.json D-091-R001"
+     ],
+     "reviewed_sha": "387a3a08a5cbb649e2c23ae562791a0173a4143b"
     },
     {
      "id": "D-091-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "gates M0-T165-G{2,3,4,5}.json all PASS, content_manifest 815ed89c",
+      "reports M0-T165-G3G4.md (code-reviewer) + M0-T165-G5.md (security-reviewer): additive, fail-closed preserved, Windows byte-unchanged, no live loop/commissioning",
+      "recertification deferred to a later D-091 task",
+      "CI gh pr checks 288 40/40",
+      "evidence-map D-091-R007"
+     ],
+     "reviewed_sha": "387a3a08a5cbb649e2c23ae562791a0173a4143b"
     }
-   ]
+   ],
+   "restamp_note": "DCV reviewed 6f80c23717932eef8baa4a7069df7ca3ed098ffe (project-control/reports/M0-T165-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: identity unchanged (815ed89c) and no non-project-control diff."
   },
   {
    "directive_id": "D-091",
