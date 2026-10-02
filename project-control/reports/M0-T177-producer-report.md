@@ -266,4 +266,15 @@ env-gated; NEVER run here):
 Everything else identical; `.github/workflows/ci.yml` NOT changed (the fix was entirely in the harness).
 Local (R3 NOT run): file `-k "not R3"` 42 passed, 1 deselected (R3); R1 1 passed, R2 1 passed; ruff clean.
 
+## Rework 3 (R3 helper %-format collision; 2026-10-02)
+
+Rework-2 diagnostics surfaced the real cause: the R3 helper crashed with `TypeError: %d format: a real
+number is required, not str` because `worker_src = ("...'%d'%os.getpid()...%r..." % gc_src)` bound the
+inner `%d` text. FIX: build the child-code strings with CONCATENATION + `repr(gc_src)` and use
+`str(os.getpid())` (no `%`-formatting anywhere in the helper), so no placeholder can collide. PROOF (no
+systemd): the helper text + the built gc_src/worker_src all `compile()`, and a short-lived variant
+(600 s->3 s) run with `/usr/bin/python3` produced main_pid/worker_pid/gc_pid/gc_started
+(helper->worker(setsid)->grandchild), pids killed + dir removed. Rework-2 clean-interpreter selection and
+diagnostics kept; `ci.yml` unchanged; file still POSIX- and env-gated.
+
 END-OF-REPORT

@@ -520,20 +520,26 @@ class LinuxContainmentRealProcessTests(unittest.TestCase):
                      "R3 real-unit proof is opt-in (set NYC_SUP_R3_SYSTEMD=1 in Linux CI "
                      "or an owner-typed step); NEVER run by an agent on this host")
 class R3RealSystemdUnitTests(unittest.TestCase):
+    # The child-code strings are built by CONCATENATION with repr(gc_src), never
+    # %-formatting: the worker/grandchild source text itself contains `'%d' %
+    # os.getpid()`, so an outer `% gc_src` would bind that inner `%d` and raise
+    # `TypeError: %d format: a real number is required, not str` (CI diagnostic,
+    # rework 3). The inner `'%d' % os.getpid()` is evaluated at the child's OWN
+    # runtime, where os.getpid() is an int.
     R3_HELPER = textwrap.dedent('''
         import os, subprocess, sys, time
         d = sys.argv[1]
-        open(os.path.join(d, "main_pid"), "w").write("%d\\n" % os.getpid())
+        open(os.path.join(d, "main_pid"), "w").write(str(os.getpid()) + "\\n")
         gc_src = (
             "import os,sys,time\\n"
-            "open(sys.argv[1]+'/gc_pid','w').write('%d'%os.getpid())\\n"
+            "open(sys.argv[1]+'/gc_pid','w').write(str(os.getpid()))\\n"
             "open(sys.argv[1]+'/gc_started','w').write('1')\\n"
             "time.sleep(600)\\n")
         worker_src = (
             "import os,subprocess,sys,time\\n"
-            "open(sys.argv[1]+'/worker_pid','w').write('%d'%os.getpid())\\n"
-            "subprocess.Popen([sys.executable,'-c',%r,sys.argv[1]])\\n"
-            "time.sleep(600)\\n" % gc_src)
+            "open(sys.argv[1]+'/worker_pid','w').write(str(os.getpid()))\\n"
+            "subprocess.Popen([sys.executable,'-c'," + repr(gc_src) + ",sys.argv[1]])\\n"
+            "time.sleep(600)\\n")
         subprocess.Popen([sys.executable, "-c", worker_src, d], start_new_session=True)
         time.sleep(600)
     ''')
