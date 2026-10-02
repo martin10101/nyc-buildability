@@ -80,3 +80,9 @@ lock in the runtime directory. Nothing in the loop calls it yet (TW2 wires it).
 Requested status: awaiting_gate (G0,G2,G3,G4,G5; reviewers code-reviewer, security-reviewer,
 control-plane-verifier, directive-compliance-verifier).
 END-OF-REPORT
+
+## Rework 1 (CI windows-latest), producer return saved by the orchestrator
+CI supervisor-bridge (windows-latest) failed `FailureAndReclaimTests::test_lock_error_fails_closed` ('slot_lock_error' != 'slot_lock_timeout'); the other 3905 supervisor tests passed on Windows, races included. On Windows, os.open(O_CREAT|O_EXCL) on an existing directory raises PermissionError, so the product refuses at once with slot_lock_error; on POSIX it raises FileExistsError and refuses at the timeout with slot_lock_timeout. Both fail closed. review_slots.py is unchanged. The premature acceptance (d6c47fd2) was reverted before merge.
+
+Producer commit f95b4e25 (test-only): the test now asserts admitted is False and reservation is None, and pins the reason code per platform with an explicit os.name branch (slot_lock_error on nt, slot_lock_timeout otherwise), with a comment explaining the difference. ruff clean; pytest tools/test_agent_supervisor_review_slots.py 13 passed, 3 runs.
+END-OF-REPORT
