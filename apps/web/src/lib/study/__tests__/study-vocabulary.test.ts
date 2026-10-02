@@ -19,7 +19,7 @@ const DRIFTED_BLOCKED_OUTPUTS = ["floor_area_allowance", "remaining_floor_area"]
 
 describe("enum lock between the runtime arrays and the generated contract unions", () => {
   it("binds one proof slot per locked array to a value", () => {
-    expect(STUDY_ENUM_ASSERTIONS).toHaveLength(14);
+    expect(STUDY_ENUM_ASSERTIONS).toHaveLength(15);
     expect(STUDY_ENUM_ASSERTIONS.every((slot) => slot === true)).toBe(true);
   });
 
