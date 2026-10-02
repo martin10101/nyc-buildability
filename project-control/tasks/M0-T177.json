@@ -77,8 +77,8 @@
     "control-plane-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "recertification: every tools/agent_supervisor/** edit voids the M0-T174 certification; a Linux recertification superseding M0-T174 runs after M0-T177 and M0-T178",
     "activation: a proved systemd control group counts as containment only after the owner amends the activation PIN 2026-08-08 (B-027 needs); until then nothing is activated",
@@ -86,7 +86,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-02T20:48:48.109680+00:00",
-  "updated_at": "2026-10-02T20:48:48.462194+00:00",
+  "updated_at": "2026-10-02T20:50:12.811330+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -97,5 +97,15 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-10-02T20:48:48.109990+00:00"
+  "directive_regime_entered_at": "2026-10-02T20:48:48.109990+00:00",
+  "worktree": "/root/project/w-M0-T177",
+  "progress_log": [
+    {
+      "at": "2026-10-02T20:50:12.811248+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Scenarios in the packet; producer dispatched in /root/project/w-M0-T177"
+    }
+  ]
 }
