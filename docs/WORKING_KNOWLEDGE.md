@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: the D-059 work order as "the CURRENT priority lane" and "R008 delivery sequence … governs remaining MVP order"; task order now comes from plan §12 and §12a. The loop-packet mechanics and the wide-street build map still apply.
+
 # WORKING_KNOWLEDGE — current section: D-059 dependable-answers + A2 geometry (D-054 Tier 2)
 
 ## Loop-packet contract for WEB tasks (learned the hard way, run persistent-local-36, 2026-09-17)

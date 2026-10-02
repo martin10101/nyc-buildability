@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: the four-step flow "Step 1 Property … Step 4 Evidence" (plan §3: one dashboard page), "Practical usable range" (Phase 2), "Verified, conditional, review-required … labels" (plan §5, §5a.3) and "Next.js on Vercel" (ADR-004). The AI-boundary and state-machine rules still apply.
+
 # Product Flow and AI Boundaries
 
 ## Design objective

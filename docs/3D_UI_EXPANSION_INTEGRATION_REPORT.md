@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md).** Replaced by the expansion hold (`.claude/rules/expansion-agent-dispatch-hold.md` §2) and the plan. Do not start its "Now" list or its UI-001 navigation.
+
 # 3D/UI Expansion Pack — Integration Report (M0-T010 Phase 2)
 
 - **Status:** Producer deliverable submitted for independent gate (G3). Task M0-T010, producer `cloud-architect`, reviewer `code-reviewer`.
