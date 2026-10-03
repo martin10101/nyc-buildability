@@ -42,7 +42,12 @@ from .checkpoint_envelope import EnvelopeError, measure_git_state, normalize_bra
 from .claude_runner import WORKER_CHILD_ROLE, RunnerConfig, RunResult, StreamStats, inspect_stream
 from .locking import process_start_token
 from .models import digest_of, to_utc_iso
-from .mrl_descendants import DescendantProof, Snapshot, prove_zero_descendants
+from .mrl_descendants import (
+    DescendantProof,
+    Snapshot,
+    creation_token_to_ordinal,
+    prove_zero_descendants,
+)
 from .mrl_exec_chain import (
     RunVersion,
     chain_record,
@@ -482,6 +487,10 @@ class _ContainedSpawn:
         self.report: Any = None
         self.proof: DescendantProof | None = None
         self.pid = 0
+        #: The worker's own creation ordinal, read while it is alive (the only
+        #: moment it is reliably readable). Threaded into the descendant-zero proof
+        #: so a reused pid cannot make an earlier orphan look like a descendant.
+        self._root_start: int | None = None
 
     def __call__(self, argv: Sequence[str], *, stdin_text: str, timeout: float) -> tuple[int, str, str]:
         self.calls += 1
@@ -499,6 +508,12 @@ class _ContainedSpawn:
             container.close()
             raise ContractError("spawn_failed", f"the claude executable did not start: {exc}") from exc
         self.pid = int(process.pid)
+        # Capture the worker's creation time NOW, while it is alive: once it exits
+        # (and especially once its pid is reused) this is no longer readable, yet
+        # the descendant-zero proof runs after the worker is gone. See
+        # `mrl_descendants.descendants_of` for why a pre-root creation time excludes
+        # a reused-pid orphan.
+        self._root_start = creation_token_to_ordinal(process_start_token(self.pid))
         container.adopt(process.pid)
         try:
             self._record(process)
@@ -568,7 +583,8 @@ class _ContainedSpawn:
                 pass
         self.report = container.report()
         container.close()
-        proof = prove_zero_descendants(self.pid, snapshot=self.runner._snapshot)
+        proof = prove_zero_descendants(self.pid, snapshot=self.runner._snapshot,
+                                       root_start=self._root_start)
         self.proof = proof
         # The journal record is cleared ONLY on a reaped pid AND a proven-empty tree
         # (M0-T053 discipline): an unproven tree keeps the record so the next start

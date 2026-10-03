@@ -66,6 +66,9 @@ STUDY_SCHEMA_FILES = (
     "hidden_issue_flags.schema.json",
     "transit_parking.schema.json",
     "parity_data.schema.json",
+    # Lane C evaluator channel (task C-07, plan M1-08). $refs site_fact (for
+    # the measurement/source vocabulary) and common, both bundled above.
+    "evaluator_inputs.schema.json",
 )
 
 SCHEMA_FILES = PROFILE_SCHEMA_FILES + STUDY_SCHEMA_FILES

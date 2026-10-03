@@ -1,0 +1,54 @@
+{
+  "contract_version": "1.0.0",
+  "study_id": "test-fixture-synthetic-study",
+  "option_id": "option-2",
+  "revision": 3,
+  "inputs": [
+    {
+      "key": "lot_area_sq_ft",
+      "value": 5000,
+      "unit": "square_feet",
+      "fact_id": "test-fixture-synthetic:lot-area:city",
+      "rank": "city_records",
+      "label": "City records",
+      "source_kind": "city_dataset",
+      "governing": true,
+      "displaced": []
+    },
+    {
+      "key": "lot_front_ft",
+      "value": 51.5,
+      "unit": "feet",
+      "fact_id": "test-fixture-synthetic:lot-frontage:survey",
+      "rank": "survey_entered",
+      "label": "Survey (entered)",
+      "source_kind": "survey",
+      "governing": true,
+      "displaced": [
+        {
+          "fact_id": "test-fixture-synthetic:lot-frontage:city",
+          "rank": "city_records",
+          "label": "City records",
+          "value": 50
+        }
+      ]
+    },
+    {
+      "key": "lot_depth_ft",
+      "value": 98,
+      "unit": "feet",
+      "fact_id": "test-fixture-synthetic:lot-depth:assumed",
+      "rank": "assumed",
+      "label": "Assumed",
+      "source_kind": "assumption",
+      "governing": true,
+      "displaced": []
+    }
+  ],
+  "site_measurement_rank": "assumed",
+  "depends_on_fact_ids": [
+    "test-fixture-synthetic:lot-area:city",
+    "test-fixture-synthetic:lot-frontage:survey",
+    "test-fixture-synthetic:lot-depth:assumed"
+  ]
+}

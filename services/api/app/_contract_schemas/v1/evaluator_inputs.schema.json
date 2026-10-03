@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/evaluator_inputs.schema.json",
+  "title": "Evaluator Inputs",
+  "description": "v1 contract (task C-07, plan docs/PRODUCT_PLAN_CURRENT_2026-09-28.md M1-08 'Labeled input channel to the evaluator'; done-when 'Reviewed contract keeps entered values distinct from facts') for what the three-answer evaluator (services/api/app/scenario/three_answers) receives for ONE option at ONE study revision: the LABELLED site values it will compute from, each tagged with its measurement rank, display label and source kind so an entered, assumed or survey value stays distinct from a city fact all the way into the evaluator. For every engine input (lot area, frontage, depth, lot type, zoning district) exactly ONE GOVERNING record is chosen from the study's site facts by the plan's source order, and the city/computed facts that an architect's entered/assumed/survey value overrides travel with it in 'displaced' (never discarded, never overwritten in place - plan section 3 step 3 'Each shows its source and can be edited'; site_fact.schema.json 'editable'). The weakest governing rank is carried as 'site_measurement_rank' so each result can show the label of its weakest input (plan section 4 'Each result carries the label of its weakest input'), and 'depends_on_fact_ids' lists the governing fact ids so a change to any of them marks the result out of date (plan section 9). The rank/label/source-kind vocabulary is the site_fact contract's (site_fact.schema.json #/$defs/measurement_known and #/$defs/source): a record whose rank is entered, assumed or survey_entered carries its own fact id and label and can never be labelled 'City records'. 'unknown' is not a governing rank - an unknown value blocks an answer, it never feeds one.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "study_id",
+    "option_id",
+    "revision",
+    "inputs",
+    "site_measurement_rank",
+    "depends_on_fact_ids"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published evaluator_inputs contract versions. 1.0.0 = C-07 initial shape. New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "study_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "The study these inputs were built from (study.schema.json study_id)."
+    },
+    "option_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "The option these inputs are for (study.schema.json options[].option_id). Site facts are shared by every option; this names which option's evaluation they feed."
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The study revision these inputs were built from (study.schema.json revision.number). The results computed from them carry the same revision (plan section 9)."
+    },
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "description": "One GOVERNING record per engine input, chosen from the study's site facts by the plan's source order. At most one record per key.",
+      "items": { "$ref": "#/$defs/governing_input" }
+    },
+    "site_measurement_rank": {
+      "$ref": "#/$defs/measurement_rank_known",
+      "description": "The weakest rank among the governing records (plan section 4 'Each result carries the label of its weakest input'). The evaluator stamps the answers it computes with this rank's label."
+    },
+    "depends_on_fact_ids": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The fact ids of the governing records (plan section 9, dependency-based invalidation). A change to any of them marks results built from these inputs out of date.",
+      "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key; it is allowed (optional) so an invalid fixture fails only for its stated defect under additionalProperties:false."
+    }
+  },
+  "$defs": {
+    "governing_input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "value",
+        "unit",
+        "fact_id",
+        "rank",
+        "label",
+        "source_kind",
+        "governing",
+        "displaced"
+      ],
+      "description": "One engine input the evaluator receives: the GOVERNING site value, its provenance tag (rank, label, source kind), and the facts it displaced. 'governing' is always true (a non-governing fact never appears as a record; it appears only inside another record's 'displaced').",
+      "properties": {
+        "key": {
+          "type": "string",
+          "enum": [
+            "lot_area_sq_ft",
+            "lot_front_ft",
+            "lot_depth_ft",
+            "lot_type",
+            "zoning_district"
+          ],
+          "description": "The ThreeAnswerInputs field this value fills (services/api/app/scenario/three_answers/inputs.py). Mapped from the site_fact key: lot_area->lot_area_sq_ft, lot_frontage->lot_front_ft, lot_depth->lot_depth_ft, lot_type->lot_type, zoning_district->zoning_district. CLOSED enum; new engine inputs are added additively."
+        },
+        "value": {
+          "type": ["number", "string"],
+          "description": "The governing value: a number for areas and lengths, text for lot type and district. Never null (an unknown value never governs) and never NaN/Infinity (strict JSON)."
+        },
+        "unit": {
+          "description": "Unit of a numeric value: square_feet for areas, feet for lengths; null for text values. Tied to the key.",
+          "anyOf": [
+            { "type": "string", "enum": ["square_feet", "feet"] },
+            { "type": "null" }
+          ]
+        },
+        "fact_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The id of the site fact that governs this input (site_fact.schema.json fact_id). Present for every record, including entered/assumed/survey records, so an edit is always traceable to its own fact."
+        },
+        "rank": { "$ref": "#/$defs/measurement_rank_known" },
+        "label": { "$ref": "#/$defs/measurement_label_known" },
+        "source_kind": { "$ref": "#/$defs/source_kind" },
+        "governing": {
+          "type": "boolean",
+          "const": true,
+          "description": "Always true: a record is the governing value for its key."
+        },
+        "displaced": {
+          "type": "array",
+          "description": "The facts this governing value overrides, newest-first is not required but order is stable. Empty when nothing was overridden (e.g. a lone city fact, or an entered value over a previously-unknown slot). An entered/assumed/survey value typically displaces the city/computed fact beside it (plan section 3 step 3; site_fact.schema.json 'editable': the city value is never overwritten in place).",
+          "items": { "$ref": "#/$defs/displaced_fact" }
+        }
+      },
+      "allOf": [
+        {
+          "description": "Rank, label and source kind are tied one-to-one exactly as site_fact.schema.json ties them (#/$defs/measurement_known, #/$defs/source). An entered/assumed/survey record therefore can NEVER carry the 'City records' label or a city source kind, keeping an entered value distinct from a city fact (M1-08 done-when). Expressed with oneOf/const (not if/then) because the contracts validator's keyword allowlist excludes if/then.",
+          "oneOf": [
+            {
+              "properties": {
+                "rank": { "const": "survey_entered" },
+                "label": { "const": "Survey (entered)" },
+                "source_kind": { "const": "survey" }
+              }
+            },
+            {
+              "properties": {
+                "rank": { "const": "city_records" },
+                "label": { "const": "City records" },
+                "source_kind": { "enum": ["city_dataset", "city_filing"] }
+              }
+            },
+            {
+              "properties": {
+                "rank": { "const": "approximate_tax_map" },
+                "label": { "const": "Approximate — tax map" },
+                "source_kind": { "const": "tax_map_computation" }
+              }
+            },
+            {
+              "properties": {
+                "rank": { "const": "entered" },
+                "label": { "const": "Entered" },
+                "source_kind": { "const": "architect_entry" }
+              }
+            },
+            {
+              "properties": {
+                "rank": { "const": "assumed" },
+                "label": { "const": "Assumed" },
+                "source_kind": { "const": "assumption" }
+              }
+            }
+          ]
+        },
+        {
+          "description": "Value type and unit per key: dimensions are strictly positive numbers with their unit; text values carry a null unit. Expressed with oneOf/const because the validator's keyword allowlist excludes if/then.",
+          "oneOf": [
+            {
+              "properties": {
+                "key": { "const": "lot_area_sq_ft" },
+                "value": { "type": "number", "exclusiveMinimum": 0 },
+                "unit": { "const": "square_feet" }
+              }
+            },
+            {
+              "properties": {
+                "key": { "enum": ["lot_front_ft", "lot_depth_ft"] },
+                "value": { "type": "number", "exclusiveMinimum": 0 },
+                "unit": { "const": "feet" }
+              }
+            },
+            {
+              "properties": {
+                "key": { "const": "lot_type" },
+                "value": { "type": "string", "enum": ["corner", "interior", "through"] },
+                "unit": { "type": "null" }
+              }
+            },
+            {
+              "properties": {
+                "key": { "const": "zoning_district" },
+                "value": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+                "unit": { "type": "null" }
+              }
+            }
+          ]
+        },
+        {
+          "description": "An 'assumed' value governs an input only when it is the sole value for that input: the plan uses an assumption where no sourced value exists (plan section 9 'Explicit assumptions'; section 3 step 4) and ties the override path to entered/survey_entered (site_fact.schema.json 'editable'), never to a stated assumption. So an assumed governing record NEVER displaces a fact - its 'displaced' list is empty. (A conflict between an assumption and a recorded value is refused upstream by the adapter; a governing 'assumed' record with any displaced fact is a malformed channel.) Expressed with anyOf/const (not if/then) because the validator's keyword allowlist excludes if/then.",
+          "anyOf": [
+            {
+              "properties": {
+                "rank": { "enum": ["survey_entered", "city_records", "approximate_tax_map", "entered"] }
+              }
+            },
+            {
+              "properties": {
+                "displaced": { "maxItems": 0 }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "displaced_fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fact_id", "rank", "label", "value"],
+      "description": "A site fact a governing value overrides, kept visible beside it (never discarded). Carries its own id, rank, tied label and value, so the architect can still see what the city/computed source said.",
+      "properties": {
+        "fact_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "rank": { "$ref": "#/$defs/measurement_rank_known" },
+        "label": { "$ref": "#/$defs/measurement_label_known" },
+        "value": {
+          "type": ["number", "string"],
+          "description": "The overridden value as the source recorded it (number for areas/lengths, text otherwise). Never null (an unknown value is never a displaced fact: it blocks, it does not get overridden)."
+        }
+      },
+      "allOf": [
+        {
+          "description": "rank and label tied one-to-one (site_fact.schema.json #/$defs/measurement_known).",
+          "oneOf": [
+            { "properties": { "rank": { "const": "survey_entered" }, "label": { "const": "Survey (entered)" } } },
+            { "properties": { "rank": { "const": "city_records" }, "label": { "const": "City records" } } },
+            { "properties": { "rank": { "const": "approximate_tax_map" }, "label": { "const": "Approximate — tax map" } } },
+            { "properties": { "rank": { "const": "entered" }, "label": { "const": "Entered" } } },
+            { "properties": { "rank": { "const": "assumed" }, "label": { "const": "Assumed" } } }
+          ]
+        }
+      ]
+    },
+    "measurement_rank_known": {
+      "type": "string",
+      "enum": [
+        "survey_entered",
+        "city_records",
+        "approximate_tax_map",
+        "entered",
+        "assumed"
+      ],
+      "description": "Any site_fact measurement rank EXCEPT 'unknown' (site_fact.schema.json #/$defs/measurement_known): an unknown value never governs an answer and is never a displaced fact."
+    },
+    "measurement_label_known": {
+      "type": "string",
+      "enum": [
+        "Survey (entered)",
+        "City records",
+        "Approximate — tax map",
+        "Entered",
+        "Assumed"
+      ],
+      "description": "The display label tied to a known rank (site_fact.schema.json #/$defs/measurement_known labels, plan section 4 table and task M1-07). Tied one-to-one to the rank in the governing_input and displaced_fact allOf blocks."
+    },
+    "source_kind": {
+      "type": "string",
+      "enum": [
+        "survey",
+        "city_dataset",
+        "city_filing",
+        "tax_map_computation",
+        "architect_entry",
+        "assumption"
+      ],
+      "description": "The site_fact source kind this value came from (site_fact.schema.json #/$defs/source 'kind'). Tied to the rank in the governing_input allOf: survey->survey_entered, city_dataset/city_filing->city_records, tax_map_computation->approximate_tax_map, architect_entry->entered, assumption->assumed."
+    }
+  }
+}
