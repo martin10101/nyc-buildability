@@ -220,3 +220,10 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   `cb6f5c77`).
 - Re-run `git ls-remote` before telling the owner a branch lacks something: the owner may push
   mid-chat (control/session14, 2026-09-30).
+- This gh build has no `gh pr checks --json`; read `gh pr view N --json statusCheckRollup` (CheckRun
+  .status/.conclusion, StatusContext .state). `gh pr merge --match-head-commit` needs the FULL 40-char sha.
+- `readonly_agent_guard` fails CLOSED for any agent type not in `.claude/agents/` (general-purpose, Explore,
+  Plan): they cannot edit or commit. Writing producers = roster producer types only (backend-/frontend-engineer,
+  cloud-architect...).
+- Base merge after review: prove identity with `git show --remerge-diff --format= <merge> | wc -l` == 0 and an
+  unchanged `git patch-id --stable` of the net diff vs the merge base (short two-dot diffs mislead).
