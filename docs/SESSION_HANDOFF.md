@@ -76,6 +76,13 @@ over this prose. Seq 134 is in git (#327).
    - Q10: the architect mockup review.
    - R082: should the tax-lot warning become a short tag?
 
+## NEW: dependency-security incident (found at handoff; not started)
+- Since about 2026-10-03 01:00 UTC, `web-dependency-security` fails on **every** PR. The cause is the new advisory **GHSA-vfj7-8cjw-p6xm**
+  (`braces`, high severity; npm audit shows the range `*`, i.e. all versions). It enters through a dev chain: `eslint-config-next` →
+  `@next/eslint-plugin-next` → `fast-glob` → `micromatch` → `braces` (5 high findings). The audit suggests `eslint-config-next@14.2.35`,
+  which is a breaking change. First seen on PR #347, run 37088548221.
+- The policy has no waiver, so **no PR can merge until it is fixed**. That includes this handoff (#347). Never merge with a red check.
+
 ## Follow-ups recorded
 - DB-104: before enabling the study read in production: B-001 sign-in and a study-route concurrency bound.
 - DB-105: canonical model ids.
@@ -93,7 +100,14 @@ over this prose. Seq 134 is in git (#327).
 - Lessons are in `docs/WORKING_KNOWLEDGE.md`, "Cloud session 2026-10-03".
 
 ## EXACT NEXT ACTION (successor)
-1. Gate 0, then READY TO RESUME or BLOCKED. Run `gh pr list`.
+1. Gate 0, then READY TO RESUME or BLOCKED. Run `gh pr list`. **If #347 is still open, read this handoff from branch
+   `task/session-handoff-2026-10-03`.**
+1a. **The dependency-security incident comes first:**
+   - invoke `/dependency-security`;
+   - confirm the advisory's affected and patched ranges (GHSA, registry);
+   - contract a Lane C (or orchestrator) fix that removes or replaces the vulnerable dev chain with an admitted, 7-day-old, advisory-free set
+     (new packages need a G5 provenance review), or wait for an upstream patch;
+   - then get #347 green and merge it, and re-run CI on any other open PR.
 2. If the owner has pushed `control/D-091-R009-pin-amendment`:
    - a reviewer (security-reviewer) confirms the appended text equals the signed-off draft (sha `417e1f70…`) and that nothing else changed;
    - merge;
@@ -114,4 +128,5 @@ evidence. Verify: cwd IS the repo worktree root, branch candidate/D-024-mrl-opti
 status` (the ledger wins); check `gh pr list`. Report READY TO RESUME or BLOCKED, then continue from EXACT NEXT
 ACTION without repeating work. At most 5 robots, memory under 70%; LANE_A_ENABLED stays off; zoning-math
 merges need the owner's yes; explain things to the owner in plain, simple words. Stop for Tier D, PR #241,
-owner holds and owner-typed commissioning; never pass `model:`.
+owner holds and owner-typed commissioning; never pass `model:`. If PR #347 (this handoff) is not merged yet, read
+docs/SESSION_HANDOFF.md from branch task/session-handoff-2026-10-03.
