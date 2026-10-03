@@ -9,8 +9,10 @@ import {
 } from "@/lib/parity-api";
 import {
   EXCLUDED_REASON_TEXT,
+  FACE_TEXT_MAX_CHARS,
   comparableSalesView,
   formatRecordedPrice,
+  parityFaceBudget,
   parityStripSummary,
   unusedFloorAreaView,
 } from "@/lib/architect/parity-panel-view";
@@ -95,5 +97,29 @@ describe("parityStripSummary — one §5a strip, at most three items", () => {
 
   it("singularizes a single recorded sale", () => {
     expect(parityStripSummary(synth()).items[0]).toBe("1 recorded sale");
+  });
+});
+
+describe("parityFaceBudget — §5a face-text budget (D-090-R082)", () => {
+  it("counts three standing blocks and holds the one app line within budget", () => {
+    const budget = parityFaceBudget(bayside());
+    expect(budget.noticeCount).toBeLessThanOrEqual(3);
+    // The pinned disclosures are the not-a-valuation notice, the settled capacity
+    // label and reason, plus the disclosed filter — shown verbatim, so exempt.
+    expect(budget.pinned).toContain(NOT_A_VALUATION_NOTICE);
+    expect(budget.pinned).toContain(NOT_CONFIRMED_LABEL);
+    expect(budget.pinned).toContain(NOT_CONFIRMED_REASON);
+    // With recorded sales present there is no app chatter on the face.
+    expect(budget.appStrings).toEqual([]);
+  });
+
+  it("surfaces the empty-state app line only when no sale matched, within budget", () => {
+    const empty = synth();
+    empty.comparable_sales.selected = [];
+    const budget = parityFaceBudget(empty);
+    expect(budget.appStrings).toEqual(["No recorded sale matched the disclosed filter."]);
+    for (const line of budget.appStrings) {
+      expect(line.length).toBeLessThanOrEqual(FACE_TEXT_MAX_CHARS);
+    }
   });
 });

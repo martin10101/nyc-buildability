@@ -1,8 +1,9 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import realDof from "../../../../../../packages/contracts/fixtures/valid/parity_data/real_dof_bayside.json";
-import { NOT_CONFIRMED_LABEL, NOT_CONFIRMED_REASON } from "@/lib/parity-api";
+import { NOT_CONFIRMED_LABEL, NOT_CONFIRMED_REASON, type ParityData } from "@/lib/parity-api";
 import { parityUiEnabled } from "@/lib/architect/parity-panel-ui-flag";
+import { parityFaceBudget } from "@/lib/architect/parity-panel-view";
 import { ParityPanel } from "../ParityPanel";
 
 /**
@@ -106,6 +107,18 @@ describe("ParityPanel — success render (comparable sales + unused floor area)"
     expect(screen.getByTestId("parity-unused-label")).toHaveTextContent(NOT_CONFIRMED_LABEL);
     expect(screen.getByTestId("parity-unused-reason")).toHaveTextContent(NOT_CONFIRMED_REASON);
     expect(/[0-9]/.test(block.textContent ?? "")).toBe(false);
+  });
+
+  it("carries no app chatter on a populated face (R082 §5a budget helper)", async () => {
+    render(<ParityPanel bbl={BBL} fetchImpl={stub(parityResponse(parity(), 200))} />);
+    await screen.findByTestId("parity-panel");
+    const budget = parityFaceBudget(parity() as ParityData);
+    expect(budget.appStrings).toEqual([]); // recorded sales present -> no empty-state line
+    expect(budget.noticeCount).toBeLessThanOrEqual(3);
+    // The pinned not-a-valuation notice and settled capacity block are the standing
+    // blocks, both rendered verbatim on the face.
+    expect(screen.getByTestId("parity-not-a-valuation")).toHaveTextContent("not a valuation or an appraisal");
+    expect(screen.getByTestId("parity-unused-label")).toHaveTextContent(NOT_CONFIRMED_LABEL);
   });
 
   it("puts no internal code on the face (bbl, source tokens, contract keys stay off)", async () => {

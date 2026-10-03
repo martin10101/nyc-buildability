@@ -2,6 +2,12 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import validFour from "../../../../../../packages/contracts/fixtures/valid/hidden_issue_flags/synthetic_four_groups.json";
 import { jsonResponse } from "@/test-support/fixtures";
+import {
+  FACE_TEXT_MAX_CHARS,
+  STATUS_MEANINGS,
+  hiddenIssueFlagsFaceBudget,
+} from "@/lib/architect/hidden-issue-flags-view";
+import type { HiddenIssueFlagsDocument } from "@/lib/hidden-issue-flags-contract-checks";
 import { HiddenIssueFlags } from "../HiddenIssueFlags";
 
 /**
@@ -47,11 +53,54 @@ describe("HiddenIssueFlags — success render (four §8a groups)", () => {
     await screen.findByTestId("hidden-issues");
     const through = screen.getByTestId("hidden-issue-site_shape_and_street.through_lot");
     expect(through).toHaveTextContent("No flag");
-    expect(through).toHaveTextContent("This check found nothing to flag.");
+    // The flag row carries its own finding (its detail), not the generic meaning.
+    expect(through).toHaveTextContent("The recorded lot type is not a through lot");
+    // R082: the generic per-status meaning is defined ONCE in the strip glossary
+    // (on tap), not repeated on every row.
+    expect(through).not.toHaveTextContent("This check found nothing to flag.");
+    const strip = screen.getByTestId("hidden-issues-strip-detail");
+    expect(strip).toHaveTextContent("This check found nothing to flag.");
     // The panel never asserts an all-clear for the property.
-    expect(screen.getByTestId("hidden-issues-strip-detail")).toHaveTextContent("not an all-clear for the property");
+    expect(strip).toHaveTextContent("not an all-clear for the property");
     const panel = screen.getByTestId("hidden-issues");
     expect((panel.textContent ?? "").toLowerCase()).not.toContain("no issues");
+  });
+
+  it("moves the generic meaning and typical source off the face (R082, §5a item 4)", async () => {
+    render(<HiddenIssueFlags bbl={BBL} fetchImpl={stub(jsonResponse(fourGroups(), 200))} />);
+    await screen.findByTestId("hidden-issues");
+    // The face is the panel minus its <details> (the strip glossary + per-flag Source).
+    const face = screen.getByTestId("hidden-issues").cloneNode(true) as HTMLElement;
+    face.querySelectorAll<HTMLElement>("details").forEach((node) => node.remove());
+    const faceText = face.textContent ?? "";
+    expect(faceText).not.toContain("Typical source:");
+    for (const meaning of Object.values(STATUS_MEANINGS)) {
+      expect(faceText).not.toContain(meaning);
+    }
+    // Each flag's own detail still shows on the face — that is the real information.
+    expect(faceText).toContain("Existing zoning floor area is not on file");
+    // The typical source now lives behind the per-flag "Source" details, which render
+    // even for a flag that carries no evidence input.
+    const source = screen.getByTestId("hidden-issue-source-existing_building.larger_than_today");
+    expect(source.tagName.toLowerCase()).toBe("details");
+    expect(source).toHaveTextContent("Typical source: DOB job filing or certificate of occupancy");
+  });
+
+  it("stays within the §5a face-text budget, and the helper matches the rendered face", async () => {
+    render(<HiddenIssueFlags bbl={BBL} fetchImpl={stub(jsonResponse(fourGroups(), 200))} />);
+    await screen.findByTestId("hidden-issues");
+    const budget = hiddenIssueFlagsFaceBudget(fourGroups() as HiddenIssueFlagsDocument);
+    expect(budget.noticeCount).toBeLessThanOrEqual(3);
+    for (const line of budget.appStrings) {
+      expect(line.length).toBeLessThanOrEqual(FACE_TEXT_MAX_CHARS);
+    }
+    // Every app string the helper claims is on the face actually appears on the face.
+    const face = screen.getByTestId("hidden-issues").cloneNode(true) as HTMLElement;
+    face.querySelectorAll<HTMLElement>("details").forEach((node) => node.remove());
+    const faceText = face.textContent ?? "";
+    for (const line of budget.appStrings) {
+      expect(faceText).toContain(line);
+    }
   });
 
   it("shows the one §5a strip with at most three summary items", async () => {
