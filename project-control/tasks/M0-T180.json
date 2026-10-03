@@ -112,8 +112,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 55,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "typescript-eslint recommended may flag code that next/typescript tolerated (rule-set drift) -> S3: stop and report; never edit src or blanket-disable under this packet",
     "a transitive of the replacement set may itself carry an advisory or be younger than 7 days -> the workflow's audit/age gate fails closed; the producer swaps the version with registry evidence or returns BLOCKED (S7)",
@@ -123,7 +123,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-03T02:47:44.473028+00:00",
-  "updated_at": "2026-10-03T04:14:14.581398+00:00",
+  "updated_at": "2026-10-03T04:25:11.158911+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
