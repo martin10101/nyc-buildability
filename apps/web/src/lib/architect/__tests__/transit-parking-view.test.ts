@@ -157,3 +157,46 @@ describe("transitParkingView — the source-to-check reference (contract 1.1.0)"
     expect(transitParkingView(nullUrl).missingSourceRef?.url).toBeNull();
   });
 });
+
+describe("transitParkingView — the source link is held to http(s) before it can be an href", () => {
+  const checkNeeded = fixture("synthetic_check_needed");
+
+  function viewWithUrl(url: string | null) {
+    const ref = checkNeeded.missing_source_ref;
+    if (!ref) throw new Error("fixture must carry missing_source_ref");
+    const doc: TransitParking = { ...checkNeeded, missing_source_ref: { ...ref, url } };
+    return transitParkingView(doc);
+  }
+
+  it("keeps a plain https dataset link verbatim", () => {
+    expect(viewWithUrl("https://data.cityofnewyork.us/d/6ztr-wgff").missingSourceRef?.url).toBe(
+      "https://data.cityofnewyork.us/d/6ztr-wgff",
+    );
+  });
+
+  it("keeps a plain http dataset link", () => {
+    expect(viewWithUrl("http://example.gov/d/x").missingSourceRef?.url).toBe(
+      "http://example.gov/d/x",
+    );
+  });
+
+  it("rejects a javascript: url so it never reaches an href", () => {
+    expect(viewWithUrl("javascript:alert(1)").missingSourceRef?.url).toBeNull();
+  });
+
+  it("rejects a data: url", () => {
+    expect(
+      viewWithUrl("data:text/html,<script>alert(1)</script>").missingSourceRef?.url,
+    ).toBeNull();
+  });
+
+  it("rejects a url carrying embedded credentials", () => {
+    expect(
+      viewWithUrl("https://user:pass@data.cityofnewyork.us/d/6ztr-wgff").missingSourceRef?.url,
+    ).toBeNull();
+  });
+
+  it("rejects a relative or otherwise unparseable url", () => {
+    expect(viewWithUrl("/d/6ztr-wgff").missingSourceRef?.url).toBeNull();
+  });
+});

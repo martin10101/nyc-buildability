@@ -310,7 +310,7 @@ export function TransitParkingSection({ bbl, fetchImpl }: TransitParkingSectionP
                     <dd>
                       <ul className="transit-parking__source-ref-components">
                         {view.missingSourceRef.components.map((component) => (
-                          <li key={component.datasetId}>
+                          <li key={`${component.dataset}-${component.datasetId}`}>
                             {component.dataset} ({component.datasetId})
                           </li>
                         ))}

@@ -118,10 +118,32 @@ function sourceView(source: TransitParkingSource | null): TransitSourceView | nu
 }
 
 /**
+ * Accept a source link ONLY if it is a well-formed absolute http(s) URL with no
+ * embedded credentials; everything else → null, so the Link row is omitted exactly
+ * as it is for a missing url. `boundedText` already caps length and strips control
+ * characters, but it does NOT validate the scheme, so a server-supplied
+ * `javascript:` / `data:` string would otherwise reach an href. This mirrors the
+ * spirit of source-links.ts `officialZoningTextUrl` (parse with `new URL`, demand a
+ * safe protocol, reject `user:pass@` credentials): a scheme the browser must not
+ * navigate to never becomes a link.
+ */
+function safeHttpUrl(value: string): string | null {
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    if (url.username || url.password) return null;
+    return value;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Reshape the contract's `missing_source_ref` (absent or null → null) into the
  * disclosure view. Built with the same `boundedText` helper the source view uses,
  * so each reflected id/url is length-capped and control-stripped; an empty result
- * is nulled to an honest "Not available" row rather than a blank one.
+ * is nulled to an honest "Not available" row rather than a blank one, and the url is
+ * additionally held to the http(s) safelist above before it can become an href.
  */
 function missingSourceRefView(
   ref: TransitParkingMissingSourceRef | null | undefined,
@@ -130,7 +152,6 @@ function missingSourceRefView(
   const datasetId = boundedText(ref.dataset_id, "");
   const publisher = boundedText(ref.publisher, "");
   const datasetVersion = boundedText(ref.dataset_version, "");
-  const url = boundedText(ref.url, "");
   const components = (ref.components ?? []).map((component) => ({
     dataset: boundedText(component.dataset, "Unnamed dataset"),
     datasetId: boundedText(component.dataset_id, "Unknown id"),
@@ -140,7 +161,7 @@ function missingSourceRefView(
     datasetId: datasetId === "" ? null : datasetId,
     publisher: publisher === "" ? null : publisher,
     datasetVersion: datasetVersion === "" ? null : datasetVersion,
-    url: url === "" ? null : url,
+    url: safeHttpUrl(boundedText(ref.url, "")),
     components,
   };
 }
