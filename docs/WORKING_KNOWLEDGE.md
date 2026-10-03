@@ -655,3 +655,7 @@ push), read the AssertionError payload from the failed log, delete the branch.
   carry the hunk in a Lane C PR first, then merge the base into the lane-a branch.
 - **Identity after a base merge:** `git show --remerge-diff --format= <merge> | wc -l` == 0 and an unchanged
   `git patch-id --stable` of the net diff against the MERGE BASE (a two-dot diff from the old base misleads).
+- **Read-only reviewer types cannot `git worktree add`** — the guard blocks it; never ask them to. They verify via git
+  plumbing, `ruff --stdin-filename`, and in-process import.
+- **A producer's new request file can collide (add/add) with the integrator's docs seam** — resolve to the seam's file
+  plus the lane's State line (#364).
