@@ -30,13 +30,15 @@
     "apps/web/package-lock.json",
     "apps/web/eslint.config.mjs",
     "project-control/reports/M0-T180-registry-research.md",
-    "project-control/reports/M0-T180-producer-report.md"
+    "project-control/reports/M0-T180-producer-report.md",
+    "apps/web/scripts/tests/dependency_age_gate.test.mjs",
+    "apps/web/src/lib/address-search.ts",
+    "apps/web/src/lib/architect/source-links.ts",
+    "apps/web/src/lib/dashboard/loader.server.ts"
   ],
   "forbidden_paths": [
-    "apps/web/src/**",
     "apps/web/e2e/**",
     "apps/web/.npmrc",
-    "apps/web/scripts/**",
     "apps/web/next.config.ts",
     "apps/web/playwright.config.ts",
     "apps/web/tsconfig.json",
@@ -49,7 +51,9 @@
     "project-control/directives/**",
     "project-control/tasks/**",
     "project-control/state.json",
-    "project-control/blockers/**"
+    "project-control/blockers/**",
+    "apps/web/src/** except the three files named in allowed_paths",
+    "apps/web/scripts/** except scripts/tests/dependency_age_gate.test.mjs (test regex spacing only; the gate script itself is untouched)"
   ],
   "acceptance_scenarios": [
     {
@@ -119,7 +123,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-03T02:47:44.473028+00:00",
-  "updated_at": "2026-10-03T04:05:38.062519+00:00",
+  "updated_at": "2026-10-03T04:14:13+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -130,7 +134,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-10-03T02:47:44.473209+00:00",
-  "path_notes": "PRODUCER = frontend-engineer in an isolated worktree on branch task/M0-T180-web-lint-chain-braces (contract-head reset first). The producer edits package.json + eslint.config.mjs + the two reports ONLY; the lock is NEVER generated locally - the orchestrator dispatches .github/workflows/generate-lockfile.yml on the branch after cherry-picking the producer commit, and the bot's lock commit is this task's material (allowed_paths includes the lock). THIN CLIENT / CODING_RULES: no npm, npx or node runs on this host. D-090 scope already allows 'the dependency-security repair needed for a green baseline'; the capture of the owner's 2026-10-03 message (D-090 source-010, R083-R086) travels in this task's PR because no PR can merge before this repair. Blocker B-028 names the condition, not this task id, so acceptance is not self-blocked; B-028 is resolved in the acceptance seam.",
+  "path_notes": "PRODUCER = frontend-engineer in an isolated worktree on branch task/M0-T180-web-lint-chain-braces (contract-head reset first). The producer edits package.json + eslint.config.mjs + the two reports ONLY; the lock is NEVER generated locally - the orchestrator dispatches .github/workflows/generate-lockfile.yml on the branch after cherry-picking the producer commit, and the bot's lock commit is this task's material (allowed_paths includes the lock). THIN CLIENT / CODING_RULES: no npm, npx or node runs on this host. D-090 scope already allows 'the dependency-security repair needed for a green baseline'; the capture of the owner's 2026-10-03 message (D-090 source-010, R083-R086) travels in this task's PR because no PR can merge before this repair. Blocker B-028 names the condition, not this task id, so acceptance is not self-blocked; B-028 is resolved in the acceptance seam. SCOPE CORRECTION 2026-10-03 (S3 fallout, recorded in the re-recorded G0): CI web lint on the admitted config (run 37095482896, head 1d127077) reported exactly 4 errors in base code - two intentional control-character rejection regexes (address-search.ts:56, source-links.ts:3), one two-space regex in the age-gate TEST (dependency_age_gate.test.mjs:463) and one literal BOM inside a regex (loader.server.ts:31). The four files are added to allowed_paths for behavior-identical fixes only (justified inline disables; `/PASS {2}/`; `\\uFEFF`), applied by the orchestrator and tagged [ORCH-CORRECTED per S3]; reviewers cover them. The two remaining lint WARNINGS (unused imports in two test files) do not fail CI and are left to their lanes.",
   "documented_test_commands": [
     "generate-lockfile workflow run on the branch (npm ci; npm audit --audit-level=low; audit JSON total == 0; node scripts/dependency_age_gate.mjs package-lock.json; --npm-cli-advisory 11.18.0) - orchestrator-dispatched",
     "ci.yml web (npm run lint; typecheck; build), web-e2e, web-dependency-security on the post-lock head",
