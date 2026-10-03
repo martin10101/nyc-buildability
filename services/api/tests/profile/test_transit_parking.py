@@ -37,6 +37,16 @@ _CLOCK = lambda: datetime(2026, 9, 30, 6, 20, tzinfo=UTC)  # noqa: E731
 PACK = Path(__file__).resolve().parents[1] / "fixtures" / "benchmark_215_16_northern"
 PLUTO_FILE = "pluto_64uk-42ks_bbl_4073340070.json"
 RETRIEVED_AT = "2026-09-30T06:20:00Z"
+# The committed contract fixture for the recorded transit/parking detail (request D-2).
+CONTRACT_FIXTURE = (
+    Path(__file__).resolve().parents[4]
+    / "packages"
+    / "contracts"
+    / "fixtures"
+    / "valid"
+    / "transit_parking"
+    / "synthetic_recorded.json"
+)
 
 
 def benchmark_profile() -> dict:
@@ -104,6 +114,20 @@ def test_recorded_detail_states_the_value_and_the_legal_boundary_not_a_parking_c
     # It never claims a number of spaces or an exemption.
     assert "space" not in detail.lower()
     assert "exempt" not in detail.lower()
+
+
+def test_recorded_detail_is_byte_identical_to_the_contract_fixture_and_hides_the_id() -> None:
+    # Request D-2 (plan section 5a items 4-5): the dataset id belongs in ``source``, not on
+    # the face the parity window shows verbatim. The recorded detail must match the committed
+    # contract fixture byte for byte; the fixture string is loaded, never copied here.
+    expected = json.loads(CONTRACT_FIXTURE.read_text("utf-8"))["detail"]
+    status = resolve_transit_parking_status(benchmark_profile())
+    assert status.transit_zone == "Outer Transit Zone"
+    assert status.detail == expected
+    assert "64uk-42ks" not in status.detail
+    # The id, version and query_ref still live where provenance belongs.
+    assert status.source is not None
+    assert status.source["dataset"] == PLUTO_DATASET_NAME == "PLUTO (64uk-42ks)"
 
 
 def test_status_source_is_pinnable_by_b06_and_current_against_its_own_retrieval() -> None:

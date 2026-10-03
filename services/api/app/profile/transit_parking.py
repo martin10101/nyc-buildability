@@ -178,8 +178,11 @@ def resolve_transit_parking_status(profile: Mapping[str, Any]) -> TransitParking
     value, source, problem = read_pluto_text(profile, TRANSIT_ZONE_FIELD)
     bbl = _bbl(profile)
     if problem is None and value is not None:
+        # The parenthesis names the dataset by name only ("PLUTO"), not its id: the
+        # dataset id, version and query_ref are provenance and stay in ``source`` below,
+        # off the face the parity window shows (request D-2; plan section 5a items 4-5).
         detail = (
-            f"Transit zone: {value} ({PLUTO_DATASET_NAME}, field '{TRANSIT_ZONE_FIELD}', "
+            f"Transit zone: {value} (PLUTO, field '{TRANSIT_ZONE_FIELD}', "
             f"DCP's Transit Zones classification per the PLUTO Data Dictionary 26v1). "
             f"Every option reads this one recorded value, so the transit/parking status "
             f"is the same across all options (check C-8). "
