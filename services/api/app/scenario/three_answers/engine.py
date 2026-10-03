@@ -33,6 +33,7 @@ from .answers import build_allowance, build_envelope, not_available
 from .building_option import build_building_option
 from .contract import validate_results_document
 from .dwelling_units import build_unit_estimate
+from .explanations import build_status_strip
 from .geometry import build_geometry
 from .inputs import (
     MEASUREMENT_APPROXIMATE_TAX_MAP,
@@ -228,11 +229,9 @@ def generate_results(
         unit_estimate=unit_estimate,
         geometry=geometry,
         rule_versions=rule_versions,
-        status_strip=[
-            {"text": "Zoning maximum"},
-            {"text": "Approximate measurements"},
-            {"text": "Lots you selected"},
-        ],
+        # Status strip, with the measurement chip computed from the real site rank (C-11): a
+        # survey-measured lot is never flagged "Approximate measurements" (see explanations.py).
+        status_strip=build_status_strip(inputs.site_measurement_rank),
         notices_count=len(assumptions),
     )
     validate_results_document(document)
