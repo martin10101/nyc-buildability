@@ -5,7 +5,10 @@ import assumedExistingZfaFact from "../../../../../../packages/contracts/fixture
 import { createStudyStore } from "@/lib/study/study-store";
 import { StudyStoreProvider } from "@/lib/study/use-study";
 import { MEASUREMENT_LABELS, type SiteFact, type Study } from "@/lib/study/study-vocabulary";
-import { CHOOSE_SOURCE_REASON } from "@/lib/architect/existing-building-view";
+import {
+  CHOOSE_SOURCE_REASON,
+  existingFloorAreaAssumptionStatement,
+} from "@/lib/architect/existing-building-view";
 import { ENTER_POSITIVE_NUMBER } from "@/lib/architect/lot-site-setup";
 import { ExistingBuildingStep } from "../ExistingBuildingStep";
 import { LotSiteSetup } from "../LotSiteSetup";
@@ -17,6 +20,21 @@ const BBL = unknownStudy.property.bbl; // "5999999998", plan "keep", existing-zf
 const unknownFacts = unknownStudy.site.facts;
 const assumedFact = assumedExistingZfaFact as unknown as SiteFact;
 const FIXED_NOW = () => "2026-10-03T09:00:00Z";
+
+/**
+ * A valid study with NO existing-zfa fact (so the first-creation edge runs: buildExistingFloorAreaFact
+ * + upsertSiteFact) and a CITY value parked at the exact id that edge would write. The store never
+ * overwrites a city value in place, so the write fails — the honest path behind the fallback message.
+ */
+function studyThatRefusesTheFirstCreation(): Study {
+  const study = structuredClone(unknownStudy);
+  study.site.facts = study.site.facts
+    .filter((fact) => fact.key !== "existing_zoning_floor_area")
+    .map((fact) =>
+      fact.fact_id === "fact-zoning-district" ? { ...fact, fact_id: "existing-zoning-floor-area" } : fact,
+    );
+  return study;
+}
 
 function studySetupDoc(study: Study) {
   return {
@@ -151,11 +169,33 @@ describe("LotSiteSetup — step 4 wired to the store (a study exists)", () => {
     fireEvent.click(screen.getByRole("radio", { name: "Stated assumption" }));
     fireEvent.click(screen.getByTestId("existing-floor-area-save"));
 
+    // Recorded through the real store op (enterSiteFactAssumption), no study-operations mocking.
     await waitFor(() => {
-      const fact = store.get(BBL)!.study.site.facts.find((candidate) => candidate.fact_id === "fact-existing-zfa")!;
-      expect(fact.measurement.rank).toBe("assumed");
-      expect(fact.value).toBe(6200);
-      expect(fact.source?.kind).toBe("assumption");
+      const fact = store.get(BBL)?.study.site.facts.find((candidate) => candidate.fact_id === "fact-existing-zfa");
+      expect(fact).toBeDefined();
+      expect(fact?.measurement.rank).toBe("assumed");
+      expect(fact?.measurement.label).toBe(MEASUREMENT_LABELS.assumed);
+      expect(fact?.value).toBe(6200);
+      expect(fact?.source?.kind).toBe("assumption");
+      expect(fact?.source?.statement).toBe(existingFloorAreaAssumptionStatement(6200));
+    });
+  });
+
+  it("records an architect entry into the shared study (rank Entered, source architect_entry)", async () => {
+    const store = renderWithStore();
+    fireEvent.change(screen.getByTestId("existing-floor-area-input"), { target: { value: "6200" } });
+    fireEvent.click(screen.getByRole("radio", { name: "Architect entry" }));
+    fireEvent.click(screen.getByTestId("existing-floor-area-save"));
+
+    // Recorded through the real store op (enterSiteFactValue), no study-operations mocking.
+    await waitFor(() => {
+      const fact = store.get(BBL)?.study.site.facts.find((candidate) => candidate.fact_id === "fact-existing-zfa");
+      expect(fact).toBeDefined();
+      expect(fact?.measurement.rank).toBe("entered");
+      expect(fact?.measurement.label).toBe(MEASUREMENT_LABELS.entered);
+      expect(fact?.value).toBe(6200);
+      expect(fact?.source?.kind).toBe("architect_entry");
+      expect(fact?.source?.statement).toBeNull();
     });
   });
 
@@ -166,6 +206,32 @@ describe("LotSiteSetup — step 4 wired to the store (a study exists)", () => {
       expect(store.get(BBL)!.study.options[0].existing_building_plan).toBe("remove");
     });
     expect(screen.queryByTestId("existing-floor-area")).toBeNull();
+  });
+
+  it("surfaces the fallback message and records nothing when the store refuses the write", async () => {
+    // A real store + real ops (no study-operations mocking): the op genuinely fails because the
+    // store will not overwrite a city value in place, and the UI shows the unchanged fallback.
+    const store = createStudyStore();
+    store.replace({
+      ok: true,
+      entry: { study: studyThatRefusesTheFirstCreation(), staleOptionIds: [], parcelChoices: null },
+    });
+    render(
+      <StudyStoreProvider store={store}>
+        <LotSiteSetup bbl={BBL} now={FIXED_NOW} />
+      </StudyStoreProvider>,
+    );
+
+    // Plan "keep" with no existing-zfa fact shows the first-creation entry form.
+    fireEvent.change(screen.getByTestId("existing-floor-area-input"), { target: { value: "6200" } });
+    fireEvent.click(screen.getByRole("radio", { name: "Architect entry" }));
+    fireEvent.click(screen.getByTestId("existing-floor-area-save"));
+
+    expect(await screen.findByTestId("existing-floor-area-error")).toHaveTextContent(
+      "That value could not be recorded.",
+    );
+    const facts = store.get(BBL)?.study.site.facts ?? [];
+    expect(facts.some((fact) => fact.key === "existing_zoning_floor_area")).toBe(false);
   });
 });
 

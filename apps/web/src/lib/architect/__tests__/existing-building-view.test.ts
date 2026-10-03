@@ -16,6 +16,7 @@ import {
   buildExistingFloorAreaFact,
   existingBuildingFaceBudget,
   existingBuildingPlanOptions,
+  existingFloorAreaAssumptionStatement,
   existingFloorAreaFact,
   existingFloorAreaGroup,
   selectedOptionPlan,
@@ -143,6 +144,18 @@ describe("existing-building-view — build the entered fact with the chosen allo
     };
     const entered = buildExistingFloorAreaFact(cityFiling, "5999999998", 6200, "architect_entry", "2026-10-03T09:00:00Z");
     expect(entered.fact_id).toBe("fact-existing-zfa-entered");
+  });
+});
+
+describe("existing-building-view — the shared stated-assumption wording", () => {
+  it("builds the one plain-words statement the UI and the builder both record", () => {
+    expect(existingFloorAreaAssumptionStatement(6200)).toBe(
+      "Architect's stated assumption: existing zoning floor area 6,200 sq ft.",
+    );
+    // The builder records exactly what the helper returns, so the setup-only path and the
+    // store path (which passes this to enterSiteFactAssumption) can never drift.
+    const fact = buildExistingFloorAreaFact(unknownExistingFact, "5999999998", 6200, "assumption", "2026-10-03T09:00:00Z");
+    expect(fact.source?.statement).toBe(existingFloorAreaAssumptionStatement(6200));
   });
 });
 
