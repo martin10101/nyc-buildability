@@ -3,9 +3,12 @@
 Orientation only. The ledger (`python tools/project_control.py status`) and `project-control/` WIN over this prose. Seq 137 is in git (#365).
 
 **Turnover reason (owner, verbatim, message 39 = D-090 source-014):**
-> 1. I approve merging #349 and #353 under the existing review and CI requirements. Keep the production switches off and preserve the benchmark's stated assumptions and zoning-lot limitations. This does not authorize activation.
+> 1. I approve merging #349 and #353 under the existing review and CI requirements. Keep the production switches off and preserve the benchmark’s stated assumptions and zoning-lot limitations. This does not authorize activation.
+>
 > 2. Proceed with a bounded repair of the recurring Windows supervisor failures in a separate PR. Investigate whether the cause is test timing or a real supervisor defect, and fix the cause. Preserve the safety and concurrency assertions; do not skip tests, weaken checks, or add retries merely to obtain green CI. Run this alongside other eligible work where possible.
+>
 > 3. Move the technical dataset ID behind the Source disclosure. Keep a readable source name and a clear explanation of what needs checking on the main screen. Retain the exact identifier, version and source link in the disclosure where available.
+>
 > After the approved merges, continue C-07, A-05 and the E-03 rebase under the existing rules. These three decisions are settled; bring me only new blockers or decisions that actually require my input.
 
 ## Identity (live at generation)
