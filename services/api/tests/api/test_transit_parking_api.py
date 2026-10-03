@@ -245,7 +245,7 @@ def test_no_parking_outcome_field_or_text(monkeypatch, provider_factory) -> None
     _enable(monkeypatch)
     body = _client(provider_factory()).get(_url()).json()
     # No parking-outcome FIELD: the document is exactly the contract key set.
-    assert set(body) == {
+    expected_keys = {
         "contract_version",
         "lot_bbl",
         "status",
@@ -254,8 +254,13 @@ def test_no_parking_outcome_field_or_text(monkeypatch, provider_factory) -> None
         "source",
         "detail",
         "missing_source",
-        "missing_source_ref",  # contract 1.1.0 (#370); the emitter carries it from #368 on
     }
+    # Transitional (request D-2 part 2b): contract 1.1.0 (#370) added the OPTIONAL key
+    # ``missing_source_ref``; the emitter carries it from the Lane B PR #368 on. Until part 3
+    # requires the ref when check_needed, both shapes are admitted and nothing else is -
+    # every 1.0.0 key must be present and no key outside the 1.1.0 set may appear.
+    optional_keys = {"missing_source_ref"}
+    assert expected_keys <= set(body) <= expected_keys | optional_keys, sorted(body)
 
     # No parking-outcome TEXT anywhere in the serialized document: it never states a
     # number of spaces, a waiver or an exemption (the zone is carried; applying the
