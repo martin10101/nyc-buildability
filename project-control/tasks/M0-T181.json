@@ -115,7 +115,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "This host is Linux; Toolhelp32 and Windows pid-reuse behaviour cannot be reproduced locally -> the causal path is argued from the frozen logs + code + cited Win32 semantics, and confirmed on windows-latest through an orchestrator-pushed CI experiment branch (ci-exp/M0-T181-*) when instrumentation is needed",
     "The race under-admission recurred 2 in ~45 runs -> a single green CI run proves nothing; the repair must make the next occurrence self-diagnosing (reason codes in the results) and the convergence record must argue the mechanism, not the green",
@@ -124,7 +124,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-03T20:54:43.405552+00:00",
-  "updated_at": "2026-10-03T21:22:43.654232+00:00",
+  "updated_at": "2026-10-03T21:33:51.015234+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
