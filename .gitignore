@@ -15,6 +15,8 @@ build/
 # keep that stray build artifact out of git.
 services/api/**/*.egg-info/
 coverage/
+# Real source directory whose name collides with the coverage-tool pattern above (A-01).
+!services/api/app/rules/coverage/
 .cache/
 .pytest_cache/
 .mypy_cache/
