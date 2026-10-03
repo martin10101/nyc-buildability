@@ -3,7 +3,7 @@
  "directive_id": "D-090",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-090-BOOTSTRAP at capture; tasks cite them through directive_refs. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": null,
+ "verified_at": "2026-10-03T21:48:36+00:00",
  "task_verifications": [
   {
    "directive_id": "D-090",
@@ -205,6 +205,44 @@
       "Not claimed under R083: the lane work (#349 #350 #351 #352 #353 run under their own reviews) and the broader build continuation"
      ],
      "reviewed_sha": "c32b1b62a80d0f49d55fb84b1cd61d458c1bc743"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M0-T181",
+   "applicable_requirement_ids": [
+    "D-090-R093",
+    "D-090-R094"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "58b889885c165e101265d2de9ff90bbb20f99022",
+   "reviewed_manifest_sha256": "5a35443f1f1e177236bed519ee9008e4599744252b85b68a8349130b707da017",
+   "requirements": [
+    {
+     "id": "D-090-R093",
+     "state": "PASS",
+     "evidence": [
+      "Separate PR (#372, branch task/M0-T181-supervisor-bridge-windows-flakes): `git diff --stat ec87eb6b..1ba4380e` touches only the packet's allowed_paths (tools/agent_supervisor/{mrl_descendants,mrl_one_shot}.py, tools/test_agent_supervisor_{review_slots,mrl_one_shot}.py, the two M0-T181 reports and the ci-evidence folder); no lane PR, no .github/**, no services/apps/packages.",
+      "Investigation authenticated by the verifier against GitHub: the three frozen job logs' full-log sha256 and headSha match the recorded values exactly (jobs 111231288935, 111247110311, 111292325552), and the decisive fourth occurrence is real (push run 37153603034 SUCCESS vs pull_request run 37153605150 FAIL on the same head 265635a8 - a load-only difference).",
+      "Causes named and fixed at the cause, verified from the diff: Failure A (RaceTests 1 != 2) = test-harness timing (racer's independent 30 s go-deadline shorter than the parent's 60 s readiness window; abandonment emitted '0' and was counted as a refusal) - fixed in the test file only with reason codes, a loud fault on any non-slot outcome and a budget-derived 90 s barrier (commit 4d94d75b); Failure B (reaped-child proof False with four orphans under a reused pid) = real supervisor defect in mrl_descendants.py (Win32 stale th32ParentProcessID + pid reuse) - fixed with root_start/creation-ordinal pruning that keeps unknown ordinals, keeps at-or-after-root pids and is byte-identical without root_start, captured while the worker is alive (commit 0ad93762); new mutation-proof tests.",
+      "Verification: Linux `pytest -q tools/test_agent_supervisor_review_slots.py tools/test_agent_supervisor_mrl_one_shot.py -p no:cacheprovider` 83 passed; the consumer suite tools/test_agent_supervisor_mrl_one_shot_review.py 81 passed; supervisor_command_doc_check 11 checked / 0 failures; modularity 0 failures; windows-latest supervisor-bridge job SUCCESS at the material head 83a64029 (run 37154896211) and again at 58b88988; gates G0/G2/G3/G4/G5 PASS (reports M0-T181-G0/G3G4/G5.md); DCV report project-control/reports/M0-T181-DCV.md.",
+      "Consequences recorded: tools/agent_supervisor/** changed, so the M0-T179 Linux certification is voided and the D-091 recertification follow-up is owed (a cost, not a bar; R084 commissioning stays deferred); residual outside the packet: tools/agent_supervisor/mrl_one_shot_review.py:291 still runs the old fail-closed walk (over-counts, never misses a descendant) - follow-up recorded; the convergence record ends VERIFIED_CLOSED."
+     ],
+     "reviewed_sha": "58b889885c165e101265d2de9ff90bbb20f99022"
+    },
+    {
+     "id": "D-090-R094",
+     "state": "PASS",
+     "evidence": [
+      "Every assertion in the two test files at ec87eb6b is present at 1ba4380e (line-shifted only); none removed or weakened: assertEqual(winners, 2), assertLessEqual(len(ReviewSlots(self.dir).active()), 2), the per-lane assertEqual(winners, 1) and the reaped-child `proof.proven is True and proof.remaining == ()` are byte-identical; the only added branch is a loud self.fail (strengthening).",
+      "Added-line scan of the whole diff for skip|xfail|rerun|--reruns|flaky|pytest.mark|retry|sleep-and-retry: none; no .github/** and no pytest configuration change.",
+      "Exactly one timeout changed, with its derivation: the racer go-deadline 30 s -> 90 s because the trace shows the old value is the cause and 90 s = the parent's 60 s readiness window + a 30 s lock-serialization allowance; lock_timeout_s, the winner hold and the descendants settle window are unchanged.",
+      "Safety and concurrency assertions preserved and listed before/after in project-control/reports/M0-T181-producer-report.md; confirmed by the G3/G4 code-reviewer (164 passed) and the G5 security-reviewer (line-level fail-closed analysis: strict ordinal < root_start, unknown kept, no root_start = old behaviour; no fail-open path)."
+     ],
+     "reviewed_sha": "58b889885c165e101265d2de9ff90bbb20f99022"
     }
    ]
   }

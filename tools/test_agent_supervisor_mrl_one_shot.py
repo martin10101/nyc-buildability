@@ -38,6 +38,7 @@ from tools.agent_supervisor import mrl_launch_path as mlp  # noqa: E402
 from tools.agent_supervisor import mrl_one_shot as mos  # noqa: E402
 from tools.agent_supervisor import mrl_runtime_identity as mri  # noqa: E402
 from tools.agent_supervisor.claude_runner import WORKER_CHILD_ROLE, RunnerConfig  # noqa: E402
+from tools.agent_supervisor.locking import process_start_token  # noqa: E402
 from tools.agent_supervisor.models import digest_of  # noqa: E402
 from tools.agent_supervisor.mrl_provider_schema import provider_schema_for_claude_cli  # noqa: E402
 from tools.agent_supervisor.mrl_subagent_contract import SubagentLedger  # noqa: E402
@@ -869,10 +870,57 @@ def test_real_process_table_sees_this_interpreter_alive():
 
 
 def test_real_process_table_proves_a_reaped_child_gone():
-    child = subprocess.Popen([sys.executable, "-c", "pass"])
+    # A real child that runs briefly so its creation time is readable WHILE ALIVE
+    # (the only moment it is), exactly as the production launcher captures it in
+    # `_ContainedSpawn`. Threading that `root_start` into the proof is what lets a
+    # reused pid NOT drag an unrelated earlier orphan into `remaining` on Windows
+    # (Toolhelp32 never rewrites an orphan's recorded parent; pids are reused fast).
+    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(2.0)"])
+    root_start = md.creation_token_to_ordinal(process_start_token(child.pid))
     child.wait(timeout=60)
-    proof = md.prove_zero_descendants(child.pid, settle_seconds=5.0)
+    proof = md.prove_zero_descendants(child.pid, settle_seconds=5.0, root_start=root_start)
     assert proof.proven is True and proof.remaining == ()
+
+
+def test_reused_pid_orphan_before_root_is_not_a_descendant_but_a_real_child_is():
+    # The frozen windows-latest shape (job 111247110311): root pid 8028 is ABSENT
+    # (our child exited and was reaped) yet four pids still record ppid 8028 - the
+    # orphans an EARLIER process that held 8028 left behind. Without the root's
+    # start they are miscounted as descendants forever (the real defect). With it,
+    # a process created BEFORE the root is excluded WITH its subtree, while a
+    # genuine child created AFTER the root is still counted, and an unknown creation
+    # time is kept (fail closed - a real descendant is never dropped).
+    creation = {100: 50, 200: 60, 300: 10, 301: 70, 8040: 10, 8088: 11,
+                8136: 12, 8184: 13}
+    ordinal = lambda pid: creation.get(pid)  # noqa: E731 - a one-line test reader
+
+    # Root present (100), a real child 200 (created after), a reused-pid orphan 300
+    # created before the root with its own later child 301 (reachable only through
+    # 300). Exactly the root and its genuine child remain.
+    live_tree = {1: 0, 100: 1, 200: 100, 300: 100, 301: 300}
+    assert md.descendants_of(100, live_tree, root_start=50, creation_ordinal=ordinal) == (100, 200)
+    # The un-guarded walk would wrongly count the orphan and its subtree:
+    assert md.descendants_of(100, live_tree) == (100, 200, 300, 301)
+
+    # The exact frozen-failure shape: root absent, four pre-root orphans on the
+    # reused pid. Guarded -> empty (proven). Un-guarded -> all four (the CI failure).
+    reaped_tree = {8040: 8028, 8088: 8028, 8136: 8028, 8184: 8028}
+    assert md.descendants_of(8028, reaped_tree, root_start=50, creation_ordinal=ordinal) == ()
+    assert md.descendants_of(8028, reaped_tree) == (8040, 8088, 8136, 8184)
+
+    proof = md.prove_zero_descendants(
+        8028, snapshot=lambda: reaped_tree, root_start=50, creation_ordinal=ordinal,
+        settle_seconds=0.0)
+    assert proof.proven is True and proof.remaining == ()
+
+
+def test_descendant_with_unknown_creation_time_is_kept_fail_closed():
+    # A descendant whose creation time cannot be read (probe returns None) must NOT
+    # be excluded on an unreadable creation time - the proof stays fail-closed and
+    # keeps counting it rather than risk dropping a live descendant.
+    table = {500: 1, 600: 500}
+    only_root_known = lambda pid: 50 if pid == 500 else None  # noqa: E731
+    assert md.descendants_of(500, table, root_start=50, creation_ordinal=only_root_known) == (500, 600)
 
 
 # ---------------------------------------------------------------- parsing helpers

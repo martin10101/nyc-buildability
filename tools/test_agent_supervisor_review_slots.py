@@ -41,12 +41,25 @@ from tools.agent_supervisor.review_slots import (  # noqa: E402
 )
 
 # A self-contained worker run as a separate OS process. It spins on a file
-# barrier so every racer calls try_reserve at the same moment, records whether it
-# won, and (if it won) HOLDS the slot until released - so a late racer still sees
-# the box full. argv: repo runtime_dir global_limit lane_limit lane coord_dir idx
+# barrier so every racer calls try_reserve at the same moment, records the OUTCOME
+# as a reason code, and (if it won) HOLDS the slot until released - so a late racer
+# still sees the box full. argv: repo runtime_dir global_limit lane_limit lane
+# coord_dir idx barrier_wait_s.
+#
+# The result is a reason code, never a bare count (M0-T181 / DB-111): "admitted"
+# when the slot was taken, "refused:<reason_code>" for a real admission refusal
+# (e.g. refused:concurrency_limit_reached when the box/lane is full), and
+# "barrier_timeout" when `go` never appeared inside the barrier budget. The barrier
+# budget is passed in and is strictly larger than the parent's readiness window, so
+# a racer can never abandon the barrier before the parent could gather every ready_*
+# and write `go`; an expiry is a genuine hung-parent fault, surfaced loudly by the
+# test, never a "0" miscounted as a legitimate refusal (the bug this closes: on a
+# loaded 2-vCPU Windows runner an early racer's independent 30 s go-deadline expired
+# before the slow sixth racer was ready and `go` was written, so it emitted "0"
+# WITHOUT ever calling try_reserve and the test saw 1 winner of 6 instead of 2).
 _RACE_WORKER = r"""
 import os, sys, time, pathlib
-repo, runtime_dir, gl, ll, lane, coord, idx = sys.argv[1:8]
+repo, runtime_dir, gl, ll, lane, coord, idx, barrier_s = sys.argv[1:9]
 sys.path.insert(0, repo)
 from tools.agent_supervisor.review_slots import ReviewSlots
 coordp = pathlib.Path(coord)
@@ -54,7 +67,7 @@ coordp = pathlib.Path(coord)
 
 def _emit(value):
     # Atomic: the parent globs result_* and reads it, so the final name must only
-    # appear fully written (a partial read would be an int('') crash in the test).
+    # appear fully written (a partial read would read a half-written reason code).
     tmp = coordp / ("writing_" + idx)
     tmp.write_text(value)
     os.replace(tmp, coordp / ("result_" + idx))
@@ -64,13 +77,13 @@ def _emit(value):
 go, release = coordp / "go", coordp / "release"
 slots = ReviewSlots(runtime_dir, global_limit=int(gl), lane_limit=int(ll),
                     lock_timeout_s=30.0)
-deadline = time.monotonic() + 30
+deadline = time.monotonic() + float(barrier_s)
 while not go.exists():
     if time.monotonic() > deadline:
-        _emit("0"); sys.exit(0)
+        _emit("barrier_timeout"); sys.exit(0)
     time.sleep(0.005)
 grant = slots.try_reserve(lane)
-_emit("1" if grant.admitted else "0")
+_emit("admitted" if grant.admitted else "refused:" + grant.reason_code)
 if grant.admitted:
     hold = time.monotonic() + 30
     while not release.exists() and time.monotonic() < hold:
@@ -130,6 +143,30 @@ class PrimaryReserveReleaseTests(unittest.TestCase):
         self.assertFalse(slots.release(None))
 
 
+#: One shared window sizes the whole race so no racer can give up before the
+#: parent does (M0-T181 / DB-111). The parent waits ``_RACE_PARENT_WAIT_S`` for
+#: each fan-in (all ``ready_*``, then all ``result_*``). The racer's barrier budget
+#: is DERIVED from that window and is strictly larger: the parent may spend its full
+#: readiness window gathering six slow interpreter starts before it writes ``go``,
+#: so a racer must wait for ``go`` at least that long PLUS a lock-serialization
+#: allowance (the time for six racers to pass one tiny critical section back to back
+#: on a saturated 2-vCPU runner). A barrier expiry inside that budget therefore
+#: means a genuinely hung parent - a loud harness fault - never a loaded-but-
+#: progressing runner. The old value (an independent 30 s go-deadline, shorter than
+#: this 60 s readiness window) WAS the cause: an early racer abandoned the barrier
+#: before the slow sixth racer became ready and ``go`` was written.
+_RACE_PARENT_WAIT_S = 60.0
+_RACE_LOCK_SERIALIZE_ALLOWANCE_S = 30.0
+_RACE_BARRIER_WAIT_S = _RACE_PARENT_WAIT_S + _RACE_LOCK_SERIALIZE_ALLOWANCE_S
+
+#: The only admission outcome that is a legitimate non-winner in these races: the
+#: box or lane is full. Every OTHER non-admitted outcome (a barrier expiry, a lock
+#: timeout, an unreadable/malformed state) is surfaced LOUDLY rather than silently
+#: counted as a non-winner, so an under-admission can never again masquerade as a
+#: refusal and a real fail-closed defect is never masked.
+_RACE_LEGITIMATE_REFUSAL = "refused:concurrency_limit_reached"
+
+
 class RaceTests(unittest.TestCase):
     """RACE: real concurrent processes never both take the last slot."""
 
@@ -138,6 +175,9 @@ class RaceTests(unittest.TestCase):
 
     def _run_race(self, *, n: int, global_limit: int, lane_limit: int,
                   same_lane: bool) -> int:
+        """Run the race and return the number of racers ADMITTED. Any non-slot
+        outcome (barrier expiry, lock timeout, unreadable state) fails the test
+        loudly with every racer's reason code - it is never counted as a loser."""
         coord = tempfile.mkdtemp(prefix="race-coord-")
         import shutil
         self.addCleanup(shutil.rmtree, coord, ignore_errors=True)
@@ -148,12 +188,21 @@ class RaceTests(unittest.TestCase):
                 lane = "shared" if same_lane else f"lane-{idx}"
                 procs.append(subprocess.Popen([
                     sys.executable, "-c", _RACE_WORKER, str(REPO), self.dir,
-                    str(global_limit), str(lane_limit), lane, coord, str(idx)]))
+                    str(global_limit), str(lane_limit), lane, coord, str(idx),
+                    str(_RACE_BARRIER_WAIT_S)]))
             self._wait_for(coordp, "ready_", n)
             (coordp / "go").write_text("1")
             self._wait_for(coordp, "result_", n)
-            return sum(int((coordp / f"result_{i}").read_text().strip())
-                       for i in range(n))
+            results = [(coordp / f"result_{i}").read_text().strip() for i in range(n)]
+            faults = [r for r in results
+                      if r != "admitted" and r != _RACE_LEGITIMATE_REFUSAL]
+            if faults:
+                self.fail(
+                    f"race produced a non-slot outcome (barrier/lock/state), not a "
+                    f"clean admitted/full result - a loaded-runner barrier expiry or a "
+                    f"fail-closed error, NOT a legitimate refusal to be counted as a "
+                    f"loser: {results}")
+            return sum(1 for r in results if r == "admitted")
         finally:
             (coordp / "release").write_text("1")
             for proc in procs:
@@ -163,7 +212,7 @@ class RaceTests(unittest.TestCase):
                     proc.kill()
 
     def _wait_for(self, coordp: pathlib.Path, prefix: str, n: int) -> None:
-        deadline = time.monotonic() + 60
+        deadline = time.monotonic() + _RACE_PARENT_WAIT_S
         while len(list(coordp.glob(prefix + "*"))) < n:
             if time.monotonic() > deadline:
                 self.fail(f"only {len(list(coordp.glob(prefix + '*')))}/{n} "
