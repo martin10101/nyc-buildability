@@ -58,14 +58,14 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 30,
+  "progress_percent": 85,
   "risks": [
     "any later tools/agent_supervisor/** change voids this certification",
     "commissioning stays owner-typed (M0-T175): root config, Codex sign-in, record-manifest/verify-controller, unit install, start"
   ],
   "blockers": [],
   "created_at": "2026-10-02T23:36:05.344526+00:00",
-  "updated_at": "2026-10-02T23:48:44.172172+00:00",
+  "updated_at": "2026-10-03T00:00:15.331295+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -92,6 +92,13 @@
       "percent": 30,
       "status": "in_progress",
       "message": "Scope corrected (recapture at 2.1.288 + event_drift re-point); producer relaunched in /root/project/w-M0-T179"
+    },
+    {
+      "at": "2026-10-03T00:00:15.331149+00:00",
+      "agent": "backend-engineer",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Producer done at 4ca72d56 (claude 2.1.288 admitted: three drift families recaptured, event_drift re-pointed; certification claimed)"
     }
   ],
   "scope_corrections": [
