@@ -184,6 +184,21 @@
               }
             }
           ]
+        },
+        {
+          "description": "An 'assumed' value governs an input only when it is the sole value for that input: the plan uses an assumption where no sourced value exists (plan section 9 'Explicit assumptions'; section 3 step 4) and ties the override path to entered/survey_entered (site_fact.schema.json 'editable'), never to a stated assumption. So an assumed governing record NEVER displaces a fact - its 'displaced' list is empty. (A conflict between an assumption and a recorded value is refused upstream by the adapter; a governing 'assumed' record with any displaced fact is a malformed channel.) Expressed with anyOf/const (not if/then) because the validator's keyword allowlist excludes if/then.",
+          "anyOf": [
+            {
+              "properties": {
+                "rank": { "enum": ["survey_entered", "city_records", "approximate_tax_map", "entered"] }
+              }
+            },
+            {
+              "properties": {
+                "displaced": { "maxItems": 0 }
+              }
+            }
+          ]
         }
       ]
     },

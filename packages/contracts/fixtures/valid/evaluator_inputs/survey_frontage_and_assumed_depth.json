@@ -37,25 +37,18 @@
       "key": "lot_depth_ft",
       "value": 98,
       "unit": "feet",
-      "fact_id": "test-fixture-synthetic:lot-depth:city-entered",
+      "fact_id": "test-fixture-synthetic:lot-depth:assumed",
       "rank": "assumed",
       "label": "Assumed",
       "source_kind": "assumption",
       "governing": true,
-      "displaced": [
-        {
-          "fact_id": "test-fixture-synthetic:lot-depth:city",
-          "rank": "city_records",
-          "label": "City records",
-          "value": 100
-        }
-      ]
+      "displaced": []
     }
   ],
   "site_measurement_rank": "assumed",
   "depends_on_fact_ids": [
     "test-fixture-synthetic:lot-area:city",
     "test-fixture-synthetic:lot-frontage:survey",
-    "test-fixture-synthetic:lot-depth:city-entered"
+    "test-fixture-synthetic:lot-depth:assumed"
   ]
 }

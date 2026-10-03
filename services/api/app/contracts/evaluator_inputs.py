@@ -17,20 +17,31 @@ dashboard). Two steps, each failing closed on a contract defect:
 PRECEDENCE RULE (which value governs an engine input), grounded in the plan and the
 already-accepted study operations - NOT invented here:
 
-- An architect's own statement overrides automatically-sourced data. When the architect
-  edits a value it becomes an entered/assumed/survey fact placed BESIDE the city value,
+- An architect's EDIT (survey_entered or entered) overrides automatically-sourced data.
+  Editing a value makes a new survey_entered/entered fact placed BESIDE the city value,
   which is never overwritten in place (plan section 3 step 3 'Each shows its source and
   can be edited'; section 4 'Entering survey numbers updates every dependent result';
-  site_fact.schema.json ``editable``; apps/web study-operations.ts enterSiteFactValue /
-  enterSiteFactAssumption). So survey_entered, entered and assumed govern over
-  city_records and approximate_tax_map; the overridden city/computed fact travels in
-  ``displaced``.
-- Within each group the plan's source order applies (plan section 4 'Source order
-  (highest available wins)'): survey (rank 1) > city records (rank 2) > approximate tax
-  map (rank 3). A typed entry beats a mere stated assumption, the assumption being the
-  weakest input (section 9 'Explicit assumptions'). This fixes a total order
-  survey_entered > entered > assumed > city_records > approximate_tax_map for choosing
-  the governing fact (:data:`_GOVERNING_PRIORITY`).
+  site_fact.schema.json ``editable`` ties the override path to entered/survey_entered;
+  apps/web study-operations.ts enterSiteFactValue). The overridden city/computed fact
+  travels in ``displaced``.
+- Within the sourced/entered facts the plan's source order applies (plan section 4
+  'Source order (highest available wins)'): survey (rank 1) > city records (rank 2) >
+  approximate tax map (rank 3); an entered correction overrides the city value it was
+  typed beside. This fixes the order survey_entered > entered > city_records >
+  approximate_tax_map for the governing fact (:data:`_GOVERNING_PRIORITY`).
+- A stated ASSUMPTION is NOT an override. The plan uses an assumption only where no
+  sourced value exists (section 9 'Explicit assumptions'; section 3 step 4 takes an
+  assumption for existing floor area only when no city source exists); section 4's source
+  order omits it, and site_fact ``editable`` ties the override path to entered/
+  survey_entered, not assumed. So an ``assumed`` fact governs an engine input ONLY when
+  it is the sole value for it (no survey_entered/city_records/approximate_tax_map and no
+  entered fact). An assumption recorded BESIDE a sourced or entered fact for the same
+  input is a visible CONFLICT: :func:`build_evaluator_inputs` raises rather than silently
+  picking either way (CLAUDE.md principle 3 fail-closed, principle 4 conflicts stay
+  visible). An assumed governing record therefore never displaces anything (its
+  ``displaced`` is empty - an invariant the evaluator_inputs contract also enforces).
+- Two facts of the SAME rank for one input with DIFFERENT values are a visible conflict,
+  raised (never resolved silently by fact id); two with the SAME value collapse to one.
 
 WEAKEST-INPUT LABEL (``site_measurement_rank``). Each result carries the label of its
 WEAKEST input (plan section 4 'Each result carries the label of its weakest input'). The
@@ -91,14 +102,15 @@ _ENGINE_KEY_ORDER = (
     "zoning_district",
 )
 
-# Governing precedence: architect statement over automatic data; within each group the
-# plan's source order. Lower governs. (See module docstring for the plan citations.)
+# Governing precedence AMONG SOURCED/ENTERED facts (lower governs): an architect edit
+# (survey/entered) overrides automatically-sourced data; within each the plan's source
+# order. 'assumed' is deliberately ABSENT - an assumption is not an override; it governs
+# only as the sole value for an input, handled in _resolve_group. (Docstring: citations.)
 _GOVERNING_PRIORITY = {
     "survey_entered": 0,
     "entered": 1,
-    "assumed": 2,
-    "city_records": 3,
-    "approximate_tax_map": 4,
+    "city_records": 2,
+    "approximate_tax_map": 3,
 }
 
 # Reliability order for the weakest-input label; later in the tuple = weaker.
@@ -124,14 +136,49 @@ def _is_known(fact: dict) -> bool:
     return fact["measurement"]["rank"] != "unknown"
 
 
-def _choose_governing(facts: Sequence[dict]) -> tuple[dict, list[dict]]:
-    """The governing fact (lowest governing priority; fact_id breaks ties for a stable
-    result) and the facts it displaces, in the same stable order."""
-    ordered = sorted(
-        facts,
-        key=lambda f: (_GOVERNING_PRIORITY[f["measurement"]["rank"]], f["fact_id"]),
+def _single_value(engine_key: str, rank: str, facts: Sequence[dict]) -> dict:
+    """One fact from a SAME-rank set. Two of the same rank with the SAME value collapse to
+    one (deterministic by fact_id); DIFFERENT values are a visible conflict that is raised,
+    never silently resolved by id (review F2)."""
+    if len({f["value"] for f in facts}) > 1:
+        ids = sorted(f["fact_id"] for f in facts)
+        raise EvaluatorInputsError(
+            f"conflicting {rank} values for {engine_key}: facts {ids[0]!r} and {ids[1]!r} "
+            "record different values; resolve the conflict (keep one value)."
+        )
+    return sorted(facts, key=lambda f: f["fact_id"])[0]
+
+
+def _resolve_group(engine_key: str, facts: Sequence[dict]) -> tuple[dict, list[dict]]:
+    """The governing fact for one (engine input, street, lot) group and the facts it
+    displaces. An assumption governs only when it is the sole value for the input; an
+    assumption recorded beside a sourced/entered value is a visible conflict (raise, never
+    a silent pick). Among sourced/entered facts the governing rank is the one that wins the
+    source order, and only LOWER-ranked facts are displaced (same-rank duplicates collapse
+    via _single_value)."""
+    assumed = [f for f in facts if f["measurement"]["rank"] == "assumed"]
+    sourced_or_entered = [f for f in facts if f["measurement"]["rank"] != "assumed"]
+
+    if assumed and sourced_or_entered:
+        raise EvaluatorInputsError(
+            f"a stated assumption conflicts with a recorded value for {engine_key}; "
+            "enter the value or remove the assumption"
+        )
+    if not sourced_or_entered:
+        # Assumption is the sole value for the input, so it governs and displaces nothing.
+        return _single_value(engine_key, "assumed", assumed), []
+
+    governing_rank = min(
+        (f["measurement"]["rank"] for f in sourced_or_entered),
+        key=_GOVERNING_PRIORITY.__getitem__,
     )
-    return ordered[0], list(ordered[1:])
+    top = [f for f in sourced_or_entered if f["measurement"]["rank"] == governing_rank]
+    governing = _single_value(engine_key, governing_rank, top)
+    displaced = sorted(
+        (f for f in sourced_or_entered if f["measurement"]["rank"] != governing_rank),
+        key=lambda f: f["fact_id"],
+    )
+    return governing, list(displaced)
 
 
 def _displaced_entry(fact: dict) -> dict:
@@ -168,10 +215,12 @@ def build_evaluator_inputs(study: dict, option_id: str) -> dict:
 
     ``study`` is a (re-validated, fail-closed) study document; ``option_id`` names which
     option's evaluation these shared site facts feed. One governing record per engine
-    input is chosen by the precedence rule in the module docstring; raises
-    :class:`EvaluatorInputsError` when the study has no known site value to evaluate or an
-    engine input resolves to more than one distinct fact (multi-street / split-district,
-    out of scope for this slice)."""
+    input is chosen by the precedence rule in the module docstring. Raises
+    :class:`EvaluatorInputsError` (fail closed, conflict visible) when the study has no
+    known site value to evaluate; an engine input resolves to more than one distinct fact
+    (multi-street / split-district, out of scope); a stated assumption sits beside a
+    sourced or entered value for the same input; or two same-rank facts disagree on the
+    value for one input."""
     validate_study_document(study)
 
     option_ids = [option["option_id"] for option in study["options"]]
@@ -206,7 +255,7 @@ def build_evaluator_inputs(study: dict, option_id: str) -> dict:
                 "facts (different streets or tax lots); collapsing them is the combined-"
                 "outline rule (plan section 4 'Multi-lot sites'), out of scope for C-07."
             )
-        governing, displaced = _choose_governing(resolved[0])
+        governing, displaced = _resolve_group(engine_key, resolved[0])
         records.append(_record(engine_key, governing, displaced))
 
     if not records:

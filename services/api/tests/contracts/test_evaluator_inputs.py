@@ -175,11 +175,11 @@ def test_entered_lot_area_governs_and_displaces_the_city_fact() -> None:
     assert "f-area-city" not in doc["depends_on_fact_ids"]
 
 
-def test_assumed_value_governs_and_is_the_weakest_rank() -> None:
-    facts = _benchmark_city_facts()
-    facts.append(
-        _fact("lot_depth", 98, "assumed", "f-depth-assumed", _ASSUMPTION)
-    )
+def test_assumption_governs_only_when_no_sourced_fact_exists() -> None:
+    # lot_depth has ONLY a stated assumption (no city/sourced/entered depth): the
+    # assumption governs and displaces nothing (plan section 9; section 3 step 4).
+    facts = [f for f in _benchmark_city_facts() if f["key"] != "lot_depth"]
+    facts.append(_fact("lot_depth", 98, "assumed", "f-depth-assumed", _ASSUMPTION))
     doc = build_evaluator_inputs(_study(facts), _OPTION_ID)
 
     depth = _record(doc, "lot_depth_ft")
@@ -187,9 +187,45 @@ def test_assumed_value_governs_and_is_the_weakest_rank() -> None:
     assert depth["rank"] == "assumed"
     assert depth["label"] == "Assumed"
     assert depth["source_kind"] == "assumption"
-    assert depth["displaced"][0]["fact_id"] == "f-depth-city"
+    assert depth["displaced"] == []  # an assumption never overrides a value
     # Assumed is weakest of all, so it wins the weakest-input label.
     assert doc["site_measurement_rank"] == "assumed"
+
+
+def test_assumption_beside_a_sourced_fact_raises() -> None:
+    # An assumption recorded BESIDE a city value for the same input is a visible conflict:
+    # never silently governing, never silently discarded (CLAUDE.md principles 3 and 4).
+    facts = _benchmark_city_facts()  # already carries a city lot_depth
+    facts.append(_fact("lot_depth", 98, "assumed", "f-depth-assumed", _ASSUMPTION))
+    with pytest.raises(
+        EvaluatorInputsError, match="a stated assumption conflicts with a recorded value"
+    ):
+        build_evaluator_inputs(_study(facts), _OPTION_ID)
+
+
+def test_conflicting_same_rank_values_raise() -> None:
+    # Two city_records lot areas disagreeing on the value for one lot is a visible
+    # conflict, named by both fact ids - never silently resolved by fact id (review F2).
+    facts = _benchmark_city_facts()
+    facts.append(_fact("lot_area", 5200, "city_records", "f-area-city-2", _CITY))
+    with pytest.raises(EvaluatorInputsError) as excinfo:
+        build_evaluator_inputs(_study(facts), _OPTION_ID)
+    message = str(excinfo.value)
+    assert "conflicting city_records values for lot_area_sq_ft" in message
+    assert "f-area-city" in message and "f-area-city-2" in message
+
+
+def test_same_rank_same_value_collapses() -> None:
+    # Two city_records lot areas with the SAME value collapse to one governing record.
+    facts = _benchmark_city_facts()
+    facts.append(
+        _fact("lot_area", _benchmark_value("lot_area"), "city_records", "f-area-city-2", _CITY)
+    )
+    doc = build_evaluator_inputs(_study(facts), _OPTION_ID)
+    area = _record(doc, "lot_area_sq_ft")
+    assert area["rank"] == "city_records"
+    assert area["fact_id"] in {"f-area-city", "f-area-city-2"}
+    assert area["displaced"] == []  # the duplicate collapses, it is not an override
 
 
 def test_survey_value_governs_but_does_not_weaken_the_label() -> None:
@@ -324,6 +360,7 @@ def test_missing_required_engine_input_is_rejected() -> None:
         "entered_labelled_city_records.json",
         "governing_record_without_fact_id.json",
         "unknown_rank.json",
+        "assumed_record_displaces_a_fact.json",
     ],
 )
 def test_invalid_fixtures_fail_validation(name: str) -> None:
