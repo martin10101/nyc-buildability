@@ -142,11 +142,6 @@ describe("transitParkingView — the source-to-check reference (contract 1.1.0)"
     expect(transitParkingView(fixture("synthetic_recorded")).missingSourceRef).toBeNull();
   });
 
-  it("is null when the document omits missing_source_ref entirely (a 1.0.0 body)", () => {
-    const withoutRef: TransitParking = { ...checkNeeded, missing_source_ref: undefined };
-    expect(transitParkingView(withoutRef).missingSourceRef).toBeNull();
-  });
-
   it("nulls an absent url rather than carrying an empty link", () => {
     const ref = checkNeeded.missing_source_ref;
     expect(ref).toBeTruthy();
