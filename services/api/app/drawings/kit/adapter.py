@@ -5,9 +5,10 @@
    (task C-03: bundled canonical schema, strict JSON, no fixture-only keys).
 2. The geometry is then checked for what a schema cannot state: closed,
    finite, simple, non-degenerate rings; holes inside their exterior; yards,
-   setback lines and floor plates inside the lot outline; street frontages on
-   the lot boundary; every printed string well-formed for XML; and the drawn
-   outlines agreeing with the printed numbers (:mod:`.consistency`, check C-4).
+   setback lines, envelope tiers (each with its top above its bottom) and floor
+   plates inside the lot outline; street frontages on the lot boundary; every
+   printed string well-formed for XML; and the drawn outlines agreeing with the
+   printed numbers (:mod:`.consistency`, check C-4).
 
 Any failure raises :class:`DrawingInputError`; nothing partial is returned.
 ``geometry: not_available`` is not an error - it returns :class:`Unavailable`
@@ -32,6 +33,7 @@ from .errors import DrawingInputError
 from .model import (
     CaseAssumption,
     DrawingInput,
+    EnvelopeTier,
     FloorPlate,
     FloorRow,
     LayerUnavailable,
@@ -50,6 +52,7 @@ from .svg import xml_illegal
 __all__ = [
     "FRONTAGE_TOL_FT",
     "MAX_ABS_COORD_FT",
+    "MAX_ENVELOPE_TIERS",
     "MAX_FLOOR_PLATES",
     "MAX_RING_POINTS",
     "load_drawing_input",
@@ -57,6 +60,7 @@ __all__ = [
 
 MAX_RING_POINTS = 1024  # bounds the O(n^2) simplicity check
 MAX_FLOOR_PLATES = 1000
+MAX_ENVELOPE_TIERS = 1000
 MAX_ABS_COORD_FT = 1.0e8  # EPSG:2263 NYC values are ~1e6 ft; anything far beyond is corrupt
 FRONTAGE_TOL_FT = 0.01  # a frontage end point this close to the lot boundary lies on it
 
@@ -92,6 +96,7 @@ def load_drawing_input(results: Mapping) -> DrawingInput | Unavailable:
         yards=yards,
         yards_not_required=not_required,
         setback_lines=_setback_lines(geometry["setback_lines_per_level"], lot),
+        envelope=_envelope(geometry["envelope"], lot),
         floor_plates=plates,
         floor_rows=rows,
         street_width_case=_street_width_case(results["street_width_case"]),
@@ -259,6 +264,35 @@ def _setback_lines(raw: Mapping, lot: Polygon) -> tuple[SetbackLine, ...] | Laye
             lines.append(points)
         result.append(SetbackLine(entry["floor"], tuple(lines), location))
     return tuple(result)
+
+
+def _height(value: float, location: str) -> float:
+    height = _finite(value, location)
+    if abs(height) > MAX_ABS_COORD_FT:
+        raise DrawingInputError("coordinate_out_of_range", "height beyond the supported extent",
+                                location=location)
+    return height
+
+
+def _envelope(raw: Mapping, lot: Polygon) -> tuple[EnvelopeTier, ...] | LayerUnavailable:
+    base = "/geometry/envelope"
+    if raw["status"] == "not_available":
+        return LayerUnavailable("envelope", raw["reason"], raw["reason_kind"], base)
+    if len(raw["tiers"]) > MAX_ENVELOPE_TIERS:
+        raise DrawingInputError("too_many_envelope_tiers", f"more than {MAX_ENVELOPE_TIERS}",
+                                location=base)
+    tiers: list[EnvelopeTier] = []
+    for i, tier in enumerate(raw["tiers"]):
+        location = f"{base}/tiers/{i}"
+        bottom = _height(tier["bottom_ft"], f"{location}/bottom_ft")
+        top = _height(tier["top_ft"], f"{location}/top_ft")
+        if top <= bottom:
+            raise DrawingInputError("envelope_tier_inverted",
+                                    "tier top is not above its bottom", location=location)
+        outline = _polygon(tier["outline"], f"{location}/outline")
+        _check_within_lot(outline, lot, "envelope_outside_lot")
+        tiers.append(EnvelopeTier(bottom, top, outline, location))
+    return tuple(tiers)
 
 
 def _floor_plates(raw: Mapping, lot: Polygon) -> tuple[FloorPlate, ...] | LayerUnavailable:
