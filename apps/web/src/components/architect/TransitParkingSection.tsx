@@ -245,31 +245,82 @@ export function TransitParkingSection({ bbl, fetchImpl }: TransitParkingSectionP
       <p className="transit-parking__detail" data-testid="transit-parking-detail">
         {view.detail}
       </p>
-      {view.source ? (
+      {view.source || view.missingSourceRef ? (
         <details className="transit-parking__source" data-testid="transit-parking-source">
           <summary>Source</summary>
-          <dl>
-            <dt>Dataset</dt>
-            <dd>{view.source.dataset}</dd>
-            {view.source.datasetVersion ? (
-              <>
-                <dt>Dataset version</dt>
-                <dd>{view.source.datasetVersion}</dd>
-              </>
-            ) : null}
-            {view.source.retrievedAt ? (
-              <>
-                <dt>Retrieved</dt>
-                <dd>{view.source.retrievedAt}</dd>
-              </>
-            ) : null}
-            {view.source.requestUrl ? (
-              <>
-                <dt>Request</dt>
-                <dd>{view.source.requestUrl}</dd>
-              </>
-            ) : null}
-          </dl>
+          {view.source ? (
+            <dl>
+              <dt>Dataset</dt>
+              <dd>{view.source.dataset}</dd>
+              {view.source.datasetVersion ? (
+                <>
+                  <dt>Dataset version</dt>
+                  <dd>{view.source.datasetVersion}</dd>
+                </>
+              ) : null}
+              {view.source.retrievedAt ? (
+                <>
+                  <dt>Retrieved</dt>
+                  <dd>{view.source.retrievedAt}</dd>
+                </>
+              ) : null}
+              {view.source.requestUrl ? (
+                <>
+                  <dt>Request</dt>
+                  <dd>{view.source.requestUrl}</dd>
+                </>
+              ) : null}
+            </dl>
+          ) : null}
+          {view.missingSourceRef ? (
+            <div
+              className="transit-parking__source-ref"
+              data-testid="transit-parking-missing-source-ref"
+            >
+              <p className="transit-parking__source-ref-title">Source to check</p>
+              <dl>
+                <dt>Dataset</dt>
+                <dd>{view.missingSourceRef.dataset}</dd>
+                <dt>Publisher</dt>
+                <dd>{view.missingSourceRef.publisher ?? "Not available"}</dd>
+                <dt>Dataset id</dt>
+                <dd>{view.missingSourceRef.datasetId ?? "Not available"}</dd>
+                <dt>Version</dt>
+                <dd>
+                  {view.missingSourceRef.datasetVersion ??
+                    "Not available — no connector or version probe for this dataset"}
+                </dd>
+                {view.missingSourceRef.url ? (
+                  <>
+                    <dt>Link</dt>
+                    <dd>
+                      <a
+                        href={view.missingSourceRef.url}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        {view.missingSourceRef.url}
+                      </a>
+                    </dd>
+                  </>
+                ) : null}
+                {view.missingSourceRef.components.length > 0 ? (
+                  <>
+                    <dt>Components</dt>
+                    <dd>
+                      <ul className="transit-parking__source-ref-components">
+                        {view.missingSourceRef.components.map((component) => (
+                          <li key={`${component.dataset}-${component.datasetId}`}>
+                            {component.dataset} ({component.datasetId})
+                          </li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </>
+                ) : null}
+              </dl>
+            </div>
+          ) : null}
         </details>
       ) : null}
     </section>
