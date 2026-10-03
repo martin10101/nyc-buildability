@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 98,
+ "requirement_count": 100,
  "producer": "orchestrator",
- "updated_at": "2026-10-03T18:39:53+00:00",
+ "updated_at": "2026-10-03T20:45:20+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -3316,6 +3316,86 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Invoked 2026-10-03 (message 39).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R099",
+   "text": "Seq 138 resume harness: verify the model (/model; Fable 5.1); Gate 0 (cwd IS /root/project/nyc-buildability, the repo root; branch candidate/D-024-mrl-option-b; HEAD == origin; /mcp empty; memory under 70%); then read ONLY docs/SESSION_HANDOFF.md (seq 138; from branch task/session-handoff-2026-10-03d while that PR is open, merging it when green - a reviewer PASS is on it) and run `python tools/project_control.py status` (the ledger wins over prose) and `gh pr list`; report READY TO RESUME or BLOCKED; work only from repository evidence and do NOT re-read the product plan, the lane status files or the directive registry to re-derive the orientation the prompt carries. ORCHESTRATOR'S READING, not owner wording: the conditional 'if the PR ... is still open' did not apply - PR #366 had merged before the session started (HEAD = origin = 4306bb60), so the handoff was read from the integration head.",
+   "source_ref": "source-015-amendment.md#owner-message-40-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R077",
+    "D-090-R078",
+    "D-090-R086",
+    "D-090-R089",
+    "D-090-R090"
+   ],
+   "required_harness": "The session's first replies: Gate 0 results, the READY/BLOCKED line, and the first action taken.",
+   "required_evidence": "Session transcript 0ba6d6a3: Gate 0 evidence (repo root, branch, HEAD 4306bb60 == origin, no MCP servers, memory ~16%), the handoff read from the integration head (PR #366 already merged), the READY/BLOCKED report.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done in-session on 2026-10-03 (pending independent verification).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R100",
+   "text": "Seq 138 next action, in order: (1) merge the handoff PR if still open and green; (2) in parallel: the supervisor repair packet (R093/R094, DB-111) as an orchestrator-contracted ledger packet (precedent M0-T180), the R095 dataset-id work (Lane B prose + Lane C source/fixtures/test + Lane D disclosure), Lane C C-07, Lane A A-05 (its merge needs a per-PR yes), the E-03 rebase (#268); (3) a docs seam refreshing docs/lanes/status/A.md (A-01 merged) and the D-2 request State. Each under the lean lane process: a producer subagent of a ROSTER producer type in an isolated worktree reset to the integration head (show-toplevel guard; exact lane paths per docs/lanes/OWNERSHIP.yaml; check_lane_paths.py and modularity_check.py --check with DIRECT exit codes; never npm/npx/node locally - web tests prove only in CI); the orchestrator pushes and opens the PR; a DIFFERENT read-only reviewer posts PASS at the exact head and verifies the PR body; the base is merged in if CI is stale (proven empty); `gh pr merge --merge --match-head-commit <full sha>` once all checks are green (R020); up to 10 subagents at once, memory under 70%; never pass `model:`; every new owner instruction captured with /directive-compliance before acting. The STOPS restate R012, R021/R029, R048/R058, R038/R039, R084 (the supervisor repair is NOT commissioning), R094, R097 and CLAUDE.md principle 19. ORCHESTRATOR'S READING, not owner wording: step (1) was satisfied at Gate 0 (PR #366 already merged); 'in parallel' means the items run concurrently where their files are disjoint; the R095 work is sequenced as lane PRs in dependency order (the Lane C contract field first, then the Lane B emitter, then the Lane C tightening and the Lane D disclosure) so that every PR is green on its own and no lane edits another lane's files.",
+   "source_ref": "source-015-amendment.md#owner-message-40-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R020",
+    "D-090-R021",
+    "D-090-R084",
+    "D-090-R085",
+    "D-090-R091",
+    "D-090-R092",
+    "D-090-R093",
+    "D-090-R094",
+    "D-090-R095",
+    "D-090-R096",
+    "D-090-R097"
+   ],
+   "required_harness": "Dispatch records and PRs for exactly the listed items; the ledger packet for the supervisor repair; Lane A PRs carry 'needs owner's yes' and are not merged by robots.",
+   "required_evidence": "Session transcript 0ba6d6a3: the dispatches, the lane PRs and their review comments, the supervisor-repair packet files under project-control/, the docs-seam PR.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force from 2026-10-03 for the seq 138 session.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
