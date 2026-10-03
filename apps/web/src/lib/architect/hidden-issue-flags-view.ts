@@ -46,6 +46,19 @@ export const NOT_A_CLEAN_BILL_NOTE =
   "Each line below is one specific check. “No flag” means that check found nothing — " +
   "it is not an all-clear for the property, and the list is not exhaustive.";
 
+/**
+ * The four status words defined once, for the strip's on-tap details (§5a item 4).
+ * R082 (D-090): the per-flag generic meaning sentence is NOT repeated on every row
+ * — the label plus the flag's own `detail` carry the finding; this glossary
+ * explains the labels one time, behind the strip, so the face says less.
+ */
+export const STATUS_GLOSSARY: ReadonlyArray<{ readonly label: string; readonly meaning: string }> = [
+  { label: "Flag", meaning: STATUS_MEANINGS.flag },
+  { label: "Opportunity", meaning: STATUS_MEANINGS.opportunity },
+  { label: "Check needed", meaning: STATUS_MEANINGS.check_needed },
+  { label: "No flag", meaning: STATUS_MEANINGS.not_flagged },
+];
+
 /** Panel note for "beside the affected results": placement waits on the numbers. */
 export const BESIDE_RESULTS_NOTE =
   "When the development numbers are shown, each flag tied to a result will appear beside that " +
@@ -209,4 +222,63 @@ export function flagStripSummary(doc: HiddenIssueFlagsDocument): FlagStripSummar
   if (counts.check_needed) items.push(`${counts.check_needed} to check`);
   if (items.length === 0) items.push("Each check below shows its own result");
   return { items: items.slice(0, FLAG_STRIP_LIMIT), counts };
+}
+
+// ---------------------------------------------------------------------------
+// §5a face-text budget (D-090-R082 "say less, show exact information"). A pure
+// measure the tests assert against: the app's own standing copy on the results
+// face stays short, and the face carries at most three notice/disclosure blocks
+// (§5a item 6). Server-provided data (a flag's title and detail) is passed
+// through and bounded by the contract, so it is not counted as app chatter here.
+// ---------------------------------------------------------------------------
+
+/** A single readable fact line at the §5a 14 px floor fits roughly this many
+ * characters before it wraps into the "long paragraph" R082 forbids. */
+export const FACE_TEXT_MAX_CHARS = 140;
+
+export interface FaceTextBudget {
+  /** App-authored standing strings shown on the results face (NOT behind <details>);
+   * each must be <= FACE_TEXT_MAX_CHARS. */
+  readonly appStrings: string[];
+  /** Verbatim owner/contract-pinned disclosures on the face (shown exactly by
+   * design, so exempt from the length budget). */
+  readonly pinned: string[];
+  /** Standing notice/disclosure blocks on the face (<= 3, §5a item 6). */
+  readonly noticeCount: number;
+}
+
+export interface FlagFacePlacement {
+  /** App-authored strings this flag shows ON the face. */
+  readonly face: string[];
+  /** App-authored strings this flag moves BEHIND the "Source" <details> (§5a item 4). */
+  readonly details: string[];
+}
+
+/**
+ * Where each app-authored string of one flag goes (R082 / §5a). The face carries
+ * only the fact-forward lines (the relation to a site fact, and a results-exception
+ * marker); the generic typical-source line is provenance and lives behind the
+ * "Source" details. The flag's own title/label/detail are server data and are not
+ * listed here.
+ */
+export function flagFacePlacement(flag: FlagView): FlagFacePlacement {
+  const face: string[] = [];
+  if (flag.relation) face.push(flag.relation);
+  if (flag.exceptionLabel) face.push(`Marked for results: ${flag.exceptionLabel}`);
+  return { face, details: [`Typical source: ${flag.typicalSource}`] };
+}
+
+/**
+ * The hidden-issue panel's face-text budget. The only standing notice block on the
+ * face is the one status strip; its explanatory notes and the label glossary live
+ * behind the strip's <details>, and each flag's generic meaning + typical source
+ * move off the face (R082). The per-flag relation/exception markers are the only
+ * app strings that remain on the face.
+ */
+export function hiddenIssueFlagsFaceBudget(doc: HiddenIssueFlagsDocument): FaceTextBudget {
+  const appStrings: string[] = [];
+  for (const group of groupViews(doc)) {
+    for (const flag of group.flags) appStrings.push(...flagFacePlacement(flag).face);
+  }
+  return { appStrings, pinned: [], noticeCount: 1 };
 }

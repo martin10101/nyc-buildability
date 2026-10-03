@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-02T20:02:07+00:00",
+ "updated_at": "2026-10-03T03:35:14+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -103,10 +103,16 @@
   "D-090-R079",
   "D-090-R080",
   "D-090-R081",
-  "D-090-R082"
+  "D-090-R082",
+  "D-090-R083",
+  "D-090-R084",
+  "D-090-R085",
+  "D-090-R086",
+  "D-090-R087",
+  "D-090-R088"
  ],
- "requirements_id_digest_sha256": "3d17ed903c8bc95949c1a8605e5d372f193976735a1247adc3b240e0aaac6e3c",
- "requirements_content_digest_sha256": "2af6e1babe73fa8916e368d06331c52df422d3f10df6940fe5bf0b3e72c80a7e",
+ "requirements_id_digest_sha256": "adc38b64db78f2fe2eca17d787066f10641c429e5905fa462612434fadd5c874",
+ "requirements_content_digest_sha256": "fd1368aebeab3f30a4afa8e40bb3bf06d0f507aaff421fee8f52d1b3178eb1b4",
  "sources": [
   {
    "file": "source-001.md",
@@ -178,6 +184,22 @@
    "recorded_at": "2026-10-02T20:02:07+00:00",
    "content_digest_sha256": "0f4984801ed260cb9688df77f0d081adaebca683c4812954e6208c78b65902e7",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-010-amendment.md",
+   "kind": "amendment",
+   "sequence": 10,
+   "recorded_at": "2026-10-03T02:44:42+00:00",
+   "content_digest_sha256": "d24559148a1dec8896887cb2ff901a75cf9702cafc5a78cc97972a8d0cea23d2",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-011-amendment.md",
+   "kind": "amendment",
+   "sequence": 11,
+   "recorded_at": "2026-10-03T03:35:14+00:00",
+   "content_digest_sha256": "5694e0460e7ceceaf46aebca2e6fc3b9204af039dcd682ee3f0a28ec1b392cd9",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -188,7 +210,9 @@
   "source-006-amendment.md",
   "source-007-amendment.md",
   "source-008-amendment.md",
-  "source-009-amendment.md"
+  "source-009-amendment.md",
+  "source-010-amendment.md",
+  "source-011-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -196,7 +220,8 @@
   "M0-T162",
   "M0-T163",
   "M0-T164",
-  "M5-T125"
+  "M5-T125",
+  "M0-T180"
  ],
  "affected_prs": [
   262,
@@ -267,6 +292,24 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-009 (session 08a1e891 messages 32-33) and requirements D-090-R080..R082, all pending. Message 32 maps to R044 (no new row); message 33's loop clause maps to D-091-R001. Text extracted by script from the session transcript; nothing retyped. No existing row edited. Capture session: 08a1e891, claude-opus-5-5. Integration head at capture: 2e1930f7."
+  },
+  {
+   "at": "2026-10-03T02:44:42+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-010 (session ab961de0 message 34, 2026-10-03T02:32:51Z) and requirements D-090-R083..R086, all pending. The message's resume block maps to R077-R079 (R086 records the seq 135 harness incl. the #347 branch read) and to standing rows R012/R021/R029/R044/R048/R058 and D-085; 'At most 5 robots' is replaced within the same message by 'run 10 subagents' (R085; R076 memory rule unchanged); 'dont worry about codex' = deferral of the D-091 commissioning track (R084, reading recorded). Text extracted by script from the session transcript; nothing retyped. No existing row edited. Capture session: ab961de0, claude-fable-5-1. Integration head at capture: 15b4d656; origin/main d8b3899f."
+  },
+  {
+   "at": "2026-10-03T02:49:37+00:00",
+   "actor": "orchestrator",
+   "action": "bound",
+   "note": "Bound D-090-R083 to M0-T180 (applicability.task_ids + maps_to.tasks; status_reason note); affected_tasks += M0-T180; requirements content digest resynced in the same commit (c14). No requirement text changed."
+  },
+  {
+   "at": "2026-10-03T03:35:14+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-011 (session ab961de0 messages 35-36) and requirements D-090-R087..R088, pending. Message 35 = the plan request (R088, return, delivered in-session); message 36 'Ok go on' = approval of the plan (R087, authorization; reading recorded: starts builds, merge rules unchanged). Text extracted by script; nothing retyped; no existing row edited. Capture session: ab961de0, claude-fable-5-1."
   }
  ]
 }

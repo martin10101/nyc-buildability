@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import cornerLotStudy from "../../../../../../packages/contracts/fixtures/valid/study/synthetic_corner_lot_two_options.json";
 import { LOT_SITE_SETUP_FLAG, lotSiteSetupEnabled } from "../lot-site-setup-flag";
 import {
+  FACE_TEXT_MAX_CHARS,
+  SITE_FACTS_INTRO,
+  SITE_SETUP_NOT_CONNECTED,
   applyEnteredFactToSource,
   combinationView,
   combinationViewOf,
@@ -9,6 +12,7 @@ import {
   lotChoiceView,
   lotChoiceViewOf,
   lotRows,
+  lotSiteSetupFaceBudget,
   siteFactLabel,
   siteFactRows,
   siteFactRowsOf,
@@ -291,5 +295,42 @@ describe("groupSiteFactRows — the entered value groups with its city fact", ()
     // An un-edited fact has no entered sibling.
     const district = groups.find((group) => group.primary.key === "zoning_district")!;
     expect(district.entered).toBeNull();
+  });
+});
+
+describe("lotSiteSetupFaceBudget — §5a face-text budget (D-090-R082)", () => {
+  it("keeps the trimmed section copy within budget and names the dropped restatement", () => {
+    expect(SITE_FACTS_INTRO.length).toBeLessThanOrEqual(FACE_TEXT_MAX_CHARS);
+    expect(SITE_SETUP_NOT_CONNECTED.length).toBeLessThanOrEqual(FACE_TEXT_MAX_CHARS);
+    // R082: the earlier restatement ("Nothing here has to be typed…") is gone; the
+    // intro still names the one fact the architect needs (source + override).
+    expect(SITE_FACTS_INTRO).toContain("Each value shows its source");
+    expect(SITE_FACTS_INTRO).not.toContain("Nothing here has to be typed");
+    // The empty-state line reads as a fact, not a caution.
+    expect(SITE_SETUP_NOT_CONNECTED).toContain("No measurement is guessed");
+    expect(SITE_SETUP_NOT_CONNECTED.toLowerCase()).not.toContain("prepared by");
+  });
+
+  it("exempts the pinned statement and B-07's refusal, budgets the app leads, ≤3 notices (refused)", () => {
+    const budget = lotSiteSetupFaceBudget(sourceFromStudy(twoLotCrossBlockStudy));
+    expect(budget.noticeCount).toBeLessThanOrEqual(3);
+    // Pinned (verbatim, exempt): the owner statement and B-07's refusal reason.
+    expect(budget.pinned).toContain(LOT_SELECTION_STATEMENT);
+    expect(budget.pinned).toContain(CROSS_BLOCK_REASON);
+    // App-authored leads are length-budgeted and carry the trimmed intro.
+    expect(budget.appStrings).toContain(SITE_FACTS_INTRO);
+    expect(budget.appStrings).toContain("This property has 2 lots.");
+    expect(budget.appStrings).toContain("These lots were not combined");
+    for (const line of budget.appStrings) {
+      expect(line.length).toBeLessThanOrEqual(FACE_TEXT_MAX_CHARS);
+    }
+    // B-07's reason stays out of the length budget (it may be long, by design).
+    expect(budget.appStrings).not.toContain(CROSS_BLOCK_REASON);
+  });
+
+  it("budgets the app's own offered line (no B-07 reason to pin)", () => {
+    const budget = lotSiteSetupFaceBudget(sourceFromStudy(twoLotOfferedStudy));
+    expect(budget.pinned).toEqual([LOT_SELECTION_STATEMENT]);
+    expect(budget.appStrings).toContain("These are the lots you selected.");
   });
 });

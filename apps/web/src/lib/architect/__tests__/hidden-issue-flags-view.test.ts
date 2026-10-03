@@ -3,13 +3,17 @@ import validFour from "../../../../../../packages/contracts/fixtures/valid/hidde
 import validAllowance from "../../../../../../packages/contracts/fixtures/valid/hidden_issue_flags/real_existing_building_allowance.json";
 import type { HiddenIssueFlagsDocument } from "@/lib/hidden-issue-flags-contract-checks";
 import {
+  FACE_TEXT_MAX_CHARS,
   NOT_A_CLEAN_BILL_NOTE,
+  STATUS_GLOSSARY,
   STATUS_MEANINGS,
   evidenceView,
   factRelationText,
+  flagFacePlacement,
   flagStripSummary,
   flagView,
   groupViews,
+  hiddenIssueFlagsFaceBudget,
   humanFactName,
   orderedGroups,
 } from "@/lib/architect/hidden-issue-flags-view";
@@ -152,5 +156,41 @@ describe("hidden-issue-flags-view — beside-the-results relation and sources", 
     const view = evidenceView(eb.evidence[0]);
     expect(view.hasSource).toBe(false);
     expect(view.sourceLines).toEqual(["No dataset is connected for this input."]);
+  });
+});
+
+describe("hidden-issue-flags-view — §5a face-text budget (D-090-R082)", () => {
+  it("keeps the generic status glossary one time, defining each label", () => {
+    expect(STATUS_GLOSSARY.map((e) => e.label)).toEqual(["Flag", "Opportunity", "Check needed", "No flag"]);
+    expect(STATUS_GLOSSARY.find((e) => e.label === "No flag")?.meaning).toBe(STATUS_MEANINGS.not_flagged);
+  });
+
+  it("places the relation and results-exception on the face, the typical source behind details", () => {
+    const larger = groupViews(allowance())[0].flags[0];
+    const place = flagFacePlacement(larger);
+    // The fact relation is the one app line on the face for this flag.
+    expect(place.face).toEqual(["Relates to: existing zoning floor area."]);
+    // The generic typical-source line moves behind the "Source" details (§5a item 4).
+    expect(place.details).toEqual([`Typical source: ${larger.typicalSource}`]);
+    expect(place.details[0]).toContain("Typical source:");
+    // A results-exception marker also rides on the face when present.
+    const overlay = groupViews(fourGroups()).find((g) => g.key === "map_based_rules")!.flags[0];
+    expect(flagFacePlacement(overlay).face).toContain("Marked for results: Out of date");
+  });
+
+  it("holds the on-face app copy within the budget and to one notice (the strip)", () => {
+    const budget = hiddenIssueFlagsFaceBudget(fourGroups());
+    expect(budget.noticeCount).toBeLessThanOrEqual(3);
+    expect(budget.pinned).toEqual([]);
+    for (const line of budget.appStrings) {
+      expect(line.length).toBeLessThanOrEqual(FACE_TEXT_MAX_CHARS);
+    }
+    // R082 red/green: the repeated generic meaning and the typical-source line are
+    // NOT on the face any more (they moved behind the strip glossary / per-flag Source).
+    const face = budget.appStrings.join(" ⁣ ");
+    for (const meaning of Object.values(STATUS_MEANINGS)) {
+      expect(face).not.toContain(meaning);
+    }
+    expect(face).not.toContain("Typical source:");
   });
 });

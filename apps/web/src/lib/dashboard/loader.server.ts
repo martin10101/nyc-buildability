@@ -28,7 +28,7 @@ export async function findControlPlaneDir(startDir: string = process.cwd()): Pro
 async function readJson(file: string): Promise<unknown> {
   const text = await fs.readFile(file, 'utf-8');
   // strip a possible UTF-8 BOM
-  return JSON.parse(text.replace(/^﻿/, ''));
+  return JSON.parse(text.replace(/^\uFEFF/, ''));
 }
 
 async function readJsonDir(dir: string, filter: (name: string) => boolean): Promise<{ items: unknown[]; issues: Issue[] }> {

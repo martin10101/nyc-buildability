@@ -1,5 +1,6 @@
 /** Only observed official ZR article/chapter/section forms. No reconstructed link when the capture omits its URL. */
 export function officialZoningTextUrl(value: unknown): string | null {
+    // eslint-disable-next-line no-control-regex -- intentional: reject control characters and spaces in a URL
     if (typeof value !== "string" || !value.startsWith("https://zoningresolution.planning.nyc.gov/") || value.length > 500 || /[\u0000-\u0020\u007f\\]/.test(value))
         return null;
     try {
