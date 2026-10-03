@@ -254,6 +254,7 @@ def test_no_parking_outcome_field_or_text(monkeypatch, provider_factory) -> None
         "source",
         "detail",
         "missing_source",
+        "missing_source_ref",  # contract 1.1.0 (#370); the emitter carries it from #368 on
     }
 
     # No parking-outcome TEXT anywhere in the serialized document: it never states a
