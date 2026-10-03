@@ -108,8 +108,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "typescript-eslint recommended may flag code that next/typescript tolerated (rule-set drift) -> S3: stop and report; never edit src or blanket-disable under this packet",
     "a transitive of the replacement set may itself carry an advisory or be younger than 7 days -> the workflow's audit/age gate fails closed; the producer swaps the version with registry evidence or returns BLOCKED (S7)",
@@ -119,7 +119,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-03T02:47:44.473028+00:00",
-  "updated_at": "2026-10-03T02:49:37+00:00",
+  "updated_at": "2026-10-03T03:35:16.226193+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -137,5 +137,14 @@
     "python3 scripts/lanes/check_lane_paths.py (producer, before hand-back)",
     "python - <<EOF lock parse: assert none of braces/micromatch/fast-glob/@next/eslint-plugin-next/eslint-config-next in packages EOF"
   ],
-  "worktree": "/root/project/w-M0-T180"
+  "worktree": "/root/project/w-M0-T180",
+  "progress_log": [
+    {
+      "at": "2026-10-03T03:35:16.226087+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted + G0 PASS at bbb77decc1cdb8d4b034a477612483d0659c9b6e + claimed; producer (frontend-engineer) dispatched to an isolated worktree off this head; lock regeneration via the generate-lockfile workflow after the producer commit is cherry-picked onto task/M0-T180-web-lint-chain-braces"
+    }
+  ]
 }
