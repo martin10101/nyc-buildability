@@ -13,7 +13,7 @@
     "document_ref": null,
     "statement": null
   },
-  "detail": "Transit/parking status: Check needed. PLUTO records no 'transitzone' value for this lot. Transit-zone source to check: DCP Transit Zones (NYC Open Data), the dataset PLUTO's transitzone field is sourced from. Applying the Zoning Resolution off-street parking rules to this zone is a rule-engine / legal determination, confirmed by a qualified reviewer at G6, that this data layer never makes.",
+  "detail": "Transit/parking status: Check needed. PLUTO records no 'transitzone' value for this lot. Transit-zone source to check: DCP Transit Zones (NYC Open Data), the dataset PLUTO's transitzone field is sourced from. Applying the Zoning Resolution off-street parking rules to this zone (by district, housing type and affordability) is a rule-engine / legal determination, confirmed by a qualified reviewer at G6, that this data layer never makes.",
   "missing_source": "DCP Transit Zones (NYC Open Data), the dataset PLUTO's transitzone field is sourced from; recorded in research, no registered connector in this repository",
   "missing_source_ref": {
     "dataset": "Transit Zones",
