@@ -360,6 +360,11 @@ export type FactInputResult =
   | { ok: true; value: number | string }
   | { ok: false; reason: string };
 
+/** Plain, shared input messages (no internal code). Exported so the step-4 existing-building
+ * entry (./existing-building-view) rejects a bad floor area with the SAME words as a per-fact edit. */
+export const ENTER_VALUE_FIRST = "Enter a value first.";
+export const ENTER_POSITIVE_NUMBER = "Enter a number greater than zero.";
+
 /**
  * Validate the architect's typed value for one fact, in plain words with no internal code. No value
  * is computed: a measured key (square feet / feet) must be a number greater than zero; lot type must
@@ -368,12 +373,12 @@ export type FactInputResult =
  */
 export function validateFactInput(fact: SiteFact, raw: string): FactInputResult {
   const trimmed = raw.trim();
-  if (trimmed === "") return { ok: false, reason: "Enter a value first." };
+  if (trimmed === "") return { ok: false, reason: ENTER_VALUE_FIRST };
   const unit = SITE_FACT_KEY_UNITS[fact.key];
   if (unit === "square_feet" || unit === "feet") {
     const value = Number(trimmed);
     if (!Number.isFinite(value) || value <= 0) {
-      return { ok: false, reason: "Enter a number greater than zero." };
+      return { ok: false, reason: ENTER_POSITIVE_NUMBER };
     }
     return { ok: true, value };
   }
@@ -429,12 +434,22 @@ export function applyEnteredFactToSource(
     blocks: [],
     editable: true,
   };
-  const index = source.siteFacts.findIndex((fact) => fact.fact_id === entered.fact_id);
+  return { ok: true, source: withSiteFact(source, entered) };
+}
+
+/**
+ * Replace the site fact with the same `fact_id` on a setup-only working source, or append it when
+ * none matches. Pure (no clock, no store): the caller builds the fully-formed, contract-shaped fact
+ * (./existing-building-view does, for the step-4 existing-building value). When a study exists the
+ * panel calls the store's upsertSiteFact instead; this is the no-study working-copy mirror.
+ */
+export function withSiteFact(source: LotSiteSource, fact: SiteFact): LotSiteSource {
+  const index = source.siteFacts.findIndex((existing) => existing.fact_id === fact.fact_id);
   const siteFacts =
     index >= 0
-      ? source.siteFacts.map((fact, position) => (position === index ? entered : fact))
-      : [...source.siteFacts, entered];
-  return { ok: true, source: { ...source, siteFacts } };
+      ? source.siteFacts.map((existing, position) => (position === index ? fact : existing))
+      : [...source.siteFacts, fact];
+  return { ...source, siteFacts };
 }
 
 // ---------------------------------------------------------------------------
