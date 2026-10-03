@@ -25,6 +25,7 @@ from app.profile.data_versions import (
 from app.profile.site_facts import PLUTO_DATASET_NAME
 from app.profile.transit_parking import (
     MISSING_TRANSIT_ZONE_SOURCE,
+    MISSING_TRANSIT_ZONE_SOURCE_REF,
     STATUS_CHECK_NEEDED,
     STATUS_RECORDED,
     TRANSIT_ZONE_FIELD,
@@ -191,7 +192,9 @@ def test_check_needed_when_pluto_has_no_transit_zone_value() -> None:
     assert status.needs_check is True
     assert status.missing_source == MISSING_TRANSIT_ZONE_SOURCE
     assert "Check needed" in status.detail
-    assert "6ztr-wgff" in status.detail  # names DCP Transit Zones, the source to check
+    # The face names DCP Transit Zones in readable words, no technical id (D-090-R095).
+    assert "DCP Transit Zones" in status.detail
+    assert "DCP Transit Zones" in status.missing_source
 
 
 def test_untrusted_pluto_value_is_check_needed_never_surfaced() -> None:
@@ -223,3 +226,74 @@ def test_untrusted_pluto_value_is_check_needed_never_surfaced() -> None:
 def test_missing_identity_bbl_raises() -> None:
     with pytest.raises(ValueError):
         resolve_transit_parking_status({"provenance": []})
+
+
+# ---------------------------------------------------------------------------
+# D-090-R095 / request D-2 part 2: the technical dataset id moves behind the
+# Source disclosure. The face (detail + missing_source) names the source in
+# readable words; the exact id, version and link ride in missing_source_ref.
+# ---------------------------------------------------------------------------
+
+# Every technical dataset id that must stay off the face: the three DCP transit-zone ids and
+# PLUTO's own id (removed from the recorded face in request D-2 part 1, #361).
+_DATASET_IDS = ("6ztr-wgff", "vhqf-adkz", "dpnc-b2hd", "64uk-42ks")
+
+
+def _check_needed_status():
+    """The synthetic check_needed status (PLUTO has no transitzone value; null omitted)."""
+    record = benchmark_record()
+    assert record.pop(TRANSIT_ZONE_FIELD) == "Outer Transit Zone"  # SYNTHETIC: null omitted
+    return resolve_transit_parking_status(profile_from_record(record))
+
+
+def test_no_dataset_id_on_the_face_for_either_status() -> None:
+    recorded = resolve_transit_parking_status(benchmark_profile())
+    check_needed = _check_needed_status()
+    for status in (recorded, check_needed):
+        for dataset_id in _DATASET_IDS:
+            assert dataset_id not in status.detail
+            assert dataset_id not in (status.missing_source or "")
+
+
+def test_missing_source_ref_carries_the_ids_only_when_check_needed() -> None:
+    recorded = resolve_transit_parking_status(benchmark_profile())
+    assert recorded.missing_source_ref is None
+
+    check_needed = _check_needed_status()
+    assert check_needed.missing_source_ref == MISSING_TRANSIT_ZONE_SOURCE_REF
+    assert check_needed.missing_source_ref == {
+        "dataset": "Transit Zones",
+        "dataset_id": "6ztr-wgff",
+        "publisher": "Department of City Planning (DCP)",
+        "dataset_version": None,
+        "url": "https://data.cityofnewyork.us/d/6ztr-wgff",
+        "components": [
+            {"dataset": "Greater Transit Zone", "dataset_id": "vhqf-adkz"},
+            {"dataset": "Appendix I - Transit Zones", "dataset_id": "dpnc-b2hd"},
+        ],
+    }
+
+
+def test_to_dict_carries_missing_source_ref_for_both_statuses() -> None:
+    recorded = resolve_transit_parking_status(benchmark_profile()).to_dict()
+    assert "missing_source_ref" in recorded
+    assert recorded["missing_source_ref"] is None
+
+    check_needed = _check_needed_status().to_dict()
+    assert "missing_source_ref" in check_needed
+    assert check_needed["missing_source_ref"] == MISSING_TRANSIT_ZONE_SOURCE_REF
+
+
+def test_the_id_removed_from_the_face_is_not_lost_it_moves_to_missing_source_ref() -> None:
+    # The change DISPLACES the "6ztr-wgff" id out of the face prose. Assert the field it moves
+    # INTO carries it (M5-T083 G4-F6: a displacement test pins the moved value, not an
+    # invariant one). The pre-change code put the id in detail/missing_source and had no
+    # missing_source_ref field, so reverting fails this test.
+    status = _check_needed_status()
+    assert "6ztr-wgff" not in status.detail
+    assert "6ztr-wgff" not in status.missing_source
+    assert status.missing_source_ref is not None
+    assert status.missing_source_ref["dataset_id"] == "6ztr-wgff"
+    assert status.missing_source_ref["url"].endswith("6ztr-wgff")
+    component_ids = {c["dataset_id"] for c in status.missing_source_ref["components"]}
+    assert component_ids == {"vhqf-adkz", "dpnc-b2hd"}

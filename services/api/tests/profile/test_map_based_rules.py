@@ -447,7 +447,10 @@ def test_transit_parking_zone_check_needed_carries_through_from_b10() -> None:
     group = map_based_rules_group(BBL, profile=profile, transit_parking=status)
     extra = by_id(group)["map_based_rules.transit_parking_zone"]
     assert extra.status == STATUS_CHECK_NEEDED
-    assert "6ztr-wgff" in extra.detail  # B-10's missing source
+    # The flag face names B-10's missing source in readable words; the technical id moved to
+    # the structured ``missing_source_ref`` disclosure (owner decision D-090-R095; request D-2).
+    assert "DCP Transit Zones" in extra.detail
+    assert "6ztr-wgff" not in extra.detail
 
 
 # ---------------------------------------------------------------------------
