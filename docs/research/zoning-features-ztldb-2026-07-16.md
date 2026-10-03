@@ -282,3 +282,32 @@ All fixtures: raw unmodified responses + request URL + retrieval timestamp; no d
 | Z12 | `https://www.nyc.gov/content/planning/pages/resources/datasets/gis-zoning-features` | live fetch → **HTTP 403 Forbidden** | BYTES page bot-protection recorded (S5); URL authenticity established via Z6 description link |
 | Z13 | `https://catalog.data.gov/dataset/zoning-gis-data-geodatabase`; `https://catalog.data.gov/dataset/nyc-zoning-tax-lot-database` | live fetches | cross-channel corroboration: 202604 blob version (checked 2026-05-26); ZTLDB "April 5, 2026" still current at data.gov check 2026-07-07 |
 | Z14 | WebSearch result listings (BYTES page URLs: `dwn-gis-zoning.page`, `datasets/zoning-taxlot-database`; legacy 2018 ZTLDB metadata PDF at nyc.gov/assets) | search-evidenced only | **[NEEDS G1 RE-VERIFICATION]** — page-existence pointers only; no content claims made from these |
+
+## 10. Addendum (2026-10-03) — DCP Transit Zones dataset identifiers behind the Source disclosure (request D-2 part 2; owner decision D-090-R095)
+
+Context: the transit/parking status (`app.profile.transit_parking`, queue item B-10) names DCP's
+Transit Zones dataset as the source to check when PLUTO carries no `transitzone` value. Per owner
+decision D-090-R095, the face prose (`detail`, `missing_source`) now names that source in readable
+words only; the exact dataset identifier, version and landing link move into a structured
+`missing_source_ref` disclosure. This addendum records the identifiers that structure carries.
+
+These three DCP Socrata datasets were first noted in §2.2 (adjacent entries seen during
+enumeration). The fields below are the only ones used, each read from the Socrata asset-metadata
+endpoint `https://data.cityofnewyork.us/api/views/<id>.json` (fields `name`, `id`, `attribution`).
+Landing URL form: `https://data.cityofnewyork.us/d/<id>`.
+
+| Dataset id | `name` (title) | `attribution` (publisher) | Role |
+|---|---|---|---|
+| `6ztr-wgff` | Transit Zones | Department of City Planning (DCP) | the source behind PLUTO's `transitzone` field (`missing_source_ref.dataset_id`) |
+| `vhqf-adkz` | Greater Transit Zone | Department of City Planning (DCP) | component of the Transit Zones geography |
+| `dpnc-b2hd` | Appendix I - Transit Zones | Department of City Planning (DCP) | component of the Transit Zones geography |
+
+Scope and limits (nothing is claimed beyond the three fields above):
+
+- Verified 2026-10-03 by the orchestrator via `https://data.cityofnewyork.us/api/views/<id>.json`
+  for each id — only `name`, `id` and `attribution` were read.
+- `dataset_version` is recorded as `None` (unknown): no version probe and no registered connector
+  exist for these datasets in this repository ("where available" = not available here). No row
+  count, column inventory, cadence, CRS, update timestamp, or field semantics is asserted.
+- No connector, fixture, or `source_registry` record is created by this work; PLUTO's `transitzone`
+  remains the recorded source and these three stay check-needed fallbacks only.
