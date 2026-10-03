@@ -57,15 +57,15 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "any later tools/agent_supervisor/** change voids this certification",
     "commissioning stays owner-typed (M0-T175): root config, Codex sign-in, record-manifest/verify-controller, unit install, start"
   ],
   "blockers": [],
   "created_at": "2026-10-02T23:36:05.344526+00:00",
-  "updated_at": "2026-10-03T00:06:44.791243+00:00",
+  "updated_at": "2026-10-03T00:17:36.696980+00:00",
   "directive_refs": [
     {
       "directive_id": "D-091",
@@ -107,5 +107,7 @@
       "actor": "orchestrator",
       "change": "Added tools/agent_supervisor/event_drift.py (hook-catalog re-point only) and switched the premise to recapturing all three claude drift families at the installed 2.1.288: the producer's first run (57f7e515) failed closed because the host claude auto-updated 2.1.287 -> 2.1.288 (installed 2026-10-02 23:17 UTC) and event_bus S8 reads event_drift.CATALOG_FIXTURE_PATH. Same shape as M0-T174 round 1 and M0-T159. Admission is deliberate under D-024-R287 (update, recapture, recertify, then repin)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-03T00:17:36.696757+00:00"
 }

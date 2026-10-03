@@ -538,24 +538,31 @@
         "D-091-R007"
       ],
       "producer": "backend-engineer",
-      "verifier": "",
+      "verifier": "directive-compliance-verifier",
       "schema_version": "directive_verification/v2",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
+      "reviewed_sha": "2ff288d42819c176aa0268e812ae18ddb8df7de3",
+      "reviewed_manifest_sha256": "ca01a21f8b5e02acf42ec660b77783c506aed6f08ef06063c6fa0f88dd5b0be9",
       "requirements": [
         {
           "id": "D-091-R001",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "This task's share: the supervisor tree that lets the loop run on this Linux server (M0-T177 containment + M0-T178 equal-model refusal) is recertified at subtree 019ecf1f with claude 2.1.288 and codex-cli 0.157.0 (project-control/reports/M0-T179-producer-report.md)",
+            "Remaining for R001 overall (not claimed): the owner-applied activation-PIN amendment (R009) and the owner-typed commissioning (M0-T175)"
+          ],
+          "reviewed_sha": "2ff288d42819c176aa0268e812ae18ddb8df7de3"
         },
         {
           "id": "D-091-R007",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "claude 2.1.288 admitted under D-024-R287 after round 1 failed closed on the silent auto-update; three drift fixtures recaptured (b5950e97, 9c02bc97, 975a9118), event_drift re-pointed only; teeth green; CI R3 real-unit proof and windows freeze baseline green; host auto-update off (DISABLE_AUTOUPDATER=1, 2026-10-03)",
+            "gates G0, G2, G3, G4, G5 PASS at content identity ca01a21f (G3/G4 by an independent control-plane-verifier, G5 by an independent security-reviewer; producer != reviewers)"
+          ],
+          "reviewed_sha": "2ff288d42819c176aa0268e812ae18ddb8df7de3"
         }
-      ]
+      ],
+      "restamp_note": "DCV reviewed 9822fb94 (project-control/reports/M0-T179-DCV.md); restamped to the accept-seam HEAD under the DCV's up-front pre-authorization: content identity unchanged (ca01a21f) and the certified subtree unchanged (019ecf1f); M0-T179 gate, submission and evidence records unchanged; R001/R007 unchanged; the only intervening commit is the saved DCV report (the integration branch was already included)."
     }
   ]
 }
