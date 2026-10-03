@@ -619,3 +619,26 @@ push), read the AssertionError payload from the failed log, delete the branch.
   with `/usr/bin/python3` (setup-python's interpreter needs LD_LIBRARY_PATH that a clean unit lacks).
 - **Producers misreport exit codes through pipes** (`check | tail` swallows `$?`): the M0-T177 "modularity exit 0" was false. Require direct
   exit codes in every dispatch, and re-run the check yourself before pushing.
+
+## Cloud session 2026-10-03b (ab961de0; seq 136; Fable 5.1 main, 13 robots total, ≤ 7 at once, memory ≤ 16 %)
+- **Mid-turn owner messages are not `user` lines in the transcript.** They are stored as `queue-operation` + `attachment`
+  (`attachment.type == "queued_command"`, text in `attachment.prompt`, `origin.kind == "human"`). The D-090 source-011 capture
+  aborted on "not found" until the script scanned both shapes. Slash commands (e.g. `/session-handoff`) are `user` lines whose
+  content is the `<command-message>/<command-name>/<command-args>` block; the owner's words are the args.
+- **`eslint-plugin-react-hooks` 7.x `configs.recommended` / `recommended-latest` is not the two classic rules** — it adds every
+  React-Compiler rule at ERROR (set-state-in-effect, refs, purity, …). Register the plugin and name `rules-of-hooks` (error) +
+  `exhaustive-deps` (warn) explicitly; a wholesale preset would redden the whole web baseline.
+- **Enabling `@eslint/js` recommended on a codebase that never had it** (eslint-config-next did not) surfaces a predictable set:
+  `no-control-regex` on intentional control-character rejection regexes, `no-irregular-whitespace` on a literal U+FEFF in a regex,
+  `no-regex-spaces` in test regexes. Fix behaviour-identically (line-scoped justified disables, `﻿`, ` {2}`) under a recorded
+  scope correction; never by weakening the config.
+- **A root `.gitignore` pattern like `coverage/` silently ignores any real source directory with that name** — the A-01 producer had
+  to `git add -f`; the integrator added `!services/api/app/rules/coverage/`. Check `git check-ignore -v` when a new directory's files
+  do not show up in `git status`.
+- **PR bodies drift even when written from the producer's own return**: 2 of 5 lane bodies (A-01, B-11) and the M0-T180 checklist
+  needed count/claim fixes caught by the reviewer. The reviewer's "verify the body" step is load-bearing; patch with
+  `gh api -X PATCH …/pulls/N -F body=@file`.
+- **The lane process scales to six concurrent builders + rolling reviewers** at ~16 % memory on the 8 GB droplet; the only
+  serialization point was the one red CI check that blocked every merge — fix that first, then let reviews run while CI re-runs.
+- **generate-lockfile's bot commit message still says "M0-T019 security tree"** (template text in the workflow) — cosmetic;
+  fix the template when the workflow is next touched (needs its own Tier B review).

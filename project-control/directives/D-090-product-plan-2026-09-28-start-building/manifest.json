@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-03T03:35:14+00:00",
+ "updated_at": "2026-10-03T14:53:09+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -109,10 +109,13 @@
   "D-090-R085",
   "D-090-R086",
   "D-090-R087",
-  "D-090-R088"
+  "D-090-R088",
+  "D-090-R089",
+  "D-090-R090",
+  "D-090-R091"
  ],
- "requirements_id_digest_sha256": "adc38b64db78f2fe2eca17d787066f10641c429e5905fa462612434fadd5c874",
- "requirements_content_digest_sha256": "fd1368aebeab3f30a4afa8e40bb3bf06d0f507aaff421fee8f52d1b3178eb1b4",
+ "requirements_id_digest_sha256": "e9a15a55037960cd6963e7166d98e4374e34aa7c8bf0a5c31b19c724418ad5ed",
+ "requirements_content_digest_sha256": "90ee1351f7a10b24ac32b4a4a88fe88b02b13171d731584d63c6e7023cefdd2a",
  "sources": [
   {
    "file": "source-001.md",
@@ -200,6 +203,22 @@
    "recorded_at": "2026-10-03T03:35:14+00:00",
    "content_digest_sha256": "5694e0460e7ceceaf46aebca2e6fc3b9204af039dcd682ee3f0a28ec1b392cd9",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-012-amendment.md",
+   "kind": "amendment",
+   "sequence": 12,
+   "recorded_at": "2026-10-03T04:50:43+00:00",
+   "content_digest_sha256": "9a76623e35a372d455800766b73b36554559ccbe7e33e39d4ebba64f565f20ee",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-013-amendment.md",
+   "kind": "amendment",
+   "sequence": 13,
+   "recorded_at": "2026-10-03T14:53:09+00:00",
+   "content_digest_sha256": "4f0e351465d09a12910e837eea93ca88c72f2e7ead2ad47dbc53114083299b29",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -212,7 +231,9 @@
   "source-008-amendment.md",
   "source-009-amendment.md",
   "source-010-amendment.md",
-  "source-011-amendment.md"
+  "source-011-amendment.md",
+  "source-012-amendment.md",
+  "source-013-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -310,6 +331,18 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-011 (session ab961de0 messages 35-36) and requirements D-090-R087..R088, pending. Message 35 = the plan request (R088, return, delivered in-session); message 36 'Ok go on' = approval of the plan (R087, authorization; reading recorded: starts builds, merge rules unchanged). Text extracted by script; nothing retyped; no existing row edited. Capture session: ab961de0, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-03T04:50:43+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-012 (session ab961de0 message 37, the /session-handoff request) and requirement D-090-R089 (sequencing: hand off at a proper seam; token-lean successor prompt), pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: ab961de0, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-03T14:53:09+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-013 (session 966ea9e4 message 38, the seq 136 resume prompt) and requirements D-090-R090 (harness: the seq 136 resume harness) and D-090-R091 (sequencing: the seq 136 next-action order), both pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: 966ea9e4, claude-fable-5-1."
   }
  ]
 }

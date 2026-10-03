@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 88,
+ "requirement_count": 91,
  "producer": "orchestrator",
- "updated_at": "2026-10-03T03:35:14+00:00",
+ "updated_at": "2026-10-03T14:53:09+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -2966,6 +2966,113 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Delivered in-session on 2026-10-03 before proceeding; pending independent verification.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R089",
+   "text": "Hand off at a proper seam ('at a proper seam do the handoff'): finish the in-flight seam (M0-T180 accepted, PR #348 merged, every returned robot result recorded; no half-landed build) before writing the handoff; and write the successor prompt so the next session spends few start-up tokens ('explan really well in the proment so it dont use alotnof startup tokens'): the prompt and the handoff carry the orientation (what is done, what is open, the exact next action, the files to read) so the successor does not re-derive it.",
+   "source_ref": "source-012-amendment.md#owner-message-37-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R037"
+   ],
+   "required_harness": "The /session-handoff procedure (profile .claude/session-handoff-profile.md); context_budget_check on the handoff.",
+   "required_evidence": "docs/SESSION_HANDOFF.md seq 136 with the successor prompt; the seam's merge/accept records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force for the 2026-10-03 handoff (seq 136); pending independent verification.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R090",
+   "text": "Seq 136 resume harness: verify the model (/model; Fable 5.1); Gate 0 (cwd IS /root/project/nyc-buildability, the repo root; branch candidate/D-024-mrl-option-b; HEAD == origin; /mcp empty; memory under 70%); then read ONLY docs/SESSION_HANDOFF.md (seq 136; from branch task/session-handoff-2026-10-03b while that PR is open) and run `python tools/project_control.py status` (the ledger wins over prose) and `gh pr list`; report READY TO RESUME or BLOCKED; work only from repository evidence and do NOT re-read the product plan, the lane status files or the directive registry to re-derive the orientation the prompt carries.",
+   "source_ref": "source-013-amendment.md#owner-message-38-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R077",
+    "D-090-R078",
+    "D-090-R086",
+    "D-090-R089"
+   ],
+   "required_harness": "The session's first replies: Gate 0 results, the READY/BLOCKED line, and the first action taken.",
+   "required_evidence": "Session transcript 966ea9e4: Gate 0 evidence (repo root, branch, HEAD ea3133dc == origin, no MCP servers, memory ~15%), the handoff read from the integration head (PR #354 already merged), the READY/BLOCKED report.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done in-session on 2026-10-03 (pending independent verification).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R091",
+   "text": "Seq 136 next action, in order: (1) ask the owner in one short plain message for the yes on PR #349 (A-01 rule-coverage matrix) and PR #353 (A-04 slice 1); (2) meanwhile start the next unblocked items in parallel - the tiny Lane C playwright-flags PR, then Lane D D-12 slice 2, D-15 slice 2 and D-06 slice 2 ONE AT A TIME; after #349 merges, Lane C C-07; after #353 merges, Lane A A-05 and the E-03 rebase (#268); (3) one integrator PR refreshing docs/lanes/status/{A..E}.md from the PR record. Each under the lean lane process (R020 Option B merges after a different reviewer's PASS at the exact head and green CI; zoning-math merges only after the owner's yes per PR, R021). ORCHESTRATOR'S READING, not owner wording: 'ONE AT A TIME' means the three Lane D slices are built and merged sequentially because they edit the same workspace files; disjoint items may run in parallel.",
+   "source_ref": "source-013-amendment.md#owner-message-38-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R079",
+    "D-090-R083",
+    "D-090-R087",
+    "D-090-R020",
+    "D-090-R021",
+    "D-090-R085"
+   ],
+   "required_harness": "Dispatch records and PRs for exactly the listed items in the listed order; Lane A PRs carry 'needs owner's yes' and are not merged by robots.",
+   "required_evidence": "Session transcript 966ea9e4: the owner question in the first reply; the lane PRs and their review comments; the status-refresh PR.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force from 2026-10-03 for the seq 136 session.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
