@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 88,
+ "requirement_count": 89,
  "producer": "orchestrator",
- "updated_at": "2026-10-03T03:35:14+00:00",
+ "updated_at": "2026-10-03T04:50:43+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -2966,6 +2966,39 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Delivered in-session on 2026-10-03 before proceeding; pending independent verification.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R089",
+   "text": "Hand off at a proper seam ('at a proper seam do the handoff'): finish the in-flight seam (M0-T180 accepted, PR #348 merged, every returned robot result recorded; no half-landed build) before writing the handoff; and write the successor prompt so the next session spends few start-up tokens ('explan really well in the proment so it dont use alotnof startup tokens'): the prompt and the handoff carry the orientation (what is done, what is open, the exact next action, the files to read) so the successor does not re-derive it.",
+   "source_ref": "source-012-amendment.md#owner-message-37-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R037"
+   ],
+   "required_harness": "The /session-handoff procedure (profile .claude/session-handoff-profile.md); context_budget_check on the handoff.",
+   "required_evidence": "docs/SESSION_HANDOFF.md seq 136 with the successor prompt; the seam's merge/accept records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force for the 2026-10-03 handoff (seq 136); pending independent verification.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
