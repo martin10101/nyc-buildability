@@ -642,3 +642,16 @@ push), read the AssertionError payload from the failed log, delete the branch.
   serialization point was the one red CI check that blocked every merge — fix that first, then let reviews run while CI re-runs.
 - **generate-lockfile's bot commit message still says "M0-T019 security tree"** (template text in the workflow) — cosmetic;
   fix the template when the workflow is next touched (needs its own Tier B review).
+
+## Cloud session 2026-10-03c (966ea9e4; seq 137)
+- **A never-settling mocked promise hangs the hook timeout and reddens web-e2e before Playwright runs.** A vitest test whose
+  `vi.mock`'d adapter returns `new Promise(() => {})` leaves the loading-state hook timeout to fire; hold the resolver, settle
+  it, await, then unmount (#359).
+- **This gh build has no `gh pr checks --json`** — use `gh pr view N --json statusCheckRollup` (CheckRun .status/.conclusion,
+  StatusContext .state). `gh pr merge --match-head-commit` needs the full 40-char sha.
+- **`readonly_agent_guard` fails closed for any agent type not on the `.claude/agents/` roster** (general-purpose cannot write);
+  writing producers must be roster producer types.
+- **An integrator edit to a Lane C root file inside a lane-a PR can never pass the lane path check** (#349's `.gitignore` line) —
+  carry the hunk in a Lane C PR first, then merge the base into the lane-a branch.
+- **Identity after a base merge:** `git show --remerge-diff --format= <merge> | wc -l` == 0 and an unchanged
+  `git patch-id --stable` of the net diff against the MERGE BASE (a two-dot diff from the old base misleads).
