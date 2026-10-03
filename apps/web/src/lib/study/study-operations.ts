@@ -31,6 +31,7 @@ import {
   type StudyEntry,
   type StudyResult,
 } from "./study-entry";
+import { optionsInvalidatedBy, type StudyChange } from "./study-invalidation";
 import { validateStudyDocument } from "./study-validator";
 import {
   LOT_SELECTION_STATEMENT,
@@ -68,9 +69,6 @@ export interface CreateStudyInput {
   at: string;
   parcelChoices?: ParcelChoices | null;
 }
-
-/** Which options a committed change marks out of date. */
-type StaleMark = "all" | "none" | readonly string[];
 
 /** Source kinds of a city value: an edit is a new fact, never an in-place overwrite (site_fact.schema.json `editable`). */
 const CITY_SOURCE_KINDS: readonly SourceKind[] = ["city_dataset", "city_filing", "tax_map_computation"];
@@ -148,20 +146,23 @@ function finish(study: Study, stale: ReadonlySet<string>, parcelChoices: ParcelC
 /**
  * The one commit path: a new revision on top of `entry`, the stale flags
  * updated, the document validated. `nextStudy` carries the change; its revision
- * is replaced here. Module-private: every caller passes copied or frozen parts.
+ * is replaced here. The option-level §9 invalidation (which options the change
+ * marks out of date) is decided by study-invalidation.optionsInvalidatedBy, so
+ * the rule lives in one place (task C-06, plan M1-11). Module-private: every
+ * caller passes copied or frozen parts.
  */
 function commitStudyChange(
   entry: StudyEntry,
   nextStudy: Study,
   at: string,
-  markStale: StaleMark,
+  change: StudyChange,
   parcelChoices: ParcelChoices | null = entry.parcelChoices,
 ): StudyResult {
   const previous = entry.study.revision.number;
   const study: Study = { ...nextStudy, revision: { number: previous + 1, created_at: at, parent: previous } };
   const stale = new Set(entry.staleOptionIds);
-  if (markStale === "all") study.options.forEach((option) => stale.add(option.option_id));
-  else if (markStale !== "none") markStale.forEach((id) => stale.add(id));
+  const optionIds = study.options.map((option) => option.option_id);
+  for (const id of optionsInvalidatedBy(optionIds, change)) stale.add(id);
   return finish(study, stale, parcelChoices);
 }
 
@@ -217,7 +218,12 @@ export function addOption(entry: StudyEntry, option: NewOption, at: string): Stu
   }
   const added = copyJson(optionOf(optionId, option.name, option.inputs));
   if (added === null) return nonFinite();
-  return commitStudyChange(entry, { ...entry.study, options: [...entry.study.options, added] }, at, [optionId]);
+  return commitStudyChange(
+    entry,
+    { ...entry.study, options: [...entry.study.options, added] },
+    at,
+    { kind: "option", optionId },
+  );
 }
 
 /** A copy of one option's inputs under a new id and name; the source option is untouched. */
@@ -237,7 +243,7 @@ function replaceOption(
   optionId: string,
   change: (option: StudyOption) => StudyOption,
   at: string,
-  markStale: StaleMark,
+  studyChange: StudyChange,
 ): StudyResult {
   const index = entry.study.options.findIndex((option) => option.option_id === optionId);
   if (index < 0) return unknownOption();
@@ -246,12 +252,18 @@ function replaceOption(
   if (next === null) return nonFinite();
   if (sameJson(next, current)) return ok(entry);
   const options = entry.study.options.map((option, position) => (position === index ? next : option));
-  return commitStudyChange(entry, { ...entry.study, options }, at, markStale);
+  return commitStudyChange(entry, { ...entry.study, options }, at, studyChange);
 }
 
 /** A new display name. Results do not depend on the name, so nothing goes out of date. */
 export function renameOption(entry: StudyEntry, optionId: string, name: string, at: string): StudyResult {
-  return replaceOption(entry, optionId, (option) => optionOf(option.option_id, name, optionInputsOf(option)), at, "none");
+  return replaceOption(
+    entry,
+    optionId,
+    (option) => optionOf(option.option_id, name, optionInputsOf(option)),
+    at,
+    { kind: "none" },
+  );
 }
 
 /**
@@ -269,7 +281,7 @@ export function updateOptionInputs(
     optionId,
     (option) => optionOf(option.option_id, option.name, { ...optionInputsOf(option), ...patch }),
     at,
-    [optionId],
+    { kind: "option", optionId },
   );
 }
 
@@ -277,7 +289,7 @@ export function updateOptionInputs(
 export function selectOption(entry: StudyEntry, optionId: string, at: string): StudyResult {
   if (!entry.study.options.some((option) => option.option_id === optionId)) return unknownOption();
   if (entry.study.selected_option_id === optionId) return ok(entry);
-  return commitStudyChange(entry, { ...entry.study, selected_option_id: optionId }, at, "none");
+  return commitStudyChange(entry, { ...entry.study, selected_option_id: optionId }, at, { kind: "none" });
 }
 
 /**
@@ -306,7 +318,12 @@ export function setLotSelection(
   if (sameJson(nextLots, entry.study.lots) && sameJson(nextSelection, entry.study.lot_selection)) {
     return ok(entry);
   }
-  return commitStudyChange(entry, { ...entry.study, lots: nextLots, lot_selection: nextSelection }, at, "all");
+  return commitStudyChange(
+    entry,
+    { ...entry.study, lots: nextLots, lot_selection: nextSelection },
+    at,
+    { kind: "site", input: "lot_selection" },
+  );
 }
 
 function fromCity(fact: SiteFact): boolean {
@@ -334,7 +351,12 @@ export function upsertSiteFact(entry: StudyEntry, fact: SiteFact, at: string): S
     }
   }
   const nextFacts = index >= 0 ? facts.map((existing, position) => (position === index ? next : existing)) : [...facts, next];
-  return commitStudyChange(entry, { ...entry.study, site: { ...entry.study.site, facts: nextFacts } }, at, "all");
+  return commitStudyChange(
+    entry,
+    { ...entry.study, site: { ...entry.study.site, facts: nextFacts } },
+    at,
+    { kind: "site", input: next.key },
+  );
 }
 
 /** A per-fact edit: which displayed fact, and the value the architect typed. */
@@ -400,7 +422,12 @@ export function removeSiteFact(entry: StudyEntry, factId: string, at: string): S
     return studyFailure("unknown_fact", "This site fact is not part of the study.");
   }
   const nextFacts = facts.filter((fact) => fact.fact_id !== factId);
-  return commitStudyChange(entry, { ...entry.study, site: { ...entry.study.site, facts: nextFacts } }, at, "all");
+  return commitStudyChange(
+    entry,
+    { ...entry.study, site: { ...entry.study.site, facts: nextFacts } },
+    at,
+    { kind: "site", input: factId },
+  );
 }
 
 /**
@@ -412,7 +439,7 @@ export function setParcelChoices(entry: StudyEntry, choices: ParcelChoices, at: 
   const next = copyJson(choices);
   if (next === null) return nonFinite();
   if (sameJson(next, entry.parcelChoices)) return ok(entry);
-  return commitStudyChange(entry, entry.study, at, "all", next);
+  return commitStudyChange(entry, entry.study, at, { kind: "site", input: "parcel_choices" }, next);
 }
 
 /**
