@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/compare_rows.schema.json",
+  "title": "Compare rows",
+  "description": "v1 contract (task C-09, plan docs/PRODUCT_PLAN_CURRENT_2026-09-28.md M1-18 'Compare options side by side'; directive D-090; derived lane plan docs/lanes/PARALLEL_BUILD_PLAN.md) for the side-by-side comparison TABLE of N options of ONE study at ONE revision. Every option is one column; every metric is one ROW, and that row carries exactly ONE cell per option in the caller's option order, so the SAME ordered row set is present for EVERY option (plan M1-18 'Identical rows'). A cell is never missing and never blank: it is either available (a value with its unit and label, carrying the results document's own Zoning Resolution sections, sources and measurement where it had them) or not_available (the results document's OWN reason and reason_kind, copied verbatim - never a value or a sentence invented by the comparison). The cell vocabulary is the results contract's own: an available cell mirrors an answer value, a not_available cell IS results.schema.json#/$defs/not_available. A common_scale block gives the one scale at which every option's lot plan fits, derived from the options' geometry extents (plan M1-18 'plans at a common scale'), or not_available with the reason when any option has no geometry. Row VALUES are straight copies from the per-option results documents (results.schema.json); the only numbers the comparison itself computes are the scale EXTENTS (bounding-box width/height). No legal value is recomputed. The duplicates block carries the A-05 'merge or explain' record(s) for options the generator found identical; this contract pins only the option_ids the record ties together and carries the rest of A-05's record opaquely (A-05 / app.scenario.three_answers owns that vocabulary).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "study_id",
+    "revision",
+    "options",
+    "rows",
+    "common_scale",
+    "duplicates"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published compare_rows contract versions. 1.0.0 = task C-09 initial shape (D-090). New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "study_id": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "The one study every compared option belongs to. Every per-option results document must declare this study_id, or the builder fails closed (a comparison across studies is meaningless)."
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The one study revision every compared option was computed for (study.revision.number). Every per-option results document must declare this revision, or the builder fails closed."
+    },
+    "options": {
+      "type": "array",
+      "minItems": 2,
+      "description": "The option identity columns, in the caller's order. A comparison needs at least two options. Each entry is the identity of ONE results document; option_id values are unique across the array (the builder fails closed on a repeated option).",
+      "items": { "$ref": "#/$defs/option_identity" }
+    },
+    "rows": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The metric rows in a fixed catalogue order (catalogue_order ascending, matching the index in the array). Every row carries exactly one cell per option in the SAME order as 'options', so every metric is present for every option (plan M1-18 'Identical rows').",
+      "items": { "$ref": "#/$defs/row" }
+    },
+    "common_scale": {
+      "description": "The one scale at which every option's lot plan fits (plan M1-18 'plans at a common scale'): a single fits_extent (the largest option width and the largest option height, in feet) so each option's plan drawn at that scale sits inside the same box, plus each option's own extent. not_available with a reason when ANY option's geometry is not_available (no lot outline); the reason names the first such option and carries that option's geometry reason_kind.",
+      "oneOf": [
+        { "$ref": "#/$defs/common_scale_available" },
+        { "$ref": "results.schema.json#/$defs/not_available" }
+      ]
+    },
+    "duplicates": {
+      "type": "array",
+      "description": "The A-05 'merge or explain' record(s) for options the three-answer generator found identical (plan A-05 'No duplicate options'). Empty when the caller supplied none. Each record is carried through verbatim (the builder never computes the identity itself - that is A-05's identity key, app.scenario.three_answers); this contract pins only option_ids so the comparison can tie the record to its columns.",
+      "items": { "$ref": "#/$defs/duplicate_record" }
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key."
+    }
+  },
+  "$defs": {
+    "option_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["option_id", "revision", "results_id", "computed_at"],
+      "description": "One option column's identity, copied from its results document (plan section 9 'Option B · revision 7 · date').",
+      "properties": {
+        "option_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "results_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "computed_at": { "$ref": "common.schema.json#/$defs/date_time" }
+      }
+    },
+    "row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "label", "catalogue_order", "cells"],
+      "description": "One metric row: a stable key, a human label, its fixed catalogue position, and one cell per option (same order as the document's options). cells has at least two entries (a comparison has at least two options); the builder emits exactly one cell per option.",
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Stable machine key of the metric, drawn from the results document, e.g. floor_area_allowance, permitted_building_height, building_option_floor_area, shortfall, unit_estimate, floors_fit, floor_to_floor_ft, status, out_of_date."
+        },
+        "label": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "catalogue_order": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The row's fixed position in the catalogue; rows are emitted in ascending catalogue_order."
+        },
+        "cells": {
+          "type": "array",
+          "minItems": 2,
+          "description": "One cell per option, in the document's option order.",
+          "items": { "$ref": "#/$defs/cell" }
+        }
+      }
+    },
+    "cell": {
+      "description": "One option's value for one metric: available (a value) or not_available (the results document's own reason). Never missing, never blank (plan section 5 'Not available - reason').",
+      "oneOf": [
+        { "$ref": "#/$defs/cell_available" },
+        { "$ref": "results.schema.json#/$defs/not_available" }
+      ]
+    },
+    "cell_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "unit", "label"],
+      "description": "An available cell. value is a straight copy from the results document (a number, a short joined status string, or the out_of_date boolean); unit is the results unit vocabulary or null for a non-dimensional value; label is the value's own label where the source had one, else the row label. The optional measurement, zr_sections and sources carry the results document's provenance for the value where it had them (CLAUDE.md principle 2); note carries a short qualifier such as the out_of_date reason.",
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "value": {
+          "type": ["number", "string", "boolean"],
+          "description": "The value as read from the results document: a number (e.g. floor area, height, floors, units), a short status string (the status strip joined with ' · '), or the out_of_date boolean."
+        },
+        "unit": {
+          "description": "The results unit vocabulary, or null for a non-dimensional value (a status string, the out_of_date flag).",
+          "anyOf": [
+            { "$ref": "results.schema.json#/$defs/unit" },
+            { "type": "null" }
+          ]
+        },
+        "label": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "measurement": {
+          "description": "The weakest-input measurement label of the answer this value came from (plan section 4), where the source carried one.",
+          "anyOf": [
+            { "$ref": "site_fact.schema.json#/$defs/measurement_known" },
+            { "type": "null" }
+          ]
+        },
+        "zr_sections": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The Zoning Resolution sections the source value cited (copied verbatim), where it had any.",
+          "items": { "$ref": "results.schema.json#/$defs/zr_section" }
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The sources the source value carried (copied verbatim), where it had any.",
+          "items": { "$ref": "results.schema.json#/$defs/value_source" }
+        },
+        "note": {
+          "description": "A short qualifier copied from the results document, e.g. the out_of_date reason; null when none.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "common_scale_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "units", "fits_extent", "per_option"],
+      "description": "A common scale that fits every option's lot plan. fits_extent is the largest option width and the largest option height in feet; a plan drawn to fits_extent contains every option's plan. per_option carries each option's own extent so a surface can show the relative sizes.",
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "units": { "type": "string", "const": "feet" },
+        "fits_extent": { "$ref": "#/$defs/extent" },
+        "per_option": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["option_id", "crs", "width_ft", "height_ft"],
+            "properties": {
+              "option_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+              "crs": {
+                "type": "string",
+                "enum": ["local_feet", "EPSG:2263"],
+                "description": "The CRS of this option's geometry (results geometry.crs). Extents are sizes (width/height) and are comparable across options regardless of each local-feet origin."
+              },
+              "width_ft": { "type": "number", "exclusiveMinimum": 0 },
+              "height_ft": { "type": "number", "exclusiveMinimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "extent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width_ft", "height_ft"],
+      "description": "A plan extent in feet (lot-outline bounding box).",
+      "properties": {
+        "width_ft": { "type": "number", "exclusiveMinimum": 0 },
+        "height_ft": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "duplicate_record": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["option_ids"],
+      "description": "The A-05 'merge or explain' record for a set of options the three-answer generator found identical. OPAQUE by design (additionalProperties true): A-05 (app.scenario.three_answers) owns the full record shape and its identity key; the compare contract pins ONLY option_ids so the comparison can tie the record to the columns it is about. The builder carries the record through verbatim and never recomputes the identity.",
+      "properties": {
+        "option_ids": {
+          "type": "array",
+          "minItems": 2,
+          "description": "The option_id values A-05 found identical; every one must be an option in this comparison (the builder fails closed otherwise).",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        }
+      }
+    }
+  }
+}

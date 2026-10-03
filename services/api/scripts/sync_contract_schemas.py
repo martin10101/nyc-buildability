@@ -69,6 +69,10 @@ STUDY_SCHEMA_FILES = (
     # Lane C evaluator channel (task C-07, plan M1-08). $refs site_fact (for
     # the measurement/source vocabulary) and common, both bundled above.
     "evaluator_inputs.schema.json",
+    # Lane C compare backend (task C-09, plan M1-18). $refs results (not_available,
+    # unit, zr_section, value_source), site_fact (measurement_known) and common,
+    # all bundled above.
+    "compare_rows.schema.json",
 )
 
 SCHEMA_FILES = PROFILE_SCHEMA_FILES + STUDY_SCHEMA_FILES
