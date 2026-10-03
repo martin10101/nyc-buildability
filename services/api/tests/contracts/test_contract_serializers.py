@@ -402,7 +402,9 @@ def test_serializer_names_are_the_package_reexports() -> None:
 
 
 def test_study_contracts_is_the_proven_non_serializer_submodule() -> None:
-    assert _non_serializer_contract_modules() == {"study_contracts"}
+    # The contract-validation modules (study_contracts C-03, evaluator_inputs C-07)
+    # never reach the provenance serializer; they are the proven exempt submodules.
+    assert _non_serializer_contract_modules() == {"study_contracts", "evaluator_inputs"}
 
 
 def test_a_contracts_submodule_that_reaches_the_serializer_is_not_exempt(
