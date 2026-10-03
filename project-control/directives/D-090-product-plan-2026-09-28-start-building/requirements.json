@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 91,
+ "requirement_count": 98,
  "producer": "orchestrator",
- "updated_at": "2026-10-03T14:53:09+00:00",
+ "updated_at": "2026-10-03T18:39:53+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -3073,6 +3073,249 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "In force from 2026-10-03 for the seq 136 session.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R092",
+   "text": "Approval to merge PR #349 (A-01 rule-coverage matrix) and PR #353 (A-04 slice 1, three answers on the 215-16 Northern benchmark) under the existing review and CI requirements ('I approve merging #349 and #353 under the existing review and CI requirements'), with conditions: keep the production switches off (LANE_A_ENABLED stays off), preserve the benchmark's stated assumptions and zoning-lot limitations, and 'This does not authorize activation.' ORCHESTRATOR'S READING, not owner wording: this is the per-PR yes that R021/R029 require for these two PRs only; 'existing requirements' = Option B (R020): PASS at the exact reviewed content, all checks green at the merge head, --match-head-commit.",
+   "source_ref": "source-014-amendment.md#owner-message-39-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R021",
+    "D-090-R029",
+    "D-090-R020",
+    "D-090-R048",
+    "D-090-R059"
+   ],
+   "required_harness": "The two merges with --match-head-commit after an identity proof (remerge-diff empty; net-diff patch-id unchanged vs the reviewed content) and green CI; LANE_A_ENABLED untouched; no activation.",
+   "required_evidence": "Session transcript 966ea9e4; gh merge records for #349 and #353; the PR review comments.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Approved 2026-10-03 (message 39). Applies to #349 and #353 only.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R093",
+   "text": "Proceed with a bounded repair of the recurring Windows supervisor-bridge CI failures in a SEPARATE PR ('Proceed with a bounded repair of the recurring Windows supervisor failures in a separate PR'): investigate whether the cause is test timing or a real supervisor defect, and fix the cause; run it alongside other eligible work where possible. ORCHESTRATOR'S READING, not owner wording: contracted as an orchestrator packet under /deficit-convergence (DB-111 is the frozen evidence); if the cause is in tools/agent_supervisor/** the fix voids the M0-T179 certification and takes the D-091 recertification path - a recorded cost, not a bar; the deferral of Codex/loop COMMISSIONING (R084) is unchanged.",
+   "source_ref": "source-014-amendment.md#owner-message-39-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R084",
+    "D-090-R019"
+   ],
+   "required_harness": "One ledger task citing D-090-R093/R094 with the DB-111 evidence, a root-cause record (timing vs defect), the fix, and independent review; a separate PR from any lane work.",
+   "required_evidence": "Session transcript 966ea9e4; the repair task packet, its PR and gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Authorized 2026-10-03 (message 39). Not started in session 966ea9e4 (handoff rule); successor's next action.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R094",
+   "text": "In the supervisor repair, preserve the safety and concurrency assertions; do not skip tests, weaken checks, or add retries merely to obtain green CI ('Preserve the safety and concurrency assertions; do not skip tests, weaken checks, or add retries merely to obtain green CI.').",
+   "source_ref": "source-014-amendment.md#owner-message-39-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R093"
+   ],
+   "required_harness": "The repair diff: no test skipped or deleted, no assertion weakened, no retry added for green; the reviewer checks each explicitly.",
+   "required_evidence": "Session transcript 966ea9e4; the repair PR diff and its review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force from 2026-10-03 for the R093 repair.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R095",
+   "text": "Decision on the dataset id on the face (D-2 remainder, DB-112): move the technical dataset ID behind the Source disclosure; keep a readable source name and a clear explanation of what needs checking on the main screen; retain the exact identifier, version and source link in the disclosure where available ('Move the technical dataset ID behind the Source disclosure. Keep a readable source name and a clear explanation of what needs checking on the main screen. Retain the exact identifier, version and source link in the disclosure where available.'). ORCHESTRATOR'S READING, not owner wording: applies to the transit/parking check-needed `detail` and `missing_source` prose (Lane B) and, if needed, the contract so the id/version/link travel in `source` for the Source disclosure (Lane C), with the fixtures and the Lane C API test updated to match; Lane D shows the disclosure.",
+   "source_ref": "source-014-amendment.md#owner-message-39-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R082",
+    "D-090-R044"
+   ],
+   "required_harness": "Request D-2 remainder closed by Lane B / Lane C PRs: no dataset id in the face prose; name + explanation on the face; id, version, link in the Source disclosure; fixtures match the route.",
+   "required_evidence": "Session transcript 966ea9e4; the D-2 request State; the PRs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Decided 2026-10-03 (message 39). Not started in session 966ea9e4 (handoff rule); successor's next action.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R096",
+   "text": "After the approved merges, continue C-07, A-05 and the E-03 rebase under the existing rules ('After the approved merges, continue C-07, A-05 and the E-03 rebase under the existing rules.').",
+   "source_ref": "source-014-amendment.md#owner-message-39-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R092",
+    "D-090-R054",
+    "D-090-R087",
+    "D-090-R021"
+   ],
+   "required_harness": "Lane C C-07 after #349 is merged; Lane A A-05 and the E-03 rebase (#268) after #353 is merged; each under the lean lane process; Lane A merges still need a per-PR yes (R021).",
+   "required_evidence": "Session transcript 966ea9e4; the lane PRs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force from 2026-10-03. Successor's next actions after the merges.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R097",
+   "text": "The three decisions (R092, R093/R094, R095) are settled; bring the owner only new blockers or decisions that actually require the owner's input ('These three decisions are settled; bring me only new blockers or decisions that actually require my input.').",
+   "source_ref": "source-014-amendment.md#owner-message-39-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R061",
+    "D-090-R060"
+   ],
+   "required_harness": "Session replies and handoffs: no re-asking of the three settled items; owner questions limited to new blockers / decisions.",
+   "required_evidence": "Session transcripts from 966ea9e4 onward; the handoff's owner-questions section.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force from 2026-10-03.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R098",
+   "text": "Hand off now ('/session-handoff' invoked with the decisions as the reason): land the session per the handoff skill and the repository profile - no new implementation unit after this message; the approved merges (#349, #353) are landed as existing reviewed work; the supervisor repair (R093), the D-2 remainder (R095) and C-07 / A-05 / E-03 (R096) are the successor's next actions; write the seq-138 handoff with a token-lean successor prompt (R089).",
+   "source_ref": "source-014-amendment.md#owner-message-39-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R037",
+    "D-090-R089",
+    "D-090-R092"
+   ],
+   "required_harness": "The /session-handoff procedure: HANDOFF READY with the handoff path, saved commit shas, push status, the clean-start command and the COPY INTO THE NEW SESSION prompt.",
+   "required_evidence": "Session transcript 966ea9e4; docs/SESSION_HANDOFF.md seq 138; the handoff PR.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Invoked 2026-10-03 (message 39).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
