@@ -1,132 +1,61 @@
-# SESSION HANDOFF — seq 135 (2026-10-03 ~00:45 UTC; owner-invoked /session-handoff, no reason given; Claude Code session 08a1e891 / 01AjePR92H83Yc5jH81uya6d, claude-opus-5-5; directives D-090, D-091)
+# SESSION HANDOFF — seq 136 (2026-10-03 ~05:00 UTC; owner-invoked /session-handoff, reason: "at a proper seam do the handoff please explan really well in the proment so it dont use alotnof startup tokens"; Claude Code session ab961de0 / 01AjePR92H83Yc5jH81uya6d, claude-fable-5-1; directives D-090 source-010..012)
 
-Orientation only. The ledger (`python tools/project_control.py status`) and `project-control/` WIN
-over this prose. Seq 134 is in git (#327).
+Orientation only. The ledger (`python tools/project_control.py status`) and `project-control/` WIN over this prose. Seq 135 is in git (#347).
 
 ## Identity (live at generation)
-- **Machine:** the DigitalOcean droplet (Ubuntu, 4 CPU / 8 GB), not the owner's PC.
-- **Repos:** main checkout `/root/project/nyc-buildability` = origin `candidate/D-024-mrl-option-b` @ `15b4d656` before this handoff PR
-  (written in worktree `/root/project/w-handoff4`, branch `task/session-handoff-2026-10-03`).
-- **CLIs:** claude **2.1.288** at `/usr/bin/claude` (certified by M0-T179). Host auto-update is **OFF** (`DISABLE_AUTOUPDATER=1` in
-  `~/.claude/settings.json`, owner-requested on 2026-10-03). codex-cli **0.157.0** at `/opt/nyc-codex` (built from the admitted
-  `tools/codex_cli/package-lock.json`), symlinked at `/usr/local/bin/codex`. Codex is **not signed in** yet.
-- **Running:** no loop, no supervisor process, no subagent. Memory peaked at 16% (limit 70%).
-- **Server venv:** `/root/project/lanes-runtime/venv/bin/{python,ruff}`; run api tests from `services/api` (stale `app` copy in site-packages).
+- **Machine:** the DigitalOcean droplet (4 CPU / 8 GB), not the owner's PC. Peak memory this session 16 %; peak 7 robots at once (cap 10, D-090-R085); 13 robot runs in all.
+- **Repo:** `/root/project/nyc-buildability` = origin `candidate/D-024-mrl-option-b` @ `1daaeeca` before this handoff PR (written in worktree `/root/project/w-handoff5`, branch `task/session-handoff-2026-10-03b`). Primary checkout clean.
+- **CLIs:** claude 2.1.288 (`/usr/bin/claude`, host auto-update off). codex 0.157.0 installed, not signed in — the Codex/loop track is **DEFERRED** by the owner (D-090-R084).
+- **Running:** nothing — no loop, no supervisor, no live subagent. `campaign_continuity --status` exits 1 (orientation unavailable) → use the ledger + git.
+- **Server venv:** `/root/project/lanes-runtime/venv/bin/{python,ruff}`; run api tests from `services/api` cwd.
 
-## Owner decisions in force (new this session)
-- **D-090 source-008–009** (#328, #340): resume rules (R077–R079); explain the loop steps and the open items in depth (R080, R081); **R082:
-  the website says less and shows exact information, not warnings or long paragraphs.** R082 does not by itself remove the tax-lot-only
-  warning (R030–R033) or the settled capacity wording (R038); whether that warning shrinks to a short "Tax lot only" tag is an open owner
-  question.
-- **D-091 source-002 / R009** (#343): the owner approved amending the activation PIN so that a **proved** systemd control group counts as
-  containment alongside the Windows Job Object.
-- Standing: Option B merges (a different agent's PASS at the exact head, all CI green, `--match-head-commit`); `LANE_A_ENABLED` off;
-  zoning-math merges need the owner's yes; capacity wording settled; at most 5 robots, memory under 70%.
-- Owner feedback: don't narrate the record-keeping ("word for word") in replies; just say what happens next.
+## Owner decisions in force (new this session; D-090 source-010..012)
+- **R083** start building. **R084** Codex/loop commissioning (M0-T175, the B-027 PIN text, Codex sign-in, OD-B) deferred, not withdrawn — D-091 stays active; start nothing there until the owner says so. **R085** up to 10 robots at once (replaces the five-robot line); memory under 70 % (R076). **R086** seq-135 resume harness. **R087** the 2026-10-03 plan approved ("Ok go on") — approval to START builds; zoning-math merges still need the owner's yes per PR. **R088** plan given first. **R089** hand off at a proper seam with a token-lean successor prompt.
+- Standing: Option B merges (a different agent's PASS at the exact head, all CI green, `--match-head-commit`); `LANE_A_ENABLED` off; capacity wording settled (R038); never PR #241; expansion §2 hold; never pass `model:`; no local npm/node; dependency security has no waiver.
 
-## Done this session (each merged after independent review and green CI)
-- **Product, all behind default-off flags:**
-  - #326 D-12 hidden-issues window;
-  - #329 W5 mount of the W2–W4 routes;
-  - #331 D-15 parity window;
-  - #332 site_fact 1.1.0 `version_check`;
-  - #334 B-06 attach;
-  - #335 B-3 wiring;
-  - #336 D-04 slice 3 (version status in the lot panel);
-  - #337 PLUTO version probe;
-  - #338 B-4 probe wiring (fail-closed `version_unknown`; 1 attempt, 5 s; 60 s negative cache).
-- **Records:** #328 and #340 (D-090 captures), #343 (D-091 R009), #333 and #339 (notes; DB-103, DB-104).
-- **Loop, D-091:**
-  - #330 M0-T175 checklist (interim; the task stays in progress);
-  - #341 blocker **B-027** (the Linux loop could not start a worker: Windows-only containment gate plus a POSIX self-kill), via deficit
-    convergence;
-  - #342 contract;
-  - **#344 M0-T177**, the systemd control-group containment proof plus the self-kill fix. Its real-unit kill test passed in CI;
-  - **#345 M0-T178**, the equal-model refusal;
-  - **#346 M0-T179**, the Linux recertification superseding M0-T174. It admits claude 2.1.288; the certified subtree is `019ecf1f`.
+## Done this session (all merged after independent review + green CI)
+- **M0-T180 ACCEPTED** (`f81c3b86`; PR **#348** merged `635afba1`): web dependency-security repair. `eslint-config-next` — the only path to the unfixable `braces` advisory GHSA-vfj7-8cjw-p6xm — removed; native flat ESLint config over the admitted set `@eslint/js 9.39.5`, `typescript-eslint 8.70.1`, `eslint-plugin-react-hooks 7.1.1`, `globals 17.12.0`; lock regenerated by the generate-lockfile workflow (run 37095335970, bot `4844b56b`); four one-line behavior-identical lint corrections under a recorded scope correction; gates G0/G2/G3/G4/G5 PASS (identity `840e30a0`); DCV PASS; **B-028 resolved**. Every PR is green again.
+- **#347** seq-135 handoff + lessons merged (`ac6a0d0a`).
+- **#350 D-03** R082 "say less" pass on the hidden-issues / parity / lot windows (pinned wording byte-identical; face-budget tests) merged `45e5bf6f`.
+- **#351 C-06 slice 1** in-memory invalidation rules (fail-closed dependency table; late-response drop; no persistence) merged `fcfe2eef`.
+- **#352 B-11 slice 2** neighbours' existing floor area (B-05 source order; recorded lot-1 DOB fixtures; never DOF area; never a capacity number; Lane C request B-5; new owner question Q-B11-3) merged `1daaeeca`.
+- Records: D-090 source-010/011/012 + R083–R089; lessons in `docs/WORKING_KNOWLEDGE.md` "Cloud session 2026-10-03b"; DB-107..110; two CODING_RULES lines.
 
 ## Open PRs
-- #268 E-03 DXF (draft; waits on A-04).
-- #241: never merge.
-- #64: old.
+- **#349 A-01** rule-coverage matrix (45 districts × 18 columns, provenance-pinned to the ZR 23-21/23-22 snapshots; 918 rules tests) — reviewed PASS; base merged in; **waits for the owner's yes** (Lane A path).
+- **#353 A-04 slice 1** three answers on the 215-16 Northern benchmark (20,150 / 24,180 sq ft; one ZR 23-432 lookup; unit estimate 29 with its formula; the 680 factor read from the rule table; draft; flag off) — reviewed PASS; base merged in; **waits for the owner's yes**.
+- #268 E-03 DXF (draft; rebase after #353). #241 never. #64 old.
 
-## Blockers and owner steps (plain words)
-1. **PIN text (B-027 stays open until it is merged).**
-   - The G5-approved text is at `/root/nyc-loop-drafts/PIN-amendment-draft.md` (sha256 `417e1f70…`).
-   - The prepared branch is `control/D-091-R009-pin-amendment`, in worktree `/root/project/w-pin-amend`.
-   - The orchestrator's edit is refused by auto-mode ("Security Weaken"), so the owner applies it in a terminal, or explicitly asks the
-     orchestrator to run the one append-commit-push line.
-   - Then: a reviewer confirms the text matches, merge, resolve B-027.
-2. **Commissioning (M0-T175):** all of it is owner-typed, in the DigitalOcean web console, because `!` lines in the owner's app don't run.
-   - Codex sign-in: `codex login --device-auth`.
-   - The root config and `model_selection.toml`.
-   - The orchestrator runs `record-manifest`, `verify-controller` and `doctor`.
-   - Install the systemd unit, start it, and approve the first prompt digest.
-   - The drafts in `/root/nyc-loop-drafts/` predate M0-T177: **refresh the unit draft from the hardened template** (KillMode, ExitType,
-     SendSIGKILL, TimeoutStopSec, ProtectControlGroups; START_CMD must exec python directly), and contract a small canary ledger task
-     first.
-3. **OD-B, the combining model:** optional; the recommendation is Opus 5.5. The model must differ from the Claude reviewer model (now
-   enforced in code) and use canonical ids only (DB-105).
-4. **Product questions:**
-   - Q1/Q12: the pilot lot and a licensed checker.
-   - Lane A GO for the R6B math engine (merges still need the owner's yes).
-   - The comparables "similar" rule.
-   - Q4: the dashboard as the only entry.
-   - Q8: the section view under the hold.
-   - Q10: the architect mockup review.
-   - R082: should the tax-lot warning become a short tag?
-
-## NEW: dependency-security incident (found at handoff; not started)
-- Since about 2026-10-03 01:00 UTC, `web-dependency-security` fails on **every** PR. The cause is the new advisory **GHSA-vfj7-8cjw-p6xm**
-  (`braces`, high severity; npm audit shows the range `*`, i.e. all versions). It enters through a dev chain: `eslint-config-next` →
-  `@next/eslint-plugin-next` → `fast-glob` → `micromatch` → `braces` (5 high findings). The audit suggests `eslint-config-next@14.2.35`,
-  which is a breaking change. First seen on PR #347, run 37088548221.
-- The policy has no waiver, so **no PR can merge until it is fixed**. That includes this handoff (#347). Never merge with a red check.
-
-## Follow-ups recorded
-- DB-104: before enabling the study read in production: B-001 sign-in and a study-route concurrency bound.
-- DB-105: canonical model ids.
-- DB-106: `preflight.py:126` session isolation, at the next recert.
-- Requests B-1, B-3 and B-4 are done; B-2 (study-level transit/parking) is owner-decided W6.
+## Owner questions (plain words; none decided)
+1. **Yes to merge #349 and #353?** Both reviewed PASS, both behind the off switch, no compliance claims; merging them does not turn anything on.
+2. Should the always-visible **tax-lot-only warning shrink to a short tag** under your "say less" rule? (kept byte-identical so far)
+3. **B-11:** Q-B11-1 confirm the comparables "similar type and size" filter; Q-B11-2 which official 485-x source and who confirms eligibility; Q-B11-3 record a block-wide neighbour set, or keep the touching lots only?
+4. Still open from seq 135: Q1/Q12 pilot lot + licensed checker; Q4 dashboard as the only entry; Q8 section view vs the hold; Q10 architect mockup review; E-02 WeasyPrint needs a Render runtime decision. Deferred with Codex: OD-B combiner, B-027 PIN text.
 
 ## Standing restrictions
-- Tier D / Section 20 stops.
-- Never merge #241. The expansion §2 hold stands.
-- Commissioning, the PIN amendment and credentials are owner-typed.
-- Never pass `model:`. Dependency security: no waiver.
-- No local npm or node for web (CI is the web executor).
-- Never run whole RealProcess classes or the whole `test_agent_supervisor_model_chain.py` on this host.
-- Any `tools/agent_supervisor/**` change voids the M0-T179 certification.
-- Lessons are in `docs/WORKING_KNOWLEDGE.md`, "Cloud session 2026-10-03".
+Tier D / Section 20 stops; never merge #241; expansion §2 hold; commissioning, the PIN amendment and credentials are owner-typed (and deferred, R084); never pass `model:`; dependency security: no waiver; no local npm/node; never run whole RealProcess classes here; any `tools/agent_supervisor/**` change voids the M0-T179 certification.
+
+## Authoritative files (smallest set)
+`project-control/state.json`; `project-control/tasks/M0-T180.json`; `project-control/directives/D-090-product-plan-2026-09-28-start-building/{requirements,manifest,verification}.json`; `project-control/blockers/B-028-*.json`; `docs/lanes/queues/*.md` + `docs/lanes/status/*.md` (status files are PARTLY STALE — the PR record wins); `docs/DISCOVERY_BACKLOG.md`; `docs/WORKING_KNOWLEDGE.md`.
 
 ## EXACT NEXT ACTION (successor)
-1. Gate 0, then READY TO RESUME or BLOCKED. Run `gh pr list`. **If #347 is still open, read this handoff from branch
-   `task/session-handoff-2026-10-03`.**
-1a. **The dependency-security incident comes first:**
-   - invoke `/dependency-security`;
-   - confirm the advisory's affected and patched ranges (GHSA, registry);
-   - contract a Lane C (or orchestrator) fix that removes or replaces the vulnerable dev chain with an admitted, 7-day-old, advisory-free set
-     (new packages need a G5 provenance review), or wait for an upstream patch;
-   - then get #347 green and merge it, and re-run CI on any other open PR.
-2. If the owner has pushed `control/D-091-R009-pin-amendment`:
-   - a reviewer (security-reviewer) confirms the appended text equals the signed-off draft (sha `417e1f70…`) and that nothing else changed;
-   - merge;
-   - resolve B-027 in a control PR.
-3. Prepare commissioning:
-   - contract a tiny canary ledger task (one safe file, its own worktree);
-   - refresh `/root/nyc-loop-drafts/` (the hardened unit; START_CMD with the canary packet, the manifest and `--codex-executable
-     /opt/nyc-codex/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex`);
-   - give the owner one numbered list for the DigitalOcean console.
-4. Otherwise, lane work that is not owner-blocked: the R082 text cleanup pass (Lane D) on the hidden-issues, parity and lot-panel windows.
+1. Gate 0 → READY TO RESUME or BLOCKED. `gh pr list`. If the handoff PR from `task/session-handoff-2026-10-03b` is still open, read this file from that branch and merge it when green (a reviewer PASS is on it).
+2. Ask the owner, in ONE short plain message, for the yes on #349 and #353 (their CI is already re-run on the new base).
+3. Meanwhile start the next unblocked items with parallel builders (lean lane process, ≤ 10 robots): a tiny Lane C PR adding `INTERNAL_HIDDEN_ISSUE_FLAGS_UI_ENABLED` and `INTERNAL_PARITY_UI_ENABLED` to `apps/web/playwright.config.ts`; then Lane D **D-12 slice 2** (flag-on e2e for the hidden-issues window), **D-15 slice 2** (transit/parking panel over the mounted W3 route) and **D-06 slice 2** (keep/remove step) ONE AT A TIME (they share files); after #349 merges, Lane C **C-07** (labelled input channel); after #353 merges, Lane A **A-05** (no duplicate options / template sentences) and the E-03 rebase. Lane B has nothing unblocked without owner answers.
+4. One integrator PR refreshing `docs/lanes/status/{A..E}.md` from the PR record (they still call merged work "in review").
+5. Each build: lane branch off the merged base → producer in an isolated worktree → a DIFFERENT read-only reviewer posts PASS at the exact head and verifies the PR body → merge base in if CI is stale (prove it empty with `git show --remerge-diff` + patch-id) → `gh pr merge --merge --match-head-commit`. Zoning-math PRs: the owner's yes first.
 
 ## COPY INTO THE NEW SESSION
 Owner, before starting: `cd /root/project/nyc-buildability && git pull --ff-only && claude`. `/mcp` must list none.
 
-Resume as the NYC Buildability orchestrator (verify the model with /model). Work only from repository
-evidence. Verify: cwd IS the repo worktree root, branch candidate/D-024-mrl-option-b, HEAD == origin,
-/mcp empty (Bootstrap Gate 0). Read CLAUDE.md, docs/SESSION_HANDOFF.md and `python tools/project_control.py
-status` (the ledger wins); check `gh pr list`. Report READY TO RESUME or BLOCKED, then continue from EXACT NEXT
-ACTION without repeating work. At most 5 robots, memory under 70%; LANE_A_ENABLED stays off; zoning-math
-merges need the owner's yes; explain things to the owner in plain, simple words. Stop for Tier D, PR #241,
-owner holds and owner-typed commissioning; never pass `model:`. If PR #347 (this handoff) is not merged yet, read
-docs/SESSION_HANDOFF.md from branch task/session-handoff-2026-10-03.
+Resume as the NYC Buildability orchestrator (Fable 5.1; verify with /model). Work only from repository evidence; this prompt is orientation so you can start cheaply — do NOT re-read the product plan, the lane status files or the directive registry to re-derive it.
+
+START (Bootstrap Gate 0, about 5 tool calls): cwd must BE /root/project/nyc-buildability (repo root), branch candidate/D-024-mrl-option-b, HEAD == origin, /mcp empty, memory under 70 %. Then read ONLY docs/SESSION_HANDOFF.md (seq 136; if the PR from branch task/session-handoff-2026-10-03b is still open, read it from that branch) and run `python tools/project_control.py status` (the ledger wins over prose) and `gh pr list`. Report READY TO RESUME or BLOCKED.
+
+WHERE WE ARE: the green baseline is back — M0-T180 (the braces advisory chain removed from the web lint tooling) is ACCEPTED and merged (#348); PR #347 (seq 135) merged; lane PRs #350 D-03, #351 C-06 slice 1 and #352 B-11 slice 2 merged after independent PASS reviews. Two engine PRs are reviewed PASS and WAIT FOR THE OWNER'S YES: #349 A-01 (rule-coverage matrix) and #353 A-04 slice 1 (three answers on the benchmark; LANE_A_ENABLED off). Owner questions are listed in the handoff; none is decided.
+
+HOW WE WORK (do not re-derive): lane items run as lane-branch PRs under the lean process — producer subagent in an isolated worktree (reset to the integration head first; show-toplevel guard; exact lane paths per docs/lanes/OWNERSHIP.yaml; `python3 scripts/lanes/check_lane_paths.py` and `python tools/modularity_check.py --check` with DIRECT exit codes; never npm/npx/node locally — web tests prove only in CI) → you push and open the PR → a DIFFERENT read-only reviewer subagent posts PASS at the exact head and verifies the PR body → merge base in if CI is stale → `gh pr merge --merge --match-head-commit <sha>` once all checks are green (Option B, D-090-R020). Ledger packets are only for orchestrator-contracted repairs (precedent M0-T180). Up to 10 subagents at once (D-090-R085), memory under 70 %. Never pass `model:` on a dispatch. Capture every new owner instruction with /directive-compliance before acting (D-090 is the active product directive; sources 010–012 are this session's; mid-turn owner messages live in `queued_command` attachments in the transcript).
+
+NEXT ACTION, in order: (1) ask the owner in one short plain message for the yes on #349 and #353; (2) meanwhile start the next unblocked items in parallel: the tiny Lane C playwright-flags PR, then Lane D D-12 slice 2, D-15 slice 2 and D-06 slice 2 ONE AT A TIME; after #349 merges, Lane C C-07; after #353 merges, Lane A A-05 and the E-03 rebase (#268); (3) one integrator PR refreshing docs/lanes/status/{A..E}.md from the PR record.
+
+STOPS: Tier D / Section 20; PR #241 never; the expansion §2 hold; zoning-math (Lane A path) merges need the owner's explicit yes per PR; LANE_A_ENABLED stays off; the settled capacity wording never changes; Codex/loop commissioning and the B-027 PIN text are DEFERRED by the owner (D-090-R084) — do not start them; dependency security has no waiver; explain things to the owner in plain, simple words and do not narrate record-keeping.
