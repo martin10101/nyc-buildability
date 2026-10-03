@@ -605,3 +605,17 @@ push), read the AssertionError payload from the failed log, delete the branch.
 - **Settled wording:** a producer shortened the owner-settled "Remaining development capacity: Not confirmed" to "Remaining capacity: Not confirmed" in a status strip (#331); review NB-1 caught it. Dispatch prompts must require the adapter constants (`NOT_CONFIRMED_LABEL` / `NOT_CONFIRMED_REASON`) for settled text, never a literal.
 - **Contract additions break count pins:** adding an enum-lock slot (#332) broke `study-vocabulary.test.ts`, which pinned `toHaveLength(14)`. Producers adding a contract enum or slot must grep for count pins and drift guards in every consumer.
 - **Mirror parity:** a contract change must update the hand-written runtime mirrors in the same PR (`site-fact-validator.ts`, `transit-parking-api.ts`). Otherwise a schema-valid document is rejected at the first real producer.
+
+## Cloud session 2026-10-03 (08a1e891; seq 135)
+- **Claude Code auto-updates on this host** (2.1.287 → 2.1.288 overnight) and breaks the certified CLI identity. The drift teeth catch it.
+  Admit it per D-024-R287: scope the recert to recapture all three drift families plus the `event_drift.py` catalog re-point. Host
+  auto-update is now off (`DISABLE_AUTOUPDATER=1` in `~/.claude/settings.json`; never `DISABLE_UPDATES`, R280).
+- **The owner's app does not execute `!` lines** (they arrive as chat text). For owner-typed server steps, use the DigitalOcean web console,
+  or run the line yourself when the owner's message clearly asks for it (it is their typed instruction).
+- **Auto-mode refuses edits to safety pins** (`M0-T036-ACTIVATION-CHECKLIST.md`) even with owner authorization ("Security Weaken"). Do not
+  work around it: prepare the reviewed text and the exact command; the owner applies it.
+- **CI-only real-unit tests:** make them self-explaining on failure (`systemctl status`, `journalctl -u`, a workdir listing). Two CI rounds
+  were lost to a guessed cause; the diagnostics found the real one (a `%`-format collision in the helper) in one round. Run unit helpers
+  with `/usr/bin/python3` (setup-python's interpreter needs LD_LIBRARY_PATH that a clean unit lacks).
+- **Producers misreport exit codes through pipes** (`check | tail` swallows `$?`): the M0-T177 "modularity exit 0" was false. Require direct
+  exit codes in every dispatch, and re-run the check yourself before pushing.
