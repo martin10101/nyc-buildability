@@ -129,10 +129,21 @@ describe("TransitParkingSection — §5a non-success states", () => {
     expect(screen.queryByTestId("transit-parking")).toBeNull();
   });
 
-  it("shows the loading card before the fetch resolves", () => {
-    fetchMock.mockReturnValue(new Promise<never>(() => {}));
-    render(<TransitParkingSection bbl={BBL} />);
+  it("shows the loading card before the fetch resolves", async () => {
+    // Hold the resolver so the loading state is observable, then settle and flush it
+    // before the test ends — nothing is left pending on the mocked module.
+    let settle: (outcome: TransitParkingFetchOutcome) => void = () => {};
+    fetchMock.mockReturnValue(
+      new Promise<TransitParkingFetchOutcome>((resolve) => {
+        settle = resolve;
+      }),
+    );
+    const { unmount } = render(<TransitParkingSection bbl={BBL} />);
     expect(screen.getByTestId("transit-parking-loading")).toBeInTheDocument();
+
+    settle({ kind: "aborted" }); // resolve to a superseded request -> section collapses to nothing
+    await waitFor(() => expect(screen.queryByTestId("transit-parking-loading")).toBeNull());
+    unmount();
   });
 
   it("renders nothing for a superseded (aborted) request", async () => {
