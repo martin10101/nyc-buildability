@@ -53,6 +53,7 @@ export interface AddressSearchOptions {
     backoffMs?: number;
 }
 function boundedString(value: unknown, max: number): value is string {
+    // eslint-disable-next-line no-control-regex -- intentional: reject control characters in caller input
     return typeof value === "string" && value.trim().length > 0 && value.length <= max && !/[\u0000-\u001f\u007f]/.test(value);
 }
 export function parseAddressSuggestions(body: unknown): AddressSuggestion[] | null {

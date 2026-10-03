@@ -34,6 +34,7 @@ import {
   BESIDE_RESULTS_NOTE,
   EVERY_PROPERTY_NOTE,
   NOT_A_CLEAN_BILL_NOTE,
+  STATUS_GLOSSARY,
   flagStripSummary,
   groupViews,
   type FlagStripSummary,
@@ -206,11 +207,7 @@ function NotConnectedCard() {
     <section className="card architect-empty" data-testid="hidden-issues-unavailable">
       <p className="architect-eyebrow">Hidden issues</p>
       <h2>Hidden-issue checks are not connected yet</h2>
-      <p>
-        The §8a checks for this property are prepared by the data service. That service is not
-        connected to this screen yet, so there is nothing to show here. Nothing is guessed, and no
-        result is presented as clear.
-      </p>
+      <p>The data service is not wired to this screen. Nothing is guessed, and no result is shown as clear.</p>
     </section>
   );
 }
@@ -227,6 +224,14 @@ function FlagStatusStrip({ summary }: { summary: FlagStripSummary }) {
       </summary>
       <div className="hidden-issues-strip__detail" data-testid="hidden-issues-strip-detail">
         <p>{NOT_A_CLEAN_BILL_NOTE}</p>
+        <dl className="hidden-issues-strip__glossary">
+          {STATUS_GLOSSARY.map((entry) => (
+            <div key={entry.label}>
+              <dt>{entry.label}</dt>
+              <dd>{entry.meaning}</dd>
+            </div>
+          ))}
+        </dl>
         <p>{BESIDE_RESULTS_NOTE}</p>
         <p>{EVERY_PROPERTY_NOTE}</p>
       </div>
@@ -246,7 +251,6 @@ function FlagRow({ flag }: { flag: FlagView }) {
           {flag.statusLabel}
         </span>
       </div>
-      <p className="hidden-issue__meaning">{flag.statusMeaning}</p>
       <p className="hidden-issue__detail">{flag.detail}</p>
       {flag.relation ? (
         <p className="hidden-issue__relation" data-testid={`hidden-issue-relation-${flag.key}`}>
@@ -256,10 +260,10 @@ function FlagRow({ flag }: { flag: FlagView }) {
       {flag.exceptionLabel ? (
         <p className="hidden-issue__exception">Marked for results: {flag.exceptionLabel}</p>
       ) : null}
-      <p className="hidden-issue__typical">Typical source: {flag.typicalSource}</p>
-      {flag.evidence.length ? (
-        <details className="hidden-issue__source" data-testid={`hidden-issue-source-${flag.key}`}>
-          <summary>Source</summary>
+      <details className="hidden-issue__source" data-testid={`hidden-issue-source-${flag.key}`}>
+        <summary>Source</summary>
+        <p className="hidden-issue__typical">Typical source: {flag.typicalSource}</p>
+        {flag.evidence.length ? (
           <dl>
             {flag.evidence.map((item, index) => (
               <div key={index}>
@@ -270,8 +274,8 @@ function FlagRow({ flag }: { flag: FlagView }) {
               </div>
             ))}
           </dl>
-        </details>
-      ) : null}
+        ) : null}
+      </details>
     </li>
   );
 }
