@@ -1,0 +1,141 @@
+{
+  "task_id": "M0-T180",
+  "title": "Web dependency-security repair: remove the braces advisory chain (eslint-config-next -> @next/eslint-plugin-next -> fast-glob -> micromatch -> braces, GHSA-vfj7-8cjw-p6xm) from apps/web and restore the green baseline (B-028)",
+  "task_type": "frontend",
+  "milestone_id": "M0",
+  "objective": "Every PR is red on web-dependency-security since 2026-10-03 ~01:00 UTC: GHSA-vfj7-8cjw-p6xm (braces <= 3.0.3, high, NO patched version) enters through the dev-only chain eslint-config-next 15.5.21 -> @next/eslint-plugin-next -> fast-glob 3.3.1 -> micromatch 4.0.8 -> braces 3.0.3; every 15.x/16.x @next/eslint-plugin-next pins fast-glob 3.3.1 and the 14.2.35 downgrade carries glob 10.3.10 (GHSA-5j98-mcp5-4vw2). Remove eslint-config-next and its chain; keep 'npm run lint' meaningful with an admitted flat-config replacement set (candidates: typescript-eslint 8.70.1, eslint-plugin-react-hooks 7.1.1, @eslint/js 9.39.5 - each exact-pinned, registry-verified >= 7 complete days old, advisory-free, provenance-reviewed at G5); regenerate and PROVE the lock ONLY through the generate-lockfile workflow (no local npm/node); CI web + web-e2e + web-dependency-security green on the final head with zero apps/web/src edits. No waiver, no --omit=dev, no audit-level change.",
+  "business_reason": "D-090-R083 (start building; the green baseline is the first step of the seq 135 EXACT NEXT ACTION) and the permanent dependency-security policy (CLAUDE.md p15; ORCHESTRATION_POLICY section G; no waiver). Precedents: M0-T163 (brace-expansion), M5-T021 (B-022), M0-T071 (B-019).",
+  "inputs": [
+    "GitHub advisory GHSA-vfj7-8cjw-p6xm (braces <= 3.0.3, high, first_patched_version null; published 2026-09-18, updated 2026-10-02) - verified 2026-10-03 via gh api /advisories",
+    "apps/web/package-lock.json at 15b4d656: the ONLY path to braces is eslint-config-next 15.5.21 -> @next/eslint-plugin-next 15.5.21 -> fast-glob 3.3.1 -> micromatch 4.0.8 -> braces 3.0.3 (all dev); no other package requires braces/micromatch/fast-glob",
+    "npm registry facts 2026-10-03: braces latest 3.0.3 (2024-05-21, no newer); every @next/eslint-plugin-next 15.x/16.x pins fast-glob 3.3.1; 14.2.35 uses glob 10.3.10 which carries GHSA-5j98-mcp5-4vw2 (>=10.2.0 <10.5.0) - so neither upgrade nor downgrade is admissible",
+    "Replacement candidates and publish dates: typescript-eslint 8.70.1 (2026-09-21; 8.71.0 of 2026-09-28 is TOO YOUNG), eslint-plugin-react-hooks 7.1.1 (2026-04-17), @eslint/js 9.39.5 (2026-07-10); @typescript-eslint/typescript-estree 8.7x uses tinyglobby + minimatch (no micromatch) - the producer re-verifies every transitive against the regenerated lock",
+    "apps/web/eslint.config.mjs (FlatCompat over next/core-web-vitals + next/typescript); apps/web/package.json scripts.lint = 'eslint .'; .github/workflows/ci.yml web job runs npm run lint",
+    ".github/workflows/generate-lockfile.yml (the AUTHORITATIVE thin-client lock path: npm 11.18.0 pinned; npm install --package-lock-only honouring .npmrc min-release-age=7 + save-exact; npm ci; blocking audit at every severity incl. dev; committed-lock age gate; npm CLI advisory; bot commit)",
+    "docs/DEPENDENCY_SECURITY_POLICY.md; .claude/ORCHESTRATION_POLICY.md section G (no waiver; new package = G5 provenance review)",
+    "project-control/blockers/B-028-braces-advisory-web-dependency-gate.json (the blocking condition this task discharges; resolution recorded after acceptance)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json D-090-R083 (start building; the green baseline first)",
+    "Precedents: project-control/tasks/M0-T163.json (brace-expansion repair), M5-T021.json (B-022 sweep), M0-T071 (B-019 nanoid)"
+  ],
+  "outputs": [
+    "apps/web/package.json: devDependencies without eslint-config-next; the admitted replacement set exact-pinned (each registry-verified >= 604800 s old at lock time, advisory-free); @eslint/eslintrc removed if the new flat config no longer needs FlatCompat; NOTHING else changes",
+    "apps/web/eslint.config.mjs: a flat config covering at least @eslint/js recommended, typescript-eslint recommended, and eslint-plugin-react-hooks recommended (rules-of-hooks error; exhaustive-deps warn) with the same ignores; any rule turned off carries a one-line justification in the producer report",
+    "apps/web/package-lock.json: regenerated + proven + committed BY THE generate-lockfile WORKFLOW BOT on this branch (orchestrator-dispatched) - part of this task's material",
+    "project-control/reports/M0-T180-registry-research.md: per package - name, exact version, registry publish timestamp (UTC), age in seconds at research time, integrity, advisory query result (gh api /advisories?ecosystem=npm&affects=<pkg>@<ver>), and why alternatives were rejected",
+    "project-control/reports/M0-T180-producer-report.md: the before/after dependency chain, the rule-set mapping old -> new, every lint difference observed, direct exit codes of every check, and the explicit statement that no apps/web/src file changed"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "apps/web/eslint.config.mjs",
+    "project-control/reports/M0-T180-registry-research.md",
+    "project-control/reports/M0-T180-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/**",
+    "apps/web/e2e/**",
+    "apps/web/.npmrc",
+    "apps/web/scripts/**",
+    "apps/web/next.config.ts",
+    "apps/web/playwright.config.ts",
+    "apps/web/tsconfig.json",
+    ".github/**",
+    "render.yaml",
+    "services/**",
+    "packages/**",
+    "tools/**",
+    "docs/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json",
+    "project-control/blockers/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "chain_removed",
+      "input": "the final apps/web/package.json + the bot-regenerated package-lock.json",
+      "expected": "no lock entry for node_modules/braces, node_modules/micromatch, node_modules/fast-glob, node_modules/@next/eslint-plugin-next or node_modules/eslint-config-next (checked by a lock parse, not by grep of the advisory name); devDependencies no longer list eslint-config-next"
+    },
+    {
+      "id": "S2",
+      "case": "replacement_admitted",
+      "input": "every added or changed direct dependency",
+      "expected": "exact-pinned (no ^/~); registry publish timestamp >= 604800 s before the bot lock commit; gh api advisory query returns none for the exact version; integrity matches the registry; all of it recorded per package in M0-T180-registry-research.md; no version younger than 7 complete days anywhere in the regenerated tree (the committed-lock age gate is the executable authority)"
+    },
+    {
+      "id": "S3",
+      "case": "lint_equivalence_no_src_edits",
+      "input": "the new apps/web/eslint.config.mjs run by ci.yml's web job (npm run lint) on the final head",
+      "expected": "lint passes with ZERO changes under apps/web/src; the rule set covers @eslint/js recommended + typescript-eslint recommended + react-hooks recommended (rules-of-hooks: error, exhaustive-deps: warn); ignores unchanged; if the new rules flag existing code the producer STOPS and lists each finding file:line in the producer report instead of editing src or disabling the rule - the orchestrator decides a separate bounded correction"
+    },
+    {
+      "id": "S4",
+      "case": "workflow_proven_lock",
+      "input": "the generate-lockfile workflow dispatched by the orchestrator on this branch after the package.json/config commit",
+      "expected": "the run succeeds: npm ci integrity, blocking npm audit (--audit-level=low, dev included) AND the JSON total == 0, committed-lock 7-day age gate, npm CLI advisory check all pass BEFORE the bot commits; the run id and bot commit sha are in the producer report; no npm, npx or node ran outside GitHub Actions (thin-client rule)"
+    },
+    {
+      "id": "S5",
+      "case": "ci_green_on_final_head",
+      "input": "ci.yml on the final head of the task branch",
+      "expected": "web (lint + typecheck + build), web-e2e and web-dependency-security all pass; the step 'Blocking npm audit (--audit-level=low; dev deps included)' that failed on run 37089049103 passes"
+    },
+    {
+      "id": "S6",
+      "case": "no_scope_creep",
+      "input": "git diff 15b4d656..final for apps/web/package.json and the lock",
+      "expected": "next, react, react-dom, three, maplibre-gl, @react-three/fiber, vitest, @playwright/test, typescript and the overrides block are unchanged; the only lock drift is what removing the chain and adding the replacement set resolves under min-release-age=7; every drifted entry is listed in the producer report"
+    },
+    {
+      "id": "S7",
+      "case": "fail_closed",
+      "input": "no admitted replacement set exists (every candidate too young or advisory-laden), or the workflow's audit/age gate fails",
+      "expected": "the producer returns BLOCKED with the registry evidence and the failing step; no waiver, no --omit=dev, no --audit-level change, no npm audit ignore list, no package.json 'overrides' that points braces/micromatch at a fork or a non-fixed version"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "typescript-eslint recommended may flag code that next/typescript tolerated (rule-set drift) -> S3: stop and report; never edit src or blanket-disable under this packet",
+    "a transitive of the replacement set may itself carry an advisory or be younger than 7 days -> the workflow's audit/age gate fails closed; the producer swaps the version with registry evidence or returns BLOCKED (S7)",
+    "bot lock pushes do not trigger CI (M5-T021 note) -> the orchestrator pushes an empty follow-up commit to run ci.yml on the post-lock head",
+    "eslint-plugin-react-hooks 7.x ships flat configs under a different export shape than 5.x -> the producer reads the installed package's README/exports in the lock-proven tree, never guesses",
+    "PR #347 and #268 inherit the red check -> after this merges, merge the base into #347 and re-run CI; #268 stays draft (waits on A-04)"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-03T02:47:44.473028+00:00",
+  "updated_at": "2026-10-03T02:49:37+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R083"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-03T02:47:44.473209+00:00",
+  "path_notes": "PRODUCER = frontend-engineer in an isolated worktree on branch task/M0-T180-web-lint-chain-braces (contract-head reset first). The producer edits package.json + eslint.config.mjs + the two reports ONLY; the lock is NEVER generated locally - the orchestrator dispatches .github/workflows/generate-lockfile.yml on the branch after cherry-picking the producer commit, and the bot's lock commit is this task's material (allowed_paths includes the lock). THIN CLIENT / CODING_RULES: no npm, npx or node runs on this host. D-090 scope already allows 'the dependency-security repair needed for a green baseline'; the capture of the owner's 2026-10-03 message (D-090 source-010, R083-R086) travels in this task's PR because no PR can merge before this repair. Blocker B-028 names the condition, not this task id, so acceptance is not self-blocked; B-028 is resolved in the acceptance seam.",
+  "documented_test_commands": [
+    "generate-lockfile workflow run on the branch (npm ci; npm audit --audit-level=low; audit JSON total == 0; node scripts/dependency_age_gate.mjs package-lock.json; --npm-cli-advisory 11.18.0) - orchestrator-dispatched",
+    "ci.yml web (npm run lint; typecheck; build), web-e2e, web-dependency-security on the post-lock head",
+    "python3 scripts/lanes/check_lane_paths.py (producer, before hand-back)",
+    "python - <<EOF lock parse: assert none of braces/micromatch/fast-glob/@next/eslint-plugin-next/eslint-config-next in packages EOF"
+  ],
+  "worktree": "/root/project/w-M0-T180"
+}

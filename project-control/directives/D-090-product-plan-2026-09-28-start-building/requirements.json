@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 82,
+ "requirement_count": 88,
  "producer": "orchestrator",
- "updated_at": "2026-10-02T20:02:07+00:00",
+ "updated_at": "2026-10-03T03:35:14+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -2760,6 +2760,212 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "In force for new interface work from 2026-10-02. It does not by itself remove the owner-approved tax-lot-only warning (R030-R033) or the settled remaining-capacity wording (R038); the owner is asked whether the tax-lot-only warning should shrink.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R083",
+   "text": "Start building the program ('Start building the program'): continue the product build now - the lane work under the 2026-09-28 plan (R003, R005, R054) from the seq 135 handoff's EXACT NEXT ACTION, whose first step is the dependency-security repair the green baseline needs (every PR is red on web-dependency-security: GHSA-vfj7-8cjw-p6xm, braces <= 3.0.3, no patched version, dev-only chain eslint-config-next -> @next/eslint-plugin-next -> fast-glob -> micromatch -> braces).",
+   "source_ref": "source-010-amendment.md#owner-message-34-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M0-T180"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R003",
+    "D-090-R054"
+   ],
+   "required_harness": "Ledger tasks under the normal gates; PRs merge under R020 (Option B) with green CI; dependency changes under the permanent dependency-security policy (no waiver; new packages need a G5 provenance review).",
+   "required_evidence": "Task packets, gate records, merged PRs; for the repair, the generate-lockfile workflow run and the green web-dependency-security job on the final head.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force from 2026-10-03. The repair task is contracted at this seam; lane work follows as subagent capacity allows (R085). Bound to M0-T180 (the dependency-security repair) at contract on 2026-10-03.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T180"
+    ]
+   }
+  },
+  {
+   "id": "D-090-R084",
+   "text": "Codex is set aside for now ('dont worry about codex at the moment'): the Codex/loop commissioning track under D-091 (M0-T175 commissioning, the B-027 PIN amendment, the Codex sign-in, the OD-B combiner choice) is DEFERRED - not withdrawn; D-091 stays active and no record in it is closed; no session effort goes to it until the owner says so. ORCHESTRATOR'S READING, not owner wording: 'at the moment' means a deferral.",
+   "source_ref": "source-010-amendment.md#owner-message-34-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [],
+   "required_harness": "Session conduct: no commissioning steps, PIN edits, Codex sign-in prompts or combiner work are started or requested while this stands; the owner steps stay listed in the handoff.",
+   "required_evidence": "Session transcripts and handoffs show no Codex/loop work after 2026-10-03T02:32Z until the owner lifts it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force from 2026-10-03. The owner is told the reading (deferral, not cancellation) in the session reply.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R085",
+   "text": "Run 10 subagents ('run 10 subagents'): the concurrency ceiling is ten orchestrator-dispatched subagents at once, replacing the five of R075 and the 'At most 5 robots' line pasted earlier in the same message; the memory rule R076 (under 70%; drop the count if it gets close) stays in force. ORCHESTRATOR'S READING, not owner wording: the typed instruction at the end of the message overrides the pasted resume text's five.",
+   "source_ref": "source-010-amendment.md#owner-message-34-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R075",
+    "D-090-R076"
+   ],
+   "required_harness": "Dispatch records: never more than ten subagents running at once; memory sampled before each wave and kept under 70%.",
+   "required_evidence": "Handoff/session notes recording the peak subagent count and peak memory.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force from 2026-10-03. The owner is told the reading in the session reply.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R086",
+   "text": "Seq 135 resume harness: verify the model (/model); Gate 0 (cwd is the repo worktree root, branch candidate/D-024-mrl-option-b, HEAD == origin, /mcp empty); read CLAUDE.md, docs/SESSION_HANDOFF.md and the ledger (the ledger wins); check gh pr list; report READY TO RESUME or BLOCKED; then continue from the seq 135 handoff's EXACT NEXT ACTION without repeating work; while PR #347 is open, read docs/SESSION_HANDOFF.md from branch task/session-handoff-2026-10-03.",
+   "source_ref": "source-010-amendment.md#owner-message-34-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R077",
+    "D-090-R078",
+    "D-090-R079"
+   ],
+   "required_harness": "The session's first replies: Gate 0 results, the READY/BLOCKED line, and the first action taken.",
+   "required_evidence": "Session transcript ab961de0: Gate 0 evidence (repo root, branch, HEAD 15b4d656 == origin, no MCP servers, memory ~15%), the handoff read from the #347 branch, the READY/BLOCKED report.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Done in-session on 2026-10-03 (pending independent verification).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R087",
+   "text": "Approval to proceed with the 2026-10-03 game plan ('Ok go on', after the plan was given): fix the web dependency-security blocker first (M0-T180), and in parallel start - up to ten robots, memory under 70% - Lane A A-01 and A-04 behind LANE_A_ENABLED (off), Lane B B-11 slice 2 (data only), the Lane D R082 text pass on the hidden-issues, comparable-sales and lot-panel windows, and Lane C C-06 slice 1 (in-memory invalidation only); each build reviewed by a different robot and merged one at a time on green CI; then the next queue items one at a time. ORCHESTRATOR'S READING, not owner wording: this approves STARTING the builds; zoning-math merges still need the owner's explicit yes per PR (R021/R029); no hold is lifted and no owner question is decided (R008).",
+   "source_ref": "source-011-amendment.md#owner-message-36-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R083",
+    "D-090-R085",
+    "D-090-R021",
+    "D-090-R008"
+   ],
+   "required_harness": "Dispatch records and PRs for exactly the listed items; Lane A PRs carry the 'needs owner's yes' label and are not merged by robots.",
+   "required_evidence": "Session transcript ab961de0 (the plan reply and message 36); the lane PRs and their review comments.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Approved 2026-10-03. In force for the listed wave; later waves need no new approval beyond R083 unless they touch a held area or an owner question.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R088",
+   "text": "Return item: before going on, give the owner the game plan in simple English ('Before y go on give me the game plan in simple English what u going to do').",
+   "source_ref": "source-011-amendment.md#owner-message-35-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-03"
+   },
+   "dependencies": [
+    "D-090-R044"
+   ],
+   "required_harness": "The session reply after message 35, in plain words, before any further action.",
+   "required_evidence": "Session transcript ab961de0: the plan reply precedes the next tool action.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Delivered in-session on 2026-10-03 before proceeding; pending independent verification.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
