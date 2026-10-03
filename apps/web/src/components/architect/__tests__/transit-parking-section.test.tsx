@@ -103,6 +103,75 @@ describe("TransitParkingSection — check_needed 200", () => {
   });
 });
 
+describe("TransitParkingSection — the source-to-check reference (request D-2)", () => {
+  it("shows the dataset id only inside the Source disclosure, never on the face", async () => {
+    resolveWith({ kind: "status", status: status("synthetic_check_needed"), correlationId: "cid" });
+    render(<TransitParkingSection bbl={BBL} />);
+
+    const section = await screen.findByTestId("transit-parking");
+    const disclosure = within(section).getByTestId("transit-parking-source");
+    const ref = within(disclosure).getByTestId("transit-parking-missing-source-ref");
+    expect(ref).toHaveTextContent("Source to check");
+    expect(ref).toHaveTextContent("6ztr-wgff"); // the exact dataset id, in the disclosure
+
+    // The face = the section with the "Source" disclosure content removed.
+    const face = section.cloneNode(true) as HTMLElement;
+    face.querySelectorAll<HTMLElement>("details").forEach((node) => node.remove());
+    const faceText = face.textContent ?? "";
+    expect(faceText).not.toContain("6ztr-wgff"); // the raw dataset id stays in Source
+    expect(faceText).not.toContain("vhqf-adkz"); // nor a component id
+    // The readable "what to check" line IS on the face (plain words, no raw id).
+    expect(within(section).getByTestId("transit-parking-missing")).toHaveTextContent(
+      "Not available —",
+    );
+  });
+
+  it("links the dataset with safe external-link attributes", async () => {
+    resolveWith({ kind: "status", status: status("synthetic_check_needed"), correlationId: "cid" });
+    render(<TransitParkingSection bbl={BBL} />);
+    const ref = await screen.findByTestId("transit-parking-missing-source-ref");
+    const link = within(ref).getByRole("link", {
+      name: "https://data.cityofnewyork.us/d/6ztr-wgff",
+    });
+    expect(link).toHaveAttribute("href", "https://data.cityofnewyork.us/d/6ztr-wgff");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    expect(link).toHaveAttribute("target", "_blank");
+  });
+
+  it("states the honest not-available version when the source records none", async () => {
+    resolveWith({ kind: "status", status: status("synthetic_check_needed"), correlationId: "cid" });
+    render(<TransitParkingSection bbl={BBL} />);
+    const ref = await screen.findByTestId("transit-parking-missing-source-ref");
+    expect(ref).toHaveTextContent(
+      "Not available — no connector or version probe for this dataset",
+    );
+  });
+
+  it("renders no source-to-check block for a recorded status (null ref)", async () => {
+    resolveWith({ kind: "status", status: status("synthetic_recorded"), correlationId: "cid" });
+    render(<TransitParkingSection bbl={BBL} />);
+    await screen.findByTestId("transit-parking");
+    expect(screen.queryByTestId("transit-parking-missing-source-ref")).toBeNull();
+    // The "Source" disclosure still renders the recorded PLUTO provenance.
+    expect(screen.getByTestId("transit-parking-source")).toBeInTheDocument();
+  });
+
+  it("omits the link row when the reference carries no url", async () => {
+    const base = status("synthetic_check_needed");
+    const ref = base.missing_source_ref;
+    expect(ref).toBeTruthy();
+    const noUrl: TransitParking = {
+      ...base,
+      missing_source_ref: ref ? { ...ref, url: null } : null,
+    };
+    resolveWith({ kind: "status", status: noUrl, correlationId: "cid" });
+    render(<TransitParkingSection bbl={BBL} />);
+    const block = await screen.findByTestId("transit-parking-missing-source-ref");
+    expect(within(block).queryByRole("link")).toBeNull();
+    expect(block).toHaveTextContent("Dataset id");
+  });
+});
+
 describe("TransitParkingSection — §5a non-success states", () => {
   it("shows the plain 'not connected yet' card on a 404", async () => {
     resolveWith({ kind: "not_available" });

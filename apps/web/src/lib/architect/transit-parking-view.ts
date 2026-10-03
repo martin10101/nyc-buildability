@@ -26,7 +26,11 @@
  */
 
 import { boundedText } from "@/lib/bounded";
-import type { TransitParking, TransitParkingSource } from "@/lib/transit-parking-api";
+import type {
+  TransitParking,
+  TransitParkingSource,
+  TransitParkingMissingSourceRef,
+} from "@/lib/transit-parking-api";
 
 export const TRANSIT_SECTION_TITLE = "Transit and parking zone";
 
@@ -59,6 +63,30 @@ export interface TransitSourceView {
   readonly requestUrl: string | null;
 }
 
+/** One sub-dataset a single named "source to check" is composed of (contract
+ * 1.1.0 missing_source_ref.components). Both fields are required in the contract. */
+export interface TransitMissingSourceRefComponentView {
+  readonly dataset: string;
+  readonly datasetId: string;
+}
+
+/**
+ * The structured reference for the source that still needs checking (contract
+ * 1.1.0 `missing_source_ref`, request D-2 / D-090-R095). Shown ONLY inside the
+ * "Source" disclosure: the face keeps the readable `missingSource` line, so the
+ * §5a item-5 rule holds — the raw dataset id never reaches the face. Each
+ * id/version/url is nulled when the source omits it, so the section states the
+ * honest fact ("Not available …") rather than rendering an empty row.
+ */
+export interface TransitMissingSourceRefView {
+  readonly dataset: string;
+  readonly datasetId: string | null;
+  readonly publisher: string | null;
+  readonly datasetVersion: string | null;
+  readonly url: string | null;
+  readonly components: readonly TransitMissingSourceRefComponentView[];
+}
+
 export interface TransitParkingView {
   /** The plain status headline (`STATUS_HEADLINE[status]`, = the contract label). */
   readonly headline: string;
@@ -70,6 +98,10 @@ export interface TransitParkingView {
   readonly missingSource: string | null;
   /** Structured provenance, behind the "Source" disclosure; null when absent. */
   readonly source: TransitSourceView | null;
+  /** The structured source-to-check reference, also behind the "Source"
+   * disclosure; null when the document carries none (an absent or null
+   * `missing_source_ref`, e.g. every recorded status). */
+  readonly missingSourceRef: TransitMissingSourceRefView | null;
 }
 
 function sourceView(source: TransitParkingSource | null): TransitSourceView | null {
@@ -85,6 +117,34 @@ function sourceView(source: TransitParkingSource | null): TransitSourceView | nu
   };
 }
 
+/**
+ * Reshape the contract's `missing_source_ref` (absent or null → null) into the
+ * disclosure view. Built with the same `boundedText` helper the source view uses,
+ * so each reflected id/url is length-capped and control-stripped; an empty result
+ * is nulled to an honest "Not available" row rather than a blank one.
+ */
+function missingSourceRefView(
+  ref: TransitParkingMissingSourceRef | null | undefined,
+): TransitMissingSourceRefView | null {
+  if (ref === null || ref === undefined) return null;
+  const datasetId = boundedText(ref.dataset_id, "");
+  const publisher = boundedText(ref.publisher, "");
+  const datasetVersion = boundedText(ref.dataset_version, "");
+  const url = boundedText(ref.url, "");
+  const components = (ref.components ?? []).map((component) => ({
+    dataset: boundedText(component.dataset, "Unnamed dataset"),
+    datasetId: boundedText(component.dataset_id, "Unknown id"),
+  }));
+  return {
+    dataset: boundedText(ref.dataset, "Unnamed dataset"),
+    datasetId: datasetId === "" ? null : datasetId,
+    publisher: publisher === "" ? null : publisher,
+    datasetVersion: datasetVersion === "" ? null : datasetVersion,
+    url: url === "" ? null : url,
+    components,
+  };
+}
+
 /** Reshape one validated transit/parking document into the section's view model. */
 export function transitParkingView(status: TransitParking): TransitParkingView {
   const zone = boundedText(status.transit_zone, "");
@@ -95,5 +155,6 @@ export function transitParkingView(status: TransitParking): TransitParkingView {
     detail: boundedText(status.detail, "The transit and parking zone status is unavailable."),
     missingSource: missing === "" ? null : `${NOT_AVAILABLE_PREFIX}${missing}`,
     source: sourceView(status.source),
+    missingSourceRef: missingSourceRefView(status.missing_source_ref),
   };
 }

@@ -113,3 +113,47 @@ describe("transitParkingView — source edge cases", () => {
     expect(view.source?.dataset).toBe("test-fixture-synthetic PLUTO");
   });
 });
+
+describe("transitParkingView — the source-to-check reference (contract 1.1.0)", () => {
+  const checkNeeded = fixture("synthetic_check_needed");
+  const view = transitParkingView(checkNeeded);
+
+  it("exposes the structured reference from a present missing_source_ref", () => {
+    const ref = view.missingSourceRef;
+    expect(ref).not.toBeNull();
+    expect(ref?.dataset).toBe("Transit Zones");
+    expect(ref?.datasetId).toBe("6ztr-wgff");
+    expect(ref?.publisher).toBe("Department of City Planning (DCP)");
+    expect(ref?.url).toBe("https://data.cityofnewyork.us/d/6ztr-wgff");
+  });
+
+  it("nulls a dataset version the source does not record (honest, never invented)", () => {
+    expect(view.missingSourceRef?.datasetVersion).toBeNull();
+  });
+
+  it("carries each component sub-dataset with its id", () => {
+    expect(view.missingSourceRef?.components).toEqual([
+      { dataset: "Greater Transit Zone", datasetId: "vhqf-adkz" },
+      { dataset: "Appendix I - Transit Zones", datasetId: "dpnc-b2hd" },
+    ]);
+  });
+
+  it("is null when the recorded document carries a null missing_source_ref", () => {
+    expect(transitParkingView(fixture("synthetic_recorded")).missingSourceRef).toBeNull();
+  });
+
+  it("is null when the document omits missing_source_ref entirely (a 1.0.0 body)", () => {
+    const withoutRef: TransitParking = { ...checkNeeded, missing_source_ref: undefined };
+    expect(transitParkingView(withoutRef).missingSourceRef).toBeNull();
+  });
+
+  it("nulls an absent url rather than carrying an empty link", () => {
+    const ref = checkNeeded.missing_source_ref;
+    expect(ref).toBeTruthy();
+    const nullUrl: TransitParking = {
+      ...checkNeeded,
+      missing_source_ref: ref ? { ...ref, url: null } : null,
+    };
+    expect(transitParkingView(nullUrl).missingSourceRef?.url).toBeNull();
+  });
+});
