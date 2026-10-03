@@ -13,7 +13,13 @@
  "needs": "ORCHESTRATOR: contract one bounded fix (a systemd control-group containment the gates can prove from inside the process: cgroup-v2 .service membership, KillMode control-group or mixed, ExitType=main, MainPID==self, SendSIGKILL=yes, bounded TimeoutStopSec; start_new_session for POSIX worker launches; an own-group kill guard; the unit template hardening; a Linux CI job; positive/negative/mutation tests and bounded real-process tests), then a Linux recertification that supersedes M0-T174, with the DB-103 combiner model-difference refusal bundled as its own commit. OWNER: approve amending the activation PIN 2026-08-08 so a proved systemd control group counts as containment alongside the Job Object (the property it protects is unchanged); the opt-in kill-the-supervisor proof on a real unit runs in Linux CI or as an owner-typed step, never by an agent on this host.",
  "workaround_in_effect": "Work continues as orchestrator-dispatched subagent producers and reviewers (Option B lane PRs). The commissioning checklist steps 1-3 stay valid; step 4 waits for this blocker.",
  "candidate_followup": "M0 tasks: Linux systemd-cgroup containment + self-kill fix; DB-103 combiner model-difference refusal; Linux recertification superseding M0-T174; then M0-T175 step 4.",
- "scope_corrections": [],
+ "scope_corrections": [
+  {
+   "at": "2026-10-03T00:40:00+00:00",
+   "actor": "orchestrator",
+   "change": "Progress (blocker stays OPEN): M0-T177 (systemd control-group containment + POSIX self-kill fix; real-unit R3 proof green in CI) accepted and merged in #344; M0-T178 (DB-103 equal-model refusal) accepted in #345; M0-T179 (Linux recertification superseding M0-T174, admitting the auto-updated claude 2.1.288) accepted in #346. The owner approved the PIN amendment (D-091-R009, #343) and the G5 reviewer signed off its text (project-control/reports/M0-T177-G5.md). The orchestrator's edit of M0-T036-ACTIVATION-CHECKLIST.md was refused by the auto-mode safety filter, so the owner applies it (prepared branch control/D-091-R009-pin-amendment; draft text at /root/nyc-loop-drafts/PIN-amendment-draft.md on the server, sha256 417e1f70...). Resolve this blocker once the amended PIN text is merged; M0-T175 commissioning then proceeds."
+  }
+ ],
  "history_note": "Found while preparing M0-T175 commissioning drafts (/root/nyc-loop-drafts/, outside the repo). The refusal had been seen in M0-T173/M0-T174 reports and filed as Windows-platform test noise; CI runs the supervisor suite on windows-latest only (ci.yml:618-640).",
  "resolved_at": null,
  "resolution": null
