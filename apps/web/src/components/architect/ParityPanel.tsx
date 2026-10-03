@@ -26,8 +26,9 @@
  *
  * NO legal logic and NO zoning math live here. The zoning-math switch is off, so
  * the floor-by-floor table and the unit estimate with its formula are NOT in this
- * slice; neither is scenario comparison nor the data-flags / transit-parking
- * panel (D-12 already carries the §8a flags). See docs/lanes/status/D.md.
+ * slice; neither is scenario comparison (D-12 already carries the §8a data flags).
+ * The "Transit and parking zone" section (D-15 slice 2) IS added here as an
+ * independent third section — see `TransitParkingSection`. See docs/lanes/status/D.md.
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -49,6 +50,7 @@ import {
 } from "@/lib/architect/parity-panel-view";
 import { FailureNoticeCard } from "./workspace/DashboardFailureNotice";
 import { referenceRow, type DashboardFailureNoticeModel } from "./workspace/dashboard-failure";
+import { TransitParkingSection } from "./TransitParkingSection";
 
 const NEEDS_PLATFORM =
   "This needs the platform team. Trying again will likely give the same result until it is fixed.";
@@ -328,7 +330,10 @@ function UnusedFloorAreaSection({ view }: { view: UnusedFloorAreaView }) {
   );
 }
 
-export function ParityPanel({ bbl, fetchImpl }: ParityPanelProps) {
+/** Comparable sales + the owner-settled unused-floor-area block (slice 1). Kept as
+ * a focused component so the parity window can add sibling sections (the transit and
+ * parking zone, D-15 slice 2) without reshaping this one or its states/testids. */
+function ComparableSalesFloorArea({ bbl, fetchImpl }: ParityPanelProps) {
   const { status, data, retry } = useParityData({ bbl, fetchImpl });
 
   if (status?.kind === "error") {
@@ -346,6 +351,22 @@ export function ParityPanel({ bbl, fetchImpl }: ParityPanelProps) {
       <ParityStatusStrip summary={summary} />
       <ComparableSalesSection view={sales} />
       <UnusedFloorAreaSection view={unused} />
+    </div>
+  );
+}
+
+/**
+ * The parity window. Two independent sections, each owning its own fetch and §5a
+ * states: comparable sales + unused floor area (slice 1), and the transit and
+ * parking zone (slice 2). Keeping the transit section independent means it shows its
+ * own loading / not-connected / failure surface and never changes the §5a status
+ * strip, which stays the three slice-1 items.
+ */
+export function ParityPanel({ bbl, fetchImpl }: ParityPanelProps) {
+  return (
+    <div className="parity-window" data-testid="parity-window">
+      <ComparableSalesFloorArea bbl={bbl} fetchImpl={fetchImpl} />
+      <TransitParkingSection bbl={bbl} fetchImpl={fetchImpl} />
     </div>
   );
 }
