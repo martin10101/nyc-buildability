@@ -67,6 +67,9 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   assemble v2 rows and accept BACK-TO-BACK (a disjoint material commit between them forces a
   DCV-predicate restamp: T066 a234a508->5aad9007); the full validator now runs ~12 min wall
   (verification-row growth) - sequence the one-budgeted-run-per-seam so accept never waits.
+- Contract seam: an IN-REGIME task appended to `manifest.affected_tasks` needs a PROVISIONAL
+  `task_verifications` row (verifier `""`, pending) in the SAME commit — c14 fails closed
+  otherwise; the control-plane CI job catches its absence (M0-T181 b5cdbdeb).
 
 ## Dispatch / review mechanics
 
@@ -227,3 +230,7 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   cloud-architect...).
 - Base merge after review: prove identity with `git show --remerge-diff --format= <merge> | wc -l` == 0 and an
   unchanged `git patch-id --stable` of the net diff vs the merge base (short two-dot diffs mislead).
+- A branch ref moved by ANOTHER worktree's `checkout -B`/rebase leaves the first worktree's index
+  stale (phantom entries): `git -C <wt> reset --hard HEAD` before reviewing there.
+- Write a PR body's CI claim only AFTER the run completes (two bodies corrected this way); the
+  reviewer verifies the body.
