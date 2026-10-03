@@ -4,6 +4,7 @@ import {
   addOption,
   createStudyEntry,
   duplicateOption,
+  enterSiteFactAssumption,
   enterSiteFactValue,
   markOptionResultsCurrent,
   nextOptionId,
@@ -14,7 +15,8 @@ import {
   updateOptionInputs,
   upsertSiteFact,
 } from "../study-operations";
-import { LOT_SELECTION_STATEMENT, MEASUREMENT_LABELS, type Lot } from "../study-vocabulary";
+import { validateStudyDocument } from "../study-validator";
+import { LOT_SELECTION_STATEMENT, MEASUREMENT_LABELS, type Lot, type SiteFact } from "../study-vocabulary";
 import {
   T1,
   T2,
@@ -384,6 +386,150 @@ describe("per-fact edit (enterSiteFactValue, request D-1 slice 2)", () => {
       ok: false,
       code: "unknown_fact",
     });
+  });
+});
+
+describe("per-fact stated assumption (enterSiteFactAssumption, request D-3)", () => {
+  /** An unknown existing-zoning-floor-area fact as the server would supply it (no DOB figure). */
+  function unknownExistingZfaFact(): SiteFact {
+    return {
+      contract_version: "1.0.0",
+      fact_id: "fact-existing-zfa",
+      key: "existing_zoning_floor_area",
+      lot_bbl: "5999999999",
+      street: null,
+      value: null,
+      unit: null,
+      measurement: { rank: "unknown", label: MEASUREMENT_LABELS.unknown },
+      source: null,
+      blocks: ["remaining_floor_area"],
+      editable: true,
+    };
+  }
+
+  it("records an assumption on a city fact as a NEW assumed fact and leaves the city fact intact", () => {
+    const entry = currentTwoOptions();
+    const cityArea = entry.study.site.facts.find((fact) => fact.fact_id === "fact-lot-area");
+    expect(cityArea?.source?.kind).toBe("tax_map_computation");
+    const next = expectOk(
+      enterSiteFactAssumption(
+        entry,
+        { factId: "fact-lot-area", value: 6200, statement: "  Assume ~6,200 sq ft from the prior survey  " },
+        T1,
+      ),
+    );
+    // The city value is never overwritten in place: the original fact is still present, unchanged.
+    expect(next.study.site.facts.find((fact) => fact.fact_id === "fact-lot-area")).toEqual(cityArea);
+    // The assumption is a new fact at rank "assumed", sourced to the assumption, following the contract.
+    const assumed = next.study.site.facts.find((fact) => fact.fact_id === "fact-lot-area-entered");
+    expect(assumed?.value).toBe(6200);
+    expect(assumed?.unit).toBe("square_feet");
+    expect(assumed?.key).toBe("lot_area");
+    expect(assumed?.measurement).toEqual({ rank: "assumed", label: MEASUREMENT_LABELS.assumed });
+    expect(assumed?.source?.kind).toBe("assumption");
+    expect(assumed?.source?.retrieved_at).toBe(T1);
+    // The statement is stored trimmed and non-empty.
+    expect(assumed?.source?.statement).toBe("Assume ~6,200 sq ft from the prior survey");
+    expect(assumed?.blocks).toEqual([]);
+    // The site is shared, so every option's results are out of date, and the whole study is contract-valid.
+    expect(next.staleOptionIds).toEqual(["opt-a", "opt-b"]);
+    expect(next.study.revision).toEqual({ number: 2, created_at: T1, parent: 1 });
+    expect(validateStudyDocument(next.study).ok).toBe(true);
+  });
+
+  it("records an assumption in place on a non-city fact under its own id", () => {
+    const entry = currentTwoOptions();
+    const before = entry.study.site.facts.find((fact) => fact.fact_id === "fact-street-width-a");
+    expect(before?.source?.kind).toBe("architect_entry");
+    const next = expectOk(
+      enterSiteFactAssumption(
+        entry,
+        { factId: "fact-street-width-a", value: 80, statement: "Assume an 80 ft mapped street width" },
+        T2,
+      ),
+    );
+    // No new fact: the non-city value is replaced in place.
+    expect(next.study.site.facts).toHaveLength(entry.study.site.facts.length);
+    const assumed = next.study.site.facts.find((fact) => fact.fact_id === "fact-street-width-a");
+    expect(assumed?.value).toBe(80);
+    expect(assumed?.street).toBe("Synthetic Street A");
+    expect(assumed?.unit).toBe("feet");
+    expect(assumed?.measurement).toEqual({ rank: "assumed", label: MEASUREMENT_LABELS.assumed });
+    expect(assumed?.source?.kind).toBe("assumption");
+    expect(assumed?.source?.statement).toBe("Assume an 80 ft mapped street width");
+    expect(next.staleOptionIds).toEqual(["opt-a", "opt-b"]);
+    expect(validateStudyDocument(next.study).ok).toBe(true);
+  });
+
+  it("records an assumption for existing zoning floor area (an unknown placeholder becomes assumed)", () => {
+    const withUnknown = expectOk(upsertSiteFact(currentTwoOptions(), unknownExistingZfaFact(), T1));
+    const next = expectOk(
+      enterSiteFactAssumption(
+        withUnknown,
+        {
+          factId: "fact-existing-zfa",
+          value: 6200,
+          statement: "Assume existing zoning floor area 6,200 sq ft (no DOB filing on record)",
+        },
+        T2,
+      ),
+    );
+    const assumed = next.study.site.facts.find((fact) => fact.fact_id === "fact-existing-zfa");
+    expect(assumed?.key).toBe("existing_zoning_floor_area");
+    expect(assumed?.value).toBe(6200);
+    expect(assumed?.unit).toBe("square_feet");
+    expect(assumed?.measurement).toEqual({ rank: "assumed", label: MEASUREMENT_LABELS.assumed });
+    expect(assumed?.source?.kind).toBe("assumption");
+    expect(assumed?.blocks).toEqual([]);
+    expect(validateStudyDocument(next.study).ok).toBe(true);
+  });
+
+  it("refuses a missing or blank statement and changes nothing (the existing invalid_document code)", () => {
+    const entry = currentTwoOptions();
+    for (const statement of ["", "   "]) {
+      expect(
+        enterSiteFactAssumption(entry, { factId: "fact-lot-area", value: 6200, statement }, T1),
+      ).toMatchObject({ ok: false, code: "invalid_document" });
+    }
+    expect(entry.study.site.facts.some((fact) => fact.fact_id === "fact-lot-area-entered")).toBe(false);
+    expect(entry.staleOptionIds).toEqual([]);
+  });
+
+  it("refuses a non-positive assumed value (the existing dimension message) and changes nothing", () => {
+    const entry = currentTwoOptions();
+    for (const value of [0, -5]) {
+      expect(
+        enterSiteFactAssumption(entry, { factId: "fact-lot-area", value, statement: "Assume a value" }, T1),
+      ).toMatchObject({ ok: false, code: "invalid_document" });
+    }
+    expect(entry.study.site.facts.some((fact) => fact.fact_id === "fact-lot-area-entered")).toBe(false);
+    expect(entry.staleOptionIds).toEqual([]);
+  });
+
+  it("refuses an assumption on a fact that is not in the study", () => {
+    const entry = currentTwoOptions();
+    expect(
+      enterSiteFactAssumption(entry, { factId: "fact-missing", value: 10, statement: "Assume ten" }, T1),
+    ).toMatchObject({ ok: false, code: "unknown_fact" });
+  });
+
+  it("uses a caller-supplied id for the new assumed fact", () => {
+    const entry = currentTwoOptions();
+    const next = expectOk(
+      enterSiteFactAssumption(
+        entry,
+        {
+          factId: "fact-lot-area",
+          value: 6000,
+          statement: "Assume 6,000 sq ft",
+          enteredFactId: "fact-lot-area-assumed",
+        },
+        T1,
+      ),
+    );
+    const assumed = next.study.site.facts.find((fact) => fact.fact_id === "fact-lot-area-assumed");
+    expect(assumed?.measurement.rank).toBe("assumed");
+    expect(assumed?.source?.kind).toBe("assumption");
   });
 });
 
