@@ -108,14 +108,14 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "This host is Linux; Toolhelp32 and Windows pid-reuse behaviour cannot be reproduced locally -> the causal path is argued from the frozen logs + code + cited Win32 semantics, and confirmed on windows-latest through an orchestrator-pushed CI experiment branch (ci-exp/M0-T181-*) when instrumentation is needed",
     "The race under-admission recurred 2 in ~45 runs -> a single green CI run proves nothing; the repair must make the next occurrence self-diagnosing (reason codes in the results) and the convergence record must argue the mechanism, not the green",
@@ -124,7 +124,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-03T20:54:43.405552+00:00",
-  "updated_at": "2026-10-03T20:54:43.759097+00:00",
+  "updated_at": "2026-10-03T20:56:53.317767+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -145,5 +145,14 @@
     "python3 scripts/lanes/check_lane_paths.py --branch task/M0-T181-supervisor-bridge-windows-flakes (not a lane branch: passes)",
     "CI: supervisor-bridge (windows-latest) on the PR head; ci-exp/M0-T181-* runs for instrumentation"
   ],
-  "worktree": "/root/project/w-M0-T181"
+  "worktree": "/root/project/w-M0-T181",
+  "progress_log": [
+    {
+      "at": "2026-10-03T20:56:53.317660+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claim seam: G0 PASS at db9c4351; producer backend-engineer dispatched under /deficit-convergence; frozen CI evidence committed; stacked on PR #367 (source-015 capture)"
+    }
+  ]
 }
