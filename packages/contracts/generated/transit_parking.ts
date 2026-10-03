@@ -10,6 +10,17 @@
 export type Bbl = string;
 export type DateTime = string;
 export type NonEmptyString = string;
+export interface MissingSourceRef {
+  dataset: NonEmptyString;
+  dataset_id: NonEmptyString | null;
+  publisher: NonEmptyString | null;
+  dataset_version: NonEmptyString | null;
+  url: string | null;
+  components?: {
+    dataset: NonEmptyString;
+    dataset_id: NonEmptyString;
+  }[];
+}
 export interface Source {
   kind: "survey" | "city_dataset" | "city_filing" | "tax_map_computation" | "architect_entry" | "assumption";
   dataset: NonEmptyString | null;
@@ -30,7 +41,7 @@ export interface VersionCheck {
   reason: NonEmptyString;
 }
 export interface TransitParking {
-  contract_version: "1.0.0";
+  contract_version: "1.0.0" | "1.1.0";
   lot_bbl: Bbl;
   status: "recorded" | "check_needed";
   status_label: "Recorded" | "Check needed";
@@ -38,5 +49,6 @@ export interface TransitParking {
   source: Source | null;
   detail: NonEmptyString;
   missing_source: NonEmptyString | null;
+  missing_source_ref?: MissingSourceRef | null;
   _expected_failure?: string;
 }

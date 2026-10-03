@@ -57,8 +57,12 @@ import type {
  * provable in CI without configuration (mirrors src/lib/api.ts). */
 export const DEFAULT_TIMEOUT_MS = 12_000;
 
-/** The contract-version the client accepts (transit_parking.schema.json v1). */
-export const TRANSIT_PARKING_CONTRACT_VERSION = "1.0.0";
+/** The contract-versions the client accepts (transit_parking.schema.json v1):
+ * 1.0.0 and the additive 1.1.0 (request D-2, D-090-R095) that carries the optional
+ * missing_source_ref. Both stay valid, so a 1.0.0 server body and a 1.1.0 body
+ * (fixtures / the later Lane B emitter) are both admitted. Mirrors
+ * study-vocabulary's SITE_FACT_CONTRACT_VERSIONS. */
+export const TRANSIT_PARKING_CONTRACT_VERSIONS = ["1.0.0", "1.1.0"] as const;
 
 const STATUS_VALUES = ["recorded", "check_needed"] as const;
 const STATUS_LABELS = ["Recorded", "Check needed"] as const;
@@ -85,6 +89,22 @@ const SOURCE_KEYS = [
   "document_ref",
   "statement",
 ] as const;
+
+/** The OPTIONAL top-level key the additive 1.1.0 contract adds (request D-2,
+ * D-090-R095). Absent on every 1.0.0 document; null or the ref object on 1.1.0. */
+const DOCUMENT_OPTIONAL_KEYS = ["missing_source_ref"] as const;
+
+/** missing_source_ref keys: every declared key is present (null when N/A);
+ * 'components' is the one optional key. */
+const MISSING_SOURCE_REF_KEYS = [
+  "dataset",
+  "dataset_id",
+  "publisher",
+  "dataset_version",
+  "url",
+] as const;
+const MISSING_SOURCE_REF_OPTIONAL_KEYS = ["components"] as const;
+const MISSING_SOURCE_REF_COMPONENT_KEYS = ["dataset", "dataset_id"] as const;
 
 export interface TransitParkingStatusOutcome {
   kind: "status";
@@ -195,23 +215,66 @@ function checkTransitParkingSource(problems: Problems, path: string, value: unkn
 }
 
 /**
+ * The Source-disclosure reference behind missing_source (transit_parking contract
+ * 1.1.0, request D-2 / D-090-R095). The face shows missing_source (a readable name
+ * and what to check); this carries the exact identifier, publisher, version and
+ * link for the Source disclosure, with `components` naming any sub-datasets a
+ * single named source is composed of.
+ */
+export interface TransitParkingMissingSourceRef {
+  dataset: string;
+  dataset_id: string | null;
+  publisher: string | null;
+  dataset_version: string | null;
+  url: string | null;
+  components?: { dataset: string; dataset_id: string }[];
+}
+
+/**
+ * Validate missing_source_ref (transit_parking.schema.json#/$defs/missing_source_ref,
+ * contract 1.1.0): absent (every 1.0.0 body), null (no source to reference), or the
+ * object shape. The uri form of `url` is a server-side format annotation; the client
+ * checks it as nullable text, as it does the source query_ref.
+ */
+function checkMissingSourceRef(problems: Problems, path: string, value: unknown): void {
+  if (value === undefined || value === null) return;
+  const ref = checkObject(problems, path, value);
+  if (!ref) return;
+  checkKeys(problems, path, ref, MISSING_SOURCE_REF_KEYS, MISSING_SOURCE_REF_OPTIONAL_KEYS);
+  checkNonEmptyString(problems, `${path}.dataset`, ref.dataset);
+  checkNullableNonEmptyString(problems, `${path}.dataset_id`, ref.dataset_id);
+  checkNullableNonEmptyString(problems, `${path}.publisher`, ref.publisher);
+  checkNullableNonEmptyString(problems, `${path}.dataset_version`, ref.dataset_version);
+  checkNullableNonEmptyString(problems, `${path}.url`, ref.url);
+  if (ref.components !== undefined) {
+    const components = checkArray(problems, `${path}.components`, ref.components);
+    components?.forEach((component, index) => {
+      const comp = checkObject(problems, `${path}.components[${index}]`, component);
+      if (!comp) return;
+      checkKeys(problems, `${path}.components[${index}]`, comp, MISSING_SOURCE_REF_COMPONENT_KEYS);
+      checkNonEmptyString(problems, `${path}.components[${index}].dataset`, comp.dataset);
+      checkNonEmptyString(problems, `${path}.components[${index}].dataset_id`, comp.dataset_id);
+    });
+  }
+}
+
+/**
  * Validate a transit/parking document against the contract shape. Mirrors the
- * server's transit_parking.schema.json: the closed key set, the status/label
- * enums, the nullable zone/source/missing_source, and the allOf coherence rule
- * (status, status_label, transit_zone and missing_source move together).
+ * server's transit_parking.schema.json: the closed key set (plus the optional
+ * 1.1.0 missing_source_ref), the status/label enums, the nullable
+ * zone/source/missing_source, and the allOf coherence rule (status, status_label,
+ * transit_zone and missing_source move together).
  */
 export function validateTransitParkingDocument(body: unknown): TransitParkingValidation {
   const problems = new Problems();
   const doc = checkObject(problems, "transit_parking", body);
   if (!doc) return { ok: false, problems: problems.list };
   checkNoFixtureAnnotation(problems, "transit_parking", doc);
-  // Closed shape: required keys present, NO extra key (a parking-outcome field,
-  // say, is refused here - the zone only).
-  checkKeys(problems, "transit_parking", doc, DOCUMENT_KEYS);
+  // Closed shape: required keys present, the optional 1.1.0 missing_source_ref
+  // admitted, NO other key (a parking-outcome field, say, is refused - the zone only).
+  checkKeys(problems, "transit_parking", doc, DOCUMENT_KEYS, DOCUMENT_OPTIONAL_KEYS);
 
-  if (doc.contract_version !== TRANSIT_PARKING_CONTRACT_VERSION) {
-    problems.add("contract_version", `must be the string "${TRANSIT_PARKING_CONTRACT_VERSION}"`);
-  }
+  checkEnum(problems, "contract_version", doc.contract_version, TRANSIT_PARKING_CONTRACT_VERSIONS);
   checkBbl(problems, "lot_bbl", doc.lot_bbl);
   checkEnum(problems, "status", doc.status, STATUS_VALUES);
   checkEnum(problems, "status_label", doc.status_label, STATUS_LABELS);
@@ -219,6 +282,7 @@ export function validateTransitParkingDocument(body: unknown): TransitParkingVal
   checkNonEmptyString(problems, "detail", doc.detail);
   checkNullableNonEmptyString(problems, "missing_source", doc.missing_source);
   checkTransitParkingSource(problems, "source", doc.source);
+  checkMissingSourceRef(problems, "missing_source_ref", doc.missing_source_ref);
 
   // allOf coherence (the schema oneOf): recorded carries a zone and no missing
   // source; check_needed carries no zone and names the source to check.
