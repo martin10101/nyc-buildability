@@ -33,6 +33,8 @@
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import {
+  SITE_FACTS_INTRO,
+  SITE_SETUP_NOT_CONNECTED,
   applyEnteredFactToSource,
   groupSiteFactRows,
   lotChoiceViewOf,
@@ -285,11 +287,7 @@ function NotConnectedCard() {
     <section className="card architect-empty" data-testid="lot-site-unavailable">
       <p className="architect-eyebrow">Lot &amp; site setup</p>
       <h2>Site setup is not connected yet</h2>
-      <p>
-        The lots that make up this site and their pre-filled measurements are prepared by the
-        site-facts service. That data is not connected to this screen yet, so there is nothing to
-        show here. No measurements are guessed.
-      </p>
+      <p>{SITE_SETUP_NOT_CONNECTED}</p>
     </section>
   );
 }
@@ -544,11 +542,7 @@ export function LotSiteSetup({ bbl, study, fetchImpl, now }: LotSiteSetupProps) 
 
       <section className="card" aria-label="Site facts">
         <h2>Site facts</h2>
-        <p className="section-note">
-          Each value shows where it came from. Enter your own value for any fact — it is recorded as
-          &ldquo;Entered&rdquo; and the city value stays on file beside it. Nothing here has to be
-          typed when a city value is on file.
-        </p>
+        <p className="section-note">{SITE_FACTS_INTRO}</p>
         <dl className="lot-site-facts">
           {groups.map((group) => (
             <SiteFactGroupRow
