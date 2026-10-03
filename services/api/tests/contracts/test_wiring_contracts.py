@@ -73,6 +73,9 @@ EXPECTED_INVALID_DEFECT = {
     "zoning_lot_history_opportunity.json": ("groups/0/flags/0", None),
     # recorded status with transit_zone null -> the root status/zone oneOf.
     "recorded_without_transit_zone.json": ("<root>", None),
+    # missing_source_ref object missing its required 'dataset' key -> satisfies
+    # neither branch of the missing_source_ref anyOf (object shape nor null).
+    "missing_source_ref_wrong_shape.json": ("missing_source_ref", None),
     # unused_floor_area.status not the const 'not_confirmed'.
     "unused_floor_area_confirmed.json": (
         "unused_floor_area/status",

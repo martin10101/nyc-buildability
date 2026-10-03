@@ -64,7 +64,12 @@ describe("fetchTransitParking — documented pairs route to typed outcomes", () 
     if (outcome.kind === "status") {
       expect(outcome.status.status).toBe("check_needed");
       expect(outcome.status.transit_zone).toBeNull();
-      expect(outcome.status.missing_source).toContain("6ztr-wgff");
+      // The adapter has no transitional phase: it validates the 1.1.0 document the
+      // check-needed fixture carries. The id lives in the Source-disclosure ref
+      // (request D-2, D-090-R095); the face string names DCP Transit Zones, id-free.
+      expect(outcome.status.missing_source).toContain("DCP Transit Zones");
+      expect(outcome.status.missing_source).not.toContain("6ztr-wgff");
+      expect(outcome.status.missing_source_ref?.dataset_id).toBe("6ztr-wgff");
     }
   });
 
@@ -226,5 +231,70 @@ describe("validateTransitParkingDocument", () => {
     const result = validateTransitParkingDocument(doc);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.problems.some((p) => p.includes("contract_version"))).toBe(true);
+  });
+
+  it("accepts both the 1.0.0 and 1.1.0 contract versions", () => {
+    const v10 = recordedDocument();
+    v10.contract_version = "1.0.0";
+    delete v10.missing_source_ref; // a 1.0.0 body omits the key
+    expect(validateTransitParkingDocument(v10).ok).toBe(true);
+    expect(validateTransitParkingDocument(recordedDocument()).ok).toBe(true); // 1.1.0
+  });
+});
+
+describe("validateTransitParkingDocument — missing_source_ref (contract 1.1.0)", () => {
+  it("accepts the structured ref object the check-needed fixture carries", () => {
+    const result = validateTransitParkingDocument(checkNeededDocument());
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.status.missing_source_ref?.dataset_id).toBe("6ztr-wgff");
+      expect(result.status.missing_source_ref?.components?.[0]?.dataset_id).toBe("vhqf-adkz");
+    }
+  });
+
+  it("accepts a null ref (the recorded fixture: no source to reference)", () => {
+    const doc = recordedDocument();
+    expect(doc.missing_source_ref).toBeNull();
+    expect(validateTransitParkingDocument(doc).ok).toBe(true);
+  });
+
+  it("accepts a document that omits missing_source_ref (a 1.0.0 body)", () => {
+    const doc = recordedDocument();
+    delete doc.missing_source_ref;
+    doc.contract_version = "1.0.0";
+    expect(validateTransitParkingDocument(doc).ok).toBe(true);
+  });
+
+  it("rejects a ref object missing its required 'dataset'", () => {
+    const doc = checkNeededDocument();
+    // A deliberate invalid-shape probe: neither branch of the ref anyOf is
+    // satisfied (object shape nor null), so the client contract refuses it. The
+    // key is typed `unknown` on the document record, so no cast is needed.
+    doc.missing_source_ref = { dataset_id: "6ztr-wgff" };
+    const result = validateTransitParkingDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.problems.some((p) => p.includes("missing_source_ref.dataset"))).toBe(true);
+    }
+  });
+
+  it("rejects a ref whose dataset is empty", () => {
+    const doc = checkNeededDocument();
+    (doc.missing_source_ref as Record<string, unknown>).dataset = "";
+    const result = validateTransitParkingDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.problems.some((p) => p.includes("missing_source_ref.dataset"))).toBe(true);
+    }
+  });
+
+  it("rejects a ref that is not an object or null", () => {
+    const doc = checkNeededDocument();
+    doc.missing_source_ref = "6ztr-wgff";
+    const result = validateTransitParkingDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.problems.some((p) => p.includes("missing_source_ref"))).toBe(true);
+    }
   });
 });
