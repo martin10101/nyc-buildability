@@ -38,3 +38,8 @@
   request can never produce).
 - DO make a "fix does not corrupt X" test assert the field the bug displaces: revert to the
   literal pre-fix code and confirm the asserted value moves (M5-T083 G4-F6: points[0] was invariant).
+- DON'T enable eslint-plugin-react-hooks 7.x `configs.recommended` / `recommended-latest` wholesale — they add every
+  React-Compiler rule at ERROR; register the plugin and name `rules-of-hooks` (error) + `exhaustive-deps` (warn) (M0-T180).
+- DO expect `@eslint/js` recommended, when first enabled, to flag intentional control-char regexes (`no-control-regex`), a
+  literal U+FEFF in a regex (`no-irregular-whitespace`) and double spaces in test regexes — fix behavior-identically
+  (line-scoped justified disable, `\uFEFF`, ` {2}`), never by weakening the config (M0-T180 S3).
