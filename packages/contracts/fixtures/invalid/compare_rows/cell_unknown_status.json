@@ -1,0 +1,31 @@
+{
+  "contract_version": "1.0.0",
+  "study_id": "test-fixture-synthetic-study",
+  "revision": 1,
+  "options": [
+    { "option_id": "option-1", "revision": 1, "results_id": "test-fixture-synthetic:results:1", "computed_at": "2026-10-03T00:00:00Z" },
+    { "option_id": "option-2", "revision": 1, "results_id": "test-fixture-synthetic:results:2", "computed_at": "2026-10-03T00:00:00Z" }
+  ],
+  "rows": [
+    {
+      "key": "floor_area_allowance",
+      "label": "Floor-area allowance (residential)",
+      "catalogue_order": 0,
+      "cells": [
+        { "status": "available", "value": 20150, "unit": "square_feet", "label": "Most residential floor area" },
+        { "status": "pending", "value": 20150, "unit": "square_feet", "label": "Most residential floor area" }
+      ]
+    }
+  ],
+  "common_scale": {
+    "status": "available",
+    "units": "feet",
+    "fits_extent": { "width_ft": 100.8, "height_ft": 100.0 },
+    "per_option": [
+      { "option_id": "option-1", "crs": "local_feet", "width_ft": 100.8, "height_ft": 100.0 },
+      { "option_id": "option-2", "crs": "local_feet", "width_ft": 100.8, "height_ft": 100.0 }
+    ]
+  },
+  "duplicates": [],
+  "_expected_failure": "a cell status is exactly 'available' or 'not_available': 'pending' matches neither arm of the cell oneOf."
+}

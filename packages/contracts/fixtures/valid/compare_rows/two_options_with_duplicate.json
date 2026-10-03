@@ -1,0 +1,137 @@
+{
+  "contract_version": "1.0.0",
+  "study_id": "test-fixture-synthetic-study",
+  "revision": 1,
+  "options": [
+    {
+      "option_id": "option-1",
+      "revision": 1,
+      "results_id": "test-fixture-synthetic:results:1",
+      "computed_at": "2026-10-03T00:00:00Z"
+    },
+    {
+      "option_id": "option-2",
+      "revision": 1,
+      "results_id": "test-fixture-synthetic:results:2",
+      "computed_at": "2026-10-03T00:00:00Z"
+    }
+  ],
+  "rows": [
+    {
+      "key": "floor_area_allowance",
+      "label": "Floor-area allowance (residential)",
+      "catalogue_order": 0,
+      "cells": [
+        {
+          "status": "available",
+          "value": 20150,
+          "unit": "square_feet",
+          "label": "Most residential floor area",
+          "measurement": { "rank": "assumed", "label": "Assumed" },
+          "zr_sections": ["ZR 23-22"],
+          "sources": [{ "kind": "zoning_resolution", "ref": "ZR 23-22" }]
+        },
+        {
+          "status": "available",
+          "value": 20150,
+          "unit": "square_feet",
+          "label": "Most residential floor area",
+          "measurement": { "rank": "assumed", "label": "Assumed" },
+          "zr_sections": ["ZR 23-22"],
+          "sources": [{ "kind": "zoning_resolution", "ref": "ZR 23-22" }]
+        }
+      ]
+    },
+    {
+      "key": "permitted_building_height",
+      "label": "Permitted building height",
+      "catalogue_order": 1,
+      "cells": [
+        {
+          "status": "available",
+          "value": 55,
+          "unit": "feet",
+          "label": "Maximum building height",
+          "zr_sections": ["ZR 23-432"],
+          "sources": [{ "kind": "zoning_resolution", "ref": "ZR 23-432" }]
+        },
+        {
+          "status": "not_available",
+          "reason": "Height rules for this district are not built yet.",
+          "reason_kind": "rule_not_implemented"
+        }
+      ]
+    },
+    {
+      "key": "floor_to_floor_ft",
+      "label": "Floor-to-floor height (assumed)",
+      "catalogue_order": 2,
+      "cells": [
+        {
+          "status": "available",
+          "value": 10,
+          "unit": "feet",
+          "label": "Floor-to-floor height (assumed)"
+        },
+        {
+          "status": "available",
+          "value": 12,
+          "unit": "feet",
+          "label": "Floor-to-floor height (assumed)"
+        }
+      ]
+    },
+    {
+      "key": "status",
+      "label": "Status",
+      "catalogue_order": 3,
+      "cells": [
+        {
+          "status": "available",
+          "value": "Zoning maximum · Approximate measurements · Lots you selected",
+          "unit": null,
+          "label": "Status"
+        },
+        {
+          "status": "available",
+          "value": "Zoning maximum · Approximate measurements · Lots you selected",
+          "unit": null,
+          "label": "Status"
+        }
+      ]
+    },
+    {
+      "key": "out_of_date",
+      "label": "Out of date",
+      "catalogue_order": 4,
+      "cells": [
+        {
+          "status": "available",
+          "value": false,
+          "unit": null,
+          "label": "Out of date",
+          "note": null
+        },
+        {
+          "status": "available",
+          "value": false,
+          "unit": null,
+          "label": "Out of date",
+          "note": null
+        }
+      ]
+    }
+  ],
+  "common_scale": {
+    "status": "available",
+    "units": "feet",
+    "fits_extent": { "width_ft": 100.8, "height_ft": 100.0 },
+    "per_option": [
+      { "option_id": "option-1", "crs": "local_feet", "width_ft": 100.8, "height_ft": 100.0 },
+      { "option_id": "option-2", "crs": "local_feet", "width_ft": 100.8, "height_ft": 100.0 }
+    ]
+  },
+  "duplicates": [
+    { "option_ids": ["option-1", "option-2"], "disposition": "merge", "reason": "Both options resolve to the same inputs and the same results." }
+  ]
+}

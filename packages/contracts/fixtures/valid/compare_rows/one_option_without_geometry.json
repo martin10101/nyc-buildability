@@ -1,0 +1,68 @@
+{
+  "contract_version": "1.0.0",
+  "study_id": "test-fixture-synthetic-study",
+  "revision": 2,
+  "options": [
+    {
+      "option_id": "option-1",
+      "revision": 2,
+      "results_id": "test-fixture-synthetic:results:1",
+      "computed_at": "2026-10-03T00:00:00Z"
+    },
+    {
+      "option_id": "option-2",
+      "revision": 2,
+      "results_id": "test-fixture-synthetic:results:2",
+      "computed_at": "2026-10-03T00:00:00Z"
+    }
+  ],
+  "rows": [
+    {
+      "key": "floor_area_allowance",
+      "label": "Floor-area allowance (residential)",
+      "catalogue_order": 0,
+      "cells": [
+        {
+          "status": "available",
+          "value": 20150,
+          "unit": "square_feet",
+          "label": "Most residential floor area",
+          "zr_sections": ["ZR 23-22"],
+          "sources": [{ "kind": "zoning_resolution", "ref": "ZR 23-22" }]
+        },
+        {
+          "status": "not_available",
+          "reason": "The zoning-math engine (Lane A) is not enabled; its draft rules are not reviewed.",
+          "reason_kind": "rule_not_reviewed"
+        }
+      ]
+    },
+    {
+      "key": "out_of_date",
+      "label": "Out of date",
+      "catalogue_order": 1,
+      "cells": [
+        {
+          "status": "available",
+          "value": false,
+          "unit": null,
+          "label": "Out of date",
+          "note": null
+        },
+        {
+          "status": "available",
+          "value": false,
+          "unit": null,
+          "label": "Out of date",
+          "note": null
+        }
+      ]
+    }
+  ],
+  "common_scale": {
+    "status": "not_available",
+    "reason": "Option 'option-2' has no geometry (The zoning-math engine (Lane A) is not enabled.); a common scale needs every option's lot plan.",
+    "reason_kind": "rule_not_reviewed"
+  },
+  "duplicates": []
+}
