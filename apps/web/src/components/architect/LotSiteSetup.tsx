@@ -49,12 +49,18 @@ import {
 } from "@/lib/architect/lot-site-setup";
 import {
   buildExistingFloorAreaFact,
+  existingFloorAreaAssumptionStatement,
   existingFloorAreaFact,
   selectedOptionPlan,
   type ExistingBuildingPlan,
   type ExistingFloorAreaSourceKind,
 } from "@/lib/architect/existing-building-view";
-import { enterSiteFactValue, updateOptionInputs, upsertSiteFact } from "@/lib/study/study-operations";
+import {
+  enterSiteFactAssumption,
+  enterSiteFactValue,
+  updateOptionInputs,
+  upsertSiteFact,
+} from "@/lib/study/study-operations";
 import {
   fetchStudySetup,
   repickLots,
@@ -261,14 +267,33 @@ function useLotSiteSetup({ bbl, study: studyProp, fetchImpl, now }: LotSiteSetup
 
   const recordExistingFloorArea = useCallback(
     (value: number, sourceKind: ExistingFloorAreaSourceKind): string | null => {
-      const facts = stored ? stored.study.site.facts : (local?.siteFacts ?? []);
-      const existing = existingFloorAreaFact(facts);
-      const fact = buildExistingFloorAreaFact(existing, bbl, value, sourceKind, clock());
       if (stored) {
-        const result = store.update(bbl, (entry) => upsertSiteFact(entry, fact, clock()));
+        // Fact construction belongs in the C-05 store, not in this component (lane request D-3,
+        // adopted here): a stated assumption is recorded with enterSiteFactAssumption and an
+        // architect entry with enterSiteFactValue, so the store builds the contract fact. The
+        // builder + upsertSiteFact stay ONLY for the edge where the study carries no existing-zfa
+        // fact at all — both ops EDIT an existing displayed fact, so a first creation has nothing
+        // for them to edit (the server normally always supplies one, unknown when no figure exists).
+        const result = store.update(bbl, (entry) => {
+          const existing = existingFloorAreaFact(entry.study.site.facts);
+          if (!existing) {
+            return upsertSiteFact(entry, buildExistingFloorAreaFact(null, bbl, value, sourceKind, clock()), clock());
+          }
+          return sourceKind === "assumption"
+            ? enterSiteFactAssumption(
+                entry,
+                { factId: existing.fact_id, value, statement: existingFloorAreaAssumptionStatement(value) },
+                clock(),
+              )
+            : enterSiteFactValue(entry, { factId: existing.fact_id, value }, clock());
+        });
         return result.ok ? null : "That value could not be recorded.";
       }
+      // Setup-only working copy (no study/option yet): build the fact and mirror it locally — the
+      // store ops need a study, so this path keeps the builder exactly as before (unchanged).
       if (local) {
+        const existing = existingFloorAreaFact(local.siteFacts);
+        const fact = buildExistingFloorAreaFact(existing, bbl, value, sourceKind, clock());
         setLocal(withSiteFact(local, fact));
         return null;
       }

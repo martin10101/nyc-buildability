@@ -131,6 +131,18 @@ function isKeptCityExistingFact(existing: SiteFact | null): boolean {
 }
 
 /**
+ * The plain-words statement recorded for a STATED-ASSUMPTION existing-zoning-floor-area value. One
+ * wording shared by its two callers so they can never drift: the UI records a stated assumption
+ * through the C-05 store's enterSiteFactAssumption (passing this statement), and buildExistingFloorAreaFact
+ * below keeps using it for the setup-only working copy. One function, one test.
+ */
+export function existingFloorAreaAssumptionStatement(value: number): string {
+  return `Architect's stated assumption: existing zoning floor area ${value.toLocaleString(
+    "en-US",
+  )} sq ft.`;
+}
+
+/**
  * Build the contract-shaped existing-zoning-floor-area fact for a value the architect entered. The
  * source is the architect's chosen kind — "architect entry" (rank "Entered") or "stated assumption"
  * (rank "Assumed", with the assumption stated) — and NEVER a city source. A kept city filing is
@@ -155,9 +167,7 @@ export function buildExistingFloorAreaFact(
           retrieved_at: at,
           query_ref: null,
           document_ref: null,
-          statement: `Architect's stated assumption: existing zoning floor area ${value.toLocaleString(
-            "en-US",
-          )} sq ft.`,
+          statement: existingFloorAreaAssumptionStatement(value),
         }
       : {
           kind: "architect_entry",
