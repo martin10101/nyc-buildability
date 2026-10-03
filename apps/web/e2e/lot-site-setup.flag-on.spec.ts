@@ -84,4 +84,41 @@ test.describe("D-04 lot & site setup — flag-on journey over the real study set
     await expect(panel).not.toContainText("architect_entry");
     await expect(panel).not.toContainText("city_dataset");
   });
+
+  test("step 4: keep the building, enter the zoning floor area as a stated assumption, then no existing building", async ({ page }) => {
+    await routeApi(page);
+
+    await page.goto(`/property/workspace?ruleeval=on&bbl=${BBL}`);
+    await expect(page.getByTestId("connected-dashboard")).toBeVisible({ timeout: 15_000 });
+    await page.getByRole("button", { name: /Lot & site setup/ }).click();
+    const panel = page.getByTestId("lot-site-setup");
+    await expect(panel).toBeVisible({ timeout: 15_000 });
+
+    const step = panel.getByTestId("existing-building-step");
+    await expect(step).toBeVisible();
+    // Nothing chosen yet: the honest note shows and there is no floor-area entry.
+    await expect(panel.getByTestId("existing-building-unchosen")).toBeVisible();
+    await expect(panel.getByTestId("existing-floor-area")).toHaveCount(0);
+
+    // Keep the building → the existing zoning floor area is "Unknown — enter" (none established).
+    await step.getByRole("radio", { name: "Keep the existing building" }).check();
+    const floorArea = panel.getByTestId("existing-floor-area");
+    await expect(floorArea).toContainText("Unknown — enter");
+    await expect(floorArea).toContainText("Needed for:");
+
+    // Enter a value as a stated assumption → it is listed with the "Assumed" source label.
+    await floorArea.getByRole("textbox").fill("6200");
+    await floorArea.getByRole("radio", { name: "Stated assumption" }).check();
+    await floorArea.getByRole("button", { name: "Save" }).click();
+    await expect(panel.getByTestId("existing-floor-area-value")).toContainText("6,200 sq ft");
+    await expect(panel.getByTestId("existing-floor-area-source-label")).toContainText("Assumed");
+
+    // No internal enum tokens on the face (the plain word "assumption" in a label is fine).
+    await expect(step).not.toContainText("existing_zoning_floor_area");
+    await expect(step).not.toContainText("architect_entry");
+
+    // No existing building → the floor-area entry is gone.
+    await step.getByRole("radio", { name: "No existing building" }).check();
+    await expect(panel.getByTestId("existing-floor-area")).toHaveCount(0);
+  });
 });
