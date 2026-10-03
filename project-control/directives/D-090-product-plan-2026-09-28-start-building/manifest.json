@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-03T04:50:43+00:00",
+ "updated_at": "2026-10-03T14:53:09+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -110,10 +110,12 @@
   "D-090-R086",
   "D-090-R087",
   "D-090-R088",
-  "D-090-R089"
+  "D-090-R089",
+  "D-090-R090",
+  "D-090-R091"
  ],
- "requirements_id_digest_sha256": "ccf77b0c6f25fa444e39a78763b834e918df5a25c7de2b6feaacc110a5c3070b",
- "requirements_content_digest_sha256": "e7263394db27cfc7fb65ad538a8104fd3e6d9889252e87867e557cc136f2304e",
+ "requirements_id_digest_sha256": "e9a15a55037960cd6963e7166d98e4374e34aa7c8bf0a5c31b19c724418ad5ed",
+ "requirements_content_digest_sha256": "90ee1351f7a10b24ac32b4a4a88fe88b02b13171d731584d63c6e7023cefdd2a",
  "sources": [
   {
    "file": "source-001.md",
@@ -209,6 +211,14 @@
    "recorded_at": "2026-10-03T04:50:43+00:00",
    "content_digest_sha256": "9a76623e35a372d455800766b73b36554559ccbe7e33e39d4ebba64f565f20ee",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-013-amendment.md",
+   "kind": "amendment",
+   "sequence": 13,
+   "recorded_at": "2026-10-03T14:53:09+00:00",
+   "content_digest_sha256": "4f0e351465d09a12910e837eea93ca88c72f2e7ead2ad47dbc53114083299b29",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -222,7 +232,8 @@
   "source-009-amendment.md",
   "source-010-amendment.md",
   "source-011-amendment.md",
-  "source-012-amendment.md"
+  "source-012-amendment.md",
+  "source-013-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -326,6 +337,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-012 (session ab961de0 message 37, the /session-handoff request) and requirement D-090-R089 (sequencing: hand off at a proper seam; token-lean successor prompt), pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: ab961de0, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-03T14:53:09+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-013 (session 966ea9e4 message 38, the seq 136 resume prompt) and requirements D-090-R090 (harness: the seq 136 resume harness) and D-090-R091 (sequencing: the seq 136 next-action order), both pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: 966ea9e4, claude-fable-5-1."
   }
  ]
 }
