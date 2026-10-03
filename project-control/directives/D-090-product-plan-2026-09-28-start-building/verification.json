@@ -190,16 +190,21 @@
     "D-090-R083"
    ],
    "producer": "frontend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "c32b1b62a80d0f49d55fb84b1cd61d458c1bc743",
+   "reviewed_manifest_sha256": "840e30a01e84a09bcfe834167f7d83b9cf30ff10ea293c45cced9b4abcc3a711",
    "requirements": [
     {
      "id": "D-090-R083",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task's share of 'start building' (the green baseline): the braces advisory chain (eslint-config-next -> @next/eslint-plugin-next -> fast-glob -> micromatch -> braces, GHSA-vfj7-8cjw-p6xm, no patched version) is removed from apps/web; native flat ESLint config over the admitted set @eslint/js 9.39.5, typescript-eslint 8.70.1, eslint-plugin-react-hooks 7.1.1, globals 17.12.0 (exact pins; >= 604800 s; advisories empty; integrity recorded) - producer commit 4a783382, lock by the generate-lockfile bot 4844b56b (run 37095335970), scope correction 2c0735ee; project-control/reports/M0-T180-producer-report.md + M0-T180-registry-research.md + M0-T180-evidence-map.json",
+      "Lock parse at the head: braces / micromatch / fast-glob / @next/eslint-plugin-next / eslint-config-next ABSENT (397 entries); overrides byte-identical; ci.yml audit unchanged (no --omit=dev, no audit-level change, no waiver); all 48 check-runs success at the material head 2ad88408 incl. web-dependency-security, web, web-e2e, control-plane",
+      "Gates G0/G2/G3/G4/G5 PASS at content identity 840e30a0 (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer frontend-engineer != reviewers); DCV report project-control/reports/M0-T180-DCV.md (validator --check EXIT=0; test_project_control + test_directive_reminder exit 0); restamp pre-authorized for control-only commits",
+      "Not claimed under R083: the lane work (#349 #350 #351 #352 #353 run under their own reviews) and the broader build continuation"
+     ],
+     "reviewed_sha": "c32b1b62a80d0f49d55fb84b1cd61d458c1bc743"
     }
    ]
   }

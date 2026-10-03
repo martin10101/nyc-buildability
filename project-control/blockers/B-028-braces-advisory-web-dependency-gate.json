@@ -1,7 +1,7 @@
 {
   "blocker_id": "B-028",
   "title": "braces <= 3.0.3 advisory GHSA-vfj7-8cjw-p6xm (high, no patched version) fails the web-dependency-security gate on every PR since 2026-10-03 ~01:00 UTC; it enters only through the dev chain eslint-config-next -> @next/eslint-plugin-next -> fast-glob -> micromatch -> braces; no PR can merge until the chain is removed",
-  "status": "open",
+  "status": "resolved",
   "created_at": "2026-10-03T02:49:37+00:00",
   "created_by": "orchestrator",
   "affects": [
@@ -18,5 +18,19 @@
   "workaround_in_effect": "None. No waiver exists; no merge happens with a red check (D-090-R020 Option B requires all CI green).",
   "candidate_followup": "Ledger task M0-T180 (frontend-engineer producer; gates G0/G2/G3/G4/G5; reviewers code-reviewer, security-reviewer, directive-compliance-verifier) is contracted at this seam to discharge it; this blocker is resolved in that task's acceptance seam with the green run ids as evidence. If braces ships a fixed release later, a follow-up may re-admit the Next lint plugin as its own gated task.",
   "scope_corrections": [],
-  "history_note": "Found at the seq 135 handoff (2026-10-03 ~00:45 UTC, PR #347) by the previous session; root-caused and opened by this session on 2026-10-03."
+  "history_note": "Found at the seq 135 handoff (2026-10-03 ~00:45 UTC, PR #347) by the previous session; root-caused and opened by this session on 2026-10-03.",
+  "resolved_at": "2026-10-03T04:41:14+00:00",
+  "resolved_by": "orchestrator (M0-T180 accepted; D-090-R083 share verified PASS)",
+  "resolution": {
+    "summary": "Resolved exactly along the recorded path: ledger task M0-T180 (ACCEPTED 2026-10-03) removed eslint-config-next and its chain, replaced the lint config with an admitted flat-config set (@eslint/js 9.39.5, typescript-eslint 8.70.1, eslint-plugin-react-hooks 7.1.1, globals 17.12.0; each exact-pinned, >= 7 days old, advisory-free, G5 provenance-reviewed), and had the lock regenerated and proven by the generate-lockfile workflow (run 37095335970, bot 4844b56b). web-dependency-security, web and web-e2e are green at the material head 2ad88408 (48/48 check-runs); gates G0/G2/G3/G4/G5 PASS; DCV PASS for D-090-R083's share. No waiver, no --omit=dev, no audit-level change.",
+    "evidence": [
+      "PR #348 (task/M0-T180-web-lint-chain-braces): CI runs 37095868671 / 37095870850 at 2ad88408 - all success",
+      "generate-lockfile run 37095335970 success; bot lock commit 4844b56b",
+      "project-control/gates/M0-T180-G{0,2,3,4,5}.json PASS, content identity 840e30a0; project-control/reports/M0-T180-{G2,G3G4,G5,DCV}.md"
+    ],
+    "follow_ups": [
+      "PR #347 and the lane PRs #350/#351/#352 need the base merged in and CI re-run (their red check was this advisory)",
+      "DB-107: re-admission of a11y/react lint is a future gated package decision; never @next/eslint-plugin-next until braces ships a fix"
+    ]
+  }
 }
