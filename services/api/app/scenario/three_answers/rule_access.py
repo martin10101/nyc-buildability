@@ -45,6 +45,35 @@ class RuleGap:
     reason_kind: str  # results.schema.json not_available reason_kind
 
 
+class RuleParameterError(RuntimeError):
+    """A declared rule-table parameter a caller depends on is absent or non-numeric. Raised
+    fail-closed so a value (e.g. the dwelling-unit factor) can never silently drift from the
+    rule table into a hand-copied literal."""
+
+
+def rule_parameter(registry: RuleRegistry, rule_id: str, param_name: str) -> float:
+    """Read a declared NUMERIC parameter from ``rule_id``'s rule table through the registry.
+
+    Fails closed with :class:`RuleParameterError` when the rule is not indexed, the parameter
+    is absent, or its declared value is not a finite number (booleans rejected). The value is
+    the rule's own (e.g. ``dwelling_unit_factor = 680``), never a literal in calling code."""
+    if rule_id not in registry.rule_ids():
+        raise RuleParameterError(
+            f"rule {rule_id!r} is not indexed; cannot read parameter {param_name!r}"
+        )
+    parameters = registry.rule(rule_id).parameters
+    if param_name not in parameters:
+        raise RuleParameterError(
+            f"rule {rule_id!r} declares no parameter {param_name!r}"
+        )
+    value = parameters[param_name]
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise RuleParameterError(
+            f"rule {rule_id!r} parameter {param_name!r} is not numeric: {value!r}"
+        )
+    return float(value)
+
+
 def _zr_sections(citations: list[dict]) -> tuple[str, ...]:
     """Prefix each citation's section with 'ZR ' and de-duplicate, order-preserving."""
     out: list[str] = []

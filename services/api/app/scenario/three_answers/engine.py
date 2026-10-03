@@ -188,6 +188,9 @@ def generate_results(
     lane flag is read there). The returned document is strictly schema-valid."""
     resolved_env = env
     reg = _resolve_registry(registry, env)
+    # Enablement: the default path reads LANE_A_ENABLED from ``env`` (app.config.lane_enabled);
+    # a CALLER-SUPPLIED registry was already built with its own env, so we infer enablement from
+    # the gated rule's presence in it (the lane-A rules are indexed only when the flag was on).
     enabled = lane_enabled(LANE, resolved_env) if registry is None else (
         _DWELLING_UNITS_RULE in reg.rule_ids()
     )

@@ -11,10 +11,13 @@ from __future__ import annotations
 
 from .answers import not_available
 from .inputs import ThreeAnswerInputs
-from .rule_access import RuleGap, RuleValue, evaluate_output
+from .rule_access import RuleGap, RuleValue, evaluate_output, rule_parameter
 
 _UNITS_RULE = "r6b-dwelling-units"
-_FACTOR = 680.0
+# The dwelling-unit factor is NOT a literal here: it is read from the rule table's declared
+# parameter (r6b-dwelling-units parameters.dwelling_unit_factor) so the formula and the factor
+# field can never drift from the rule the estimate is computed by (review F1).
+_FACTOR_PARAM = "dwelling_unit_factor"
 
 
 def _format_thousands(value: float) -> str:
@@ -39,8 +42,9 @@ def build_unit_estimate(
         return not_available(gap.reason, gap.reason_kind)
     assert isinstance(before, RuleValue) and isinstance(value, RuleValue)
 
+    factor = rule_parameter(registry, _UNITS_RULE, _FACTOR_PARAM)
     formula = (
-        f"{_format_thousands(standard_floor_area_sq_ft)} ÷ {_FACTOR:,.0f} = "
+        f"{_format_thousands(standard_floor_area_sq_ft)} ÷ {factor:,.0f} = "
         f"{before.value:.2f}"
     )
     zr_sections = list(value.zr_sections) or ["ZR 23-52"]
@@ -48,7 +52,7 @@ def build_unit_estimate(
         "status": "available",
         "value": int(value.value),
         "formula": formula,
-        "factor": {"value": _FACTOR, "unit": "square_feet_per_dwelling_unit"},
+        "factor": {"value": factor, "unit": "square_feet_per_dwelling_unit"},
         "rounding_rule": "rounds up only at .75 or more",
         "zr_sections": zr_sections,
     }
