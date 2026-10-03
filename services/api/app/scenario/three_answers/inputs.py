@@ -26,6 +26,27 @@ DEFAULT_FLOOR_TO_FLOOR_FT = 10.0
 # rests on the floor-to-floor assumption, so its own weakest-input label is "Assumed".
 DEFAULT_SITE_MEASUREMENT_RANK = "city_records"
 
+# 'Best combination' goal vocabulary (results.schema.json study goal def). A CLOSED set the
+# add-on search optimizes; the default is stated and editable per option, exactly like the
+# floor-to-floor height. goal_value_sf (results.schema.json) is always a floor area, so both
+# kinds below resolve to a square-foot figure.
+ADDON_GOAL_KINDS = ("most_residential_floor_area", "most_total_floor_area")
+DEFAULT_ADDON_GOAL_KIND = "most_residential_floor_area"
+
+
+@dataclass(frozen=True)
+class AddonGoal:
+    """The stated, editable 'Best combination' goal saved with the option (plan section 5:
+    'The goal, program and assumptions are saved with the option'). ``kind`` is a closed
+    vocabulary; ``text`` is required only for the open 'other' kind (results contract), null
+    otherwise. The default is most residential floor area."""
+
+    kind: str = DEFAULT_ADDON_GOAL_KIND
+    text: str | None = None
+
+    def as_contract(self) -> dict:
+        return {"kind": self.kind, "text": self.text}
+
 
 @dataclass(frozen=True)
 class Assumption:
@@ -100,6 +121,9 @@ class ThreeAnswerInputs:
 
     # --- editable building defaults ---
     building_defaults: BuildingDefaults = field(default_factory=BuildingDefaults)
+
+    # --- editable 'Best combination' goal (saved with the option) ---
+    addon_goal: AddonGoal = field(default_factory=AddonGoal)
 
     # --- provenance plumbing ---
     depends_on_fact_ids: tuple[str, ...] = ()
