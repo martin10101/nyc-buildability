@@ -460,7 +460,7 @@ test("run() fails (exit 1) and names the too-new package when one entry is under
   assert.equal(code, 1);
   assert.match(output, /FAIL/);
   assert.match(output, /newpkg@1\.0\.0/);
-  assert.match(output, /PASS  oldpkg@1\.0\.0/);
+  assert.match(output, /PASS {2}oldpkg@1\.0\.0/);
 });
 
 test("run() passes (exit 0) for an all-valid multi-entry lock", async () => {
