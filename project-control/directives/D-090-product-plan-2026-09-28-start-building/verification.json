@@ -3,7 +3,7 @@
  "directive_id": "D-090",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-090-BOOTSTRAP at capture; tasks cite them through directive_refs. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": null,
+ "verified_at": "2026-10-03T21:28:17+00:00",
  "task_verifications": [
   {
    "directive_id": "D-090",
@@ -205,6 +205,33 @@
       "Not claimed under R083: the lane work (#349 #350 #351 #352 #353 run under their own reviews) and the broader build continuation"
      ],
      "reviewed_sha": "c32b1b62a80d0f49d55fb84b1cd61d458c1bc743"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M0-T181",
+   "applicable_requirement_ids": [
+    "D-090-R093",
+    "D-090-R094"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R093",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R094",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
     }
    ]
   }
