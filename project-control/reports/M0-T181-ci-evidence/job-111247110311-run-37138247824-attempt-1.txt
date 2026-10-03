@@ -1,0 +1,21 @@
+# Frozen CI evidence - supervisor-bridge job 111247110311 (run 37138247824, attempt 1)
+# Head 745e33184cd3e01bde57c6efe074b0497824f73e, branch lane-b/B-req-D-2-transit-detail-prose, runner image: Microsoft Windows Server 2025 (windows-latest)
+# Full job log: 51115 bytes, sha256 2443eb67335837b90a25fcb50ed40bee54bf765ab403848ac799e03f24404f6a
+# Source: gh api repos/martin10101/nyc-buildability/actions/jobs/111247110311/logs, read 2026-10-03 by the orchestrator. Excerpt = the FAILURES section through the summary line, timestamps stripped. Read-only for the producer.
+
+================================== FAILURES ===================================
+_____________ test_real_process_table_proves_a_reaped_child_gone ______________
+
+    def test_real_process_table_proves_a_reaped_child_gone():
+        child = subprocess.Popen([sys.executable, "-c", "pass"])
+        child.wait(timeout=60)
+        proof = md.prove_zero_descendants(child.pid, settle_seconds=5.0)
+>       assert proof.proven is True and proof.remaining == ()
+E       AssertionError: assert (False is True)
+E        +  where False = DescendantProof(root_pid=8028, remaining=(8040, 8088, 8136, 8184), attempts=97, elapsed_seconds=5.046999999999969, proven=False, source='windows_toolhelp32').proven
+
+tools\test_agent_supervisor_mrl_one_shot.py:875: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/test_agent_supervisor_mrl_one_shot.py::test_real_process_table_proves_a_reaped_child_gone - AssertionError: assert (False is True)
+ +  where False = DescendantProof(root_pid=8028, remaining=(8040, 8088, 8136, 8184), attempts=97, elapsed_seconds=5.046999999999969, proven=False, source='windows_toolhelp32').proven
+=========== 1 failed, 3949 passed, 60 skipped in 302.60s (0:05:02) ============

@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-03T20:45:20+00:00",
+ "updated_at": "2026-10-03T20:54:51+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -124,7 +124,7 @@
   "D-090-R100"
  ],
  "requirements_id_digest_sha256": "c19a37282c99e2c1e6df2ccbab43d605f990a471b628009eaa66ab74769bc23c",
- "requirements_content_digest_sha256": "509e16fb91979edc44bb362426fa34cc082a432eaa6c97c1d9ad87dd4437e5c4",
+ "requirements_content_digest_sha256": "80d2651fa985942b17c611ea6a0e4e853caf97e8577f77698e24f6748a9bbdf6",
  "sources": [
   {
    "file": "source-001.md",
@@ -269,7 +269,8 @@
   "M0-T163",
   "M0-T164",
   "M5-T125",
-  "M0-T180"
+  "M0-T180",
+  "M0-T181"
  ],
  "affected_prs": [
   262,
@@ -382,6 +383,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-015 (session 0ba6d6a3 message 40, the seq 138 resume prompt) and requirements D-090-R099 (harness: the seq 138 resume harness) and D-090-R100 (sequencing: the seq 138 next-action order), both pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-03T20:54:51+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T181 (supervisor-bridge Windows CI repair) to D-090-R093 and D-090-R094 via applicability.task_ids; requirements content digest resynced in the same commit; no requirement text edited. Capture session: 0ba6d6a3, claude-fable-5-1."
   }
  ]
 }

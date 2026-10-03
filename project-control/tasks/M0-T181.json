@@ -1,0 +1,149 @@
+{
+  "task_id": "M0-T181",
+  "title": "Supervisor-bridge Windows CI repair: trace and fix the cause of the two load-sensitive real-process test failures (review-slots race under-admission; reaped-child descendants proof) without skipping tests, weakening checks or adding retries (DB-111; D-090-R093/R094)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "The windows-latest supervisor-bridge job (pytest tools/test_agent_supervisor_*.py) failed three times on 2026-10-03 in two timing-sensitive real-process tests while the paired run of the same head passed: tools/test_agent_supervisor_review_slots.py::RaceTests::test_global_last_slot_never_double_taken (AssertionError 1 != 2 - six racers, two global slots, only ONE admitted; jobs 111231288935 and 111247302687) and tools/test_agent_supervisor_mrl_one_shot.py::test_real_process_table_proves_a_reaped_child_gone (proven False with remaining=(8040, 8088, 8136, 8184) under windows_toolhelp32 for root_pid 8028 after a 5 s settle; job 111247110311). Under /deficit-convergence: freeze the three job logs, reproduce or reason the complete causal path from the code (the runner is windows-latest; this host is Linux), decide whether each failure is test timing or a real supervisor defect, and fix the CAUSE as one bounded change. Preserve every safety and concurrency assertion; never skip or weaken a test, never add a retry merely to obtain green CI (D-090-R094). Separate PR. Any change under tools/agent_supervisor/** voids the M0-T179 certification and takes the D-091 recertification path (a cost, not a bar).",
+  "business_reason": "Owner directive D-090-R093 (2026-10-03: 'Proceed with a bounded repair of the recurring Windows supervisor failures in a separate PR. Investigate whether the cause is test timing or a real supervisor defect, and fix the cause') and D-090-R094 (preserve the safety and concurrency assertions; no skipped tests, weakened checks or retries for green). Discovery DB-111. Precedent for an orchestrator-contracted repair packet: M0-T180.",
+  "inputs": [
+    "docs/DISCOVERY_BACKLOG.md row DB-111 (2026-10-03): the three supervisor-bridge failures, 37 of the last 45 runs green, every failure started within seconds of a second supervisor-bridge job for the same head; under-admission / liveness, never a double-take",
+    "Frozen CI evidence (orchestrator, 2026-10-03): project-control/reports/M0-T181-ci-evidence/ - the FAILURES sections and summary lines of jobs 111231288935 (run 37132839977 attempt 1, head 84ded09b, lane-d/D-12-slice-2-flag-on-e2e), 111247110311 (run 37138247824 attempt 1, head 745e3318, lane-b/B-req-D-2-transit-detail-prose) and 111247302687 (run 37138313731, head 1ed2a55f, task/docs-seam-2026-10-03), each with the full log's byte count and sha256; runner image Microsoft Windows Server 2025; suite timings 419.55 s / 302.60 s / 322.47 s for 3949 passed + 60 skipped + 1 failed",
+    "tools/test_agent_supervisor_review_slots.py (RaceTests: six real interpreters behind a file barrier; the racer source _RACE_WORKER sets lock_timeout_s=30.0 and a 30 s go-deadline that emits '0' on expiry; the parent waits up to 60 s for ready_* and result_*)",
+    "tools/test_agent_supervisor_mrl_one_shot.py::test_real_process_table_proves_a_reaped_child_gone (Popen child, wait, prove_zero_descendants(child.pid, settle_seconds=5.0)); the frozen failure shows root_pid 8028 absent while four pids 8040/8088/8136/8184 remained under it for 97 attempts (windows_toolhelp32)",
+    "tools/agent_supervisor/review_slots.py (DEFAULT_LOCK_TIMEOUT_S 10.0, _SlotLock O_EXCL + stale scan, try_reserve critical section, reservation_owner_alive via process.probe_process); tools/agent_supervisor/mrl_descendants.py (snapshot_processes via Toolhelp32 on win32, descendants_of walks pid->ppid chains including orphans whose recorded parent is gone, prove_zero_descendants settle loop); tools/agent_supervisor/process.py (probe_process, start tokens)",
+    ".github/workflows/ci.yml job supervisor-bridge (windows-latest; `pytest tools/test_agent_supervisor_*.py` single process, no rerun plugin) - READ ONLY for this task",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows D-090-R093 (authorization: bounded repair in a separate PR; test timing vs real defect; fix the cause) and D-090-R094 (prohibition: preserve safety and concurrency assertions; no skipped tests, weakened checks or retries for green)",
+    "D-091 (cloud loop dual review) + project-control/tasks/M0-T179.json: the current Linux supervisor certification; any change under tools/agent_supervisor/** voids it and takes the D-091 recertification path",
+    "Precedent packet: project-control/tasks/M0-T180.json (orchestrator-contracted repair; frozen-head accept flow)",
+    "Method: .claude/skills/deficit-convergence (freeze evidence, reproduce or trace the complete causal path, repair ONE bounded causal cluster, verify once at the frozen candidate, end VERIFIED_CLOSED or one consolidated blocker report)"
+  ],
+  "outputs": [
+    "The repair commit(s): the cause of each of the two failures removed in the test harness and/or the supervisor modules named in allowed_paths, with new tests that pin the corrected mechanism (a stale-parent orphan or a barrier timeout must now FAIL LOUDLY as a harness fault or be excluded by a proven rule - never counted as a legitimate refusal or a live descendant)",
+    "project-control/reports/M0-T181-convergence-record.md: the /deficit-convergence record - frozen evidence, the reproduced or code-traced causal path for EACH failure, the classification (test timing | real supervisor defect) with the evidence that decides it, the one bounded repair, the verification at the frozen candidate (Linux local + windows-latest CI run ids), and the closing line VERIFIED_CLOSED or a consolidated blocker",
+    "project-control/reports/M0-T181-producer-report.md: files changed, every check command with its DIRECT exit code and pytest counts, the before/after list of the safety and concurrency assertions (test names) proving none was removed or loosened, the explicit R094 statement (no skip, no xfail, no loosened assertion, no retry/rerun, no CI change), and whether tools/agent_supervisor/** changed (M0-T179 recertification consequence)",
+    "project-control/reports/M0-T181-ci-evidence/*.txt: the frozen failure excerpts (written by the orchestrator at contract time; the producer may ADD experiment-run excerpts, never edit the frozen ones)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/test_agent_supervisor_review_slots.py",
+    "tools/test_agent_supervisor_mrl_one_shot.py",
+    "tools/agent_supervisor/review_slots.py",
+    "tools/agent_supervisor/mrl_descendants.py",
+    "tools/agent_supervisor/mrl_one_shot.py",
+    "tools/agent_supervisor/process.py",
+    "project-control/reports/M0-T181-producer-report.md",
+    "project-control/reports/M0-T181-convergence-record.md",
+    "project-control/reports/M0-T181-ci-evidence/**"
+  ],
+  "forbidden_paths": [
+    ".github/**",
+    "tools/agent_supervisor/** except the four modules named in allowed_paths",
+    "tools/test_agent_supervisor_*.py except the two test files named in allowed_paths",
+    "tools/supervisor_command_doc_check.py",
+    "services/**",
+    "apps/**",
+    "packages/**",
+    "docs/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json",
+    "project-control/blockers/**",
+    "project-control/gates/**",
+    "any pytest configuration (pytest.ini, pyproject, conftest) and any rerun/flaky plugin"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "frozen_evidence",
+      "input": "the three failing jobs named in the objective",
+      "expected": "project-control/reports/M0-T181-ci-evidence/ holds each job's FAILURES section and summary line with the run id, attempt, job id, head sha, branch, runner image and the full log's byte count + sha256; the convergence record cites them; no evidence is paraphrased from memory"
+    },
+    {
+      "id": "S2",
+      "case": "causal_path_race_under_admission",
+      "input": "tools/test_agent_supervisor_review_slots.py::RaceTests::test_global_last_slot_never_double_taken failing 1 != 2 (one admitted of six, two global slots)",
+      "expected": "the complete causal path from racer spawn to the '0' results is traced in code and the frozen timings (candidates to prove or rule out: the racer's 30 s go-deadline expiring while the parent still waits up to 60 s for the slow racers to become ready on a loaded 2-vCPU Windows runner, so racers emit '0' WITHOUT ever calling try_reserve; the 30 s slot-lock wait; the Windows liveness probe of the first reservation; a stale-lock takeover) and classified as test timing or a supervisor defect WITH the evidence that decides it; the repair removes the cause (for example one shared budget for barrier and lock deadlines derived from the parent's window, and racers that EMIT the refusal reason so a barrier expiry is a loud harness fault that fails the test with its reason, never a '0' counted as a legitimate refusal); the asserted invariant stays exactly: exactly 2 of 6 admitted, never more, and len(active()) <= 2"
+    },
+    {
+      "id": "S3",
+      "case": "causal_path_reaped_child_descendants",
+      "input": "tools/test_agent_supervisor_mrl_one_shot.py::test_real_process_table_proves_a_reaped_child_gone failing with root_pid 8028 absent and remaining=(8040, 8088, 8136, 8184) for 97 attempts over 5.05 s (windows_toolhelp32)",
+      "expected": "the causal path is traced against the Win32 Toolhelp32 semantics with a citation (orphaned processes keep their recorded th32ParentProcessID after the parent exits, and pids are reused, so descendants_of(root) counts unrelated earlier orphans whose stale parent pid equals a reused root pid); classified as a REAL supervisor semantic defect in tools/agent_supervisor/mrl_descendants.py if the trace confirms it (a false 'descendants remaining' - fail-closed direction, but a false refusal/turnover in production) or as test timing if the trace shows otherwise; the fix removes the cause while keeping the proof semantics (proven is True only when a real snapshot shows the tree empty; an unobservable table stays 'unavailable', never zero; nothing created AFTER the root started under its pid chain is excluded) - for example by ordering on process creation time (a process created before the root's own start cannot be its descendant) with the root's start captured where the launcher knows it; a new test proves a stale-parent orphan created BEFORE the root is not counted while a real child created AFTER it IS; the existing mutation tests keep passing"
+    },
+    {
+      "id": "S4",
+      "case": "no_weakening_R094",
+      "input": "git diff <contract head>..<final head> over allowed_paths",
+      "expected": "no test deleted, skipped, xfail-marked or renamed away; no assertion loosened (every assertEqual/assertTrue/assert in the two test files is kept or strengthened - listed before/after in the producer report); no retry loop, rerun plugin, --reruns, sleep-and-retry or try-again-on-failure added anywhere; no .github/** or pytest configuration change; a timeout or settle window changes ONLY when the convergence record shows the old value IS the cause and derives the new value from a stated budget"
+    },
+    {
+      "id": "S5",
+      "case": "safety_and_concurrency_assertions_preserved",
+      "input": "the supervisor test suite after the repair",
+      "expected": "the global and per-lane never-double-taken invariants, the fail-closed slot errors (unreadable state, lock timeout, reused pid reclaim), the descendants-proof rules (settle window, give-up with remaining pids, unobservable table reported as unavailable) and the one-shot containment outcomes remain asserted by named tests; the producer report lists those test names before and after"
+    },
+    {
+      "id": "S6",
+      "case": "verified_at_the_frozen_candidate",
+      "input": "the final head",
+      "expected": "Linux local: `python -m pytest -q tools/test_agent_supervisor_review_slots.py tools/test_agent_supervisor_mrl_one_shot.py` and the suites of every touched module pass with direct exit code 0; `python tools/supervisor_command_doc_check.py` passes; windows-latest: the supervisor-bridge job passes on the PR head (run id recorded); when a CI experiment branch was used to reproduce or instrument on Windows, its run ids and the observed reason codes are in the convergence record; a Windows-only mechanism is argued from the Win32 API semantics with a citation, never assumed"
+    },
+    {
+      "id": "S7",
+      "case": "recertification_consequence_recorded",
+      "input": "the set of changed files",
+      "expected": "if any file under tools/agent_supervisor/ changed, the producer report and the convergence record say so and name the D-091 recertification follow-up (M0-T179 superseded) - recorded, not a bar; if only tests changed, they state that M0-T179 stands"
+    },
+    {
+      "id": "S8",
+      "case": "convergence_record_closes",
+      "input": "project-control/reports/M0-T181-convergence-record.md",
+      "expected": "ends with VERIFIED_CLOSED (both failures: cause named, fix verified) or ONE consolidated blocker report naming the unprovable step; never 'fixed one, reran everything, stopped'"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "This host is Linux; Toolhelp32 and Windows pid-reuse behaviour cannot be reproduced locally -> the causal path is argued from the frozen logs + code + cited Win32 semantics, and confirmed on windows-latest through an orchestrator-pushed CI experiment branch (ci-exp/M0-T181-*) when instrumentation is needed",
+    "The race under-admission recurred 2 in ~45 runs -> a single green CI run proves nothing; the repair must make the next occurrence self-diagnosing (reason codes in the results) and the convergence record must argue the mechanism, not the green",
+    "A production change under tools/agent_supervisor/** voids the M0-T179 Linux certification (D-091 recertification path) -> recorded as a consequence; the owner authorized fixing the cause (R093)",
+    "Temptation to 'fix' by widening timeouts or adding a rerun -> forbidden by R094 unless the trace proves the timeout IS the cause and the new value is derived (S4)"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-03T20:54:43.405552+00:00",
+  "updated_at": "2026-10-03T20:54:43.759097+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R093",
+        "D-090-R094"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-03T20:54:43.405748+00:00",
+  "path_notes": "PRODUCER = backend-engineer in an isolated worktree on branch producer/M0-T181 (reset to the CLAIM-SEAM head first; show-toplevel guard). Loads /deficit-convergence BEFORE editing. The orchestrator cherry-picks producer commits onto task/M0-T181-supervisor-bridge-windows-flakes (worktree /root/project/w-M0-T181) and pushes; CI experiment branches (ci-exp/M0-T181-*) are orchestrator-pushed from producer-prepared commits. The frozen CI evidence excerpts under project-control/reports/M0-T181-ci-evidence/ are written by the orchestrator at contract time and are read-only for the producer (it may add experiment excerpts as new files). Separate PR (D-090-R093). Not commissioning (D-090-R084 stays deferred). Lane path check: task/ branches are not lane branches (check_lane_paths.py passes); tools/** is Lane C territory - this is an orchestrator-contracted repair packet, precedent M0-T180.",
+  "documented_test_commands": [
+    "python -m pytest -q tools/test_agent_supervisor_review_slots.py tools/test_agent_supervisor_mrl_one_shot.py (Linux local, direct exit code)",
+    "python -m pytest -q tools/test_agent_supervisor_*.py -p no:cacheprovider (Linux local, bounded by the producer's runtime; the windows-latest CI job runs the same glob)",
+    "python tools/supervisor_command_doc_check.py",
+    "python3 tools/modularity_check.py --check",
+    "python3 scripts/lanes/check_lane_paths.py --branch task/M0-T181-supervisor-bridge-windows-flakes (not a lane branch: passes)",
+    "CI: supervisor-bridge (windows-latest) on the PR head; ci-exp/M0-T181-* runs for instrumentation"
+  ],
+  "worktree": "/root/project/w-M0-T181"
+}
