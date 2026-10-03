@@ -10,7 +10,8 @@ import { defineConfig, devices } from "@playwright/test";
  *  2. The production Next.js build (`next start` on :3000; `next build` must run
  *     first — CI does this in the web-e2e job). Flag-off; the `chromium` project.
  *  3. A second `next start` on :3001 with INTERNAL_LOT_SITE_SETUP_ENABLED=1 for the
- *     flag-ON lot-&-site-setup journey (D-1 slice 2); the `chromium-flag-on` project.
+ *     flag-ON lot-&-site-setup journey (D-1 slice 2), plus the hidden-issues and parity
+ *     window UI flags (Lane D D-12 / D-15 slice 2); the `chromium-flag-on` project.
  *     Reuses the one build, so there is no second `next build`.
  *
  * Runs in CI only; the owner's PC never installs browsers or node_modules
@@ -105,6 +106,13 @@ export default defineConfig({
         INTERNAL_OWNER_DASHBOARD_ENABLED: "1",
         INTERNAL_SURVEY_REVIEW_ENABLED: "1",
         INTERNAL_LOT_SITE_SETUP_ENABLED: "1",
+        // Lane D D-12 / D-15 flag-ON journeys: the hidden-issues and parity windows are
+        // behind these two server-read, default-off UI flags (distinct from the API
+        // read-route flags INTERNAL_*_READ_ENABLED, which the fixture harness turns on
+        // for itself). Set ONLY on this :3001 server; the :3000 server stays flag-OFF so
+        // the default (both windows hidden, no fetch) keeps being proven.
+        INTERNAL_HIDDEN_ISSUE_FLAGS_UI_ENABLED: "1",
+        INTERNAL_PARITY_UI_ENABLED: "1",
       },
     },
   ],
