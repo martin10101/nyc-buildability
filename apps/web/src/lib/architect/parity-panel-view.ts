@@ -47,9 +47,8 @@ export const STRIP_DETAIL_NOTE =
 /** The plain "not connected yet" copy for a 404 (the read route is not mounted / the
  * feature flag is off on the server), mirroring the D-12 slice. */
 export const PARITY_NOT_CONNECTED =
-  "The comparable-sales and floor-area data for this property is prepared by the data service. " +
-  "That service is not connected to this screen yet, so there is nothing to show here. Nothing is " +
-  "guessed, and no value is presented as confirmed.";
+  "The data service is not wired to this screen, so there is nothing to show here. " +
+  "Nothing is guessed and no value is shown as confirmed.";
 
 /** Each stable exclusion-reason token in plain words (the raw token is an internal
  * code and never reaches the screen, §5a item 5). Keyed by the contract enum. */
@@ -173,4 +172,49 @@ export function parityStripSummary(data: ParityData): ParityStripSummary {
     items.push(`${excludedCount} not included`);
   }
   return { items: items.slice(0, PARITY_STRIP_LIMIT) };
+}
+
+// ---------------------------------------------------------------------------
+// §5a face-text budget (D-090-R082 "say less, show exact information"). A pure
+// measure the tests assert against: the app's own standing copy on the results
+// face stays short, and the face carries at most three notice/disclosure blocks
+// (§5a item 6). The owner/contract-pinned disclosures (the not-a-valuation
+// notice, the disclosed selection filter, and the settled remaining-capacity
+// wording) are shown verbatim by design and are listed separately, exempt from
+// the length budget. Recorded DOF values (address, price, date) are pass-through
+// data, not app chatter.
+// ---------------------------------------------------------------------------
+
+/** A single readable fact line at the §5a 14 px floor fits roughly this many
+ * characters before it wraps into the "long paragraph" R082 forbids. */
+export const FACE_TEXT_MAX_CHARS = 140;
+
+export interface FaceTextBudget {
+  /** App-authored standing strings shown on the results face (NOT behind <details>);
+   * each must be <= FACE_TEXT_MAX_CHARS. */
+  readonly appStrings: string[];
+  /** Verbatim owner/contract-pinned disclosures on the face (shown exactly by
+   * design, so exempt from the length budget). */
+  readonly pinned: string[];
+  /** Standing notice/disclosure blocks on the face (<= 3, §5a item 6). */
+  readonly noticeCount: number;
+}
+
+/**
+ * The parity panel's face-text budget. The three standing blocks on the face are
+ * the one status strip, the pinned not-a-valuation notice, and the pinned
+ * remaining-capacity block (§5a item 3, in place of a number). The disclosed
+ * filter and those two blocks are pinned verbatim; the only app-authored face
+ * copy is the empty-state line, so the panel already says little.
+ */
+export function parityFaceBudget(data: ParityData): FaceTextBudget {
+  const sales = comparableSalesView(data);
+  const unused = unusedFloorAreaView(data);
+  const appStrings: string[] = [];
+  if (sales.selected.length === 0) {
+    appStrings.push("No recorded sale matched the disclosed filter.");
+  }
+  const pinned: string[] = [sales.notAValuation, unused.label, unused.reason];
+  if (sales.criteriaText) pinned.push(`How these were selected: ${sales.criteriaText}`);
+  return { appStrings, pinned, noticeCount: 3 };
 }

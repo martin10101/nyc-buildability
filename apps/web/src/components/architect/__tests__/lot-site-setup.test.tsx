@@ -13,6 +13,11 @@ import {
   VERSION_CHECK_LABELS,
   type Study,
 } from "@/lib/study/study-vocabulary";
+import {
+  SITE_FACTS_INTRO,
+  lotSiteSetupFaceBudget,
+  sourceFromStudy,
+} from "@/lib/architect/lot-site-setup";
 import { LotSiteSetup } from "../LotSiteSetup";
 import { CROSS_BLOCK_REASON, LOT_A, LOT_B, twoLotCrossBlockStudy, twoLotOfferedStudy } from "./lot-site-fixtures";
 
@@ -101,6 +106,19 @@ describe("LotSiteSetup — lot choice + site facts with source labels (D-04, pla
   it("always carries the owner's zoning-lot statement", () => {
     render(<LotSiteSetup bbl="5999999999" study={corner} />);
     expect(screen.getByTestId("lot-site-statement")).toHaveTextContent(LOT_SELECTION_STATEMENT);
+  });
+
+  it("renders the trimmed, fact-forward site-facts intro and stays within the §5a budget (R082)", () => {
+    render(<LotSiteSetup bbl="3001230001" study={twoLotCrossBlockStudy} />);
+    const setup = screen.getByTestId("lot-site-setup");
+    // The one short intro line replaces the earlier paragraph.
+    expect(setup).toHaveTextContent(SITE_FACTS_INTRO);
+    expect(setup).not.toHaveTextContent("Nothing here has to be typed");
+    const budget = lotSiteSetupFaceBudget(sourceFromStudy(twoLotCrossBlockStudy));
+    expect(budget.noticeCount).toBeLessThanOrEqual(3);
+    // The owner statement and B-07's verbatim refusal stay on the face as pinned text.
+    expect(budget.pinned).toContain(LOT_SELECTION_STATEMENT);
+    expect(budget.pinned).toContain(CROSS_BLOCK_REASON);
   });
 
   it("refuses a cross-block combination and shows B-07's reason verbatim", () => {

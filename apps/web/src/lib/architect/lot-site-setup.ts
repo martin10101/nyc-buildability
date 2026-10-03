@@ -32,6 +32,19 @@ import {
 import type { StudySetup } from "@/lib/study/study-setup-api";
 
 /**
+ * Short, fact-forward site-facts intro (D-090-R082 "say less"). It names the one
+ * thing the architect needs to know — each value shows its source and can be
+ * overridden — without the earlier paragraph's restatement.
+ */
+export const SITE_FACTS_INTRO =
+  "Each value shows its source. Enter your own for any fact — it is saved as “Entered” beside the city value.";
+
+/** The plain "not connected yet" copy, worded as a fact (not a caution), for the
+ * empty state (route off / no setup). Keeps the honesty that nothing is guessed. */
+export const SITE_SETUP_NOT_CONNECTED =
+  "The site-facts service is not wired to this screen, so there is nothing to show here. No measurement is guessed.";
+
+/**
  * The display source the panel renders over: the lots, the lot selection (mode +
  * B-07's combination only — the pinned statement is re-applied here) and the site
  * facts. BOTH a full `Study` (read from the C-05 store once an option is
@@ -422,4 +435,48 @@ export function applyEnteredFactToSource(
       ? source.siteFacts.map((fact, position) => (position === index ? entered : fact))
       : [...source.siteFacts, entered];
   return { ok: true, source: { ...source, siteFacts } };
+}
+
+// ---------------------------------------------------------------------------
+// §5a face-text budget (D-090-R082 "say less, show exact information"). A pure
+// measure the tests assert against: the app's own standing copy on the results
+// face stays short, and the face carries at most three notice blocks (§5a item
+// 6). The owner-pinned zoning-lot statement and B-07's verbatim refusal reason
+// are shown exactly and are listed separately, exempt from the length budget.
+// Lot numbers, sizes, source labels and fact values are pass-through data.
+// ---------------------------------------------------------------------------
+
+/** A single readable fact line at the §5a 14 px floor fits roughly this many
+ * characters before it wraps into the "long paragraph" R082 forbids. */
+export const FACE_TEXT_MAX_CHARS = 140;
+
+export interface FaceTextBudget {
+  /** App-authored standing strings shown on the results face (NOT behind <details>);
+   * each must be <= FACE_TEXT_MAX_CHARS. */
+  readonly appStrings: string[];
+  /** Verbatim owner-pinned / source-verbatim strings on the face (shown exactly by
+   * design, so exempt from the length budget). */
+  readonly pinned: string[];
+  /** Standing notice blocks on the face (<= 3, §5a item 6): the combination note
+   * and the pinned zoning-lot statement. */
+  readonly noticeCount: number;
+}
+
+/**
+ * The lot & site setup panel's face-text budget. The app-authored face copy is the
+ * two section leads (the lot-choice heading + pick line and the site-facts intro)
+ * and the combination heading; the pinned zoning-lot statement and — when the
+ * combination is refused — B-07's verbatim reason are exempt. Two standing notice
+ * blocks sit on the face: the combination note and the pinned statement.
+ */
+export function lotSiteSetupFaceBudget(source: LotSiteSource): FaceTextBudget {
+  const choice = lotChoiceViewOf(source);
+  const appStrings: string[] = [choice.heading, choice.pickLine, choice.combination.heading, SITE_FACTS_INTRO];
+  const pinned: string[] = [choice.statement];
+  if (choice.combination.detail) {
+    // A refused combination carries B-07's reason verbatim (pinned/source text); an
+    // offered/single-lot detail is the app's own short line and is length-budgeted.
+    (choice.combination.refused ? pinned : appStrings).push(choice.combination.detail);
+  }
+  return { appStrings, pinned, noticeCount: 2 };
 }
