@@ -1,0 +1,13 @@
+{
+  "task_id": "M0-T179",
+  "requirements": {
+    "D-091-R001": [
+      "This task's share: the supervisor tree that lets the loop run on this Linux server (M0-T177 containment + M0-T178 equal-model refusal) is recertified at subtree 019ecf1f with the installed claude 2.1.288 (/usr/bin/claude) and codex-cli 0.157.0 (/opt/nyc-codex); report project-control/reports/M0-T179-producer-report.md.",
+      "Remaining for R001 overall (not claimed): the owner-applied activation-PIN amendment (R009) and the owner-typed commissioning (M0-T175: root config, Codex sign-in, record-manifest/verify-controller, unit install, start)."
+    ],
+    "D-091-R007": [
+      "Certified before use: claude 2.1.288 admitted deliberately under D-024-R287 after round 1 failed closed on the silent auto-update (57f7e515); all three drift families recaptured with provenance (b5950e97, 9c02bc97, 975a9118), event_drift re-pointed, every tooth green (capability_probe claude+codex, native_adapter, event_bus S8: 115 passed; sh harness with mutants; containment 42 + R1/R2; dual_review 21).",
+      "Cited CI: real-unit R3 (supervisor-linux-containment, run 37072153749) and the windows freeze baseline (supervisor-bridge) green on #344/#345; G3/G4 (control-plane-verifier) and G5 (security-reviewer) PASS at d9ceef23; host auto-update turned off by the owner's settings line (DISABLE_AUTOUPDATER=1 in ~/.claude/settings.json, applied 2026-10-03)."
+    ]
+  }
+}
