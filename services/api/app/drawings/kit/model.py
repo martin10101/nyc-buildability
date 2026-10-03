@@ -14,6 +14,7 @@ __all__ = [
     "CaseAssumption",
     "Drawing",
     "DrawingInput",
+    "EnvelopeTier",
     "FloorPlate",
     "FloorRow",
     "Label",
@@ -89,6 +90,17 @@ class SetbackLine:
 
 
 @dataclass(frozen=True)
+class EnvelopeTier:
+    """One tier of the permitted envelope: ``outline`` extruded from
+    ``bottom_ft`` to ``top_ft`` above grade (results geometry.envelope)."""
+
+    bottom_ft: float
+    top_ft: float
+    outline: Polygon
+    source: str
+
+
+@dataclass(frozen=True)
 class FloorPlate:
     floor: int
     use: str
@@ -126,7 +138,7 @@ class StreetWidthCase:
 
 @dataclass(frozen=True)
 class DrawingInput:
-    """Everything the site plan and massing need, validated and fail-closed."""
+    """Everything the site plan, massing and DXF need, validated and fail-closed."""
 
     crs: str
     measurement_label: str
@@ -135,6 +147,7 @@ class DrawingInput:
     yards: tuple[Yard, ...] | LayerUnavailable
     yards_not_required: tuple[YardNotRequired, ...]
     setback_lines: tuple[SetbackLine, ...] | LayerUnavailable
+    envelope: tuple[EnvelopeTier, ...] | LayerUnavailable
     floor_plates: tuple[FloorPlate, ...] | LayerUnavailable
     floor_rows: tuple[FloorRow, ...]
     street_width_case: StreetWidthCase | None

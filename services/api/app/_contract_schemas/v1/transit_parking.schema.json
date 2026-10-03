@@ -18,8 +18,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0"],
-      "description": "CLOSED enum of published transit_parking contract versions. 1.0.0 = lane C packet W0 initial shape. New versions are admitted only by an accepted contract task that appends to this enum."
+      "enum": ["1.0.0", "1.1.0"],
+      "description": "CLOSED enum of published transit_parking contract versions. 1.0.0 = lane C packet W0 initial shape. 1.1.0 (request D-2, D-090-R095) adds the OPTIONAL missing_source_ref object (the Source-disclosure reference behind missing_source: its exact identifier, version and link); every 1.0.0 instance stays valid unchanged (missing_source_ref is optional and nothing else changed), so a document that omits the key stays 1.0.0 and one that carries it declares 1.1.0. New versions are admitted only by an accepted contract task that appends to this enum."
     },
     "lot_bbl": {
       "$ref": "common.schema.json#/$defs/bbl",
@@ -60,6 +60,13 @@
         { "type": "null" }
       ]
     },
+    "missing_source_ref": {
+      "description": "Structured reference to the source named in missing_source, for the Source disclosure (request D-2, D-090-R095): the exact identifier, version and link where available. The face shows missing_source (a readable name and what to check) only. OPTIONAL (contract 1.1.0): absent on every 1.0.0 document, null when there is no source to reference (a recorded status), the object below when check_needed names a source.",
+      "anyOf": [
+        { "$ref": "#/$defs/missing_source_ref" },
+        { "type": "null" }
+      ]
+    },
     "_expected_failure": {
       "type": "string",
       "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key; it is allowed (optional) so an invalid fixture fails only for its stated defect under additionalProperties:false."
@@ -87,5 +94,60 @@
         }
       ]
     }
-  ]
+  ],
+  "$defs": {
+    "missing_source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The Source-disclosure reference behind missing_source (contract 1.1.0, request D-2 / D-090-R095). Carries the official dataset title and, where available, its exact identifier, publisher, version and link. Every declared key is present; a key that does not apply is explicitly null, so absence is a visible statement. 'components' names the sub-datasets a single named source is composed of, each with its own id. This is the disclosure-side reference ONLY; the face shows missing_source.",
+      "required": ["dataset", "dataset_id", "publisher", "dataset_version", "url"],
+      "properties": {
+        "dataset": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The official dataset title (for example 'Transit Zones')."
+        },
+        "dataset_id": {
+          "description": "The official dataset identifier (for example the NYC Open Data four-by-four '6ztr-wgff'); null when the source exposes none.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "publisher": {
+          "description": "The publishing agency (for example 'Department of City Planning (DCP)'); null when not recorded.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "dataset_version": {
+          "description": "The dataset release identifier where the source exposes one; null when it does not.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "url": {
+          "description": "A link to the dataset landing page or record; null when none is recorded.",
+          "anyOf": [
+            { "type": "string", "format": "uri" },
+            { "type": "null" }
+          ]
+        },
+        "components": {
+          "type": "array",
+          "description": "OPTIONAL sub-datasets a single named source is composed of (for example the Greater Transit Zone and Appendix I layers behind DCP Transit Zones), each with its own title and identifier.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["dataset", "dataset_id"],
+            "properties": {
+              "dataset": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+              "dataset_id": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+            }
+          }
+        }
+      }
+    }
+  }
 }
