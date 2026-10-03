@@ -375,6 +375,47 @@ export interface SiteFactValueEdit {
 }
 
 /**
+ * Build one architect-sourced site fact from an edited fact and commit it via
+ * upsertSiteFact. Shared by the "entered" path (enterSiteFactValue) and the
+ * "assumed" path (enterSiteFactAssumption). Both keep the edited fact's key,
+ * street, lot and contract version, set the unit from the key, carry no blocks,
+ * and - because a CITY value is never overwritten in place (site_fact.schema.json
+ * `editable`) - write a NEW fact under `<fact_id>-entered` when the edited fact
+ * is a city value, or replace a non-city fact in place under its own id. The
+ * rank/label and source are the only things the two paths differ in; the caller
+ * passes them already matched to the contract (rank "entered" + architect_entry,
+ * or rank "assumed" + assumption). Nothing is computed. An edit the contract
+ * rejects (wrong value type for the key, a non-positive dimension) changes
+ * nothing, via upsertSiteFact's validation.
+ */
+function recordSiteFactEntry(
+  entry: StudyEntry,
+  factId: string,
+  value: number | string,
+  measurement: SiteFact["measurement"],
+  source: SiteFact["source"],
+  enteredFactId: string | undefined,
+  at: string,
+): StudyResult {
+  const existing = entry.study.site.facts.find((fact) => fact.fact_id === factId);
+  if (!existing) return studyFailure("unknown_fact", "This site fact is not part of the study.");
+  const recorded: SiteFact = {
+    contract_version: existing.contract_version,
+    fact_id: fromCity(existing) ? (enteredFactId ?? `${existing.fact_id}-entered`) : existing.fact_id,
+    key: existing.key,
+    lot_bbl: existing.lot_bbl,
+    street: existing.street,
+    value,
+    unit: SITE_FACT_KEY_UNITS[existing.key],
+    measurement,
+    source,
+    blocks: [],
+    editable: true,
+  };
+  return upsertSiteFact(entry, recorded, at);
+}
+
+/**
  * The architect edits one displayed site value. The edit becomes a fact at
  * measurement rank "entered" (its tied label "Entered") sourced to the architect
  * (kind "architect_entry"), following site_fact.schema.json exactly - the key,
@@ -389,18 +430,12 @@ export interface SiteFactValueEdit {
  * nothing, via upsertSiteFact's validation.
  */
 export function enterSiteFactValue(entry: StudyEntry, edit: SiteFactValueEdit, at: string): StudyResult {
-  const existing = entry.study.site.facts.find((fact) => fact.fact_id === edit.factId);
-  if (!existing) return studyFailure("unknown_fact", "This site fact is not part of the study.");
-  const entered: SiteFact = {
-    contract_version: existing.contract_version,
-    fact_id: fromCity(existing) ? (edit.enteredFactId ?? `${existing.fact_id}-entered`) : existing.fact_id,
-    key: existing.key,
-    lot_bbl: existing.lot_bbl,
-    street: existing.street,
-    value: edit.value,
-    unit: SITE_FACT_KEY_UNITS[existing.key],
-    measurement: { rank: "entered", label: MEASUREMENT_LABELS.entered },
-    source: {
+  return recordSiteFactEntry(
+    entry,
+    edit.factId,
+    edit.value,
+    { rank: "entered", label: MEASUREMENT_LABELS.entered },
+    {
       kind: "architect_entry",
       dataset: null,
       dataset_version: null,
@@ -409,10 +444,72 @@ export function enterSiteFactValue(entry: StudyEntry, edit: SiteFactValueEdit, a
       document_ref: null,
       statement: null,
     },
-    blocks: [],
-    editable: true,
-  };
-  return upsertSiteFact(entry, entered, at);
+    edit.enteredFactId,
+    at,
+  );
+}
+
+/** A per-fact stated assumption: which displayed fact, the value, and the assumption in plain words. */
+export interface SiteFactAssumptionEdit {
+  /** The fact being recorded as an assumption, found by id in the study's site. */
+  factId: string;
+  /** The value assumed: a number for areas and lengths, text for lot type, district or overlay. */
+  value: number | string;
+  /** The assumption in plain English (required; a missing or blank statement is refused). */
+  statement: string;
+  /**
+   * Id for the NEW assumed fact when the recorded one is a CITY value (a city
+   * value is never overwritten in place, so the assumption is a new fact).
+   * Ignored when the fact is not a city value - that one is replaced in place
+   * under its own id. Defaults to "<factId>-entered".
+   */
+  enteredFactId?: string;
+}
+
+/**
+ * The architect records a stated assumption for one displayed site value (plan
+ * section 9 "Explicit assumptions"). The value becomes a fact at measurement
+ * rank "assumed" (its tied label "Assumed") sourced to the assumption (kind
+ * "assumption") carrying the stated assumption, following site_fact.schema.json
+ * exactly - the key, street and lot stay the fact's; the unit is the key's unit;
+ * nothing is computed. This is the enterSiteFactValue sibling for the
+ * assumption source kind (request docs/lanes/requests/D-3.md): the city-value
+ * protection, the `<fact_id>-entered` id convention and the out-of-date flagging
+ * are identical. A missing or blank statement changes nothing (a stated
+ * assumption without a statement is not one); an assumed value the contract
+ * rejects (wrong value type for the key, a non-positive dimension) also changes
+ * nothing, via upsertSiteFact's validation.
+ */
+export function enterSiteFactAssumption(
+  entry: StudyEntry,
+  edit: SiteFactAssumptionEdit,
+  at: string,
+): StudyResult {
+  const statement = typeof edit.statement === "string" ? edit.statement.trim() : "";
+  if (statement === "") {
+    return studyFailure(
+      "invalid_document",
+      "A stated assumption needs a statement in plain words; nothing was changed.",
+      ["source.statement: a stated assumption needs a non-empty statement"],
+    );
+  }
+  return recordSiteFactEntry(
+    entry,
+    edit.factId,
+    edit.value,
+    { rank: "assumed", label: MEASUREMENT_LABELS.assumed },
+    {
+      kind: "assumption",
+      dataset: null,
+      dataset_version: null,
+      retrieved_at: at,
+      query_ref: null,
+      document_ref: null,
+      statement,
+    },
+    edit.enteredFactId,
+    at,
+  );
 }
 
 /** Remove a site fact; every option is marked out of date. */
