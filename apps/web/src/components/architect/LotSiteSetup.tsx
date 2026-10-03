@@ -42,11 +42,19 @@ import {
   sourceFromSetup,
   sourceFromStudy,
   validateFactInput,
+  withSiteFact,
   type LotRow,
   type LotSiteSource,
   type SiteFactGroup,
 } from "@/lib/architect/lot-site-setup";
-import { enterSiteFactValue } from "@/lib/study/study-operations";
+import {
+  buildExistingFloorAreaFact,
+  existingFloorAreaFact,
+  selectedOptionPlan,
+  type ExistingBuildingPlan,
+  type ExistingFloorAreaSourceKind,
+} from "@/lib/architect/existing-building-view";
+import { enterSiteFactValue, updateOptionInputs, upsertSiteFact } from "@/lib/study/study-operations";
 import {
   fetchStudySetup,
   repickLots,
@@ -54,6 +62,7 @@ import {
 } from "@/lib/study/study-setup-api";
 import type { SiteFact, Study } from "@/lib/study/study-vocabulary";
 import { useStudy, useStudyStore } from "@/lib/study/use-study";
+import { ExistingBuildingStep } from "./ExistingBuildingStep";
 import { FailureNoticeCard } from "./workspace/DashboardFailureNotice";
 import { referenceRow, type DashboardFailureNoticeModel } from "./workspace/dashboard-failure";
 
@@ -171,6 +180,12 @@ interface LotSiteSetupState {
   /** Records the edit; returns null on success, or a plain reason to show on the row. */
   editFact: (fact: SiteFact, raw: string) => string | null;
   repick: (selected: readonly string[]) => Promise<void>;
+  /** The study's existing-building plan, or null when no study/option exists yet (setup-only). */
+  plan: ExistingBuildingPlan | null;
+  /** Writes the plan to the selected option when a study exists, else to a local working copy. */
+  choosePlan: (plan: ExistingBuildingPlan) => void;
+  /** Records the existing zoning floor area; returns null on success, or a plain reason. */
+  recordExistingFloorArea: (value: number, sourceKind: ExistingFloorAreaSourceKind) => string | null;
 }
 
 function useLotSiteSetup({ bbl, study: studyProp, fetchImpl, now }: LotSiteSetupProps): LotSiteSetupState {
@@ -183,6 +198,7 @@ function useLotSiteSetup({ bbl, study: studyProp, fetchImpl, now }: LotSiteSetup
   const [status, setStatus] = useState<PanelStatus | null>(null);
   const [reload, setReload] = useState(0);
   const [busy, setBusy] = useState(false);
+  const [localPlan, setLocalPlan] = useState<ExistingBuildingPlan | null>(null);
 
   useEffect(() => {
     // A study (store first, then an explicit prop) drives directly; the store study is read live
@@ -221,6 +237,45 @@ function useLotSiteSetup({ bbl, study: studyProp, fetchImpl, now }: LotSiteSetup
   }, [bbl, storeStudy, propStudy, fetchImpl, reload]);
 
   const source = storeStudy ? sourceFromStudy(storeStudy) : local;
+
+  // The existing-building plan is an OPTION field (study.options[selected].existing_building_plan),
+  // not a site fact. When a study exists it is read live from the store (and a prop study seeds it);
+  // with only a fetched setup there is no option, so the choice is a local working copy (mirroring
+  // how a per-fact edit is a working copy with no study). It is never silently pre-selected.
+  const activeStudy = storeStudy ?? propStudy;
+  const basePlan = activeStudy ? selectedOptionPlan(activeStudy) : null;
+  const plan: ExistingBuildingPlan | null = storeStudy ? basePlan : (localPlan ?? basePlan);
+
+  const choosePlan = useCallback(
+    (next: ExistingBuildingPlan): void => {
+      if (stored) {
+        store.update(bbl, (entry) =>
+          updateOptionInputs(entry, entry.study.selected_option_id, { existing_building_plan: next }, clock()),
+        );
+        return;
+      }
+      setLocalPlan(next);
+    },
+    [stored, store, bbl, clock],
+  );
+
+  const recordExistingFloorArea = useCallback(
+    (value: number, sourceKind: ExistingFloorAreaSourceKind): string | null => {
+      const facts = stored ? stored.study.site.facts : (local?.siteFacts ?? []);
+      const existing = existingFloorAreaFact(facts);
+      const fact = buildExistingFloorAreaFact(existing, bbl, value, sourceKind, clock());
+      if (stored) {
+        const result = store.update(bbl, (entry) => upsertSiteFact(entry, fact, clock()));
+        return result.ok ? null : "That value could not be recorded.";
+      }
+      if (local) {
+        setLocal(withSiteFact(local, fact));
+        return null;
+      }
+      return "That value could not be recorded.";
+    },
+    [stored, store, bbl, local, clock],
+  );
 
   const retry = useCallback(() => setReload((value) => value + 1), []);
 
@@ -270,7 +325,7 @@ function useLotSiteSetup({ bbl, study: studyProp, fetchImpl, now }: LotSiteSetup
     [stored, store, bbl, fetchImpl, clock],
   );
 
-  return { status, source, busy, retry, editFact, repick };
+  return { status, source, busy, retry, editFact, repick, plan, choosePlan, recordExistingFloorArea };
 }
 
 function LoadingCard() {
@@ -498,7 +553,8 @@ function SiteFactGroupRow({
 }
 
 export function LotSiteSetup({ bbl, study, fetchImpl, now }: LotSiteSetupProps) {
-  const { status, source, busy, retry, editFact, repick } = useLotSiteSetup({ bbl, study, fetchImpl, now });
+  const { status, source, busy, retry, editFact, repick, plan, choosePlan, recordExistingFloorArea } =
+    useLotSiteSetup({ bbl, study, fetchImpl, now });
 
   if (status?.kind === "error") {
     return <FailureNoticeCard model={status.model} onRetry={retry} testId="lot-site-failure" focusTitle />;
@@ -507,7 +563,10 @@ export function LotSiteSetup({ bbl, study, fetchImpl, now }: LotSiteSetupProps) 
   if (!source) return <LoadingCard />;
 
   const choice = lotChoiceViewOf(source);
-  const groups = groupSiteFactRows(siteFactRowsOf(source.siteFacts));
+  // Step 3 (site facts) excludes the existing zoning floor area; that value belongs to step 4
+  // ("Existing building", ExistingBuildingStep) where it is shown only when the building is kept.
+  const stepThreeFacts = source.siteFacts.filter((fact) => fact.key !== "existing_zoning_floor_area");
+  const groups = groupSiteFactRows(siteFactRowsOf(stepThreeFacts));
   const factById = new Map(source.siteFacts.map((fact): [string, SiteFact] => [fact.fact_id, fact]));
 
   return (
@@ -554,6 +613,13 @@ export function LotSiteSetup({ bbl, study, fetchImpl, now }: LotSiteSetupProps) 
           ))}
         </dl>
       </section>
+
+      <ExistingBuildingStep
+        plan={plan}
+        onChoosePlan={choosePlan}
+        facts={source.siteFacts}
+        onRecordFloorArea={recordExistingFloorArea}
+      />
     </div>
   );
 }
