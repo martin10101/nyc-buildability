@@ -58,9 +58,10 @@ import type {
 export const DEFAULT_TIMEOUT_MS = 12_000;
 
 /** The contract-versions the client accepts (transit_parking.schema.json v1):
- * 1.0.0 and the additive 1.1.0 (request D-2, D-090-R095) that carries the optional
- * missing_source_ref. Both stay valid, so a 1.0.0 server body and a 1.1.0 body
- * (fixtures / the later Lane B emitter) are both admitted. Mirrors
+ * 1.0.0 and 1.1.0 (request D-2, D-090-R095). The enum is append-only and mirrors
+ * the schema, so BOTH stay accepted: 1.1.0 is what the route now emits, and 1.0.0
+ * stays valid for a recorded document carrying a null missing_source_ref (a non-null
+ * reference binds the version to 1.1.0 - see the coherence rule below). Mirrors
  * study-vocabulary's SITE_FACT_CONTRACT_VERSIONS. */
 export const TRANSIT_PARKING_CONTRACT_VERSIONS = ["1.0.0", "1.1.0"] as const;
 
@@ -68,7 +69,10 @@ const STATUS_VALUES = ["recorded", "check_needed"] as const;
 const STATUS_LABELS = ["Recorded", "Check needed"] as const;
 
 /** The closed transit_parking document key set (additionalProperties:false). A
- * body with any other key - a parking-outcome field, say - is refused. */
+ * body with any other key - a parking-outcome field, say - is refused. D-2 part 3
+ * (tightened): missing_source_ref is now REQUIRED on every document and always
+ * emitted (object when check_needed, null when recorded), so it is in the required
+ * set, not an optional one. */
 const DOCUMENT_KEYS = [
   "contract_version",
   "lot_bbl",
@@ -78,6 +82,7 @@ const DOCUMENT_KEYS = [
   "source",
   "detail",
   "missing_source",
+  "missing_source_ref",
 ] as const;
 
 const SOURCE_KEYS = [
@@ -89,10 +94,6 @@ const SOURCE_KEYS = [
   "document_ref",
   "statement",
 ] as const;
-
-/** The OPTIONAL top-level key the additive 1.1.0 contract adds (request D-2,
- * D-090-R095). Absent on every 1.0.0 document; null or the ref object on 1.1.0. */
-const DOCUMENT_OPTIONAL_KEYS = ["missing_source_ref"] as const;
 
 /** missing_source_ref keys: every declared key is present (null when N/A);
  * 'components' is the one optional key. */
@@ -270,9 +271,10 @@ export function validateTransitParkingDocument(body: unknown): TransitParkingVal
   const doc = checkObject(problems, "transit_parking", body);
   if (!doc) return { ok: false, problems: problems.list };
   checkNoFixtureAnnotation(problems, "transit_parking", doc);
-  // Closed shape: required keys present, the optional 1.1.0 missing_source_ref
-  // admitted, NO other key (a parking-outcome field, say, is refused - the zone only).
-  checkKeys(problems, "transit_parking", doc, DOCUMENT_KEYS, DOCUMENT_OPTIONAL_KEYS);
+  // Closed shape: every required key present (D-2 part 3: missing_source_ref is
+  // required now), NO other key (a parking-outcome field, say, is refused - the
+  // zone only).
+  checkKeys(problems, "transit_parking", doc, DOCUMENT_KEYS);
 
   checkEnum(problems, "contract_version", doc.contract_version, TRANSIT_PARKING_CONTRACT_VERSIONS);
   checkBbl(problems, "lot_bbl", doc.lot_bbl);
@@ -284,8 +286,9 @@ export function validateTransitParkingDocument(body: unknown): TransitParkingVal
   checkTransitParkingSource(problems, "source", doc.source);
   checkMissingSourceRef(problems, "missing_source_ref", doc.missing_source_ref);
 
-  // allOf coherence (the schema oneOf): recorded carries a zone and no missing
-  // source; check_needed carries no zone and names the source to check.
+  // allOf coherence (the schema oneOf): recorded carries a zone, no missing source
+  // and a null reference; check_needed carries no zone, names the source to check
+  // and carries the structured reference object (D-2 part 3, tightened).
   if (doc.status === "recorded") {
     if (doc.status_label !== "Recorded") {
       problems.add("status_label", "a recorded status must be labelled 'Recorded'");
@@ -295,6 +298,9 @@ export function validateTransitParkingDocument(body: unknown): TransitParkingVal
     }
     if (doc.missing_source !== null) {
       problems.add("missing_source", "a recorded status must carry no missing source");
+    }
+    if (doc.missing_source_ref != null) {
+      problems.add("missing_source_ref", "a recorded status must carry a null source reference");
     }
   } else if (doc.status === "check_needed") {
     if (doc.status_label !== "Check needed") {
@@ -306,6 +312,19 @@ export function validateTransitParkingDocument(body: unknown): TransitParkingVal
     if (!isNonEmptyString(doc.missing_source)) {
       problems.add("missing_source", "a check-needed status must name the source to check");
     }
+    if (!isRecord(doc.missing_source_ref)) {
+      problems.add("missing_source_ref", "a check-needed status must carry the structured source reference");
+    }
+  }
+
+  // Version binding (schema version-binding allOf): a non-null missing_source_ref
+  // (the structured Source disclosure introduced in 1.1.0) requires contract_version
+  // 1.1.0. A null reference leaves 1.0.0 valid.
+  if (isRecord(doc.missing_source_ref) && doc.contract_version !== "1.1.0") {
+    problems.add(
+      "contract_version",
+      "a document carrying a structured source reference must declare contract_version 1.1.0",
+    );
   }
 
   if (problems.list.length > 0) return { ok: false, problems: problems.list };

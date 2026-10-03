@@ -2,7 +2,7 @@
 transit/parking-ZONE status (lane C packet W3; plan check C-8, queue item B-10).
 
 Transports the single transit/parking-zone status for one BBL, shaped to
-``packages/contracts/schemas/v1/transit_parking.schema.json`` (version 1.0.0):
+``packages/contracts/schemas/v1/transit_parking.schema.json`` (version 1.1.0):
 the serialized :func:`app.profile.transit_parking.resolve_transit_parking_status`
 output (``TransitParkingStatus.to_dict()``) wrapped in the contract-version
 envelope. ``resolve_transit_parking_status`` runs ONCE per BBL and the one status
@@ -107,8 +107,15 @@ router = APIRouter(prefix="/api/v1", tags=["transit_parking_read"])
 
 # The published transit_parking contract version this route emits. The envelope
 # is resolve_transit_parking_status(...).to_dict() PLUS this field; the schema's
-# contract_version enum admits exactly this value for v1.
-CONTRACT_VERSION = "1.0.0"
+# contract_version enum admits this value for v1.
+#
+# History: W3 shipped "1.0.0" (no missing_source_ref). Request D-2 / D-090-R095
+# added the REQUIRED missing_source_ref key (object when check_needed, null when
+# recorded), which the serialized status now always carries; a non-null reference
+# binds the version to 1.1.0 (schema version-binding allOf), so the route emits
+# "1.1.0" for every document. 1.0.0 stays a valid version for a recorded document
+# with a null reference, but the route no longer emits it.
+CONTRACT_VERSION = "1.1.0"
 
 # Defense-in-depth length cap for the reflected raw_value repr in a 422 detail
 # (the sibling bounded-repr class). The repr is already repr()-sanitized in

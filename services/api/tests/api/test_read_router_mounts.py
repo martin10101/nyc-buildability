@@ -212,7 +212,7 @@ def test_transit_parking_reachable_when_flag_on(monkeypatch) -> None:
     assert response.status_code == 200
     assert response.headers["X-Correlation-ID"]
     body = response.json()
-    assert body["contract_version"] == "1.0.0"
+    assert body["contract_version"] == "1.1.0"
     assert body["transit_zone"] == "Outer Transit Zone"
 
 

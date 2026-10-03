@@ -49,6 +49,6 @@ export interface TransitParking {
   source: Source | null;
   detail: NonEmptyString;
   missing_source: NonEmptyString | null;
-  missing_source_ref?: MissingSourceRef | null;
+  missing_source_ref: MissingSourceRef | null;
   _expected_failure?: string;
 }

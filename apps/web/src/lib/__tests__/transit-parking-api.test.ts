@@ -234,9 +234,11 @@ describe("validateTransitParkingDocument", () => {
   });
 
   it("accepts both the 1.0.0 and 1.1.0 contract versions", () => {
+    // D-2 part 3: a recorded 1.0.0 body carries a null missing_source_ref (the key
+    // is required now; a null reference leaves 1.0.0 valid). 1.1.0 is the default.
     const v10 = recordedDocument();
     v10.contract_version = "1.0.0";
-    delete v10.missing_source_ref; // a 1.0.0 body omits the key
+    expect(v10.missing_source_ref).toBeNull();
     expect(validateTransitParkingDocument(v10).ok).toBe(true);
     expect(validateTransitParkingDocument(recordedDocument()).ok).toBe(true); // 1.1.0
   });
@@ -258,11 +260,47 @@ describe("validateTransitParkingDocument — missing_source_ref (contract 1.1.0)
     expect(validateTransitParkingDocument(doc).ok).toBe(true);
   });
 
-  it("accepts a document that omits missing_source_ref (a 1.0.0 body)", () => {
+  it("accepts a recorded 1.0.0 body carrying a null missing_source_ref", () => {
+    // D-2 part 3 (tightened): missing_source_ref is required now, so a 1.0.0 body
+    // no longer OMITS it - a recorded 1.0.0 document carries a null reference.
+    const doc = recordedDocument();
+    doc.contract_version = "1.0.0";
+    expect(doc.missing_source_ref).toBeNull();
+    expect(validateTransitParkingDocument(doc).ok).toBe(true);
+  });
+
+  it("rejects a document that omits missing_source_ref (the key is required)", () => {
     const doc = recordedDocument();
     delete doc.missing_source_ref;
+    const result = validateTransitParkingDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.problems.some((p) => p.includes("missing_source_ref"))).toBe(true);
+    }
+  });
+
+  it("rejects a check_needed 1.1.0 document whose missing_source_ref is null", () => {
+    // The coherence rule: a check_needed status must carry the structured object,
+    // never null (D-2 part 3).
+    const doc = checkNeededDocument();
+    doc.missing_source_ref = null;
+    const result = validateTransitParkingDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.problems.some((p) => p.includes("missing_source_ref"))).toBe(true);
+    }
+  });
+
+  it("rejects a 1.0.0 document carrying a non-null missing_source_ref", () => {
+    // The version binding: a structured reference was introduced in 1.1.0, so a
+    // non-null ref under 1.0.0 is incoherent (D-2 part 3).
+    const doc = checkNeededDocument();
     doc.contract_version = "1.0.0";
-    expect(validateTransitParkingDocument(doc).ok).toBe(true);
+    const result = validateTransitParkingDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.problems.some((p) => p.includes("contract_version"))).toBe(true);
+    }
   });
 
   it("rejects a ref object missing its required 'dataset'", () => {

@@ -57,6 +57,12 @@ from app.contracts.study_contracts import (
 from app.profile.transit_parking import TransitParkingStatus
 
 FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "benchmark_215_16_northern"
+# The committed transit_parking contract fixtures (packages/contracts). parents[4]
+# is the repo root (tests/api -> tests -> services/api -> services -> root).
+CONTRACTS_FIXTURE_DIR = (
+    Path(__file__).resolve().parents[4]
+    / "packages" / "contracts" / "fixtures" / "valid" / "transit_parking"
+)
 NORTHERN_BBL = "4073340070"
 PLUTO_FILE = "pluto_64uk-42ks_bbl_4073340070.json"
 FIXED_CLOCK = lambda: datetime(2026, 9, 30, 12, 0, 0, tzinfo=UTC)  # noqa: E731
@@ -197,12 +203,15 @@ def test_recorded_200_from_recorded_pack(monkeypatch) -> None:
     body = response.json()
     # A 200 carries NO ``state`` (the document speaks for itself).
     assert "state" not in body
-    assert body["contract_version"] == "1.0.0"
+    assert body["contract_version"] == "1.1.0"
     assert body["lot_bbl"] == NORTHERN_BBL
     assert body["status"] == "recorded"
     assert body["status_label"] == "Recorded"
     assert body["transit_zone"] == "Outer Transit Zone"
     assert body["missing_source"] is None
+    # A recorded status carries a null reference (D-2 part 3: the key is required
+    # and always emitted; recorded has no source to reference).
+    assert body["missing_source_ref"] is None
     assert body["source"] is not None and body["source"]["kind"] == "city_dataset"
     # The emitted document honours the published contract.
     validate_transit_parking_document(body)
@@ -215,22 +224,55 @@ def test_check_needed_200_when_pluto_has_no_transit_zone(monkeypatch) -> None:
     assert response.status_code == 200
     body = response.json()
     assert "state" not in body
+    assert body["contract_version"] == "1.1.0"
     assert body["status"] == "check_needed"
     assert body["status_label"] == "Check needed"
     assert body["transit_zone"] is None
-    # transitional until the Lane B emitter lands (request D-2 part 2): the id
-    # travels in missing_source_ref["dataset_id"] once that key is present and not
-    # null, otherwise in missing_source; the tightening PR (part 3) requires the ref
-    # and forbids ids in prose. missing_source always names DCP Transit Zones.
-    ref = body.get("missing_source_ref")
-    if ref is not None and ref.get("dataset_id") is not None:
-        assert ref["dataset_id"] == "6ztr-wgff"
-    else:
-        assert body["missing_source"] and "6ztr-wgff" in body["missing_source"]
+    # D-2 part 3 (tightened): the structured reference is REQUIRED when check_needed
+    # and the technical id lives in missing_source_ref["dataset_id"], never in the
+    # prose. The face names the dataset in readable words only.
+    ref = body["missing_source_ref"]
+    assert ref is not None
+    assert ref["dataset_id"] == "6ztr-wgff"
     assert body["missing_source"] and "DCP Transit Zones" in body["missing_source"]
     assert "Check needed" in body["detail"]
+    # No dataset id leaks onto the face (owner decision D-090-R095): neither prose
+    # field names the technical id, its component ids, or the PLUTO four-by-four.
+    for field in ("detail", "missing_source"):
+        for identifier in ("6ztr-wgff", "vhqf-adkz", "dpnc-b2hd", "64uk-42ks"):
+            assert identifier not in body[field], (field, identifier)
     validate_transit_parking_document(body)
     _assert_pair_documented(response)
+
+
+def test_recorded_prose_names_no_dataset_id(monkeypatch) -> None:
+    """The recorded face also carries no technical dataset id (D-090-R095); the
+    recorded status has no missing_source, so only the detail prose is checked."""
+    _enable(monkeypatch)
+    body = _client(_northern_provider()).get(_url()).json()
+    assert body["status"] == "recorded"
+    for identifier in ("6ztr-wgff", "vhqf-adkz", "dpnc-b2hd", "64uk-42ks"):
+        assert identifier not in body["detail"], identifier
+
+
+def test_check_needed_prose_and_ref_match_the_committed_fixture_byte_for_byte(
+    monkeypatch,
+) -> None:
+    """Prose lock (reviewer F2, #368): the committed check_needed fixture's
+    ``detail``, ``missing_source`` and ``missing_source_ref`` must equal the REAL
+    route output byte-for-byte, so the fixture and the emitter can never drift. The
+    route's check_needed ``detail`` carries the ``read_pluto_text`` problem string
+    (\"PLUTO has no transitzone value for this lot.\"), not the emitter's unreachable
+    fallback literal; this test is what keeps the fixture honest to it."""
+    _enable(monkeypatch)
+    body = _client(_check_needed_provider()).get(_url()).json()
+    assert body["status"] == "check_needed"
+    fixture = json.loads(
+        (CONTRACTS_FIXTURE_DIR / "synthetic_check_needed.json").read_text(encoding="utf-8")
+    )
+    assert body["detail"] == fixture["detail"]
+    assert body["missing_source"] == fixture["missing_source"]
+    assert body["missing_source_ref"] == fixture["missing_source_ref"]
 
 
 # ---------------------------------------------------------------------------
@@ -244,7 +286,10 @@ _PARKING_OUTCOME_TOKENS = ("space", "waiver", "exempt")
 def test_no_parking_outcome_field_or_text(monkeypatch, provider_factory) -> None:
     _enable(monkeypatch)
     body = _client(provider_factory()).get(_url()).json()
-    # No parking-outcome FIELD: the document is exactly the contract key set.
+    # No parking-outcome FIELD: the document is EXACTLY the contract 1.1.0 key set
+    # (D-2 part 3, tightened: missing_source_ref is required and always emitted, so
+    # the set is closed again - no more transitional subset). A parking-outcome field
+    # would be an extra key and fail this equality.
     expected_keys = {
         "contract_version",
         "lot_bbl",
@@ -254,13 +299,9 @@ def test_no_parking_outcome_field_or_text(monkeypatch, provider_factory) -> None
         "source",
         "detail",
         "missing_source",
+        "missing_source_ref",
     }
-    # Transitional (request D-2 part 2b): contract 1.1.0 (#370) added the OPTIONAL key
-    # ``missing_source_ref``; the emitter carries it from the Lane B PR #368 on. Until part 3
-    # requires the ref when check_needed, both shapes are admitted and nothing else is -
-    # every 1.0.0 key must be present and no key outside the 1.1.0 set may appear.
-    optional_keys = {"missing_source_ref"}
-    assert expected_keys <= set(body) <= expected_keys | optional_keys, sorted(body)
+    assert set(body) == expected_keys, sorted(body)
 
     # No parking-outcome TEXT anywhere in the serialized document: it never states a
     # number of spaces, a waiver or an exemption (the zone is carried; applying the
@@ -371,13 +412,68 @@ def test_invalid_status_is_refused_as_internal_contract_error(monkeypatch) -> No
     assert ok.json()["transit_zone"] == "Outer Transit Zone"
 
 
+_WELL_FORMED_REF = {
+    "dataset": "Transit Zones",
+    "dataset_id": "6ztr-wgff",
+    "publisher": "Department of City Planning (DCP)",
+    "dataset_version": None,
+    "url": "https://data.cityofnewyork.us/d/6ztr-wgff",
+    "components": [
+        {"dataset": "Greater Transit Zone", "dataset_id": "vhqf-adkz"},
+        {"dataset": "Appendix I - Transit Zones", "dataset_id": "dpnc-b2hd"},
+    ],
+}
+_CHECK_NEEDED_SOURCE = (
+    "DCP Transit Zones (NYC Open Data), the dataset PLUTO's transitzone field is sourced from"
+)
+
+
+def test_wrong_shape_ref_is_refused_as_internal_contract_error_at_the_route(monkeypatch) -> None:
+    """A check_needed status whose missing_source_ref is wrong-shape fails the
+    pre-send contract guard, so the route refuses to ship it (500
+    internal_contract_error), exactly like the broken-status guard above. Injected
+    the way the broken-fixture tests do (a status whose to_dict() fails the
+    contract). Red/green: the SAME status with the well-formed ref restored is a
+    clean 1.1.0 200 carrying the id in the ref, off the face."""
+    _enable(monkeypatch)
+    bad_ref = TransitParkingStatus(
+        lot_bbl=NORTHERN_BBL,
+        status="check_needed",
+        transit_zone=None,
+        source=None,
+        detail="Transit/parking status: Check needed (synthetic wrong-shape ref guard probe).",
+        missing_source=_CHECK_NEEDED_SOURCE,
+        # Wrong shape: an object missing the required 'dataset' (and other) keys, so
+        # it satisfies neither branch of the missing_source_ref anyOf.
+        missing_source_ref={"dataset_id": "6ztr-wgff"},
+    )
+    response = _client(lambda bbl, cid: bad_ref).get(_url())
+    assert response.status_code == 500
+    assert response.json()["state"] == "internal_contract_error"
+    _assert_pair_documented(response)
+
+    good_ref = TransitParkingStatus(
+        lot_bbl=NORTHERN_BBL,
+        status="check_needed",
+        transit_zone=None,
+        source=None,
+        detail=bad_ref.detail,
+        missing_source=_CHECK_NEEDED_SOURCE,
+        missing_source_ref=dict(_WELL_FORMED_REF),
+    )
+    ok = _client(lambda bbl, cid: good_ref).get(_url())
+    assert ok.status_code == 200
+    ok_body = ok.json()
+    assert ok_body["contract_version"] == "1.1.0"
+    assert ok_body["missing_source_ref"]["dataset_id"] == "6ztr-wgff"
+
+
 def test_wrong_shape_missing_source_ref_fails_the_contract() -> None:
-    """A wrong-shape missing_source_ref is refused by the published contract
-    (request D-2, D-090-R095). The Lane B emitter that produces this key has not
-    landed yet (request D-2 part 2), so this asserts the pre-send contract guard
-    directly, the way the broken-fixture tests do; when the key is emitted, the
-    route turns any contract failure into a 500 internal_contract_error. Red/green:
-    the well-formed ref AND null pass the same validator."""
+    """The published contract guards the missing_source_ref shape and its coupling
+    (request D-2, D-090-R095; part 3 tightened). Red/green: a wrong-shape ref fails
+    at missing_source_ref, the well-formed ref passes, a NULL ref under check_needed
+    now FAILS (part 3: check_needed must carry the structured object), and the SAME
+    null ref under a recorded document passes."""
     base = {
         "contract_version": "1.1.0",
         "lot_bbl": NORTHERN_BBL,
@@ -386,10 +482,7 @@ def test_wrong_shape_missing_source_ref_fails_the_contract() -> None:
         "transit_zone": None,
         "source": None,
         "detail": "Transit/parking status: Check needed (synthetic contract-guard probe).",
-        "missing_source": (
-            "DCP Transit Zones (NYC Open Data), the dataset PLUTO's transitzone field "
-            "is sourced from"
-        ),
+        "missing_source": _CHECK_NEEDED_SOURCE,
         # Wrong shape: an object missing the required 'dataset' (and other) keys, so
         # it satisfies neither branch of the missing_source_ref anyOf.
         "missing_source_ref": {"dataset_id": "6ztr-wgff"},
@@ -398,23 +491,31 @@ def test_wrong_shape_missing_source_ref_fails_the_contract() -> None:
         validate_transit_parking_document(base)
     assert exc.value.location == "missing_source_ref"
 
-    # The well-formed ref (the exact prose Lane B part 2 will emit) is accepted.
-    base["missing_source_ref"] = {
-        "dataset": "Transit Zones",
-        "dataset_id": "6ztr-wgff",
-        "publisher": "Department of City Planning (DCP)",
-        "dataset_version": None,
-        "url": "https://data.cityofnewyork.us/d/6ztr-wgff",
-        "components": [
-            {"dataset": "Greater Transit Zone", "dataset_id": "vhqf-adkz"},
-            {"dataset": "Appendix I - Transit Zones", "dataset_id": "dpnc-b2hd"},
-        ],
-    }
+    # The well-formed ref is accepted for a check_needed document.
+    base["missing_source_ref"] = dict(_WELL_FORMED_REF)
     validate_transit_parking_document(base)  # raises on any defect
 
-    # A null ref (a recorded or id-free check-needed document) is also accepted.
+    # A NULL ref under check_needed is now rejected (part 3: the structured object is
+    # required when check_needed). It fails the root status/ref coupling.
     base["missing_source_ref"] = None
-    validate_transit_parking_document(base)
+    with pytest.raises(StudyContractError) as exc_null:
+        validate_transit_parking_document(base)
+    assert exc_null.value.location == "<root>"
+
+    # The SAME null ref under a recorded document IS accepted (a recorded status has
+    # no source to reference).
+    recorded = {
+        "contract_version": "1.1.0",
+        "lot_bbl": NORTHERN_BBL,
+        "status": "recorded",
+        "status_label": "Recorded",
+        "transit_zone": "Outer Transit Zone",
+        "source": None,
+        "detail": "Transit zone: Outer Transit Zone (synthetic contract-guard probe).",
+        "missing_source": None,
+        "missing_source_ref": None,
+    }
+    validate_transit_parking_document(recorded)  # raises on any defect
 
 
 def test_unexpected_provider_error_is_generic_500(monkeypatch) -> None:

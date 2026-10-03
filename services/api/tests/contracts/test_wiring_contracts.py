@@ -71,11 +71,17 @@ EXPECTED_INVALID_DEFECT = {
     # zoning_lot_history group with status 'opportunity' -> the group/status oneOf
     # rejects the flag object.
     "zoning_lot_history_opportunity.json": ("groups/0/flags/0", None),
-    # recorded status with transit_zone null -> the root status/zone oneOf.
+    # recorded status with transit_zone null -> the root status/zone/ref oneOf.
     "recorded_without_transit_zone.json": ("<root>", None),
     # missing_source_ref object missing its required 'dataset' key -> satisfies
     # neither branch of the missing_source_ref anyOf (object shape nor null).
     "missing_source_ref_wrong_shape.json": ("missing_source_ref", None),
+    # check_needed status with a null missing_source_ref -> the check_needed branch
+    # of the root oneOf requires the structured object, so the coupling rejects it.
+    "check_needed_without_ref.json": ("<root>", None),
+    # a non-null missing_source_ref under contract_version '1.0.0' -> the version
+    # binding allOf (anyOf: ref null OR version 1.1.0) rejects it at the root.
+    "ref_under_1_0_0.json": ("<root>", None),
     # unused_floor_area.status not the const 'not_confirmed'.
     "unused_floor_area_confirmed.json": (
         "unused_floor_area/status",
