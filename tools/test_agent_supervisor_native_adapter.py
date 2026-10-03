@@ -22,7 +22,7 @@ from tools.agent_supervisor import native_runtime as nr
 from tools.agent_supervisor import runtime_backend as rb
 
 FIXTURES = Path(__file__).parent / "agent_supervisor" / "fixtures"
-DETECTION_FIXTURE = FIXTURES / "native_runtime_detection_2026-10-02_m0t174.json"
+DETECTION_FIXTURE = FIXTURES / "native_runtime_detection_2026-10-02_m0t179.json"
 AGENTS_FIXTURE = FIXTURES / "agents_listing_2026-08-27_m0t104.json"
 AGENTS_ALL_FIXTURE = FIXTURES / "agents_listing_all_2026-08-27_m0t104.json"
 
@@ -663,13 +663,14 @@ def agents_all_listing() -> dict:
 
 
 def test_committed_detection_fixture_shape(detection):
-    # M0-T174 re-capture (D-091 TW4 Linux recertification): the installed claude
-    # 2.1.287 native surface re-detected live on the cloud server with help/version
-    # probes only; every flag/verb classification identical to 2.1.281 (version-only
-    # drift); the m0t159 (2.1.281) fixture stays committed as history.
+    # M0-T179 re-capture (D-091 Linux recertification): the host auto-updated
+    # claude 2.1.287 -> 2.1.288 after M0-T174; the installed claude 2.1.288 native
+    # surface re-detected live on the cloud server with help/version probes only;
+    # every flag/verb classification identical to 2.1.287 (version-only drift); the
+    # m0t174 (2.1.287) and m0t159 (2.1.281) fixtures stay committed as history.
     assert detection["schema"] == "native_runtime_detection/v1"
-    assert detection["task"] == "M0-T174"          # G3 ADV-1
-    assert detection["claude_version"] == "2.1.287 (Claude Code)"
+    assert detection["task"] == "M0-T179"          # G3 ADV-1
+    assert detection["claude_version"] == "2.1.288 (Claude Code)"
     assert detection["background_gaps"] == []
     for verb in nr.BACKGROUND_VERBS:
         assert detection["verbs"][verb] == "supported"

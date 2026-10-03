@@ -34,16 +34,17 @@ from typing import Any, Iterable
 from .telemetry_hooks import KNOWN_HOOK_EVENTS
 
 CATALOG_SCHEMA = "hook_event_catalog/v1"
-# M0-T174 (D-091 TW4 Linux recertification): re-pointed 2_1_281 -> 2_1_287 for the
-# installed claude 2.1.287 on the cloud server (M0-T159/M0-T132/M0-T118 precedent).
-# 2.1.287 is a benign bump at the hook-event surface: the documented event set is
-# IDENTICAL to 2.1.281 (33 events; docs re-fetched 2026-10-02, HTTP 200), so the
-# +2 drift versus the 2.1.220/2.1.248 baseline (PreModelSwitch + PostModelSwitch)
+# M0-T179 (D-091 Linux recertification): re-pointed 2_1_287 -> 2_1_288 for the
+# installed claude 2.1.288 on the cloud server (the host auto-updated 2.1.287 ->
+# 2.1.288 after M0-T174; M0-T159/M0-T174/M0-T132/M0-T118 precedent). 2.1.288 is a
+# benign bump at the hook-event surface: the documented event set is IDENTICAL to
+# 2.1.287 (33 events; docs re-fetched 2026-10-02, HTTP 200, 2,915,734 bytes), so
+# the +2 drift versus the 2.1.220/2.1.248 baseline (PreModelSwitch + PostModelSwitch)
 # carries unchanged. The fixture records the reconciled drift and the deterministic
-# test bites on it. The 2_1_247/2_1_248/2_1_251/2_1_252/2_1_281 catalogs stay
+# test bites on it. The 2_1_247/2_1_248/2_1_251/2_1_252/2_1_281/2_1_287 catalogs stay
 # committed as history.
 CATALOG_FIXTURE_PATH = (pathlib.Path(__file__).resolve().parent / "fixtures"
-                        / "hook_event_catalog_2_1_287.json")
+                        / "hook_event_catalog_2_1_288.json")
 
 
 class CatalogFixtureError(ValueError):

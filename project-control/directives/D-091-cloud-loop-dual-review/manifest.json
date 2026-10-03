@@ -10,7 +10,7 @@
  "issued_at": "2026-10-02",
  "captured_at": "2026-10-02T04:56:13+00:00",
  "created_at": "2026-10-02T04:56:13+00:00",
- "updated_at": "2026-10-02T21:24:08+00:00",
+ "updated_at": "2026-10-02T23:36:05+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "c81ba14d6609e5bc892a33090c9311390d5866e4",
  "capture_head_sha": null,
@@ -33,7 +33,7 @@
   "D-091-R009"
  ],
  "requirements_id_digest_sha256": "30029590036b56e20e0c3deeb15ad8186ab2acb0a69499f4c10aad49e51d5285",
- "requirements_content_digest_sha256": "bec2b2ec800586de0dbcfb69f6f1daa5fb370684d7ba218ca495cbbae02aa1ba",
+ "requirements_content_digest_sha256": "e416ea7d525dcccabc0838c5755182f407f901ea1457bf59a7b62bb7396ef62b",
  "sources": [
   {
    "file": "source-001.md",
@@ -70,7 +70,8 @@
   "M0-T175",
   "M0-T176",
   "M0-T177",
-  "M0-T178"
+  "M0-T178",
+  "M0-T179"
  ],
  "affected_prs": [
   284
@@ -129,6 +130,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-002 (session 08a1e891 message 34: the owner approves amending the activation PIN so a proved systemd control group counts as containment) and requirement D-091-R009 (authorization, pending). Text extracted by script from the session transcript; nothing retyped. No existing row edited. Capture session: 08a1e891, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-02T23:36:05+00:00",
+   "actor": "orchestrator",
+   "action": "scope_binding",
+   "note": "M0-T179 contracted: the Linux recertification superseding M0-T174 after M0-T177 (B-027 containment) and M0-T178 (DB-103) changed tools/agent_supervisor (R001, R007; depends on both). Task id appended to applicability.task_ids and maps_to.tasks (requirement text unchanged); content digest resynced. Commissioning stays owner-typed (M0-T175)."
   }
  ]
 }

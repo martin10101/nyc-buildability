@@ -32,12 +32,13 @@ FIXTURES = Path(__file__).parent / "agent_supervisor" / "fixtures"
 LIVE_FIXTURE = FIXTURES / "capability_probe_live_2026-08-25.json"
 # M0-T103 post-update record (claude 2.1.246): frozen historical upgrade pair.
 POST_FIXTURE = FIXTURES / "capability_probe_live_2026-08-26_m0t103_post_update.json"
-# Current record (claude 2.1.287, codex-cli 0.157.0): the D-091 TW4 Linux
-# recertification (task M0-T174) re-probed both installed CLIs live on the
-# cloud server; the live drift teeth target THIS. The M0-T159 (claude 2.1.281
-# / codex-cli 0.153.4, Windows) fixture stays committed as append-only history.
+# Current record (claude 2.1.288, codex-cli 0.157.0): the D-091 Linux
+# recertification (task M0-T179) re-probed both installed CLIs live on the cloud
+# server after the host auto-updated claude 2.1.287 -> 2.1.288; the live drift
+# teeth target THIS. The M0-T174 (claude 2.1.287) and M0-T159 (claude 2.1.281 /
+# codex-cli 0.153.4, Windows) fixtures stay committed as append-only history.
 CURRENT_FIXTURE = (FIXTURES
-                   / "capability_probe_live_2026-10-02_m0t174_2_1_287.json")
+                   / "capability_probe_live_2026-10-02_m0t179_2_1_288.json")
 MATRIX = FIXTURES / "capability_matrix_v1.json"
 
 
@@ -231,30 +232,31 @@ def test_live_reprobe_codex_version_matches_fixture(current):
     assert rec["first_line"] == current["body"]["probes"]["codex_version"]["first_line"]
 
 
-def test_current_fixture_records_claude_2_1_287_masked_and_shaped(current, post):
-    """M0-T174 re-baseline invariant (D-091 TW4 Linux recertification; following
-    the M0-T159 / D-032 / M0-T132 / M0-T118 / M0-T092 R149/R102 pattern): the
-    current fixture freezes the installed claude 2.1.287 and codex-cli 0.157.0
-    (the D-091 M0-T167 codex admission), both re-probed live on the cloud server.
-    Filename carries the consuming task id (G3 ADV-1). The M0-T159 (claude 2.1.281
-    / codex 0.153.4) and M0-T103 (post, codex 0.146.0) fixtures stay as history.
+def test_current_fixture_records_claude_2_1_288_masked_and_shaped(current, post):
+    """M0-T179 re-baseline invariant (D-091 Linux recertification; following the
+    M0-T174 / M0-T159 / D-032 / M0-T132 / M0-T118 / M0-T092 R149/R102 pattern):
+    the host auto-updated claude 2.1.287 -> 2.1.288 after M0-T174, so the current
+    fixture freezes the installed claude 2.1.288 and codex-cli 0.157.0 (unchanged),
+    both re-probed live on the cloud server. Filename carries the consuming task
+    id (G3 ADV-1). The M0-T174 (claude 2.1.287), M0-T159 (claude 2.1.281 / codex
+    0.153.4) and M0-T103 (post, codex 0.146.0) fixtures stay as history.
 
     Masking contract, Linux reality: on this server-run box claude is a system
-    install (/usr/bin/claude) and codex is the repo-local M0-T167 admission, so
-    the resolved probe_meta paths are NOT under /home or /Users; the code's
-    redaction regex (telemetry_redaction._HOME_PREFIXES masks /home|/Users, never
-    /usr or /root) is a legitimate no-op on them. The invariant is therefore the
-    real no-leak contract — no owner username, no /home/<user> or /Users/<user>
-    prefix anywhere in the fixture — rather than the Windows [HOME]-prefix form
-    the 2.1.281 predecessor asserted (which does not apply to a Linux system
-    install). The deterministic body carries no paths at all."""
+    install (/usr/bin/claude) and codex is a system install (/usr/local/bin/codex,
+    /opt/nyc-codex), so the resolved probe_meta paths are NOT under /home or
+    /Users; the code's redaction regex (telemetry_redaction._HOME_PREFIXES masks
+    /home|/Users, never /usr or /root) is a legitimate no-op on them. The invariant
+    is therefore the real no-leak contract — no owner username, no /home/<user> or
+    /Users/<user> prefix anywhere in the fixture — rather than the Windows
+    [HOME]-prefix form the 2.1.281 predecessor asserted (which does not apply to a
+    Linux system install). The deterministic body carries no paths at all."""
     assert (current["body"]["probes"]["claude_version"]["first_line"]
-            == "2.1.287 (Claude Code)")
+            == "2.1.288 (Claude Code)")
     assert (current["body"]["probes"]["codex_version"]["first_line"]
             == "codex-cli 0.157.0")
     assert (post["body"]["probes"]["codex_version"]["first_line"]
             == "codex-cli 0.146.0")
-    assert "m0t174" in CURRENT_FIXTURE.name
+    assert "m0t179" in CURRENT_FIXTURE.name
     whole = json.dumps(current, sort_keys=True)
     for leak in (":\\\\Users\\\\", ":/Users/", "\\\\Users\\\\MLFLL", "MLFLL",
                  "/home/", "/Users/"):
