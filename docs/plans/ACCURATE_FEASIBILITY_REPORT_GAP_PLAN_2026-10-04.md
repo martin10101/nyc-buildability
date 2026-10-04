@@ -62,7 +62,7 @@ results are listed after the table (DB-122).
 | Zoning overview + parameter table with ZR references (FAR, height, DU (dwelling unit) factor, ZFA (zoning floor area), base-height rules) | Y | P | Y | N | R6B draft rules `r6b_qualifying_housing_far.rule.json`, `r6b_height.rule.json`, `r6b_dwelling_units.rule.json`, `r6b_lot_coverage.rule.json`, `r6b_rear_yard_corner_waiver.rule.json`, `r6_r12_residential_far.rule.json`; engine recomputes allowance/envelope/units | No rendered parameter-table sheet (`report_model.schema.json` `calculation_rows` defined, no builder); every rule `needs_review` (no G6) | Lane A/E; gate: G6 legal review; order 10-11 |
 | Calculation detail with plan view (footprint, yards, coverage, unit count) | Y | P | Y | N | `three_answers/geometry.py`, `three_answers/dwelling_units.py`; SVG site plan `services/api/app/drawings/kit/` (E-01, #263); results DXF `services/api/app/cad/results_dxf.py` (#268, structure tested, not AutoCAD-open-tested) | Live site inputs still fed from hard-coded `_benchmark_inputs`; plan-view not yet bound to the live study read | Lane C; gate: C-07 adapter; order 5 |
 | Programs screened / applicable (48 evaluated, 7 applicable; UAP (Universal Affordability Preference), AIRS (Affordable Independent Residences for Seniors), CF (community facility), SRO (single-room occupancy), overlay) | P | N | N | N | Coverage matrix add-on columns AO5 (affordable/senior City of Yes), AO6 (community facility), AO8 (ground-floor commercial) in `COVERAGE_MATRIX.md`; add-on model A-06 catalogue-as-data (#377, open) | No published bonus-program rule exists (grep below); program screening not rule-backed | Lane A; gate: M4 D-045 A3 wave + G6; stage 2 |
-| Scenario pages: floor schedules, building core, floor plans, financial inputs | P | N | N | N | Scenario engine `services/api/app/scenario/builder.py`, `comparison.py`, `max_envelope.py`; massing `services/api/app/scenario/massing_mesh.py`, `cad/glb_writer.py` (D-087 released) | No floor-schedule / core / unit-schedule / floor-plan producer; no financial-inputs module (grep below); financial analysis is HELD under expansion hold | Lane A/E; gate: M5 scenario engine; financial HELD (expansion §2); stage 2 |
+| Scenario pages: floor schedules, building core, floor plans, financial inputs | P | N | N | N | Scenario engine `services/api/app/scenario/builder.py`, `comparison.py`, `max_envelope.py`; massing `services/api/app/scenario/massing_mesh.py`, `cad/glb_writer.py` (D-087 released) | A basic floor-by-floor table ALREADY EXISTS in `three_answers/building_option.py` and is reused, not rebuilt [ORCH-CORRECTED per source-025 R152]; still missing: detailed apartment layouts, building-core calculations, deduction and unit schedules, floor-plan drawings; no financial-inputs module (grep below); financial analysis is HELD under expansion hold | Lane A/E; gate: M5 scenario engine; financial HELD (expansion §2); stage 2 |
 | Scenario comparison (cards + numeric table across programs) | P | N | N | N | `services/api/app/scenario/comparison.py`; `compare_rows.schema.json`; Lane C C-09 compare backend in progress | Comparison needs rule-backed programs; no mounted comparison over the Northern document | Lane A/C; gate: M4 D-045 programs + G6; stage 2 |
 | Tax abatement eligibility (485-x, 421-a, J-51) | N | N | N | N | Explicitly out of scope: `services/api/app/api/v1/parity_read.py` ("computes no 485-x"); `profile/parity/__init__.py` ("485-x source pointers still to come under B-11") | No 485-x / tax-incentive logic at all (grep below) | Lane B; gate: product + owner scope decision; stage 2 or later |
 | Comparable sales nearby (ACRIS + PLUTO, ranked, $/SF) | Y | P | Y | N | `services/api/app/profile/parity/comparable_sales.py`; DOF sales connector `connectors/dof_sales_soda.py`; route `api/v1/parity_read.py` (B-11, #312/#352) | Uses DOF sales, not ACRIS; computes no average or price-per-SF by product choice; selection filter is an open owner question | Lane B; gate: product decision on the filter; stage 2 |
@@ -88,9 +88,9 @@ Where the sample's method would be wrong for us, and how our pipeline prevents t
 1. **Unsourced numbers.** The sample prints figures (for example lot frontage 100.8 ft, existing FAR
    5.41) with no per-value provenance a reader can trace. Our every fact carries a source, rank and
    label (`source_fact.schema.json`, study read facts), and the report is bound to one results
-   document by canonical digest (`report_model.schema.json` `results_ref`), so a value cannot appear
-   without a traceable origin (PRD section 9 and the "impossible to export a material calculation
-   without a provenance record" rule). Where our captured reading differs from the sample (for
+   document by canonical digest (`report_model.schema.json` `results_ref`), so every exported value
+   can be traced to its origin (PRD section 9 and the "impossible to export a material calculation
+   without a provenance record" rule); traceability does not by itself prove the value right. Where our captured reading differs from the sample (for
    example the sample's own page 9 shows "Lot Coverage 100%" while noting "corner lot: 80%"), we do
    not pick a side: the figure stays draft and qualified review decides.
 
@@ -106,8 +106,10 @@ Where the sample's method would be wrong for us, and how our pipeline prevents t
    (AO5, AO6, AO8) with no published rule, so our report shows them as screened-but-not-computed
    rather than as a number.
 
-4. **"Max units" without the dwelling-unit rule.** The sample asserts a unit count (for example 29,
-   and an SRO scenario of 62) on its own. Our unit count is computed by a named draft rule
+4. **"Max units" without the dwelling-unit rule.** The sample does show its unit calculation
+   (page 8: 20,150 / 680 = 29.63, rounded to 29) [ORCH-CORRECTED per source-025 R153: an earlier
+   draft wrongly said it asserted the count on its own]; the risk this item guards is a unit count
+   printed anywhere without the cited rule and formula behind it. Our unit count is computed by a named draft rule
    (`r6b_dwelling_units.rule.json`) with the explicit formula "20,150 / 680 = 29.63" and the rounding
    rule, and it stays draft until G6. We never show a unit count that is not the output of a cited
    rule.
@@ -119,8 +121,10 @@ Where the sample's method would be wrong for us, and how our pipeline prevents t
    carrying the captured text; mismatches surface as a draft note (results 1.2.0 `notes[]`, #412),
    not a silent number.
 
-In short: every mechanism that would let an inaccurate number reach the sample's pages is exactly the
-mechanism our provenance, draft-until-G6, and deterministic-engine rules remove.
+In short: provenance, draft-until-G6 and deterministic computation make every number traceable to
+its origin and every legal reading reviewable. They do not guarantee accuracy and do not remove every
+way an inaccurate number can reach a report; they make a mistake easier to find, and professional
+review remains necessary [ORCH-CORRECTED per source-025 R155: an earlier draft overstated this].
 
 ### The sample disagrees with itself (why copying it would be wrong)
 
@@ -134,9 +138,12 @@ decides every one):
 - **Base and max height.** Pages 7 and 9 give base 30 ft, max base 50 ft, max building 60 ft, while
   page 10 (programs) says "base height 30-45 ft, max 55 ft". Our heights come from
   `r6b_height.rule.json` plus the #388 minimum-base-height finding, each tied to the captured ZR node.
-- **Bonus FAR.** Several scenario pages describe "FAR 2.40 (+0.40 bonus)" in prose but then state
-  "Base FAR 2.00 + Bonus realized 0.30 = 2.30 FAR". We emit a bonus FAR only from a captured,
-  G6-approved program rule, so the headline and the arithmetic cannot drift apart.
+- **Allowed versus achieved FAR (not a contradiction).** Page 16 states FAR 2.40 allowed (+0.40
+  bonus) and 2.30 achieved after floor-plate losses. Those are two different quantities, and the
+  sample distinguishes them; an earlier draft of this plan wrongly listed them as an internal
+  contradiction [ORCH-CORRECTED per source-025 R153]. The point for us is separate: we emit a bonus
+  FAR only from a captured, G6-approved program rule, and we print the allowance and the achieved
+  figure as two labelled values with the shortfall reason computed (gap-plan item 2 above).
 - **FAR table source.** Page 9 cites residential FAR to "ZR 23-151/153/154/155"; our captured R6B
   FAR reading is `r6b_qualifying_housing_far.rule.json` / `r6_r12_residential_far.rule.json`, and any
   difference from the sample's citation is a draft note, not a silent correction.
@@ -179,7 +186,9 @@ are listed but not to be started until the owner clears them. Nothing here promi
     publication.
 11. **[E] Build the report_model builder** that assembles ONE `report_model` (1.0.0) from the results
     document plus the study at the same revision: cover, dimensioned site plan (reuse E-01), the
-    calculation table with ZR sections, the floor-by-floor table, the assumptions page, the standing
+    calculation table with ZR sections, the EXISTING basic floor-by-floor table from
+    `three_answers/building_option.py` (reused, not rebuilt; detailed core, deduction and unit
+    schedules come later) [ORCH-CORRECTED per source-025 R152], the assumptions page, the standing
     notices shown once, and the colophon with data versions and the reproducibility id. Dependency:
     step 9 and the report_model contract (present). Gate: review.
 12. **[E] E-02 PDF converter trial** on the benchmark lot and the owner's Render-runtime decision
@@ -191,14 +200,17 @@ are listed but not to be started until the owner clears them. Nothing here promi
     SVG renderers) so the report carries the two vector maps. Dependency: step 11; the imagery licence
     decision governs any raster base map. Gate: review.
 
-The honest shortest path to the FIRST accurate PDF runs steps 1-7 (unblocked wiring and the journey
-test), is then gated at the screen by the golden record M1-05 (steps 8-9), at the rules by G6 (step
-10), and at the export by the PDF converter and durable storage (steps 11-13). An agent can clear 1-7
-and 11 and 14; it cannot clear 8, 10, 12 or 13.
+The honest shortest path to the FIRST accurate PDF runs steps 1-7. Of those, steps 1-3, 5 and 7 are
+wiring and tests an agent can do without an owner decision; step 4 needs the owner's yes on #405 and
+step 6 needs the owner to lift the #388 hold, so they are NOT unblocked [ORCH-CORRECTED per
+source-025 R154]. The path is then gated at the screen by the golden record M1-05 (steps 8-9), at the
+rules by G6 (step 10), and at the export by the PDF converter and durable storage (steps 11-13). An
+agent can clear 1-3, 5, 7, 11 and 14; it cannot clear 4, 6, 8, 10, 12 or 13 (owner decisions).
 
 ### Critical path at a glance
 
-- Facts and study read: steps 1 -> 2 -> 3 (Lane C, unblocked today).
+- Facts and study read: steps 1 -> 2 -> 3 (Lane C; no owner decision needed for the work itself; step 2
+  sits in #417, which waits on the owner's yes for #405 before it can merge).
 - Scope and engine feed: step 4 (owner yes on #405) -> step 5 (C-07 adapter) -> step 7 (journey test).
 - Screen: step 8 (owner golden record M1-05) -> step 9 (mount results route C-08).
 - Legal: step 10 (G6) is parallel to the wiring but blocks any reliance on a rule value.
@@ -217,9 +229,11 @@ cleared by an agent, and both sit before the report can be called accurate rathe
   G6. The M5 scenario engine (`services/api/app/scenario/`) then compares them the way the sample's
   scenario pages and comparison table do, but only over rule-backed programs.
 - **Floor plans and massing.** Released under D-087 (3D building-and-lot massing, CAD export, PDF
-  blueprints). The massing primitives exist (`scenario/massing_mesh.py`, `cad/glb_writer.py`). Still to
-  build: the floor-schedule, building-core and unit-schedule producers, and the synthesized floor-plan
-  drawings the sample shows, each marked diagrammatic and not for construction.
+  blueprints). The massing primitives exist (`scenario/massing_mesh.py`, `cad/glb_writer.py`), and so
+  does a basic floor-by-floor table (`three_answers/building_option.py`) [ORCH-CORRECTED per
+  source-025 R152]. Still to build: detailed apartment layouts, the building-core and deduction
+  calculations, the unit schedules, and the synthesized floor-plan drawings the sample shows, each
+  marked diagrammatic and not for construction.
 - **Financial analysis.** The sample's financial-analysis inputs and 485-x table are financial
   feasibility. That family is still HELD under the expansion §2 hold
   (`.claude/rules/expansion-agent-dispatch-hold.md`); D-087 released 3D / CAD / PDF blueprints but not
