@@ -16,6 +16,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:  # pragma: no cover - typing only, avoids an inputs<->scope cycle
+    from .scope import ScopeInputs
 
 # Default residential floor-to-floor height (ft). STATED and EDITABLE: the architect
 # may override it per option; it is surfaced as a named assumption, never hidden.
@@ -105,6 +109,13 @@ class ThreeAnswerInputs:
     depends_on_fact_ids: tuple[str, ...] = ()
     lot_area_fact_id: str | None = None
     site_measurement_rank: str = DEFAULT_SITE_MEASUREMENT_RANK
+
+    # --- optional scope-beside-the-numbers inputs (results contract 1.1.0, D-090-R108) ---
+    # When present, the generator emits the top-level ``scope`` object (lot identity +
+    # disclosed assumptions) and declares contract_version 1.1.0; when None the document is
+    # byte-identical to the 1.0.0 shape. Additive and optional, so every existing caller is
+    # unchanged. See three_answers/scope.py for ScopeInputs and the builder.
+    scope_inputs: ScopeInputs | None = None
 
     def far_inputs(self) -> dict:
         """Inputs for the standard residential-FAR rule (r6-r12-residential-far)."""
