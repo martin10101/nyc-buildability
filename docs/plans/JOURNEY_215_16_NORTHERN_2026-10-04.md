@@ -212,7 +212,8 @@ in any order — (a) the evaluator_inputs existing-FA + keep/remove governing sl
 additive, flag-off) **merged as #391**; (b) the B-03 site geometry → study read (lot type,
 frontage, depth) **merged as #390**, with the B-05 existing-floor-area → study-provider wiring
 (link 3) and the C-07 study-read → engine bridge (link 5) **in flight**; (c) the matching inert
-field on `ThreeAnswerInputs` (Lane A, inert until the rule). Then, **gated on PR #382's merge
+field on `ThreeAnswerInputs` (Lane A, inert until the rule — but its merge still needs the owner's
+yes per PR, Lane A). Then, **gated on PR #382's merge
 (owner's yes)**: (d) the A-07 draft rule → (e) the engine consumes keep/remove so the answer
 differs and remaining capacity can compute → (f) surface it in the D-11 keep/partial/full-rebuild
 comparison UI. Remaining capacity still stays "Not confirmed" until **both** a verified zoning lot
@@ -232,7 +233,7 @@ covers. "Owner decision needed" names the specific gate.
 | Street width → study read (connect existing envelope fetch → `street_data_from_pages` wrapper; reuse) | envelope fetch/parser/wrapper (all done), B-03 wiring | C | No | Partly — D-1 later slice |
 | B-05 existing-FA → study provider | B-05 (done) | C | No | Partly — implied by the study read; no discrete row |
 | evaluator_inputs existing-FA + keep/remove slot | C-07 (done) | C | No (DB-113 assumption-override is tangential) | Yes — C-07 follow-up |
-| `ThreeAnswerInputs` existing-FA + keep/remove field | A-04 (done) | A | No | Yes — under A-07 |
+| `ThreeAnswerInputs` existing-FA + keep/remove field | A-04 (done) | A | **Yes — owner's yes to merge (Lane A)** | Yes — under A-07 |
 | C-07 adapter bridges the live read | B-03 wiring, C-07 (done) | C | No | Yes — queue C-07 (gap named) |
 | Real address → BBL (proposed B-addr) | Geoclient connector M2-T021 + route M2-T022 (both done) | B/C | No — geocoder (Geoclient v2) + route already exist; needs a recorded fixture + flag, not an owner choice | No — no queue row |
 | A-07 existing buildings §5b rule | A-04 (done), B-05 (done), PR #382 | A | **Yes — owner's yes to merge PR #382; G6/Q12 for the rule** | Yes — queue A-07 |
@@ -287,7 +288,8 @@ it. "What works now" first, then the assumptions / missing connections.
 Every item is one small PR, green on its own. **Owner-blocked items are listed but NOT to
 be started** (D-090-R007 GO covers the queue rows but the named gates still hold).
 
-**Wave 1 — unblocked wiring (no owner decision; join the links that already have the code):**
+**Wave 1 — unblocked wiring (no owner product/gate decision; join the links that already have the
+code — but any Lane A merge still needs the owner's yes per PR, e.g. item 5):**
 1. [C] B-03 geometry → study read (lot type, frontage, depth from the outline) — closes the
    `lot_type: unknown` gap (link 2).
 2. [C] street width per frontage → study read by connecting the existing envelope fetch to the
@@ -297,7 +299,7 @@ be started** (D-090-R007 GO covers the queue rows but the named gates still hold
 4. [C] evaluator_inputs contract: add the existing-FA + keep/remove governing slot
    (additive, `contract_version` bump, flag-off) — §2 step 4.
 5. [A] `ThreeAnswerInputs` (`inputs.py`): add the existing-FA + keep/remove field, inert
-   until the A-07 rule — §2 step 4.
+   until the A-07 rule — §2 step 4. **Lane A: the merge needs the owner's yes per PR.**
 6. [C] C-07 adapter: bridge the live study read to the engine once #1 provides a known lot
    type (link 4). This replaces the hard-coded `_benchmark_inputs` site inputs.
 

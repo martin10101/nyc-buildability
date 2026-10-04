@@ -174,12 +174,19 @@ all checks green") is therefore driven by the **pull_request** run. The push run
 redundant copy that additionally tests a *non-merge* state (the raw head), which — when the base has
 advanced — is a state that will never exist on the base.
 
-**"Merge base in when stale" rule.** When the base advances, the PR's `refs/pull/N/merge` recomputes
-and the pull_request run re-validates the fresh merge; merging the base into the branch produces a
-new head whose pull_request run again validates the merged tree. If the PR cannot be merged
-(conflicts), GitHub produces **no** merge ref and **no** pull_request run, so `statusCheckRollup`
-shows missing checks and the fail-closed orchestrator cannot call it green — which is correct. The
-**pull_request** run is load-bearing for this rule too; the push run adds nothing to it.
+**"Merge base in when stale" rule.** When the base advances, GitHub recomputes the PR's
+`refs/pull/N/merge` ref, **but it does NOT fire a new `pull_request` run** — a run fires only on a
+push to the PR branch (the `synchronize` activity of the bare `pull_request:` trigger, `ci.yml`
+`on:` block, lines 8–10), never when the base moves on its own. (Observed: #369's PR run stayed at
+its old merge ref while the integration branch advanced.) Fresh-base testing is therefore **not
+automatic**; it is enforced by the manual Option B rule: a stale PR has the integration branch
+**merged into it** — a new head, which triggers a fresh `synchronize` `pull_request` run on the
+merged tree — and the merge is proved empty before merge. If the PR cannot be merged (conflicts),
+GitHub produces **no** merge ref and **no** `pull_request` run, so `statusCheckRollup` shows missing
+checks and the fail-closed orchestrator cannot call it green — which is correct. The **pull_request**
+run is load-bearing for this rule too, but it revalidates a fresh base only when a push gives it a
+new head — a process rule, not a workflow guarantee. This proposal does not change any of this (it
+touches only the `push` trigger).
 
 **No branch protection exists.** `gh api .../branches/main/protection` and
 `.../branches/candidate/D-024-mrl-option-b/protection` both return **404 "Branch not protected"**.
