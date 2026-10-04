@@ -41,6 +41,15 @@ Lot choice and multi-lot site are Lane B behaviour, so they are produced only
 through ``derive_multi_lot_site_if_enabled`` (the LANE_B_ENABLED gate). When that
 gate is off the inputs are unavailable (fail safe), never fabricated.
 
+B-03 geometry (journey wave 1 item 1) and B-05 existing-floor-area evidence (journey
+wave 1 item 3) reach assembly through INJECTED providers, as pure data, so assembly
+stays I/O-free. Both LIVE defaults bind NOTHING: there is no live envelope-DCM geometry
+binding, and there is NO DOB connector under ``app/connectors`` for the existing-floor-
+area evidence (a Lane B deliverable). So in production both stay None and the study read
+is byte-identical to the pre-wiring slice; tests and the e2e harness inject fixture-
+backed providers built from the recorded 215-16 Northern pack through the real B-03/B-05
+readers to exercise the seams offline.
+
 Slice bounds (documented, not hidden): one tax lot per call (no MapPLUTO outline
 fetch and no condo base-lot resolution yet, so a multi-lot or condo input
 resolves to the single entered lot, and a condo unit-lot no-match is labelled
@@ -73,6 +82,7 @@ from app.profile.data_versions import (
     assess_data_versions,
     pins_from_site_facts,
 )
+from app.profile.existing_floor_area import ExistingFloorAreaEvidence
 from app.profile.fact_version_check import attach_version_check
 from app.profile.site_facts import build_site_facts
 from app.spatial.multi_lot_site import (
@@ -85,6 +95,7 @@ from app.spatial.multi_lot_site import (
 from app.spatial.site_geometry import SiteGeometry
 
 __all__ = [
+    "ExistingFloorAreaProvider",
     "GeometryProvider",
     "PlutoFetcher",
     "StudyInputs",
@@ -161,6 +172,53 @@ PlutoFetcher = Callable[[str, str], PlutoFetchResult]
 # and the study read is byte-identical to the pre-geometry slice.
 GeometryProvider = Callable[[str, str], "SiteGeometry | None"]
 
+# (canonical_bbl, correlation_id) -> B-05 ExistingFloorAreaEvidence, or None when no
+# DOB-filing / certificate / stated-assumption evidence is available for this lot (the
+# existing_zoning_floor_area fact then stays unknown, exactly as before). The INJECTED
+# existing-floor-area seam (journey wave 1 item 3): tests and the e2e harness bind a
+# fixture-backed provider built from the benchmark pack's recorded DOB responses through
+# B-05's own readers; the LIVE default binds NOTHING here, because there is NO DOB
+# connector under app/connectors (see _live_study_inputs_provider), so the evidence
+# stays None in production and the study read's existing_zoning_floor_area fact is
+# byte-identical to the pre-wiring slice. The evidence is pure DATA (an
+# ExistingFloorAreaEvidence); the fetch that builds it is the provider's I/O, never the
+# route's or assembly's.
+ExistingFloorAreaProvider = Callable[[str, str], "ExistingFloorAreaEvidence | None"]
+
+
+def _existing_evidence(
+    provider: ExistingFloorAreaProvider | None,
+    canonical_bbl: str,
+    correlation_id: str,
+) -> ExistingFloorAreaEvidence | None:
+    """Call the injected existing-floor-area provider (journey wave 1 item 3) and
+    return its B-05 evidence, or None when no provider is bound (the live default).
+
+    A provider that cannot produce VALID evidence -- a B-05 validation error while
+    building the evidence (``ValueError``/``TypeError``, e.g. a recorded row refused by
+    B-05's readers), or a returned value that is not an
+    :class:`~app.profile.existing_floor_area.ExistingFloorAreaEvidence` -- is the route's
+    fail-safe unavailability: it raises :class:`StudyInputsUnavailableError`, which the
+    route maps to a bounded ``503``. Nothing is ever fabricated, and a malformed-evidence
+    fetch is never a generic ``500``. Mirrors the PLUTO-connector failure mapping."""
+    if provider is None:
+        return None
+    try:
+        evidence = provider(canonical_bbl, correlation_id)
+    except (ValueError, TypeError) as exc:
+        raise StudyInputsUnavailableError(
+            "the existing floor-area evidence could not be produced for this lot; the "
+            "study setup is withheld rather than fabricated and is safe to retry.",
+            reason="existing_floor_area_unavailable",
+        ) from exc
+    if evidence is not None and not isinstance(evidence, ExistingFloorAreaEvidence):
+        raise StudyInputsUnavailableError(
+            "the existing floor-area evidence provider returned a malformed value; the "
+            "study setup is withheld rather than fabricated and is safe to retry.",
+            reason="existing_floor_area_malformed",
+        )
+    return evidence
+
 
 def assemble_study_inputs(
     pluto_result: PlutoFetchResult,
@@ -172,6 +230,7 @@ def assemble_study_inputs(
     version_probe: VersionProbe | None = None,
     correlation_id: str | None = None,
     site_geometry: SiteGeometry | None = None,
+    existing_floor_area: ExistingFloorAreaEvidence | None = None,
 ) -> StudyInputs:
     """Build :class:`StudyInputs` from a successful PLUTO fetch result.
 
@@ -194,6 +253,18 @@ def assemble_study_inputs(
     is replaced only when B-03 gives a single depth. When None (the default, and
     the live default) the facts are byte-identical to the pre-geometry slice.
 
+    ``existing_floor_area`` is the B-05
+    :class:`~app.profile.existing_floor_area.ExistingFloorAreaEvidence` for this lot
+    (journey wave 1 item 3), passed in as pure DATA (so this function stays I/O-free)
+    straight into :func:`app.profile.site_facts.build_site_facts`. B-05 resolves it to
+    the ``existing_zoning_floor_area`` fact -- a sourced value when a completed DOB
+    filing / certificate / stated assumption gives one, or an honest unknown with the
+    considered figures and its reason attached when it does not (the recorded 215-16
+    Northern lot is unknown: the DOB figure may cover the whole zoning lot). No figure
+    is ever invented, and city building area (PLUTO/DOF) is never used for it. When None
+    (the default, and the live default) the ``existing_zoning_floor_area`` fact is the
+    unknown fact B-05 emits for no evidence -- byte-identical to the pre-wiring slice.
+
     Raises:
         StudyInputsUnavailableError: the Lane B gate is off (so the lot choice is
             not produced), or the fetch result is not a usable single-lot record.
@@ -209,7 +280,7 @@ def assemble_study_inputs(
         )
     builder_kwargs = {} if clock is None else {"clock": clock}
     profile = build_property_profile(pluto_result, **builder_kwargs)
-    site_fact_set = build_site_facts(profile)
+    site_fact_set = build_site_facts(profile, existing_floor_area=existing_floor_area)
     # One tax lot from the PLUTO row (no MapPLUTO outline yet - slice 1). B-07's
     # adapter records the absence of an outline; the lot size is the city-recorded
     # area, or unknown (never 0). Lot choice and multi-lot site are Lane B
@@ -261,6 +332,7 @@ def pluto_study_inputs_provider(
     env: Mapping[str, str] | None = None,
     version_probe: VersionProbe | None = None,
     geometry_provider: GeometryProvider | None = None,
+    existing_floor_area_provider: ExistingFloorAreaProvider | None = None,
 ) -> StudyInputsProvider:
     """A :data:`StudyInputsProvider` over a PLUTO ``fetcher``.
 
@@ -278,6 +350,16 @@ def pluto_study_inputs_provider(
     (so assembly stays I/O-free). None (the default, and the live default) means no
     geometry is threaded and the facts are byte-identical to the pre-geometry
     slice. A geometry fetch is the provider's I/O, never the route's or assembly's.
+
+    ``existing_floor_area_provider`` is the INJECTED B-05 existing-floor-area seam
+    (journey wave 1 item 3): when given, it is called ``(canonical_bbl,
+    correlation_id) -> ExistingFloorAreaEvidence | None`` and its result is passed to
+    :func:`assemble_study_inputs` as pure data. A provider that cannot produce valid
+    evidence maps to :class:`StudyInputsUnavailableError` (the route's bounded 503, fail
+    safe) via :func:`_existing_evidence`, never a fabricated figure or a generic 500.
+    None (the default, and the live default) means no evidence is threaded and the
+    ``existing_zoning_floor_area`` fact is byte-identical to the pre-wiring slice. The
+    evidence fetch is the provider's I/O, never the route's or assembly's.
     """
 
     def provider(
@@ -299,6 +381,9 @@ def pluto_study_inputs_provider(
             if geometry_provider is not None
             else None
         )
+        existing_floor_area = _existing_evidence(
+            existing_floor_area_provider, canonical_bbl, correlation_id
+        )
         return assemble_study_inputs(
             result,
             selected=selected,
@@ -307,6 +392,7 @@ def pluto_study_inputs_provider(
             version_probe=version_probe,
             correlation_id=correlation_id,
             site_geometry=site_geometry,
+            existing_floor_area=existing_floor_area,
         )
 
     return provider
@@ -342,7 +428,18 @@ def _live_study_inputs_provider() -> StudyInputsProvider:
     check closed (the lot type then reads unknown). Rather than invent a connector,
     this default binds nothing live, so geometry stays None and the live study read
     is byte-identical to the pre-geometry slice. Tests and the e2e harness inject a
-    fixture-backed geometry provider to exercise the seam offline."""
+    fixture-backed geometry provider to exercise the seam offline.
+
+    It binds NO live existing-floor-area provider either (journey wave 1 item 3). There
+    is NO DOB connector under ``app/connectors``: the only DOB datasets with a zoning
+    floor-area column (DOB BIS job filings ``ic3t-wcy2`` and the certificate datasets
+    ``pkdm-hqz6`` / ``bs8b-p36w``) have no connector / source_registry record / fixtures
+    / contract tests yet -- that connector is a Lane B deliverable. Rather than invent
+    one, this default binds nothing live, so the existing-floor-area evidence stays None
+    and the live study read's ``existing_zoning_floor_area`` fact is byte-identical to
+    the pre-wiring slice (the unknown fact B-05 emits for no evidence). Tests and the
+    e2e harness inject a fixture-backed evidence provider built from the recorded
+    benchmark pack (through B-05's own readers) to exercise the seam offline."""
     from app.api.v1.properties import get_pluto_fetcher
 
     return pluto_study_inputs_provider(
