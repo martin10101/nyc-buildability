@@ -32,7 +32,7 @@ export interface ScopeWholeSite {
 }
 export interface ScopeRemainingCapacity {
   status: "not_confirmed";
-  label: "Remaining development capacity: Not confirmed.";
+  label: "Remaining development capacity: Not confirmed";
   reason: "Needs verified zoning-lot boundaries and existing zoning floor area.";
 }
 export interface ScopeAssumption {

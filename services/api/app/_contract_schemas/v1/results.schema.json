@@ -345,8 +345,8 @@
         },
         "label": {
           "type": "string",
-          "const": "Remaining development capacity: Not confirmed.",
-          "description": "The owner-settled label, byte-exact as the owner wrote it in D-090-R108 (with the final period). NOTE: the engine's existing display constant UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT (services/api/app/scenario/constants.py) is the same words WITHOUT a final period; the two were not reconciled here (D-090-R108: report the byte difference, change neither side). The emitter must decide which form to emit into this field before the slot is made required."
+          "const": "Remaining development capacity: Not confirmed",
+          "description": "The owner-settled label (D-090-R038 verbatim, owner 2026-10-01; cited again by D-090-R108), byte-exact with NO final period: it equals the engine display constant UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT (services/api/app/scenario/constants.py) byte-for-byte. The separate reason line below carries its own final period."
         },
         "reason": {
           "type": "string",

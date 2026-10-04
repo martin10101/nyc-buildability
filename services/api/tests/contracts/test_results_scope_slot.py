@@ -14,10 +14,10 @@ quietly change them:
 - each invalid scope fixture is rejected BY THE SCHEMA once its fixture-only
   ``_expected_failure`` annotation is stripped, for exactly its stated defect;
 - a non-null scope binds contract_version to 1.1.0 (version binding);
-- the two owner-settled strings and the label const are byte-exact, and their
-  documented relationship to the engine constants is pinned (D-090-R108: the
-  remaining-capacity LABEL carries a final period the engine's display
-  constant does not; the two were not reconciled here).
+- the two owner-settled strings and the label const are byte-exact, and the
+  remaining-capacity LABEL equals the engine display constant
+  UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT byte-for-byte (D-090-R038 settled
+  wording, no final period; the reason line carries its own period).
 """
 
 from __future__ import annotations
@@ -45,7 +45,8 @@ RESULTS_INVALID = REPO_ROOT / "packages" / "contracts" / "fixtures" / "invalid" 
 SCOPE_VALID_FIXTURE = RESULTS_VALID / "synthetic_scope_tax_lot_only_northern.json"
 
 SCOPE_LABEL = "Tax-lot-only estimate"
-REMAINING_LABEL = "Remaining development capacity: Not confirmed."
+# D-090-R038 settled wording, verbatim: no final period on the label line.
+REMAINING_LABEL = "Remaining development capacity: Not confirmed"
 
 
 def _load(path: Path) -> dict:
@@ -121,10 +122,11 @@ def test_wrong_scope_label_is_the_only_defect() -> None:
     validate_results_document(doc)
 
 
-def test_remaining_label_missing_period_is_the_only_defect() -> None:
-    doc = _load(RESULTS_INVALID / "scope_remaining_capacity_label_no_period.json")
+def test_remaining_label_with_period_is_the_only_defect() -> None:
+    doc = _load(RESULTS_INVALID / "scope_remaining_capacity_label_with_period.json")
     doc.pop(FIXTURE_ONLY_KEY)
-    assert doc["scope"]["remaining_capacity"]["label"] == REMAINING_LABEL[:-1]
+    # The defect is a trailing period; the settled const has none.
+    assert doc["scope"]["remaining_capacity"]["label"] == REMAINING_LABEL + "."
     with pytest.raises(StudyContractError):
         validate_results_document(doc)
     doc["scope"]["remaining_capacity"]["label"] = REMAINING_LABEL
@@ -169,14 +171,15 @@ def test_remaining_capacity_strings_byte_exact() -> None:
     assert rc["reason"] == REMAINING_NOT_CONFIRMED_REASON
 
 
-def test_remaining_label_differs_from_engine_display_constant_by_period() -> None:
-    """D-090-R108 byte-difference, pinned: the owner-settled remaining-capacity
-    LABEL carries a final period that the engine's display constant does not;
-    neither side was changed here. If a future change reconciles them, this
-    test fails loudly so the reconciliation is deliberate, not silent."""
+def test_remaining_label_matches_engine_display_constant_byte_for_byte() -> None:
+    """D-090-R038 settled wording: the scope remaining-capacity LABEL has no
+    final period and equals the engine display constant
+    UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT byte-for-byte (Lane A's constant,
+    imported read-only and never edited here). If either side is reworded this
+    fails loudly, so the settled text cannot drift."""
     rc_label = _scope()["remaining_capacity"]["label"]
-    assert rc_label != UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT
-    assert rc_label == UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT + "."
+    assert rc_label == UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT
+    assert rc_label == REMAINING_LABEL
 
 
 def test_lot_identity_and_assumptions_present() -> None:
