@@ -209,22 +209,35 @@ def _frontage_disclosure(
     )
 
 
-def _overlay_disclosure(study: dict) -> DisclosedAssumption:
-    """overlay_present: a recorded commercial overlay gives basis = its own record rank
-    (city data); no recorded overlay gives an honest assumed-false disclosure."""
+def _overlay_disclosure(study: dict, overlay_present: bool) -> DisclosedAssumption:
+    """overlay_present: the statement ALWAYS follows the actual flag value, and a recorded
+    commercial_overlay fact must AGREE with it. When a fact is recorded (basis = its own
+    record rank, city data) a recorded overlay (non-null value) requires the flag true and
+    the statement names it, while a recorded 'none' (null value) requires the flag false. A
+    flag that disagrees fails closed naming the key (never a silent override; CLAUDE.md
+    principle 4). With no recorded fact the statement follows the flag with basis 'assumed'."""
     overlay = _known_fact(study, _COMMERCIAL_OVERLAY_KEY)
     if overlay is not None:
-        return DisclosedAssumption(
-            basis=overlay["measurement"]["rank"],
-            statement=(
-                f"A commercial overlay ({overlay['value']}) is recorded for this lot in "
-                "city data."
-            ),
+        fact_present = overlay["value"] is not None
+        if fact_present != overlay_present:
+            raise EngineDisclosureError(
+                "cannot disclose assumed input 'overlay_present': the caller flag "
+                f"({overlay_present}) disagrees with the recorded commercial_overlay fact "
+                f"(records {'an overlay' if fact_present else 'none'}); resolve the conflict "
+                "(never a silent override)."
+            )
+        statement = (
+            f"A commercial overlay ({overlay['value']}) is recorded for this lot in city data."
+            if fact_present
+            else "No commercial overlay is recorded for this lot in city data."
         )
+        return DisclosedAssumption(basis=overlay["measurement"]["rank"], statement=statement)
     return DisclosedAssumption(
         basis="assumed",
         statement=(
-            "No commercial overlay is assumed to apply; none is recorded for this lot."
+            "A commercial overlay is assumed to apply; none is recorded for this lot."
+            if overlay_present
+            else "No commercial overlay is assumed to apply; none is recorded for this lot."
         ),
     )
 
@@ -244,12 +257,28 @@ def _housing_program_disclosure(housing_program: str) -> DisclosedAssumption:
     )
 
 
+def _assumed_flag_disclosure(
+    present: bool, present_statement: str, absent_statement: str
+) -> DisclosedAssumption:
+    """An assumed boolean-flag disclosure whose statement follows the ACTUAL value: the
+    present wording when the flag is true, the absent wording when false, so the statement
+    can never disagree with the row's emitted value. Basis is always ``assumed`` - this run
+    reads no layer for these flags; they are caller-supplied assumptions."""
+    return DisclosedAssumption(
+        basis="assumed",
+        statement=present_statement if present else absent_statement,
+    )
+
+
 def build_scope_inputs(
     evaluator_inputs: dict,
     study: dict,
     *,
     resolved_frontages: Sequence[ResolvedFrontage],
     housing_program: str,
+    overlay_present: bool,
+    special_district_present: bool,
+    special_density_area: bool,
     within_100_ft_of_street_line_intersection: bool,
     street_line_intersection_angle_degrees: float,
     floor_to_floor_ft: float,
@@ -261,10 +290,17 @@ def build_scope_inputs(
     ``assumed`` / ``default`` (or ``entered``) for the engine defaults and caller flags.
     The lot's BBL identifies the lot; the engine derives the lot display from it.
 
+    Every flag-derived row's STATEMENT follows the actual value passed to the engine, so a
+    disclosure can never disagree with the row it describes (``overlay_present``,
+    ``special_district_present``, ``special_density_area``,
+    ``within_100_ft_of_street_line_intersection``). For ``overlay_present`` the caller flag
+    must additionally agree with any recorded commercial_overlay fact (DB-126).
+
     ``resolved_frontages`` is the per-street governing frontage (from
     ``evaluator_inputs._resolve_group``); it decides whether lot_front_ft carries the
     R138 corner statement. Raises :class:`EngineDisclosureError` naming the key when a
-    required disclosure cannot be derived (a missing governing record or lot identity)."""
+    required disclosure cannot be derived (a missing governing record or lot identity), or
+    when ``overlay_present`` contradicts the recorded commercial_overlay fact."""
     property_obj = study.get("property")
     if not isinstance(property_obj, dict) or not property_obj.get("bbl"):
         raise EngineDisclosureError(
@@ -285,20 +321,20 @@ def build_scope_inputs(
                 f"Zoning district {zoning['value']} is read from recorded city data."
             ),
         ),
-        "overlay_present": _overlay_disclosure(study),
-        "special_district_present": DisclosedAssumption(
-            basis="assumed",
-            statement=(
-                "No special purpose district is assumed to apply; this run does not read "
-                "the special-district layer."
-            ),
+        "overlay_present": _overlay_disclosure(study, overlay_present),
+        "special_district_present": _assumed_flag_disclosure(
+            special_district_present,
+            "A special purpose district is assumed to apply; this run does not read the "
+            "special-district layer.",
+            "No special purpose district is assumed to apply; this run does not read the "
+            "special-district layer.",
         ),
-        "special_density_area": DisclosedAssumption(
-            basis="assumed",
-            statement=(
-                "The lot is assumed not to lie in a special density area; this run does "
-                "not read the special-density layer."
-            ),
+        "special_density_area": _assumed_flag_disclosure(
+            special_density_area,
+            "The lot is assumed to lie in a special density area; this run does not read "
+            "the special-density layer.",
+            "The lot is assumed not to lie in a special density area; this run does not "
+            "read the special-density layer.",
         ),
         "lot_type": DisclosedAssumption(
             basis=lot_type["rank"],
@@ -325,12 +361,10 @@ def build_scope_inputs(
                 "the label."
             ),
         ),
-        "within_100_ft_of_street_line_intersection": DisclosedAssumption(
-            basis="assumed",
-            statement=(
-                "The lot is assumed to lie within 100 feet of a street-line "
-                "intersection."
-            ),
+        "within_100_ft_of_street_line_intersection": _assumed_flag_disclosure(
+            within_100_ft_of_street_line_intersection,
+            "The lot is assumed to lie within 100 feet of a street-line intersection.",
+            "The lot is assumed not to lie within 100 feet of a street-line intersection.",
         ),
         "street_line_intersection_angle_degrees": DisclosedAssumption(
             basis="assumed",

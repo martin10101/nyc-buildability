@@ -476,6 +476,9 @@ def build_three_answer_inputs(
             study,
             resolved_frontages=_resolved_frontages(study),
             housing_program=housing_program,
+            overlay_present=overlay_present,
+            special_district_present=special_district_present,
+            special_density_area=special_density_area,
             within_100_ft_of_street_line_intersection=(
                 within_100_ft_of_street_line_intersection
             ),
