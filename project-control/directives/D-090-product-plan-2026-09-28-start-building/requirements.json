@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 136,
+ "requirement_count": 141,
  "producer": "orchestrator",
- "updated_at": "2026-10-04T04:38:11+00:00",
+ "updated_at": "2026-10-04T05:45:14+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -4641,6 +4641,177 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-04 (message 51).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R137",
+   "text": "Demonstrate ONE continuous run for 215-16 Northern Boulevard on recorded data - address (or the disclosed BBL entry) -> selected lots and sourced facts -> study -> bridge -> engine -> results -> cards -> exports - as a single automated journey test; completed components shown separately do not satisfy this.",
+   "source_ref": "source-023-amendment.md#owner-message-52-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R109",
+    "D-090-R132",
+    "D-090-R138",
+    "D-090-R139"
+   ],
+   "required_harness": "One journey test (recorded fixtures, flags off) that asserts each link's output feeds the next; an independent review runs it.",
+   "required_evidence": "The test, its run record, the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 52, the reviewer's assessment forwarded by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R138",
+   "text": "Close the corner-lot stop in the study-to-engine bridge: when a lot has two frontages, the bridge uses the frontage on the address street as the front lot line and records that as a DISCLOSED ASSUMPTION in the scope (never a legal determination; fails closed when no frontage matches); which street is legally the front lot line stays a qualified-review question.",
+   "source_ref": "source-023-amendment.md#owner-message-52-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R109",
+    "D-090-R119"
+   ],
+   "required_harness": "Lane C bridge/adapter change + tests; the assumption appears in scope.assumptions; independent review.",
+   "required_evidence": "PR diff, tests, review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 52, the reviewer's assessment forwarded by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R139",
+   "text": "The complete scope information reaches the engine automatically: the bridge fills the engine's scope disclosures from the governing-input ranks and the recorded assumptions, so the journey's results carry the scope without test-only inputs.",
+   "source_ref": "source-023-amendment.md#owner-message-52-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R119",
+    "D-090-R131"
+   ],
+   "required_harness": "Lane C change on the bridge (after the Lane A scope emitter lands) + tests; independent review.",
+   "required_evidence": "PR diff, tests, review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 52, the reviewer's assessment forwarded by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R140",
+   "text": "Geoclient key: if GEOCLIENT_SUBSCRIPTION_KEY is already configured, use it for the already-requested 215-16 Northern address recording; if it is missing, ask the owner to configure it securely (an environment variable on the recording machine) and NEVER ask for it in chat.",
+   "source_ref": "source-023-amendment.md#owner-message-52-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R124"
+   ],
+   "required_harness": "The recording runs only where the variable is present; the fixture is committed with provenance; no key material in any artifact.",
+   "required_evidence": "The recorded fixture + MANIFEST entry, or the record that the key is not configured.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 52, the reviewer's assessment forwarded by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R141",
+   "text": "Every later owner update separates 'independently verified' from 'merged, not yet independently verified' (the owner's reviewer had not verified the latest merges).",
+   "source_ref": "source-023-amendment.md#owner-message-52-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R126",
+    "D-090-R135"
+   ],
+   "required_harness": "The update text carries the two labels.",
+   "required_evidence": "The chat reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 52, the reviewer's assessment forwarded by the owner).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
