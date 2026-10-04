@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 131,
+ "requirement_count": 136,
  "producer": "orchestrator",
- "updated_at": "2026-10-04T03:58:51+00:00",
+ "updated_at": "2026-10-04T04:38:11+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -4471,6 +4471,176 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-04 (message 50, the owner's reviewer's third check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R132",
+   "text": "Finish the height explanation: carry the computed minimum-base-height note into the actual results document (an additive results-contract slot for building-option notes), emit it from the engine, show it on the screen wherever the sample building appears, and test that it reaches the user from the rendered document; the wording is a draft finding pending qualified review (never 'complies' or other definitive legal wording).",
+   "source_ref": "source-022-amendment.md#owner-message-51-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R107",
+    "D-090-R118"
+   ],
+   "required_harness": "Lane C slot PR, Lane A emitter PR (owner's yes), Lane D display PR; a test reading the note from the document and from the rendered card; independent reviews.",
+   "required_evidence": "PR diffs, review records, the test.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 51).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R133",
+   "text": "Make the reports match reality and classify every element as built / connected / tested / professionally verified (the four states, never collapsed); correct the remaining walkthrough claims, the AutoCAD-opening claim and the contradictory task order wherever they still appear.",
+   "source_ref": "source-022-amendment.md#owner-message-51-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R117",
+    "D-090-R120",
+    "D-090-R128"
+   ],
+   "required_harness": "Docs PR; reviewer checks each element's state against code, tests and review records.",
+   "required_evidence": "The corrected documents and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 51).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R134",
+   "text": "Tell the owner, without bias, the difference between the orchestrator's work and the owner's independent reviewer's audits, who did the better job and why.",
+   "source_ref": "source-022-amendment.md#owner-message-51-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R116"
+   ],
+   "required_harness": "A plain, evidence-based answer in chat.",
+   "required_evidence": "The chat reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 51). Answered in chat the same turn.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R135",
+   "text": "Return one short consolidated update in four parts: what is fixed, what can now be demonstrated, what remains unfinished, and the exact decisions that genuinely require the owner.",
+   "source_ref": "source-022-amendment.md#owner-message-51-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R115",
+    "D-090-R126"
+   ],
+   "required_harness": "The update, built only from the PR record and verified records.",
+   "required_evidence": "The chat reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 51).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R136",
+   "text": "This message approves nothing: the held Lane A merges (#388 and every other Lane A PR) and the CI change stay unmerged and unapplied; corrected, reviewable work is prepared first; workflow files stay unchanged.",
+   "source_ref": "source-022-amendment.md#owner-message-51-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R125",
+    "D-090-R111"
+   ],
+   "required_harness": "PR states and the untouched .github/workflows tree.",
+   "required_evidence": "PR list; git log of .github/workflows.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 51).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
