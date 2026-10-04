@@ -154,13 +154,13 @@ def test_fixed_scope_statements_are_present_and_are_standing_scope_notices() -> 
     # The audit's fixed_scope entries: standing statements about families not built in this
     # slice. Each is always true because the slice never computes that family; C-11 keeps them
     # as not_available / scope notices, never as computed explanations.
+    # (best_combination and the add-on completeness line are now COMPUTED by the add-on model
+    # merged from A-06, so they left this "not built" list; their honest-value behaviour is
+    # covered by tests/scenario/three_answers/test_three_answers_addons.py.)
     doc = _generate().document
     assert doc["remaining_floor_area"]["status"] == "not_available"
-    assert doc["best_combination"]["status"] == "not_available"
-    assert "add-on model is not built in this slice" in doc["best_combination"]["reason"]
     assert doc["existing_building"]["status"] == "not_available"
     assert "not computed in this slice" in doc["existing_building"]["reason"]
-    assert "add-on model not built in this slice" in doc["completeness_line"]["text"]
     assert doc["geometry"]["setback_lines_per_level"]["status"] == "not_available"
     assert "not encoded in this slice" in doc["geometry"]["setback_lines_per_level"]["reason"]
     assert doc["lot_selection_statement"].startswith("Based on the lots you selected")
