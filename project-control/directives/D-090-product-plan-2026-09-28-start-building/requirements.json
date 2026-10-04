@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 127,
+ "requirement_count": 131,
  "producer": "orchestrator",
- "updated_at": "2026-10-04T03:47:12+00:00",
+ "updated_at": "2026-10-04T03:58:51+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -4335,6 +4335,142 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-04 (message 49, the owner's reviewer's second check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R128",
+   "text": "Correct merged PR #383's title and body: they must not say 'one complete request'; say the walkthrough showed components working together on test inputs, not a complete address-to-screen request, with a dated correction note.",
+   "source_ref": "source-021-amendment.md#owner-message-50-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R106",
+    "D-090-R117"
+   ],
+   "required_harness": "The PR metadata edit; reviewer reads the title and body.",
+   "required_evidence": "PR #383 title and body.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 50, the owner's reviewer's third check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R129",
+   "text": "The journey plan must mark every Lane A step (the inert ThreeAnswerInputs existing-floor-area / keep-remove field, the A-07 rule, the scope emitter, any engine change) as needing the owner's yes to merge; only M1-05 (Q1/Q12), E-02, Q4 and B-001 are product decisions, and no geocoder choice is owed.",
+   "source_ref": "source-021-amendment.md#owner-message-50-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R109",
+    "D-090-R120"
+   ],
+   "required_harness": "The corrected plan rows; reviewer checks each Lane A row carries the owner-yes marker.",
+   "required_evidence": "docs/plans/JOURNEY_215_16_NORTHERN_2026-10-04.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 50, the owner's reviewer's third check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R130",
+   "text": "The CI record must state that a pull_request run is NOT re-run when the base advances (GitHub re-runs only on a push to the PR branch; #369's run stayed at its old merge ref while integration advanced) and must say how fresh-base testing is enforced today: the manual rule of merging the integration branch into a stale PR branch, proving the merge empty and letting the new head's run go green before merging; the proposal does not change this.",
+   "source_ref": "source-021-amendment.md#owner-message-50-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R112",
+    "D-090-R122"
+   ],
+   "required_harness": "The corrected record; reviewer checks the workflow trigger lines and the stated rule.",
+   "required_evidence": "docs/ci/DUPLICATE_RUNS_INSPECTION_2026-10-04.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 50, the owner's reviewer's third check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R131",
+   "text": "The scope's disclosed assumptions must include the hard-coded special-district and special-density inputs (special_district_present, special_density_area) and every other assumed engine input, each with an honest basis and statement; #392 is not a candidate for the owner's yes until this lands.",
+   "source_ref": "source-021-amendment.md#owner-message-50-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R108",
+    "D-090-R119"
+   ],
+   "required_harness": "The emitter + fixture change; a test deriving the disclosed set from the input fields; review record.",
+   "required_evidence": "PR diff and tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 50, the owner's reviewer's third check).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

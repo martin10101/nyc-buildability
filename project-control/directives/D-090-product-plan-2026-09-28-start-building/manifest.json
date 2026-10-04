@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-04T03:47:12+00:00",
+ "updated_at": "2026-10-04T03:58:51+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -148,10 +148,14 @@
   "D-090-R124",
   "D-090-R125",
   "D-090-R126",
-  "D-090-R127"
+  "D-090-R127",
+  "D-090-R128",
+  "D-090-R129",
+  "D-090-R130",
+  "D-090-R131"
  ],
- "requirements_id_digest_sha256": "e0394156afaebb466f393e8e19fd734e1f55f4accf6863bed8d44310c91c3721",
- "requirements_content_digest_sha256": "74383085d24bd5d4406f7488ff5543f6a5927a5883ad85e4c1d83adb6f2a9c16",
+ "requirements_id_digest_sha256": "b6c9414c1ce5ac9b5b6fb2c0fe14fedc44c9abb2960796de9f9c0d57eb1c1e81",
+ "requirements_content_digest_sha256": "49fb8f1aa0a0e881898ebf2be7c3a908ac39ef753696402866672134a555b412",
  "sources": [
   {
    "file": "source-001.md",
@@ -311,6 +315,14 @@
    "recorded_at": "2026-10-04T03:47:12+00:00",
    "content_digest_sha256": "8a27df326e4940a9c6ef6ff7e826d78289504771a2689f48e4434bc867e6e1ba",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-021-amendment.md",
+   "kind": "amendment",
+   "sequence": 21,
+   "recorded_at": "2026-10-04T03:58:51+00:00",
+   "content_digest_sha256": "18b06c9c0aff3a532ef760d0fe67575f9482cce8d385ed49ae3424c4ce522997",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -332,7 +344,8 @@
   "source-017-amendment.md",
   "source-018-amendment.md",
   "source-019-amendment.md",
-  "source-020-amendment.md"
+  "source-020-amendment.md",
+  "source-021-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -491,6 +504,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-020 (session 0ba6d6a3 message 49, 2026-10-04: the owner's reviewer's second check - street-query connector exists, maps exist, height note dropped before the document, 'corrected everywhere' inaccurate, CI proposal still needs correction; hold #388 and the CI change; reconcile against the code; continue other authorized work) and requirements D-090-R124..R127, all pending. Text extracted by script from the queued_command attachment; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T03:58:51+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-021 (session 0ba6d6a3 message 50, 2026-10-04: the owner's reviewer's third check through 7275e463 - #383 title/body, Lane A rows need the owner's yes, no automatic PR revalidation on base advance, special-district and special-density assumptions omitted) and requirements D-090-R128..R131, all pending. Text extracted by script from the queued_command attachment; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
   }
  ]
 }
