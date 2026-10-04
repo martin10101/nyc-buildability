@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-04T00:45:30+00:00",
+ "updated_at": "2026-10-04T01:54:37+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -126,10 +126,20 @@
   "D-090-R102",
   "D-090-R103",
   "D-090-R104",
-  "D-090-R105"
+  "D-090-R105",
+  "D-090-R106",
+  "D-090-R107",
+  "D-090-R108",
+  "D-090-R109",
+  "D-090-R110",
+  "D-090-R111",
+  "D-090-R112",
+  "D-090-R113",
+  "D-090-R114",
+  "D-090-R115"
  ],
- "requirements_id_digest_sha256": "4d5a2c02fba2ca8a6660b819d30a83c6bc006158b758dfd2f7bf1cd5c8e38d32",
- "requirements_content_digest_sha256": "c3696b69778f82f65f1ca041c354c735ab580af4b7d4ac9a429ff3f75ef215b9",
+ "requirements_id_digest_sha256": "59680529dfacee2cce375bfe9fb2eb21cfbc5da192da4d0d20466fef9bc9fd94",
+ "requirements_content_digest_sha256": "779a24a3473ba1695f660bc3a33e9a6822c1d7a2198d82f8400ed5cb1f08a49e",
  "sources": [
   {
    "file": "source-001.md",
@@ -257,6 +267,14 @@
    "recorded_at": "2026-10-04T00:45:30+00:00",
    "content_digest_sha256": "ac84e1afb44c08e56398d9839cd7aaeef83e408709d4b4de0ee1c016b8687cf3",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-017-amendment.md",
+   "kind": "amendment",
+   "sequence": 17,
+   "recorded_at": "2026-10-04T01:54:37+00:00",
+   "content_digest_sha256": "3ab8d457e1db32234f353205fb9a29a8bffb6b6e67dfbe1859624c02cb3008ce",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -274,7 +292,8 @@
   "source-013-amendment.md",
   "source-014-amendment.md",
   "source-015-amendment.md",
-  "source-016-amendment.md"
+  "source-016-amendment.md",
+  "source-017-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -409,6 +428,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-016 (session 0ba6d6a3 message 43, 2026-10-04: the 215-16 Northern walkthrough, switches off, continue eligible development, CI duplicate-run inspection + one proposal) and requirements D-090-R101..R105, all pending. Messages 41-42 recorded as conversational (no rows). Text extracted by script; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T01:54:37+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-017 (session 0ba6d6a3 message 45, 2026-10-04: six findings-actions after the 215-16 Northern walkthrough - accurate progress wording, height discrepancy first, scope beside the numbers, one complete journey, approvals explained not granted, CI proposal tightened; continue authorized work; switches off; one consolidated update) and requirements D-090-R106..R115, all pending. Message 44 recorded as a fulfilled return request (no row). Text extracted by script; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
   }
  ]
 }
