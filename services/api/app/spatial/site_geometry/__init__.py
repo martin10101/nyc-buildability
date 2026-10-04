@@ -29,6 +29,11 @@ from .labels import (
     LABEL_UNKNOWN,
     SourcedValue,
 )
+from .live_streets import (
+    UnusableLotOutlineError,
+    street_data_for_lot,
+    street_envelope_for_lot,
+)
 from .parameters import METHOD_VERSION, parameters_snapshot
 from .results import (
     AreaCheck,
@@ -60,11 +65,14 @@ __all__ = [
     "StreetData",
     "StreetFrontage",
     "StreetRelation",
+    "UnusableLotOutlineError",
     "city_records_from_pluto",
     "derive_site_geometry",
     "derive_site_geometry_from_sources",
     "lot_outline_from_mappluto",
     "parameters_snapshot",
     "refused_site_geometry",
+    "street_data_for_lot",
     "street_data_from_pages",
+    "street_envelope_for_lot",
 ]
