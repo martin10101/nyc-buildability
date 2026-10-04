@@ -22,6 +22,7 @@ from app.cad.results_dxf import (
     render_results_dxf,
 )
 from app.cad.results_dxf_notes import MEASUREMENT_NOTE_TEXT, ascii_text
+from app.drawings.kit.labels import format_number
 from app.drawings.kit.scope import ASSUMPTION_KEY_NAMES, FLAG_WORDS, assumption_value_word
 from app.drawings.kit.styles import STYLE_TABLE, style_for
 
@@ -118,6 +119,14 @@ def test_level_layer_names():
 # Units: feet at 1:1, the same header as the existing writer.
 # --------------------------------------------------------------------------- #
 
+def _at_writer_precision(value: float) -> float:
+    """A coordinate at the DXF writer's output precision (6 decimals; dxf_writer formats
+    coords as f"{v:.6f}"). Real-engine results fixtures carry 14-decimal sqrt-derived lot
+    coordinates, so the round-trip must be compared at the precision the writer can carry;
+    this is identity for the hand-authored clean (integer/short-decimal) fixtures."""
+    return float(f"{value:.6f}")
+
+
 @pytest.mark.parametrize("path", PATHS, ids=IDS)
 def test_feet_at_one_to_one(path):
     doc = load(path)
@@ -127,8 +136,13 @@ def test_feet_at_one_to_one(path):
     assert dxf_writer.INSUNITS_US_SURVEY_FEET == 21  # US survey feet, as the old writer
     lot = parsed.on("C-PROP-LINE", "POLYLINE")
     rings = doc["geometry"]["lot_outline"]
-    # every vertex is the results' coordinate, unscaled and untranslated, at grade
-    assert [[(x, y) for x, y, _ in e.points] for e in lot] == [open_ring(r) for r in rings]
+    # every vertex is the results' coordinate, unscaled and untranslated, at grade (compared
+    # at the writer's 6-decimal export precision; see _at_writer_precision)
+    got = [[(_at_writer_precision(x), _at_writer_precision(y)) for x, y, _ in e.points]
+           for e in lot]
+    want = [[(_at_writer_precision(x), _at_writer_precision(y)) for x, y in open_ring(r)]
+            for r in rings]
+    assert got == want
     assert all(e.closed and {z for *_, z in e.points} == {0.0} for e in lot)
 
 
@@ -285,6 +299,17 @@ def _scope_token(doc, source, value):
     return None
 
 
+def _source_value_text(source, value):
+    """The text a note prints for a results value. A numeric scope-assumption value uses the
+    note's OWN formatter (kit format_number), so a real-engine fixture's float-valued integer
+    (e.g. a 100.0 lot depth, printed "100") is matched; str() would look for "100.0". Every
+    other source keeps str(). For the hand-authored clean fixtures this is unchanged."""
+    if ("/scope/assumptions/" in source and source.endswith("/value")
+            and isinstance(value, (int, float)) and not isinstance(value, bool)):
+        return format_number(float(value))
+    return str(value)
+
+
 @pytest.mark.parametrize("path", PATHS, ids=IDS)
 def test_every_note_value_is_read_from_the_results(path):
     doc = load(path)
@@ -306,7 +331,8 @@ def test_every_note_value_is_read_from_the_results(path):
                            "local_feet": "Coordinates: local plane in feet"}[value]
                 assert note.text.startswith(wording)
                 continue
-            assert ascii_text(str(value), source) in note.text, (source, note.text)
+            assert ascii_text(_source_value_text(source, value), source) in note.text, (
+                source, note.text)
     # Check C-4: no note prints a number that is not a results value; only the
     # fixed coordinates and units statements carry digits of their own.
     for note in result.notes:
@@ -316,7 +342,9 @@ def test_every_note_value_is_read_from_the_results(path):
             if source.startswith("/") and note.role not in ("measurement_note", "crs"):
                 value = _resolve(doc, source)
                 token = _scope_token(doc, source, value)
-                tokens.append(token if token is not None else ascii_text(str(value), source))
+                tokens.append(
+                    token if token is not None
+                    else ascii_text(_source_value_text(source, value), source))
         for token in sorted(tokens, key=len, reverse=True):  # a longer value first, so a
             rest = rest.replace(token, "")                   # short word inside it is not lost
         if note.role not in ("crs", "units"):
