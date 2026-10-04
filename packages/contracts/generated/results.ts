@@ -7,8 +7,41 @@
 // The answers computed for one option of one study revision.
 // Types only: cross-field rules (oneOf/allOf constraints such as rank vs
 // source kind) are enforced by the JSON Schema on the server, not here.
+export type Bbl = string;
+export type BoroughName = "Manhattan" | "Bronx" | "Brooklyn" | "Queens" | "Staten Island";
 export type DateTime = string;
 export type NonEmptyString = string;
+export interface Scope {
+  basis: "tax_lot_only";
+  label: "Tax-lot-only estimate";
+  lot: ScopeLot;
+  whole_site: ScopeWholeSite;
+  remaining_capacity: ScopeRemainingCapacity;
+  assumptions: ScopeAssumption[];
+}
+export interface ScopeLot {
+  bbl: Bbl;
+  borough: BoroughName;
+  block: string;
+  lot: string;
+  display: NonEmptyString;
+}
+export interface ScopeWholeSite {
+  status: "unconfirmed";
+  statement: "Based on the lots you selected \u2014 the app does not verify the zoning lot";
+}
+export interface ScopeRemainingCapacity {
+  status: "not_confirmed";
+  label: "Remaining development capacity: Not confirmed";
+  reason: "Needs verified zoning-lot boundaries and existing zoning floor area.";
+}
+export interface ScopeAssumption {
+  key: NonEmptyString;
+  value: string | number | boolean;
+  unit: NonEmptyString | null;
+  basis: "assumed" | "entered" | "fixture" | "city_records" | "survey_entered" | "approximate_tax_map" | "default";
+  statement: NonEmptyString;
+}
 export interface StreetWidthCase {
   marker: "Needs street width";
   assumptions: {
@@ -251,7 +284,7 @@ export interface Goal {
   text: NonEmptyString | null;
 }
 export interface Results {
-  contract_version: "1.0.0";
+  contract_version: "1.0.0" | "1.1.0";
   results_id: NonEmptyString;
   study_id: NonEmptyString;
   option_id: NonEmptyString;
@@ -287,5 +320,6 @@ export interface Results {
   rule_versions: RuleVersion[];
   draft: boolean;
   street_width_case: StreetWidthCase | null;
+  scope?: Scope | null;
   _expected_failure?: string;
 }
