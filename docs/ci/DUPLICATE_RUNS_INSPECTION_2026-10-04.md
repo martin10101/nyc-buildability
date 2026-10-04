@@ -10,6 +10,13 @@ proposal in the last section.
 Base: branch `task/ci-duplicate-runs-inspection-2026-10-04` at `09641f4e86562a5abfd9a0aec20585a60c5123cc`.
 All run data is from real GitHub Actions runs on 2026-10-03 (`gh run list`/`gh run view`, read-only).
 
+**Revision (D-090-R112, 2026-10-04):** this edit tightens the proposal. It separates the **measured**
+duplication (§4) from the **unproven** claim that the duplication caused the Windows supervisor-bridge
+failures (now isolated in §4a, "Hypothesis, not demonstrated"). It states exactly which runs disappear
+and which remain (§7, "Exactly which runs disappear, and which remain"), and maps each required-testing
+and security-policy obligation to the run that still satisfies it after the change (§7 coverage table).
+The measured tables (§3, §4) and the YAML sketch (§7) are unchanged.
+
 ---
 
 ## 1. The duplicate, in one sentence
@@ -114,12 +121,38 @@ above is exact and unchanged):
 - **31** more ci.yml push runs that day were on the integration branch `candidate/D-024-mrl-option-b`
   itself — these have **no** PR and are **not** duplicates (they are the post-merge validation).
 
-**Simultaneity / correctness (DB-111).** The pairs run at the same time, not back-to-back:
-`acae9028` push 22:06:25→22:14:13 and PR 22:06:27→22:14:06 fully overlap and both completed.
-`83a64029` push and PR started 2 s apart and one was cancelled mid-flight. The Windows
-`supervisor-bridge` job (named-pipe IPC, Job Objects) is sensitive to a second run of the **same
-head** starting seconds later — the DB-111 flake. So the duplication costs **correctness**, not
-only minutes: two concurrent runs of one commit can collide on the Windows job.
+**Simultaneity (measured fact).** The two runs of a pair run concurrently, not back-to-back:
+`acae9028` push 22:06:25→22:14:13 and PR 22:06:27→22:14:06 fully overlap and both completed;
+`83a64029` push and PR started 2 s apart and one run was cancelled mid-flight. This overlap is the
+measured consequence of the per-`github.ref` concurrency group (§1): a `push` ref and a
+`pull_request` ref never share a group, so the two runs of one commit are never serialized against
+each other.
+
+---
+
+## 4a. Hypothesis, not demonstrated — did the duplication cause the DB-111 Windows flakes?
+
+This subsection holds the **only** claim in this record that is not directly measured, so it is kept
+separate from the data above and does **not** support the proposal.
+
+**The hypothesis.** The Windows `supervisor-bridge` job uses named-pipe IPC and Job Objects, which
+are process-/host-global. One could suppose that when two runs of the **same head** start seconds
+apart (as the duplication makes possible), the two Windows jobs collide on a shared named pipe or
+Job Object and one flakes — the pattern recorded as DB-111.
+
+**Why this is correlation, not demonstrated causation.** The strongest datum here is the `83a64029`
+pair starting 2 s apart — a **timing correlation**, not a shown mechanism. In that very pair the
+failing job was `control-plane` (a real test failure present in *both* runs), while the push run's
+`supervisor-bridge` was merely **cancelled**, not flaked. So the cited example does not itself
+exhibit a `supervisor-bridge` collision; it only shows two same-head runs overlapping. No run log in
+this inspection was traced to a named-pipe / Job-Object contention signature.
+
+**What would prove or disprove it.** A controlled experiment: trigger the `supervisor-bridge` job
+**alone** versus **paired with a second concurrent run of the identical head**, N times each (e.g.
+N ≈ 30–50), and compare the flake rates; a materially higher flake rate in the paired arm, together
+with a run-log signature of pipe / Job-Object contention, would support causation, and
+statistically equal rates would refute it. **No such test was run for this record.** Until it is,
+the duplication is at most a *plausible* contributor to DB-111, not a proven one.
 
 ---
 
@@ -201,6 +234,33 @@ on:
 `concurrency: ci-${{ github.ref }}` with `cancel-in-progress: true` stays as-is — it still cancels a
 superseded push on the integration branch and a superseded PR sync.
 
+### Exactly which runs disappear, and which remain
+
+**Disappear.** Only the **`push`-event** runs of the three bare-trigger workflows — `ci.yml`,
+`secret-scan.yml`, `context-budget.yml` — **on every branch other than `main` and `candidate/**`**
+(the `lane-*` and `task/*` PR branches). No `pull_request` run disappears; no run on `main` or on an
+integration branch disappears; no `schedule` or `workflow_dispatch` run is affected.
+
+2026-10-03 counts (`gh run list --workflow <wf> --limit 400`, fetched window
+2026-10-02T08:41 → 2026-10-04T00:58 UTC, filtered to `createdAt` on 2026-10-03 UTC). All three
+workflows share the identical bare `push:`+`pull_request:` shape, so their counts coincide:
+
+| Workflow | push runs that day | remain (on `main`/`candidate/**`) | **disappear** (other branches) | pull_request runs (all remain) |
+|---|---|---|---|---|
+| `ci.yml` | 99 | 31 (all `candidate/**`; 0 `main`) | **68** | 66 |
+| `secret-scan.yml` | 99 | 31 | **68** | 66 |
+| `context-budget.yml` | 99 | 31 | **68** | 66 |
+
+"99 push runs" is the day's **total** push count per workflow; of those, **68** are on
+non-merge-target branches and disappear, and **31** (all on `candidate/D-024-mrl-option-b`) remain.
+The 68 disappearing `ci.yml` push runs break down by branch prefix as `task/*` 29, `lane-c` 12,
+`lane-d` 11, `lane-a` 9, `lane-b` 6, `lane-e` 1.
+
+**Remain.** The **pull_request** runs (66 that day per workflow — the load-bearing merge-ref runs);
+the **integration-branch pushes** (31 that day on `candidate/**`, the post-merge validation); the
+**daily scheduled audits** (`scheduled-audit.yml` 06:17 UTC, `scheduled-web-audit.yml` 06:41 UTC);
+and every **`workflow_dispatch`** run. Nothing that validates a mergeable change is removed.
+
 ### What it saves
 
 - **Per push to a PR branch:** one entire ci.yml run — **~27 job-minutes** (**≥ ~33 billed
@@ -221,14 +281,44 @@ pre-merge (PR) + post-merge (integration push) + schedule. `control-plane` (ADR-
 every PR and every integration push. No gate is weakened, suppressed, or made warning-only; all stay
 fail-closed.
 
+### Coverage table — each requirement → the run that satisfies it after the change
+
+Every obligation below is still met on **every change that can merge**: the pull_request (merge-ref)
+run before merge, the `candidate/**` push after merge, and — for dependency security — the daily
+schedule. Policy wording is quoted exactly.
+
+| Requirement (exact quote) | Source | Satisfying run(s) after the change |
+|---|---|---|
+| "audits run on every change and on a schedule; all gates FAIL CLOSED on any outage/missing/malformed/ambiguous evidence and are never warning-only" | CLAUDE.md principle 15 | `web-dependency-security`, `codex-cli-dependency-security`, `exact-production-install` (dual pip-audit + age gate), `api-lock-verify`, `api-tooling-lock-verify` — on every pull_request run and every `candidate/**` push; plus `scheduled-audit` / `scheduled-web-audit` daily |
+| "Audited on every change AND on a schedule. A blocking advisory audit runs on every push and pull request that can affect the tree, and again on a daily schedule so an advisory disclosed AFTER a lock lands turns the run red without any code change." | DEPENDENCY_SECURITY_POLICY §1.5 item 5 | Same jobs. "every push … that can affect the tree" = pushes to `main`/`candidate/**` (the only trees that can merge or deploy), still covered; "pull request" = every PR run, still covered; "daily schedule" = the two scheduled audits, untouched |
+| "Fail closed on unavailable, missing, malformed, ambiguous, or unmatched registry/integrity evidence." | ORCHESTRATION_POLICY §G | Unchanged — the identical job steps run on the pull_request run and the integration push; no step is weakened or made warning-only |
+| ADR-005 control-plane workflow regression | `control-plane` job (ci.yml) | Every pull_request run + every `candidate/**` push |
+| Modularity gate | `modularity` job | Every pull_request run + every `candidate/**` push |
+| Supervisor containment (Windows + Linux) | `supervisor-bridge`, `supervisor-linux-containment` | Every pull_request run + every `candidate/**` push |
+| Web lint/typecheck/build + e2e | `web`, `web-e2e` | Every pull_request run + every `candidate/**` push |
+| Contract schema / typegen / bundle drift | `contracts`, `contracts-typegen`, `contracts-schema-bundle` | Every pull_request run + every `candidate/**` push |
+| API ruff lint + pytest on the hash-pinned trees | `api` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Owner-dashboard product-map integrity vs the ledger | `product-map` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Code-graph determinism (`--check`) + fixture tests | `code-graph` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Repo fingerprint + crash-safe cache + baseline + incremental index tests | `context-index-a1` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Frozen model-routing corpus + allowlist boundary tests | `model-routing` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Context-pipeline Units B–F suites + integration/adversarial + clean-checkout e2e benchmark | `context-pipeline` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Orphaned contracts-validator + residential + gate-runner + authority suites | `validation-suite` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Repository credential scan | `secret-scan.yml` | Every pull_request run + every `candidate/**` push |
+| Automatic-context-load budget guard | `context-budget.yml` | Every pull_request run + every `candidate/**` push |
+
 ### What it stops validating (exact)
 
-A branch **pushed without an open PR** no longer gets a heavy CI run (today the bare `push:` gives it
-one). Under Option B such a branch **cannot merge** and therefore cannot affect the shared tree;
-opening the PR (`gh pr create`) immediately triggers the pull_request run. The only real gap is the
+**Exactly one thing stops being tested: a branch pushed with no open PR.** Today the bare `push:`
+gives such a branch a heavy CI run; after the change it gets none until a PR exists. This cannot
+affect a mergeable change, because under Option B **nothing reaches `main` or an integration branch
+except through a PR**: the orchestrator merges only via `gh pr merge --merge --match-head-commit
+<head>`, which requires an open PR, and only after reading all-checks-green on that PR's head
+(`statusCheckRollup`). A branch with no PR therefore cannot merge and cannot alter the shared tree.
+The moment a PR is opened (`gh pr create`) the pull_request run fires, so the only gap is the
 seconds-to-minutes window between first push and PR creation. The literal phrase "on every push" in
-the dependency policy is thereby narrowed to "every push to a merge-target branch + every pull
-request + the daily schedule" — this is the one wording point the owner must bless (Tier B).
+the dependency policy is thereby narrowed to "every push **to a merge-target branch** + every pull
+request + the daily schedule" — the one wording point the owner must bless (Tier B).
 
 ### Risks
 
@@ -240,8 +330,11 @@ request + the daily schedule" — this is the one wording point the owner must b
 4. A PR with merge conflicts yields no pull_request run → orchestrator sees missing checks → fails
    closed (correct; not a regression).
 
-**Bonus (correctness):** with `push` gone on PR branches there is exactly **one** ci.yml run per PR
-head, so the DB-111 same-head Windows race (two concurrent runs of one commit) cannot occur.
+**Structural side effect (not a demonstrated fix):** with `push` gone on PR branches there is exactly
+**one** ci.yml run per PR head, so the "two concurrent runs of the same commit" condition no longer
+arises. Whether that condition *caused* the DB-111 Windows flakes is an unproven hypothesis (§4a);
+the case for this proposal rests on the measured minutes saved and the preserved coverage, not on
+that hypothesis.
 
 ### How it is reviewed
 
@@ -272,6 +365,8 @@ absent, so no required-check contract is affected.
   higher risk of under-testing. Lost.
 
 **(a) wins** on minutes-saved-to-risk: it removes a whole redundant run per PR push
-(~27 job-min / ≥ ~33 billed), deterministically leaves the one load-bearing run, preserves every gate
-on the merge ref + integration push + schedule, and as a bonus removes the DB-111 same-head race. Its
-single cost — no heavy CI on a PR-less branch push — touches only states that cannot merge.
+(~27 job-min / ≥ ~33 billed), deterministically leaves the one load-bearing run, and preserves every
+gate on the merge ref + integration push + schedule. As a structural side effect it leaves exactly
+one ci.yml run per PR head (whether that bears on the DB-111 Windows flakes is an unproven
+hypothesis, §4a, that this proposal does not rely on). Its single cost — no heavy CI on a PR-less
+branch push — touches only states that cannot merge.
