@@ -194,3 +194,86 @@
   margin: var(--space-4, 1rem) 0 0;
   font-weight: 600;
 }
+
+/* ---- Scope beside the numbers (contract 1.1.0, D-090-R108) ---- */
+
+.ta-scope {
+  margin: 0 0 var(--space-4, 1rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  border: 1px solid var(--border-quiet, #e4e4df);
+  border-radius: var(--radius-card, 10px);
+  background: var(--surface-card, #ffffff);
+}
+
+/* The scope label is a plain-text line, never a coloured chip (owner directive). */
+.ta-scope-label {
+  margin: 0;
+  font-weight: 650;
+}
+
+.ta-scope-lot {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-scope-assumptions {
+  margin: var(--space-3, 0.75rem) 0 0;
+}
+
+.ta-scope-assumptions summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--accent, #1f4f82);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ta-scope-assumptions summary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
+}
+
+.ta-scope-assumption-list {
+  margin: var(--space-2, 0.5rem) 0 0;
+  padding-left: 1.25rem;
+}
+
+.ta-scope-assumption {
+  margin: 0 0 var(--space-2, 0.5rem);
+}
+
+.ta-scope-assumption-head {
+  display: block;
+}
+
+.ta-scope-assumption-key {
+  font-weight: 600;
+}
+
+.ta-scope-assumption-basis {
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-scope-assumption-statement {
+  display: block;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-scope-whole-site {
+  margin: var(--space-3, 0.75rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-scope-remaining {
+  margin: var(--space-2, 0.5rem) 0 0;
+}
+
+.ta-scope-remaining-label {
+  display: block;
+  font-weight: 600;
+}
+
+.ta-scope-remaining-reason {
+  display: block;
+  color: var(--text-secondary, #4b4b47);
+}
