@@ -29,7 +29,7 @@
       "byte_count": 95349,
       "content_sha256": "69d5c2a4fd84edaba8004ae63f49cb8a20aeaf7017fc9388c05799f1e5878842",
       "retrieved_at": "2026-10-04T01:02:19Z",
-      "note": "Raw HTML bytes of the canonical section page; the verbatim_excerpt was tag-stripped from the field--name-body <p> paragraphs of these bytes (paragraphs joined by blank lines; defined-term bold/italic dropped to plain text)."
+      "note": "Raw HTML bytes of the canonical section page; the verbatim_excerpt was tag-stripped from the field--name-body <p> paragraphs of these bytes (paragraphs joined by blank lines; defined-term bold/italic dropped to plain text). Within the 36-entry 'following provisions' list, runs of non-breaking-space / space padding between the section number and its parenthetical title were collapsed to a single space (whitespace normalization only; the words and section numbers are unchanged - a whitespace-normalized comparison against the raw HTML is equal)."
     },
     "completeness_channel": {
       "channel": "print_pdf_entityprint",
@@ -47,7 +47,7 @@
   "content_digest_sha256": "27e1ee4d56cdcc5cf11fb7468a2b5352d781f5affbadbba0e1cad805cccb2648",
   "extraction_status": "extracted_draft",
   "capture_does_not_establish": [
-    "This capture does NOT make the legal reading of §5b's path-2 wall trap. It records the 'development' definition and the Article V notwithstanding/exception clauses verbatim, plus the full published list of 'following provisions' this section routes a deemed-development to. It does not decide whether any building meets the >75% floor-area + >25% perimeter-wall + replacement test, nor which of the 37 listed provisions apply to a given site - that is rule-author work for a later DRAFT rule, never published without G6."
+    "This capture does NOT make the legal reading of §5b's path-2 wall trap. It records the 'development' definition and the Article V notwithstanding/exception clauses verbatim, plus the full published list of 'following provisions' this section routes a deemed-development to. It does not decide whether any building meets the >75% floor-area + >25% perimeter-wall + replacement test, nor which of the 36 listed provisions apply to a given site - that is rule-author work for a later DRAFT rule, never published without G6."
   ],
   "downstream_rule_inputs": {
     "sections_a_rule_author_needs": [
@@ -55,7 +55,7 @@
       "ZR 54-41 (captured here) - the §5b operative section that routes the wall-trap to §11-23"
     ],
     "cross_references_not_yet_captured": [
-      "The 37 'following provisions' listed verbatim in this section's body (ZR 23-611, 23-612, 33-04, 37-35, 37-40, 81-42, 81-46, 81-72, 82-12, 91-43, 93-14, 93-65, 93-66, 93-70, 95-03, 95-04, 95-08, 97-12, 98-14, 98-53, 98-54, 98-60, 101-11, 101-43, 108-30, 109-33, 117-42, 117-44, 117-45, 117-55, 118-30, 119-112, 119-216, 124-30, 124-40, 126-21) are the obligations a reconstruction-deemed-a-development must then satisfy; they are NOT captured in this step and are out of A-07 step-1 scope.",
+      "The 36 'following provisions' listed verbatim in this section's body (ZR 23-611, 23-612, 33-04, 37-35, 37-40, 81-42, 81-46, 81-72, 82-12, 91-43, 93-14, 93-65, 93-66, 93-70, 95-03, 95-04, 95-08, 97-12, 98-14, 98-53, 98-54, 98-60, 101-11, 101-43, 108-30, 109-33, 117-42, 117-44, 117-45, 117-55, 118-30, 119-112, 119-216, 124-30, 124-40, 126-21) are the obligations a reconstruction-deemed-a-development must then satisfy; they are NOT captured in this step and are out of A-07 step-1 scope.",
       "Defined terms (building, floor area, development, residence) resolve to §12-10 / Article I - not captured here."
     ]
   },
