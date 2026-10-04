@@ -43,3 +43,6 @@
 - DO expect `@eslint/js` recommended, when first enabled, to flag intentional control-char regexes (`no-control-regex`), a
   literal U+FEFF in a regex (`no-irregular-whitespace`) and double spaces in test regexes — fix behavior-identically
   (line-scoped justified disable, `\uFEFF`, ` {2}`), never by weakening the config (M0-T180 S3).
+- DO run the FULL `pytest -q` from services/api before any api PR: a new fixture in a shared
+  `packages/contracts/fixtures/valid/<schema>/` dir is globbed by the Lane D/E snapshot suites (tests/cad,
+  tests/drawings) and needs an approved snapshot per fixture (#387 F1: 3 red tests a subset run missed).
