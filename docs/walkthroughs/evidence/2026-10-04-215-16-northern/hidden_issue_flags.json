@@ -1,0 +1,410 @@
+{
+  "contract_version": "1.0.0",
+  "groups": [
+    {
+      "group_id": "existing_building",
+      "title": "Existing building",
+      "lot_bbl": "4073340070",
+      "flags": [
+        {
+          "item_id": "existing_building.larger_than_today",
+          "group": "existing_building",
+          "title": "Existing building larger than today's rules",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "Existing zoning floor area is not available, so it cannot be compared with today's as-of-right allowance. No existing-floor-area result was supplied. It comes from a DOB filing or certificate of occupancy, or a stated assumption, and never from DOF/PLUTO building area.",
+          "typical_source": "DOB filing or certificate of occupancy (existing zoning floor area, M2-07); the engine's as-of-right allowance",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "existing_building.non_conforming_use",
+          "group": "existing_building",
+          "title": "Non-conforming use",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "Whether the use is non-conforming (and so loses its protection after major damage) is a determination against the district's currently permitted uses (the engine) read with the certificate of occupancy's legal use. No source establishes it, so a reviewer must check it; it is never guessed.",
+          "typical_source": "DOB filings/certificate of occupancy (legal use); zoning use rules (engine)",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "existing_building.legal_use_and_occupancy",
+          "group": "existing_building",
+          "title": "Legal use and occupancy on the certificate of occupancy",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No certificate-of-occupancy dataset carries a legal-use or occupancy column, and no certificate-document importer is connected, so the legal use and occupancy must be read from the certificate itself.",
+          "typical_source": "DOB certificate of occupancy (document)",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "existing_building.rent_regulated_apartments",
+          "group": "existing_building",
+          "title": "Rent-regulated apartments",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No DHCR or HPD rent-regulation source is connected, so whether the building has rent-regulated apartments cannot be determined from the data on record and is never guessed.",
+          "typical_source": "DHCR and HPD data",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "existing_building.harassment_certification",
+          "group": "existing_building",
+          "title": "Harassment-certification requirements",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "Whether a Certification of No Harassment applies depends on the building's location in an HPD program area (a map-based source) and HPD records, neither connected, so a reviewer must check it.",
+          "typical_source": "HPD Certification of No Harassment program (map-based) and HPD data",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        }
+      ]
+    },
+    {
+      "group_id": "zoning_lot_history",
+      "title": "Zoning-lot history",
+      "lot_bbl": "4073340070",
+      "flags": [
+        {
+          "item_id": "zoning_lot_history.recorded_descriptions_or_mergers",
+          "group": "zoning_lot_history",
+          "title": "Recorded zoning-lot descriptions or mergers",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No source is connected to check this, so a reviewer must check it; it is never guessed. Look in: ACRIS recorded documents (flag only, P-2); DOB filings that mention a zoning lot; ZR Appendix C.",
+          "typical_source": "ACRIS recorded documents (flag only, P-2); DOB filings that mention a zoning lot; ZR Appendix C",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "zoning_lot_history.floor_area_transferred",
+          "group": "zoning_lot_history",
+          "title": "Floor area already transferred",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No source is connected to check this, so a reviewer must check it; it is never guessed. Look in: ACRIS recorded documents (flag only, P-2: a reminder, never a records check).",
+          "typical_source": "ACRIS recorded documents (flag only, P-2: a reminder, never a records check)",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "zoning_lot_history.restrictive_declarations",
+          "group": "zoning_lot_history",
+          "title": "(D) and other restrictive declarations",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No source is connected to check this, so a reviewer must check it; it is never guessed. Look in: ACRIS recorded documents (flag only, P-2); ZR Appendix D.",
+          "typical_source": "ACRIS recorded documents (flag only, P-2); ZR Appendix D",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "zoning_lot_history.e_designations",
+          "group": "zoning_lot_history",
+          "title": "E-designations (environmental testing)",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No source is connected to check this, so a reviewer must check it; it is never guessed. An E-designation comes from the zoning map's E-designation list (ZR Appendix C) and CEQR records, not from ACRIS, and none is connected.",
+          "typical_source": "Zoning map E-designation list (ZR Appendix C); CEQR records",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        }
+      ]
+    },
+    {
+      "group_id": "map_based_rules",
+      "title": "Map-based rules",
+      "lot_bbl": "4073340070",
+      "flags": [
+        {
+          "item_id": "map_based_rules.special_districts_and_overlays",
+          "group": "map_based_rules",
+          "title": "Special districts and overlays",
+          "status": "flag",
+          "status_label": "Flag",
+          "detail": "The lot is mapped with: commercial overlay C2-2 (PLUTO overlay1). What this requires under the Zoning Resolution is a rule check (the engine, Lane A) confirmed by a qualified reviewer at G6; this data layer only reports that the lot is mapped this way and never decides the rule.",
+          "typical_source": "PLUTO overlay1-2 (commercial overlays) and spdist1-3 (special districts), recorded; DCP zoning map special-district and commercial-overlay layers",
+          "evidence": [
+            {
+              "label": "commercial overlay C2-2 (PLUTO overlay1)",
+              "source": {
+                "kind": "city_dataset",
+                "dataset": "PLUTO (64uk-42ks)",
+                "dataset_version": "26v2",
+                "retrieved_at": "2026-07-16T12:00:00Z",
+                "query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+                "document_ref": null,
+                "statement": null,
+                "provenance_refs": [
+                  "pluto-64uk-42ks-26v2-4073340070-overlay1"
+                ]
+              }
+            }
+          ],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "map_based_rules.inclusionary_housing",
+          "group": "map_based_rules",
+          "title": "Inclusionary-housing areas",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "PLUTO records no Mandatory Inclusionary Housing option flag (mih_opt) for this lot (SODA omits null fields, so an absent column means none OR unknown here, never a silent \"no issue\"; a reviewer confirms it on the source, and it is never guessed). Whether the lot is in an Inclusionary Housing Designated Area (mandatory or voluntary) must be checked on the DCP Inclusionary Housing data.",
+          "typical_source": "DCP Mandatory / Voluntary Inclusionary Housing Designated Areas; PLUTO mih_opt1-4 (recorded when present)",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "map_based_rules.split_by_district_line",
+          "group": "map_based_rules",
+          "title": "Lot split by a district line",
+          "status": "not_flagged",
+          "status_label": "No flag",
+          "detail": "PLUTO records this lot as not split by a zoning-district boundary (splitzone false). This is a recorded value, not an absent one; it does not say the lot is away from a district line (see \"within about 20 ft of a district line\").",
+          "typical_source": "PLUTO splitzone (recorded); DCP zoning map district boundaries",
+          "evidence": [
+            {
+              "label": "PLUTO splitzone",
+              "source": {
+                "kind": "city_dataset",
+                "dataset": "PLUTO (64uk-42ks)",
+                "dataset_version": "26v2",
+                "retrieved_at": "2026-07-16T12:00:00Z",
+                "query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+                "document_ref": null,
+                "statement": null,
+                "provenance_refs": [
+                  "pluto-64uk-42ks-26v2-4073340070-splitzone"
+                ]
+              }
+            }
+          ],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "map_based_rules.near_district_line",
+          "group": "map_based_rules",
+          "title": "Lot within about 20 ft of a district line",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No recorded data field answers this. The city's zoning map is not lot-precise, so whether the lot is within about 20 ft of a district line needs a lot-vs-boundary proximity check against the DCP zoning-map boundaries. The platform's spatial substrate computes this (near-boundary), but this data layer runs no geometry, so a reviewer must check it; it is never guessed.",
+          "typical_source": "DCP zoning map district boundaries (NYZD / NYCO); a lot-vs-boundary proximity analysis (the platform spatial substrate)",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "map_based_rules.flood",
+          "group": "map_based_rules",
+          "title": "Flood zones and flood-resilience height rules",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "PLUTO records no FEMA flood-map flag (firm07_flag / pfirm15_flag) for this lot (SODA omits null fields, so an absent column means none OR unknown here, never a silent \"no issue\"; a reviewer confirms it on the source, and it is never guessed), and no FEMA flood-map source is connected to confirm the lot's flood zone. A reviewer must check the FEMA Flood Insurance Rate Map.",
+          "typical_source": "FEMA Flood Insurance Rate Maps; PLUTO firm07_flag / pfirm15_flag (recorded when present; field meaning from DCP's official NYC Open Data PLUTO metadata, dataset 64uk-42ks, retrieved 2026-10-02, body sha256 e2898060ad159147f2c8c4a333c9689b5e9234cb86239106c5ca48941680d4c2)",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "map_based_rules.waterfront_coastal",
+          "group": "map_based_rules",
+          "title": "Waterfront and coastal-zone rules",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No DCP Waterfront or Coastal Zone Boundary source is connected, so whether the lot is on the waterfront or in the coastal zone (which brings extra rules) must be checked; it is never guessed.",
+          "typical_source": "DCP Waterfront Revitalization Program area; NYS Coastal Zone Boundary",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "map_based_rules.transit_easements",
+          "group": "map_based_rules",
+          "title": "Transit easements near stations",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No transit-easement source is connected. Whether a transit easement crosses the lot near a subway station (a different map layer from the transit/parking ZONE, which B-10 surfaces separately) must be checked; it is never guessed.",
+          "typical_source": "MTA / NYCT transit easements; DCP zoning map transit-easement notations (ZR 13-10 / 37-40)",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "map_based_rules.airport_height",
+          "group": "map_based_rules",
+          "title": "Airport height limits",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No airport-height source is connected. Whether an FAA Part 77 obstruction surface or an airport approach-surface limit applies to the lot must be checked; it is never guessed.",
+          "typical_source": "FAA Part 77 obstruction surfaces; airport approach-surface limits",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "map_based_rules.landmarks_historic",
+          "group": "map_based_rules",
+          "title": "Landmarks and historic districts",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "PLUTO records no landmark or historic-district value for this lot (SODA omits null fields, so an absent column means none OR unknown here, never a silent \"no issue\"; a reviewer confirms it on the source, and it is never guessed), and no LPC source is connected. Whether the lot is an individual landmark or in a historic district must be checked on the LPC data.",
+          "typical_source": "LPC Individual Landmarks and Historic Districts; PLUTO landmark / histdist (recorded when present)",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        }
+      ]
+    },
+    {
+      "group_id": "site_shape_and_street",
+      "title": "Site shape and street",
+      "lot_bbl": "4073340070",
+      "flags": [
+        {
+          "item_id": "site_shape_and_street.mapped_streets_or_widening",
+          "group": "site_shape_and_street",
+          "title": "Mapped-but-unbuilt streets or widening lines crossing the lot",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "B-03 found no street center line crossing the lot interior, but this does not clear the item: street-widening lines and mapped-but-unbuilt (paper) streets adjacent to the lot are the City Map (the adopted City Map is conclusive, Admin Code section 25-101; DCP Digital City Map / DCM street center lines) features this layer does not read, so a reviewer must check the City Map; it is never guessed.",
+          "typical_source": "the City Map (the adopted City Map is conclusive, Admin Code section 25-101; DCP Digital City Map / DCM street center lines); a street-widening line and a mapped-but-unbuilt (paper) street are City Map features not carried in the street center-line data",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "site_shape_and_street.shallow_or_irregular",
+          "group": "site_shape_and_street",
+          "title": "Shallow or irregular lot (yard relief)",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "Whether the lot is shallow or irregular enough to qualify for yard relief is a rule check: the yard rules set the depth threshold and the irregular-lot test, not this data layer. What the rule requires is a determination for the engine (Lane A) confirmed by a qualified reviewer at G6; this data layer reports the recorded facts and never decides the rule. A field survey gives the authoritative shape; it is never guessed.",
+          "typical_source": "The tax-map outline (approximate shape, B-03) and a field survey (the authoritative shape); the shallow-lot / irregular-lot yard rules (the engine)",
+          "evidence": [
+            {
+              "label": "Lot depth and outline (B-03)",
+              "source": {
+                "method_version": "site-geometry-2",
+                "lot_outline": null,
+                "streets": null,
+                "city_records": {
+                  "source": "PLUTO 26v2 (64uk-42ks)",
+                  "source_id": "nyc-dcp-pluto-soda",
+                  "dataset_version": "26v2",
+                  "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+                  "retrieved_at": "2026-07-16T12:00:00Z",
+                  "response_digest": "sha256:08169f4e585b8c8ea781eb6af99726ac94193edb73b588da1611db8205dfab6c"
+                }
+              }
+            }
+          ],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "site_shape_and_street.through_lot",
+          "group": "site_shape_and_street",
+          "title": "Through lot",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "The geometric lot type could not be determined, so whether the lot is a through lot must be checked on the tax map / City Map; it is never guessed. No MapPLUTO outline was fetched for this lot.",
+          "typical_source": "The tax-map outline and City Map street center lines (geometric lot type, B-03); the Zoning Resolution through-lot definition (reviewer)",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "site_shape_and_street.street_wall_lineup",
+          "group": "site_shape_and_street",
+          "title": "Line-up with neighboring street walls (R6B, R7B, R8B)",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "Whether street-wall line-up rules apply to this lot and what they require is a rule check; the plan flags the contextual districts R6B, R7B and R8B. PLUTO records the zoning district as 'R6B'. What the rule requires is a determination for the engine (Lane A) confirmed by a qualified reviewer at G6; this data layer reports the recorded facts and never decides the rule. The neighboring buildings' street-wall positions are not on record here; a field survey or DOB records must supply them. It is never guessed.",
+          "typical_source": "PLUTO zoning district (recorded); the street-wall / line-up rules (the engine); the neighboring buildings' street-wall positions (a field survey / DOB records)",
+          "evidence": [
+            {
+              "label": "PLUTO zonedist1",
+              "source": {
+                "kind": "city_dataset",
+                "dataset": "PLUTO (64uk-42ks)",
+                "dataset_version": "26v2",
+                "retrieved_at": "2026-07-16T12:00:00Z",
+                "query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+                "document_ref": null,
+                "statement": null,
+                "provenance_refs": [
+                  "pluto-64uk-42ks-26v2-4073340070-zonedist1"
+                ]
+              }
+            }
+          ],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "site_shape_and_street.sloping_site",
+          "group": "site_shape_and_street",
+          "title": "Sloping site",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No ground-elevation or topographic source is connected, so whether the site slopes (which can change the base plane, how height is measured and yard regrading) must be checked on a field or topographic survey; it is never guessed.",
+          "typical_source": "A field survey / topographic survey (ground elevations); no connected source",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "site_shape_and_street.neighbors_lot_line_windows",
+          "group": "site_shape_and_street",
+          "title": "Neighbors' lot-line windows",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No source records the neighboring buildings' lot-line windows, so whether any legal lot-line windows face this lot (which can restrict building to the lot line) must be checked by a field survey or the neighbors' DOB records; it is never guessed. What the rule requires is a determination for the engine (Lane A) confirmed by a qualified reviewer at G6; this data layer reports the recorded facts and never decides the rule.",
+          "typical_source": "A field survey / site observation of the neighboring buildings; the neighbors' DOB records; no connected source",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        }
+      ]
+    }
+  ]
+}

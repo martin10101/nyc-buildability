@@ -1,0 +1,234 @@
+{
+  "document_kind": "study_setup",
+  "bbl": "4073340070",
+  "property": {
+    "bbl": "4073340070",
+    "address": null
+  },
+  "lots": [
+    {
+      "bbl": "4073340070",
+      "approximate_lot_area_sq_ft": 10075.0,
+      "size_measurement": {
+        "rank": "city_records",
+        "label": "City records"
+      },
+      "selected": true
+    }
+  ],
+  "lot_selection": {
+    "mode": "all",
+    "statement": "Based on the lots you selected — the app does not verify the zoning lot",
+    "combination": {
+      "status": "single_lot",
+      "reason": null
+    }
+  },
+  "site": {
+    "facts": [
+      {
+        "contract_version": "1.1.0",
+        "fact_id": "4073340070:lot_area",
+        "key": "lot_area",
+        "lot_bbl": "4073340070",
+        "street": null,
+        "value": 10075,
+        "unit": "square_feet",
+        "measurement": {
+          "rank": "city_records",
+          "label": "City records"
+        },
+        "source": {
+          "kind": "city_dataset",
+          "dataset": "PLUTO (64uk-42ks)",
+          "dataset_version": "26v2",
+          "retrieved_at": "2026-07-16T12:00:00Z",
+          "query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+          "document_ref": null,
+          "statement": null,
+          "provenance_refs": [
+            "pluto-64uk-42ks-26v2-4073340070-lotarea"
+          ],
+          "version_check": {
+            "status": "current",
+            "label": "Current",
+            "latest_known_version": "26v2",
+            "latest_known_seen_at": "2026-07-16T12:00:00Z",
+            "latest_known_query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+            "reason": "PLUTO (64uk-42ks) 26v2 (retrieved 2026-07-16T12:00:00Z) is the newest published version on record (checked 2026-07-16T12:00:00Z)."
+          }
+        },
+        "blocks": [],
+        "editable": true,
+        "note": "From PLUTO field 'lotarea'."
+      },
+      {
+        "contract_version": "1.1.0",
+        "fact_id": "4073340070:lot_depth",
+        "key": "lot_depth",
+        "lot_bbl": "4073340070",
+        "street": null,
+        "value": 100,
+        "unit": "feet",
+        "measurement": {
+          "rank": "city_records",
+          "label": "City records"
+        },
+        "source": {
+          "kind": "city_dataset",
+          "dataset": "PLUTO (64uk-42ks)",
+          "dataset_version": "26v2",
+          "retrieved_at": "2026-07-16T12:00:00Z",
+          "query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+          "document_ref": null,
+          "statement": null,
+          "provenance_refs": [
+            "pluto-64uk-42ks-26v2-4073340070-lotdepth"
+          ],
+          "version_check": {
+            "status": "current",
+            "label": "Current",
+            "latest_known_version": "26v2",
+            "latest_known_seen_at": "2026-07-16T12:00:00Z",
+            "latest_known_query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+            "reason": "PLUTO (64uk-42ks) 26v2 (retrieved 2026-07-16T12:00:00Z) is the newest published version on record (checked 2026-07-16T12:00:00Z)."
+          }
+        },
+        "blocks": [],
+        "editable": true,
+        "note": "From PLUTO field 'lotdepth'."
+      },
+      {
+        "contract_version": "1.1.0",
+        "fact_id": "4073340070:lot_type",
+        "key": "lot_type",
+        "lot_bbl": "4073340070",
+        "street": null,
+        "value": null,
+        "unit": null,
+        "measurement": {
+          "rank": "unknown",
+          "label": "Unknown — enter"
+        },
+        "source": {
+          "kind": "city_dataset",
+          "dataset": "PLUTO (64uk-42ks)",
+          "dataset_version": "26v2",
+          "retrieved_at": "2026-07-16T12:00:00Z",
+          "query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+          "document_ref": null,
+          "statement": null,
+          "provenance_refs": [
+            "pluto-64uk-42ks-26v2-4073340070-lottype"
+          ],
+          "version_check": {
+            "status": "current",
+            "label": "Current",
+            "latest_known_version": "26v2",
+            "latest_known_seen_at": "2026-07-16T12:00:00Z",
+            "latest_known_query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+            "reason": "PLUTO (64uk-42ks) 26v2 (retrieved 2026-07-16T12:00:00Z) is the newest published version on record (checked 2026-07-16T12:00:00Z)."
+          }
+        },
+        "blocks": [
+          "permitted_envelope",
+          "building_option"
+        ],
+        "editable": true,
+        "note": "PLUTO records LotType code 3; its code list is not verified here and a tax-lot code is not the zoning lot type. Lot type comes from the tax-map outline or an entry."
+      },
+      {
+        "contract_version": "1.1.0",
+        "fact_id": "4073340070:zoning_district:1",
+        "key": "zoning_district",
+        "lot_bbl": "4073340070",
+        "street": null,
+        "value": "R6B",
+        "unit": null,
+        "measurement": {
+          "rank": "city_records",
+          "label": "City records"
+        },
+        "source": {
+          "kind": "city_dataset",
+          "dataset": "PLUTO (64uk-42ks)",
+          "dataset_version": "26v2",
+          "retrieved_at": "2026-07-16T12:00:00Z",
+          "query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+          "document_ref": null,
+          "statement": null,
+          "provenance_refs": [
+            "pluto-64uk-42ks-26v2-4073340070-zonedist1"
+          ],
+          "version_check": {
+            "status": "current",
+            "label": "Current",
+            "latest_known_version": "26v2",
+            "latest_known_seen_at": "2026-07-16T12:00:00Z",
+            "latest_known_query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+            "reason": "PLUTO (64uk-42ks) 26v2 (retrieved 2026-07-16T12:00:00Z) is the newest published version on record (checked 2026-07-16T12:00:00Z)."
+          }
+        },
+        "blocks": [],
+        "editable": true,
+        "note": "From PLUTO field 'zonedist1'."
+      },
+      {
+        "contract_version": "1.1.0",
+        "fact_id": "4073340070:commercial_overlay:1",
+        "key": "commercial_overlay",
+        "lot_bbl": "4073340070",
+        "street": null,
+        "value": "C2-2",
+        "unit": null,
+        "measurement": {
+          "rank": "city_records",
+          "label": "City records"
+        },
+        "source": {
+          "kind": "city_dataset",
+          "dataset": "PLUTO (64uk-42ks)",
+          "dataset_version": "26v2",
+          "retrieved_at": "2026-07-16T12:00:00Z",
+          "query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+          "document_ref": null,
+          "statement": null,
+          "provenance_refs": [
+            "pluto-64uk-42ks-26v2-4073340070-overlay1"
+          ],
+          "version_check": {
+            "status": "current",
+            "label": "Current",
+            "latest_known_version": "26v2",
+            "latest_known_seen_at": "2026-07-16T12:00:00Z",
+            "latest_known_query_ref": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340070",
+            "reason": "PLUTO (64uk-42ks) 26v2 (retrieved 2026-07-16T12:00:00Z) is the newest published version on record (checked 2026-07-16T12:00:00Z)."
+          }
+        },
+        "blocks": [],
+        "editable": true,
+        "note": "From PLUTO field 'overlay1'."
+      },
+      {
+        "contract_version": "1.0.0",
+        "fact_id": "4073340070:existing_zoning_floor_area",
+        "key": "existing_zoning_floor_area",
+        "lot_bbl": "4073340070",
+        "street": null,
+        "value": null,
+        "unit": null,
+        "measurement": {
+          "rank": "unknown",
+          "label": "Unknown — enter"
+        },
+        "source": null,
+        "blocks": [
+          "remaining_floor_area",
+          "existing_building_paths"
+        ],
+        "editable": true,
+        "note": "Needs existing zoning floor area: from a Buildings Department filing or certificate of occupancy, or entered as a stated assumption. City-recorded building area is never used for it. No DOB job-filing rows were supplied. No certificate of occupancy figure or stated assumption was entered."
+      }
+    ]
+  }
+}
