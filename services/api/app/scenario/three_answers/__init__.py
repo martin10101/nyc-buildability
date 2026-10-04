@@ -25,6 +25,7 @@ from __future__ import annotations
 from .building_option import (
     BuildingOptionComputation,
     BuildingOptionResult,
+    compliance_notes,
     compute_building_option,
     shortfall_reason,
 )
@@ -55,6 +56,7 @@ __all__ = [
     "ResultsContractError",
     "ThreeAnswerInputs",
     "ThreeAnswersResult",
+    "compliance_notes",
     "compute_building_option",
     "generate_results",
     "shortfall_reason",

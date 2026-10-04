@@ -75,7 +75,10 @@ def test_document_validates_and_is_draft() -> None:
     # generate_results validates internally; reaching here means the document is schema-valid.
     result = _generate()
     doc = result.document
-    assert doc["contract_version"] == "1.0.0"
+    # The R6B benchmark building (20 ft) is below the 30 ft minimum base height, so the engine
+    # emits the computed minimum-base-height note into the 1.2.0 notes slot (D-090-R132), which
+    # binds contract_version 1.2.0. The emission itself is pinned in test_three_answers_notes_emit.
+    assert doc["contract_version"] == "1.2.0"
     assert doc["draft"] is True  # every rule is needs_review (D-090-R010)
     assert all(rv["status"] == "needs_review" for rv in doc["rule_versions"])
     assert result.lane_enabled is True

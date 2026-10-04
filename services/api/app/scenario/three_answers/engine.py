@@ -40,6 +40,7 @@ from .inputs import (
     Assumption,
     ThreeAnswerInputs,
 )
+from .notes import RESULTS_CONTRACT_VERSION_WITH_NOTES, map_building_option_notes
 from .rule_access import rule_version_record
 
 CONTRACT_VERSION = "1.0.0"
@@ -136,9 +137,10 @@ def _assemble_document(
     rule_versions: list[dict],
     status_strip: list[dict],
     notices_count: int,
+    contract_version: str = CONTRACT_VERSION,
 ) -> dict:
     return {
-        "contract_version": CONTRACT_VERSION,
+        "contract_version": contract_version,
         "results_id": inputs.results_id,
         "study_id": inputs.study_id,
         "option_id": inputs.option_id,
@@ -215,12 +217,24 @@ def generate_results(
         if units_version is not None:
             rule_versions = _dedupe_rule_versions(tuple(rule_versions), (units_version,))
 
+    # Carry the engine's COMPUTED building-option notes (e.g. the minimum-base-height note)
+    # into the document's 1.2.0 notes slot (D-090-R132; DB-119). The slot is additive and
+    # optional: a non-empty notes array binds contract_version 1.2.0, while an empty one leaves
+    # the building-option answer and the 1.0.0 version byte-identical to today's output.
+    building_option_notes = map_building_option_notes(option.compliance_notes)
+    if building_option_notes:
+        building_option_answer = {**option.answer, "notes": building_option_notes}
+        contract_version = RESULTS_CONTRACT_VERSION_WITH_NOTES
+    else:
+        building_option_answer = option.answer
+        contract_version = CONTRACT_VERSION
+
     document = _assemble_document(
         inputs=inputs,
         answers={
             "floor_area_allowance": allowance.answer,
             "permitted_envelope": envelope.answer,
-            "building_option": option.answer,
+            "building_option": building_option_answer,
         },
         shortfall=option.shortfall,
         floor_by_floor=option.floor_by_floor,
@@ -234,6 +248,7 @@ def generate_results(
             {"text": "Lots you selected"},
         ],
         notices_count=len(assumptions),
+        contract_version=contract_version,
     )
     validate_results_document(document)
     return ThreeAnswersResult(document=document, assumptions=assumptions, lane_enabled=True)
