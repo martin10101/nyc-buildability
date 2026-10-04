@@ -4,12 +4,13 @@ import { useId } from "react";
 import {
   DRAFT_PREVIEW_TAG,
   answerView,
+  buildingOptionNotesView,
   remainingFloorAreaView,
   scopeView,
   shortfallView,
   type ThreeAnswersResults,
 } from "@/lib/architect/three-answers";
-import { AnswerCard, ShortfallBlock, SupplementRow } from "./AnswerCard";
+import { AnswerCard, BuildingOptionNotes, ShortfallBlock, SupplementRow } from "./AnswerCard";
 import { ResultsStatusStrip } from "./ResultsStatusStrip";
 import { ScopeSummary } from "./ScopeSummary";
 import "./three-answers.css";
@@ -67,6 +68,7 @@ export function ThreeAnswersPanel({ results, showDraftValues = false }: ThreeAns
           view={answerView(results, "building_option", showDraftValues)}
         >
           <ShortfallBlock view={shortfallView(results)} />
+          <BuildingOptionNotes notes={buildingOptionNotesView(results)} />
         </AnswerCard>
       </div>
       <p className="ta-completeness" data-testid="three-answers-completeness">
