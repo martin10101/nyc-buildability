@@ -1,0 +1,20 @@
+{
+  "contract_version": "1.1.0",
+  "lot_bbl": "5999999999",
+  "status": "check_needed",
+  "status_label": "Check needed",
+  "transit_zone": null,
+  "source": {
+    "kind": "city_dataset",
+    "dataset": "test-fixture-synthetic PLUTO",
+    "dataset_version": "26v2",
+    "retrieved_at": "2026-09-30T12:00:00Z",
+    "query_ref": "test-fixture-synthetic://pluto/5999999999",
+    "document_ref": null,
+    "statement": null
+  },
+  "detail": "Transit/parking status: Check needed (synthetic fixture whose missing_source_ref is null).",
+  "missing_source": "DCP Transit Zones (NYC Open Data), the dataset PLUTO's transitzone field is sourced from; recorded in research, no registered connector in this repository",
+  "missing_source_ref": null,
+  "_expected_failure": "status 'check_needed' with missing_source_ref null: a check_needed status must carry the structured Source-disclosure object (object, not null), so the allOf/oneOf 'status, status_label, transit_zone, missing_source and missing_source_ref move together' rejects it at the root. Everything else is a valid check_needed document, so the only defect is the null reference."
+}
