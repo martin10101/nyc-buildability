@@ -189,10 +189,25 @@ class EnvelopeResult:
     rule_versions: tuple[dict, ...]
 
 
+# Each row is (rule_output_name, answer_value key, label, unit). The standard triple
+# (min base / max base / max building) is surfaced first, then the qualifying-housing triple.
+# The R6B ZR 23-432 table carries a SINGLE minimum-base-height column that spans the row (it is
+# not repeated under the qualifying heading), so the qualifying minimum base height reads from
+# the SAME ``min_base_height`` rule output (same 30 ft, same ZR 23-432) under its own key: a
+# reader then sees min base / max base / max building for BOTH the standard (30 / 45 / 55) and
+# the qualifying (30 / 45 / 65) cases, and the shared 30 ft is explicit rather than implied
+# (D-090-R107 step 2; finding note docs/research/zr-snapshots/notes/
+# 2026-10-04-r6b-minimum-base-height-20ft-sample.md section (d)).
 _HEIGHT_OUTPUTS = (
     ("min_base_height", "min_base_height", "Minimum base height", "feet"),
     ("max_base_height", "max_base_height", "Maximum base height", "feet"),
     ("max_building_height", "max_building_height", "Maximum building height", "feet"),
+    (
+        "min_base_height",
+        "min_base_height_qualifying_affordable_or_senior",
+        "Minimum base height with qualifying affordable or senior housing",
+        "feet",
+    ),
     (
         "qualifying_max_base_height",
         "max_base_height_qualifying_affordable_or_senior",
