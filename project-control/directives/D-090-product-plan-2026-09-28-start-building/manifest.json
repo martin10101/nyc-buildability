@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-04T03:13:26+00:00",
+ "updated_at": "2026-10-04T03:35:43+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -137,10 +137,17 @@
   "D-090-R113",
   "D-090-R114",
   "D-090-R115",
-  "D-090-R116"
+  "D-090-R116",
+  "D-090-R117",
+  "D-090-R118",
+  "D-090-R119",
+  "D-090-R120",
+  "D-090-R121",
+  "D-090-R122",
+  "D-090-R123"
  ],
- "requirements_id_digest_sha256": "4930fdc60e3e876a416467c4d153d19c85a3615cde347a48c90b744bd0204c8d",
- "requirements_content_digest_sha256": "ba13f399c29f60361be18086d01199fe92c385a81f599d792658d0e974749dd0",
+ "requirements_id_digest_sha256": "a6a83a63a12d59a56bc323a808d5bc2e0162f8fe3b21dadbfd52d6185b926993",
+ "requirements_content_digest_sha256": "218dc91a34da933d4478510db100a4799d48981db4ab2d02fc6427b9b232b793",
  "sources": [
   {
    "file": "source-001.md",
@@ -284,6 +291,14 @@
    "recorded_at": "2026-10-04T03:13:26+00:00",
    "content_digest_sha256": "60ffc376ab29c0b75457202c4d847c0de7f4246865757c5e74b22f6d0a08cf14",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-019-amendment.md",
+   "kind": "amendment",
+   "sequence": 19,
+   "recorded_at": "2026-10-04T03:35:43+00:00",
+   "content_digest_sha256": "c0e298c9b35ab0ecfc8fcad0cf4e5af2554ecf1b7a0478ea070254f0ca78a1d2",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -303,7 +318,8 @@
   "source-015-amendment.md",
   "source-016-amendment.md",
   "source-017-amendment.md",
-  "source-018-amendment.md"
+  "source-018-amendment.md",
+  "source-019-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -450,6 +466,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-018 (session 0ba6d6a3 message 47, 2026-10-04: message 45 re-pasted with 'Was this done ? Can u write up a prompt for my reviewer') and requirement D-090-R116 (return: independent-reviewer prompt), pending. Message 46 (first re-paste, status question only) recorded in the source file, no row. Text extracted by script from the queued_command attachment; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T03:35:43+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-019 (session 0ba6d6a3 message 48, 2026-10-04: the owner's independent reviewer's audit of items 1-6, forwarded verbatim; verdicts PARTLY DONE on items 1-4 and 6, DONE on 5's status checks) and requirements D-090-R117..R123, all pending. Text extracted by script from the queued_command attachment; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
   }
  ]
 }
