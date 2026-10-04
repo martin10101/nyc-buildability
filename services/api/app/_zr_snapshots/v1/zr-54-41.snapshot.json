@@ -1,0 +1,70 @@
+{
+  "snapshot_id": "zr-54-41",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "54-41",
+  "section_title": "Permitted Reconstruction",
+  "article": "V",
+  "chapter": "4",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-v/chapter-4/54-41",
+    "retrieved_at": "2026-10-04T01:02:19Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "The site-wide currency banner was not separately captured; the operative provenance is this section's machine-readable per-section Last Amended stamp (<time datetime=\"2011-02-02T12:00:00Z\">2/2/2011</time>) in the raw HTML.",
+    "section_last_amended": "2011-02-02",
+    "section_last_amended_source_text": "Last Amended 2/2/2011",
+    "capture_method": "lane_a_A-07_step1_curl_html_verbatim_plus_printpdf_completeness_2026-10-04",
+    "raw_html_verified": false,
+    "verification_required": "Verbatim text was tag-stripped from the official DCP Zoning Resolution portal HTML (https://zoningresolution.planning.nyc.gov/article-v/chapter-4/54-41) fetched fresh in-task on 2026-10-04 (curl -A Mozilla/5.0 -> HTTP 200); the legal text lives in the field--name-body container and the section carries the per-section Last Amended stamp recorded above. The text was NOT re-verified byte-for-byte at the field level against the raw HTML, so raw_html_verified stays false and extraction_status stays extracted_draft. The legal reading MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
+  },
+  "provenance_chain": {
+    "capture_task": "lane-a A-07 step 1 (ZR 54-41 family snapshots; D-090 R103; plan M2-08)",
+    "verbatim_text_channel": {
+      "channel": "canonical_html",
+      "request_url": "https://zoningresolution.planning.nyc.gov/article-v/chapter-4/54-41",
+      "http_status": 200,
+      "byte_count": 73366,
+      "content_sha256": "963d37a2e99178f633639fbe334b74c070ab8dff804a1e7d0b02a36d124dd56c",
+      "retrieved_at": "2026-10-04T01:02:19Z",
+      "note": "Raw HTML bytes of the canonical section page; the verbatim_excerpt was tag-stripped from the field--name-body <p> paragraphs of these bytes (paragraphs joined by blank lines; defined-term bold/italic dropped to plain text)."
+    },
+    "completeness_channel": {
+      "channel": "print_pdf_entityprint",
+      "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18619",
+      "shortlink_node": "/node/18619",
+      "http_status": 200,
+      "content_type": "application/pdf",
+      "byte_count": 47716,
+      "content_sha256": "b2142c96737fb99caea5fd7e8834f5963d2d4421541d31137bcf53d311738660",
+      "retrieved_at": "2026-10-04T01:02:19Z",
+      "note": "The repo's preferred print/PDF completeness channel returned HTTP 200 application/pdf and its raw bytes are pinned here. No PDF text extractor is available under the thin-client runtime, so the PDF was NOT text-extracted; the verbatim_excerpt is derived from the canonical HTML channel above. The PDF is retained as the pinned completeness artifact."
+    }
+  },
+  "verbatim_excerpt": "If a non-complying building or other structure is damaged or destroyed by any means, including any demolition as set forth in this Section, to the extent of 75 percent or more of its total floor area, such building may be reconstructed only in accordance with the applicable district bulk regulations, except in the case of a one- or two-family residence, such residence may be reconstructed provided that such reconstruction shall not create a new non-compliance nor increase the pre-existing degree of non-compliance with the applicable bulk regulations. If the extent of such damage or destruction is less than 75 percent, a non-complying building may be reconstructed provided that such reconstruction shall not create a new non-compliance nor increase the pre-existing degree of non-compliance with the applicable bulk regulations.\n\nIn addition, the alteration of such existing building resulting in both the removal of more than 75 percent of the floor area and more than 25 percent of the perimeter walls of such existing building, and the replacement of any portion thereof, shall be considered a development for the purposes of the provisions set forth in Section 11-23 (Demolition and Replacement).\n\nIn the event that any demolition, damage or destruction of an existing building other than one- or two-family residences produces an unsafe condition requiring a Department of Buildings order or permit for further demolition of floor area to remove or rectify the unsafe condition, and the aggregate floor area demolished, damaged or destroyed including that ordered or permitted by the Department of Buildings constitutes 75 percent or more of the total floor area of such building, then such building may be reconstructed only in accordance with the applicable district bulk regulations.",
+  "content_digest_sha256": "d081d6d09a4cc19964b93df37e62571f290a5c6efcfacdf2c766f26056763a53",
+  "extraction_status": "extracted_draft",
+  "capture_does_not_establish": [
+    "This capture does NOT make the legal reading of the plan's §5b. It does not decide the keep / partial-rebuild / full-rebuild path classification, the 75-percent threshold's application to any specific building, the 'rebuild budget' (floor area and perimeter-wall length that may be removed), or either path-2 trap (the >75% floor-area + >25% perimeter-wall 'development' trap, and the Department-of-Buildings unsafe-condition aggregation trap). Those are rule-author work for a later DRAFT rule (needs_review), never published without G6 qualified-human approval.",
+    "It does not establish which bulk regulations are 'applicable district bulk regulations', nor the meaning of the defined terms it uses (non-complying, floor area, building, bulk, non-compliance, development, residence) - those defined terms are captured elsewhere (§12-10 and Article I) and are not re-adjudicated here."
+  ],
+  "downstream_rule_inputs": {
+    "sections_a_rule_author_needs": [
+      "ZR 54-41 (this capture) - the reconstruction thresholds and the one-/two-family residence exception",
+      "ZR 54-40 (captured here) - parent/group provision: abutting buildings on one zoning lot count as one building",
+      "ZR 11-23 (captured here) - the 'development' definition the §54-41 wall-trap cross-references"
+    ],
+    "cross_references_not_yet_captured": [
+      "ZR 11-23 is cross-referenced by name in paragraph 2 ('the provisions set forth in Section 11-23 (Demolition and Replacement)') and IS captured in this same step; its own 37 downstream section references are listed in the zr-11-23 snapshot and are out of step-1 scope.",
+      "Defined terms used by the text (non-complying, floor area, bulk, non-compliance, development, residence) resolve to §12-10 / Article I definitions - not captured in this step.",
+      "The plan's path-1 'Article V' continuation reference is general (not a numbered section the plan names); no additional Article V continuation section is captured in this step."
+    ]
+  },
+  "notes": [
+    "Operative section for the plan's §5b paths 2 (partial rebuild, damage/destruction < 75% of total floor area) and 3 (full rebuild, 75% or more). Paragraph 1 states both the >=75% rule (reconstruct only per applicable district bulk regulations, with a one-/two-family residence exception) and the <75% rule (reconstruct without new or increased non-compliance). Paragraph 2 is the §5b path-2 WALL trap (>75% floor area + >25% perimeter walls + replacement = a development per §11-23). Paragraph 3 is the §5b path-2 UNSAFE-CONDITION trap (DOB-ordered further demolition aggregating to >=75% => reconstruct only per applicable bulk regulations).",
+    "Captured fresh in-task as source provenance for the §5b DRAFT comparison rule (M2-08); no numeric or legal determination is made here.",
+    "Nothing in this record is a Verified zoning determination. Verified requires a published M-series rule plus G6 qualified-human approval (owner directive item 12); snapshots are source provenance only."
+  ]
+}

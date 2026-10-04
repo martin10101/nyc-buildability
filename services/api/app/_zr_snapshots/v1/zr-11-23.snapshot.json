@@ -1,0 +1,68 @@
+{
+  "snapshot_id": "zr-11-23",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "11-23",
+  "section_title": "Demolition and Replacement",
+  "article": "I",
+  "chapter": "1",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-1/11-23",
+    "retrieved_at": "2026-10-04T01:02:19Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "The site-wide currency banner was not separately captured; the operative provenance is this section's machine-readable per-section Last Amended stamp (<time datetime=\"2016-03-22T12:00:00Z\">3/22/2016</time>) in the raw HTML.",
+    "section_last_amended": "2016-03-22",
+    "section_last_amended_source_text": "Last Amended 3/22/2016",
+    "capture_method": "lane_a_A-07_step1_curl_html_verbatim_plus_printpdf_completeness_2026-10-04",
+    "raw_html_verified": false,
+    "verification_required": "Verbatim text was tag-stripped from the official DCP Zoning Resolution portal HTML (https://zoningresolution.planning.nyc.gov/article-i/chapter-1/11-23) fetched fresh in-task on 2026-10-04 (curl -A Mozilla/5.0 -> HTTP 200); the legal text lives in the field--name-body container and the section carries the per-section Last Amended stamp recorded above. The text was NOT re-verified byte-for-byte at the field level against the raw HTML, so raw_html_verified stays false and extraction_status stays extracted_draft. The legal reading MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
+  },
+  "provenance_chain": {
+    "capture_task": "lane-a A-07 step 1 (ZR 54-41 family snapshots; D-090 R103; plan M2-08)",
+    "verbatim_text_channel": {
+      "channel": "canonical_html",
+      "request_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-1/11-23",
+      "http_status": 200,
+      "byte_count": 95349,
+      "content_sha256": "69d5c2a4fd84edaba8004ae63f49cb8a20aeaf7017fc9388c05799f1e5878842",
+      "retrieved_at": "2026-10-04T01:02:19Z",
+      "note": "Raw HTML bytes of the canonical section page; the verbatim_excerpt was tag-stripped from the field--name-body <p> paragraphs of these bytes (paragraphs joined by blank lines; defined-term bold/italic dropped to plain text)."
+    },
+    "completeness_channel": {
+      "channel": "print_pdf_entityprint",
+      "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18432",
+      "shortlink_node": "/node/18432",
+      "http_status": 200,
+      "content_type": "application/pdf",
+      "byte_count": 64123,
+      "content_sha256": "53378be456dfc522ffbaf028eb36abfcad477a4b0a62864a97e92d49f77f78fa",
+      "retrieved_at": "2026-10-04T01:02:19Z",
+      "note": "The repo's preferred print/PDF completeness channel returned HTTP 200 application/pdf and its raw bytes are pinned here. No PDF text extractor is available under the thin-client runtime, so the PDF was NOT text-extracted; the verbatim_excerpt is derived from the canonical HTML channel above. The PDF is retained as the pinned completeness artifact."
+    }
+  },
+  "verbatim_excerpt": "The alteration of an existing building resulting in both the removal of more than 75 percent of the floor area and more than 25 percent of the perimeter walls of such existing building, and the replacement of any amount of floor area, shall be considered a development for the purposes of the following provisions. The provisions of this Section shall apply notwithstanding the provisions of Article V (Non-Conforming Uses and Non-Complying Buildings). However, these provisions shall not apply where the building to be replaced is a single- or two-family residence utilizing the provisions of Article V.\n\nSection 23-611 (Street tree planting)\n\nSection 23-612 (Planting strips in residence districts)\n\nSection 33-04 (Street Tree Planting in Commercial Districts)\n\nSection 37-35 (Parking Wrap and Screening Requirements)\n\nSection 37-40 (OFF-STREET RELOCATION OR RENOVATION OF A SUBWAY STAIR)\n\nSection 81-42 (Retail Continuity Along Designated Streets)\n\nSection 81-46 (Off-Street Relocation or Renovation of a Subway Stair)\n\nSection 81-72 (Use Regulations Modified)\n\nSection 82-12 (Mandatory Off-Street Relocation of a Subway Stair)\n\nSection 91-43 (Off-street Relocation or Renovation of a Subway Stair)\n\nSection 93-14 (Ground Floor Level Requirements)\n\nSection 93-65 (Transit Facilities)\n\nSection 93-66 (Open Area Requirements in the Large-Scale Plan Subdistrict A)\n\nSection 93-70 (PUBLIC ACCESS REQUIREMENTS FOR SPECIAL SITES)\n\nSection 95-03 (Transit Easement)\n\nSection 95-04 (Certification of Transit Easement Volume)\n\nSection 95-08 (Special Use Regulations)\n\nSection 97-12 (Arts and Entertainment Use Requirement)\n\nSection 98-14 (Ground Floor Use and Transparency Requirements on Tenth Avenue)\n\nSection 98-53 (Required Open Areas on the East Side of the High Line)\n\nSection 98-54 (Transparency Requirements on the East Side of the High Line)\n\nSection 98-60 (SPECIAL REGULATIONS FOR CERTAIN ZONING LOTS)\n\nSection 101-11 (Special Ground Floor Use Regulations)\n\nSection 101-43 (Off-street Relocation or Renovation of a Subway Stair)\n\nSection 108-30 (MODIFICATION OF STREET TREE REQUIREMENTS)\n\nSection 109-33 (Special Front Wall Regulations)\n\nSection 117-42 (Special Bulk and Use Regulations in the Court Square Subdistrict)\n\nSection 117-44 (Mandatory Subway Improvements)\n\nSection 117-45 (Developer's Notice)\n\nSection 117-55 (Mandatory sidewalk widening)\n\nSection 118-30 (OFF-STREET RELOCATION OF A SUBWAY STAIR WITHIN THE SPECIAL UNION SQUARE DISTRICT)\n\nSection 119-112 (Tier I tree planting requirements)\n\nSection 119-216 (Tier II tree planting requirements)\n\nSection 124-30 (MANDATORY IMPROVEMENTS)\n\nSection 124-40 (PUBLICLY ACCESSIBLE OPEN SPACE REQUIREMENTS)\n\nSection 126-21 (Street Tree Planting)",
+  "content_digest_sha256": "27e1ee4d56cdcc5cf11fb7468a2b5352d781f5affbadbba0e1cad805cccb2648",
+  "extraction_status": "extracted_draft",
+  "capture_does_not_establish": [
+    "This capture does NOT make the legal reading of §5b's path-2 wall trap. It records the 'development' definition and the Article V notwithstanding/exception clauses verbatim, plus the full published list of 'following provisions' this section routes a deemed-development to. It does not decide whether any building meets the >75% floor-area + >25% perimeter-wall + replacement test, nor which of the 37 listed provisions apply to a given site - that is rule-author work for a later DRAFT rule, never published without G6."
+  ],
+  "downstream_rule_inputs": {
+    "sections_a_rule_author_needs": [
+      "ZR 11-23 (this capture) - the 'development' definition the §54-41 wall-trap cross-references, plus the single-/two-family Article V carve-out",
+      "ZR 54-41 (captured here) - the §5b operative section that routes the wall-trap to §11-23"
+    ],
+    "cross_references_not_yet_captured": [
+      "The 37 'following provisions' listed verbatim in this section's body (ZR 23-611, 23-612, 33-04, 37-35, 37-40, 81-42, 81-46, 81-72, 82-12, 91-43, 93-14, 93-65, 93-66, 93-70, 95-03, 95-04, 95-08, 97-12, 98-14, 98-53, 98-54, 98-60, 101-11, 101-43, 108-30, 109-33, 117-42, 117-44, 117-45, 117-55, 118-30, 119-112, 119-216, 124-30, 124-40, 126-21) are the obligations a reconstruction-deemed-a-development must then satisfy; they are NOT captured in this step and are out of A-07 step-1 scope.",
+      "Defined terms (building, floor area, development, residence) resolve to §12-10 / Article I - not captured here."
+    ]
+  },
+  "notes": [
+    "Captured because §54-41 paragraph 2 cross-references 'Section 11-23 (Demolition and Replacement)' by name for the §5b path-2 wall trap. Paragraph 1 is the operative clause: the same >75% floor-area + >25% perimeter-wall + replacement alteration is a 'development', applies notwithstanding Article V, and does NOT apply where the replaced building is a single- or two-family residence using Article V. The remaining 36 paragraphs are the published list of 'following provisions' (verbatim, digest-covered) and are second-order cross-references, not captured as separate sections in this step.",
+    "Captured fresh in-task as cross-reference provenance for the §5b DRAFT comparison rule (M2-08).",
+    "Nothing in this record is a Verified zoning determination. Verified requires a published M-series rule plus G6 qualified-human approval (owner directive item 12); snapshots are source provenance only."
+  ],
+  "section_title_source_note": "Raw HTML section-title field was 'Demolition and Replacement ' (one trailing space); recorded trimmed."
+}
