@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 144,
+ "requirement_count": 159,
  "producer": "orchestrator",
- "updated_at": "2026-10-04T07:28:52+00:00",
+ "updated_at": "2026-10-04T08:25:25+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -4911,6 +4911,507 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-04 (message 56, the owner's direction after the sample PDF).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R145",
+   "text": "Conditional: if R6B was the only reason PR #388 was held, the orchestrator may lift that hold. ORCHESTRATOR'S READING, not owner wording: the recorded hold reasons are D-090-R125 (audit corrections R118/R122 landed and independently verified) and D-090-R136 (nothing approved; Lane A merges stay unmerged until corrected, reviewable work is prepared), plus the Lane A rule that every merge needs the owner's explicit yes per PR; the R6B-coverage question is not the recorded reason, so the condition is not met, the hold is not lifted by this message, and #388 still needs the owner's explicit yes. The line '#388 stays on hold until my architect answers R6B' was never written by the orchestrator and is in no repository text; nothing to drop.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R125",
+    "D-090-R136"
+   ],
+   "required_harness": "The orchestrator's reply states the recorded reasons and asks for the explicit yes/no on #388; no hold is lifted without it.",
+   "required_evidence": "The chat reply; the unchanged hold rows R125/R136.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R146",
+   "text": "The owner (with their AI) found five groups of errors in the competitor sample PDF: (1) wrong rules (50/60 ft heights where the law says 45/55, or 65 with affordable housing, and the sample's own page 10 says 45/55; a 'wide-street bonus' R6B does not have; old law section numbers and 2024 city data); (2) the full allowance not used (the 'best' building is 23,136 sq ft when 24,180 is allowed; the gap called 705 sq ft is really 1,044; a height limit blamed that the building is nowhere near); (3) real-world facts ignored (the existing building, bigger than any option shown; the lot shares one zoning lot with lot 1; the inner-half rules in the lot-split idea); (4) drawings that do not match the numbers (plans wider than the lot; one floor plan reused; apartments drawn not matching apartments claimed; 'no elevator' but one drawn; shops drawn in senior housing; fixed labels 116 ft wide, 20 ft rear yard, 8,032 sq ft per floor); (5) contradictions (zero parking in most options, 16 in one; flood 'no need to elevate' vs 'must add 2 ft'; copy-paste options with different heights; two 'different' options that are the same building). The owner lists five protections our program is meant to provide (one checked rule table with data dates and an 'Out of date' warning; allowance kept separate from the fitting building with computed shortfall reasons; real-world facts flagged, never guessed; every drawing and label from the same numbers as the tables, no template floor plans; an automatic cross-page sweep with the same rule applied everywhere), 'some built; others still planned'. The sample remains a reference only (R143).",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R143"
+   ],
+   "required_harness": "Used as the input list for R147; no repository statement adjudicates the competitor's figures.",
+   "required_evidence": "This source file; the R147 table.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R147",
+   "text": "Competitor-error guard check (assessment + tests only). Source: docs/COMPETITOR_REVIEW_ENVELOPE_215-16_NORTHERN_2026-09-28.md and the owner's list. For each mistake E1-E20 (E1 heights one source, R6B 30/45/55 and 45/65 with affordable, C-1; E2 no wide-street FAR bonus for R6B; E3 every law citation exists in the current Zoning Resolution, C-7; E4 data versions shown with 'Out of date' when newer, C-7; E5 allowance 24,180 / 20,150 kept separate from the fitting building, C-2; E6 any shortfall reason computed and true, never template text, C-11; E7 existing building floor area confirmed or 'Not known', flagged when it exceeds today's allowance, C-3; E8 zoning lot is not the tax lot, DOB shows lot 70 + lot 1 as one zoning lot, C-9; E9 lot splits checked piece by piece with their own lot type, subdivision stated, C-10; E10 footprint never larger than the lot, C-4; E11 drawings generated per option, never reused templates, C-4; E12 units one formula, same number everywhere, C-12; E13 elevator/core statements match the drawings, C-5; E14 ground-floor use in drawings matches the option's use, C-4; E15 every label inside a picture comes from results, C-4; E16 parking/transit rule applied the same in every option, C-8; E17 flood statements consistent across all pages, C-5; E18 no copy-paste options with mismatched heights/floors, C-5/C-6; E19 identical buildings merged or explained, C-6; E20 one footprint value per option on every page, C-5), find where OUR app could make the same mistake and report our guard (file + test), the status using exactly one of PREVENTED+TESTED / PREVENTED, NO TEST / NOT BUILT YET (task ID) / NOT APPLICABLE IN PHASE 1, and the evidence (test name, CI run). Use the recorded 215-16 Northern data.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R146",
+    "D-090-R137"
+   ],
+   "required_harness": "The table in docs/plans/COMPETITOR_ERROR_GUARDS_2026-10-04.md has one row per E-item with file+test, one of the four status words and evidence; an independent reviewer re-runs every existence claim.",
+   "required_evidence": "docs/plans/COMPETITOR_ERROR_GUARDS_2026-10-04.md; the PR's review record; CI run ids.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R148",
+   "text": "In the guard-check work: the sample PDF is a reference only and is never committed; no zoning number or rule table is changed; anything about numbers goes to the reviewer.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R147"
+   ],
+   "required_harness": "The PR diff touches no `*.rule.json`, no ZR snapshot and no numeric constant in the engine; the PDF is absent from the tree.",
+   "required_evidence": "The PR diff; the reviewer's record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R149",
+   "text": "Write the missing tests in the owning lane. Tests for features not built yet are marked pending (skipped/xfail) with the task ID that will make them pass, so CI stays green.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R147"
+   ],
+   "required_harness": "Each NOT BUILT YET row has a pending test naming its task ID; CI green on the PR head.",
+   "required_evidence": "The test files; the CI rollup.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R150",
+   "text": "Save the table as docs/plans/COMPETITOR_ERROR_GUARDS_2026-10-04.md. One PR, independent review, CI green.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R147",
+    "D-090-R149"
+   ],
+   "required_harness": "One PR; a different agent's PASS at the exact head; all checks SUCCESS before merge.",
+   "required_evidence": "The PR, its review record and rollup.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R151",
+   "text": "Report to the owner in plain, simple English: how many of E1-E20 are protected and tested; which ones still need building; anything found where our own app makes the same mistake.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R150"
+   ],
+   "required_harness": "The reply carries the three items with counts and names, generated from the merged table.",
+   "required_evidence": "The chat reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R152",
+   "text": "Correct the gap plan (#424): a basic floor-by-floor table already exists (building_option.py); the plan must say so and reuse it; what remains missing is detailed apartment layouts, building-core calculations, and deduction/unit schedules.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R144"
+   ],
+   "required_harness": "The gap plan's scenario-pages row and step 11 name the existing table and the remaining pieces; the reviewer re-checks building_option.py.",
+   "required_evidence": "docs/plans/ACCURATE_FEASIBILITY_REPORT_GAP_PLAN_2026-10-04.md (corrected).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R153",
+   "text": "Correct the gap plan (#424): withdraw two unfair criticisms of the sample - page 8 already shows the apartment (unit) calculation; page 16 distinguishes the floor area allowed (2.40 FAR) from what the proposed design uses (2.30), and different figures are not automatically contradictory.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R144",
+    "D-090-R143"
+   ],
+   "required_harness": "Section 3 of the gap plan no longer lists the 2.40/2.30 figures as a contradiction and does not say the sample asserts a unit count 'on its own'.",
+   "required_evidence": "docs/plans/ACCURATE_FEASIBILITY_REPORT_GAP_PLAN_2026-10-04.md (corrected).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R154",
+   "text": "Correct the gap plan (#424): steps that need the owner's approval must not be called 'unblocked' - step 4 needs the owner's yes on #405 and step 6 depends on lifting #388's hold; fix the wording wherever it appears.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R144"
+   ],
+   "required_harness": "No step needing an owner decision is described as unblocked; the critical-path block names the approvals.",
+   "required_evidence": "docs/plans/ACCURATE_FEASIBILITY_REPORT_GAP_PLAN_2026-10-04.md (corrected).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R155",
+   "text": "Correct the gap plan (#424): sources and passing tests make mistakes easier to trace; they do not guarantee accuracy and do not eliminate every way an inaccurate number can reach a report; professional review remains necessary. Replace the overreaching sentence(s).",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R144",
+    "D-090-R142"
+   ],
+   "required_harness": "The gap plan's accuracy section states traceability, not elimination, and keeps the professional-review requirement.",
+   "required_evidence": "docs/plans/ACCURATE_FEASIBILITY_REPORT_GAP_PLAN_2026-10-04.md (corrected).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R156",
+   "text": "Fix the #417 defect: app/contracts/engine_disclosures.py composes the overlay, special-district and within-100-feet statements without reading the actual values, so a schema-valid result can carry false disclosure text (overlay or special district true with a statement saying none applies; within-100-feet false with a statement saying the lot is within 100 feet). Each statement must follow the actual value; add tests with non-default flags (the Northern fixture's matching defaults hid the defect). Extends DB-126.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R139",
+    "D-090-R138"
+   ],
+   "required_harness": "Tests on #417's branch exercise overlay true, special district true, within-100-feet false (and the defaults) and assert each statement matches its value; the existing Northern journey tests stay green.",
+   "required_evidence": "#417 branch commits and its re-review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R157",
+   "text": "Review records are posted from the shared GitHub account; separate reviewer identities cannot be authenticated from GitHub alone (the owner's reviewer's observation). The records remain the agents' returns saved verbatim by the orchestrator; no process change is made on this message.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [],
+   "required_harness": "Recorded; any change to how reviewer identity is evidenced is a separate owner decision.",
+   "required_evidence": "This source file.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R158",
+   "text": "Priority (the reviewer's recommendation): correct the statements, reuse what already exists, and concentrate on producing one complete, clearly labelled DRAFT report for one lot and one building option; multiple programs, detailed apartment layouts and financial analysis come later.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R142",
+    "D-090-R152"
+   ],
+   "required_harness": "The next build packets target the single draft report path (results route, report builder, PDF) within the existing approvals.",
+   "required_evidence": "The orchestrator's plan and dispatch records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R159",
+   "text": "Approval requirements and production switches stay unchanged: #369, #377, #382, #405 remain open awaiting the owner's yes; #388 remains held (see R145); workflow files and production-switch configuration unchanged, lane/study defaults off.",
+   "source_ref": "source-025-amendment.md#owner-message-57-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R136",
+    "D-090-R125"
+   ],
+   "required_harness": "No Lane A merge, no workflow file change, no flag default change on this message.",
+   "required_evidence": "The PR list and the unchanged workflow/config files.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

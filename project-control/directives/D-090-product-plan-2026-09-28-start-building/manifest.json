@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-04T07:28:52+00:00",
+ "updated_at": "2026-10-04T08:25:25+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -165,10 +165,25 @@
   "D-090-R141",
   "D-090-R142",
   "D-090-R143",
-  "D-090-R144"
+  "D-090-R144",
+  "D-090-R145",
+  "D-090-R146",
+  "D-090-R147",
+  "D-090-R148",
+  "D-090-R149",
+  "D-090-R150",
+  "D-090-R151",
+  "D-090-R152",
+  "D-090-R153",
+  "D-090-R154",
+  "D-090-R155",
+  "D-090-R156",
+  "D-090-R157",
+  "D-090-R158",
+  "D-090-R159"
  ],
- "requirements_id_digest_sha256": "7788a6d0d4d73bb65b6fa3315cf115f2d90dfdcebeca9d1b71ac6003ced3a667",
- "requirements_content_digest_sha256": "5447bb5f59adfa08661a6b18bd4badd1f4595d21f1ed641f9188eba5df511bac",
+ "requirements_id_digest_sha256": "c639b5d52c53d4b4fd3bf8dd14ceb237d7084a5662c939193676ff715a4c3a5d",
+ "requirements_content_digest_sha256": "90c8eaa4aed61772e52f12fcbab3fa6f670c327f20f6965a47c52dc2a3a0b531",
  "sources": [
   {
    "file": "source-001.md",
@@ -360,6 +375,14 @@
    "recorded_at": "2026-10-04T07:28:52+00:00",
    "content_digest_sha256": "4f52df9130a48505e2bc0e68ac98d7fe942091de2e781091863def303f389ee4",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-025-amendment.md",
+   "kind": "amendment",
+   "sequence": 25,
+   "recorded_at": "2026-10-04T08:25:25+00:00",
+   "content_digest_sha256": "96735fd6dc9171bac812ead2334bfb289e02f39bf86359afb7a9f50ccdb5dfa1",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -385,7 +408,8 @@
   "source-021-amendment.md",
   "source-022-amendment.md",
   "source-023-amendment.md",
-  "source-024-amendment.md"
+  "source-024-amendment.md",
+  "source-025-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -568,6 +592,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-024 (session 4d3637bc messages 55-56, 2026-10-04: the owner's competitor sample PDF as the kind of report an architect must get back; the sample has errors per the owner; 'what do we still need to add to get back a PDF like this, but accurately') and requirements D-090-R142..R144, all pending. Text extracted by script from the transcript (message 56 from a queued_command attachment); nothing retyped; no existing row edited. Capture session: 4d3637bc, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T08:25:25+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-025 (session 4d3637bc message 57, 2026-10-04: the #388 hold question (conditional, not met); the owner's five error groups in the competitor sample; the competitor-error guard-check task E1-E20; two forwarded reviewer assessments with gap-plan corrections and the #417 false-disclosure defect) and requirements D-090-R145..R159, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited. Capture session: 4d3637bc, claude-fable-5-1."
   }
  ]
 }
