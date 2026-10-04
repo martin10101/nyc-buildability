@@ -274,12 +274,16 @@ and every **`workflow_dispatch`** run. Nothing that validates a mergeable change
 
 Every job still runs **on the pull_request merge ref before merge** (the load-bearing run — the one
 `statusCheckRollup` and Option B already rely on) **and on the `candidate/**` + `main` push after
-merge** (post-merge validation of the integration branch) **and on the daily `scheduled-audit` /
-`scheduled-web-audit`**. So "audited on every change / on every change that can merge" holds:
-pre-merge (PR) + post-merge (integration push) + schedule. `control-plane` (ADR-005), `modularity`,
-`supervisor-bridge`, `supervisor-linux-containment`, and all dependency-security jobs still run on
-every PR and every integration push. No gate is weakened, suppressed, or made warning-only; all stay
-fail-closed.
+merge** (post-merge validation of the integration branch). The **daily** scheduled runs do **not**
+re-run the whole suite: `scheduled-audit.yml` (06:17 UTC) runs only the Python dependency audit —
+pip-audit over `services/api/requirements.txt` and the tooling lock plus the release-age gate — and
+`scheduled-web-audit.yml` (06:41 UTC) runs only the web npm audit + committed-lockfile age gate +
+npm-CLI advisory check and the `tools/codex_cli` re-audit. No `web-e2e`, `control-plane`,
+`supervisor-*`, `api`, or other ci.yml job runs on the schedule. So the dependency-security
+obligation is met pre-merge (PR) + post-merge (integration push) + daily schedule, while every other
+gate — `control-plane` (ADR-005), `modularity`, `supervisor-bridge`, `supervisor-linux-containment` —
+is met on every PR and every integration push. No gate is weakened, suppressed, or made
+warning-only; all stay fail-closed.
 
 ### Coverage table — each requirement → the run that satisfies it after the change
 
@@ -309,21 +313,44 @@ schedule. Policy wording is quoted exactly.
 
 ### What it stops validating (exact)
 
-**Exactly one thing stops being tested: a branch pushed with no open PR.** Today the bare `push:`
-gives such a branch a heavy CI run; after the change it gets none until a PR exists. This cannot
-affect a mergeable change, because under Option B **nothing reaches `main` or an integration branch
-except through a PR**: the orchestrator merges only via `gh pr merge --merge --match-head-commit
-<head>`, which requires an open PR, and only after reading all-checks-green on that PR's head
-(`statusCheckRollup`). A branch with no PR therefore cannot merge and cannot alter the shared tree.
-The moment a PR is opened (`gh pr create`) the pull_request run fires, so the only gap is the
-seconds-to-minutes window between first push and PR creation. The literal phrase "on every push" in
-the dependency policy is thereby narrowed to "every push **to a merge-target branch** + every pull
-request + the daily schedule" — the one wording point the owner must bless (Tier B).
+**Two coverage changes, stated exactly.**
+
+**(1) A branch pushed with no open PR loses its heavy CI run.** Today the bare `push:` gives such a
+branch a full CI run; after the change it gets none until a PR exists. This cannot affect a mergeable
+change, because under Option B **nothing reaches `main` or an integration branch except through a
+PR**: the orchestrator merges only via `gh pr merge --merge --match-head-commit <head>`, which
+requires an open PR, and only after reading all-checks-green on that PR's head (`statusCheckRollup`).
+A branch with no PR therefore cannot merge and cannot alter the shared tree. The moment a PR is
+opened (`gh pr create`) the pull_request run fires, so the only gap is the seconds-to-minutes window
+between first push and PR creation.
+
+**(2) An open PR's branch loses its raw-head push run; only the merge-ref (pull_request) run
+remains.** Today a commit on a PR branch gets two runs — the raw-head push run and the
+`refs/pull/N/merge` run (§4); after the change only the merge-ref run survives. The merge-ref run is
+the load-bearing one Option B reads (§5), but the raw head and the merge ref are different trees once
+the base has advanced. So a failure that would appear **only on the raw head and not on the merge
+ref** is no longer caught at push time; it would surface only after the change merges, on the
+post-merge `candidate/**` push run (which still runs every job). This is a real reduction in
+pre-merge coverage of the raw-head tree, not merely a redundant copy removed.
+
+### Policy change required (not just a trigger tweak)
+
+The dependency-security policy currently requires (DEPENDENCY_SECURITY_POLICY §1.5 item 5, quoted
+exactly): "**Audited on every change AND on a schedule.** A blocking advisory audit runs on every
+push and pull request that can affect the tree, and again on a daily schedule so an advisory
+disclosed AFTER a lock lands turns the run red without any code change." This proposal **narrows**
+that literal wording — from "every push … that can affect the tree" to "every push **to a
+merge-target branch** + every pull request + the daily schedule." It therefore does **not** preserve
+coverage unchanged: per change (2) above, the raw-head push run on PR branches is dropped. Adopting
+it requires the policy text to be **amended** and the owner to **accept the disclosed coverage/policy
+change** (Tier B) — not merely bless a wording point.
 
 ### Risks
 
-1. Literal "on every push" reading of the dep policy — owner decision (Tier B). Intent ("every change
-   that can affect the tree") is preserved.
+1. Literal "on every push" reading of the dep policy is **narrowed**, so the policy text must be
+   amended and the owner must accept it as a policy change (Tier B — see "Policy change required").
+   The intent ("every change that can affect the tree before it can merge") is preserved, but
+   raw-head coverage on PR branches is reduced (loss (2)).
 2. A feature-branch push shows no CI until its PR is opened; mitigated because the process always
    opens a PR and nothing merges without one.
 3. Relies on pull_request-run checks attaching to the head (verified in §5 via `statusCheckRollup`).
@@ -333,15 +360,17 @@ request + the daily schedule" — the one wording point the owner must bless (Ti
 **Structural side effect (not a demonstrated fix):** with `push` gone on PR branches there is exactly
 **one** ci.yml run per PR head, so the "two concurrent runs of the same commit" condition no longer
 arises. Whether that condition *caused* the DB-111 Windows flakes is an unproven hypothesis (§4a);
-the case for this proposal rests on the measured minutes saved and the preserved coverage, not on
-that hypothesis.
+the case for this proposal rests on the measured minutes saved and the preserved merge-gating
+coverage (with the disclosed raw-head narrowing — see "Policy change required"), not on that
+hypothesis.
 
 ### How it is reviewed
 
 Tier B hot-file change to `.github/workflows` (Lane C owns `.github/**`). A different reviewer
 confirms the `branches:` filter matches every merge-target branch pattern actually in use (`main`,
-`candidate/**`) and that no lane/task branch is ever a merge target; the owner blesses the narrowed
-"on every push" wording; the orchestrator merges via the normal Option B flow. Branch protection is
+`candidate/**`) and that no lane/task branch is ever a merge target; the owner **accepts the
+narrowed "on every push" wording as a policy change** and DEPENDENCY_SECURITY_POLICY §1.5 item 5 is
+amended accordingly; the orchestrator merges via the normal Option B flow. Branch protection is
 absent, so no required-check contract is affected.
 
 ---

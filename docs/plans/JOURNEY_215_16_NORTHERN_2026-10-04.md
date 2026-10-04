@@ -26,20 +26,27 @@ the smallest task that closes the gap with its dependencies. Queue ids are from
 
 ### Link 1 — Real address → BBL
 
-- **Proven:** the `GET /api/v1/address-resolution` route is mounted
-  (`services/api/app/main.py:163`) and returns 200; `lot-geometry` is mounted
-  (`main.py:173`).
-- **Missing / stubbed (SYNTHETIC):** the resolver is a synthetic test seam
-  (`apps/web/e2e/harness/fixture_api.py:372` `harness_address_resolver`, map at `:362`):
-  "Northern Boulevard" returns the default BBL `1008350041`, **not** the benchmark
-  `4073340070`. No task ever wired a real address→BBL step, so the address flow and the
-  benchmark study flow are separate. The on-card lot outline seam has no feature for the
-  benchmark BBL (`lot_geometry.json` → `no_outline`, `fixture_api.py:313`).
-- **Smallest task (PROPOSED "B-addr", Lane B + Lane C wiring):** record an official
-  address→BBL source (fixtures + connector) and serve it through the mounted
-  address-resolution route. **Depends on:** an owner/research decision on *which* official
-  geocoder (the lane plan is silent here — see §3). Until then the address step stays
-  synthetic.
+- **Proven:** a real Geoclient v2 `/address` connector exists
+  (`services/api/app/connectors/geoclient_address.py`, M2-T021) and the
+  `GET /api/v1/address-resolution` route is mounted (`services/api/app/main.py:163`)
+  behind the EXISTING default-off `INTERNAL_RULE_EVAL_ENABLED` flag and returns 200;
+  `lot-geometry` is mounted (`main.py:173`).
+- **Missing / stubbed (SYNTHETIC in this walkthrough):** the walkthrough drove the route
+  through a synthetic test seam (`apps/web/e2e/harness/fixture_api.py:372`
+  `harness_address_resolver`, map at `:362`, injected via
+  `dependency_overrides[get_address_resolver]` at `:564`): "Northern Boulevard" returns the
+  default BBL `1008350041`, **not** the benchmark `4073340070`. The real Geoclient connector
+  and route (above) already exist; the walkthrough used the test seam, so the real connector
+  was not exercised and the address flow and the benchmark study flow are separate in this
+  test setup. The on-card lot outline seam has no feature for the benchmark BBL
+  (`lot_geometry.json` → `no_outline`, `fixture_api.py:313`).
+- **Smallest task (PROPOSED "B-addr", Lane B/C wiring):** record an official Geoclient
+  `/address` fixture for the benchmark address and exercise the **existing** connector +
+  mounted route on the recorded path (enabling the flag), so the address step resolves the
+  benchmark BBL instead of the synthetic default. **Depends on:** no owner wording decision —
+  the geocoder (Geoclient v2) and the route already exist; a live call would additionally need
+  the `GEOCLIENT_SUBSCRIPTION_KEY` secret, but the recorded-fixture path does not. Until the
+  fixture + wiring land, the walkthrough's address step stays synthetic.
 
 ### Link 2 — Lots selected
 
@@ -72,11 +79,18 @@ the smallest task that closes the gap with its dependencies. Queue ids are from
   `lot_type` reads **unknown** (link 2); **no frontage / street-width fact** in the study
   read (B-04 built, not surfaced — a real gap for a corner lot); 22 of 24 flags are
   `check_needed` (no connected source).
-- **Smallest task (B-05 wiring + B-04 wiring, PROPOSED Lane C slices):** (a) wire the B-05
-  DOB-filing / certificate rows into the study provider so the existing-floor-area fact
+- **Smallest task (B-05 wiring + street-width wiring, PROPOSED Lane C slices):** (a) wire the
+  B-05 DOB-filing / certificate rows into the study provider so the existing-floor-area fact
   carries a sourced value (or stays honestly unknown with the rows attached); (b) surface
-  B-04 street width per frontage into the study read. **Depends on:** B-05 (done), B-04
-  (done), link 2 for the frontage geometry.
+  street width per frontage into the study read by **connecting the existing envelope fetch to
+  the geometry wrapper (reuse — no new connector)**: the EPSG:2263 intersects-envelope
+  predicate already exists (`dcm_street_centerline_arcgis.py`) and the benchmark pack already
+  carries the recorded envelope query (`dcm_street_centerline_lot_envelope_4073340070.json`);
+  what is missing is wiring that fetch plus the geometry page parser
+  (`dcm_street_centerline_geometry.parse_segment_geometry_page`) into the existing
+  `street_data_from_pages` wrapper (`app/spatial/site_geometry`), then threading its result
+  into the study read. **Depends on:** B-05 (done), the street-centerline envelope
+  fetch/parser/wrapper (all done), link 2 for the frontage geometry.
 
 ### Link 4 — Study
 
@@ -140,13 +154,17 @@ the smallest task that closes the gap with its dependencies. Queue ids are from
 ### Link 7 — Available exports
 
 - **Proven (REAL):** the SVG site plan and massing (`app.drawings.kit`, E-01, #263) and
-  the results DXF (`app.cad.results_dxf`, E-03, #268 — 4 layers, 9 notes, AutoCAD-opening,
-  carries the not-a-survey note) are generated and cross-checked vertex-for-vertex against
-  the results geometry (`results.dxf`, `dxf_meta.json`). All behind `LANE_E_ENABLED` (off).
-- **Missing / stubbed (INCOMPLETE):** location/zoning maps (E-07, #286) need a
-  `map_context` block the three-answer results do not carry (`MapInputError`). The report
-  PDF (E-02 converter trial — WeasyPrint vs headless Chromium — not built), the E-04
-  ReportModel report and the E-05 Excel mirror are not built.
+  the results DXF (`app.cad.results_dxf`, E-03, #268 — 4 layers, 9 notes, structurally valid
+  per an independent group-code reader, carries the not-a-survey note) are generated and
+  cross-checked vertex-for-vertex against the results geometry (`results.dxf`, `dxf_meta.json`);
+  the tests prove the file's structure, not that AutoCAD opens it
+  (`services/api/tests/cad/test_results_dxf.py` docstring). All behind `LANE_E_ENABLED` (off).
+- **Missing / stubbed (INCOMPLETE):** the location/zoning map **renderers exist** (E-07,
+  #286 — `app.drawings.maps.render_location_map` / `render_zoning_map`, `load_map_context`);
+  they are simply **not connected** to the results/study document for this lot — the
+  three-answer results carry no `map_context` block, so `load_map_context` raises
+  `MapInputError`. Separately, the report PDF (E-02 converter trial — WeasyPrint vs headless
+  Chromium), the E-04 ReportModel report and the E-05 Excel mirror are not built.
 - **Smallest task (E-02, queue row):** run the PDF converter trial on the benchmark lots
   and choose a converter. **Depends on:** the dependency-security gate (7-day age, zero
   advisories, G5) and a Render runtime check — an **owner item** (the WeasyPrint/Chromium
@@ -173,10 +191,12 @@ engine has no field for it. The pieces and their exact order:
    the matching-field search returns empty). So `generate_results` returns the **identical**
    result for "keep" and "remove", and `remaining_floor_area` is **always** `not_available`
    ("Needs verified zoning-lot boundaries and existing zoning floor area.").
-4. **Contract slot — MISSING** (`packages/contracts/schemas/v1/evaluator_inputs.schema.json`).
-   The governing inputs are lot area, frontage, depth, lot type, zoning district only —
-   there is no existing-floor-area or keep/remove slot. Adding one is an additive
-   `contract_version` bump owned by Lane C.
+4. **Contract slot — MERGED as an inert slot**
+   (`packages/contracts/schemas/v1/evaluator_inputs.schema.json`, evaluator_inputs 1.1.0, #391,
+   journey wave 1 item 4). The additive existing-floor-area + keep/remove slot was added as a
+   `contract_version` bump owned by Lane C; it is inert (flag-off) until the A-07 rule consumes
+   it. Before #391 the governing inputs were lot area, frontage, depth, lot type, zoning
+   district only.
 5. **A-07 rule step (ZR 54-41 existing buildings §5b):**
    - **step 1** — pinned ZR snapshots (54-41, 54-40, 11-23; source text only, no rule, no
      interpretation) in **PR #382, OPEN**, Lane A, merge needs the owner's yes.
@@ -186,15 +206,18 @@ engine has no field for it. The pieces and their exact order:
    - **step 3** — the engine consumes it so "keep" keeps more floor area than "full
      rebuild" on this benchmark (M2-08 done-when).
 
-**Exact order:** (a) merge PR #382 (owner's yes) → (b) wire B-05 into the study provider so
-the existing-floor-area fact carries a value (link 3) → (c) add the existing-FA +
-keep/remove governing slot to the evaluator_inputs contract (Lane C, additive, flag-off) →
-(d) add the matching field to `ThreeAnswerInputs` (Lane A, inert until the rule) → (e) write
-the A-07 draft rule → (f) the engine consumes keep/remove so the answer differs and
-remaining capacity can compute → (g) surface it in the D-11 keep/partial/full-rebuild
-comparison UI. Remaining capacity still stays "Not confirmed" until **both** a verified
-zoning lot (a professional step — the app does not verify it) **and** a sourced existing
-zoning floor area are present (owner D-090-R038), and until the rules pass G6.
+**Exact order (as executed and merged — the additive/inert wiring did NOT wait for PR #382;
+#382's merge gates only the A-07 rule step):** the independent, flag-off wiring landed first and
+in any order — (a) the evaluator_inputs existing-FA + keep/remove governing slot (Lane C,
+additive, flag-off) **merged as #391**; (b) the B-03 site geometry → study read (lot type,
+frontage, depth) **merged as #390**, with the B-05 existing-floor-area → study-provider wiring
+(link 3) and the C-07 study-read → engine bridge (link 5) **in flight**; (c) the matching inert
+field on `ThreeAnswerInputs` (Lane A, inert until the rule). Then, **gated on PR #382's merge
+(owner's yes)**: (d) the A-07 draft rule → (e) the engine consumes keep/remove so the answer
+differs and remaining capacity can compute → (f) surface it in the D-11 keep/partial/full-rebuild
+comparison UI. Remaining capacity still stays "Not confirmed" until **both** a verified zoning lot
+(a professional step — the app does not verify it) **and** a sourced existing zoning floor area are
+present (owner D-090-R038), and until the rules pass G6.
 
 ---
 
@@ -206,12 +229,12 @@ covers. "Owner decision needed" names the specific gate.
 | Task | Depends on | Lane | Owner decision needed? | Authorized under lane plan? |
 |---|---|---|---|---|
 | B-03 geometry → study read (lot type, frontage, depth) | B-03 (done) | C | No | Partly — D-1 named it a later slice; no discrete row |
-| B-04 street width → study read | B-04 (done), B-03 wiring | C | No | Partly — D-1 later slice |
+| Street width → study read (connect existing envelope fetch → `street_data_from_pages` wrapper; reuse) | envelope fetch/parser/wrapper (all done), B-03 wiring | C | No | Partly — D-1 later slice |
 | B-05 existing-FA → study provider | B-05 (done) | C | No | Partly — implied by the study read; no discrete row |
 | evaluator_inputs existing-FA + keep/remove slot | C-07 (done) | C | No (DB-113 assumption-override is tangential) | Yes — C-07 follow-up |
 | `ThreeAnswerInputs` existing-FA + keep/remove field | A-04 (done) | A | No | Yes — under A-07 |
 | C-07 adapter bridges the live read | B-03 wiring, C-07 (done) | C | No | Yes — queue C-07 (gap named) |
-| Real address → BBL (proposed B-addr) | — | B | **Yes — which official geocoder source (plan silent)** | No — no queue row |
+| Real address → BBL (proposed B-addr) | Geoclient connector M2-T021 + route M2-T022 (both done) | B/C | No — geocoder (Geoclient v2) + route already exist; needs a recorded fixture + flag, not an owner choice | No — no queue row |
 | A-07 existing buildings §5b rule | A-04 (done), B-05 (done), PR #382 | A | **Yes — owner's yes to merge PR #382; G6/Q12 for the rule** | Yes — queue A-07 |
 | C-08 mount results route | A-04 (done), C-07 | C | **Yes — golden record M1-05 (Q1 pilot + Q12 reviewer)** | Yes — queue C-08 (blocked) |
 | C-11 recorded-fixture CI journey | C-08, E-03 (done), E-04 | C | Inherits C-08 (M1-05) and E-04 (E-02) | Yes — queue C-11 |
@@ -241,11 +264,11 @@ it. "What works now" first, then the assumptions / missing connections.
 **Remaining assumptions / missing connections:**
 | Item | Label | Task that removes it |
 |---|---|---|
-| Address resolution → the benchmark BBL | SYNTHETIC | proposed B-addr (geocoder — owner source decision) |
+| Address resolution → the benchmark BBL | SYNTHETIC (walkthrough seam) | proposed B-addr: record a Geoclient fixture + exercise the existing connector/route (no owner geocoder choice) |
 | On-card lot outline for this BBL | INCOMPLETE | D-040 lot-outline increment (MapPLUTO) |
 | `lot_type` (PLUTO code 3 unverified; not a zoning-lot type) | INCOMPLETE / NEEDS PROFESSIONAL VERIFICATION | B-03 geometry → study read (link 2) |
 | `existing_zoning_floor_area` (unknown; no DOB rows wired) | INCOMPLETE | B-05 → study provider (link 3) |
-| Frontage / street width (absent from the study read) | INCOMPLETE | B-04 → study read (link 3) |
+| Frontage / street width (absent from the study read) | INCOMPLETE | connect the existing envelope fetch to the `street_data_from_pages` wrapper (reuse) → study read (link 3) |
 | 22 of 24 hidden-issue flags `check_needed` | INCOMPLETE | B-09 connectors (owner-queued) / reviewer / survey |
 | Zoning-lot statement ("app does not verify the zoning lot") | NEEDS PROFESSIONAL VERIFICATION | ACRIS zoning-lot docs read + confirmed (not planned) |
 | Keep/remove in the engine | INCOMPLETE | §2 thread (A-07 + inputs.py + contract slot) |
@@ -253,7 +276,7 @@ it. "What works now" first, then the assumptions / missing connections.
 | `lot_type` / frontage used by the engine (fixture-sourced) | HARD-CODED | C-07 live feed (link 4/5) |
 | Rule status (all 6 `needs_review`, `draft:true`) | NEEDS PROFESSIONAL VERIFICATION | G6 qualified legal review |
 | Screen render for this lot (no mounted route) | INCOMPLETE | C-08 (M1-05 / Q1 / Q12) |
-| Maps (E-07) need a `map_context` block | INCOMPLETE | wire `map_context` into results (Lane E) |
+| Maps (E-07) renderers exist (#286) but not connected to the results/study | INCOMPLETE | connect the renderers: feed a `map_context` from the results/study (Lane E) |
 | Report PDF / Excel (E-02/E-04/E-05) | INCOMPLETE | E-02 trial (owner runtime) → E-04 → E-05 |
 | Durable storage / auth / production | INCOMPLETE | B-001 Supabase token (owner); C-08 mount |
 
@@ -267,7 +290,8 @@ be started** (D-090-R007 GO covers the queue rows but the named gates still hold
 **Wave 1 — unblocked wiring (no owner decision; join the links that already have the code):**
 1. [C] B-03 geometry → study read (lot type, frontage, depth from the outline) — closes the
    `lot_type: unknown` gap (link 2).
-2. [C] B-04 street width per frontage → study read (link 3), after #1.
+2. [C] street width per frontage → study read by connecting the existing envelope fetch to the
+   `street_data_from_pages` wrapper (reuse — no new connector), after #1 (link 3).
 3. [C] B-05 existing-floor-area (DOB rows) → study provider so the fact carries a value or
    stays honestly unknown with the rows attached (link 3 / §2 step 2).
 4. [C] evaluator_inputs contract: add the existing-FA + keep/remove governing slot
@@ -293,7 +317,7 @@ be started** (D-090-R007 GO covers the queue rows but the named gates still hold
 **Do not start (owner / human gates):** C-08 and the golden record (M1-05 / Q1 / Q12);
 A-07 rule and PR #382 merge (owner's yes + G6); A-05 merge (#369); C-06 slice 2 and E-04
 (durable storage B-001 token / Q7); D-02 (Q4); E-02 converter choice (Render runtime);
-the real address→BBL geocoder source; and the qualified legal review of every draft rule.
+and the qualified legal review of every draft rule.
 
 The honest shortest path to the journey the owner asked for runs through Wave-1 steps 1-6
 (which are unblocked and join address-less lot/fact/study/engine), then is **gated at the
