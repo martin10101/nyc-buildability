@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 162,
+ "requirement_count": 166,
  "producer": "orchestrator",
- "updated_at": "2026-10-04T08:44:45+00:00",
+ "updated_at": "2026-10-04T09:08:13+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -5513,6 +5513,142 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-04 (messages 58-59).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R163",
+   "text": "'On yes no I let u decide based on best for program': the owner delegates the Lane A per-PR yes/no (and like merge decisions) to the orchestrator, to be decided on what is best for the program. Supersedes the per-PR owner-yes rule for Lane A (R021-style) and R136/R159 for those merges. ORCHESTRATOR'S READING: the Tier D hard stops (production approval, payments, secrets, paid accounts) stay with the owner; every merge still needs a different agent's PASS at the exact head and every check green.",
+   "source_ref": "source-027-amendment.md#owner-message-62-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R162",
+    "D-090-R159"
+   ],
+   "required_harness": "Each Lane A merge records the orchestrator's decision and its reason in the PR; the review-and-green rule is unchanged.",
+   "required_evidence": "The PR merge records for #369, #377, #382, #405 and later Lane A PRs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 62, after the sizing and the 50-agent question).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R164",
+   "text": "'no professional review stop asking for that we just put a label on website 1 time that it needs to be reviewed our part is we leave a paper trail and links directly to the zoning low for each stat etc thats it stop bugging out about it since we are building it with data from source and if program is not sure it says so': the qualified-reviewer approval (G6) is no longer a gate the orchestrator asks the owner for, and no agent asks for it again; in its place a one-time, always-visible website (and report) label that the results need professional review, a paper trail linking every stat directly to the zoning-law text, and the program saying plainly when it is not sure. ORCHESTRATOR'S READING: this amends CLAUDE.md principles 1, 12, 13 and the Section 20 / Tier D legal-approval stop; recorded by an ADR and a CLAUDE.md edit under this directive, independently reviewed. No compliance declaration is permitted by it; the draft register stays.",
+   "source_ref": "source-027-amendment.md#owner-message-62-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R142",
+    "D-090-R155"
+   ],
+   "required_harness": "An ADR and the CLAUDE.md amendment merged after independent review; no later owner update asks for professional review.",
+   "required_evidence": "docs/adr/ADR-007 (or next number) and the CLAUDE.md diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 62, after the sizing and the 50-agent question).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R165",
+   "text": "Build what R164 names: (a) a one-time, always-visible label on the website and on every exported report that the results need professional review; (b) a paper trail with a direct link to the zoning-law text for every stat (each value's ZR section resolves to the captured, pinned source and the official page); (c) the program says plainly when it is not sure (fail closed to a labelled 'not known' / 'not covered', never a guess), on every surface: cards, drawings, exports, reports.",
+   "source_ref": "source-027-amendment.md#owner-message-62-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R164",
+    "D-090-R142"
+   ],
+   "required_harness": "Tests: the label is present on every surface and export; every printed value carries a resolvable ZR link; unknown or uncovered inputs render as 'not known' / 'not covered' with the reason.",
+   "required_evidence": "The surface tests and the report fixture.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 62, after the sizing and the 50-agent question).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R166",
+   "text": "'we are not narrow ing the target we going to work on it all at once': the target is every property type in NYC (R1-R12, commercial and manufacturing districts, flood zones, special districts and the other overlays) worked in parallel, not a narrowed first district. Supersedes the orchestrator's 'narrow the first target' suggestion and the D-045-R008 one-reviewed-family-at-a-time sequencing. ORCHESTRATOR'S READING: parallel waves at the agent width the owner permits (the orchestrator offered 16: 8 writers + 8 reviewers, and runs at that width unless told otherwise); review-per-change, green CI and fail-closed merges unchanged.",
+   "source_ref": "source-027-amendment.md#owner-message-62-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R142",
+    "D-090-R163"
+   ],
+   "required_harness": "The replan lists every district family / overlay as a parallel packet with its owning lane; waves dispatched at the permitted width; each packet reviewed and merged on its own.",
+   "required_evidence": "The replan document and the dispatch records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 62, after the sizing and the 50-agent question).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

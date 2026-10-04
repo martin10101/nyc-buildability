@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-04T08:44:45+00:00",
+ "updated_at": "2026-10-04T09:08:13+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -183,10 +183,14 @@
   "D-090-R159",
   "D-090-R160",
   "D-090-R161",
-  "D-090-R162"
+  "D-090-R162",
+  "D-090-R163",
+  "D-090-R164",
+  "D-090-R165",
+  "D-090-R166"
  ],
- "requirements_id_digest_sha256": "89e5207583211de5c8a0631c70522c5acc8bb60687c06436e17f1a6eca912d25",
- "requirements_content_digest_sha256": "2357028e7f882560f3fa229fca3c224e206180168c3055fff612e36797bf2b00",
+ "requirements_id_digest_sha256": "b1703878d110b11180de83aa42884c0ea29a4f07cde22c4d8adedd3fa94fe5e8",
+ "requirements_content_digest_sha256": "3a05b7d5631e01d6443725444cb82acb3ba374d140db931e3d20fd44bc901649",
  "sources": [
   {
    "file": "source-001.md",
@@ -394,6 +398,14 @@
    "recorded_at": "2026-10-04T08:44:45+00:00",
    "content_digest_sha256": "2f67d66c0dbcbc59f5041e6dacc3d8f782d777f1728ed23c8d2241018e9b1edf",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-027-amendment.md",
+   "kind": "amendment",
+   "sequence": 27,
+   "recorded_at": "2026-10-04T09:08:13+00:00",
+   "content_digest_sha256": "7d4af6b32e3823aa328b3d81d3505a88a54208e2641407b5304fc90156f72558",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -421,7 +433,8 @@
   "source-023-amendment.md",
   "source-024-amendment.md",
   "source-025-amendment.md",
-  "source-026-amendment.md"
+  "source-026-amendment.md",
+  "source-027-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -616,6 +629,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-026 (session 4d3637bc messages 58-59, 2026-10-04: plain human language; the Geoclient key is set in Render; yes to merge #388) and requirements D-090-R160..R162, all pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: 4d3637bc, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T09:08:13+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-027 (session 4d3637bc messages 60-62, 2026-10-04: the orchestrator decides Lane A yes/no; no professional-review gate, a one-time website label plus a paper trail with direct zoning-law links; not narrowing the target, all districts at once) and requirements D-090-R163..R166, all pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: 4d3637bc, claude-fable-5-1."
   }
  ]
 }
