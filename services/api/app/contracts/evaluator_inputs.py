@@ -75,12 +75,34 @@ from app.scenario.three_answers import BuildingDefaults, ThreeAnswerInputs
 
 __all__ = [
     "CONTRACT_VERSION",
+    "CONTRACT_VERSION_WITH_EXISTING_BUILDING",
     "EvaluatorInputsError",
     "build_evaluator_inputs",
     "build_three_answer_inputs",
 ]
 
 CONTRACT_VERSION = "1.0.0"
+# Declared only when the additive, INERT existing_building slot is filled (journey plan
+# §2 step 4, wave 1 item 4; D-090-R109). Absent/null slot keeps the 1.0.0 shape.
+CONTRACT_VERSION_WITH_EXISTING_BUILDING = "1.1.0"
+
+# The site_fact key the existing-building slot is built from (B-05). Deliberately NOT in
+# _SITE_KEY_TO_ENGINE_KEY: existing floor area is carried in the slot, never as a
+# ThreeAnswerInputs scalar (INERT until Lane A adds the field and the A-07 rule).
+_EXISTING_ZFA_KEY = "existing_zoning_floor_area"
+
+# The keep/remove plan is always architect-entered: the measurement vocabulary's
+# architect-entry tie (rank 'entered' / label 'Entered'), never a city source.
+_EXISTING_BUILDING_PLAN_BASIS = "entered"
+_EXISTING_BUILDING_PLAN_LABEL = "Entered"
+
+# Plain-words label per closed plan value, mirroring apps/web existing-building-view
+# EXISTING_BUILDING_PLAN_LABELS (study.schema.json existing_building_plan vocabulary).
+_EXISTING_BUILDING_PLAN_STATEMENTS = {
+    "no_existing_building": "No existing building",
+    "keep": "Keep the existing building",
+    "remove": "Remove the existing building",
+}
 
 # site_fact key -> the ThreeAnswerInputs field the evaluator_inputs record fills. Only
 # the measurable site values the evaluator consumes as scalars; commercial_overlay,
@@ -210,8 +232,72 @@ def _weakest_rank(ranks: Sequence[str]) -> str:
     return max(ranks, key=_RELIABILITY_ORDER.index)
 
 
-def build_evaluator_inputs(study: dict, option_id: str) -> dict:
-    """Build and validate the evaluator_inputs v1 document for one option of ``study``.
+def _existing_floor_area_record(fact: dict) -> dict:
+    """The existing-building slot's floor-area record from one existing_zoning_floor_area
+    site fact (B-05), carrying its rank/label/source VERBATIM (the site_fact vocabulary)
+    plus B-05's ``note`` - the tax-lot scope statement when known, the reason when unknown.
+    A known fact governs (``governing`` True); an unknown fact is carried explicitly
+    (``governing`` False, value/unit/source_kind null) so an unknown value stays visible and
+    is never silently dropped."""
+    rank = fact["measurement"]["rank"]
+    known = rank != "unknown"
+    source = fact["source"]
+    return {
+        "key": _EXISTING_ZFA_KEY,
+        "value": fact["value"],
+        "unit": fact["unit"],
+        "fact_id": fact["fact_id"],
+        "rank": rank,
+        "label": fact["measurement"]["label"],
+        "source_kind": source["kind"] if source is not None else None,
+        "governing": known,
+        "note": fact.get("note"),
+    }
+
+
+def _resolve_existing_floor_area(study: dict) -> tuple[dict | None, bool]:
+    """``(floor_area record or None, has_known)`` for the study's existing-building slot.
+
+    The governing existing-floor-area record is chosen from the study's
+    ``existing_zoning_floor_area`` facts by the SAME source order the engine inputs use
+    (:func:`_resolve_group`), so a stated assumption governs ONLY when no city source
+    exists and a conflict (an assumption beside a recorded value, or two same-rank facts
+    disagreeing) is raised, never resolved silently. A lone unknown fact is carried
+    explicitly (``has_known`` False); no existing_zoning_floor_area fact at all gives
+    ``(None, False)``."""
+    facts = [f for f in study["site"]["facts"] if f["key"] == _EXISTING_ZFA_KEY]
+    if not facts:
+        return None, False
+    known = [f for f in facts if _is_known(f)]
+    if known:
+        governing, _displaced = _resolve_group(_EXISTING_ZFA_KEY, known)
+        return _existing_floor_area_record(governing), True
+    unknown_fact = sorted(facts, key=lambda f: f["fact_id"])[0]
+    return _existing_floor_area_record(unknown_fact), False
+
+
+def _existing_building_plan_record(plan: str) -> dict:
+    """The slot's plan record from the architect's keep/remove choice: architect-entered
+    only (basis ``entered`` / label ``Entered``), never a city source. The plain-words
+    statement mirrors the web step's closed vocabulary."""
+    if plan not in _EXISTING_BUILDING_PLAN_STATEMENTS:
+        raise EvaluatorInputsError(
+            f"existing_building_plan {plan!r} is not one of "
+            f"{sorted(_EXISTING_BUILDING_PLAN_STATEMENTS)} (study.schema.json "
+            "existing_building_plan vocabulary)"
+        )
+    return {
+        "value": plan,
+        "basis": _EXISTING_BUILDING_PLAN_BASIS,
+        "label": _EXISTING_BUILDING_PLAN_LABEL,
+        "statement": _EXISTING_BUILDING_PLAN_STATEMENTS[plan],
+    }
+
+
+def build_evaluator_inputs(
+    study: dict, option_id: str, *, existing_building_plan: str | None = None
+) -> dict:
+    """Build and validate the evaluator_inputs document for one option of ``study``.
 
     ``study`` is a (re-validated, fail-closed) study document; ``option_id`` names which
     option's evaluation these shared site facts feed. One governing record per engine
@@ -220,7 +306,15 @@ def build_evaluator_inputs(study: dict, option_id: str) -> dict:
     known site value to evaluate; an engine input resolves to more than one distinct fact
     (multi-street / split-district, out of scope); a stated assumption sits beside a
     sourced or entered value for the same input; or two same-rank facts disagree on the
-    value for one input."""
+    value for one input.
+
+    ``existing_building_plan`` (keyword-only; one of the study.schema.json
+    existing_building_plan values, or None) is the architect's keep/remove choice. The
+    additive, INERT ``existing_building`` slot (contract 1.1.0, journey plan §2 step 4) is
+    filled - and the version bumped to 1.1.0 - when a plan is given OR the study carries a
+    KNOWN existing_zoning_floor_area fact; otherwise the output is BYTE-IDENTICAL to the
+    1.0.0 shape (no slot key emitted). The slot is INERT: it does not change
+    :func:`build_three_answer_inputs`, the engine_key enum, or any engine output."""
     validate_study_document(study)
 
     option_ids = [option["option_id"] for option in study["options"]]
@@ -264,8 +358,13 @@ def build_evaluator_inputs(study: dict, option_id: str) -> dict:
             "nothing to evaluate."
         )
 
+    floor_area, has_known_floor_area = _resolve_existing_floor_area(study)
+    fill_slot = existing_building_plan is not None or has_known_floor_area
+
     document = {
-        "contract_version": CONTRACT_VERSION,
+        "contract_version": (
+            CONTRACT_VERSION_WITH_EXISTING_BUILDING if fill_slot else CONTRACT_VERSION
+        ),
         "study_id": study["study_id"],
         "option_id": option_id,
         "revision": study["revision"]["number"],
@@ -273,6 +372,13 @@ def build_evaluator_inputs(study: dict, option_id: str) -> dict:
         "site_measurement_rank": _weakest_rank([r["rank"] for r in records]),
         "depends_on_fact_ids": [r["fact_id"] for r in records],
     }
+    if fill_slot:
+        plan_record = (
+            _existing_building_plan_record(existing_building_plan)
+            if existing_building_plan is not None
+            else None
+        )
+        document["existing_building"] = {"plan": plan_record, "floor_area": floor_area}
     validate_evaluator_inputs_document(document)
     return document
 
