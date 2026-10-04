@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 123,
+ "requirement_count": 127,
  "producer": "orchestrator",
- "updated_at": "2026-10-04T03:35:43+00:00",
+ "updated_at": "2026-10-04T03:47:12+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -4195,6 +4195,146 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-04 (message 48, the owner's reviewer's audit).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R124",
+   "text": "Reconcile the audit against the actual code and finish the missing connections by reuse: connect the B-03 geometry wrapper to the EXISTING envelope-intersects street-centerline fetch (dcm_street_centerline_arcgis) plus the geometry page parser - no new connector; connect the EXISTING location and zoning map renderers (app/drawings/maps) to this lot's results document - no rebuild; correct every record that said otherwise (DB-120, the #390 review comment's claim, the journey plan, the walkthrough, the owner updates).",
+   "source_ref": "source-020-amendment.md#owner-message-49-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R109",
+    "D-090-R117",
+    "D-090-R120"
+   ],
+   "required_harness": "Lane B + Lane C PRs for the geometry connection; a Lane E PR for the map connection; docs corrections; each independently reviewed against the code.",
+   "required_evidence": "PR diffs, review records, corrected records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 49, the owner's reviewer's second check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R125",
+   "text": "Hold PR #388 (R107 height finding) and the CI proposal change until the audit corrections (R118, R122) have landed and been independently verified; neither is a candidate for the owner's yes before that.",
+   "source_ref": "source-020-amendment.md#owner-message-49-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R118",
+    "D-090-R122",
+    "D-090-R123"
+   ],
+   "required_harness": "Both stay OPEN with no merge until the owner lifts the hold after verified corrections.",
+   "required_evidence": "PR states; this row.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 49, the owner's reviewer's second check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R126",
+   "text": "Status language: the R107 note exists internally and is dropped before the results document - say so wherever it is described; #392's assumption disclosures stay 'missing' until the emitter and fixture change lands; never write 'corrected everywhere' or 'done' while a named record still carries the old wording; the CI proposal removes raw-head testing of branch code even when a PR exists and changes the existing testing policy - say that; passing tests do not resolve a named gap.",
+   "source_ref": "source-020-amendment.md#owner-message-49-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R106",
+    "D-090-R115",
+    "D-090-R118",
+    "D-090-R119",
+    "D-090-R122"
+   ],
+   "required_harness": "Every owner update checked sentence by sentence against the named records before sending; the directive verifier reads the updates against the records.",
+   "required_evidence": "The owner updates; the records they cite.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 49, the owner's reviewer's second check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R127",
+   "text": "Continue other authorized work under the existing review rules while the held items wait.",
+   "source_ref": "source-020-amendment.md#owner-message-49-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R113"
+   ],
+   "required_harness": "Ordinary lane PRs continue (Tier A); Lane A merges still need the owner's yes; production switches off.",
+   "required_evidence": "PR record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 49, the owner's reviewer's second check).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
