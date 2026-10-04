@@ -264,11 +264,60 @@
     },
     "assumptions": [
       {
+        "key": "zoning_district",
+        "value": "R6B",
+        "unit": null,
+        "basis": "fixture",
+        "statement": "Zoning district R6B is taken from the test fixture, not from a city source, in this benchmark run."
+      },
+      {
+        "key": "overlay_present",
+        "value": true,
+        "unit": null,
+        "basis": "fixture",
+        "statement": "A commercial overlay is assumed present (C2-2 in the benchmark), taken from the test fixture rather than a city source in this benchmark run."
+      },
+      {
+        "key": "special_district_present",
+        "value": false,
+        "unit": null,
+        "basis": "fixture",
+        "statement": "No special purpose district is assumed to apply; the benchmark run hard-codes this and does not read the special-district layer."
+      },
+      {
+        "key": "special_density_area",
+        "value": false,
+        "unit": null,
+        "basis": "fixture",
+        "statement": "The lot is assumed not to lie in a special density area; the benchmark run hard-codes this and does not read the special-density layer."
+      },
+      {
         "key": "lot_type",
         "value": "corner",
         "unit": null,
         "basis": "fixture",
         "statement": "Corner lot assumed; the live data does not record the lot type."
+      },
+      {
+        "key": "lot_front_ft",
+        "value": 100.8,
+        "unit": "feet",
+        "basis": "fixture",
+        "statement": "The lot frontage of 100.8 feet is taken from the test fixture, not from a survey or city source, in this benchmark run."
+      },
+      {
+        "key": "lot_depth_ft",
+        "value": 100,
+        "unit": "feet",
+        "basis": "fixture",
+        "statement": "The lot depth of 100 feet is taken from the test fixture, not from a survey or city source, in this benchmark run."
+      },
+      {
+        "key": "site_measurement_rank",
+        "value": "city_records",
+        "unit": null,
+        "basis": "default",
+        "statement": "The site measurements are labelled 'City records' by default; no survey or entered measurement was supplied in this benchmark run."
       },
       {
         "key": "within_100_ft_of_street_line_intersection",

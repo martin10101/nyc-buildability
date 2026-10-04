@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from app.drawings.kit.labels import YARD_KIND_NAMES, Box, text_box
-from app.drawings.kit.scope import ASSUMPTION_KEY_NAMES, FLAG_WORDS
+from app.drawings.kit.scope import ASSUMPTION_KEY_NAMES, FLAG_WORDS, assumption_value_word
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[4]
@@ -113,7 +113,12 @@ def label_problems(svg: str, doc: dict) -> list[str]:
             if isinstance(value, bool):  # a flag: a fixed word per document boolean
                 if FLAG_WORDS[value] != text:
                     problems.append(f"{text!r} is not the flag word for {value!r}")
-                continue  # a numeric or string value falls through to the generic checks
+                continue
+            if isinstance(value, str):  # a code-like value: its fixed word, else verbatim
+                key = resolve(doc, source[: -len("/value")] + "/key")
+                if (assumption_value_word(key, value) or value) != text:
+                    problems.append(f"{text!r} is not the scope value word for {value!r}")
+                continue  # a numeric value falls through to the generic checks
         if source.startswith("edge:"):
             expected: object = edge_length(doc, source)
         else:

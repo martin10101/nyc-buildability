@@ -41,8 +41,12 @@ from .inputs import (
     ThreeAnswerInputs,
 )
 from .rule_access import rule_version_record
+from .scope import build_scope
 
 CONTRACT_VERSION = "1.0.0"
+# Results contract version declared when an optional scope block is emitted (D-090-R108).
+# A non-null scope binds the version to 1.1.0 (results.schema.json version-binding allOf).
+CONTRACT_VERSION_WITH_SCOPE = "1.1.0"
 LANE = "A"
 
 LOT_SELECTION_STATEMENT = "Based on the lots you selected — the app does not verify the zoning lot"
@@ -137,7 +141,7 @@ def _assemble_document(
     status_strip: list[dict],
     notices_count: int,
 ) -> dict:
-    return {
+    document = {
         "contract_version": CONTRACT_VERSION,
         "results_id": inputs.results_id,
         "study_id": inputs.study_id,
@@ -174,6 +178,17 @@ def _assemble_document(
         "draft": True,
         "street_width_case": None,
     }
+    # Optional scope-beside-the-numbers block (results contract 1.1.0, D-090-R108). Emitted
+    # only when scope_inputs is supplied, and gated solely on its presence (independent of the
+    # lane flag): the lot identity and disclosed assumptions are honest metadata either way. A
+    # non-null scope binds the version to 1.1.0; with scope_inputs None the document is left
+    # byte-identical to the 1.0.0 shape (no scope key).
+    if inputs.scope_inputs is not None:
+        document["contract_version"] = CONTRACT_VERSION_WITH_SCOPE
+        document["scope"] = build_scope(
+            inputs, lot_selection_statement=LOT_SELECTION_STATEMENT
+        )
+    return document
 
 
 def generate_results(
