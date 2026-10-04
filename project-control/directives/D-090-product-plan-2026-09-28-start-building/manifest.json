@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-04T04:38:11+00:00",
+ "updated_at": "2026-10-04T05:45:14+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -157,10 +157,15 @@
   "D-090-R133",
   "D-090-R134",
   "D-090-R135",
-  "D-090-R136"
+  "D-090-R136",
+  "D-090-R137",
+  "D-090-R138",
+  "D-090-R139",
+  "D-090-R140",
+  "D-090-R141"
  ],
- "requirements_id_digest_sha256": "c934d359ab90cd373c561b5efea33d53a8a3093779441caddea94a2a8c017675",
- "requirements_content_digest_sha256": "ce7082a7445a83f45b2176e5118226f6c39b54b399ad1e35235c832b342e3cc4",
+ "requirements_id_digest_sha256": "b6e1fdd4cd827efbfda55fbd2cdb6e4b62120a1598d21d548559fe04aa7c4b07",
+ "requirements_content_digest_sha256": "f0eddb7e2d8a2bcbfdf9e80bd1edf7f10bd53154c94084092e33877d0b27a1f6",
  "sources": [
   {
    "file": "source-001.md",
@@ -336,6 +341,14 @@
    "recorded_at": "2026-10-04T04:38:11+00:00",
    "content_digest_sha256": "da37e9373a4be21879676f81e05d1abbc2cfa95a5d89edf97b710078ff515bcf",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-023-amendment.md",
+   "kind": "amendment",
+   "sequence": 23,
+   "recorded_at": "2026-10-04T05:45:14+00:00",
+   "content_digest_sha256": "e896abf8d7fb3b5eb219c06122f2203b94f3a45389aff947490bd79b0883c636",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -359,7 +372,8 @@
   "source-019-amendment.md",
   "source-020-amendment.md",
   "source-021-amendment.md",
-  "source-022-amendment.md"
+  "source-022-amendment.md",
+  "source-023-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -530,6 +544,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-022 (session 0ba6d6a3 message 51, 2026-10-04: resume prompt + reviewer's third check re-pasted + new words: compare the two audits without bias; reconcile both against the code; finish the height explanation into the results and the screen; reports classify built/connected/tested/professionally verified; no approvals, workflows unapplied; one short four-part update) and requirements D-090-R132..R136, all pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T05:45:14+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-023 (session 0ba6d6a3 message 52, 2026-10-04: the reviewer's assessment of the four-part update - journey stops halfway at the corner-lot bridge; demonstrate one continuous run; scope to the engine automatically; Geoclient key handling; latest merges not independently verified) and requirements D-090-R137..R141, all pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
   }
  ]
 }
