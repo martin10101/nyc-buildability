@@ -250,10 +250,10 @@
       ]
     },
     {
-      "description": "Version binding (contract 1.1.0, D-090-R108): a document carrying a non-null scope object declares contract_version 1.1.0. An absent or null scope leaves the version unconstrained, so 1.0.0 stays valid for it. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either scope is null (or absent, since 'properties' is vacuous for an absent key), or contract_version is 1.1.0.",
+      "description": "Version binding (contract 1.1.0, D-090-R108; widened to the enum by D-090-R132/R137, DB-129): a document carrying a non-null scope object declares contract_version 1.1.0 OR 1.2.0, not const 1.1.0. 1.2.0 is a strict superset of 1.1.0 - the scope object is allowed AND the building-option notes array is allowed - so a single document may carry BOTH a non-null scope and a non-empty notes array and still declare a valid version (it resolves to 1.2.0). Before this widening the scope clause pinned const 1.1.0 while the notes clause (the allOf below) pins const 1.2.0, so a document carrying both was unsatisfiable: no single contract_version could satisfy both clauses (the scope emitter and the notes emitter each fire on the R6B 215-16 Northern path). An absent or null scope still leaves the version unconstrained, so every 1.0.0 instance stays valid. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either scope is null (or absent, since 'properties' is vacuous for an absent key), or contract_version is one of 1.1.0 / 1.2.0. The notes binding below is unchanged (a non-empty notes array still binds to const 1.2.0), so a document with both a scope and non-empty notes resolves to exactly 1.2.0, while a scope-only document stays valid at either 1.1.0 or 1.2.0.",
       "anyOf": [
         { "properties": { "scope": { "type": "null" } } },
-        { "properties": { "contract_version": { "const": "1.1.0" } } }
+        { "properties": { "contract_version": { "enum": ["1.1.0", "1.2.0"] } } }
       ]
     },
     {
