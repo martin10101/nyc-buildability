@@ -128,8 +128,8 @@ the smallest task that closes the gap with its dependencies. Queue ids are from
   Not confirmed" (e2e-pinned, `development-limits.spec.ts`). The D-03 single-page dashboard
   and its §5a passes are merged.
 - **Missing / stubbed (INCOMPLETE):** **no mounted route serves the Northern three-answer
-  document to a browser** — `three_answers` is library-only (its docstring: "no route in
-  this slice; C-08 wires engine → API → dashboard"). The only CI screenshot
+  document to a browser** — `three_answers` is library-only (its docstring: "The engine is
+  library-only; Lane C mounts any route later."). The only CI screenshot
   (`ci-development-limits-not-confirmed.png`, run 37165881685) is pilot BBL **1000010010**,
   not the Northern lot. D-02 (single-page dashboard as default entry) is blocked on Q4.
 - **Smallest task (C-08, queue row):** mount a results route behind flags (flip the tests
