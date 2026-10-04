@@ -659,3 +659,19 @@ push), read the AssertionError payload from the failed log, delete the branch.
   plumbing, `ruff --stdin-filename`, and in-process import.
 - **A producer's new request file can collide (add/add) with the integrator's docs seam** — resolve to the seam's file
   plus the lane's State line (#364).
+
+## Cloud session 2026-10-03d (seq 138)
+- **PR record (all merged into candidate/D-024-mrl-option-b unless noted):** #367 (D-090 source-015, R099/R100,
+  e1db369d), #268 (E-03 DXF from results geometry, Lane E, b3bba78e), #370 + #374 + #368 + #373 (request D-2 remainder:
+  contract 1.1.0, key-set test, emitter, Source disclosure), #371 (C-07 labelled input channel, 98591c25), #372
+  (M0-T181 supervisor-bridge Windows CI repair, accepted d25a7fa3). #369 (A-05) reviewed PASS, CI green, OPEN awaiting
+  the owner's yes.
+- **The frozen-head accept flow worked again** — but an in-regime task appended to `manifest.affected_tasks` needs a
+  PROVISIONAL `task_verifications` row (verifier `""`, pending) in the SAME contract commit; c14 fails closed without
+  it and the control-plane CI job catches its absence (M0-T181, b5cdbdeb).
+- **A branch ref moved under a second worktree leaves that worktree's index stale** (814 phantom entries): realign with
+  `git -C <wt> reset --hard HEAD` before anyone reviews there.
+- **Never write a PR body's CI claim before the run finishes** — two bodies this session were corrected; the reviewer
+  verifies the body.
+- **Reviewer-found cross-PR byte mismatches are fixed on the side that is NOT the source of truth** — the emitter wins
+  over the fixture (the transit_parking `detail` reason clause, DB-115).
