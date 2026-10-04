@@ -86,9 +86,11 @@ def _dedupe_rule_versions(*groups: tuple[dict, ...]) -> list[dict]:
 
 
 def _completeness_line() -> dict:
+    """Fallback completeness line for the lane-off document only (nothing is computed). When
+    the lane is enabled the add-on model computes the real line (app.scenario.addons)."""
     return {
         "text": (
-            "Add-ons checked for this district: none yet (add-on model not built in this slice)."
+            "Add-ons checked for this district: none (the zoning engine is not enabled)."
         ),
         "not_yet_covered": [
             "Add-on gains",
@@ -139,6 +141,9 @@ def _assemble_document(
     status_strip: list[dict],
     notices_count: int,
     contract_version: str = CONTRACT_VERSION,
+    addon_gains: list[dict] | None = None,
+    best_combination: dict | None = None,
+    completeness_line: dict | None = None,
 ) -> dict:
     return {
         "contract_version": contract_version,
@@ -157,11 +162,15 @@ def _assemble_document(
             REMAINING_NOT_CONFIRMED_REASON, "missing_input"
         ),
         "shortfall": shortfall,
-        "addon_gains": [],
-        "best_combination": not_available(
+        "addon_gains": addon_gains if addon_gains is not None else [],
+        "best_combination": best_combination
+        if best_combination is not None
+        else not_available(
             "The add-on model is not built in this slice (task M1-25).", "rule_not_implemented"
         ),
-        "completeness_line": _completeness_line(),
+        "completeness_line": completeness_line
+        if completeness_line is not None
+        else _completeness_line(),
         "status_strip": status_strip,
         "notices_count": notices_count,
         "floor_by_floor": floor_by_floor,
@@ -230,6 +239,14 @@ def generate_results(
         building_option_answer = option.answer
         contract_version = CONTRACT_VERSION
 
+    # Add-on model (task A-06): automatic add-ons are already applied by the rules above;
+    # the optional switches, their gains vs the current selection (empty by default) and the
+    # 'Best combination' for the option's stated goal are computed from the SAME accepted rules.
+    # Imported locally to keep the three_answers <-> addons package import acyclic.
+    from app.scenario.addons import build_addon_results
+
+    addons = build_addon_results(inputs, reg)
+
     document = _assemble_document(
         inputs=inputs,
         answers={
@@ -248,6 +265,9 @@ def generate_results(
         status_strip=build_status_strip(inputs.site_measurement_rank),
         notices_count=len(assumptions),
         contract_version=contract_version,
+        addon_gains=addons["addon_gains"],
+        best_combination=addons["best_combination"],
+        completeness_line=addons["completeness_line"],
     )
     validate_results_document(document)
     return ThreeAnswersResult(document=document, assumptions=assumptions, lane_enabled=True)
