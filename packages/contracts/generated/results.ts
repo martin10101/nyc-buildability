@@ -73,6 +73,25 @@ export interface AnswerAvailable {
   values: AnswerValue[];
   measurement: MeasurementKnown;
 }
+export type BuildingOptionAnswer = BuildingOptionAnswerAvailable | NotAvailable;
+export interface BuildingOptionAnswerAvailable {
+  status: "available";
+  values: AnswerValue[];
+  measurement: MeasurementKnown;
+  notes?: null | BuildingOptionNote[];
+}
+export interface BuildingOptionNote {
+  text: NonEmptyString;
+  kind: "minimum_base_height";
+  computed_from: NonEmptyString[];
+  values: {
+    [key: string]: number | string;
+  };
+  zr_sections: ZrSection[];
+  snapshot_ids: NonEmptyString[];
+  draft: true;
+  register: "draft reading of the captured text";
+}
 export interface AnswerValue {
   key: string;
   label: NonEmptyString;
@@ -284,7 +303,7 @@ export interface Goal {
   text: NonEmptyString | null;
 }
 export interface Results {
-  contract_version: "1.0.0" | "1.1.0";
+  contract_version: "1.0.0" | "1.1.0" | "1.2.0";
   results_id: NonEmptyString;
   study_id: NonEmptyString;
   option_id: NonEmptyString;
@@ -298,7 +317,7 @@ export interface Results {
   answers: {
     floor_area_allowance: Answer;
     permitted_envelope: Answer;
-    building_option: Answer;
+    building_option: BuildingOptionAnswer;
   };
   remaining_floor_area: RemainingAvailable | NotAvailable | NotApplicable;
   shortfall: ShortfallNone | ShortfallPresent | NotAvailable;

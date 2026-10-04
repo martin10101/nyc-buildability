@@ -1,7 +1,7 @@
 """Shared support for the drawing-kit tests: fixtures, rendering with the Lane E
 flag on, SVG parsing, and the check C-4 label-traceability checker.
 
-Fixtures: every valid ``results`` contract fixture (five today) plus the Lane E kit
+Fixtures: every valid ``results`` contract fixture (six today) plus the Lane E kit
 fixtures under ``fixtures/`` (schema-valid synthetic results documents). The
 ``zr_sections`` values in the kit fixtures are placeholders copied from the
 contract fixture; the kit never prints them and they are not legal claims.
