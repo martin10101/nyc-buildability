@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 115,
+ "requirement_count": 116,
  "producer": "orchestrator",
- "updated_at": "2026-10-04T01:54:37+00:00",
+ "updated_at": "2026-10-04T03:13:26+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -3919,6 +3919,47 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-04 (message 45).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R116",
+   "text": "Write a prompt the owner can hand to an independent reviewer to check, read-only and from primary evidence (commits, merged PRs, CI results, files), whether the six items of message 45 (R106-R115) were carried out honestly: per item, where to look, what counts as done, what is still open, and what would be an overstatement; it must not rely on PR descriptions or summaries, must name the settled wording to check byte-exact, must confirm #369/#377/#382 are still open, and must confirm production switches stay off.",
+   "source_ref": "source-018-amendment.md#owner-message-47-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R106",
+    "D-090-R107",
+    "D-090-R108",
+    "D-090-R109",
+    "D-090-R110",
+    "D-090-R111",
+    "D-090-R112",
+    "D-090-R114",
+    "D-090-R115"
+   ],
+   "required_harness": "The prompt text delivered to the owner in chat (and optionally as a shareable page); the owner's reviewer can run it without further context.",
+   "required_evidence": "The delivered prompt; the chat reply that carried it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 47). Delivered in chat the same turn; verification pending.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

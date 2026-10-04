@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-04T01:54:37+00:00",
+ "updated_at": "2026-10-04T03:13:26+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -136,10 +136,11 @@
   "D-090-R112",
   "D-090-R113",
   "D-090-R114",
-  "D-090-R115"
+  "D-090-R115",
+  "D-090-R116"
  ],
- "requirements_id_digest_sha256": "59680529dfacee2cce375bfe9fb2eb21cfbc5da192da4d0d20466fef9bc9fd94",
- "requirements_content_digest_sha256": "779a24a3473ba1695f660bc3a33e9a6822c1d7a2198d82f8400ed5cb1f08a49e",
+ "requirements_id_digest_sha256": "4930fdc60e3e876a416467c4d153d19c85a3615cde347a48c90b744bd0204c8d",
+ "requirements_content_digest_sha256": "ba13f399c29f60361be18086d01199fe92c385a81f599d792658d0e974749dd0",
  "sources": [
   {
    "file": "source-001.md",
@@ -275,6 +276,14 @@
    "recorded_at": "2026-10-04T01:54:37+00:00",
    "content_digest_sha256": "3ab8d457e1db32234f353205fb9a29a8bffb6b6e67dfbe1859624c02cb3008ce",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-018-amendment.md",
+   "kind": "amendment",
+   "sequence": 18,
+   "recorded_at": "2026-10-04T03:13:26+00:00",
+   "content_digest_sha256": "60ffc376ab29c0b75457202c4d847c0de7f4246865757c5e74b22f6d0a08cf14",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -293,7 +302,8 @@
   "source-014-amendment.md",
   "source-015-amendment.md",
   "source-016-amendment.md",
-  "source-017-amendment.md"
+  "source-017-amendment.md",
+  "source-018-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -434,6 +444,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-017 (session 0ba6d6a3 message 45, 2026-10-04: six findings-actions after the 215-16 Northern walkthrough - accurate progress wording, height discrepancy first, scope beside the numbers, one complete journey, approvals explained not granted, CI proposal tightened; continue authorized work; switches off; one consolidated update) and requirements D-090-R106..R115, all pending. Message 44 recorded as a fulfilled return request (no row). Text extracted by script; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T03:13:26+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-018 (session 0ba6d6a3 message 47, 2026-10-04: message 45 re-pasted with 'Was this done ? Can u write up a prompt for my reviewer') and requirement D-090-R116 (return: independent-reviewer prompt), pending. Message 46 (first re-paste, status question only) recorded in the source file, no row. Text extracted by script from the queued_command attachment; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
   }
  ]
 }
