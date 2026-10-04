@@ -297,6 +297,13 @@ schedule. Policy wording is quoted exactly.
 | Supervisor containment (Windows + Linux) | `supervisor-bridge`, `supervisor-linux-containment` | Every pull_request run + every `candidate/**` push |
 | Web lint/typecheck/build + e2e | `web`, `web-e2e` | Every pull_request run + every `candidate/**` push |
 | Contract schema / typegen / bundle drift | `contracts`, `contracts-typegen`, `contracts-schema-bundle` | Every pull_request run + every `candidate/**` push |
+| API ruff lint + pytest on the hash-pinned trees | `api` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Owner-dashboard product-map integrity vs the ledger | `product-map` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Code-graph determinism (`--check`) + fixture tests | `code-graph` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Repo fingerprint + crash-safe cache + baseline + incremental index tests | `context-index-a1` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Frozen model-routing corpus + allowlist boundary tests | `model-routing` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Context-pipeline Units B–F suites + integration/adversarial + clean-checkout e2e benchmark | `context-pipeline` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
+| Orphaned contracts-validator + residential + gate-runner + authority suites | `validation-suite` | Every pull_request run (merge ref) + every `candidate/**` or `main` push |
 | Repository credential scan | `secret-scan.yml` | Every pull_request run + every `candidate/**` push |
 | Automatic-context-load budget guard | `context-budget.yml` | Every pull_request run + every `candidate/**` push |
 
