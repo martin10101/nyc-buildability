@@ -43,12 +43,14 @@ gate is off the inputs are unavailable (fail safe), never fabricated.
 
 B-03 geometry (journey wave 1 item 1) and B-05 existing-floor-area evidence (journey
 wave 1 item 3) reach assembly through INJECTED providers, as pure data, so assembly
-stays I/O-free. Both LIVE defaults bind NOTHING: there is no live envelope-DCM geometry
-binding, and there is NO DOB connector under ``app/connectors`` for the existing-floor-
-area evidence (a Lane B deliverable). So in production both stay None and the study read
-is byte-identical to the pre-wiring slice; tests and the e2e harness inject fixture-
-backed providers built from the recorded 215-16 Northern pack through the real B-03/B-05
-readers to exercise the seams offline.
+stays I/O-free. The LIVE geometry default is bound only behind
+``LIVE_SPATIAL_PROVIDER_ENABLED`` (default OFF), through Lane B's accepted
+envelope-intersects street fetch (D-090-R124); the LIVE existing-floor-area default binds
+NOTHING because there is NO DOB connector under ``app/connectors`` yet (a Lane B
+deliverable). So with the flag off in production both stay None and the study read is
+byte-identical to the pre-wiring slice; tests and the e2e harness inject fixture-backed
+providers built from the recorded 215-16 Northern pack through the real B-03/B-05 readers
+to exercise the seams offline.
 
 Slice bounds (documented, not hidden): one tax lot per call (no MapPLUTO outline
 fetch and no condo base-lot resolution yet, so a multi-lot or condo input
@@ -167,9 +169,11 @@ PlutoFetcher = Callable[[str, str], PlutoFetchResult]
 # (canonical_bbl, correlation_id) -> B-03 SiteGeometry, or None when no usable
 # geometry is available for this lot (the facts then stay unknown, exactly as
 # before). The INJECTED geometry seam (journey wave 1 item 1): tests and the e2e
-# harness bind a fixture-backed provider; the LIVE default binds NOTHING here
-# (see _live_study_inputs_provider for why), so geometry stays None in production
-# and the study read is byte-identical to the pre-geometry slice.
+# harness bind a fixture-backed provider; the LIVE default binds
+# ``app.api.v1.study_live_geometry.live_geometry_provider`` ONLY behind
+# ``LIVE_SPATIAL_PROVIDER_ENABLED`` (default OFF, see _live_study_inputs_provider),
+# so geometry stays None in production and the study read is byte-identical to the
+# pre-geometry slice.
 GeometryProvider = Callable[[str, str], "SiteGeometry | None"]
 
 # (canonical_bbl, correlation_id) -> B-05 ExistingFloorAreaEvidence, or None when no
@@ -347,9 +351,10 @@ def pluto_study_inputs_provider(
     ``geometry_provider`` is the INJECTED B-03 geometry seam (journey wave 1 item
     1): when given, it is called ``(canonical_bbl, correlation_id) -> SiteGeometry
     | None`` and its result is passed to :func:`assemble_study_inputs` as pure data
-    (so assembly stays I/O-free). None (the default, and the live default) means no
-    geometry is threaded and the facts are byte-identical to the pre-geometry
-    slice. A geometry fetch is the provider's I/O, never the route's or assembly's.
+    (so assembly stays I/O-free). None (the default, and the live default while
+    ``LIVE_SPATIAL_PROVIDER_ENABLED`` is off) means no geometry is threaded and the
+    facts are byte-identical to the pre-geometry slice. A geometry fetch is the
+    provider's I/O, never the route's or assembly's.
 
     ``existing_floor_area_provider`` is the INJECTED B-05 existing-floor-area seam
     (journey wave 1 item 3): when given, it is called ``(canonical_bbl,
@@ -416,19 +421,20 @@ def _live_study_inputs_provider() -> StudyInputsProvider:
     the city API is not hit once per study. No probe call happens here - the cache
     is cold until the first study assembles.
 
-    It binds NO live geometry provider (journey wave 1 item 1). The B-03 engine
-    needs BOTH a live lot outline AND the City Map street center lines queried for
-    the lot's ENVELOPE. A live MapPLUTO lot-outline fetch exists
-    (``app.connectors.mappluto_geometry_arcgis.fetch_lot_geometry``), but there is
-    NO existing live binding that produces the envelope-intersects DCM geometry
-    PAGES ``app.spatial.site_geometry.street_data_from_pages`` requires: the
-    accepted geometry fetch (``dcm_street_centerline_geometry.
-    fetch_street_segment_geometries``) supports only borough / street_name /
-    object_id predicates, and a non-envelope page fails that adapter's coverage
-    check closed (the lot type then reads unknown). Rather than invent a connector,
-    this default binds nothing live, so geometry stays None and the live study read
-    is byte-identical to the pre-geometry slice. Tests and the e2e harness inject a
-    fixture-backed geometry provider to exercise the seam offline.
+    It binds the live geometry provider (journey wave 1 item 1) ONLY behind the
+    existing ``LIVE_SPATIAL_PROVIDER_ENABLED`` flag (default OFF). The envelope
+    predicate the B-03 engine needs now EXISTS: Lane B's accepted
+    ``app.spatial.site_geometry.street_data_for_lot`` (D-090-R124) queries the City
+    Map street centre lines for the lot's ENVELOPE and feeds the accepted
+    ``street_data_from_pages`` adapter, closing the former "no live binding produces
+    the envelope-intersects DCM geometry pages" gap. So
+    ``app.api.v1.study_live_geometry.live_geometry_provider`` composes that with the
+    live MapPLUTO lot-outline fetch and ``derive_site_geometry``. When the flag is
+    OFF (the production default) the binding is None and geometry stays None, so the
+    live study read is byte-identical to the pre-geometry slice; the flag gates the
+    live fetch exactly like the rule-evaluation route's live spatial substrate. Tests
+    and the e2e harness inject a fixture-backed geometry provider to exercise the seam
+    offline regardless of the flag.
 
     It binds NO live existing-floor-area provider either (journey wave 1 item 3). There
     is NO DOB connector under ``app/connectors``: the only DOB datasets with a zoning
@@ -441,9 +447,16 @@ def _live_study_inputs_provider() -> StudyInputsProvider:
     e2e harness inject a fixture-backed evidence provider built from the recorded
     benchmark pack (through B-05's own readers) to exercise the seam offline."""
     from app.api.v1.properties import get_pluto_fetcher
+    from app.api.v1.study_live_geometry import live_geometry_provider
+    from app.spatial.live_provider import live_spatial_provider_enabled
 
+    geometry_provider = (
+        live_geometry_provider() if live_spatial_provider_enabled() else None
+    )
     return pluto_study_inputs_provider(
-        get_pluto_fetcher(), version_probe=cached_default_version_probe()
+        get_pluto_fetcher(),
+        version_probe=cached_default_version_probe(),
+        geometry_provider=geometry_provider,
     )
 
 
