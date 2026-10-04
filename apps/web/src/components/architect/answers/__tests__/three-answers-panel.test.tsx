@@ -211,11 +211,29 @@ for (const { name, doc } of FIXTURES) {
         const text = panelText();
         expect(text).not.toMatch(SNAKE_CASE);
         for (const code of RAW_CODES) expect(text).not.toContain(code);
+        // A source ref may legitimately appear only in the "Rule sections" disclosure — the same
+        // answer-section items the rule-sections test reads (line ~118); strip those once so the
+        // checks below can require a ZR ref to live there and nowhere else.
+        const outsideSections = without(
+          text,
+          ...screen.queryAllByTestId("answer-section").map(item => item.textContent ?? ""),
+        );
         for (const key of ANSWER_KEYS) {
           const answer = doc.answers[key];
           if (answer.status !== "available") continue;
           for (const value of answer.values) {
-            for (const source of value.sources) expect(text).not.toContain(source.ref);
+            for (const source of value.sources) {
+              // The contract (results.schema.json $defs.value_source) allows value_source.kind
+              // `zoning_resolution`, whose ref IS a shown ZR section, so it is excluded from the
+              // bare-ref ban: it must equal one of this value's zr_sections and appear only inside
+              // the rule sections. Internal ids (site_fact, rule_table) stay forbidden everywhere.
+              if (source.kind === "zoning_resolution") {
+                expect(value.zr_sections, value.key).toContain(source.ref);
+                expect(outsideSections).not.toContain(source.ref);
+              } else {
+                expect(text).not.toContain(source.ref);
+              }
+            }
           }
         }
         cleanup();
