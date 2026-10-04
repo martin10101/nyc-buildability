@@ -9,6 +9,10 @@ results document - so each printed label can be traced back to the results
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .scope import ScopeView
 
 __all__ = [
     "CaseAssumption",
@@ -151,6 +155,7 @@ class DrawingInput:
     floor_plates: tuple[FloorPlate, ...] | LayerUnavailable
     floor_rows: tuple[FloorRow, ...]
     street_width_case: StreetWidthCase | None
+    scope: ScopeView | None = None
 
 
 @dataclass(frozen=True)

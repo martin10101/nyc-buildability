@@ -19,7 +19,7 @@ from dataclasses import dataclass
 
 from . import geometry as geo
 from .errors import DrawingInputError
-from .furniture import Note, case_notes, legend, north_arrow, notes_block, scale_bar
+from .furniture import Note, case_notes, legend, north_arrow, notes_block, scale_bar, scope_notes
 from .hatches import hatch_defs
 from .labels import YARD_KIND_NAMES, format_feet, format_number
 from .model import Drawing, DrawingInput, LayerUnavailable, Point, Polygon
@@ -192,7 +192,7 @@ def _footprint(sheet: Sheet, data: DrawingInput, frame: _Frame) -> None:
 
 
 def _notes(data: DrawingInput) -> list[Note]:
-    notes = case_notes(data.street_width_case)
+    notes = scope_notes(data.scope) + case_notes(data.street_width_case)
     notes.append(Note((("Lot outline:", None),
                        (data.measurement_label, "/geometry/measurement/label"))))
     for yard in data.yards_not_required:
