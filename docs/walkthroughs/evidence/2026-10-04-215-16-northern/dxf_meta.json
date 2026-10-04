@@ -1,0 +1,46 @@
+{
+  "layers": [
+    "C-PROP-LINE",
+    "A-ZONE-ENVL",
+    "A-MASS-RESI",
+    "A-ANNO-NOTE"
+  ],
+  "notes": [
+    {
+      "text": "Option opt-1 - revision 1",
+      "values": []
+    },
+    {
+      "text": "Results res-benchmark-1 - computed 2026-10-03T00:00:00Z",
+      "values": []
+    },
+    {
+      "text": "City records, not a survey (envelope)",
+      "values": []
+    },
+    {
+      "text": "Approximate - city tax map, not a survey (lot outline)",
+      "values": []
+    },
+    {
+      "text": "Assumed, not a survey (floor plates)",
+      "values": []
+    },
+    {
+      "text": "Setback lines need the ZR 23-433 setback depths, not encoded in this slice.",
+      "values": []
+    },
+    {
+      "text": "Coordinates: local plane in feet, origin at a lot corner, axes parallel to the EPSG:2263 grid",
+      "values": []
+    },
+    {
+      "text": "Units: feet, 1 drawing unit = 1 ft (scale 1:1)",
+      "values": []
+    },
+    {
+      "text": "Not a city record - drawn from the results",
+      "values": []
+    }
+  ]
+}
