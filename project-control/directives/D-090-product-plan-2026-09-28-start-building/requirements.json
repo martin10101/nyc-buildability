@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 159,
+ "requirement_count": 162,
  "producer": "orchestrator",
- "updated_at": "2026-10-04T08:25:25+00:00",
+ "updated_at": "2026-10-04T08:44:45+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -5412,6 +5412,107 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-04 (message 57: the #388 hold question, the sample's error groups, the guard-check task, two forwarded reviewer assessments).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R160",
+   "text": "Talk to the owner in plain human terms, not 'complicated shenanigans': every owner-facing reply says what is done, what is waiting and what the owner must decide, in short plain sentences, without code ids, hashes, requirement ids, gate or process vocabulary unless the owner asks for them (tightens CLAUDE.md principle 19 / D-064).",
+   "source_ref": "source-026-amendment.md#owner-message-58-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R141"
+   ],
+   "required_harness": "Each later reply reads as plain English a non-engineer follows; detail stays in repository records.",
+   "required_evidence": "The chat replies after message 58.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (messages 58-59).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R161",
+   "text": "The Geoclient key is already set in Render (months ago). ORCHESTRATOR'S READING: it lives in Render's environment, not on the orchestrator's server (GEOCLIENT_SUBSCRIPTION_KEY unset there at capture); the one-off 215-16 Northern address recording (R140) therefore runs where the key exists - on Render, or after the owner also sets the variable on this server - and the value is never requested in chat.",
+   "source_ref": "source-026-amendment.md#owner-message-59-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R140"
+   ],
+   "required_harness": "The recording job runs with the key present in its environment; the recorded response lands in the repository as a fixture with its request url and digest; no secret in any file or chat.",
+   "required_evidence": "The recorded Geoclient fixture for 215-16 Northern and its test.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (messages 58-59).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R162",
+   "text": "'Yes to merge': the owner's explicit yes to merge PR #388 (the R6B minimum-base-height finding with the prepared 1.2.0 notes emitter), answering the orchestrator's direct question. Supersedes the R125/R136 hold for #388 only. ORCHESTRATOR'S READING: it does not name #369, #377, #382 or #405; those still need their own explicit yes. The merge follows the normal rule (a different agent's PASS at the exact head; every check green).",
+   "source_ref": "source-026-amendment.md#owner-message-59-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R145",
+    "D-090-R125",
+    "D-090-R136"
+   ],
+   "required_harness": "PR #388 merged at the reviewed head with all checks SUCCESS; no other Lane A PR merged on this message.",
+   "required_evidence": "The #388 merge record and the unchanged state of #369/#377/#382/#405.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (messages 58-59).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
