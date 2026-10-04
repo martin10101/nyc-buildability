@@ -1,0 +1,88 @@
+{
+  "contract_version": "1.0.0",
+  "document_kind": "map_context",
+  "map_context": {
+    "crs": "EPSG:2263",
+    "units": "feet",
+    "measurement": {
+      "rank": "approximate_tax_map",
+      "label": "Approximate — tax map"
+    },
+    "subject_lot": {
+      "bbl": "4005120033",
+      "outline": [
+        [
+          [
+            987210,
+            200210
+          ],
+          [
+            987290,
+            200210
+          ],
+          [
+            987290,
+            200300
+          ],
+          [
+            987210,
+            200300
+          ],
+          [
+            987210,
+            200210
+          ]
+        ]
+      ]
+    },
+    "zoning_districts": {
+      "status": "available",
+      "attribution": "Zoning districts: NYC Department of City Planning, NYC GIS Zoning Features (nyzd), via NYC Open Data under the NYC Open Data Terms of Use; source edit date 2026-07-01.",
+      "accuracy": "Zoning-district boundaries are approximate: the DCP horizontal accuracy statement is approximately ± 20 ft, so a boundary drawn near the lot is not a lot-level determination.",
+      "use_limitation": "These features are not intended for determining zoning at the individual tax lot level.",
+      "entries": [
+        {
+          "zonedist": "M1-5",
+          "outline": [
+            [
+              [
+                987100,
+                200100
+              ],
+              [
+                987400,
+                200100
+              ],
+              [
+                987400,
+                200400
+              ],
+              [
+                987100,
+                200400
+              ],
+              [
+                987100,
+                200100
+              ]
+            ]
+          ]
+        }
+      ],
+      "provenance": {
+        "source_id": "test-fixture-synthetic",
+        "dataset_id": "nyzd",
+        "request_url": "https://example.invalid/test-fixture-synthetic/nyzd",
+        "retrieved_at": "2026-07-01T00:00:00Z",
+        "raw_digest_sha256": "sha256:a82ba713d8b59340cbb7d3115720f76081c79546be53ce70e2c9bf369bb0ba00",
+        "source_data_last_edited": "2026-07-01",
+        "dataset_version": "test-fixture-synthetic"
+      }
+    },
+    "building_footprints": {
+      "status": "not_available",
+      "reason": "Building footprints could not be retrieved from the Building Footprints service for this area.",
+      "reason_kind": "source_unavailable"
+    }
+  }
+}
