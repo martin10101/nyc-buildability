@@ -195,6 +195,67 @@
   font-weight: 600;
 }
 
+/* ---- Building-option draft note (contract 1.2.0, D-090-R132) ---- */
+
+/* A draft reading of the captured zoning text, shown openly under the building-option values and
+   never as a compliance statement. The heading carries the "pending qualified review" wording in
+   plain text — no status is encoded by colour; the border and inset only set the block apart. */
+.ta-option-notes {
+  margin: var(--space-3, 0.75rem) 0 0;
+}
+
+.ta-option-note {
+  padding: var(--space-3, 0.75rem);
+  border: 1px solid var(--border-strong, #c9c9c2);
+  border-radius: var(--radius-control, 6px);
+  background: var(--surface-inset, #f4f4f1);
+}
+
+.ta-option-note + .ta-option-note {
+  margin-top: var(--space-2, 0.5rem);
+}
+
+.ta-option-note-heading {
+  margin: 0;
+  font-weight: 650;
+}
+
+.ta-option-note-kind {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+  font-weight: 600;
+}
+
+.ta-option-note-text {
+  margin: var(--space-2, 0.5rem) 0 0;
+}
+
+.ta-option-note-sections {
+  margin: var(--space-2, 0.5rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-option-note-snapshots {
+  margin: var(--space-2, 0.5rem) 0 0;
+}
+
+.ta-option-note-snapshots summary {
+  cursor: pointer;
+  color: var(--accent, #1f4f82);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ta-option-note-snapshots summary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
+}
+
+.ta-option-note-snapshot-list {
+  margin: var(--space-2, 0.5rem) 0 0;
+  padding-left: 1.25rem;
+}
+
 /* ---- Scope beside the numbers (contract 1.1.0, D-090-R108) ---- */
 
 .ta-scope {

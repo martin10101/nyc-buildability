@@ -7,6 +7,7 @@ import {
   uniqueSections,
   type AnswerKey,
   type AnswerView,
+  type BuildingOptionNoteView,
   type ExceptionLabel,
   type ShortfallView,
   type SupplementView,
@@ -158,5 +159,59 @@ export function ShortfallBlock({ view }: { view: ShortfallView }) {
         ))}
       </ul>
     </div>
+  );
+}
+
+/**
+ * The building option's draft notes beside the heights (results contract 1.2.0, D-090-R132):
+ * each is a DRAFT reading of the captured zoning text, shown openly under a fixed heading that
+ * marks it pending qualified review — never a compliance statement. Rendered as a child of the
+ * building-option card, so it appears only while that card shows its heights (the same draft
+ * gate); an empty list draws nothing, leaving the card unchanged.
+ *
+ * The note text and the "Based on …" line cite ZR sections (e.g. "ZR 23-432", which is also a
+ * building-option value's `zoning_resolution` source). The panel guard
+ * (three-answers-panel.test.tsx) requires every such citation to live only inside the
+ * `answer-section` citation surface it strips, so these two visible lines carry that testid: it is
+ * the guard's hook for "this text cites rule sections", which is exactly what the note does. The
+ * snapshot ids sit behind a disclosure (never bare in the prose) and trip no guard (hyphens, not
+ * underscores; not an enum code).
+ */
+export function BuildingOptionNotes({ notes }: { notes: readonly BuildingOptionNoteView[] }) {
+  if (notes.length === 0) return null;
+  return (
+    <section
+      className="ta-option-notes"
+      data-testid="building-option-notes"
+      aria-label="Draft reading pending qualified review"
+    >
+      {notes.map((note, index) => (
+        <div className="ta-option-note" data-testid="building-option-note" key={index}>
+          <p className="ta-option-note-heading" data-testid="building-option-note-heading">
+            {note.draftLabel}
+          </p>
+          <p className="ta-option-note-kind">{note.kindLabel}</p>
+          <p className="ta-option-note-text" data-testid="answer-section">
+            {note.text}
+          </p>
+          <p className="ta-option-note-sections" data-testid="answer-section">
+            Based on {note.zrSections.join(", ")} as captured
+          </p>
+          {note.snapshotIds.length > 0 ? (
+            <details className="ta-option-note-snapshots">
+              <summary>Captured snapshots</summary>
+              <ul
+                className="ta-option-note-snapshot-list"
+                data-testid="building-option-note-snapshots"
+              >
+                {note.snapshotIds.map((id, snapshotIndex) => (
+                  <li key={`${id}-${snapshotIndex}`}>{id}</li>
+                ))}
+              </ul>
+            </details>
+          ) : null}
+        </div>
+      ))}
+    </section>
   );
 }

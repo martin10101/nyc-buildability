@@ -433,3 +433,65 @@ export function scopeView(results: ThreeAnswersResults): ScopeView | null {
     remainingReason: scope.remaining_capacity.reason,
   };
 }
+
+// ---- Building-option draft notes (results contract 1.2.0, D-090-R132) ----
+// A note is a DRAFT reading of the captured zoning text for the building option — never a
+// compliance statement. The panel reads the text, ZR sections and snapshot ids straight from the
+// document; the kind becomes plain words and the heading is a fixed UI label. Nothing is retyped.
+
+/**
+ * Heading over every building-option draft note. A fixed label (never read from the document): it
+ * marks the note as a draft reading a qualified reviewer has NOT signed off, so a reading is never
+ * shown as a finding (D-090-R132).
+ */
+export const BUILDING_OPTION_NOTE_HEADING = "Draft reading — pending qualified review";
+
+// The note kind enum (schema building_option_note.kind) in plain words, so the architect sees what
+// the reading is about, never the enum code (plan §5a item 5). An unlisted kind is de-underscored
+// and sentence-cased so a kind added to the contract later never prints as a raw code.
+const BUILDING_OPTION_NOTE_KIND_LABELS: Readonly<Record<string, string>> = {
+  minimum_base_height: "Minimum base height",
+};
+
+/** A note kind in plain words (never the enum code). */
+export function buildingOptionNoteKindLabel(kind: string): string {
+  const mapped = BUILDING_OPTION_NOTE_KIND_LABELS[kind];
+  if (mapped) return mapped;
+  const words = kind.replace(/_/g, " ").trim();
+  return words ? words.charAt(0).toUpperCase() + words.slice(1) : kind;
+}
+
+export interface BuildingOptionNoteView {
+  /** The draft heading over the note (the fixed UI label above, never from the document). */
+  draftLabel: string;
+  /** What the reading is about, in plain words (e.g. "Minimum base height"). */
+  kindLabel: string;
+  /** The note text, byte-exact from the document. */
+  text: string;
+  /** The ZR sections the reading is based on, read from the document (e.g. "ZR 23-431"). */
+  zrSections: readonly string[];
+  /** The captured snapshot ids behind the reading, read from the document (e.g. "zr-23-431"). */
+  snapshotIds: readonly string[];
+}
+
+/**
+ * The building option's draft notes (results contract 1.2.0, D-090-R132). Reads only the
+ * document. Fail safe: a note whose `draft` flag is not exactly true is dropped, so a reading
+ * never reaches the screen as a finding; a building option that is not available, or one with no
+ * notes, yields an empty list so the card is unchanged (requirement c). The rendering gate — show
+ * a note only while the heights it interprets are shown — is the card itself: the panel passes
+ * this list to the building-option card, which renders its children only when available.
+ */
+export function buildingOptionNotesView(results: ThreeAnswersResults): BuildingOptionNoteView[] {
+  const option = results.answers.building_option;
+  if (option.status !== "available" || !option.notes) return [];
+  return option.notes
+    .filter(note => note.draft === true)
+    .map(note => ({
+      draftLabel: BUILDING_OPTION_NOTE_HEADING,
+      kindLabel: buildingOptionNoteKindLabel(note.kind),
+      text: note.text,
+      zrSections: note.zr_sections,
+      snapshotIds: note.snapshot_ids,
+    }));
+}
