@@ -54,10 +54,11 @@ Setback mechanics - ZR 23-433 (`zr-23-433`):
 > street#, and a setback with a depth of at least 15 feet shall be provided from
 > any #street wall# fronting on a #narrow street#.
 
-## (c) The finding on its face: COMPLIES
+## (c) The finding, as a draft reading of the captured text
 
-A 20 ft building in R6B appears permitted on the face of the captured text. Three
-points, none of which requires a building to reach 30 ft:
+On a reading of the captured text, no captured provision requires a 20 ft building
+in R6B to rise to the 30 ft minimum base height. Three points, none of which
+requires a building to reach 30 ft:
 
 1. The setback is triggered only "For portions of a #building# #street wall#
    that exceed the maximum base height" (ZR 23-432). R6B maximum base height is
@@ -70,10 +71,12 @@ points, none of which requires a building to reach 30 ft:
 3. The paragraph (a) "Line-up rule" that names R6B governs how far the street
    wall sits from the street line; it states no minimum building height.
 
-So nothing in the captured text makes 20 ft non-compliant; the minimum base
-height is reconciled with a shorter building by the "whichever is less" clause.
-The report's "30 ft minimum" is a correct table value but is shown without that
-clause, which is what makes it read as a contradiction. Residual, for G6: which
+So no captured provision requires the 20 ft building to rise to the minimum base
+height; the minimum base height is reconciled with a shorter building by the
+"whichever is less" clause. This does not establish the site's compliance:
+qualified zoning review (G6) decides which paragraph of ZR 23-431 governs this lot
+and the legal effect. The report's "30 ft minimum" is a correct table value but is
+shown without that clause, which is what makes it read as a contradiction. Residual, for G6: which
 of 23-431 (a)/(b) governs turns on a "prevailing street wall frontage" factual
 determination; Sections 23-434, 23-436, 23-44 and any overlay/special district
 were not captured and must be confirmed (none of them is a minimum-height source
@@ -95,12 +98,63 @@ So the qualifying-housing heights read 30 / 45 / 65 ft: the 30 ft minimum base
 height is SHARED (same column), and only the maximum base height (45) and
 maximum building height (65) are the qualifying-specific values.
 
+## Recheck 2026-10-04 - §23-432 official-HTML fingerprint
+
+The owner's reviewer noted that §§23-431 and 23-433 were fingerprint-reproduced in
+this step but §23-432 was not: its retrieved operative text and R6B row matched the
+snapshot, but the raw-HTML digest had not been re-fetched, so this was an
+unreproduced fingerprint, not proof the law changed. Rechecked here against the
+exact channel the snapshot records (docs/research/zr-snapshots/v1/
+zr-23-432.snapshot.json).
+
+- Channel: one direct HTTPS GET of the official DCP portal page with a browser
+  user-agent (`curl -A "Mozilla/5.0"`), exactly as the snapshot's capture_method
+  records.
+- URL fetched: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-432
+- Fetched 2026-10-04; HTTP 200; 182,022 bytes (pinned capture was 182,068 bytes).
+- raw_html_sha256 obtained:
+  4abaa14913b0d75cba8de20ea2866de9e059c6de9f936eeba5d0e505fa71f2f7
+- raw_html_sha256 pinned in the snapshot:
+  06ca2245cd0a7b463c268d617dc0c6a8cb908d90c5fa13f5800d72c85226b177
+- Digest match: NO. The pinned byte capture did not reproduce.
+
+Operative text and R6B row comparison (parsed from the fetched HTML, defined-term
+markup stripped):
+
+- Setback paragraph, verbatim: "For portions of a #building# #street wall# that
+  exceed the maximum base height, a setback shall be provided at a height not lower
+  than the minimum base height or higher than the maximum base height in accordance
+  with Section 23-433." - MATCHES the snapshot verbatim_excerpt.
+- Table intro ("... the minimum base height, maximum base height, and maximum
+  #building# height shall be as set forth in the following table. Separate maximum
+  base heights and maximum #building# heights are set forth for #zoning lots#
+  containing standard #residences# and #zoning lots# containing #qualifying
+  affordable housing# or #qualifying senior housing#.") - MATCHES.
+- R6B row: District R6B, Minimum base height 30, Standard residences max base 45 /
+  max building 55, Qualifying max base 45 / max building 65 - i.e. 30 / 45 / 55;
+  qualifying 45 / 65 - MATCHES the snapshot's R6B row exactly.
+- Last Amended still 12/5/2024 (machine-readable 2024-12-05T12:00:00Z present).
+
+Conclusion: the page's bytes changed; the operative text and the R6B row did not.
+An unreproduced fingerprint is not evidence that the law changed - it means the
+point-in-time byte capture no longer reproduces (the portal is a Drupal site that
+emits per-request markup, so the raw bytes drift while the published text is
+stable). The snapshot file is deliberately NOT edited: its pin is a point-in-time
+record. Only the HTML channel was re-fetched here; the print/PDF cross-check was
+not re-run and nothing beyond the HTML GET is claimed. The §23-432 operative text
+and R6B row this finding relies on are confirmed unchanged as of this recheck; the
+legal effect still waits for G6.
+
 ## (e) What the generator should do (step 2 engine change + test)
 
 Legally grounded fix (recommended): keep the 20 ft FAR-limited sample and add a
-compliance note on the building option, because the 20 ft building complies on
-the face of the text. Forcing the street wall to 30 ft is NOT required by the
-text and would misstate the law. The note should say, in plain words: the
+note on the building option (the engine's compliance_notes field) recording that,
+on a reading of the captured text, no captured provision requires the building to
+rise to the minimum base height. Forcing the street wall to 30 ft is NOT required
+by the captured text; presenting it as required would read a requirement into the
+text that the text does not state. This does not establish the site's compliance;
+qualified zoning review (G6) decides which paragraph of ZR 23-431 governs this lot
+and the legal effect. The note should say, in plain words: the
 building's height (20 ft) is below the R6B minimum base height (30 ft); per ZR
 23-431 the street wall need only rise to the lesser of the minimum base height or
 the building's height ("whichever is less"), and per ZR 23-432 no setback is

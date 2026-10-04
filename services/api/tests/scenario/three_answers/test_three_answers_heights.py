@@ -14,13 +14,20 @@ COMPUTED note records that reading. These tests pin:
       displaced note LIST, not a constant, so the test cannot pass on always-on or always-off code;
   (c) the qualifying-housing heights read as the 30 / 45 / 65 triple (shared 30 ft minimum base),
       beside the standard 30 / 45 / 55 triple, every height from the one ZR 23-432 lookup;
-  (d) the results document still validates with the extra qualifying minimum-base-height value.
+  (d) the results document still validates with the extra qualifying minimum-base-height value;
+  (e) DB-119 gap: the computed note is dropped before the results document - neither the
+      compliance_notes key nor the note text appears in the schema-validated document;
+  (f) the research finding note stays in the draft register (owner reviewer audit, D-090-R118):
+      no "complies" / "misstate" / "non-compliant" assertion formulation reappears in it.
 
 Expected values come from the benchmark fixture / the loaded rules, never restated (the
 _benchmark_inputs / _expected pattern of test_three_answers_benchmark).
 """
 
 from __future__ import annotations
+
+import json
+from pathlib import Path
 
 from app.rules.registry import RuleRegistry
 from app.scenario.three_answers import validate_results_document
@@ -153,3 +160,55 @@ def test_results_document_still_validates_with_the_qualifying_min_base_value() -
         "sources",
         "exception_label",
     }
+
+
+def test_compliance_note_is_dropped_before_the_results_document() -> None:
+    """DB-119 gap: the computed minimum-base-height note never reaches the results document.
+
+    The v1 results contract's answer shape is closed (additionalProperties false), so the note
+    lives ONLY on BuildingOptionResult.compliance_notes (the engine object), not inside the
+    schema-validated document. generate_results computes the note on this benchmark and then
+    drops it when it assembles the document. This test pins that omission so the gap cannot
+    regress silently, and it MUST be updated when the Lane C results slot that surfaces the note
+    lands - at that point the note (or its contract field) is expected IN the document.
+    """
+    # The engine computes a real note here (the 20 ft sample is below the 30 ft minimum base
+    # height) - capture it so the absence assertions below are meaningful, not vacuous.
+    option, _envelope = _real_building_option()
+    assert len(option.compliance_notes) == 1
+    note_text = option.compliance_notes[0]["text"]
+
+    # The schema-validated document that generate_results returns, serialized and searched.
+    doc = _generate().document
+    serialized = json.dumps(doc)
+
+    # Neither the compliance_notes key nor the computed note text appears anywhere in it.
+    assert "compliance_notes" not in serialized
+    assert note_text not in serialized
+    # A distinctive fragment of the note, and the lowercase snapshot ids it cites, are likewise
+    # absent - the document carries no partial leak of the dropped note.
+    assert "No captured provision requires the building to rise to it" not in serialized
+    assert "zr-23-431" not in serialized
+
+
+def test_research_finding_note_stays_in_the_draft_register() -> None:
+    """The research finding note must read as a DRAFT reading of the captured text, never a
+    compliance determination (owner reviewer audit, D-090-R118). This extends the production-note
+    guard (above) to the finding note file: the flagged assertion formulations must not reappear,
+    and the draft-register language the finding must keep is present.
+    """
+    note_path = (
+        Path(__file__).resolve().parents[5]
+        / "docs"
+        / "research"
+        / "zr-snapshots"
+        / "notes"
+        / "2026-10-04-r6b-minimum-base-height-20ft-sample.md"
+    )
+    lowered = note_path.read_text("utf-8").lower()
+    assert "complies" not in lowered
+    assert "misstate" not in lowered
+    assert "non-compliant" not in lowered
+    # The draft register the finding must keep.
+    assert "a reading of the captured text" in lowered
+    assert "does not establish the site's compliance" in lowered
