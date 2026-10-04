@@ -37,8 +37,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0"],
-      "description": "CLOSED enum of published results contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). New versions are admitted only by an accepted contract task that appends to this enum."
+      "enum": ["1.0.0", "1.1.0"],
+      "description": "CLOSED enum of published results contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). 1.1.0 (D-090-R108) adds the OPTIONAL top-level 'scope' object (purpose: put the scope beside the numbers - the headline cards and exported drawings visibly carry the 'Tax-lot-only estimate' label, identify the lot, and disclose the assumed corner conditions, while whole-site and remaining capacity stay unconfirmed). scope is OPTIONAL and may be absent or null; a document carrying a NON-NULL scope object declares 1.1.0 (the version-binding allOf below), while a document with an absent or null scope may declare 1.0.0 or 1.1.0, so every valid 1.0.0 instance stays valid unchanged. The enum is append-only (new versions are admitted only by an accepted contract task that appends to it); the emitter decides when to declare 1.1.0."
     },
     "results_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
     "study_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
@@ -207,6 +207,13 @@
         { "type": "null" }
       ]
     },
+    "scope": {
+      "description": "OPTIONAL scope-beside-the-numbers block (contract 1.1.0, D-090-R108). Puts the scope next to the figures so the headline cards and the exported drawings visibly state 'Tax-lot-only estimate' (label), identify the lot (lot.display), disclose the assumed corner conditions (assumptions[].statement), and keep whole-site and remaining capacity unconfirmed (whole_site, remaining_capacity). The face reads label, lot.display, the assumptions' statements, and the two settled strings (remaining_capacity.label and remaining_capacity.reason) directly from this block, never typed. Every value is derived deterministically by the emitter from the study inputs (the lot fields from the BBL). OPTIONAL in this contract (a later PR may require it once the engine emits it); absent or null is valid. A non-null object binds contract_version to 1.1.0 (the version-binding allOf below).",
+      "anyOf": [
+        { "$ref": "#/$defs/scope" },
+        { "type": "null" }
+      ]
+    },
     "_expected_failure": {
       "type": "string",
       "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key."
@@ -241,9 +248,145 @@
           }
         }
       ]
+    },
+    {
+      "description": "Version binding (contract 1.1.0, D-090-R108): a document carrying a non-null scope object declares contract_version 1.1.0. An absent or null scope leaves the version unconstrained, so 1.0.0 stays valid for it. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either scope is null (or absent, since 'properties' is vacuous for an absent key), or contract_version is 1.1.0.",
+      "anyOf": [
+        { "properties": { "scope": { "type": "null" } } },
+        { "properties": { "contract_version": { "const": "1.1.0" } } }
+      ]
     }
   ],
   "$defs": {
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basis", "label", "lot", "whole_site", "remaining_capacity", "assumptions"],
+      "description": "The scope-beside-the-numbers block (contract 1.1.0, D-090-R108). Puts the scope next to the figures: basis and label name the estimate ('Tax-lot-only estimate'), lot identifies it, whole_site keeps whole-site development unconfirmed, remaining_capacity keeps remaining development capacity not confirmed with the two owner-settled strings, and assumptions discloses the assumed corner conditions in plain English. The face shows label, lot.display, the assumptions' statements, and the two settled strings (remaining_capacity.label and remaining_capacity.reason).",
+      "properties": {
+        "basis": {
+          "type": "string",
+          "enum": ["tax_lot_only"],
+          "description": "CLOSED enum of estimate bases. For now the single value tax_lot_only: the estimate rests on the selected tax lot(s), not a verified zoning lot (D-090-R108). New bases are appended additively only by an accepted contract task."
+        },
+        "label": {
+          "type": "string",
+          "const": "Tax-lot-only estimate",
+          "description": "The scope label shown on the headline cards and exported drawings, byte-exact as the owner wrote it (D-090-R108)."
+        },
+        "lot": { "$ref": "#/$defs/scope_lot" },
+        "whole_site": { "$ref": "#/$defs/scope_whole_site" },
+        "remaining_capacity": { "$ref": "#/$defs/scope_remaining_capacity" },
+        "assumptions": {
+          "type": "array",
+          "description": "The assumed conditions behind this estimate, each disclosed in plain English (D-090-R108). May be empty. The face shows each entry's statement.",
+          "items": { "$ref": "#/$defs/scope_assumption" }
+        }
+      }
+    },
+    "scope_lot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bbl", "borough", "block", "lot", "display"],
+      "description": "The tax lot this estimate is for (D-090-R108). Every field is derived deterministically from the BBL by the emitter; the face shows display.",
+      "properties": {
+        "bbl": {
+          "$ref": "common.schema.json#/$defs/bbl",
+          "description": "The 10-digit BBL the lot fields are derived from, e.g. '4073340070'."
+        },
+        "borough": {
+          "$ref": "common.schema.json#/$defs/borough_name",
+          "description": "The borough display name, one of the five, derived from the BBL's borough digit."
+        },
+        "block": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$",
+          "description": "Tax block as digits with no leading zeros, e.g. '7334' (derived from the BBL's 5-digit block with leading zeros stripped)."
+        },
+        "lot": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$",
+          "description": "Tax lot as digits with no leading zeros, e.g. '70' (derived from the BBL's 4-digit lot with leading zeros stripped)."
+        },
+        "display": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The human lot label shown on the face, e.g. 'Queens block 7334, lot 70'."
+        }
+      }
+    },
+    "scope_whole_site": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "statement"],
+      "description": "Whole-site development stays UNCONFIRMED (D-090-R108): the estimate is based on the selected lots, not a verified zoning lot.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "unconfirmed",
+          "description": "Whole-site development is not confirmed by this tax-lot-only estimate."
+        },
+        "statement": {
+          "type": "string",
+          "const": "Based on the lots you selected — the app does not verify the zoning lot",
+          "description": "The existing lot-selection statement, byte-exact (equals results.lot_selection_statement and the engine constant LOT_SELECTION_STATEMENT), including the em dash (U+2014)."
+        }
+      }
+    },
+    "scope_remaining_capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "label", "reason"],
+      "description": "Remaining development capacity stays NOT CONFIRMED (owner-settled wording, D-090-R038 / R108). Never a number. The face shows label then reason.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "not_confirmed",
+          "description": "Remaining development capacity is not confirmed."
+        },
+        "label": {
+          "type": "string",
+          "const": "Remaining development capacity: Not confirmed.",
+          "description": "The owner-settled label, byte-exact as the owner wrote it in D-090-R108 (with the final period). NOTE: the engine's existing display constant UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT (services/api/app/scenario/constants.py) is the same words WITHOUT a final period; the two were not reconciled here (D-090-R108: report the byte difference, change neither side). The emitter must decide which form to emit into this field before the slot is made required."
+        },
+        "reason": {
+          "type": "string",
+          "const": "Needs verified zoning-lot boundaries and existing zoning floor area.",
+          "description": "The owner-settled reason, byte-exact (equals the engine constant REMAINING_NOT_CONFIRMED_REASON in the three_answers package and UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_TEXT in scenario/constants.py; both carry the final period), including the final period."
+        }
+      }
+    },
+    "scope_assumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "value", "unit", "basis", "statement"],
+      "description": "One disclosed assumption behind the estimate (D-090-R108), e.g. the assumed corner conditions. The face shows statement.",
+      "properties": {
+        "key": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Stable machine key, e.g. lot_type, within_100_ft_of_street_line_intersection, street_line_intersection_angle_degrees, housing_program, floor_to_floor_ft."
+        },
+        "value": {
+          "type": ["string", "number", "boolean"],
+          "description": "The assumed value, e.g. 'corner', true, 90, 'standard_residence', 10."
+        },
+        "unit": {
+          "description": "The unit of value in plain words, or null when the value is dimensionless (a type, a flag, an angle in degrees carried in the key).",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "basis": {
+          "type": "string",
+          "enum": ["assumed", "entered", "fixture", "city_records", "survey_entered", "approximate_tax_map", "default"],
+          "description": "Where the value came from: assumed (a stated assumption the app made), entered (the architect typed it), fixture (a fixed benchmark value), city_records (recorded city data), survey_entered (from a survey the architect supplied), approximate_tax_map (the approximate city tax map), or default (the app's default when nothing was supplied)."
+        },
+        "statement": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "A plain-English sentence stating the assumption and why, e.g. 'Corner lot assumed; the live data does not record the lot type'. Shown on the face."
+        }
+      }
+    },
     "street_width_case": {
       "type": "object",
       "additionalProperties": false,

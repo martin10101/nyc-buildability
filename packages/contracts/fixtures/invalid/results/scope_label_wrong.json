@@ -1,0 +1,304 @@
+{
+  "contract_version": "1.1.0",
+  "results_id": "test-fixture-scope-bad-label-results",
+  "study_id": "test-fixture-scope-bad-label-study",
+  "option_id": "opt-1",
+  "revision": 1,
+  "computed_at": "2026-09-30T13:01:00Z",
+  "out_of_date": true,
+  "out_of_date_reason": "The zoning district fact changed after these results were computed.",
+  "depends_on_fact_ids": [
+    "fact-lot-area",
+    "fact-zoning-district",
+    "fact-existing-zfa"
+  ],
+  "lot_selection_statement": "Based on the lots you selected — the app does not verify the zoning lot",
+  "with_approvals_label": null,
+  "answers": {
+    "floor_area_allowance": {
+      "status": "available",
+      "values": [
+        {
+          "key": "max_residential_far",
+          "label": "Maximum residential FAR",
+          "value": 2.0,
+          "unit": "ratio",
+          "zr_sections": [
+            "ZR 23-22"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-far@0.1.0-draft"
+            },
+            {
+              "kind": "site_fact",
+              "ref": "fact-zoning-district"
+            }
+          ],
+          "exception_label": "Out of date"
+        },
+        {
+          "key": "max_residential_floor_area",
+          "label": "Floor-area allowance",
+          "value": 8000,
+          "unit": "square_feet",
+          "zr_sections": [
+            "ZR 23-22"
+          ],
+          "sources": [
+            {
+              "kind": "site_fact",
+              "ref": "fact-lot-area"
+            },
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-far@0.1.0-draft"
+            }
+          ],
+          "exception_label": "Out of date"
+        }
+      ],
+      "measurement": {
+        "rank": "city_records",
+        "label": "City records"
+      }
+    },
+    "permitted_envelope": {
+      "status": "not_available",
+      "reason": "Envelope not available — height rules for this district are not built yet.",
+      "reason_kind": "rule_not_implemented"
+    },
+    "building_option": {
+      "status": "not_available",
+      "reason": "Building option not available — it needs the permitted envelope.",
+      "reason_kind": "rule_not_implemented"
+    }
+  },
+  "remaining_floor_area": {
+    "status": "not_available",
+    "reason": "Needs verified zoning-lot boundaries and existing zoning floor area.",
+    "reason_kind": "missing_input"
+  },
+  "shortfall": {
+    "status": "not_available",
+    "reason": "No building option to compare with the allowance.",
+    "reason_kind": "rule_not_implemented"
+  },
+  "addon_gains": [],
+  "best_combination": {
+    "status": "not_available",
+    "reason": "Add-ons for this district are not built yet.",
+    "reason_kind": "rule_not_implemented"
+  },
+  "completeness_line": {
+    "text": "Not yet covered: heights and setbacks, yards, lot coverage, all add-ons",
+    "not_yet_covered": [
+      "Heights and setbacks",
+      "Yards",
+      "Lot coverage",
+      "All add-ons"
+    ]
+  },
+  "status_strip": [
+    {
+      "text": "Zoning maximum"
+    },
+    {
+      "text": "District incomplete"
+    }
+  ],
+  "notices_count": 4,
+  "floor_by_floor": [],
+  "floor_stack": {
+    "status": "not_available",
+    "reason": "Floor stack not available — height rules for this district are not built yet.",
+    "reason_kind": "rule_not_implemented"
+  },
+  "existing_building": {
+    "status": "present",
+    "paths": {
+      "keep": {
+        "status": "not_available",
+        "reason": "Needs verified zoning-lot boundaries and existing zoning floor area.",
+        "reason_kind": "missing_input"
+      },
+      "partial_rebuild": {
+        "status": "not_available",
+        "reason": "Not available — needs existing floor-by-floor areas",
+        "reason_kind": "missing_input"
+      },
+      "full_rebuild": {
+        "status": "available",
+        "floor_area_sf": 8000,
+        "height_ft": null,
+        "rule": "If 75% or more of the floor area is demolished, the new building follows today's rules.",
+        "zr_sections": [
+          "ZR 54-41"
+        ],
+        "rebuild_budget": null
+      }
+    },
+    "headline": null,
+    "larger_than_allowed_flag": null,
+    "partial_rebuild_traps": [],
+    "exceptions": [],
+    "flags": [
+      "recorded_vs_zoning_floor_area_gap"
+    ]
+  },
+  "unit_estimate": {
+    "status": "available",
+    "value": 12,
+    "formula": "8,000 ÷ 680 = 11.76",
+    "factor": {
+      "value": 680,
+      "unit": "square_feet_per_dwelling_unit"
+    },
+    "rounding_rule": "rounds up only at .75 or more",
+    "zr_sections": [
+      "ZR 23-52"
+    ]
+  },
+  "geometry": {
+    "status": "available",
+    "crs": "local_feet",
+    "units": "feet",
+    "measurement": {
+      "rank": "approximate_tax_map",
+      "label": "Approximate — tax map"
+    },
+    "lot_outline": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          40,
+          0
+        ],
+        [
+          40,
+          100
+        ],
+        [
+          0,
+          100
+        ],
+        [
+          0,
+          0
+        ]
+      ]
+    ],
+    "streets": [
+      {
+        "street": "Synthetic Street C",
+        "frontage_line": [
+          [
+            0,
+            0
+          ],
+          [
+            40,
+            0
+          ]
+        ],
+        "street_width_fact_id": null
+      }
+    ],
+    "yards": {
+      "status": "not_available",
+      "reason": "Yards not available — yard rules for this district are not built yet.",
+      "reason_kind": "rule_not_implemented"
+    },
+    "setback_lines_per_level": {
+      "status": "not_available",
+      "reason": "Setbacks not available — height rules for this district are not built yet.",
+      "reason_kind": "rule_not_implemented"
+    },
+    "envelope": {
+      "status": "not_available",
+      "reason": "Envelope not available — height rules for this district are not built yet.",
+      "reason_kind": "rule_not_implemented"
+    },
+    "floor_plates": {
+      "status": "not_available",
+      "reason": "Floor plates not available — the building option is not available.",
+      "reason_kind": "rule_not_implemented"
+    }
+  },
+  "rule_versions": [
+    {
+      "rule_id": "test-fixture-synthetic-r6b-far",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "test-fixture-synthetic-r6b-dwelling-units",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
+    }
+  ],
+  "draft": true,
+  "street_width_case": null,
+  "scope": {
+    "basis": "tax_lot_only",
+    "label": "Tax lot estimate",
+    "lot": {
+      "bbl": "4073340070",
+      "borough": "Queens",
+      "block": "7334",
+      "lot": "70",
+      "display": "Queens block 7334, lot 70"
+    },
+    "whole_site": {
+      "status": "unconfirmed",
+      "statement": "Based on the lots you selected — the app does not verify the zoning lot"
+    },
+    "remaining_capacity": {
+      "status": "not_confirmed",
+      "label": "Remaining development capacity: Not confirmed.",
+      "reason": "Needs verified zoning-lot boundaries and existing zoning floor area."
+    },
+    "assumptions": [
+      {
+        "key": "lot_type",
+        "value": "corner",
+        "unit": null,
+        "basis": "fixture",
+        "statement": "Corner lot assumed; the live data does not record the lot type."
+      },
+      {
+        "key": "within_100_ft_of_street_line_intersection",
+        "value": true,
+        "unit": null,
+        "basis": "assumed",
+        "statement": "The lot is assumed to lie within 100 feet of a street-line intersection."
+      },
+      {
+        "key": "street_line_intersection_angle_degrees",
+        "value": 90,
+        "unit": "degrees",
+        "basis": "assumed",
+        "statement": "The street lines are assumed to meet at a 90-degree angle."
+      },
+      {
+        "key": "housing_program",
+        "value": "standard_residence",
+        "unit": null,
+        "basis": "default",
+        "statement": "Standard residence is used as the default housing program."
+      },
+      {
+        "key": "floor_to_floor_ft",
+        "value": 10,
+        "unit": "feet",
+        "basis": "default",
+        "statement": "A 10-foot floor-to-floor height is used as the default."
+      }
+    ]
+  },
+  "_expected_failure": "scope.label is 'Tax lot estimate', not the required const 'Tax-lot-only estimate' (D-090-R108). Fails the scope.label const only."
+}
