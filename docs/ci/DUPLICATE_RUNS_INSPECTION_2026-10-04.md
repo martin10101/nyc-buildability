@@ -75,7 +75,9 @@ steps either way, so each job's *result* depends only on the tree it is handed �
 
 Sum of job-minutes per full run ≈ **27 job-min** (push) / **29** (PR). `supervisor-bridge` runs on
 `windows-latest`, which GitHub bills at **2×** — so billed runner-minutes per full run ≈ **33–35**.
-Wall-clock per run ≈ 7–9 min (the long jobs run in parallel).
+GitHub bills each job **rounded up to the whole minute** before applying that Windows 2× multiplier,
+and this run has 21 jobs (many well under a minute), so the ≈33–35 billed figure is a **lower bound** —
+the true billed total is higher. Wall-clock per run ≈ 7–9 min (the long jobs run in parallel).
 
 ---
 
@@ -98,13 +100,18 @@ other and run **simultaneously** (confirmed below) — the concurrency group doe
 | 032cf320 | lane-c (#376) | 37158605162 · 6.8m · success | 37158607748 · 8.3m · success |
 | 91a60c11 | lane-d (#378) | 37159098260 · 11.3m · success | 37159100022 · 8.0m · success |
 
-**Aggregate for 2026-10-03** (from `gh run list --workflow ci.yml`, 145 ci.yml runs that day):
+**Aggregate for 2026-10-03** (`gh run list --workflow ci.yml --limit 400`; the fetched page spans
+`createdAt` **2026-10-02T08:41:20Z → 2026-10-04T00:58:30Z**, which fully brackets the whole
+2026-10-03 UTC day on both ends, then filtered to `createdAt` on 2026-10-03 UTC. An earlier
+`--limit 150` page truncated the day and undercounted these aggregates by ~15%; the per-row table
+above is exact and unchanged):
 
-- **55** distinct PR-branch head SHAs had **both** a `push` and a `pull_request` ci.yml run.
-- **50** of those 55 pairs had both runs complete; **5** had one run cancelled by a re-push.
-- Redundant PR-branch **push**-run wall that day ≈ **460–482 min**; the paired PR-run wall ≈ **464 min**
+- **165** ci.yml runs that day = **99** `push` + **66** `pull_request`.
+- **65** distinct PR-branch head SHAs had **both** a `push` and a `pull_request` ci.yml run.
+- **58** of those 65 pairs had both runs complete; **7** had one run cancelled by a re-push.
+- Redundant PR-branch **push**-run wall that day ≈ **522 min**; the paired PR-run wall ≈ **531 min**
   (they are near-identical, as expected — same jobs, same tree size).
-- **30** more ci.yml push runs that day were on the integration branch `candidate/D-024-mrl-option-b`
+- **31** more ci.yml push runs that day were on the integration branch `candidate/D-024-mrl-option-b`
   itself — these have **no** PR and are **not** duplicates (they are the post-merge validation).
 
 **Simultaneity / correctness (DB-111).** The pairs run at the same time, not back-to-back:
@@ -196,11 +203,12 @@ superseded push on the integration branch and a superseded PR sync.
 
 ### What it saves
 
-- **Per push to a PR branch:** one entire ci.yml run — **~27 job-minutes** (**~33 billed
-  runner-minutes**, counting the Windows `supervisor-bridge` job at 2×) and **~8–9 min of wall
-  clock**. Plus the redundant second copy of `secret-scan` and `context-budget` (cheap).
-- **Scaled to 2026-10-03:** ~55 eliminated full runs ≈ **~460 wall-minutes** and ≈ **~1,500
-  job-minutes (≈ ~1,800 billed runner-minutes)** in one day, with no loss of merge-gating coverage.
+- **Per push to a PR branch:** one entire ci.yml run — **~27 job-minutes** (**≥ ~33 billed
+  runner-minutes** — a lower bound, since GitHub rounds each job up to the whole minute before the
+  Windows `supervisor-bridge` 2× multiplier) and **~8–9 min of wall clock**. Plus the redundant
+  second copy of `secret-scan` and `context-budget` (cheap).
+- **Scaled to 2026-10-03:** ~65 eliminated full runs ≈ **~522 wall-minutes** and ≈ **~1,755
+  job-minutes (≥ ~2,100 billed runner-minutes)** in one day, with no loss of merge-gating coverage.
 
 ### What coverage it keeps, and why
 
@@ -264,6 +272,6 @@ absent, so no required-check contract is affected.
   higher risk of under-testing. Lost.
 
 **(a) wins** on minutes-saved-to-risk: it removes a whole redundant run per PR push
-(~27 job-min / ~33 billed), deterministically leaves the one load-bearing run, preserves every gate
+(~27 job-min / ≥ ~33 billed), deterministically leaves the one load-bearing run, preserves every gate
 on the merge ref + integration push + schedule, and as a bonus removes the DB-111 same-head race. Its
 single cost — no heavy CI on a PR-less branch push — touches only states that cannot merge.
