@@ -15,8 +15,9 @@ COMPUTED note records that reading. These tests pin:
   (c) the qualifying-housing heights read as the 30 / 45 / 65 triple (shared 30 ft minimum base),
       beside the standard 30 / 45 / 55 triple, every height from the one ZR 23-432 lookup;
   (d) the results document still validates with the extra qualifying minimum-base-height value;
-  (e) DB-119 gap: the computed note is dropped before the results document - neither the
-      compliance_notes key nor the note text appears in the schema-validated document;
+  (e) DB-119 gap CLOSED (D-090-R132): the computed note now reaches the results document's
+      1.2.0 building-option notes slot - the note text and pinned snapshots appear in it
+      (the fixture-equality and byte-identity pins live in test_three_answers_notes_emit);
   (f) the research finding note stays in the draft register (owner reviewer audit, D-090-R118):
       no "complies" / "misstate" / "non-compliant" assertion formulation reappears in it.
 
@@ -162,33 +163,37 @@ def test_results_document_still_validates_with_the_qualifying_min_base_value() -
     }
 
 
-def test_compliance_note_is_dropped_before_the_results_document() -> None:
-    """DB-119 gap: the computed minimum-base-height note never reaches the results document.
+def test_compliance_note_is_emitted_into_the_results_document() -> None:
+    """DB-119 gap CLOSED (D-090-R132): the computed minimum-base-height note now reaches the
+    results document's 1.2.0 building-option notes slot, shown beside the heights instead of
+    being dropped before the document.
 
-    The v1 results contract's answer shape is closed (additionalProperties false), so the note
-    lives ONLY on BuildingOptionResult.compliance_notes (the engine object), not inside the
-    schema-validated document. generate_results computes the note on this benchmark and then
-    drops it when it assembles the document. This test pins that omission so the gap cannot
-    regress silently, and it MUST be updated when the Lane C results slot that surfaces the note
-    lands - at that point the note (or its contract field) is expected IN the document.
+    The inverse of the former "dropped" pin (which this replaces per its own instruction to
+    update when the Lane C results slot lands): the note travels on
+    answers.building_option.notes, carrying the engine's computed text verbatim, and the
+    computed text, a distinctive fragment and the pinned snapshot ids now appear in the
+    serialized document. The fixture-equality and byte-identity pins live in
+    test_three_answers_notes_emit.
     """
     # The engine computes a real note here (the 20 ft sample is below the 30 ft minimum base
-    # height) - capture it so the absence assertions below are meaningful, not vacuous.
+    # height) - capture it so the presence assertions below are meaningful, not vacuous.
     option, _envelope = _real_building_option()
     assert len(option.compliance_notes) == 1
     note_text = option.compliance_notes[0]["text"]
 
-    # The schema-validated document that generate_results returns, serialized and searched.
+    # The schema-validated document that generate_results returns carries the note in its slot.
     doc = _generate().document
-    serialized = json.dumps(doc)
+    notes = doc["answers"]["building_option"]["notes"]
+    assert len(notes) == 1
+    assert notes[0]["text"] == note_text  # the engine's computed text, carried verbatim
+    assert doc["contract_version"] == "1.2.0"  # a non-empty notes slot binds 1.2.0
 
-    # Neither the compliance_notes key nor the computed note text appears anywhere in it.
-    assert "compliance_notes" not in serialized
-    assert note_text not in serialized
-    # A distinctive fragment of the note, and the lowercase snapshot ids it cites, are likewise
-    # absent - the document carries no partial leak of the dropped note.
-    assert "No captured provision requires the building to rise to it" not in serialized
-    assert "zr-23-431" not in serialized
+    # The note reaches the serialized document too (the former pin asserted it was absent). A
+    # distinctive fragment and the snapshot ids it cites are now present (quote-free fragments;
+    # the full text is proved verbatim by the structured equality above).
+    serialized = json.dumps(doc)
+    assert "No captured provision requires the building to rise to it" in serialized
+    assert "zr-23-431" in serialized
 
 
 def test_research_finding_note_stays_in_the_draft_register() -> None:
