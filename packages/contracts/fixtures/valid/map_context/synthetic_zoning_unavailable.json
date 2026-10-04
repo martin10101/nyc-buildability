@@ -1,0 +1,140 @@
+{
+  "contract_version": "1.0.0",
+  "document_kind": "map_context",
+  "map_context": {
+    "crs": "EPSG:2263",
+    "units": "feet",
+    "measurement": {
+      "rank": "approximate_tax_map",
+      "label": "Approximate — tax map"
+    },
+    "subject_lot": {
+      "bbl": "5001230045",
+      "outline": [
+        [
+          [
+            987200,
+            200200
+          ],
+          [
+            987280,
+            200200
+          ],
+          [
+            987280,
+            200290
+          ],
+          [
+            987200,
+            200290
+          ],
+          [
+            987200,
+            200200
+          ]
+        ]
+      ]
+    },
+    "zoning_districts": {
+      "status": "not_available",
+      "reason": "Zoning-district features could not be retrieved from the NYC GIS Zoning Features service for this area.",
+      "reason_kind": "source_unavailable"
+    },
+    "building_footprints": {
+      "status": "available",
+      "attribution": "Building footprints: NYC Office of Technology and Innovation, Building Footprints (NYC Open Data 5zhs-2jue), under the NYC Open Data Terms of Use; source edit date 2026-09-20.",
+      "entries": [
+        {
+          "doitt_id": "500501",
+          "outline": [
+            [
+              [
+                987120,
+                200120
+              ],
+              [
+                987180,
+                200120
+              ],
+              [
+                987180,
+                200180
+              ],
+              [
+                987120,
+                200180
+              ],
+              [
+                987120,
+                200120
+              ]
+            ]
+          ]
+        },
+        {
+          "doitt_id": "500502",
+          "outline": [
+            [
+              [
+                987300,
+                200300
+              ],
+              [
+                987360,
+                200300
+              ],
+              [
+                987360,
+                200360
+              ],
+              [
+                987300,
+                200360
+              ],
+              [
+                987300,
+                200300
+              ]
+            ]
+          ]
+        },
+        {
+          "doitt_id": "500503",
+          "outline": [
+            [
+              [
+                987210,
+                200320
+              ],
+              [
+                987270,
+                200320
+              ],
+              [
+                987270,
+                200370
+              ],
+              [
+                987210,
+                200370
+              ],
+              [
+                987210,
+                200320
+              ]
+            ]
+          ]
+        }
+      ],
+      "provenance": {
+        "source_id": "test-fixture-synthetic",
+        "dataset_id": "5zhs-2jue",
+        "request_url": "https://example.invalid/test-fixture-synthetic/building-footprints",
+        "retrieved_at": "2026-09-20T00:00:00Z",
+        "raw_digest_sha256": "sha256:3b1e564914710eba7696197810359eba7b4eb125f78dcf4c01226e2cc8b20146",
+        "source_data_last_edited": "2026-09-20",
+        "dataset_version": "test-fixture-synthetic"
+      }
+    }
+  }
+}
