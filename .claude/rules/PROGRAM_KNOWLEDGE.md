@@ -85,6 +85,10 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - Shared checkout with the companion session: heads-up before commits both ways; peer sticks
   to directive-capture + owner-facing docs; ledger/git is orchestrator-only (ADR-005).
 
+- CI's lane-path check runs on every `lane-*` branch: an `[ORCH-CORRECTED]` cross-lane commit there fails
+  the control-plane job (#387 b70b869f). Put the correction on its own `task/` PR, merge it first, then
+  rebuild the lane branch = reviewed head + one base merge (remerge-diff 0, patch-id unchanged, blobs same).
+
 ## Key files / commands
 
 - Ledger: `python tools/project_control.py status|new-task|claim|progress|submit|gate|accept|
