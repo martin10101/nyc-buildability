@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720.00 582.00" width="720.00" height="582.00" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" data-drawing="site_plan" data-kit-version="0">
+<title>Site plan</title>
+<defs></defs>
+<rect x="0.00" y="0.00" width="720.00" height="582.00" fill="#FFFFFF"/>
+<path d="M137.07 371.97 L378.93 371.97 L378.93 132.03 L137.07 132.03 Z" fill="#F0E442" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-source="/geometry/floor_plates/entries/0" data-floor="1"/>
+<path d="M137.07 371.97 L378.93 371.97 L378.93 132.03 L137.07 132.03 Z" fill="none" stroke="#000000" stroke-width="1.50" stroke-linejoin="round" fill-rule="evenodd" data-source="/geometry/lot_outline"/>
+<path d="M137.07 373.97 L137.07 386.97 M134.87 381.77 L139.27 386.17 M378.93 373.97 L378.93 386.97 M376.73 381.77 L381.13 386.17 M137.07 383.97 L378.93 383.97" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="258.00" y="392.37" font-size="8.00" text-anchor="middle" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#0">100.77 ft</text>
+<path d="M380.93 371.97 L393.93 371.97 M388.73 374.17 L393.13 369.77 M380.93 132.03 L393.93 132.03 M388.73 134.23 L393.13 129.83 M390.93 371.97 L390.93 132.03" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="399.33" y="252.00" font-size="8.00" text-anchor="middle" transform="rotate(-90.00 399.33 252.00)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#1">99.98 ft</text>
+<path d="M378.93 130.03 L378.93 117.03 M381.13 122.23 L376.73 117.83 M137.07 130.03 L137.07 117.03 M139.27 122.23 L134.87 117.83 M378.93 120.03 L137.07 120.03" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="258.00" y="118.03" font-size="8.00" text-anchor="middle" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#2">100.77 ft</text>
+<path d="M135.07 132.03 L122.07 132.03 M127.27 129.83 L122.87 134.23 M135.07 371.97 L122.07 371.97 M127.27 369.77 L122.87 374.17 M125.07 132.03 L125.07 371.97" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="123.07" y="252.00" font-size="8.00" text-anchor="middle" transform="rotate(-90.00 123.07 252.00)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#3">99.98 ft</text>
+<g data-role="north-arrow">
+<path d="M540.00 26.00 L547.00 62.00 L540.00 53.00 L533.00 62.00 Z" fill="#000000" stroke="#000000" stroke-width="0.50"/>
+<text x="540.00" y="22.00" font-size="10.00" text-anchor="middle" font-weight="bold" fill="#111111" data-role="furniture">N</text>
+<text x="554.00" y="58.00" font-size="8.00" text-anchor="start" fill="#111111" data-role="furniture">Grid north</text>
+</g>
+<g data-role="scale-bar" data-x0="520.00" data-px-per-ft="2.400000">
+<rect x="520.00" y="88.00" width="60.00" height="5.00" fill="#000000" stroke="#000000" stroke-width="0.50"/>
+<rect x="580.00" y="88.00" width="60.00" height="5.00" fill="#FFFFFF" stroke="#000000" stroke-width="0.50"/>
+<text x="520.00" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">0</text>
+<text x="580.00" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">25</text>
+<text x="640.00" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">50 ft</text>
+</g>
+<g data-role="legend">
+<text x="520.00" y="126.00" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Legend</text>
+<rect x="520.00" y="132.00" width="18.00" height="10.00" fill="#F0E442" stroke="#222222" stroke-width="0.50" stroke-linejoin="round"/>
+<text x="544.00" y="140.50" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Residential</text>
+<line x1="520.00" y1="153.00" x2="538.00" y2="153.00" stroke="#000000" stroke-width="1.50" stroke-linejoin="round"/>
+<text x="544.00" y="156.50" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Lot line</text>
+</g>
+<g data-role="notes">
+<text x="520.00" y="182.00" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Notes</text>
+<text x="520.00" y="194.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/scope/label">Tax-lot-only estimate</tspan></text>
+<text x="520.00" y="208.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/scope/lot/display">Queens block 7334, lot 70</tspan></text>
+<text x="520.00" y="222.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00">Assumed conditions</tspan></text>
+<text x="520.00" y="236.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/scope/assumptions/0/key">Lot type </tspan><tspan data-source="/scope/assumptions/0/value">corner </tspan><tspan data-source="/scope/assumptions/0/basis">fixture </tspan><tspan data-source="/scope/assumptions/0/statement">Corner lot</tspan><tspan x="520.00" dy="10.00" data-source="/scope/assumptions/0/statement">assumed; the live data does not record</tspan><tspan x="520.00" dy="10.00" data-source="/scope/assumptions/0/statement">the lot type.</tspan></text>
+<text x="520.00" y="270.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/scope/assumptions/1/key">Within 100 ft of a street-line</tspan><tspan x="520.00" dy="10.00" data-source="/scope/assumptions/1/key">intersection </tspan><tspan data-source="/scope/assumptions/1/value">Yes </tspan><tspan data-source="/scope/assumptions/1/basis">assumed </tspan><tspan data-source="/scope/assumptions/1/statement">The lot is</tspan><tspan x="520.00" dy="10.00" data-source="/scope/assumptions/1/statement">assumed to lie within 100 feet of a</tspan><tspan x="520.00" dy="10.00" data-source="/scope/assumptions/1/statement">street-line intersection.</tspan></text>
+<text x="520.00" y="314.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/scope/assumptions/2/key">Street-line intersection angle </tspan><tspan data-source="/scope/assumptions/2/value">90</tspan><tspan x="520.00" dy="10.00" data-source="/scope/assumptions/2/unit">degrees </tspan><tspan data-source="/scope/assumptions/2/basis">assumed </tspan><tspan data-source="/scope/assumptions/2/statement">The street lines are</tspan><tspan x="520.00" dy="10.00" data-source="/scope/assumptions/2/statement">assumed to meet at a 90-degree angle.</tspan></text>
+<text x="520.00" y="348.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/scope/assumptions/3/key">Housing program </tspan><tspan data-source="/scope/assumptions/3/value">standard_residence</tspan><tspan x="520.00" dy="10.00" data-source="/scope/assumptions/3/basis">default </tspan><tspan data-source="/scope/assumptions/3/statement">Standard residence is used as</tspan><tspan x="520.00" dy="10.00" data-source="/scope/assumptions/3/statement">the default housing program.</tspan></text>
+<text x="520.00" y="382.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/scope/assumptions/4/key">Floor-to-floor height </tspan><tspan data-source="/scope/assumptions/4/value">10 </tspan><tspan data-source="/scope/assumptions/4/unit">feet </tspan><tspan data-source="/scope/assumptions/4/basis">default </tspan><tspan data-source="/scope/assumptions/4/statement">A</tspan><tspan x="520.00" dy="10.00" data-source="/scope/assumptions/4/statement">10-foot floor-to-floor height is used as</tspan><tspan x="520.00" dy="10.00" data-source="/scope/assumptions/4/statement">the default.</tspan></text>
+<text x="520.00" y="416.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/scope/whole_site/statement">Based on the lots you selected — the app</tspan><tspan x="520.00" dy="10.00" data-source="/scope/whole_site/statement">does not verify the zoning lot</tspan></text>
+<text x="520.00" y="440.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/scope/remaining_capacity/label">Remaining development capacity: Not</tspan><tspan x="520.00" dy="10.00" data-source="/scope/remaining_capacity/label">confirmed</tspan></text>
+<text x="520.00" y="464.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/scope/remaining_capacity/reason">Needs verified zoning-lot boundaries and</tspan><tspan x="520.00" dy="10.00" data-source="/scope/remaining_capacity/reason">existing zoning floor area.</tspan></text>
+<text x="520.00" y="488.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00">Lot outline: </tspan><tspan data-source="/geometry/measurement/label">Approximate — tax map</tspan></text>
+<text x="520.00" y="502.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00">Rear yard not required: </tspan><tspan data-source="/geometry/yards/entries/0/reason">No rear yard is</tspan><tspan x="520.00" dy="10.00" data-source="/geometry/yards/entries/0/reason">required within 100 ft of the corner</tspan><tspan x="520.00" dy="10.00" data-source="/geometry/yards/entries/0/reason">(two street lines intersecting at 135</tspan><tspan x="520.00" dy="10.00" data-source="/geometry/yards/entries/0/reason">degrees or less).</tspan></text>
+<text x="520.00" y="546.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/geometry/setback_lines_per_level/reason">Setback lines need the ZR 23-433 setback</tspan><tspan x="520.00" dy="10.00" data-source="/geometry/setback_lines_per_level/reason">depths, not encoded in this slice.</tspan></text>
+</g>
+</svg>
