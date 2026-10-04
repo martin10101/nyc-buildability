@@ -90,7 +90,8 @@ Where the sample's method would be wrong for us, and how our pipeline prevents t
    label (`source_fact.schema.json`, study read facts), and the report is bound to one results
    document by canonical digest (`report_model.schema.json` `results_ref`), so every exported value
    can be traced to its origin (PRD section 9 and the "impossible to export a material calculation
-   without a provenance record" rule); traceability does not by itself prove the value right. Where our captured reading differs from the sample (for
+   without a provenance record" rule); traceability does not by itself prove the value right
+   [ORCH-CORRECTED per source-025 R155]. Where our captured reading differs from the sample (for
    example the sample's own page 9 shows "Lot Coverage 100%" while noting "corner lot: 80%"), we do
    not pick a side: the figure stays draft and qualified review decides.
 
