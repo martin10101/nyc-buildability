@@ -6,6 +6,11 @@ import type { ScopeView } from "@/lib/architect/three-answers";
  * whole-site development and remaining capacity unconfirmed. Every string is read from the `results`
  * document (via `scopeView`); nothing is typed here. The label is a plain-text line, never a
  * coloured chip, and no status is encoded by colour alone (owner directive; plan §5a).
+ *
+ * The assumed conditions are shown OPEN by default (D-090-R119, per the owner's reviewer audit): a
+ * plain heading over a real list, with nothing hidden behind a disclosure, so an architect never
+ * has to click to see which corner conditions the estimate assumed. One line per assumption (key,
+ * value and basis), its statement on the line underneath, so a longer list still reads cleanly.
  */
 export function ScopeSummary({ view }: { view: ScopeView }) {
   return (
@@ -16,8 +21,8 @@ export function ScopeSummary({ view }: { view: ScopeView }) {
       <p className="ta-scope-lot" data-testid="three-answers-scope-lot">
         {view.lotDisplay}
       </p>
-      <details className="ta-scope-assumptions" data-testid="three-answers-scope-assumptions">
-        <summary>Assumed conditions</summary>
+      <div className="ta-scope-assumptions" data-testid="three-answers-scope-assumptions">
+        <h3 className="ta-scope-assumptions-heading">Assumed conditions</h3>
         <ul className="ta-scope-assumption-list">
           {view.assumptions.map((assumption, index) => (
             <li
@@ -53,7 +58,7 @@ export function ScopeSummary({ view }: { view: ScopeView }) {
             </li>
           ))}
         </ul>
-      </details>
+      </div>
       <p className="ta-scope-whole-site" data-testid="three-answers-scope-whole-site">
         {view.wholeSiteStatement}
       </p>

@@ -102,19 +102,25 @@ describe("scope beside the numbers (D-090-R108)", () => {
     expect(scope.remaining_capacity.reason).toBe(REMAINING_CAPACITY_REASON);
   });
 
-  it("puts the assumptions in a real list behind a keyboard-reachable disclosure heading", () => {
+  it("shows the assumptions open by default under a plain heading, nothing hidden (D-090-R119)", () => {
     const { doc, scope } = northern();
     render(<ThreeAnswersPanel results={doc} />);
-    const disclosure = within(scopeBlock()).getByTestId("three-answers-scope-assumptions");
-    expect(disclosure.tagName).toBe("DETAILS");
-    expect(disclosure).not.toHaveAttribute("open");
-    // The summary is the list heading and is natively keyboard-operable (same pattern as the
-    // "Rule sections" and status-strip disclosures in this panel).
-    const summary = disclosure.querySelector<HTMLElement>("summary");
-    expect(summary?.textContent).toBe("Assumed conditions");
-    const list = disclosure.querySelector<HTMLUListElement>("ul.ta-scope-assumption-list");
+    const assumptions = within(scopeBlock()).getByTestId("three-answers-scope-assumptions");
+    // No disclosure wrapper: the list is not collapsed behind a toggle (the owner's reviewer
+    // audit — a closed <details> hid the assumptions). The heading is a plain heading, not a
+    // keyboard-operable summary, so reading the assumptions needs no interaction.
+    expect(assumptions.tagName).not.toBe("DETAILS");
+    expect(assumptions.querySelector("summary")).toBeNull();
+    const heading = within(assumptions).getByRole("heading", { name: "Assumed conditions" });
+    expect(heading).toBeVisible();
+    // The real list and every row are visible straight away. toBeVisible() reports false for a
+    // descendant of a closed <details>, so it would fail against the old collapsed markup.
+    const list = assumptions.querySelector<HTMLUListElement>("ul.ta-scope-assumption-list");
     expect(list).not.toBeNull();
-    expect(list?.querySelectorAll<HTMLLIElement>("li")).toHaveLength(scope.assumptions.length);
+    expect(list).toBeVisible();
+    const rows = within(assumptions).getAllByTestId("three-answers-scope-assumption");
+    expect(rows).toHaveLength(scope.assumptions.length);
+    rows.forEach(row => expect(row).toBeVisible());
   });
 
   it("shows the scope label beside the headline numbers on a lane-flag surface", () => {

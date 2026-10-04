@@ -220,17 +220,12 @@
   margin: var(--space-3, 0.75rem) 0 0;
 }
 
-.ta-scope-assumptions summary {
-  cursor: pointer;
+/* The assumed conditions are shown open by default (D-090-R119): a plain heading over a real list,
+   nothing hidden behind a disclosure. Not link-styled — it is a heading, not a toggle. */
+.ta-scope-assumptions-heading {
+  margin: 0;
+  font-size: 1rem;
   font-weight: 600;
-  color: var(--accent, #1f4f82);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.ta-scope-assumptions summary:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
 }
 
 .ta-scope-assumption-list {
