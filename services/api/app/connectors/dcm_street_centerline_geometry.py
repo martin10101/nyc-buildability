@@ -487,19 +487,27 @@ def fetch_street_segment_geometries(
     street_name: str | None = None,
     object_id: int | None = None,
     object_id_in: list[int] | None = None,
+    envelope: tuple[float, float, float, float] | None = None,
     page_size: int = MAX_RESULT_RECORD_COUNT,
     max_pages: int | None = None,
     fetch: Callable[[str, str], DcmTransport] = default_fetch,
     correlation_id: str | None = None,
 ) -> SegmentGeometryQueryResult:
-    """Fetch typed segment geometries for exactly one predicate style.
+    """Fetch typed segment geometries for exactly one predicate style
+    (Borough/Street_NM, OBJECTID, OBJECTID IN, or an EPSG:2263
+    envelope-intersects spatial predicate - M5-T035/DB-015).
 
     The accepted ``fetch_street_segments`` performs ALL transport work -
-    metadata gate, URL building, paging, loop safety - through a
-    pass-through recording seam, so every page body is transported exactly
-    ONCE and then parsed here on the geometry side. Provenance from the
-    accepted result (source freshness fields, retrieval identity, per-page
-    raw digests, drift signals) is carried through unchanged.
+    metadata gate, URL building, paging, loop safety, and the envelope
+    extent-sanity refusal - through a pass-through recording seam, so every
+    page body is transported exactly ONCE and then parsed here on the
+    geometry side. The ``envelope`` predicate is threaded straight through to
+    that accepted driver (D-090-R124: the attribute side already supported it;
+    this closes the geometry side's omission so the single-lot live-streets
+    seam can gather envelope-intersecting polyline pages without a new
+    connector). Provenance from the accepted result (source freshness fields,
+    retrieval identity, per-page raw digests, drift signals) is carried
+    through unchanged.
     """
     recorded: list[DcmTransport] = []
 
@@ -513,6 +521,7 @@ def fetch_street_segment_geometries(
         street_name=street_name,
         object_id=object_id,
         object_id_in=object_id_in,
+        envelope=envelope,
         page_size=page_size,
         max_pages=max_pages,
         fetch=_recording_fetch,

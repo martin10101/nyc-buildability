@@ -58,3 +58,11 @@ def replay_dcm_page() -> SegmentGeometryPage:
     transport = DcmTransport(url=entry["url"], status=200, body=body,
                              retrieved_at=entry["retrieved_at"])
     return parse_segment_geometry_page(transport, correlation_id="b03-benchmark")
+
+
+def recorded_dcm_envelope_page() -> tuple[str, str, str]:
+    """The recorded DCM envelope-page as ``(url, body_text, retrieved_at)`` -- the raw bytes a
+    live-streets composition test serves back through the accepted fetch seam, so the URL the
+    code builds can be checked against the recorded one."""
+    entry = MANIFEST[DCM_FILE]
+    return entry["url"], (PACK / DCM_FILE).read_bytes().decode("utf-8"), entry["retrieved_at"]
