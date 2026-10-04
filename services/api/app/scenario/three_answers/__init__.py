@@ -30,6 +30,11 @@ from .building_option import (
     shortfall_reason,
 )
 from .contract import ResultsContractError, validate_results_document
+from .duplicates import (
+    find_duplicate_options,
+    merge_or_explain,
+    option_identity_key,
+)
 from .engine import (
     CONTRACT_VERSION,
     LOT_SELECTION_STATEMENT,
@@ -37,6 +42,7 @@ from .engine import (
     ThreeAnswersResult,
     generate_results,
 )
+from .explanations import build_status_strip, site_measurement_status_chip
 from .inputs import (
     DEFAULT_FLOOR_TO_FLOOR_FT,
     Assumption,
@@ -56,9 +62,14 @@ __all__ = [
     "ResultsContractError",
     "ThreeAnswerInputs",
     "ThreeAnswersResult",
+    "build_status_strip",
     "compliance_notes",
     "compute_building_option",
+    "find_duplicate_options",
     "generate_results",
+    "merge_or_explain",
+    "option_identity_key",
     "shortfall_reason",
+    "site_measurement_status_chip",
     "validate_results_document",
 ]
