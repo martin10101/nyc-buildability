@@ -13,17 +13,26 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from app.scenario.constants import UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT
 from app.scenario.three_answers import (
     REMAINING_NOT_CONFIRMED_REASON,
     BuildingDefaults,
     ThreeAnswerInputs,
     generate_results,
 )
+from app.scenario.three_answers.scope import DisclosedAssumption, ScopeInputs
 
 _REPO_ROOT = Path(__file__).resolve().parents[5]
 _BENCHMARK = (
     _REPO_ROOT / "packages" / "contracts" / "fixtures" / "valid" / "benchmark_lot"
     / "northern_blvd_215_16_queens_4073340070.json"
+)
+# The #387 scope fixture (results 1.1.0): the benchmark document's scope must equal its
+# scope object, so each disclosed assumption's basis/statement is read from here, never
+# restated (the engine derives the lot identity and reads each value from the real inputs).
+_SCOPE_FIXTURE = (
+    _REPO_ROOT / "packages" / "contracts" / "fixtures" / "valid" / "results"
+    / "synthetic_scope_tax_lot_only_northern.json"
 )
 _ON = {"LANE_A_ENABLED": "1"}
 _OFF: dict[str, str] = {}
@@ -31,6 +40,34 @@ _OFF: dict[str, str] = {}
 
 def _doc_fixture() -> dict:
     return json.loads(_BENCHMARK.read_text("utf-8"))
+
+
+def _scope_fixture() -> dict:
+    return json.loads(_SCOPE_FIXTURE.read_text("utf-8"))["scope"]
+
+
+def _benchmark_scope_inputs() -> ScopeInputs:
+    """ScopeInputs for 215-16 Northern (BBL 4073340070, Queens block 7334 lot 70). The
+    basis and statement of each disclosed assumption are read from the #387 scope fixture
+    so they are never restated here."""
+    assumptions = {a["key"]: a for a in _scope_fixture()["assumptions"]}
+
+    def disclosure(key: str) -> DisclosedAssumption:
+        row = assumptions[key]
+        return DisclosedAssumption(basis=row["basis"], statement=row["statement"])
+
+    return ScopeInputs(
+        bbl="4073340070",
+        lot_type=disclosure("lot_type"),
+        within_100_ft_of_street_line_intersection=disclosure(
+            "within_100_ft_of_street_line_intersection"
+        ),
+        street_line_intersection_angle_degrees=disclosure(
+            "street_line_intersection_angle_degrees"
+        ),
+        housing_program=disclosure("housing_program"),
+        floor_to_floor_ft=disclosure("floor_to_floor_ft"),
+    )
 
 
 def _expected(key: str):
@@ -58,6 +95,7 @@ def _benchmark_inputs(**overrides) -> ThreeAnswerInputs:
         lot_depth_ft=float(_expected("lot_dimension_2")),
         depends_on_fact_ids=("pluto:4073340070:lotarea",),
         lot_area_fact_id="pluto:4073340070:lotarea",
+        scope_inputs=_benchmark_scope_inputs(),
     )
     base.update(overrides)
     return ThreeAnswerInputs(**base)
@@ -75,7 +113,9 @@ def test_document_validates_and_is_draft() -> None:
     # generate_results validates internally; reaching here means the document is schema-valid.
     result = _generate()
     doc = result.document
-    assert doc["contract_version"] == "1.0.0"
+    # 1.1.0: the benchmark inputs carry scope_inputs, so the document emits the scope block
+    # and declares 1.1.0 (D-090-R108 version binding).
+    assert doc["contract_version"] == "1.1.0"
     assert doc["draft"] is True  # every rule is needs_review (D-090-R010)
     assert all(rv["status"] == "needs_review" for rv in doc["rule_versions"])
     assert result.lane_enabled is True
@@ -202,9 +242,13 @@ def test_remaining_capacity_is_never_a_number() -> None:
     assert doc["lot_selection_statement"] == (
         "Based on the lots you selected — the app does not verify the zoning lot"
     )
-    # No answer key states a remaining development capacity number anywhere.
-    blob = json.dumps(doc).lower()
-    assert "remaining development capacity" not in blob
+    # D-090-R108 puts the settled 'Remaining development capacity: Not confirmed' label in the
+    # scope block, beside the numbers. The honest invariant stands: wherever that phrase
+    # appears it is the settled not-confirmed label (no number), and nowhere else.
+    rc = doc["scope"]["remaining_capacity"]
+    assert rc["status"] == "not_confirmed"
+    assert rc["label"] == UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT  # byte-exact, no number
+    assert json.dumps(doc).count("Remaining development capacity") == 1
 
 
 def test_flag_off_gates_everything() -> None:
@@ -216,5 +260,8 @@ def test_flag_off_gates_everything() -> None:
     assert doc["geometry"]["status"] == "not_available"
     assert doc["unit_estimate"]["status"] == "not_available"
     assert doc["draft"] is True
-    # Still a valid results-v1 document (generate_results validated it).
-    assert doc["contract_version"] == "1.0.0"
+    # Still a valid results-v1 document (generate_results validated it). The scope block is
+    # gated on scope_inputs, not the lane flag, so the gated-off document still carries it and
+    # declares 1.1.0 (D-090-R108).
+    assert doc["contract_version"] == "1.1.0"
+    assert doc["scope"]["label"] == "Tax-lot-only estimate"
