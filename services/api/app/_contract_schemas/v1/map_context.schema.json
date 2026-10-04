@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/map_context.schema.json",
+  "title": "Map context",
+  "description": "v1 contract (maps connection step 2, owner directive D-090-R124) for the ONE document the E-07 location and zoning map renderers consume via app.drawings.maps.adapter.load_map_context. It is reshaped NYC city open data only - the subject lot outline (MapPLUTO / DOF Digital Tax Map), the surrounding zoning-district boundaries (DCP NYC GIS Zoning Features nyzd, field ZONEDIST) and the surrounding building footprints (OTI Building Footprints, NYC Open Data 5zhs-2jue) - never a live service call. The maps are APPROXIMATE: they are drawn from the city tax map, they are NEVER a boundary survey, and the zoning layer is NEVER a lot-level zoning determination (the official use limitation and the +/- 20 ft accuracy note ride on every zoning map). Every coordinate is EPSG:2263 (NAD83 / New York Long Island, US survey feet) - the authoritative measurement CRS; the maps never reproject and refuse any other CRS. The schema demands per-layer provenance on every drawable (available) layer so nothing unsourced is ever drawn; the adapter ignores provenance (it validates geometry and strings), so the two are complementary, not redundant. Structural rules a schema cannot state - ring closure, simplicity, non-degeneracy, holes inside their exterior, XML-1.0-safe strings - are enforced by the adapter, which fails closed; this schema pins the shape, the single CRS, the caps and the vocabulary so a document rejected by one is rejected by the other.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "document_kind", "map_context"],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published map_context contract versions. 1.0.0 = the initial shape (D-090-R124). Append-only: a new version is admitted only by an accepted contract task that appends to this enum."
+    },
+    "document_kind": {
+      "type": "string",
+      "const": "map_context",
+      "description": "Fixed document-kind discriminator so a consumer can tell a map_context document apart from any other contract document."
+    },
+    "map_context": {
+      "$ref": "#/$defs/map_context",
+      "description": "The drawable context itself. Named exactly 'map_context' because the adapter reads doc['map_context'] and nothing else at the top level (contract_version/document_kind/_expected_failure are the envelope, invisible to the renderer)."
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Admitted here so an invalid fixture fails ONLY for its stated defect, never for carrying the annotation; producers NEVER emit this key (app/contracts/study_contracts.py rejects it anywhere in a real document)."
+    }
+  },
+  "$defs": {
+    "map_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["crs", "units", "measurement", "subject_lot", "zoning_districts", "building_footprints"],
+      "description": "Everything the location map and the zoning map need, validated and fail-closed. The subject lot is always present (the study is about it); each surrounding layer is either drawable (available, with its sources) or not_available carrying the data's own reason, so the map returns an honest 'unavailable' rather than a blank or invented layer.",
+      "properties": {
+        "crs": {
+          "type": "string",
+          "const": "EPSG:2263",
+          "description": "The single supported CRS: EPSG:2263 (NAD83 / New York Long Island, US survey feet), the authoritative citywide measurement CRS. Equals app.drawings.maps.adapter.SUPPORTED_CRS; any other CRS (e.g. an EPSG:4326 display CRS) is refused, never silently misplaced."
+        },
+        "units": {
+          "type": "string",
+          "const": "feet",
+          "description": "Linear unit of every coordinate: US survey feet (EPSG:2263)."
+        },
+        "measurement": {
+          "$ref": "site_fact.schema.json#/$defs/measurement_known",
+          "description": "The measurement rank and its one-to-one display label for these maps - for the tax-map-derived outline this is rank 'approximate_tax_map', label 'Approximate - tax map' (the dash shown here is an em dash in the data). Reused from site_fact exactly as results.schema.json reuses it, so the label is the shared vocabulary, never retyped. An 'unknown' rank is not a valid map measurement."
+        },
+        "subject_lot": { "$ref": "#/$defs/subject_lot" },
+        "zoning_districts": {
+          "description": "The zoning-district layer: either drawable (available) with its districts, the three mandatory notes and provenance, or not_available carrying the data's own reason.",
+          "oneOf": [
+            { "$ref": "#/$defs/zoning_available" },
+            { "$ref": "#/$defs/layer_unavailable" }
+          ]
+        },
+        "building_footprints": {
+          "description": "The building-footprint layer: either drawable (available) with its footprints, attribution and provenance, or not_available carrying the data's own reason.",
+          "oneOf": [
+            { "$ref": "#/$defs/buildings_available" },
+            { "$ref": "#/$defs/layer_unavailable" }
+          ]
+        }
+      }
+    },
+    "subject_lot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outline"],
+      "description": "The lot the study is about - the focus of both maps, drawn from its own tax-map outline independently of the district polygons. The outline is APPROXIMATE (tax map), never a boundary survey.",
+      "properties": {
+        "bbl": {
+          "$ref": "common.schema.json#/$defs/bbl",
+          "description": "Borough-Block-Lot label read from the data (OPTIONAL: the data may carry no BBL). When present, the location map labels the lot with it."
+        },
+        "outline": {
+          "$ref": "#/$defs/polygon",
+          "description": "The lot polygon (exterior ring first, then any holes), EPSG:2263 US survey feet."
+        }
+      }
+    },
+    "zoning_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "entries", "attribution", "accuracy", "use_limitation", "provenance"],
+      "description": "A drawable zoning layer. Carries the three notes every zoning map must show - the dataset attribution, the horizontal-accuracy statement and the official use limitation - and the per-layer provenance so nothing unsourced is drawn.",
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "entries": {
+          "type": "array",
+          "maxItems": 2000,
+          "description": "The zoning districts around the lot. Capped at 2000 entries, equal to app.drawings.maps.adapter.MAX_MAP_FEATURES (the adapter rejects more).",
+          "items": { "$ref": "#/$defs/zoning_entry" }
+        },
+        "attribution": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Dataset attribution read from the data, e.g. crediting DCP NYC GIS Zoning Features (nyzd) under the NYC Open Data Terms of Use, with the source edit date."
+        },
+        "accuracy": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The horizontal-accuracy statement read from the data (the DCP +/- 20 ft statement), so a boundary drawn near the lot is understood as approximate, not a lot-level determination."
+        },
+        "use_limitation": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The official DCP use limitation, quoted verbatim from docs/samples/maps/README.md: \"These features are not intended for determining zoning at the individual tax lot level\". It MUST appear on every zoning map; the map is deliberately not a lot-level zoning determination."
+        },
+        "provenance": { "$ref": "#/$defs/provenance" }
+      }
+    },
+    "buildings_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "entries", "attribution", "provenance"],
+      "description": "A drawable building-footprint layer: neighbourhood context footprints with the dataset attribution and the per-layer provenance so nothing unsourced is drawn.",
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "entries": {
+          "type": "array",
+          "maxItems": 2000,
+          "description": "The building footprints around the lot. Capped at 2000 entries, equal to app.drawings.maps.adapter.MAX_MAP_FEATURES (the adapter rejects more).",
+          "items": { "$ref": "#/$defs/building_entry" }
+        },
+        "attribution": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Dataset attribution read from the data, crediting the OTI Building Footprints dataset (NYC Open Data 5zhs-2jue) under the NYC Open Data Terms of Use, with the source edit date."
+        },
+        "provenance": { "$ref": "#/$defs/provenance" }
+      }
+    },
+    "layer_unavailable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reason", "reason_kind"],
+      "description": "A layer the data could not provide. The corresponding map becomes an honest 'unavailable' carrying this reason - never a blank or invented layer. Provenance is optional here (there may be nothing retrieved to source).",
+      "properties": {
+        "status": { "type": "string", "const": "not_available" },
+        "reason": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The data's own plain-English reason the layer is unavailable (shown on the map)."
+        },
+        "reason_kind": {
+          "type": "string",
+          "enum": ["source_unavailable"],
+          "description": "Machine kind of the reason, reusing the kind the E-07 renderers and fixtures use: 'source_unavailable' (the layer could not be retrieved from its service for this area). CLOSED enum; new kinds are appended additively only by an accepted contract task."
+        },
+        "provenance": { "$ref": "#/$defs/provenance" }
+      }
+    },
+    "zoning_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["zonedist", "outline"],
+      "description": "One zoning-district polygon, labelled by its verbatim ZONEDIST designation. All districts share one neutral wash on the map; the ZONEDIST symbol is the only classification and it is the label (the use limitation forbids a lot-level determination).",
+      "properties": {
+        "zonedist": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The verbatim ZONEDIST designation read from the data (e.g. 'R7A', 'C4-4A', 'M1-5'), used as the district label."
+        },
+        "outline": {
+          "$ref": "#/$defs/polygon",
+          "description": "The district polygon, EPSG:2263 US survey feet."
+        }
+      }
+    },
+    "building_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outline"],
+      "description": "One building footprint, drawn as neighbourhood context (not labelled individually). An optional source identifier (object_id / doitt_id / bin) may travel with it; the renderer ignores it (it draws only the outline).",
+      "properties": {
+        "outline": {
+          "$ref": "#/$defs/polygon",
+          "description": "The footprint polygon, EPSG:2263 US survey feet."
+        },
+        "object_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "OPTIONAL source feature id as served (e.g. the ArcGIS OBJECTID as a string)."
+        },
+        "doitt_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "OPTIONAL OTI/DOITT building-footprint id as served (a string)."
+        },
+        "bin": {
+          "$ref": "common.schema.json#/$defs/bin",
+          "description": "OPTIONAL 7-digit NYC Building Identification Number for the footprint."
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "dataset_id",
+        "request_url",
+        "retrieved_at",
+        "raw_digest_sha256",
+        "source_data_last_edited",
+        "dataset_version"
+      ],
+      "description": "Per-layer provenance: where this layer's features came from. REQUIRED on every available (drawable) layer so nothing unsourced is ever drawn; OPTIONAL on a not_available layer. The adapter ignores it; the schema demands it (backend-api rule: a material value with no provenance is a defect).",
+      "properties": {
+        "source_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Stable id of the source in the source registry (fixtures use 'test-fixture-synthetic')."
+        },
+        "dataset_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Dataset identifier, e.g. the zoning features layer 'nyzd' or the building-footprints NYC Open Data id '5zhs-2jue'."
+        },
+        "request_url": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The exact request URL the features were retrieved from (fixtures use an example.invalid test-fixture-synthetic URL - no network was called)."
+        },
+        "retrieved_at": {
+          "$ref": "common.schema.json#/$defs/date_time",
+          "description": "RFC 3339 timestamp when the layer was retrieved."
+        },
+        "raw_digest_sha256": {
+          "$ref": "common.schema.json#/$defs/digest_sha256",
+          "description": "Canonical content digest of the retrieved payload ('sha256:' + 64 lowercase hex), so the drawn features are traceable to an exact response."
+        },
+        "source_data_last_edited": {
+          "$ref": "common.schema.json#/$defs/date",
+          "description": "RFC 3339 full-date of the source's own last edit (the dataset's edit date), distinct from retrieved_at."
+        },
+        "dataset_version": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The dataset version the features came from (fixtures use 'test-fixture-synthetic')."
+        }
+      }
+    },
+    "point": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "[x, y] in EPSG:2263 US survey feet. Each coordinate's absolute value is bounded by app.drawings.maps.adapter.MAX_ABS_COORD_FT (1e8 ft) - NYC values are ~1e6 ft; far beyond is corrupt data. The adapter additionally rejects non-finite values.",
+      "items": {
+        "type": "number",
+        "minimum": -100000000,
+        "maximum": 100000000
+      }
+    },
+    "ring": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 2048,
+      "description": "One polygon ring. At least 4 points so a closed ring (first point repeated as last) has at least 3 distinct vertices; at most 2048 points, equal to app.drawings.maps.adapter.MAX_RING_POINTS (which bounds the adapter's O(n^2) simplicity check). CLOSURE (first == last), SIMPLICITY (no self-touch/cross) and NON-DEGENERACY (encloses area) are enforced by the adapter, not by this schema (JSON Schema cannot compare array elements).",
+      "items": { "$ref": "#/$defs/point" }
+    },
+    "polygon": {
+      "type": "array",
+      "minItems": 1,
+      "description": "A polygon as rings: the exterior ring first, then any holes. The adapter checks every hole lies inside the exterior ring.",
+      "items": { "$ref": "#/$defs/ring" }
+    }
+  }
+}
