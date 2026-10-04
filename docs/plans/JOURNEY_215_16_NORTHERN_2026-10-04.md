@@ -24,6 +24,26 @@ For each link: what is proven today (file / test / PR), what is stubbed or missi
 the smallest task that closes the gap with its dependencies. Queue ids are from
 `docs/lanes/queues/{A..E}.md`; a "proposed" slice has no queue row yet.
 
+**State by link (D-090-R133 — built / connected / tested / professionally verified).** The four
+states are not collapsed. **built** = code exists; **connected** = wired into the 215-16 Northern
+path on the **recorded-fixture** route (a "live?" note says whether it is bound live in production —
+**today nothing is live**); **tested** = an automated test on the recorded data **plus** an
+independent review PASS on the PR; **professionally verified** = a qualified human (G6) approved the
+legal reading — **TRUE FOR NOTHING today** (every rule is `draft` / `needs_review`). The full
+element-by-element table is in the walkthrough, section
+"Status by state" (`docs/walkthroughs/2026-10-04-215-16-northern-blvd.md`); this is the per-link
+summary.
+
+| Link | built | connected (recorded-fixture; live?) | tested | G6 | walkthrough rows |
+|---|---|---|---|---|---|
+| 1 Real address → BBL | Yes — Geoclient connector + mounted route | **No on this path** (synthetic seam used); never live | connector/route unit tests; no 215-16 fixture | n/a | 1–3 |
+| 2 Lots selected | Yes — B-07 (#281); B-03 geometry bridge (#390) | B-07 **connected (fixture)**; B-03 geometry → study read **fixture path only (#390)**, live binding **not connected**; not live | #281, #390 (review PASS) | n/a (zoning lot not verified) | 5, 6 |
+| 3 Sourced facts | Yes — PLUTO read; B-05 (#397); street seam `street_data_for_lot` (#403) | PLUTO facts **connected (fixture)**; B-05 → study read **fixture only (#397)**; street seam **built+tested, not attached (#403)** — **street width still not surfaced** | reviews PASS on #329/#397/#403 | none | 4, 7, 8, 9, 10 |
+| 4 Study | Yes — study read + study_setup→study bridge (#400); C-07 inert slot (#391) | bridge **closes the shape + lot_type gap (#400)** but the Northern **corner read fails closed** (two frontages); slot inert; not live | #400, #391 (review PASS) | n/a | 11, 12 |
+| 5 Calculation engine | Yes — A-04 `generate_results` (#353); A-05 #369 / A-06 #377 **open** | **library-only, no route**; hard-coded `_benchmark_inputs`; not live | #353 (review PASS) | **No** — rules `draft` / `needs_review` | 13, 14 |
+| 6 Actual screen | panel exists (#264); results `scope` emission in **#405 open** | **no mounted results route (C-08)**; scope not yet emitted by the engine (#405 open); not live | #264 (review PASS) | **No** | 15, 16 |
+| 7 Available exports | Yes — SVG/DXF (#263/#268); maps renderers (#286). **PDF/Excel not built** | SVG/DXF **connected (fixture)**, AutoCAD-open NOT tested; maps **not connected** (no `map_context`); not live | #263/#268/#286 (review PASS) | n/a | 17, 18, 19 |
+
 ### Link 1 — Real address → BBL
 
 - **Proven:** a real Geoclient v2 `/address` connector exists
@@ -85,12 +105,15 @@ the smallest task that closes the gap with its dependencies. Queue ids are from
   street width per frontage into the study read by **connecting the existing envelope fetch to
   the geometry wrapper (reuse — no new connector)**: the EPSG:2263 intersects-envelope
   predicate already exists (`dcm_street_centerline_arcgis.py`) and the benchmark pack already
-  carries the recorded envelope query (`dcm_street_centerline_lot_envelope_4073340070.json`);
-  what is missing is wiring that fetch plus the geometry page parser
-  (`dcm_street_centerline_geometry.parse_segment_geometry_page`) into the existing
-  `street_data_from_pages` wrapper (`app/spatial/site_geometry`), then threading its result
-  into the study read. **Depends on:** B-05 (done), the street-centerline envelope
-  fetch/parser/wrapper (all done), link 2 for the frontage geometry.
+  carries the recorded envelope query (`dcm_street_centerline_lot_envelope_4073340070.json`).
+  **Part (a) is now merged** (#397: B-05 evidence threaded into the study read — honest unknown with
+  the DOB figure set aside). **The fetch→wrapper wiring is also now built** (#403:
+  `app/spatial/site_geometry/live_streets.py` `street_data_for_lot`, reuse — no new connector). What
+  remains is attaching that seam into the study read's live provider
+  (`_live_study_inputs_provider` binds no live geometry provider) and **threading street width per
+  frontage into the study read** (it is still not surfaced). **Depends on:** B-05 (done, wired #397),
+  the street-centerline envelope fetch/parser/wrapper and the `street_data_for_lot` seam (all done,
+  #403), link 2 for the frontage geometry.
 
 ### Link 4 — Study
 
@@ -210,8 +233,9 @@ engine has no field for it. The pieces and their exact order:
 #382's merge gates only the A-07 rule step):** the independent, flag-off wiring landed first and
 in any order — (a) the evaluator_inputs existing-FA + keep/remove governing slot (Lane C,
 additive, flag-off) **merged as #391**; (b) the B-03 site geometry → study read (lot type,
-frontage, depth) **merged as #390**, with the B-05 existing-floor-area → study-provider wiring
-(link 3) and the C-07 study-read → engine bridge (link 5) **in flight**; (c) the matching inert
+frontage, depth) **merged as #390**, the B-05 existing-floor-area → study-provider wiring (link 3)
+**merged as #397**, and the C-07 study-read → engine bridge (link 5) **merged as #400** (the
+corner-lot two-frontage input still fails closed); (c) the matching inert
 field on `ThreeAnswerInputs` (Lane A, inert until the rule — but its merge still needs the owner's
 yes per PR, Lane A). Then, **gated on PR #382's merge
 (owner's yes)**: (d) the A-07 draft rule → (e) the engine consumes keep/remove so the answer
