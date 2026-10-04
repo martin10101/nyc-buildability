@@ -59,7 +59,14 @@ SCOPE / NOT INVENTED: the plan gives no rule for collapsing several street front
 split district into the single scalar the current evaluator takes (that is the combined-
 outline rule, plan section 4 'Multi-lot sites', and a later slice). So when an engine
 input resolves to more than one distinct fact (different street or tax lot),
-:func:`build_evaluator_inputs` raises rather than guessing which one to use.
+:func:`build_evaluator_inputs` raises rather than guessing which one to use - with ONE
+narrow, disclosed exception for ``lot_front_ft`` (directive D-090-R138): on a corner lot
+whose study property ADDRESS names exactly one of the frontage streets, that frontage is
+selected as the front lot line and the choice is recorded as a DISCLOSED ASSUMPTION
+(``app.contracts.engine_disclosures``); when no street matches the address, or the
+address is absent, the fail-closed error stands. R139 then auto-fills every assumed
+scope disclosure from this bridge's data (also in ``engine_disclosures``), so the engine
+runs on the live read with the scope present and no test-only inputs.
 """
 
 from __future__ import annotations
@@ -67,6 +74,10 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import Any
 
+from app.contracts.engine_disclosures import (
+    build_scope_inputs,
+    select_address_street_frontage,
+)
 from app.contracts.study_contracts import (
     validate_evaluator_inputs_document,
     validate_study_document,
@@ -294,6 +305,33 @@ def _existing_building_plan_record(plan: str) -> dict:
     }
 
 
+def _grouped_known_facts(study: dict) -> dict[str, list[list[dict]]]:
+    """Group the study's KNOWN engine-input facts by (engine input, street, tax lot) and
+    bucket the groups per engine input. A city value and its architect edit share all
+    three keys, so they form one group; different streets or lots are different inputs
+    (several groups for one engine input). Shared by :func:`build_evaluator_inputs` and
+    :func:`build_three_answer_inputs` so the grouping is defined once."""
+    groups: dict[tuple[str, Any, Any], list[dict]] = {}
+    for fact in study["site"]["facts"]:
+        engine_key = _SITE_KEY_TO_ENGINE_KEY.get(fact["key"])
+        if engine_key is None or not _is_known(fact):
+            continue
+        groups.setdefault((engine_key, fact["street"], fact["lot_bbl"]), []).append(fact)
+    by_engine: dict[str, list[list[dict]]] = {}
+    for (engine_key, _street, _bbl), facts in groups.items():
+        by_engine.setdefault(engine_key, []).append(facts)
+    return by_engine
+
+
+def _resolved_frontages(study: dict) -> list[tuple[dict, list[dict]]]:
+    """The per-street governing ``lot_front_ft`` frontage (``(governing, displaced)``
+    from :func:`_resolve_group`) for every known frontage group. Passed to the R139
+    scope auto-fill so the disclosure layer never re-implements the source-order
+    precedence (:mod:`app.contracts.engine_disclosures`)."""
+    front_groups = _grouped_known_facts(study).get("lot_front_ft", [])
+    return [_resolve_group("lot_front_ft", group) for group in front_groups]
+
+
 def build_evaluator_inputs(
     study: dict, option_id: str, *, existing_building_plan: str | None = None
 ) -> dict:
@@ -324,19 +362,8 @@ def build_evaluator_inputs(
             f"(options: {option_ids})"
         )
 
-    # Group known facts by (engine input, street, tax lot): a city value and its
-    # architect edit share all three, so they form one group; different streets or lots
-    # are different inputs.
-    groups: dict[tuple[str, Any, Any], list[dict]] = {}
-    for fact in study["site"]["facts"]:
-        engine_key = _SITE_KEY_TO_ENGINE_KEY.get(fact["key"])
-        if engine_key is None or not _is_known(fact):
-            continue
-        groups.setdefault((engine_key, fact["street"], fact["lot_bbl"]), []).append(fact)
-
-    by_engine: dict[str, list[list[dict]]] = {}
-    for (engine_key, _street, _bbl), facts in groups.items():
-        by_engine.setdefault(engine_key, []).append(facts)
+    by_engine = _grouped_known_facts(study)
+    address = (study.get("property") or {}).get("address")
 
     records: list[dict] = []
     for engine_key in _ENGINE_KEY_ORDER:
@@ -344,6 +371,18 @@ def build_evaluator_inputs(
         if not resolved:
             continue
         if len(resolved) > 1:
+            # R138 corner-lot exception (lot_front_ft only): when the property address
+            # names exactly one frontage street, that frontage is the front lot line - a
+            # DISCLOSED ASSUMPTION the R139 scope carries. Any other multi-fact case, and
+            # a no-match / absent address, keeps the fail-closed combined-outline error.
+            if engine_key == "lot_front_ft":
+                frontages = [_resolve_group(engine_key, group) for group in resolved]
+                selection = select_address_street_frontage(address, frontages)
+                if selection is not None:
+                    records.append(
+                        _record(engine_key, selection.governing, selection.displaced)
+                    )
+                    continue
             raise EvaluatorInputsError(
                 f"engine input {engine_key!r} resolves to {len(resolved)} distinct site "
                 "facts (different streets or tax lots); collapsing them is the combined-"
@@ -395,6 +434,7 @@ def build_three_answer_inputs(
     street_line_intersection_angle_degrees: float,
     special_density_area: bool,
     building_defaults: BuildingDefaults | None = None,
+    study: dict | None = None,
 ) -> ThreeAnswerInputs:
     """Build :class:`ThreeAnswerInputs` from a validated evaluator_inputs document.
 
@@ -403,7 +443,18 @@ def build_three_answer_inputs(
     special-district / geometry flags, and the results document identity) is supplied by
     the caller (the zoning determination and the option; C-08 wires them). Raises
     :class:`EvaluatorInputsError` when a required engine input (lot area, lot type, zoning
-    district) is absent."""
+    district) is absent.
+
+    ``study`` (the SAME validated study document ``evaluator_inputs`` was built from) is
+    optional and ADDITIVE: when given, the R139 scope-beside-the-numbers disclosures are
+    auto-filled from the bridge's own data (:func:`app.contracts.engine_disclosures.
+    build_scope_inputs`) and carried as ``scope_inputs``, so the engine emits the
+    1.1.0 ``scope`` block (lot identity + every assumed input disclosed, with the R138
+    front-lot-line statement when the corner assumption applied) without any test-only
+    input. When ``study`` is None (every existing caller) the result is byte-identical to
+    before - ``scope_inputs`` is None and the engine stays on the 1.0.0 shape. May raise
+    :class:`~app.contracts.engine_disclosures.EngineDisclosureError`, naming the key, when
+    a required disclosure cannot be derived."""
     validate_evaluator_inputs_document(evaluator_inputs)
 
     by_key = {record["key"]: record for record in evaluator_inputs["inputs"]}
@@ -417,6 +468,23 @@ def build_three_answer_inputs(
     lot_area = by_key["lot_area_sq_ft"]
     front = by_key.get("lot_front_ft")
     depth = by_key.get("lot_depth_ft")
+
+    defaults = building_defaults or BuildingDefaults()
+    scope_inputs = (
+        build_scope_inputs(
+            evaluator_inputs,
+            study,
+            resolved_frontages=_resolved_frontages(study),
+            housing_program=housing_program,
+            within_100_ft_of_street_line_intersection=(
+                within_100_ft_of_street_line_intersection
+            ),
+            street_line_intersection_angle_degrees=street_line_intersection_angle_degrees,
+            floor_to_floor_ft=defaults.floor_to_floor_ft,
+        )
+        if study is not None
+        else None
+    )
 
     return ThreeAnswerInputs(
         results_id=results_id,
@@ -435,8 +503,9 @@ def build_three_answer_inputs(
         special_density_area=special_density_area,
         lot_front_ft=float(front["value"]) if front is not None else None,
         lot_depth_ft=float(depth["value"]) if depth is not None else None,
-        building_defaults=building_defaults or BuildingDefaults(),
+        building_defaults=defaults,
         depends_on_fact_ids=tuple(evaluator_inputs["depends_on_fact_ids"]),
         lot_area_fact_id=lot_area["fact_id"],
         site_measurement_rank=evaluator_inputs["site_measurement_rank"],
+        scope_inputs=scope_inputs,
     )
