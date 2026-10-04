@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-04T08:25:25+00:00",
+ "updated_at": "2026-10-04T08:44:45+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -180,10 +180,13 @@
   "D-090-R156",
   "D-090-R157",
   "D-090-R158",
-  "D-090-R159"
+  "D-090-R159",
+  "D-090-R160",
+  "D-090-R161",
+  "D-090-R162"
  ],
- "requirements_id_digest_sha256": "c639b5d52c53d4b4fd3bf8dd14ceb237d7084a5662c939193676ff715a4c3a5d",
- "requirements_content_digest_sha256": "90c8eaa4aed61772e52f12fcbab3fa6f670c327f20f6965a47c52dc2a3a0b531",
+ "requirements_id_digest_sha256": "89e5207583211de5c8a0631c70522c5acc8bb60687c06436e17f1a6eca912d25",
+ "requirements_content_digest_sha256": "2357028e7f882560f3fa229fca3c224e206180168c3055fff612e36797bf2b00",
  "sources": [
   {
    "file": "source-001.md",
@@ -383,6 +386,14 @@
    "recorded_at": "2026-10-04T08:25:25+00:00",
    "content_digest_sha256": "96735fd6dc9171bac812ead2334bfb289e02f39bf86359afb7a9f50ccdb5dfa1",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-026-amendment.md",
+   "kind": "amendment",
+   "sequence": 26,
+   "recorded_at": "2026-10-04T08:44:45+00:00",
+   "content_digest_sha256": "2f67d66c0dbcbc59f5041e6dacc3d8f782d777f1728ed23c8d2241018e9b1edf",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -409,7 +420,8 @@
   "source-022-amendment.md",
   "source-023-amendment.md",
   "source-024-amendment.md",
-  "source-025-amendment.md"
+  "source-025-amendment.md",
+  "source-026-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -598,6 +610,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-025 (session 4d3637bc message 57, 2026-10-04: the #388 hold question (conditional, not met); the owner's five error groups in the competitor sample; the competitor-error guard-check task E1-E20; two forwarded reviewer assessments with gap-plan corrections and the #417 false-disclosure defect) and requirements D-090-R145..R159, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited. Capture session: 4d3637bc, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T08:44:45+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-026 (session 4d3637bc messages 58-59, 2026-10-04: plain human language; the Geoclient key is set in Render; yes to merge #388) and requirements D-090-R160..R162, all pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: 4d3637bc, claude-fable-5-1."
   }
  ]
 }
