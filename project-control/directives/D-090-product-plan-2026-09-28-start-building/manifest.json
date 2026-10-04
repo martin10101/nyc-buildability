@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-04T05:45:14+00:00",
+ "updated_at": "2026-10-04T07:28:52+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -162,10 +162,13 @@
   "D-090-R138",
   "D-090-R139",
   "D-090-R140",
-  "D-090-R141"
+  "D-090-R141",
+  "D-090-R142",
+  "D-090-R143",
+  "D-090-R144"
  ],
- "requirements_id_digest_sha256": "b6e1fdd4cd827efbfda55fbd2cdb6e4b62120a1598d21d548559fe04aa7c4b07",
- "requirements_content_digest_sha256": "f0eddb7e2d8a2bcbfdf9e80bd1edf7f10bd53154c94084092e33877d0b27a1f6",
+ "requirements_id_digest_sha256": "7788a6d0d4d73bb65b6fa3315cf115f2d90dfdcebeca9d1b71ac6003ced3a667",
+ "requirements_content_digest_sha256": "5447bb5f59adfa08661a6b18bd4badd1f4595d21f1ed641f9188eba5df511bac",
  "sources": [
   {
    "file": "source-001.md",
@@ -349,6 +352,14 @@
    "recorded_at": "2026-10-04T05:45:14+00:00",
    "content_digest_sha256": "e896abf8d7fb3b5eb219c06122f2203b94f3a45389aff947490bd79b0883c636",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-024-amendment.md",
+   "kind": "amendment",
+   "sequence": 24,
+   "recorded_at": "2026-10-04T07:28:52+00:00",
+   "content_digest_sha256": "4f52df9130a48505e2bc0e68ac98d7fe942091de2e781091863def303f389ee4",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -373,7 +384,8 @@
   "source-020-amendment.md",
   "source-021-amendment.md",
   "source-022-amendment.md",
-  "source-023-amendment.md"
+  "source-023-amendment.md",
+  "source-024-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -550,6 +562,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-023 (session 0ba6d6a3 message 52, 2026-10-04: the reviewer's assessment of the four-part update - journey stops halfway at the corner-lot bridge; demonstrate one continuous run; scope to the engine automatically; Geoclient key handling; latest merges not independently verified) and requirements D-090-R137..R141, all pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T07:28:52+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-024 (session 4d3637bc messages 55-56, 2026-10-04: the owner's competitor sample PDF as the kind of report an architect must get back; the sample has errors per the owner; 'what do we still need to add to get back a PDF like this, but accurately') and requirements D-090-R142..R144, all pending. Text extracted by script from the transcript (message 56 from a queued_command attachment); nothing retyped; no existing row edited. Capture session: 4d3637bc, claude-fable-5-1."
   }
  ]
 }
