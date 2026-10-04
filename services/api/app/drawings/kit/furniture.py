@@ -9,12 +9,16 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from .hatches import hatch_fill
 from .labels import format_number
 from .model import Label, StreetWidthCase
 from .styles import AREA, STYLE_TABLE, TYPOGRAPHY, style_for
 from .svg import attrs, element, escape, num, open_tag, stroke_attrs, text_element
+
+if TYPE_CHECKING:
+    from .scope import ScopeView
 
 __all__ = [
     "SCALE_BAR_LENGTHS_FT",
@@ -24,6 +28,7 @@ __all__ = [
     "north_arrow",
     "notes_block",
     "scale_bar",
+    "scope_notes",
 ]
 
 # Candidate scale-bar lengths (feet); the longest that fits is used.
@@ -191,6 +196,15 @@ def notes_block(
         y += _NOTE_LINE * len(lines) + 4.0
     parts.append("</g>")
     return parts, labels, y
+
+
+def scope_notes(scope: ScopeView | None) -> list[Note]:
+    """One note per scope line (D-090-R108): the estimate label, the tax lot, the
+    assumed conditions, the whole-site statement and the two settled strings -
+    every figure and settled string read from the results."""
+    if scope is None:
+        return []
+    return [Note(tuple((part.text, part.source) for part in line)) for line in scope.lines]
 
 
 def case_notes(case: StreetWidthCase | None) -> list[Note]:

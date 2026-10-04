@@ -15,7 +15,7 @@ $EXTMIN
 10
 0.000000
 20
--34.000000
+-67.000000
 30
 0.000000
 9
@@ -55,7 +55,7 @@ VPORT
 12
 20.000000
 22
-33.000000
+16.500000
 13
 0.000000
 23
@@ -81,7 +81,7 @@ VPORT
 37
 0.000000
 40
-147.400000
+183.700000
 41
 1.000000
 42
@@ -267,7 +267,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Option opt-1 - revision 1
+Tax-lot-only estimate
 0
 TEXT
 8
@@ -281,7 +281,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Results test-fixture-scope-northern-70-results - computed 2026-09-30T13:01:00Z
+Queens block 7334, lot 70
 0
 TEXT
 8
@@ -295,7 +295,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Approximate - city tax map, not a survey (lot outline)
+Assumed conditions
 0
 TEXT
 8
@@ -309,7 +309,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Yards not available - yard rules for this district are not built yet.
+Lot type corner fixture Corner lot assumed; the live data does not record the lot type.
 0
 TEXT
 8
@@ -323,7 +323,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Setbacks not available - height rules for this district are not built yet.
+Within 100 ft of a street-line intersection Yes assumed The lot is assumed to lie within 100 feet of a street-line intersection.
 0
 TEXT
 8
@@ -337,7 +337,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Envelope not available - height rules for this district are not built yet.
+Street-line intersection angle 90 degrees assumed The street lines are assumed to meet at a 90-degree angle.
 0
 TEXT
 8
@@ -351,7 +351,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Floor plates not available - the building option is not available.
+Housing program standard_residence default Standard residence is used as the default housing program.
 0
 TEXT
 8
@@ -365,7 +365,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Out of date: The zoning district fact changed after these results were computed.
+Floor-to-floor height 10 feet default A 10-foot floor-to-floor height is used as the default.
 0
 TEXT
 8
@@ -379,7 +379,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Coordinates: local plane in feet, origin at a lot corner, axes parallel to the EPSG:2263 grid
+Based on the lots you selected - the app does not verify the zoning lot
 0
 TEXT
 8
@@ -393,7 +393,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Units: feet, 1 drawing unit = 1 ft (scale 1:1)
+Remaining development capacity: Not confirmed
 0
 TEXT
 8
@@ -402,6 +402,160 @@ A-ANNO-NOTE
 0.000000
 20
 -34.000000
+30
+0.000000
+40
+2.000000
+1
+Needs verified zoning-lot boundaries and existing zoning floor area.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-37.000000
+30
+0.000000
+40
+2.000000
+1
+Option opt-1 - revision 1
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-40.000000
+30
+0.000000
+40
+2.000000
+1
+Results test-fixture-scope-northern-70-results - computed 2026-09-30T13:01:00Z
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-43.000000
+30
+0.000000
+40
+2.000000
+1
+Approximate - city tax map, not a survey (lot outline)
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-46.000000
+30
+0.000000
+40
+2.000000
+1
+Yards not available - yard rules for this district are not built yet.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-49.000000
+30
+0.000000
+40
+2.000000
+1
+Setbacks not available - height rules for this district are not built yet.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-52.000000
+30
+0.000000
+40
+2.000000
+1
+Envelope not available - height rules for this district are not built yet.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-55.000000
+30
+0.000000
+40
+2.000000
+1
+Floor plates not available - the building option is not available.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-58.000000
+30
+0.000000
+40
+2.000000
+1
+Out of date: The zoning district fact changed after these results were computed.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-61.000000
+30
+0.000000
+40
+2.000000
+1
+Coordinates: local plane in feet, origin at a lot corner, axes parallel to the EPSG:2263 grid
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-64.000000
+30
+0.000000
+40
+2.000000
+1
+Units: feet, 1 drawing unit = 1 ft (scale 1:1)
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-67.000000
 30
 0.000000
 40

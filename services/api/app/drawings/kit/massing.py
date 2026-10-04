@@ -15,7 +15,7 @@ from dataclasses import dataclass
 
 from . import geometry as geo
 from .color import mix
-from .furniture import case_notes, legend, notes_block
+from .furniture import case_notes, legend, notes_block, scope_notes
 from .hatches import hatch_defs
 from .labels import format_area, format_feet, text_box
 from .model import Drawing, DrawingInput, FloorPlate, FloorRow, LayerUnavailable, Unavailable
@@ -165,8 +165,8 @@ def draw_massing(data: DrawingInput) -> Drawing | Unavailable:
     table_bottom = _floor_table(sheet, data, levels, origin, fit)
     legend_parts, legend_bottom = legend(sheet.kinds, COL_NAME_X, table_bottom + 14.0)
     note_parts, note_labels, notes_bottom = notes_block(
-        case_notes(data.street_width_case), COL_NAME_X, legend_bottom + 10.0,
-        CANVAS_W - COL_NAME_X - 16.0)
+        scope_notes(data.scope) + case_notes(data.street_width_case), COL_NAME_X,
+        legend_bottom + 10.0, CANVAS_W - COL_NAME_X - 16.0)
     height = max(CANVAS_H, legend_bottom + 12.0, notes_bottom + 12.0)
     svg = svg_document(width=CANVAS_W, height=height, drawing="massing",
                        title="Axonometric massing", defs=hatch_defs(sheet.kinds),

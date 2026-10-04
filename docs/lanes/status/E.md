@@ -11,3 +11,5 @@ Refreshed 2026-10-03 from the PR record by the integrator (status words only; de
 | **Next** | E-02 (PDF converter trial) — next, but its WeasyPrint runtime question is an owner item; E-04 waits on E-02. E-03 (DXF) merged (#268, 2026-10-03); E-01b/Q8 unchanged. |
 | **Blocked by** | E-01b (section drawing): owner question Q8 |
 | **Open owner questions** | Q8 — whether the section view falls under the expansion hold. (E-07: optional aerial/street base map deferred until an imagery licence is confirmed from the publisher's own page) |
+
+E-R108 (D-090-R108): the results `scope` now prints on the site plan and DXF notes — label, tax lot, assumed conditions, whole-site and the two settled remaining-capacity strings (branch `lane-e/E-R108-scope-on-drawings`, in review).
