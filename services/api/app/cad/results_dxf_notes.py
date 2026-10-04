@@ -38,10 +38,14 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from app.cad.claim_words import contains_claim_word
 from app.drawings.kit.errors import DrawingInputError
 from app.drawings.kit.model import DrawingInput, LayerUnavailable
+
+if TYPE_CHECKING:
+    from app.drawings.kit.scope import ScopeView
 
 __all__ = [
     "MEASUREMENT_NOTE_TEXT",
@@ -189,6 +193,24 @@ def _case_notes(results: Mapping) -> list[DxfNote]:
     return notes
 
 
+def _scope_notes(scope: ScopeView) -> list[DxfNote]:
+    """The scope lines as annotation (D-090-R108), the same lines the site plan
+    prints: each figure and settled string read from the results (its pointer in
+    ``sources``); the kit's own words (heading, key name, flag word) screened for
+    a claim word and folded to ASCII, like every other fixed note."""
+    notes: list[DxfNote] = []
+    for line in scope.lines:
+        words: list[str] = []
+        sources: list[str] = []
+        for part in line:
+            words.append(_fixed(part.text) if part.mine
+                         else ascii_text(part.text, part.source or ""))
+            if part.source is not None:
+                sources.append(part.source)
+        notes.append(DxfNote(" ".join(words), "scope", tuple(sources)))
+    return notes
+
+
 def _unavailable_notes(results: Mapping, data: DrawingInput) -> list[DxfNote]:
     return [
         _line(results, "not_available", f"{layer.source}/reason")
@@ -203,6 +225,7 @@ def annotation_notes(results: Mapping, data: DrawingInput) -> list[DxfNote]:
         raise DrawingInputError("crs_unknown", f"no coordinates note for {data.crs!r}",
                                 location="/geometry/crs")
     notes = [
+        *(_scope_notes(data.scope) if data.scope is not None else []),
         _line(results, "option", "Option", "/option_id", "- revision", "/revision"),
         _line(results, "results", "Results", "/results_id", "- computed", "/computed_at"),
         *_case_notes(results),

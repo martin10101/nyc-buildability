@@ -17,8 +17,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0"],
-      "description": "CLOSED enum of published evaluator_inputs contract versions. 1.0.0 = C-07 initial shape. New versions are admitted only by an accepted contract task that appends to this enum."
+      "enum": ["1.0.0", "1.1.0"],
+      "description": "CLOSED enum of published evaluator_inputs contract versions. 1.0.0 = C-07 initial shape. 1.1.0 (journey plan §2 step 4, wave 1 item 4; D-090-R109) adds the OPTIONAL, additive, INERT 'existing_building' slot (the architect's keep/remove plan and the governing existing-zoning-floor-area record). existing_building is OPTIONAL and may be absent or null; a document carrying a NON-NULL existing_building declares 1.1.0 (the version-binding allOf below), while a document with an absent or null slot may declare 1.0.0 or 1.1.0, so every valid 1.0.0 instance stays valid unchanged. The enum is append-only (new versions are admitted only by an accepted contract task that appends to it); the emitter declares 1.1.0 only when it fills the slot."
     },
     "study_id": {
       "$ref": "common.schema.json#/$defs/non_empty_string",
@@ -49,11 +49,27 @@
       "description": "The fact ids of the governing records (plan section 9, dependency-based invalidation). A change to any of them marks results built from these inputs out of date.",
       "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
     },
+    "existing_building": {
+      "description": "OPTIONAL, additive, INERT slot (contract 1.1.0; journey plan §2 step 4, wave 1 item 4; D-090-R109). Carries the architect's keep/remove PLAN (architect-entered only, never a city source) and the GOVERNING existing-zoning-floor-area record built from the study's existing_zoning_floor_area site fact (B-05), so the keep/remove choice and the existing zoning floor area travel beside the evaluator inputs. INERT: the three-answer evaluator has no field for it yet - it does NOT change build_three_answer_inputs, the governing_input engine_key enum, or any engine output. It becomes load-bearing only once Lane A adds the matching ThreeAnswerInputs field and the A-07 existing-buildings §5b rule exist (journey plan §2 steps 4-6). OPTIONAL and may be absent or null; a non-null slot binds contract_version to 1.1.0 (the version-binding allOf below). The settled 'Remaining development capacity: Not confirmed' wording is untouched - nothing here computes or changes remaining capacity.",
+      "anyOf": [
+        { "$ref": "#/$defs/existing_building" },
+        { "type": "null" }
+      ]
+    },
     "_expected_failure": {
       "type": "string",
       "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key; it is allowed (optional) so an invalid fixture fails only for its stated defect under additionalProperties:false."
     }
   },
+  "allOf": [
+    {
+      "description": "Version binding (contract 1.1.0; journey plan §2 step 4): a document carrying a non-null existing_building slot declares contract_version 1.1.0. An absent or null slot leaves the version unconstrained, so 1.0.0 stays valid for it. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either existing_building is null (or absent, since 'properties' is vacuous for an absent key), or contract_version is 1.1.0.",
+      "anyOf": [
+        { "properties": { "existing_building": { "type": "null" } } },
+        { "properties": { "contract_version": { "const": "1.1.0" } } }
+      ]
+    }
+  ],
   "$defs": {
     "governing_input": {
       "type": "object",
@@ -262,6 +278,194 @@
         "assumption"
       ],
       "description": "The site_fact source kind this value came from (site_fact.schema.json #/$defs/source 'kind'). Tied to the rank in the governing_input allOf: survey->survey_entered, city_dataset/city_filing->city_records, tax_map_computation->approximate_tax_map, architect_entry->entered, assumption->assumed."
+    },
+    "existing_building": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["plan", "floor_area"],
+      "description": "The INERT existing-building slot (contract 1.1.0). 'plan' is the architect's keep/remove choice (architect-entered, never a city source) or null when not provided; 'floor_area' is the governing existing-zoning-floor-area record built from the study's existing_zoning_floor_area site fact, or null when the study carries no such fact. The builder fills the slot when the caller supplies a plan or the study carries a KNOWN existing-floor-area fact; a lone unknown fact without a plan leaves the slot absent (the 1.0.0 output is unchanged).",
+      "properties": {
+        "plan": {
+          "description": "The architect's keep/remove plan, or null when not provided. Architect-entered only (basis 'entered', label 'Entered'); never a city source.",
+          "anyOf": [
+            { "$ref": "#/$defs/existing_building_plan" },
+            { "type": "null" }
+          ]
+        },
+        "floor_area": {
+          "description": "The governing existing-zoning-floor-area record, or null when the study carries no existing_zoning_floor_area site fact. A known record governs (governing true); an unknown record is carried explicitly (governing false) with B-05's reason, so an unknown value stays visible and is never silently dropped.",
+          "anyOf": [
+            { "$ref": "#/$defs/existing_floor_area_record" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "existing_building_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "basis", "label", "statement"],
+      "description": "The architect's keep/remove choice, mirroring the web step's closed vocabulary (study.schema.json existing_building_plan; apps/web existing-building-view EXISTING_BUILDING_PLANS / EXISTING_BUILDING_PLAN_LABELS). ALWAYS architect-entered: basis 'entered', label 'Entered' (the measurement vocabulary's architect-entry tie), never a city source, so the choice can never be shown as a city fact. 'statement' is the plain-words label for the chosen value.",
+      "properties": {
+        "value": {
+          "type": "string",
+          "enum": ["no_existing_building", "keep", "remove"],
+          "description": "The closed keep/remove vocabulary, byte-identical to study.schema.json existing_building_plan and the web step's EXISTING_BUILDING_PLANS."
+        },
+        "basis": {
+          "type": "string",
+          "const": "entered",
+          "description": "The plan is architect-entered. CONST 'entered' (the measurement rank for an architect entry); never a city source kind."
+        },
+        "label": {
+          "type": "string",
+          "const": "Entered",
+          "description": "The display label tied one-to-one to basis 'entered' (measurement_label_known 'Entered')."
+        },
+        "statement": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The plain-words plan label (apps/web EXISTING_BUILDING_PLAN_LABELS): 'No existing building', 'Keep the existing building' or 'Remove the existing building'."
+        }
+      }
+    },
+    "existing_floor_area_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "value", "unit", "fact_id", "rank", "label", "source_kind", "governing", "note"],
+      "description": "The governing existing-zoning-floor-area record, built from the study's existing_zoning_floor_area site fact (B-05) through the SAME rank/label/source one-to-one tie the governing_input records use, EXTENDED with the 'unknown' rank because an unknown existing floor area is a valid, visible state here (it blocks remaining capacity; it is never a governing engine input). A known record (rank != unknown) carries a positive square-feet value, its tied source kind and governing=true; an unknown record carries value/unit/source_kind null and governing=false. 'note' is B-05's prose carried VERBATIM from the site fact: for a known value it includes the tax-lot scope statement ('stated for tax lot ...; whether the figure covers only this tax lot or a zoning lot of several tax lots is not established'); for an unknown value it is B-05's reason ('Needs existing zoning floor area: ...'). A stated assumption governs only when no city source exists - B-05's own precedence decided that before the fact reached here.",
+      "properties": {
+        "key": {
+          "type": "string",
+          "const": "existing_zoning_floor_area",
+          "description": "The site_fact key this record is built from (B-05). Deliberately NOT a member of the governing_input engine_key enum: existing floor area is carried in this slot, never as a ThreeAnswerInputs scalar (INERT until Lane A)."
+        },
+        "value": {
+          "type": ["number", "null"],
+          "description": "The existing zoning floor area in square feet when known (a positive number), or null when unknown. Never NaN/Infinity (strict JSON)."
+        },
+        "unit": {
+          "description": "square_feet when known; null when unknown.",
+          "anyOf": [
+            { "type": "string", "const": "square_feet" },
+            { "type": "null" }
+          ]
+        },
+        "fact_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The id of the existing_zoning_floor_area site fact this record was built from (site_fact.schema.json fact_id), present for a known or an unknown record so the slot is always traceable to its fact."
+        },
+        "rank": { "$ref": "#/$defs/measurement_rank_any" },
+        "label": { "$ref": "#/$defs/measurement_label_any" },
+        "source_kind": {
+          "description": "The site_fact source kind tied to the rank; null when unknown (an unknown fact has no source).",
+          "anyOf": [
+            { "$ref": "#/$defs/source_kind" },
+            { "type": "null" }
+          ]
+        },
+        "governing": {
+          "type": "boolean",
+          "description": "true when the record is a known governing existing-floor-area value; false when unknown (an unknown value never governs - it blocks remaining capacity, plan section 3 step 4)."
+        },
+        "note": {
+          "description": "B-05's prose carried verbatim from the site fact (site_fact.schema.json note): the tax-lot scope statement for a known value, or B-05's reason for an unknown one. Null only if the source fact carried no note.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "description": "rank, label, source kind, value, unit and governing are tied one-to-one (the governing_input tie, extended with 'unknown'). A known rank carries its tied label and source kind, a positive square-feet value and governing=true; 'unknown' carries 'Unknown — enter', a null source kind, null value and unit, and governing=false. Expressed with oneOf/const (not if/then) because the contracts validator's keyword allowlist excludes if/then.",
+          "oneOf": [
+            {
+              "properties": {
+                "rank": { "const": "survey_entered" },
+                "label": { "const": "Survey (entered)" },
+                "source_kind": { "const": "survey" },
+                "value": { "type": "number", "exclusiveMinimum": 0 },
+                "unit": { "const": "square_feet" },
+                "governing": { "const": true }
+              }
+            },
+            {
+              "properties": {
+                "rank": { "const": "city_records" },
+                "label": { "const": "City records" },
+                "source_kind": { "enum": ["city_dataset", "city_filing"] },
+                "value": { "type": "number", "exclusiveMinimum": 0 },
+                "unit": { "const": "square_feet" },
+                "governing": { "const": true }
+              }
+            },
+            {
+              "properties": {
+                "rank": { "const": "approximate_tax_map" },
+                "label": { "const": "Approximate — tax map" },
+                "source_kind": { "const": "tax_map_computation" },
+                "value": { "type": "number", "exclusiveMinimum": 0 },
+                "unit": { "const": "square_feet" },
+                "governing": { "const": true }
+              }
+            },
+            {
+              "properties": {
+                "rank": { "const": "entered" },
+                "label": { "const": "Entered" },
+                "source_kind": { "const": "architect_entry" },
+                "value": { "type": "number", "exclusiveMinimum": 0 },
+                "unit": { "const": "square_feet" },
+                "governing": { "const": true }
+              }
+            },
+            {
+              "properties": {
+                "rank": { "const": "assumed" },
+                "label": { "const": "Assumed" },
+                "source_kind": { "const": "assumption" },
+                "value": { "type": "number", "exclusiveMinimum": 0 },
+                "unit": { "const": "square_feet" },
+                "governing": { "const": true }
+              }
+            },
+            {
+              "properties": {
+                "rank": { "const": "unknown" },
+                "label": { "const": "Unknown — enter" },
+                "source_kind": { "type": "null" },
+                "value": { "type": "null" },
+                "unit": { "type": "null" },
+                "governing": { "const": false }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "measurement_rank_any": {
+      "type": "string",
+      "enum": [
+        "survey_entered",
+        "city_records",
+        "approximate_tax_map",
+        "entered",
+        "assumed",
+        "unknown"
+      ],
+      "description": "Any site_fact measurement rank INCLUDING 'unknown' (site_fact.schema.json #/$defs/measurement). Used only by existing_floor_area_record, where an unknown existing floor area is a valid, visible state (it blocks remaining capacity, never feeds an engine input). Distinct from measurement_rank_known, which excludes 'unknown' because an unknown value never governs an engine input."
+    },
+    "measurement_label_any": {
+      "type": "string",
+      "enum": [
+        "Survey (entered)",
+        "City records",
+        "Approximate — tax map",
+        "Entered",
+        "Assumed",
+        "Unknown — enter"
+      ],
+      "description": "The display label tied to any rank including 'unknown' ('Unknown — enter'; site_fact.schema.json #/$defs/measurement labels). Tied one-to-one to the rank in the existing_floor_area_record allOf."
     }
   }
 }

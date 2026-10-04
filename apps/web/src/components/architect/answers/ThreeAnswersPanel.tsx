@@ -5,11 +5,13 @@ import {
   DRAFT_PREVIEW_TAG,
   answerView,
   remainingFloorAreaView,
+  scopeView,
   shortfallView,
   type ThreeAnswersResults,
 } from "@/lib/architect/three-answers";
 import { AnswerCard, ShortfallBlock, SupplementRow } from "./AnswerCard";
 import { ResultsStatusStrip } from "./ResultsStatusStrip";
+import { ScopeSummary } from "./ScopeSummary";
 import "./three-answers.css";
 
 export interface ThreeAnswersPanelProps {
@@ -36,6 +38,7 @@ export interface ThreeAnswersPanelProps {
 export function ThreeAnswersPanel({ results, showDraftValues = false }: ThreeAnswersPanelProps) {
   const headingId = useId();
   const remaining = remainingFloorAreaView(results);
+  const scope = scopeView(results);
   return (
     <section className="ta-panel" aria-labelledby={headingId} data-testid="three-answers-panel">
       <h2 id={headingId} className="ta-panel-title">
@@ -47,6 +50,7 @@ export function ThreeAnswersPanel({ results, showDraftValues = false }: ThreeAns
         ) : null}
       </h2>
       <ResultsStatusStrip results={results} />
+      {scope ? <ScopeSummary view={scope} /> : null}
       <div className="ta-answers">
         <AnswerCard
           answerKey="floor_area_allowance"

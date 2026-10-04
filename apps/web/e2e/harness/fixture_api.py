@@ -51,6 +51,7 @@ import os
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
+from urllib.parse import parse_qs, urlparse
 
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
@@ -83,7 +84,7 @@ from app.config import (
 )
 from app.connectors.dof_sales_soda import build_by_bbl_url, build_candidates_url
 from app.connectors.dtm_lot_outline import build_outline_query_url as dtm_outline_query_url
-from app.connectors.geoclient_address import AddressResolution
+from app.connectors.geoclient_address import AddressResolution, resolve_address
 from app.connectors.mappluto_lot_outline import (
     LotOutlineTransport,
     build_outline_query_url,
@@ -297,7 +298,12 @@ def harness_substrate_provider(canonical_bbl: str, correlation_id: str):
 #      is scaffolding ONLY: no prior task wired an address-resolution seam, and
 #      the confirm card (hence the lot-outline surface) is reachable only through
 #      a resolved address. The resolver is clearly synthetic; the GEOMETRY it
-#      leads to is the real recorded data from seam (1).
+#      leads to is the real recorded data from seam (1). The DEFAULT stays this
+#      synthetic resolver (so every existing e2e is byte-identical); an OPT-IN
+#      recorded-Geoclient resolver (``harness_recorded_geoclient_resolver``,
+#      defined below, NOT wired as the default) runs the REAL Geoclient
+#      connector over the recorded G01 documented-example body for a caller that
+#      wants the real address->BBL path (D-090-R124; Tier-D note there).
 # ---------------------------------------------------------------------------
 
 LOT_OUTLINE_FIXTURE_DIR = (
@@ -416,6 +422,92 @@ def harness_address_resolver(
             "digest_canonicalization": "canonical-json-1",
             "correlation_id": correlation_id,
         },
+    )
+
+
+# ---------------------------------------------------------------------------
+# D-090-R124 (Lane C W1-08): an OPT-IN recorded-Geoclient resolver beside the
+# synthetic one above. It is NOT the harness default - the build_app override
+# below stays ``harness_address_resolver``, so every existing e2e is
+# byte-identical. It exists so the address->BBL step can be driven through the
+# REAL Geoclient connector over RECORDED OFFICIAL data when a caller opts in.
+#
+# For the ONE documented-example address the G01 fixture records (314 W 100 St,
+# Manhattan -> BBL 1018887502 - the Geoclient User Guide example, NOT the
+# 215-16 Northern benchmark lot) it runs the production ``resolve_address`` over
+# the recorded response body through a url-keyed fake transport + a dummy
+# offline key, so route/connector/parse/provenance are the real code paths and
+# no response byte is hand-written. EVERY other address falls through to the
+# synthetic ``harness_address_resolver`` unchanged.
+#
+# HARD LIMIT (Tier D): recording the real Geoclient response for 215-16 Northern
+# Boulevard needs the subscription key, which only the owner holds, so until
+# then the real path is proven on the documented example above and the benchmark
+# journey still enters by BBL.
+# ---------------------------------------------------------------------------
+
+GEOCLIENT_FIXTURE_DIR = (
+    REPO_ROOT / "services" / "api" / "tests" / "fixtures" / "geoclient"
+)
+GEOCLIENT_G01_FIXTURE = "G01_address_documented_example.json"
+# Clearly-fake offline key; the real GEOCLIENT_SUBSCRIPTION_KEY is owner-only
+# (Tier D) and is never read, required, or printed here.
+RECORDED_GEOCLIENT_DUMMY_KEY = "DUMMY-GEOCLIENT-KEY-HARNESS-OFFLINE-ONLY"
+
+
+def _g01_recorded_capture() -> dict:
+    """The G01 documented-example capture: the exact house/street/borough it was
+    recorded with (parsed from its own ``request_url``, never restated here),
+    its recorded ``request_url`` and its verbatim response body."""
+    fixture = json.loads(
+        (GEOCLIENT_FIXTURE_DIR / GEOCLIENT_G01_FIXTURE).read_text(encoding="utf-8")
+    )
+    query = parse_qs(urlparse(fixture["request_url"]).query)
+    return {
+        "house_number": query["houseNumber"][0],
+        "street": query["street"][0],
+        "borough": query["borough"][0],
+        "request_url": fixture["request_url"],
+        "body": fixture["response_body_raw"],
+    }
+
+
+def harness_recorded_geoclient_resolver(
+    house_number: str,
+    street: str,
+    *,
+    borough: str | None = None,
+    zip_code: str | None = None,
+) -> AddressResolution:
+    """OPT-IN resolver (never the harness default). For the recorded G01
+    documented-example address it resolves through the REAL Geoclient connector
+    over the recorded official body + a dummy offline key; any other address
+    keeps the synthetic ``harness_address_resolver`` behaviour byte-for-byte.
+    See the block comment above for the Tier-D hard limit on the benchmark lot."""
+    capture = _g01_recorded_capture()
+    asked = (house_number, street, borough or "")
+    recorded = (capture["house_number"], capture["street"], capture["borough"])
+    if asked != recorded:
+        return harness_address_resolver(
+            house_number, street, borough=borough, zip_code=zip_code
+        )
+
+    def _recorded_transport(url: str, headers: dict, timeout: float) -> TransportResponse:
+        if url != capture["request_url"]:
+            raise AssertionError(
+                f"unexpected Geoclient url {url!r}; only the recorded G01 "
+                "documented-example capture is served offline"
+            )
+        return TransportResponse(200, capture["body"])
+
+    return resolve_address(
+        house_number,
+        street,
+        borough=borough,
+        zip_code=zip_code,
+        key=RECORDED_GEOCLIENT_DUMMY_KEY,
+        transport=_recorded_transport,
+        sleep=lambda _seconds: None,
     )
 
 

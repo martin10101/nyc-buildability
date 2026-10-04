@@ -134,6 +134,194 @@ def _record(doc: dict, engine_key: str) -> dict:
     return next(r for r in doc["inputs"] if r["key"] == engine_key)
 
 
+def _existing_zfa_fact(
+    *, value, rank: str, fact_id: str, source: dict | None, note: str, bbl="4073340070"
+) -> dict:
+    """An existing_zoning_floor_area site fact (B-05), for the INERT slot tests."""
+    label = {
+        "city_records": "City records",
+        "assumed": "Assumed",
+        "entered": "Entered",
+        "unknown": "Unknown — enter",
+    }[rank]
+    known = rank != "unknown"
+    return {
+        "contract_version": "1.0.0",
+        "fact_id": fact_id,
+        "key": "existing_zoning_floor_area",
+        "lot_bbl": bbl,
+        "street": None,
+        "value": value,
+        "unit": "square_feet" if known else None,
+        "measurement": {"rank": rank, "label": label},
+        "source": source,
+        "blocks": [] if known else ["remaining_floor_area", "existing_building_paths"],
+        "editable": True,
+        "note": note,
+    }
+
+
+# A realistic B-05 "no evidence supplied" unknown reason (resolve_existing_zoning_floor_area).
+_EFA_UNKNOWN_NOTE = (
+    "Needs existing zoning floor area: from a Buildings Department filing or certificate "
+    "of occupancy, or entered as a stated assumption. City-recorded building area is never "
+    "used for it. No DOB job-filing rows were supplied. No certificate of occupancy figure "
+    "or stated assumption was entered."
+)
+# A B-05 known note carrying the tax-lot scope statement verbatim.
+_EFA_KNOWN_NOTE = (
+    "9,100 sq ft from DOB BIS job 421803891 (document 01). Scope: stated for tax lot "
+    "4073340070; whether the figure covers only this tax lot or a zoning lot of several tax "
+    "lots is not established. City-recorded building area is shown for reference only and is "
+    "never used for it."
+)
+
+
+# --------------------------------------------------------------------------
+# existing_building slot (contract 1.1.0, INERT): journey plan §2 step 4
+# --------------------------------------------------------------------------
+
+def test_default_has_no_existing_building_slot_and_stays_1_0_0() -> None:
+    # No plan and no existing_zoning_floor_area fact: the slot is absent and the output is
+    # byte-identical to the 1.0.0 shape (requirement d: identical to today).
+    doc = build_evaluator_inputs(_study(_benchmark_city_facts()), _OPTION_ID)
+    assert doc["contract_version"] == "1.0.0"
+    assert "existing_building" not in doc
+
+
+def test_plan_fills_the_slot_and_bumps_version_floor_area_unknown() -> None:
+    # The benchmark pack has no sourced existing floor area; a "keep" plan still fills the
+    # slot with an explicit-unknown floor area carrying B-05's reason verbatim.
+    facts = _benchmark_city_facts()
+    facts.append(
+        _existing_zfa_fact(
+            value=None, rank="unknown", fact_id="f-efa-unknown", source=None,
+            note=_EFA_UNKNOWN_NOTE,
+        )
+    )
+    doc = build_evaluator_inputs(_study(facts), _OPTION_ID, existing_building_plan="keep")
+    assert doc["contract_version"] == "1.1.0"
+    slot = doc["existing_building"]
+    assert slot["plan"] == {
+        "value": "keep", "basis": "entered", "label": "Entered",
+        "statement": "Keep the existing building",
+    }
+    fa = slot["floor_area"]
+    assert fa["key"] == "existing_zoning_floor_area"
+    assert fa["rank"] == "unknown" and fa["label"] == "Unknown — enter"
+    assert fa["value"] is None and fa["unit"] is None and fa["source_kind"] is None
+    assert fa["governing"] is False
+    assert fa["note"] == _EFA_UNKNOWN_NOTE  # B-05's reason, verbatim
+    # The slot is INERT: the engine inputs are unchanged by it.
+    assert [r["key"] for r in doc["inputs"]] == [
+        "lot_area_sq_ft", "lot_front_ft", "lot_depth_ft", "lot_type", "zoning_district",
+    ]
+
+
+def test_known_existing_floor_area_fills_the_slot_without_a_plan() -> None:
+    facts = _benchmark_city_facts()
+    facts.append(
+        _existing_zfa_fact(
+            value=9100, rank="city_records", fact_id="f-efa-dob",
+            source=_source(
+                "city_filing", dataset="DOB Job Application Filings (ic3t-wcy2)",
+                document_ref="DOB BIS job 421803891",
+            ),
+            note=_EFA_KNOWN_NOTE,
+        )
+    )
+    doc = build_evaluator_inputs(_study(facts), _OPTION_ID)
+    assert doc["contract_version"] == "1.1.0"
+    slot = doc["existing_building"]
+    assert slot["plan"] is None  # no plan supplied, but a known fact still fills the slot
+    fa = slot["floor_area"]
+    assert fa["value"] == 9100 and fa["unit"] == "square_feet"
+    assert fa["rank"] == "city_records" and fa["label"] == "City records"
+    assert fa["source_kind"] == "city_filing"
+    assert fa["governing"] is True
+    assert fa["note"] == _EFA_KNOWN_NOTE  # tax-lot scope statement, verbatim
+
+
+def test_assumption_governs_existing_floor_area_only_without_a_city_source() -> None:
+    # A lone stated assumption governs the existing floor area (no city source present).
+    facts = _benchmark_city_facts()
+    facts.append(
+        _existing_zfa_fact(
+            value=8000, rank="assumed", fact_id="f-efa-assumed",
+            source=_source("assumption", statement="Architect-stated existing floor area."),
+            note="8,000 sq ft entered as a stated assumption.",
+        )
+    )
+    doc = build_evaluator_inputs(_study(facts), _OPTION_ID, existing_building_plan="keep")
+    fa = doc["existing_building"]["floor_area"]
+    assert fa["rank"] == "assumed" and fa["governing"] is True and fa["value"] == 8000
+
+
+def test_assumption_beside_a_city_existing_floor_area_raises() -> None:
+    # An assumption recorded BESIDE a city existing-floor-area value is a visible conflict.
+    facts = _benchmark_city_facts()
+    facts.append(
+        _existing_zfa_fact(
+            value=9100, rank="city_records", fact_id="f-efa-dob",
+            source=_source(
+                "city_filing", dataset="DOB Job Application Filings (ic3t-wcy2)",
+                document_ref="DOB BIS job 421803891",
+            ),
+            note=_EFA_KNOWN_NOTE,
+        )
+    )
+    facts.append(
+        _existing_zfa_fact(
+            value=8000, rank="assumed", fact_id="f-efa-assumed",
+            source=_source("assumption", statement="Architect-stated existing floor area."),
+            note="8,000 sq ft entered as a stated assumption.",
+        )
+    )
+    with pytest.raises(
+        EvaluatorInputsError, match="a stated assumption conflicts with a recorded value"
+    ):
+        build_evaluator_inputs(_study(facts), _OPTION_ID, existing_building_plan="keep")
+
+
+def test_slot_is_inert_for_the_three_answer_evaluator() -> None:
+    # Filling the slot does not change the engine output: the golden allowance still holds.
+    facts = _benchmark_city_facts()
+    facts.append(
+        _existing_zfa_fact(
+            value=None, rank="unknown", fact_id="f-efa-unknown", source=None,
+            note=_EFA_UNKNOWN_NOTE,
+        )
+    )
+    doc = build_evaluator_inputs(_study(facts), _OPTION_ID, existing_building_plan="keep")
+    inputs = _three_answer_inputs(doc)
+    result = generate_results(inputs, env=_LANE_ON)
+    allowance = result.document["answers"]["floor_area_allowance"]
+    area = next(v for v in allowance["values"] if v["key"] == "max_residential_floor_area")
+    assert area["value"] == _benchmark_value("max_residential_floor_area")  # 20150, golden
+
+
+def test_unknown_floor_area_fact_without_a_plan_leaves_the_slot_absent() -> None:
+    # A lone UNKNOWN existing-floor-area fact and no plan does NOT fill the slot: the
+    # 1.0.0 output is unchanged (requirement d).
+    facts = _benchmark_city_facts()
+    facts.append(
+        _existing_zfa_fact(
+            value=None, rank="unknown", fact_id="f-efa-unknown", source=None,
+            note=_EFA_UNKNOWN_NOTE,
+        )
+    )
+    doc = build_evaluator_inputs(_study(facts), _OPTION_ID)
+    assert doc["contract_version"] == "1.0.0"
+    assert "existing_building" not in doc
+
+
+def test_unknown_plan_value_is_rejected() -> None:
+    with pytest.raises(EvaluatorInputsError, match="is not one of"):
+        build_evaluator_inputs(
+            _study(_benchmark_city_facts()), _OPTION_ID, existing_building_plan="demolish"
+        )
+
+
 # --------------------------------------------------------------------------
 # build_evaluator_inputs: governing selection and displacement
 # --------------------------------------------------------------------------
@@ -361,6 +549,8 @@ def test_missing_required_engine_input_is_rejected() -> None:
         "governing_record_without_fact_id.json",
         "unknown_rank.json",
         "assumed_record_displaces_a_fact.json",
+        "existing_building_plan_city_source_basis.json",
+        "existing_building_non_null_with_1_0_0_version.json",
     ],
 )
 def test_invalid_fixtures_fail_validation(name: str) -> None:

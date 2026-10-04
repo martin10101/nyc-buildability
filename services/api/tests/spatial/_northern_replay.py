@@ -12,7 +12,12 @@ from datetime import UTC, datetime
 from pathlib import Path
 from random import Random
 
-from app.connectors import mappluto_geometry_arcgis, pluto_soda
+from app.connectors import (
+    building_footprints_arcgis,
+    mappluto_geometry_arcgis,
+    pluto_soda,
+    zoning_features_arcgis,
+)
 from app.connectors.dcm_street_centerline_arcgis import DcmTransport
 from app.connectors.dcm_street_centerline_geometry import (
     SegmentGeometryPage,
@@ -58,3 +63,34 @@ def replay_dcm_page() -> SegmentGeometryPage:
     transport = DcmTransport(url=entry["url"], status=200, body=body,
                              retrieved_at=entry["retrieved_at"])
     return parse_segment_geometry_page(transport, correlation_id="b03-benchmark")
+
+
+def replay_nyzd_page() -> zoning_features_arcgis.LayerQueryResult:
+    """The recorded nyzd ZONEDIST='R6B' query page as the connector's OWN typed result
+    (the page the live zoning-district provider requests). The pack's ``_transport`` serves
+    the recorded layer metadata first, then this query page, each matched by URL."""
+    return zoning_features_arcgis.query_features(
+        "nyzd", "ZONEDIST", "R6B",
+        result_record_count=zoning_features_arcgis.MAX_RESULT_RECORD_COUNT, result_offset=0,
+        transport=_transport, sleep=lambda _s: None, clock=lambda: _CLOCK,
+        rng=Random(0), correlation_id="b03-benchmark")
+
+
+def replay_footprints_lot_polygon() -> building_footprints_arcgis.ContextBuildingsResult:
+    """The recorded building-footprint page for the lot polygon as the connector's OWN typed
+    result. The lot ring comes from :func:`replay_lot_geometry` (the pack's MapPLUTO lot
+    geometry through the real connector); ``_transport`` serves the recorded footprint-layer
+    metadata first, then this query page, each matched by URL."""
+    lot_ring = replay_lot_geometry().features[0]["geometry"]["rings"][0]
+    return building_footprints_arcgis.fetch_context_buildings(
+        polygon=lot_ring, page_size=2000,
+        transport=_transport, sleep=lambda _s: None, clock=lambda: _CLOCK,
+        rng=Random(0), correlation_id="b03-benchmark")
+
+
+def recorded_dcm_envelope_page() -> tuple[str, str, str]:
+    """The recorded DCM envelope-page as ``(url, body_text, retrieved_at)`` -- the raw bytes a
+    live-streets composition test serves back through the accepted fetch seam, so the URL the
+    code builds can be checked against the recorded one."""
+    entry = MANIFEST[DCM_FILE]
+    return entry["url"], (PACK / DCM_FILE).read_bytes().decode("utf-8"), entry["retrieved_at"]

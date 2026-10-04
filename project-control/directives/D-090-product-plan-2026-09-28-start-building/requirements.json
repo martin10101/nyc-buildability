@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 105,
+ "requirement_count": 141,
  "producer": "orchestrator",
- "updated_at": "2026-10-04T00:45:30+00:00",
+ "updated_at": "2026-10-04T05:45:14+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -3572,6 +3572,1246 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-04 (message 43).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R106",
+   "text": "Describe the demonstrated progress accurately: the 215-16 Northern walkthrough proves several components work together with test inputs; it does not yet demonstrate a complete address-to-screen workflow. Correct wording that suggests otherwise (the walkthrough record, its published page, PR bodies and status prose).",
+   "source_ref": "source-017-amendment.md#owner-message-45-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R101"
+   ],
+   "required_harness": "A docs PR correcting the record's framing; the republished page; the consolidated update uses the same words.",
+   "required_evidence": "The corrected record (docs/walkthroughs/) and the page; the PR body.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 45).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R107",
+   "text": "Investigate the height discrepancy FIRST: the sample building is 20 feet tall while the report lists a 30-foot minimum wall (base) height. Check the applicable rules and any exception against the captured ZR text; either document why this particular sample complies or fix the generator and add a meaningful test. Also show the qualifying-housing heights clearly as 30 / 45 / 65 feet. ORCHESTRATOR'S READING, not owner wording: 'first' orders the Lane A engine work ahead of the scope-disclosure engine change (R108), since both touch the generator; the finding is documented from the captured ZR text, never from memory, and any legal reading stays DRAFT until G6.",
+   "source_ref": "source-017-amendment.md#owner-message-45-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R012",
+    "D-090-R101"
+   ],
+   "required_harness": "A Lane A PR: the investigation note citing the ZR snapshot text, either a compliance note in the results (with a test that fails if the condition is removed) or a generator fix with a red/green test; the qualifying heights emitted as the triple 30 / 45 / 65 ft; independent review.",
+   "required_evidence": "The PR, its tests and the review comment.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 45).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R108",
+   "text": "Put the scope beside the numbers: the headline cards and the exported drawings must visibly say \"Tax-lot-only estimate\", identify lot 70, and disclose the assumed corner conditions; keep whole-site and remaining capacity unconfirmed; preserve the settled wording \"Remaining development capacity: Not confirmed.\" and \"Needs verified zoning-lot boundaries and existing zoning floor area.\" ORCHESTRATOR'S READING, not owner wording: this needs a results-contract slot (Lane C), the engine to fill it from its inputs (Lane A, after R107), the answer cards (Lane D) and the SVG/DXF notes (Lane E) to render it - four lane PRs in dependency order.",
+   "source_ref": "source-017-amendment.md#owner-message-45-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R038",
+    "D-090-R039",
+    "D-090-R107"
+   ],
+   "required_harness": "The four PRs; tests that the label, the lot identity and the assumed-corner disclosure are present on the cards and in the drawings; the settled strings byte-identical.",
+   "required_evidence": "The PRs and their review comments; the walkthrough re-run showing the label on the exports.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 45).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R109",
+   "text": "Prioritize one complete working journey: real address -> selected lots and sourced facts -> study -> calculation engine -> actual screen -> available exports. Reuse the existing work. Identify the smallest remaining tasks and dependencies, including the keep/remove choice and the existing zoning floor area. Demonstrate what works and clearly identify every remaining assumption or missing connection. ORCHESTRATOR'S READING, not owner wording: first a committed plan of the smallest tasks and their dependencies, then execution of the items already authorized under the lane plan; items needing a new owner decision are listed, not started.",
+   "source_ref": "source-017-amendment.md#owner-message-45-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R101",
+    "D-090-R103"
+   ],
+   "required_harness": "A committed journey plan (docs/) with the task list, dependencies and owner decisions; the demonstration re-run as each connection lands.",
+   "required_evidence": "The plan record; the PRs it spawns; the re-run records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 45).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R110",
+   "text": "Explain the pending approvals together: for PRs #369, #377 and #382 give one plain sentence each describing the change, its review/test status, and why it needs the owner's approval.",
+   "source_ref": "source-017-amendment.md#owner-message-45-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R021",
+    "D-090-R029"
+   ],
+   "required_harness": "The consolidated update's approvals section.",
+   "required_evidence": "The update text.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 45).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R111",
+   "text": "This message does not approve those merges: PRs #369, #377 and #382 stay open until a later explicit yes per PR.",
+   "source_ref": "source-017-amendment.md#owner-message-45-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R021",
+    "D-090-R029",
+    "D-090-R110"
+   ],
+   "required_harness": "No merge of #369/#377/#382 without a later explicit owner yes naming the PR.",
+   "required_evidence": "The PRs' states.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 45).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R112",
+   "text": "Tighten the CI proposal: separate the measured duplication from the unproven claim that it caused the Windows failures; state exactly which runs disappear and how required testing and the existing security policy remain satisfied.",
+   "source_ref": "source-017-amendment.md#owner-message-45-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R104",
+    "D-090-R105"
+   ],
+   "required_harness": "A revision of docs/ci/DUPLICATE_RUNS_INSPECTION_2026-10-04.md with the causation claim marked unproven (or removed), the exact run set that disappears, and the coverage/policy mapping; independent check.",
+   "required_evidence": "The revised record and its review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 45).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R113",
+   "text": "Continue already-authorized development under the existing review rules.",
+   "source_ref": "source-017-amendment.md#owner-message-45-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R020",
+    "D-090-R103"
+   ],
+   "required_harness": "Dispatch records and PRs under Option B.",
+   "required_evidence": "The lane PRs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 45).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R114",
+   "text": "Keep production switches off.",
+   "source_ref": "source-017-amendment.md#owner-message-45-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R102",
+    "D-090-R048",
+    "D-090-R058"
+   ],
+   "required_harness": "No lane flag or route default changes in any PR of this wave.",
+   "required_evidence": "PR diffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 45).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R115",
+   "text": "Return one consolidated update with findings, completed fixes and the genuine decisions needed from the owner.",
+   "source_ref": "source-017-amendment.md#owner-message-45-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R097",
+    "D-090-R106",
+    "D-090-R107",
+    "D-090-R108",
+    "D-090-R109",
+    "D-090-R110",
+    "D-090-R112"
+   ],
+   "required_harness": "One owner-facing update in plain words with those three parts.",
+   "required_evidence": "The update text.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 45).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R116",
+   "text": "Write a prompt the owner can hand to an independent reviewer to check, read-only and from primary evidence (commits, merged PRs, CI results, files), whether the six items of message 45 (R106-R115) were carried out honestly: per item, where to look, what counts as done, what is still open, and what would be an overstatement; it must not rely on PR descriptions or summaries, must name the settled wording to check byte-exact, must confirm #369/#377/#382 are still open, and must confirm production switches stay off.",
+   "source_ref": "source-018-amendment.md#owner-message-47-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R106",
+    "D-090-R107",
+    "D-090-R108",
+    "D-090-R109",
+    "D-090-R110",
+    "D-090-R111",
+    "D-090-R112",
+    "D-090-R114",
+    "D-090-R115"
+   ],
+   "required_harness": "The prompt text delivered to the owner in chat (and optionally as a shareable page); the owner's reviewer can run it without further context.",
+   "required_evidence": "The delivered prompt; the chat reply that carried it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 47). Delivered in chat the same turn; verification pending.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R117",
+   "text": "Correct the walkthrough prose: the city-data pack does not 'flow through' the engine (the engine ran on separate fixture inputs that bypass the study adapter); and a real Geoclient connector and a mounted address-resolution route already exist, so 'no prior task wired a real address-to-BBL step' is false. Say exactly what the existing route does and what the walkthrough used.",
+   "source_ref": "source-019-amendment.md#owner-message-48-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R106"
+   ],
+   "required_harness": "A docs PR; reviewer confirms each corrected sentence against the connectors and route registrations.",
+   "required_evidence": "The corrected walkthrough text and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 48, the owner's reviewer's audit).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R118",
+   "text": "Height finding corrections: (a) the research note and headings must not say 'COMPLIES' or 'would misstate the law'; keep the draft register ('a reading of the captured text'; it does not establish the site's compliance; qualified zoning review decides); (b) record that the \u00a723-432 HTML fingerprint did not reproduce on recheck while the operative text and the R6B row matched (an unreproduced fingerprint, not proof the law changed); (c) the computed note is currently dropped before the results document - make that explicit with a test and queue the Lane C slot + Lane A emitter + Lane D display that carry it; (d) the owner approves the corrected #388 separately after these corrections.",
+   "source_ref": "source-019-amendment.md#owner-message-48-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R107"
+   ],
+   "required_harness": "Corrected note text on the #388 branch; a test asserting the note's presence/absence in the document; a queued task for the slot; independent review at the corrected head.",
+   "required_evidence": "The #388 branch diff, the review record, the queue row.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 48, the owner's reviewer's audit).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R119",
+   "text": "Scope beside the numbers, visible: the cards show the assumed conditions open by default, not behind a closed disclosure; every assumed input the engine actually uses appears in scope.assumptions (the emitter and the contract fixture change together); the exported drawings and DXF notes carry the scope label, lot identity and assumptions. No new wording decision is needed.",
+   "source_ref": "source-019-amendment.md#owner-message-48-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R108"
+   ],
+   "required_harness": "Lane D, Lane A + Lane C, and Lane E PRs, each reviewed; a test proving every assumed engine input is disclosed; snapshot diffs showing the scope lines on the drawings.",
+   "required_evidence": "PR diffs, review records, snapshot files.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 48, the owner's reviewer's audit).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R120",
+   "text": "Correct the journey plan: remove the unsupported 'choose a geocoder' owner blocker (a Geoclient connector and route exist); replace 'AutoCAD-opening' with what the tests prove (structurally valid DXF); make the keep/remove 'exact order' consistent with the wave-1 sequence and the already-merged work.",
+   "source_ref": "source-019-amendment.md#owner-message-48-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R109"
+   ],
+   "required_harness": "A docs PR; reviewer checks each statement against the code and the merged PRs.",
+   "required_evidence": "The corrected plan and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 48, the owner's reviewer's audit).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R121",
+   "text": "Approvals record: correct PR #382's body (36 provisions, matching the corrected source, not 37); state plainly in the approvals explanation that independent-agent reviews are recorded by the shared GitHub account and cannot be authenticated as separate identities from GitHub alone (agent transcripts are the evidence).",
+   "source_ref": "source-019-amendment.md#owner-message-48-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R110",
+    "D-090-R111"
+   ],
+   "required_harness": "The #382 body diff; the explanation text.",
+   "required_evidence": "PR body; the owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 48, the owner's reviewer's audit).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R122",
+   "text": "Correct the CI proposal record: name both coverage losses (branches with no open PR get no heavy CI; open PRs lose the raw-head push run and keep only the merge-ref run); say that the scheduled workflows run the dependency audits, not every job; say that the proposal narrows the existing 'every push' policy wording and needs the owner's acceptance as a policy change, not 'preserved unchanged'.",
+   "source_ref": "source-019-amendment.md#owner-message-48-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R112"
+   ],
+   "required_harness": "A docs PR; reviewer re-derives each statement from the workflow files and the policy text.",
+   "required_evidence": "The corrected record and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 48, the owner's reviewer's audit).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R123",
+   "text": "Owner decisions carried from the audit: qualified zoning review of the height finding and a separate merge approval for the corrected #388; #392's approval when ready; the existing pilot / reviewer / storage decisions (M1-05, E-02, Q4, B-001) with no repeat geocoder choice; a separate yes/no for each Lane A PR; whether to accept the CI coverage/policy change once accurately disclosed.",
+   "source_ref": "source-019-amendment.md#owner-message-48-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R115",
+    "D-090-R118",
+    "D-090-R119",
+    "D-090-R122"
+   ],
+   "required_harness": "Each decision recorded when the owner gives it; none assumed.",
+   "required_evidence": "Owner messages; directive captures.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 48, the owner's reviewer's audit).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R124",
+   "text": "Reconcile the audit against the actual code and finish the missing connections by reuse: connect the B-03 geometry wrapper to the EXISTING envelope-intersects street-centerline fetch (dcm_street_centerline_arcgis) plus the geometry page parser - no new connector; connect the EXISTING location and zoning map renderers (app/drawings/maps) to this lot's results document - no rebuild; correct every record that said otherwise (DB-120, the #390 review comment's claim, the journey plan, the walkthrough, the owner updates).",
+   "source_ref": "source-020-amendment.md#owner-message-49-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R109",
+    "D-090-R117",
+    "D-090-R120"
+   ],
+   "required_harness": "Lane B + Lane C PRs for the geometry connection; a Lane E PR for the map connection; docs corrections; each independently reviewed against the code.",
+   "required_evidence": "PR diffs, review records, corrected records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 49, the owner's reviewer's second check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R125",
+   "text": "Hold PR #388 (R107 height finding) and the CI proposal change until the audit corrections (R118, R122) have landed and been independently verified; neither is a candidate for the owner's yes before that.",
+   "source_ref": "source-020-amendment.md#owner-message-49-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R118",
+    "D-090-R122",
+    "D-090-R123"
+   ],
+   "required_harness": "Both stay OPEN with no merge until the owner lifts the hold after verified corrections.",
+   "required_evidence": "PR states; this row.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 49, the owner's reviewer's second check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R126",
+   "text": "Status language: the R107 note exists internally and is dropped before the results document - say so wherever it is described; #392's assumption disclosures stay 'missing' until the emitter and fixture change lands; never write 'corrected everywhere' or 'done' while a named record still carries the old wording; the CI proposal removes raw-head testing of branch code even when a PR exists and changes the existing testing policy - say that; passing tests do not resolve a named gap.",
+   "source_ref": "source-020-amendment.md#owner-message-49-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R106",
+    "D-090-R115",
+    "D-090-R118",
+    "D-090-R119",
+    "D-090-R122"
+   ],
+   "required_harness": "Every owner update checked sentence by sentence against the named records before sending; the directive verifier reads the updates against the records.",
+   "required_evidence": "The owner updates; the records they cite.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 49, the owner's reviewer's second check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R127",
+   "text": "Continue other authorized work under the existing review rules while the held items wait.",
+   "source_ref": "source-020-amendment.md#owner-message-49-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R113"
+   ],
+   "required_harness": "Ordinary lane PRs continue (Tier A); Lane A merges still need the owner's yes; production switches off.",
+   "required_evidence": "PR record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 49, the owner's reviewer's second check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R128",
+   "text": "Correct merged PR #383's title and body: they must not say 'one complete request'; say the walkthrough showed components working together on test inputs, not a complete address-to-screen request, with a dated correction note.",
+   "source_ref": "source-021-amendment.md#owner-message-50-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R106",
+    "D-090-R117"
+   ],
+   "required_harness": "The PR metadata edit; reviewer reads the title and body.",
+   "required_evidence": "PR #383 title and body.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 50, the owner's reviewer's third check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R129",
+   "text": "The journey plan must mark every Lane A step (the inert ThreeAnswerInputs existing-floor-area / keep-remove field, the A-07 rule, the scope emitter, any engine change) as needing the owner's yes to merge; only M1-05 (Q1/Q12), E-02, Q4 and B-001 are product decisions, and no geocoder choice is owed.",
+   "source_ref": "source-021-amendment.md#owner-message-50-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R109",
+    "D-090-R120"
+   ],
+   "required_harness": "The corrected plan rows; reviewer checks each Lane A row carries the owner-yes marker.",
+   "required_evidence": "docs/plans/JOURNEY_215_16_NORTHERN_2026-10-04.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 50, the owner's reviewer's third check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R130",
+   "text": "The CI record must state that a pull_request run is NOT re-run when the base advances (GitHub re-runs only on a push to the PR branch; #369's run stayed at its old merge ref while integration advanced) and must say how fresh-base testing is enforced today: the manual rule of merging the integration branch into a stale PR branch, proving the merge empty and letting the new head's run go green before merging; the proposal does not change this.",
+   "source_ref": "source-021-amendment.md#owner-message-50-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R112",
+    "D-090-R122"
+   ],
+   "required_harness": "The corrected record; reviewer checks the workflow trigger lines and the stated rule.",
+   "required_evidence": "docs/ci/DUPLICATE_RUNS_INSPECTION_2026-10-04.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 50, the owner's reviewer's third check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R131",
+   "text": "The scope's disclosed assumptions must include the hard-coded special-district and special-density inputs (special_district_present, special_density_area) and every other assumed engine input, each with an honest basis and statement; #392 is not a candidate for the owner's yes until this lands.",
+   "source_ref": "source-021-amendment.md#owner-message-50-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R108",
+    "D-090-R119"
+   ],
+   "required_harness": "The emitter + fixture change; a test deriving the disclosed set from the input fields; review record.",
+   "required_evidence": "PR diff and tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 50, the owner's reviewer's third check).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R132",
+   "text": "Finish the height explanation: carry the computed minimum-base-height note into the actual results document (an additive results-contract slot for building-option notes), emit it from the engine, show it on the screen wherever the sample building appears, and test that it reaches the user from the rendered document; the wording is a draft finding pending qualified review (never 'complies' or other definitive legal wording).",
+   "source_ref": "source-022-amendment.md#owner-message-51-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R107",
+    "D-090-R118"
+   ],
+   "required_harness": "Lane C slot PR, Lane A emitter PR (owner's yes), Lane D display PR; a test reading the note from the document and from the rendered card; independent reviews.",
+   "required_evidence": "PR diffs, review records, the test.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 51).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R133",
+   "text": "Make the reports match reality and classify every element as built / connected / tested / professionally verified (the four states, never collapsed); correct the remaining walkthrough claims, the AutoCAD-opening claim and the contradictory task order wherever they still appear.",
+   "source_ref": "source-022-amendment.md#owner-message-51-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R117",
+    "D-090-R120",
+    "D-090-R128"
+   ],
+   "required_harness": "Docs PR; reviewer checks each element's state against code, tests and review records.",
+   "required_evidence": "The corrected documents and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 51).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R134",
+   "text": "Tell the owner, without bias, the difference between the orchestrator's work and the owner's independent reviewer's audits, who did the better job and why.",
+   "source_ref": "source-022-amendment.md#owner-message-51-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R116"
+   ],
+   "required_harness": "A plain, evidence-based answer in chat.",
+   "required_evidence": "The chat reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 51). Answered in chat the same turn.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R135",
+   "text": "Return one short consolidated update in four parts: what is fixed, what can now be demonstrated, what remains unfinished, and the exact decisions that genuinely require the owner.",
+   "source_ref": "source-022-amendment.md#owner-message-51-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R115",
+    "D-090-R126"
+   ],
+   "required_harness": "The update, built only from the PR record and verified records.",
+   "required_evidence": "The chat reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 51).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R136",
+   "text": "This message approves nothing: the held Lane A merges (#388 and every other Lane A PR) and the CI change stay unmerged and unapplied; corrected, reviewable work is prepared first; workflow files stay unchanged.",
+   "source_ref": "source-022-amendment.md#owner-message-51-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R125",
+    "D-090-R111"
+   ],
+   "required_harness": "PR states and the untouched .github/workflows tree.",
+   "required_evidence": "PR list; git log of .github/workflows.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 51).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R137",
+   "text": "Demonstrate ONE continuous run for 215-16 Northern Boulevard on recorded data - address (or the disclosed BBL entry) -> selected lots and sourced facts -> study -> bridge -> engine -> results -> cards -> exports - as a single automated journey test; completed components shown separately do not satisfy this.",
+   "source_ref": "source-023-amendment.md#owner-message-52-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R109",
+    "D-090-R132",
+    "D-090-R138",
+    "D-090-R139"
+   ],
+   "required_harness": "One journey test (recorded fixtures, flags off) that asserts each link's output feeds the next; an independent review runs it.",
+   "required_evidence": "The test, its run record, the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 52, the reviewer's assessment forwarded by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R138",
+   "text": "Close the corner-lot stop in the study-to-engine bridge: when a lot has two frontages, the bridge uses the frontage on the address street as the front lot line and records that as a DISCLOSED ASSUMPTION in the scope (never a legal determination; fails closed when no frontage matches); which street is legally the front lot line stays a qualified-review question.",
+   "source_ref": "source-023-amendment.md#owner-message-52-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R109",
+    "D-090-R119"
+   ],
+   "required_harness": "Lane C bridge/adapter change + tests; the assumption appears in scope.assumptions; independent review.",
+   "required_evidence": "PR diff, tests, review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 52, the reviewer's assessment forwarded by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R139",
+   "text": "The complete scope information reaches the engine automatically: the bridge fills the engine's scope disclosures from the governing-input ranks and the recorded assumptions, so the journey's results carry the scope without test-only inputs.",
+   "source_ref": "source-023-amendment.md#owner-message-52-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R119",
+    "D-090-R131"
+   ],
+   "required_harness": "Lane C change on the bridge (after the Lane A scope emitter lands) + tests; independent review.",
+   "required_evidence": "PR diff, tests, review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 52, the reviewer's assessment forwarded by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R140",
+   "text": "Geoclient key: if GEOCLIENT_SUBSCRIPTION_KEY is already configured, use it for the already-requested 215-16 Northern address recording; if it is missing, ask the owner to configure it securely (an environment variable on the recording machine) and NEVER ask for it in chat.",
+   "source_ref": "source-023-amendment.md#owner-message-52-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R124"
+   ],
+   "required_harness": "The recording runs only where the variable is present; the fixture is committed with provenance; no key material in any artifact.",
+   "required_evidence": "The recorded fixture + MANIFEST entry, or the record that the key is not configured.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 52, the reviewer's assessment forwarded by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R141",
+   "text": "Every later owner update separates 'independently verified' from 'merged, not yet independently verified' (the owner's reviewer had not verified the latest merges).",
+   "source_ref": "source-023-amendment.md#owner-message-52-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R126",
+    "D-090-R135"
+   ],
+   "required_harness": "The update text carries the two labels.",
+   "required_evidence": "The chat reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 52, the reviewer's assessment forwarded by the owner).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

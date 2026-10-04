@@ -14,7 +14,10 @@
 import type {
   AnswerValue,
   ExceptionLabel,
+  MeasurementKnown,
   Results,
+  Scope,
+  ScopeAssumption,
   StreetWidthCase,
   Unit,
 } from "../../../../../packages/contracts/generated/results";
@@ -22,7 +25,7 @@ import { NOT_CONFIRMED, REMAINING_CAPACITY_LABEL, REMAINING_CAPACITY_REASON } fr
 
 // The canonical generated contract types (packages/contracts/generated/results.ts, task C-03),
 // re-exported so the panel and its tests import them from one place.
-export type { AnswerValue, ExceptionLabel, Results, Unit };
+export type { AnswerValue, ExceptionLabel, Results, Scope, ScopeAssumption, Unit };
 
 /**
  * The part of a `results` document the panel reads, derived from the generated `Results` type
@@ -42,6 +45,7 @@ export type ThreeAnswersResults = Pick<
   | "notices_count"
   | "draft"
   | "street_width_case"
+  | "scope"
 >;
 
 export type AnswerKey = keyof ThreeAnswersResults["answers"];
@@ -288,4 +292,144 @@ export function streetWidthCaseLines(results: ThreeAnswersResults): string[] {
       ? [`This case assumes ${assumption.street} is ${width}; its width is not known.`]
       : [];
   });
+}
+
+// ---- Scope beside the numbers (results contract 1.1.0, D-090-R108) ----
+// The panel reads every scope string straight from the document (label, lot.display, each
+// assumption statement, the whole-site statement and the two settled remaining-capacity strings).
+// These maps only turn the machine assumption key and the basis enum into plain words so no
+// internal code reaches the screen (plan §5a item 5); they never restate a document string.
+
+const SCOPE_ASSUMPTION_KEY_LABELS: Readonly<Record<string, string>> = {
+  lot_type: "Lot type",
+  within_100_ft_of_street_line_intersection: "Within 100 ft of a street-line intersection",
+  street_line_intersection_angle_degrees: "Street-line intersection angle",
+  housing_program: "Housing program",
+  floor_to_floor_ft: "Floor-to-floor height",
+  // D-090-R119/R131: the scope now carries all the assumed inputs (12 rows). These plain-word
+  // labels match the drawings' scope vocabulary (services/api/app/drawings/kit/scope.py, Lane E).
+  zoning_district: "Zoning district",
+  overlay_present: "Commercial overlay present",
+  special_district_present: "Special purpose district",
+  special_density_area: "Special density area",
+  lot_front_ft: "Lot frontage",
+  lot_depth_ft: "Lot depth",
+  site_measurement_rank: "Site measurement basis",
+};
+
+/** A machine assumption key in plain words. An unlisted key is de-underscored and sentence-cased
+ * so a key added to the contract later never prints as a raw code. */
+export function scopeAssumptionKeyLabel(key: string): string {
+  const mapped = SCOPE_ASSUMPTION_KEY_LABELS[key];
+  if (mapped) return mapped;
+  const words = key.replace(/_/g, " ").trim();
+  return words ? words.charAt(0).toUpperCase() + words.slice(1) : key;
+}
+
+// The basis enum (schema scope_assumption.basis) in plain words, so the architect sees whether a
+// value was assumed, entered, a fixed benchmark, from city records, from a supplied survey, from
+// the approximate tax map, or the app's default — never the enum code.
+const SCOPE_BASIS_LABELS: Readonly<Record<ScopeAssumption["basis"], string>> = {
+  assumed: "Assumed",
+  entered: "Entered",
+  fixture: "Test fixture",
+  city_records: "City records",
+  survey_entered: "Survey",
+  approximate_tax_map: "Approximate tax map",
+  default: "Default",
+};
+
+/** Where an assumed value came from, in plain words (never the enum code). */
+export function scopeAssumptionBasisLabel(basis: ScopeAssumption["basis"]): string {
+  return SCOPE_BASIS_LABELS[basis];
+}
+
+// Measurement-rank values (schema MeasurementKnown.rank) in plain words, so a rank carried as a
+// scope-assumption value (e.g. site_measurement_rank) reads well and never prints the enum code.
+// Exhaustive over the rank union so a rank added to the contract later forces an entry here.
+type MeasurementRank = MeasurementKnown["rank"];
+const MEASUREMENT_RANK_WORDS: Readonly<Record<MeasurementRank, string>> = {
+  survey_entered: "survey (entered)",
+  city_records: "city records",
+  approximate_tax_map: "approximate tax map",
+  entered: "entered",
+  assumed: "assumed",
+};
+
+// Housing-program codes in plain words, matching the drawings' scope vocabulary (D-090-R119/R131).
+// The contract types a scope-assumption value as a free string | number | boolean, so there is no
+// closed enum to exhaust; the API's codes are standard_residence | qualifying_affordable_housing |
+// qualifying_senior_housing. Only standard_residence is pinned here (the one the drawings pin and
+// the only one a scope carries today); the other two de-underscore cleanly via the fallback below.
+const HOUSING_PROGRAM_WORDS: Readonly<Record<string, string>> = {
+  standard_residence: "standard residence",
+};
+
+// Code-like string values turned into plain words (requirement b): measurement-rank values and
+// housing-program codes, consistent with the drawings. Any string not listed keeps the
+// de-underscore fallback, so the panel guard never sees a snake_case code on the screen.
+const SCOPE_VALUE_WORDS: Readonly<Record<string, string>> = {
+  ...MEASUREMENT_RANK_WORDS,
+  ...HOUSING_PROGRAM_WORDS,
+};
+
+/** An assumed value with its unit, in plain words: a flag reads Yes/No, a number is grouped, and a
+ * code-like string reads as plain words — a known measurement-rank or housing-program code via
+ * SCOPE_VALUE_WORDS, any other code de-underscored. The unit comes from the document already in
+ * plain words. */
+export function scopeAssumptionValueText(
+  value: string | number | boolean,
+  unit: string | null,
+): string {
+  let base: string;
+  if (typeof value === "boolean") base = value ? "Yes" : "No";
+  else if (typeof value === "number") base = PLAIN_NUMBER.format(value);
+  else base = SCOPE_VALUE_WORDS[value] ?? value.replace(/_/g, " ");
+  return unit ? `${base} ${unit}` : base;
+}
+
+export interface ScopeAssumptionView {
+  keyLabel: string;
+  valueText: string;
+  basisLabel: string;
+  statement: string;
+}
+
+export interface ScopeView {
+  /** The scope label, byte-exact from the document (e.g. "Tax-lot-only estimate"). */
+  label: string;
+  /** The human lot label, read from the document (e.g. "Queens block 7334, lot 70"). */
+  lotDisplay: string;
+  /** Each assumed condition in the order the document gives; statement read from the document. */
+  assumptions: readonly ScopeAssumptionView[];
+  /** The whole-site statement, byte-exact from the document. */
+  wholeSiteStatement: string;
+  /** The remaining-capacity line ("<label>: <status word>"), byte-exact from the document. */
+  remainingLabel: string;
+  /** The reason under the remaining-capacity line, byte-exact from the document. */
+  remainingReason: string;
+}
+
+/**
+ * The scope-beside-the-numbers block (results contract 1.1.0, D-090-R108), or null when the
+ * document carries no scope — a 1.0.0 document, or a 1.1.0 document with scope null — so the panel
+ * renders unchanged from before for those (requirement b). Every string is read from the document;
+ * the key and basis are turned into plain words only, never restated.
+ */
+export function scopeView(results: ThreeAnswersResults): ScopeView | null {
+  const scope = results.scope;
+  if (!scope) return null;
+  return {
+    label: scope.label,
+    lotDisplay: scope.lot.display,
+    assumptions: scope.assumptions.map(assumption => ({
+      keyLabel: scopeAssumptionKeyLabel(assumption.key),
+      valueText: scopeAssumptionValueText(assumption.value, assumption.unit),
+      basisLabel: scopeAssumptionBasisLabel(assumption.basis),
+      statement: assumption.statement,
+    })),
+    wholeSiteStatement: scope.whole_site.statement,
+    remainingLabel: scope.remaining_capacity.label,
+    remainingReason: scope.remaining_capacity.reason,
+  };
 }

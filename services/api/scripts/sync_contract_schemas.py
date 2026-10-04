@@ -73,6 +73,9 @@ STUDY_SCHEMA_FILES = (
     # unit, zr_section, value_source), site_fact (measurement_known) and common,
     # all bundled above.
     "compare_rows.schema.json",
+    # Maps connection step 2 (D-090-R124). The document the E-07 map renderers
+    # consume; $refs site_fact (measurement_known) and common, both bundled above.
+    "map_context.schema.json",
 )
 
 SCHEMA_FILES = PROFILE_SCHEMA_FILES + STUDY_SCHEMA_FILES

@@ -37,8 +37,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0"],
-      "description": "CLOSED enum of published results contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). New versions are admitted only by an accepted contract task that appends to this enum."
+      "enum": ["1.0.0", "1.1.0", "1.2.0"],
+      "description": "CLOSED enum of published results contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). 1.1.0 (D-090-R108) adds the OPTIONAL top-level 'scope' object (purpose: put the scope beside the numbers - the headline cards and exported drawings visibly carry the 'Tax-lot-only estimate' label, identify the lot, and disclose the assumed corner conditions, while whole-site and remaining capacity stay unconfirmed). scope is OPTIONAL and may be absent or null; a document carrying a NON-NULL scope object declares 1.1.0 (the version-binding allOf below), while a document with an absent or null scope may declare 1.0.0 or 1.1.0, so every valid 1.0.0 instance stays valid unchanged. 1.2.0 (D-090-R132) adds the OPTIONAL 'notes' array on the building-option answer only (purpose: carry the engine's COMPUTED minimum-base-height note into the results document so it can be shown beside the heights instead of being dropped before the document; DB-119). notes is OPTIONAL and may be absent, null or empty; a document whose building-option answer carries a NON-EMPTY notes array declares 1.2.0 (the version-binding allOf below), while a document with an absent, null or empty notes array may declare 1.0.0, 1.1.0 or 1.2.0, so every valid 1.0.0 and 1.1.0 instance stays valid byte-for-byte. The enum is append-only (new versions are admitted only by an accepted contract task that appends to it); the emitter decides when to declare a higher version."
     },
     "results_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
     "study_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
@@ -92,8 +92,8 @@
           "description": "The three-dimensional limits: base and maximum heights, setbacks, yards and lot coverage."
         },
         "building_option": {
-          "$ref": "#/$defs/answer",
-          "description": "A generated building inside the envelope and within the allowance: achieved floor area, floors, height, footprint width x depth."
+          "$ref": "#/$defs/building_option_answer",
+          "description": "A generated building inside the envelope and within the allowance: achieved floor area, floors, height, footprint width x depth. This is the only answer that may carry the OPTIONAL additive 'notes' array (contract 1.2.0, D-090-R132): COMPUTED, plain-English draft readings such as the minimum-base-height note. The other two answers use the plain answer shape with no notes slot."
         }
       }
     },
@@ -207,6 +207,13 @@
         { "type": "null" }
       ]
     },
+    "scope": {
+      "description": "OPTIONAL scope-beside-the-numbers block (contract 1.1.0, D-090-R108). Puts the scope next to the figures so the headline cards and the exported drawings visibly state 'Tax-lot-only estimate' (label), identify the lot (lot.display), disclose the assumed corner conditions (assumptions[].statement), and keep whole-site and remaining capacity unconfirmed (whole_site, remaining_capacity). The face reads label, lot.display, the assumptions' statements, and the two settled strings (remaining_capacity.label and remaining_capacity.reason) directly from this block, never typed. Every value is derived deterministically by the emitter from the study inputs (the lot fields from the BBL). OPTIONAL in this contract (a later PR may require it once the engine emits it); absent or null is valid. A non-null object binds contract_version to 1.1.0 (the version-binding allOf below).",
+      "anyOf": [
+        { "$ref": "#/$defs/scope" },
+        { "type": "null" }
+      ]
+    },
     "_expected_failure": {
       "type": "string",
       "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key."
@@ -241,9 +248,169 @@
           }
         }
       ]
+    },
+    {
+      "description": "Version binding (contract 1.1.0, D-090-R108): a document carrying a non-null scope object declares contract_version 1.1.0. An absent or null scope leaves the version unconstrained, so 1.0.0 stays valid for it. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either scope is null (or absent, since 'properties' is vacuous for an absent key), or contract_version is 1.1.0.",
+      "anyOf": [
+        { "properties": { "scope": { "type": "null" } } },
+        { "properties": { "contract_version": { "const": "1.1.0" } } }
+      ]
+    },
+    {
+      "description": "Version binding (contract 1.2.0, D-090-R132): a document whose building-option answer carries a NON-EMPTY notes array declares contract_version 1.2.0. An absent, null or empty notes array leaves the version unconstrained, so 1.0.0 and 1.1.0 stay valid for it. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either the building-option notes array is null or empty (or absent, since 'properties' is vacuous for an absent key, and a not_available building option has no notes key), or contract_version is 1.2.0.",
+      "anyOf": [
+        {
+          "properties": {
+            "answers": {
+              "properties": {
+                "building_option": {
+                  "properties": {
+                    "notes": {
+                      "anyOf": [
+                        { "type": "null" },
+                        { "type": "array", "maxItems": 0 }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        { "properties": { "contract_version": { "const": "1.2.0" } } }
+      ]
     }
   ],
   "$defs": {
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basis", "label", "lot", "whole_site", "remaining_capacity", "assumptions"],
+      "description": "The scope-beside-the-numbers block (contract 1.1.0, D-090-R108). Puts the scope next to the figures: basis and label name the estimate ('Tax-lot-only estimate'), lot identifies it, whole_site keeps whole-site development unconfirmed, remaining_capacity keeps remaining development capacity not confirmed with the two owner-settled strings, and assumptions discloses the assumed corner conditions in plain English. The face shows label, lot.display, the assumptions' statements, and the two settled strings (remaining_capacity.label and remaining_capacity.reason).",
+      "properties": {
+        "basis": {
+          "type": "string",
+          "enum": ["tax_lot_only"],
+          "description": "CLOSED enum of estimate bases. For now the single value tax_lot_only: the estimate rests on the selected tax lot(s), not a verified zoning lot (D-090-R108). New bases are appended additively only by an accepted contract task."
+        },
+        "label": {
+          "type": "string",
+          "const": "Tax-lot-only estimate",
+          "description": "The scope label shown on the headline cards and exported drawings, byte-exact as the owner wrote it (D-090-R108)."
+        },
+        "lot": { "$ref": "#/$defs/scope_lot" },
+        "whole_site": { "$ref": "#/$defs/scope_whole_site" },
+        "remaining_capacity": { "$ref": "#/$defs/scope_remaining_capacity" },
+        "assumptions": {
+          "type": "array",
+          "description": "The assumed conditions behind this estimate, each disclosed in plain English (D-090-R108). May be empty. The face shows each entry's statement.",
+          "items": { "$ref": "#/$defs/scope_assumption" }
+        }
+      }
+    },
+    "scope_lot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bbl", "borough", "block", "lot", "display"],
+      "description": "The tax lot this estimate is for (D-090-R108). Every field is derived deterministically from the BBL by the emitter; the face shows display.",
+      "properties": {
+        "bbl": {
+          "$ref": "common.schema.json#/$defs/bbl",
+          "description": "The 10-digit BBL the lot fields are derived from, e.g. '4073340070'."
+        },
+        "borough": {
+          "$ref": "common.schema.json#/$defs/borough_name",
+          "description": "The borough display name, one of the five, derived from the BBL's borough digit."
+        },
+        "block": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$",
+          "description": "Tax block as digits with no leading zeros, e.g. '7334' (derived from the BBL's 5-digit block with leading zeros stripped)."
+        },
+        "lot": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$",
+          "description": "Tax lot as digits with no leading zeros, e.g. '70' (derived from the BBL's 4-digit lot with leading zeros stripped)."
+        },
+        "display": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The human lot label shown on the face, e.g. 'Queens block 7334, lot 70'."
+        }
+      }
+    },
+    "scope_whole_site": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "statement"],
+      "description": "Whole-site development stays UNCONFIRMED (D-090-R108): the estimate is based on the selected lots, not a verified zoning lot.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "unconfirmed",
+          "description": "Whole-site development is not confirmed by this tax-lot-only estimate."
+        },
+        "statement": {
+          "type": "string",
+          "const": "Based on the lots you selected — the app does not verify the zoning lot",
+          "description": "The existing lot-selection statement, byte-exact (equals results.lot_selection_statement and the engine constant LOT_SELECTION_STATEMENT), including the em dash (U+2014)."
+        }
+      }
+    },
+    "scope_remaining_capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "label", "reason"],
+      "description": "Remaining development capacity stays NOT CONFIRMED (owner-settled wording, D-090-R038 / R108). Never a number. The face shows label then reason.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "not_confirmed",
+          "description": "Remaining development capacity is not confirmed."
+        },
+        "label": {
+          "type": "string",
+          "const": "Remaining development capacity: Not confirmed",
+          "description": "The owner-settled label (D-090-R038 verbatim, owner 2026-10-01; cited again by D-090-R108), byte-exact with NO final period: it equals the engine display constant UNUSED_FLOOR_AREA_NOT_AVAILABLE_TEXT (services/api/app/scenario/constants.py) byte-for-byte. The separate reason line below carries its own final period."
+        },
+        "reason": {
+          "type": "string",
+          "const": "Needs verified zoning-lot boundaries and existing zoning floor area.",
+          "description": "The owner-settled reason, byte-exact (equals the engine constant REMAINING_NOT_CONFIRMED_REASON in the three_answers package and UNUSED_FLOOR_AREA_NOT_AVAILABLE_REASON_TEXT in scenario/constants.py; both carry the final period), including the final period."
+        }
+      }
+    },
+    "scope_assumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "value", "unit", "basis", "statement"],
+      "description": "One disclosed assumption behind the estimate (D-090-R108), e.g. the assumed corner conditions. The face shows statement.",
+      "properties": {
+        "key": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Stable machine key, e.g. lot_type, within_100_ft_of_street_line_intersection, street_line_intersection_angle_degrees, housing_program, floor_to_floor_ft."
+        },
+        "value": {
+          "type": ["string", "number", "boolean"],
+          "description": "The assumed value, e.g. 'corner', true, 90, 'standard_residence', 10."
+        },
+        "unit": {
+          "description": "The unit of value in plain words, or null when the value is dimensionless (a type, a flag, an angle in degrees carried in the key).",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "basis": {
+          "type": "string",
+          "enum": ["assumed", "entered", "fixture", "city_records", "survey_entered", "approximate_tax_map", "default"],
+          "description": "Where the value came from: assumed (a stated assumption the app made), entered (the architect typed it), fixture (a fixed benchmark value), city_records (recorded city data), survey_entered (from a survey the architect supplied), approximate_tax_map (the approximate city tax map), or default (the app's default when nothing was supplied)."
+        },
+        "statement": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "A plain-English sentence stating the assumption and why, e.g. 'Corner lot assumed; the live data does not record the lot type'. Shown on the face."
+        }
+      }
+    },
     "street_width_case": {
       "type": "object",
       "additionalProperties": false,
@@ -373,6 +540,100 @@
         "measurement": {
           "$ref": "site_fact.schema.json#/$defs/measurement_known",
           "description": "The measurement label of this answer's weakest input (plan section 4 'How labels carry through'). In a street_width_case document the assumed width counts as an 'assumed' input."
+        }
+      }
+    },
+    "building_option_answer": {
+      "description": "The building-option answer (plan section 5 answer 3). Same oneOf as 'answer' - available or not_available - but the available branch adds the OPTIONAL additive 'notes' array (contract 1.2.0, D-090-R132). Only the building option uses this shape; floor_area_allowance and permitted_envelope use the plain 'answer' shape with no notes slot.",
+      "oneOf": [
+        { "$ref": "#/$defs/building_option_answer_available" },
+        { "$ref": "#/$defs/not_available" }
+      ]
+    },
+    "building_option_answer_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "values", "measurement"],
+      "description": "An available building-option answer: the answer_available shape (status, values, measurement) PLUS the OPTIONAL additive 'notes' array (contract 1.2.0, D-090-R132). Every valid 1.0.0 / 1.1.0 building option (no notes key) stays valid byte-for-byte because notes is optional and absent is allowed.",
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/answer_value" }
+        },
+        "measurement": {
+          "$ref": "site_fact.schema.json#/$defs/measurement_known",
+          "description": "The measurement label of this answer's weakest input (plan section 4 'How labels carry through'). In a street_width_case document the assumed width counts as an 'assumed' input."
+        },
+        "notes": {
+          "description": "OPTIONAL additive notes on the building option (contract 1.2.0, D-090-R132). Each entry is a COMPUTED, plain-English DRAFT reading of the captured Zoning Resolution text (e.g. the minimum-base-height note the engine computes when the built height is below the minimum base height; DB-119), carried into the results document so a surface can show it beside the heights. Absent, null or empty are all valid and leave the contract version unconstrained; a NON-EMPTY array binds contract_version to 1.2.0 (the version-binding allOf above). A note is NEVER a legal determination: each entry's 'draft' is const true and 'register' is the fixed draft-register string, documenting that the text is a draft reading pending qualified review (no 'complies' wording).",
+          "anyOf": [
+            { "type": "null" },
+            {
+              "type": "array",
+              "items": { "$ref": "#/$defs/building_option_note" }
+            }
+          ]
+        }
+      }
+    },
+    "building_option_note": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text",
+        "kind",
+        "computed_from",
+        "values",
+        "zr_sections",
+        "snapshot_ids",
+        "draft",
+        "register"
+      ],
+      "description": "One COMPUTED, plain-English note on the building option (contract 1.2.0, D-090-R132), computed from the numbers it names (the C-11 no-template-sentences discipline). It is a DRAFT reading of the captured Zoning Resolution text, NEVER a legal determination: 'draft' is const true and 'register' is the fixed draft-register string - the not-free guard that keeps the text a draft reading pending qualified review (CLAUDE.md principle 1; D-090-R010/R118). The text must not assert compliance (no 'complies' / 'non-compliant' / 'misstate' formulation); which captured provision governs and its legal effect wait for qualified review (G6).",
+      "properties": {
+        "text": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The note as shown: a plain-English draft reading computed from the named values, naming the Zoning Resolution sections and the pinned snapshots it rests on. Never a compliance determination."
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["minimum_base_height"],
+          "description": "CLOSED enum of note kinds. For now the single value minimum_base_height: the built height is below the minimum base height and no captured provision requires the building to rise to it (D-090-R107). New kinds are appended additively only by an accepted contract task."
+        },
+        "computed_from": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The value keys (answer value keys or named figures) the note was computed from, e.g. ['building_height', 'min_base_height', 'max_base_height'].",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": { "type": ["number", "string"] },
+          "description": "The numbers (or short strings) the note was computed from, keyed by the names in computed_from, e.g. {\"building_height\": 20, \"min_base_height\": 30, \"max_base_height\": 45}. Each value is a number or a string; the face reads these, never a typed figure."
+        },
+        "zr_sections": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The Zoning Resolution sections the draft reading cites, e.g. ['ZR 23-431', 'ZR 23-432', 'ZR 23-433'].",
+          "items": { "$ref": "#/$defs/zr_section" }
+        },
+        "snapshot_ids": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The pinned ZR snapshot ids backing the draft reading, e.g. ['zr-23-431', 'zr-23-432', 'zr-23-433'].",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        },
+        "draft": {
+          "type": "boolean",
+          "const": true,
+          "description": "Const true: the not-free guard (D-090-R132). A building-option note is ALWAYS a draft reading of the captured text pending qualified review, never a reviewed or compliance statement; false is not admitted."
+        },
+        "register": {
+          "type": "string",
+          "const": "draft reading of the captured text",
+          "description": "The fixed draft-register string, byte-exact. Together with draft const true it marks the note as a draft reading pending qualified review (D-090-R118), never a legal determination."
         }
       }
     },

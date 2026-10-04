@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-04T00:45:30+00:00",
+ "updated_at": "2026-10-04T05:45:14+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -126,10 +126,46 @@
   "D-090-R102",
   "D-090-R103",
   "D-090-R104",
-  "D-090-R105"
+  "D-090-R105",
+  "D-090-R106",
+  "D-090-R107",
+  "D-090-R108",
+  "D-090-R109",
+  "D-090-R110",
+  "D-090-R111",
+  "D-090-R112",
+  "D-090-R113",
+  "D-090-R114",
+  "D-090-R115",
+  "D-090-R116",
+  "D-090-R117",
+  "D-090-R118",
+  "D-090-R119",
+  "D-090-R120",
+  "D-090-R121",
+  "D-090-R122",
+  "D-090-R123",
+  "D-090-R124",
+  "D-090-R125",
+  "D-090-R126",
+  "D-090-R127",
+  "D-090-R128",
+  "D-090-R129",
+  "D-090-R130",
+  "D-090-R131",
+  "D-090-R132",
+  "D-090-R133",
+  "D-090-R134",
+  "D-090-R135",
+  "D-090-R136",
+  "D-090-R137",
+  "D-090-R138",
+  "D-090-R139",
+  "D-090-R140",
+  "D-090-R141"
  ],
- "requirements_id_digest_sha256": "4d5a2c02fba2ca8a6660b819d30a83c6bc006158b758dfd2f7bf1cd5c8e38d32",
- "requirements_content_digest_sha256": "c3696b69778f82f65f1ca041c354c735ab580af4b7d4ac9a429ff3f75ef215b9",
+ "requirements_id_digest_sha256": "b6e1fdd4cd827efbfda55fbd2cdb6e4b62120a1598d21d548559fe04aa7c4b07",
+ "requirements_content_digest_sha256": "f0eddb7e2d8a2bcbfdf9e80bd1edf7f10bd53154c94084092e33877d0b27a1f6",
  "sources": [
   {
    "file": "source-001.md",
@@ -257,6 +293,62 @@
    "recorded_at": "2026-10-04T00:45:30+00:00",
    "content_digest_sha256": "ac84e1afb44c08e56398d9839cd7aaeef83e408709d4b4de0ee1c016b8687cf3",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-017-amendment.md",
+   "kind": "amendment",
+   "sequence": 17,
+   "recorded_at": "2026-10-04T01:54:37+00:00",
+   "content_digest_sha256": "3ab8d457e1db32234f353205fb9a29a8bffb6b6e67dfbe1859624c02cb3008ce",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-018-amendment.md",
+   "kind": "amendment",
+   "sequence": 18,
+   "recorded_at": "2026-10-04T03:13:26+00:00",
+   "content_digest_sha256": "60ffc376ab29c0b75457202c4d847c0de7f4246865757c5e74b22f6d0a08cf14",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-019-amendment.md",
+   "kind": "amendment",
+   "sequence": 19,
+   "recorded_at": "2026-10-04T03:35:43+00:00",
+   "content_digest_sha256": "c0e298c9b35ab0ecfc8fcad0cf4e5af2554ecf1b7a0478ea070254f0ca78a1d2",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-020-amendment.md",
+   "kind": "amendment",
+   "sequence": 20,
+   "recorded_at": "2026-10-04T03:47:12+00:00",
+   "content_digest_sha256": "8a27df326e4940a9c6ef6ff7e826d78289504771a2689f48e4434bc867e6e1ba",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-021-amendment.md",
+   "kind": "amendment",
+   "sequence": 21,
+   "recorded_at": "2026-10-04T03:58:51+00:00",
+   "content_digest_sha256": "18b06c9c0aff3a532ef760d0fe67575f9482cce8d385ed49ae3424c4ce522997",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-022-amendment.md",
+   "kind": "amendment",
+   "sequence": 22,
+   "recorded_at": "2026-10-04T04:38:11+00:00",
+   "content_digest_sha256": "da37e9373a4be21879676f81e05d1abbc2cfa95a5d89edf97b710078ff515bcf",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-023-amendment.md",
+   "kind": "amendment",
+   "sequence": 23,
+   "recorded_at": "2026-10-04T05:45:14+00:00",
+   "content_digest_sha256": "e896abf8d7fb3b5eb219c06122f2203b94f3a45389aff947490bd79b0883c636",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -274,7 +366,14 @@
   "source-013-amendment.md",
   "source-014-amendment.md",
   "source-015-amendment.md",
-  "source-016-amendment.md"
+  "source-016-amendment.md",
+  "source-017-amendment.md",
+  "source-018-amendment.md",
+  "source-019-amendment.md",
+  "source-020-amendment.md",
+  "source-021-amendment.md",
+  "source-022-amendment.md",
+  "source-023-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -409,6 +508,48 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-016 (session 0ba6d6a3 message 43, 2026-10-04: the 215-16 Northern walkthrough, switches off, continue eligible development, CI duplicate-run inspection + one proposal) and requirements D-090-R101..R105, all pending. Messages 41-42 recorded as conversational (no rows). Text extracted by script; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T01:54:37+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-017 (session 0ba6d6a3 message 45, 2026-10-04: six findings-actions after the 215-16 Northern walkthrough - accurate progress wording, height discrepancy first, scope beside the numbers, one complete journey, approvals explained not granted, CI proposal tightened; continue authorized work; switches off; one consolidated update) and requirements D-090-R106..R115, all pending. Message 44 recorded as a fulfilled return request (no row). Text extracted by script; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T03:13:26+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-018 (session 0ba6d6a3 message 47, 2026-10-04: message 45 re-pasted with 'Was this done ? Can u write up a prompt for my reviewer') and requirement D-090-R116 (return: independent-reviewer prompt), pending. Message 46 (first re-paste, status question only) recorded in the source file, no row. Text extracted by script from the queued_command attachment; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T03:35:43+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-019 (session 0ba6d6a3 message 48, 2026-10-04: the owner's independent reviewer's audit of items 1-6, forwarded verbatim; verdicts PARTLY DONE on items 1-4 and 6, DONE on 5's status checks) and requirements D-090-R117..R123, all pending. Text extracted by script from the queued_command attachment; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T03:47:12+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-020 (session 0ba6d6a3 message 49, 2026-10-04: the owner's reviewer's second check - street-query connector exists, maps exist, height note dropped before the document, 'corrected everywhere' inaccurate, CI proposal still needs correction; hold #388 and the CI change; reconcile against the code; continue other authorized work) and requirements D-090-R124..R127, all pending. Text extracted by script from the queued_command attachment; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T03:58:51+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-021 (session 0ba6d6a3 message 50, 2026-10-04: the owner's reviewer's third check through 7275e463 - #383 title/body, Lane A rows need the owner's yes, no automatic PR revalidation on base advance, special-district and special-density assumptions omitted) and requirements D-090-R128..R131, all pending. Text extracted by script from the queued_command attachment; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T04:38:11+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-022 (session 0ba6d6a3 message 51, 2026-10-04: resume prompt + reviewer's third check re-pasted + new words: compare the two audits without bias; reconcile both against the code; finish the height explanation into the results and the screen; reports classify built/connected/tested/professionally verified; no approvals, workflows unapplied; one short four-part update) and requirements D-090-R132..R136, all pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T05:45:14+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-023 (session 0ba6d6a3 message 52, 2026-10-04: the reviewer's assessment of the four-part update - journey stops halfway at the corner-lot bridge; demonstrate one continuous run; scope to the engine automatically; Geoclient key handling; latest merges not independently verified) and requirements D-090-R137..R141, all pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
   }
  ]
 }

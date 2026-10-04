@@ -22,6 +22,7 @@ from app.cad.results_dxf import (
     render_results_dxf,
 )
 from app.cad.results_dxf_notes import MEASUREMENT_NOTE_TEXT, ascii_text
+from app.drawings.kit.scope import ASSUMPTION_KEY_NAMES, FLAG_WORDS
 from app.drawings.kit.styles import STYLE_TABLE, style_for
 
 from .results_dxf_support import (
@@ -268,6 +269,17 @@ def _resolve(doc, pointer):
     return node
 
 
+def _scope_token(source, value):
+    """The fixed plain word a scope note prints for an assumption key or boolean
+    flag source (the kit's presentation vocabulary), or None for a plain figure
+    or string read straight from the results (D-090-R108)."""
+    if "/scope/assumptions/" in source and source.endswith("/key"):
+        return ASSUMPTION_KEY_NAMES[value]
+    if "/scope/assumptions/" in source and source.endswith("/value") and isinstance(value, bool):
+        return FLAG_WORDS[value]
+    return None
+
+
 @pytest.mark.parametrize("path", PATHS, ids=IDS)
 def test_every_note_value_is_read_from_the_results(path):
     doc = load(path)
@@ -277,6 +289,10 @@ def test_every_note_value_is_read_from_the_results(path):
             if source == "units":
                 continue
             value = _resolve(doc, source)
+            token = _scope_token(source, value)
+            if token is not None:  # a key/flag: its word maps to the document value
+                assert token in note.text, (source, note.text)
+                continue
             if note.role == "measurement_note":
                 assert value == "not_available" or value in MEASUREMENT_NOTE_TEXT
                 continue
@@ -290,9 +306,14 @@ def test_every_note_value_is_read_from_the_results(path):
     # fixed coordinates and units statements carry digits of their own.
     for note in result.notes:
         rest = note.text
+        tokens = []
         for source in note.sources:
             if source.startswith("/") and note.role not in ("measurement_note", "crs"):
-                rest = rest.replace(ascii_text(str(_resolve(doc, source)), source), "")
+                value = _resolve(doc, source)
+                token = _scope_token(source, value)
+                tokens.append(token if token is not None else ascii_text(str(value), source))
+        for token in sorted(tokens, key=len, reverse=True):  # a longer value first, so a
+            rest = rest.replace(token, "")                   # short word inside it is not lost
         if note.role not in ("crs", "units"):
             assert not any(ch.isdigit() for ch in rest), note.text
 

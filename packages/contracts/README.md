@@ -409,6 +409,48 @@ retrieved 2026-07-14):
   source family has not been researched yet (M0-T002 covered address/BBL/BIN
   only). Open-with-flag; enums land additively with the M2 zoning research.
 
+## Map-context contract 1.0.0 (maps connection step 2, D-090-R124)
+
+`schemas/v1/map_context.schema.json` is the single document the E-07 location
+and zoning map renderers consume via
+`services/api/app/drawings/maps/adapter.py::load_map_context`. It is reshaped
+NYC **city open data only** — the subject-lot outline (MapPLUTO / DOF Digital
+Tax Map), the surrounding zoning districts (DCP NYC GIS Zoning Features `nyzd`,
+field `ZONEDIST`) and the surrounding building footprints (OTI Building
+Footprints, NYC Open Data `5zhs-2jue`) — never a live service call.
+
+- **One CRS.** `map_context.crs` is `const "EPSG:2263"` (NAD83 / New York Long
+  Island, US survey feet), equal to `adapter.SUPPORTED_CRS`; any other CRS is
+  refused. `units` is `const "feet"`; `measurement` reuses
+  `site_fact.schema.json#/$defs/measurement_known` (the tax-map outline is rank
+  `approximate_tax_map`, label "Approximate — tax map").
+- **Approximate, never a determination.** The maps are drawn from the city tax
+  map; they are NEVER a boundary survey and the zoning layer is NEVER a
+  lot-level zoning determination. The official DCP use limitation ("These
+  features are not intended for determining zoning at the individual tax lot
+  level") and the ± 20 ft accuracy note are required on every available zoning
+  layer.
+- **Layers.** `subject_lot` (optional `bbl`, required `outline`) is always
+  present; `zoning_districts` and `building_footprints` are each a `oneOf`
+  **available** (entries + notes + `provenance`) or **not_available**
+  (`reason` + `reason_kind` `"source_unavailable"`). Entry counts are capped at
+  2000 (`adapter.MAX_MAP_FEATURES`); rings allow ≤ 2048 points
+  (`adapter.MAX_RING_POINTS`) and each coordinate ≤ 1e8 ft
+  (`adapter.MAX_ABS_COORD_FT`).
+- **Per-layer provenance** is REQUIRED on every available (drawable) layer so
+  nothing unsourced is ever drawn (`source_id`, `dataset_id`, `request_url`,
+  `retrieved_at`, `raw_digest_sha256`, `source_data_last_edited`,
+  `dataset_version`). The adapter ignores it; the schema demands it.
+- **Adapter-enforced invariants** the schema cannot state — ring closure,
+  simplicity, non-degeneracy, holes inside their exterior, XML-1.0-safe strings
+  — are checked by `load_map_context`, which fails closed. The valid fixtures
+  pass BOTH the schema and the adapter; every invalid fixture is rejected by
+  BOTH (`services/api/tests/contracts/test_map_context_contract.py`).
+
+Registered in `STUDY_CONTRACT_STEMS` (`app/contracts/study_contracts.py`) and
+`STUDY_SCHEMA_FILES` (`services/api/scripts/sync_contract_schemas.py`); like
+`evaluator_inputs` and `compare_rows` it has no generated TypeScript type.
+
 ## Fixtures
 
 - `fixtures/valid/<schema>/*.json` — must validate against

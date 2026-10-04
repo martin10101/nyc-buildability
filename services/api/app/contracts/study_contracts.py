@@ -36,6 +36,7 @@ __all__ = [
     "validate_compare_rows_document",
     "validate_export_record_document",
     "validate_hidden_issue_flags_document",
+    "validate_map_context_document",
     "validate_parity_data_document",
     "validate_report_model_document",
     "validate_results_document",
@@ -63,6 +64,9 @@ STUDY_CONTRACT_STEMS = (
     "evaluator_inputs",
     # Lane C compare backend (task C-09, plan M1-18). $refs results + site_fact + common.
     "compare_rows",
+    # Maps connection step 2 (D-090-R124). The document the E-07 map renderers
+    # consume; $refs site_fact (measurement_known) + common, both already in the set.
+    "map_context",
 )
 
 # Every $ref in the schemas resolves within the set plus common.schema.json
@@ -74,7 +78,9 @@ STUDY_CONTRACT_STEMS = (
 # evaluator_inputs -> common + site_fact (it mirrors site_fact's measurement
 # and source vocabulary in its own $defs); compare_rows -> common + results
 # (not_available, unit, zr_section, value_source) + site_fact (measurement_known),
-# all already in the set. One registry serves all of them.
+# all already in the set; map_context -> site_fact (measurement_known) + common
+# (bbl, bin, non_empty_string, date, date_time, digest_sha256), also in the set.
+# One registry serves all of them.
 _REGISTRY_SCHEMA_FILES = tuple(f"{stem}.schema.json" for stem in STUDY_CONTRACT_STEMS) + (
     "common.schema.json",
 )
@@ -221,3 +227,7 @@ def validate_evaluator_inputs_document(document: Any) -> None:
 
 def validate_compare_rows_document(document: Any) -> None:
     validate_study_contract_document("compare_rows", document)
+
+
+def validate_map_context_document(document: Any) -> None:
+    validate_study_contract_document("map_context", document)

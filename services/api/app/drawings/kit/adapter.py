@@ -47,6 +47,7 @@ from .model import (
     Yard,
     YardNotRequired,
 )
+from .scope import load_scope
 from .svg import xml_illegal
 
 __all__ = [
@@ -100,6 +101,7 @@ def load_drawing_input(results: Mapping) -> DrawingInput | Unavailable:
         floor_plates=plates,
         floor_rows=rows,
         street_width_case=_street_width_case(results["street_width_case"]),
+        scope=load_scope(results.get("scope")),
     )
 
 
