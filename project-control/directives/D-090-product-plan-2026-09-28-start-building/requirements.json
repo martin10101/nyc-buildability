@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 100,
+ "requirement_count": 105,
  "producer": "orchestrator",
- "updated_at": "2026-10-03T20:54:51+00:00",
+ "updated_at": "2026-10-04T00:45:30+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -3398,6 +3398,180 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "In force from 2026-10-03 for the seq 138 session.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R101",
+   "text": "Walk through ONE complete request for 215-16 Northern Boulevard (BBL 4073340070) using the existing test setup and demonstrate it running, showing: (1) the address and the selected tax lots; (2) each important input, its source, and whether it is verified, approximate, entered, assumed or missing; (3) the zoning-lot status and how the existing-building keep/remove choice affects the calculation; (4) the three answers on the actual screen - permitted floor area, permitted envelope and the sample building; (5) which exports currently generate successfully and whether their numbers and geometry match the screen; (6) the exact remaining work needed to repeat this with live city data and make it usable by an architect. Use the existing tests and artifacts where possible; clearly identify every step that is mocked, hard-coded, incomplete or still requires professional verification. ORCHESTRATOR'S READING, not owner wording: 'demonstrate it running' is met by running the existing offline setup on this host (recorded-fixture harness, FastAPI test client, the generator and the export writers) plus the CI web-e2e run of record for the screen, because npm/node may not run on the thin client and nothing is deployed; that limitation is stated in the walkthrough.",
+   "source_ref": "source-016-amendment.md#owner-message-43-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R012",
+    "D-090-R037",
+    "D-090-R095"
+   ],
+   "required_harness": "A committed walkthrough record (docs/) with the actual outputs, the per-input source/status table, the export artifacts and their comparison with the screen values, the mocked/hard-coded/incomplete/needs-professional-verification table, and the remaining-work list; produced by a producer, reviewed read-only.",
+   "required_evidence": "The walkthrough record and the commands/tests it ran with direct exit codes; the CI web-e2e run id used as the screen evidence.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 43).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R102",
+   "text": "Keep production switches off ('Keep production switches off.'): no lane flag (LANE_A..E_ENABLED) or route mount changes its production default during this work; the walkthrough runs with flags enabled only in the offline test setup.",
+   "source_ref": "source-016-amendment.md#owner-message-43-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R048",
+    "D-090-R058"
+   ],
+   "required_harness": "No change to services/api/app/config.py defaults, render.yaml or .env.example flag defaults in any PR of this wave; reviewers check it.",
+   "required_evidence": "PR diffs; the walkthrough's statement of which flags were on and where.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force from 2026-10-04.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R103",
+   "text": "Continue eligible development under the existing approvals ('Continue eligible development under the existing approvals.'): the lane-queue items whose dependencies are merged and whose stops do not apply proceed under the standing Option B process; Lane A merges still wait for the owner's yes per PR (R021/R029); nothing held or deferred (R084, the expansion hold, Tier D) is started. ORCHESTRATOR'S READING, not owner wording: this lifts the conversational pause of message 41.",
+   "source_ref": "source-016-amendment.md#owner-message-43-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R020",
+    "D-090-R021",
+    "D-090-R029",
+    "D-090-R084",
+    "D-090-R092",
+    "D-090-R096"
+   ],
+   "required_harness": "Dispatch records and PRs for the eligible items; Lane A PRs carry 'needs the owner's yes' and are not merged by robots.",
+   "required_evidence": "The lane PRs and their review comments; the merge record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "In force from 2026-10-04.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R104",
+   "text": "Separately, inspect the duplicate CI runs and identify what each actually validates BEFORE proposing changes ('inspect the duplicate CI runs and identify what each actually validates before proposing changes').",
+   "source_ref": "source-016-amendment.md#owner-message-43-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R020"
+   ],
+   "required_harness": "A written inspection of .github/workflows (triggers, jobs, what each job proves, where the push and pull_request runs duplicate each other, with run ids from this week as evidence) produced before any proposal.",
+   "required_evidence": "The inspection record (docs/) with the workflow files and run ids cited.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 43).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R105",
+   "text": "Bring back ONE concrete optimization proposal that preserves the required coverage ('Bring back one concrete optimization proposal that preserves the required coverage.'). ORCHESTRATOR'S READING, not owner wording: a proposal only - no .github/workflows change is applied without the owner's decision on it (and then under Tier B specialist review, as a Lane C hot file).",
+   "source_ref": "source-016-amendment.md#owner-message-43-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R104",
+    "D-090-R097"
+   ],
+   "required_harness": "One proposal, stated with the coverage it keeps, the minutes it saves per PR, and the risk it adds; returned to the owner in plain words.",
+   "required_evidence": "The owner-facing reply and the inspection record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 43).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

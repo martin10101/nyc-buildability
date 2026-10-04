@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-03T20:54:51+00:00",
+ "updated_at": "2026-10-04T00:45:30+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -121,10 +121,15 @@
   "D-090-R097",
   "D-090-R098",
   "D-090-R099",
-  "D-090-R100"
+  "D-090-R100",
+  "D-090-R101",
+  "D-090-R102",
+  "D-090-R103",
+  "D-090-R104",
+  "D-090-R105"
  ],
- "requirements_id_digest_sha256": "c19a37282c99e2c1e6df2ccbab43d605f990a471b628009eaa66ab74769bc23c",
- "requirements_content_digest_sha256": "80d2651fa985942b17c611ea6a0e4e853caf97e8577f77698e24f6748a9bbdf6",
+ "requirements_id_digest_sha256": "4d5a2c02fba2ca8a6660b819d30a83c6bc006158b758dfd2f7bf1cd5c8e38d32",
+ "requirements_content_digest_sha256": "c3696b69778f82f65f1ca041c354c735ab580af4b7d4ac9a429ff3f75ef215b9",
  "sources": [
   {
    "file": "source-001.md",
@@ -244,6 +249,14 @@
    "recorded_at": "2026-10-03T20:45:20+00:00",
    "content_digest_sha256": "0a62dbb01450797a827e1e39d0e4aaf563e2c06f2aa2505698592a078dee782a",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-016-amendment.md",
+   "kind": "amendment",
+   "sequence": 16,
+   "recorded_at": "2026-10-04T00:45:30+00:00",
+   "content_digest_sha256": "ac84e1afb44c08e56398d9839cd7aaeef83e408709d4b4de0ee1c016b8687cf3",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -260,7 +273,8 @@
   "source-012-amendment.md",
   "source-013-amendment.md",
   "source-014-amendment.md",
-  "source-015-amendment.md"
+  "source-015-amendment.md",
+  "source-016-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -389,6 +403,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M0-T181 (supervisor-bridge Windows CI repair) to D-090-R093 and D-090-R094 via applicability.task_ids; requirements content digest resynced in the same commit; no requirement text edited. Capture session: 0ba6d6a3, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-04T00:45:30+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-016 (session 0ba6d6a3 message 43, 2026-10-04: the 215-16 Northern walkthrough, switches off, continue eligible development, CI duplicate-run inspection + one proposal) and requirements D-090-R101..R105, all pending. Messages 41-42 recorded as conversational (no rows). Text extracted by script; nothing retyped; no existing row edited. Capture session: 0ba6d6a3, claude-fable-5-1."
   }
  ]
 }
