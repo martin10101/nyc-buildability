@@ -73,6 +73,8 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 
 ## Dispatch / review mechanics
 
+- BUILD packets go to builder types (backend-/frontend-engineer…); a `qa-engineer` given a build
+  packet returned a BLOCKED gate, wrote nothing (R137, DB-128). State the producer role first.
 - Producers: unnamed spawns only (named = readonly-guard silent denial), isolation worktree,
   prompt MUST carry: show-toplevel guard (STOP if primary checkout), `git reset --hard
   <contract-head>` (worktrees spawn off stale bases), exact single-scope, self-check commands,

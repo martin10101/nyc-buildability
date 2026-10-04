@@ -28,3 +28,5 @@ Refreshed 2026-10-03 from the PR record by the integrator (status words only; de
 | **Next** | D-12/D-15/D-06 slice 2 merged (#358/#359/#360, 2026-10-03); D-2 disclosure merged (#373, 2026-10-03); remaining Lane D items are blocked — D-07 (A-06), D-08 (Q8), D-10 (D-08, C-09), D-11 (A-07), D-13 (Q10), D-14 (E-04; A-04 #353 merged), D-02 (Q4). |
 | **Blocked by** | D-02 on Q4 (which screen is the default); D-08 on Q8; D-13 on Q10 |
 | **Open owner questions** | Q4, Q8, Q10 — see `docs/lanes/queues/D.md` "Blocked by owner". **Tax-lot-only warning shrink (R082 vs R030–R033):** R082 asks the app to say less, but the always-visible tax-lot-only warning and labels (R030–R033, owner directive 2026-10-01) are owner-pinned; whether that standing warning may shrink to a short tag under §5a is an OPEN owner decision (R008 — not decided here). This pass kept it byte-identical and did not touch it. |
+
+2026-10-04 (integrator, status words only): #416 merged (notes on the card).
