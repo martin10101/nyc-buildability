@@ -61,6 +61,7 @@ from app.api.v1.pluto_version_cache import (
     cached_default_version_probe,
     published_versions_for_study,
 )
+from app.api.v1.study_geometry import thread_site_geometry
 from app.connectors.bbl import BBLValidationError, normalize_bbl
 from app.connectors.pluto_soda import (
     CONDO_UNIT_LOT_RANGE,
@@ -81,8 +82,10 @@ from app.spatial.multi_lot_site import (
     derive_multi_lot_site_if_enabled,
     site_lot_from_sources,
 )
+from app.spatial.site_geometry import SiteGeometry
 
 __all__ = [
+    "GeometryProvider",
     "PlutoFetcher",
     "StudyInputs",
     "StudyInputsProvider",
@@ -150,6 +153,14 @@ def _no_record_reason(bbl: str) -> str:
 # properties route injects; the live resilient fetcher is wired in a later slice.
 PlutoFetcher = Callable[[str, str], PlutoFetchResult]
 
+# (canonical_bbl, correlation_id) -> B-03 SiteGeometry, or None when no usable
+# geometry is available for this lot (the facts then stay unknown, exactly as
+# before). The INJECTED geometry seam (journey wave 1 item 1): tests and the e2e
+# harness bind a fixture-backed provider; the LIVE default binds NOTHING here
+# (see _live_study_inputs_provider for why), so geometry stays None in production
+# and the study read is byte-identical to the pre-geometry slice.
+GeometryProvider = Callable[[str, str], "SiteGeometry | None"]
+
 
 def assemble_study_inputs(
     pluto_result: PlutoFetchResult,
@@ -160,6 +171,7 @@ def assemble_study_inputs(
     address: str | None = None,
     version_probe: VersionProbe | None = None,
     correlation_id: str | None = None,
+    site_geometry: SiteGeometry | None = None,
 ) -> StudyInputs:
     """Build :class:`StudyInputs` from a successful PLUTO fetch result.
 
@@ -172,6 +184,15 @@ def assemble_study_inputs(
     (no probe by design) the published-on-record set is retrieval-only, as before.
     The only I/O this function performs is that injected probe; ``correlation_id``
     ties the probe's provenance and logs to the request.
+
+    ``site_geometry`` is an already-derived B-03 :class:`SiteGeometry` for this lot
+    (journey wave 1 item 1), passed in as pure DATA so this function stays I/O-free
+    -- the fetch that produces it happens in the provider, never here. When given,
+    :func:`app.api.v1.study_geometry.thread_site_geometry` threads it onto the site
+    facts AFTER the B-06 version-check bridge: the ``lot_type`` fact carries B-03's
+    geometric type, per-street ``lot_frontage`` facts are added, and ``lot_depth``
+    is replaced only when B-03 gives a single depth. When None (the default, and
+    the live default) the facts are byte-identical to the pre-geometry slice.
 
     Raises:
         StudyInputsUnavailableError: the Lane B gate is off (so the lot choice is
@@ -220,6 +241,11 @@ def assemble_study_inputs(
     )
     report = assess_data_versions(pins, published)
     site_facts = attach_version_check(site_fact_set.facts, report)
+    # Thread B-03 geometry (journey wave 1 item 1) AFTER the version-check bridge:
+    # the PLUTO facts keep their version_check; the added/replaced tax-map facts
+    # carry none (they are not a versioned city dataset here). None -> unchanged.
+    if site_geometry is not None:
+        site_facts = thread_site_geometry(site_facts, site_geometry)
     return StudyInputs(
         lot_choice=choice,
         site=site,
@@ -234,6 +260,7 @@ def pluto_study_inputs_provider(
     clock: Callable[[], datetime] | None = None,
     env: Mapping[str, str] | None = None,
     version_probe: VersionProbe | None = None,
+    geometry_provider: GeometryProvider | None = None,
 ) -> StudyInputsProvider:
     """A :data:`StudyInputsProvider` over a PLUTO ``fetcher``.
 
@@ -244,6 +271,13 @@ def pluto_study_inputs_provider(
     :func:`assemble_study_inputs` (request B-4): the live provider binds the
     cached live probe; tests and the e2e harness inject a probe over a routed
     fixture transport so nothing touches the network.
+
+    ``geometry_provider`` is the INJECTED B-03 geometry seam (journey wave 1 item
+    1): when given, it is called ``(canonical_bbl, correlation_id) -> SiteGeometry
+    | None`` and its result is passed to :func:`assemble_study_inputs` as pure data
+    (so assembly stays I/O-free). None (the default, and the live default) means no
+    geometry is threaded and the facts are byte-identical to the pre-geometry
+    slice. A geometry fetch is the provider's I/O, never the route's or assembly's.
     """
 
     def provider(
@@ -260,6 +294,11 @@ def pluto_study_inputs_provider(
                 "withheld and is safe to retry.",
                 reason=exc.error_type,
             ) from exc
+        site_geometry = (
+            geometry_provider(canonical_bbl, correlation_id)
+            if geometry_provider is not None
+            else None
+        )
         return assemble_study_inputs(
             result,
             selected=selected,
@@ -267,6 +306,7 @@ def pluto_study_inputs_provider(
             env=env,
             version_probe=version_probe,
             correlation_id=correlation_id,
+            site_geometry=site_geometry,
         )
 
     return provider
@@ -288,7 +328,21 @@ def _live_study_inputs_provider() -> StudyInputsProvider:
     (``cached_default_version_probe``, request B-4): built once here (this provider
     is ``lru_cache``-d), so a burst of studies shares one freshness observation and
     the city API is not hit once per study. No probe call happens here - the cache
-    is cold until the first study assembles."""
+    is cold until the first study assembles.
+
+    It binds NO live geometry provider (journey wave 1 item 1). The B-03 engine
+    needs BOTH a live lot outline AND the City Map street center lines queried for
+    the lot's ENVELOPE. A live MapPLUTO lot-outline fetch exists
+    (``app.connectors.mappluto_geometry_arcgis.fetch_lot_geometry``), but there is
+    NO existing live binding that produces the envelope-intersects DCM geometry
+    PAGES ``app.spatial.site_geometry.street_data_from_pages`` requires: the
+    accepted geometry fetch (``dcm_street_centerline_geometry.
+    fetch_street_segment_geometries``) supports only borough / street_name /
+    object_id predicates, and a non-envelope page fails that adapter's coverage
+    check closed (the lot type then reads unknown). Rather than invent a connector,
+    this default binds nothing live, so geometry stays None and the live study read
+    is byte-identical to the pre-geometry slice. Tests and the e2e harness inject a
+    fixture-backed geometry provider to exercise the seam offline."""
     from app.api.v1.properties import get_pluto_fetcher
 
     return pluto_study_inputs_provider(
