@@ -10,6 +10,28 @@ it was computed from with the actual numbers compared (competitor-review checks 
 no template sentences). When the envelope holds the whole allowance, the shortfall is
 ``none`` - the honest answer for an R6B lot, where the generous height limit is never the
 binding constraint.
+
+Minimum-base-height note (D-090-R107 step 2). The FAR-limited R6B sample building is 20 ft
+tall while the R6B table minimum base height is 30 ft. The 20 ft sample is KEPT, not raised:
+on a reading of the captured Zoning Resolution text no provision requires a building to rise
+to the minimum base height, so raising the sample to a 30 ft street wall would read a
+requirement into the text that it does not state. Finding:
+docs/research/zr-snapshots/notes/2026-10-04-r6b-minimum-base-height-20ft-sample.md.
+- ZR 23-431 (a) "line-up rules", the presumptive governing paragraph for R6B, state no
+  minimum building height; the "extend to the minimum base height ... or the height of the
+  #building#, whichever is less" language lives in paragraphs (b)/(c), not in (a).
+- ZR 23-432 positions a setback only for street-wall portions that exceed the maximum base
+  height (45 ft here); a 20 ft building never reaches it.
+- ZR 23-433 only positions that (never-triggered) setback.
+Instead of changing the sample, :func:`compliance_notes` emits a COMPUTED, plain-English
+note (C-11 discipline) when, and only when, the built height is below the minimum base
+height, citing ZR 23-431 / ZR 23-432 / ZR 23-433 and snapshots zr-23-431/432/433. It is a
+DRAFT reading of the captured text: which paragraph of ZR 23-431 governs a given lot and the
+legal effect wait for G6 qualified review. The v1 results contract's answer shape is closed
+(status / values / measurement, additionalProperties false) and this producer adds no
+contract field, so the note travels on the engine's :class:`BuildingOptionResult`
+(compliance_notes), not inside the schema-validated document; surfacing it to the architect
+needs a Lane C contract slot.
 """
 
 from __future__ import annotations
@@ -22,6 +44,12 @@ from .answers import AllowanceResult, EnvelopeResult, answer_value, not_availabl
 from .inputs import ThreeAnswerInputs
 
 _RESIDENTIAL = "residential"
+
+# Minimum-base-height compliance note (D-090-R107 step 2). The three governing sections and
+# the pinned snapshots that back the draft reading (see the module docstring and the finding
+# note). Kept as module constants so the note cites exactly one, stable set.
+_MIN_BASE_HEIGHT_ZR_SECTIONS = ("ZR 23-431", "ZR 23-432", "ZR 23-433")
+_MIN_BASE_HEIGHT_SNAPSHOT_IDS = ("zr-23-431", "zr-23-432", "zr-23-433")
 
 
 def _frac(value: float) -> Fraction:
@@ -195,6 +223,53 @@ def shortfall_reason(
     }
 
 
+def compliance_notes(
+    comp: BuildingOptionComputation,
+    min_base_height_ft: float | None,
+    max_base_height_ft: float | None,
+) -> tuple[dict, ...]:
+    """The building option's minimum-base-height note, COMPUTED from the numbers (C-11: never a
+    template). A single note is emitted ONLY when the built height is strictly below the minimum
+    base height; when the building reaches or exceeds it - so the street wall already meets the
+    base - no note appears and the tuple is empty.
+
+    The note reads the captured Zoning Resolution text: no captured provision requires the
+    building to rise to the minimum base height - the setback rule (ZR 23-432, ZR 23-433) applies
+    only above the maximum base height, the extend-to-the-minimum-base-height language (ZR 23-431
+    (b)/(c)) is itself capped at the building height ("whichever is less"), and the R6B line-up
+    rule (ZR 23-431 (a)) states no minimum height. It is a DRAFT reading; which paragraph of ZR
+    23-431 governs a given lot and the legal effect wait for G6 (see the module docstring and the
+    finding note)."""
+    if min_base_height_ft is None or max_base_height_ft is None:
+        return ()
+    if comp.building_height_ft >= min_base_height_ft:
+        return ()
+    snapshots = ", ".join(_MIN_BASE_HEIGHT_SNAPSHOT_IDS)
+    text = (
+        f"Built height {comp.building_height_ft:g} ft is below the {min_base_height_ft:g} ft "
+        f"minimum base height. No captured provision requires the building to rise to it: the "
+        f"setback rule (ZR 23-432, ZR 23-433) applies only to street-wall portions above the "
+        f"{max_base_height_ft:g} ft maximum base height; where a street wall must extend to the "
+        f"minimum base height (ZR 23-431 (b)/(c)) it extends to the building height when that is "
+        f'lower ("whichever is less"); the R6B line-up rule (ZR 23-431 (a)) states no minimum '
+        f"height. Draft reading of the captured text (snapshots {snapshots}); which paragraph of "
+        f"ZR 23-431 governs this lot and the legal effect wait for qualified review."
+    )
+    note = {
+        "text": text,
+        "computed_from": ["building_height", "min_base_height", "max_base_height"],
+        "values": [
+            {"name": "building_height", "value": comp.building_height_ft, "unit": "feet"},
+            {"name": "min_base_height", "value": float(min_base_height_ft), "unit": "feet"},
+            {"name": "max_base_height", "value": float(max_base_height_ft), "unit": "feet"},
+        ],
+        "zr_sections": list(_MIN_BASE_HEIGHT_ZR_SECTIONS),
+        "snapshot_ids": list(_MIN_BASE_HEIGHT_SNAPSHOT_IDS),
+        "draft": True,
+    }
+    return (note,)
+
+
 @dataclass(frozen=True)
 class BuildingOptionResult:
     answer: dict
@@ -202,6 +277,7 @@ class BuildingOptionResult:
     floor_by_floor: list[dict]
     floor_stack: dict
     computation: BuildingOptionComputation | None
+    compliance_notes: tuple[dict, ...] = ()
 
 
 def build_building_option(
@@ -322,6 +398,9 @@ def build_building_option(
         floor_by_floor=floor_by_floor,
         floor_stack=floor_stack,
         computation=comp,
+        compliance_notes=compliance_notes(
+            comp, envelope.min_base_height_ft, envelope.max_base_height_ft
+        ),
     )
 
 
