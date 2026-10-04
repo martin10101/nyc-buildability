@@ -14,6 +14,7 @@
 import type {
   AnswerValue,
   ExceptionLabel,
+  MeasurementKnown,
   Results,
   Scope,
   ScopeAssumption,
@@ -305,6 +306,15 @@ const SCOPE_ASSUMPTION_KEY_LABELS: Readonly<Record<string, string>> = {
   street_line_intersection_angle_degrees: "Street-line intersection angle",
   housing_program: "Housing program",
   floor_to_floor_ft: "Floor-to-floor height",
+  // D-090-R119/R131: the scope now carries all the assumed inputs (12 rows). These plain-word
+  // labels match the drawings' scope vocabulary (services/api/app/drawings/kit/scope.py, Lane E).
+  zoning_district: "Zoning district",
+  overlay_present: "Commercial overlay present",
+  special_district_present: "Special purpose district",
+  special_density_area: "Special density area",
+  lot_front_ft: "Lot frontage",
+  lot_depth_ft: "Lot depth",
+  site_measurement_rank: "Site measurement basis",
 };
 
 /** A machine assumption key in plain words. An unlisted key is de-underscored and sentence-cased
@@ -334,8 +344,39 @@ export function scopeAssumptionBasisLabel(basis: ScopeAssumption["basis"]): stri
   return SCOPE_BASIS_LABELS[basis];
 }
 
-/** An assumed value with its unit, in plain words: a flag reads Yes/No, a number is grouped, and
- * a code-like string is de-underscored. The unit comes from the document already in plain words. */
+// Measurement-rank values (schema MeasurementKnown.rank) in plain words, so a rank carried as a
+// scope-assumption value (e.g. site_measurement_rank) reads well and never prints the enum code.
+// Exhaustive over the rank union so a rank added to the contract later forces an entry here.
+type MeasurementRank = MeasurementKnown["rank"];
+const MEASUREMENT_RANK_WORDS: Readonly<Record<MeasurementRank, string>> = {
+  survey_entered: "survey (entered)",
+  city_records: "city records",
+  approximate_tax_map: "approximate tax map",
+  entered: "entered",
+  assumed: "assumed",
+};
+
+// Housing-program codes in plain words, matching the drawings' scope vocabulary (D-090-R119/R131).
+// The contract types a scope-assumption value as a free string | number | boolean, so there is no
+// closed enum to exhaust; the API's codes are standard_residence | qualifying_affordable_housing |
+// qualifying_senior_housing. Only standard_residence is pinned here (the one the drawings pin and
+// the only one a scope carries today); the other two de-underscore cleanly via the fallback below.
+const HOUSING_PROGRAM_WORDS: Readonly<Record<string, string>> = {
+  standard_residence: "standard residence",
+};
+
+// Code-like string values turned into plain words (requirement b): measurement-rank values and
+// housing-program codes, consistent with the drawings. Any string not listed keeps the
+// de-underscore fallback, so the panel guard never sees a snake_case code on the screen.
+const SCOPE_VALUE_WORDS: Readonly<Record<string, string>> = {
+  ...MEASUREMENT_RANK_WORDS,
+  ...HOUSING_PROGRAM_WORDS,
+};
+
+/** An assumed value with its unit, in plain words: a flag reads Yes/No, a number is grouped, and a
+ * code-like string reads as plain words — a known measurement-rank or housing-program code via
+ * SCOPE_VALUE_WORDS, any other code de-underscored. The unit comes from the document already in
+ * plain words. */
 export function scopeAssumptionValueText(
   value: string | number | boolean,
   unit: string | null,
@@ -343,7 +384,7 @@ export function scopeAssumptionValueText(
   let base: string;
   if (typeof value === "boolean") base = value ? "Yes" : "No";
   else if (typeof value === "number") base = PLAIN_NUMBER.format(value);
-  else base = value.replace(/_/g, " ");
+  else base = SCOPE_VALUE_WORDS[value] ?? value.replace(/_/g, " ");
   return unit ? `${base} ${unit}` : base;
 }
 
