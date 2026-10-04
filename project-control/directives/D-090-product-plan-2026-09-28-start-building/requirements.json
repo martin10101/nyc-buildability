@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 141,
+ "requirement_count": 144,
  "producer": "orchestrator",
- "updated_at": "2026-10-04T05:45:14+00:00",
+ "updated_at": "2026-10-04T07:28:52+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -4812,6 +4812,105 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-04 (message 52, the reviewer's assessment forwarded by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R142",
+   "text": "The architect must be able to get back from the web app a complete feasibility report in PDF of the kind the owner's sample shows (a zoning analysis and massing study for one lot: executive summary; property location; site summary; applicable development characteristics; zoning overview and a parameter table with Zoning Resolution references; calculation detail; applicable programs; scenarios with floor schedules, plans and comparison; colophon with data versions and disclaimers) - ACCURATELY: every value computed by deterministic code from captured official sources with provenance; every legal reading marked draft until a qualified reviewer approves it (G6); never a compliance declaration.",
+   "source_ref": "source-024-amendment.md#owner-message-56-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R137",
+    "D-090-R133"
+   ],
+   "required_harness": "An automated journey on recorded data produces the PDF; every printed value traces to a source fact or a captured rule; the report model and PDF are schema-validated; a qualified reviewer's approval gates anything shown as more than draft.",
+   "required_evidence": "The gap plan (R144) first; later the report-model, PDF and journey tests of the tasks it names.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 56, the owner's direction after the sample PDF).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R143",
+   "text": "The owner's sample PDF (a competitor's 'Envelope' zoning analysis and massing study for 215-16 Northern Boulevard dated 2026-09-18, 88 pages) contains multiple errors or issues according to the owner's conversation with an AI. It is a reference for the report's FORM and SCOPE only; no figure, legal reading or program determination in it is treated as fact, and where it differs from the repository's captured Zoning Resolution readings, qualified review decides.",
+   "source_ref": "source-024-amendment.md#owner-message-56-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [],
+   "required_harness": "The gap plan and every later report task cite the sample for structure only and mark each divergence as 'differs; qualified review decides'.",
+   "required_evidence": "docs/plans/ACCURATE_FEASIBILITY_REPORT_GAP_PLAN_2026-10-04.md section 3; later report fixtures carry no value copied from the sample.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 56, the owner's direction after the sample PDF).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R144",
+   "text": "Return item: answer 'what do we still need to add in order to get back a PDF like this, but accurately' as a gap plan - section by section against the sample, with the four states (built / connected / tested / professionally verified) and repository evidence for what exists, what is missing, which lane or milestone owns it, which owner decision or hold gates it, and the dependency order to the first accurate PDF for one lot and one program and then to multiple programs; no dates promised; no master-plan change; held items named, not planned.",
+   "source_ref": "source-024-amendment.md#owner-message-56-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R142",
+    "D-090-R143"
+   ],
+   "required_harness": "An independent read-only reviewer checks every repository claim in the plan (git grep for every 'does not exist' claim, DB-122) before it merges.",
+   "required_evidence": "docs/plans/ACCURATE_FEASIBILITY_REPORT_GAP_PLAN_2026-10-04.md merged after review; the owner update that points to it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 56, the owner's direction after the sample PDF).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
