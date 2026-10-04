@@ -20,7 +20,11 @@ from app.scenario.three_answers import (
     ThreeAnswerInputs,
     generate_results,
 )
-from app.scenario.three_answers.scope import DisclosedAssumption, ScopeInputs
+from app.scenario.three_answers.scope import (
+    ASSUMPTION_KEYS,
+    DisclosedAssumption,
+    ScopeInputs,
+)
 
 _REPO_ROOT = Path(__file__).resolve().parents[5]
 _BENCHMARK = (
@@ -46,28 +50,26 @@ def _scope_fixture() -> dict:
     return json.loads(_SCOPE_FIXTURE.read_text("utf-8"))["scope"]
 
 
-def _benchmark_scope_inputs() -> ScopeInputs:
-    """ScopeInputs for 215-16 Northern (BBL 4073340070, Queens block 7334 lot 70). The
-    basis and statement of each disclosed assumption are read from the #387 scope fixture
-    so they are never restated here."""
+def _benchmark_scope_input_kwargs() -> dict:
+    """The full ScopeInputs kwargs for 215-16 Northern (BBL 4073340070, Queens block 7334
+    lot 70): the bbl plus one DisclosedAssumption per assumed input. The basis and
+    statement of each disclosure are read from the scope fixture so they are never restated
+    here, and the key set is the authoritative ASSUMPTION_KEYS, never a hand list - add an
+    assumed input to the emitter and this helper covers it automatically."""
     assumptions = {a["key"]: a for a in _scope_fixture()["assumptions"]}
 
     def disclosure(key: str) -> DisclosedAssumption:
         row = assumptions[key]
         return DisclosedAssumption(basis=row["basis"], statement=row["statement"])
 
-    return ScopeInputs(
-        bbl="4073340070",
-        lot_type=disclosure("lot_type"),
-        within_100_ft_of_street_line_intersection=disclosure(
-            "within_100_ft_of_street_line_intersection"
-        ),
-        street_line_intersection_angle_degrees=disclosure(
-            "street_line_intersection_angle_degrees"
-        ),
-        housing_program=disclosure("housing_program"),
-        floor_to_floor_ft=disclosure("floor_to_floor_ft"),
-    )
+    kwargs: dict = {"bbl": "4073340070"}
+    kwargs.update({key: disclosure(key) for key in ASSUMPTION_KEYS})
+    return kwargs
+
+
+def _benchmark_scope_inputs() -> ScopeInputs:
+    """ScopeInputs for the 215-16 Northern benchmark, with every assumed input disclosed."""
+    return ScopeInputs(**_benchmark_scope_input_kwargs())
 
 
 def _expected(key: str):

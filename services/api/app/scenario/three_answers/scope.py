@@ -13,11 +13,17 @@ Honesty invariants held here:
   deterministically from the canonical BBL via the shared
   :func:`app.connectors.bbl.normalize_bbl` helper - never a second BBL parser,
   and never with leading zeros.
-- Every disclosed assumption's VALUE and UNIT come from the real generator
-  inputs (the lot type, the within-100-ft flag, the street-line angle in
-  degrees, the housing program, the floor-to-floor height in feet); its BASIS
-  and STATEMENT come from the caller-supplied :class:`ScopeInputs`. The engine
-  NEVER invents a basis - every basis is a required field of ``ScopeInputs``.
+- Every assumed input the engine USES is disclosed - not just the corner
+  conditions (D-090-R119, per the owner's reviewer audit). One
+  ``assumptions[]`` row is emitted per assumed input in the fixed order of
+  :data:`_ASSUMPTION_SPECS` (zoning facts, lot facts, corner condition,
+  housing/building default). Each row's VALUE and UNIT come from the real
+  generator inputs; its BASIS and STATEMENT come from the caller-supplied
+  :class:`ScopeInputs`. The engine NEVER invents a basis - every basis is a
+  required field of ``ScopeInputs``, so a caller cannot silently omit one.
+- The one input that is NOT an assumption is ``lot_area_sq_ft``: it is a sourced
+  site fact (it carries ``lot_area_fact_id`` and travels in
+  ``depends_on_fact_ids``), so it belongs with the governing inputs, never here.
 - The two settled remaining-capacity strings are imported read-only from
   :mod:`app.scenario.constants` (never retyped), and the whole-site statement is
   supplied by the engine (its ``LOT_SELECTION_STATEMENT``), so the settled
@@ -39,9 +45,11 @@ from app.scenario.constants import (
 )
 
 if TYPE_CHECKING:  # pragma: no cover - typing only, avoids an inputs<->scope cycle
+    from collections.abc import Callable
+
     from .inputs import ThreeAnswerInputs
 
-__all__ = ["DisclosedAssumption", "ScopeInputs", "build_scope"]
+__all__ = ["ASSUMPTION_KEYS", "DisclosedAssumption", "ScopeInputs", "build_scope"]
 
 # The emitter's declared scope identity, matching the closed results.schema.json
 # scope $defs: basis enum value and the byte-exact label const (D-090-R108).
@@ -81,23 +89,103 @@ class ScopeInputs:
 
     ``bbl`` is the lot's canonical 10-digit BBL; the borough name, block, lot and
     display string are derived from it deterministically by :func:`build_scope`.
-    Each remaining field is the caller's :class:`DisclosedAssumption` (basis +
-    statement) for one of the five disclosed conditions. All fields are REQUIRED:
-    the engine never fabricates a basis or a statement."""
+    Every OTHER field is the caller's :class:`DisclosedAssumption` (basis +
+    statement) for one assumed engine input, named exactly as the key it emits in
+    :data:`_ASSUMPTION_SPECS`. ALL fields are REQUIRED (no defaults): omitting any
+    one raises ``TypeError`` at construction, so a caller cannot silently leave an
+    assumed input undisclosed (D-090-R119), and the engine never fabricates a
+    basis or a statement. ``lot_area_sq_ft`` is deliberately absent - it is a
+    sourced site fact, not an assumption."""
 
     bbl: str
+    # zoning facts
+    zoning_district: DisclosedAssumption
+    overlay_present: DisclosedAssumption
+    special_district_present: DisclosedAssumption
+    special_density_area: DisclosedAssumption
+    # lot facts (the recorded lot AREA is a sourced fact, so it is not here)
     lot_type: DisclosedAssumption
+    lot_front_ft: DisclosedAssumption
+    lot_depth_ft: DisclosedAssumption
+    site_measurement_rank: DisclosedAssumption
+    # corner condition
     within_100_ft_of_street_line_intersection: DisclosedAssumption
     street_line_intersection_angle_degrees: DisclosedAssumption
+    # housing / building default
     housing_program: DisclosedAssumption
     floor_to_floor_ft: DisclosedAssumption
+
+
+# The fixed, documented order in which assumed inputs are disclosed in
+# scope.assumptions (D-090-R119, per the owner's reviewer audit: EVERY assumed
+# input the engine actually uses is disclosed). Each tuple is
+# (key, value_reader, unit): the key names the row AND the matching required
+# DisclosedAssumption field of ScopeInputs (same name); the reader pulls the real
+# value from the generator inputs; the unit is the value's unit in plain words, or
+# None for a dimensionless flag/type/string. Grouped zoning -> lot -> corner
+# condition -> building. lot_area_sq_ft is NOT here: it is the one sourced site
+# fact (lot_area_fact_id / depends_on_fact_ids), so it travels with the governing
+# inputs, never as an assumption.
+_ASSUMPTION_SPECS: tuple[
+    tuple[str, Callable[[ThreeAnswerInputs], object], str | None], ...
+] = (
+    ("zoning_district", lambda i: i.zoning_district, None),
+    ("overlay_present", lambda i: i.overlay_present, None),
+    ("special_district_present", lambda i: i.special_district_present, None),
+    ("special_density_area", lambda i: i.special_density_area, None),
+    ("lot_type", lambda i: i.lot_type, None),
+    ("lot_front_ft", lambda i: i.lot_front_ft, "feet"),
+    ("lot_depth_ft", lambda i: i.lot_depth_ft, "feet"),
+    ("site_measurement_rank", lambda i: i.site_measurement_rank, None),
+    (
+        "within_100_ft_of_street_line_intersection",
+        lambda i: i.within_100_ft_of_street_line_intersection,
+        None,
+    ),
+    (
+        "street_line_intersection_angle_degrees",
+        lambda i: i.street_line_intersection_angle_degrees,
+        "degrees",
+    ),
+    ("housing_program", lambda i: i.housing_program, None),
+    ("floor_to_floor_ft", lambda i: i.building_defaults.floor_to_floor_ft, "feet"),
+)
+
+# The disclosed assumed-input keys, in emission order. Equals the ScopeInputs
+# DisclosedAssumption field names; exported so callers and tests derive the set
+# from this single source of truth, never a hand-maintained list.
+ASSUMPTION_KEYS: tuple[str, ...] = tuple(key for key, _reader, _unit in _ASSUMPTION_SPECS)
+
+# The JSON scalar types the results.schema.json scope_assumption `value` allows
+# (string | number | boolean). bool is a subclass of int, so it is covered.
+_SCOPE_VALUE_TYPES = (str, int, float)
+
+
+def _require_disclosure(scope_inputs: ScopeInputs, key: str) -> DisclosedAssumption:
+    """Return the caller's disclosure for one assumed input, failing closed if it
+    is missing. ScopeInputs makes every disclosure a required field, so a missing
+    one already raises at construction; this is the second, explicit guard against
+    a caller that passes None in its place (D-090-R119: never silently omit one)."""
+    disclosure = getattr(scope_inputs, key)
+    if not isinstance(disclosure, DisclosedAssumption):
+        raise ValueError(
+            f"scope_inputs is missing the required disclosure for assumed input {key!r}"
+        )
+    return disclosure
 
 
 def _assumption(
     key: str, value: object, unit: str | None, disclosure: DisclosedAssumption
 ) -> dict:
     """One scope-assumption row: the key and value/unit come from the real input,
-    the basis and statement are passed through from the caller's disclosure."""
+    the basis and statement are passed through from the caller's disclosure. The
+    value must be a JSON scalar (string/number/boolean) the schema admits; a None
+    or other value fails closed rather than emitting an invalid row."""
+    if not isinstance(value, _SCOPE_VALUE_TYPES):
+        raise ValueError(
+            f"assumed input {key!r} has no disclosable value (got {value!r}); "
+            "the scope contract allows only a string, number or boolean"
+        )
     return {
         "key": key,
         "value": value,
@@ -124,32 +212,12 @@ def build_scope(inputs: ThreeAnswerInputs, *, lot_selection_statement: str) -> d
     block = str(normalized.block)
     lot = str(normalized.lot)
 
+    # One row per assumed engine input, in the fixed _ASSUMPTION_SPECS order:
+    # value/unit from the real inputs, basis/statement from the required disclosure
+    # of the same name (D-090-R119).
     assumptions = [
-        _assumption("lot_type", inputs.lot_type, None, scope_inputs.lot_type),
-        _assumption(
-            "within_100_ft_of_street_line_intersection",
-            inputs.within_100_ft_of_street_line_intersection,
-            None,
-            scope_inputs.within_100_ft_of_street_line_intersection,
-        ),
-        _assumption(
-            "street_line_intersection_angle_degrees",
-            inputs.street_line_intersection_angle_degrees,
-            "degrees",
-            scope_inputs.street_line_intersection_angle_degrees,
-        ),
-        _assumption(
-            "housing_program",
-            inputs.housing_program,
-            None,
-            scope_inputs.housing_program,
-        ),
-        _assumption(
-            "floor_to_floor_ft",
-            inputs.building_defaults.floor_to_floor_ft,
-            "feet",
-            scope_inputs.floor_to_floor_ft,
-        ),
+        _assumption(key, reader(inputs), unit, _require_disclosure(scope_inputs, key))
+        for key, reader, unit in _ASSUMPTION_SPECS
     ]
 
     return {
