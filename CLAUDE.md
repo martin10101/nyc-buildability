@@ -9,7 +9,8 @@ document only when the task at hand needs it (routing table below).
 
 ## Permanent principles (always apply)
 
-1. AI retrieves, classifies, drafts, and explains. Deterministic code calculates. Qualified humans approve legal interpretations.
+1. AI retrieves, classifies, drafts, and explains. Deterministic code calculates. Legal interpretations are
+   labelled as unreviewed drafts with a direct link to the source text; professional review is advisory (ADR-007).
 2. Every material fact, rule, formula, scenario, and report value must retain provenance.
 3. Never guess API schemas, dataset fields, units, legal rules, effective dates, or source meanings.
 4. Official sources are primary. Conflicts and stale data must stay visible.
@@ -20,8 +21,11 @@ document only when the task at hand needs it (routing table below).
 9. The orchestrator alone accepts tasks, changes milestone status, unlocks dependent tasks, and changes the master plan.
 10. Use worktree isolation for parallel writing agents; never let parallel agents edit overlapping files.
 11. All schema changes use migrations. All exposed Supabase tables use tested RLS.
-12. No rule becomes `published` without source linkage, deterministic tests, independent review, and qualified-reviewer approval.
-13. Stop and create a blocker when a legal interpretation, secret, payment, production approval, or unavailable credential requires a human.
+12. Rules become `published` with source linkage, deterministic tests, and independent agent review; professional
+    approval is optional and recorded when it happens (ADR-007).
+13. Stop and create a blocker when a secret, payment, production approval, or unavailable credential requires a
+    human. A legal interpretation is never a stop: label it, link its source, say "not sure" when the program is
+    not sure (ADR-007).
 14. The owner's PC has ~7 GB free — thin client only: no local databases, Docker stack, citywide datasets, bulk documents, or large caches (see `docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md`).
 15. Dependency security is permanent and machine-enforced, with no agent waiver (npm and Python alike): every admitted version must be advisory-free at every severity, exact-pinned, integrity-matched to the official registry, and **at least 7 complete days old (604800 s passes, 604799 fails)**; audits run on every change and on a schedule; all gates FAIL CLOSED on any outage/missing/malformed/ambiguous evidence and are never warning-only; a new package needs a G5 provenance review; the ONLY exception is an owner-authorized, single-package, auto-expiring waiver of the AGE requirement (never of an advisory). Full policy: `docs/DEPENDENCY_SECURITY_POLICY.md`; canonical wording: `.claude/ORCHESTRATION_POLICY.md` §G.
 16. Modularity is permanent repository law: design production code around clear responsibilities and stable module boundaries; never put unrelated domain logic, storage, serialization, external I/O, CLI/API wiring, and presentation in one large file; inspect a file's size, responsibilities, and dependencies before substantially growing it; prefer focused modules with explicit interfaces and focused tests; preserve public imports through compatibility facades when splitting. New oversized handwritten files and unjustified growth of existing oversized files are prohibited by the modularity policy and fail CI. When creating, substantially expanding, or decomposing production source, read `docs/CODE_MODULARITY_POLICY.md` and the path-scoped `.claude/rules/code-architecture.md`.
@@ -111,8 +115,9 @@ approval (this narrows the former per-merge owner queue, D-004-R721, for Tier A 
 sensitive changes proceed after the named specialist review, not owner approval. **Tier C** items are
 queued and the next accepted dependency continues. **Tier D** items hard-deny or stop for the owner and
 are unchanged. Ask the user to perform only actions that require ownership or private authority:
-paid-account creation, payment, secrets, verification codes, production approval, and legal/zoning
-approval (the Section 20 / Tier D hard stops). Do not delegate ordinary coding, research, testing,
+paid-account creation, payment, secrets, verification codes, and production approval (the Section 20 /
+Tier D hard stops). Professional/legal review of results is no longer one of these: it is replaced by a
+standing label plus a per-stat zoning-law link (ADR-007). Do not delegate ordinary coding, research, testing,
 documentation, or configuration to the user. Nothing here — and no `.claude/ORCHESTRATION_POLICY.md`,
 rule, or skill — overrides these rules, the gates, the Tier D hard stops, or an active owner hold.
 (Live automated merging by the supervisor additionally requires the R595 activation path; until then

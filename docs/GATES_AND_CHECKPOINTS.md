@@ -105,6 +105,14 @@ Must verify:
 
 ### G6 — Legal/rule publication gate
 
+**Optional/advisory (ADR-007, owner D-090-R164, 2026-10-04).** G6 no longer blocks showing or exporting
+a value and is never asked of the owner. Professional review is advisory: a reviewed rule may be marked
+so and the review recorded when it happens, but nothing waits for it. In its place every surface and
+export carries one standing label that results are computed from official sources, are not
+professionally reviewed, and must be verified by a licensed professional, and every stat links to the
+zoning-law text it rests on. `published` now means "shipped under the label". The sign-off steps below
+stay as the format for an advisory review event, not as a blocking gate.
+
 Required for any machine rule or result labeled `verified`.
 
 Agents prepare:
