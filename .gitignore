@@ -8,6 +8,9 @@ __pycache__/
 
 # Builds and caches
 .next/
+# Written by `next build` / `tsc` when the web checks run on the dev server (D-090-R170).
+next-env.d.ts
+*.tsbuildinfo
 dist/
 build/
 # M0-T020: setuptools writes app.egg-info/ when `pip install ./services/api`
