@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 169,
+ "requirement_count": 171,
  "producer": "orchestrator",
- "updated_at": "2026-10-05T18:54:02+00:00",
+ "updated_at": "2026-10-05T19:07:55+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -5750,6 +5750,72 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-05 (message 64).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R170",
+   "text": "'i want this pc to have eccsues to browser to run test on what it builds': the development server gets a browser so the sessions can test what they build before pushing. ORCHESTRATOR'S READING: step 1 = run the project's own Playwright browser tests here with a hidden Chromium (exact locked packages, the same commands as the CI web-e2e job); a browser tool for the agent itself is a later step and a new package.",
+   "source_ref": "source-029-amendment.md#owner-message-65-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R160"
+   ],
+   "required_harness": "The web unit tests, the production build and the Playwright journeys run on the development server at the integration head and their results are recorded; CI on the pushed head stays the final word.",
+   "required_evidence": "The run log of the first local web run and the amended rule line.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (messages 65-66).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R171",
+   "text": "'is it safe ? if yes go': proceed if it is safe. ORCHESTRATOR'S READING: assessed safe (only the already-locked, integrity-checked packages; the publisher's Chromium build for the pinned Playwright; a windowless browser that loads only this project's own local pages; nothing touches production or secrets; removable by deleting two folders; caveat: as root Chromium runs without its inner sandbox, so it never browses outside sites). 'go' covers step 1 and amending the CODING_RULES 'no npm/npx/node locally' line for the development server; it does not authorize any new package or MCP server.",
+   "source_ref": "source-029-amendment.md#owner-message-66-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R170"
+   ],
+   "required_harness": "No package outside apps/web/package-lock.json is installed; no MCP server is added; the rule line is amended in a reviewed PR.",
+   "required_evidence": "The install log, `claude mcp list`, and the rule PR.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (messages 65-66).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
