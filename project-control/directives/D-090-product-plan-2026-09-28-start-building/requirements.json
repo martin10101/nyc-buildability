@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 209,
+ "requirement_count": 213,
  "producer": "orchestrator",
- "updated_at": "2026-10-05T20:46:35+00:00",
+ "updated_at": "2026-10-05T21:36:27+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -7082,6 +7082,147 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R210",
+   "text": "'Make sure the new checklist excludes detailed apartment design and permit-ready plans.' 'your goal is simplified feasibility.': the R6B checklist, and the measure of a finished district, exclude detailed apartment design and permit-ready plans; the product's goal is simplified feasibility. ORCHESTRATOR'S READING: out of scope, and never a checklist row: apartment-by-apartment layouts (unit plans) and construction, filing or permit-ready drawings. In scope: feasibility numbers and diagram drawings (lot, yards, setbacks, floor outlines, a core shown as a simple block), each labelled a diagram and not for construction. This narrows how the drawing items of source-030 (R192 to R196, the wording the sender says overstated the scope) and the apartment-count check (R185) are read: counts come from the rule arithmetic and are checked against the schedule, not against drawn apartments; the 'unconfirmed' label of R196 stays on anything that depends on a layout.",
+   "source_ref": "source-031-amendment.md#owner-message-71-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R185",
+    "D-090-R192",
+    "D-090-R193",
+    "D-090-R194",
+    "D-090-R195",
+    "D-090-R196",
+    "D-090-R205"
+   ],
+   "required_harness": "The checklist has an explicit out-of-scope section naming detailed apartment design and permit-ready plans; no row requires either; an independent check confirms it.",
+   "required_evidence": "The checklist diff and the check record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 71, the owner's reviewer's read of the update, sent by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R211",
+   "text": "'needs to fit your one-at-a-time instruction.' 'Running heavy checks together also appears to be contributing to the timing-test problem.': background reviews and test runs follow the one-at-a-time rule too, and heavy checks are not run together. ORCHESTRATOR'S READING: on the development server one heavy run at a time (the full server suite, the website checks, the browser journeys) and one helper at a time; a helper that runs tests never overlaps a heavy run. The policy cap (three writers, four reviewers) stays a ceiling, not the normal shape. The runs and helpers already in flight when this message arrived are allowed to finish; nothing new is started beside them.",
+   "source_ref": "source-031-amendment.md#owner-message-71-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R167",
+    "D-090-R182"
+   ],
+   "required_harness": "From this message on the session record shows no two heavy runs overlapping, no helper running tests during a heavy run, and no two helpers at once.",
+   "required_evidence": "The start and end time of each run and each helper.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 71, the owner's reviewer's read of the update, sent by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R212",
+   "text": "'The failed test still needs a clean full-run result or a properly reviewed fix.' 'make the failed combined run green.': a combined run with one failing test is not green; it becomes green only by a clean full run of the same suite on the same combined tree, or by a fix that a different agent reviews; the test passing alone proves nothing about the run. ORCHESTRATOR'S READING: make the clean full run first, with nothing else running, and record it; the timing test itself (`tests/drawings/test_dxf_reader.py::test_t097_b1_mutation_double_find_reddens_time_guard`, a measured ratio against a fixed threshold) still gets its own reviewed fix so it stops failing under load.",
+   "source_ref": "source-031-amendment.md#owner-message-71-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R181",
+    "D-090-R211"
+   ],
+   "required_harness": "A full-suite log for the combined tree with zero failures, made with no other heavy run or test-running helper active; or the reviewed fix and a full run after it.",
+   "required_evidence": "The run log with its start and end time; the fix and its review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 71, the owner's reviewer's read of the update, sent by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R213",
+   "text": "'The next useful milestone is exactly what they describe: connected R6B results': the next build step is, in this order, the R6B results connected to the website, then the report, then the PDF (the full sentence ends 'report' then 'PDF', joined by arrows; it confirms section 4.1 of the plan and R201).",
+   "source_ref": "source-031-amendment.md#owner-message-71-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R201",
+    "D-090-R208"
+   ],
+   "required_harness": "The next contracted work is the results connection, then the report builder, then the PDF, one after the other.",
+   "required_evidence": "The ledger tasks and the PRs, in that order.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 71, the owner's reviewer's read of the update, sent by the owner).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
