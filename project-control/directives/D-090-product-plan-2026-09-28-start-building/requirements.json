@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 166,
+ "requirement_count": 169,
  "producer": "orchestrator",
- "updated_at": "2026-10-04T09:08:13+00:00",
+ "updated_at": "2026-10-05T18:54:02+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -5649,6 +5649,107 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-04 (message 62, after the sizing and the 50-agent question).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R167",
+   "text": "'what i ment wasnt to littltrly spone up 50 subagents i ment build 1 go to next': build the program in full (all R1-R12, all zoning) one piece at a time - finish one, then go to the next - not by spawning many agents at once. Corrects the orchestrator's reading of R166: the 'parallel waves at 16 agents' reading is withdrawn; the scope half of R166 (the full target, not narrowed) stands. ORCHESTRATOR'S READING: one district family at a time; the ORCHESTRATION_POLICY section B agent cap (3 writers + 4 reviewers) is unchanged; PR #431's wave plan must be revised to this order before it merges.",
+   "source_ref": "source-028-amendment.md#owner-message-64-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R166"
+   ],
+   "required_harness": "The plan and the dispatch records show one district family in work at a time, finished before the next starts; no wave wider than the policy cap.",
+   "required_evidence": "The revised plan document and the dispatch records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 64).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R168",
+   "text": "'the program is only considerd done when all 12 zoon are fully done': the program is done only when all twelve zones R1 through R12 are fully done; no partial result is reported as the program being done. ORCHESTRATOR'S READING of 'fully done' for a zone: every district in it and every rule-coverage-matrix column drafted from captured law text, tested, and carried through to the results, the screens and the report with the standing label and per-stat law link (R164/R165); the rest of 'all zoning' (flood, special districts, other overlays, commercial and manufacturing districts) stays in the full target.",
+   "source_ref": "source-028-amendment.md#owner-message-64-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R167",
+    "D-090-R142"
+   ],
+   "required_harness": "Status reports state done only per zone with evidence, and never state the program done before all twelve are.",
+   "required_evidence": "The coverage matrix at 646 of 646 with tests, and the owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 64).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R169",
+   "text": "'give me the seasen handoff proment now': give the owner the session-handoff prompt now, taking R167 and R168 into account.",
+   "source_ref": "source-028-amendment.md#owner-message-64-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R167",
+    "D-090-R168"
+   ],
+   "required_harness": "The reply carries the successor prompt; docs/SESSION_HANDOFF.md seq 141 states R167/R168.",
+   "required_evidence": "The chat reply and the handoff file.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 64).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
