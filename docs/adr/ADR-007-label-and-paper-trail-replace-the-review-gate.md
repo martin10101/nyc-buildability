@@ -10,7 +10,8 @@
   are unchanged except where this ADR names them below.
 - **Directive requirements:** D-090-R163 (Lane A merge authority to the orchestrator),
   D-090-R164 (this decision), D-090-R165 (the label + paper-trail + not-sure build obligation),
-  D-090-R166 (target is every property type at once).
+  D-090-R166 (the target is every property type, the full scope; built one zone at a time per the
+  owner's later correction, D-090-R167).
 
 ## Context
 
@@ -74,13 +75,16 @@ doc under this directive, both producer and reviewer independent, rather than ke
    `published` now means "shipped under the standing label", not "professionally approved". The
    qualified-professional event that `published` formerly required is replaced by the standing label
    and the paper trail; where a professional review does happen it is recorded as an advisory fact,
-   not a precondition.
+   not a precondition. `verified` keeps its meaning (the orchestrator's reading; the owner did not
+   mention it): it is used only for a rule or result a qualified professional has actually reviewed,
+   with that review recorded. Nothing shipped under the label is called `verified`.
 
 ### Effect on ADR-006 Tier D
 
 ADR-006 Tier D item 10 ("publishing or labeling a rule `published`/`verified` without the required
 qualified professional event") is reinterpreted by this ADR: `published` now means "shipped under the
-label", so shipping under the label is permitted and is no longer a hard deny. ADR-006 Tier D item 11
+label", so shipping under the label is permitted and is no longer a hard deny; labelling a rule or
+result `verified` without that event stays a hard deny. ADR-006 Tier D item 11
 (representing a result as a legal opinion, permit approval, or professional certification) and the ban
 on compliance declarations stay in force unchanged. ADR-006 is an immutable record; this ADR
 supersedes those two readings in prose. The Tier D hard stops for production approval, production
@@ -123,7 +127,8 @@ deployment, payments, secrets, credentials, and paid-account creation are not to
 ## Record
 
 - Owner decision: D-090-R164 (decision), D-090-R165 (build obligation), D-090-R163 (Lane A merge
-  authority), D-090-R166 (target is every property type at once), source-027 / owner message 62,
+  authority), D-090-R166 (the target is every property type, the full scope; built one zone at a
+  time per the owner's later correction, D-090-R167, source-028), source-027 / owner message 62,
   2026-10-04.
 - Captured verbatim: `project-control/directives/D-090-product-plan-2026-09-28-start-building/source-027-amendment.md`.
 - This ADR and the CLAUDE.md amendment are both independently reviewed before merge.
