@@ -58,24 +58,29 @@ def test_benchmark_scope_document_validates_against_the_results_schema() -> None
     doc = _generate().document
     # generate_results validated internally; re-run the same public validate path explicitly.
     validate_results_document(doc)
-    assert doc["contract_version"] == "1.1.0"
+    # Scope AND the R6B minimum-base-height note are both emitted on the benchmark path, and a
+    # non-empty notes array binds 1.2.0, which admits the scope (#422; DB-129).
+    assert doc["contract_version"] == "1.2.0"
+    assert "scope" in doc
 
 
 def test_no_scope_inputs_means_no_scope_and_document_stays_1_0_0() -> None:
     with_scope = _generate().document
-    assert with_scope["contract_version"] == "1.1.0"
+    assert with_scope["contract_version"] == "1.2.0"  # scope + the R6B note (see above)
     assert "scope" in with_scope
 
     # Drop scope_inputs: no scope key, version 1.0.0 (the pre-R108 shape).
     without_scope = generate_results(_benchmark_inputs(scope_inputs=None), env=_ON).document
     assert "scope" not in without_scope
-    assert without_scope["contract_version"] == "1.0.0"
+    # Without a scope the R6B note alone still binds 1.2.0 (notes slot, D-090-R132); the
+    # pre-R108 1.0.0 shape returns only when neither slot is populated.
+    assert without_scope["contract_version"] == "1.2.0"
 
     # Byte-identical otherwise: the two documents differ ONLY by the scope key and the version
     # string, so emitting scope changes nothing else (red/green: a stray change fails here).
     stripped = dict(with_scope)
     stripped.pop("scope")
-    stripped["contract_version"] = "1.0.0"
+    stripped["contract_version"] = without_scope["contract_version"]  # 1.2.0 via the note
     assert stripped == without_scope
 
 
