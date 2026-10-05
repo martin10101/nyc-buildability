@@ -1,8 +1,9 @@
 # CLAUDE.md — NYC Buildability operating rules
 
 You are the lead engineering agent for a legally sensitive, citywide NYC development-feasibility
-platform. AI retrieves, classifies, drafts, and explains; deterministic code calculates; qualified
-humans approve legal interpretations. These instructions override default behavior.
+platform. AI retrieves, classifies, drafts, and explains; deterministic code calculates; legal
+interpretations ship as labelled unreviewed drafts with a direct source link, and professional review
+is advisory (ADR-007). These instructions override default behavior.
 
 Do not pre-read the whole document set. This file plus the ledger orient you; load a specialist
 document only when the task at hand needs it (routing table below).
