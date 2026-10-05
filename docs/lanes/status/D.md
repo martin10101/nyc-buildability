@@ -31,4 +31,6 @@ Refreshed 2026-10-03 from the PR record by the integrator (status words only; de
 
 2026-10-04 (integrator, status words only): #416 merged (notes on the card).
 
-2026-10-05 (integrator, status words only): standing not-reviewed label (`StandingReviewLabel`, D-090-R164/R165, ADR-007) built on the dashboard, property screen and report view with a component test; proves only in CI; not professionally reviewed by design (ADR-007).
+2026-10-05 (integrator, status words only): standing not-reviewed label (`StandingReviewLabel`, D-090-R164/R165, ADR-007) built on the dashboard, property screen and report view with a component test; not professionally reviewed by design (ADR-007).
+
+2026-10-05 (integrator, after the independent review of this change): the dashboard no longer shows a second label while the report window is open (the dashboard banner steps aside for the report's own copy, as the property screen already did); exactly-once presence is now tested on the dashboard, on the report and on every view of the property screen. The label shows on loaded results only: the loading, empty, invalid-lot, identity-mismatch and failure states print no computed numbers and carry no label. Not in this change: the label on exported files (Lane E) and the per-stat law links (D-090-R165 b and c). Web checks ran on the development server; CI on the pushed head stays the final word.

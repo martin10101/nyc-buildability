@@ -1,8 +1,9 @@
 // The one standing not-reviewed label (owner decision D-090-R164/R165, source-027; ADR-007).
 // These tests pin the wording, the three required facts, the banned words, the panel guard and
 // the a11y/standing behaviour of the component in isolation. Its exactly-once presence on each
-// numbered surface is proven where those surfaces are rendered (report-view / dashboard-entry /
-// entry test suites). Web tests prove only in CI (thin client).
+// numbered surface is proven where those surfaces are rendered: report-view.test.tsx (the
+// report), workspace/__tests__/dashboard-entry.test.tsx (the dashboard, with and without the
+// report window open) and entry.test.tsx (every view of the property screen).
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import {
