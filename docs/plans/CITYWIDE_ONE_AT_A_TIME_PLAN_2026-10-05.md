@@ -1,27 +1,42 @@
-# Citywide all-at-once replan: every district, overlay and the report pipeline as parallel packets (D-090-R166)
+# Citywide plan, one district at a time: every district, overlay and the report pipeline (D-090-R166 as corrected by R167 and R168)
 
 Planner-writer document. It changes no code, contracts no task, and changes no master plan.
 The orchestrator alone contracts the packets below under the normal gates and amends the master
 plan on the owner's instruction (CLAUDE.md principle 9). No date is promised anywhere.
 
-## 1. Purpose and the owner's decision
+## 1. Purpose and the owner's decisions
 
 The owner decided (D-090 source-027, message 62, R166, 2026-10-04, verbatim):
 
 > we are not narrow ing the target we going to work on it all at once
 
 Target (owner wording, message 60): "every single type of property in NYC from r1 to r12 and
-all type flood zoon speacl etc can print such a pdf". R166 reads this as: the target is every
-property type in NYC worked in parallel, not a narrowed first district.
+all type flood zoon speacl etc can print such a pdf".
 
-This supersedes two earlier sequencing instructions:
+The owner then corrected how that is to be built (D-090 source-028, message 64, R167 and R168,
+2026-10-05, verbatim):
+
+> what i ment wasnt to littltrly spone up 50 subagents i ment build 1 go to next the program is only considerd done when all 12 zoon are fully done
+
+So the target is every property type in NYC, not a narrowed first district (the scope half of R166
+stands). It is built one piece at a time: finish one, then go to the next (R167). The earlier reading
+of R166 as parallel waves at 16 agents is withdrawn. The program is done only when all twelve zones
+R1 through R12 are fully done (R168).
+
+What "fully done" means is set by the owner's report accuracy and completion requirements (D-090
+source-030, message 70, 2026-10-05, R183 to R209). They are quoted in full in
+`docs/SESSION_HANDOFF.md` and bound to the work in sections 4.1 and 4.3 below.
+
+Effect on earlier sequencing instructions:
 
 - **D-045-R008** said "one reviewed family at a time ... orchestrator wave order A1 to A2+B2 to A3
-  to C to M to A4". The dependency order inside a family still holds (capture before draft, data
-  before the rule that reads it); what changes is that families now run in parallel across lanes
-  instead of one after another.
+  to C to M to A4". R166 was first read as replacing that with families worked side by side; R167
+  withdraws that reading, so one piece at a time is again the rule. The order is the one in section 4,
+  set by the orchestrator on the owner's "build 1 go to next"; the old R008 wave order is not revived.
+  The dependency order inside a family still holds (capture before draft, data before the rule that
+  reads it).
 - The orchestrator's own "narrow the first target" suggestion (answered in chat before message 62)
-  is withdrawn by R166.
+  stays withdrawn: the first district built end to end is where the work starts, not a narrowed target.
 
 The master plan is amended by the orchestrator on this instruction. The expansion pack (the 19-task
 pack, the 9 contracts, GDS P1 to P8) is reference input only and changes no plan
@@ -155,18 +170,18 @@ and PDF blueprints but not financial analysis. This plan names it and plans noth
 ## 3. Packetization
 
 Each packet is one independent unit the orchestrator contracts as a ledger task `M<x>-T<n>` citing
-`D-090:D-090-R166`. Packets use the existing lane-queue id where one exists, else `NEW-<lane>-<n>`.
+`D-090:D-090-R166` and `D-090-R167`. Packets use the existing lane-queue id where one exists, else `NEW-<lane>-<n>`.
 Every rule-family packet starts with ZR text capture (snapshot into `docs/research/zr-snapshots/v1/`
 plus `sync_zr_snapshots`) before any rule is drafted. New rule files auto-load by glob
 (`services/api/app/rules/registry.py:152` globs `*.rule.json`; the module notes adding a rule is
 "purely a matter of dropping a new *.rule.json in the rulesets directory, no" registry edit), so
-distinct rule filenames and distinct snapshot sections give zero file overlap between parallel packets.
+distinct rule filenames and distinct snapshot sections give zero file overlap between packets, which keeps each one small and separately reviewable.
 The generated `coverage_matrix.json` and `COVERAGE_MATRIX.md`, the FastAPI wiring (`main.py`,
 `config.py`, `api/**`), the contracts (`packages/contracts/**`) and the CI config are hot files edited
-only by a Lane C integration packet or by the orchestrator between waves, never by a family packet.
+only by a Lane C integration packet or by the orchestrator between packets, never by a family packet.
 
 Column key: id, lane, inputs (ZR sections or data to capture first), outputs, size, depends on, owned
-directories (no two packets in a wave share a file).
+directories (no two packets share a file).
 
 ### 3.1 Lane A, rules (engine)
 
@@ -219,7 +234,7 @@ directories (no two packets in a wave share a file).
 | C-10 | none | run the orphaned suites in CI, add the validation-suite job | S | none | CI config |
 | C-11 | none | recorded-fixture CI journey address to export | M | C-08, E-03, E-04 | e2e harness + test |
 | NEW-C-01 | report_model contract | mount POST and GET /reports behind flags | M | NEW-E-01, C-08 | api/v1 reports route + test |
-| NEW-C-02 | per-wave | regenerate coverage_matrix.json and COVERAGE_MATRIX.md, register new rules, run full rules suite (integration serialization point) | S | each wave's A packets | rules/coverage + matrix (integrator only) |
+| NEW-C-02 | after each rule packet | regenerate coverage_matrix.json and COVERAGE_MATRIX.md, register new rules, run full rules suite (integration serialization point) | S | each merged A rule packet | rules/coverage + matrix (integrator only) |
 
 ### 3.4 Lane D, architect interface
 
@@ -264,77 +279,82 @@ Packet count by lane and size:
 | E | 0 | 8 | 4 | 12 |
 | total | 7 | 34 | 19 | 60 |
 
-## 4. Parallel waves at 16 agents (8 writers + 8 reviewers)
+This list is the inventory, not a schedule. The ledger (`python tools/project_control.py status`) and the lane status
+files (`docs/lanes/status/`) are the record of which packets are already done. Section 4 gives the order.
 
-The owner offered 16 agents (8 writers + 8 reviewers). The standing cap in
-`.claude/ORCHESTRATION_POLICY.md` section B is "Normal maximum: three concurrent writing producers;
-four concurrent independent reviewers/verifiers. Add agents beyond this only for genuinely independent,
-read-only work." Running 8 concurrent writers exceeds that cap, so the agent width (16 or more) is an
-owner decision listed in section 6. The policy also requires (section C) that concurrent writers never
-overlap on production code, schema, workflow, lockfile, ledger or task-packet paths. Every wave below
-is built so no two writers share a file; the hot files (coverage matrix, contracts, CI, `main.py`) are
-touched only by Lane C or by the orchestrator between waves.
+## 4. Order of work: one at a time (R167)
 
-Merge and CI constraints that do not change under "all at once": one integration branch
-(`candidate/D-024-mrl-option-b`); CI runs about 10 to 15 minutes per run; merges happen one PR at a
-time (rebase, full CI including the lane path check and web-e2e, merge); merge fails closed on any
-non-success; review per change by a different agent; and the merge order C, B, A, D, E when several are
-ready (`docs/lanes/PARALLEL_BUILD_PLAN.md` section 2).
+There are no parallel waves. The standing cap in `.claude/ORCHESTRATION_POLICY.md` section B ("Normal
+maximum: three concurrent writing producers; four concurrent independent reviewers/verifiers") is
+unchanged and is a ceiling, not a target. The normal shape is one piece of work written, then reviewed
+by a different agent, then merged, then the next piece (D-090-R182: implementation and independent
+review happen one after the other). A second writer is used only for work that shares no file with the
+piece in hand, never to look fast.
 
-Between every wave the orchestrator runs the integration step NEW-C-02: regenerate the coverage matrix,
-register the new rule files, and run the full rules suite, so the next wave starts from a clean head.
+Merge and CI constraints, unchanged: one integration branch (`candidate/D-024-mrl-option-b`); one PR
+at a time; review per change by a different agent at the exact head; every expected check a completed
+success on that head (a missing, cancelled, queued or pending check is not a success, D-090-R181); the
+merge fails closed. After each rule packet the integration step NEW-C-02 regenerates the coverage
+matrix, registers the new rule files and runs the full rules suite, so the next packet starts from a
+clean head.
 
-### Wave 1 (foundations plus the first capture-first families)
+### 4.1 Step 1: finish R6B end to end
 
-Eight writers, each owning a disjoint file set. Reviewers pair one per writer.
+R6B is the most complete district (section 2.1) and it drives the report pipeline, so it goes first.
+The owner's measure (D-090-R201): a real R6B property goes from address input through calculations and
+website results to a downloadable PDF. The benchmark lot is 215-16 Northern Boulevard (R137, R142).
+The pieces, in order, each finished, reviewed and merged before the next starts:
 
-| writer packet | lane | why it does not overlap |
-|---|---|---|
-| NEW-A-02 | A | writes r6_r12_height_setback rule files and its own test; reads captured 23-432/23-433 |
-| NEW-A-01 | A | writes r1_r5 yard/coverage/unit rule files and its own test; captures distinct R1 to R5 sections |
-| B-04 | B | spatial street-width surface, no rules files |
-| B-05 | B | profile/existing_floor_area, no rules files |
-| C-03 | C | contracts and typegen only |
-| C-04 | C | api request validators only |
-| E-01 | E | drawings/kit only |
-| D-03 | D | web status strip component only |
+| # | piece | packets (section 3) | owner requirement it closes |
+|---|---|---|---|
+| 1 | results route mounted behind its flag and fed by the recorded journey | C-07, C-08 | the website shows engine results for the lot |
+| 2 | one shared, versioned result that every output reads | NEW-E-01 | R183, R184 |
+| 3 | number checks that run on every result (unit counts, floor areas, FAR definitions, area kinds, denominators, building versus site, rounding) | NEW-E-01, E-06 | R185 to R191 |
+| 4 | honest drawings from the same result (actual parcel geometry, simplified geometry labelled, yards, setbacks, floor shapes, cores) | E-01, E-01b, NEW-E-03 as far as R6B needs | R192 to R196 |
+| 5 | every important number traceable; a missing value never becomes zero | NEW-D-01, NEW-E-01 | R197 to R199 |
+| 6 | the PDF | E-02, NEW-C-01, E-04 | R201 |
+| 7 | the standing label and the uncertainty labels on every export | E-03, E-04, E-05 | R200 |
+| 8 | proof: one journey from the address to the downloaded PDF; the same journey with a changed input, with missing evidence and with conflicting evidence; an independent page-by-page inspection of the PDF; the confirmed competitor-report discrepancies as regression tests | C-11, E-06 | R201 to R204 |
+| 9 | the R6B checklist complete: the remaining R6B columns of section 2.1 (SBK, AO1, AO3, AO4, AO6, AO7, AO8 to AO11), each supported and tested or listed as unsupported | Lane A rule packets for R6B | R205 to R207 |
 
-Between-wave merge: C-03, C-04 first (Lane C), then B-04, B-05, then A packets, then D-03, E-01, then
-NEW-C-02 regenerates the matrix.
+One working R6B example is not R6B coverage (R206): step 1 is complete only when row 9 is.
 
-### Wave 2 (height and setback breadth plus the study wiring)
+### 4.2 Step 2 onward: the next district, one at a time
 
-| writer packet | lane | why it does not overlap |
-|---|---|---|
-| NEW-A-03 | A | sky-exposure rule files, distinct from height/setback files |
-| NEW-A-04 | A | Quality Housing choice rule files |
-| NEW-A-07 | A | commercial C1 to C8 rule files (Article III capture first) |
-| B-09 | B | profile/hidden_issue_flags only |
-| NEW-B-01 | B | connectors/flood only |
-| C-05 | C | web study store |
-| E-01b | E | section SVG in the drawing kit (after E-01) |
-| D-05 | D | three-answers panel |
+After R6B is complete and reviewed (R208) the districts follow one at a time. The order below is the
+orchestrator's proposal; the owner can change it in a sentence.
 
-### Wave 3 (more families, add-on model and the results route)
+1. The rest of zone R6 (R6, R6A, R6-1, R6-2, R6D), then R7, R8, R9, R10, R11 and R12, in that order.
+   They share the height and setback chain already captured (23-432, 23-433), so each district reuses
+   the one before it.
+2. R5 down to R1. R5 is the most complete low-density district; yards, coverage and units are the
+   missing columns for all of them.
+3. The rest of "all zoning", which stays in the full target: commercial districts, manufacturing
+   districts, special purpose districts, flood zones and the other overlays (sections 2.2 to 2.7),
+   each one at a time, each starting with the capture of its law text.
 
-| writer packet | lane | why it does not overlap |
-|---|---|---|
-| NEW-A-05 | A | geometry add-on rule files |
-| NEW-A-06 | A | bonus-program rule files |
-| NEW-A-08 | A | manufacturing M1 to M3 rule files (Article IV capture first) |
-| A-06 | A | scenario add-on model (distinct from rulesets) |
-| C-07 | C | api labeled input channel |
-| C-08 | C | api results route |
-| E-03 | E | cad results DXF |
-| D-07 | D | web add-on switches |
+Every district follows the same steps: capture the law text, draft the rules, test them, carry them
+through the results, the screens, the drawings and the report, then review the district's checklist.
+The program is not reported finished before all twelve zones R1 to R12 are complete (R168, R209).
 
-Waves 4 and beyond continue the same shape across the remaining packets (special purpose A-09,
-flood-resilience A-10, inclusionary A-11, waterfront A-12, parking A-13, groups A-12, lot-split A-13,
-report builder NEW-E-01, reports route NEW-C-01, report render E-04, Excel E-05, maps E-07, the
-standing label NEW-D-01, the parity and compare surfaces, and the massing detail NEW-E-03), always
-eight disjoint writers with the hot files held to Lane C and the between-wave integration step.
+### 4.3 What "done" means for a district (R205 to R209)
 
-## 5. Quality rules that do not change under "all at once"
+- Each district has a checklist file under `docs/plans/district-checklists/` (planned; the first one is
+  written with step 1 for R6B): one row per rule-coverage-matrix column, per overlay that can apply to
+  the district, per exception and per scenario type.
+- Each row is either supported, with a link to the captured law text and to its passing test, or
+  unsupported, with the reason. An unsupported case shows on the outputs as "not covered", never as a
+  number (R207).
+- One working example does not make a district complete (R206).
+- A district is complete when every row is supported and tested or listed as unsupported, its outputs
+  carry the standing label and the per-stat law links (R164, R165), and a different agent has reviewed
+  the checklist against the tests. Only then does the next district start (R208).
+- The owner's other requirements apply to every district's outputs: one shared, versioned result
+  (R183, R184); automatic number checks (R185 to R191); honest drawings (R192 to R196); traceable
+  numbers and no silent zero (R197 to R200); the complete workflow proven and the actual PDF inspected
+  (R201 to R204).
+
+## 5. Quality rules that do not change
 
 - Review per change by a different agent; producer is never the verifier (CLAUDE.md principle 7).
 - Green CI before any merge; merge fails closed on any non-success; one PR at a time.
@@ -348,8 +368,6 @@ eight disjoint writers with the hot files held to Lane C and the between-wave in
 
 ## 6. Owner decisions still needed (outside the orchestrator's authority)
 
-- **Agent width:** 16 agents (8 writers + 8 reviewers) exceeds the standing cap of 3 writers / 4
-  reviewers (`.claude/ORCHESTRATION_POLICY.md` section B). Running at 16 or more needs the owner's word.
 - **Production switches:** flipping any `LANE_*`, `LIVE_*` or `INTERNAL_*` flag live in production.
 - **PDF converter choice:** WeasyPrint vs headless Chromium and the Render runtime decision (E-02),
   with the dependency-security age and provenance gate (G5) for the new package.
@@ -357,7 +375,9 @@ eight disjoint writers with the hot files held to Lane C and the between-wave in
 - **Imagery licence:** needed before any raster, aerial or street-view base map.
 - **Financial-analysis hold:** still suspended under the expansion hold; release is an owner directive.
 
-Professional review is not on this list (R164 removed it as an owner gate).
+Professional review is not on this list (R164 removed it as an owner gate). Agent width is not on it
+either: the owner settled it (R167), and the standing cap of three writers and four reviewers stays. The
+district order in section 4.2 needs no decision; the owner can change it at any time.
 
 ## 7. What this plan does not do
 
@@ -402,3 +422,8 @@ Queue ids cited, each verified present in `docs/lanes/queues/*.md`:
 - Lane E: E-01, E-01b, E-02, E-03, E-04, E-05, E-06, E-07, E-08, E-09 (E queue holds E-01, E-01b, E-02 to E-09)
 
 `NEW-<lane>-<n>` ids are new by design (no queue row yet) so the orchestrator can contract them.
+
+Added with the one-at-a-time rewrite (2026-10-05): `docs/SESSION_HANDOFF.md` (present);
+`docs/plans/district-checklists/` is planned and not present yet. Requirement ids R167 and R168 are in the
+D-090 registry on the integration branch; R173 to R209 are in the source-030 capture, which merges before
+this plan.
