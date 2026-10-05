@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-05T19:07:55+00:00",
+ "updated_at": "2026-10-05T20:46:35+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -192,10 +192,48 @@
   "D-090-R168",
   "D-090-R169",
   "D-090-R170",
-  "D-090-R171"
+  "D-090-R171",
+  "D-090-R172",
+  "D-090-R173",
+  "D-090-R174",
+  "D-090-R175",
+  "D-090-R176",
+  "D-090-R177",
+  "D-090-R178",
+  "D-090-R179",
+  "D-090-R180",
+  "D-090-R181",
+  "D-090-R182",
+  "D-090-R183",
+  "D-090-R184",
+  "D-090-R185",
+  "D-090-R186",
+  "D-090-R187",
+  "D-090-R188",
+  "D-090-R189",
+  "D-090-R190",
+  "D-090-R191",
+  "D-090-R192",
+  "D-090-R193",
+  "D-090-R194",
+  "D-090-R195",
+  "D-090-R196",
+  "D-090-R197",
+  "D-090-R198",
+  "D-090-R199",
+  "D-090-R200",
+  "D-090-R201",
+  "D-090-R202",
+  "D-090-R203",
+  "D-090-R204",
+  "D-090-R205",
+  "D-090-R206",
+  "D-090-R207",
+  "D-090-R208",
+  "D-090-R209"
  ],
- "requirements_id_digest_sha256": "e51bd513fb400fc931b766c36406ee3c39eec43ffe9e2cb5331efb0fefc37889",
- "requirements_content_digest_sha256": "f5d273120bd08f26d4a2a7233843595a99188f95ca65593fea61fd901cd032ae",
+ "requirements_id_digest_sha256": "05179d98383a8aa068c09ea56616577bb9c0794683dccbdc316138c9f10a1921",
+ "requirements_content_digest_sha256": "d0ca2242825d6c78155ce9001e76783bb3e1ef7eb5e72d8bad2760f280639302",
  "sources": [
   {
    "file": "source-001.md",
@@ -427,6 +465,14 @@
    "recorded_at": "2026-10-05T19:07:55+00:00",
    "content_digest_sha256": "059b9a15192dff1b72039106f4a046ba9b3380bf05bc3a4927c5d66cc45f370f",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-030-amendment.md",
+   "kind": "amendment",
+   "sequence": 30,
+   "recorded_at": "2026-10-05T20:46:35+00:00",
+   "content_digest_sha256": "31713a9863f27eed94c0556f22d10c42334ab37fe51862c123bc52ab65709ba9",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -457,7 +503,8 @@
   "source-026-amendment.md",
   "source-027-amendment.md",
   "source-028-amendment.md",
-  "source-029-amendment.md"
+  "source-029-amendment.md",
+  "source-030-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -670,6 +717,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-029 (session 013RaGmC messages 65-66, 2026-10-05: give the development server a browser to test what it builds; 'is it safe? if yes go') and requirements D-090-R170..R171, pending. Text extracted by script; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-05T20:46:35+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-030 (session 013RaGmC messages 69-70, 2026-10-05: the resume prompt's merge step; then two instruction fixes - read-only start-up checks before any change, no automatic rerun of queued jobs - and the REPORT ACCURACY AND COMPLETION REQUIREMENTS, eight items, to add to the handoff) and requirements D-090-R172..D-090-R209, all pending. Text extracted by script; nothing retyped; no existing row edited."
   }
  ]
 }
