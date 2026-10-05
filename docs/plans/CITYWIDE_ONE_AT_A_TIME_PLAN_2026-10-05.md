@@ -59,8 +59,9 @@ Three other owner decisions from the same source shape this plan:
 ## 2. The full target as a checklist
 
 Grouped. Residential coverage per district is read from
-`services/api/app/rules/coverage/COVERAGE_MATRIX.md` and `coverage_matrix.json` (45 districts,
-118 implemented_draft cells of 646, every cell at most implemented_draft and never reviewed).
+`services/api/app/rules/coverage/COVERAGE_MATRIX.md` and `coverage_matrix.json` (45 districts x 18
+columns = 810 cells: 118 implemented_draft, 646 not implemented, 45 not applicable, 1 awaiting a
+reviewer; no cell is reviewed).
 
 ### 2.1 Residential districts (45, every one listed; FAR and AO5 are drafted for all 45)
 
