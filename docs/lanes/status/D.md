@@ -30,3 +30,5 @@ Refreshed 2026-10-03 from the PR record by the integrator (status words only; de
 | **Open owner questions** | Q4, Q8, Q10 — see `docs/lanes/queues/D.md` "Blocked by owner". **Tax-lot-only warning shrink (R082 vs R030–R033):** R082 asks the app to say less, but the always-visible tax-lot-only warning and labels (R030–R033, owner directive 2026-10-01) are owner-pinned; whether that standing warning may shrink to a short tag under §5a is an OPEN owner decision (R008 — not decided here). This pass kept it byte-identical and did not touch it. |
 
 2026-10-04 (integrator, status words only): #416 merged (notes on the card).
+
+2026-10-05 (integrator, status words only): standing not-reviewed label (`StandingReviewLabel`, D-090-R164/R165, ADR-007) built on the dashboard, property screen and report view with a component test; proves only in CI; not professionally reviewed by design (ADR-007).
