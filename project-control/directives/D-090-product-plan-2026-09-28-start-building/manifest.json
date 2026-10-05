@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-04T09:08:13+00:00",
+ "updated_at": "2026-10-05T18:54:02+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -187,10 +187,13 @@
   "D-090-R163",
   "D-090-R164",
   "D-090-R165",
-  "D-090-R166"
+  "D-090-R166",
+  "D-090-R167",
+  "D-090-R168",
+  "D-090-R169"
  ],
- "requirements_id_digest_sha256": "b1703878d110b11180de83aa42884c0ea29a4f07cde22c4d8adedd3fa94fe5e8",
- "requirements_content_digest_sha256": "3a05b7d5631e01d6443725444cb82acb3ba374d140db931e3d20fd44bc901649",
+ "requirements_id_digest_sha256": "1d991a8db85f2c186195fb20726a598fdd8a1901560d7b12b698added6e05b55",
+ "requirements_content_digest_sha256": "023a92e4e79cdd642baf33ca0d41bd8bc1f44ede33820f2fa2ed90782d6b1337",
  "sources": [
   {
    "file": "source-001.md",
@@ -406,6 +409,14 @@
    "recorded_at": "2026-10-04T09:08:13+00:00",
    "content_digest_sha256": "7d4af6b32e3823aa328b3d81d3505a88a54208e2641407b5304fc90156f72558",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-028-amendment.md",
+   "kind": "amendment",
+   "sequence": 28,
+   "recorded_at": "2026-10-05T18:54:02+00:00",
+   "content_digest_sha256": "fd05c044796e95cc5b697bf674de68497b9abe11804be9573f1422ca61836e91",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -434,7 +445,8 @@
   "source-024-amendment.md",
   "source-025-amendment.md",
   "source-026-amendment.md",
-  "source-027-amendment.md"
+  "source-027-amendment.md",
+  "source-028-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -635,6 +647,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-027 (session 4d3637bc messages 60-62, 2026-10-04: the orchestrator decides Lane A yes/no; no professional-review gate, a one-time website label plus a paper trail with direct zoning-law links; not narrowing the target, all districts at once) and requirements D-090-R163..R166, all pending. Text extracted by script; nothing retyped; no existing row edited. Capture session: 4d3637bc, claude-fable-5-1."
+  },
+  {
+   "at": "2026-10-05T18:54:02+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-028 (session 013RaGmC message 64, 2026-10-05: 'all at once' corrected to build one then the next, not 50 subagents; done only when all 12 zones are fully done; give the handoff prompt now) and requirements D-090-R167..R169, all pending. Text extracted by script; nothing retyped; no existing row edited."
   }
  ]
 }
