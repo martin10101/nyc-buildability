@@ -15,7 +15,7 @@ $EXTMIN
 10
 0.000000
 20
--67.000000
+-88.000000
 30
 0.000000
 9
@@ -55,7 +55,7 @@ VPORT
 12
 20.000000
 22
-16.500000
+6.000000
 13
 0.000000
 23
@@ -81,7 +81,7 @@ VPORT
 37
 0.000000
 40
-183.700000
+206.800000
 41
 1.000000
 42
@@ -309,7 +309,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Lot type corner fixture Corner lot assumed; the live data does not record the lot type.
+Zoning district R6B fixture Zoning district R6B is taken from the test fixture, not from a city source, in this benchmark run.
 0
 TEXT
 8
@@ -323,7 +323,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Within 100 ft of a street-line intersection Yes assumed The lot is assumed to lie within 100 feet of a street-line intersection.
+Commercial overlay present Yes fixture A commercial overlay is assumed present (C2-2 in the benchmark), taken from the test fixture rather than a city source in this benchmark run.
 0
 TEXT
 8
@@ -337,7 +337,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Street-line intersection angle 90 degrees assumed The street lines are assumed to meet at a 90-degree angle.
+Special purpose district No fixture No special purpose district is assumed to apply; the benchmark run hard-codes this and does not read the special-district layer.
 0
 TEXT
 8
@@ -351,7 +351,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Housing program standard_residence default Standard residence is used as the default housing program.
+Special density area No fixture The lot is assumed not to lie in a special density area; the benchmark run hard-codes this and does not read the special-density layer.
 0
 TEXT
 8
@@ -365,7 +365,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Floor-to-floor height 10 feet default A 10-foot floor-to-floor height is used as the default.
+Lot type corner fixture Corner lot assumed; the live data does not record the lot type.
 0
 TEXT
 8
@@ -379,7 +379,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Based on the lots you selected - the app does not verify the zoning lot
+Lot frontage 100.8 feet fixture The lot frontage of 100.8 feet is taken from the test fixture, not from a survey or city source, in this benchmark run.
 0
 TEXT
 8
@@ -393,7 +393,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Remaining development capacity: Not confirmed
+Lot depth 100 feet fixture The lot depth of 100 feet is taken from the test fixture, not from a survey or city source, in this benchmark run.
 0
 TEXT
 8
@@ -407,7 +407,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Needs verified zoning-lot boundaries and existing zoning floor area.
+Site measurement basis city records default The site measurements are labelled 'City records' by default; no survey or entered measurement was supplied in this benchmark run.
 0
 TEXT
 8
@@ -421,7 +421,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Option opt-1 - revision 1
+Within 100 ft of a street-line intersection Yes assumed The lot is assumed to lie within 100 feet of a street-line intersection.
 0
 TEXT
 8
@@ -435,7 +435,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Results test-fixture-scope-northern-70-results - computed 2026-09-30T13:01:00Z
+Street-line intersection angle 90 degrees assumed The street lines are assumed to meet at a 90-degree angle.
 0
 TEXT
 8
@@ -449,7 +449,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Approximate - city tax map, not a survey (lot outline)
+Housing program standard residence default Standard residence is used as the default housing program.
 0
 TEXT
 8
@@ -463,7 +463,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Yards not available - yard rules for this district are not built yet.
+Floor-to-floor height 10 feet default A 10-foot floor-to-floor height is used as the default.
 0
 TEXT
 8
@@ -477,7 +477,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Setbacks not available - height rules for this district are not built yet.
+Based on the lots you selected - the app does not verify the zoning lot
 0
 TEXT
 8
@@ -491,7 +491,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Envelope not available - height rules for this district are not built yet.
+Remaining development capacity: Not confirmed
 0
 TEXT
 8
@@ -505,7 +505,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Floor plates not available - the building option is not available.
+Needs verified zoning-lot boundaries and existing zoning floor area.
 0
 TEXT
 8
@@ -519,7 +519,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Out of date: The zoning district fact changed after these results were computed.
+Option opt-1 - revision 1
 0
 TEXT
 8
@@ -533,7 +533,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Coordinates: local plane in feet, origin at a lot corner, axes parallel to the EPSG:2263 grid
+Results test-fixture-scope-northern-70-results - computed 2026-09-30T13:01:00Z
 0
 TEXT
 8
@@ -547,7 +547,7 @@ A-ANNO-NOTE
 40
 2.000000
 1
-Units: feet, 1 drawing unit = 1 ft (scale 1:1)
+Approximate - city tax map, not a survey (lot outline)
 0
 TEXT
 8
@@ -556,6 +556,104 @@ A-ANNO-NOTE
 0.000000
 20
 -67.000000
+30
+0.000000
+40
+2.000000
+1
+Yards not available - yard rules for this district are not built yet.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-70.000000
+30
+0.000000
+40
+2.000000
+1
+Setbacks not available - height rules for this district are not built yet.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-73.000000
+30
+0.000000
+40
+2.000000
+1
+Envelope not available - height rules for this district are not built yet.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-76.000000
+30
+0.000000
+40
+2.000000
+1
+Floor plates not available - the building option is not available.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-79.000000
+30
+0.000000
+40
+2.000000
+1
+Out of date: The zoning district fact changed after these results were computed.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-82.000000
+30
+0.000000
+40
+2.000000
+1
+Coordinates: local plane in feet, origin at a lot corner, axes parallel to the EPSG:2263 grid
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-85.000000
+30
+0.000000
+40
+2.000000
+1
+Units: feet, 1 drawing unit = 1 ft (scale 1:1)
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-88.000000
 30
 0.000000
 40
