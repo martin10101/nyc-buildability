@@ -1,5 +1,5 @@
 {
-  "contract_version": "1.1.0",
+  "contract_version": "1.2.0",
   "results_id": "res-215-16-northern-journey",
   "study_id": "study-215-16-northern-journey",
   "option_id": "opt-test",
@@ -150,6 +150,22 @@
           "exception_label": null
         },
         {
+          "key": "min_base_height_qualifying_affordable_or_senior",
+          "label": "Minimum base height with qualifying affordable or senior housing",
+          "value": 30.0,
+          "unit": "feet",
+          "zr_sections": [
+            "ZR 23-432"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "r6b-height@0.1.0-draft"
+            }
+          ],
+          "exception_label": null
+        },
+        {
           "key": "max_base_height_qualifying_affordable_or_senior",
           "label": "Maximum base height with qualifying affordable or senior housing",
           "value": 45.0,
@@ -277,7 +293,35 @@
       "measurement": {
         "rank": "assumed",
         "label": "Assumed"
-      }
+      },
+      "notes": [
+        {
+          "text": "Built height 20 ft is below the 30 ft minimum base height. No captured provision requires the building to rise to it: the setback rule (ZR 23-432, ZR 23-433) applies only to street-wall portions above the 45 ft maximum base height; where a street wall must extend to the minimum base height (ZR 23-431 (b)/(c)) it extends to the building height when that is lower (\"whichever is less\"); the R6B line-up rule (ZR 23-431 (a)) states no minimum height. Draft reading of the captured text (snapshots zr-23-431, zr-23-432, zr-23-433); which paragraph of ZR 23-431 governs this lot and the legal effect wait for qualified review.",
+          "kind": "minimum_base_height",
+          "computed_from": [
+            "building_height",
+            "min_base_height",
+            "max_base_height"
+          ],
+          "values": {
+            "building_height": 20.0,
+            "min_base_height": 30.0,
+            "max_base_height": 45.0
+          },
+          "zr_sections": [
+            "ZR 23-431",
+            "ZR 23-432",
+            "ZR 23-433"
+          ],
+          "snapshot_ids": [
+            "zr-23-431",
+            "zr-23-432",
+            "zr-23-433"
+          ],
+          "draft": true,
+          "register": "draft reading of the captured text"
+        }
+      ]
     }
   },
   "remaining_floor_area": {
@@ -288,19 +332,142 @@
   "shortfall": {
     "status": "none"
   },
-  "addon_gains": [],
+  "addon_gains": [
+    {
+      "addon_id": "qualifying_affordable_housing",
+      "name": "Qualifying affordable housing (City of Yes)",
+      "group": "A",
+      "on": false,
+      "relative_to": "current_selection",
+      "requires": [
+        "A development containing qualifying affordable housing (ZR 23-22, ZR 23-432) - a separate legal determination this app does not make."
+      ],
+      "gain": {
+        "status": "available",
+        "floor_area_sf": 4030.0,
+        "height_ft": 10.0,
+        "floors": 1
+      }
+    },
+    {
+      "addon_id": "qualifying_senior_housing",
+      "name": "Qualifying senior housing (City of Yes)",
+      "group": "A",
+      "on": false,
+      "relative_to": "current_selection",
+      "requires": [
+        "A development containing qualifying senior housing (ZR 23-22, ZR 23-432) - a separate legal determination this app does not make."
+      ],
+      "gain": {
+        "status": "available",
+        "floor_area_sf": 4030.0,
+        "height_ft": 10.0,
+        "floors": 1
+      }
+    },
+    {
+      "addon_id": "community_facility_floor_area",
+      "name": "Community-facility floor area",
+      "group": "A",
+      "on": false,
+      "relative_to": "current_selection",
+      "requires": [
+        "A reviewed community-facility floor-area rule (task A-12)."
+      ],
+      "gain": {
+        "status": "not_available",
+        "reason": "No reviewed Lane A rule for 'Community-facility floor area' in this slice (task A-12); not a guessed number.",
+        "reason_kind": "rule_not_implemented"
+      }
+    },
+    {
+      "addon_id": "choice_of_bulk_rules",
+      "name": "Choice of bulk rules (Quality Housing vs height factor)",
+      "group": "A",
+      "on": false,
+      "relative_to": "current_selection",
+      "requires": [
+        "A reviewed bulk-rule-choice rule (task A-12)."
+      ],
+      "gain": {
+        "status": "not_available",
+        "reason": "No reviewed Lane A rule for 'Choice of bulk rules (Quality Housing vs height factor)' in this slice (task A-12); not a guessed number.",
+        "reason_kind": "rule_not_implemented"
+      }
+    },
+    {
+      "addon_id": "ground_floor_commercial",
+      "name": "Ground-floor commercial space",
+      "group": "A",
+      "on": false,
+      "relative_to": "current_selection",
+      "requires": [
+        "A reviewed ground-floor-commercial trade-off rule and a commercial overlay or commercial district (task A-12)."
+      ],
+      "gain": {
+        "status": "not_available",
+        "reason": "No reviewed Lane A rule for 'Ground-floor commercial space' in this slice (task A-12); not a guessed number.",
+        "reason_kind": "rule_not_implemented"
+      }
+    },
+    {
+      "addon_id": "certification_transfer",
+      "name": "Transfer by certification (e.g. from a nearby landmark)",
+      "group": "B",
+      "on": false,
+      "relative_to": "current_selection",
+      "requires": [
+        "A reviewed certification-transfer rule (task A-12)."
+      ],
+      "gain": {
+        "status": "not_available",
+        "reason": "No reviewed Lane A rule for 'Transfer by certification (e.g. from a nearby landmark)' in this slice (task A-12); not a guessed number.",
+        "reason_kind": "rule_not_implemented"
+      }
+    }
+  ],
   "best_combination": {
-    "status": "not_available",
-    "reason": "The add-on model is not built in this slice (task M1-25).",
-    "reason_kind": "rule_not_implemented"
+    "status": "available",
+    "goal": {
+      "kind": "most_residential_floor_area",
+      "text": null
+    },
+    "selected_addon_ids": [
+      "qualifying_affordable_housing"
+    ],
+    "excluded": [
+      {
+        "addon_id": "qualifying_senior_housing",
+        "reason": "Conflicts with 'Qualifying affordable housing (City of Yes)' (both set housing_program); only one applies."
+      },
+      {
+        "addon_id": "community_facility_floor_area",
+        "reason": "No reviewed Lane A rule for 'Community-facility floor area' in this slice (task A-12); not a guessed number."
+      },
+      {
+        "addon_id": "choice_of_bulk_rules",
+        "reason": "No reviewed Lane A rule for 'Choice of bulk rules (Quality Housing vs height factor)' in this slice (task A-12); not a guessed number."
+      },
+      {
+        "addon_id": "ground_floor_commercial",
+        "reason": "No reviewed Lane A rule for 'Ground-floor commercial space' in this slice (task A-12); not a guessed number."
+      },
+      {
+        "addon_id": "certification_transfer",
+        "reason": "No reviewed Lane A rule for 'Transfer by certification (e.g. from a nearby landmark)' in this slice (task A-12); not a guessed number."
+      }
+    ],
+    "goal_value_sf": 24180.0
   },
   "completeness_line": {
-    "text": "Add-ons checked for this district: none yet (add-on model not built in this slice).",
+    "text": "Not yet covered: Community-facility floor area, Choice of bulk rules (Quality Housing vs height factor), Ground-floor commercial space, Transfer by certification (e.g. from a nearby landmark), A neighbor's unused floor area (estimate; needs an agreement), Approval with a text maximum ('up to X with approval').",
     "not_yet_covered": [
-      "Add-on gains",
-      "Best combination",
-      "Existing-building keep / partial-rebuild / full-rebuild paths",
-      "Setback lines"
+      "Community-facility floor area",
+      "Choice of bulk rules (Quality Housing vs height factor)",
+      "Ground-floor commercial space",
+      "Transfer by certification (e.g. from a nearby landmark)",
+      "A neighbor's unused floor area (estimate; needs an agreement)",
+      "Approval with a text maximum ('up to X with approval')"
     ]
   },
   "status_strip": [
