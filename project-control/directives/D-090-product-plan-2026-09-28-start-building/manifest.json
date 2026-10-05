@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-05T18:54:02+00:00",
+ "updated_at": "2026-10-05T19:07:55+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -190,10 +190,12 @@
   "D-090-R166",
   "D-090-R167",
   "D-090-R168",
-  "D-090-R169"
+  "D-090-R169",
+  "D-090-R170",
+  "D-090-R171"
  ],
- "requirements_id_digest_sha256": "1d991a8db85f2c186195fb20726a598fdd8a1901560d7b12b698added6e05b55",
- "requirements_content_digest_sha256": "023a92e4e79cdd642baf33ca0d41bd8bc1f44ede33820f2fa2ed90782d6b1337",
+ "requirements_id_digest_sha256": "e51bd513fb400fc931b766c36406ee3c39eec43ffe9e2cb5331efb0fefc37889",
+ "requirements_content_digest_sha256": "f5d273120bd08f26d4a2a7233843595a99188f95ca65593fea61fd901cd032ae",
  "sources": [
   {
    "file": "source-001.md",
@@ -417,6 +419,14 @@
    "recorded_at": "2026-10-05T18:54:02+00:00",
    "content_digest_sha256": "fd05c044796e95cc5b697bf674de68497b9abe11804be9573f1422ca61836e91",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-029-amendment.md",
+   "kind": "amendment",
+   "sequence": 29,
+   "recorded_at": "2026-10-05T19:07:55+00:00",
+   "content_digest_sha256": "059b9a15192dff1b72039106f4a046ba9b3380bf05bc3a4927c5d66cc45f370f",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -446,7 +456,8 @@
   "source-025-amendment.md",
   "source-026-amendment.md",
   "source-027-amendment.md",
-  "source-028-amendment.md"
+  "source-028-amendment.md",
+  "source-029-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -653,6 +664,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-028 (session 013RaGmC message 64, 2026-10-05: 'all at once' corrected to build one then the next, not 50 subagents; done only when all 12 zones are fully done; give the handoff prompt now) and requirements D-090-R167..R169, all pending. Text extracted by script; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-05T19:07:55+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-029 (session 013RaGmC messages 65-66, 2026-10-05: give the development server a browser to test what it builds; 'is it safe? if yes go') and requirements D-090-R170..R171, pending. Text extracted by script; nothing retyped; no existing row edited."
   }
  ]
 }
