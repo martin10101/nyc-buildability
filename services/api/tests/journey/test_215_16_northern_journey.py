@@ -6,7 +6,8 @@ The one primary test chains the whole product path, each link consuming the PREV
 link's output object (no re-typed intermediate literals):
 
     entry (BBL) -> recorded study read -> bridge -> evaluator inputs -> engine results
-    document (contract 1.2.0: scope + the R6B height note) -> exports (site-plan SVG + results DXF) -> committed fixture
+    document (contract 1.2.0: scope + the R6B height note) -> exports (site-plan SVG +
+    results DXF) -> committed fixture
 
 A second short test proves the REAL address->BBL leg on the Geoclient User Guide
 documented example (314 W 100 St -> BBL 1018887502), so the module shows both legs
@@ -174,7 +175,8 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     assert inputs.lot_type == _fact(study, "lot_type")["value"]
 
     # 5. ENGINE: the real engine runs end to end with every Lane flag off except Lane A, and
-    # emits the scope document, and the R6B height note binds 1.2.0 (#388, #422). It is validated against the bundled results schema.
+    # emits the scope document, and the R6B height note binds 1.2.0 (#388, #422).
+    # It is validated against the bundled results schema.
     result = generate_results(inputs, env=_LANE_ON)
     document = result.document
     validate_results_document(document)

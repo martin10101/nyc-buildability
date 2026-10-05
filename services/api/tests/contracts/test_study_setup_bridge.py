@@ -370,7 +370,9 @@ def test_corner_read_runs_through_the_engine_via_the_address_street_assumption(
     result = generate_results(inputs, env=_LANE_ON)
     validate_results_document(result.document)
     out = result.document
-    assert out["contract_version"] == "1.1.0"
+    # Scope (1.1.0) plus the R6B minimum-base-height note (1.2.0, #388): a non-empty notes
+    # array binds 1.2.0, which admits the scope (#422; DB-129).
+    assert out["contract_version"] == "1.2.0"
     scope = out["scope"]
     # The lot identity is derived from the study's BBL (not restated).
     assert scope["lot"]["bbl"] == study["property"]["bbl"]
