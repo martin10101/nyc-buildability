@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 283,
+ "requirement_count": 288,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T05:15:59+00:00",
+ "updated_at": "2026-10-06T06:56:23+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -9572,6 +9572,174 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-06 (message 82).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R284",
+   "text": "'Ok go ahead and continue': the work continues in the order the reply to message 85 gave: finish the one-time dependency update, merge the waiting changes one at a time, then build the first milestone (R6B results on the screen) step by step. ORCHESTRATOR'S READING: it answers that reply; it lifts no restriction and decides no open scope choice.",
+   "source_ref": "source-038-amendment.md#owner-message-86-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R213",
+    "D-090-R250"
+   ],
+   "required_harness": "The work proceeds in that order; each merge on a fresh green run; each build step reviewed by a different agent.",
+   "required_evidence": "The merge records and the task records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 86).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R285",
+   "text": "'Please use the md for research we have for any deep questions like regarding floor hight': a question that needs outside research, such as the starting floor height, is written into the project's research file instead of being left for the owner to work out. ORCHESTRATOR'S READING: 'the md for research we have' is docs/RESEARCH_REQUESTS.md (directive D-050); its rules stand: answers are leads with citations, never sources of record, and questions about what a law means do not go there.",
+   "source_ref": "source-038-amendment.md#owner-message-87-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R256"
+   ],
+   "required_harness": "Each such question has an entry in docs/RESEARCH_REQUESTS.md in that file's format.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 87).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R286",
+   "text": "'basically whatever goes in to that md you will spin up a deep research agent that will look all over online to try to find the answer': for every question entered in that file, the orchestrator starts a research helper that searches widely online and reports an answer with its sources, and the answer is written into the file. ORCHESTRATOR'S READING: a helper of the session, one at a time (R211); what it finds is a lead to be checked, and a starting value it supports is still the owner's to approve (R256).",
+   "source_ref": "source-038-amendment.md#owner-message-87-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R211",
+    "D-090-R285"
+   ],
+   "required_harness": "Each entry shows that a research helper was run and what it returned, with sources.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the helper's saved return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 87).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R287",
+   "text": "'if he cant get a rightful answer or if answer makes it more confusing you can remind me to check the file to give it to other agent to check': when the helper finds no well-supported answer, or its answer leaves the question less clear, the entry stays open in the file, and the orchestrator reminds the owner in plain words to look at the file and give the question to their other agent.",
+   "source_ref": "source-038-amendment.md#owner-message-87-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R286"
+   ],
+   "required_harness": "An entry without a well-supported answer is marked open for the owner, and the owner update names it.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 87).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R288",
+   "text": "'never let that be a blocker': no research question stops the work. Building continues on everything that does not depend on the answer; a result that does depend on it is shown as conditional on a visible, editable starting value or is withheld, never invented.",
+   "source_ref": "source-038-amendment.md#owner-message-87-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R256",
+    "D-090-R285"
+   ],
+   "required_harness": "No task is blocked, and no blocker is opened, only because a research entry is unanswered.",
+   "required_evidence": "The ledger and the blocker list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 87).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
