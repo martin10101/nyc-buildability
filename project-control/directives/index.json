@@ -1202,7 +1202,22 @@
     "M0-T179"
    ],
    "manifest": "D-091-cloud-loop-dual-review/manifest.json"
+  },
+  {
+   "directive_id": "D-092",
+   "slug": "one-time-age-exception-source-map-js-1-2-2",
+   "title": "Owner 2026-10-06 ('Investigate whether we can safely clear B-029 before the seven-day waiting period ends' + 'Go ahead update it only this 1 time'): a read-only investigation, then the owner's approval of ONE early update of source-map-js to 1.2.2 through a single-version, self-expiring rule in the web age checker; vulnerability scanning, integrity verification, independent review and all tests stay mandatory; the advisory is not waived; NO other restriction lifted",
+   "status": "active",
+   "issued_at": "2026-10-06",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T182",
+    "M0-T183"
+   ],
+   "manifest": "D-092-one-time-age-exception-source-map-js-1-2-2/manifest.json"
   }
  ],
- "updated_at": "2026-10-02T04:56:13+00:00"
+ "updated_at": "2026-10-06T05:41:27+00:00"
 }

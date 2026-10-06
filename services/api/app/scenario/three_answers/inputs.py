@@ -16,6 +16,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:  # pragma: no cover - typing only, avoids an inputs<->scope cycle
+    from .scope import ScopeInputs
 
 # Default residential floor-to-floor height (ft). STATED and EDITABLE: the architect
 # may override it per option; it is surfaced as a named assumption, never hidden.
@@ -25,6 +29,27 @@ DEFAULT_FLOOR_TO_FLOOR_FT = 10.0
 # and recorded dimensions are rank-2 "City records"). The building option additionally
 # rests on the floor-to-floor assumption, so its own weakest-input label is "Assumed".
 DEFAULT_SITE_MEASUREMENT_RANK = "city_records"
+
+# 'Best combination' goal vocabulary (results.schema.json study goal def). A CLOSED set the
+# add-on search optimizes; the default is stated and editable per option, exactly like the
+# floor-to-floor height. goal_value_sf (results.schema.json) is always a floor area, so both
+# kinds below resolve to a square-foot figure.
+ADDON_GOAL_KINDS = ("most_residential_floor_area", "most_total_floor_area")
+DEFAULT_ADDON_GOAL_KIND = "most_residential_floor_area"
+
+
+@dataclass(frozen=True)
+class AddonGoal:
+    """The stated, editable 'Best combination' goal saved with the option (plan section 5:
+    'The goal, program and assumptions are saved with the option'). ``kind`` is a closed
+    vocabulary; ``text`` is required only for the open 'other' kind (results contract), null
+    otherwise. The default is most residential floor area."""
+
+    kind: str = DEFAULT_ADDON_GOAL_KIND
+    text: str | None = None
+
+    def as_contract(self) -> dict:
+        return {"kind": self.kind, "text": self.text}
 
 
 @dataclass(frozen=True)
@@ -101,10 +126,20 @@ class ThreeAnswerInputs:
     # --- editable building defaults ---
     building_defaults: BuildingDefaults = field(default_factory=BuildingDefaults)
 
+    # --- editable 'Best combination' goal (saved with the option) ---
+    addon_goal: AddonGoal = field(default_factory=AddonGoal)
+
     # --- provenance plumbing ---
     depends_on_fact_ids: tuple[str, ...] = ()
     lot_area_fact_id: str | None = None
     site_measurement_rank: str = DEFAULT_SITE_MEASUREMENT_RANK
+
+    # --- optional scope-beside-the-numbers inputs (results contract 1.1.0, D-090-R108) ---
+    # When present, the generator emits the top-level ``scope`` object (lot identity +
+    # disclosed assumptions) and declares contract_version 1.1.0; when None the document is
+    # byte-identical to the 1.0.0 shape. Additive and optional, so every existing caller is
+    # unchanged. See three_answers/scope.py for ScopeInputs and the builder.
+    scope_inputs: ScopeInputs | None = None
 
     def far_inputs(self) -> dict:
         """Inputs for the standard residential-FAR rule (r6-r12-residential-far)."""
