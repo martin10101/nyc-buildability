@@ -71,7 +71,9 @@ checked (R269).
 - **What it is not.** It is not the report. Development options beyond the first, estimated floors,
   building shapes, the realistic apartment estimate, option comparisons and the PDF are later
   milestones (the section map, section 3). Everything this milestone withholds stays owed. R6B is not
-  finished by it (R206), and nothing is reported as complete before the whole report is (R251).
+  finished by it (R206); this milestone is a finished piece, not completion of the whole report
+  (R251). Completion of any piece, district or the program is reported only when its agreed
+  requirements and tests pass (R278).
 - **Scope (R254, R224, R225, R242):** no detailed apartment layouts, no permit-ready plans, no
   building-code design. Where closing a gap would need detailed design, the result is withheld.
 
