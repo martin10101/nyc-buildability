@@ -17,13 +17,13 @@
     "docs/reference-cases/R6B/cases/<case id>.json: four structured case files (real lot; interior lots; corner reach; suffix question) with stable ids for the case and for each row (the work order's ids L1..L15, P1, P3, P4, P5, C1..C3 are kept), fixed field names, and for each row: the facts used with their source, the citations (section, quote, snapshot id, snapshot file, content digest, or not_captured with the page and the date read), the reason the rule applies, the arithmetic steps (operands, operation, result, rounding rule), the expected value or kind 'not_known' with the reason, and what the row does not establish; plus prepared_by, checked_by, sources and a change log",
     "docs/reference-cases/R6B/<case id>.md: one page per case rendered from its data file, in plain English, that a person can follow with the law text and a calculator",
     "docs/reference-cases/R6B/provenance/: the helper's two returns, unchanged, each under a short header that says what it is, when it was made and under which rules (the sealed folder, no program access)",
-    "services/api/tests/reference_cases/: a stdlib checker and renderer for the case files (no import from the rule engine, the scenario engine or any program output) and test_r6b_reference_cases.py: the structure, the arithmetic recomputed exactly, the capture digests, the rendered pages byte-identical to the data, no program result in any case file, and a small loader that later [LAW] tests use to read a row's expected value by its id",
+    "services/api/tests/rules/reference_cases/: a stdlib checker and renderer for the case files (no import from the rule engine, the scenario engine or any program output) and test_r6b_reference_cases.py: the structure, the arithmetic recomputed exactly, the capture digests, the rendered pages byte-identical to the data, no program result in any case file, and a small loader that later [LAW] tests use to read a row's expected value by its id",
     "project-control/reports/M4-T024-producer-report.md: what was written; a table of every row with its expected value and its source line in the helper's return and in the work order; EVERY difference found between the work order's tables and the helper's returns, reported and not silently resolved; every check with its DIRECT exit code"
   ],
   "dependencies": [],
   "allowed_paths": [
     "docs/reference-cases/R6B/**",
-    "services/api/tests/reference_cases/**",
+    "services/api/tests/rules/reference_cases/**",
     "project-control/reports/M4-T024-producer-report.md"
   ],
   "forbidden_paths": [
@@ -99,7 +99,7 @@
     {
       "id": "S11",
       "case": "a_loader_for_later_law_tests",
-      "input": "the loader in services/api/tests/reference_cases",
+      "input": "the loader in services/api/tests/rules/reference_cases",
       "expected": "a later [LAW] test can ask for a row by case id and row id and receives its expected value, its kind and its source reference; asking for a row that does not exist fails loudly; the test proves it for one numeric row and one 'not_known' row"
     },
     {
@@ -146,11 +146,18 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-10-06T20:37:42.971824+00:00",
-  "path_notes": "PRODUCER = rules-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). The orchestrator integrates its commits onto the task branch. The contract and claim seams of this task ride on the research-corrections pull request (branch task/research-assessment-corrections-2026-10-06); the task branch is created from the integration branch after that pull request has merged. MODULARITY ANSWERS: (1) owner of the change = a new, separate reference-case record; (2) module = documents under docs/reference-cases/R6B/ and a stdlib checker, renderer and loader under services/api/tests/reference_cases/ (test support, not program code: the program must never read a reference case at run time); (3) new files, each under the 600-line warning threshold; (4) nothing extracted from existing modules; (5) public interface = the case files' schema (case id, row id, expected value and kind) and the loader; (6) focused test = services/api/tests/reference_cases/test_r6b_reference_cases.py; (7) `python3 tools/modularity_check.py --check` passes before submission.",
+  "path_notes": "PRODUCER = rules-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). The orchestrator integrates its commits onto the task branch. The contract and claim seams of this task ride on the research-corrections pull request (branch task/research-assessment-corrections-2026-10-06); the task branch is created from the integration branch after that pull request has merged. MODULARITY ANSWERS: (1) owner of the change = a new, separate reference-case record; (2) module = documents under docs/reference-cases/R6B/ and a stdlib checker, renderer and loader under services/api/tests/rules/reference_cases/ (test support, not program code: the program must never read a reference case at run time); (3) new files, each under the 600-line warning threshold; (4) nothing extracted from existing modules; (5) public interface = the case files' schema (case id, row id, expected value and kind) and the loader; (6) focused test = services/api/tests/rules/reference_cases/test_r6b_reference_cases.py; (7) `python3 tools/modularity_check.py --check` passes before submission.",
   "documented_test_commands": [
     "cd services/api && python -m ruff check .   (the api CI job's first step)",
-    "cd services/api && python -m pytest -q tests/reference_cases",
+    "cd services/api && python -m pytest -q tests/rules/reference_cases",
     "cd services/api && python -m pytest -q   (the FULL api suite, once, at the final candidate; a heavy run, nothing else running)",
     "python3 tools/modularity_check.py --check"
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-06T21:00:00+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-06, before any claim] the test-support folder moves from services/api/tests/reference_cases/ to services/api/tests/rules/reference_cases/. The repository's ownership map (docs/lanes/OWNERSHIP.yaml) has no owner for a new folder directly under services/api/tests/, and the ownership check failed on the seeded placeholder (pull request 453, control-plane job, runs 37529527410 and 37529531704). The new folder is inside a glob the map already assigns to the engine lane. No scenario, gate, reviewer or other path changed; the readiness gate is recorded again at the corrected head."
+    }
   ]
 }

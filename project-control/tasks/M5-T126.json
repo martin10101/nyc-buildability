@@ -16,7 +16,7 @@
   "outputs": [
     "docs/measurement-basis/MEASUREMENT_BASIS.md: the record (definitions with quotes and sources; the area-schedule form; the rule for the ratio; the separation from the legal cap; what the examples show and do not show; the open points for the owner with a recommendation and its basis for each)",
     "docs/measurement-basis/examples/<example id>.json and <example id>.md: two or three worked examples (one mixed-use), each a made-up simple layout with every dimension stated, the area schedule, both areas computed separately, the reconciliation line by line, and the page rendered from the data",
-    "services/api/tests/measurement_basis/: a stdlib checker and renderer for the examples (test support, no import from the scenario or rule engines) and test_measurement_basis_examples.py",
+    "services/api/tests/scenario/measurement_basis/: a stdlib checker and renderer for the examples (test support, no import from the scenario or rule engines) and test_measurement_basis_examples.py",
     "project-control/reports/M5-T126-producer-report.md"
   ],
   "dependencies": [
@@ -24,7 +24,7 @@
   ],
   "allowed_paths": [
     "docs/measurement-basis/**",
-    "services/api/tests/measurement_basis/**",
+    "services/api/tests/scenario/measurement_basis/**",
     "project-control/reports/M5-T126-producer-report.md"
   ],
   "forbidden_paths": [
@@ -154,11 +154,18 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-10-06T20:41:01.862015+00:00",
-  "path_notes": "PRODUCER = scenario-optimization-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). DEPENDS ON M4-T025 (the captures of ZR 12-10 'floor area' and ZR 23-23): it is not claimed before that task is accepted and merged. The contract seam rides on the research-corrections pull request. After acceptance the orchestrator puts the record to the owner (R389, R359); the estimator is contracted only after the owner has answered. MODULARITY ANSWERS: (1) owner = a new design record; (2) module = documents under docs/measurement-basis/ and a stdlib checker and renderer under services/api/tests/measurement_basis/ (test support, not program code); (3) new files, each under the 600-line warning threshold; (4) nothing extracted; (5) public interface = the example files' schema; (6) focused test = services/api/tests/measurement_basis/test_measurement_basis_examples.py; (7) `python3 tools/modularity_check.py --check` passes before submission.",
+  "path_notes": "PRODUCER = scenario-optimization-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). DEPENDS ON M4-T025 (the captures of ZR 12-10 'floor area' and ZR 23-23): it is not claimed before that task is accepted and merged. The contract seam rides on the research-corrections pull request. After acceptance the orchestrator puts the record to the owner (R389, R359); the estimator is contracted only after the owner has answered. MODULARITY ANSWERS: (1) owner = a new design record; (2) module = documents under docs/measurement-basis/ and a stdlib checker and renderer under services/api/tests/scenario/measurement_basis/ (test support, not program code); (3) new files, each under the 600-line warning threshold; (4) nothing extracted; (5) public interface = the example files' schema; (6) focused test = services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py; (7) `python3 tools/modularity_check.py --check` passes before submission.",
   "documented_test_commands": [
     "cd services/api && python -m ruff check .",
-    "cd services/api && python -m pytest -q tests/measurement_basis",
+    "cd services/api && python -m pytest -q tests/scenario/measurement_basis",
     "cd services/api && python -m pytest -q   (the FULL api suite, once, at the final candidate)",
     "python3 tools/modularity_check.py --check"
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-06T21:00:00+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-06, before any claim] the test-support folder moves from services/api/tests/measurement_basis/ to services/api/tests/scenario/measurement_basis/. The repository's ownership map (docs/lanes/OWNERSHIP.yaml) has no owner for a new folder directly under services/api/tests/, and the ownership check failed on the seeded placeholder (pull request 453, control-plane job, runs 37529527410 and 37529531704). The new folder is inside a glob the map already assigns to the engine lane. No scenario, gate, reviewer or other path changed; the readiness gate is recorded again at the corrected head."
+    }
   ]
 }
