@@ -158,8 +158,8 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "An 'expected answer' copied from the program's own output would make the register circular -> S5: expected comes from the law text, a reference case, or is a gap",
     "A register that silently goes stale is worse than none -> S4 and S8 make the build fail",
@@ -170,7 +170,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T14:32:39.206321+00:00",
-  "updated_at": "2026-10-06T14:33:11.374233+00:00",
+  "updated_at": "2026-10-06T18:46:29.650132+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
