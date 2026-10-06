@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-05T21:36:27+00:00",
+ "updated_at": "2026-10-06T02:23:58+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -234,10 +234,31 @@
   "D-090-R210",
   "D-090-R211",
   "D-090-R212",
-  "D-090-R213"
+  "D-090-R213",
+  "D-090-R214",
+  "D-090-R215",
+  "D-090-R216",
+  "D-090-R217",
+  "D-090-R218",
+  "D-090-R219",
+  "D-090-R220",
+  "D-090-R221",
+  "D-090-R222",
+  "D-090-R223",
+  "D-090-R224",
+  "D-090-R225",
+  "D-090-R226",
+  "D-090-R227",
+  "D-090-R228",
+  "D-090-R229",
+  "D-090-R230",
+  "D-090-R231",
+  "D-090-R232",
+  "D-090-R233",
+  "D-090-R234"
  ],
- "requirements_id_digest_sha256": "d7462ce89aa304ad799ebbb570c8d825ea2d04fb4260e75c06dd80617f139d70",
- "requirements_content_digest_sha256": "c96d69ed5f9d14d4e2e340755b8cf5bb6bffc0e674869390ac438dae204c5d76",
+ "requirements_id_digest_sha256": "b62195c6f2c1ce1fb3093a6ea2c4b9441a99871ec128fb4a54ad22b795860c3c",
+ "requirements_content_digest_sha256": "ffdc1a83e84ee5d2e8952c3d9fee457c0f3958efb7a397b5db2f4cbabb8b65f7",
  "sources": [
   {
    "file": "source-001.md",
@@ -485,6 +506,14 @@
    "recorded_at": "2026-10-05T21:36:27+00:00",
    "content_digest_sha256": "224f79b33bd7b5c29c4c7bb8fa52c9b22ddbffdf06ea4623282f69346a19cbb7",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-032-amendment.md",
+   "kind": "amendment",
+   "sequence": 32,
+   "recorded_at": "2026-10-06T02:23:58+00:00",
+   "content_digest_sha256": "ff51bd8758cea4ffdb2570f7dfdc466da8219f71b3fb0fde889aaa3935a5d278",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -517,7 +546,8 @@
   "source-028-amendment.md",
   "source-029-amendment.md",
   "source-030-amendment.md",
-  "source-031-amendment.md"
+  "source-031-amendment.md",
+  "source-032-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -742,6 +772,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-031 (session 013RaGmC message 71, 2026-10-05: the reviewer's read of the update - checklist excludes detailed apartment design and permit-ready plans; reviews and test runs one at a time; the failed test needs a clean full run or a reviewed fix; next milestone results, report, PDF) and requirements D-090-R210..R213, all pending. Text extracted by script; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-06T02:23:58+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-032 (session 013RaGmC messages 72-76, 2026-10-06: three closing messages and the hand-off prompt with no requirement; then message 76 - finish the running review and record it at the exact commit; keep the dependency hold, eligible 2026-10-07 with 14:09 UTC as the safe check time; a read-only work order for the first R6B results connection; simplified feasibility scope; independently calculated law-based tests; sequential work, production settings unchanged, no timers; one short update; no completion claim before verification) and requirements D-090-R214..R234, all pending. Text extracted by script; nothing retyped; no existing row edited."
   }
  ]
 }

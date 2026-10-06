@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 213,
+ "requirement_count": 234,
  "producer": "orchestrator",
- "updated_at": "2026-10-05T21:36:27+00:00",
+ "updated_at": "2026-10-06T02:23:58+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -7223,6 +7223,707 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-05 (message 71, the owner's reviewer's read of the update, sent by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R214",
+   "text": "'Continue from the current session and repository state.' 'Don\u2019t restart completed work.': work continues from what this session and the repository already hold; finished work is not done again. ORCHESTRATOR'S READING: the start-up checks, the review already dispatched for the timing-test fix and the prepared one-line pin are kept as they are.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "No second start-up pass, no second reviewer for the same head, no second fix branch.",
+   "required_evidence": "The session record: one review of the test fix; one prepared fix branch.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R215",
+   "text": "'Finish the independent review already running': the independent review of the timing-test fix (PR #443), dispatched before this message, runs to its end; it is not cancelled, replaced or duplicated.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R182",
+    "D-090-R212"
+   ],
+   "required_harness": "The same reviewer returns a verdict on the head it was given, with its full-suite result.",
+   "required_evidence": "The reviewer's return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R216",
+   "text": "'record its verdict at the exact commit reviewed.': the verdict is recorded on the pull request against the full 40-character commit the reviewer verified; a verdict is never attached to a different or later commit.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R180",
+    "D-090-R182"
+   ],
+   "required_harness": "The recorded commit equals the commit the reviewer printed; the live head is read again before recording.",
+   "required_evidence": "The review record on the pull request, naming the full commit.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R217",
+   "text": "'Keep the dependency-security hold.' 'Do not bypass the seven-day check': nothing merges while the dependency check is red, and the seven-day age rule is not waived, bypassed or worked around (no exception request, no hand-edited lock, no change to the check).",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R181"
+   ],
+   "required_harness": "No merge before a fresh green dependency check; the age gate and the lock are untouched until the eligible time.",
+   "required_evidence": "The pull request list and the check results at each merge; blocker B-029.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R218",
+   "text": "'or treat older green checks as current approval.': a check run that finished before the advisory reached the audit (2026-10-05 about 23:31 UTC) is not approval to merge; each waiting change needs a fresh run on its current head after the fix.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R180",
+    "D-090-R181"
+   ],
+   "required_harness": "Every merge is preceded by a run that started after the fix merged.",
+   "required_evidence": "Run ids and their start times on each merged head.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R219",
+   "text": "'With the existing checker unchanged, source-map-js 1.2.2 becomes eligible on October 7; use 14:09 UTC or later as the safe check time.': the lock regeneration and the age check for source-map-js 1.2.2 are not attempted before 2026-10-07T14:09:00Z, and the age checker itself is not changed. ORCHESTRATOR'S READING: the official registry publish time read on 2026-10-06 is 2026-09-30T14:08:09.382Z, so 604800 seconds are reached at 2026-10-07T14:08:09.382Z; 14:09 UTC is the owner's margin; the registry time is read again at that moment (an outside fact, never assumed).",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R217"
+   ],
+   "required_harness": "The generate-lockfile workflow is dispatched at or after 2026-10-07T14:09:00Z; no commit touches the age gate.",
+   "required_evidence": "The workflow run's start time; the registry publish time read at dispatch.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R220",
+   "text": "'It still needs the normal reviewed update and fresh passing checks.': reaching the eligible time approves nothing: the fix goes through the normal path - the exact pin, the lock regenerated and proven by the generate-lockfile workflow, an independent dependency review at the exact head, and every expected check a completed success on that head.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R180",
+    "D-090-R181",
+    "D-090-R219"
+   ],
+   "required_harness": "Workflow-proven lock; an independent dependency review at the exact head; all expected checks green on that head.",
+   "required_evidence": "The workflow run, the review record and the check results on the fix pull request.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R221",
+   "text": "'While blocked, finish a read-only work order for the first R6B results connection.': while the merge queue is blocked, a written work order for the first R6B piece (the results route and its website connection, plan section 4.1 row 1) is finished; writing it changes no product code.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R213"
+   ],
+   "required_harness": "The work order exists as a document; the product tree is untouched by it.",
+   "required_evidence": "The work order file and the diff of its commit (documents only).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R222",
+   "text": "'List exactly what exists, what is missing, which files would change and how success will be tested.': the work order has those four lists, each entry traceable to a file, a test or a commit that a stranger can check.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R221"
+   ],
+   "required_harness": "An independent reader checks each list against the code at the commits it names.",
+   "required_evidence": "The work order and its independent review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R223",
+   "text": "'Don\u2019t build on top of the unmerged queue.': no product code for the results connection, or any later piece, is written on a base that contains unmerged changes; building starts after the waiting changes are merged. ORCHESTRATOR'S READING: this record and the work order are documents; this record must sit above the waiting source-031 record because both edit the same registry file. That is not building.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R167",
+    "D-090-R182"
+   ],
+   "required_harness": "No branch with product-code changes for the results connection exists before the queue is merged.",
+   "required_evidence": "The branch list and the base of the first build branch.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R224",
+   "text": "'Keep the scope to simplified zoning feasibility: development potential, approximate capacity, simple building shapes and a clear PDF.': the product's scope is simplified zoning feasibility: what can be developed, about how much, simple building shapes, and a clear PDF.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R210"
+   ],
+   "required_harness": "The work order and each later piece stay inside this scope.",
+   "required_evidence": "The work order's scope section; later task packets.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R225",
+   "text": "'No detailed apartment layouts, permit-ready plans or complete building-code design.': out of scope: detailed apartment layouts, permit-ready plans, and complete building-code design. ORCHESTRATOR'S READING: this adds building-code design to the exclusions of R210; the product does not design to the building code; where a building-code matter bears on feasibility it is at most a flag or 'not known', never a design.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R210",
+    "D-090-R224"
+   ],
+   "required_harness": "No work-order item, checklist row or task requires any of the three.",
+   "required_evidence": "The work order and later task packets.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R226",
+   "text": "'Include independently calculated, law-based test examples.': the work order, and then the tests of each piece, include worked examples whose expected values are calculated by hand from the captured law text and the lot's sourced facts, by someone who has not read the program's answer first; each example cites its section.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R204"
+   ],
+   "required_harness": "Worked examples with the law section, the inputs, the arithmetic and the expected value, produced without reading the program's output.",
+   "required_evidence": "The examples in the work order; later, tests that assert those expected values.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R227",
+   "text": "'Tests must check the interpretation, not merely repeat the program\u2019s own answers.': an expected value copied from the program's own output (a snapshot or a regenerated fixture) is not a test of correctness; each important number has at least one test whose expected value comes independently from the law; a disagreement is a finding to investigate, never a fixture update.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R226"
+   ],
+   "required_harness": "For each important number, a test whose expected value is traced to the law text, not to a program run.",
+   "required_evidence": "The test files and the trace from each expected value to its section.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R228",
+   "text": "'Numbers, drawings and PDF must agree': the numbers on the website, the drawings and the PDF agree with each other because they are read from the same result.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R183",
+    "D-090-R184"
+   ],
+   "required_harness": "A test compares the same values across the result, the drawings and the PDF.",
+   "required_evidence": "The agreement tests and their run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R229",
+   "text": "'unknown information stays unknown.': a value the program does not have (missing evidence, an unread fact, an unsettled reading) is shown as not known on the website, the drawings and the PDF; never a zero, a default or a guess.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R198",
+    "D-090-R199"
+   ],
+   "required_harness": "Tests with a missing input show 'not known' on every output.",
+   "required_evidence": "The missing-evidence tests and their run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R230",
+   "text": "'Keep work sequential.': one piece of work at a time, and one helper and one heavy run at a time.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R167",
+    "D-090-R182",
+    "D-090-R211"
+   ],
+   "required_harness": "No two helpers and no two heavy runs overlap.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R231",
+   "text": "'Leave production settings unchanged.': no production switch, flag, environment value or deployment setting is changed.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "No change to render.yaml, production environment values or any production flag.",
+   "required_evidence": "The diff of every commit in this period.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R232",
+   "text": "'Don\u2019t create automatic merge or rerun timers.': no scheduled or timed job, watcher, loop or wake-up that merges, reruns or dispatches by itself; the step due on 2026-10-07 at 14:09 UTC is started by hand in an attended session.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R175"
+   ],
+   "required_harness": "No cron entry, scheduled trigger, background watcher or timed wake-up exists.",
+   "required_evidence": "The scheduled-job list and the process list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R233",
+   "text": "'Give me one short update when the review and work order are ready: what passed, what is still blocked and the exact next step.': one short update is sent when both the review and the work order are ready, saying what passed, what is still blocked and the exact next step.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R141"
+   ],
+   "required_harness": "One update with those three parts.",
+   "required_evidence": "The update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R234",
+   "text": "'Don\u2019t claim the dependency fix or program is complete before verification.': neither the dependency fix nor the program is reported complete before it is verified.",
+   "source_ref": "source-032-amendment.md#owner-message-76-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R141",
+    "D-090-R209"
+   ],
+   "required_harness": "No update calls the fix or the program complete without the verifying evidence.",
+   "required_evidence": "The updates and handoffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 76).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
