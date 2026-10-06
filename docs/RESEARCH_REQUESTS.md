@@ -329,9 +329,12 @@ verification target.*
     subsidized through any HPD Loan Programs shall not be subject to the Guidelines." (The owner's
     reviewer summarised this as such projects being "not automatically subject"; the document's
     own words are the stronger "shall not be subject to the Guidelines" — both are recorded.) The
-    target net areas by type are studio/0BR 350–400 sq ft; 1BR 500–550; 2BR 650–725; 3BR 850–950.
-    A midpoint mix of these comes to about 575 sq ft, which is an illustrative mix, not HPD's
-    prescribed or observed average.
+    target net areas by type are studio/0BR 350–400 sq ft; 1BR 500–550; 2BR 650–725; 3BR 850–950,
+    as the second helper read them in the earlier edition (version 2.0) and as the owner's
+    reviewer's table gives them; the reading of the 2026 edition made for this assessment quoted
+    its definition of unit area, not these bands, so the bands are not yet confirmed for the 2026
+    edition. A midpoint mix of these comes to about 575 sq ft, which is an illustrative mix, not
+    HPD's prescribed or observed average.
 - **Candidate (a design assumption; the owner approves; not adopted; the program and its starting
   values are unchanged):** 700 sq ft per apartment for standard residences, as a rounded,
   explicitly chosen historical reference from the one dataset above — not a validated average for
@@ -400,7 +403,7 @@ verification target.*
     included." So the apartment's own partitions and free-standing structure are included and the
     model must not subtract all apartment walls; the excluded shafts are the "mechanical and
     plumbing chases" precisely, not every kind of shaft. (The reviewer summarised the exclusion as
-    "exterior/demising-wall thickness and mechanical/plumbing chases"; the document excludes the
+    "Exterior/demising-wall thickness and mechanical/plumbing chases"; the document excludes the
     structural members integral to those walls and the chases and measures from the finished face;
     both are recorded.)
   - **(c) HCR common space — NYS HCR Design Guidelines 2025, section 3.4.1a and Exhibit A, and the
@@ -433,7 +436,7 @@ verification target.*
   description of anything established — it is not a New York City average. 25 percent shared (a 75
   percent ratio of apartment area to residential zoning floor area) is a design judgment that
   neither HPD's material nor HCR's ceiling supports; it stays an editable, explicitly unvalidated
-  preliminary assumption. Neither "25 percent is appropriate" nor "15 percent is too low" is
+  preliminary assumption. Neither "25% is appropriate" nor "15% is probably too low" is
   established by the research; both are design judgments.
 - **Still open, FOR THE OWNER'S OTHER AGENT:** a New York City source (an architect's gross-to-net
   study for a low-rise apartment building, or a City or developer template) that gives the share of
