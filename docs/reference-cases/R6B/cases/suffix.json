@@ -1,0 +1,289 @@
+{
+  "case_id": "suffix",
+  "title": "The suffix question: do the sections that list R6 reach R6B?",
+  "work_order_table": "D",
+  "summary": "Whether the sections that list the R6 group (not R6B by name) apply to the suffixed R6B district. ZR 11-25 carries a district's regulations to the suffixed district unless the section lists separate provisions for it. The reading is of the captured text, never a program run.",
+  "what_it_is_worth": "Prepared by an AI helper and recomputed by a second AI; their agreement alone is not proof. It reads the captured text of ZR 11-25 and each section's own district list. It is a draft reading, not professionally reviewed, and is not a statement that anything complies.",
+  "what_it_does_not_establish": [
+    "It reads the suffix rule only; it does not decide any number for a lot.",
+    "It is not a professional or legal determination."
+  ],
+  "prepared_by": "An AI helper that took no part in writing the program's rules, working only from a sealed folder of pinned law-text captures and the lot's recorded facts, with no access to the program.",
+  "checked_by": "A second AI recomputed the arithmetic and the geometry independently from the same sealed folder. Agreement between two AI answers alone is not proof.",
+  "sources": [
+    "The independent hand-calculation, follow-up (tables C and D): provenance/return-independent-hand-calculation-2.md",
+    "The sealed folder given to the helper: the pinned ZR captures (without the notes describing how the program encoded them) and the lot's recorded official facts, with no program access.",
+    "The law captures under docs/research/zr-snapshots/v1/, each pinned by its content digest."
+  ],
+  "facts": [
+    {
+      "name": "District designation",
+      "value": "R6B",
+      "source": "a suffixed R6 district"
+    },
+    {
+      "name": "Suffix rule",
+      "value": "ZR 11-25",
+      "source": "captured"
+    }
+  ],
+  "change_log": [
+    {
+      "date": "2026-10-06",
+      "summary": "Case created from the independent hand-calculation returns (step R0).",
+      "by": "rules-engineer (M4-T024)"
+    }
+  ],
+  "rows": [
+    {
+      "row_id": "23-362",
+      "quantity": "Does ZR 23-362 apply to R6B?",
+      "facts_used": [
+        {
+          "name": "District designation",
+          "value": "R6B",
+          "source": "a suffixed R6 district"
+        }
+      ],
+      "citations": [
+        {
+          "kind": "captured",
+          "section": "11-25",
+          "title": "District Designations Appended with Suffixes",
+          "quote": "All regulations applicable to a district designation shall be applicable to such district designation appended with a suffix, except as otherwise set forth in express provisions of this Resolution",
+          "snapshot_id": "zr-11-25",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-11-25.snapshot.json",
+          "content_digest": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18433",
+          "captured_on": "2026-09-13",
+          "last_amended": "1994-06-29",
+          "date_read": "",
+          "status_note": "",
+          "table_assertion": null
+        },
+        {
+          "kind": "captured",
+          "section": "23-362",
+          "title": "Maximum lot coverage in R6 through R12 Districts",
+          "quote": "R6 R7 R8 R9 R10 R11 R12",
+          "snapshot_id": "zr-23-362",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-362.snapshot.json",
+          "content_digest": "f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362",
+          "captured_on": "2026-09-30",
+          "last_amended": "2024-12-05",
+          "date_read": "",
+          "status_note": "",
+          "table_assertion": null
+        }
+      ],
+      "why_applies": "ZR 11-25 says the regulations for a district also apply to that district with a suffix, unless a section lists separate provisions for the suffixed district. ZR 23-362 lists the R6 group (R6 R7 R8 R9 R10 R11 R12) and names no separate R6B provision, so it applies to R6B through ZR 11-25.",
+      "arithmetic": [],
+      "expected": {
+        "kind": "value",
+        "value": "applies to R6B, through ZR 11-25",
+        "unit": "",
+        "reason": ""
+      },
+      "source_reference": "return-independent-hand-calculation-2.md, Q3: '23-362: APPLIES TO R6B - via 11-25'.",
+      "does_not_establish": "It reads the suffix rule and the section's own district list; it is not a professional determination."
+    },
+    {
+      "row_id": "23-52",
+      "quantity": "Does ZR 23-52 apply to R6B?",
+      "facts_used": [
+        {
+          "name": "District designation",
+          "value": "R6B",
+          "source": "a suffixed R6 district"
+        }
+      ],
+      "citations": [
+        {
+          "kind": "captured",
+          "section": "11-25",
+          "title": "District Designations Appended with Suffixes",
+          "quote": "All regulations applicable to a district designation shall be applicable to such district designation appended with a suffix, except as otherwise set forth in express provisions of this Resolution",
+          "snapshot_id": "zr-11-25",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-11-25.snapshot.json",
+          "content_digest": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18433",
+          "captured_on": "2026-09-13",
+          "last_amended": "1994-06-29",
+          "date_read": "",
+          "status_note": "",
+          "table_assertion": null
+        },
+        {
+          "kind": "captured",
+          "section": "23-52",
+          "title": "Maximum Number of Dwelling Units",
+          "quote": "R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12",
+          "snapshot_id": "zr-23-52",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-52.snapshot.json",
+          "content_digest": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52",
+          "captured_on": "2026-09-30",
+          "last_amended": "2024-12-05",
+          "date_read": "",
+          "status_note": "",
+          "table_assertion": null
+        }
+      ],
+      "why_applies": "ZR 11-25 carries the general rule to suffixed districts unless a section lists separate provisions for them. ZR 23-52 lists the R1 to R12 group and names no separate R6B provision, so it applies to R6B through ZR 11-25.",
+      "arithmetic": [],
+      "expected": {
+        "kind": "value",
+        "value": "applies to R6B, through ZR 11-25",
+        "unit": "",
+        "reason": ""
+      },
+      "source_reference": "return-independent-hand-calculation-2.md, Q3: '23-52: APPLIES TO R6B - via 11-25'.",
+      "does_not_establish": "It reads the suffix rule and the section's own district list; it is not a professional determination."
+    },
+    {
+      "row_id": "23-344",
+      "quantity": "Does ZR 23-344 apply to R6B?",
+      "facts_used": [
+        {
+          "name": "District designation",
+          "value": "R6B",
+          "source": "a suffixed R6 district"
+        }
+      ],
+      "citations": [
+        {
+          "kind": "captured",
+          "section": "11-25",
+          "title": "District Designations Appended with Suffixes",
+          "quote": "All regulations applicable to a district designation shall be applicable to such district designation appended with a suffix, except as otherwise set forth in express provisions of this Resolution",
+          "snapshot_id": "zr-11-25",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-11-25.snapshot.json",
+          "content_digest": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18433",
+          "captured_on": "2026-09-13",
+          "last_amended": "1994-06-29",
+          "date_read": "",
+          "status_note": "",
+          "table_assertion": null
+        },
+        {
+          "kind": "captured",
+          "section": "23-344",
+          "title": "Additional rear yard modifications",
+          "quote": "R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12",
+          "snapshot_id": "zr-23-344",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-344.snapshot.json",
+          "content_digest": "91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344",
+          "captured_on": "2026-09-30",
+          "last_amended": "2024-12-05",
+          "date_read": "",
+          "status_note": "",
+          "table_assertion": null
+        }
+      ],
+      "why_applies": "ZR 11-25 carries the general rule to suffixed districts unless a section lists separate provisions for them. ZR 23-344 lists the R1 to R12 group, and its paragraphs (c) and (d) distinguish only R1 through R5 from R6 through R12 (R6B sits in the R6 to R12 group); it names no separate R6B provision, so it applies to R6B through ZR 11-25.",
+      "arithmetic": [],
+      "expected": {
+        "kind": "value",
+        "value": "applies to R6B, through ZR 11-25",
+        "unit": "",
+        "reason": ""
+      },
+      "source_reference": "return-independent-hand-calculation-2.md, Q3: '23-344: APPLIES TO R6B - via 11-25'.",
+      "does_not_establish": "It reads the suffix rule and the section's own district list; it is not a professional determination."
+    },
+    {
+      "row_id": "23-22",
+      "quantity": "Does ZR 23-22 list R6B directly?",
+      "facts_used": [
+        {
+          "name": "District designation",
+          "value": "R6B",
+          "source": "a suffixed R6 district"
+        }
+      ],
+      "citations": [
+        {
+          "kind": "captured",
+          "section": "23-22",
+          "title": "Floor Area Regulations for R6 Through R12 Districts",
+          "quote": "the maximum residential floor area ratio shall be as set forth in the following table",
+          "snapshot_id": "zr-23-22",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-22.snapshot.json",
+          "content_digest": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+          "captured_on": "2026-09-11",
+          "last_amended": "2024-12-05",
+          "date_read": "",
+          "status_note": "",
+          "table_assertion": {
+            "district": "R6B",
+            "fields": {
+              "standard_residences": "2.00",
+              "qualifying_affordable_or_senior_housing": "2.40"
+            }
+          }
+        }
+      ],
+      "why_applies": "ZR 23-22 lists R6B in a row of its own (standard 2.00, qualifying 2.40), so it applies to R6B directly and needs no suffix step.",
+      "arithmetic": [],
+      "expected": {
+        "kind": "value",
+        "value": "lists R6B directly; no suffix step needed",
+        "unit": "",
+        "reason": ""
+      },
+      "source_reference": "return-independent-hand-calculation-2.md, Q3: 'Contrast: 23-22 and 23-432 DO list a separate R6B row'.",
+      "does_not_establish": "It reads the district list; it is not a professional determination."
+    },
+    {
+      "row_id": "23-432",
+      "quantity": "Does ZR 23-432 list R6B directly?",
+      "facts_used": [
+        {
+          "name": "District designation",
+          "value": "R6B",
+          "source": "a suffixed R6 district"
+        }
+      ],
+      "citations": [
+        {
+          "kind": "captured",
+          "section": "23-432",
+          "title": "Height and setback requirements",
+          "quote": "the minimum base height, maximum base height, and maximum building height shall be as set forth in the following table",
+          "snapshot_id": "zr-23-432",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-432.snapshot.json",
+          "content_digest": "9fab7be8940498b076f7a88dfdd170d9003907e69cefae62305daf807037c68c",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-432",
+          "captured_on": "2026-09-30",
+          "last_amended": "2024-12-05",
+          "date_read": "",
+          "status_note": "",
+          "table_assertion": {
+            "district": "R6B",
+            "fields": {
+              "min_base_height_ft": "30",
+              "standard_max_base_height_ft": "45",
+              "standard_max_building_height_ft": "55",
+              "qualifying_max_base_height_ft": "45",
+              "qualifying_max_building_height_ft": "65"
+            }
+          }
+        }
+      ],
+      "why_applies": "ZR 23-432 lists R6B in a row of its own (its own base and building heights), so it applies to R6B directly and needs no suffix step.",
+      "arithmetic": [],
+      "expected": {
+        "kind": "value",
+        "value": "lists R6B directly; no suffix step needed",
+        "unit": "",
+        "reason": ""
+      },
+      "source_reference": "return-independent-hand-calculation-2.md, Q3: 'Contrast: 23-22 and 23-432 DO list a separate R6B row'.",
+      "does_not_establish": "It reads the district list; it is not a professional determination."
+    }
+  ]
+}
