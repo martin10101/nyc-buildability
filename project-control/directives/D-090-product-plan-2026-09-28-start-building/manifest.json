@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T18:16:25+00:00",
+ "updated_at": "2026-10-06T20:24:25+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -478,10 +478,17 @@
   "D-090-R454",
   "D-090-R455",
   "D-090-R456",
-  "D-090-R457"
+  "D-090-R457",
+  "D-090-R458",
+  "D-090-R459",
+  "D-090-R460",
+  "D-090-R461",
+  "D-090-R462",
+  "D-090-R463",
+  "D-090-R464"
  ],
- "requirements_id_digest_sha256": "c77b08a70f8861863c33b2eacc248661e98875a59425010a095a24906ac47b59",
- "requirements_content_digest_sha256": "1ee779efb688a0e5f1e1b8ca5e3c95bb329ff5fe2398a0304a09dae7d5b10aea",
+ "requirements_id_digest_sha256": "bc2a5e6504e17752a34e4c6f6698fa2ad39cc113049419ec7e65c5171fb225b8",
+ "requirements_content_digest_sha256": "6524eaebebd882c9bedbc9ba4b2629d86b87913bde12f8959e6b93c83645d0e4",
  "sources": [
   {
    "file": "source-001.md",
@@ -841,6 +848,14 @@
    "recorded_at": "2026-10-06T18:16:25+00:00",
    "content_digest_sha256": "cac41b662566c253cd27c9fb56b9b8b487a922286b91bf2a8433f894b35b8d92",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-046-amendment.md",
+   "kind": "amendment",
+   "sequence": 46,
+   "recorded_at": "2026-10-06T20:24:25+00:00",
+   "content_digest_sha256": "aa6b47d1125686c1d1ce8ee97beccd553427c4726cabd2e2c9e3acd5db7579f0",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -887,7 +902,8 @@
   "source-042-amendment.md",
   "source-043-amendment.md",
   "source-044-amendment.md",
-  "source-045-amendment.md"
+  "source-045-amendment.md",
+  "source-046-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1216,6 +1232,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-045 (session 013RaGmC message 96, 2026-10-06, the /session-handoff command with no text; and message 97, the seq 145 start prompt pasted by the owner: start-up checks, the position at the handover, the order of the next eight steps, the standing stops) and requirements D-090-R448..R457, all pending. Text extracted by script from the transcripts; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-06T20:24:25+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-046 (session 013RaGmC message 98, 2026-10-06, sent mid-turn: the owner's proposal that the main instruction file point to what a session reads at start instead of holding it; look it up and say whether to keep or change the structure; do not just agree; information must not get lost between sessions) and requirements D-090-R458..R464, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

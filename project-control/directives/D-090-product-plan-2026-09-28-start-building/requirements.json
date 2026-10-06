@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 457,
+ "requirement_count": 464,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T18:16:25+00:00",
+ "updated_at": "2026-10-06T20:24:25+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -15390,6 +15390,238 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-06 (message 97).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R458",
+   "text": "'Look it up online' 'tell me if we should leave it like that or we should change anything around': the session looks up how the main instruction file is structured in current practice (the tool maker's own documentation and known builders) and tells the owner whether to keep the present structure or change it, with the basis. ORCHESTRATOR'S READING: 'cloud MD' is CLAUDE.md, the main instruction file (the message was dictated).",
+   "source_ref": "source-046-amendment.md#owner-message-98-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "The answer names what was read, with links, says what was not surveyed, and gives a recommendation the owner can accept or refuse.",
+   "required_evidence": "The session transcript (the answer of 2026-10-06); the sources it names.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 98).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R459",
+   "text": "'If I'm wrong, let me know.' 'Don't just agree with me.': the answer says plainly where the owner's view holds and where it does not, each with its basis; agreement is not the default.",
+   "source_ref": "source-046-amendment.md#owner-message-98-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R458"
+   ],
+   "required_harness": "The answer states at least what in the owner's view the evidence supports and what it does not support.",
+   "required_evidence": "The session transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 98).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R460",
+   "text": "'I think the cloud MD just needs to tell it where it should go look for when it starts up a session to familiarize itself with this, this, and that, the most important part of the program that it's building and the rules, so on.' 'I might not be right.': the owner's proposal: the main instruction file tells a new session where to look to learn the most important parts of the program and its rules, in place of holding that content itself. ORCHESTRATOR'S READING: a proposal the owner asks to have checked, not a decision; the structure of the instruction files is not changed until the owner decides (R283).",
+   "source_ref": "source-046-amendment.md#owner-message-98-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R300"
+   ],
+   "required_harness": "No instruction file is restructured on this message alone; any restructuring is a ledger task contracted after the owner's answer.",
+   "required_evidence": "The ledger and the registry.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 98).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R461",
+   "text": "'I don't know if it's a good idea if it's injected directly into the cloud MD because the cloud recommends that cloud MD should stay as small as possible.': the owner's understanding is that the tool's maker recommends keeping the main instruction file as small as possible. ORCHESTRATOR'S READING: checked on 2026-10-06 at the maker's documentation, which says to target under 200 lines per instruction file, to keep in it only what applies to every session, and that longer files reduce adherence; the files loaded automatically here total about 480 lines.",
+   "source_ref": "source-046-amendment.md#owner-message-98-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R458"
+   ],
+   "required_harness": "The answer quotes the documentation it relies on.",
+   "required_evidence": "The session transcript; code.claude.com/docs/en/memory and /best-practices.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 98).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R462",
+   "text": "'Now, I'm not saying we need to set any limits on it.': this message sets no new limit on the size of the instruction file. The existing cap on automatically loaded instructions (D-067-R003) stays as it is, neither raised nor lowered by this message.",
+   "source_ref": "source-046-amendment.md#owner-message-98-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "No cap is changed in the context-budget tool on this message.",
+   "required_evidence": "tools/context_budget_check.py.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 98).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R463",
+   "text": "'there might be a better approach that is safer, better for the program, will get along with every session, won't disappear, and it will do the job just as good with with a lot less tokens.': any approach that is recommended is weighed against the owner's five tests: it is safer; it is better for the program; it works for every session; it does not disappear; it does the job as well with far fewer tokens.",
+   "source_ref": "source-046-amendment.md#owner-message-98-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R458"
+   ],
+   "required_harness": "The recommendation says how it meets or fails each of the five tests.",
+   "required_evidence": "The session transcript; the task that carries any change.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 98).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R464",
+   "text": "'the main thing is that at all times when because we make constantly new sessions the information shouldn't get lost and then the program doesn't know where it's left off or what what what happened before or you know what I mean or what we agreed on': whatever the structure, a new session can always find where the work left off, what happened before and what was agreed. ORCHESTRATOR'S READING: that information is kept in the repository (the ledger, the handoff, the record of the owner's messages, git) and never only in one session's memory; no change to the instruction files may weaken the start-of-session reading of those records.",
+   "source_ref": "source-046-amendment.md#owner-message-98-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R301",
+    "D-090-R323",
+    "D-090-R324"
+   ],
+   "required_harness": "After any change to the instruction files, a fresh session started from the handoff reaches the ledger status, the handoff and the open decisions without being told in chat.",
+   "required_evidence": "A start-up test of a fresh session; the handoff; the ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 98).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
