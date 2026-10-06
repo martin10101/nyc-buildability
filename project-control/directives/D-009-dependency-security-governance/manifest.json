@@ -33,7 +33,8 @@
   "supersedes": [],
   "superseded_by": null,
   "affected_tasks": [
-    "M0-T019"
+    "M0-T019",
+    "M0-T185"
   ],
   "affected_prs": [],
   "affected_branches": [],
@@ -62,7 +63,7 @@
   "verification_file": "verification.json",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
-  "requirements_content_digest_sha256": "8caf12295cec426b4b336d2096931990fd65fdaa6909ce66d55574b9aa634f80",
+  "requirements_content_digest_sha256": "33a3e8469c909868a3f124b07787de163a60c4fd311d080bfb884e70ce62da5d",
   "requirements_id_digest_sha256": "8e6161eb186b0476b239f25d37442b3b9a567c1745609973b1f9f38668db0d37",
   "enforcement_pointers": {
     "tasks": [
@@ -111,7 +112,7 @@
     "D-009-R021"
   ],
   "created_at": "2026-08-05T03:35:52+00:00",
-  "updated_at": "2026-08-05T22:40:00+00:00",
+  "updated_at": "2026-10-06T15:24:03+00:00",
   "audit_log": [
     {
       "at": "2026-08-05T03:35:52+00:00",
@@ -122,6 +123,12 @@
       "at": "2026-08-05T22:40:00+00:00",
       "by": "orchestrator",
       "note": "Captured owner amendment 1 VERBATIM in source-002-amendment.md (sha256 e0dc6f3bd07cd4eb0aa67e496ae66f9fac944f8f6742313a45fc83ce36844d94) on branch control/D-009-depsec-and-m0t019-dispatch; frozen baseline origin/main d5d9b506c8be63eafd00ad92bd2d3dab2012d067 unchanged. Appended 14 atomic rows D-009-R008..R021 (Option B: scoped auto-expiring FE-S9 age exception for brace-expansion@1.1.18 + sharp@0.35.3; global threshold unchanged; re-run G3+G5; regen lock via CI; run remaining gates; verbatim capture; report accept-readiness). Verification deferred to the independent directive-compliance-verifier at the finalized head."
+    },
+    {
+      "at": "2026-10-06T15:24:03+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bound",
+      "note": "Bound task M0-T185 (sharp 0.35.4 -> 0.35.5, advisory GHSA-wq5f-xc86-pv6w, under the normal policy, no exception) to D-009-R017 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
     }
   ]
 }

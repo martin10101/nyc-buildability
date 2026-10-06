@@ -1,0 +1,175 @@
+{
+  "task_id": "M0-T184",
+  "title": "Review-slot race tests on windows-latest: trace and fix the cause of the slot_lock_timeout failures in both RaceTests (the slot lock stays held after a racer has finished) without skipping tests, weakening checks or adding retries for green (DB-150; D-090-R093/R094/R337/R338/R339)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "The windows-latest supervisor-bridge job (pytest tools/test_agent_supervisor_*.py) failed three times on 2026-10-06 in tools/test_agent_supervisor_review_slots.py::RaceTests: test_global_last_slot_never_double_taken twice (job 112160344138, run 37430612001, PR #448 head 486ebe8c; job 112164492630, run 37431907048 attempt 1, integration head 789f87ce) and test_per_lane_last_slot_never_double_taken once (job 112181006630, run 37436954274 attempt 1, integration head 4b6a4d8c, with no other CI run in progress). The racers now report reason codes (M0-T181), and in all three runs EVERY racer that was not admitted answered 'refused:slot_lock_timeout' after its own 30 s wait for the slot lock: 2 admitted + 4 timed out, twice; 1 admitted + 5 timed out, once. No run shows a last slot taken twice. The review-slots test file took about 62 s in each failing run. One manual rerun of each integration run passed (3952 passed). So the lock stayed unavailable for 30 s AFTER the admitted racers had already left the critical section and written their results. Under /deficit-convergence: work from the three frozen job logs, trace the complete causal path in the code (the runner is windows-latest; this host is Linux), decide with evidence whether the cause is test timing or a real defect in tools/agent_supervisor/review_slots.py (the lead to prove or rule out first: _SlotLock.release() leaves the lock file on disk, owned by a still-living process, when its single unlink - or the read before it - fails on Windows while another racer briefly has the file open, because the failure is swallowed), show the deciding platform behaviour on windows-latest itself, and fix the CAUSE as one bounded change. Reconcile the result with the two earlier records that looked at this code: M0-T176's report section 4 item 4 ('release's unlink - already correct, no change') and M0-T181's convergence record (Failure A classified as test-harness timing). Preserve every safety and concurrency assertion; never skip or weaken a test and never add a retry merely to obtain a green run (D-090-R094).",
+  "business_reason": "Owner start prompt of 2026-10-06 (D-090 source-041): R339 'treat a tracked, reviewed fix of these tests as the first piece of work, because every merge now risks a red run'; R337 the stated fact that both race tests fail on CI, whose cause this task establishes; R338 'correct that record' (DB-150). Standing rules for this repair: D-090-R093 (bounded repair of the recurring Windows supervisor failures in a separate PR; test timing or a real supervisor defect; fix the cause) and D-090-R094 (preserve the safety and concurrency assertions; no skipped tests, weakened checks or retries for green). Supervisor freeze (.claude/rules/supervisor-freeze.md section 2) qualifying evidence: a failed acceptance scenario - the RACE scenario of M0-T171 failed on CI in jobs 112160344138, 112164492630 and 112181006630. Every merge to the integration branch runs this job; a red run blocks the fail-closed merge step.",
+  "inputs": [
+    "Frozen CI evidence (orchestrator, 2026-10-06): project-control/reports/M0-T184-ci-evidence/job-112160344138-run-37430612001-attempt-1.txt, job-112164492630-run-37431907048-attempt-1.txt, job-112181006630-run-37436954274-attempt-1.txt - each the FAILURES section and summary line with head sha, branch, runner image (Microsoft Windows Server 2025), the full log's byte count and sha256, and the two timestamped progress lines that bound the review-slots file's run time (about 62 s each)",
+    "tools/agent_supervisor/review_slots.py (523 lines): _SlotLock.acquire (O_CREAT|O_EXCL, FileExistsError -> stale check -> wait; Windows PermissionError -> wait, M0-T176), _SlotLock._read_holder (Path.read_text; OSError/ValueError -> None), _SlotLock.release (reads the holder, returns WITHOUT unlinking unless the lock_id is its own, then ONE unlink inside contextlib.suppress(OSError)), _SlotLock.__exit__, ReviewSlots.try_reserve / release / active (each wraps its body in `with self._lock()` and maps SlotError to a fail-closed result)",
+    "tools/test_agent_supervisor_review_slots.py (472 lines): _RACE_WORKER (six real interpreters, lock_timeout_s=30.0, an admitted racer HOLDS ITS SLOT - not the lock - until `release` appears), RaceTests._run_race (any outcome other than 'admitted' or 'refused:concurrency_limit_reached' fails the test loudly), the two race tests, WindowsSharingViolationTests (M0-T176) and its _failing_open helper",
+    "project-control/reports/M0-T176-producer-report.md section 4 (per-site sharing-violation analysis; item 4 concluded the release unlink needs no change and reasoned that, if a reader does not share delete, 'the unlink would raise PermissionError - suppressed, the file stays our own lock')",
+    "project-control/reports/M0-T181-convergence-record.md (Failure A: classified as test-harness timing; the racers were made to emit reason codes - the instrumentation that now shows slot_lock_timeout)",
+    "tools/agent_supervisor/locking.py (probe_process, process_start_token, SingleInstanceLock - READ ONLY; the pattern review_slots mirrors)",
+    ".github/workflows/ci.yml job supervisor-bridge (windows-latest; `pytest tools/test_agent_supervisor_*.py`, one process, no rerun plugin) - READ ONLY",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows D-090-R093, D-090-R094, D-090-R337, D-090-R338, D-090-R339",
+    ".claude/rules/supervisor-freeze.md (defect-only lane; qualifying evidence cited in the packet AND in every commit message that touches tools/agent_supervisor/**)",
+    "Precedent packets: project-control/tasks/M0-T181.json and M0-T176.json",
+    "Method: .claude/skills/deficit-convergence (freeze evidence, trace the complete causal path, repair ONE bounded causal cluster, verify once at the frozen candidate, end VERIFIED_CLOSED or one consolidated blocker report)"
+  ],
+  "outputs": [
+    "The repair commit(s): the cause of the slot_lock_timeout failures removed in tools/agent_supervisor/review_slots.py and/or the test harness, with tests that pin the corrected mechanism (positive, negative and a mutation proof)",
+    "project-control/reports/M0-T184-convergence-record.md: the /deficit-convergence record - the frozen evidence cited, the code-traced causal path from racer spawn to 'refused:slot_lock_timeout', every candidate cause proved or ruled out with the evidence that decides it, the classification (test timing | real supervisor defect), whether the M0-T176 section 4 item 4 conclusion and the M0-T181 Failure A classification still stand, the one bounded repair, the verification (Linux local + the windows-latest run ids supplied by the orchestrator), and the closing line VERIFIED_CLOSED or one consolidated blocker",
+    "project-control/reports/M0-T184-producer-report.md: files changed; every check command with its DIRECT exit code and pytest counts; the mutation proof (the pre-repair code restored, the new test red, with the command and output); the before/after list of the safety and concurrency assertions (test names) proving none was removed or loosened; the explicit R094 statement (no skip beyond a justified platform skip of a Windows-only test, no xfail, no loosened assertion, no retry/rerun of a TEST, no CI change); the report-only list of sibling surfaces (S8); the recertification consequence",
+    "project-control/reports/M0-T184-ci-evidence/*.txt: the frozen failure excerpts (written by the orchestrator at contract time; the producer may ADD experiment-run excerpts as new files, never edit the frozen ones)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/review_slots.py",
+    "tools/test_agent_supervisor_review_slots.py",
+    "project-control/reports/M0-T184-producer-report.md",
+    "project-control/reports/M0-T184-convergence-record.md",
+    "project-control/reports/M0-T184-ci-evidence/**"
+  ],
+  "forbidden_paths": [
+    ".github/**",
+    "tools/agent_supervisor/** except review_slots.py",
+    "tools/test_agent_supervisor_*.py except test_agent_supervisor_review_slots.py",
+    "tools/supervisor_command_doc_check.py",
+    "services/**",
+    "apps/**",
+    "packages/**",
+    "docs/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json",
+    "project-control/blockers/**",
+    "project-control/gates/**",
+    "any pytest configuration (pytest.ini, pyproject, conftest) and any rerun/flaky plugin"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "frozen_evidence",
+      "input": "the three failing jobs named in the objective",
+      "expected": "the convergence record cites the three files under project-control/reports/M0-T184-ci-evidence/ (run id, attempt, job id, head sha, branch, runner image, full-log byte count and sha256) and quotes the racers' reason-code lists from them; no evidence is paraphrased from memory; the frozen files are unchanged"
+    },
+    {
+      "id": "S2",
+      "case": "causal_path_slot_lock_timeout",
+      "input": "RaceTests failing with ['refused:slot_lock_timeout' x4, 'admitted' x2] (global, twice) and ['refused:slot_lock_timeout' x5, 'admitted' x1] (per-lane, once)",
+      "expected": "the complete path from racer spawn to the refusals is traced in the code and the frozen timings, and each candidate is PROVED or RULED OUT with the evidence that decides it: (a) _SlotLock.release()'s single unlink raising a Windows sharing violation (PermissionError) while another racer's _read_holder has the file open, swallowed by contextlib.suppress(OSError), so the lock file stays on disk owned by a LIVE process and every other racer waits out its 30 s; (b) release()'s own _read_holder returning None on a transient read failure, so release returns without unlinking; (c) a critical section that really takes longer than 30 s on a slow runner; (d) a failed stale takeover or a wrong liveness answer; (e) test-harness timing (barrier, parent window). The result is classified as test timing or a real supervisor defect. The record says whether M0-T176 report section 4 item 4 and the M0-T181 Failure A classification still stand, and why"
+    },
+    {
+      "id": "S3",
+      "case": "mechanism_shown_on_windows",
+      "input": "the platform behaviour the classification rests on",
+      "expected": "the deciding Windows behaviour is DEMONSTRATED on windows-latest, never assumed from Linux or from memory of the Win32 API: either a deterministic test that is RED on a ci-exp/M0-T184-* branch before the repair (orchestrator-pushed from a producer-prepared commit) or a deterministic Windows-only test in the suite that asserts the platform fact directly (for example: deleting a file that another handle, opened the way _read_holder opens it, still has open raises PermissionError) beside the test of the repaired behaviour; the convergence record cites the run id and job id the orchestrator supplies"
+    },
+    {
+      "id": "S4",
+      "case": "repair_removes_the_cause",
+      "input": "the classified cause",
+      "expected": "ONE bounded change. If the cause is the release path: after a normal _SlotLock.release() the lock file is gone even when a concurrent short read briefly blocks the removal (a bounded wait derived from the lock's own timeout and poll values, never an unbounded loop); release still never removes or overwrites a lock whose lock_id is not its own; a release that cannot complete inside its bound stays fail-closed (nobody is admitted on a guess) and is observable rather than silent; an ADMITTED reservation that was already written is never turned into a refusal by a late lock-release problem (that would strand the slot); try_reserve / release / active return exactly what they returned before in every non-failing case. If the cause is elsewhere, the same standard applies to that site"
+    },
+    {
+      "id": "S5",
+      "case": "tests_positive_negative_mutation",
+      "input": "the repaired module",
+      "expected": "new deterministic tests, runnable on any host: (i) the transient case - the removal fails N times with the Windows error and then succeeds -> the lock file is gone and the next acquire succeeds promptly; (ii) the never-clears case -> bounded, fail-closed, typed, no other holder's lock touched; (iii) a lock file carrying a different lock_id is left untouched; (iv) MUTATION PROOF: with the literal pre-repair release body restored, test (i) fails - the command and its output are in the producer report; (v) a real-handle test on Windows (skipped elsewhere with a stated reason) - that platform skip is the only skip added"
+    },
+    {
+      "id": "S6",
+      "case": "no_weakening_R094",
+      "input": "git diff <claim-seam head>..<final head> over allowed_paths",
+      "expected": "no test deleted, skipped (except S5 v), xfail-marked or renamed away; no assertion loosened - RaceTests keep 'exactly 2 of 6' with len(active()) <= 2 and 'exactly 1 of 6', and a slot_lock_timeout inside a race stays a loud failure (_RACE_LEGITIMATE_REFUSAL unchanged); no retry or rerun of a TEST, no rerun plugin, no .github/** or pytest-configuration change; the racer's lock_timeout_s, the parent window and the barrier budget change ONLY if the record proves the old value is the cause and derives the new one"
+    },
+    {
+      "id": "S7",
+      "case": "verified_at_the_frozen_candidate",
+      "input": "the final head",
+      "expected": "Linux local: `python -m pytest -q -p no:cacheprovider tools/test_agent_supervisor_review_slots.py` passes with direct exit code 0 (counts recorded); `python tools/supervisor_command_doc_check.py` and `python3 tools/modularity_check.py --check` pass; windows-latest: the supervisor-bridge job, which runs the whole `tools/test_agent_supervisor_*.py` suite, is green on the PR head (run id and counts recorded by the orchestrator; the supervisor-freeze baseline is at least 1165 tests, 0 failures). The whole suite is NOT run on this Linux server (ci.yml records that the whole glob starved an ubuntu runner on 2026-08-03; M0-T181 ran focused files only). One green run proves nothing by itself: the record argues the mechanism"
+    },
+    {
+      "id": "S8",
+      "case": "siblings_and_consequences_report_only",
+      "input": "the same release/acquire pattern elsewhere",
+      "expected": "REPORTED, NOT CHANGED (outside this packet's scope): every other place in tools/agent_supervisor/ that removes a lock file with the failure swallowed (for example locking.SingleInstanceLock.release), and the acquire path that leaves an unreadable lock file behind when the payload write fails, each with one line on its exposure; the producer report and the convergence record state that tools/agent_supervisor/** changed and name the D-091 recertification follow-up (M0-T181 already recorded M0-T179 as superseded) - a recorded cost, not a bar"
+    },
+    {
+      "id": "S9",
+      "case": "convergence_record_closes",
+      "input": "project-control/reports/M0-T184-convergence-record.md",
+      "expected": "ends with VERIFIED_CLOSED (cause named, shown on Windows, repair verified) or ONE consolidated blocker report naming the unprovable step; never 'fixed one thing, reran everything, stopped'"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "This host is Linux; the Windows file-sharing behaviour cannot be reproduced locally -> the causal path is argued from the frozen logs and the code, and SHOWN on windows-latest (S3) before the record closes",
+    "Three failures in one day against many green runs -> a single green CI run proves nothing; the record must argue the mechanism, and the new tests must fail without the repair (S5 iv)",
+    "Two earlier records looked at this code and closed (M0-T176, M0-T181) -> this record must say plainly where each stands; a third partial closure is the failure to avoid",
+    "A change under tools/agent_supervisor/** carries the D-091 recertification follow-up (M0-T179 already superseded by M0-T181) -> recorded as a consequence; D-090-R093 authorizes fixing the cause",
+    "Temptation to 'fix' by widening the racers' 30 s lock wait, accepting slot_lock_timeout as a legitimate loser, or rerunning -> forbidden by R094 (S6)",
+    "A release that raises from _SlotLock.__exit__ would turn a written reservation into a refusal and strand the slot -> S4 forbids it"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-06T09:05:35.678128+00:00",
+  "updated_at": "2026-10-06T14:02:27.140402+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R093",
+        "D-090-R094",
+        "D-090-R337",
+        "D-090-R338",
+        "D-090-R339"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-06T09:05:35.678396+00:00",
+  "path_notes": "PRODUCER = backend-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). Loads /deficit-convergence BEFORE editing. The orchestrator cherry-picks producer commits onto task/M0-T184-review-slot-lock-release (worktree /root/project/w-M0-T184) and pushes; a CI experiment branch (ci-exp/M0-T184-*) is orchestrator-pushed from a producer-prepared commit when S3 needs one. The frozen CI evidence excerpts are written by the orchestrator at contract time and are read-only for the producer. Separate PR (D-090-R093). Not commissioning. task/ branches are not lane branches (check_lane_paths.py passes). Row DB-150 and the handoff sentence (R338) are corrected by the orchestrator in the contract commit, outside the producer's scope. MODULARITY ANSWERS: (1) owner of the change = the slot lock's acquire/release critical section; (2) module = tools/agent_supervisor/review_slots.py (class _SlotLock); (3) the file is 523 lines, under the 600-line warning threshold; (4) no extraction needed for a change of this size; (5) stable public interface = ReviewSlots.try_reserve / release / reserve / active, Reservation, SlotGrant, SlotError codes, reservation_owner_alive; (6) focused tests = tools/test_agent_supervisor_review_slots.py; (7) `python3 tools/modularity_check.py --check` passes before submission.",
+  "documented_test_commands": [
+    "python -m pytest -q -p no:cacheprovider tools/test_agent_supervisor_review_slots.py (Linux local, direct exit code)",
+    "the whole `tools/test_agent_supervisor_*.py` suite runs ONLY in the windows-latest supervisor-bridge CI job (never the whole glob on this Linux server)",
+    "python tools/supervisor_command_doc_check.py",
+    "python3 tools/modularity_check.py --check",
+    "python3 scripts/lanes/check_lane_paths.py --branch task/M0-T184-review-slot-lock-release (not a lane branch: passes)",
+    "CI: supervisor-bridge (windows-latest) on the PR head; a ci-exp/M0-T184-* run when S3 uses one"
+  ],
+  "worktree": "/root/project/w-M0-T184",
+  "progress_log": [
+    {
+      "at": "2026-10-06T09:08:45.009266+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claim seam: G0 PASS at 0f23b435; producer backend-engineer dispatched under /deficit-convergence; frozen CI evidence committed; stacked on the source-041 capture"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-06T09:10:21+00:00",
+      "actor": "orchestrator",
+      "change": "Before dispatch: S7 and documented_test_commands no longer ask for the whole supervisor suite on the Linux server. .github/workflows/ci.yml records that the whole glob starved an ubuntu runner (2026-08-03), and M0-T181's producer ran focused files only. The whole-suite baseline is the windows-latest supervisor-bridge job on the PR head. No path, gate, reviewer or other scenario changed."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-06T14:02:27.140202+00:00"
+}

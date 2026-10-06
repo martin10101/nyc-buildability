@@ -1,0 +1,42 @@
+{
+  "task_id": "M0-T182",
+  "requirements": {
+    "D-092-R004": [
+      "material_commit 8fe57ca0 (the cherry-pick of producer commit 2d70307f) plus the workflow's lock commit 246bcebf; no file under .github/ changes in e97bf405..653b254d, so the audit steps, the integrity and host checks and every CI job are as they were",
+      "apps/web/scripts/dependency_age_gate.mjs: the new branch sits after the ambiguous, host, integrity-present, packument, integrity-match and timestamp checks; tests 'S5 integrity_binding' and 'S7 fail_closed_unchanged' show the excepted package still fails each of them",
+      "generate-lockfile run 37421376443 (head 8fe57ca0, bot commit 246bcebf): npm ci passed; 'found 0 vulnerabilities'; 'npm audit JSON: total vulnerabilities == 0 across all severities'; age gate RESULT PASS with exactly one '>>> OWNER AGE EXCEPTION (D-092) PASS source-map-js@1.2.2 ... age=489153s expires=2026-10-07T14:08:09.382Z' line and no FAIL line; npm CLI advisory check passed",
+      "CI at 653b254d: 48 checks, 48 completed success, 0 other (runs 37421553486 push, 37421582133 pull_request; context-budget 37421553592 / 37421582137; secret-scan 37421553515 / 37421582090; scheduled-web-audit 37421582153)",
+      "independent review: G5 by security-reviewer (project-control/reports/M0-T182-G5.md) and G3/G4 by code-reviewer (project-control/reports/M0-T182-G3G4.md), both of the exact head 653b254d; neither is the producer",
+      "node --test scripts/tests/*.test.mjs: 50 passed, 0 failed (40 before; no existing test line removed)"
+    ],
+    "D-092-R006": [
+      "git diff e97bf405..653b254d touches no workflow file; in the gate no existing check is removed or reordered (the diff adds a constant, a kind, a matcher, one branch and reporting lines); MIN_AGE_SECONDS unchanged",
+      "G5 report answer 2: every pre-existing check executes unchanged before the branch; evaluateLock, the infrastructure path and the npm-CLI advisory code are byte-unchanged"
+    ],
+    "D-092-R007": [
+      "dependency_age_gate.mjs decide(): ageSeconds is computed from the registry's time map and the supplied clock; matchOwnerAgeException only compares the registry instant with the recorded one; test 'S6 publication_time_binding' (a different registry time gives too_new; a future time gives too_new)",
+      "G5 report answer 3: the recorded instant is only compared, never substituted"
+    ],
+    "D-092-R008": [
+      "no audit step, severity threshold or suppression changed; the fix is the patched version 1.2.2 (advisory GHSA-68fv-2mgg-jv7q: range >= 1.0.0, < 1.2.2)",
+      "generate-lockfile run 37421376443 (head 8fe57ca0, bot commit 246bcebf): npm ci passed; 'found 0 vulnerabilities'; 'npm audit JSON: total vulnerabilities == 0 across all severities'; age gate RESULT PASS with exactly one '>>> OWNER AGE EXCEPTION (D-092) PASS source-map-js@1.2.2 ... age=489153s expires=2026-10-07T14:08:09.382Z' line and no FAIL line; npm CLI advisory check passed",
+      "G5 report answer 4: OSV and the GitHub advisory database list no advisory for 1.2.2"
+    ],
+    "D-092-R012": [
+      "the change is the one the reply described and the owner approved in message 84: pin (apps/web/package.json overrides), gate rule for that version and integrity, installer exclusion (apps/web/.npmrc), tests, policy text; made as ledger task M0-T182 under gates G0, G2, G3, G4, G5",
+      "lock comparison base vs head: only node_modules/source-map-js differs (1.2.1 -> 1.2.2, integrity sha512-KGj/8Y43...P3Vw== equal to the registry's and to the recorded value)"
+    ],
+    "D-092-R013": [
+      "OWNER_AGE_EXCEPTIONS holds exactly one frozen entry; test 'S8 single_entry_pin' deep-equals it and proves the list and the entry are frozen; tests S3 and S4: another version or another package stays too_new",
+      "docs/DEPENDENCY_SECURITY_POLICY.md sections 1, 2(b), 6: no agent may add an exception; each entry needs its own owner approval, directive record and G5 review; the table 'Exceptions on record' lists this one only"
+    ],
+    "D-092-R014": [
+      "git show --stat 8fe57ca0: apps/web/package.json, apps/web/.npmrc, apps/web/scripts/dependency_age_gate.mjs, apps/web/scripts/tests/dependency_age_gate.test.mjs, docs/DEPENDENCY_SECURITY_POLICY.md and the producer report; 246bcebf (github-actions[bot]): apps/web/package-lock.json only; nothing else material",
+      "the lockfile was produced by the workflow, not by hand (run 37421376443)"
+    ],
+    "D-092-R015": [
+      "decide(): at ageSeconds >= 604800 the ordinary ok return happens before the exception branch; matchOwnerAgeException requires 0 <= age < 604800; test 'S2 boundary' (604799 -> owner_age_exception; 604800 -> ok)",
+      "expiry = registry publication 2026-09-30T14:08:09.382Z + 604800 s = 2026-10-07T14:08:09.382Z (printed by the gate in the workflow log)"
+    ]
+  }
+}

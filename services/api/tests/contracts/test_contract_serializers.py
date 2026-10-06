@@ -404,14 +404,15 @@ def test_serializer_names_are_the_package_reexports() -> None:
 def test_study_contracts_is_the_proven_non_serializer_submodule() -> None:
     # The contract-validation / bridge / builder modules (study_contracts C-03,
     # evaluator_inputs C-07, compare_rows C-09, study_setup_bridge C-07 adapter,
-    # map_context maps-connection step 3 D-090-R124) never reach the provenance
-    # serializer; they are the proven exempt submodules.
+    # map_context maps-connection step 3 D-090-R124, engine_disclosures D-090-R138/R139)
+    # never reach the provenance serializer; they are the proven exempt submodules.
     assert _non_serializer_contract_modules() == {
         "study_contracts",
         "evaluator_inputs",
         "compare_rows",
         "study_setup_bridge",
         "map_context",
+        "engine_disclosures",
     }
 
 

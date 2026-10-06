@@ -42,11 +42,12 @@
   },
   "overrides": {
     "postcss": "8.5.23",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "brace-expansion": "1.1.21",
     "js-yaml": "4.3.2",
     "nanoid": "3.3.18",
     "baseline-browser-mapping": "2.11.21",
-    "browserslist": "4.28.9"
+    "browserslist": "4.28.9",
+    "source-map-js": "1.2.2"
   }
 }

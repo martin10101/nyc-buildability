@@ -1,0 +1,88 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-092",
+ "version": 1,
+ "slug": "one-time-age-exception-source-map-js-1-2-2",
+ "title": "Owner 2026-10-06 ('Investigate whether we can safely clear B-029 before the seven-day waiting period ends' + 'Go ahead update it only this 1 time'): a read-only investigation, then the owner's approval of ONE early update of source-map-js to 1.2.2 through a single-version, self-expiring rule in the web age checker; vulnerability scanning, integrity verification, independent review and all tests stay mandatory; the advisory is not waived; NO other restriction lifted",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-10-06",
+ "captured_at": "2026-10-06T05:41:27+00:00",
+ "created_at": "2026-10-06T05:41:27+00:00",
+ "updated_at": "2026-10-06T05:44:24+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "e97bf405453826bb7855a2129c8433e87bdb95e4",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed message 84 in-channel in answer to the orchestrator's reply, which had recommended waiting and had named the approval needed. It approves one early update of source-map-js to 1.2.2 through a single-version, self-expiring rule in the web age checker. It waives no advisory, lifts no hold and changes no gate; scanning, integrity verification, independent review and all tests stay mandatory."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-092-R001",
+  "D-092-R002",
+  "D-092-R003",
+  "D-092-R004",
+  "D-092-R005",
+  "D-092-R006",
+  "D-092-R007",
+  "D-092-R008",
+  "D-092-R009",
+  "D-092-R010",
+  "D-092-R011",
+  "D-092-R012",
+  "D-092-R013",
+  "D-092-R014",
+  "D-092-R015",
+  "D-092-R016"
+ ],
+ "requirements_id_digest_sha256": "4944084be46d586869652f731ebfbb395b1c52e2ec13abdb34b3ee5cc034024a",
+ "requirements_content_digest_sha256": "777d989776f5b860e15ef595cd52d9f949dd426e4ba1ae520bea6e4bf34d82b0",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-10-06T05:41:27+00:00",
+   "content_digest_sha256": "3371a159b15e4440d8ce5ab156bd6aea4ec9717dafefb95082d36e3c514cfa02"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M0-T182",
+  "M0-T183"
+ ],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "one_time_dependency_age_exception",
+  "task_ids": [
+   "M0-T182",
+   "M0-T183"
+  ],
+  "task_types": [],
+  "allowed": "one tracked change, under the normal gates with an independent security review, that moves source-map-js to 1.2.2 before its seven-day point: the exact pin, a rule in the web age checker for that version and integrity only, the matching installer exclusion, tests, and the policy text; then a tracked clean-up after the seven-day point",
+  "forbidden": "waiving, ignoring or suppressing any advisory; disabling or weakening any check; altering or simulating a publication date; any other package, version or occasion; a standing exception mechanism used without a new owner approval; hand-editing the lockfile; lifting any hold; any Tier D action"
+ },
+ "audit_log": [
+  {
+   "at": "2026-10-06T05:41:27+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured before acting, by script from this session's transcript; nothing retyped. frozen_baseline_sha = integration head e97bf405. R001-R016 pending. R004, R006, R007, R008, R012, R013, R014 and R015 bind task M0-T182, contracted in the same commit; the others bind the sentinel D-092-BOOTSTRAP (investigation rows) or wait for the clean-up task (R016)."
+  },
+  {
+   "at": "2026-10-06T05:44:24+00:00",
+   "actor": "orchestrator",
+   "action": "bound",
+   "note": "Contract seam, same commit as the capture: R016's applicability gains the clean-up task M0-T183 (backlog; packet to be completed before its G0); the requirements content digest is resynced; provisional verification rows added for M0-T182 (R004, R006, R007, R008, R012, R013, R014, R015) and M0-T183 (R016). No requirement text changed."
+  }
+ ]
+}
