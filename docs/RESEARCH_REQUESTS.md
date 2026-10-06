@@ -177,7 +177,7 @@ history). The active queue never carries figured-out material.
 session or the build session; the receiving session marks the entry ANSWERED and names the
 verification target.*
 
-## RQ-006 — A starting floor-to-floor height for the floor estimate (R6B first) — ANSWERED IN PART 2026-10-06 (research helper); residual OPEN, FOR THE OWNER'S OTHER AGENT
+## RQ-006 — A starting floor-to-floor height for the floor estimate (R6B first) — ANSWERED IN PART 2026-10-06; ground-floor candidate revised to 15 ft and put to the owner 2026-10-06, not yet answered; residual OPEN, FOR THE OWNER'S OTHER AGENT
 
 - **Question:** What floor-to-floor height should a feasibility estimate start from for a new
   residential building of the size R6B allows in New York City, and for its ground floor? Wanted:
@@ -197,7 +197,7 @@ verification target.*
   "estimated floors" part of the report. Until then the result is shown as conditional on the
   value on screen.
 - **Not asked here:** what any law means for a particular lot.
-- **Research helper, 2026-10-06 (a lead only; full return in `docs/research/helper-research/RQ006_RQ007_RQ008_Starting_Values_2026-10-06.md`):**
+- **First research helper, 2026-10-06 (a lead only; full return in `docs/research/helper-research/RQ006_RQ007_RQ008_Starting_Values_2026-10-06.md`):**
   - It found no law that fixes a floor-to-floor height. The Zoning Resolution limits building
     height and floor area; the Building Code sets a minimum ceiling height for habitable rooms
     (it quotes section 1208.2: 8 feet). Both are leads to be captured from the official text
@@ -206,17 +206,62 @@ verification target.*
     a ground floor with shops or a community facility at 14 to 16 ft. These are professional
     conventions, not City figures.
   - Its confidence: PARTLY SUPPORTED.
-- **Proposed starting values (design assumptions; the owner approves; not adopted):** 10 ft for a
-  residential floor (the value the program already holds); 14 ft for a ground floor with shops
-  or a community facility, kept as a separate editable value.
-- **Still open, FOR THE OWNER'S OTHER AGENT:** (1) the ground-floor height that HPD's "Laying the
-  Groundwork" design guideline states (the helper could not read that file); (2) a second,
-  independent source for the usual floor-to-floor height of new low-rise apartment buildings in
-  New York City, ideally an architect's typical section for an R6B building.
-- **Status:** ANSWERED IN PART 2026-10-06. Not a blocker: results that use the value are shown as
+- **Checked at the official source, 2026-10-06 (owner messages 93 and 94; a second helper run and
+  a reading of the document; a lead only; notes in
+  `docs/research/helper-research/RQ006_RQ007_RQ008_Verification_2026-10-06.md` and
+  `docs/research/helper-research/RQ006_RQ007_RQ008_Official_Readings_2026-10-06.md`):**
+  - The document is HPD with the Design Trust for Public Space, "Laying the Groundwork: Design
+    Guidelines for Retail and Other Ground-Floor Uses in Mixed-Use Affordable Housing
+    Developments," copyright 2015 (PDF December 2015; commonly cited as January 2016). Section
+    3.1 "Ceiling Height", printed page 37, gives three figures and keeps them apart: ".1 Provide
+    a minimum of 15 feet floor-to-floor height and a minimum 14 feet, 4 inches clear
+    floor-to-underside of slab height in the retail areas." ".2 Maintain a clear span of 12 feet
+    above the finish floor level (AFFL)." So 15 ft is floor-to-floor; 14 ft 4 in is the clear
+    height from the finished floor to the underside of the slab; 12 ft is the clear height kept
+    free of pipes and ducts. They measure different things, and choosing 15 ft floor-to-floor
+    does not by itself show the 14 ft 4 in and 12 ft clearances are met.
+  - How the document says it is used (quoted): developers and designers "may use this publication
+    as a tool to achieve best practices"; HPD's foreword says the guidelines "will be used as a
+    resource by our development and technical staff, and by other city agencies, developers, and
+    community organizations"; and they inform "criteria for requests for proposals (RFPs), the
+    evaluation of development proposals, and the review of architectural plans." Each figure is a
+    recommended minimum. It is not a universal legal requirement for any building.
+  - The owner's reviewer states: "HPD identifies critical success factors as requirements for
+    mixed-use proposals on HPD-owned property disposed through its RFP process." Reading this
+    document in full on 2026-10-06 did not find that sentence or its substance in it: the
+    document calls the nine factors guidance and a "resource," and the words "requirement,"
+    "HPD-owned" and "disposition" were not found in that sense (the only "disposal" is of trash).
+    The requirement the reviewer describes may rest on another HPD source (an RFP term sheet or
+    disposition rules) not read here. This is a bounded negative about this one document, not a
+    statement that HPD never requires the factors.
+  - Its definition of "retail": "the term 'retail' refers to any ground-floor use that generates
+    commercial activity or fills a community need and activates the streetscape." It lists
+    ground-floor childcare (Childcare/Pre-K Center), health (Health Facility) and cultural
+    (Cultural Space) uses among the community uses it covers, which supports applying its general
+    guidance, including these heights, to those uses. Its back-of-book table gives community uses
+    the same 14 ft 4 in clear height as retail and no separate floor-to-floor figure, so it does
+    not set one height for every community facility as zoning defines that term.
+- **Candidates (design assumptions; the owner approves; none adopted; the program and its
+  starting values are unchanged):** 10 ft for a residential floor (the value the program already
+  holds; a design assumption — the actual number of floors also depends on setbacks, elevations,
+  structure and roof treatment); 15 ft floor-to-floor for a ground floor with shops, revised from
+  14 ft on the basis above and put to the owner for approval on 2026-10-06, not yet answered; the
+  same 15 ft offered for a community-facility ground floor on the support above. All stay editable
+  preliminary assumptions; this research approves none.
+- **Still open, FOR THE OWNER'S OTHER AGENT:** (1) a second, independent source for the usual
+  floor-to-floor height of new low-rise apartment buildings in New York City, ideally an
+  architect's typical section for an R6B building; (2) a source that states a floor-to-floor
+  height for a community-facility ground floor.
+- **Status:** ANSWERED IN PART 2026-10-06; the revised 15 ft ground-floor candidate awaits the
+  owner's approval. Research is never a blocker: results that use the value are shown as
   conditional on the value on screen.
+- **Corrected 2026-10-06 after the owner's review (messages 93, 94 and 95):** first written as a
+  14 ft ground-floor candidate with the guideline's figures not yet read; now 15 ft floor-to-floor
+  put to the owner, kept apart from the document's 14 ft 4 in clear and 12 ft clear figures, with
+  the document's standing and its "retail" definition recorded and the reviewer's "requirements
+  ... RFP process" sentence marked as not found in this document.
 
-## RQ-007 — A starting average apartment size for the realistic apartment-count estimate — ANSWERED IN PART 2026-10-06 (research helper); residual OPEN, FOR THE OWNER'S OTHER AGENT
+## RQ-007 — A starting average apartment size for the realistic apartment-count estimate — ANSWERED IN PART 2026-10-06; figures corrected to historical benchmarks from one dataset with an unverified measurement basis, legal cap kept separate; residual OPEN, FOR THE OWNER'S OTHER AGENT
 
 - **Question:** What average apartment size should a realistic apartment-count estimate start
   from for new multifamily housing in New York City (low-rise and mid-rise, outer boroughs)?
@@ -231,25 +276,85 @@ verification target.*
   and every estimate to state its assumptions (D-090 source-035).
 - **What it unlocks:** a proposed starting value with its basis for the owner's approval (section
   map, choices 3 and 4); the "realistic apartment-count estimates" part of the report.
-- **Research helper, 2026-10-06 (a lead only; full return in `docs/research/helper-research/RQ006_RQ007_RQ008_Starting_Values_2026-10-06.md`):**
+- **First research helper, 2026-10-06 (a lead only; full return in `docs/research/helper-research/RQ006_RQ007_RQ008_Starting_Values_2026-10-06.md`):**
   - The legal limit: it quotes the Zoning Resolution's dwelling-unit factor (section 23-52, as
     amended 2024-12-05) as 680 for multiple dwellings. That is the LEGAL cap on the number of
     apartments and is kept apart from the realistic figure.
   - The realistic figure: one market dataset (RentCafe on Yardi data, 2024) gives the average
     size of apartments built 2014 to 2023 as 737 sq ft in Manhattan, 712 in Brooklyn and 692 in
-    Queens, measured as the inside area of the apartment. It found no second dataset.
+    Queens, measured as the inside area of the apartment. **[Corrected 2026-10-06: the article
+    does not say how an apartment's size is measured; "the inside area of the apartment" is
+    unverified — see the check below.]** It found no second dataset.
   - City guidance it read (HPD design guidelines, 2000 revision) sets minimum ROOM sizes, not
     whole-apartment sizes.
   - Its confidence: WELL SUPPORTED for the legal factor; PARTLY SUPPORTED for the realistic
     figure (one source).
-- **Proposed starting value (a design assumption; the owner approves; not adopted):** 700 sq ft
-  of apartment area per apartment, measured inside the apartment, editable.
-- **Still open, FOR THE OWNER'S OTHER AGENT:** a second source for the average size of newly
-  built apartments in New York City by borough (for example the City's housing database or
-  building filings), and HPD's current target apartment sizes by type.
-- **Status:** ANSWERED IN PART 2026-10-06. Not a blocker.
+- **The legal cap, kept separate (Zoning Resolution 23-52, captured in the repository at
+  `docs/research/zr-snapshots/v1/zr-23-52.snapshot.json`, last amended 2024-12-05):** the
+  dwelling-unit factor is 680 for other multiple dwellings; it is a ceiling on the number of
+  apartments (maximum residential floor area divided by 680, a fraction of 0.75 or more rounding
+  up), not proof that that many apartments physically fit. Who is exempt, quoted: "(a) For the
+  following types of multiple dwelling residences, there shall be no applicable dwelling unit
+  factor: (1) developments or enlargements of residences in special density areas; (2) qualifying
+  senior housing; or (3) conversions ..." — affordable housing alone is not on that list and does
+  not by itself remove the factor. The two R6B scenarios do not share one floor area and one
+  ceiling: a standard-residence case and a qualifying-affordable case have different residential
+  floor areas (for example 2.00 vs 2.40 FAR) and so different caps, and the affordable case does
+  not inherit the standard case's floor area or unit count. For a mixed-use proposal the estimate
+  uses the residential floor area actually allocated to it; a shop floor is not simply added to an
+  already-used residential allowance without checking the combined FAR and shared-space rules. The
+  lot area in any worked example is unverified and the numbers establish no whole-site or remaining
+  development capacity. The estimate of what fits stays separate from this legal cap and its
+  rounding.
+- **Checked at the original publication and the official guideline, 2026-10-06 (owner messages 93
+  and 94; a lead only; notes in the two helper files named above):**
+  - The 692, 712 and 737 sq ft figures are historical benchmarks from ONE RentCafe/Yardi dataset
+    (one 2024 article), not independently confirmed borough averages. Their measuring method is
+    not stated in the article, so the net-interior basis first recorded is unverified.
+  - The article's linked national study states its coverage (multifamily properties of 50 or more
+    units); only the shorter New York article omits it. "Market-rate only" is not established for
+    the size figures (RentCafe applies that only to its rent data, not to the size study). The
+    50-unit coverage makes the sample a poor match for a 29-unit R6B example; it does not mean
+    R6B prohibits 50-unit buildings.
+  - Articles that repeat the same study are not independent sources; the list of such articles
+    (Fox5NY, NBC New York, QNS, BrickUnderground, 6sqft and one investor site) is the second
+    helper's finding, not the owner's reviewer's count — the reviewer did not independently
+    establish a six-article count. An average for newly leased apartments is never used in place
+    of one for newly built apartments; these figures are for apartments built 2014 to 2023.
+  - HPD's target net areas by apartment type (a target on a stated basis, not an average of what
+    is built) come from HPD's Design Guidelines for New Construction; the edition read for this
+    assessment is the 2026 edition (item 5 of the official readings). In the document's own words
+    it applies to design-consultation submissions received on or after October 1, 2026, and
+    "Projects participating in Housing incentive programs (either MIH or UAP) that are not
+    subsidized through any HPD Loan Programs shall not be subject to the Guidelines." (The owner's
+    reviewer summarised this as such projects being "not automatically subject"; the document's
+    own words are the stronger "shall not be subject to the Guidelines" — both are recorded.) The
+    target net areas by type are studio/0BR 350–400 sq ft; 1BR 500–550; 2BR 650–725; 3BR 850–950,
+    as the second helper read them in the earlier edition (version 2.0) and as the owner's
+    reviewer's table gives them; the reading of the 2026 edition made for this assessment quoted
+    its definition of unit area, not these bands, so the bands are not yet confirmed for the 2026
+    edition. A midpoint mix of these comes to about 575 sq ft, which is an illustrative mix, not
+    HPD's prescribed or observed average.
+- **Candidate (a design assumption; the owner approves; not adopted; the program and its starting
+  values are unchanged):** 700 sq ft per apartment for standard residences, as a rounded,
+  explicitly chosen historical reference from the one dataset above — not a validated average for
+  R6B and not shown to be measured the way HPD measures (if used in the program it would be stated
+  as an adopted assumption on HPD's basis, not as a verified research result). It stays an editable
+  preliminary assumption, put to the owner on 2026-10-06 with its evidence, its uncertainty, HPD's
+  target areas as a second anchor, and a table of how the estimated count moves; this research
+  approves no default.
+- **Still open, FOR THE OWNER'S OTHER AGENT:** a second, independent dataset for the size of newly
+  built apartments in New York City by borough that states how size is measured (for example the
+  City's housing database or building filings).
+- **Status:** ANSWERED IN PART 2026-10-06; the candidate awaits the owner's answer. Research is
+  never a blocker.
+- **Corrected 2026-10-06 after the owner's review (messages 93, 94 and 95):** first written as
+  737/712/692 sq ft "measured as the inside area of the apartment" and a 700 sq ft value "measured
+  inside the apartment"; the measurement basis is now recorded as unverified, the figures as
+  historical benchmarks from one dataset, and the dwelling-unit factor as a legal ceiling kept
+  separate from the realistic estimate.
 
-## RQ-008 — A starting shared-space allowance (the part of a residential building that is not inside apartments) — OPEN: the helper's answer leaves it less clear; FOR THE OWNER'S OTHER AGENT
+## RQ-008 — A starting shared-space allowance (the part of a residential building that is not inside apartments) — OPEN; corrected 2026-10-06 (no percentage is established; the measurement basis is set out and must be resolved before any estimator); FOR THE OWNER'S OTHER AGENT
 
 - **Question:** What share of a new New York City apartment building's floor area is commonly
   taken by halls, stairs, lifts, lobby, refuse and service rooms, so that a feasibility estimate
@@ -263,25 +368,87 @@ verification target.*
   distinct and every efficiency percentage to state its denominator (D-090 source-030, item 4).
 - **What it unlocks:** a proposed starting value with its basis for the owner's approval (section
   map, choices 3 and 4); the realistic apartment-count estimate.
-- **Research helper, 2026-10-06 (a lead only; full return in `docs/research/helper-research/RQ006_RQ007_RQ008_Starting_Values_2026-10-06.md`):**
-  - It found no official figure. Practice sources give apartment buildings as 70 to 85 percent
-    efficient, none of them specific to New York City, and they do not agree on what is being
-    divided by what.
-  - It reports that the Zoning Resolution's "floor area" counts halls, stairs, lift shafts and
-    lobbies and leaves out cellar space and most mechanical space, so the percentage depends on
-    whether it is applied to gross floor area or to zoning floor area. It could not read the
-    full definition (section 12-10) in one piece. A lead to be captured from the official text.
-  - **Why it is less clear:** "loss factor" in leasing sources (rentable against usable area)
-    is not the architect's ratio of apartment area to building area. A figure taken from a
-    leasing source would mislead.
-  - Its confidence: PARTLY SUPPORTED, and it flags the answer as confusing.
-- **Proposed starting value (a design assumption; weakly supported; the owner approves; not
-  adopted):** 15 percent of the residential zoning floor area taken as shared space, so 85
-  percent inside apartments, editable, with the denominator printed beside it.
-- **Still open, FOR THE OWNER'S OTHER AGENT:** a New York City source (an architect's
-  gross-to-net study for a low-rise apartment building, or a City or developer template) that
-  gives the share of floor area inside apartments and names its denominator.
-- **Status:** OPEN 2026-10-06 (helper run; no well-supported answer). Not a blocker.
+- **First research helper, 2026-10-06 (a lead only; full return in `docs/research/helper-research/RQ006_RQ007_RQ008_Starting_Values_2026-10-06.md`):** it found no official figure; practice sources
+  give apartment buildings 70 to 85 percent efficient, none specific to New York City and with no
+  agreed denominator. It noted ZR "floor area" counts halls, stairs, shafts and lobbies but leaves
+  out cellar and most mechanical space (so a percentage depends on gross vs zoning floor area), and
+  warns a leasing "loss factor" is not the architect's apartment-to-building ratio. PARTLY SUPPORTED.
+- **What each area includes and excludes, with its source and status (checked 2026-10-06; owner
+  messages 93, 94 and 95; a lead only; notes in the two helper files named in RQ-006 and RQ-007):**
+  - **(a) Zoning floor area — ZR 12-10 "floor area" and the Section 23-23 allowances (read at the
+    official page 2026-10-06; NOT captured — the repository's 12-10 capture holds only the
+    street-width definitions, row DB-156 — to be captured before any rule or result relies on
+    them).** Floor area is "the sum of the gross areas of the several floors ... measured from the
+    exterior faces of exterior walls or from the center lines of walls separating two buildings";
+    it already counts stairwells and elevator shafts and already leaves out cellar space (unless
+    used for dwelling), accessory mechanical-equipment space and accessory parking within limits.
+    Section 23-23 then lets a multiple dwelling leave out, each on conditions and none
+    automatically: residential amenities up to 5 percent of residential floor area, accessible to
+    the residents (the text lists "laundry facilities" as one example amenity inside that 5 percent
+    allowance, so "laundry rooms count" holds only with that qualification — the reviewer wrote
+    "qualifying laundry facilities," the Section 23-231 text says "laundry facilities"; both are
+    recorded); corridors 50 percent under the termination/daylighting/outdoor-access provisions and
+    another 50 percent where the corridor is no more than 100 linear feet, combinable; refuse
+    storage or disposal up to 3 sq ft per dwelling unit; access to elevated ground-floor apartments
+    up to 100 sq ft per foot of elevation difference, capped at 500 sq ft per building. Section
+    12-10 also carries qualifying exterior-wall-thickness and energy exclusions; these and the
+    parking, balcony and mechanical-space conditions are checked where they bear on a result, not
+    treated as a complete short list.
+  - **(b) HPD dwelling-unit area — HPD Design Guidelines for New Construction, 2026 edition (item 5
+    of the official readings; applicability recorded in RQ-007).** In its own words: "measured
+    within the perimeter walls, from the finished face of all exterior walls and demising
+    partitions"; "Structural members that are integral components of exterior walls or demising
+    partitions, as well as all mechanical and plumbing chases, are excluded ... All other structural
+    members — including freestanding columns and columns attached to interior partitions — are
+    included." So the apartment's own partitions and free-standing structure are included and the
+    model must not subtract all apartment walls; the excluded shafts are the "mechanical and
+    plumbing chases" precisely, not every kind of shaft. (The reviewer summarised the exclusion as
+    "Exterior/demising-wall thickness and mechanical/plumbing chases"; the document excludes the
+    structural members integral to those walls and the chases and measures from the finished face;
+    both are recorded.)
+  - **(c) HCR common space — NYS HCR Design Guidelines 2025, section 3.4.1a and Exhibit A, and the
+    2026 Project Detail Application, Exhibit D-2 (a program-specific calculation for HCR-funded
+    projects).** The second helper read the application workbook and found Exhibit D-2 computes
+    residential common space divided by (dwelling-unit area plus residential common space) on an
+    interior-gross basis, non-residential space left out; the owner's reviewer could not open the
+    spreadsheet and so could not certify the exact Exhibit D-2 cells or that the division appears
+    only there. HCR measures to the centre line of demising and corridor walls and includes the
+    apartment's own chases, so the same apartment measures larger on HCR's basis than on HPD's. The
+    two bases differ, are never mixed, and nothing is subtracted twice. HCR's maximum is 25 percent
+    for new construction plus 5 percent for New York City — a program ceiling, not an average — and
+    HCR's percentage stays out of this estimate's formula.
+- **The rule for the estimate (owed before any estimator is built; the estimator is not built until
+  this basis is resolved):** its ratio means total HPD-measured dwelling-unit area divided by
+  residential zoning floor area and nothing else. No general gross-to-net percentage is applied to
+  zoning floor area and no allowance is taken for space zoning already leaves out (that would deduct
+  the same space twice; a subtract-walls-and-shafts conversion is not universally valid). Zoning
+  floor area and HPD dwelling-unit area are each worked out separately from ONE schedule of measured
+  areas taken from a proposed building layout — the maximum floor area a lot allows does not
+  establish that physical space — with every component (apartments, corridors, walls, chases,
+  mechanical rooms) shown with its treatment under both systems, then reconciled. Two or three
+  worked examples can check the calculations reconcile with nothing deducted twice and show that no
+  single percentage is general; their ratios stay specific to those examples. For a mixed-use
+  building the input is the residential portion's zoning floor area, including any residential
+  circulation and support space counted as floor area, not "the area given to apartments." Correct
+  arithmetic in a sensitivity table is not support for an assumption.
+- **Candidate (a design judgment; the owner approves; not adopted; the program and its starting
+  values are unchanged):** no percentage is offered as established. 15 percent is withdrawn as a
+  description of anything established — it is not a New York City average. 25 percent shared (a 75
+  percent ratio of apartment area to residential zoning floor area) is a design judgment that
+  neither HPD's material nor HCR's ceiling supports; it stays an editable, explicitly unvalidated
+  preliminary assumption. Neither "25% is appropriate" nor "15% is probably too low" is
+  established by the research; both are design judgments.
+- **Still open, FOR THE OWNER'S OTHER AGENT:** a New York City source (an architect's gross-to-net
+  study for a low-rise apartment building, or a City or developer template) that gives the share of
+  floor area inside apartments and names what it is a share of; and how much floor space Section
+  23-23 lets a multiple dwelling leave out, once 12-10 and 23-23 are captured.
+- **Status:** OPEN 2026-10-06 (two helper runs; no well-supported New York figure; the measurement
+  basis set out above must be resolved before any apartment estimator). Research is never a blocker.
+- **Corrected 2026-10-06 after the owner's review (messages 93, 94 and 95):** first written as a 15
+  percent shared-space allowance (85 percent inside apartments) offered as a proposed value; now no
+  percentage is offered as established, the three measurement bases are set out, and the estimate's
+  rule (HPD dwelling-unit area divided by residential zoning floor area, both from one measured
+  schedule) replaces the earlier subtract-walls-and-shafts outline.
 
 ---
 

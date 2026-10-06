@@ -1,0 +1,171 @@
+{
+  "task_id": "M5-T126",
+  "title": "Measurement basis for the realistic apartment estimate: what each area includes and excludes, one area schedule from a proposed layout, zoning floor area and HPD dwelling-unit area worked out separately and reconciled, two or three worked examples (one mixed-use) that validate no percentage, and the open points put to the owner; no estimator is built (D-090 R357-R359, R387-R389, R392, R396, R397, R407, R413, R428, R430-R437)",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "Resolve the measurement basis for the realistic apartment estimate, as a written record with worked examples that is put to the owner; build NO estimator. The owner's two audits of 2026-10-06 require: before any apartment estimator is built, say exactly what each area includes and excludes; work out the residential ZONING FLOOR AREA and the HPD DWELLING-UNIT AREA separately, each from ONE schedule of measured areas taken from a proposed building layout (the maximum floor area the law allows does not establish that physical space), with every component (apartments, partitions inside apartments, shared and exterior walls, mechanical and plumbing chases, corridors, stairs, lifts, lobby, refuse rooms, amenity and laundry rooms, mechanical rooms, cellar, parking, balconies) shown with its treatment under BOTH systems; then reconcile the two, so that nothing is deducted twice and no general gross-to-net percentage is applied to zoning floor area. Deliver under docs/measurement-basis/: (1) the definitions, each quoted from its captured or cited source: zoning floor area (ZR 12-10 'floor area' and the conditional allowances of ZR 23-23, from the captures of task M4-T025) and HPD's dwelling-unit area (HPD Design Guidelines for New Construction, 2026 edition, 'unit area calculation', with its edition and to whom it applies); (2) the area-schedule form: one row per component, its measured area, how it was measured, and its treatment under each system with the provision that governs it and the condition that must be shown before an allowance is taken; (3) two or three worked examples, each from a simple proposed layout that is drawn for the example, labelled as made up and not a real or detailed design, with every dimension stated so that each area can be recomputed; each example computes both areas separately and reconciles them line by line; one example is mixed-use and uses the residential portion's zoning floor area, with any counted residential circulation; (4) what the examples show and do not show: they check that the method reconciles and deducts nothing twice; their ratios belong to those examples only and no percentage is presented as typical; (5) the definition of the estimate's ratio (total HPD-measured dwelling-unit area divided by residential zoning floor area, and nothing else) and where the legal unit cap stays separate; (6) the open points for the owner, in plain words, with a recommendation and its basis for each: which assumptions a user must be able to see and change, what stays 'not known' without a layout, and what the estimator would need. A test recomputes every area and every reconciliation line of the examples from their stated dimensions with exact decimal arithmetic. The starting values (700 sq ft, 25 percent, 10 ft, 15 ft) stay unapproved assumptions and none is validated by this task.",
+  "business_reason": "Owner messages 93, 94 and 95 of 2026-10-06 (D-090 R357 to R359, R387 to R389, R392, R396, R397, R407, R413, R428, R430 to R437): define each area before proposing the formula; resolve the measurement basis before implementing the estimator; no generic gross-to-net loss on zoning floor area; show how the model accounts for zoning exclusions and arrives at HPD-defined dwelling-unit area without double deductions; derive both areas independently from the same measured area schedule and reconcile them; the measured space comes from a proposed layout; two or three examples check the method and validate no percentage; keep estimated physical yield separate from the legal unit cap. The start prompt's step 5: contract the measurement-basis work. The estimator itself is a later task and is not contracted before the owner has seen this record.",
+  "inputs": [
+    "The owner's words: project-control/directives/D-090-product-plan-2026-09-28-start-building/source-042-amendment.md, source-043-amendment.md and source-044-amendment.md, read in full; the rows bound to this task in requirements.json",
+    "The captures made by task M4-T025 under docs/research/zr-snapshots/v1/ (ZR 12-10 'floor area' and 'qualifying exterior wall thickness'; ZR 23-23 and 23-231 to 23-234) and the existing capture zr-23-52.snapshot.json",
+    "HPD Design Guidelines for New Construction, 2026 edition (official nyc.gov PDF), section 'unit area calculation': read at the official source and quoted with its address, edition and date read; it is a guideline, not law, and the record says to whom it applies",
+    "docs/RESEARCH_REQUESTS.md entries RQ-006, RQ-007 and RQ-008 as corrected, and the three helper files under docs/research/helper-research/ (leads, not sources of record)",
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 4 item 13 and section 9 (the legal unit limit and its reference cases); docs/reference-cases/R6B/ (task M4-T024) for the legal cap's worked values",
+    "services/api/app/scenario/three_answers/ (where the program holds its editable starting values today) - READ ONLY"
+  ],
+  "outputs": [
+    "docs/measurement-basis/MEASUREMENT_BASIS.md: the record (definitions with quotes and sources; the area-schedule form; the rule for the ratio; the separation from the legal cap; what the examples show and do not show; the open points for the owner with a recommendation and its basis for each)",
+    "docs/measurement-basis/examples/<example id>.json and <example id>.md: two or three worked examples (one mixed-use), each a made-up simple layout with every dimension stated, the area schedule, both areas computed separately, the reconciliation line by line, and the page rendered from the data",
+    "services/api/tests/scenario/measurement_basis/: a stdlib checker and renderer for the examples (test support, no import from the scenario or rule engines) and test_measurement_basis_examples.py",
+    "project-control/reports/M5-T126-producer-report.md"
+  ],
+  "dependencies": [
+    "M4-T025"
+  ],
+  "allowed_paths": [
+    "docs/measurement-basis/**",
+    "services/api/tests/scenario/measurement_basis/**",
+    "project-control/reports/M5-T126-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/** (NO estimator, no change to the scenario or rule engines, no new starting value in the program)",
+    "apps/** (no screen), packages/** (no contract change)",
+    "docs/research/**, docs/reference-cases/**, docs/zoning-rule-review/**, docs/plans/**",
+    "every other test file; .github/**; CLAUDE.md; .claude/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "each_area_defined_before_any_formula",
+      "input": "docs/measurement-basis/MEASUREMENT_BASIS.md",
+      "expected": "zoning floor area and HPD dwelling-unit area are each defined by what they include and exclude, in the source's own quoted words, with the section or page, the capture or address, and its standing (captured law; a guideline with its edition and to whom it applies); the formula comes after the definitions"
+    },
+    {
+      "id": "S2",
+      "case": "one_schedule_two_treatments",
+      "input": "the area-schedule form and each example's schedule",
+      "expected": "every component appears once with its measured area and its treatment under both systems (counted / left out / left out only if a stated condition is shown, with the provision); HPD's rows use the words 'mechanical and plumbing chases' and keep partitions inside an apartment and free-standing structure in the unit area"
+    },
+    {
+      "id": "S3",
+      "case": "allowances_are_conditional",
+      "input": "the rows for amenities, laundry, corridors, refuse storage, access to raised ground-floor apartments, exterior wall thickness, mechanical space, parking, balconies",
+      "expected": "no allowance of ZR 23-23 or exclusion of ZR 12-10 is taken unless the example states the condition and shows it met; an example that does not meet a condition counts the space; nothing zoning already leaves out is deducted again"
+    },
+    {
+      "id": "S4",
+      "case": "space_comes_from_a_layout_not_from_the_far",
+      "input": "each example",
+      "expected": "the measured areas come from the example's stated dimensions; the maximum floor area allowed appears only as a limit the layout is checked against, never as the measured space; each layout is labelled made up, simple, and not a real or detailed design"
+    },
+    {
+      "id": "S5",
+      "case": "both_areas_separately_then_reconciled",
+      "input": "each example",
+      "expected": "residential zoning floor area and total HPD dwelling-unit area are each summed from the schedule on their own; a reconciliation table accounts for every square foot of the difference by component; the two bases are never mixed and HCR's common-space percentage is not used"
+    },
+    {
+      "id": "S6",
+      "case": "arithmetic_recomputed_exactly",
+      "input": "the examples' data files",
+      "expected": "a test recomputes every area from the dimensions and every sum and reconciliation line with exact decimal arithmetic; MUTATION PROOF: one dimension changed in a copy makes the test fail and name the row; the rendered pages are byte-identical to the data"
+    },
+    {
+      "id": "S7",
+      "case": "examples_validate_no_percentage",
+      "input": "the record's section on what the examples show",
+      "expected": "each example's ratio is reported as that example's only; the record says in plain words that two or three examples cannot establish a typical figure and that 700 sq ft, 25 percent, 10 ft and 15 ft remain unapproved assumptions; correct arithmetic is not offered as support for an assumption"
+    },
+    {
+      "id": "S8",
+      "case": "mixed_use_uses_the_residential_portion",
+      "input": "the mixed-use example",
+      "expected": "the estimate uses the zoning floor area of the residential portion, including counted residential circulation and support space, not the whole building's and not a shop floor's"
+    },
+    {
+      "id": "S9",
+      "case": "legal_cap_kept_apart",
+      "input": "the record and each example",
+      "expected": "the estimate of what fits is a separate figure from the legal unit limit and its rounding; neither is derived from the other; the ratio is defined as total HPD-measured dwelling-unit area divided by residential zoning floor area and nothing else"
+    },
+    {
+      "id": "S10",
+      "case": "put_to_the_owner",
+      "input": "the record's last section",
+      "expected": "the open points are listed in plain words, each with a recommendation and its basis, what stays 'not known' without a layout, and how changing each assumption would change an estimated count; nothing is described as decided"
+    },
+    {
+      "id": "S11",
+      "case": "no_estimator_no_program_change",
+      "input": "git diff <claim-seam head>..<final head>",
+      "expected": "only allowed_paths changed; nothing under services/api/app, apps or packages; the checker and test import nothing from the scenario or rule engines; ruff and the full services/api pytest pass; every new source file stays under the 600-line warning threshold"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "ready",
+  "progress_percent": 5,
+  "risks": [
+    "A worked example read as a typical building -> S7: ratios belong to the examples only",
+    "A made-up layout mistaken for a design -> S4: labelled made up and simple; the owner's goal excludes detailed apartment layouts and permit-ready plans",
+    "An allowance taken without its condition -> S3",
+    "The record quietly becoming an estimator -> S11 and forbidden_paths: no program code",
+    "A guideline treated as law -> S1: HPD's guidelines are cited with their edition and applicability and called a guideline"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-06T20:41:01.861739+00:00",
+  "updated_at": "2026-10-06T20:59:38.996753+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R357",
+        "D-090-R358",
+        "D-090-R359",
+        "D-090-R387",
+        "D-090-R388",
+        "D-090-R389",
+        "D-090-R392",
+        "D-090-R396",
+        "D-090-R397",
+        "D-090-R407",
+        "D-090-R413",
+        "D-090-R428",
+        "D-090-R430",
+        "D-090-R431",
+        "D-090-R432",
+        "D-090-R433",
+        "D-090-R434",
+        "D-090-R435",
+        "D-090-R436",
+        "D-090-R437"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-06T20:41:01.862015+00:00",
+  "path_notes": "PRODUCER = scenario-optimization-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). DEPENDS ON M4-T025 (the captures of ZR 12-10 'floor area' and ZR 23-23): it is not claimed before that task is accepted and merged. The contract seam rides on the research-corrections pull request. After acceptance the orchestrator puts the record to the owner (R389, R359); the estimator is contracted only after the owner has answered. MODULARITY ANSWERS: (1) owner = a new design record; (2) module = documents under docs/measurement-basis/ and a stdlib checker and renderer under services/api/tests/scenario/measurement_basis/ (test support, not program code); (3) new files, each under the 600-line warning threshold; (4) nothing extracted; (5) public interface = the example files' schema; (6) focused test = services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py; (7) `python3 tools/modularity_check.py --check` passes before submission.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/scenario/measurement_basis",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the final candidate)",
+    "python3 tools/modularity_check.py --check"
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-06T21:00:00+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-06, before any claim] the test-support folder moves from services/api/tests/measurement_basis/ to services/api/tests/scenario/measurement_basis/. The repository's ownership map (docs/lanes/OWNERSHIP.yaml) has no owner for a new folder directly under services/api/tests/, and the ownership check failed on the seeded placeholder (pull request 453, control-plane job, runs 37529527410 and 37529531704). The new folder is inside a glob the map already assigns to the engine lane. No scenario, gate, reviewer or other path changed; the readiness gate is recorded again at the corrected head."
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "task_id": "M4-T025",
+  "title": "Law-text captures for the R6B checks and the measurement basis (work-order step P1 and DB-156): the ZR 12-10 definitions of corner, interior and through lot, lot area, special density area, floor area and qualifying exterior wall thickness; ZR 23-23 with 23-231 to 23-234; ZR 23-342; ZR 23-363 - source text only (D-090 R400, R403)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Capture, as source text only, the law text that the R6B work order (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, section 4 item 7 and section 8 'Step P1') and the measurement basis for the apartment estimate depend on and that the repository does not hold. From the official Zoning Resolution site (zoningresolution.planning.nyc.gov), with the existing capture method and file format of docs/research/zr-snapshots/v1/ and the synced copy under services/api/app/_zr_snapshots/v1/: (1) the ZR 12-10 definitions of 'corner lot', 'interior lot', 'through lot', 'lot area' and 'special density area' (step P1); (2) the ZR 12-10 definition of 'floor area' in full, and the definition of 'qualifying exterior wall thickness' that it relies on; the other defined terms the floor-area definition names for an exclusion (for example 'fully electrified building', 'ultra low energy building') are listed with a note that they are not captured here; (3) ZR 23-23 and its subsections 23-231, 23-232, 23-233 and 23-234 (floor space a multiple dwelling may leave out of floor area); (4) ZR 23-342 (rear yards) and ZR 23-363 (special coverage rules). Each capture records the official address, the channel used (the page, and the print/PDF channel as the completeness check where it answers; a disclosed fallback where it does not), the date and time read, the 'last amended' date shown, the verbatim text, and its digests, exactly as the existing captures do. A capture holds source text only: no rule, no reading of what the text means for a lot, no number derived from it. The existing zr-12-10 capture (the street-width definitions) is not edited; new 12-10 terms get capture files of their own. No rule file, rule engine, register entry, reference case or screen changes, and no value is shown anywhere because of a capture.",
+  "business_reason": "The work order's missing item 7 and step P1 (the corner, interior and through lot, lot area and special density area definitions; ZR 23-342; ZR 23-363) and the owner's two audits of 2026-10-06: Section 23-23's allowances are recorded as law only from the captured official text (D-090-R400), and the exclusions of Section 12-10 are checked against the text rather than a short list (R403). Discovery row DB-156 makes these two captures the first step of the measurement-basis work; nothing may rely on either text before it is captured. A research helper read all of them on the official site on 2026-10-06 (docs/research/helper-research/RQ006_RQ007_RQ008_Official_Readings_2026-10-06.md); that reading is a lead, not a capture.",
+  "inputs": [
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 4 (item 7), section 8 ('Step P1 and step P2') and section 9 (which rows rest on uncaptured text)",
+    "docs/DISCOVERY_BACKLOG.md row DB-156",
+    "The existing captures under docs/research/zr-snapshots/v1/ (for the file format, the id pattern such as zr-23-421-g for a part of a section, the source and cross_check blocks, the digest fields) and docs/research/zr-snapshots/v1/zr-12-10.snapshot.json in particular (its notes on the big-page timeout of the print channel and the documented fallback); services/api/scripts/sync_zr_snapshots.py and services/api/tests/rules/test_zr_snapshot_bundle.py (how the synced copy is made and checked); .claude/rules/legal-rules.md",
+    "docs/research/helper-research/RQ006_RQ007_RQ008_Official_Readings_2026-10-06.md (a lead: the addresses and node ids the helper used, and what it read)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R400 and R403"
+  ],
+  "outputs": [
+    "New capture files under docs/research/zr-snapshots/v1/ in the existing schema, one per section or per group of 12-10 definitions as the existing id pattern dictates, each with its verbatim text, source block, cross-check block and digests",
+    "The synced copies under services/api/app/_zr_snapshots/v1/, made with services/api/scripts/sync_zr_snapshots.py",
+    "services/api/tests/rules/test_zr_snapshot_bundle.py changed ONLY if it lists the expected captures and so must name the new ones",
+    "project-control/reports/M4-T025-producer-report.md: for each capture the address, channel, time read, amendment date, byte counts and digests; what was NOT captured and why; how each text compares with the helper's reading of 2026-10-06 (every difference listed); every check with its DIRECT exit code"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/research/zr-snapshots/v1/**",
+    "services/api/app/_zr_snapshots/v1/**",
+    "services/api/tests/rules/test_zr_snapshot_bundle.py",
+    "project-control/reports/M4-T025-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "the existing capture files (no edit to a capture that is already committed; new files only)",
+    "services/api/app/rules/** (no rule file, engine, registry or register change)",
+    "docs/reference-cases/**, docs/zoning-rule-review/**, docs/plans/**, docs/measurement-basis/**",
+    "every other test file; apps/**; packages/**; .github/**; CLAUDE.md; .claude/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "each_named_text_is_captured",
+      "input": "ls docs/research/zr-snapshots/v1",
+      "expected": "a capture exists for each of: the 12-10 definitions of corner lot, interior lot, through lot, lot area and special density area; the 12-10 definition of floor area in full; qualifying exterior wall thickness; ZR 23-23, 23-231, 23-232, 23-233, 23-234; ZR 23-342; ZR 23-363. Anything not captured is named in the report with the reason"
+    },
+    {
+      "id": "S2",
+      "case": "source_text_only",
+      "input": "each new capture file",
+      "expected": "verbatim text with its address, channel, time read and amendment date; no rule, no interpretation for a lot, no derived number; notes say only what the channel supports"
+    },
+    {
+      "id": "S3",
+      "case": "the_text_is_what_the_official_page_says",
+      "input": "an independent re-read of each official page by the reviewer",
+      "expected": "the captured text equals the official text read again by a different agent; the recorded digests recompute; the amendment date matches"
+    },
+    {
+      "id": "S4",
+      "case": "complete_not_excerpted_where_it_matters",
+      "input": "the floor-area definition and ZR 23-23 with its four subsections",
+      "expected": "the whole definition (every 'includes' item and every 'shall not include' item) and every paragraph and condition of 23-231 to 23-234 are in the capture; an excerpt is marked as an excerpt and says what is left out"
+    },
+    {
+      "id": "S5",
+      "case": "existing_captures_untouched",
+      "input": "git diff <claim-seam head>..<final head> -- docs/research/zr-snapshots/v1",
+      "expected": "only added files; every existing capture and its digest is unchanged; the review register's check still passes"
+    },
+    {
+      "id": "S6",
+      "case": "synced_copy_and_bundle_check",
+      "input": "services/api/scripts/sync_zr_snapshots.py and tests/rules/test_zr_snapshot_bundle.py",
+      "expected": "the synced copies are byte-identical to the captures; the bundle test passes"
+    },
+    {
+      "id": "S7",
+      "case": "compared_with_the_helpers_reading",
+      "input": "the producer report",
+      "expected": "each capture is set beside the helper's reading of 2026-10-06 and every difference is listed; none is resolved silently"
+    },
+    {
+      "id": "S8",
+      "case": "scope",
+      "input": "git diff <claim-seam head>..<final head>",
+      "expected": "only allowed_paths changed; no rule, engine, register, reference case, plan or screen changed; ruff and the full services/api pytest pass"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "ready",
+  "progress_percent": 5,
+  "risks": [
+    "The 12-10 page is very large and its print channel has timed out before -> the capture states the channel used and any fallback, as the existing 12-10 capture does",
+    "A capture that silently omits a condition would mislead every later reading -> S3 and S4: an independent re-read and completeness of the two texts the estimate depends on",
+    "A capture mistaken for permission to show a number -> S2 and the work order: no number is shown because of a capture alone"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-06T20:40:44.785325+00:00",
+  "updated_at": "2026-10-06T20:41:01.115594+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R400",
+        "D-090-R403"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-06T20:40:44.785563+00:00",
+  "path_notes": "PRODUCER = legal-corpus-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). The contract seam rides on the research-corrections pull request; the task branch and the claim follow after it merges. The reference-cases task M4-T024 comes first in the work order's sequence (R0, then P1). MODULARITY ANSWERS: no handwritten production source changes; capture files and their synced copies only.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python scripts/sync_zr_snapshots.py --check   (or the script's own check mode)",
+    "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py tests/rules/test_zoning_rule_review_register.py",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the final candidate)"
+  ]
+}

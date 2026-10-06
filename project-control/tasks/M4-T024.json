@@ -1,0 +1,163 @@
+{
+  "task_id": "M4-T024",
+  "title": "R6B reference cases as files of their own (work-order step R0): four independently worked cases, each with its facts and sources, the law text relied on and its capture, the arithmetic, the expected values (unsettled ones recorded as not known), who prepared and checked it, and a change log; a test that recomputes the arithmetic and proves no program result is in them (D-090 R226, R241, R259, R291)",
+  "task_type": "rule_engineering",
+  "milestone_id": "M4",
+  "objective": "Step R0 of the R6B work order (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, section 8 'Step R0' and section 9): move the independently worked reference cases out of the work order's tables into files of their own under docs/reference-cases/R6B/, so that later tests can take their expected values from a case file and never from a program run. Four cases, as the work order names them: the real lot (table A, rows L1 to L15), the made-up interior lots (table B: P1, P3, P4, P5 and the 80 percent interior coverage reading), the reach of a corner lot (table C: the real lot, C1, C2, C3) and the suffix question (table D: do the sections that list R6 apply to R6B). Each case holds: the facts and where each comes from; the law text relied on, quoted, with its capture (snapshot id, file, content digest) or the plain statement that it is not captured and was read on the official page on a stated date; why that rule applies; the arithmetic step by step; the expected values, including every value the independent reading could NOT settle, recorded as not known with the reason; who prepared it and how it was checked; what it does not establish; and a change log. The cases were worked by an AI helper from a sealed folder (the law captures and the lot's recorded facts, without the program) and recomputed by a second AI; the helper's two returns are brought into the repository unchanged as the cases' provenance. Nothing in these files is copied from a program run: the work order's columns 'Program today' and 'First screen' stay in the work order. Each case exists twice from one source: a structured data file (stable ids, fixed field names) that tests can load, and a page a person can follow with the law text and a calculator. A test recomputes every arithmetic step from the case's own operands with exact decimal arithmetic, checks every cited capture against the live capture file's digest, and proves that no case file holds a program result. No rule file, rule engine, capture or screen changes; no expected value is 'fixed' to agree with the program.",
+  "business_reason": "Owner, 2026-10-05 and 2026-10-06 (D-090 R226, R241, R259, R291): worked examples whose expected values are calculated from the law text by someone who has not read the program's answer; matching a saved result is never proof; independently worked reference cases are kept in their own files apart from program output, and two AI answers agreeing is not, alone, proof; step 3 of the owner's order is to check the R6B answers and save independently calculated examples to test against. The work order makes step R0 the first step of milestone 1, before any law text is captured (P1, P2) and before the engine, the server route or the website change (Part 0, A, B): every [LAW] test of those later steps must name a case file and use its values.",
+  "inputs": [
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 8 ('Three rules for every test below'; 'Step R0') and section 9 (how the cases were made; what they are worth; tables A, B, C, D; 'What the comparison shows')",
+    "The independent helper's two returns, outside the repository: /root/project/lanes-runtime/owner-docs/session-2026-10-06/return-independent-hand-calculation-1.txt (first round) and return-independent-hand-calculation-2.txt (the follow-up: tables C and D); the sealed folder it was given: /root/project/lanes-runtime/owner-docs/session-2026-10-06/sealed-packet/ ; the second AI's recomputation: /root/project/lanes-runtime/owner-docs/session-2026-10-06/blind-calc/",
+    "The law captures under docs/research/zr-snapshots/v1/ (zr-23-22, zr-23-432, zr-23-433, zr-23-362, zr-23-344, zr-23-52, zr-11-25, zr-12-10 and the others the cases cite), each with its content_digest_sha256 - READ ONLY",
+    "docs/zoning-rule-review/ (the review register; its examples cite the same reference cases) - READ ONLY; services/api/app/rules/review_register/check_review_register.py as the pattern for a stdlib checker and services/api/tests/rules/test_zoning_rule_review_register.py as the pattern for its test - READ ONLY",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R226, R241, R259, R291 and their sources (source-032, source-033, source-035 and source-039 of that folder: the owner's words on law-based examples, on saved results and on reference cases)"
+  ],
+  "outputs": [
+    "docs/reference-cases/R6B/README.md: what a reference case is and is worth (prepared by an AI helper, recomputed by a second AI, agreement alone is not proof, a draft reading, not professionally reviewed); the rule for changing an expected value (only with a recorded reason: corrected evidence, a corrected reading, or a change in the law; a disagreement with the program is investigated on both sides); the list of cases; how a test uses them",
+    "docs/reference-cases/R6B/cases/<case id>.json: four structured case files (real lot; interior lots; corner reach; suffix question) with stable ids for the case and for each row (the work order's ids L1..L15, P1, P3, P4, P5, C1..C3 are kept), fixed field names, and for each row: the facts used with their source, the citations (section, quote, snapshot id, snapshot file, content digest, or not_captured with the page and the date read), the reason the rule applies, the arithmetic steps (operands, operation, result, rounding rule), the expected value or kind 'not_known' with the reason, and what the row does not establish; plus prepared_by, checked_by, sources and a change log",
+    "docs/reference-cases/R6B/<case id>.md: one page per case rendered from its data file, in plain English, that a person can follow with the law text and a calculator",
+    "docs/reference-cases/R6B/provenance/: the helper's two returns, unchanged, each under a short header that says what it is, when it was made and under which rules (the sealed folder, no program access)",
+    "services/api/tests/rules/reference_cases/: a stdlib checker and renderer for the case files (no import from the rule engine, the scenario engine or any program output) and test_r6b_reference_cases.py: the structure, the arithmetic recomputed exactly, the capture digests, the rendered pages byte-identical to the data, no program result in any case file, and a small loader that later [LAW] tests use to read a row's expected value by its id",
+    "project-control/reports/M4-T024-producer-report.md: what was written; a table of every row with its expected value and its source line in the helper's return and in the work order; EVERY difference found between the work order's tables and the helper's returns, reported and not silently resolved; every check with its DIRECT exit code"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/reference-cases/R6B/**",
+    "services/api/tests/rules/reference_cases/**",
+    "project-control/reports/M4-T024-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/** (no rule file, rule engine, registry, evaluator, scenario or capture bundle changes)",
+    "docs/research/** (the captures and research notes are read, not changed)",
+    "docs/plans/** (the work order is read, not changed; the orchestrator updates it later)",
+    "docs/zoning-rule-review/** and services/api/app/rules/review_register/** (the register is not changed here)",
+    "every other test file",
+    "apps/**, packages/**, supabase/**, .github/**, CLAUDE.md, .claude/**, any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "four_cases_each_in_its_own_files",
+      "input": "ls docs/reference-cases/R6B",
+      "expected": "four cases (real lot, interior lots, corner reach, suffix question), each with one data file and one rendered page; every row of the work order's tables A (L1 to L15), B (P1, P3, P4, P5 and the interior coverage reading), C (the real lot, C1, C2, C3) and D (three sections, and the two that need no such step) is present under its id"
+    },
+    {
+      "id": "S2",
+      "case": "every_row_can_be_followed_by_a_person",
+      "input": "any row of any case page",
+      "expected": "the facts with their source, the quoted law text with its section, why the rule applies, each arithmetic step with its operands and result, the rounding rule where one applies, and the expected value: enough to redo it with the law text and a calculator, in plain English"
+    },
+    {
+      "id": "S3",
+      "case": "nothing_from_a_program_run",
+      "input": "the case files and the checker's imports",
+      "expected": "no field, column or sentence gives a program result ('Program today', 'actual', 'first screen' and the like stay in the work order); the checker, renderer and test import nothing from app.rules, app.scenario or any engine; a test fails when a case file gains a program-result field"
+    },
+    {
+      "id": "S4",
+      "case": "values_come_from_the_helpers_returns",
+      "input": "each expected value against return-independent-hand-calculation-1.txt and -2.txt and against section 9 of the work order",
+      "expected": "each row names where its value stands in the helper's return; the two returns are in docs/reference-cases/R6B/provenance/ unchanged; every difference between a return and the work order's table is listed in the producer report and in the case's change log, and the case follows the helper's return unless the work order records a reasoned correction"
+    },
+    {
+      "id": "S5",
+      "case": "arithmetic_recomputed_exactly",
+      "input": "every arithmetic step of every row",
+      "expected": "a test recomputes each step from the operands in the data file with exact decimal arithmetic and the stated rounding rule and compares it with the recorded result (2.00 x 10,075 = 20,150; 20,150 / 680 = 29.63..., a fraction below three-quarters dropped, so 29; 10,710 / 680 = 15.75 exactly, 'equal to or greater than three-quarters', so 16); MUTATION PROOF: one operand changed in a copy makes the test fail and name the row"
+    },
+    {
+      "id": "S6",
+      "case": "law_text_tied_to_its_capture",
+      "input": "every citation",
+      "expected": "a captured section names its snapshot id, file and content digest, and the test compares the digest with the live capture file; the quoted words are found in the capture's text; a section that is NOT captured (ZR 12-10 lot definitions, ZR 23-342) says so, gives the official page and the date it was read, and is listed in the README as waiting for step P1; MUTATION PROOF: a changed digest in a copy makes the test fail"
+    },
+    {
+      "id": "S7",
+      "case": "not_known_stays_not_known",
+      "input": "rows the independent reading could not settle (whole-lot coverage L5, the rear yard beyond the corner area L12, the ordinary rear-yard depth L14, floor plates and floors L15, qualifying-housing units L7 and L8 as the tables state them, the 'not known' cells of table C)",
+      "expected": "the expected value has kind 'not_known' with the reason in plain words and no number; the test refuses a 'not_known' row that carries a numeric value and a numeric row without arithmetic or a quoted basis"
+    },
+    {
+      "id": "S8",
+      "case": "change_rule_and_change_log",
+      "input": "README.md and each case's change log",
+      "expected": "the README states that an expected value changes only with a recorded reason (corrected evidence, a corrected reading, a change in the law) and that a disagreement with the program is investigated on both sides; each case has a change log whose first entry is its creation, dated, naming the sources; the test requires the log to be non-empty and its dates ordered"
+    },
+    {
+      "id": "S9",
+      "case": "what_a_case_is_worth",
+      "input": "README.md and each case page",
+      "expected": "each says the case was prepared by an AI helper and recomputed by a second AI, that their agreement alone is not proof, that it is a draft reading and not professionally reviewed, that it is one lot (for the real lot), that most sections were read from the same captures the rules were written from, and what the case does not establish; nothing reads as a statement that a value is legally correct or that anything complies"
+    },
+    {
+      "id": "S10",
+      "case": "rendered_pages_match_the_data",
+      "input": "the renderer's check mode",
+      "expected": "each case page is byte-identical to what the renderer produces from its data file; a hand-edited page fails the test"
+    },
+    {
+      "id": "S11",
+      "case": "a_loader_for_later_law_tests",
+      "input": "the loader in services/api/tests/rules/reference_cases",
+      "expected": "a later [LAW] test can ask for a row by case id and row id and receives its expected value, its kind and its source reference; asking for a row that does not exist fails loudly; the test proves it for one numeric row and one 'not_known' row"
+    },
+    {
+      "id": "S12",
+      "case": "scope",
+      "input": "git diff <claim-seam head>..<final head>",
+      "expected": "only allowed_paths changed; no rule file, engine, capture, plan, register, workflow or dependency file changed; ruff and the full services/api pytest pass; every new source file stays under the 600-line warning threshold"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "ready",
+  "progress_percent": 5,
+  "risks": [
+    "A case value quietly taken from the program would make every later [LAW] test circular -> S3 and S4: values are traced to the helper's returns, and the checker cannot import the engine",
+    "The work order's tables and the helper's returns may differ in a detail -> S4: every difference is reported, none is resolved silently",
+    "An unsettled value could be filled in to look complete -> S7: 'not known' is a value kind of its own and the test refuses a number on it",
+    "Two AI answers agreeing could be read as proof -> S9: each case says what it is worth",
+    "A later change of a capture would leave a case quoting stale text -> S6: the digest is checked by the build",
+    "Scope creep into fixing rules where a case disagrees with the program -> forbidden_paths; disagreements are reported for the later steps (Part 0)"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-06T20:37:42.971519+00:00",
+  "updated_at": "2026-10-06T20:59:38.525232+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R226",
+        "D-090-R241",
+        "D-090-R259",
+        "D-090-R291"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-06T20:37:42.971824+00:00",
+  "path_notes": "PRODUCER = rules-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). The orchestrator integrates its commits onto the task branch. The contract and claim seams of this task ride on the research-corrections pull request (branch task/research-assessment-corrections-2026-10-06); the task branch is created from the integration branch after that pull request has merged. MODULARITY ANSWERS: (1) owner of the change = a new, separate reference-case record; (2) module = documents under docs/reference-cases/R6B/ and a stdlib checker, renderer and loader under services/api/tests/rules/reference_cases/ (test support, not program code: the program must never read a reference case at run time); (3) new files, each under the 600-line warning threshold; (4) nothing extracted from existing modules; (5) public interface = the case files' schema (case id, row id, expected value and kind) and the loader; (6) focused test = services/api/tests/rules/reference_cases/test_r6b_reference_cases.py; (7) `python3 tools/modularity_check.py --check` passes before submission.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .   (the api CI job's first step)",
+    "cd services/api && python -m pytest -q tests/rules/reference_cases",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the final candidate; a heavy run, nothing else running)",
+    "python3 tools/modularity_check.py --check"
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-06T21:00:00+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-06, before any claim] the test-support folder moves from services/api/tests/reference_cases/ to services/api/tests/rules/reference_cases/. The repository's ownership map (docs/lanes/OWNERSHIP.yaml) has no owner for a new folder directly under services/api/tests/, and the ownership check failed on the seeded placeholder (pull request 453, control-plane job, runs 37529527410 and 37529531704). The new folder is inside a glob the map already assigns to the engine lane. No scenario, gate, reviewer or other path changed; the readiness gate is recorded again at the corrected head."
+    }
+  ]
+}
