@@ -120,8 +120,8 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "A case value quietly taken from the program would make every later [LAW] test circular -> S3 and S4: values are traced to the helper's returns, and the checker cannot import the engine",
     "The work order's tables and the helper's returns may differ in a detail -> S4: every difference is reported, none is resolved silently",
@@ -132,7 +132,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T20:37:42.971519+00:00",
-  "updated_at": "2026-10-06T23:27:27.805032+00:00",
+  "updated_at": "2026-10-06T23:42:41.401913+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
