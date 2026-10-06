@@ -93,8 +93,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "ready",
+  "progress_percent": 5,
   "risks": [
     "The 12-10 page is very large and its print channel has timed out before -> the capture states the channel used and any fallback, as the existing 12-10 capture does",
     "A capture that silently omits a condition would mislead every later reading -> S3 and S4: an independent re-read and completeness of the two texts the estimate depends on",
@@ -102,7 +102,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T20:40:44.785325+00:00",
-  "updated_at": "2026-10-06T20:40:45.165265+00:00",
+  "updated_at": "2026-10-06T20:41:01.115594+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
