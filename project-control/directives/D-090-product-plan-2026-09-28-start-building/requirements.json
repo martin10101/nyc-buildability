@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 247,
+ "requirement_count": 265,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T03:49:07+00:00",
+ "updated_at": "2026-10-06T04:07:48+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -8360,6 +8360,613 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-06 (message 78).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R248",
+   "text": "'I want the full feasibility report comparable to my sample PDF, with reliable numbers.': the goal is the full feasibility report of the kind of the owner's sample, with numbers that can be relied on.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R142",
+    "D-090-R201"
+   ],
+   "required_harness": "The intended report is defined section by section against the sample.",
+   "required_evidence": "The section map; later, the report itself.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R249",
+   "text": "'Don\u2019t reduce the goal to a basic zoning summary.': the goal is not cut down to a zoning summary; a piece that shows only zoning limits is a step, never the product.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R248"
+   ],
+   "required_harness": "No plan or update describes a zoning-limits screen as the finished product.",
+   "required_evidence": "The plans, the work order and the updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R250",
+   "text": "'Build it one piece at a time': the report is built one piece at a time.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R167",
+    "D-090-R230"
+   ],
+   "required_harness": "One piece in hand at a time; each reviewed before the next.",
+   "required_evidence": "The ledger and the pull requests, in order.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R251",
+   "text": "'partial work is a milestone, not completion.': a finished piece is reported as a milestone; nothing is reported as complete until the whole promised report is.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R206",
+    "D-090-R209"
+   ],
+   "required_harness": "No update or record calls a part of the report complete as the product.",
+   "required_evidence": "The updates and handoffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R252",
+   "text": "'Include property facts, applicable zoning, development options, estimated floors, simple building shapes, legal unit limits where applicable, realistic apartment-count estimates, option comparisons and the downloadable report.': the report contains these nine things: property facts; applicable zoning; development options; estimated floors; simple building shapes; legal unit limits where they apply; realistic apartment-count estimates; option comparisons; a downloadable report.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R248"
+   ],
+   "required_harness": "Each of the nine is a named part of the intended report with its own state (built, remaining).",
+   "required_evidence": "The section map; later, each part demonstrated in the browser and the PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R253",
+   "text": "'Keep legal maximums separate from practical estimates and state the assumptions.': a legal maximum and a practical estimate are never shown as one figure or under one label, and every estimate states the assumptions it rests on.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R198",
+    "D-090-R252"
+   ],
+   "required_harness": "Tests that each estimate carries its assumptions and that no legal maximum is labelled as an estimate or the reverse.",
+   "required_evidence": "The report contract and those tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R254",
+   "text": "'No detailed apartment layouts or permit-ready plans.': the report contains no detailed apartment layouts and no permit-ready plans.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R210",
+    "D-090-R225"
+   ],
+   "required_harness": "The section map marks the sample's parts that fall outside this line.",
+   "required_evidence": "The section map.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R255",
+   "text": "'Facts and legal eligibility must come from evidence.' 'A user assumption can support a clearly labeled conditional scenario, but must not become a verified fact.': a fact about the property, or whether a legal condition is met, comes from evidence; what a user assumes may be used only for a result clearly labelled as conditional on that assumption, and is never stored or shown as a verified fact.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R237",
+    "D-090-R240"
+   ],
+   "required_harness": "A test that a result resting on a user's assumption is labelled conditional and names the assumption, and that the assumption never appears among the sourced facts.",
+   "required_evidence": "The corrected work order; later, those tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R256",
+   "text": "'Design choices, such as floor height and average apartment size, may have visible, editable starting values.' 'No hidden defaults.': a design choice may start from a value the user can see and change; no value is applied without being shown.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R240"
+   ],
+   "required_harness": "Every starting value is printed with the result and is editable; a test finds no value used in a calculation that the result does not print.",
+   "required_evidence": "The corrected work order; later, that test.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R257",
+   "text": "'For conflicting areas, establish what each measures and which applies.' 'Don\u2019t automatically choose one.' 'If unresolved, show defensible conditional results or withhold the affected calculations.': when two area figures disagree, what each one measures and which one applies is established first; neither is picked automatically; if that is not settled, the affected calculations are shown only as defensible conditional results or are withheld.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R239"
+   ],
+   "required_harness": "A test with two disagreeing area figures: no single settled figure is shown; either labelled conditional results or nothing.",
+   "required_evidence": "The corrected work order; later, that test.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R258",
+   "text": "'Missing information and unfinished features are different.' 'Calling a promised feature \u201cunsupported\u201d does not make it finished.': information that is missing for a property and a feature that is not built yet are kept apart; a promised feature that is not built stays owed work and is never counted as finished by being labelled unsupported.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R206",
+    "D-090-R237"
+   ],
+   "required_harness": "Every open item is marked as missing information or as unfinished work; no checklist counts an unfinished promised feature as done.",
+   "required_evidence": "The work order, the section map and the district checklist.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R259",
+   "text": "'Keep independently worked reference cases separate from program output.' 'AI can help prepare them, but agreement between AI answers alone isn\u2019t proof.': worked reference cases are kept in their own files, apart from anything the program produces; an AI may help prepare them; two AI answers agreeing is not, alone, proof that a value is right.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R226",
+    "D-090-R227",
+    "D-090-R241"
+   ],
+   "required_harness": "Reference cases live in their own files with the facts, the law text relied on and the arithmetic, so a person can follow each with the source and a calculator.",
+   "required_evidence": "Those files and the rule that an expected value changes only with a recorded reason.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R260",
+   "text": "'Compare options using stated criteria.' 'Don\u2019t claim one is \u201cbest\u201d without explaining why.': options are compared on criteria that are stated; none is called best unless the report says by which criterion and why.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R252"
+   ],
+   "required_harness": "The comparison prints its criteria; a test rejects 'best' without a stated criterion.",
+   "required_evidence": "The comparison part of the report and that test.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R261",
+   "text": "'Now map every section of the sample PDF to our intended report.' 'Identify what is already built, what remains and what falls outside the apartment-design/permit-plan boundary.': every section of the sample PDF is mapped to the intended report, each marked as already built, remaining, or outside the apartment-design and permit-plan boundary.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R252",
+    "D-090-R254"
+   ],
+   "required_harness": "A map with one row per section of the sample and those three marks.",
+   "required_evidence": "The section map and its independent check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R262",
+   "text": "'Include the three audit corrections, revise the work order once, and have it independently checked.': the work order is revised once, with the three corrections its audit required, and the revision is checked by a different agent.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R236"
+   ],
+   "required_harness": "One revision commit; the three corrections present; an independent check at that commit.",
+   "required_evidence": "The revised work order and its check record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R263",
+   "text": "'Keep existing security and merge restrictions.': every security and merge restriction in force stays as it is.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R217",
+    "D-090-R218",
+    "D-090-R219",
+    "D-090-R220",
+    "D-090-R231",
+    "D-090-R232"
+   ],
+   "required_harness": "No merge on a red or stale check; the dependency hold untouched; no production setting changed; no timer.",
+   "required_evidence": "The pull request list and the check results.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R264",
+   "text": "'Explain any unresolved scope decision briefly before implementation.': any scope decision still open is explained briefly to the owner before anything is built.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R223"
+   ],
+   "required_harness": "A short list of the open scope decisions in the reply; no build before it.",
+   "required_evidence": "The reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R265",
+   "text": "'Also since I will do session handoff soon where does this information getting saved?': the reply says where this information is saved, and it is saved where a later session will find it.",
+   "source_ref": "source-035-amendment.md#owner-message-79-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "Everything of this session that a later session needs is in the repository on a pushed branch, and the reply says where.",
+   "required_evidence": "The pushed branch and the reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 79).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

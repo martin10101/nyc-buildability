@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T03:49:07+00:00",
+ "updated_at": "2026-10-06T04:07:48+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -268,10 +268,28 @@
   "D-090-R244",
   "D-090-R245",
   "D-090-R246",
-  "D-090-R247"
+  "D-090-R247",
+  "D-090-R248",
+  "D-090-R249",
+  "D-090-R250",
+  "D-090-R251",
+  "D-090-R252",
+  "D-090-R253",
+  "D-090-R254",
+  "D-090-R255",
+  "D-090-R256",
+  "D-090-R257",
+  "D-090-R258",
+  "D-090-R259",
+  "D-090-R260",
+  "D-090-R261",
+  "D-090-R262",
+  "D-090-R263",
+  "D-090-R264",
+  "D-090-R265"
  ],
- "requirements_id_digest_sha256": "3b5a726822a40716f686dfe18d5eb4ab6b5937010180a05ec641c3f49a718667",
- "requirements_content_digest_sha256": "420822047c587b5ce7e7c70bc8ee1206b2cc8fc43c85b50db8d6493e001fd868",
+ "requirements_id_digest_sha256": "8de5294e11a239dd9c62813cf1883e3e20f5c0c3075c92eebaee40ec142dfc0c",
+ "requirements_content_digest_sha256": "23b469301fdbc52f21fe36eadc0052fba1f28a6d2600b4a363cd6ec53d2441d7",
  "sources": [
   {
    "file": "source-001.md",
@@ -543,6 +561,14 @@
    "recorded_at": "2026-10-06T03:49:07+00:00",
    "content_digest_sha256": "13cb693c2ec8f59ace6cfb1c851c98226c5265e22fa3f05423ddca9d9a7ca556",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-035-amendment.md",
+   "kind": "amendment",
+   "sequence": 35,
+   "recorded_at": "2026-10-06T04:07:48+00:00",
+   "content_digest_sha256": "ebdf23f3433dc696d5358e85bf344962365bad6f0fedbfc74ea0feaaa2398efc",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -578,7 +604,8 @@
   "source-031-amendment.md",
   "source-032-amendment.md",
   "source-033-amendment.md",
-  "source-034-amendment.md"
+  "source-034-amendment.md",
+  "source-035-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -821,6 +848,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-034 (session 013RaGmC message 78, 2026-10-06: a proposed testing plan, a PDF that is not committed, to compare with the existing rules and the work order - what is covered, what is missing, what conflicts; no changes yet; scope stays simplified feasibility; one short recommendation before changing the plan) and requirements D-090-R243..R247, all pending. Text extracted by script; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-06T04:07:48+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-035 (session 013RaGmC message 79, 2026-10-06: the full feasibility report of the kind of the sample, its nine contents, legal maximums apart from practical estimates, six decisions on the open questions, a section-by-section map of the sample, one revision of the work order with the three audit corrections and an independent check, existing security and merge restrictions kept, open scope decisions explained first, and where the information is saved) and requirements D-090-R248..R265, all pending. Text extracted by script; nothing retyped; no existing row edited."
   }
  ]
 }
