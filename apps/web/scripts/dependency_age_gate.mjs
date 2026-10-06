@@ -16,7 +16,7 @@
 //   * was published at least MIN_AGE_SECONDS ago, measured against an
 //     authoritative current UTC (the npm registry `Date` response header).
 //
-// FAIL-CLOSED SEMANTICS (never skip, never warn-only, no allowlist/exception)
+// FAIL-CLOSED SEMANTICS (never skip, never warn-only, no allowlist/suppression)
 // --------------------------------------------------------------------------
 // A package is marked FAIL (non-zero process exit) on ANY of: registry outage
 // or network error (after bounded retries, distinctly typed as
@@ -24,7 +24,21 @@
 // advisory-free / age-clean), missing or malformed publication timestamp,
 // malformed lock entry, missing integrity, integrity mismatch, unexpected
 // resolved host, or any unverifiable/ambiguous condition. There is no
-// allowlist, no --ignore, no suppression, and no exception path in this tool.
+// allowlist, no --ignore, and no suppression in this tool.
+//
+// AGE-ONLY OWNER EXCEPTION (docs/DEPENDENCY_SECURITY_POLICY.md section 6)
+// --------------------------------------------------------------------------
+// There is exactly ONE narrow exception path, and it applies to the 7-day AGE
+// requirement ONLY. `OWNER_AGE_EXCEPTIONS` is a frozen, owner-authorized list;
+// each entry names a single package@version bound to its registry integrity and
+// its exact registry publication instant, and carries the authorizing directive.
+// An entry admits that one tarball (result kind OWNER_AGE_EXCEPTION, counted as a
+// PASS) ONLY while its age is below MIN_AGE_SECONDS; at 604800 s the ordinary OK
+// path fires first, so the exception self-expires and can never apply again. It
+// can NEVER waive an advisory, an integrity mismatch, an unexpected host, or any
+// other fail-closed condition — every one of those still fails before the age
+// branch is reached. No agent may add, widen, or apply an exception: each entry
+// needs its own owner approval, directive record and G5 security review.
 //
 // Boundary: exactly 604800 s PASSES; 604799 s FAILS (full-second arithmetic,
 // no day rounding).
@@ -58,6 +72,9 @@ const BASE_BACKOFF_MS = 500;
 export const Kind = Object.freeze({
   OK: "ok",
   TOO_NEW: "too_new",
+  // Admitted under a single owner-authorized age exception (section 6). Counts
+  // as a PASS wherever OK does; applies ONLY while age < MIN_AGE_SECONDS.
+  OWNER_AGE_EXCEPTION: "owner_age_exception",
   INFRASTRUCTURE_UNAVAILABLE: "infrastructure_unavailable",
   INTEGRITY_MISMATCH: "integrity_mismatch",
   UNEXPECTED_HOST: "unexpected_host",
@@ -66,6 +83,48 @@ export const Kind = Object.freeze({
   MALFORMED: "malformed",
   AMBIGUOUS: "ambiguous",
 });
+
+// Owner-authorized AGE-ONLY exceptions (docs/DEPENDENCY_SECURITY_POLICY.md
+// section 6). Frozen so no code path can add, widen, or mutate an entry at
+// runtime. Each entry binds ONE package@version to the registry integrity and
+// the exact registry publication instant recorded by the owner's directive; it
+// admits that single tarball only while the version is younger than
+// MIN_AGE_SECONDS, and never waives any advisory/integrity/host/other condition.
+// Adding an entry requires its own owner approval, directive record and G5 review.
+//   - source-map-js 1.2.2: owner directive D-092 (2026-10-06, "Go ahead update
+//     it only this 1 time"); clears blocker B-029 (GHSA-68fv-2mgg-jv7q) about a
+//     day early; self-expires at 2026-09-30T14:08:09.382Z + 604800 s =
+//     2026-10-07T14:08:09.382Z; cleaned up by task M0-T183.
+export const OWNER_AGE_EXCEPTIONS = Object.freeze([
+  Object.freeze({
+    name: "source-map-js",
+    version: "1.2.2",
+    integrity: "sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==",
+    published: "2026-09-30T14:08:09.382Z",
+    directive: "D-092",
+  }),
+]);
+
+// Match one lock entry against the owner-authorized age exceptions. Returns the
+// matching frozen entry, or null. ALL of: the age is in [0, MIN_AGE_SECONDS);
+// name AND version match; the lock integrity (already proven equal to the
+// registry's by decide() before this is called) equals the entry's recorded
+// integrity; and the registry publication instant equals the entry's recorded
+// instant (compared as instants, not strings). The age is always computed by the
+// caller from the registry time and the supplied `now`; `published` is only
+// compared here, never substituted for registry time.
+export function matchOwnerAgeException(entry, registryPublished, ageSeconds) {
+  if (!(ageSeconds >= 0 && ageSeconds < MIN_AGE_SECONDS)) return null;
+  const publishedMs = registryPublished.getTime();
+  for (const exc of OWNER_AGE_EXCEPTIONS) {
+    if (exc.name !== entry.name) continue;
+    if (exc.version !== entry.version) continue;
+    if (exc.integrity !== entry.integrity) continue;
+    if (new Date(exc.published).getTime() !== publishedMs) continue;
+    return exc;
+  }
+  return null;
+}
 
 // A fail-closed condition. `kind` lets callers distinguish an infrastructure
 // outage from a genuine verification failure.
@@ -168,7 +227,8 @@ function result(entry, kind, timestamp, ageSeconds, reason) {
     kind,
     timestamp: timestamp || null,
     ageSeconds: ageSeconds ?? null,
-    passed: kind === Kind.OK,
+    // The owner age exception counts as a PASS wherever OK does.
+    passed: kind === Kind.OK || kind === Kind.OWNER_AGE_EXCEPTION,
     reason: reason || "",
   };
 }
@@ -230,6 +290,18 @@ export function decide(entry, packument, now) {
   const ageSeconds = Math.floor((now.getTime() - published.getTime()) / 1000);
   if (ageSeconds >= MIN_AGE_SECONDS) {
     return result(entry, Kind.OK, published.toISOString(), ageSeconds, "");
+  }
+  // Owner-authorized AGE-ONLY exception (section 6). Reached ONLY here, after
+  // every other check has already passed and only while age < MIN_AGE_SECONDS.
+  // At age >= MIN_AGE_SECONDS the OK return above fires first, so this can never
+  // apply once the version is old enough. `published` (registry time) drives the
+  // age; the entry's recorded instant is only compared, never substituted.
+  const exception = matchOwnerAgeException(entry, published, ageSeconds);
+  if (exception) {
+    const expiry = new Date(published.getTime() + MIN_AGE_SECONDS * 1000).toISOString();
+    return result(entry, Kind.OWNER_AGE_EXCEPTION, published.toISOString(), ageSeconds,
+      `owner age exception ${exception.directive}: admitted at age ${ageSeconds}s ` +
+        `(< ${MIN_AGE_SECONDS}s); auto-expires ${expiry} (registry publication + ${MIN_AGE_SECONDS}s)`);
   }
   return result(entry, Kind.TOO_NEW, published.toISOString(), ageSeconds,
     `published ${ageSeconds}s ago; requires >= ${MIN_AGE_SECONDS}s`);
@@ -423,9 +495,23 @@ export async function runNpmCliAdvisory(version, client = new RegistryClient()) 
 // Reporting / CLI
 // --------------------------------------------------------------------------- //
 export function formatResult(r) {
-  const verdict = r.passed ? "PASS" : "FAIL";
   const ts = r.timestamp || "-";
   const age = r.ageSeconds != null ? `${r.ageSeconds}s (${(r.ageSeconds / 86400).toFixed(2)}d)` : "-";
+  // An owner age exception prints on its own loud line so it cannot be missed in
+  // a CI log: it names the directive, the age in seconds, and the expiry instant.
+  if (r.kind === Kind.OWNER_AGE_EXCEPTION) {
+    const expiry = r.timestamp
+      ? new Date(new Date(r.timestamp).getTime() + MIN_AGE_SECONDS * 1000).toISOString()
+      : "-";
+    const dir = OWNER_AGE_EXCEPTIONS.find((e) => e.name === r.name && e.version === r.version);
+    const dirId = dir ? dir.directive : "D-092";
+    return (
+      `>>> OWNER AGE EXCEPTION (${dirId}) PASS  ${r.name}@${r.version}  ` +
+      `uploaded=${ts}  age=${r.ageSeconds}s  expires=${expiry}  ` +
+      `(age-only, owner-authorized; counts as PASS; section 6) <<<`
+    );
+  }
+  const verdict = r.passed ? "PASS" : "FAIL";
   const tail = r.passed ? "" : `  [${r.kind}: ${r.reason}]`;
   return `${verdict}  ${r.name}@${r.version}  uploaded=${ts}  age=${age}${tail}`;
 }
@@ -457,10 +543,12 @@ export async function run(lockPath, client = new RegistryClient()) {
 
   let ok = true;
   let infra = 0;
+  let exceptions = 0;
   for (const r of results) {
     console.log("  " + formatResult(r));
     if (!r.passed) ok = false;
     if (r.kind === Kind.INFRASTRUCTURE_UNAVAILABLE) infra += 1;
+    if (r.kind === Kind.OWNER_AGE_EXCEPTION) exceptions += 1;
   }
 
   if (infra > 0) {
@@ -471,11 +559,13 @@ export async function run(lockPath, client = new RegistryClient()) {
     );
     return 1;
   }
+  const passMsg =
+    exceptions > 0
+      ? `PASS — every committed registry package is >= 7 days old and integrity-verified, ` +
+        `except ${exceptions} admitted under a visible owner age exception (age-only; section 6)`
+      : "PASS — every committed registry package is >= 7 days old and integrity-verified";
   console.log(
-    "\nRESULT: " +
-      (ok
-        ? "PASS — every committed registry package is >= 7 days old and integrity-verified"
-        : "FAIL — at least one package is too new, tampered, or unverifiable"),
+    "\nRESULT: " + (ok ? passMsg : "FAIL — at least one package is too new, tampered, or unverifiable"),
   );
   return ok ? 0 : 1;
 }

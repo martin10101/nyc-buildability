@@ -1,0 +1,123 @@
+{
+  "schema": "directive_verification/v2",
+  "directive_id": "D-092",
+  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. No completion claim exists at capture time.",
+  "verified_by": null,
+  "verified_at": null,
+  "task_verifications": [
+    {
+      "directive_id": "D-092",
+      "task_id": "M0-T182",
+      "applicable_requirement_ids": [
+        "D-092-R004",
+        "D-092-R006",
+        "D-092-R007",
+        "D-092-R008",
+        "D-092-R012",
+        "D-092-R013",
+        "D-092-R014",
+        "D-092-R015"
+      ],
+      "producer": "frontend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": "43bf0209db2489e55bb0d5ed6765ac6e149222bb",
+      "reviewed_manifest_sha256": "416ce200565ee4e40f2b63f30515032ae9c604c9c3dff45614f8274fdf3e4dad",
+      "requirements": [
+        {
+          "id": "D-092-R004",
+          "state": "PASS",
+          "evidence": [
+            "No .github change in e97bf405..65053cdd; the exception branch in apps/web/scripts/dependency_age_gate.mjs sits after the host, integrity and timestamp checks; generate-lockfile run 37421376443: npm audit 'found 0 vulnerabilities' and JSON total == 0 at every severity, age gate RESULT PASS, npm-CLI advisory PASS; node --test 50/50",
+            "Independent G3/G4 (code-reviewer) and G5 (security-reviewer) PASS at 653b254d; every check at that head a completed success (48 of 48); the merge step re-reads every check on the final head",
+            "Gates G0/G2/G3/G4/G5 PASS at content identity 416ce200 (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer frontend-engineer is neither); DCV report project-control/reports/M0-T182-DCV.md (verified at 65053cdd; validator exit 0; carry-forward condition met at this head: nine blobs byte-identical, later commits only under project-control/)"
+          ],
+          "reviewed_sha": "43bf0209db2489e55bb0d5ed6765ac6e149222bb"
+        },
+        {
+          "id": "D-092-R006",
+          "state": "PASS",
+          "evidence": [
+            "The diff touches no workflow file; no existing check is removed or reordered (added: one kind, one frozen list, one matcher, one branch, reporting lines); MIN_AGE_SECONDS unchanged",
+            "Gates G0/G2/G3/G4/G5 PASS at content identity 416ce200 (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer frontend-engineer is neither); DCV report project-control/reports/M0-T182-DCV.md (verified at 65053cdd; validator exit 0; carry-forward condition met at this head: nine blobs byte-identical, later commits only under project-control/)"
+          ],
+          "reviewed_sha": "43bf0209db2489e55bb0d5ed6765ac6e149222bb"
+        },
+        {
+          "id": "D-092-R007",
+          "state": "PASS",
+          "evidence": [
+            "decide() computes the age from the registry's time map and the supplied clock; matchOwnerAgeException only compares the registry instant with the recorded one; test S6 (wrong, missing, malformed, future time)",
+            "Gates G0/G2/G3/G4/G5 PASS at content identity 416ce200 (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer frontend-engineer is neither); DCV report project-control/reports/M0-T182-DCV.md (verified at 65053cdd; validator exit 0; carry-forward condition met at this head: nine blobs byte-identical, later commits only under project-control/)"
+          ],
+          "reviewed_sha": "43bf0209db2489e55bb0d5ed6765ac6e149222bb"
+        },
+        {
+          "id": "D-092-R008",
+          "state": "PASS",
+          "evidence": [
+            "No audit step, threshold or suppression changed; the advisory GHSA-68fv-2mgg-jv7q (range >= 1.0.0, < 1.2.2) is cleared by moving to the fixed version 1.2.2; audit total == 0 on the new lock",
+            "Gates G0/G2/G3/G4/G5 PASS at content identity 416ce200 (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer frontend-engineer is neither); DCV report project-control/reports/M0-T182-DCV.md (verified at 65053cdd; validator exit 0; carry-forward condition met at this head: nine blobs byte-identical, later commits only under project-control/)"
+          ],
+          "reviewed_sha": "43bf0209db2489e55bb0d5ed6765ac6e149222bb"
+        },
+        {
+          "id": "D-092-R012",
+          "state": "PASS",
+          "evidence": [
+            "Message 84 is the approval of the one proposal the reply described; built as ledger task M0-T182 under G0/G2/G3/G4/G5; the change equals that proposal item for item; the lock differs from the base only in node_modules/source-map-js (1.2.1 -> 1.2.2, integrity equal to the registry's and the recorded value)",
+            "Gates G0/G2/G3/G4/G5 PASS at content identity 416ce200 (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer frontend-engineer is neither); DCV report project-control/reports/M0-T182-DCV.md (verified at 65053cdd; validator exit 0; carry-forward condition met at this head: nine blobs byte-identical, later commits only under project-control/)"
+          ],
+          "reviewed_sha": "43bf0209db2489e55bb0d5ed6765ac6e149222bb"
+        },
+        {
+          "id": "D-092-R013",
+          "state": "PASS",
+          "evidence": [
+            "OWNER_AGE_EXCEPTIONS holds one frozen entry; test S8 deep-equals it and proves list and entry frozen; S3/S4: another version or name stays too_new; the policy text requires a separate owner approval, directive record and G5 review for any entry",
+            "Gates G0/G2/G3/G4/G5 PASS at content identity 416ce200 (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer frontend-engineer is neither); DCV report project-control/reports/M0-T182-DCV.md (verified at 65053cdd; validator exit 0; carry-forward condition met at this head: nine blobs byte-identical, later commits only under project-control/)"
+          ],
+          "reviewed_sha": "43bf0209db2489e55bb0d5ed6765ac6e149222bb"
+        },
+        {
+          "id": "D-092-R014",
+          "state": "PASS",
+          "evidence": [
+            "Material diff: the package.json pin, the .npmrc exclusion, the gate rule, tests S1-S8, the policy text and the producer report only; the lockfile by workflow commit 246bcebf (github-actions[bot]), not by hand; no forbidden path",
+            "Gates G0/G2/G3/G4/G5 PASS at content identity 416ce200 (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer frontend-engineer is neither); DCV report project-control/reports/M0-T182-DCV.md (verified at 65053cdd; validator exit 0; carry-forward condition met at this head: nine blobs byte-identical, later commits only under project-control/)"
+          ],
+          "reviewed_sha": "43bf0209db2489e55bb0d5ed6765ac6e149222bb"
+        },
+        {
+          "id": "D-092-R015",
+          "state": "PASS",
+          "evidence": [
+            "The ordinary ok return happens at age >= 604800 before the branch; the matcher requires 0 <= age < 604800; test S2: 604799 -> owner_age_exception, 604800 -> ok; expiry = registry publication + 604800 s = 2026-10-07T14:08:09.382Z",
+            "Gates G0/G2/G3/G4/G5 PASS at content identity 416ce200 (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer frontend-engineer is neither); DCV report project-control/reports/M0-T182-DCV.md (verified at 65053cdd; validator exit 0; carry-forward condition met at this head: nine blobs byte-identical, later commits only under project-control/)"
+          ],
+          "reviewed_sha": "43bf0209db2489e55bb0d5ed6765ac6e149222bb"
+        }
+      ]
+    },
+    {
+      "directive_id": "D-092",
+      "task_id": "M0-T183",
+      "applicable_requirement_ids": [
+        "D-092-R016"
+      ],
+      "producer": "frontend-engineer",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-092-R016",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
+    }
+  ]
+}
