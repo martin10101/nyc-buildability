@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 299,
+ "requirement_count": 329,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T07:14:11+00:00",
+ "updated_at": "2026-10-06T07:33:12+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -10103,6 +10103,997 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-06 (message 88).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R300",
+   "text": "'Record the following working guidance in the existing main instruction file used by future sessions': the guidance, from GOAL to its last sentence, is written into the project's main instruction file. ORCHESTRATOR'S READING: that file is CLAUDE.md at the repository root, the project instructions every session loads first; the owner's text goes in unchanged.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "CLAUDE.md holds the guidance text, byte-identical to the message from GOAL on.",
+   "required_evidence": "CLAUDE.md and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R301",
+   "text": "'and reference it from the handoff': docs/SESSION_HANDOFF.md points to that part of the main instruction file.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "The handoff names the section of CLAUDE.md.",
+   "required_evidence": "docs/SESSION_HANDOFF.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R302",
+   "text": "'Verify the correct file rather than creating a duplicate \u201cmain info\u201d file.': which file is the main instruction file is checked before writing, and no new file is created to hold the guidance.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "The change adds no new instruction file; the review confirms the file.",
+   "required_evidence": "The diff and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R303",
+   "text": "'Follow the normal review process.': the change goes through a pull request, an independent review of its exact head, and the fail-closed merge with every expected check a completed success.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "A review record naming the head, and the merge record.",
+   "required_evidence": "The pull request.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R304",
+   "text": "'Deliver the full feasibility report comparable to my sample, with reliable numbers.': the guidance sentence is recorded and followed as written. It restates the goal of R248 and R249.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "No plan or record narrows the goal.",
+   "required_evidence": "The plans and CLAUDE.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R305",
+   "text": "'Keep all promised sections and options unless I explicitly approve removing one.': the guidance sentence is recorded and followed as written. It restates R272.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R272"
+   ],
+   "required_harness": "No section or option is removed without an owner message that approves it.",
+   "required_evidence": "The section map and the registry.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R306",
+   "text": "'No detailed apartment layouts or permit-ready plans.': the guidance sentence is recorded and followed as written. It restates the line of R254.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "No task builds a detailed apartment layout or a permit-ready plan.",
+   "required_evidence": "The ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R307",
+   "text": "'Intermediate milestones are progress, not full completion.': the guidance sentence is recorded and followed as written. It restates R251; completion is reported as R278 says.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R251",
+    "D-090-R278"
+   ],
+   "required_harness": "No milestone is reported as completion of the report.",
+   "required_evidence": "The updates and handoffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R308",
+   "text": "'Finish one implementation piece at a time and obtain independent review.': the guidance sentence is recorded and followed as written. ",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R250"
+   ],
+   "required_harness": "One piece in work at a time; each has an independent review of its exact head.",
+   "required_evidence": "The ledger and review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R309",
+   "text": "'Reuse shared calculations across scenarios, screens, drawings and PDF.': one calculation result serves every scenario, screen, drawing and the PDF; none of them recomputes it separately.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "Screens, drawings and the PDF read the same result document.",
+   "required_evidence": "The code and its tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R310",
+   "text": "'Reach a working address-to-results-to-PDF path early, then expand it into the full report.' 'Don\u2019t abandon the remaining scope.': a first working path from an address to results to a PDF is reached early and then widened to the full report, with nothing of the remaining scope dropped. ORCHESTRATOR'S READING: against the eight steps of R289 to R296 this asks for a first, thin PDF of the connected option soon after step 4, before the full report assembly of step 7; the choice of PDF converter is then needed early. The orchestrator points this out to the owner; the eight steps otherwise stand.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R292",
+    "D-090-R295"
+   ],
+   "required_harness": "A thin address-to-results-to-PDF path exists before the remaining options are built; the later steps still follow.",
+   "required_evidence": "The ledger, the code and the owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R311",
+   "text": "'Research the next necessary decision, bring me a recommendation with its basis, then move forward once it is settled.': the guidance sentence is recorded and followed as written. It joins R297 and R290.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R290",
+    "D-090-R297"
+   ],
+   "required_harness": "Each decision put to the owner carries a recommendation and its basis; work on the piece proceeds once the owner has answered.",
+   "required_evidence": "The research file, the owner updates and the ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R312",
+   "text": "'Avoid repeated planning and wording changes unless they resolve a real issue or record a necessary decision.': the guidance sentence is recorded and followed as written. It restates R298 and extends it to wording changes.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R298"
+   ],
+   "required_harness": "A plan or wording change names the issue it resolves or the decision it records.",
+   "required_evidence": "The documents' history.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R313",
+   "text": "'Run heavy test suites one at a time.': the guidance sentence is recorded and followed as written. It restates R211.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R211"
+   ],
+   "required_harness": "No two heavy suites run at the same time on the development server.",
+   "required_evidence": "The run records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R314",
+   "text": "'Stay within my existing agent limits.': the limits already recorded stay as they are. ORCHESTRATOR'S READING: the limit in force is R211 as recorded: one heavy run and one helper at a time, with the policy cap as a ceiling.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R211"
+   ],
+   "required_harness": "No session runs more helpers at once than R211 allows.",
+   "required_evidence": "The session records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R315",
+   "text": "'Where permitted, separate building, independent review and preparation of the next research question.': building, independent review and the preparation of the next research question are done by different agents where the limits permit. ORCHESTRATOR'S READING: under R211 they are separate agents that run one after another; running any of them at the same time needs the owner's approval (R316).",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R314"
+   ],
+   "required_harness": "The builder, the reviewer and the research helper are different agents.",
+   "required_evidence": "The session and review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R316",
+   "text": "'Do not add a swarm or increase concurrency without my approval.': the guidance sentence is recorded and followed as written. ",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R314"
+   ],
+   "required_harness": "No rise in the number of agents running at once without an owner message that approves it.",
+   "required_evidence": "The session records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R317",
+   "text": "'Parallel work must be independent and must not collide on shared files or tests.': the guidance sentence is recorded and followed as written. ",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R314"
+   ],
+   "required_harness": "Work run in parallel shares no file and no test run.",
+   "required_evidence": "The task scopes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R318",
+   "text": "'Use independently worked, source-backed examples to check interpretation.': the guidance sentence is recorded and followed as written. It restates rule 5 of R255 to R260.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "Reference examples are worked from the source text by an agent that does not see the program's output, and are kept as files.",
+   "required_evidence": "The reference files.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R319",
+   "text": "'Matching the program\u2019s own saved output is not proof of correctness.': the guidance sentence is recorded and followed as written. It restates R241.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "No test counts agreement with a saved program result as proof of the law.",
+   "required_evidence": "The tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R320",
+   "text": "'Keep legal limits separate from practical estimates.': the guidance sentence is recorded and followed as written. ",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "Screens, data and the PDF keep the two apart.",
+   "required_evidence": "The contract, screens and PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R321",
+   "text": "'Make design assumptions visible and editable.': the guidance sentence is recorded and followed as written. It restates R256.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R256"
+   ],
+   "required_harness": "Every design assumption is shown with its value and can be changed by the user.",
+   "required_evidence": "The screens and tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R322",
+   "text": "'Missing facts stay unknown or support clearly conditional scenarios; unfinished promised features remain work owed.': the guidance sentence is recorded and followed as written. It restates rule 4 of R255 to R260.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "A missing fact is shown as not known or as the stated condition of a result; an unbuilt promised feature is listed as owed.",
+   "required_evidence": "The screens and the handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R323",
+   "text": "'Keep a concise record of what is built, connected, tested, merged and still missing.': one short, current record lists what is built, connected, tested, merged and still missing. ORCHESTRATOR'S READING: it is kept in the handoff, not in a new file.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "The handoff carries that record.",
+   "required_evidence": "docs/SESSION_HANDOFF.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R324",
+   "text": "'Each handoff must identify the exact next step, blockers and pending owner decisions.': the guidance sentence is recorded and followed as written. ",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R323"
+   ],
+   "required_harness": "Every handoff names the exact next step, the blockers and the owner decisions that are pending.",
+   "required_evidence": "docs/SESSION_HANDOFF.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R325",
+   "text": "'Report meaningful progress in plain English.': the guidance sentence is recorded and followed as written. It restates R160.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "Owner updates are in plain English.",
+   "required_evidence": "The owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R326",
+   "text": "'Estimate remaining time from observed delivery, not guessed agent speed.': an estimate of remaining time is worked out from how long finished pieces actually took.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "A time estimate cites the measured time of finished pieces.",
+   "required_evidence": "The owner updates and handoffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R327",
+   "text": "'Preserve all existing security, production and merge restrictions.': the guidance sentence is recorded and followed as written. ",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300"
+   ],
+   "required_harness": "No security, production or merge restriction is changed by this guidance.",
+   "required_evidence": "The policies and the merge records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R328",
+   "text": "'This guidance does not authorize new spending, access changes or additional agents.': the guidance sentence is recorded and followed as written. ",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R327"
+   ],
+   "required_harness": "No spending, access change or added agent is justified by this guidance.",
+   "required_evidence": "The session records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R329",
+   "text": "'Point out any conflict before changing those restrictions.': where the guidance and an existing restriction pull apart, the orchestrator tells the owner before anything is changed.",
+   "source_ref": "source-040-amendment.md#owner-message-89-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R327"
+   ],
+   "required_harness": "The owner update names any such conflict.",
+   "required_evidence": "The owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 89).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
