@@ -23,6 +23,14 @@ open, or dictate results into the chat — it does the file work.
 - Ask for **citations, section numbers, and exact quotes with URLs** in every answer — a claim
   without a pinpoint citation costs verification time instead of saving it.
 
+**How a request is worked now (owner, 2026-10-06; D-090 R285 to R288).** Deep questions, such as a
+starting floor height, are written here. For each one the orchestrator first runs its own research
+helper, which searches widely online and reports an answer with its sources; the answer is written
+into the entry. If the helper finds no well-supported answer, or its answer leaves the question less
+clear, the entry stays OPEN and is marked **FOR THE OWNER'S OTHER AGENT**, and the owner is reminded
+to hand it on. A request is never a blocker. Everything above still holds: an answer is a lead to be
+checked, never a source of record.
+
 **Entry format:** question · why it matters · what it unlocks · status (OPEN / ANSWERED
 <date> / ROUTED-to-architect-doc).
 
@@ -168,6 +176,112 @@ history). The active queue never carries figured-out material.
 *Loop: append new requests below with the same format. Owner: paste results to the companion
 session or the build session; the receiving session marks the entry ANSWERED and names the
 verification target.*
+
+## RQ-006 — A starting floor-to-floor height for the floor estimate (R6B first) — ANSWERED IN PART 2026-10-06 (research helper); residual OPEN, FOR THE OWNER'S OTHER AGENT
+
+- **Question:** What floor-to-floor height should a feasibility estimate start from for a new
+  residential building of the size R6B allows in New York City, and for its ground floor? Wanted:
+  (a) what the Zoning Resolution itself says that bears on it (any rule that ties the number of
+  storeys to height, or a ground-floor height, with section numbers and exact quotes); (b) the
+  minimum ceiling heights in the NYC Building Code and Housing Maintenance Code (section numbers,
+  quotes); (c) what City design guidance says (for example HPD design guidelines, DCP's zoning
+  handbook); (d) what architects and feasibility studies commonly assume, with the reasoning
+  (structure depth, services, finished ceiling); (e) whether the common value differs for a
+  ground floor with shops or a community facility.
+- **Why it matters:** the estimated number of floors is the height limit divided by the
+  floor-to-floor height. The program holds 10 ft as a stated, editable starting value
+  (`services/api/app/scenario/three_answers/inputs.py`). The owner's rule is that a design choice
+  may have a visible, editable starting value and no hidden default (D-090-R256), and the owner
+  approves the starting values (section map, choice 4).
+- **What it unlocks:** a proposed starting value with its basis for the owner's approval; the
+  "estimated floors" part of the report. Until then the result is shown as conditional on the
+  value on screen.
+- **Not asked here:** what any law means for a particular lot.
+- **Research helper, 2026-10-06 (a lead only; full return in `docs/research/helper-research/RQ006_RQ007_RQ008_Starting_Values_2026-10-06.md`):**
+  - It found no law that fixes a floor-to-floor height. The Zoning Resolution limits building
+    height and floor area; the Building Code sets a minimum ceiling height for habitable rooms
+    (it quotes section 1208.2: 8 feet). Both are leads to be captured from the official text
+    before use.
+  - Practice sources it found put a typical residential floor at 9 to 10 ft floor-to-floor and
+    a ground floor with shops or a community facility at 14 to 16 ft. These are professional
+    conventions, not City figures.
+  - Its confidence: PARTLY SUPPORTED.
+- **Proposed starting values (design assumptions; the owner approves; not adopted):** 10 ft for a
+  residential floor (the value the program already holds); 14 ft for a ground floor with shops
+  or a community facility, kept as a separate editable value.
+- **Still open, FOR THE OWNER'S OTHER AGENT:** (1) the ground-floor height that HPD's "Laying the
+  Groundwork" design guideline states (the helper could not read that file); (2) a second,
+  independent source for the usual floor-to-floor height of new low-rise apartment buildings in
+  New York City, ideally an architect's typical section for an R6B building.
+- **Status:** ANSWERED IN PART 2026-10-06. Not a blocker: results that use the value are shown as
+  conditional on the value on screen.
+
+## RQ-007 — A starting average apartment size for the realistic apartment-count estimate — ANSWERED IN PART 2026-10-06 (research helper); residual OPEN, FOR THE OWNER'S OTHER AGENT
+
+- **Question:** What average apartment size should a realistic apartment-count estimate start
+  from for new multifamily housing in New York City (low-rise and mid-rise, outer boroughs)?
+  Wanted: (a) what the Zoning Resolution says about the number of dwelling units allowed per
+  floor area (the dwelling-unit factor: section number, current value, exact quote), kept apart
+  because that is the LEGAL limit, not the realistic count; (b) minimum apartment or room sizes
+  in City codes and HPD design guidelines by apartment type; (c) published figures for the
+  average size of newly built apartments in New York City or Queens, with source and year;
+  (d) how feasibility studies usually pick the figure, and whether they state net or gross area.
+- **Why it matters:** the realistic count is the floor area available for apartments divided by
+  an average apartment size. The owner wants legal maximums kept apart from practical estimates
+  and every estimate to state its assumptions (D-090 source-035).
+- **What it unlocks:** a proposed starting value with its basis for the owner's approval (section
+  map, choices 3 and 4); the "realistic apartment-count estimates" part of the report.
+- **Research helper, 2026-10-06 (a lead only; full return in `docs/research/helper-research/RQ006_RQ007_RQ008_Starting_Values_2026-10-06.md`):**
+  - The legal limit: it quotes the Zoning Resolution's dwelling-unit factor (section 23-52, as
+    amended 2024-12-05) as 680 for multiple dwellings. That is the LEGAL cap on the number of
+    apartments and is kept apart from the realistic figure.
+  - The realistic figure: one market dataset (RentCafe on Yardi data, 2024) gives the average
+    size of apartments built 2014 to 2023 as 737 sq ft in Manhattan, 712 in Brooklyn and 692 in
+    Queens, measured as the inside area of the apartment. It found no second dataset.
+  - City guidance it read (HPD design guidelines, 2000 revision) sets minimum ROOM sizes, not
+    whole-apartment sizes.
+  - Its confidence: WELL SUPPORTED for the legal factor; PARTLY SUPPORTED for the realistic
+    figure (one source).
+- **Proposed starting value (a design assumption; the owner approves; not adopted):** 700 sq ft
+  of apartment area per apartment, measured inside the apartment, editable.
+- **Still open, FOR THE OWNER'S OTHER AGENT:** a second source for the average size of newly
+  built apartments in New York City by borough (for example the City's housing database or
+  building filings), and HPD's current target apartment sizes by type.
+- **Status:** ANSWERED IN PART 2026-10-06. Not a blocker.
+
+## RQ-008 — A starting shared-space allowance (the part of a residential building that is not inside apartments) — OPEN: the helper's answer leaves it less clear; FOR THE OWNER'S OTHER AGENT
+
+- **Question:** What share of a new New York City apartment building's floor area is commonly
+  taken by halls, stairs, lifts, lobby, refuse and service rooms, so that a feasibility estimate
+  can turn floor area into apartment area? Wanted: (a) published efficiency or loss-factor figures
+  for low-rise and mid-rise multifamily buildings, with source, year, and whether the base is
+  gross floor area or zoning floor area; (b) which spaces the Zoning Resolution leaves out of
+  "floor area" for a residential building (section numbers and exact quotes), because that changes
+  the base the percentage applies to; (c) how the figure changes with building size and with the
+  number of stairs and lifts the Building Code requires.
+- **Why it matters:** the owner's accuracy rules require gross, net and zoning floor area to stay
+  distinct and every efficiency percentage to state its denominator (D-090 source-030, item 4).
+- **What it unlocks:** a proposed starting value with its basis for the owner's approval (section
+  map, choices 3 and 4); the realistic apartment-count estimate.
+- **Research helper, 2026-10-06 (a lead only; full return in `docs/research/helper-research/RQ006_RQ007_RQ008_Starting_Values_2026-10-06.md`):**
+  - It found no official figure. Practice sources give apartment buildings as 70 to 85 percent
+    efficient, none of them specific to New York City, and they do not agree on what is being
+    divided by what.
+  - It reports that the Zoning Resolution's "floor area" counts halls, stairs, lift shafts and
+    lobbies and leaves out cellar space and most mechanical space, so the percentage depends on
+    whether it is applied to gross floor area or to zoning floor area. It could not read the
+    full definition (section 12-10) in one piece. A lead to be captured from the official text.
+  - **Why it is less clear:** "loss factor" in leasing sources (rentable against usable area)
+    is not the architect's ratio of apartment area to building area. A figure taken from a
+    leasing source would mislead.
+  - Its confidence: PARTLY SUPPORTED, and it flags the answer as confusing.
+- **Proposed starting value (a design assumption; weakly supported; the owner approves; not
+  adopted):** 15 percent of the residential zoning floor area taken as shared space, so 85
+  percent inside apartments, editable, with the denominator printed beside it.
+- **Still open, FOR THE OWNER'S OTHER AGENT:** a New York City source (an architect's
+  gross-to-net study for a low-rise apartment building, or a City or developer template) that
+  gives the share of floor area inside apartments and names its denominator.
+- **Status:** OPEN 2026-10-06 (helper run; no well-supported answer). Not a blocker.
 
 ---
 
