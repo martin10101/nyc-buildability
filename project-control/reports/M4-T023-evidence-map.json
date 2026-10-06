@@ -1,0 +1,125 @@
+{
+ "task_id": "M4-T023",
+ "material_commits": [
+  "c55b7c47 (producer rules-engineer, first build: the register data, renderer, checker, test, guide and rendered pages)",
+  "8ac78417 (cherry-pick of the second producer's commit 860d175e, the rework for owner messages 94 and 95 and the first review's notes F1 to F5) = material head",
+  "4cd2fc4a (orchestrator: the one-line standing instruction in CLAUDE.md, outside the task's allowed paths)"
+ ],
+ "contract_head": "6bcb9e92",
+ "claim_seam_head": "10ce8cad",
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/rules/test_zoning_rule_review_register.py tests/rules/test_coverage_matrix.py: exit 0, 55 passed",
+  "render_review_register.py --check: exit 0, register check PASSED",
+  "tools/modularity_check.py --check: exit 0",
+  "full services/api pytest, run alone by the orchestrator at 8ac78417 (the branch with the integration branch merged in): exit 0, 8040 passed, 8 skipped"
+ ],
+ "requirements": {
+  "D-090-R362": [
+   "docs/zoning-rule-review/REGISTER.md (the current table, 23 rows), docs/zoning-rule-review/rules/<rule id>.md (23 detail pages), docs/zoning-rule-review/HISTORY.md and docs/zoning-rule-review/GUIDE.md exist on the branch; each entry shows the law, where it applies, the program's reading, a worked example, what is tested, committed or planned, the test result, and a human-review block.",
+   "The data is services/api/app/rules/review_register/register.json (23 entries); the pages are rendered from it by services/api/app/rules/review_register/render_review_register.py, and `--check` fails when a rendered file differs."
+  ],
+  "D-090-R363": [
+   "docs/zoning-rule-review/REGISTER.md is a Markdown file of its own holding one simple table (rule, law and date, revision, tests, human verdict, reviewer, link to the detail page), generated from services/api/app/rules/review_register/register.json.",
+   "services/api/tests/rules/test_zoning_rule_review_register.py::test_register_md_is_byte_identical proves the committed table equals the render."
+  ],
+  "D-090-R364": [
+   "Each entry's entry_id equals the rule id of its file under services/api/app/rules/rulesets/ (services/api/tests/rules/test_zoning_rule_review_register.py::test_entry_id_equals_rule_id, test_one_entry_per_rule_file_and_reverse).",
+   "Entries point to existing evidence and copy none of it: rule_file with rule_file_sha256, law[].snapshot_file with content_digest_sha256, code_links and test_links; services/api/tests/rules/test_zoning_rule_review_register.py::test_linked_code_test_and_capture_files_exist, test_rule_version_and_sha256_match_live_files and test_law_digest_matches_live_capture check the pointers against the live files."
+  ],
+  "D-090-R365": [
+   "Each entry carries rule_id, law[] (section, official_url, last_amended, captured_on) and applicable_from; the table's second column renders the section as a link to the official text with 'applies from <date>'."
+  ],
+  "D-090-R366": [
+   "Each entry has applies_where and exceptions; the detail page renders them under 'Where it applies' and 'Exceptions and limits'."
+  ],
+  "D-090-R367": [
+   "Each entry has interpretation, a plain-English statement of how the program reads the rule, rendered on the detail page under 'How the program reads it'; the REGISTER.md introduction says every rule is the program's own unreviewed draft reading (ADR-007)."
+  ],
+  "D-090-R368": [
+   "Each entry has example {description, inputs, expected (values, basis_kind, basis), actual, agrees}. The expected answer is taken from the law text or a reference case (basis_kind), never from the program's output; the actual answer is recomputed through the rule engine by the test (services/api/tests/rules/test_zoning_rule_review_register.py::test_example_actual_is_recomputed_through_the_engine).",
+   "agrees is expected versus actual, or null where the example is a gap (services/api/tests/rules/test_zoning_rule_review_register.py::test_agrees_equals_expected_vs_actual_or_null_for_gap)."
+  ],
+  "D-090-R369": [
+   "Each entry has code_links and test_links; services/api/tests/rules/test_zoning_rule_review_register.py::test_linked_code_test_and_capture_files_exist proves every linked file exists; the detail page lists them."
+  ],
+  "D-090-R370": [
+   "Each entry has revision and last_changed, shown in the table's third column; services/api/app/rules/review_register/check_review_register.py history_errors requires the current revision to equal the latest history event (services/api/tests/rules/test_zoning_rule_review_register.py::test_current_revision_must_match_latest_event)."
+  ],
+  "D-090-R371": [
+   "human_review.verdict takes exactly four values: Not reviewed, Correct, Incorrect, Needs re-review; services/api/app/rules/review_register/check_review_register.py derive_human_review produces only those four, and human_review_errors refuses a stored verdict that differs from the derived one."
+  ],
+  "D-090-R372": [
+   "human_review has reviewer_name, reviewer_role, review_date and comments, empty for all 23 entries; services/api/tests/rules/test_zoning_rule_review_register.py::test_not_reviewed_with_a_reviewer_name_is_rejected and test_all_backfilled_entries_read_not_reviewed."
+  ],
+  "D-090-R373": [
+   "automated_tests is a block of its own, apart from human_review; nothing derives one from the other; the table shows them in separate columns ('Tests' and 'Human verdict') and the detail page under separate headings ('Automated test result' and 'Human review')."
+  ],
+  "D-090-R374": [
+   "All 23 entries have decision null and verdict 'Not reviewed' (services/api/tests/rules/test_zoning_rule_review_register.py::test_all_backfilled_entries_read_not_reviewed); a decision is refused without a named reviewer, date, revision, conditions and the identity of what was reviewed (services/api/tests/rules/test_zoning_rule_review_register.py::test_decision_refused_without_a_named_reviewer_and_identity).",
+   "docs/zoning-rule-review/GUIDE.md section 'How a human verdict is recorded' and the REGISTER.md introduction say a verdict is written only from a named human reviewer's own answer, never because tests passed or an agent review agreed. CLAUDE.md principle 20 (commit 4cd2fc4a): no session enters a human verdict."
+  ],
+  "D-090-R375": [
+   "A decision stores reviewed_revision, reviewed_conditions, reviewed_rule_file_sha256 and reviewed_law_digests; services/api/app/rules/review_register/check_review_register.py derive_human_review compares them with the entry's current revision, rule-file digest and law digests, so a decision counts only for the version and conditions reviewed (services/api/tests/rules/test_zoning_rule_review_register.py::test_s12a_rule_change_under_a_correct_decision_reads_needs_re_review, test_s12c_changed_law_capture_digest_flags_needs_re_review)."
+  ],
+  "D-090-R376": [
+   "docs/zoning-rule-review/REGISTER.md is the short current table with a link to each detail page under docs/zoning-rule-review/rules/; docs/zoning-rule-review/HISTORY.md is the history, rendered from register.json 'history'.",
+   "History is append-only by check: contiguous sequence numbers, one 'created' event per entry at revision 1, current revision equal to the latest event (services/api/tests/rules/test_zoning_rule_review_register.py::test_history_rules_hold_for_committed_register, test_missing_created_event_is_caught, test_non_contiguous_seq_is_caught). GUIDE.md adds the reviewer's duty to confirm on every change that history was only appended (first review's note F4)."
+  ],
+  "D-090-R377": [
+   "When a rule file, its law capture or the entry's revision changes, the earlier decision stays stored and the shown verdict becomes 'Needs re-review' (derive_human_review; services/api/tests/rules/test_zoning_rule_review_register.py::test_s12a_..., test_s12b_touching_the_file_cannot_keep_an_old_correct, test_s12c_...); history records 'human_verdict_recorded' and 'flagged_for_re_review' (services/api/tests/rules/test_zoning_rule_review_register.py::test_s12d_history_records_the_decision_and_its_later_non_application).",
+   "A changed rule file whose entry is not updated fails the check and names the rule (services/api/tests/rules/test_zoning_rule_review_register.py::test_tampered_rule_sha_is_caught_and_names_the_rule, test_changed_rule_version_is_caught)."
+  ],
+  "D-090-R378": [
+   "One entry per rule file and one per rule id (services/api/tests/rules/test_zoning_rule_review_register.py::test_one_entry_per_rule_file_and_reverse); each entry has exactly one 'created' event at revision 1 and no other event (services/api/tests/rules/test_zoning_rule_review_register.py::test_each_entry_has_a_created_event_at_revision_1).",
+   "docs/zoning-rule-review/GUIDE.md section 'Which changes move an entry's revision' says a revision moves only when interpretation, applicability, implementation or evidence changes, and that a change of the register's own layout does not; the rework kept every entry at revision 1."
+  ],
+  "D-090-R379": [
+   "CLAUDE.md, permanent principle 20 (orchestrator commit 4cd2fc4a on this branch): 'every session that adds or changes zoning-rule behavior must update the register (docs/zoning-rule-review/; how: its GUIDE.md) as part of the same change. No session enters a human verdict.' One line; `tools/context_budget_check.py` PASS at about 9,922 of 10,000 tokens.",
+   "docs/zoning-rule-review/GUIDE.md section 'How a session updates the register when a rule changes' gives the steps."
+  ],
+  "D-090-R380": [
+   "The register and its history are separate files under docs/zoning-rule-review/ and services/api/app/rules/review_register/; none is in the automatically loaded set (CLAUDE.md and .claude/rules/*), which gains one line only; the context-budget check passes."
+  ],
+  "D-090-R381": [
+   "23 entries for the 23 rule files under services/api/app/rules/rulesets/ (services/api/tests/rules/test_zoning_rule_review_register.py::test_one_entry_per_rule_file_and_reverse); each filled from checkable evidence: the rule file (digest), the captured law text (digest), an example recomputed through the engine, and the result of the rule's own tests with a committed run log under docs/zoning-rule-review/evidence/."
+  ],
+  "D-090-R382": [
+   "Each entry has gaps[]; an example with no independent basis is marked as a gap with agrees null (services/api/tests/rules/test_zoning_rule_review_register.py::test_agrees_equals_expected_vs_actual_or_null_for_gap, test_every_basis_kind_is_present_at_least_once); behaviour.committed_untested items say 'no test found that exercises this' (services/api/tests/rules/test_zoning_rule_review_register.py::test_committed_untested_items_say_no_test_was_found); r5b-height and r5d-height carry the gap line that the statement-to-district mapping in the capture is the researcher's and unconfirmed (first review's note F2)."
+  ],
+  "D-090-R383": [
+   "The REGISTER.md introduction says: 'This is a review record: nothing in the program waits for a verdict (ADR-007).' The task adds no gate; services/api/tests/rules/test_zoning_rule_review_register.py::test_s13_updated_entry_without_a_decision_passes_the_check and test_s13_entry_whose_decision_no_longer_applies_passes_the_check prove the check passes without any human decision."
+  ],
+  "D-090-R384": [
+   "entry_id is stable and equals rule_id; field names are fixed and value sets are closed (services/api/tests/rules/test_zoning_rule_review_register.py::test_fields_are_fixed_and_structured, structure_errors in services/api/app/rules/review_register/check_review_register.py); register.json has schema and schema_version; GUIDE.md section 'Moving the register into a database later' maps entries to rows."
+  ],
+  "D-090-R385": [
+   "No database table, migration or connection is in the change: `git diff --name-only` of the task's commits against the integration branch lists only services/api/app/rules/review_register/**, docs/zoning-rule-review/**, the one test file, CLAUDE.md (one line) and project-control/**; nothing under supabase/ or any migration path."
+  ],
+  "D-090-R393": [
+   "Each entry has behaviour {tested, committed_untested, planned}: 104 tested items (each names its test function), 6 committed-untested items in 4 entries, 49 planned items; the detail page renders them under 'What the program does today and a test checks', 'In the program but no test checks it' and 'Planned, not built' (services/api/tests/rules/test_zoning_rule_review_register.py::test_behaviour_is_structured_and_tested_items_name_a_test, test_behaviour_rejects_a_tested_item_without_a_test_name)."
+  ],
+  "D-090-R394": [
+   "The check requires only that the record is current (recorded identities match the files, a revision and a history event exist). No check, test, gate or script requires a human decision (services/api/tests/rules/test_zoning_rule_review_register.py::test_s13_updated_entry_without_a_decision_passes_the_check, test_s13_entry_whose_decision_no_longer_applies_passes_the_check); GUIDE.md says so in one sentence ('The check enforces record-keeping only')."
+  ],
+  "D-090-R423": [
+   "REGISTER.md introduction: 'This register covers the 23 rule-definition files the program has today - one entry per rule. That is not complete coverage of the New York City Zoning Resolution'."
+  ],
+  "D-090-R425": [
+   "Whether a decision applies is derived from the identity of what was reviewed (rule-file digest, law digests, revision) compared with the current one; the checker recomputes it and refuses a stored value that differs, so updating or touching register.json cannot keep an old 'Correct' (services/api/tests/rules/test_zoning_rule_review_register.py::test_s12a_rule_change_under_a_correct_decision_reads_needs_re_review, test_s12b_touching_the_file_cannot_keep_an_old_correct). Mutation proof S12 in the producer report."
+  ],
+  "D-090-R426": [
+   "human_review keeps the original decision, reviewer, date, comments, revision, conditions and identities unchanged; applies_to_current is a separate derived field; the detail page shows 'Earlier decision: ...; it does not apply to the current version' when it no longer applies; history keeps both events (services/api/tests/rules/test_zoning_rule_review_register.py::test_s12d_history_records_the_decision_and_its_later_non_application)."
+  ],
+  "D-090-R441": [
+   "automated_tests holds status (Passed, Failed or Not run), tested_commit, tested_on, command, counts, evidence (a committed run log under docs/zoning-rule-review/evidence/), tested_rule_file_sha256 and tested_test_file_sha256s. All 23 read Passed at 52e3d8a4 (7 run logs). The table column shows the status, the short commit and a link to the log, never a count of test files (services/api/tests/rules/test_zoning_rule_review_register.py::test_automated_tests_result_shape_and_status).",
+   "The checker requires 'Not run' when a recorded rule-file or test-file digest differs from the current file (services/api/tests/rules/test_zoning_rule_review_register.py::test_changed_test_file_demands_status_not_run, test_changed_rule_file_demands_status_not_run). The run logs are .txt files because *.log is ignored repository-wide."
+  ],
+  "D-090-R442": [
+   "Both register changes are built as planned: the original decision kept apart from its applicability to the current version (R425, R426 evidence) and a check that enforces record keeping without waiting for an examiner (R394 evidence)."
+  ],
+  "D-090-R443": [
+   "The register's branch task/M4-T023-zoning-rule-review-register is pushed to GitHub; the first review's return with its five notes is in the repository as project-control/reports/M4-T023-G3G4.md, the producer's report as project-control/reports/M4-T023-producer-report.md, and the register itself under docs/zoning-rule-review/."
+  ]
+ }
+}
