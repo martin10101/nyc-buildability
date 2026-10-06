@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T20:41:02+00:00",
+ "updated_at": "2026-10-06T23:22:37+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -485,10 +485,19 @@
   "D-090-R461",
   "D-090-R462",
   "D-090-R463",
-  "D-090-R464"
+  "D-090-R464",
+  "D-090-R465",
+  "D-090-R466",
+  "D-090-R467",
+  "D-090-R468",
+  "D-090-R469",
+  "D-090-R470",
+  "D-090-R471",
+  "D-090-R472",
+  "D-090-R473"
  ],
- "requirements_id_digest_sha256": "bc2a5e6504e17752a34e4c6f6698fa2ad39cc113049419ec7e65c5171fb225b8",
- "requirements_content_digest_sha256": "c0b478714454e64dd07205df20acc2aafd13ef27d60038d040bcb9163f2cdc65",
+ "requirements_id_digest_sha256": "c170769e5c15e2ecd8f4f9a6ae3b5a432da2a76b1bd35670bcd022ab87236510",
+ "requirements_content_digest_sha256": "2e47454c386a6879af4b436f3fe773ffbfd117f1c7b41066ead91a51ce3287f0",
  "sources": [
   {
    "file": "source-001.md",
@@ -856,6 +865,14 @@
    "recorded_at": "2026-10-06T20:24:25+00:00",
    "content_digest_sha256": "aa6b47d1125686c1d1ce8ee97beccd553427c4726cabd2e2c9e3acd5db7579f0",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-047-amendment.md",
+   "kind": "amendment",
+   "sequence": 47,
+   "recorded_at": "2026-10-06T23:22:37+00:00",
+   "content_digest_sha256": "c5ff75f8c888b184d5c2bca5116f0d20d2e0cec27ae03dc8fe25bfbeb8e5fa0b",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -903,7 +920,8 @@
   "source-043-amendment.md",
   "source-044-amendment.md",
   "source-045-amendment.md",
-  "source-046-amendment.md"
+  "source-046-amendment.md",
+  "source-047-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1259,6 +1277,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T126 (the measurement basis for the apartment estimate: a record with worked examples, put to the owner; no estimator) to R357, R358, R359, R387, R388, R389, R392, R396, R397, R407, R413, R428, R430, R431, R432, R433, R434, R435, R436, R437 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-06T23:22:37+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-047 (session 013RaGmC message 99, 2026-10-06, sent mid-turn: /session-handoff; message 100: the seq 146 start prompt - start-up checks, the position at the handover, the order of the next five steps, the standing stops) and requirements D-090-R465..R473, all pending. Text extracted by script from the transcripts; nothing retyped; no existing row edited."
   }
  ]
 }
