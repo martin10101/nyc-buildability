@@ -1,7 +1,7 @@
 {
  "blocker_id": "B-029",
  "title": "source-map-js 1.2.1 advisory GHSA-68fv-2mgg-jv7q (high; fixed in 1.2.2) fails the web-dependency-security gate on every new run since 2026-10-05 ~23:31 UTC; the fixed version passes the 7-day age rule only at 2026-10-07T14:08:09Z",
- "status": "open",
+ "status": "resolved",
  "created_at": "2026-10-06T01:55:00+00:00",
  "created_by": "orchestrator",
  "affects": [
@@ -19,6 +19,16 @@
  "candidate_followup": "A small dependency-security change (lockfile only) contracted by the successor session; this blocker is resolved at its merge with the green run ids as evidence.",
  "scope_corrections": [],
  "history_note": "Found on 2026-10-06 ~01:41 UTC while landing the seq 142 handoff: the first PR opened after the advisory update (#443, a test-only change) failed web-dependency-security.",
- "resolved_at": null,
- "resolution": null
+ "resolved_at": "2026-10-06T06:57:00+00:00",
+ "resolution": {
+  "summary": "Resolved by the fixed version, not by a waiver of the advisory. The owner approved ONE early update on 2026-10-06 (directive D-092, 'Go ahead update it only this 1 time'). Ledger task M0-T182 (ACCEPTED) moved source-map-js to 1.2.2 through an exact pin, a single-version rule in the web age gate that cannot apply once the version is 604800 s old (2026-10-07T14:08:09.382Z), an installer exclusion by package name, tests and policy text. The lock was regenerated and proven by the generate-lockfile workflow; only node_modules/source-map-js moved; npm audit reports 0 at every severity. Gates G0/G2/G3/G4/G5 PASS (G5 independent security-reviewer, G3/G4 independent code-reviewer); DCV PASS. The orchestrator had recommended waiting; the owner decided.",
+  "evidence": [
+   "PR #446 merged 2026-10-06T06:43:17Z as 5de0245a; 48 of 48 checks success on its final head 7a903656",
+   "generate-lockfile run 37421376443 success; bot lock commit 246bcebf",
+   "integration branch CI at 5de0245a: run 37425339867 success (web-dependency-security green)",
+   "project-control/reports/M0-T182-G5.md, M0-T182-G3G4.md, M0-T182-DCV.md; project-control/directives/D-092-one-time-age-exception-source-map-js-1-2-2/",
+   "eight waiting pull requests merged afterwards, each on a fresh all-green run"
+  ],
+  "follow_up": "Task M0-T183 (backlog; not before 2026-10-07 14:09 UTC): remove the installer exclusion and the age gate's exception entry. Owner D-090-R299; D-092-R016."
+ }
 }
