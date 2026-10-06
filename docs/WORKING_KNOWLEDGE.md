@@ -675,3 +675,42 @@ push), read the AssertionError payload from the failed log, delete the branch.
   verifies the body.
 - **Reviewer-found cross-PR byte mismatches are fixed on the side that is NOT the source of truth** — the emitter wins
   over the fixture (the transit_parking `detail` reason clause, DB-115).
+
+## Loop-run and Windows-PC notes (moved from Tier 1 `.claude/rules/PROGRAM_KNOWLEDGE.md` on 2026-10-06, unchanged)
+
+Moved to keep the automatically loaded instructions under the owner's 10,000-token cap (D-067-R003) when the owner's
+working guidance was added to CLAUDE.md (D-090 R300). The seven notes below are byte-identical to their Tier 1 text.
+
+- PS5.1: no `&&`, no quotes-in-`git commit -m` via PowerShell (use Bash tool); UTF-16
+  redirection trap; heredocs via Write tool when Bash mangles them.
+- Fable exhaustion kills the loop (`REFUSED unsafe exit 11
+  fable_exhaustion_turnover_recorded`): the worker-pin flip is OWNER-ONLY (controller S3.2
+  rule 6) AND classifier-blocked — open a blocker with the one-line edit, never retry past it;
+  the INITIAL pin needs no launch probe so the owner's edit alone suffices. Keep working via an
+  orchestrator-dispatched producer + recorded deviation. Confirm exhaustion ONLY from the run
+  log + `model_switch_tracker.py --query`, never a model's self-report. Full arc: B-024, D-060.
+- `claim --worktree` MUST be the FULL path (controller-authoritative): a short name
+  lands in the packet, the worker echoes it, and S4.5 stops the run at the FIRST
+  checkpoint (`checkpoint_field_mismatch`). Fix both packet copies + fresh run-id.
+- Create/advance the task worktree AT (or past) the CLAIM-SEAM commit, never the contract
+  head: `task_authority` corroborates the ctl24 packet against the WORKTREE's ledger copy
+  (`--repo`), and a pre-claim copy (backlog vs in_progress) refuses the launch
+  (`ledger_status_mismatch`, exit 11). Fix = `git -C <wt> reset --hard <claim-seam sha>`;
+  a preflight refusal parks the journal in PREFLIGHT (no clear-recovery needed), same
+  run-id relaunches (M5-T045 launch, 2026-09-19).
+  ANY audit-appending CLI verb racing a LIVE loop forks its chain - deny/approve-once AND
+  graceful-stop alike (store-side effects land; appends refuse). Repair between runs
+  (archive-to-forked-evidence; loop-2 needs a targeted script - the stock repair hardcodes
+  loop-1's runtime). Packet allowed_paths are GLOBS matched at LAUNCH (cached): a bare
+  directory prefix matches nothing - write `dir/**`; a mid-run packet fix needs a
+  graceful-stop + relaunch to apply.
+- Loop WAIT_FOR_OWNER (tier_ask_blocking) after all asks denied needs `resume-after-answer`
+  (WAIT_FOR_OWNER -> PREFLIGHT); `clear-recovery` only exits PAUSED_RECOVERY.
+- Python with Windows paths goes through the Write tool, never a Bash heredoc (a backslash-U
+  becomes a unicodeescape SyntaxError; a claim silently did not run). Agents keep scratch .py files
+  in a SUBFOLDER: a root `inspect.py` in the shared scratchpad shadowed the stdlib, broke pytest.
+- Opus 5.5 (D-085): exact id `claude-opus-5-5` (alias opus55; dotted 'opus-5.5' = SILENT
+  unrecognized_model fallback to opus-4-8 - never use it). Verified on CLI 2.1.281 canary.
+  Worker-pin flips AND the shared allowlist (`C:\Program Files\SupervisorConfig\config.toml`
+  [claude].allowed_models + [approved_models].models) are OWNER edits (classifier-blocked;
+  B-025 resolved by owner actuation - all three lanes + allowlist on opus-5-5 since 2026-09-23).
