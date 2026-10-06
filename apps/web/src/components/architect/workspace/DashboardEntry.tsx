@@ -17,6 +17,7 @@ import { DashboardFailureNotice } from "./DashboardFailureNotice";
 import { DashboardEnrichmentNotice } from "./DashboardEnrichmentNotice";
 import { SCENARIO_SURFACE, RULE_EVALUATION_SURFACE } from "./dashboard-enrichment-failure";
 import { AnalysisIdentityNotice } from "../AnalysisIdentityNotice";
+import { StandingReviewLabel } from "../StandingReviewLabel";
 import { IncompleteEvaluationNotice } from "../DevelopmentLimits";
 import { CapturedRecord } from "../EvidenceRecord";
 import { deriveCondoSurface } from "../CondoRecordsSection";
@@ -87,6 +88,11 @@ function LoadedDashboard({ profile, initialTool, surveyEnabled, proposalEditorEn
 
   return <div ref={root} data-testid="connected-dashboard" onClickCapture={followWorkspaceLink} className={tool === "report" ? "dashboard-report-open" : ""}>
     <OutcomeAnnouncer testId="rule-eval-announcer" message={evaluationMessage}/>
+    {/* D-090-R164/R165 (ADR-007): the one standing not-reviewed label at the top of the loaded
+        workspace. The report window carries its own copy (ReportView), so this one is not
+        rendered while that window is open: never two on one screen, never two in print. The
+        `--screen` hook stays hidden by the dashboard print stylesheet as a second guard. */}
+    {tool !== "report" ? <StandingReviewLabel className="standing-review-label--screen"/> : null}
     <div className="dashboard-analysis-notices">
       <AnalysisIdentityNotice label="Scenario" requestedBbl={bbl} document={returnedScenario}/>
       <AnalysisIdentityNotice label="Rule evaluation" requestedBbl={bbl} document={returnedEvaluation}/>

@@ -23,7 +23,7 @@ from app.cad.results_dxf import (
 )
 from app.cad.results_dxf_notes import MEASUREMENT_NOTE_TEXT, ascii_text
 from app.drawings.kit.labels import format_number
-from app.drawings.kit.scope import ASSUMPTION_KEY_NAMES, FLAG_WORDS
+from app.drawings.kit.scope import ASSUMPTION_KEY_NAMES, FLAG_WORDS, assumption_value_word
 from app.drawings.kit.styles import STYLE_TABLE, style_for
 
 from .results_dxf_support import (
@@ -283,14 +283,19 @@ def _resolve(doc, pointer):
     return node
 
 
-def _scope_token(source, value):
-    """The fixed plain word a scope note prints for an assumption key or boolean
-    flag source (the kit's presentation vocabulary), or None for a plain figure
-    or string read straight from the results (D-090-R108)."""
+def _scope_token(doc, source, value):
+    """The fixed plain word a scope note prints for an assumption key, boolean
+    flag, or code-like value source (the kit's presentation vocabulary). A
+    code-like value maps to its fixed word or, when the kit knows none, prints
+    verbatim; a plain figure read straight from the results is None (D-090-R108)."""
     if "/scope/assumptions/" in source and source.endswith("/key"):
         return ASSUMPTION_KEY_NAMES[value]
-    if "/scope/assumptions/" in source and source.endswith("/value") and isinstance(value, bool):
-        return FLAG_WORDS[value]
+    if "/scope/assumptions/" in source and source.endswith("/value"):
+        if isinstance(value, bool):
+            return FLAG_WORDS[value]
+        if isinstance(value, str):
+            key = _resolve(doc, source[: -len("/value")] + "/key")
+            return assumption_value_word(key, value) or value
     return None
 
 
@@ -314,8 +319,8 @@ def test_every_note_value_is_read_from_the_results(path):
             if source == "units":
                 continue
             value = _resolve(doc, source)
-            token = _scope_token(source, value)
-            if token is not None:  # a key/flag: its word maps to the document value
+            token = _scope_token(doc, source, value)
+            if token is not None:  # a key/flag/value word mapped to the document value
                 assert token in note.text, (source, note.text)
                 continue
             if note.role == "measurement_note":
@@ -336,7 +341,7 @@ def test_every_note_value_is_read_from_the_results(path):
         for source in note.sources:
             if source.startswith("/") and note.role not in ("measurement_note", "crs"):
                 value = _resolve(doc, source)
-                token = _scope_token(source, value)
+                token = _scope_token(doc, source, value)
                 tokens.append(
                     token if token is not None
                     else ascii_text(_source_value_text(source, value), source))
