@@ -80,9 +80,10 @@ def release(self) -> None:
 Two swallow paths leave the lock file on disk:
 - **(a) the single swallowed `unlink`.** `_read_holder()` opens the lock file the way
   `pathlib.Path.read_text` opens it (text-read handle). On Windows CPython opens a file for reading
-  WITHOUT `FILE_SHARE_DELETE`, so while a concurrent racer's `_read_holder` (called every poll inside
+  WITHOUT delete-sharing, so while a concurrent racer's `_read_holder` (called every poll inside
   that racer's own `acquire` wait) has the lock file open, the holder's `unlink` raises
-  `PermissionError` (ERROR_ACCESS_DENIED) rather than marking the file delete-pending. The single
+  `PermissionError` — a SHARING VIOLATION (the captured Windows CI output shows the sharing
+  violation, not a Win32 error code, and shows no delete-pending on the release path). The single
   `contextlib.suppress(OSError)` swallows it and returns. The lock file stays on disk carrying the
   admitted racer's `lock_id`; that racer is ALIVE (holding its reservation up to 30 s).
 - **(b) the skipped unlink on a transient `None` read.** If `release`'s own `_read_holder` returns
@@ -172,15 +173,31 @@ nt-only tests pushed on the ci-exp branch BEFORE the repair:
   end-to-end real-handle case: RED before the repair (the single swallowed unlink leaves the lock
   file on disk), GREEN after it.
 
-Windows evidence to be supplied by the orchestrator:
-- ci-exp branch `ci-exp/M0-T184-*` run id: **TO BE SUPPLIED BY THE ORCHESTRATOR** (expected at
-  commit A: `test_release_retries_transient_removal_failure_then_succeeds` RED and
-  `test_windows_release_removes_lock_despite_concurrent_reader` RED;
-  `test_windows_open_reader_blocks_unlink_platform_fact` GREEN — the OS fact proven).
-- supervisor-bridge (windows-latest) job id + run id on the PR head after the repair: **TO BE
-  SUPPLIED BY THE ORCHESTRATOR** (expected: whole `tools/test_agent_supervisor_*.py` suite green,
-  ≥ 1165 tests, 0 failures; the two RaceTests pass; the three new ReleaseLockRemovalTests that run on
-  nt all green).
+Windows evidence (captured by the orchestrator; files under `project-control/reports/M0-T184-ci-evidence/`):
+
+- **Before the repair — on commit A `a83d63bb` (tests only).** branch `ci-exp/M0-T184-red`, run
+  37443478339, job 112202576560, windows-latest (Microsoft Windows Server 2025). File
+  `job-112202576560-run-37443478339-attempt-1-ci-exp-red.txt` (55170 bytes, sha256
+  `41d55154b4b07851b24fb034c1131ea6379f87ac6a7442cda75838ac66bfca40`). Result:
+  `test_release_retries_transient_removal_failure_then_succeeds` FAILED and
+  `test_windows_release_removes_lock_despite_concurrent_reader` FAILED — both
+  `AssertionError: True is not false`, i.e. the lock file was still on disk after `release()` —
+  while `test_windows_open_reader_blocks_unlink_platform_fact` PASSED (the OS sharing-violation fact
+  proven: deleting a file an open read handle holds raises `PermissionError` and leaves it). Summary:
+  2 failed, 3953 passed, 60 skipped.
+- **After the repair — on head `3da6dd759ba78cc383a7d307c28ee3103601ca8c`** (commits A + B + C plus
+  the ci-exp excerpt; branch `task/M0-T184-review-slot-lock-release`, PR #449). File
+  `jobs-112205608287-112205718974-head-3da6dd75-green.txt`. Both CI runs ended with every job a
+  success: run 37444399337 (push), supervisor-bridge job 112205608287 (full log 49983 bytes, sha256
+  `3d158afdc1eacb9d69afc57341881a71945bbffa704fd9340610c9400a511d8d`); run 37444432633
+  (pull_request), job 112205718974 (full log 50589 bytes, sha256
+  `13cf199006f822d4396099358e6be9c68475d7600a36598854d7e8a493ede1d9`). Each: all 22 tests of the
+  review-slots file passed on Windows (both RaceTests and the two Windows-only tests included);
+  summary 3957 passed, 60 skipped, 0 failed (the supervisor-freeze baseline needs ≥ 1165 tests, 0
+  failures — comfortably met).
+- **Final head (this commit D)** differs from `3da6dd75` ONLY in comment, docstring and test-label
+  wording (findings F2/F3, no logic change) and in these two report files; its own CI run is recorded
+  by the orchestrator in the task's evidence map.
 
 ## 4. The one bounded repair (S4)
 
@@ -195,8 +212,11 @@ paths, and all three `with self._lock()` call sites are unchanged):
 - A transient unreadable-but-present read is waited out and re-read (closing candidate (b)) rather
   than mistaken for "not ours" and skipped.
 - A removal that cannot complete within the bound leaves the file in place (fail closed — no
-  contender over-admits on a guess) and records a typed `SlotError("slot_lock_release_failed", …)`
-  on `self.release_error` AND logs it at ERROR — observable, never silently swallowed.
+  contender over-admits on a guess) and is surfaced by a `logger.error(...)` — THE operator-visible
+  surface — never silently swallowed. (F2) The typed `SlotError("slot_lock_release_failed", …)` is
+  also recorded on the INTERNAL `self.release_error` attribute, which only the unit test reads:
+  `ReviewSlots._lock()` creates a `_SlotLock` per call and never exposes it, so a ReviewSlots caller
+  cannot read `release_error` — the log is the observable surface.
 - `release()` never raises, so an already-written ADMITTED reservation is never turned into a refusal
   by a late lock-release problem, and a legitimate `concurrency_limit_reached` refusal keeps its
   reason code. `try_reserve` / `release` / `active` return exactly what they returned before in every
@@ -239,14 +259,20 @@ and counts — full table in the producer report:
   `tools/test_agent_supervisor_review_slots.py` (plus these two report files in commit C).
 
 The whole supervisor suite is NOT run on this Linux server (ci.yml records that the whole glob
-starved an ubuntu runner on 2026-08-03; M0-T181 ran focused files only). One green run proves
-nothing by itself — §2 argues the mechanism and the host-independent + mutation tests prove the
-fix is load-bearing.
+starved an ubuntu runner on 2026-08-03; M0-T181 ran focused files only). A green run alone proves
+nothing by itself — the proof is the MECHANISM argued in §2 together with the red-before / green-
+after tests on windows-latest: the two repair-dependent tests FAILED on commit A (`a83d63bb`) and
+PASSED on the repaired head (`3da6dd75`), and the platform-fact test PASSED on both, so the OS
+behaviour and the fix are each demonstrated, not merely a single green run.
 
-**STATUS: PENDING WINDOWS EVIDENCE — not yet VERIFIED_CLOSED.** The cause is named and classified
-(real supervisor defect in `_SlotLock.release()`), the fix is bounded and verified on Linux with a
-mutation proof, and the deciding platform fact is encoded in two nt-only tests. This record becomes
-**VERIFIED_CLOSED** when the orchestrator fills in the §3 ci-exp run id (new tests RED/GREEN as
-stated before the repair) and the windows-latest supervisor-bridge run id + counts on the repaired
-PR head (whole suite green, ≥ 1165 tests, 0 failures, both RaceTests passing). No step is
-unprovable; nothing is blocked — the only open item is orchestrator-captured Windows CI evidence.
+**STATUS: VERIFIED_CLOSED.** Cause named and classified (real supervisor defect in
+`_SlotLock.release()` — a swallowed sharing-violation `unlink` leaving a live-owned lock file).
+SHOWN ON WINDOWS: at commit A (tests only) the two repair-dependent tests failed with the lock file
+still on disk after `release()` and the platform-fact test passed (run 37443478339, job
+112202576560); after the repair every job of head `3da6dd75` succeeded with all 22 review-slots
+tests green on Windows and the whole supervisor-bridge suite at 3957 passed / 60 skipped / 0 failed
+(runs 37444399337 and 37444432633, jobs 112205608287 and 112205718974). REPAIR VERIFIED: one bounded
+change in `release()`, a host-independent mutation proof, and no weakened test or widened window
+(R094). M0-T176 §4 item 4 does not stand; M0-T181 Failure A stands. The final head (commit D) is the
+same tree as `3da6dd75` save for F2/F3 wording and these reports; its own CI run is recorded in the
+task's evidence map.

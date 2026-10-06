@@ -475,10 +475,12 @@ class ReleaseLockRemovalTests(unittest.TestCase):
 
     The CI defect (jobs 112160344138 / 112164492630 / 112181006630, windows-latest):
     ``release()`` issued ONE ``self.path.unlink()`` inside ``contextlib.suppress``.
-    On Windows CPython opens a file for reading WITHOUT ``FILE_SHARE_DELETE``, so
-    while another racer's ``_read_holder`` has the lock file open, the holder's
-    ``unlink`` raises ``PermissionError`` (ERROR_ACCESS_DENIED). That error was
-    swallowed, so the lock file stayed on disk owned by a STILL-LIVE admitted racer.
+    On Windows an open read handle without delete-sharing makes a concurrent
+    ``unlink`` raise ``PermissionError`` (a sharing violation; the captured CI output
+    shows the sharing violation, not a Win32 error code). While another racer's
+    ``_read_holder`` has the lock file open, the holder's ``unlink`` raises that
+    sharing violation; the swallowed error left the lock file on disk owned by a
+    STILL-LIVE admitted racer.
     No contender may take over a live holder, so every other racer waited out its
     full 30 s lock timeout -> ``refused:slot_lock_timeout``. The fix makes the
     removal a bounded retry derived from the lock's own timeout/poll (the reader's
@@ -497,7 +499,7 @@ class ReleaseLockRemovalTests(unittest.TestCase):
         Returns ``(fake_unlink, state)``; ``state['calls']`` counts invocations so a
         test can prove the removal retried (waited) rather than giving up after one
         swallowed failure. A huge ``fail_times`` models a removal that never clears.
-        Host-independent: it injects the Windows delete-pending failure on any OS, so
+        Host-independent: it injects the Windows sharing-violation failure on any OS, so
         the transient/never-clears behaviour is pinned deterministically everywhere
         (the real Win32 sharing fact is pinned separately by the two nt-only tests).
         """
@@ -520,14 +522,14 @@ class ReleaseLockRemovalTests(unittest.TestCase):
 
     def test_release_retries_transient_removal_failure_then_succeeds(self) -> None:
         # S5(i), host-independent. The removal fails three times with the Windows
-        # delete-pending error and then succeeds: after release() the lock file is
+        # sharing-violation error and then succeeds: after release() the lock file is
         # GONE and the next acquire takes it promptly. RED against the pre-repair
         # release (one swallowed unlink leaves the file on disk; state['calls']==1).
         lock = self._lock("transient.lock")
         lock.acquire()
         self.assertTrue(lock.path.exists())
         fake_unlink, state = self._failing_unlink(
-            PermissionError(errno.EACCES, "delete pending"), fail_times=3)
+            PermissionError(errno.EACCES, "sharing violation"), fail_times=3)
         with mock.patch.object(pathlib.Path, "unlink", fake_unlink):
             lock.release()
         self.assertFalse(lock.path.exists())  # removed after the transient failures
@@ -603,7 +605,7 @@ class ReleaseLockRemovalTests(unittest.TestCase):
         lock = self._lock("stuck.lock", timeout_s=0.2, poll_s=0.01)
         lock.acquire()
         fake_unlink, state = self._failing_unlink(
-            PermissionError(errno.EACCES, "delete pending"), fail_times=10 ** 9)
+            PermissionError(errno.EACCES, "sharing violation"), fail_times=10 ** 9)
         start = time.monotonic()
         with mock.patch.object(pathlib.Path, "unlink", fake_unlink), \
                 self.assertLogs(review_slots.logger, level="ERROR") as logs:

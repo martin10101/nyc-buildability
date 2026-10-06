@@ -37,11 +37,33 @@ run on this Linux server (S7; ci.yml 2026-08-03 ubuntu starvation). Commands run
 |---|---|---|---|
 | `pytest -q -p no:cacheprovider tools/test_agent_supervisor_review_slots.py` | baseline (claim-seam head) | 0 | 17 passed, 2 subtests passed |
 | same, at commit **A** (tests only) | commit A | 1 | 1 failed (`test_release_retries_transient_removal_failure_then_succeeds`), 17 passed, 2 skipped, 2 subtests — the host-independent new test is RED on the current release code; the two nt-only tests skip on Linux |
-| same, at the **final head** (repair in) | final head | 0 | 20 passed, 2 skipped, 2 subtests passed |
-| `ruff check tools/agent_supervisor/review_slots.py tools/test_agent_supervisor_review_slots.py` | final head | 0 | All checks passed |
-| `tools/supervisor_command_doc_check.py` | final head | 0 | 11 presented supervisor command(s) checked; 0 failure(s) |
-| `tools/modularity_check.py --check` | final head | 0 | pass; `review_slots.py` 578 lines (< 600 warn); printed warnings are pre-existing for codex_reviewer / durable_state / evidence / gate_wave / next_task, not this file |
-| `git diff --stat 06480e12..HEAD` | final head | — | only the two allowed code files (+ the two report files in commit C) |
+| same, at the **final head** (commit D, repair + F2/F3 wording in) | commit D | 0 | 20 passed, 2 skipped, 2 subtests passed |
+| `ruff check tools/agent_supervisor/review_slots.py tools/test_agent_supervisor_review_slots.py` | commit D | 0 | All checks passed |
+| `tools/supervisor_command_doc_check.py` | commit D | 0 | 11 presented supervisor command(s) checked; 0 failure(s) |
+| `tools/modularity_check.py --check` | commit D | 0 | pass; `review_slots.py` 583 lines (< 600 warn; +5 from the F2/F3 docstring wording); printed warnings are pre-existing for codex_reviewer / durable_state / evidence / gate_wave / next_task, not this file |
+| `git diff --stat 06480e12..HEAD` | commit D | — | only the two allowed code files + the two report files |
+| `git diff 263ae471..HEAD -- tools/` (commit D delta) | commit D | — | wording only — every changed line is a comment, a docstring line or the fake error's message string; no logic/assertion/test-name/timing/skip change |
+
+### Windows CI (orchestrator-captured; files under `project-control/reports/M0-T184-ci-evidence/`)
+
+| Head | Run / job | Windows result |
+|---|---|---|
+| commit A `a83d63bb` (tests only) | run 37443478339 / job 112202576560 (ci-exp/M0-T184-red) | `test_release_retries_transient_removal_failure_then_succeeds` FAILED and `test_windows_release_removes_lock_despite_concurrent_reader` FAILED (both `AssertionError: True is not false`, lock still on disk after release()); `test_windows_open_reader_blocks_unlink_platform_fact` PASSED. Summary: 2 failed, 3953 passed, 60 skipped. File `job-112202576560-run-37443478339-attempt-1-ci-exp-red.txt` (55170 bytes, sha256 `41d55154…bfca40`) |
+| repaired head `3da6dd75` (A+B+C) PR #449 | run 37444399337 / job 112205608287 (push); run 37444432633 / job 112205718974 (pull_request) | every job success; all 22 review-slots tests pass on Windows (both RaceTests + the two nt-only); supervisor-bridge suite 3957 passed, 60 skipped, 0 failed (baseline ≥ 1165/0 met). File `jobs-112205608287-112205718974-head-3da6dd75-green.txt` (logs 49983 bytes sha256 `3d158afd…a511d8d` and 50589 bytes sha256 `13cf1990…ede1d9`) |
+| final head (commit D) | orchestrator-recorded in the task evidence map | same tree as `3da6dd75` except F2/F3 wording + these two reports |
+
+Findings F2 and F3 were applied as WORDING ONLY (comment / docstring / the fake error's message
+string) — no behaviour, assertion, test name, timing value or skip changed:
+- **F2 (should fix):** `release_error` is on a per-call `_SlotLock` that `ReviewSlots._lock()` never
+  exposes, so it is unreadable by a ReviewSlots caller. The attribute comment, the `release()`
+  docstring, convergence record §4 and §7 now say the `logger.error(...)` line is the
+  operator-visible surface and `release_error` is internal (unit-test only).
+- **F3 (note):** the captured Windows output shows a SHARING VIOLATION (an open read handle makes
+  `unlink` raise `PermissionError`, file stays), not "delete pending", and no Win32 error code
+  appears. The release-path docstring/comments, the new test class docstrings/comments, the two fake
+  error message strings, and both reports now say "sharing violation" and no longer name
+  `ERROR_ACCESS_DENIED` as fact. M0-T176's acquire-side comments and tests are left exactly as they
+  were.
 
 ## 3. Mutation proof (S5 iv) — the fix is load-bearing
 
@@ -68,7 +90,9 @@ Direct exit code: **1**. The single swallowed `unlink` leaves the lock file on d
 still present after `release()`. The pre-repair body was then restored byte-exact with
 `git checkout -- tools/agent_supervisor/review_slots.py` (working tree verified clean via
 `git status --porcelain`), and the test file re-ran GREEN (20 passed, 2 skipped). The mutation was
-never committed.
+never committed. (This output is the verbatim run captured at commit B/C; the quoted line number
+`:533` predates commit D's F2/F3 wording, which added docstring lines above the test and shifted the
+assertion line — the failure itself is unchanged.)
 
 ## 4. Scenario → test map (positive / negative / mutation / platform)
 
@@ -128,15 +152,17 @@ orchestrator's ci-exp and PR-head runs):
   and carrying the D-091 recertification follow-up (M0-T181 already recorded M0-T179 as superseded).
   A recorded cost authorized by D-090-R093, not a bar; the supervisor stays SHADOW-ONLY.
 
-## 7. Classification and open item
+## 7. Classification and closure
 
 - Classification: **real supervisor defect** in `_SlotLock.release()` (candidate (a) primary,
-  (b) secondary). (c), (d), (e) ruled out — see convergence record §2.3. The deciding discriminator
-  is the reason code: `slot_lock_timeout` (lock acquire deadline inside `try_reserve`), not
-  `barrier_timeout` (harness) and not `concurrency_limit_reached` (legitimate).
+  (b) secondary — a swallowed sharing-violation `unlink` leaving a live-owned lock file). (c), (d),
+  (e) ruled out — see convergence record §2.3. The deciding discriminator is the reason code:
+  `slot_lock_timeout` (lock acquire deadline inside `try_reserve`), not `barrier_timeout` (harness)
+  and not `concurrency_limit_reached` (legitimate).
 - M0-T176 §4 item 4 does NOT stand (its World-B dismissal was incomplete); M0-T181 Failure A DOES
   stand (a distinct under-count symptom; its instrumentation exposed this defect).
-- Open item (not a blocker): the windows-latest ci-exp run (new tests RED/GREEN before the repair)
-  and the repaired-PR-head supervisor-bridge run id + counts are orchestrator-captured; the
-  convergence record is marked PENDING WINDOWS EVIDENCE and becomes VERIFIED_CLOSED when those run
-  ids are filled in.
+- Shown on Windows: at commit A the two repair-dependent tests FAILED (lock still on disk after
+  `release()`) and the platform-fact test PASSED (run 37443478339, job 112202576560); on the repaired
+  head `3da6dd75` every job succeeded with all 22 review-slots tests green and the supervisor-bridge
+  suite at 3957 passed / 60 skipped / 0 failed (runs 37444399337, 37444432633). The convergence
+  record now closes **VERIFIED_CLOSED**. No open item; nothing blocked.

@@ -228,9 +228,11 @@ class _SlotLock:
         self.timeout_s = float(timeout_s)
         self.poll_s = float(poll_s)
         self._lock_id = ""
-        #: Set to the typed error if release() cannot remove this lock within its
-        #: bound; stays None on a clean release. Observable (also logged), never a
-        #: silently swallowed failure (M0-T184).
+        #: INTERNAL, read only by the unit test: ``_SlotLock`` is created per call by
+        #: ``ReviewSlots._lock()`` and never exposed, so a ReviewSlots caller cannot
+        #: read this. The operator-visible surface is the ``logger.error(...)`` line in
+        #: release(). Set to the typed error if release() cannot remove this lock within
+        #: its bound; stays None on a clean release (M0-T184).
         self.release_error: SlotError | None = None
 
     def _payload(self) -> bytes:
@@ -342,13 +344,15 @@ class _SlotLock:
     def release(self) -> None:
         """Remove this process's own lock file. Bounded, fail-closed, observable.
 
-        On Windows CPython opens a file for reading WITHOUT ``FILE_SHARE_DELETE``, so
-        while another racer's short ``_read_holder`` read has this lock file open the
-        ``unlink`` raises ``PermissionError`` (ERROR_ACCESS_DENIED). The prior code
-        issued ONE unlink inside ``contextlib.suppress`` and abandoned it, leaving the
-        lock file on disk owned by this STILL-LIVE process — no contender could take
-        over a live holder, so every racer waited out its full lock timeout and
-        refused ``slot_lock_timeout`` (M0-T184; CI jobs 112160344138 / 112164492630 /
+        On Windows an open read handle without delete-sharing makes a concurrent
+        ``unlink`` of that file raise ``PermissionError`` (a sharing violation — the
+        captured CI output shows the sharing violation, not a Win32 error code). While
+        another racer's short ``_read_holder`` read has this lock file open, the
+        holder's ``unlink`` raises that sharing violation. The prior code issued ONE
+        unlink inside ``contextlib.suppress`` and abandoned it, leaving the lock file
+        on disk owned by this STILL-LIVE process — no contender could take over a live
+        holder, so every racer waited out its full lock timeout and refused
+        ``slot_lock_timeout`` (M0-T184; CI jobs 112160344138 / 112164492630 /
         112181006630). The reader's handle is short-lived, so the removal is now
         RETRIED to the lock's own deadline instead of swallowed once.
 
@@ -356,10 +360,11 @@ class _SlotLock:
         ``lock_id`` (a foreign lock is never touched); a transient unreadable read of
         a file still present is waited out rather than mistaken for "not ours"; a
         removal that cannot complete within the bound leaves the file in place (fail
-        closed — no contender over-admits on a guess) and is recorded on
-        ``release_error`` and logged, never silently dropped. Never raises, so an
-        already-written reservation is never turned into a refusal by a late lock
-        problem.
+        closed — no contender over-admits on a guess) and is surfaced by an
+        ``logger.error(...)`` (the operator-visible surface), never silently dropped —
+        it is also recorded on the INTERNAL ``release_error`` attribute, which only the
+        unit test reads. Never raises, so an already-written reservation is never
+        turned into a refusal by a late lock problem.
         """
         deadline = time.monotonic() + self.timeout_s
         while True:
@@ -373,8 +378,8 @@ class _SlotLock:
             elif holder.get("lock_id") != self._lock_id:
                 return  # another process's lock: never remove it
             else:
-                # Confirmed ours. Remove it, retrying a Windows sharing/delete-pending
-                # failure within the bound (the colliding reader's handle is brief).
+                # Confirmed ours. Remove it, retrying a Windows sharing violation
+                # within the bound (the colliding reader's handle is brief).
                 try:
                     self.path.unlink()
                     return
