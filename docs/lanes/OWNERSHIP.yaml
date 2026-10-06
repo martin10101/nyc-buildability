@@ -99,6 +99,7 @@ rules:
       - services/api/app/_contract_schemas/**
       - services/api/tests/api/**
       - services/api/tests/contracts/**
+      - services/api/tests/journey/**   # cross-lane journey tests (D-090-R137); Lane C integrates
       - services/api/tests/__init__.py
       - services/api/tests/test_health.py
       - services/api/tests/test_security_middleware.py

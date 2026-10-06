@@ -15,15 +15,15 @@ $EXTMIN
 10
 0.000000
 20
--61.472750
+-80.819410
 30
 0.000000
 9
 $EXTMAX
 10
-100.774997
+102.303030
 20
-99.975195
+98.481931
 30
 55.000000
 0
@@ -53,9 +53,9 @@ VPORT
 21
 1.000000
 12
-50.387498
+51.151515
 22
-19.251223
+8.831261
 13
 0.000000
 23
@@ -81,7 +81,7 @@ VPORT
 37
 0.000000
 40
-177.592740
+197.231475
 41
 1.000000
 42
@@ -245,7 +245,7 @@ VERTEX
 8
 C-PROP-LINE
 10
-100.774997
+102.303030
 20
 0.000000
 30
@@ -255,9 +255,9 @@ VERTEX
 8
 C-PROP-LINE
 10
-100.774997
+102.303030
 20
-99.975195
+98.481931
 30
 0.000000
 0
@@ -267,7 +267,7 @@ C-PROP-LINE
 10
 0.000000
 20
-99.975195
+98.481931
 30
 0.000000
 0
@@ -303,7 +303,7 @@ VERTEX
 8
 A-ZONE-ENVL
 10
-100.774997
+102.303030
 20
 0.000000
 30
@@ -313,9 +313,9 @@ VERTEX
 8
 A-ZONE-ENVL
 10
-100.774997
+102.303030
 20
-99.975195
+98.481931
 30
 0.000000
 0
@@ -325,7 +325,7 @@ A-ZONE-ENVL
 10
 0.000000
 20
-99.975195
+98.481931
 30
 0.000000
 0
@@ -361,7 +361,7 @@ VERTEX
 8
 A-ZONE-ENVL
 10
-100.774997
+102.303030
 20
 0.000000
 30
@@ -371,9 +371,9 @@ VERTEX
 8
 A-ZONE-ENVL
 10
-100.774997
+102.303030
 20
-99.975195
+98.481931
 30
 55.000000
 0
@@ -383,7 +383,7 @@ A-ZONE-ENVL
 10
 0.000000
 20
-99.975195
+98.481931
 30
 55.000000
 0
@@ -419,7 +419,7 @@ VERTEX
 8
 A-MASS-RESI
 10
-100.774997
+102.303030
 20
 0.000000
 30
@@ -429,9 +429,9 @@ VERTEX
 8
 A-MASS-RESI
 10
-100.774997
+102.303030
 20
-99.975195
+98.481931
 30
 0.000000
 0
@@ -441,7 +441,7 @@ A-MASS-RESI
 10
 0.000000
 20
-99.975195
+98.481931
 30
 0.000000
 0
@@ -477,7 +477,7 @@ VERTEX
 8
 A-MASS-RESI
 10
-100.774997
+102.303030
 20
 0.000000
 30
@@ -487,9 +487,9 @@ VERTEX
 8
 A-MASS-RESI
 10
-100.774997
+102.303030
 20
-99.975195
+98.481931
 30
 10.000000
 0
@@ -499,7 +499,7 @@ A-MASS-RESI
 10
 0.000000
 20
-99.975195
+98.481931
 30
 10.000000
 0
@@ -527,13 +527,13 @@ LINE
 8
 A-ZONE-ENVL
 10
-100.774997
+102.303030
 20
 0.000000
 30
 0.000000
 11
-100.774997
+102.303030
 21
 0.000000
 31
@@ -543,15 +543,15 @@ LINE
 8
 A-ZONE-ENVL
 10
-100.774997
+102.303030
 20
-99.975195
+98.481931
 30
 0.000000
 11
-100.774997
+102.303030
 21
-99.975195
+98.481931
 31
 55.000000
 0
@@ -561,13 +561,13 @@ A-ZONE-ENVL
 10
 0.000000
 20
-99.975195
+98.481931
 30
 0.000000
 11
 0.000000
 21
-99.975195
+98.481931
 31
 55.000000
 0
@@ -577,11 +577,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--4.031000
+-4.092122
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Tax-lot-only estimate
 0
@@ -591,11 +591,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--7.054250
+-7.161213
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Queens block 7334, lot 70
 0
@@ -605,11 +605,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--10.077500
+-10.230305
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Assumed conditions
 0
@@ -619,13 +619,13 @@ A-ANNO-NOTE
 10
 0.000000
 20
--13.100750
+-13.299397
 30
 0.000000
 40
-2.015500
+2.046061
 1
-Lot type corner fixture Corner lot assumed; the live data does not record the lot type.
+Zoning district R6B city_records Zoning district R6B is read from recorded city data.
 0
 TEXT
 8
@@ -633,11 +633,109 @@ A-ANNO-NOTE
 10
 0.000000
 20
--16.124000
+-16.368488
 30
 0.000000
 40
-2.015500
+2.046061
+1
+Commercial overlay present Yes city_records A commercial overlay (C2-2) is recorded for this lot in city data.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-19.437579
+30
+0.000000
+40
+2.046061
+1
+Special purpose district No assumed No special purpose district is assumed to apply; this run does not read the special-district layer.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-22.506671
+30
+0.000000
+40
+2.046061
+1
+Special density area No assumed The lot is assumed not to lie in a special density area; this run does not read the special-density layer.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-25.575762
+30
+0.000000
+40
+2.046061
+1
+Lot type corner approximate_tax_map The lot type (corner) is read from the approximate city tax-map outline.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-28.644854
+30
+0.000000
+40
+2.046061
+1
+Lot frontage 103.88 feet approximate_tax_map Front lot line assumed to be the Northern Boulevard frontage (the address street); the lot is a corner lot with two frontages (215 Place 99.98 ft); which street is legally the front lot line is a qualified-review question.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-31.713945
+30
+0.000000
+40
+2.046061
+1
+Lot depth 100 feet city_records The lot depth of 100 feet is read from recorded city data.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-34.783037
+30
+0.000000
+40
+2.046061
+1
+Site measurement basis approximate tax map default The results carry the label of their weakest input; no survey or entered measurement was supplied, so the weakest recorded source sets the label.
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-37.852128
+30
+0.000000
+40
+2.046061
 1
 Within 100 ft of a street-line intersection Yes assumed The lot is assumed to lie within 100 feet of a street-line intersection.
 0
@@ -647,11 +745,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--19.147250
+-40.921220
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Street-line intersection angle 90 degrees assumed The street lines are assumed to meet at a 90-degree angle.
 0
@@ -661,11 +759,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--22.170500
+-43.990312
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Housing program standard residence default Standard residence is used as the default housing program.
 0
@@ -675,11 +773,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--25.193750
+-47.059403
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Floor-to-floor height 10 feet default A 10-foot floor-to-floor height is used as the default.
 0
@@ -689,11 +787,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--28.217000
+-50.128495
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Based on the lots you selected - the app does not verify the zoning lot
 0
@@ -703,11 +801,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--31.240250
+-53.197586
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Remaining development capacity: Not confirmed
 0
@@ -717,11 +815,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--34.263500
+-56.266678
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Needs verified zoning-lot boundaries and existing zoning floor area.
 0
@@ -731,13 +829,13 @@ A-ANNO-NOTE
 10
 0.000000
 20
--37.286750
+-59.335769
 30
 0.000000
 40
-2.015500
+2.046061
 1
-Option opt-1 - revision 1
+Option opt-test - revision 1
 0
 TEXT
 8
@@ -745,13 +843,13 @@ A-ANNO-NOTE
 10
 0.000000
 20
--40.310000
+-62.404860
 30
 0.000000
 40
-2.015500
+2.046061
 1
-Results test-fixture-synthetic-results-scope-and-notes-northern - computed 2026-10-03T00:00:00Z
+Results res-215-16-northern-journey - computed 2026-10-03T00:00:00Z
 0
 TEXT
 8
@@ -759,13 +857,13 @@ A-ANNO-NOTE
 10
 0.000000
 20
--43.333250
+-65.473952
 30
 0.000000
 40
-2.015500
+2.046061
 1
-City records, not a survey (envelope)
+Approximate - city tax map, not a survey (lot outline, envelope)
 0
 TEXT
 8
@@ -773,25 +871,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--46.356500
+-68.543043
 30
 0.000000
 40
-2.015500
-1
-Approximate - city tax map, not a survey (lot outline)
-0
-TEXT
-8
-A-ANNO-NOTE
-10
-0.000000
-20
--49.379750
-30
-0.000000
-40
-2.015500
+2.046061
 1
 Assumed, not a survey (floor plates)
 0
@@ -801,11 +885,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--52.403000
+-71.612135
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Setback lines need the ZR 23-433 setback depths, not encoded in this slice.
 0
@@ -815,11 +899,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--55.426250
+-74.681226
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Coordinates: local plane in feet, origin at a lot corner, axes parallel to the EPSG:2263 grid
 0
@@ -829,11 +913,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--58.449500
+-77.750318
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Units: feet, 1 drawing unit = 1 ft (scale 1:1)
 0
@@ -843,11 +927,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--61.472750
+-80.819410
 30
 0.000000
 40
-2.015500
+2.046061
 1
 Not a city record - drawn from the results
 0
