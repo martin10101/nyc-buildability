@@ -1,0 +1,187 @@
+{
+  "task_id": "M4-T023",
+  "title": "Zoning-rule review register: a permanent, structured record of every implemented zoning rule (law link, where it applies, plain-English interpretation, worked example, code and tests, revision, a human verdict only a named reviewer can set), with a short current table, detail pages, an append-only history, a build-time check and a backfill of the 23 rule files (D-090-R362..R385)",
+  "task_type": "rule_engineering",
+  "milestone_id": "M4",
+  "objective": "Create the permanent zoning-rule review register the owner asked for on 2026-10-06 (D-090 source-042): a record the owner can hand to a New York City architect or examiner that shows, for each zoning rule the program implements, the law it rests on, where it applies and its exceptions, the program's interpretation in plain English, one concrete example (inputs, the expected answer, the answer the program actually gives), the code and tests, its revision, and a HUMAN verdict field that only a named human reviewer's own answer may fill. Build it the way the rule-coverage matrix is built (services/api/app/rules/coverage/: authored JSON, a deterministic renderer, a test that the committed Markdown equals the renderer's output): one structured data file with stable ids and fixed field names (so it can move into a database table later; NO database work now), rendered to a short current table, one detail page per rule and an append-only history. Backfill every rule file under services/api/app/rules/rulesets/ (23 today) from evidence that can be checked - the rule file, the captured law text under docs/research/zr-snapshots/v1/, the tests - and mark every gap as a gap. Add a test in the api suite that fails when a rule file changes without the register being updated, so the standing instruction is enforced by the build and not by memory. Reuse the existing rule ids and evidence; point to the coverage matrix, the captures and docs/ARCHITECT_REVIEW_QUESTIONS.md instead of copying them. This is a review record, not a gate: nothing may be made to wait for a verdict.",
+  "business_reason": "Owner message 93 (D-090 source-042), rows R362 to R385: a permanent register for a later architect or examiner review; a separate Markdown file with a simple table; existing rule ids and evidence reused; eight named fields; automated test results kept apart from the human verdict; no rule ever marked professionally reviewed because tests or another AI passed it; a verdict bound to the version and conditions reviewed; a short current table with linked details and an append-only history; old records preserved and affected reviews flagged when a rule changes; no duplicate entries; a short standing instruction in the main instruction file; the detail not loaded into every session; a backfill from verifiable evidence with gaps marked; not a new mandatory sign-off stage; stable ids and structured fields; no database integration now.",
+  "inputs": [
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/source-042-amendment.md (owner message 93, verbatim) and rows D-090-R362 to D-090-R385 of requirements.json",
+    "services/api/app/rules/rulesets/*.rule.json - the 23 rule files: rule_id, rule_version, status, effective_from, citations (snapshot_id, section, quote, last_amended, content_digest_sha256), applicability, parameters, computation, exceptions, special_district_interactions, limitations, release.test_suite_ref",
+    "docs/research/zr-snapshots/v1/*.snapshot.json (and the synced copy services/api/app/_zr_snapshots/v1/) - the captured law text: section, official request URL, print/PDF cross-check, verbatim excerpt, table, capture date, digest",
+    "services/api/app/rules/registry.py, evaluator.py, models.py, snapshots.py - how a rule is loaded and evaluated (the 'actual program answer' of each example is computed through this public path, never typed by hand)",
+    "services/api/tests/rules/ - the rule tests each rule file names in release.test_suite_ref",
+    "services/api/app/rules/coverage/ (coverage_matrix.json, render_coverage_matrix.py, COVERAGE_MATRIX.md) and services/api/tests/rules/test_coverage_matrix.py - the pattern to follow and the record NOT to duplicate (link to it)",
+    "docs/ARCHITECT_REVIEW_QUESTIONS.md and docs/MVP_ARCHITECT_REVIEW_QA.md - the owner's existing question list for a professional (link, do not copy)",
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 9 - the independent reference cases for R6B (tables A to D): the only independently worked examples that exist today; cite them where a register example uses one",
+    "docs/adr/ ADR-007 (legal interpretations ship as labelled unreviewed drafts with a link to the law; professional review is advisory)",
+    "docs/CODE_MODULARITY_POLICY.md and .claude/rules/code-architecture.md"
+  ],
+  "outputs": [
+    "services/api/app/rules/review_register/register.json - the authored, structured register: schema name and version, the field list with fixed names and value sets, one entry per rule (stable entry_id = the rule_id), and the history events",
+    "services/api/app/rules/review_register/render_review_register.py (+ __init__.py) - deterministic stdlib renderer and checker: `--write` renders the Markdown, `--check` exits non-zero on any inconsistency",
+    "docs/zoning-rule-review/REGISTER.md - the short current table, one row per rule, rendered",
+    "docs/zoning-rule-review/rules/<rule_id>.md - one detail page per rule, rendered",
+    "docs/zoning-rule-review/HISTORY.md - the append-only history, rendered",
+    "docs/zoning-rule-review/GUIDE.md - handwritten, short: what the register is and is not, each field's name, meaning and allowed values, how a session updates it, how a human verdict is recorded, what triggers 'Needs re-review', and the note for a later move into a database table",
+    "services/api/tests/rules/test_zoning_rule_review_register.py - the build-time checks (scenarios S3 to S8)",
+    "project-control/reports/M4-T023-producer-report.md - files, every check command with its DIRECT exit code and counts, the list of gaps by rule, the list of zoning behaviour found in code that has no rule id, the mutation proofs"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/rules/review_register/**",
+    "docs/zoning-rule-review/**",
+    "services/api/tests/rules/test_zoning_rule_review_register.py",
+    "project-control/reports/M4-T023-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/rulesets/**",
+    "services/api/app/rules/*.py (no change to the rule engine, registry or evaluator)",
+    "services/api/app/rules/coverage/**",
+    "services/api/app/_zr_snapshots/**",
+    "docs/research/**",
+    "CLAUDE.md and .claude/** (the standing instruction is added by the orchestrator)",
+    "apps/**",
+    "packages/**",
+    "supabase/** and any migration or database code",
+    ".github/**",
+    "any dependency manifest or lockfile",
+    "project-control/** except the producer report named in allowed_paths",
+    "every other test file"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "primary_register_exists_and_reads_alone",
+      "input": "docs/zoning-rule-review/REGISTER.md and one detail page, read without the code",
+      "expected": "REGISTER.md is a short table with one row per rule: entry id, rule title, law section with its official link and applicable date, revision and date last changed, automated-test status, human verdict, reviewer and date, and a link to the detail page. A detail page shows, in plain English, where the rule applies and its exceptions, the program's interpretation, the example (inputs, expected answer with its basis, actual program answer), links to the code and tests, the evidence (capture id, digest, capture date), the gaps, and the human review block. An architect can follow it without opening the repository's code"
+    },
+    {
+      "id": "S2",
+      "case": "fields_fixed_and_structured",
+      "input": "services/api/app/rules/review_register/register.json and docs/zoning-rule-review/GUIDE.md",
+      "expected": "every field of the owner's list is present under a fixed name: rule id and official law link with applicable date; where it applies and exceptions; interpretation; example (inputs, expected, actual); code and test links; revision and date last changed; human verdict with exactly the four values 'Not reviewed', 'Correct', 'Incorrect', 'Needs re-review'; reviewer name, date and comments. Automated-test status is a SEPARATE field from the human verdict. entry_id equals the existing rule_id and never changes. GUIDE.md lists the field names and value sets; no database file exists"
+    },
+    {
+      "id": "S3",
+      "case": "backfill_complete_one_entry_per_rule",
+      "input": "the rule files under services/api/app/rules/rulesets/",
+      "expected": "the test asserts a one-to-one match between rule files and register entries (23 today; no entry without a rule file, no rule file without an entry, no duplicate id), and that every linked code file, test file and capture file exists"
+    },
+    {
+      "id": "S4",
+      "case": "rule_change_without_register_update_fails",
+      "input": "a rule file whose rule_version or content differs from what the entry records",
+      "expected": "each entry records the rule file's rule_version and a line-ending-normalized sha256 of the rule file; the test fails with a message that names the rule and says the register must be updated in the same change (new revision, history event). MUTATION PROOF in the producer report: edit one rule file in a scratch copy, show the test red, restore"
+    },
+    {
+      "id": "S5",
+      "case": "example_actual_answer_is_computed_not_typed",
+      "input": "each entry's example",
+      "expected": "the test evaluates every example's inputs through the program's own rule registry and evaluator and asserts the result equals the 'actual' recorded in the register; a recorded 'expected' never comes from a program run: it is either worked from the captured law text with the arithmetic shown, or taken from a named reference case, or marked as a gap. Where expected and actual differ, the entry says so plainly (a 'differs' flag) and is not hidden; the test does not force them equal"
+    },
+    {
+      "id": "S6",
+      "case": "human_verdict_rules",
+      "input": "the human review block of every entry",
+      "expected": "all 23 backfilled entries read 'Not reviewed' with empty reviewer fields. The checker REFUSES a verdict other than 'Not reviewed' without a reviewer name, a review date and the revision and conditions reviewed; it refuses 'Correct' or 'Incorrect' when the reviewed revision is not the entry's current revision (it must read 'Needs re-review'). Negative tests prove each refusal. Nothing derives a verdict from test status or from an AI review"
+    },
+    {
+      "id": "S7",
+      "case": "history_append_only_and_no_duplicates",
+      "input": "the history events",
+      "expected": "every entry has a 'created' event for revision 1; event sequence numbers are contiguous from 1 and in date order; the current revision of each entry equals its latest event's revision; no two consecutive events of one entry are identical in what they record. GUIDE.md states that events are only added, and that a change of interpretation, applicability or implementation adds a new revision, keeps the old detail in the history and sets affected human verdicts to 'Needs re-review'. The limit is stated honestly: the test cannot see earlier commits, so a reviewer checks that a change only appends"
+    },
+    {
+      "id": "S8",
+      "case": "rendered_markdown_is_current",
+      "input": "docs/zoning-rule-review/REGISTER.md, docs/zoning-rule-review/rules/*.md, docs/zoning-rule-review/HISTORY.md",
+      "expected": "the test renders from register.json and asserts byte-identical files on disk (line endings normalized), as test_coverage_matrix.py does for the coverage matrix; no stale or orphan detail page"
+    },
+    {
+      "id": "S9",
+      "case": "gaps_marked_honestly",
+      "input": "entries whose evidence is incomplete",
+      "expected": "a missing independent example, a law section read but not captured, a rule with no test of its own, an exception the rule file names but does not compute, a special-district interaction that is a stub: each is written in the entry's gaps list in plain words. No field holds an invented value; no example copies a number from the owner's sample report. Every entry carries the standing note that the rule is an unreviewed draft"
+    },
+    {
+      "id": "S10",
+      "case": "zoning_behaviour_outside_rule_files",
+      "input": "modules that apply zoning law without a rule id (for example the wide-street wiring and the named-street override table under services/api/app/rules/, and zoning arithmetic in the scenario engine)",
+      "expected": "REPORTED in the producer report and listed in GUIDE.md under a heading that says these are not yet in the register and why; NOT given invented rule ids and NOT changed. The orchestrator turns the list into follow-up work"
+    },
+    {
+      "id": "S11",
+      "case": "no_gate_no_database_no_engine_change",
+      "input": "git diff <claim-seam head>..<final head>",
+      "expected": "only allowed_paths changed; no rule file, engine, registry, snapshot, coverage, CI, dependency or database file changed; no gate, task or check is made to depend on a human verdict; the full services/api pytest and ruff pass"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "An 'expected answer' copied from the program's own output would make the register circular -> S5: expected comes from the law text, a reference case, or is a gap",
+    "A register that silently goes stale is worse than none -> S4 and S8 make the build fail",
+    "A human verdict written by a session -> S6: refused without a named reviewer, a date and the revision reviewed; all backfilled rows read 'Not reviewed'",
+    "Scope creep into rule fixes: the backfill will surface doubts about rules -> they are written as gaps and reported, never fixed here",
+    "The plain-English interpretation could overstate what a draft rule covers -> every row carries the unreviewed-draft note and its limits; an independent reviewer re-derives the examples from the captured text",
+    "The standing instruction must fit under the 10,000-token cap on automatically loaded instructions -> one or two lines, added by the orchestrator after the open instruction change (PR #448) merges"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-06T14:32:39.206321+00:00",
+  "updated_at": "2026-10-06T14:32:39.610236+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R362",
+        "D-090-R363",
+        "D-090-R364",
+        "D-090-R365",
+        "D-090-R366",
+        "D-090-R367",
+        "D-090-R368",
+        "D-090-R369",
+        "D-090-R370",
+        "D-090-R371",
+        "D-090-R372",
+        "D-090-R373",
+        "D-090-R374",
+        "D-090-R375",
+        "D-090-R376",
+        "D-090-R377",
+        "D-090-R378",
+        "D-090-R379",
+        "D-090-R380",
+        "D-090-R381",
+        "D-090-R382",
+        "D-090-R383",
+        "D-090-R384",
+        "D-090-R385"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-06T14:32:39.206639+00:00",
+  "path_notes": "PRODUCER = rules-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). The orchestrator integrates its commits onto task/M4-T023-zoning-rule-review-register (worktree /root/project/w-M4-T023). The standing instruction in CLAUDE.md (R379, R380) is the orchestrator's edit, made on this branch after PR #448 has merged and the integration branch has been merged in; it is outside the producer's scope. MODULARITY ANSWERS: (1) owner of the change = a new, separate review-record component; (2) module = the new package services/api/app/rules/review_register/ (data + renderer/checker), beside the coverage package it mirrors; (3) new files, to stay well under the 600-line warning threshold (split render and check if needed); (4) no extraction from existing modules; the rule engine is read, not changed; (5) public interface = the register's schema (field names, value sets, entry_id) and the renderer's --write / --check; (6) focused test = services/api/tests/rules/test_zoning_rule_review_register.py; (7) `python3 tools/modularity_check.py --check` passes before submission.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .   (the api CI job's first step)",
+    "cd services/api && python -m pytest -q tests/rules/test_zoning_rule_review_register.py",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the final candidate; a heavy run, nothing else running)",
+    "python services/api/app/rules/review_register/render_review_register.py --check",
+    "python3 tools/modularity_check.py --check",
+    "python3 scripts/lanes/check_lane_paths.py --branch task/M4-T023-zoning-rule-review-register (not a lane branch: passes)"
+  ],
+  "worktree": "/root/project/w-M4-T023"
+}

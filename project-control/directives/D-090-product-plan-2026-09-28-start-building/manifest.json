@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T14:02:44+00:00",
+ "updated_at": "2026-10-06T14:32:39+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -410,7 +410,7 @@
   "D-090-R386"
  ],
  "requirements_id_digest_sha256": "62402e39c2b1f4695845215720bc6c7065a223ded4afb312ccb6c9d73e4c87f9",
- "requirements_content_digest_sha256": "9e58a80dd0ce6abb66da4cc69c1773bfe33ce73ce9e3f423d635da3eb6d7bb8b",
+ "requirements_content_digest_sha256": "3d24257db343827550e26cd5a41e97a9772bda17115e4df4f32b780ed715a985",
  "sources": [
   {
    "file": "source-001.md",
@@ -800,7 +800,8 @@
   "M5-T125",
   "M0-T180",
   "M0-T181",
-  "M0-T184"
+  "M0-T184",
+  "M4-T023"
  ],
  "affected_prs": [
   262,
@@ -1087,6 +1088,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-042 (session 013RaGmC message 93, 2026-10-06: update the research assessment only - the ground-floor height candidate from HPD's guideline, the apartment-size figures as one-dataset benchmarks, the shared-space measurement of HCR's program; define each area before proposing the apartment-count formula; create a permanent zoning-rule review register with structured fields, a separate human verdict, an append-only history, a standing instruction in the main instruction file and a backfill) and requirements D-090-R344..R386, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-06T14:32:39+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M4-T023 (the zoning-rule review register) to D-090-R362..R385 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. R386 (tell the owner where it is saved and show two rows) stays with the orchestrator's owner update. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }
