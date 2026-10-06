@@ -120,6 +120,9 @@
 }
 @media print {
   .dashboard-shell :is(.dashboard-topbar,.dashboard-search,.dashboard-analysis-notices,.dashboard-address-alias,.buildability-dashboard) { display:none!important; }
+  /* D-090-R164/R165: the dashboard screen banner is hidden in print; the printed brief shows
+     only ReportView's own standing label (never two). */
+  .dashboard-shell .standing-review-label--screen { display:none!important; }
   .dashboard-shell .dashboard-content { padding:0; }
   .dashboard-shell .workspace-window { display:none!important; }
   .dashboard-shell .dashboard-report-open #workspace-report:not([hidden]) { display:block!important; position:static!important; width:auto!important; height:auto!important; max-width:none!important; max-height:none!important; border:0; box-shadow:none; overflow:visible; }
