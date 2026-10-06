@@ -146,8 +146,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The pull request changes the check that judges it -> an independent G5 security review of the exact head reads the whole gate diff; S8 pins the list so any widening needs a visible test change.",
     "The same gate script also runs for the tools/codex_cli lock and in the scheduled audits -> the entry is bound to name, version, integrity and publication time, so it admits that one tarball and nothing else in any lock.",
@@ -158,7 +158,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T05:42:35.984624+00:00",
-  "updated_at": "2026-10-06T06:19:03.263066+00:00",
+  "updated_at": "2026-10-06T06:34:07.994073+00:00",
   "directive_refs": [
     {
       "directive_id": "D-092",
@@ -199,5 +199,7 @@
       "status": "in_progress",
       "message": "Producer commit integrated (8fe57ca0: pin, gate rule, installer exclusion, tests, policy text; node --test 50/50). Lockfile workflow run 37421376443 green and committed 246bcebf: only node_modules/source-map-js moved (1.2.1 -> 1.2.2, recorded integrity); npm audit 0 at every severity; age gate PASS with exactly one owner-exception line; npm-CLI advisory check passed."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-06T06:34:07.993907+00:00"
 }
