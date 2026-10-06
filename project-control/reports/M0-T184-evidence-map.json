@@ -1,0 +1,44 @@
+{
+ "task_id": "M0-T184",
+ "material_commits": [
+  "a83d63bb (commit A: new tests only, no repair - tools/test_agent_supervisor_review_slots.py)",
+  "d116940f (commit B: the repair in tools/agent_supervisor/review_slots.py _SlotLock.release() + two negative tests)",
+  "e3d2f1fc (commit C: convergence record + producer report)",
+  "3da6dd75 (orchestrator: the ci-exp excerpt, project-control/reports/M0-T184-ci-evidence/job-112202576560-run-37443478339-attempt-1-ci-exp-red.txt)",
+  "263ae471 (orchestrator: the green excerpt, project-control/reports/M0-T184-ci-evidence/jobs-112205608287-112205718974-head-3da6dd75-green.txt)",
+  "9889fa4c (commit D: record finished with the Windows evidence; code-review findings F2 and F3 applied as comment, docstring and test-label wording only) = material head"
+ ],
+ "contract_head": "0f23b435f74d1565e06938e550f4ab5c0eb7ffb4",
+ "claim_seam_head": "06480e1216c0e79b8a4647819efc2052aea137e7",
+ "requirements": {
+  "D-090-R093": [
+   "Separate PR: #449, branch task/M0-T184-review-slot-lock-release, against candidate/D-024-mrl-option-b. The producer's commits A, B, C and D touch only tools/agent_supervisor/review_slots.py, tools/test_agent_supervisor_review_slots.py and the two M0-T184 reports (git diff --stat 06480e12..9889fa4c); the orchestrator added two excerpt files under project-control/reports/M0-T184-ci-evidence/.",
+   "Test timing or a real defect, decided on evidence (project-control/reports/M0-T184-convergence-record.md sections 1 to 3): a REAL DEFECT in _SlotLock.release(). The three frozen windows-latest logs show every non-admitted racer answering refused:slot_lock_timeout after a 30 s lock wait (2 admitted + 4, twice; 1 admitted + 5, once), no slot taken twice. Candidates (a) to (e) of scenario S2 are each proved or ruled out in section 2.",
+   "Shown on Windows before the repair: run 37443478339, job 112202576560, branch ci-exp/M0-T184-red = commit A (tests only). The two repair-dependent tests fail (the lock file is still on disk after release()), the platform-fact test passes (deleting a file that an open read handle holds raises PermissionError). Excerpt with the full log's byte count and sha256: project-control/reports/M0-T184-ci-evidence/job-112202576560-run-37443478339-attempt-1-ci-exp-red.txt.",
+   "The cause is fixed at the cause: release() retries the removal up to the lock's own timeout, removes only a file confirmed to carry its own lock_id, never raises, and logs a removal that cannot complete (slot_lock_release_failed). After the repair, head 3da6dd75: runs 37444399337 (push) and 37444432633 (pull_request) ended with every job a success; windows-latest supervisor-bridge jobs 112205608287 and 112205718974: all 22 review-slots tests pass, 3957 passed, 60 skipped, 0 failed. Excerpt: project-control/reports/M0-T184-ci-evidence/jobs-112205608287-112205718974-head-3da6dd75-green.txt.",
+   "Mutation proof (producer report section 3; reproduced independently by the code reviewer): with the literal pre-repair release body restored, test_release_retries_transient_removal_failure_then_succeeds fails.",
+   "Earlier records reconciled (convergence record section 2): M0-T176 report section 4 item 4 ('release's unlink - no change') does not stand; M0-T181's Failure A classification stands as a separate symptom.",
+   "The CI runs of the final head (the material head 9889fa4c plus ledger commits) are read by the orchestrator before the merge and recorded on the PR; the fail-closed merge step refuses on any non-success, missing, queued or pending check."
+  ],
+  "D-090-R094": [
+   "No test deleted, skipped, xfail-marked or renamed: the test file's diff from the claim-seam head is additions only, apart from wording inside the new tests in commit D (git diff 06480e12..9889fa4c -- tools/test_agent_supervisor_review_slots.py); the only skips added are the two Windows-only tests, each with a stated reason, and both RUN and pass on windows-latest.",
+   "No assertion loosened: RaceTests keep assertEqual(winners, 2), assertLessEqual(len(ReviewSlots(self.dir).active()), 2) and assertEqual(winners, 1); _RACE_LEGITIMATE_REFUSAL is unchanged, so a slot_lock_timeout inside a race is still a loud failure; the racers' lock_timeout_s (30 s), the parent window (60 s) and the barrier budget (90 s) are unchanged. Producer report section 5 lists the assertions before and after; the code reviewer checked every pre-existing class and method (G3/G4 return, scenario S6).",
+   "No retry or rerun of a TEST, no rerun plugin, no pytest configuration change, no .github change. The retry that was added is in the product's lock release (a bounded wait for a short-lived concurrent read), which is the cause being fixed, not a retry to obtain a green run.",
+   "The safety property is unchanged and still asserted: release() never removes a lock whose lock_id is not its own (test_release_never_removes_a_foreign_lock_id); a release that cannot complete leaves the lock in place, fail closed (test_release_that_never_clears_is_bounded_failclosed_and_observable)."
+  ],
+  "D-090-R337": [
+   "The stated fact is checked against CI: both RaceTests failed on windows-latest on 2026-10-06 (jobs 112160344138, 112164492630, 112181006630; frozen excerpts under project-control/reports/M0-T184-ci-evidence/ with full-log byte counts and sha256). The third failure ran with no other CI run in progress (the earlier runs ended by 08:33:12 UTC; the failing job ran 08:34:09 to 08:43:29 UTC); the second attempts of both integration runs passed with 3952 passed (jobs 112168039083 and 112184899084).",
+   "The cause is named with the evidence that decides it (convergence record sections 2 and 3; its closing line is VERIFIED_CLOSED): not slow runners, a real defect in the slot lock's release, shown on the Windows machine before and after the repair."
+  ],
+  "D-090-R338": [
+   "Row DB-150 of docs/DISCOVERY_BACKLOG.md corrected in commit 0f23b435: both tests, the three jobs with run ids, the racers' reason (refused:slot_lock_timeout), 'under load' removed as not established; the row keeps a dated note of what it first said. Updated with the established cause in the docs seam commit of this task.",
+   "The sentence of docs/SESSION_HANDOFF.md that points to DB-150 corrected in the same commit (marked ORCH-CORRECTED), and step 7 of its next-action list now names both tests and task M0-T184."
+  ],
+  "D-090-R339": [
+   "A tracked task: M0-T184, contracted at 0f23b435 with readiness gate G0 PASS, claimed at 3714522a; gates G0, G2, G3, G4, G5.",
+   "First piece of work of the session: none of the waiting pull requests (#431, #443, #447, #448) was merged or base-merged before this task; the integration branch head is unchanged at 4b6a4d8c.",
+   "Reviewed by different agents than the producer (backend-engineer): the independent code-reviewer's G3/G4 return (PASS for code, tests, scope, modularity and no-weakening at 3da6dd75, with findings F1 to F3, all applied in commit D) is saved by the orchestrator; its check of the final head, the security-reviewer's G5 review and the directive-compliance-verifier's check follow this submission and are recorded as gate records and in verification.json.",
+   "R094 holds (see D-090-R094): the cause was removed in the slot-lock code; no test was skipped or weakened and no retry was added to obtain a green run."
+  ]
+ }
+}

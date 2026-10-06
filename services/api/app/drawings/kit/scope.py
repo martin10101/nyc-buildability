@@ -9,11 +9,12 @@ the whole-site statement and the two owner-settled remaining-capacity strings.
 
 Every printed FIGURE and settled string is read from the results document and
 carries the JSON pointer it came from (check C-4). The only text the kit adds
-of its own is the ``Assumed conditions`` heading and the short plain-words name
-of each assumption key (:data:`ASSUMPTION_KEY_NAMES`) and the flag words
-(:data:`FLAG_WORDS`); those are a fixed presentation vocabulary - like the
-drawing kit's yard-kind names - validated against the document's machine value,
-never a legal claim and never a figure.
+of its own is the ``Assumed conditions`` heading, the short plain-words name of
+each assumption key (:data:`ASSUMPTION_KEY_NAMES`), the flag words
+(:data:`FLAG_WORDS`) and the plain word for a code-like value
+(:data:`ASSUMPTION_VALUE_WORDS`); those are a fixed presentation vocabulary -
+like the drawing kit's yard-kind names - validated against the document's
+machine value, never a legal claim and never a figure.
 
 This module builds a document-agnostic, ordered list of :class:`ScopePart`
 lines (:class:`ScopeView`). The site plan and massing turn each line into a
@@ -33,9 +34,11 @@ from .svg import xml_illegal
 __all__ = [
     "ASSUMED_CONDITIONS_HEADING",
     "ASSUMPTION_KEY_NAMES",
+    "ASSUMPTION_VALUE_WORDS",
     "FLAG_WORDS",
     "ScopePart",
     "ScopeView",
+    "assumption_value_word",
     "load_scope",
 ]
 
@@ -44,7 +47,14 @@ __all__ = [
 #: names - validated against the document key by the C-4 checker; an unknown key
 #: fails closed (the kit never invents a name for a key it does not know).
 ASSUMPTION_KEY_NAMES: dict[str, str] = {
+    "zoning_district": "Zoning district",
+    "overlay_present": "Commercial overlay present",
+    "special_district_present": "Special purpose district",
+    "special_density_area": "Special density area",
     "lot_type": "Lot type",
+    "lot_front_ft": "Lot frontage",
+    "lot_depth_ft": "Lot depth",
+    "site_measurement_rank": "Site measurement basis",
     "within_100_ft_of_street_line_intersection": "Within 100 ft of a street-line intersection",
     "street_line_intersection_angle_degrees": "Street-line intersection angle",
     "housing_program": "Housing program",
@@ -54,6 +64,38 @@ ASSUMPTION_KEY_NAMES: dict[str, str] = {
 #: Plain words for a boolean assumption value (the schema's ``value`` may be a
 #: flag). Validated against the document boolean by the C-4 checker.
 FLAG_WORDS: dict[bool, str] = {True: "Yes", False: "No"}
+
+#: Plain words for a code-like string assumption value, keyed by assumption key.
+#: A fixed presentation vocabulary (like the key names and the flag words),
+#: validated against the document value by the C-4 checker; a value not listed
+#: here prints verbatim (it is already plain words). ``housing_program`` is the
+#: engine enum (``scenario/three_answers/inputs.py`` and the r6-r12 / r6b rules);
+#: ``site_measurement_rank`` mirrors the site_fact measurement labels
+#: (``app/profile/measurement.py``), in the plain-words form the results cards
+#: print (``apps/web`` three-answers.ts ``scopeAssumptionValueText``), so the
+#: drawing says the same word as the card, never the raw code.
+ASSUMPTION_VALUE_WORDS: dict[str, dict[str, str]] = {
+    "housing_program": {
+        "standard_residence": "standard residence",
+        "qualifying_affordable_housing": "qualifying affordable housing",
+        "qualifying_senior_housing": "qualifying senior housing",
+    },
+    "site_measurement_rank": {
+        "survey_entered": "survey (entered)",
+        "city_records": "city records",
+        "approximate_tax_map": "approximate tax map",
+        "entered": "entered",
+        "assumed": "assumed",
+    },
+}
+
+
+def assumption_value_word(key: str, value: str) -> str | None:
+    """The fixed plain word for a code-like string ``value`` of assumption
+    ``key``, or ``None`` when the kit has no mapping - the value then prints
+    verbatim (it is already plain words). A fail-closed vocabulary: it never
+    invents a word, only maps the values it knows."""
+    return ASSUMPTION_VALUE_WORDS.get(key, {}).get(value)
 
 ASSUMED_CONDITIONS_HEADING = "Assumed conditions"
 
@@ -92,16 +134,24 @@ def _doc(value: str, pointer: str) -> ScopePart:
     return ScopePart(value, pointer, mine=False)
 
 
-def _value_parts(value, unit, base: str) -> list[ScopePart]:
+def _value_parts(key: str, value, unit, base: str) -> list[ScopePart]:
     """The ``value + unit`` parts of one assumption, in that order. A boolean is
-    shown as a flag word; a number is formatted like every other drawn number;
-    a string is printed as given. The unit, when present, follows the value."""
+    shown as a flag word; a number is formatted like every other drawn number; a
+    code-like string is shown as its fixed plain word
+    (:func:`assumption_value_word`) when the kit knows one - the kit's own
+    presentation word, screened for a claim word on the DXF and validated against
+    the document value by the C-4 checker - else printed verbatim. The unit, when
+    present, follows the value."""
     if isinstance(value, bool):
         parts = [ScopePart(FLAG_WORDS[value], f"{base}/value", mine=True)]
     elif isinstance(value, (int, float)):
         parts = [ScopePart(format_number(float(value)), f"{base}/value", mine=False)]
     else:
-        parts = [_doc(str(value), f"{base}/value")]
+        word = assumption_value_word(key, str(value))
+        if word is None:
+            parts = [_doc(str(value), f"{base}/value")]
+        else:
+            parts = [ScopePart(word, f"{base}/value", mine=True)]
     if unit is not None:
         parts.append(_doc(str(unit), f"{base}/unit"))
     return parts
@@ -117,7 +167,7 @@ def _assumption_line(raw: Mapping, index: int) -> tuple[ScopePart, ...]:
                                 location=f"{base}/key")
     return (
         ScopePart(name, f"{base}/key", mine=True),
-        *_value_parts(raw["value"], raw["unit"], base),
+        *_value_parts(key, raw["value"], raw["unit"], base),
         _doc(str(raw["basis"]), f"{base}/basis"),
         _doc(str(raw["statement"]), f"{base}/statement"),
     )

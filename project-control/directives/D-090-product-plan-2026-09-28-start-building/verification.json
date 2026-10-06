@@ -3,7 +3,7 @@
  "directive_id": "D-090",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-090-BOOTSTRAP at capture; tasks cite them through directive_refs. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": "2026-10-03T21:48:36+00:00",
+ "verified_at": "2026-10-06T14:02:26+00:00",
  "task_verifications": [
   {
    "directive_id": "D-090",
@@ -243,6 +243,79 @@
       "Safety and concurrency assertions preserved and listed before/after in project-control/reports/M0-T181-producer-report.md; confirmed by the G3/G4 code-reviewer (164 passed) and the G5 security-reviewer (line-level fail-closed analysis: strict ordinal < root_start, unknown kept, no root_start = old behaviour; no fail-open path)."
      ],
      "reviewed_sha": "58b889885c165e101265d2de9ff90bbb20f99022"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M0-T184",
+   "applicable_requirement_ids": [
+    "D-090-R093",
+    "D-090-R094",
+    "D-090-R337",
+    "D-090-R338",
+    "D-090-R339"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "e1e8b71d04206baa05b64f4489b852caec7f0d26",
+   "reviewed_manifest_sha256": "4367c8a5d3d2ceb8d7ac70cf2d946377ef502dbb3db3db13ec779fb4651478c3",
+   "requirements": [
+    {
+     "id": "D-090-R093",
+     "state": "PASS",
+     "evidence": [
+      "Separate PR #449 on branch task/M0-T184-review-slot-lock-release, distinct from any lane work; the repair is ledger task M0-T184 under /deficit-convergence.",
+      "project-control/reports/M0-T184-convergence-record.md section 2.4 classifies the cause as a real supervisor defect in tools/agent_supervisor/review_slots.py _SlotLock.release() and rules out test timing in section 2.3; the deciding discriminator is the reason code slot_lock_timeout, raised only by the acquire wait, not barrier_timeout.",
+      "The fix is one bounded change to release() (frozen blob 8e0a90c3); shown on windows-latest before the repair (run 37443478339, job 112202576560, commit A: the two repair-dependent tests fail, the platform-fact test passes) and green after it on the reviewed head 17247337 (runs 37446982370 and 37446987856, jobs 112214078115 and 112214096512: 3957 passed, 60 skipped, 0 failed, all 22 review-slots tests).",
+      "The D-091 recertification cost of a change under tools/agent_supervisor/** is recorded (convergence record section 5; producer report section 6) as a cost, not a bar.",
+      "Verifier's carry-forward condition met at e1e8b71d: the nine allowed-path blobs are identical to those verified at 4acd2a49 (content identity 4367c8a5), the only later commit adds project-control/reports/M0-T184-DCV.md, the DB-150 row and the corrected handoff sentences are unchanged, and pull requests #431, #443, #447 and #448 were read OPEN and unmerged at acceptance (integration head 4b6a4d8c). Gates G0/G2/G3/G4/G5 PASS at that content identity (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer backend-engineer is neither). DCV report: project-control/reports/M0-T184-DCV.md (validator direct exit 0 at 4acd2a49)."
+     ],
+     "reviewed_sha": "e1e8b71d04206baa05b64f4489b852caec7f0d26"
+    },
+    {
+     "id": "D-090-R094",
+     "state": "PASS",
+     "evidence": [
+      "The test file is additions only: ReleaseLockRemovalTests appended (167 insertions, 0 deletions from the claim-seam head); no pre-existing test deleted, renamed or xfail-marked.",
+      "Asserts unchanged in the frozen test file: _RACE_LEGITIMATE_REFUSAL = 'refused:concurrency_limit_reached' (line 167); RaceTests keep assertEqual(winners, 2) with assertLessEqual(len(active()), 2) (lines 225-226) and assertEqual(winners, 1) (line 231); _run_race routes any other outcome to self.fail (lines 198-201), so a slot_lock_timeout in a race stays a loud failure.",
+      "Timing windows untouched: lock_timeout_s=30.0 (line 79), _RACE_PARENT_WAIT_S=60.0 (line 158), _RACE_BARRIER_WAIT_S (line 160). The only skips added are two skipUnless(os.name == 'nt') platform tests, which run and pass on windows-latest. The one retry added is inside the production release(), not around a test. No .github or pytest-configuration change.",
+      "Verifier's carry-forward condition met at e1e8b71d: the nine allowed-path blobs are identical to those verified at 4acd2a49 (content identity 4367c8a5), the only later commit adds project-control/reports/M0-T184-DCV.md, the DB-150 row and the corrected handoff sentences are unchanged, and pull requests #431, #443, #447 and #448 were read OPEN and unmerged at acceptance (integration head 4b6a4d8c). Gates G0/G2/G3/G4/G5 PASS at that content identity (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer backend-engineer is neither). DCV report: project-control/reports/M0-T184-DCV.md (validator direct exit 0 at 4acd2a49)."
+     ],
+     "reviewed_sha": "e1e8b71d04206baa05b64f4489b852caec7f0d26"
+    },
+    {
+     "id": "D-090-R337",
+     "state": "PASS",
+     "evidence": [
+      "The three frozen ci-evidence files are cited in convergence record section 1 with the racers' reason-code lists verbatim; byte counts and sha256 of the three full logs were recomputed by the verifier and match (112160344138 = 52669 bytes, 112164492630 = 51690, 112181006630 = 50911).",
+      "Both RaceTests failed: test_global_last_slot_never_double_taken twice (jobs 112160344138 run 37430612001; 112164492630 run 37431907048) and test_per_lane_last_slot_never_double_taken once (job 112181006630 run 37436954274); every racer not admitted answered refused:slot_lock_timeout (2 admitted + 4 twice, 1 admitted + 5 once); no slot taken twice.",
+      "The record names the cause with the deciding evidence (sections 2.3 and 2.4) and treats 'fail on slow CI runners' as a description, not an established cause.",
+      "Verifier's carry-forward condition met at e1e8b71d: the nine allowed-path blobs are identical to those verified at 4acd2a49 (content identity 4367c8a5), the only later commit adds project-control/reports/M0-T184-DCV.md, the DB-150 row and the corrected handoff sentences are unchanged, and pull requests #431, #443, #447 and #448 were read OPEN and unmerged at acceptance (integration head 4b6a4d8c). Gates G0/G2/G3/G4/G5 PASS at that content identity (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer backend-engineer is neither). DCV report: project-control/reports/M0-T184-DCV.md (validator direct exit 0 at 4acd2a49)."
+     ],
+     "reviewed_sha": "e1e8b71d04206baa05b64f4489b852caec7f0d26"
+    },
+    {
+     "id": "D-090-R338",
+     "state": "PASS",
+     "evidence": [
+      "docs/DISCOVERY_BACKLOG.md row DB-150 is corrected in place with a dated note of what it first said: it names both tests with the three failing run and job ids, gives the racers' reason (refused:slot_lock_timeout after the 30-second wait), replaces 'under load' with what the evidence shows, deletes nothing.",
+      "docs/SESSION_HANDOFF.md carries the matching correction: the READ FIRST bullet (line 11, tagged ORCH-CORRECTED per owner R338) names both tests and the slot_lock_timeout reason, and next-action step 7 (line 87) names the two failing race tests and task M0-T184.",
+      "Verifier's carry-forward condition met at e1e8b71d: the nine allowed-path blobs are identical to those verified at 4acd2a49 (content identity 4367c8a5), the only later commit adds project-control/reports/M0-T184-DCV.md, the DB-150 row and the corrected handoff sentences are unchanged, and pull requests #431, #443, #447 and #448 were read OPEN and unmerged at acceptance (integration head 4b6a4d8c). Gates G0/G2/G3/G4/G5 PASS at that content identity (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer backend-engineer is neither). DCV report: project-control/reports/M0-T184-DCV.md (validator direct exit 0 at 4acd2a49)."
+     ],
+     "reviewed_sha": "e1e8b71d04206baa05b64f4489b852caec7f0d26"
+    },
+    {
+     "id": "D-090-R339",
+     "state": "PASS",
+     "evidence": [
+      "Ledger task M0-T184 with independent review at its exact head 17247337 (G3/G4 code-reviewer PASS, G5 security-reviewer PASS); the windows-latest supervisor-bridge job is green on that head (jobs 112214078115 and 112214096512: 3957 passed, 60 skipped, 0 failed).",
+      "Ordering: the frozen head sits directly on integration head 4b6a4d8c; git log 4b6a4d8c..HEAD holds only the source-041 capture and the M0-T184 commits, with no merge of the waiting pull requests #431, #443, #447 or #448 in the fix's ancestry.",
+      "The verifier could not read the live GitHub state of the four pull requests from its copy; the orchestrator read it at acceptance: all four OPEN and unmerged.",
+      "Verifier's carry-forward condition met at e1e8b71d: the nine allowed-path blobs are identical to those verified at 4acd2a49 (content identity 4367c8a5), the only later commit adds project-control/reports/M0-T184-DCV.md, the DB-150 row and the corrected handoff sentences are unchanged, and pull requests #431, #443, #447 and #448 were read OPEN and unmerged at acceptance (integration head 4b6a4d8c). Gates G0/G2/G3/G4/G5 PASS at that content identity (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer backend-engineer is neither). DCV report: project-control/reports/M0-T184-DCV.md (validator direct exit 0 at 4acd2a49)."
+     ],
+     "reviewed_sha": "e1e8b71d04206baa05b64f4489b852caec7f0d26"
     }
    ]
   }
