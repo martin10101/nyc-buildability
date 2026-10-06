@@ -833,6 +833,12 @@ def test_t097_as3_mutation_insunits_codes_reddens() -> None:
 
 
 _SUBQUADRATIC_RATIO_CEIL = 8.0  # linear ~4x per 4x input; the old double-find is ~12-16x
+# Size for the mutation proof only. At 30,000 lines the double-find mutant measured a 4x-input
+# ratio of 7.1-10.2 (median 8.5): it sat ON the 8.0 ceiling and failed about one run in eight,
+# quiet or loaded, because the linear per-line cost still hid most of the quadratic rescan. At
+# 90,000 lines the quadratic term dominates: 10.9-13.7 with every core busy (2026-10-05, 4-core
+# development server), while the real splitter stays at 3.4-4.9 at 30,000 and 120,000 lines.
+_MUTATION_PROOF_LINES = 90_000
 
 
 def _splitter_scaling_ratio(
@@ -905,7 +911,9 @@ def test_t097_b1_mutation_double_find_reddens_time_guard() -> None:
 
     try:
         _reader_mod._iter_dxf_lines = _double_find_mutant  # type: ignore[assignment]
-        mutant_ratio = _splitter_scaling_ratio("\n", 30_000, reps_small=3, reps_large=1)
+        mutant_ratio = _splitter_scaling_ratio(
+            "\n", _MUTATION_PROOF_LINES, reps_small=3, reps_large=1
+        )
     finally:
         _reader_mod._iter_dxf_lines = original
 
@@ -914,7 +922,7 @@ def test_t097_b1_mutation_double_find_reddens_time_guard() -> None:
         f"measured {mutant_ratio:.1f}x - the guard did not redden"
     )
     # must-stay-PASS: the real splitter is comfortably sub-quadratic at the same size.
-    assert _splitter_scaling_ratio("\n", 30_000) < _SUBQUADRATIC_RATIO_CEIL
+    assert _splitter_scaling_ratio("\n", _MUTATION_PROOF_LINES) < _SUBQUADRATIC_RATIO_CEIL
 
 
 # ---------------------------------------- T097 round 2: G4 ADVISORY-1 exact-edge cap probes
