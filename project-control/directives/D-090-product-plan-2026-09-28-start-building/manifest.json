@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T02:23:58+00:00",
+ "updated_at": "2026-10-06T03:26:02+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -255,10 +255,18 @@
   "D-090-R231",
   "D-090-R232",
   "D-090-R233",
-  "D-090-R234"
+  "D-090-R234",
+  "D-090-R235",
+  "D-090-R236",
+  "D-090-R237",
+  "D-090-R238",
+  "D-090-R239",
+  "D-090-R240",
+  "D-090-R241",
+  "D-090-R242"
  ],
- "requirements_id_digest_sha256": "b62195c6f2c1ce1fb3093a6ea2c4b9441a99871ec128fb4a54ad22b795860c3c",
- "requirements_content_digest_sha256": "ffdc1a83e84ee5d2e8952c3d9fee457c0f3958efb7a397b5db2f4cbabb8b65f7",
+ "requirements_id_digest_sha256": "6f560fa8835a08608ea0bd17853afa721ad078b0f79d2437ca8a24d4a688975d",
+ "requirements_content_digest_sha256": "e1245b21e449e637f945180c6c99d9a3ee4379d74e2609ff1367ae8c84261eb2",
  "sources": [
   {
    "file": "source-001.md",
@@ -514,6 +522,14 @@
    "recorded_at": "2026-10-06T02:23:58+00:00",
    "content_digest_sha256": "ff51bd8758cea4ffdb2570f7dfdc466da8219f71b3fb0fde889aaa3935a5d278",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-033-amendment.md",
+   "kind": "amendment",
+   "sequence": 33,
+   "recorded_at": "2026-10-06T03:26:02+00:00",
+   "content_digest_sha256": "b7fd99a6f4047a5a2f16f9e778306714b83a068b65ad9799367b5de22f7f347e",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -547,7 +563,8 @@
   "source-029-amendment.md",
   "source-030-amendment.md",
   "source-031-amendment.md",
-  "source-032-amendment.md"
+  "source-032-amendment.md",
+  "source-033-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -778,6 +795,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-032 (session 013RaGmC messages 72-76, 2026-10-06: three closing messages and the hand-off prompt with no requirement; then message 76 - finish the running review and record it at the exact commit; keep the dependency hold, eligible 2026-10-07 with 14:09 UTC as the safe check time; a read-only work order for the first R6B results connection; simplified feasibility scope; independently calculated law-based tests; sequential work, production settings unchanged, no timers; one short update; no completion claim before verification) and requirements D-090-R214..R234, all pending. Text extracted by script; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-06T03:26:02+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-033 (session 013RaGmC message 77, 2026-10-06, the owner's reviewer's check of the work order, sent by the owner: make the work order consistent before building; every known gap corrected and tested or shown 'not known'; no whole-lot 100 percent coverage until the geometry supports it; settle the two area figures before calculating; missing inputs stay unanswered; a saved result is not proof; stay within simplified feasibility) and requirements D-090-R235..R242, all pending. Text extracted by script; nothing retyped; no existing row edited."
   }
  ]
 }

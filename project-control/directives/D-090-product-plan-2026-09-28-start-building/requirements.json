@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 234,
+ "requirement_count": 242,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T02:23:58+00:00",
+ "updated_at": "2026-10-06T03:26:02+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -7924,6 +7924,276 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-06 (message 76).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R235",
+   "text": "'some planned tests still require the old answers.' 'That could put an uncertain result onto the new screen.': no planned test in the work order may require an answer whose correctness is uncertain, and no uncertain result may reach the new screen. ORCHESTRATOR'S READING: the planned tests that required the saved journey result as a whole, whole-lot corner coverage, or values read from that saved result on the screen are the ones to correct.",
+   "source_ref": "source-033-amendment.md#owner-message-77-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R222",
+    "D-090-R227"
+   ],
+   "required_harness": "Every planned test is checked: none expects a value that the work order itself lists as uncertain.",
+   "required_evidence": "The corrected work order and its independent audit.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 77, a correction to the work order).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R236",
+   "text": "'Before building, make the work order consistent': the work order is corrected so that its findings and its planned tests agree, and this is done before any building starts.",
+   "source_ref": "source-033-amendment.md#owner-message-77-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R221",
+    "D-090-R223"
+   ],
+   "required_harness": "The corrected work order is audited by a different agent before any task is contracted from it.",
+   "required_evidence": "The audit record on the corrected work order; no build branch exists before it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 77, a correction to the work order).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R237",
+   "text": "'every known gap must either be corrected and tested, or the affected result must show \u201cnot known.\u201d': for each gap the work order knows of, one of two things is chosen and written down: the gap is corrected and a test proves the correction, or every result the gap affects shows 'not known'. No third state exists, such as showing the number with a note.",
+   "source_ref": "source-033-amendment.md#owner-message-77-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R199",
+    "D-090-R229"
+   ],
+   "required_harness": "A table of every known gap with its choice; for each 'not known' choice a test that the affected result shows 'not known'; for each correction a test of the corrected value.",
+   "required_evidence": "The gap table in the work order; later, those tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 77, a correction to the work order).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R238",
+   "text": "'Don\u2019t require 100% coverage for the entire lot until the geometry supports it.': no test and no result may state 100 percent coverage for a whole lot unless the lot's geometry shows that the corner rule covers the whole lot; otherwise the coverage shows 'not known'.",
+   "source_ref": "source-033-amendment.md#owner-message-77-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R237"
+   ],
+   "required_harness": "A test with a lot whose geometry supports it (100 percent) and one whose geometry does not ('not known').",
+   "required_evidence": "The corrected work order; later, those tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 77, a correction to the work order).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R239",
+   "text": "'Resolve how the two area figures are used before calculating from them.': how the recorded lot area and the outline's area are each used is decided and written down before any calculation uses them. ORCHESTRATOR'S READING: the two figures are the city-record lot area (10,075 sq ft on the benchmark lot) and the area of the tax-map outline (10,388 sq ft).",
+   "source_ref": "source-033-amendment.md#owner-message-77-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R228",
+    "D-090-R237"
+   ],
+   "required_harness": "The work order states one rule for the two figures, and tests that no calculation mixes them and that their difference is shown.",
+   "required_evidence": "The rule in the work order; later, those tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 77, a correction to the work order).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R240",
+   "text": "'Let missing inputs stay unanswered.': an input the user has not given stays unanswered; it is not filled by a default or a guess, and the user is not forced to answer it; the results that depend on it show 'not known'.",
+   "source_ref": "source-033-amendment.md#owner-message-77-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R199",
+    "D-090-R229"
+   ],
+   "required_harness": "A test that an unanswered input leaves its dependent results 'not known' and the other results unchanged.",
+   "required_evidence": "The corrected work order; later, that test.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 77, a correction to the work order).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R241",
+   "text": "'Matching an old saved result is not proof that it is correct.': a test that compares a new result with a saved earlier result proves only that nothing changed; it is never counted as proof that a value is right, and a saved result is never a reason to show a value.",
+   "source_ref": "source-033-amendment.md#owner-message-77-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R227"
+   ],
+   "required_harness": "No planned test accepts a value because it equals a saved result; any comparison with a saved result is labelled as such.",
+   "required_evidence": "The corrected work order's test list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 77, a correction to the work order).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R242",
+   "text": "'Keep this within simplified feasibility.': the corrections stay inside simplified zoning feasibility: where closing a gap would need detailed design, the result shows 'not known' instead.",
+   "source_ref": "source-033-amendment.md#owner-message-77-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R224",
+    "D-090-R225"
+   ],
+   "required_harness": "No corrected item requires apartment layouts, permit-ready plans or building-code design.",
+   "required_evidence": "The corrected work order.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 77, a correction to the work order).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
