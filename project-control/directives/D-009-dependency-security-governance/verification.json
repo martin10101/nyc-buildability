@@ -190,7 +190,27 @@
       "verified_at": "2026-08-11T23:12:00+00:00",
       "note": "EMPTY-SET verification. M0-T047 cites D-009:ALL, but directive_registry.evaluate_task_refs / derive_applicable derive ZERO applicable D-009 requirements for this packet: all 21 D-009 rows carry applicability.task_ids=['M0-T019'] (task_type frontend, milestone M0), so none matches M0-T047 (task_type security-hygiene). Reproduced independently at reviewed_sha c032dfe: applicable_ids=[D-010-R233, D-010-R246], D-009 subset empty, ok:True. This row exists solely because accept() fail-closes when a CITED directive has no task_verification row, independent of applicability (precedent D-001 M0-T057, D-010 M0-T060). M0-T047's substantive dependency-security verification is carried by the applicable D-010 holds (R233/R246 PASS) and the machine gates web-dependency-security + web tree re-audit PASS on c032dfe. Verifier directive-compliance-verifier != producer orchestrator.",
       "requirements": []
+    },
+    {
+      "directive_id": "D-009",
+      "task_id": "M0-T185",
+      "applicable_requirement_ids": [
+        "D-009-R017"
+      ],
+      "producer": "frontend-engineer",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-009-R017",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
     }
   ],
-  "updated_at": "2026-08-11T23:13:00+00:00"
+  "updated_at": "2026-10-06T15:24:03+00:00"
 }
