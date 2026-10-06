@@ -158,8 +158,8 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "An 'expected answer' copied from the program's own output would make the register circular -> S5: expected comes from the law text, a reference case, or is a gap",
     "A register that silently goes stale is worse than none -> S4 and S8 make the build fail",
@@ -170,7 +170,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T14:32:39.206321+00:00",
-  "updated_at": "2026-10-06T19:39:30.411738+00:00",
+  "updated_at": "2026-10-06T19:59:11.998155+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -251,5 +251,7 @@
       "actor": "orchestrator",
       "change": "After the first independent review and before any gate: owner messages 94 and 95 (D-090 source-043 and source-044) change the register's design. Rows D-090-R393, R394, R423, R425, R426, R441, R442 and R443 are bound to this task and scenarios S12 to S16 are added: the reviewer's original decision kept apart from a derived applies-to-current field; a check that enforces record keeping only; planned, committed and tested behaviour told apart; a test column that shows a result, the commit tested and its evidence; the wording about coverage and agent reviews; the five notes of the first review. One path family is added to allowed_paths for the committed test-run logs: docs/zoning-rule-review/** already covers docs/zoning-rule-review/evidence/. S6 is read with S12: where they differ, S12 governs (the stored original decision is not overwritten). No gate or reviewer changed."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-06T19:59:11.998017+00:00"
 }
