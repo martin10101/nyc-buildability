@@ -676,6 +676,21 @@ push), read the AssertionError payload from the failed log, delete the branch.
 - **Reviewer-found cross-PR byte mismatches are fixed on the side that is NOT the source of truth** — the emitter wins
   over the fixture (the transit_parking `detail` reason clause, DB-115).
 
+## Cloud session 2026-10-06c (f9ce0b61; seq 146)
+
+- Seven merges in one session, one at a time: base merge (`queue_base_merge.sh`), fresh run, the description corrected from
+  the evidence files BEFORE the pre-merge check (three descriptions held a statement that had gone stale), `ci-evidence-verifier`,
+  the fail-closed merge step, then the integration branch's own run read before the next. About 20 minutes each.
+- A contract seam may ride on a documents pull request (packet, binding, placeholders, G0 `ready`); the claim then goes on the
+  task's own branch after the merge. Seed placeholders only in owned folders (DB-158) and run the coverage check first.
+- A builder's full-suite failure on an unrelated test: check whether its tree holds the integration branch's fix (DB-159).
+- Review corrections after a submit: `progress --status rework`, then `--status in_progress`, cherry-pick, a new evidence map
+  commit, `submit` and G2 at that head; then the SAME reviewer confirms by message and G3/G4 are recorded at that head.
+- A verifier's rows can be copied by script when the prompt fixes the form (`ROW D-090-Rnnn: PASS` then ` - ` sentences).
+- ZR 12-10 (the very large page) was read through the canonical HTML address with a browser user-agent; the print channel
+  for that node has timed out before. HPD's PDFs on nyc.gov download with a browser user-agent and read with `pdftotext`.
+- A new automatic instruction line needs room first: the automatic set stands at about 9,922 of 10,000 tokens.
+
 ## Loop-run and Windows-PC notes (moved from Tier 1 `.claude/rules/PROGRAM_KNOWLEDGE.md` on 2026-10-06, unchanged)
 
 Moved to keep the automatically loaded instructions under the owner's 10,000-token cap (D-067-R003) when the owner's
