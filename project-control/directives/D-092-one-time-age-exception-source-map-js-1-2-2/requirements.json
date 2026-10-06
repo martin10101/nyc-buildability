@@ -1,0 +1,563 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-092",
+ "version": 1,
+ "requirement_count": 16,
+ "producer": "orchestrator",
+ "updated_at": "2026-10-06T05:44:24+00:00",
+ "requirements": [
+  {
+   "id": "D-092-R001",
+   "text": "'Investigate whether we can safely clear B-029 before the seven-day waiting period ends.' 'This authorizes investigation only, not changes.': a read-only investigation of clearing blocker B-029 early is authorized; this message authorizes no change.",
+   "source_ref": "source-001.md#owner-message-83-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "The investigation changes no file, installs nothing and merges nothing.",
+   "required_evidence": "The saved session transcript between messages 83 and 84.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 83).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-092-R002",
+   "text": "'First, check whether a mature, supported dependency update can remove the vulnerable package while passing all existing checks.': the first question answered is whether an update that is at least seven days old and supported removes the vulnerable package with every existing check passing.",
+   "source_ref": "source-001.md#owner-message-83-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-092-R001"
+   ],
+   "required_harness": "The reply answers it from the lockfile and the official registry.",
+   "required_evidence": "The reply; the registry and lockfile facts it rests on.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 83).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-092-R003",
+   "text": "'If not, assess a narrowly scoped change to the age checker for source-map-js 1.2.2 only.': if no such update exists, the reply assesses a change to the age checker that covers source-map-js 1.2.2 and nothing else.",
+   "source_ref": "source-001.md#owner-message-83-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-092-R002"
+   ],
+   "required_harness": "The reply assesses that change and no wider one.",
+   "required_evidence": "The reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 83).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-092-R004",
+   "text": "'Keep vulnerability scanning, package-integrity verification, independent review and all tests mandatory.': in any proposal, and in the approved change, the vulnerability scan, the check of each package's integrity against the registry, an independent review and every test stay required; none becomes optional, skipped or warning-only.",
+   "source_ref": "source-001.md#owner-message-83-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP",
+     "M0-T182"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-092-R003"
+   ],
+   "required_harness": "The change leaves the audit steps and the integrity and host checks in force for every package, the excepted one included; an independent security review of the exact head is recorded; every expected check is a completed success on that head.",
+   "required_evidence": "The diff, the workflow files unchanged, the gate records and the check results.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 83).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T182"
+    ]
+   }
+  },
+  {
+   "id": "D-092-R005",
+   "text": "'Explain how the exception would expire and how the change itself could pass review and CI.': the reply says how the exception ends and how the change that makes it could itself pass review and CI.",
+   "source_ref": "source-001.md#owner-message-83-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-092-R003"
+   ],
+   "required_harness": "The reply states both.",
+   "required_evidence": "The reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 83).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-092-R006",
+   "text": "'Do not disable checks': no check is disabled, removed, skipped or made warning-only, in the investigation or in the approved change.",
+   "source_ref": "source-001.md#owner-message-83-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP",
+     "M0-T182"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "No CI step, audit step or gate branch is removed or bypassed by the change.",
+   "required_evidence": "The diff and the workflow files.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 83).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T182"
+    ]
+   }
+  },
+  {
+   "id": "D-092-R007",
+   "text": "'fake publication dates': a package's publication time is always the one the official registry reports; it is never altered, replaced or simulated to make a check pass.",
+   "source_ref": "source-001.md#owner-message-83-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP",
+     "M0-T182"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "The age is still computed from the registry's publication time and the registry's clock; the change supplies no date that takes their place.",
+   "required_evidence": "The checker's code and its tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 83).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T182"
+    ]
+   }
+  },
+  {
+   "id": "D-092-R008",
+   "text": "'waive the vulnerability': the advisory is never waived, ignored or suppressed; it is cleared only by moving to the fixed version.",
+   "source_ref": "source-001.md#owner-message-83-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP",
+     "M0-T182"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "The audit steps are unchanged and report zero findings on the changed lockfile.",
+   "required_evidence": "The workflow files and the audit results on the change's head.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 83).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T182"
+    ]
+   }
+  },
+  {
+   "id": "D-092-R009",
+   "text": "'install packages, edit files or merge anything': during the investigation nothing is installed, no file is edited and nothing is merged. ORCHESTRATOR'S READING: this held until message 84; message 84 lifts it only for the approved change (R012).",
+   "source_ref": "source-001.md#owner-message-83-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-092-R001"
+   ],
+   "required_harness": "No repository change between messages 83 and 84.",
+   "required_evidence": "The saved session transcript; git history.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 83).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-092-R010",
+   "text": "'My existing restrictions remain until I explicitly approve a specific proposal.': every earlier restriction of the owner stays in force until the owner approves one specific proposal. ORCHESTRATOR'S READING: after message 84 they still stay in force for everything outside that proposal.",
+   "source_ref": "source-001.md#owner-message-83-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "No earlier restriction is treated as lifted except by R012, within its scope.",
+   "required_evidence": "The records and the change.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 83).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-092-R011",
+   "text": "'Give me one short recommendation: the safest workable option, its risks, exactly what approval you need, and whether implementing it would realistically save time compared with waiting until October 7 at 14:09 UTC.': the reply gives one short recommendation with those four parts.",
+   "source_ref": "source-001.md#owner-message-83-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-092-R002",
+    "D-092-R003",
+    "D-092-R005"
+   ],
+   "required_harness": "The reply contains the recommendation, the risks, the approval needed and the time comparison.",
+   "required_evidence": "The reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 83).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-092-R012",
+   "text": "'Go ahead update it': the owner approves the early update described in the reply: source-map-js is moved to version 1.2.2 before its seven-day point, through the narrow exception. ORCHESTRATOR'S READING: 'it' is the vulnerable package; the message answers the reply's last request ('For the exception I would need your explicit approval of that exact change: this one version, that fingerprint, that expiry, the policy edits and the clean-up.'). The approval covers exactly that: version 1.2.2 of source-map-js with the registry's integrity value for it, a rule in the web age checker for that version and integrity only, the matching exclusion in the installer setting, new tests, the edits to the policy text, and the clean-up afterwards. The owner gave no reason for not waiting; the reply had recommended waiting.",
+   "source_ref": "source-001.md#owner-message-84-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP",
+     "M0-T182"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-092-R004",
+    "D-092-R006",
+    "D-092-R007",
+    "D-092-R008",
+    "D-092-R010"
+   ],
+   "required_harness": "One change that contains those parts and no other, made as a tracked task under the normal gates.",
+   "required_evidence": "The task packet, the diff, the gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 84).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T182"
+    ]
+   }
+  },
+  {
+   "id": "D-092-R013",
+   "text": "'only this 1 time': the exception is used once: for no other package, no other version and no other occasion. It creates no standing permission; any later case needs a new approval from the owner.",
+   "source_ref": "source-001.md#owner-message-84-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP",
+     "M0-T182"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-092-R012"
+   ],
+   "required_harness": "The checker's exception list holds exactly one entry, pinned by a test; the policy text says each exception needs its own owner approval.",
+   "required_evidence": "The checker's code and tests; the policy text.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 84).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T182"
+    ]
+   }
+  },
+  {
+   "id": "D-092-R014",
+   "text": "From the reply the owner approved: 'one change carrying the pin, a rule in the age checker for this exact version and file fingerprint, a matching exclusion in the installer setting, new tests, and edits to the policy text': the change is one pull request holding: the exact pin of source-map-js 1.2.2; a rule in the web age checker that applies to that version with that integrity value only; an exclusion for that package name in the installer's release-age setting; tests of the rule; and the policy text brought into line. Nothing else changes.",
+   "source_ref": "source-001.md#the-orchestrators-reply-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP",
+     "M0-T182"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-092-R012"
+   ],
+   "required_harness": "The diff holds those parts only; the lockfile is produced by the lockfile workflow, not by hand.",
+   "required_evidence": "The diff and the workflow run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (the reply, approved by message 84).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T182"
+    ]
+   }
+  },
+  {
+   "id": "D-092-R015",
+   "text": "From the reply the owner approved: 'the checker rule can only apply while the version is under seven days old, so it stops by itself at 14:08 UTC tomorrow': the checker's rule can apply only while the registry shows the version is younger than 604800 seconds; from that second on the ordinary rule decides and the exception can never apply again. The seven-day point is 2026-10-07T14:08:09.382Z.",
+   "source_ref": "source-001.md#the-orchestrators-reply-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP",
+     "M0-T182"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-092-R007",
+    "D-092-R012"
+   ],
+   "required_harness": "Tests at 604799 and 604800 seconds: the exception applies at the first and not at the second, where the ordinary pass is returned.",
+   "required_evidence": "The checker's tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (the reply, approved by message 84).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T182"
+    ]
+   }
+  },
+  {
+   "id": "D-092-R016",
+   "text": "From the reply the owner approved: 'The installer exclusion is by package name only and does not expire, so it needs a second reviewed change to remove it.': after the seven-day point a second, reviewed change removes the installer exclusion and the checker's exception entry (the clean-up). It is a separate tracked task.",
+   "source_ref": "source-001.md#the-orchestrators-reply-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-092-BOOTSTRAP",
+     "M0-T183"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-092-R012",
+    "D-092-R015"
+   ],
+   "required_harness": "A tracked clean-up task exists; after it merges neither the exclusion nor the exception entry remains.",
+   "required_evidence": "The clean-up task and its diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (the reply, approved by message 84).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T183"
+    ]
+   }
+  }
+ ]
+}

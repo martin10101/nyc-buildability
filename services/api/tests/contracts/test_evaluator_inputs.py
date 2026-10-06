@@ -77,6 +77,11 @@ _CITY = _source(
 _ARCHITECT = _source("architect_entry")
 _SURVEY = _source("survey", document_ref="test-fixture-synthetic survey-001")
 _ASSUMPTION = _source("assumption", statement="Architect-stated value for a check.")
+_TAXMAP = _source(
+    "tax_map_computation",
+    dataset="test-fixture-synthetic tax map",
+    query_ref="test-fixture-synthetic://taxmap/4073340070",
+)
 
 
 def _fact(key, value, rank, fact_id, source, *, street=None, bbl="4073340070") -> dict:
@@ -109,6 +114,35 @@ def _study(facts: list[dict], *, study_id: str = "study-evi") -> dict:
 def _benchmark_value(key: str):
     doc = json.loads(_BENCHMARK.read_text("utf-8"))
     return next(v["value"] for v in doc["expected_values"] if v["key"] == key)
+
+
+def _benchmark_identity_address() -> str:
+    """The lot's REAL confirmed address (benchmark pack identity.address), read from
+    the fixture - the address the confirmed-address step supplies, not a test literal."""
+    doc = json.loads(_BENCHMARK.read_text("utf-8"))
+    return doc["identity"]["address"]
+
+
+# 215-16 Northern as a CORNER lot: two per-street tax-map frontage facts (the live B-03
+# read shape), everything else the benchmark city facts. R138 exercises the address-street
+# front-lot-line selection on these.
+def _two_frontage_corner_facts() -> list[dict]:
+    facts = [f for f in _benchmark_city_facts() if f["key"] != "lot_frontage"]
+    facts.append(
+        _fact("lot_frontage", 103.88, "approximate_tax_map", "f-front-northern", _TAXMAP,
+              street="Northern Boulevard")
+    )
+    facts.append(
+        _fact("lot_frontage", 99.98, "approximate_tax_map", "f-front-215place", _TAXMAP,
+              street="215 Place")
+    )
+    return facts
+
+
+def _study_with_address(facts: list[dict], address) -> dict:
+    study = _study(facts)
+    study["property"]["address"] = address
+    return study
 
 
 def _benchmark_city_facts() -> list[dict]:
@@ -468,10 +502,48 @@ def test_unknown_option_is_rejected() -> None:
 
 def test_multi_street_frontage_is_not_guessed() -> None:
     # The corner-lot fixture has two frontage facts (two streets); collapsing them to
-    # one scalar is out of scope, so the adapter raises instead of guessing.
+    # one scalar is out of scope, so the adapter raises instead of guessing. The fixture's
+    # address ("1 Synthetic Test Street") names NEITHER frontage street, so the R138
+    # address-street exception does not fire and the fail-closed error stands.
     corner = json.loads(_CORNER_STUDY.read_text("utf-8"))
     with pytest.raises(EvaluatorInputsError, match="resolves to 2 distinct site facts"):
         build_evaluator_inputs(corner, "opt-a")
+
+
+# --------------------------------------------------------------------------
+# R138: corner-lot front lot line as a disclosed assumption (address street)
+# --------------------------------------------------------------------------
+
+def test_corner_front_lot_line_selected_from_the_address_street() -> None:
+    # Two frontages (Northern Boulevard, 215 Place); the property address names Northern
+    # Boulevard, so it is selected as the governing lot_front_ft - read from its own fact,
+    # at its own tax-map rank, not guessed.
+    study = _study_with_address(_two_frontage_corner_facts(), _benchmark_identity_address())
+    doc = build_evaluator_inputs(study, _OPTION_ID)
+    front = _record(doc, "lot_front_ft")
+    assert front["value"] == 103.88
+    assert front["fact_id"] == "f-front-northern"
+    assert front["rank"] == "approximate_tax_map"
+    assert front["source_kind"] == "tax_map_computation"
+    # The other street's frontage is not a governing input and not in depends_on_fact_ids.
+    assert "f-front-northern" in doc["depends_on_fact_ids"]
+    assert "f-front-215place" not in doc["depends_on_fact_ids"]
+
+
+def test_corner_front_lot_line_fails_closed_when_address_names_no_frontage() -> None:
+    # An address that names neither frontage street is not a match: keep the fail-closed
+    # multi-street error (requirement a).
+    study = _study_with_address(_two_frontage_corner_facts(), "1 Nowhere Avenue")
+    with pytest.raises(EvaluatorInputsError, match="resolves to 2 distinct site facts"):
+        build_evaluator_inputs(study, _OPTION_ID)
+
+
+def test_corner_front_lot_line_fails_closed_when_address_absent() -> None:
+    # No confirmed address (the BBL-only read): nothing to match, so the fail-closed error
+    # stands (requirement a).
+    study = _study_with_address(_two_frontage_corner_facts(), None)
+    with pytest.raises(EvaluatorInputsError, match="resolves to 2 distinct site facts"):
+        build_evaluator_inputs(study, _OPTION_ID)
 
 
 # --------------------------------------------------------------------------

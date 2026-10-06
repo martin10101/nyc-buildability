@@ -135,6 +135,8 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 
 ## Session habits
 
+- Never ask the owner for professional/legal review (ADR-007, D-090-R164): label + per-stat
+  law link + say not-sure. Lane A merge yes/no is the orchestrator's call (R163).
 - D-070 finished-seam handoffs: a PLANNED handoff requires the seam DONE FIRST (sweep, next
   packet contracted+claimed+pushed, worktree, launcher pointed, fresh run-id) so the successor
   only verifies+launches; crash/forced turnover = the only fallback.
@@ -240,5 +242,7 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   stale (phantom entries): `git -C <wt> reset --hard HEAD` before reviewing there.
 - Write a PR body's CI claim only AFTER the run completes (two bodies corrected this way); the
   reviewer verifies the body.
+- PR branch holding TWO unmerged PR heads = GitHub CONFLICTING (git merges clean), no PR check run (23 not 46):
+  after the parents merge, empty base merge + the same reviewer's identity note (#438).
 - Merge step FAILS CLOSED on the LIVE rollup's `nonsuccess>0` (jq count, `exit 1` before `gh pr merge`): keying
   on a watcher's DONE merged #411 with a FAILURE check.

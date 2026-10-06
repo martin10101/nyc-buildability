@@ -1,0 +1,76 @@
+# CI experiment evidence - supervisor-bridge job 112202576560 (run 37443478339, attempt 1, event push)
+# Head a83d63bb3b578dcd2651420e5d59ff7e4b7a0483 = commit A of M0-T184 (the new tests only, NO repair), branch ci-exp/M0-T184-red, runner image: Microsoft Windows Server 2025 (windows-latest)
+# Full job log: 55170 bytes, sha256 41d55154b4b07851b24fb034c1131ea6379f87ac6a7442cda75838ac66bfca40
+# Source: gh api repos/martin10101/nyc-buildability/actions/jobs/112202576560/logs, read 2026-10-06 by the orchestrator. Excerpt = the FAILURES section through the summary line, timestamps stripped.
+# What it shows, before the repair, on Windows: the two tests that need the repair FAIL (the lock file is still on disk after release());
+# the platform-fact test PASSES (the 19th test of the file, between the two F marks below: deleting a file that an open read handle holds raises PermissionError).
+# The progress line keeps its timestamp. 3953 passed = the 3952 of the unrepaired tree + the platform-fact test.
+
+2026-10-06T09:35:56.0229840Z tools\test_agent_supervisor_review_slots.py .................F.F         [ 80%]
+
+================================== FAILURES ===================================
+_ ReleaseLockRemovalTests.test_release_retries_transient_removal_failure_then_succeeds _
+
+self = <test_agent_supervisor_review_slots.ReleaseLockRemovalTests testMethod=test_release_retries_transient_removal_failure_then_succeeds>
+
+    def test_release_retries_transient_removal_failure_then_succeeds(self) -> None:
+        # S5(i), host-independent. The removal fails three times with the Windows
+        # delete-pending error and then succeeds: after release() the lock file is
+        # GONE and the next acquire takes it promptly. RED against the pre-repair
+        # release (one swallowed unlink leaves the file on disk; state['calls']==1).
+        lock = self._lock("transient.lock")
+        lock.acquire()
+        self.assertTrue(lock.path.exists())
+        fake_unlink, state = self._failing_unlink(
+            PermissionError(errno.EACCES, "delete pending"), fail_times=3)
+        with mock.patch.object(pathlib.Path, "unlink", fake_unlink):
+            lock.release()
+>       self.assertFalse(lock.path.exists())  # removed after the transient failures
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: True is not false
+
+tools\test_agent_supervisor_review_slots.py:533: AssertionError
+_ ReleaseLockRemovalTests.test_windows_release_removes_lock_despite_concurrent_reader _
+
+self = <test_agent_supervisor_review_slots.ReleaseLockRemovalTests testMethod=test_windows_release_removes_lock_despite_concurrent_reader>
+
+    @unittest.skipUnless(
+        os.name == "nt",
+        "Windows-only real-handle test: it depends on the Win32 sharing fact above "
+        "(an open reader without delete-sharing blocks unlink), which POSIX does not "
+        "have. RED on windows-latest before the repair (the single swallowed unlink "
+        "leaves the lock file on disk); GREEN after it (the bounded retry removes the "
+        "lock once the reader's short handle closes).")
+    def test_windows_release_removes_lock_despite_concurrent_reader(self) -> None:
+        # S5(v): a second REAL handle holds the lock file open briefly while
+        # release() runs; afterwards the lock file is gone. No os.open/unlink
+        # patching - a genuine concurrent handle on the real platform.
+        import threading
+        lock = self._lock("realhandle.lock", timeout_s=5.0, poll_s=0.005)
+        lock.acquire()
+        self.assertTrue(lock.path.exists())
+        reader = lock.path.open("r", encoding="utf-8")  # another racer's short read
+        closed = threading.Event()
+
+        def _close_soon() -> None:
+            time.sleep(0.1)
+            reader.close()
+            closed.set()
+
+        thread = threading.Thread(target=_close_soon)
+        thread.start()
+        try:
+            lock.release()
+        finally:
+            if not closed.is_set():
+                reader.close()
+            thread.join(timeout=5)
+>       self.assertFalse(lock.path.exists())  # removed once the short handle closed
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: True is not false
+
+tools\test_agent_supervisor_review_slots.py:596: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/test_agent_supervisor_review_slots.py::ReleaseLockRemovalTests::test_release_retries_transient_removal_failure_then_succeeds - AssertionError: True is not false
+FAILED tools/test_agent_supervisor_review_slots.py::ReleaseLockRemovalTests::test_windows_release_removes_lock_despite_concurrent_reader - AssertionError: True is not false
+=========== 2 failed, 3953 passed, 60 skipped in 294.21s (0:04:54) ============

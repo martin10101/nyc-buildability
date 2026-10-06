@@ -1,0 +1,64 @@
+{
+  "task_id": "M0-T183",
+  "title": "Clean-up after the one-time age exception (D-092): remove the source-map-js exclusion from apps/web/.npmrc and the exception entry from the web age gate, and bring the policy text back into line; not before 2026-10-07T14:08:09.382Z",
+  "task_type": "frontend",
+  "milestone_id": "M0",
+  "objective": "After source-map-js 1.2.2 reaches 604800 s (2026-10-07T14:08:09.382Z) the exception of M0-T182 can no longer apply. Remove what it left: the min-release-age-exclude line for source-map-js in apps/web/.npmrc, the exception entry (and, as the owner's 'only this 1 time' requires, any path that could admit another package without a new owner approval) in apps/web/scripts/dependency_age_gate.mjs with its tests adjusted, and the matching sentences of docs/DEPENDENCY_SECURITY_POLICY.md, keeping a dated record of the exception that was used. The exact pin of source-map-js 1.2.2 stays. Packet to be completed (paths, scenarios) before G0.",
+  "business_reason": "Owner directive D-092-R016: the installer exclusion is by package name and does not expire by itself, so a second reviewed change removes it; D-092-R013: the exception is used once.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T182"
+  ],
+  "allowed_paths": [
+    "apps/web/.npmrc",
+    "apps/web/scripts/dependency_age_gate.mjs",
+    "apps/web/scripts/tests/dependency_age_gate.test.mjs",
+    "docs/DEPENDENCY_SECURITY_POLICY.md"
+  ],
+  "forbidden_paths": [
+    ".github/**",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "apps/web/src/**",
+    "apps/web/e2e/**",
+    "services/**",
+    "packages/**",
+    "tools/**",
+    "CLAUDE.md",
+    ".claude/**",
+    "docs/** except docs/DEPENDENCY_SECURITY_POLICY.md",
+    "project-control/**"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-10-06T05:43:03.410751+00:00",
+  "updated_at": "2026-10-06T05:47:04.930329+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-092",
+      "requirement_ids": [
+        "D-092-R016"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-06T05:43:03.410953+00:00",
+  "path_notes": "BACKLOG. Not claimable before M0-T182 is merged and source-map-js 1.2.2 has reached 604800 s (2026-10-07T14:08:09.382Z). Inputs, outputs, acceptance scenarios and a report path are added before its G0. The exact pin of source-map-js 1.2.2 and the lockfile stay as M0-T182 leaves them."
+}
