@@ -33,6 +33,7 @@ document only when the task at hand needs it (routing table below).
 17. Defect convergence: when more than one related failure exists (a failing suite, a stabilization or repair campaign, a cluster of defects), inventory the complete failure surface and cluster it by root cause BEFORE fixing anything; repair each cluster as one bounded change across its producers, consumers, schemas, CLI wiring, policies, tests, docs, and Windows behavior; verify progressively (focused tests while editing, affected tests when a cluster closes, one full regression on the frozen candidate). Never fix one defect, re-run everything, and stop. Method and required record: `/engineering-reliability` → "Defect convergence".
 18. For repeated failures, commissioning failures, external CLI/provider incompatibilities, or conflicting evidence, load /deficit-convergence before editing. Do not use live reruns as serial discovery. Produce either verified closure or one consolidated blocker report.
 19. Communication (D-064): plain facts, short answers, no jargon, no over-explaining — answer only what's asked. Applies to owner replies, subagent prompts/returns, Codex messages.
+20. Zoning-rule review register (D-090-R379): every session that adds or changes zoning-rule behavior must update the register (`docs/zoning-rule-review/`; how: its `GUIDE.md`) as part of the same change. No session enters a human verdict.
 
 ## Owner working guidance (2026-10-06; D-090 R300-R329; the owner's text, unchanged)
 
