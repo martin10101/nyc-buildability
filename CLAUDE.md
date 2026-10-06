@@ -34,6 +34,30 @@ document only when the task at hand needs it (routing table below).
 18. For repeated failures, commissioning failures, external CLI/provider incompatibilities, or conflicting evidence, load /deficit-convergence before editing. Do not use live reruns as serial discovery. Produce either verified closure or one consolidated blocker report.
 19. Communication (D-064): plain facts, short answers, no jargon, no over-explaining — answer only what's asked. Applies to owner replies, subagent prompts/returns, Codex messages.
 
+## Owner working guidance (2026-10-06; D-090 R300-R329; the owner's text, unchanged)
+
+GOAL
+Deliver the full feasibility report comparable to my sample, with reliable numbers. Keep all promised sections and options unless I explicitly approve removing one. No detailed apartment layouts or permit-ready plans. Intermediate milestones are progress, not full completion.
+
+WORK EFFICIENTLY
+- Finish one implementation piece at a time and obtain independent review.
+- Reuse shared calculations across scenarios, screens, drawings and PDF.
+- Reach a working address-to-results-to-PDF path early, then expand it into the full report. Don’t abandon the remaining scope.
+- Research the next necessary decision, bring me a recommendation with its basis, then move forward once it is settled.
+- Avoid repeated planning and wording changes unless they resolve a real issue or record a necessary decision.
+- Run heavy test suites one at a time.
+
+AGENTS
+Stay within my existing agent limits. Where permitted, separate building, independent review and preparation of the next research question. Do not add a swarm or increase concurrency without my approval. Parallel work must be independent and must not collide on shared files or tests.
+
+ACCURACY
+Use independently worked, source-backed examples to check interpretation. Matching the program’s own saved output is not proof of correctness. Keep legal limits separate from practical estimates. Make design assumptions visible and editable. Missing facts stay unknown or support clearly conditional scenarios; unfinished promised features remain work owed.
+
+CONTINUITY AND UPDATES
+Keep a concise record of what is built, connected, tested, merged and still missing. Each handoff must identify the exact next step, blockers and pending owner decisions. Report meaningful progress in plain English. Estimate remaining time from observed delivery, not guessed agent speed.
+
+Preserve all existing security, production and merge restrictions. This guidance does not authorize new spending, access changes or additional agents. Point out any conflict before changing those restrictions.
+
 ## Source of truth (never a chat transcript or agent memory)
 
 `project-control/` — `master_plan.json`, `state.json`, `tasks/`, `reports/`, `gates/`,
