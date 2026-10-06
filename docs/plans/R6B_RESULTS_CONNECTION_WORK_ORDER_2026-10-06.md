@@ -2,8 +2,9 @@
 
 Written 2026-10-06 by the orchestrator while nothing can merge (blocker B-029, a security advisory).
 Asked for by the owner (D-090 source-032: R221 to R229). Corrected after the owner's check (source-033:
-R235 to R242). **Revised once more, and for the last time before building, on the owner's decisions of
-the same day (source-035: R248 to R265), with the three corrections its second audit required.**
+R235 to R242). Revised on the owner's decisions of the same day (source-035: R248 to R265), with the three
+corrections its second audit required. **Corrected again after the owner's check of that revision
+(source-036: R266 to R273): "not checked" is never "confirmed".**
 
 **This is a work order, not a task and not a result.** Writing it changed no product file. Nothing
 described here is built. Building starts only after the waiting changes are merged.
@@ -18,10 +19,11 @@ sample, is in `docs/plans/FEASIBILITY_REPORT_SECTION_MAP_2026-10-06.md`.
 | Revision | What was wrong | Now |
 |---|---|---|
 | second (owner's check) | Tests T3, T4, T5 and W-5 required the saved journey result or 100 percent coverage for a whole corner lot. Gaps were listed with no rule for the screen. | No test accepts a value because it equals a saved result. Whole-lot coverage only when the lot's shape supports it. Every known gap has an outcome (section 5). |
-| this one, audit correction 1 | The unit count would have been shown as a number once the user said the lot is not in a special density area, a fact the program cannot check. | A user's statement can only produce a result labelled as conditional on that statement. It is never a settled number and never stored as a fact (rule 1 below; gap K11). |
-| this one, audit correction 2 | No test checked that the unit count for qualifying housing reads "not known". | Test H2 now does. |
-| this one, audit correction 3 | The text said no input is filled by a default, while the engine carries a 10 ft floor-to-floor default. | Design choices may start from a value the user can see and change. Nothing is used that is not shown (rule 2 below; test H10). |
-| this one, owner's decisions | "A number or not known, nothing else"; the recorded lot area used with a notice; nothing prefilled; "unsupported" counted as an outcome. | The six rules below. |
+| third, audit correction 1 | The unit count would have been shown as a number once the user said the lot is not in a special density area, a fact the program cannot check. | A user's statement can only produce a result labelled as conditional on that statement. It is never a settled number and never stored as a fact (rule 1 below; gap K11). |
+| third, audit correction 2 | No test checked that the unit count for qualifying housing reads "not known". | Test H2 now does. |
+| third, audit correction 3 | The text said no input is filled by a default, while the engine carries a 10 ft floor-to-floor default. | Design choices may start from a value the user can see and change. Nothing is used that is not shown (rule 2 below; test H10). |
+| third, owner's decisions | "A number or not known, nothing else"; the recorded lot area used with a notice; nothing prefilled; "unsupported" counted as an outcome. | The six rules below. |
+| this one (owner's check of the third) | The R6B height limits were to be shown as settled for the property, and for conditions the program has no data for the recommendation was a visible "not checked" list. Together that would have shown a district height as the property's confirmed maximum beside a disclaimer. | "Not checked" is never "confirmed" (R267). An answer an unchecked condition cannot change stays visible; one that holds only if the condition does not apply is conditional and names it; one that cannot be supported is withheld (R268, gap K20). The R6B height is the district's limit, not the property's confirmed maximum (R269). Tests H1, H3, H4, T4 and W-5 changed; test H11 added. |
 
 **The owner's six rules (R255 to R260). They govern every section of this document.**
 
@@ -43,12 +45,17 @@ sample, is in `docs/plans/FEASIBILITY_REPORT_SECTION_MAP_2026-10-06.md`.
 
 | Way | When | How it looks |
 |---|---|---|
-| settled | every fact behind it comes from evidence, and a reference case supports the reading of the law | the number, its law section, its sources |
-| conditional | it rests on an explicit, defensible assumption that is not evidence (a user's statement about the lot; a recorded figure that another figure contradicts) | "If <the assumption>: <the number>", set apart from the settled results, naming the assumption and what would settle it |
+| settled | every fact behind it comes from evidence, a reference case supports the reading of the law, and every condition that could change it has been checked | the number, its law section, its sources |
+| conditional | it rests on an explicit, defensible assumption that is not evidence (a user's statement about the lot; a recorded figure that another figure contradicts; a condition that was not checked and is assumed not to apply) | "If <the assumption>: <the number>", set apart from the settled results, naming the assumption and what would settle it |
 | withheld | a known gap affects it and no defensible condition covers the gap | "not known", the reason, what would resolve it, and whether it is missing information or unfinished work |
 
 The remaining-floor-area line keeps its settled wording, "Not confirmed". Every result also carries
 the existing label "Tax-lot-only estimate": the program does not verify the zoning lot.
+
+**"Not checked" is never "confirmed" (R267).** A disclaimer, a label or a list of unchecked items
+does not turn a result into a settled one. A limit read from the district's table is the district's
+limit. It is the property's maximum only when every other rule that could change it has been
+checked (R269).
 
 ## 1. The milestone
 
@@ -205,12 +212,13 @@ can settle. "Withheld" always means "not known" with the reason and what would r
 | K17 | How height is measured on the lot is not captured. | question | The height limits are shown as the table's limits. Anything that turns height into floors is withheld (K6, K8). | limits shown; floors withheld |
 | K18 | A lot split by a district line: a recorded yes/no exists and is not used by the engine. No averaging rule exists. | evidence; owed | Recorded "not split": stated as a fact. Recorded "split": every result is withheld. Not read: every result is withheld. | city records: not split |
 | K19 | Other recorded conditions the engine does not use: an inclusionary-housing area, a flood zone, a landmark or historic district. | evidence; owed | Each is read as a fact. Where one is recorded, the results it can change are withheld (floor area for inclusionary housing; heights for flood). A landmark or historic district changes no zoning number; it is shown as a fact beside the results. | read as facts |
-| K20 | Conditions with no data source today: waterfront rules, airport height limits, transit easements, a lot close to a district line. | owed | **Open scope decision 3 of the section map.** Until the owner decides: the results they could change are withheld. | withheld until decided |
+| K20 | Conditions with no data source today: waterfront rules, airport height limits, transit easements, a lot close to a district line. Their law text is not captured, so which results each can change is not established. | owed | Decided by the owner (R268). The property facts cannot be changed by them and stay visible. Every zoning result for the lot is treated as one they could change: it is conditional, "If none of these applies to this lot (not checked): ...", and names them. It is never shown as settled and never called the property's maximum. A result that cannot be supported even on that assumption is withheld. Finding a data source for each is owed work; when a condition is checked and absent, its part of the condition is removed. | height limits and floor-area figures: conditional, naming the four conditions |
 
-**What the first screen can show for the benchmark lot.** Until step P2 is done and decision 3 is
-made: the sourced facts, and "not known" with reasons. After them, and only if the reading of step P2
-supports the residential rules under the overlay: the height limits as settled numbers, and the
-floor-area figures as conditional results ("If the recorded lot area of 10,075 sq ft is confirmed").
+**What the first screen can show for the benchmark lot.** Until step P2 is done: the sourced facts,
+and "not known" with reasons. After it, and only if the reading of step P2 supports the residential
+rules under the overlay: the height limits as the district's limits, conditional on the conditions
+that were not checked (K20) and never as the property's confirmed maximum; and the floor-area figures
+as conditional results ("If the recorded lot area of 10,075 sq ft is confirmed", and on K20).
 The legal unit limit appears only as a conditional result, when the user states the density-area
 answer. Coverage, rear yard, setback, building option, floors and the envelope drawing are withheld.
 That is less than the saved journey result shows today, on purpose, and all of it is owed.
@@ -253,7 +261,7 @@ That is less than the saved journey result shows today, on purpose, and all of i
   editable, and it is printed with every result that uses it. The engine's present 10 ft value
   (`inputs.py:22`, merged) is such a starting value only once the screen shows it; Part 0 makes sure
   no result uses it unseen. The starting values themselves are the owner's to approve (the section
-  map, decision 4). The housing program is the user's choice of option, not a default.
+  map, choice 4). The housing program is the user's choice of option, not a default.
 - **A saved result proves nothing (R241).** See section 8, rule 3.
 
 **Open. The orchestrator decides at contract time; the recommendation is given.**
@@ -265,9 +273,9 @@ That is less than the saved journey result shows today, on purpose, and all of i
 | D4 | Where the website shows it | a new dashboard tool behind its own off-by-default website switch (pattern W5) | a separate page |
 | D5 | How one value says "settled", "conditional" or "withheld" in the contract (missing item 4) | a new contract version in which a value carries one of the three ways of section 0 | separate answers for each |
 
-**Open, the owner's:** the five scope decisions of the section map (section 4 there). Decision 3
-decides gap K20. None is needed to start step R0, P1 or P2. Turning any switch on in production stays
-the owner's and is not asked now.
+**Open, the owner's:** the scope choices of the section map (section 4 there). The owner has
+settled how unchecked conditions are treated (R268; gap K20). None of the open choices is needed to
+start step R0, P1 or P2. Turning any switch on in production stays the owner's and is not asked now.
 
 ## 8. Files that would change, and how success will be tested
 
@@ -328,15 +336,16 @@ commit, then merge. Paths were checked at the named commits; names of new files 
 
 | # | Kind | Test |
 |---|---|---|
-| H1 | LAW | The benchmark lot through the engine on recorded facts, **only if step P2's reading supports it** (otherwise each reads "not known" and the test asserts that): the height limits (L3, L4) are settled; the floor-area figures (L1, L2) appear only as conditional results that name the recorded-area condition, and never as settled numbers. |
+| H1 | LAW | The benchmark lot through the engine on recorded facts, **only if step P2's reading supports it** (otherwise each reads "not known" and the test asserts that): the height limits (L3, L4) appear as the district's limits, conditional on the unchecked conditions of K20 and naming them, and never as settled or as the property's maximum; the floor-area figures (L1, L2) appear only as conditional results that name the recorded-area condition and the K20 conditions. |
 | H2 | LAW | The benchmark lot: coverage is withheld and its reason carries the measured reach (103.93 ft from the 215 Place street line); the rear yard is withheld beyond the corner area (144.60 ft); building option, floor plates, floor stack and floor table are withheld; the setback reads "not covered"; **the legal unit limits for qualifying affordable and qualifying senior housing read "not known"** (K13). Never a zero. |
-| H3 | LAW | Three made-up corner lots with outlines (table C): 40 x 100 ft gives coverage 100 percent and rear yard withheld; 60 x 80 ft gives coverage 100 percent and no rear yard required anywhere; 150 x 100 ft gives coverage withheld and rear yard withheld. |
-| H4 | LAW | The made-up interior lots of table B, each with one lot-area figure: floor area settled as in the table; the legal unit limit withheld with no density-area evidence, and conditional, with the table's value, when the user states it; coverage withheld until step P1's reading of 23-363 is in, then the value that reading supports. |
+| H3 | LAW | Three made-up corner lots with outlines (table C), each supplied with the K20 conditions as checked and absent: 40 x 100 ft gives coverage 100 percent and rear yard withheld; 60 x 80 ft gives coverage 100 percent and no rear yard required anywhere; 150 x 100 ft gives coverage withheld and rear yard withheld. With the K20 conditions not checked, the same values are conditional. |
+| H4 | LAW | The made-up interior lots of table B, each with one lot-area figure: floor area as in the table, settled when the K20 conditions are supplied as checked and absent, conditional when they are not checked; the legal unit limit withheld with no density-area evidence, and conditional, with the table's value, when the user states it; coverage withheld until step P1's reading of 23-363 is in, then the value that reading supports. |
 | H5 | LAW and WIRING | Facts not given, one at a time: the special-district column not read; no outline; no lot area; the split-lot record not read. Each time the results that depend on it are withheld and name it, and every other result is unchanged. A recorded special district, or a recorded split lot, withholds every result. |
 | H6 | LAW and WIRING | The area rule: with figures that agree within the tolerance, one governing figure and settled results; with figures that disagree, conditional results only, both figures and what each measures in the result, and no automatic choice; with no recorded area, withheld; no calculation reads the outline's area; no figure mixes the two sources. |
 | H7 | WIRING | No reason text contains "professional review"; every withheld result has a reason, a kind, and what would resolve it. |
 | H8 | UNCHANGED | The regenerated saved journey result equals the engine's output. It proves nothing about correctness (rule 3). |
 | H9 | LAW and WIRING | A user's statement about the lot (the density-area answer) produces only a conditional result that names the statement; the statement is absent from the sourced facts and from the saved facts; without it the result is withheld again; a statement that contradicts a recorded fact is refused as a conflict. |
+| H11 | LAW and WIRING | Not checked is not confirmed (R267 to R269). With the K20 conditions not checked: no zoning result is settled; each is conditional and names the conditions; the height limits are labelled the district's limits and nowhere "the maximum for this property"; the facts stay visible. With one of them recorded as present: the results it can change are withheld. With all of them supplied as checked and absent: the height limits become settled. A disclaimer or label alone never changes a result's way of appearing. |
 | H10 | WIRING | No hidden default: every value used in a calculation is printed in the result with its kind (fact, design choice, user's statement); changing the floor-to-floor starting value changes what depends on it and nothing else; a search of the engine finds no constant used in a result that the result does not print. |
 
 ### Part A: the server route
@@ -356,7 +365,7 @@ commit, then merge. Paths were checked at the named commits; names of new files 
 | T1 | WIRING | Switch unset, or set to anything but a true word: a plain 404, byte-identical to a path that does not exist, and the route is absent from the public route list. |
 | T2 | WIRING | A malformed BBL: a typed 422, and the data source is never called. |
 | T3 | WIRING | The route returns what the engine returns for the same inputs: the test calls both and compares, apart from the id and time fields. It does not compare with a saved file. |
-| T4 | LAW | The recorded lot through the route: the same expectations as H1 and H2, settled, conditional and withheld alike. |
+| T4 | LAW | The recorded lot through the route: the same expectations as H1, H2 and H11, conditional and withheld alike; no height limit is returned as settled. |
 | T5 | LAW | The made-up lots of tables B and C through the same chain: the same expectations as H3 and H4. |
 | T6 | LAW | A changed input changes every result that depends on it and nothing else: the lot area 5,355 sq ft gives the floor area of row P5 and, with the user's density statement, its conditional unit limit; a changed floor-to-floor height changes no law limit. |
 | T7 | LAW and WIRING | A request with facts not given is answered normally (a 200): the dependent results are withheld and name the fact; the others are shown. No zero appears anywhere. |
@@ -382,7 +391,7 @@ commit, then merge. Paths were checked at the named commits; names of new files 
 | W-2 | WIRING | **Numbers agree:** every settled value, every conditional result with its condition, and every "not known" on the cards equals the document the server returned (walk every value; nothing is retyped in the component). |
 | W-3 | WIRING | States: loading; switch off (the plain "not available" view, and no call is made); a fact not given (its results are withheld, the rest are shown, no fact is prefilled); each design choice visible with its starting value and editable; server error. |
 | W-4 | WIRING | The standing label is on the screen once. |
-| W-5 | LAW | The browser journey on recorded data: open the lot, open the results. The height limits are settled and equal table A. The floor-area figures appear as conditional results naming the recorded-area condition. Coverage, rear yard and building option read "not known". Stating the density-area answer makes the unit limit of row L6 appear as a conditional result naming that statement, never as a settled number. Expected values come from the reference cases, not from the recorded answer. |
+| W-5 | LAW | The browser journey on recorded data: open the lot, open the results. The height limits appear as the district's limits with the values of table A, conditional, naming the conditions that were not checked, and nowhere called the maximum for the property. The floor-area figures appear as conditional results naming the recorded-area condition. Coverage, rear yard and building option read "not known". Stating the density-area answer makes the unit limit of row L6 appear as a conditional result naming that statement, never as a settled number. Expected values come from the reference cases, not from the recorded answer. |
 | W-6 | WIRING | Keyboard and screen-reader checks, as the existing suite does for each tool. |
 
 **Not touched by any step:** the rule tables' values, `render.yaml`, any production setting, the CI
@@ -422,15 +431,16 @@ not yet captured (step P1). It is one lot. Step R0 moves these tables into files
 
 ### Table A: the real lot (R6B; a C2-2 overlay is recorded; lot area 10,075 sq ft from city records)
 
-"First screen" is what section 5 allows once steps P1 and P2 are done. Every entry in that column
-also depends on K9 and K20: if the reading of step P2 does not support it, it reads "not known".
+"First screen" is what section 5 allows once steps P1 and P2 are done. Every zoning entry in that
+column waits for K9 (if the reading of step P2 does not support it, it reads "not known") and is
+conditional on the unchecked conditions of K20.
 
 | # | Quantity | Law relied on | Independent value | Program today | First screen |
 |---|---|---|---|---|---|
 | L1 | Maximum residential floor area, standard | ZR 23-22, R6B row: 2.00; 2.00 x 10,075 | 20,150 sq ft | 20,150 | conditional: "If the recorded lot area of 10,075 sq ft is confirmed" (K5) |
 | L2 | The same, qualifying affordable or senior housing | ZR 23-22, R6B row: 2.40; 2.40 x 10,075 | 24,180 sq ft | 24,180 | conditional on the same (K5), as a labelled alternative |
-| L3 | Heights, standard | ZR 23-432, R6B row | base 30 to 45 ft; building 55 ft | 30 / 45 / 55 | settled |
-| L4 | Heights, qualifying housing | ZR 23-432, R6B row | base 30 to 45 ft; building 65 ft | 30 / 45 / 65 | settled, as a labelled alternative |
+| L3 | Heights, standard | ZR 23-432, R6B row | base 30 to 45 ft; building 55 ft | 30 / 45 / 55 | conditional: the district's limits; the property's maximum only if no other height rule applies (K20, not checked). Never shown as the confirmed maximum. |
+| L4 | Heights, qualifying housing | ZR 23-432, R6B row | base 30 to 45 ft; building 65 ft | 30 / 45 / 65 | conditional in the same way, as a labelled alternative |
 | L5 | Maximum lot coverage | ZR 23-362(a): corner 100 percent, interior and through 80 percent; the corner part is the part within 100 ft of each street line (official page) | 100 percent on the corner part; the strip beyond is not a corner lot; no single figure for the whole lot | 100 for the whole lot | **not known** (K1) |
 | L6 | Maximum dwelling units, standard | ZR 23-52(b): factor 680; a fraction of three-quarters or more counts as one; 20,150 / 680 = 29.63 | 29 | 29 | withheld with no density-area evidence (K11); when the user states it, conditional on that statement and on the recorded area (K5), never settled |
 | L7 | Dwelling units, qualifying affordable | same; 24,180 / 680 = 35.56 | 35 | "not available" | not known (K13) |
@@ -447,7 +457,7 @@ also depends on K9 and K20: if the reading of step P2 does not support it, it re
 
 | # | Lot | Floor area (2.00 x area) | Area / 680 | Units, independent | Program today (floor area / units) | First screen |
 |---|---|---|---|---|---|---|
-| P1 | 5,000 sq ft | 10,000 | 14.706 | 14 | 10,000 / 14 | floor area settled (one area figure); unit limit withheld, or conditional on the user's density statement |
+| P1 | 5,000 sq ft | 10,000 | 14.706 | 14 | 10,000 / 14 | floor area conditional on K20, settled only in a test that supplies those conditions as checked; unit limit withheld, or conditional on the user's density statement |
 | P3 | 5,350 sq ft | 10,700 | 15.735 | 15 | 10,700 / 15 | same |
 | P4 | 5,360 sq ft | 10,720 | 15.765 | 16 | 10,720 / 16 | same |
 | P5 | 5,355 sq ft | 10,710 | 15.750 exactly | 16 ("equal to") | 10,710 / 16 | same |
@@ -497,6 +507,7 @@ contradicts (K5). And every number on this lot waits for the overlay reading (K9
 | the user states something about the lot | results that depend on it appear only as conditional, "If <the statement>", apart from the settled results; the statement is not listed among the facts |
 | two area figures disagree | conditional results on the recorded figure; both figures, what each measures, and what would settle it |
 | a design choice | its starting value, visible and editable, printed with every result that uses it |
+| a condition the program did not check | the results it could change are conditional and name it; none is called confirmed or the maximum for the property; the facts stay visible |
 | a result section 5 withholds | "not known" or "not covered", the reason, and whether it is missing information or work still owed |
 | remaining floor area | "Not confirmed" (the settled wording) |
 | the user contradicts a recorded fact | both; no result computed from the statement |
@@ -509,7 +520,7 @@ contradicts (K5). And every number on this lot waits for the overlay reading (K9
 2. The waiting changes, one at a time, each on a fresh green run after the fix.
 3. Step R0 (the reference cases as files), then step P1, then step P2.
 4. Part 0, then Part A, then Part B. Each is contracted as a ledger task (citing R166, R167, R213,
-   R221 to R229, R235 to R242 and R248 to R265), written by one producer on a branch from the
+   R221 to R229, R235 to R242, R248 to R265 and R266 to R273), written by one producer on a branch from the
    then-current integration branch, reviewed by a different agent at the exact commit, and merged
    before the next starts. That is milestone 1.
 5. Then the later milestones of the section map, each with a work order of its own, in an order the
@@ -536,6 +547,7 @@ contradicts (K5). And every number on this lot waits for the overlay reading (K9
   this document does not.
 - The files listed for Part 0 are the ones known today. The full list of tests that pin today's
   numbers is found when the part is contracted.
-- The five open scope decisions of the section map are the owner's and are not decided here.
+- The open scope choices of the section map are the owner's and are not decided here. No section of
+  the sample and no option is dropped by this document (R272).
 - This milestone is not the report. R6B is not finished, the dependency fix is not in, and the
   program is not complete.
