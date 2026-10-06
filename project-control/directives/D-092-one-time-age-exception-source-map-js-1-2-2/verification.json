@@ -1,0 +1,98 @@
+{
+  "schema": "directive_verification/v2",
+  "directive_id": "D-092",
+  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. No completion claim exists at capture time.",
+  "verified_by": null,
+  "verified_at": null,
+  "task_verifications": [
+    {
+      "directive_id": "D-092",
+      "task_id": "M0-T182",
+      "applicable_requirement_ids": [
+        "D-092-R004",
+        "D-092-R006",
+        "D-092-R007",
+        "D-092-R008",
+        "D-092-R012",
+        "D-092-R013",
+        "D-092-R014",
+        "D-092-R015"
+      ],
+      "producer": "frontend-engineer",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-092-R004",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-092-R006",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-092-R007",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-092-R008",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-092-R012",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-092-R013",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-092-R014",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-092-R015",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
+    },
+    {
+      "directive_id": "D-092",
+      "task_id": "M0-T183",
+      "applicable_requirement_ids": [
+        "D-092-R016"
+      ],
+      "producer": "frontend-engineer",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-092-R016",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
+    }
+  ]
+}
