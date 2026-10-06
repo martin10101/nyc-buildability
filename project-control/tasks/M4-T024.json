@@ -75,7 +75,7 @@
     {
       "id": "S7",
       "case": "not_known_stays_not_known",
-      "input": "rows the independent reading could not settle (whole-lot coverage L5, the rear yard beyond the corner area L12, the ordinary rear-yard depth L14, floor plates and floors L15, qualifying-housing units L7 and L8 as the tables state them, the 'not known' cells of table C)",
+      "input": "rows the independent reading could not settle (whole-lot coverage L5, the rear yard beyond the corner area L12, the ordinary rear-yard depth L14, floor plates and floors L15, qualifying senior housing units L8, the 'not known' cells of table C). Row L7 (units for qualifying affordable housing) is NOT one of them: the independent reading worked it out (24,180 / 680 = 35.56, so 35), and the case records 35 as a value that holds only if the housing qualifies, in the same way as rows L2 and L4 [ORCH-CORRECTED 2026-10-06; see scope_corrections]",
       "expected": "the expected value has kind 'not_known' with the reason in plain words and no number; the test refuses a 'not_known' row that carries a numeric value and a numeric row without arithmetic or a quoted basis"
     },
     {
@@ -132,7 +132,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T20:37:42.971519+00:00",
-  "updated_at": "2026-10-06T21:32:32.368766+00:00",
+  "updated_at": "2026-10-06T23:27:27+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -158,6 +158,11 @@
       "at": "2026-10-06T21:00:00+00:00",
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-06, before any claim] the test-support folder moves from services/api/tests/reference_cases/ to services/api/tests/rules/reference_cases/. The repository's ownership map (docs/lanes/OWNERSHIP.yaml) has no owner for a new folder directly under services/api/tests/, and the ownership check failed on the seeded placeholder (pull request 453, control-plane job, runs 37529527410 and 37529531704). The new folder is inside a glob the map already assigns to the engine lane. No scenario, gate, reviewer or other path changed; the readiness gate is recorded again at the corrected head."
+    },
+    {
+      "at": "2026-10-06T23:27:27+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-06, after the builder's commit 2675a9d3 and before submission] Scenario S7 listed 'qualifying-housing units L7 and L8 as the tables state them' among the rows the independent reading could not settle. That wording was the orchestrator's and was ambiguous: the work order's table A gives row L7 an independent value of 35 (24,180 / 680 = 35.56), and 'not known' stands only in its 'First screen' column, which describes what the program will show (gap K13), not the independent reading. The helper's return marks L7 as a calculation (35) and only L8 (qualifying senior housing, no unit factor) as not known. Scenario S4 says a case follows the helper's return unless the work order records a reasoned correction; none is recorded for L7. The builder recorded L7 as 'not known' under S7 and reported the difference. An independent code-reviewer agent, asked without the orchestrator's reading, ruled that L7 is 35 as a value conditional on the housing qualifying, recorded as rows L2 and L4 are, and that L8 is right as it is (project-control/reports/M4-T024-L7-ruling.md). S7's input now names L8 only and says what L7 is. Whether a lot's housing qualifies is still not read from any captured text; the row says so. No other scenario, gate, reviewer or path changed; the readiness gate is recorded again at the corrected head."
     }
   ],
   "worktree": "/root/project/w-M4-T024",
