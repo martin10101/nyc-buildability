@@ -92,14 +92,14 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "frontend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "A second advisory or a younger transitive version could appear between this packet and the workflow run -> the machine gates decide at run time (S3, S6); the packet's registry facts are a reading, not a guarantee",
     "`npm install --package-lock-only` could move packages other than sharp -> S4 compares the locks entry by entry and stops on any other change",
@@ -108,7 +108,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T15:24:03.226697+00:00",
-  "updated_at": "2026-10-06T15:24:03.656507+00:00",
+  "updated_at": "2026-10-06T15:24:35.720675+00:00",
   "directive_refs": [
     {
       "directive_id": "D-009",
@@ -125,5 +125,14 @@
     "a lock comparison (python): the entries that differ between the base lock and the new lock are exactly sharp and its @img/sharp-* and @img/sharp-libvips-* packages",
     "ci.yml on the post-lock head: web, web-e2e, web-dependency-security and every other expected check"
   ],
-  "worktree": "/root/project/w-M0-T185"
+  "worktree": "/root/project/w-M0-T185",
+  "progress_log": [
+    {
+      "at": "2026-10-06T15:24:35.720569+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claim seam: G0 PASS at ea26d39e; producer frontend-engineer dispatched; blocker B-030 recorded"
+    }
+  ]
 }
