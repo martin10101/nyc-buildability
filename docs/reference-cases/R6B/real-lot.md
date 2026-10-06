@@ -201,13 +201,17 @@ Law relied on:
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52.
   - Quoted: "the applicable dwelling unit factor shall be 680. Fractions equal to or greater than three-quarters resulting from this calculation shall be considered to be one dwelling unit"
 
-Why the rule applies: If the lot were eligible for the 2.40 qualifying ratio, ZR 23-52 would divide the qualifying floor area by 680 (qualifying affordable housing is not in the ZR 23-52(a) no-factor list). But whether this lot may use the 2.40 ratio depends on eligibility rules for qualifying affordable housing, which are not in the captured text.
+Why the rule applies: If the housing qualifies for the 2.40 ratio, ZR 23-52 divides the qualifying residential floor area of row L2 by the dwelling-unit factor; qualifying affordable housing is not in the ZR 23-52(a) list that has no factor, so the factor is 680, and a fraction below three-quarters is dropped.
 
-Expected value: not known. If the lot were eligible for the 2.40 qualifying ratio, the same 680 factor would give 24,180 / 680 = 35.56, dropping a fraction below three-quarters, that is 35 units. But the eligibility rules for qualifying affordable housing are not in the captured text, so whether the lot may use that ratio at all is not settled, and the maximum number of units for qualifying affordable housing is not known.
+Working, step by step:
+
+- maximum dwelling units, qualifying affordable housing: 24,180 (maximum residential floor area, qualifying housing (sq ft), from row L2) / 680 (dwelling-unit factor (ZR 23-52(b))) = 35.55...; a fraction below three-quarters is dropped -> 35
+
+Expected value: 35 dwelling units
 
 Where this stands in the independent reading: return-independent-hand-calculation-1.md, Task 1(g): 'Qualifying AFFORDABLE (24,180 sf): 24,180/680 = 35.56 -> 35 DU', with Task 3 item 9 (the eligibility definition is not in the sealed folder).
 
-What this row does not establish: It does not settle eligibility for qualifying affordable housing or the unit count that would follow; the 35 is shown only to make the reasoning followable and is not a settled value.
+What this row does not establish: Whether this lot's housing qualifies for the 2.40 ratio depends on eligibility rules for qualifying affordable housing, which are not in the captured text; this row shows the arithmetic only if the housing qualifies.
 
 ### L8 - Maximum dwelling units, qualifying senior housing
 
@@ -405,4 +409,5 @@ What this row does not establish: It gives no floor-plate area, floor count or b
 | Date | Change | By |
 |---|---|---|
 | 2026-10-06 | Case created from the independent hand-calculation returns (step R0). | rules-engineer (M4-T024) |
+| 2026-10-06 | Row L7 (maximum dwelling units, qualifying affordable housing) changed from not known to 35, a value that holds only if the housing qualifies, as rows L2 and L4 are (24,180 / 680 = 35.56, a fraction below three-quarters dropped, so 35). Reason: a corrected reading. The helper's return (Task 1(g)) and the work order's independent value both give 35; the 'not known' sits in the program's first-screen column, which these cases do not copy. Ruled by an independent reviewer (project-control/reports/M4-T024-L7-ruling.md). | rules-engineer (M4-T024) |
 

@@ -38,7 +38,7 @@ change log (first entry = creation, 2026-10-06).
 
 | Case | Rows | Numeric expected values | `not_known` rows | Other (categorical / conclusion) |
 |---|---|---|---|---|
-| real-lot (table A, L1-L15) | 15 | 3 (L1, L2, L6) | 6 (L5, L7, L8, L12, L14, L15) | 6 (L3, L4, L9, L10, L11, L13) |
+| real-lot (table A, L1-L15) | 15 | 4 (L1, L2, L6, L7) | 5 (L5, L8, L12, L14, L15) | 6 (L3, L4, L9, L10, L11, L13) |
 | interior-lots (table B) | 9 | 8 (4 floor-area, 4 units) | 0 | 1 (interior-coverage) |
 | corner-reach (table C) | 12 | 0 (expected values are prose; the diagonals/strip are recomputed inside the rows) | 5 (real-lot-coverage, real-lot-rear-yard, C1-rear-yard, C3-coverage, C3-rear-yard) | 7 (the reach rows and the settled coverage/rear-yard conclusions) |
 | suffix (table D) | 5 | 0 | 0 | 5 (the suffix conclusions) |
@@ -54,7 +54,7 @@ change log (first entry = creation, 2026-10-06).
 | L4 | base 30 to 45 ft; building 65 ft | Task 1(d) | A L4 (30/45/65) |
 | L5 | not known (coverage) | Task 1(e) + return 2 Q1 | A L5 (not known, K1) |
 | L6 | 29 dwelling units | Task 1(g) "20,150/680 = 29.63 -> 29 DU" | A L6 (29) |
-| L7 | not known (qualifying affordable units) | Task 1(g) "35" + Task 3 item 9 | A L7 (indep 35 / first screen not known, K13) **DIFFERENCE 1** |
+| L7 | 35 dwelling units, conditional on the housing qualifying | Task 1(g) "35" + Task 3 item 9 | A L7 (indep 35; first screen not known, K13) resolved, see Round 2 |
 | L8 | not known (qualifying senior units) | Task 1(g) "no applicable dwelling unit factor" | A L8 (not set by this formula) |
 | L9 | corner | Task 1(a) "89.7 deg <= 135 -> corner" | A L9 (corner) |
 | L10 | Northern Boulevard 103.9 ft; 215 Place 100.0 ft | Task 1(a) | A L10 |
@@ -104,10 +104,19 @@ change log (first entry = creation, 2026-10-06).
 table A "Independent value" column both give **35** (24,180 / 680 = 35.56, dropping a fraction below
 three-quarters). But the helper's own Task 3 item 9 flags that the definition of "qualifying affordable
 housing" is not in the sealed folder, so whether this lot may use the 2.40 ratio at all is not settled;
-the work order's gap K13 and first-screen column, and the packet scenario S7, record qualifying-housing
-unit counts as **not known**. The case records L7 as `not_known` (no number) and preserves the
-24,180 / 680 = 35.56 -> 35 arithmetic inside the row's reason as a conditional illustration. This
-tension is reported here and noted in the row; it is not resolved silently.
+the work order's gap K13 and first-screen column, and the packet scenario S7 as first written, record
+qualifying-housing unit counts as **not known**. Round 1 recorded L7 as `not_known` (no number) and
+reported this difference rather than resolving it silently.
+
+**RESOLVED (Round 2).** An independent code-reviewer agent, asked without the orchestrator's reading,
+ruled that L7 is **35** recorded as a value conditional on the housing qualifying, exactly as rows L2 and
+L4 are, and that only L8 (qualifying senior housing, no unit factor) stays not known
+(`project-control/reports/M4-T024-L7-ruling.md`). The orchestrator recorded scope correction 2, and
+scenario S7 no longer lists L7 (it names L8 only). Scenario S4 says a case follows the helper's return
+unless the work order records a reasoned correction; none demoted L7 to not-known. The case now records
+L7 as kind `value`, 35 dwelling units, with the 24,180 / 680 arithmetic (same divide and dwelling-unit
+rounding as L6), and the eligibility caveat -- whether this lot's housing qualifies is not in the captured
+text -- moved to the row's `does_not_establish`, in the same manner as row L2. The difference is closed.
 
 **DIFFERENCE 2 - the "P2" interior probe is dropped.** The helper's first return (Task 2 table) includes
 a "P2 corner 4,000 sq ft" probe (8,000 sq ft floor area, 100 percent coverage, 11.76 -> 12 units). The
@@ -197,13 +206,51 @@ What this row does not establish: It is the legal unit limit for a new all-resid
 
 ## Doubts / things not done
 
-- L7 was recorded as `not_known` (DIFFERENCE 1). A reviewer should confirm that treating the
-  qualifying-affordable unit count as not known (eligibility not captured), rather than as the
-  arithmetic value 35, is the intended reading; both the helper's number and the eligibility caveat are
-  disclosed in the row and above.
+- L7 is now recorded as a value of 35 dwelling units, conditional on the housing qualifying (Round 2;
+  DIFFERENCE 1 resolved by the independent reviewer's ruling and scope correction 2). The remaining
+  caveat is factual, not a doubt about the recording: whether this lot's housing qualifies for the 2.40
+  ratio is not in the captured text, so the 35 holds only if it does; the row's `does_not_establish`
+  says so, as row L2 does. Row L8 (qualifying senior housing, no unit factor) stays not known.
 - The corner-reach reach distances for the real lot (99.97, 103.93, 144.60 ft and the ~390 / ~2,560
   sq ft areas) are the helper's coordinate-geometry measurements, taken as given and cited to return 2;
   they are not recomputed by the test (the C1/C2/C3 diagonals and the C3 strip are recomputed). The
   program was not run to fill, check or confirm any value.
 - No rule file, rule engine, capture, plan or review register changed; the checker, renderer, loader and
   test import nothing from the rule or scenario engine (verified by an AST import scan in the test).
+
+## Round 2 - row L7 corrected to 35 as a conditional value (2026-10-06)
+
+Scope: the independent reviewer's ruling on L7 (`project-control/reports/M4-T024-L7-ruling.md`) and
+scope correction 2. Only allowed paths touched.
+
+The change, in `docs/reference-cases/R6B/cases/real-lot.json` (row L7 only) and the re-rendered
+`docs/reference-cases/R6B/real-lot.md`:
+
+- `expected` changed from kind `not_known` (no number) to kind `value`, 35, unit "dwelling units"
+  (the unit row L6 uses), reason "".
+- one `arithmetic` step added: 24,180 / 680, `divide` with `dwelling_unit_three_quarters` rounding,
+  result 35 - the same operation and rounding row L6 uses; operands = the qualifying floor area from
+  row L2 (24180) and the 680 factor from ZR 23-52(b).
+- `why_applies` rewritten as a conditional (if the housing qualifies, divide row L2's floor area by 680;
+  qualifying affordable housing is not in the ZR 23-52(a) no-factor list) without stating the lot
+  qualifies.
+- the eligibility caveat moved to `does_not_establish`, in the same manner as row L2.
+- `source_reference` kept (Task 1(g) quote + Task 3 item 9 note); facts and citation kept.
+- change-log: one new entry (2026-10-06) recording the correction, its reason and the ruling file.
+- test (`test_r6b_reference_cases.py`): L7 removed from the not-known set (L8 kept); a new test asserts
+  L7 is kind value 35, recomputes from its own operands, passes the checker, and that L2, L4 and L7 each
+  carry an eligibility caveat in `does_not_establish`; the 24,180 / 680 -> 35 worked number added. No
+  test deleted, skipped or weakened; neither the checker nor the lib was changed.
+
+Checks, one at a time, DIRECT exit code captured with `echo $?` (not piped):
+
+| Check (venv python; from `services/api` unless noted) | Result | Exit |
+|---|---|---|
+| a. `python -m ruff check .` | All checks passed | 0 |
+| b. `python -m pytest -q -p no:cacheprovider tests/rules/reference_cases` | 31 passed | 0 |
+| c. `python tests/rules/reference_cases/r6b_reference_cases_render.py --check` | reference-case check PASSED (no issues) | 0 |
+| d. `python3 tools/modularity_check.py --check` (repo root) | 715 files; failures 0; warnings 29 (all pre-existing, none mine) | 0 |
+| e. `python3 scripts/lanes/check_lane_paths.py --coverage` (repo root) | LANE COVERAGE PASS: 8777 files | 0 |
+| f. mutation proof (reverted L7 in a data copy; committed file untouched) | committed L7 passes; reverted L7 trips `row["expected"]["kind"] == "value"` (got 'not_known') | 0 |
+
+The full api suite was not run here (the orchestrator runs it once afterward, per the packet).

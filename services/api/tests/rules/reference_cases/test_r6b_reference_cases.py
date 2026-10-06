@@ -155,6 +155,7 @@ def test_all_arithmetic_recomputes():
 def test_the_worked_numbers_from_the_scenario():
     assert lib.load_row("real-lot", "L1")["value"] == 20150  # 2.00 x 10,075
     assert lib.load_row("real-lot", "L6")["value"] == 29      # 20,150 / 680 -> 29 (frac < 3/4)
+    assert lib.load_row("real-lot", "L7")["value"] == 35      # 24,180 / 680 -> 35 (frac < 3/4)
     assert lib.load_row("interior-lots", "P5-units")["value"] == 16  # 10,710 / 680 = 15.75 -> 16
     assert lib.load_row("interior-lots", "P3-units")["value"] == 15  # 10,700 / 680 = 15.735 -> 15
 
@@ -206,7 +207,7 @@ def test_mutation_proof_s6_a_quote_not_in_the_capture_fails():
 # S7 - not known stays not known
 # --------------------------------------------------------------------------
 NOT_KNOWN = {
-    "real-lot": {"L5", "L7", "L8", "L12", "L14", "L15"},
+    "real-lot": {"L5", "L8", "L12", "L14", "L15"},
     "corner-reach": {"real-lot-coverage", "real-lot-rear-yard", "C1-rear-yard",
                      "C3-coverage", "C3-rear-yard"},
 }
@@ -235,6 +236,26 @@ def test_a_numeric_row_without_a_basis_is_refused():
     row["citations"] = []
     errs = check.expected_errors("real-lot", row)
     assert any("arithmetic or a quoted law basis" in m for m in errs)
+
+
+def test_l7_is_a_conditional_value_and_l2_l4_l7_carry_an_eligibility_caveat():
+    # L7 (qualifying-affordable units) is NOT "not known": the independent reading
+    # worked it out (24,180 / 680 = 35.56 -> 35) and the case records 35 as a value
+    # that holds only if the housing qualifies, as rows L2 and L4 do.
+    row = lib.find_row_or_none("real-lot", "L7")
+    assert row is not None
+    assert row["expected"]["kind"] == "value"
+    assert row["expected"]["value"] == 35
+    assert row["expected"]["unit"] == "dwelling units"
+    assert lib.recompute_row_errors("real-lot", row) == []  # 35 recomputes from its operands
+    assert check.expected_errors("real-lot", row) == []
+    assert lib.load_row("real-lot", "L7")["kind"] == "value"
+    assert lib.load_row("real-lot", "L7")["value"] == 35
+    # L2, L4 and L7 each say their eligibility for qualifying housing is not settled
+    # by the captured text; the caveat lives in "does not establish".
+    by_id = {r["row_id"]: r for r in CASES["real-lot"]["rows"]}
+    for rid in ("L2", "L4", "L7"):
+        assert "eligib" in by_id[rid]["does_not_establish"].lower(), rid
 
 
 # --------------------------------------------------------------------------
