@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 242,
+ "requirement_count": 247,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T03:26:02+00:00",
+ "updated_at": "2026-10-06T03:49:07+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -8194,6 +8194,172 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-06 (message 77, a correction to the work order).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R243",
+   "text": "'Read this as a proposed testing plan.': the attached document is a proposal. It is not adopted by being sent, and nothing in it changes a rule, the plan or the work order until the owner says so.",
+   "source_ref": "source-034-amendment.md#owner-message-78-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "No rule, plan or work-order text cites the document as adopted before the owner decides.",
+   "required_evidence": "The documents at each later commit.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 78).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R244",
+   "text": "'Compare it with our existing rules and work order.' 'Tell me what is already covered, what is missing and anything that conflicts.': the reply compares the proposal with the existing rules and the work order and says three things: what is already covered, what is missing, and what conflicts.",
+   "source_ref": "source-034-amendment.md#owner-message-78-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R243"
+   ],
+   "required_harness": "A reply with those three lists.",
+   "required_evidence": "The reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 78).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R245",
+   "text": "'Don\u2019t implement changes yet.': no change is made on account of the proposal until the owner decides. ORCHESTRATOR'S READING: the correction asked for in message 77 is already written on this branch (commit 9c49f259) and audited; it stays unpublished and unchanged meanwhile, because the proposal would change rules in it, and the three corrections its audit requires are not applied yet either.",
+   "source_ref": "source-034-amendment.md#owner-message-78-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R236"
+   ],
+   "required_harness": "No commit after this record changes the rules, the plan or the work order until the owner answers; nothing is pushed to the pull request.",
+   "required_evidence": "The branch history and the pull request head.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 78).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R246",
+   "text": "'Keep our scope to simplified feasibility, not apartment design or permit-ready plans.': the scope stays simplified feasibility; nothing taken from the proposal may add apartment design or permit-ready plans.",
+   "source_ref": "source-034-amendment.md#owner-message-78-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R210",
+    "D-090-R224",
+    "D-090-R225",
+    "D-090-R242"
+   ],
+   "required_harness": "Any item later adopted from the proposal is checked against the scope.",
+   "required_evidence": "The reply; later, the changed plan.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 78).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R247",
+   "text": "'Give me one short recommendation before changing the plan.': one short recommendation is given first; the plan is changed only after the owner has answered it.",
+   "source_ref": "source-034-amendment.md#owner-message-78-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R245"
+   ],
+   "required_harness": "One short recommendation in the reply; no plan change before the owner's answer.",
+   "required_evidence": "The reply and the branch history.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 78).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

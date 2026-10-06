@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T03:26:02+00:00",
+ "updated_at": "2026-10-06T03:49:07+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -263,10 +263,15 @@
   "D-090-R239",
   "D-090-R240",
   "D-090-R241",
-  "D-090-R242"
+  "D-090-R242",
+  "D-090-R243",
+  "D-090-R244",
+  "D-090-R245",
+  "D-090-R246",
+  "D-090-R247"
  ],
- "requirements_id_digest_sha256": "6f560fa8835a08608ea0bd17853afa721ad078b0f79d2437ca8a24d4a688975d",
- "requirements_content_digest_sha256": "e1245b21e449e637f945180c6c99d9a3ee4379d74e2609ff1367ae8c84261eb2",
+ "requirements_id_digest_sha256": "3b5a726822a40716f686dfe18d5eb4ab6b5937010180a05ec641c3f49a718667",
+ "requirements_content_digest_sha256": "420822047c587b5ce7e7c70bc8ee1206b2cc8fc43c85b50db8d6493e001fd868",
  "sources": [
   {
    "file": "source-001.md",
@@ -530,6 +535,14 @@
    "recorded_at": "2026-10-06T03:26:02+00:00",
    "content_digest_sha256": "b7fd99a6f4047a5a2f16f9e778306714b83a068b65ad9799367b5de22f7f347e",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-034-amendment.md",
+   "kind": "amendment",
+   "sequence": 34,
+   "recorded_at": "2026-10-06T03:49:07+00:00",
+   "content_digest_sha256": "13cb693c2ec8f59ace6cfb1c851c98226c5265e22fa3f05423ddca9d9a7ca556",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -564,7 +577,8 @@
   "source-030-amendment.md",
   "source-031-amendment.md",
   "source-032-amendment.md",
-  "source-033-amendment.md"
+  "source-033-amendment.md",
+  "source-034-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -801,6 +815,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-033 (session 013RaGmC message 77, 2026-10-06, the owner's reviewer's check of the work order, sent by the owner: make the work order consistent before building; every known gap corrected and tested or shown 'not known'; no whole-lot 100 percent coverage until the geometry supports it; settle the two area figures before calculating; missing inputs stay unanswered; a saved result is not proof; stay within simplified feasibility) and requirements D-090-R235..R242, all pending. Text extracted by script; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-06T03:49:07+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-034 (session 013RaGmC message 78, 2026-10-06: a proposed testing plan, a PDF that is not committed, to compare with the existing rules and the work order - what is covered, what is missing, what conflicts; no changes yet; scope stays simplified feasibility; one short recommendation before changing the plan) and requirements D-090-R243..R247, all pending. Text extracted by script; nothing retyped; no existing row edited."
   }
  ]
 }
