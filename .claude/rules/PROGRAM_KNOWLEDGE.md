@@ -147,8 +147,10 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - Every wave: cite ruff pre-gate for api producers; budget ONE full validator run per seam;
   **D-064**: subagents+loop worker = opus-4-8 xhigh, main stays fable-5 (supersedes
   D-047/D-055/D-058/D-060 fable defaults); lean comms = CLAUDE.md p19.
-- PS5.1: no `&&`, no quotes-in-`git commit -m` via PowerShell (use Bash tool); UTF-16
-  redirection trap; heredocs via Write tool when Bash mangles them.
+- Loop-run and Windows-PC notes (worker pins, the claim-seam worktree, audit-chain forks,
+  PS5.1, Fable exhaustion, the Opus 5.5 pin) moved to Tier 2 on 2026-10-06, unchanged, to make
+  room for the owner's working guidance in CLAUDE.md: `docs/WORKING_KNOWLEDGE.md`, section
+  "Loop-run and Windows-PC notes". Read it before launching or repairing the loop.
 - Own pushes cancel in-flight CI on the branch — hold pushes while a needed run executes.
 - Auto-mode classifier can block detached-launch/model-file/.claude writes: capture the
   owner's words as a directive, retry ONCE under it (D-055/56/57 arc) — never hammer/bypass.
@@ -156,27 +158,6 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   seq 123): the identical verbs pass as plain single/sequential commands — reshape, don't
   re-batch. And retype digests EXACTLY (an ab→af slip cost a deny round; the error echoes
   the stored digest).
-- Fable exhaustion kills the loop (`REFUSED unsafe exit 11
-  fable_exhaustion_turnover_recorded`): the worker-pin flip is OWNER-ONLY (controller S3.2
-  rule 6) AND classifier-blocked — open a blocker with the one-line edit, never retry past it;
-  the INITIAL pin needs no launch probe so the owner's edit alone suffices. Keep working via an
-  orchestrator-dispatched producer + recorded deviation. Confirm exhaustion ONLY from the run
-  log + `model_switch_tracker.py --query`, never a model's self-report. Full arc: B-024, D-060.
-- `claim --worktree` MUST be the FULL path (controller-authoritative): a short name
-  lands in the packet, the worker echoes it, and S4.5 stops the run at the FIRST
-  checkpoint (`checkpoint_field_mismatch`). Fix both packet copies + fresh run-id.
-- Create/advance the task worktree AT (or past) the CLAIM-SEAM commit, never the contract
-  head: `task_authority` corroborates the ctl24 packet against the WORKTREE's ledger copy
-  (`--repo`), and a pre-claim copy (backlog vs in_progress) refuses the launch
-  (`ledger_status_mismatch`, exit 11). Fix = `git -C <wt> reset --hard <claim-seam sha>`;
-  a preflight refusal parks the journal in PREFLIGHT (no clear-recovery needed), same
-  run-id relaunches (M5-T045 launch, 2026-09-19).
-  ANY audit-appending CLI verb racing a LIVE loop forks its chain - deny/approve-once AND
-  graceful-stop alike (store-side effects land; appends refuse). Repair between runs
-  (archive-to-forked-evidence; loop-2 needs a targeted script - the stock repair hardcodes
-  loop-1's runtime). Packet allowed_paths are GLOBS matched at LAUNCH (cached): a bare
-  directory prefix matches nothing - write `dir/**`; a mid-run packet fix needs a
-  graceful-stop + relaunch to apply.
 - Placeholder seeding: an EMPTY .test.ts placeholder FAILS web-e2e (vitest: no suite) — seed
   web test placeholders with a trivial passing test; empty py test files are fine.
 - `submit --evidence-map` shape = top-level `requirements: {id: [prose evidence]}` (file-list
@@ -185,13 +166,8 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   an explicit END-OF-REPORT marker + proactive short-part splitting; on truncation, ask the
   SAME reviewer for the remainder FROM THE EXACT cut phrase (never the whole report again),
   then join verbatim at that point with the transmission history noted in the record header.
-- Loop WAIT_FOR_OWNER (tier_ask_blocking) after all asks denied needs `resume-after-answer`
-  (WAIT_FOR_OWNER -> PREFLIGHT); `clear-recovery` only exits PAUSED_RECOVERY.
 - Re-recording G0 (e.g. after a scope correction) resets a task in `rework` to `ready`:
   re-`claim` it (same FULL worktree path) before `submit` (seq 128 T078).
-- Python with Windows paths goes through the Write tool, never a Bash heredoc (a backslash-U
-  becomes a unicodeescape SyntaxError; a claim silently did not run). Agents keep scratch .py files
-  in a SUBFOLDER: a root `inspect.py` in the shared scratchpad shadowed the stdlib, broke pytest.
 - Seam scripts run `python -u`, never under a `timeout` shorter than the tool limit (or use
   run_in_background): a kill loses the buffered log MID-SEAM (wave-4: both commits landed, the
   worktrees did not). After any silent exit check `git log` + task status before re-running.
@@ -203,11 +179,6 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - NEVER pass `model:` on an Agent dispatch: it OVERRIDES the agent file's claude-opus-4-8 xhigh
   pin (owner: "sub agent stays 4.8", D-085 src-003); "opus" = Opus 5.5 - 20 seq-128 spawns
   drifted (report D-085-subagent-model-deviation-2026-09-24.md). Verify via subagent transcripts.
-- Opus 5.5 (D-085): exact id `claude-opus-5-5` (alias opus55; dotted 'opus-5.5' = SILENT
-  unrecognized_model fallback to opus-4-8 - never use it). Verified on CLI 2.1.281 canary.
-  Worker-pin flips AND the shared allowlist (`C:\Program Files\SupervisorConfig\config.toml`
-  [claude].allowed_models + [approved_models].models) are OWNER edits (classifier-blocked;
-  B-025 resolved by owner actuation - all three lanes + allowlist on opus-5-5 since 2026-09-23).
 - DCV dispatch prompts MUST FORBID running the full `tools/test_directive_compliance.py`
   (~7.6 min/TEST vs the grown registry = ~16h; T076-DCV F3 measured it; two DCVs stalled 3h+
   on it, seq 127): the authoritative harness evidence is `validate_directive_compliance.py
