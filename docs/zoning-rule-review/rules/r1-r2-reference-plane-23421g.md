@@ -50,7 +50,36 @@ A made-up 10,000 sq ft, 100 ft wide detached R2 lot (not a real address); it mee
 ## Tests
 
 - `services/api/tests/rules/test_r1_r2_height_setback.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Reports a 5-foot reference-plane elevation allowance when the lot meets the area-and-width path (at least 9,500 sq ft and 100 ft wide) or the slope path (at least 5 percent) (test: test_as1_reference_plane_g_confident_when_area_and_width_satisfy, test_as1_reference_plane_g_confident_when_slope_satisfies).
+- Checks the exact trigger boundaries (9,500 / 100 / 5 percent) and returns not applicable just below them (test: test_nc8_trigger_boundary_values).
+- Excludes the letter-suffix districts (R1-2A, R2A, R2X) and bare R1 even with a satisfying trigger, and admits the no-suffix members R1-1, R1-2, R2 (test: test_nc2_letter_suffix_and_bare_r1_excluded_from_reference_plane, test_nc2_no_letter_suffix_members_eligible).
+- Fails closed to professional review when any one of the three geometry inputs, or the building form, is missing (test: test_nc5_reference_plane_missing_any_single_geometry_input_fails_closed, test_nc4_reference_plane_building_type_unavailable_fails_closed).
+- Is complementary to the envelope rules and never a same-family conflict (test: test_nc7_reference_plane_rule_never_conflicts_with_envelope_rules).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- The reference plane feeds the sloping-plane geometry, which the program does not compute.
+- Site-specific modifiers are not modelled in this rule.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r1_r2_height_setback.py`
+- Counts: 110 passed
+- Evidence: [run log](../evidence/test_r1_r2_height_setback.txt)
+- Rule file digest tested: `39632cfe424a48fbf68c9553e31658b823743a208eb4bbd403fd8ee661e003fa`
+- Test files tested:
+  - `services/api/tests/rules/test_r1_r2_height_setback.py` (`30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -59,11 +88,12 @@ A made-up 10,000 sq ft, 100 ft wide detached R2 lot (not a real address); it mee
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

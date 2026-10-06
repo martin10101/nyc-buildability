@@ -4,16 +4,21 @@
 Pure stdlib. No rule math, no network, no AI call. It reads the authored
 ``register.json``, the committed rule files, the captured law snapshots and the
 rendered Markdown, and returns a list of plain-text problems (empty == clean).
-It covers acceptance scenarios S2 (fixed, structured fields), S3 (one entry per
-rule file and the reverse; links exist), S4 (a rule change without a register
-update is caught), S6 (human-verdict rules), S7 (append-only history), and S8
-(the rendered Markdown is current). The example `actual` values are re-derived
-through the real rule engine by the pytest suite, not here (this module stays
-engine-free so it can run anywhere).
+It covers the acceptance scenarios: S2 (fixed, structured fields), S3 (one entry
+per rule file and the reverse; links exist), S4 (a rule change without a register
+update is caught), S6/S12 (the human-review rules: the reviewer's ORIGINAL
+decision is kept, and a DERIVED field says whether it still applies; an old
+"Correct" can never be kept on changed logic), S13 (the check enforces
+record-keeping only - never a human decision), S14 (planned/committed/tested
+behaviour is structured), S15 (the automated-tests field holds a RESULT bound to
+the identity of what was tested), S7 (append-only history) and S8 (the rendered
+Markdown is current). The example ``actual`` values are re-derived through the
+real rule engine by the pytest suite, not here (this module stays engine-free so
+it can run anywhere).
 
-The small per-entry checkers (:func:`verdict_errors`, :func:`rule_file_errors`,
-etc.) are deliberately separate functions so the tests can call them on mutated
-in-memory data for the negative cases.
+The small per-entry checkers (:func:`human_review_errors`, :func:`rule_file_errors`,
+:func:`behaviour_errors`, etc.) are deliberately separate functions so the tests
+can call them on mutated in-memory data for the negative cases.
 """
 from __future__ import annotations
 
@@ -26,11 +31,11 @@ from . import render_review_register as render
 REPO_ROOT = render.REPO_ROOT
 RULESET_DIR = render.RULESET_DIR
 SNAPSHOT_DIR = render.SNAPSHOT_DIR
-DOCS_DIR = render.DOCS_DIR
-RULES_MD_DIR = render.RULES_MD_DIR
 
 VERDICTS = ("Not reviewed", "Correct", "Incorrect", "Needs re-review")
+DECISIONS = (None, "Correct", "Incorrect")
 BASIS_KINDS = ("law_text", "reference_case", "gap")
+AT_STATUS = ("Passed", "Failed", "Not run")
 EVENTS = (
     "created", "interpretation_changed", "applicability_changed",
     "implementation_changed", "evidence_changed", "human_verdict_recorded",
@@ -40,12 +45,18 @@ EVENTS = (
 ENTRY_KEYS = {
     "entry_id", "rule_id", "rule_file", "rule_version", "rule_file_sha256", "title",
     "family", "law", "applicable_from", "applicable_to", "applies_where", "exceptions",
-    "interpretation", "example", "code_links", "test_links", "automated_tests",
-    "revision", "last_changed", "human_review", "gaps", "draft_note",
+    "interpretation", "example", "code_links", "test_links", "behaviour",
+    "automated_tests", "revision", "last_changed", "human_review", "gaps", "draft_note",
 }
 HR_KEYS = {
-    "verdict", "reviewer_name", "reviewer_role", "review_date", "comments",
-    "reviewed_revision", "reviewed_conditions",
+    "decision", "reviewer_name", "reviewer_role", "review_date", "comments",
+    "reviewed_revision", "reviewed_conditions", "reviewed_rule_file_sha256",
+    "reviewed_law_digests", "applies_to_current", "verdict",
+}
+BEHAVIOUR_KEYS = {"tested", "committed_untested", "planned"}
+AT_KEYS = {
+    "status", "tested_commit", "tested_on", "command", "counts", "evidence",
+    "tested_rule_file_sha256", "tested_test_file_sha256s", "note",
 }
 EXAMPLE_KEYS = {"description", "inputs", "expected", "actual", "agrees"}
 EXPECTED_KEYS = {"values", "basis_kind", "basis", "prepared_by"}
@@ -73,46 +84,164 @@ def ruleset_rule_ids() -> dict[str, pathlib.Path]:
     return out
 
 
+def current_law_digests(entry: dict) -> dict[str, str]:
+    """The capture-id -> content-digest map for the entry's CURRENT law list."""
+    return {law["snapshot_id"]: law["content_digest_sha256"] for law in entry["law"]}
+
+
 # --------------------------------------------------------------------------
-# S6: human-verdict rules (callable on one entry, for negative tests)
+# S6 + S12: the human-review rules
 # --------------------------------------------------------------------------
-def verdict_errors(entry: dict) -> list[str]:
+def derive_human_review(entry: dict) -> tuple:
+    """Compute (applies_to_current, shown_verdict) from the STORED original
+    decision and a comparison of the reviewed identities with the entry's current
+    rule-file digest, law digests and revision. This is the ONLY place the shown
+    verdict and the applies-to-current flag come from; the checker refuses any
+    stored value that differs, so touching the register can never keep an old
+    'Correct' on changed logic.
+
+    - no decision            -> (None, 'Not reviewed')
+    - decision, all identities match current -> (True, that decision)
+    - decision, any identity differs         -> (False, 'Needs re-review')
+    """
+    hr = entry["human_review"]
+    if hr.get("decision") is None:
+        return (None, "Not reviewed")
+    matches = (
+        hr.get("reviewed_rule_file_sha256") == entry["rule_file_sha256"]
+        and dict(hr.get("reviewed_law_digests") or {}) == current_law_digests(entry)
+        and hr.get("reviewed_revision") == entry["revision"]
+    )
+    if matches:
+        return (True, hr["decision"])
+    return (False, "Needs re-review")
+
+
+def human_review_errors(entry: dict) -> list[str]:
     rid = entry.get("rule_id", "?")
     hr = entry.get("human_review", {})
     errs: list[str] = []
     if set(hr) != HR_KEYS:
         errs.append(f"{rid}: human_review keys {sorted(hr)} != {sorted(HR_KEYS)}")
         return errs
-    verdict = hr["verdict"]
-    if verdict not in VERDICTS:
-        errs.append(f"{rid}: human verdict {verdict!r} is not one of {list(VERDICTS)}")
+    if hr["decision"] not in DECISIONS:
+        errs.append(
+            f"{rid}: human decision {hr['decision']!r} must be 'Correct', 'Incorrect' or null"
+        )
         return errs
+    if hr["verdict"] not in VERDICTS:
+        errs.append(f"{rid}: shown verdict {hr['verdict']!r} is not one of {list(VERDICTS)}")
+        return errs
+
     named = bool(str(hr["reviewer_name"]).strip())
     dated = bool(str(hr["review_date"]).strip())
     has_rev = hr["reviewed_revision"] is not None
     has_cond = bool(str(hr["reviewed_conditions"]).strip())
-    if verdict == "Not reviewed":
-        if named or dated or has_rev or has_cond:
+    has_rule_identity = bool(str(hr["reviewed_rule_file_sha256"] or "").strip())
+    has_law_identity = bool(hr["reviewed_law_digests"])
+    any_field = (
+        named or dated or has_rev or has_cond or has_rule_identity or has_law_identity
+        or bool(str(hr["comments"]).strip()) or bool(str(hr["reviewer_role"]).strip())
+    )
+
+    if hr["decision"] is None:
+        if any_field:
             errs.append(
-                f"{rid}: a 'Not reviewed' verdict must leave reviewer name, date, reviewed "
-                "revision and conditions empty"
+                f"{rid}: an entry with no human decision must leave every reviewer field empty "
+                "(no name, role, date, comments, reviewed revision, conditions or reviewed "
+                "identities); it reads 'Not reviewed'"
             )
     else:
-        # A real verdict is refused unless a named human reviewer, a date, the
-        # revision reviewed and the conditions reviewed are all recorded.
-        if not (named and dated and has_rev and has_cond):
+        # A decision is recorded ONLY from a named human reviewer's own answer, with
+        # the reviewed identity, never from tests or an agent.
+        complete = all((named, dated, has_rev, has_cond, has_rule_identity, has_law_identity))
+        if not complete:
             errs.append(
-                f"{rid}: verdict {verdict!r} is refused - it needs a reviewer name, a review "
-                "date, the revision reviewed and the conditions reviewed (a verdict may be "
-                "recorded only from a named human reviewer's own answer, never from tests or an AI)"
+                f"{rid}: a human decision of {hr['decision']!r} is refused - it needs a reviewer "
+                "name, a review date, the revision reviewed, the conditions reviewed and the "
+                "identity of what was reviewed (the rule-file digest and the law-capture digests); "
+                "a decision is never derived from tests or an agent review"
             )
-        stale_rev = has_rev and hr["reviewed_revision"] != entry["revision"]
-        if verdict in ("Correct", "Incorrect") and stale_rev:
+
+    # The derived fields must equal the recomputed values; a stored value that
+    # differs is refused (an old decision can never be shown as current after a change).
+    applies, verdict = derive_human_review(entry)
+    if hr["applies_to_current"] != applies:
+        errs.append(
+            f"{rid}: applies_to_current {hr['applies_to_current']!r} does not match the recomputed "
+            f"value {applies!r}; it is derived from the reviewed identities versus the current ones"
+        )
+    if hr["verdict"] != verdict:
+        errs.append(
+            f"{rid}: shown verdict {hr['verdict']!r} does not match the recomputed verdict "
+            f"{verdict!r}; a decision whose reviewed rule digest, law digests or revision differ "
+            "from the current ones must read 'Needs re-review' (an old 'Correct' is never kept on "
+            "changed logic)"
+        )
+    return errs
+
+
+# --------------------------------------------------------------------------
+# S14: planned / committed / tested behaviour, told apart
+# --------------------------------------------------------------------------
+def behaviour_errors(entry: dict) -> list[str]:
+    rid = entry.get("rule_id", "?")
+    b = entry.get("behaviour", {})
+    errs: list[str] = []
+    if set(b) != BEHAVIOUR_KEYS:
+        errs.append(f"{rid}: behaviour keys {sorted(b)} != {sorted(BEHAVIOUR_KEYS)}")
+        return errs
+    for key in ("tested", "committed_untested", "planned"):
+        items = b[key]
+        if not isinstance(items, list) or not all(
+            isinstance(s, str) and s.strip() for s in items
+        ):
+            errs.append(f"{rid}: behaviour.{key} must be a list of non-empty plain sentences")
+    # Every 'tested' item names the test function(s) that exercise it.
+    for item in b.get("tested", []):
+        if isinstance(item, str) and "test_" not in item:
             errs.append(
-                f"{rid}: verdict {verdict!r} was recorded against revision "
-                f"{hr['reviewed_revision']} but the rule is now at revision {entry['revision']}; "
-                "it must read 'Needs re-review' until a reviewer checks the current revision"
+                f"{rid}: a 'tested' behaviour must name the test function(s) that exercise it: "
+                f"{item!r}"
             )
+    return errs
+
+
+# --------------------------------------------------------------------------
+# S15: the automated-tests field is a RESULT bound to what was tested
+# --------------------------------------------------------------------------
+def automated_tests_errors(entry: dict) -> list[str]:
+    rid = entry.get("rule_id", "?")
+    at = entry.get("automated_tests", {})
+    errs: list[str] = []
+    if set(at) != AT_KEYS:
+        errs.append(f"{rid}: automated_tests keys {sorted(at)} != {sorted(AT_KEYS)}")
+        return errs
+    if at["status"] not in AT_STATUS:
+        errs.append(
+            f"{rid}: automated_tests status {at['status']!r} is not one of {list(AT_STATUS)}"
+        )
+    ev = REPO_ROOT / at["evidence"]
+    if not ev.is_file():
+        errs.append(f"{rid}: automated_tests evidence file missing: {at['evidence']}")
+
+    # The result is bound to the identity of what was tested: if the current rule
+    # file or any current test file differs from the recorded digest, the status
+    # MUST read 'Not run' so a result for an earlier version is never shown.
+    stale = False
+    rule_path = REPO_ROOT / entry["rule_file"]
+    if not rule_path.is_file() or lf_sha256(rule_path) != at["tested_rule_file_sha256"]:
+        stale = True
+    for rel, digest in at["tested_test_file_sha256s"].items():
+        p = REPO_ROOT / rel
+        if not p.is_file() or lf_sha256(p) != digest:
+            stale = True
+    if stale and at["status"] != "Not run":
+        errs.append(
+            f"{rid}: the rule file or a test file changed since the recorded run, so "
+            "automated_tests.status must read 'Not run' (a result for an earlier version is never "
+            "shown as current)"
+        )
     return errs
 
 
@@ -177,6 +306,12 @@ def structure_errors(register: dict) -> list[str]:
     fg = register["field_guide"]
     if list(fg.get("verdict_values", [])) != list(VERDICTS):
         errs.append("field_guide.verdict_values must be exactly the four allowed verdicts")
+    if list(fg.get("decision_values", [])) != ["Correct", "Incorrect", "no decision"]:
+        errs.append("field_guide.decision_values must be Correct, Incorrect, no decision")
+    if list(fg.get("applies_to_current_values", [])) != ["true", "false", "null"]:
+        errs.append("field_guide.applies_to_current_values must be true, false, null")
+    if list(fg.get("automated_test_status_values", [])) != list(AT_STATUS):
+        errs.append("field_guide.automated_test_status_values must be Passed, Failed, Not run")
     if list(fg.get("basis_kind_values", [])) != list(BASIS_KINDS):
         errs.append("field_guide.basis_kind_values must be law_text, reference_case, gap")
     if list(fg.get("event_values", [])) != list(EVENTS):
@@ -198,12 +333,6 @@ def structure_errors(register: dict) -> list[str]:
             errs.append(f"{rid}: example basis_kind {ex['expected']['basis_kind']!r} invalid")
         elif set(ex["actual"]) != {"values", "coverage_status"}:
             errs.append(f"{rid}: example.actual keys differ from the fixed set")
-        at = entry["automated_tests"]
-        if set(at) != {"suites", "note"}:
-            errs.append(f"{rid}: automated_tests keys differ from the fixed set")
-        # automated-test status is a field of its own, apart from the human verdict.
-        if "human_review" in entry and "automated_tests" in entry["human_review"]:
-            errs.append(f"{rid}: automated-test status must stay out of the human_review block")
     return errs
 
 
@@ -289,22 +418,26 @@ def history_errors(register: dict) -> list[str]:
 # S8: the rendered Markdown is current
 # --------------------------------------------------------------------------
 def rendered_errors(register: dict) -> list[str]:
+    # Read the render module's paths at call time so a test can point them at a
+    # temp folder (F3: run the byte-identical check on a tampered copy).
+    docs_dir = render.DOCS_DIR
+    rules_md_dir = render.RULES_MD_DIR
     errs: list[str] = []
     checks = {
-        DOCS_DIR / "REGISTER.md": render.render_register_md(register),
-        DOCS_DIR / "HISTORY.md": render.render_history_md(register),
+        docs_dir / "REGISTER.md": render.render_register_md(register),
+        docs_dir / "HISTORY.md": render.render_history_md(register),
     }
     for entry in register["entries"]:
-        checks[RULES_MD_DIR / f"{entry['rule_id']}.md"] = render.render_detail_md(entry)
+        checks[rules_md_dir / f"{entry['rule_id']}.md"] = render.render_detail_md(entry)
     for path, produced in checks.items():
         if not path.is_file():
-            errs.append(f"rendered file missing: {path.relative_to(REPO_ROOT)} (run --write)")
+            errs.append(f"rendered file missing: {path.name} (run --write)")
         elif path.read_text() != produced:
-            errs.append(f"rendered file is stale: {path.relative_to(REPO_ROOT)} (run --write)")
+            errs.append(f"rendered file is stale: {path.name} (run --write)")
     # orphan detail pages (a rules/*.md with no entry)
     wanted = {f"{e['rule_id']}.md" for e in register["entries"]}
-    if RULES_MD_DIR.is_dir():
-        for existing in sorted(RULES_MD_DIR.glob("*.md")):
+    if rules_md_dir.is_dir():
+        for existing in sorted(rules_md_dir.glob("*.md")):
             if existing.name not in wanted:
                 errs.append(f"orphan detail page with no register entry: {existing.name}")
     return errs
@@ -327,7 +460,9 @@ def validate(register: dict) -> list[str]:
         if rule_path is not None:
             errs += rule_file_errors(entry, rule_path)
         errs += law_errors(entry)
-        errs += verdict_errors(entry)
+        errs += human_review_errors(entry)
+        errs += behaviour_errors(entry)
+        errs += automated_tests_errors(entry)
     errs += history_errors(register)
     errs += rendered_errors(register)
     return errs

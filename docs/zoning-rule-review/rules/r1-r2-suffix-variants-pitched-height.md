@@ -53,7 +53,37 @@ A made-up detached house on an R2A lot (not a real address).
 ## Tests
 
 - `services/api/tests/rules/test_r1_r2_height_setback.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Reports the same 25-foot wall / 35-foot ridge envelope for R1-1, R1-2, R1-2A, R2A and R2X, reached through the ZR 11-25 suffix reading (test: test_as1_suffix_variant_confident_wall_and_ridge_separate).
+- Cites 11-25 as owner-decision provenance in addition to 23-421, which the bare rule does not (test: test_as1_bare_and_suffix_rules_cite_distinct_provenance).
+- Records R2X's distinct 23-21 FAR row as a floor-area-only note that does not change the height, and omits that note for other variants (test: test_as1_r2x_far_row_documented_as_floor_area_only).
+- Is not applicable to bare or foreign districts (test: test_nc1_suffix_variant_rule_never_matches_bare_or_foreign).
+- Fails closed to professional review on a missing building form, and escalates on an overlay, special district, historic district, large site or transportation (test: test_nc4_suffix_variant_building_type_unavailable_fails_closed, test_nc3_suffix_variant_rule_modifier_downgrades).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- The suffix inheritance rests on ZR 11-25 rather than an express per-district citation; it is recorded as a documented limitation, not resolved.
+- The sloping-plane setback geometry is not computed.
+- Overlay, special-district, historic-district, large-site and transportation adjustments are sent to professional review.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r1_r2_height_setback.py`
+- Counts: 110 passed
+- Evidence: [run log](../evidence/test_r1_r2_height_setback.txt)
+- Rule file digest tested: `f4f840be26eb17a78b0b935d24df2a5367c495d9f9990a916db5a6418ee43dd3`
+- Test files tested:
+  - `services/api/tests/rules/test_r1_r2_height_setback.py` (`30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -64,11 +94,12 @@ A made-up detached house on an R2A lot (not a real address).
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

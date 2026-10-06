@@ -3,24 +3,28 @@
 Deterministic: they read the committed ``register.json``, the committed rule
 files, the committed law captures and the committed rendered Markdown, and they
 re-derive every example's ``actual`` answer through the program's OWN rule
-registry and evaluator. No network, no AI. They prove:
+registry and evaluator. No network, no AI. The negative cases mutate a copy of
+the data IN MEMORY (or render it to a temp folder), never the committed rule
+files. They prove:
 
-* S3 - one register entry per rule file and the reverse (23 today, no duplicate,
-  no entry without a rule file, no rule file without an entry); every linked
-  code / test / capture file exists.
-* S4 - each entry pins the rule file's version and a line-ending-normalized
+* S3  - one register entry per rule file and the reverse (23 today, no duplicate);
+  every linked code / test / capture file exists.
+* S4  - each entry pins the rule file's version and a line-ending-normalized
   sha256; a change to either is caught with a message naming the rule.
-* S5 - every example's inputs are evaluated through the real engine and the
-  result equals the recorded ``actual``; ``agrees`` equals whether the
-  independently-worked ``expected`` matches ``actual`` (or is ``null`` for a gap).
-  The recorded ``expected`` is never taken from a program run.
-* S6 - the human-verdict rules, with negative cases (a verdict is refused without
-  a named reviewer / date / revision / conditions; 'Correct'/'Incorrect' against
-  an old revision must read 'Needs re-review'; a verdict is never derived from
-  tests or an AI).
-* S7 - the append-only history rules, with negative cases.
-* S8 - the rendered Markdown is byte-identical to the renderer's output, with no
-  stale or orphan detail page.
+* S5  - every example's inputs are evaluated through the real engine and the
+  result equals the recorded ``actual``; the recorded ``expected`` is independent.
+* S6/S12 - the human-review rules: the reviewer's ORIGINAL decision is kept and a
+  DERIVED field says whether it still applies; an old "Correct" can never be kept
+  on a changed rule file, law capture or revision.
+* S13 - the build check passes for an updated entry with no decision AND for one
+  whose decision no longer applies; nothing requires a human decision.
+* S14 - planned / committed / tested behaviour is told apart, and every tested
+  item names the test function(s) that exercise it.
+* S15 - the automated-tests field is a RESULT bound to the identity of what was
+  tested; the checker demands "Not run" when a rule or test file changes.
+* S7  - the append-only history rules, with negative cases.
+* S8  - the rendered Markdown is byte-identical to the renderer's output, with no
+  stale or orphan detail page (the tamper case runs the checker on a temp copy).
 """
 from __future__ import annotations
 
@@ -50,6 +54,17 @@ def _registry() -> RuleRegistry:
 
 def _ruleset_ids() -> set[str]:
     return {json.loads(p.read_text())["rule_id"] for p in RULESET_DIR.glob("*.rule.json")}
+
+
+def _point_render_at(tmp_path, monkeypatch):
+    """Point the renderer/checker at a temp docs folder so a mutated register can
+    be rendered and the build check run without touching the committed tree."""
+    docs = tmp_path / "docs"
+    rules = docs / "rules"
+    rules.mkdir(parents=True)
+    monkeypatch.setattr(render, "DOCS_DIR", docs)
+    monkeypatch.setattr(render, "RULES_MD_DIR", rules)
+    return docs, rules
 
 
 # --------------------------------------------------------------------------
@@ -89,14 +104,17 @@ def test_linked_code_test_and_capture_files_exist():
 # S2 - fixed, structured fields; automated status separate from the verdict
 # --------------------------------------------------------------------------
 def test_fields_are_fixed_and_structured():
-    assert REGISTER["field_guide"]["verdict_values"] == [
-        "Not reviewed", "Correct", "Incorrect", "Needs re-review"
-    ]
+    fg = REGISTER["field_guide"]
+    assert fg["verdict_values"] == ["Not reviewed", "Correct", "Incorrect", "Needs re-review"]
+    assert fg["automated_test_status_values"] == ["Passed", "Failed", "Not run"]
     for e in ENTRIES:
         assert set(e) == checker.ENTRY_KEYS, e["rule_id"]
         assert set(e["human_review"]) == checker.HR_KEYS
-        assert set(e["automated_tests"]) == {"suites", "note"}
+        assert set(e["automated_tests"]) == checker.AT_KEYS
+        assert set(e["behaviour"]) == checker.BEHAVIOUR_KEYS
+        # automated-test status is its own field, never inside the human-review block
         assert "automated_tests" not in e["human_review"]
+        assert "decision" not in e["automated_tests"]
         assert e["example"]["expected"]["basis_kind"] in checker.BASIS_KINDS
 
 
@@ -153,7 +171,6 @@ def test_agrees_equals_expected_vs_actual_or_null_for_gap():
             assert exp["values"] == {}, f"{e['rule_id']}: a gap must record no expected values"
         else:
             assert ex["agrees"] == (exp["values"] == ex["actual"]["values"]), e["rule_id"]
-            # a recorded expected answer carries its independent basis + preparer
             assert exp["basis"].strip()
             assert "not checked by a professional" in exp["prepared_by"]
 
@@ -164,50 +181,237 @@ def test_every_basis_kind_is_present_at_least_once():
 
 
 # --------------------------------------------------------------------------
-# S6 - human-verdict rules (positive + negative)
+# S6 - all backfilled entries read 'Not reviewed'; a decision needs a reviewer
 # --------------------------------------------------------------------------
 def test_all_backfilled_entries_read_not_reviewed():
     for e in ENTRIES:
         hr = e["human_review"]
+        assert hr["decision"] is None, e["rule_id"]
         assert hr["verdict"] == "Not reviewed", e["rule_id"]
+        assert hr["applies_to_current"] is None
         assert hr["reviewer_name"] == "" and hr["review_date"] == ""
         assert hr["reviewed_revision"] is None
-        assert checker.verdict_errors(e) == []
+        assert checker.human_review_errors(e) == []
 
 
-def test_verdict_refused_without_named_reviewer():
+def test_decision_refused_without_a_named_reviewer_and_identity():
     e = copy.deepcopy(BY_ID["r6b-height"])
-    e["human_review"]["verdict"] = "Correct"  # no reviewer name / date / revision / conditions
-    errs = checker.verdict_errors(e)
+    e["human_review"]["decision"] = "Correct"  # but no reviewer / date / identity
+    errs = checker.human_review_errors(e)
     assert any("refused" in m for m in errs)
-
-
-def test_correct_against_old_revision_must_be_needs_re_review():
-    e = copy.deepcopy(BY_ID["r6b-height"])
-    e["revision"] = 2
-    e["human_review"].update(
-        verdict="Correct", reviewer_name="Jane Roe RA", reviewer_role="architect",
-        review_date="2026-10-10", reviewed_revision=1, reviewed_conditions="as drawn",
-    )
-    errs = checker.verdict_errors(e)
-    assert any("Needs re-review" in m for m in errs)
 
 
 def test_not_reviewed_with_a_reviewer_name_is_rejected():
     e = copy.deepcopy(BY_ID["r6b-height"])
-    e["human_review"]["reviewer_name"] = "Someone"
-    errs = checker.verdict_errors(e)
-    assert any("Not reviewed" in m for m in errs)
+    e["human_review"]["reviewer_name"] = "Someone"  # decision still None
+    errs = checker.human_review_errors(e)
+    assert any("no human decision must leave every reviewer field empty" in m for m in errs)
 
 
-def test_a_fully_recorded_current_verdict_is_accepted():
+def test_a_fully_recorded_current_decision_is_accepted():
     e = copy.deepcopy(BY_ID["r6b-height"])
+    law = checker.current_law_digests(e)
     e["human_review"].update(
-        verdict="Correct", reviewer_name="Jane Roe RA", reviewer_role="architect",
-        review_date="2026-10-10", reviewed_revision=e["revision"],
+        decision="Correct",
+        reviewer_name="Jane Roe RA",
+        reviewer_role="licensed architect (sample, not a real review)",
+        review_date="2026-10-10",
+        comments="sample",
+        reviewed_revision=e["revision"],
         reviewed_conditions="R6B lot, no overlay, no special district",
+        reviewed_rule_file_sha256=e["rule_file_sha256"],
+        reviewed_law_digests=law,
     )
-    assert checker.verdict_errors(e) == []
+    applies, verdict = checker.derive_human_review(e)
+    assert applies is True and verdict == "Correct"
+    e["human_review"]["applies_to_current"] = True
+    e["human_review"]["verdict"] = "Correct"
+    assert checker.human_review_errors(e) == []
+
+
+# --------------------------------------------------------------------------
+# S12 - the ORIGINAL decision is kept; applies-to-current is DERIVED
+# --------------------------------------------------------------------------
+def _record_correct_decision(e, *, reviewed_rule_sha, reviewed_law, reviewed_rev):
+    e["human_review"].update(
+        decision="Correct",
+        reviewer_name="Jane Roe RA",
+        reviewer_role="licensed architect (sample, not a real review)",
+        review_date="2026-10-10",
+        comments="sample decision",
+        reviewed_revision=reviewed_rev,
+        reviewed_conditions="R6B lot, no overlay, no special district",
+        reviewed_rule_file_sha256=reviewed_rule_sha,
+        reviewed_law_digests=reviewed_law,
+    )
+
+
+def test_s12a_rule_change_under_a_correct_decision_reads_needs_re_review():
+    # (a) a rule file changes and the register records the new digest in the SAME
+    # change -> the entry reads 'Needs re-review' and the original decision stays.
+    e = copy.deepcopy(BY_ID["r6b-height"])
+    old_sha = e["rule_file_sha256"]
+    _record_correct_decision(
+        e, reviewed_rule_sha=old_sha, reviewed_law=checker.current_law_digests(e), reviewed_rev=1
+    )
+    e["rule_file_sha256"] = "a" * 64  # the rule file changed; digest updated here
+    e["revision"] = 2
+    applies, verdict = checker.derive_human_review(e)
+    assert applies is False and verdict == "Needs re-review"
+    assert e["human_review"]["decision"] == "Correct"  # original decision kept
+    e["human_review"]["applies_to_current"] = False
+    e["human_review"]["verdict"] = "Needs re-review"
+    assert checker.human_review_errors(e) == []
+
+
+def test_s12b_touching_the_file_cannot_keep_an_old_correct():
+    # (b) merely storing 'Correct' when a reviewed identity differs is refused.
+    e = copy.deepcopy(BY_ID["r6b-height"])
+    _record_correct_decision(
+        e, reviewed_rule_sha="a" * 64, reviewed_law=checker.current_law_digests(e), reviewed_rev=1
+    )
+    e["human_review"]["applies_to_current"] = True
+    e["human_review"]["verdict"] = "Correct"
+    errs = checker.human_review_errors(e)
+    assert any("Needs re-review" in m for m in errs)
+
+
+def test_s12c_changed_law_capture_digest_flags_needs_re_review():
+    # (c) the same for a changed law-capture digest.
+    e = copy.deepcopy(BY_ID["r6b-height"])
+    stale_law = {k: "f" * 64 for k in checker.current_law_digests(e)}
+    _record_correct_decision(
+        e, reviewed_rule_sha=e["rule_file_sha256"], reviewed_law=stale_law,
+        reviewed_rev=e["revision"],
+    )
+    applies, verdict = checker.derive_human_review(e)
+    assert applies is False and verdict == "Needs re-review"
+    e["human_review"]["applies_to_current"] = False
+    e["human_review"]["verdict"] = "Needs re-review"
+    assert checker.human_review_errors(e) == []
+    e["human_review"]["verdict"] = "Correct"
+    e["human_review"]["applies_to_current"] = True
+    assert any("Needs re-review" in m for m in checker.human_review_errors(e))
+
+
+def test_s12d_history_records_the_decision_and_its_later_non_application():
+    # (d) a history event records the decision and a later event records that it
+    # no longer applies.
+    reg = {
+        "entries": [{"rule_id": "x", "revision": 2}],
+        "history": [
+            {"seq": 1, "date": "2026-10-06", "entry_id": "x", "revision": 1,
+             "event": "created", "summary": "created", "by": "backfill"},
+            {"seq": 2, "date": "2026-10-10", "entry_id": "x", "revision": 1,
+             "event": "human_verdict_recorded",
+             "summary": "architect recorded Correct for revision 1", "by": "Jane Roe RA"},
+            {"seq": 3, "date": "2026-10-12", "entry_id": "x", "revision": 2,
+             "event": "flagged_for_re_review",
+             "summary": "rule revised; earlier decision no longer applies", "by": "session"},
+        ],
+    }
+    assert checker.history_errors(reg) == []
+    events = {ev["event"] for ev in reg["history"]}
+    assert "human_verdict_recorded" in events and "flagged_for_re_review" in events
+
+
+# --------------------------------------------------------------------------
+# S13 - the build check enforces record-keeping only (never a human decision)
+# --------------------------------------------------------------------------
+def test_s13_updated_entry_without_a_decision_passes_the_check(tmp_path, monkeypatch):
+    reg = copy.deepcopy(REGISTER)
+    e = next(x for x in reg["entries"] if x["rule_id"] == "r6b-lot-coverage")
+    e["revision"] = 2
+    e["last_changed"] = "2026-10-20"
+    reg["history"].append({
+        "seq": len(reg["history"]) + 1, "date": "2026-10-20",
+        "entry_id": "r6b-lot-coverage", "revision": 2, "event": "implementation_changed",
+        "summary": "sample revision for the record-keeping-only test", "by": "session",
+    })
+    _point_render_at(tmp_path, monkeypatch)
+    render.write_all(reg)
+    assert checker.validate(reg) == []  # passes with no decision at all
+    assert e["human_review"]["verdict"] == "Not reviewed"
+
+
+def test_s13_entry_whose_decision_no_longer_applies_passes_the_check(tmp_path, monkeypatch):
+    reg = copy.deepcopy(REGISTER)
+    e = next(x for x in reg["entries"] if x["rule_id"] == "r6b-height")
+    _record_correct_decision(
+        e, reviewed_rule_sha=e["rule_file_sha256"],
+        reviewed_law=checker.current_law_digests(e), reviewed_rev=1,
+    )
+    e["revision"] = 2  # the rule was revised; the decision (rev 1) no longer applies
+    e["last_changed"] = "2026-10-20"
+    e["human_review"]["applies_to_current"] = False
+    e["human_review"]["verdict"] = "Needs re-review"
+    reg["history"].extend([
+        {"seq": len(reg["history"]) + 1, "date": "2026-10-12", "entry_id": "r6b-height",
+         "revision": 1, "event": "human_verdict_recorded",
+         "summary": "architect recorded Correct for revision 1 (sample)", "by": "Jane Roe RA"},
+        {"seq": len(reg["history"]) + 2, "date": "2026-10-20", "entry_id": "r6b-height",
+         "revision": 2, "event": "flagged_for_re_review",
+         "summary": "rule revised; earlier decision no longer applies (sample)", "by": "session"},
+    ])
+    _point_render_at(tmp_path, monkeypatch)
+    render.write_all(reg)
+    assert checker.validate(reg) == []  # passes though the verdict reads Needs re-review
+    assert e["human_review"]["verdict"] == "Needs re-review"
+    assert e["human_review"]["decision"] == "Correct"  # original decision kept
+
+
+# --------------------------------------------------------------------------
+# S14 - planned / committed / tested behaviour, told apart
+# --------------------------------------------------------------------------
+def test_behaviour_is_structured_and_tested_items_name_a_test():
+    for e in ENTRIES:
+        assert checker.behaviour_errors(e) == [], e["rule_id"]
+        for item in e["behaviour"]["tested"]:
+            assert "test_" in item, f"{e['rule_id']}: tested item names no test: {item!r}"
+
+
+def test_committed_untested_items_say_no_test_was_found():
+    for e in ENTRIES:
+        for item in e["behaviour"]["committed_untested"]:
+            assert "no test" in item.lower(), f"{e['rule_id']}: {item!r}"
+
+
+def test_behaviour_rejects_a_tested_item_without_a_test_name():
+    e = copy.deepcopy(BY_ID["r6b-height"])
+    e["behaviour"]["tested"] = ["reports five heights"]  # no test_ name
+    assert any("name the test" in m for m in checker.behaviour_errors(e))
+
+
+# --------------------------------------------------------------------------
+# S15 - the automated-tests field is a RESULT bound to what was tested
+# --------------------------------------------------------------------------
+def test_automated_tests_result_shape_and_status():
+    for e in ENTRIES:
+        assert checker.automated_tests_errors(e) == [], e["rule_id"]
+        at = e["automated_tests"]
+        assert at["status"] == "Passed"
+        assert len(at["tested_commit"]) == 40
+        assert (REPO_ROOT / at["evidence"]).is_file()
+        assert at["tested_rule_file_sha256"] == checker.lf_sha256(REPO_ROOT / e["rule_file"])
+
+
+def test_changed_test_file_demands_status_not_run():
+    e = copy.deepcopy(BY_ID["r6b-height"])
+    rel = e["test_links"][0]
+    e["automated_tests"]["tested_test_file_sha256s"][rel] = "0" * 64  # test file "changed"
+    errs = checker.automated_tests_errors(e)
+    assert any("Not run" in m for m in errs)
+    e["automated_tests"]["status"] = "Not run"
+    assert checker.automated_tests_errors(e) == []
+
+
+def test_changed_rule_file_demands_status_not_run():
+    e = copy.deepcopy(BY_ID["r6b-height"])
+    e["automated_tests"]["tested_rule_file_sha256"] = "0" * 64  # rule file "changed"
+    errs = checker.automated_tests_errors(e)
+    assert any("Not run" in m for m in errs)
+    e["automated_tests"]["status"] = "Not run"
+    assert checker.automated_tests_errors(e) == []
 
 
 # --------------------------------------------------------------------------
@@ -230,7 +434,6 @@ def test_each_entry_has_a_created_event_at_revision_1():
 def test_missing_created_event_is_caught():
     reg = copy.deepcopy(REGISTER)
     reg["history"] = [ev for ev in reg["history"] if ev["entry_id"] != "r6b-height"]
-    # re-number so the only complaint is the missing 'created' event
     for i, ev in enumerate(reg["history"], start=1):
         ev["seq"] = i
     errs = checker.history_errors(reg)
@@ -281,17 +484,18 @@ def test_renderer_is_deterministic():
     assert render.render_register_md(REGISTER) == render.render_register_md(render.load_register())
 
 
-def test_editing_a_rendered_file_is_caught_by_the_checker():
-    # Prove S8's check reacts to a hand-edit without touching the real file.
-    original = render.render_detail_md(BY_ID["r6b-height"])
-    tampered = original.replace("Not reviewed", "Correct", 1)
-    assert tampered != original
-    # the on-disk file still matches the renderer, but a hand-edited copy would not
-    assert (render.RULES_MD_DIR / "r6b-height.md").read_text() == original
+def test_editing_a_rendered_file_is_caught_by_the_checker(tmp_path, monkeypatch):
+    # F3: run the checker's rendered-file check against a TAMPERED on-disk copy.
+    _point_render_at(tmp_path, monkeypatch)
+    render.write_all(REGISTER)
+    assert checker.rendered_errors(REGISTER) == []  # a clean, current temp tree
+    target = render.RULES_MD_DIR / "r6b-height.md"
+    target.write_text(target.read_text().replace("Not reviewed", "Correct", 1))
+    errs = checker.rendered_errors(REGISTER)
+    assert any("r6b-height.md" in e and "stale" in e for e in errs)
 
 
 def test_guide_exists_and_is_not_rendered():
     guide = render.DOCS_DIR / "GUIDE.md"
     assert guide.is_file(), "GUIDE.md (handwritten) must exist"
-    # GUIDE.md is handwritten and must never be one of the rendered files
     assert guide.name not in {"REGISTER.md", "HISTORY.md"}

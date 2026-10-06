@@ -50,7 +50,35 @@ A made-up 5,000 sq ft R6B lot with standard residences (not a real address).
 ## Tests
 
 - `services/api/tests/rules/test_r1_r12_residential_far.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- The ZR 23-22 standard residential FAR (2.00 for R6B) is checked byte-for-byte against the captured table, and the benchmark R6B lot yields 20,150 sq ft (test: test_as1_flat_rule_values_match_snapshot, test_c2_benchmark_standard_and_qualifying_allowances).
+- Multiplies the FAR by the lot area to report the maximum residential floor area for the benchmark lot (test: test_c2_benchmark_standard_and_qualifying_allowances).
+- Is draft/needs_review, never verified, and effective from 2024-12-05 (test: test_as7_all_rules_are_draft_and_unapproved, test_as7_no_family_result_is_ever_verified).
+- Covers exactly the ZR 23-21/23-22 districts, with none claimed twice or invented (test: test_as2_every_snapshot_district_is_covered_or_excluded).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- Whether a site qualifies for the higher qualifying-housing FAR is a determination the program does not make (it is a separate labelled rule).
+- Special Purpose District and overlay changes to FAR are not applied.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r1_r12_residential_far.py`
+- Counts: 15 passed
+- Evidence: [run log](../evidence/test_r1_r12_residential_far.txt)
+- Rule file digest tested: `6338d2fae4a85f50161e44af4373d5cf1c3b91e83700d64b8c804fb87e4e4cce`
+- Test files tested:
+  - `services/api/tests/rules/test_r1_r12_residential_far.py` (`5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -60,11 +88,12 @@ A made-up 5,000 sq ft R6B lot with standard residences (not a real address).
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

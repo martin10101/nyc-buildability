@@ -51,7 +51,36 @@ A made-up detached house on an R3A lot (not a real address).
 ## Tests
 
 - `services/api/tests/rules/test_r3_r4_height.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Reports a 25-foot wall and 35-foot ridge/building height for the R3/R4-series pitched districts (R3A, R3X, R3-1, R3-2, R4, R4-1, R4A) as two separate values (test: test_as1_pitched_confident_wall_and_ridge_separate).
+- Carries the two citations (23-421 and 23-42) with provenance digests (test: test_as2_pitched_dimensions_trace_to_snapshot_provenance).
+- Is not applicable to non-enumerated or unknown districts, including R4B (test: test_nc1_pitched_rule_not_applicable_to_non_enumerated_districts, test_nc8_r4b_is_flat_only_no_pitched_envelope).
+- Fails closed to professional review on a missing/invalid building form or district, and escalates on an overlay, special district or historic district (test: test_nc4_pitched_building_type_unavailable_fails_closed, test_nc4_invalid_building_type_fails_closed, test_nc3_pitched_modifier_downgrades_to_professional_review).
+- Keeps the sloping-plane setback out of the numeric output, as a documented limitation (test: test_nc8_pitched_setback_is_documented_limitation_not_numeric).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- The sloping-plane envelope between the 25-foot wall and the 35-foot ridge is not computed.
+- Overlay, special-district and historic-district adjustments are sent to professional review.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r3_r4_height.py`
+- Counts: 90 passed
+- Evidence: [run log](../evidence/test_r3_r4_height.txt)
+- Rule file digest tested: `039bd5bfb172950cb19d54a242478e5b5bd7188103a9d548380004abd142ca8c`
+- Test files tested:
+  - `services/api/tests/rules/test_r3_r4_height.py` (`155e064f1aad76181651c81027d9851cc4897e9affc184e0d53b08e492420595`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -62,11 +91,12 @@ A made-up detached house on an R3A lot (not a real address).
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

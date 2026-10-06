@@ -50,7 +50,36 @@ A made-up bare R5 lot (not a real address).
 ## Tests
 
 - `services/api/tests/rules/test_r5_height_setback.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Reports a 35-foot maximum base height and a 45-foot maximum building height for R5 as two separate values, and records the absence of a minimum base height as a documented limitation (test: test_as1_r5_height_confident_base_and_building_separate).
+- Every emitted dimension traces to a snapshot citation with a provenance digest (test: test_as2_every_emitted_dimension_traces_to_snapshot_provenance).
+- Is not applied to R5A/R5B/R5D or an unknown R5 variant (test: test_nc1_variant_value_not_applied_to_another, test_nc1_unknown_r5_variant_is_unsupported_not_nearest).
+- Escalates to professional review on an overlay, special district or historic district, and fails closed on a missing district (test: test_nc3_overlay_or_special_district_downgrades_never_silent_base, test_nc3_historic_district_downgrades, test_nc5_missing_district_fails_closed).
+- Is reported as a same-family conflict against the qualifying-site rule, with no value chosen (test: test_nc7_base_and_qrs_rules_conflict_no_value).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- No minimum base height is encoded; it is recorded as a documented limitation.
+- Overlay, special-district and historic-district adjustments are sent to professional review.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r5_height_setback.py`
+- Counts: 47 passed
+- Evidence: [run log](../evidence/test_r5_height_setback.txt)
+- Rule file digest tested: `30eab3ebe05c2415c5666e515c420d86761714d20035625d5914df9e3294db0f`
+- Test files tested:
+  - `services/api/tests/rules/test_r5_height_setback.py` (`93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -60,11 +89,12 @@ A made-up bare R5 lot (not a real address).
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

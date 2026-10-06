@@ -52,7 +52,38 @@ A made-up R2A lot flagged as a qualifying residential site (not a real address).
 ## Tests
 
 - `services/api/tests/rules/test_r1_r2_height_setback.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Reports a 35-foot maximum base height and a 35-foot maximum building height for an R1/R2-series qualifying residential site (test: test_as1_qrs_confident_base_and_building_height).
+- Keeps the result conditional and never verified (test: test_as1_conditional_never_verified_for_every_rule).
+- Fails closed to professional review when the qualifying-site flag is missing (test: test_nc5_qrs_missing_qualifying_flag_fails_closed).
+- Escalates to professional review on a commercial overlay or special district (test: test_nc3_qrs_modifier_downgrades).
+- Is not applicable to foreign districts even with the qualifying flag set (test: test_nc1_qrs_rule_never_matches_foreign_districts).
+- Is reported as a same-family conflict against the base envelope rules for building height, with no single value chosen (test: test_nc7_qrs_and_suffix_variant_rules_conflict_no_value, test_nc7_qrs_and_bare_rule_conflict_no_value).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- Whether a lot is a qualifying residential site is a separate legal and geographic determination the program does not make.
+- The ZR 23-423 setback for this envelope is recorded as a limitation, not computed.
+- Overlay and special-district adjustments are not computed; the result is sent to professional review.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r1_r2_height_setback.py`
+- Counts: 110 passed
+- Evidence: [run log](../evidence/test_r1_r2_height_setback.txt)
+- Rule file digest tested: `f1571d89989823974211668a29802806fefc26ece611cbe7ba3fab9b80e36a26`
+- Test files tested:
+  - `services/api/tests/rules/test_r1_r2_height_setback.py` (`30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -63,11 +94,12 @@ A made-up R2A lot flagged as a qualifying residential site (not a real address).
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

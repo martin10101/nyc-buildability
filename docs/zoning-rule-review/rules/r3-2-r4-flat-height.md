@@ -50,7 +50,35 @@ A made-up attached (flat-roof) building on an R4 lot (not a real address).
 ## Tests
 
 - `services/api/tests/rules/test_r3_r4_height.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Reports a single 35-foot maximum building height for R3-2 and R4 with a non-pitched building form, and invents no base-height or perimeter-wall value (test: test_as1_flat_r3_2_r4_confident_building_height_only).
+- Keeps the flat 35-foot value off a pitched reading and never lets a pitched value leak in (test: test_nc2_r4_flat_value_never_leaks_into_pitched_constraint, test_nc2_r4_pitched_value_never_emitted_by_flat_rule).
+- Does not cover R4B or the pitched-only R3/R4 variants (test: test_nc1_flat_rule_scoped_to_r3_2_and_r4_only, test_nc8_pitched_only_variants_have_no_flat_envelope).
+- Fails closed to professional review on a missing building form or district, and escalates on an overlay, special district or historic district (test: test_nc4_flat_building_type_unavailable_fails_closed, test_nc5_missing_district_fails_closed, test_nc3_flat_modifier_downgrades_to_professional_review).
+- Is not effective before 2024-12-05 (test: test_as3_before_amendment_not_effective).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- Overlay, special-district and historic-district adjustments are not computed; the result is sent to professional review.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r3_r4_height.py`
+- Counts: 90 passed
+- Evidence: [run log](../evidence/test_r3_r4_height.txt)
+- Rule file digest tested: `6a8732b1b2644b868c8fda50d78fc6e86dc84a63f3d381aedfed354f167edaf7`
+- Test files tested:
+  - `services/api/tests/rules/test_r3_r4_height.py` (`155e064f1aad76181651c81027d9851cc4897e9affc184e0d53b08e492420595`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -60,11 +88,12 @@ A made-up attached (flat-roof) building on an R4 lot (not a real address).
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

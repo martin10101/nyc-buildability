@@ -53,7 +53,37 @@ A made-up R6B case: a 5,000 sq ft lot with 10,000 sq ft of residential floor are
 ## Tests
 
 - `services/api/tests/rules/test_r6b_coverage_yard_units.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Divides the maximum residential floor area by 680 and rounds up only at a fraction of three-quarters or more, giving 29 units for the benchmark 20,150 sq ft lot, with the formula carried in the trace (test: test_c12_benchmark_units_29_with_the_formula).
+- Rounds correctly across the three-quarters boundary over a range of floor areas (test: test_units_round_up_only_at_three_quarters).
+- Is the only rule in the registry that emits a dwelling-unit output for R6B (test: test_units_are_one_place_across_the_registry).
+- Returns no estimate for qualifying senior housing or a special density area (no factor applies), and sends qualifying affordable housing to professional review (test: test_qualifying_senior_housing_has_no_factor, test_special_density_area_has_no_factor, test_qualifying_affordable_is_computed_but_sent_to_review).
+- Fails closed to professional review on a missing or invalid floor area, program or special-density flag (test: test_unknown_program_area_or_floor_area_gives_no_estimate, test_units_fail_closed_on_a_bad_floor_area).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- Conversions and mixed-factor applicability are not computed; they are recorded as documented limitations.
+- The qualifying-affordable dividend is sent to professional review rather than decided.
+- R6B is reached through the ZR 11-25 suffix reading, recorded as a documented limitation.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py`
+- Counts: 88 passed
+- Evidence: [run log](../evidence/test_r6b_coverage_yard_units.txt)
+- Rule file digest tested: `404179f2c2aab9c25826c59c92c4715fe0647a8f552cb1e385c72ccc7cb7ef02`
+- Test files tested:
+  - `services/api/tests/rules/test_r6b_coverage_yard_units.py` (`1e0762436eb031d0e905fe67fd21a0f96ad2acf1ade21b618abacd6e288a2053`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -64,11 +94,12 @@ A made-up R6B case: a 5,000 sq ft lot with 10,000 sq ft of residential floor are
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

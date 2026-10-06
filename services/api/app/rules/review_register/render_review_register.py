@@ -101,6 +101,16 @@ def _reviewer_cell(entry: dict) -> str:
     return "-"
 
 
+def _evidence_rel(at: dict, from_rules_dir: bool) -> str:
+    """Link to the committed test-run log, relative to the Markdown that cites it.
+
+    The register stores a repo-relative path under ``docs/zoning-rule-review/``;
+    REGISTER.md links it as ``evidence/...`` and a detail page as ``../evidence/...``.
+    """
+    tail = at["evidence"].split("docs/zoning-rule-review/", 1)[-1]
+    return ("../" + tail) if from_rules_dir else tail
+
+
 # --------------------------------------------------------------------------
 # REGISTER.md - the short current table
 # --------------------------------------------------------------------------
@@ -111,42 +121,50 @@ def render_register_md(register: dict) -> str:
     lines.append(GENERATED_BANNER)
     lines.append("")
     lines.append(
-        "This register lists every zoning rule the program applies today. For each rule it "
-        "shows the law it rests on, where it applies, how the program reads it in plain English, "
-        "a worked example, and a place for a New York City architect or zoning examiner to record "
-        "whether the program's reading is correct."
+        f"This register covers the {len(register['entries'])} rule-definition files the program "
+        "has today - one entry per rule. That is **not** complete coverage of the New York City "
+        "Zoning Resolution; it is the set of zoning rules the program has implemented so far."
+    )
+    lines.append("")
+    lines.append(
+        "For each rule it shows the law it rests on, where it applies, how the program reads it in "
+        "plain English, a worked example, what the program does today versus what is only planned, "
+        "the result of the rule's automated tests, and a place for a New York City architect or "
+        "zoning examiner to record whether the program's reading is correct."
     )
     lines.append("")
     lines.append(
         "Every rule here is the program's own **unreviewed draft** reading of the law, not legal "
-        "advice. This is a review record: nothing in the program waits for a verdict."
+        "advice. This is a review record: nothing in the program waits for a verdict (ADR-007)."
     )
     lines.append("")
     lines.append(
-        f"There are {len(register['entries'])} rules in the register today. "
         "See `GUIDE.md` for what each field means, how the register is kept current, and how a "
         "human verdict is recorded. The detail pages are under `rules/`; the append-only history "
         "is in `HISTORY.md`."
     )
     lines.append("")
     lines.append(
-        "- The **Automated tests** column counts the deterministic test files that cover the "
-        "rule. They run in the build; a green build is a code check, not a human review of the law."
+        "- The **Tests** column shows the recorded result of the rule's own automated tests "
+        "(Passed, Failed or Not run), the short commit they ran at, and a link to the run log. A "
+        "passing result is a code check, not a human or professional review of the law."
     )
     lines.append(
         "- The **Human verdict** is one of: Not reviewed, Correct, Incorrect, Needs re-review. It "
         "is filled only from a named human reviewer's own answer - never because tests passed or "
-        "an AI agreed."
+        "an agent review agreed. Agent reviews of this register are agent reviews, not human or "
+        "professional reviews. Every rule reads 'Not reviewed' today."
     )
     lines.append("")
     lines.append(
-        "| Rule | Law | Revision (last changed) | Automated tests | Human verdict "
+        "| Rule | Law | Revision (last changed) | Tests | Human verdict "
         "| Reviewer and date | Details |"
     )
     lines.append("|---|---|---|---|---|---|---|")
     for entry in register["entries"]:
-        tests = len(entry["automated_tests"]["suites"])
-        test_cell = f"{tests} test file" + ("s" if tests != 1 else "")
+        at = entry["automated_tests"]
+        short = at["tested_commit"][:8]
+        test_cell = f"{_esc(at['status'])} ({short}) [log]({_evidence_rel(at, False)})"
         lines.append(
             f"| {_esc(entry['title'])} (`{entry['rule_id']}`) "
             f"| {_law_cell(entry)} "
@@ -245,7 +263,41 @@ def render_detail_md(entry: dict) -> str:
     lines.append("")
     for link in entry["test_links"]:
         lines.append(f"- `{link}`")
-    lines.append(f"- {entry['automated_tests']['note']}")
+    lines.append("")
+
+    beh = entry["behaviour"]
+    lines.append("## What the program does today and a test checks")
+    lines.append("")
+    for item in beh["tested"] or ["(none recorded)"]:
+        lines.append(f"- {item}")
+    lines.append("")
+
+    lines.append("## In the program but no test checks it")
+    lines.append("")
+    for item in beh["committed_untested"] or ["(none recorded)"]:
+        lines.append(f"- {item}")
+    lines.append("")
+
+    lines.append("## Planned, not built")
+    lines.append("")
+    for item in beh["planned"] or ["(none recorded)"]:
+        lines.append(f"- {item}")
+    lines.append("")
+
+    at = entry["automated_tests"]
+    lines.append("## Automated test result")
+    lines.append("")
+    lines.append(f"- Status: {at['status']}")
+    lines.append(f"- Commit tested: `{at['tested_commit']}`")
+    lines.append(f"- Date tested: {at['tested_on']}")
+    lines.append(f"- Command: `{at['command']}`")
+    lines.append(f"- Counts: {at['counts']}")
+    lines.append(f"- Evidence: [run log]({_evidence_rel(at, True)})")
+    lines.append(f"- Rule file digest tested: `{at['tested_rule_file_sha256']}`")
+    lines.append("- Test files tested:")
+    for rel, digest in at["tested_test_file_sha256s"].items():
+        lines.append(f"  - `{rel}` (`{digest}`)")
+    lines.append(f"- {at['note']}")
     lines.append("")
 
     lines.append("## Gaps")
@@ -257,7 +309,7 @@ def render_detail_md(entry: dict) -> str:
     hr = entry["human_review"]
     lines.append("## Human review")
     lines.append("")
-    lines.append(f"- Verdict: {hr['verdict']}")
+    lines.append(f"- Current verdict: {hr['verdict']}")
     lines.append(f"- Reviewer name: {hr['reviewer_name'] or '-'}")
     lines.append(f"- Reviewer role: {hr['reviewer_role'] or '-'}")
     lines.append(f"- Review date: {hr['review_date'] or '-'}")
@@ -265,6 +317,18 @@ def render_detail_md(entry: dict) -> str:
     lines.append(f"- Revision reviewed: {rev}")
     lines.append(f"- Conditions reviewed: {hr['reviewed_conditions'] or '-'}")
     lines.append(f"- Comments: {hr['comments'] or '-'}")
+    lines.append(
+        "- The verdict shown above is derived from the reviewer's recorded decision and whether "
+        "that decision still matches the current rule file, law captures and revision. A verdict "
+        "is a named human reviewer's own answer; agent reviews are never recorded here."
+    )
+    if hr["decision"] is not None and hr["applies_to_current"] is False:
+        lines.append("")
+        lines.append(
+            f"Earlier decision: {hr['decision']}, given by {hr['reviewer_name']} on "
+            f"{hr['review_date']} for revision {hr['reviewed_revision']}; it does not apply to the "
+            "current version."
+        )
     lines.append("")
     return "\n".join(lines) + "\n"
 

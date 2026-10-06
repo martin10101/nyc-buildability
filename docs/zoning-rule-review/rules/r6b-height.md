@@ -51,7 +51,37 @@ A made-up R6B lot with no overlay and no special district (not a real address).
 ## Tests
 
 - `services/api/tests/rules/test_r6b_far_heights.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Reports all five R6B heights (min base 30, max base 45, building 55 standard; qualifying max base 45, building 65) from the one ZR 23-432 lookup, labelled and conditional, for the benchmark lot (test: test_c1_benchmark_heights_from_the_one_lookup).
+- The rule parameters are byte-equal to the ZR 23-432 R6B snapshot row (test: test_rule_parameters_are_byte_equal_to_the_snapshot_rows).
+- Is the only rule that emits a height in feet for R6B (test: test_c1_no_other_rule_emits_a_height_for_r6b).
+- Attaches the overlay note only when an overlay is mapped, and fails closed on a special district or unattested inputs (test: test_c1_overlay_note_only_when_an_overlay_is_mapped, test_c1_special_district_or_unattested_inputs_fail_closed).
+- Is R6B-only, draft/needs_review, lane-A-gated and not effective before 2024-12-05 (test: test_c1_height_rule_is_r6b_only, test_new_rules_are_draft_needs_review_and_lane_a_gated, test_before_the_amendment_date_nothing_is_emitted).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- The ZR 23-433 setback above the base height is not encoded.
+- R6B heights do not depend on street width (recorded as a documented limitation).
+- Commercial overlays are not captured and special districts are sent to professional review.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r6b_far_heights.py`
+- Counts: 32 passed
+- Evidence: [run log](../evidence/test_r6b_far_heights.txt)
+- Rule file digest tested: `86507408a473f672cae795b488d308508872822617a01348b978a49a28e4a792`
+- Test files tested:
+  - `services/api/tests/rules/test_r6b_far_heights.py` (`7e7f505c58155f4dcc6172d78d81f4957a6764d558fb31c0f476b2e0c924daf4`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -62,11 +92,12 @@ A made-up R6B lot with no overlay and no special district (not a real address).
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

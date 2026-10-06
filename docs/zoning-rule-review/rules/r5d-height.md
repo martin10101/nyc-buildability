@@ -49,21 +49,50 @@ A made-up R5D lot (not a real address).
 ## Tests
 
 - `services/api/tests/rules/test_r5_height_setback.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Reports a single 45-foot maximum building height for R5D and invents no base height (test: test_as1_r5d_confident_building_height_no_setback).
+- Is not applied to R5 or an unknown R5 variant (test: test_nc1_variant_value_not_applied_to_another, test_nc1_unknown_r5_variant_is_unsupported_not_nearest).
+- Is needs_review, verified-ineligible, conditional/never verified and not effective before 2024-12-05 (test: test_as5_every_family_rule_is_needs_review_and_verified_ineligible, test_as3_before_amendment_not_effective).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- No base-height or setback split is modelled; only a single flat building-height cap is reported.
+- Overlay, special-district and historic-district adjustments are sent to professional review.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r5_height_setback.py`
+- Counts: 47 passed
+- Evidence: [run log](../evidence/test_r5_height_setback.txt)
+- Rule file digest tested: `129e4fd69be0688f4aea870713e4b7de5192f70177a10098a800b806b7432dfc`
+- Test files tested:
+  - `services/api/tests/rules/test_r5_height_setback.py` (`93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
 - Only a single flat building-height cap is given; no base-height / setback split is modelled.
+- The R5D-to-45-foot mapping is assigned by the researcher from the ZR 23-422 capture's table row; the capture's quoted sentence is a generic 'in the district indicated' statement, so the statement-to-district mapping is unconfirmed.
 - Overlays, special districts and historic districts send the result for professional review.
 - This is a draft extraction awaiting raw-source verification and a qualified-human legal check.
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

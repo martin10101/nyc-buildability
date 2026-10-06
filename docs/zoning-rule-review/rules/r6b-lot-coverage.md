@@ -52,7 +52,35 @@ A made-up interior R6B lot with no overlay and no special district (not a real a
 ## Tests
 
 - `services/api/tests/rules/test_r6b_coverage_yard_units.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Reports 100 percent coverage for a corner lot (the benchmark) and 80 percent for interior or through lots, byte-matched to ZR 23-362(a) (test: test_benchmark_corner_lot_coverage_is_100_percent, test_interior_and_through_lots_are_80_percent_with_the_23_363_note).
+- Fails closed to professional review and names the input when the lot type is missing, and rejects an unlisted lot type rather than guessing (test: test_unknown_lot_type_gives_no_coverage_and_names_the_input, test_an_unlisted_lot_type_is_rejected_not_guessed).
+- Is R6B-only, draft/needs_review, lane-A-gated and not effective before 2024-12-05 (test: test_rules_are_r6b_only, test_rules_are_draft_needs_review_and_lane_a_gated, test_before_the_amendment_date_nothing_is_emitted).
+- Reaches R6B through the ZR 11-25 suffix reading, flagged on every result (test: test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- Only standard lots are covered; special interior/through-lot rules are a documented limitation.
+- Commercial overlays are not captured and special districts are sent to professional review.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py`
+- Counts: 88 passed
+- Evidence: [run log](../evidence/test_r6b_coverage_yard_units.txt)
+- Rule file digest tested: `6d1f5c0adb5a6d3a85a28e57466336a0f83b16e96bb72a46fa6196a6256ce95f`
+- Test files tested:
+  - `services/api/tests/rules/test_r6b_coverage_yard_units.py` (`1e0762436eb031d0e905fe67fd21a0f96ad2acf1ade21b618abacd6e288a2053`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -63,11 +91,12 @@ A made-up interior R6B lot with no overlay and no special district (not a real a
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

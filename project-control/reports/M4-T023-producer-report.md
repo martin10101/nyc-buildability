@@ -1,149 +1,115 @@
-# M4-T023 producer report - zoning-rule review register (D-090-R362..R385)
+# M4-T023 producer report - zoning-rule review register REWORK (D-090 R362..R385 + R393/R394/R423/R425/R426/R441/R442/R443)
 
-Producer: rules-engineer, isolated worktree
-`/root/project/nyc-buildability/.claude/worktrees/agent-a8478e1d81b60aeaf`
-(reset to the claim-seam head `10ce8cadcdb4403eeb823ccaed293c90d14c8075` before work).
+Producer: rules-engineer, isolated agent worktree
+`/root/project/nyc-buildability/.claude/worktrees/agent-a38c5ad602668c836`
+(reset to `52e3d8a461cf08577273c82f802b85433f6f1ec3` before work: the first build c55b7c47 plus the
+orchestrator's project-control-only commits).
 
-## What was built
+This is the rework after owner messages 94 (source-043) and 95 (source-044) and the first independent
+review's five notes (F1-F5, project-control/reports/M4-T023-G3G4.md). No rule file, engine, registry,
+evaluator, coverage, capture, CI, dependency or database file was touched. All 23 backfilled entries
+keep no human decision ("Not reviewed"). Reviews by agents are called agent reviews everywhere
+rendered.
 
-A permanent, structured zoning-rule review register the owner can hand to a New York City architect
-or examiner. One authored data file is the source of truth; a deterministic stdlib renderer produces
-the plain-English Markdown; a checker and a pytest suite enforce that the register stays honest and
-current.
+## What changed this round
 
-- `services/api/app/rules/review_register/register.json` - the authored source: schema name/version,
-  a field guide (field names + value sets), 23 entries (one per rule file, stable `entry_id` = the
-  rule id), and the append-only history (23 `created` events).
-- `services/api/app/rules/review_register/render_review_register.py` - stdlib renderer + CLI;
-  `--write` renders the Markdown, `--check` validates and exits non-zero on any inconsistency.
-- `services/api/app/rules/review_register/check_review_register.py` - stdlib validator (S2, S3, S4,
-  S6, S7, S8); the per-entry checkers are separate functions so the tests can drive the negative
-  cases.
-- `services/api/app/rules/review_register/__init__.py` - package doc.
-- `docs/zoning-rule-review/REGISTER.md` - the short current table (one row per rule), rendered.
-- `docs/zoning-rule-review/rules/<rule_id>.md` - 23 detail pages, rendered.
-- `docs/zoning-rule-review/HISTORY.md` - the append-only history, rendered, oldest first.
-- `docs/zoning-rule-review/GUIDE.md` - handwritten: what the register is/is not, every field and its
-  values, how a session updates it, how a human verdict is recorded, the code-only zoning behaviour
-  list, and the note on moving to a database later. Links (not copies) to the coverage matrix, the
-  law-text captures and `docs/ARCHITECT_REVIEW_QUESTIONS.md`.
-- `services/api/tests/rules/test_zoning_rule_review_register.py` - 29 build-time checks (S3-S8),
-  including re-deriving every example's `actual` through the real rule engine.
+1. **Human review kept apart from applicability (S12, R425/R426).** `human_review` now stores the
+   reviewer's ORIGINAL decision and never overwrites it: `decision` (Correct|Incorrect|null),
+   reviewer_name, reviewer_role, review_date, comments, reviewed_revision, reviewed_conditions, and
+   the identity of what was reviewed - `reviewed_rule_file_sha256` and `reviewed_law_digests`. Two
+   fields are DERIVED by one function (`derive_human_review`): `applies_to_current` and the shown
+   `verdict`. The checker recomputes both and refuses any stored value that differs, so updating or
+   merely touching the register can never keep an old "Correct" on a changed rule file, law capture
+   or revision. A decision is refused without a name, date, revision, conditions and both identities.
+   The detail page shows the current verdict and, when a decision no longer applies, the line
+   "Earlier decision: ...; it does not apply to the current version". Events `human_verdict_recorded`
+   and `flagged_for_re_review` exist for this. Tests S12 (a)-(d) prove it, all on in-memory copies.
+2. **The check enforces record-keeping only (S13, R394/R442).** Two tests render a mutated register
+   to a temp folder and run the full build check: one for an updated entry with no decision, one for
+   an entry whose decision no longer applies (verdict "Needs re-review"); both pass. Nothing requires
+   a human decision; GUIDE.md says so in one sentence ("The check enforces record-keeping only").
+3. **Planned / committed / tested told apart (S14, R393).** Each entry gained `behaviour`:
+   {tested, committed_untested, planned}, built by reading each rule file and its test file. Every
+   `tested` item names the test function(s) that exercise it (the checker enforces a `test_` name).
+   Where a behaviour could not be shown as exercised it is under `committed_untested` and says "no
+   test found that exercises this". Rendered under three plain headings on each detail page.
+   Totals across 23 entries: **tested 104, committed_untested 6 (in 4 entries), planned 49**.
+4. **Test RESULT, not an inventory count (S15, R441).** `automated_tests` is now
+   {status, tested_commit, tested_on, command, counts, evidence, tested_rule_file_sha256,
+   tested_test_file_sha256s, note}. I ran each rule's test file(s) at the reset head 52e3d8a4 (rule
+   and test files unchanged by this task, so that is the commit tested), one command at a time, and
+   committed each run log under `docs/zoning-rule-review/evidence/` (`.txt`; `*.log` is gitignored
+   repo-wide and `.gitignore` is out of scope). The checker demands status "Not run" if the recorded
+   rule-file or test-file digest differs from the current file. The table column shows status, short
+   commit and an evidence link, never "N test files". Kept separate from the human-review block.
+5. **Wording and the five notes (S16, R423).** REGISTER.md and GUIDE.md now say the register covers
+   the 23 rule-definition files the program has today and that this is NOT complete coverage of the
+   law; agent reviews are named agent reviews and nothing reads as a human/professional review.
+   F1: r5a-height basis softened (the quoted excerpt states 25/35; the R5A enumeration lives in the
+   capture's notes and sibling captures). F2: r5b-height and r5d-height gained a gap line that the
+   statement-to-district mapping in the ZR 23-422 capture is researcher-assigned and unconfirmed.
+   F3: the misnamed S8 test now renders to a temp folder, tampers a detail page and runs the
+   checker's `rendered_errors` on it. F4: GUIDE.md states append-only as a standing duty of each
+   reviewer. F5: r2x-r4-residential-far exception reads "(R4 1.50; R2X unchanged at 1.00)".
+6. **Revision policy (point 6).** GUIDE.md states which changes move an entry's revision (a change of
+   interpretation, applicability, implementation or evidence) and which do not (a change of the
+   register's own layout - like this rework). Because nothing has been merged or reviewed by a human,
+   the whole backfill stays revision 1 with one `created` event dated 2026-10-06; HISTORY.md is
+   unchanged (23 created events).
+7. Files changed (allowed paths only): `register.json`, `render_review_register.py`,
+   `check_review_register.py`, the one test file, all of `docs/zoning-rule-review/` (GUIDE, REGISTER,
+   HISTORY, 23 detail pages, 7 evidence logs), and this report.
 
-Design decisions honoured: the register's source is one structured JSON file with fixed field names
-(table-ready for Supabase later, no DB work now); `entry_id` = the existing rule id; automated-test
-status is a field apart from the human verdict and never records "passing"; every example's `actual`
-is recomputed by the test through the program's own registry/evaluator while the `expected` is
-worked independently from the captured law text or a named reference case; a rule-file change without
-a register update fails the build; all 23 human verdicts read "Not reviewed"; this is a review
-record, not a gate. No rule file, engine, registry, coverage, capture, CI, dependency or database
-file was touched. The standing CLAUDE.md instruction (R379/R380) is the orchestrator's edit, out of
-producer scope.
+## Test results recorded in the register
 
-## Examples: basis and agreement
-
-- 23 entries, one example each. Basis: **law_text 18, reference_case 4, gap 1**.
-- Agreement: **agree 22, differ 0, unknown 1** (the one "unknown" is the gap example; its `agrees` is
-  `null`).
-- reference_case examples (worked by the sealed-folder agent in the R6B work order, section 9):
-  `r6b-dwelling-units`, `r6b-height`, `r6b-lot-coverage`, `r6b-rear-yard-corner-waiver`.
-- gap example: `r6-r7-r8-wide-street-conditional-far` - R6 with no wide-street determination. ZR
-  23-22 gives 2.20 (not within 100 ft of a wide street) or 3.00 (within); the single correct FAR
-  cannot be worked from the captured text without the geometry, so `expected` is a gap, `agrees` is
-  null, and the program's own answer (2.20, conditional) is still recorded in `actual`.
-- No rule's expected and actual DIFFER. (If one had, it would be `agrees: false` with a gap sentence
-  and reported here; none did. No rule was changed.)
-
-## Gaps that matter most (per the register's gaps lists)
-
-1. R6/R7-1/R7-2/R8 FAR cannot be settled without a wide-street determination; the program returns the
-   non-wide-street base value and marks it conditional.
-2. The wide-street footnote allows one lot to be split between two FAR values ("or portions thereof");
-   the split is not computed.
-3. The pitched-roof rules (R1/R2/R3/R4/R5A) report only the 25 ft wall and 35 ft ridge anchor heights;
-   the sloping-plane geometry between them is not computed (professional review).
-4. Heights are measured above the base plane, which the program does not itself determine.
-5. The ZR 23-433 setback above the base height is not encoded in the R6B height rule.
-6. R6B corner lot coverage returns a single 100 percent; the "within 100 ft of each street line"
-   corner reach is not computed.
-7. The R6B rear-yard waiver covers only the area within 100 ft of the corner; the ordinary rear-yard
-   depth beyond that (ZR 23-342, not captured) is not computed.
-8. Dwelling-unit rules do not compute qualifying-affordable dividends, qualifying senior housing or
-   conversions (no factor applies).
-9. Whether a site is a "qualifying residential site" or qualifies for qualifying-housing FAR is a
-   separate legal determination the program does not make.
-10. Special Purpose District / overlay modifications are not applied by any rule; they send the result
-    to professional review or are surfaced as alternatives.
-11. The qualifying-housing FAR/height values are surfaced as labelled alternatives, never decided.
-12. Every rule is a draft extraction (version 0.1.0-draft, status needs_review) awaiting raw-source
-    verification and a qualified-human legal check; nothing here is a Verified determination.
-
-## Zoning behaviour found in code with no rule id (S10 - reported, not changed, no invented ids)
-
-- `services/api/app/rules/wide_street_wiring.py` - the within-100-ft-of-a-wide-street determination
-  (mapped widths + 100-ft buffer) that several FAR/height rules mark "conditional".
-- `services/api/app/rules/named_street_override_table.py` (+ `named_street_override.py`,
-  `named_street_override_matching.py`, `named_street_override_status.py`) - the ZR 12-10 named-street
-  alternate-width override table (e.g. Broadway, Allen Street), encoded in code.
-- `services/api/app/scenario/three_answers/` and `services/api/app/scenario/derivation.py`,
-  `max_envelope.py` - the engine that turns rule outputs into floor-area, envelope, dwelling-unit and
-  building-option figures; it applies zoning arithmetic combining several rules, with no rule id.
-- `services/api/app/rules/proposal_checks.py` - checks a proposed massing against the existing rules.
-- `services/api/app/rules/integration.py` - maps property facts into rule inputs (maps; does not
-  decide law).
-
-This list is also in `docs/zoning-rule-review/GUIDE.md`; turning it into follow-up rule work is the
-orchestrator's call.
+All 23 entries: status **Passed**, tested at commit `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+(0 Failed, 0 Not run). Per test file (one evidence log each): test_r1_r2_height_setback 110 passed;
+test_r1_r12_residential_far 15 passed; test_r3_r4_height 90 passed; test_r5_height_setback 47 passed;
+test_rules_engine 36 passed; test_r6b_coverage_yard_units 88 passed; test_r6b_far_heights 32 passed.
 
 ## Checks (each run on its own; python = /root/project/lanes-runtime/venv/bin/python)
 
 | # | Command (from the stated cwd) | Exit | Result |
 |---|---|---|---|
 | 1 | `cd services/api && python -m ruff check .` | 0 | All checks passed! |
-| 2 | `cd services/api && python -m pytest -q tests/rules/test_zoning_rule_review_register.py tests/rules/test_coverage_matrix.py` | 0 | 44 passed |
+| 2 | `cd services/api && python -m pytest -q -p no:cacheprovider tests/rules/test_zoning_rule_review_register.py tests/rules/test_coverage_matrix.py` | 0 | 55 passed |
 | 3 | `python services/api/app/rules/review_register/render_review_register.py --check` (repo root) | 0 | register check PASSED (no issues) |
-| 4 | `python3 tools/modularity_check.py --check` | 0 | pass; no new file flagged (render 356, check 333, test 297 SLOC; all under the 600 warn line) |
-| 5 | `cd services/api && python -m pytest -q` (FULL api suite, final candidate, alone) | 0 | 8029 passed, 8 skipped (the 8 skips are pre-existing and unrelated) |
+| 4 | `python3 tools/modularity_check.py --check` | 0 | selected 715 files; failures 0 (render 420, check 468, test 501 lines; all under the 600 warn line) |
+| 5 | `cd services/api && python -m pytest -q -p no:cacheprovider` (FULL api suite, final candidate, alone) | 0 | 8040 passed, 8 skipped (the 8 skips are pre-existing and unrelated) |
 
-### Mutation proofs (each reverted; repo left clean)
+## Mutation proofs (each in memory or a temp folder; no committed rule/test file touched)
 
-- **S4** - appended a newline to `services/api/app/rules/rulesets/r6b_lot_coverage.rule.json`, then
-  `pytest tests/rules/test_zoning_rule_review_register.py::test_rule_version_and_sha256_match_live_files`:
-  FAILED (exit 1) with
-  `r6b-lot-coverage: rule file ... content changed (sha256 ...); the register must be updated in the
-  same change (new revision, history event)`. Reverted with `git checkout --`.
-- **S6** - set `r1-r2-bare-pitched-height` verdict to "Correct" with no reviewer in register.json, then
-  `render_review_register.py --check`: FAILED (exit 1) with
-  `verdict 'Correct' is refused - it needs a reviewer name, a review date, the revision reviewed and
-  the conditions reviewed (... never from tests or an AI)`. Register regenerated/re-rendered; `--check`
-  back to PASSED.
-- **S8** - appended a line to `docs/zoning-rule-review/REGISTER.md` by hand, then
-  `pytest ...::test_register_md_is_byte_identical`: FAILED (exit 1) on the byte diff. Re-rendered with
-  `--write`; the 29 register tests pass again.
+- **S4** - set a copy's recorded `rule_file_sha256` to zeros -> `rule_file_errors` RED: "rule file ...
+  content changed (sha256 ... != recorded 0000...); the register must be updated in the same change".
+- **S6** - set a copy's `human_review.decision="Correct"` with no reviewer/identity ->
+  `human_review_errors` RED: "a human decision of 'Correct' is refused - it needs a reviewer name, a
+  review date, the revision reviewed, the conditions reviewed and the identity of what was reviewed".
+- **S8** - rendered a copy to a temp folder, hand-edited `r6b-height.md` -> `rendered_errors` RED:
+  "rendered file is stale: r6b-height.md (run --write)".
+- **S12 (new)** - recorded a "Correct" decision for revision 1, then changed the rule file (new digest
+  + revision 2 in the same change): `derive_human_review` -> applies_to_current=False,
+  verdict="Needs re-review", original decision still "Correct"; storing "Correct" is refused RED.
+- **S15 (new)** - set a copy's `tested_test_file_sha256s[...]` to zeros with status "Passed" ->
+  `automated_tests_errors` RED: "a test file changed ... status must read 'Not run'"; setting status
+  to "Not run" turns it GREEN.
 
-## Two sample rows of REGISTER.md (exactly as rendered)
+## Two sample rows of REGISTER.md (exactly as rendered now)
 
 ```
-| R6 through R12 residence districts (flat ZR 23-22 rows) - maximum residential floor area ratio (standard residences) (`r6-r12-residential-far`) | [23-22](https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22), applies from 2024-12-05 | 1 (2026-10-06) | 1 test file | Not reviewed | - | [open](rules/r6-r12-residential-far.md) |
-| R6B district - minimum base height, maximum base height and maximum building height, standard residences and qualifying affordable or senior housing (ZR 23-432) (`r6b-height`) | [23-432](https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-432), applies from 2024-12-05 | 1 (2026-10-06) | 1 test file | Not reviewed | - | [open](rules/r6b-height.md) |
+| R2X and R4 residence districts (ZR 23-21 rows 2-3) - maximum residential floor area ratio (standard zoning lots) (`r2x-r4-residential-far`) | [23-21](https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-21), applies from 2024-12-05 | 1 (2026-10-06) | Passed (52e3d8a4) [log](evidence/test_r1_r12_residential_far.txt) | Not reviewed | - | [open](rules/r2x-r4-residential-far.md) |
+| R6B district - minimum base height, maximum base height and maximum building height, standard residences and qualifying affordable or senior housing (ZR 23-432) (`r6b-height`) | [23-432](https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-432), applies from 2024-12-05 | 1 (2026-10-06) | Passed (52e3d8a4) [log](evidence/test_r6b_far_heights.txt) | Not reviewed | - | [open](rules/r6b-height.md) |
 ```
 
-One detail page: `docs/zoning-rule-review/rules/r6b-height.md`.
+## Assumptions, limitations, doubts
 
-## Assumptions, limitations, deviations
-
-- The 5 R6B rules carry `lane_flag: "A"` and are not indexed unless lane A is enabled; the test and
-  the authoring step build the registry with `LANE_A_ENABLED=true` so all 23 examples evaluate. The
-  rendered register makes no claim about lane gating (it is an engine-build detail).
-- The `law` block's content digests, official URLs and capture dates are read from the capture files
-  and the rule citations at authoring time, never typed; `--check` re-reads the capture files and
-  fails if a digest or URL drifts.
-- register.json was authored with a scratch generator (kept outside the repo tree); the committed
-  JSON is the real source and is what the renderer, the checker and the test read.
-- The rule file title for `r1-r2-suffix-variants-pitched-height` contains an internal tag
-  ("OWNER DECISION D-049, 2026-09-13"); the register shows a plain-English title for that one row so
-  the rendered table carries no internal task/directive numbers (the owner's constraint). All other
-  titles are the rule files' own titles.
-- No deviation from scope. Only allowed_paths changed; `git status` is clean apart from gitignored
-  caches.
-</content>
+- Evidence logs use `.txt` because a repo-wide `*.log` ignore in `.gitignore` would silence them and
+  `.gitignore` is outside this task's allowed paths; the checker verifies each evidence file exists.
+- The `committed_untested` lists are honest about the FAR family: for r1-r2-r3, r2x-r4, r5-residential-
+  far and r5-qrs-height the emitted floor-area value or the qualifying-alternative evaluation is not
+  asserted by a dedicated test (the same multiply/alternative mechanism is asserted elsewhere, e.g.
+  R5 and the R6B benchmark); each such item says "no test found that exercises this".
+- register.json was re-authored by a scratch generator kept OUTSIDE the worktree; the committed JSON
+  is the single source the renderer, checker and test read. No scratch or untracked file remains in
+  the worktree besides the committed evidence logs.
+- Behaviour "tested" claims were written by reading each rule file and its test file(s); an
+  independent reviewer should re-check them against those files.

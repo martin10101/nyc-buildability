@@ -51,7 +51,35 @@ A made-up 5,000 sq ft R6 lot with standard residences and no wide-street informa
 ## Tests
 
 - `services/api/tests/rules/test_r1_r12_residential_far.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Returns the conservative (non-wide-street) FAR for R6, R7-1, R7-2 and R8, never the higher wide-street value, and surfaces the higher value only as a labelled conditional alternative (test: test_as3_conditional_districts_return_conservative_value).
+- Proves the higher value is the ZR 23-22 footnote-1 wide-street row, and byte-checks the R8 footnote-2 qualifying value (8.64) against the snapshot (test: test_as3_higher_value_is_the_wide_street_footnote_row, test_as1_conditional_rule_values_match_snapshot).
+- Is not applicable to R6B (which has no wide-street increase) (test: test_r6b_has_no_wide_street_increase).
+- Is draft/needs_review and never verified (test: test_as7_all_rules_are_draft_and_unapproved, test_as7_no_family_result_is_ever_verified).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- Which FAR applies cannot be settled without a wide-street determination, which this rule does not make; it returns the conservative value and marks it conditional.
+- The ZR 23-22 split of one lot between two FAR values ('or portions thereof') is not computed.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r1_r12_residential_far.py`
+- Counts: 15 passed
+- Evidence: [run log](../evidence/test_r1_r12_residential_far.txt)
+- Rule file digest tested: `a33e50f3015bb50c43720ad8bf9c58bf14b4ebd52ac8c1aa721c638b40533463`
+- Test files tested:
+  - `services/api/tests/rules/test_r1_r12_residential_far.py` (`5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -62,11 +90,12 @@ A made-up 5,000 sq ft R6 lot with standard residences and no wide-street informa
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

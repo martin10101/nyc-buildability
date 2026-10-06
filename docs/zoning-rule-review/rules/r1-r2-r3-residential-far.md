@@ -51,7 +51,37 @@ A made-up 4,000 sq ft R3A lot (not a real address).
 ## Tests
 
 - `services/api/tests/rules/test_r1_r12_residential_far.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- The first-row ZR 23-21 residential FAR of 0.75 for R1, R2 and R3 standard zoning lots is checked byte-for-byte against the captured table (test: test_as1_flat_rule_values_match_snapshot).
+- Carries the footnote-1 single-dwelling-unit 0.60 cap as a documented limitation that only this first-row rule carries (test: test_as4_footnote_1_cap_only_on_first_row_rule, test_as9_r5_no_longer_carries_footnote_cap_r1r2r3_does).
+- The qualifying-residential-site FAR values are checked byte-for-byte against the captured second column (test: test_as1_flat_rule_values_match_snapshot).
+- Is draft/needs_review, never verified, and effective from 2024-12-05 (test: test_as7_all_rules_are_draft_and_unapproved, test_as7_no_family_result_is_ever_verified).
+- Is the only rule that claims R1/R2/R3, with no district claimed twice and none invented beyond the snapshot (test: test_as2_every_snapshot_district_is_covered_or_excluded).
+
+## In the program but no test checks it
+
+- The maximum residential floor area (FAR x lot area) is computed by the rule but its number is not asserted by a test for R1/R2/R3; no test found that exercises this value (the same multiply step is asserted for R5 and for R6-R12).
+- Evaluating the rule to surface the qualifying-residential-site FAR as a conditional alternative is not exercised for this rule; no test found that exercises this (the mechanism is exercised for R6-R12).
+
+## Planned, not built
+
+- Whether a site qualifies for the higher qualifying-residential-site FAR is a determination the program does not make.
+- Special Purpose District and overlay changes to FAR are not applied.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r1_r12_residential_far.py`
+- Counts: 15 passed
+- Evidence: [run log](../evidence/test_r1_r12_residential_far.txt)
+- Rule file digest tested: `515ee0eb4a46c3735ca20ec5d4b6afe5c1682ff332e98978cf15cfde77aa9218`
+- Test files tested:
+  - `services/api/tests/rules/test_r1_r12_residential_far.py` (`5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -61,11 +91,12 @@ A made-up 4,000 sq ft R3A lot (not a real address).
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

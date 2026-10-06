@@ -51,7 +51,39 @@ A made-up detached house on a bare R1 lot (not a real address).
 ## Tests
 
 - `services/api/tests/rules/test_r1_r2_height_setback.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Reports a 25-foot maximum perimeter-wall height and a 35-foot maximum ridge/building height for a bare R1 or R2 district with a pitched building form, as two separate values (test: test_as1_bare_confident_wall_and_ridge_separate).
+- Keeps the result conditional and never verified (test: test_as1_conditional_never_verified_for_every_rule).
+- Applies to bare R1/R2 only and is not applicable to any other or unknown district (test: test_nc1_bare_rule_scoped_to_bare_labels_only, test_nc1_unknown_variant_is_unsupported_not_nearest).
+- Fails closed to professional review when the building form or district is missing or invalid (test: test_nc4_bare_building_type_unavailable_fails_closed, test_nc4_invalid_building_type_fails_closed, test_nc5_missing_district_fails_closed).
+- Escalates to professional review when an overlay, special district, historic district, large site or nearby transportation is present or merely unknown (test: test_nc3_bare_rule_modifier_downgrades, test_nc3_omitted_modifier_flag_is_indeterminate_not_confident).
+- Is not effective before 2024-12-05 and is effective on that date (test: test_as3_before_amendment_not_effective, test_as3_on_amendment_date_effective).
+- Leaves the sloping-plane setback out of the numeric output and records it as a documented limitation (test: test_nc8_setback_geometry_never_a_numeric_output).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- The sloping-plane envelope between the 25-foot wall and the 35-foot ridge is not computed.
+- The base plane the heights are measured from is not determined by the program.
+- Overlay, special-district, historic-district, large-site and transportation adjustments are not computed; the result is sent to professional review.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r1_r2_height_setback.py`
+- Counts: 110 passed
+- Evidence: [run log](../evidence/test_r1_r2_height_setback.txt)
+- Rule file digest tested: `b08d5a1e4825f9c715eb7c54323a05d772a4450e8eb19fa43690d4084046bc24`
+- Test files tested:
+  - `services/api/tests/rules/test_r1_r2_height_setback.py` (`30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -62,11 +94,12 @@ A made-up detached house on a bare R1 lot (not a real address).
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 

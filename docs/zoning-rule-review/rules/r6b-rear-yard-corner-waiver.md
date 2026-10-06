@@ -51,7 +51,36 @@ A made-up R6B corner lot where two street lines meet at about 89.7 degrees, a po
 ## Tests
 
 - `services/api/tests/rules/test_r6b_coverage_yard_units.py`
-- These deterministic tests run in the build. The build fails if they fail, so this register never ships with them failing. A green build is a code check, not a human review of the law.
+
+## What the program does today and a test checks
+
+- Reports that no rear yard is required within 100 feet of a corner where two street lines meet at 135 degrees or less (the benchmark), returning 0 (test: test_benchmark_rear_yard_is_not_required_within_100_ft_of_the_corner).
+- Checks the 135-degree boundary and that the waiver does not apply above it (test: test_angle_boundary_is_135_degrees_or_less).
+- Does not apply beyond 100 feet and emits nothing there (test: test_beyond_100_ft_the_waiver_does_not_apply_and_nothing_is_emitted).
+- Fails closed to professional review on missing geometry or an impossible angle, naming the missing input (test: test_unknown_geometry_means_no_rear_yard_result_with_the_reason, test_an_impossible_angle_fails_closed).
+- Is R6B-only, draft/needs_review and lane-A-gated, reached through the ZR 11-25 suffix reading (test: test_rules_are_r6b_only, test_rules_are_draft_needs_review_and_lane_a_gated, test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so).
+
+## In the program but no test checks it
+
+- (none recorded)
+
+## Planned, not built
+
+- Only the waiver within 100 feet of the corner is computed; the ordinary rear-yard depth beyond that is not computed.
+- Commercial overlays are not captured and special districts are sent to professional review.
+
+## Automated test result
+
+- Status: Passed
+- Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
+- Date tested: 2026-10-06
+- Command: `python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py`
+- Counts: 88 passed
+- Evidence: [run log](../evidence/test_r6b_coverage_yard_units.txt)
+- Rule file digest tested: `ee909d7e0074490cbd59b2f965fbcda823182c9b57fa2fa94bf26b5d85260da4`
+- Test files tested:
+  - `services/api/tests/rules/test_r6b_coverage_yard_units.py` (`1e0762436eb031d0e905fe67fd21a0f96ad2acf1ade21b618abacd6e288a2053`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
@@ -61,11 +90,12 @@ A made-up R6B corner lot where two street lines meet at about 89.7 degrees, a po
 
 ## Human review
 
-- Verdict: Not reviewed
+- Current verdict: Not reviewed
 - Reviewer name: -
 - Reviewer role: -
 - Review date: -
 - Revision reviewed: -
 - Conditions reviewed: -
 - Comments: -
+- The verdict shown above is derived from the reviewer's recorded decision and whether that decision still matches the current rule file, law captures and revision. A verdict is a named human reviewer's own answer; agent reviews are never recorded here.
 
