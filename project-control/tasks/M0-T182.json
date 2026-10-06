@@ -1,0 +1,205 @@
+{
+  "task_id": "M0-T182",
+  "title": "One-time owner-authorized age exception: move source-map-js to 1.2.2 before its seven-day point (GHSA-68fv-2mgg-jv7q, B-029) through a single-version, self-expiring rule in the web age gate",
+  "task_type": "frontend",
+  "milestone_id": "M0",
+  "objective": "Blocker B-029: advisory GHSA-68fv-2mgg-jv7q (high; source-map-js >= 1.0.0, < 1.2.2; first patched 1.2.2) fails web-dependency-security on every new run, so nothing merges. The fixed version 1.2.2 was published 2026-09-30T14:08:09.382Z and reaches 604800 s at 2026-10-07T14:08:09.382Z. No mature supported update removes the package (every postcss 8.x requires source-map-js; every source-map-js older than 7 days is in the vulnerable range). The owner approved ONE early update (D-092 message 84). Deliver one change: the exact pin of source-map-js 1.2.2; a rule in apps/web/scripts/dependency_age_gate.mjs that admits exactly source-map-js@1.2.2 with the registry integrity recorded in D-092 while it is younger than 604800 s, and nothing else; the matching name exclusion in apps/web/.npmrc so the lockfile workflow can resolve it; unit tests of the rule; the policy text brought into line. Every other check stays as it is: host, integrity, audit, npm-CLI advisory, fail-closed behaviour.",
+  "business_reason": "Owner directive D-092 (2026-10-06, 'Go ahead update it only this 1 time') under CLAUDE.md principle 15 and docs/DEPENDENCY_SECURITY_POLICY.md section 6 (the single owner-authorized, single-package, auto-expiring exception to the AGE requirement; never to an advisory). Ends the merge hold of B-029 about a day early. The orchestrator had recommended waiting; the owner decided.",
+  "inputs": [
+    "project-control/directives/D-092-one-time-age-exception-source-map-js-1-2-2/source-001.md (the owner's two messages, the reply they answer, and the exception record: package, version, registry integrity, publication time, expiry)",
+    "docs/DEPENDENCY_SECURITY_POLICY.md sections 1, 2, 6 and 7 (the rule, the four layers, the owner-only age exception, the enforcement map)",
+    "apps/web/scripts/dependency_age_gate.mjs (decide(), Kind, run(), formatResult) and apps/web/scripts/tests/dependency_age_gate.test.mjs",
+    "apps/web/package.json (overrides), apps/web/package-lock.json (source-map-js 1.2.1, required only by postcss 8.5.23 as ^1.2.1), apps/web/.npmrc (min-release-age=7)",
+    "Registry facts read 2026-10-06 from registry.npmjs.org: source-map-js 1.2.2 published 2026-09-30T14:08:09.382Z; dist.integrity sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==; no install script; no dependency; same publisher as 1.2.1. Advisory GHSA-68fv-2mgg-jv7q read from the GitHub advisory database: range >= 1.0.0, < 1.2.2; first patched 1.2.2.",
+    "npm 11.18.0 config definitions (npm/cli tag v11.18.0, workspaces/config/lib/definitions/definitions.js): min-release-age-exclude is a list of package names or globs exempt from min-release-age",
+    ".github/workflows/ci.yml job web-dependency-security and .github/workflows/generate-lockfile.yml (read only; neither is changed)"
+  ],
+  "outputs": [
+    "apps/web/package.json: overrides gains \"source-map-js\": \"1.2.2\" (exact). Nothing else changes.",
+    "apps/web/.npmrc: one added setting, min-release-age-exclude[]=source-map-js, with a comment naming D-092, the expiry and the clean-up task M0-T183. min-release-age=7, save-exact=true and package-lock=true are unchanged.",
+    "apps/web/scripts/dependency_age_gate.mjs: a frozen, exported list of owner-authorized age exceptions holding exactly ONE entry (name source-map-js, version 1.2.2, the registry integrity above, the registry publication time above, directive D-092); a distinct result kind for a package admitted under it; one branch in decide() that is reached only after every existing check has passed and only when the age is below 604800 s; the report prints that package on its own clearly marked line. No existing check is removed, reordered or weakened; the npm-CLI advisory code is untouched.",
+    "apps/web/scripts/tests/dependency_age_gate.test.mjs: new tests for scenarios S1 to S8; no existing test is edited or removed.",
+    "docs/DEPENDENCY_SECURITY_POLICY.md: sections 1, 2(b), 6 and 7 say truthfully what the gate now does, and section 6 gains a table 'Exceptions on record' with this one exception's required fields.",
+    "apps/web/package-lock.json: regenerated, proven and committed BY THE generate-lockfile WORKFLOW on this branch (orchestrator-dispatched). Never generated or edited by hand.",
+    "project-control/reports/M0-T182-producer-report.md: the producer's return, verbatim."
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "apps/web/.npmrc",
+    "apps/web/scripts/dependency_age_gate.mjs",
+    "apps/web/scripts/tests/dependency_age_gate.test.mjs",
+    "docs/DEPENDENCY_SECURITY_POLICY.md",
+    "project-control/reports/M0-T182-producer-report.md"
+  ],
+  "forbidden_paths": [
+    ".github/**",
+    "apps/web/src/**",
+    "apps/web/e2e/**",
+    "apps/web/eslint.config.mjs",
+    "services/**",
+    "packages/**",
+    "tools/**",
+    "CLAUDE.md",
+    ".claude/**",
+    "render.yaml",
+    "docs/** except docs/DEPENDENCY_SECURITY_POLICY.md",
+    "project-control/** except project-control/reports/M0-T182-producer-report.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "exception_applies",
+      "input": "decide() with a lock entry source-map-js@1.2.2, resolved on registry.npmjs.org, lock integrity sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==; a packument whose versions['1.2.2'].dist.integrity is the same and whose time['1.2.2'] is 2026-09-30T14:08:09.382Z; now = publication + 487485 s",
+      "expected": "the result is the distinct owner-exception kind (not 'ok', not 'too_new'), it counts as a pass, and its text names D-092, the age in seconds and the expiry; a lock that holds this entry and otherwise old packages makes run() return exit code 0 and print the entry on its own marked line"
+    },
+    {
+      "id": "S2",
+      "case": "boundary",
+      "input": "the same entry at age 604799 s and at age 604800 s; any other package at 604799 s",
+      "expected": "604799 -> the owner-exception kind; 604800 -> plain 'ok' (the exception is not used); another package at 604799 -> 'too_new' exactly as before"
+    },
+    {
+      "id": "S3",
+      "case": "other_version",
+      "input": "source-map-js at a different version (for example 1.2.3) younger than 604800 s, with matching registry integrity",
+      "expected": "'too_new'"
+    },
+    {
+      "id": "S4",
+      "case": "other_package",
+      "input": "a different package name at version 1.2.2 younger than 604800 s, even with the same integrity string",
+      "expected": "'too_new'"
+    },
+    {
+      "id": "S5",
+      "case": "integrity_binding",
+      "input": "(a) the excepted name@version with a lock integrity that differs from the registry's; (b) lock and registry integrity agree with each other but differ from the recorded value",
+      "expected": "(a) 'integrity_mismatch', as before; (b) 'too_new' (the exception does not apply)"
+    },
+    {
+      "id": "S6",
+      "case": "publication_time_binding",
+      "input": "the excepted name@version and integrity, but the registry reports a publication time other than the recorded one; a missing or malformed time; a time later than now",
+      "expected": "a different time -> 'too_new'; missing or malformed -> 'missing_timestamp' as before; a negative age -> 'too_new'. The age is always computed from the registry's time and the supplied clock; the recorded time is only compared, never used in its place"
+    },
+    {
+      "id": "S7",
+      "case": "fail_closed_unchanged",
+      "input": "the excepted name@version with: an unexpected resolved host; no lock integrity; an ambiguous lock entry; a packument without versions/time; a provider error",
+      "expected": "the same failing kinds as for any other package (unexpected_host, missing_integrity, ambiguous, malformed, infrastructure_unavailable); never the owner-exception kind"
+    },
+    {
+      "id": "S8",
+      "case": "single_entry_pin",
+      "input": "the exported exception list",
+      "expected": "deep-equals exactly one entry {source-map-js, 1.2.2, the recorded integrity, the recorded publication time, D-092}; the list and the entry are frozen; adding, widening or changing an entry fails this test"
+    },
+    {
+      "id": "S9",
+      "case": "no_other_behaviour_change",
+      "input": "git diff of the gate and its test file against the base",
+      "expected": "every pre-existing test is byte-identical and passes; MIN_AGE_SECONDS, the host check, the integrity checks, the retry logic and the npm-CLI advisory code are unchanged; the gate still imports Node built-ins only"
+    },
+    {
+      "id": "S10",
+      "case": "installer_setting",
+      "input": "apps/web/.npmrc after the change",
+      "expected": "exactly one added setting line, min-release-age-exclude[]=source-map-js; min-release-age=7, save-exact=true and package-lock=true unchanged; the comment names D-092, the expiry and M0-T183"
+    },
+    {
+      "id": "S11",
+      "case": "pin_and_lock",
+      "input": "apps/web/package.json and the workflow-generated package-lock.json",
+      "expected": "overrides has \"source-map-js\": \"1.2.2\" and no other change; in the lock node_modules/source-map-js is 1.2.2, resolved on registry.npmjs.org, with the recorded integrity; no other package's version, resolved URL or integrity changes (if the workflow would change any other package: STOP and report, policy section 3)"
+    },
+    {
+      "id": "S12",
+      "case": "all_checks_on_the_change",
+      "input": "CI on the post-lock head of the pull request",
+      "expected": "npm audit reports zero findings at every severity through the unchanged audit steps; the age gate exits 0 with exactly one owner-exception line and zero failures; the npm-CLI advisory check passes; node --test passes; every expected check is a completed success. No workflow file is changed"
+    },
+    {
+      "id": "S13",
+      "case": "policy_text",
+      "input": "docs/DEPENDENCY_SECURITY_POLICY.md and the gate's header comment after the change",
+      "expected": "no sentence still says the gate has no exception path of any kind; the text says: no agent may add one; the only entry is an owner-authorized single name@version bound to the registry integrity and publication time, usable only below 604800 s, each with its own owner approval, directive record and G5 review; an advisory, an integrity mismatch, an unexpected host or an unverifiable condition is never exceptionable; the table 'Exceptions on record' carries package and version, age at approval (487485 s), the reason as the owner gave it (none; the owner's decision), the authorization (D-092, message 84), the pull request and the expiry"
+    },
+    {
+      "id": "S14",
+      "case": "missing_or_ambiguous",
+      "input": "anything in this packet that the producer cannot do as written, or a fact that differs from the inputs (for example the registry integrity or publication time)",
+      "expected": "the producer stops and returns BLOCKED with the evidence; it does not guess, widen the exception, edit a forbidden path or run an installer"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "The pull request changes the check that judges it -> an independent G5 security review of the exact head reads the whole gate diff; S8 pins the list so any widening needs a visible test change.",
+    "The same gate script also runs for the tools/codex_cli lock and in the scheduled audits -> the entry is bound to name, version, integrity and publication time, so it admits that one tarball and nothing else in any lock.",
+    "min-release-age-exclude works by package NAME and does not expire -> the exact override pin and the age gate bound it meanwhile; M0-T183 removes it after the seven-day point.",
+    "The lockfile workflow could move another package -> S11: stop and report.",
+    "A bot lock push starts no CI run -> the orchestrator opens the pull request or pushes after it so the checks run on the post-lock head.",
+    "Web lint also covers apps/web/scripts -> new test code avoids double spaces in regular expressions and control-character patterns (CODING_RULES)."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-06T05:42:35.984624+00:00",
+  "updated_at": "2026-10-06T06:34:07.994073+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-092",
+      "requirement_ids": [
+        "D-092-R004",
+        "D-092-R006",
+        "D-092-R007",
+        "D-092-R008",
+        "D-092-R012",
+        "D-092-R013",
+        "D-092-R014",
+        "D-092-R015"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-06T05:42:35.984925+00:00",
+  "path_notes": "PRODUCER = frontend-engineer in an isolated worktree, reset to the claim-seam commit of branch task/M0-T182-source-map-js-one-time-age-exception. The producer edits package.json, .npmrc, the gate, its test file, the policy document and its report ONLY. The lock is never generated locally: the orchestrator dispatches .github/workflows/generate-lockfile.yml on the branch after cherry-picking the producer commit; the bot's lock commit is this task's material. No npm or npx command runs for this task on the server; the producer runs only `node --test scripts/tests/*.test.mjs` (Node built-ins, no install). Modularity: the gate is 494 lines and stays one file with one responsibility (the committed-lock age decision); the exception is data plus one branch in that decision, so no new module is added and the clean-up (M0-T183) is a small removal. The directive record D-092 and this packet travel in the same pull request because nothing else can merge while B-029 is open.",
+  "documented_test_commands": [
+    "cd apps/web && node --test scripts/tests/*.test.mjs (producer; offline, deterministic)",
+    "generate-lockfile workflow run on the branch (npm install --package-lock-only; npm ci; npm audit --audit-level=low; audit JSON total == 0; node scripts/dependency_age_gate.mjs package-lock.json; --npm-cli-advisory 11.18.0) - orchestrator-dispatched",
+    "ci.yml on the post-lock head: web, web-e2e, web-dependency-security, codex-cli-dependency-security, control-plane and every other expected check",
+    "a lock comparison (python): only node_modules/source-map-js differs between the base lock and the new lock"
+  ],
+  "worktree": "/root/project/w-M0-T182",
+  "progress_log": [
+    {
+      "at": "2026-10-06T05:44:39.131600+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contract seam done: D-092 captured, packet with scenarios S1-S14 written, G0 recorded; producer dispatch next."
+    },
+    {
+      "at": "2026-10-06T06:02:02.271847+00:00",
+      "agent": "frontend-engineer",
+      "percent": 50,
+      "status": "in_progress",
+      "message": "Producer commit integrated (8fe57ca0: pin, gate rule, installer exclusion, tests, policy text; node --test 50/50). Lockfile workflow run 37421376443 green and committed 246bcebf: only node_modules/source-map-js moved (1.2.1 -> 1.2.2, recorded integrity); npm audit 0 at every severity; age gate PASS with exactly one owner-exception line; npm-CLI advisory check passed."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-06T06:34:07.993907+00:00"
+}

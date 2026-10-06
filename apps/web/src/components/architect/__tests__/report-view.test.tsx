@@ -14,6 +14,7 @@ import { draftApplicableDoc } from "@/test-support/rule-evaluation-fixtures";
 import { validateRuleEvaluationDocument } from "@/lib/rule-evaluation-contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
 import { FLOOR_AREA_REMINDER, dashboardStatus } from "../workspace/dashboard-status";
+import { STANDING_REVIEW_HEADING } from "@/lib/disclaimer";
 
 vi.mock("@/components/address/LotOutlineMap", () => ({ LotOutlineMap: () => <div>Map presentation seam</div> }));
 afterEach(() => {
@@ -571,5 +572,22 @@ describe("D-09 (M1-24) — floor-area availability reminder: strip + report, exa
     render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
     expect(screen.queryByTestId("wide-street-result")).toBeNull();
     expect(screen.getAllByText(PLAN_FLOOR_AREA_REMINDER, { exact: true })).toHaveLength(1);
+  });
+});
+
+describe("standing not-reviewed label on the report (D-090-R164/R165)", () => {
+  it("shows the label exactly once, on the brief face that prints", () => {
+    const profile = baseProfile();
+    const doc = draftApplicableDoc();
+    doc.evaluated_input.bbl = profile.identity.bbl;
+    render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
+    const labels = screen.getAllByTestId("standing-review-label");
+    expect(labels).toHaveLength(1);
+    expect(screen.getByRole("note", { name: STANDING_REVIEW_HEADING })).toBe(labels[0]);
+    expect(labels[0].closest(".architect-report")).not.toBeNull();
+  });
+  it("keeps the label when the report has no rule results to print", () => {
+    render(<ReportView profile={baseProfile()} scenario={null} evaluation={null} label="Test property" />);
+    expect(screen.getAllByTestId("standing-review-label")).toHaveLength(1);
   });
 });

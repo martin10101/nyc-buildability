@@ -8,6 +8,8 @@ import { baseProfile } from "@/test-support/fixtures";
 import { draftApplicableDoc } from "@/test-support/rule-evaluation-fixtures";
 import scenarioFixture from "../../../../../../../packages/contracts/fixtures/valid/scenario/preliminary_r5_cap.json";
 import { DashboardEntry } from "../DashboardEntry";
+import { StandingReviewLabel } from "../../StandingReviewLabel";
+import { STANDING_REVIEW_HEADING } from "@/lib/disclaimer";
 
 const state = vi.hoisted(() => ({ params: new URLSearchParams(), profile: null as PropertyProfile | null, scenario: null as Scenario | null, evaluation: null as RuleEvaluation | null, replace: vi.fn() }));
 vi.mock("next/navigation", () => ({ useSearchParams: () => state.params, useRouter: () => ({ replace: state.replace }) }));
@@ -17,9 +19,11 @@ vi.mock("@/lib/condo-records", async original => ({ ...await original<typeof imp
 vi.mock("../DashboardMap", () => ({ DashboardMap: ({ bbl }: { bbl: string }) => <div>Real-map consumer for {bbl}</div> }));
 vi.mock("@/components/address/AddressResolutionScreen", () => ({ AddressResolutionScreen: ({ onConfirmLot }: { onConfirmLot: (bbl: string) => void }) => <div><label>Street address<input id="architect-address"/></label><button onClick={() => onConfirmLot("1000010100")}>Confirm another lot</button></div> }));
 vi.mock("../DashboardTools", () => ({ DashboardTools: ({ tool }: { tool: string }) => <ToolEditor tool={tool}/> }));
+// The report tool's stand-in carries the real standing label, as the real ReportView does
+// (proven in report-view.test.tsx), so the dashboard's exactly-once rule is testable here.
 function ToolEditor({ tool }: { tool: string }) {
   const [value, setValue] = useState("");
-  return <><label>Draft for {tool}<input value={value} onChange={event => setValue(event.target.value)}/></label><a href={`/property?ruleeval=on&bbl=${state.profile?.identity.bbl}&view=evidence`}>Inspect supporting evidence</a></>;
+  return <>{tool === "report" ? <StandingReviewLabel/> : null}<label>Draft for {tool}<input value={value} onChange={event => setValue(event.target.value)}/></label><a href={`/property?ruleeval=on&bbl=${state.profile?.identity.bbl}&view=evidence`}>Inspect supporting evidence</a></>;
 }
 beforeEach(() => {
   vi.clearAllMocks(); sessionStorage.clear();
@@ -118,6 +122,32 @@ describe("connected dashboard composition", () => {
     expect(screen.queryByText(/Engineering team only/)).not.toBeInTheDocument();
     expect(screen.queryByText(/Professional review required · No sign-in/)).not.toBeInTheDocument();
     expect(screen.getAllByRole("region", { name: "Results status" })).toHaveLength(1);
+  });
+  it("shows the standing not-reviewed label exactly once on the loaded dashboard (D-090-R164/R165)", () => {
+    render(<DashboardEntry/>);
+    const labels = screen.getAllByTestId("standing-review-label");
+    expect(labels).toHaveLength(1);
+    expect(screen.getByRole("note", { name: STANDING_REVIEW_HEADING })).toBe(labels[0]);
+    expect(labels[0]).toBeVisible();
+    expect(labels[0].closest("[data-testid='connected-dashboard']")).not.toBeNull();
+    expect(labels[0].closest(".workspace-window")).toBeNull();
+  });
+  it("keeps exactly one label when another tool window opens over the dashboard", () => {
+    state.params.set("tool", "evidence");
+    render(<DashboardEntry/>);
+    expect(screen.getByRole("dialog", { name: "Evidence & sources" })).toBeVisible();
+    const labels = screen.getAllByTestId("standing-review-label");
+    expect(labels).toHaveLength(1);
+    expect(labels[0].closest(".workspace-window")).toBeNull();
+  });
+  it("never shows two labels with the report window open: only the report's own copy remains", () => {
+    state.params.set("tool", "report");
+    render(<DashboardEntry/>);
+    const report = document.getElementById("workspace-report")!;
+    expect(report).toBeVisible();
+    const labels = screen.getAllByTestId("standing-review-label");
+    expect(labels).toHaveLength(1);
+    expect(report.contains(labels[0])).toBe(true);
   });
   it("offers no proposal entry when the server flag is off (the default; D-01, plan §7)", () => {
     render(<DashboardEntry/>);
