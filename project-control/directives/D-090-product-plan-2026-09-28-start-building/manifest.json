@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T04:31:04+00:00",
+ "updated_at": "2026-10-06T05:15:59+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -294,10 +294,20 @@
   "D-090-R270",
   "D-090-R271",
   "D-090-R272",
-  "D-090-R273"
+  "D-090-R273",
+  "D-090-R274",
+  "D-090-R275",
+  "D-090-R276",
+  "D-090-R277",
+  "D-090-R278",
+  "D-090-R279",
+  "D-090-R280",
+  "D-090-R281",
+  "D-090-R282",
+  "D-090-R283"
  ],
- "requirements_id_digest_sha256": "7cd8a86520cd27428304582a658f6746116197ecbc515aadfe6fdf6357d0c0eb",
- "requirements_content_digest_sha256": "16a3b4476123e1c52a4c9c790f08cf022635f4a0bc9763c2f79c02934843f7a4",
+ "requirements_id_digest_sha256": "61c32ff4a7d5178d34e6546b6e10f5cad44da73bda2d440286a0ab7d1aa5aef9",
+ "requirements_content_digest_sha256": "7bc852e30a061a71dc88c8f6c2922250be4e74e190d4c6033b7a79b4164c6d80",
  "sources": [
   {
    "file": "source-001.md",
@@ -585,6 +595,14 @@
    "recorded_at": "2026-10-06T04:31:04+00:00",
    "content_digest_sha256": "6b7c649f7d5349cd77f5d6a4d508f58094e4ca97991b3c428152c426782104b0",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-037-amendment.md",
+   "kind": "amendment",
+   "sequence": 37,
+   "recorded_at": "2026-10-06T05:15:59+00:00",
+   "content_digest_sha256": "167057d53f9c54497a71eab9758ebcb41765d2427089c47bee3540f630e4c838",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -622,7 +640,8 @@
   "source-033-amendment.md",
   "source-034-amendment.md",
   "source-035-amendment.md",
-  "source-036-amendment.md"
+  "source-036-amendment.md",
+  "source-037-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -877,6 +896,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-036 (session 013RaGmC message 80, 2026-10-06, the owner's reviewer's check of the revision, sent by the owner: 'not checked' must not become 'confirmed'; for unchecked conditions unaffected answers stay visible, defensible assumptions are conditional, only unsupported answers are withheld; a base R6B height is not the property's confirmed maximum; update the height tests; the scope choices in plain English with what each adds; no section or option removed without agreement; existing property screens apart from the new results and PDF) and requirements D-090-R266..R273, all pending. Text extracted by script; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-06T05:15:59+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-037 (session 013RaGmC messages 81 and 82, 2026-10-06: the owner's handoff command; then the seq 143 start-up prompt pasted back with the owner's reviewer's check of the handoff, sent by the owner: report completion only when the agreed requirements and tests pass, in place of 'never report ... as complete'; create a tmux session before starting Claude; 'planned test requirements are updated', not 'height tests are updated'; the small/medium/large estimates are preliminary; having comparable-sales data does not prove comparable properties can be selected; the scope recommendations are not approved decisions) and requirements D-090-R274..R283, all pending. Text extracted by script; nothing retyped; no existing row edited."
   }
  ]
 }

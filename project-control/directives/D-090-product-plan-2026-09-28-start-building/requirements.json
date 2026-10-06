@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 273,
+ "requirement_count": 283,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T04:31:04+00:00",
+ "updated_at": "2026-10-06T05:15:59+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -9236,6 +9236,342 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-06 (message 80).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R274",
+   "text": "'/session-handoff': the owner ran the handoff command and gave no reason: the session is landed and the handoff is written before any new piece of work. ORCHESTRATOR'S READING: this is the seq 143 handoff on branch task/session-handoff-2026-10-06 (PR #444).",
+   "source_ref": "source-037-amendment.md#owner-message-81-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R173",
+    "D-090-R174"
+   ],
+   "required_harness": "The handoff file of that date on its own branch, with an independent check of it recorded on its pull request.",
+   "required_evidence": "docs/SESSION_HANDOFF.md on that branch; the check on PR #444.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 81).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R275",
+   "text": "'Resume as the NYC Buildability orchestrator' 'Read-only checks first; change nothing until they pass' 'Report READY TO RESUME or BLOCKED.': the next session runs the start-up checks of the seq 143 prompt read-only before it changes anything, and says READY TO RESUME or BLOCKED. ORCHESTRATOR'S READING: the first part of the message is the orchestrator's own seq 143 start-up prompt, pasted by the owner; a script found each of its five paragraphs in the message unchanged. Its WHERE WE ARE, NEXT ACTION and STOPS repeat rows already recorded and add no row here, except where R276-R283 change them.",
+   "source_ref": "source-037-amendment.md#owner-message-82-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R174"
+   ],
+   "required_harness": "The session's first actions are the read-only checks; nothing is written before they pass; the reply states the result.",
+   "required_evidence": "The saved session transcript and the reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 82).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R276",
+   "text": "'Three wording fixes before reusing it:': the three wording fixes go into the handoff before its text is used again. ORCHESTRATOR'S READING: this session was started from the uncorrected text with the fixes below it, so this session reads the text as corrected, and the handoff file is corrected before any later session starts from it.",
+   "source_ref": "source-037-amendment.md#owner-message-82-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R274"
+   ],
+   "required_harness": "The handoff file on its branch carries the three fixes; the session that received them applies them before any other work.",
+   "required_evidence": "docs/SESSION_HANDOFF.md at the corrected commit and its independent check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 82).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R277",
+   "text": "'Change \u201cnever report a milestone, R6B or the program as complete\u201d to \u201creport completion only when the agreed requirements and tests pass.\u201d': in the handoff, the sentence 'never report a milestone, R6B or the program as complete' is replaced by 'report completion only when the agreed requirements and tests pass', in the standing restrictions and in the start-up prompt.",
+   "source_ref": "source-037-amendment.md#owner-message-82-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R251",
+    "D-090-R276"
+   ],
+   "required_harness": "The handoff holds the new sentence in both places and no sentence that forbids ever reporting completion.",
+   "required_evidence": "docs/SESSION_HANDOFF.md at the corrected commit and its independent check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 82).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R278",
+   "text": "'\u201creport completion only when the agreed requirements and tests pass.\u201d' 'Otherwise it literally forbids ever finishing.': completion is reported only when the agreed requirements and tests pass: not before, and not never. ORCHESTRATOR'S READING: this is the rule for every later report of a piece, a district or the program; R251 (a finished piece is a milestone, not completion of the whole report) and R206 and R209 (what completes a district and the program) stand unchanged.",
+   "source_ref": "source-037-amendment.md#owner-message-82-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R206",
+    "D-090-R209",
+    "D-090-R251"
+   ],
+   "required_harness": "No update or record reports completion while an agreed requirement or test has not passed; none refuses to report completion once they all have.",
+   "required_evidence": "The updates, handoffs and records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 82).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R279",
+   "text": "'If no tmux session exists, create one before starting Claude.' 'The suggested bare \u201cclaude\u201d command leaves you exposed to another laptop disconnect.': the handoff's start instruction to the owner says: if `tmux ls` lists no session, create a tmux session first and start Claude inside it; it no longer suggests starting `claude` outside tmux, where a dropped laptop connection ends the session.",
+   "source_ref": "source-037-amendment.md#owner-message-82-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R276"
+   ],
+   "required_harness": "The start instruction names the tmux step before the claude command, for both cases (a session is listed; none is listed).",
+   "required_evidence": "docs/SESSION_HANDOFF.md at the corrected commit and its independent check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 82).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R280",
+   "text": "'\u201cHeight tests are updated\u201d should say \u201cplanned test requirements are updated\u201d if this session changed documents only.': where the session's update or records say that the height tests are updated, the wording is 'planned test requirements are updated', because the session changed documents only. ORCHESTRATOR'S READING: the sentence was in the reply to the owner ('The height tests are updated, and a new test fails if a disclaimer alone makes a result look settled.') and, in other words, in the auditor's record on PR #445 ('Height tests all updated (R270)'). No test was written or changed; the work order lists tests to be written. The auditor's record is not edited; a correction note is added beside it.",
+   "source_ref": "source-037-amendment.md#owner-message-82-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R270",
+    "D-090-R276"
+   ],
+   "required_harness": "PR #445 changes no test file; a correction note on PR #445 gives the corrected wording; the handoff and later updates do not say tests were updated in that session.",
+   "required_evidence": "The file list of PR #445, the correction note and the handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 82).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R281",
+   "text": "'Also, the \u201csmall/medium/large\u201d estimates are preliminary.': the sizes given with the scope choices (small, medium, large) are first guesses: not measured, not a commitment, and likely to change once each piece is examined. The section map and any update that repeats them say so.",
+   "source_ref": "source-037-amendment.md#owner-message-82-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R271"
+   ],
+   "required_harness": "The section map labels its size estimates preliminary; no update presents one as settled.",
+   "required_evidence": "The section map and its independent check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 82).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R282",
+   "text": "'Having comparable-sales data, for example, doesn\u2019t yet prove the program can select genuinely comparable properties.': that the sales data exists does not show the program can choose properties that are truly comparable. The comparable-sales section is not sized as small on the ground that the data exists; choosing comparable properties is named as work not yet proven.",
+   "source_ref": "source-037-amendment.md#owner-message-82-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R281"
+   ],
+   "required_harness": "The section map's comparable-sales row says that selecting genuinely comparable properties is not yet shown, and its size does not rest on the data existing.",
+   "required_evidence": "The section map and its independent check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 82).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R283",
+   "text": "'I wouldn\u2019t treat the remaining scope recommendations as decisions you\u2019ve already approved.': the recommendations given with the open scope choices are not the owner's decisions; none is recorded, contracted or built as approved until the owner answers that choice. ORCHESTRATOR'S READING: the sentence is the reviewer's advice to the owner, sent on by the owner; every choice in section 4 of the section map stays open and is asked again, and nothing is dropped meanwhile (R272).",
+   "source_ref": "source-037-amendment.md#owner-message-82-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R271",
+    "D-090-R272"
+   ],
+   "required_harness": "No record, plan or task states an open scope choice as decided without an owner message that decides it; the handoff lists the choices as open.",
+   "required_evidence": "The section map, the handoff and the registry.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 82).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
