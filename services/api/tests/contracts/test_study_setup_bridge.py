@@ -39,6 +39,7 @@ from app.config import INTERNAL_STUDY_READ_ENABLED_ENV_VAR
 from app.contracts.evaluator_inputs import (
     EvaluatorInputsError,
     build_evaluator_inputs,
+    build_three_answer_inputs,
 )
 from app.contracts.study_contracts import (
     StudyContractError,
@@ -52,6 +53,7 @@ from app.contracts.study_setup_bridge import (
     study_from_study_setup,
 )
 from app.scenario.three_answers import generate_results
+from app.scenario.three_answers.scope import ASSUMPTION_KEYS
 from app.spatial.site_geometry.results import LOT_TYPE_CORNER
 from tests.api.test_study_geometry import (
     NORTHERN_BBL,
@@ -63,6 +65,7 @@ from tests.api.test_study_geometry import (
 from tests.api.test_study_read_api import _TEST_ONLY_OPTION
 from tests.contracts.test_evaluator_inputs import (
     _benchmark_city_facts,
+    _benchmark_identity_address,
     _benchmark_value,
     _three_answer_inputs,
 )
@@ -303,3 +306,107 @@ def test_bridged_study_runs_the_engine_to_the_golden_allowance(monkeypatch) -> N
     area = next(v for v in allowance["values"] if v["key"] == "max_residential_floor_area")
     # The golden allowance already pinned by the A-04 benchmark test, not a new number.
     assert area["value"] == _benchmark_value("max_residential_floor_area") == 20150
+
+
+# ---------------------------------------------------------------------------
+# (d) R137/R138/R139 journey: the LIVE corner read (two frontages), with the lot's
+# confirmed address, now runs THROUGH the engine - no test-only site facts. The corner
+# stop is closed by the address-street assumption; the scope auto-fills from the bridge.
+# ---------------------------------------------------------------------------
+def test_corner_read_runs_through_the_engine_via_the_address_street_assumption(
+    monkeypatch,
+) -> None:
+    setup = _northern_setup(monkeypatch, geometry=True)
+    # The lot's REAL confirmed address (benchmark pack identity.address). The recorded
+    # BBL-only read carries address=null because the Geoclient capture is owner-key gated
+    # (Tier D); the confirmed-address step supplies this real address. It is NOT a test
+    # literal and the site facts are the LIVE corner read's, unchanged.
+    setup["property"]["address"] = _benchmark_identity_address()
+    study = study_from_study_setup(
+        setup, _TEST_ONLY_OPTION, study_id="study-northern-journey", revision=_REVISION
+    )
+
+    # R138: the corner stop is closed. lot_front_ft is the Northern Boulevard frontage
+    # (the address street), read from its own study fact - not guessed.
+    doc = build_evaluator_inputs(study, _OPTION_ID)
+    validate_evaluator_inputs_document(doc)
+    northern = _fact(study, "lot_frontage", street="Northern Boulevard")
+    place_215 = _fact(study, "lot_frontage", street="215 Place")
+    front = _input(doc, "lot_front_ft")
+    assert front["value"] == northern["value"]  # 103.88 ft, from the fact (not a literal)
+    assert front["fact_id"] == northern["fact_id"]
+    assert front["rank"] == northern["measurement"]["rank"] == "approximate_tax_map"
+
+    # Every governing value equals the study fact it came from (never a literal).
+    for engine_key, fact_key in (
+        ("lot_area_sq_ft", "lot_area"),
+        ("lot_depth_ft", "lot_depth"),
+        ("lot_type", "lot_type"),
+        ("zoning_district", "zoning_district"),
+    ):
+        record = _input(doc, engine_key)
+        fact = _fact(study, fact_key)
+        assert record["value"] == fact["value"], engine_key
+        assert record["fact_id"] == fact["fact_id"], engine_key
+
+    # R139: build_three_answer_inputs auto-fills scope_inputs from the bridge (study passed).
+    inputs = build_three_answer_inputs(
+        doc,
+        results_id="res-northern-journey",
+        computed_at="2026-10-03T00:00:00Z",
+        housing_program="standard_residence",
+        overlay_present=True,  # a commercial overlay (C2-2) is recorded for the lot
+        special_district_present=False,
+        within_100_ft_of_street_line_intersection=True,
+        street_line_intersection_angle_degrees=90.0,
+        special_density_area=False,
+        study=study,
+    )
+    assert inputs.scope_inputs is not None
+    assert inputs.lot_front_ft == float(northern["value"])  # the address-street frontage
+    assert inputs.lot_type == _fact(study, "lot_type")["value"]
+
+    # The engine runs end to end and emits the 1.1.0 scope block.
+    result = generate_results(inputs, env=_LANE_ON)
+    validate_results_document(result.document)
+    out = result.document
+    # Scope (1.1.0) plus the R6B minimum-base-height note (1.2.0, #388): a non-empty notes
+    # array binds 1.2.0, which admits the scope (#422; DB-129).
+    assert out["contract_version"] == "1.2.0"
+    scope = out["scope"]
+    # The lot identity is derived from the study's BBL (not restated).
+    assert scope["lot"]["bbl"] == study["property"]["bbl"]
+
+    # All twelve assumed inputs are disclosed, exactly once each.
+    emitted = [a["key"] for a in scope["assumptions"]]
+    assert set(emitted) == set(ASSUMPTION_KEYS)
+    assert len(emitted) == len(set(emitted)) == 12
+
+    # The front-lot-line assumption is the Northern Boulevard corner disclosure; its value
+    # and the other frontage's length come from the study facts, never literals.
+    front_row = next(a for a in scope["assumptions"] if a["key"] == "lot_front_ft")
+    assert front_row["value"] == northern["value"]  # 103.88 ft
+    assert front_row["basis"] == "approximate_tax_map"
+    assert "Front lot line assumed to be the Northern Boulevard frontage" in front_row[
+        "statement"
+    ]
+    assert place_215["street"] in front_row["statement"]
+    assert f"{float(place_215['value']):g}" in front_row["statement"]  # 99.98, from the fact
+
+    # The sourced bases are honest: lot_type / overlay carry their recorded rank, not a guess.
+    lot_type_row = next(a for a in scope["assumptions"] if a["key"] == "lot_type")
+    assert lot_type_row["basis"] == _fact(study, "lot_type")["measurement"]["rank"]
+    overlay_row = next(a for a in scope["assumptions"] if a["key"] == "overlay_present")
+    assert overlay_row["basis"] == _fact(study, "commercial_overlay")["measurement"]["rank"]
+
+
+def test_corner_read_with_geometry_fails_closed_when_address_names_no_frontage(
+    monkeypatch,
+) -> None:
+    # Geometry present (two frontages) but the confirmed address names NEITHER street:
+    # the R138 exception does not fire and the fail-closed corner error stands as today.
+    setup = _northern_setup(monkeypatch, geometry=True)
+    setup["property"]["address"] = "1 Nowhere Avenue"
+    study = study_from_study_setup(setup, _TEST_ONLY_OPTION, study_id="s", revision=_REVISION)
+    with pytest.raises(EvaluatorInputsError, match="resolves to 2 distinct site facts"):
+        build_evaluator_inputs(study, _OPTION_ID)

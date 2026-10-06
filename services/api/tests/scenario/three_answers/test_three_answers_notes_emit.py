@@ -67,12 +67,15 @@ def test_no_note_case_is_byte_identical_to_the_pre_change_output(monkeypatch) ->
     monkeypatch.setattr(_COMPLIANCE_NOTES, lambda *args, **kwargs: ())
     noteless = _generate().document
     assert "notes" not in noteless["answers"]["building_option"]
-    assert noteless["contract_version"] == "1.0.0"
+    # The benchmark inputs carry scope_inputs (#405), so the noteless document is the 1.1.0
+    # scope-only shape; without a scope it would be 1.0.0. The note raises either to 1.2.0.
+    scope_only_version = "1.1.0" if "scope" in noteless else "1.0.0"
+    assert noteless["contract_version"] == scope_only_version
 
     # Byte-identity: the ONLY change the emitter makes is the additive slot plus the version.
     stripped = json.loads(json.dumps(with_note))
     del stripped["answers"]["building_option"]["notes"]
-    stripped["contract_version"] = "1.0.0"
+    stripped["contract_version"] = scope_only_version
     assert json.dumps(stripped, sort_keys=True) == json.dumps(noteless, sort_keys=True)
 
 
@@ -83,4 +86,4 @@ def test_mutation_reverting_the_emitter_drops_the_notes_slot(monkeypatch) -> Non
     monkeypatch.setattr(_ENGINE_MAPPER, lambda notes: [])
     doc = _generate().document
     assert "notes" not in doc["answers"]["building_option"]
-    assert doc["contract_version"] == "1.0.0"
+    assert doc["contract_version"] == ("1.1.0" if "scope" in doc else "1.0.0")

@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { STANDING_REVIEW_HEADING } from "@/lib/disclaimer";
 import { fieldLabel } from "@/lib/format";
 import { baseProfile } from "@/test-support/fixtures";
 import { draftApplicableDoc, spatialUncertaintyDoc, unsupportedDoc } from "@/test-support/rule-evaluation-fixtures";
@@ -527,6 +528,20 @@ describe("D-06: the unused-floor-area section is set aside behind INTERNAL_UNUSE
     expect(screen.queryByTestId("unused-floor-area-not-available-reason")).toBeNull();
     if (view === "scenarios") expect(screen.getByTestId("scenario-unused-floor-area")).toBeInTheDocument();
     else expect(screen.getByText("Remainder inputs, result and provenance")).toBeInTheDocument();
+  });
+});
+
+describe("standing not-reviewed label on the property screen (D-090-R164/R165)", () => {
+  // Every view of the loaded workspace, the report included: one label, never two. On the
+  // report view the workspace banner steps aside for the report's own copy.
+  it.each(["overview", "facts", "zoning", "scenarios", "evidence", "documents", "issues", "report"])("%s view shows the label exactly once", view => {
+    state.params.set("view", view);
+    render(<ArchitectEntry/>);
+    const labels = screen.getAllByTestId("standing-review-label");
+    expect(labels).toHaveLength(1);
+    expect(screen.getByRole("note", { name: STANDING_REVIEW_HEADING })).toBe(labels[0]);
+    expect(labels[0]).toBeVisible();
+    expect(labels[0].closest(".architect-report") !== null).toBe(view === "report");
   });
 });
 

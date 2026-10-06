@@ -27,6 +27,7 @@ import { EvidenceWorkspace } from "./EvidenceWorkspace";
 import { EvidenceInspector } from "./EvidenceInspector";
 import { ScenarioWorkspace } from "./ScenarioWorkspace";
 import { ReportView } from "./ReportView";
+import { StandingReviewLabel } from "./StandingReviewLabel";
 import { ProposalEditor } from "./ProposalEditor";
 import { MaxEnvelopePanel } from "./MaxEnvelopePanel";
 import { maxEnvelopeRequestForProfile } from "@/lib/architect/max-envelope-api";
@@ -208,6 +209,10 @@ function LoadedWorkspace({ profile, view, surveyEnabled, proposalEditorEnabled, 
       </div>
       <Link href={propertyHref()} className="secondary-button">Change property</Link>
     </header>
+    {/* D-090-R164/R165 (ADR-007): the one standing not-reviewed label at the top of the
+        property-screen workspace. The report view carries its own copy (ReportView), so it is
+        not rendered here for that view (no per-card repetition). */}
+    {view !== "report" ? <StandingReviewLabel/> : null}
     <div className={`architect-workspace-grid ${showInspector ? "has-inspector" : ""}`}>
       <div className="architect-main-view">
       {analysisView && !analysis.scenario ? <p className="architect-inline-loading" role="status">Loading draft scenario…</p> : null}

@@ -105,6 +105,14 @@ Must verify:
 
 ### G6 — Legal/rule publication gate
 
+**Optional/advisory (ADR-007, owner D-090-R164, 2026-10-04).** G6 no longer blocks showing or exporting
+a value and is never asked of the owner. Professional review is advisory: a reviewed rule may be marked
+so and the review recorded when it happens, but nothing waits for it. In its place every surface and
+export carries one standing label that results are computed from official sources, are not
+professionally reviewed, and must be verified by a licensed professional, and every stat links to the
+zoning-law text it rests on. `published` now means "shipped under the label". The sign-off steps below
+stay as the format for an advisory review event, not as a blocking gate.
+
 Required for any machine rule or result labeled `verified`.
 
 Agents prepare:
@@ -118,9 +126,9 @@ Agents prepare:
 - Independent reviewer findings
 - Change comparison against previous rule version
 
-A qualified human zoning reviewer must approve publication. Agent consensus cannot substitute for this gate.
+An advisory professional review may be recorded when it happens; it is not required and does not block publication under the standing label (ADR-007). Only that recorded review can make a rule or result `verified`; agent consensus cannot substitute for it.
 
-**G6 engineering-vs-publication split (ADR-006, D-010 Section 6 / AD-061..AD-063).** G6 gates *publication* only, not engineering progress. A legal/rules task may be **engineering-accepted** — letting downstream product development and the architect pilot continue — while the rule stays `draft`/`extracted_draft`/`needs_review`, the output is never labeled `verified`, and UI/reports clearly show the draft/provisional state (Section 6.1). G6 is **required only** for the transition to `approved` (where it legally implies professional approval), `published`, `verified`, or any external claim of professional reliance (Section 6.2). Publishing/labeling a rule `published`/`verified` without the qualified professional event, and representing a pilot result as a legal opinion or certification, remain Tier D hard-denies (ADR-006).
+**G6 engineering-vs-publication split (ADR-006, D-010 Section 6 / AD-061..AD-063).** G6 gates *publication* only, not engineering progress. A legal/rules task may be **engineering-accepted** — letting downstream product development and the architect pilot continue — while the rule stays `draft`/`extracted_draft`/`needs_review`, the output is never labeled `verified`, and UI/reports clearly show the draft/provisional state (Section 6.1). G6 is **required only** for the transition to `approved` (where it legally implies professional approval), `verified`, or any external claim of professional reliance (Section 6.2; `published` was in this list until ADR-007 redefined it as "shipped under the standing label", which needs no professional event). Labeling a rule or result `verified` without the qualified professional event, and representing a pilot result as a legal opinion, permit approval or certification, remain Tier D hard-denies (ADR-006 items 10 and 11 as read by ADR-007); compliance declarations stay banned.
 
 ### G7 — Release gate
 
