@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T09:04:10+00:00",
+ "updated_at": "2026-10-06T09:07:53+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -367,7 +367,7 @@
   "D-090-R343"
  ],
  "requirements_id_digest_sha256": "012157ff7ef35492b4c44eea3d531b019c87c8e91c63a3e5398b595e256b6d26",
- "requirements_content_digest_sha256": "67ef2cb70f605b16782afb08b3415a2950d99e0b10518ef5f4df38fcf989b1d1",
+ "requirements_content_digest_sha256": "60f06ba9ecc269b1feffb73ca4f78db396d4d9607eb334ff88b91edca85735fa",
  "sources": [
   {
    "file": "source-001.md",
@@ -747,7 +747,8 @@
   "M0-T164",
   "M5-T125",
   "M0-T180",
-  "M0-T181"
+  "M0-T181",
+  "M0-T184"
  ],
  "affected_prs": [
   262,
@@ -1022,6 +1023,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-041 (session 013RaGmC messages 90 and 91, 2026-10-06, both sent mid-turn: hand over at a seam; the next session does the testing, give the start prompt; and message 92, the seq 144 start prompt pasted by the owner: start-up checks, the race tests fail on CI and their tracked, reviewed fix comes first, correct the DB-150 record, the order of the next steps, the standing stops) and requirements D-090-R330..R343, all pending. Text extracted by script from the transcripts; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-06T09:07:53+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T184 (review-slot race tests: the slot_lock_timeout failures on windows-latest) to D-090-R093, D-090-R094, D-090-R337, D-090-R338 and D-090-R339 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }

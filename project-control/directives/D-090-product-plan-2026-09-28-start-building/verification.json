@@ -245,6 +245,54 @@
      "reviewed_sha": "58b889885c165e101265d2de9ff90bbb20f99022"
     }
    ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M0-T184",
+   "applicable_requirement_ids": [
+    "D-090-R093",
+    "D-090-R094",
+    "D-090-R337",
+    "D-090-R338",
+    "D-090-R339"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R093",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R094",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R337",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R338",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R339",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }
