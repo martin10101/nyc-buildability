@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 447,
+ "requirement_count": 457,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T15:39:55+00:00",
+ "updated_at": "2026-10-06T18:16:25+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -15032,6 +15032,364 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R448",
+   "text": "'/session-handoff': the session is handed over: the handoff file is written, checked by a different agent and put on a pull request, and the next session's start prompt is given. ORCHESTRATOR'S READING: the command was given with no text, so no reason for the turnover is recorded.",
+   "source_ref": "source-045-amendment.md#owner-message-96-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R324",
+    "D-090-R330"
+   ],
+   "required_harness": "docs/SESSION_HANDOFF.md seq 145 is on a pull request with an independent audit of it, and merges in its turn on a run in which every expected check is a completed success.",
+   "required_evidence": "docs/SESSION_HANDOFF.md; the audit return on the pull request; the merge record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 96).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R449",
+   "text": "'Resume as the NYC Buildability orchestrator' 'Work only from repository evidence; this prompt is orientation.' 'Read-only checks first; change nothing until they pass' 'Never reset, clean, stash or discard work to pass a check.' 'Report READY TO RESUME or BLOCKED.': seq 145 start-up: the session verifies the model; runs the start-up checks read-only before it changes anything (the repository root and branch, other live sessions, uncommitted and untracked files, worktrees, no connected servers, memory); pulls only after they pass; reads the handoff, the owner's working guidance, the ledger and the open pull requests; and says READY TO RESUME or BLOCKED. Every fact the prompt states is checked against the repository before it is relied on. ORCHESTRATOR'S READING: the message is the closing session's own start prompt, pasted by the owner; pasting it makes it the owner's instruction for this session.",
+   "source_ref": "source-045-amendment.md#owner-message-97-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R174",
+    "D-090-R275",
+    "D-090-R333"
+   ],
+   "required_harness": "The session's first actions are read-only checks; its first report says READY TO RESUME or BLOCKED.",
+   "required_evidence": "The session transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 97).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R450",
+   "text": "'the owner wants the FULL feasibility report comparable to their sample PDF, with reliable numbers, for all of R1\u2013R12, built one piece at a time; a finished piece is a milestone, not completion.': the sentence is recorded and followed as written. It restates the goal of the working guidance (R304, R306, R307), R250 and R334.",
+   "source_ref": "source-045-amendment.md#owner-message-97-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R250",
+    "D-090-R304",
+    "D-090-R306",
+    "D-090-R307",
+    "D-090-R334"
+   ],
+   "required_harness": "No plan or record narrows the goal; no piece is reported as completion of the report.",
+   "required_evidence": "The plans, the handoffs and the owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 97).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R451",
+   "text": "'Merging is on hold: a security advisory against the package `sharp` makes the dependency check fail on every run.' 'Its repair (pull request 450) is committed, was tested green at an earlier head and reviewed by two agents, and is NOT merged: the directive check, acceptance, a fresh green run and the merge remain.' 'The race-test fix and the citywide plan are merged.' 'The zoning-rule review register is committed on a branch, not merged, and must be reworked for the owner's two audits before it is reviewed again.' 'Nothing of the report itself is built beyond what existed.': the stated position is a snapshot taken when the session closed. It is checked against the ledger, git and CI before it is relied on, and it is not overstated in any update: each thing is called planned, committed on a branch, merged or tested (R393, R424).",
+   "source_ref": "source-045-amendment.md#owner-message-97-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R323",
+    "D-090-R393",
+    "D-090-R424"
+   ],
+   "required_harness": "The start-up report compares the ledger, the open pull requests and the integration branch's checks with this position.",
+   "required_evidence": "The ledger status, the pull-request list and the CI runs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 97).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R452",
+   "text": "'The apartment estimate is NOT to be built until the measurement basis is resolved;' 'no open choice is decided.': the sentence is recorded and followed as written. It restates R387 (no estimator before the measurement basis is resolved), R391 and R427 (the starting values stay labelled unvalidated assumptions) and R283 (no open choice is treated as approved until the owner answers it).",
+   "source_ref": "source-045-amendment.md#owner-message-97-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R387",
+    "D-090-R391",
+    "D-090-R427"
+   ],
+   "required_harness": "No estimator task is contracted or built before the measurement-basis work is accepted; no record, task or update treats a proposal as the owner's decision.",
+   "required_evidence": "The ledger, the registry and the owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 97).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R453",
+   "text": "'NEXT ACTION, in order: (1) finish pull request 450 and read the integration run after it;' '(2) the three waiting pull requests one at a time (the timing-test fix, the research entries, the guidance in CLAUDE.md), then the handoff's;' '(3) the register rework, its review, the standing instruction in CLAUDE.md, acceptance and merge;' '(4) the corrected research entries, with the law text read at the official source first;' '(5) contract the measurement-basis work (one area schedule from a proposed layout, both areas computed separately, reconciled);' '(6) start checking the R6B answers: the reference cases as files, then the missing law text;' '(7) at or after 14:09 UTC on 7 October: the clean-up of the temporary security exception (task M0-T183);' '(8) owner update in plain words, saying for each item whether it is planned, committed on a branch, merged or tested.': the eight steps are taken in that order: the security repair finished and the integration run after it read; the three waiting pull requests and then the handoff's, one at a time; the review register reworked, reviewed, given its standing instruction, accepted and merged; the research entries corrected, the law text read at the official source before it is recorded; the measurement-basis work contracted; the R6B checking started, the reference cases as files first and then the missing law text; the clean-up task M0-T183 at or after 2026-10-07 14:09 UTC; an owner update in plain words that says of each item whether it is planned, committed on a branch, merged or tested.",
+   "source_ref": "source-045-amendment.md#owner-message-97-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R211",
+    "D-090-R289",
+    "D-090-R290",
+    "D-090-R291",
+    "D-090-R299",
+    "D-090-R341",
+    "D-090-R393",
+    "D-090-R430"
+   ],
+   "required_harness": "The ledger and the merge records show the steps in this order.",
+   "required_evidence": "The ledger, the pull requests and the owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 97).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R454",
+   "text": "'each on a fresh fully green run, merged with the fail-closed step in /root/project/lanes-runtime/merge/, reading the integration branch's own run before the next': each waiting pull request merges only on a fresh run of its current head in which every expected check is a completed success, through the fail-closed merge step; the integration branch's own run is read before the next one starts. It restates R342.",
+   "source_ref": "source-045-amendment.md#owner-message-97-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R212",
+    "D-090-R289",
+    "D-090-R342"
+   ],
+   "required_harness": "For each merge: the fail-closed step's output for the merged head, and the integration run read before the next base merge.",
+   "required_evidence": "The merge step's output and the CI runs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 97).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R455",
+   "text": "'Owner message 96 (/session-handoff) is not recorded yet; number it with the next record.': message 96 is recorded in the next record and keeps the number 96. This record does that; the start prompt itself is message 97.",
+   "source_ref": "source-045-amendment.md#owner-message-97-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "source-045 holds messages 96 and 97, each copied from the transcript.",
+   "required_evidence": "source-045-amendment.md and the manifest.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 97).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R456",
+   "text": "'STOPS: Tier D (production approval, payments, secrets, paid accounts); PR #241 never; the expansion \u00a72 hold; all production switches off; settled capacity wording never changes; never pass `model:`;' 'no waiver of a security advisory, and no age exception without a new owner approval;' 'no timers, watchers or automatic reruns or merges;' 'never ask for a secret in chat; never ask the owner for professional review;' 'merge fails closed on any non-success, missing, queued or pending check;' 'never rerun a job without reading its state; one heavy run and one helper at a time; no new spending, access changes or added agents; no building on unmerged work; report completion only when the agreed requirements and tests pass; never drop a sample section or an option without the owner's agreement;' 'no apartment estimator before the measurement basis is resolved; never enter a human verdict in the review register;' 'research is never a blocker; plain, simple words to the owner.': every stop in the list stays in force as already recorded. ORCHESTRATOR'S READING: the list is message 92's list (R343) with stops that were recorded since or elsewhere: no waiver of an advisory and no further age exception without a new owner approval, the fail-closed merge (R342), no estimator before the measurement basis (R387), no human verdict entered by a session (R374). It lifts no restriction. The one stop that had no row of its own is recorded as R457.",
+   "source_ref": "source-045-amendment.md#owner-message-97-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R175",
+    "D-090-R211",
+    "D-090-R223",
+    "D-090-R232",
+    "D-090-R272",
+    "D-090-R278",
+    "D-090-R288",
+    "D-090-R328",
+    "D-090-R342",
+    "D-090-R343",
+    "D-090-R374",
+    "D-090-R387"
+   ],
+   "required_harness": "No action of the session crosses a listed stop.",
+   "required_evidence": "The session's records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 97).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R457",
+   "text": "'when a helper's report says \"part 1 of 2\", ask for the rest at once;': when a helper's return is headed as one part of several and the other parts have not arrived, the session asks the same helper for the remainder immediately and does not wait for it to arrive by itself. ORCHESTRATOR'S READING: it comes from the previous session, which sat idle for about three and a half hours after a two-part return stopped at part 1 (the handoff's time section).",
+   "source_ref": "source-045-amendment.md#owner-message-97-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "No session waits on a multi-part return whose helper has ended; the request for the remainder follows the first part directly.",
+   "required_evidence": "The session transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 97).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
