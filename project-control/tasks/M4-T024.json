@@ -115,13 +115,13 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "rules-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "A case value quietly taken from the program would make every later [LAW] test circular -> S3 and S4: values are traced to the helper's returns, and the checker cannot import the engine",
     "The work order's tables and the helper's returns may differ in a detail -> S4: every difference is reported, none is resolved silently",
@@ -132,7 +132,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T20:37:42.971519+00:00",
-  "updated_at": "2026-10-06T20:59:38.525232+00:00",
+  "updated_at": "2026-10-06T21:32:32.368766+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -158,6 +158,16 @@
       "at": "2026-10-06T21:00:00+00:00",
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-06, before any claim] the test-support folder moves from services/api/tests/reference_cases/ to services/api/tests/rules/reference_cases/. The repository's ownership map (docs/lanes/OWNERSHIP.yaml) has no owner for a new folder directly under services/api/tests/, and the ownership check failed on the seeded placeholder (pull request 453, control-plane job, runs 37529527410 and 37529531704). The new folder is inside a glob the map already assigns to the engine lane. No scenario, gate, reviewer or other path changed; the readiness gate is recorded again at the corrected head."
+    }
+  ],
+  "worktree": "/root/project/w-M4-T024",
+  "progress_log": [
+    {
+      "at": "2026-10-06T21:32:32.368658+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claim seam: G0 PASS at c374dae2 (recorded again after the scope correction); producer rules-engineer dispatched; based on the integration head 50c542fa (the research corrections and the three contracts merged)"
     }
   ]
 }
