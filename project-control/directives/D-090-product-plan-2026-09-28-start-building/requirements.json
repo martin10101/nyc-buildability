@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 162,
+ "requirement_count": 209,
  "producer": "orchestrator",
- "updated_at": "2026-10-04T08:44:45+00:00",
+ "updated_at": "2026-10-05T20:46:35+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -5513,6 +5513,1575 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-04 (messages 58-59).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R163",
+   "text": "'On yes no I let u decide based on best for program': the owner delegates the Lane A per-PR yes/no (and like merge decisions) to the orchestrator, to be decided on what is best for the program. Supersedes the per-PR owner-yes rule for Lane A (R021-style) and R136/R159 for those merges. ORCHESTRATOR'S READING: the Tier D hard stops (production approval, payments, secrets, paid accounts) stay with the owner; every merge still needs a different agent's PASS at the exact head and every check green.",
+   "source_ref": "source-027-amendment.md#owner-message-62-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R162",
+    "D-090-R159"
+   ],
+   "required_harness": "Each Lane A merge records the orchestrator's decision and its reason in the PR; the review-and-green rule is unchanged.",
+   "required_evidence": "The PR merge records for #369, #377, #382, #405 and later Lane A PRs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 62, after the sizing and the 50-agent question).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R164",
+   "text": "'no professional review stop asking for that we just put a label on website 1 time that it needs to be reviewed our part is we leave a paper trail and links directly to the zoning low for each stat etc thats it stop bugging out about it since we are building it with data from source and if program is not sure it says so': the qualified-reviewer approval (G6) is no longer a gate the orchestrator asks the owner for, and no agent asks for it again; in its place a one-time, always-visible website (and report) label that the results need professional review, a paper trail linking every stat directly to the zoning-law text, and the program saying plainly when it is not sure. ORCHESTRATOR'S READING: this amends CLAUDE.md principles 1, 12, 13 and the Section 20 / Tier D legal-approval stop; recorded by an ADR and a CLAUDE.md edit under this directive, independently reviewed. No compliance declaration is permitted by it; the draft register stays.",
+   "source_ref": "source-027-amendment.md#owner-message-62-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R142",
+    "D-090-R155"
+   ],
+   "required_harness": "An ADR and the CLAUDE.md amendment merged after independent review; no later owner update asks for professional review.",
+   "required_evidence": "docs/adr/ADR-007 (or next number) and the CLAUDE.md diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 62, after the sizing and the 50-agent question).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R165",
+   "text": "Build what R164 names: (a) a one-time, always-visible label on the website and on every exported report that the results need professional review; (b) a paper trail with a direct link to the zoning-law text for every stat (each value's ZR section resolves to the captured, pinned source and the official page); (c) the program says plainly when it is not sure (fail closed to a labelled 'not known' / 'not covered', never a guess), on every surface: cards, drawings, exports, reports.",
+   "source_ref": "source-027-amendment.md#owner-message-62-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R164",
+    "D-090-R142"
+   ],
+   "required_harness": "Tests: the label is present on every surface and export; every printed value carries a resolvable ZR link; unknown or uncovered inputs render as 'not known' / 'not covered' with the reason.",
+   "required_evidence": "The surface tests and the report fixture.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 62, after the sizing and the 50-agent question).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R166",
+   "text": "'we are not narrow ing the target we going to work on it all at once': the target is every property type in NYC (R1-R12, commercial and manufacturing districts, flood zones, special districts and the other overlays) worked in parallel, not a narrowed first district. Supersedes the orchestrator's 'narrow the first target' suggestion and the D-045-R008 one-reviewed-family-at-a-time sequencing. ORCHESTRATOR'S READING: parallel waves at the agent width the owner permits (the orchestrator offered 16: 8 writers + 8 reviewers, and runs at that width unless told otherwise); review-per-change, green CI and fail-closed merges unchanged.",
+   "source_ref": "source-027-amendment.md#owner-message-62-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-04"
+   },
+   "dependencies": [
+    "D-090-R142",
+    "D-090-R163"
+   ],
+   "required_harness": "The replan lists every district family / overlay as a parallel packet with its owning lane; waves dispatched at the permitted width; each packet reviewed and merged on its own.",
+   "required_evidence": "The replan document and the dispatch records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-04 (message 62, after the sizing and the 50-agent question).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R167",
+   "text": "'what i ment wasnt to littltrly spone up 50 subagents i ment build 1 go to next': build the program in full (all R1-R12, all zoning) one piece at a time - finish one, then go to the next - not by spawning many agents at once. Corrects the orchestrator's reading of R166: the 'parallel waves at 16 agents' reading is withdrawn; the scope half of R166 (the full target, not narrowed) stands. ORCHESTRATOR'S READING: one district family at a time; the ORCHESTRATION_POLICY section B agent cap (3 writers + 4 reviewers) is unchanged; PR #431's wave plan must be revised to this order before it merges.",
+   "source_ref": "source-028-amendment.md#owner-message-64-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R166"
+   ],
+   "required_harness": "The plan and the dispatch records show one district family in work at a time, finished before the next starts; no wave wider than the policy cap.",
+   "required_evidence": "The revised plan document and the dispatch records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 64).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R168",
+   "text": "'the program is only considerd done when all 12 zoon are fully done': the program is done only when all twelve zones R1 through R12 are fully done; no partial result is reported as the program being done. ORCHESTRATOR'S READING of 'fully done' for a zone: every district in it and every rule-coverage-matrix column drafted from captured law text, tested, and carried through to the results, the screens and the report with the standing label and per-stat law link (R164/R165); the rest of 'all zoning' (flood, special districts, other overlays, commercial and manufacturing districts) stays in the full target.",
+   "source_ref": "source-028-amendment.md#owner-message-64-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R167",
+    "D-090-R142"
+   ],
+   "required_harness": "Status reports state done only per zone with evidence, and never state the program done before all twelve are.",
+   "required_evidence": "The coverage matrix at 646 of 646 with tests, and the owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 64).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R169",
+   "text": "'give me the seasen handoff proment now': give the owner the session-handoff prompt now, taking R167 and R168 into account.",
+   "source_ref": "source-028-amendment.md#owner-message-64-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R167",
+    "D-090-R168"
+   ],
+   "required_harness": "The reply carries the successor prompt; docs/SESSION_HANDOFF.md seq 141 states R167/R168.",
+   "required_evidence": "The chat reply and the handoff file.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 64).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R170",
+   "text": "'i want this pc to have eccsues to browser to run test on what it builds': the development server gets a browser so the sessions can test what they build before pushing. ORCHESTRATOR'S READING: step 1 = run the project's own Playwright browser tests here with a hidden Chromium (exact locked packages, the same commands as the CI web-e2e job); a browser tool for the agent itself is a later step and a new package.",
+   "source_ref": "source-029-amendment.md#owner-message-65-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R160"
+   ],
+   "required_harness": "The web unit tests, the production build and the Playwright journeys run on the development server at the integration head and their results are recorded; CI on the pushed head stays the final word.",
+   "required_evidence": "The run log of the first local web run and the amended rule line.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (messages 65-66).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R171",
+   "text": "'is it safe ? if yes go': proceed if it is safe. ORCHESTRATOR'S READING: assessed safe (only the already-locked, integrity-checked packages; the publisher's Chromium build for the pinned Playwright; a windowless browser that loads only this project's own local pages; nothing touches production or secrets; removable by deleting two folders; caveat: as root Chromium runs without its inner sandbox, so it never browses outside sites). 'go' covers step 1 and amending the CODING_RULES 'no npm/npx/node locally' line for the development server; it does not authorize any new package or MCP server.",
+   "source_ref": "source-029-amendment.md#owner-message-66-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R170"
+   ],
+   "required_harness": "No package outside apps/web/package-lock.json is installed; no MCP server is added; the rule line is amended in a reviewed PR.",
+   "required_evidence": "The install log, `claude mcp list`, and the rule PR.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (messages 65-66).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R172",
+   "text": "'merge #436 first and #437 second, each only when the live rollup shows zero non-success': the two already-reviewed PRs merge in that order (#436 at 686f6bd7, then #437 at e27a3dda), each only at its reviewed head with every check successful. The same paragraph's rerun wording and its 'before anything else' position are corrected by message 70 (the start-up-order and no-automatic-rerun rows of this source).",
+   "source_ref": "source-030-amendment.md#owner-message-69-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R170",
+    "D-090-R171",
+    "D-090-R174",
+    "D-090-R175"
+   ],
+   "required_harness": "The merge step re-reads the live head and the live check list and refuses on a moved head or on any check that is not a success.",
+   "required_evidence": "The merge records of both PRs and the check lists read at merge time.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 69, the resume prompt).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R173",
+   "text": "'Add the text below to your handoff.' 'Text to add:': docs/SESSION_HANDOFF.md carries the section REPORT ACCURACY AND COMPLETION REQUIREMENTS with the eight numbered items exactly as the owner sent them. ORCHESTRATOR'S READING: the section stays in every later handoff until the owner changes it, and the copy-into-the-new-session prompt tells the successor to read it.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R142",
+    "D-090-R168"
+   ],
+   "required_harness": "A script compares the handoff section with the captured message text (from the heading to the end of item 8) byte for byte.",
+   "required_evidence": "The handoff diff and the comparison result.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R174",
+   "text": "'Put the read-only startup checks before git pull or any other change.' 'currently conflicts with your earlier startup gate.': in the handoff's start-up text the read-only checks (other live sessions, uncommitted and untracked files, worktrees, open PRs) come first; `git pull` and every other change come after them; no step is labelled as coming before the start-up gate. ORCHESTRATOR'S READING: the owner's own pre-start line no longer pulls (the session pulls after its read-only checks pass), and the waiting merges become the first step AFTER the gate reports ready.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R177"
+   ],
+   "required_harness": "The handoff's start-up text is read line by line: no write (the pull included) precedes the read-only checks, and no 'before anything else' step sits ahead of the gate.",
+   "required_evidence": "The handoff diff; the independent verifier's reading of it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R175",
+   "text": "'automatically rerun queued jobs.' 'Check their actual state first;': no job is rerun without first reading its actual state, and a queued or running job is never rerun. ORCHESTRATOR'S READING: read the run's jobs first (`gh run view <id> --json status,conclusion,jobs`); leave queued and in-progress jobs to run; rerun only a run whose jobs have all finished and only its unsuccessful jobs, once, with `gh run rerun <id> --failed`; no unattended script reruns anything. The two unattended watchers the earlier conversation left running (each would have rerun on a timer once GitHub recovered) were stopped at 20:39 UTC on 2026-10-05 before either acted.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R176"
+   ],
+   "required_harness": "Before any rerun the run's job states are read and recorded; the rerun names only a run whose jobs have all finished; the handoff text says the same.",
+   "required_evidence": "The recorded job states before each rerun; the handoff diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R176",
+   "text": "'--failed specifically reruns failed jobs.' 'https://cli.github.com/manual/gh_run_rerun': an outside fact to check, never assume: what `gh run rerun --failed` does. Checked 2026-10-05: the linked manual page and the installed `gh run rerun --help` (gh 2.45.0) both read 'Rerun only failed jobs, including dependencies'; neither says what happens to queued, running or cancelled jobs, so the outcome of every rerun is read back from the run's jobs instead of assumed.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [],
+   "required_harness": "The flag text is re-read from `gh run rerun --help` on the machine that runs it; after a rerun the jobs' states are read back.",
+   "required_evidence": "The help text and the job states after the rerun.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R177",
+   "text": "'Preserve existing work.' 'Check active sessions and uncommitted/untracked files before changing anything.': before the session changes anything it checks for other live sessions and for uncommitted and untracked files (the main checkout and every worktree it will touch).",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [],
+   "required_harness": "The start-up record shows the session list, `tmux ls` and `git status` (untracked files included) read before the first write.",
+   "required_evidence": "The start-up record of each session.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R178",
+   "text": "'If blocked, stop and explain.': when a start-up check blocks (another live session, unexplained uncommitted or untracked files, a head that differs from the remote) the session stops, writes nothing and explains the block to the owner in plain words.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R177",
+    "D-090-R160"
+   ],
+   "required_harness": "A blocked start-up ends in a BLOCKED report that names the reason; no write follows it.",
+   "required_evidence": "The BLOCKED report.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R179",
+   "text": "'Never reset, clean, stash or discard work to make startup checks pass.': no `git reset`, `git clean`, `git stash`, checkout-over or deletion of work is ever used to make a start-up check pass; work that is in the way is reported, not removed. ORCHESTRATOR'S READING: this covers every checkout or worktree that holds uncommitted, untracked or unpushed work; pointing a brand-new, empty helper worktree at its starting commit discards nothing and is not what this forbids.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R177"
+   ],
+   "required_harness": "The handoff states the rule; the start-up record contains no reset, clean, stash or discard.",
+   "required_evidence": "The handoff text; the start-up record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R180",
+   "text": "'Verify current evidence.' 'Saved commit hashes, handoff versions and review results are snapshots.' 'Before merging, confirm the current head has independent PASS review and all expected checks succeeded.': a hash, a handoff version or a review result written earlier is a snapshot, not current proof: immediately before each merge the live head is re-read and must be the exact head the independent PASS names, and every expected check must have succeeded on that head.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R163"
+   ],
+   "required_harness": "The merge step takes the reviewed 40-character head, re-reads the live head and the live check list, and refuses on any difference.",
+   "required_evidence": "The merge step's output for each merge; the review record naming the same head.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R181",
+   "text": "'Missing, cancelled, queued or pending checks do not count as success.': a check that is missing, cancelled, queued or pending is not a success and blocks the merge. ORCHESTRATOR'S READING: the merge step compares the live check names with the expected list for this repository's PRs and refuses when any expected name is absent or is anything other than a completed success; a rerun counts only after it has finished.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R180"
+   ],
+   "required_harness": "The merge script is run against recorded check lists with one check removed, one cancelled, one queued and one pending: it refuses each.",
+   "required_evidence": "The script and its four refusal outputs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R182",
+   "text": "'Implementation and independent review happen sequentially.': a change is finished and its head frozen first; only then does a different agent review it; a review never runs on a head that is still being written, and any later commit sends the new head back for review.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R167"
+   ],
+   "required_harness": "Each review record names a head that existed before the review began and that did not change during it.",
+   "required_evidence": "The review records and the commit times.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R183",
+   "text": "'Use one shared, versioned analysis result.' 'The website, floor schedules, drawings and PDF must use the same property, scenario, inputs and calculated results.': one versioned analysis result is the single source for every output: the website, the floor schedules, the drawings and the PDF all read the same property, scenario, inputs and calculated results; no output recomputes a number or carries its own copy of one.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R142"
+   ],
+   "required_harness": "A test builds every output from one result and asserts each printed value equals the value in that result (the same result identity and version on every output).",
+   "required_evidence": "The test, its run record, the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R184",
+   "text": "'Changing an input must update every affected output.': when an input changes, every output that depends on it changes with it; none keeps the old value.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R183"
+   ],
+   "required_harness": "A test changes one input, re-runs, and asserts the website data, the schedule, the drawing and the PDF all moved together and still agree.",
+   "required_evidence": "The test, its run record, the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R185",
+   "text": "'Automatically check the numbers.' 'Apartment counts must agree with the floor schedules and plans.': an automatic check proves the apartment count in the summary equals the sum of the floor schedule and equals the units drawn on the plans; a mismatch fails the run and is never printed as it stands.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R183"
+   ],
+   "required_harness": "A reconciliation check in the report pipeline, plus a test with a deliberately mismatched fixture that must fail.",
+   "required_evidence": "The check, the test, the run record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R186",
+   "text": "'Floor areas must reconcile with totals.': an automatic check proves the floor-by-floor areas add up to every stated total.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R183"
+   ],
+   "required_harness": "A reconciliation check plus a failing-fixture test.",
+   "required_evidence": "The check, the test, the run record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R187",
+   "text": "'FAR calculations must use the correct lot area and zoning-floor-area definitions.': every FAR figure divides zoning floor area, as the Zoning Resolution defines it, by the correct lot area for the zoning lot in question; the lot area used and where it came from are stated.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R183"
+   ],
+   "required_harness": "Tests pin the numerator (zoning floor area, not gross) and the denominator (the zoning lot's area from the stated source) for each FAR figure.",
+   "required_evidence": "The tests and the law link for each definition.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R188",
+   "text": "'Keep gross, net and zoning floor area distinct.': gross, net and zoning floor area are separate, separately labelled quantities everywhere; one is never shown or used as another.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R187"
+   ],
+   "required_harness": "The result carries three separately named fields; a test asserts no output prints one under another's label.",
+   "required_evidence": "The contract fields and the test.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R189",
+   "text": "'State the denominator for every efficiency percentage.': every efficiency percentage is printed with what it is a percentage of.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R188"
+   ],
+   "required_harness": "A test asserts each efficiency figure on each output carries its named denominator.",
+   "required_evidence": "The test and a rendered example.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R190",
+   "text": "'Keep individual-building figures separate from combined-site figures.': figures for one building and figures for the whole site are kept and labelled separately; they are never mixed in one table or total without saying which is which.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R183"
+   ],
+   "required_harness": "A multi-building fixture test asserts per-building rows and combined-site rows are distinct and that the combined rows equal the sum of the buildings.",
+   "required_evidence": "The test and a rendered example.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R191",
+   "text": "'Define rounding tolerances; never hide discrepancies inside them.': each reconciliation check has a written rounding tolerance; a difference inside the tolerance is still shown and a difference outside it fails; a tolerance is never widened to make a mismatch pass.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R185",
+    "D-090-R186"
+   ],
+   "required_harness": "The tolerances are named constants with a stated reason; tests sit just inside and just outside each one.",
+   "required_evidence": "The constants, the tests, the run record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R192",
+   "text": "'Make the drawings honest.' 'Use actual parcel geometry for parcel-specific conclusions.': any conclusion about a specific parcel (yards, coverage, footprint, what fits) is computed and drawn from that parcel's actual recorded geometry, not from a rectangle or a typical lot.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [],
+   "required_harness": "A test on an irregular real parcel asserts the drawing and the measured values come from the recorded outline.",
+   "required_evidence": "The test, the fixture's source record, a rendered drawing.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R193",
+   "text": "'Label simplified geometry clearly.': wherever a drawing or a number uses simplified geometry, the output says so in plain words at that place.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R192"
+   ],
+   "required_harness": "A test asserts the label is present whenever the simplified path is taken and absent otherwise.",
+   "required_evidence": "The test and a rendered example.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R194",
+   "text": "'Show the applicable yards, setbacks, floor shapes and cores.': the drawings show the yards and setbacks that apply to the lot, the shape of each floor and the cores.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R192"
+   ],
+   "required_harness": "Drawing tests assert each required element is present for the benchmark lot; an independent reviewer looks at the rendered drawing.",
+   "required_evidence": "The tests, the rendered drawings, the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R195",
+   "text": "'Drawings and schedules must agree on uses, floors, units and elevators.': the drawings and the schedules state the same uses, number of floors, number of units and number of elevators; a mismatch fails the run.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R183",
+    "D-090-R185"
+   ],
+   "required_harness": "A reconciliation check between the drawing data and the schedule data plus a failing-fixture test.",
+   "required_evidence": "The check, the test, the run record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R196",
+   "text": "'Treat detailed layout feasibility as unconfirmed until checked.': whether a detailed layout (unit plans, core, circulation) actually works is labelled unconfirmed on every output until a check of it exists and has run; a unit count from area arithmetic is never presented as a tested layout.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R165"
+   ],
+   "required_harness": "A test asserts the unconfirmed label is on every output that shows a layout-dependent figure.",
+   "required_evidence": "The test and a rendered example.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R197",
+   "text": "'Make every important number traceable.' 'Include the relevant source or zoning-law link, assumptions and applicable date.': every important number carries its source or zoning-law link, the assumptions it rests on and the date the source applies as of.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R164",
+    "D-090-R165"
+   ],
+   "required_harness": "A test walks every printed value in the result and fails on one without a resolvable source link, an assumptions entry (possibly empty and said so) and an as-of date.",
+   "required_evidence": "The test, its run record, a rendered example.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R198",
+   "text": "'Distinguish sourced facts, calculations, estimates and unknowns.': each value is marked as one of: a fact from a source, a calculation, an estimate, or unknown; the mark shows on the outputs.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R197"
+   ],
+   "required_harness": "The result carries the kind per value; a test asserts every printed value shows its kind.",
+   "required_evidence": "The contract field, the test, a rendered example.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R199",
+   "text": "'Missing information must never silently become zero.': a missing input or result is shown as not known with the reason; it is never replaced by 0, an empty default or an omitted row that reads as zero.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R165"
+   ],
+   "required_harness": "Tests remove each input in turn and assert the outputs say not known rather than print a zero.",
+   "required_evidence": "The tests and the run record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R200",
+   "text": "'Carry the standing disclosure and uncertainty labels into every export.': every exported file (PDF, drawing file, spreadsheet) carries the standing not-professionally-reviewed label and every uncertainty label the website shows for the same values.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R164",
+    "D-090-R165"
+   ],
+   "required_harness": "A test per export type asserts the standing label and each uncertainty label present on screen is present in the file.",
+   "required_evidence": "The tests and the exported files.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R201",
+   "text": "'Prove the complete workflow.' 'A real R6B property must go from address input through calculations and website results to a downloadable PDF.': one real R6B property is taken end to end in one continuous run: the address typed in, the calculations, the results on the website, a PDF that downloads. ORCHESTRATOR'S READING: the benchmark lot is 215-16 Northern Boulevard (R137, R142); pieces shown separately do not satisfy this.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R137",
+    "D-090-R142"
+   ],
+   "required_harness": "One automated journey from the address field to the downloaded PDF file, run on the development server and in CI.",
+   "required_evidence": "The journey test, its run record, the downloaded PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R202",
+   "text": "'Test changed inputs, missing evidence and conflicting evidence.': the same workflow is also run with an input changed, with a piece of evidence missing and with two sources that disagree; each run ends in the right visible result (updated outputs, not known, conflict shown).",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R201",
+    "D-090-R184",
+    "D-090-R199"
+   ],
+   "required_harness": "Three journey variants with their expected visible outcomes asserted.",
+   "required_evidence": "The tests and their run records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R203",
+   "text": "'Inspect the actual PDF, including its drawings, numbers, citations and page layout.': the produced PDF file itself is opened and inspected page by page (drawings, numbers, citations, page layout) by an independent reviewer; passing tests alone are not an inspection.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R201"
+   ],
+   "required_harness": "An independent reviewer opens the file the journey produced and records, page by page, what was checked and what was found.",
+   "required_evidence": "The PDF file, its digest, the page-by-page inspection record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R204",
+   "text": "'Turn the confirmed competitor-report discrepancies into regression tests with justified expected results.': each discrepancy confirmed in the competitor's report becomes a regression test whose expected result is justified from the source law or data, never copied from the competitor. ORCHESTRATOR'S READING: this builds on the guard list E1-E20 (R146-R151); the four guards recorded there as not built yet stay owed.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R146",
+    "D-090-R151"
+   ],
+   "required_harness": "One regression test per confirmed discrepancy, each with a written justification of its expected value and a source link.",
+   "required_evidence": "The tests, the justifications, the run record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R205",
+   "text": "'Define district completion.' 'Maintain a checklist of rules, overlays, exceptions and scenarios supported and tested.': each district has a maintained checklist of the rules, overlays, exceptions and scenarios that are supported and tested; it is the measure of done for that district.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R168"
+   ],
+   "required_harness": "A checklist file per district in which every supported row links its rule source and its passing test; a review confirms no supported row lacks a test.",
+   "required_evidence": "The checklist files and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R206",
+   "text": "'One successful R6B example does not establish complete R6B coverage.': one property working end to end is not R6B coverage: R6B is complete only when every row of its checklist is supported and tested or is listed as unsupported.",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R205",
+    "D-090-R201"
+   ],
+   "required_harness": "No update, handoff or plan calls R6B complete while a checklist row is neither tested nor listed as unsupported.",
+   "required_evidence": "The R6B checklist and the wording of each update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R207",
+   "text": "'List unsupported cases clearly.': the cases the program does not support are listed plainly, in the checklist and on the outputs where they matter (as not covered, with the reason).",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R205",
+    "D-090-R165"
+   ],
+   "required_harness": "The checklist has an unsupported section; a test asserts an unsupported case shows as not covered instead of a number.",
+   "required_evidence": "The checklist, the test, a rendered example.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R208",
+   "text": "'Complete and review the agreed district coverage before moving to the next': the next district starts only after the current district's coverage is complete and independently reviewed. ORCHESTRATOR'S READING: 'agreed' is the district's checklist as recorded in the repository and independently reviewed; the owner sees it in plain words and can change it; this is not a request for professional review (R164).",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R205",
+    "D-090-R164",
+    "D-090-R167"
+   ],
+   "required_harness": "The ledger and the handoff show the earlier district's checklist reviewed before the first task of the next district is opened.",
+   "required_evidence": "The checklist review record and the task dates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R209",
+   "text": "'do not declare the whole program finished until the full R1': the program is never reported finished until every district R1 through R12 is complete by its checklist (restates R168 against the checklist measure).",
+   "source_ref": "source-030-amendment.md#owner-message-70-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-05"
+   },
+   "dependencies": [
+    "D-090-R205",
+    "D-090-R168"
+   ],
+   "required_harness": "No update, handoff or plan says the program is finished while any R1-R12 checklist has an open row.",
+   "required_evidence": "The checklists and the wording of each update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-05 (message 70).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
