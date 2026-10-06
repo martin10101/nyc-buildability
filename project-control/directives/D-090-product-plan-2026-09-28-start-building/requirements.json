@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 343,
+ "requirement_count": 386,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T09:07:53+00:00",
+ "updated_at": "2026-10-06T14:02:44+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -11580,6 +11580,1420 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-06 (message 92).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R344",
+   "text": "'You can verify this below with the deep resurch agent': the statements that follow may be checked with the research helper. ORCHESTRATOR'S READING: 'the deep resurch agent' is the research helper the owner set up for deep questions (R285 to R287); it reads each named document at its source, and where a source says something different from this message the owner is told before the assessment is changed. It runs within the limit of one helper at a time (R211) and adds no agent (R328).",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R211",
+    "D-090-R328"
+   ],
+   "required_harness": "The helper's saved return names each document, the place read, and what it found.",
+   "required_evidence": "The research helper's return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R345",
+   "text": "'Update the research assessment, not the program or defaults:': only the research assessment is updated. No program code and no starting value in the program changes because of this message. ORCHESTRATOR'S READING: the assessment is the entries RQ-006, RQ-007 and RQ-008 of docs/RESEARCH_REQUESTS.md.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "The change touches the research entries and no file under services/ or apps/.",
+   "required_evidence": "The diff of the change.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R346",
+   "text": "'HPD\u2019s Laying the Groundwork, section 3.1, printed page 37, supports 15 ft floor-to-floor as a retail-ground-floor candidate.': the assessment records 15 ft floor-to-floor as a candidate for a ground floor with shops, with HPD's Laying the Groundwork, section 3.1, printed page 37, as its basis.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R344"
+   ],
+   "required_harness": "RQ-006 states the 15 ft candidate and cites the section and printed page.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the research helper's saved return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R347",
+   "text": "'Distinguish that from its 14 ft 4 in structural clearance and 12 ft unobstructed clearance.': the assessment keeps three figures of that guideline apart: 15 ft floor-to-floor, 14 ft 4 in structural clearance, and 12 ft unobstructed clearance, each named for what it measures.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R346"
+   ],
+   "required_harness": "RQ-006 lists the three figures separately, each with its meaning.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the research helper's saved return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R348",
+   "text": "'Record its limited applicability; it is not a universal legal requirement.': the assessment says where that guideline applies and that it is not a legal requirement for every building.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R346"
+   ],
+   "required_harness": "RQ-006 states the guideline's scope and that it is not law.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the research helper's saved return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R349",
+   "text": "'Bring the revised candidate to me for approval.': the revised ground-floor candidate is put to the owner for approval; it is not adopted before the owner answers.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R346",
+    "D-090-R283"
+   ],
+   "required_harness": "An owner update states the revised candidate and asks for the owner's answer.",
+   "required_evidence": "The owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R350",
+   "text": "'The 692/712/737 apartment-size figures remain historical benchmarks from one RentCafe/Yardi dataset, not independently confirmed borough averages.': the assessment describes 692, 712 and 737 sq ft as historical benchmarks from one RentCafe/Yardi dataset, and not as independently confirmed borough averages.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "RQ-007 uses those words for the three figures.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the research helper's saved return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R351",
+   "text": "'Their net-interior measurement convention is unverified.': the assessment says that how those figures measure an apartment (inside the apartment or otherwise) is not verified.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R350"
+   ],
+   "required_harness": "RQ-007 marks the measurement convention as unverified.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the research helper's saved return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R352",
+   "text": "'Don\u2019t count articles repeating the same study as independent sources': an article that repeats the same study is not counted as a second source.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R350"
+   ],
+   "required_harness": "No entry counts a repeat of the RentCafe/Yardi study as independent.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the research helper's saved return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R353",
+   "text": "'or substitute averages for newly leased apartments as if they meant newly built apartments.': an average for newly leased apartments is never used or described as an average for newly built apartments.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R350"
+   ],
+   "required_harness": "No entry presents a leasing average as a new-construction average.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the research helper's saved return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R354",
+   "text": "'Don\u2019t describe 15% shared space as an established NYC average.': 15 percent shared space is not described as an established New York City average anywhere: not in the research entries, a plan, a screen or an update.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "No record or update calls 15 percent an established average.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the research helper's saved return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R355",
+   "text": "'HCR\u2019s 2025 Design Guidelines, section 3.4.1a and Exhibit A, and the 2026 Project Detail Application\u2019s Exhibit D-2 define a program-specific common-space calculation.' 'It uses residential common area divided by dwelling-unit area plus common area on an interior-gross basis.': the assessment records the common-space calculation of HCR's 2025 Design Guidelines (section 3.4.1a and Exhibit A) and of the 2026 Project Detail Application (Exhibit D-2) as specific to that program: residential common area divided by the sum of dwelling-unit area and common area, measured on an interior-gross basis.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R344"
+   ],
+   "required_harness": "RQ-008 states the calculation, its two sources and that it is program-specific.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the research helper's saved return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R356",
+   "text": "'That differs from HPD\u2019s net-unit area definition.': the assessment says that HCR's measurement basis differs from HPD's net-unit area definition, and states both.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R355"
+   ],
+   "required_harness": "RQ-008 sets the two definitions side by side.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the research helper's saved return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R357",
+   "text": "'Don\u2019t mix those measurements or subtract walls/shared areas twice.': no figure or formula combines the two measurement bases, and none removes walls or shared areas twice.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R355",
+    "D-090-R356"
+   ],
+   "required_harness": "Each area in the proposal names its basis; a worked example shows nothing is subtracted twice.",
+   "required_evidence": "The proposal and its review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R358",
+   "text": "'Before proposing the apartment-count formula, state exactly what each area includes and excludes.': the formula for the realistic apartment count is proposed only after each area it uses is defined: what it includes and what it excludes.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R357"
+   ],
+   "required_harness": "The proposal opens with the area definitions; the formula follows.",
+   "required_evidence": "The proposal put to the owner.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R359",
+   "text": "'Then show me the proposed starting values, evidence, uncertainty and how changing them affects the estimated count.': the owner is then shown the proposed starting values, the evidence for each, how uncertain each is, and how the estimated count moves when each value changes.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R358",
+    "D-090-R290"
+   ],
+   "required_harness": "The owner update holds the four parts, the last as a worked table.",
+   "required_evidence": "The owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R360",
+   "text": "'Keep this a simplified feasibility estimate, with legal unit limits separate.': the realistic count stays a simplified feasibility estimate, and the legal limit on the number of apartments stays a separate figure. It restates the owner's rule that legal limits are kept apart from practical estimates.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "The proposal and every screen or report keep the two figures apart and labelled.",
+   "required_evidence": "The proposal; later the screens and the PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R361",
+   "text": "'This research does not approve any default.': no starting value is approved by this message or by the research; each stays a proposal until the owner answers it (R283).",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R283"
+   ],
+   "required_harness": "No record treats a researched value as approved.",
+   "required_evidence": "The registry, the research entries and the ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R362",
+   "text": "'Create a permanent zoning-rule review register that I can later give to a New York City architect or examiner.' 'It should show each rule, how our program applies it, and whether the reviewer considers that application correct.': a permanent register of zoning rules is created that can be handed to a New York City architect or examiner: for each rule, how the program applies it and whether the reviewer finds that application correct.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "The register exists in the repository and is readable without the code.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R363",
+   "text": "'Use a separate Markdown file with a simple table.': the register is a Markdown file of its own with a simple table.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R362"
+   ],
+   "required_harness": "One Markdown file holds the register's table.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R364",
+   "text": "'Reuse existing rule IDs and evidence rather than creating duplicate records.': the register uses the rule identifiers and the evidence that already exist and points to them; it does not create a second copy of a record. ORCHESTRATOR'S READING: the existing identifiers are the rule ids of the rule files under services/api/app/rules/rulesets/, and the existing evidence is the captured law text, the reference cases and the tests.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R362"
+   ],
+   "required_harness": "Every register row carries an existing rule id and links to existing evidence.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R365",
+   "text": "'- Rule ID and official law link, with applicable date': each row gives the rule id, a link to the official law text, and the date the text applies from or was read.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R363"
+   ],
+   "required_harness": "The three fields are present for every row, or marked as a gap.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R366",
+   "text": "'- Where the rule applies and its exceptions': each row says where the rule applies and what its exceptions are.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R363"
+   ],
+   "required_harness": "The field is present for every row, or marked as a gap.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R367",
+   "text": "'- Our interpretation in plain English': each row states the program's interpretation of the rule in plain English.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R363"
+   ],
+   "required_harness": "The field is present for every row.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R368",
+   "text": "'- A concrete example: inputs, expected answer and actual program answer': each row gives a concrete example: the inputs, the expected answer, and the answer the program actually gives. ORCHESTRATOR'S READING: the expected answer comes from the law text or a reference case, never from the program's own output (the owner's rule that matching a saved result is not proof); the actual answer is read from a run or a test at a named commit.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R363"
+   ],
+   "required_harness": "Every row has the three parts with their sources, or says the example is missing.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R369",
+   "text": "'- Links to the relevant code and tests': each row links to the code that applies the rule and to its tests.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R363"
+   ],
+   "required_harness": "The links resolve to files in the repository.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R370",
+   "text": "'- Revision and date last changed': each row carries a revision and the date it last changed.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R363"
+   ],
+   "required_harness": "Both fields are present for every row.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R371",
+   "text": "'- Architect/examiner verdict: Not reviewed / Correct / Incorrect / Needs re-review': each row has a verdict field for the architect or examiner with exactly four values: Not reviewed, Correct, Incorrect, Needs re-review.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R363"
+   ],
+   "required_harness": "The field exists with those four values; backfilled rows read 'Not reviewed'.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R372",
+   "text": "'- Reviewer name, date and comments, when provided': each row has places for the reviewer's name, the date and comments, filled only when a reviewer provides them.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R363"
+   ],
+   "required_harness": "The fields exist and are empty until a reviewer provides them.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R373",
+   "text": "'Keep automated test results separate from the human verdict.': the result of automated tests is recorded in a field of its own, apart from the human verdict.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R371"
+   ],
+   "required_harness": "The register has separate fields for test status and human verdict.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R374",
+   "text": "'Claude must never mark a rule professionally reviewed just because tests or another AI passed it.': no session sets a human verdict, or calls a rule professionally reviewed, because tests passed or another AI agreed. A human verdict is written only from a named human reviewer's own answer.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R371"
+   ],
+   "required_harness": "Every verdict other than 'Not reviewed' names a human reviewer and a date; a check refuses one that does not.",
+   "required_evidence": "The register and its check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R375",
+   "text": "'A verdict applies only to the version and conditions actually reviewed.': a verdict is tied to the revision of the row and to the conditions that the reviewer actually reviewed, and to nothing else.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R371"
+   ],
+   "required_harness": "Each verdict records the revision and conditions it was given for.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R376",
+   "text": "'Maintain a short current table with linked details and an append-only history.': the register keeps a short table of the current state, with links to the details, and a history to which entries are only added.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R363"
+   ],
+   "required_harness": "The current table is short; details and history are linked; no history entry is edited or removed.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R377",
+   "text": "'When a rule\u2019s interpretation, applicability or implementation changes, preserve the old record and flag affected human reviews for re-review.': when a rule's interpretation, where it applies, or its implementation changes, the earlier record is kept in the history and every human verdict it affects is set to Needs re-review.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R375",
+    "D-090-R376"
+   ],
+   "required_harness": "A changed rule shows a new revision, the old one in the history, and affected verdicts flagged.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R378",
+   "text": "'Don\u2019t create duplicate entries when nothing changed.': no new entry or revision is written for a rule when nothing about it changed.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R376"
+   ],
+   "required_harness": "The history holds no two identical consecutive entries for a rule.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R379",
+   "text": "'Add a short standing instruction to the existing main project instruction file: every session that adds or changes zoning-rule behavior must update this register as part of the same change.': a short standing instruction goes into the existing main instruction file: a session that adds or changes zoning-rule behaviour updates the register in the same change. ORCHESTRATOR'S READING: that file is CLAUDE.md at the repository root (as in R300). The files loaded at the start of every session are capped at 10,000 tokens (owner, D-067-R003); the instruction is kept to a line or two so that the cap holds, and the cap is not raised.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R300",
+    "D-090-R362"
+   ],
+   "required_harness": "CLAUDE.md holds the instruction; the context-budget check passes.",
+   "required_evidence": "CLAUDE.md and the budget check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R380",
+   "text": "'Keep the detailed register separate; don\u2019t copy or automatically load the whole history into every session.': the detailed register and its history stay in their own files and are not copied into, or loaded automatically by, the session instructions.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R379"
+   ],
+   "required_harness": "CLAUDE.md and the auto-loaded rule files point to the register and do not contain it.",
+   "required_evidence": "CLAUDE.md, .claude/rules/ and the budget check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R381",
+   "text": "'Backfill the rules already implemented using verifiable evidence.': the register is filled in for every rule the program already implements, from evidence that can be checked: the rule files, the captured law text, the reference cases, the tests.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R364"
+   ],
+   "required_harness": "The number of register rows equals the number of implemented rules; an independent agent checks a sample of rows against their evidence.",
+   "required_evidence": "The register and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R382",
+   "text": "'Mark gaps honestly.': where a field cannot be filled from evidence (no captured law text, no independent example, no test) the row says so; nothing is invented to fill it.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R381"
+   ],
+   "required_harness": "Gaps are written as gaps; no field holds a guessed value.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R383",
+   "text": "'This is a review record, not a new mandatory professional-signoff stage.': the register records reviews when they happen; it adds no gate, and no work waits for a professional's sign-off because of it. It is consistent with the standing rule that professional review is advisory (ADR-007).",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "No gate, task or merge is made to depend on a register verdict.",
+   "required_evidence": "The gate definitions and the ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R384",
+   "text": "'Use stable IDs and structured fields so we can move it into Supabase later.': every register entry has a stable identifier and fields with fixed names and fixed value sets, so the register can later be moved into a database table without re-keying.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R363"
+   ],
+   "required_harness": "The register documents its field names and value sets; ids do not change between revisions.",
+   "required_evidence": "The register file and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R385",
+   "text": "'Don\u2019t build the database integration now.': no database table, migration or connection for the register is built now.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R384"
+   ],
+   "required_harness": "The change adds no migration and no database code.",
+   "required_evidence": "The diff of the change.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R386",
+   "text": "'Tell me where the register and standing instruction are saved, and show me two sample rows.': the owner is told where the register and the standing instruction are saved and is shown two sample rows.",
+   "source_ref": "source-042-amendment.md#owner-message-93-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R362",
+    "D-090-R379"
+   ],
+   "required_harness": "An owner update gives both locations and two rows.",
+   "required_evidence": "The owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 93).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

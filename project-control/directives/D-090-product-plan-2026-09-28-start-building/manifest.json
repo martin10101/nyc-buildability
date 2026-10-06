@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T09:07:53+00:00",
+ "updated_at": "2026-10-06T14:02:44+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -364,10 +364,53 @@
   "D-090-R340",
   "D-090-R341",
   "D-090-R342",
-  "D-090-R343"
+  "D-090-R343",
+  "D-090-R344",
+  "D-090-R345",
+  "D-090-R346",
+  "D-090-R347",
+  "D-090-R348",
+  "D-090-R349",
+  "D-090-R350",
+  "D-090-R351",
+  "D-090-R352",
+  "D-090-R353",
+  "D-090-R354",
+  "D-090-R355",
+  "D-090-R356",
+  "D-090-R357",
+  "D-090-R358",
+  "D-090-R359",
+  "D-090-R360",
+  "D-090-R361",
+  "D-090-R362",
+  "D-090-R363",
+  "D-090-R364",
+  "D-090-R365",
+  "D-090-R366",
+  "D-090-R367",
+  "D-090-R368",
+  "D-090-R369",
+  "D-090-R370",
+  "D-090-R371",
+  "D-090-R372",
+  "D-090-R373",
+  "D-090-R374",
+  "D-090-R375",
+  "D-090-R376",
+  "D-090-R377",
+  "D-090-R378",
+  "D-090-R379",
+  "D-090-R380",
+  "D-090-R381",
+  "D-090-R382",
+  "D-090-R383",
+  "D-090-R384",
+  "D-090-R385",
+  "D-090-R386"
  ],
- "requirements_id_digest_sha256": "012157ff7ef35492b4c44eea3d531b019c87c8e91c63a3e5398b595e256b6d26",
- "requirements_content_digest_sha256": "60f06ba9ecc269b1feffb73ca4f78db396d4d9607eb334ff88b91edca85735fa",
+ "requirements_id_digest_sha256": "62402e39c2b1f4695845215720bc6c7065a223ded4afb312ccb6c9d73e4c87f9",
+ "requirements_content_digest_sha256": "9e58a80dd0ce6abb66da4cc69c1773bfe33ce73ce9e3f423d635da3eb6d7bb8b",
  "sources": [
   {
    "file": "source-001.md",
@@ -695,6 +738,14 @@
    "recorded_at": "2026-10-06T09:04:10+00:00",
    "content_digest_sha256": "aeb5c8be30199bd9b6ff111aef324a259682211a19600843f0b4d3489afb5107",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-042-amendment.md",
+   "kind": "amendment",
+   "sequence": 42,
+   "recorded_at": "2026-10-06T14:02:44+00:00",
+   "content_digest_sha256": "68d9379a121b26b190722f8543754e4061c10eb02b35b69c49a59c308f2a4867",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -737,7 +788,8 @@
   "source-038-amendment.md",
   "source-039-amendment.md",
   "source-040-amendment.md",
-  "source-041-amendment.md"
+  "source-041-amendment.md",
+  "source-042-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1029,6 +1081,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M0-T184 (review-slot race tests: the slot_lock_timeout failures on windows-latest) to D-090-R093, D-090-R094, D-090-R337, D-090-R338 and D-090-R339 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-06T14:02:44+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-042 (session 013RaGmC message 93, 2026-10-06: update the research assessment only - the ground-floor height candidate from HPD's guideline, the apartment-size figures as one-dataset benchmarks, the shared-space measurement of HCR's program; define each area before proposing the apartment-count formula; create a permanent zoning-rule review register with structured fields, a separate human verdict, an append-only history, a standing instruction in the main instruction file and a backfill) and requirements D-090-R344..R386, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
