@@ -468,5 +468,174 @@ class WindowsSharingViolationTests(unittest.TestCase):
         self.assertEqual(state["calls"], 1)  # no wait on POSIX
 
 
+class ReleaseLockRemovalTests(unittest.TestCase):
+    """RELEASE REMOVAL (M0-T184): a normal ``_SlotLock.release()`` must leave the
+    lock file GONE even when a concurrent short liveness read briefly blocks the
+    removal on Windows.
+
+    The CI defect (jobs 112160344138 / 112164492630 / 112181006630, windows-latest):
+    ``release()`` issued ONE ``self.path.unlink()`` inside ``contextlib.suppress``.
+    On Windows an open read handle without delete-sharing makes a concurrent
+    ``unlink`` raise ``PermissionError`` (a sharing violation; the captured CI output
+    shows the sharing violation, not a Win32 error code). While another racer's
+    ``_read_holder`` has the lock file open, the holder's ``unlink`` raises that
+    sharing violation; the swallowed error left the lock file on disk owned by a
+    STILL-LIVE admitted racer.
+    No contender may take over a live holder, so every other racer waited out its
+    full 30 s lock timeout -> ``refused:slot_lock_timeout``. The fix makes the
+    removal a bounded retry derived from the lock's own timeout/poll (the reader's
+    handle is short-lived), still never touching a foreign lock_id, and surfaces a
+    removal that cannot complete rather than swallowing it silently.
+    """
+
+    def setUp(self) -> None:
+        self.dir = _temp_runtime(self)
+
+    @staticmethod
+    def _failing_unlink(error: OSError, *, fail_times: int):
+        """A stand-in for ``pathlib.Path.unlink`` that raises ``error`` on the first
+        ``fail_times`` removals, then delegates to the real ``unlink``.
+
+        Returns ``(fake_unlink, state)``; ``state['calls']`` counts invocations so a
+        test can prove the removal retried (waited) rather than giving up after one
+        swallowed failure. A huge ``fail_times`` models a removal that never clears.
+        Host-independent: it injects the Windows sharing-violation failure on any OS, so
+        the transient/never-clears behaviour is pinned deterministically everywhere
+        (the real Win32 sharing fact is pinned separately by the two nt-only tests).
+        """
+        real_unlink = pathlib.Path.unlink
+        state = {"calls": 0}
+
+        def fake_unlink(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+            state["calls"] += 1
+            if state["calls"] <= fail_times:
+                raise error
+            return real_unlink(self, *args, **kwargs)
+
+        return fake_unlink, state
+
+    def _lock(self, name: str, *, start_token: str = "tok",
+              timeout_s: float = 5.0, poll_s: float = 0.001) -> review_slots._SlotLock:
+        path = pathlib.Path(self.dir) / name
+        return review_slots._SlotLock(path, pid=os.getpid(), start_token=start_token,
+                                      timeout_s=timeout_s, poll_s=poll_s)
+
+    def test_release_retries_transient_removal_failure_then_succeeds(self) -> None:
+        # S5(i), host-independent. The removal fails three times with the Windows
+        # sharing-violation error and then succeeds: after release() the lock file is
+        # GONE and the next acquire takes it promptly. RED against the pre-repair
+        # release (one swallowed unlink leaves the file on disk; state['calls']==1).
+        lock = self._lock("transient.lock")
+        lock.acquire()
+        self.assertTrue(lock.path.exists())
+        fake_unlink, state = self._failing_unlink(
+            PermissionError(errno.EACCES, "sharing violation"), fail_times=3)
+        with mock.patch.object(pathlib.Path, "unlink", fake_unlink):
+            lock.release()
+        self.assertFalse(lock.path.exists())  # removed after the transient failures
+        self.assertGreaterEqual(state["calls"], 4)  # 3 busy retries + 1 success
+        # The freed lock is takeable at once by the next acquirer:
+        nxt = self._lock("transient.lock", start_token="tok-2")
+        nxt.acquire()
+        self.assertTrue(nxt.path.exists())
+        nxt.release()
+        self.assertFalse(nxt.path.exists())
+
+    @unittest.skipUnless(
+        os.name == "nt",
+        "Windows-only platform fact: on POSIX unlink of a file that another handle "
+        "has open succeeds (no mandatory sharing lock), so the mechanism cannot be "
+        "exercised there. This pins the Win32 behaviour the slot_lock_timeout cause "
+        "rests on; it is DEMONSTRATED on windows-latest, never assumed from memory.")
+    def test_windows_open_reader_blocks_unlink_platform_fact(self) -> None:
+        # S3: deleting a file that another handle - opened exactly the way
+        # _read_holder opens it (read_text -> open(mode='r', encoding='utf-8')) -
+        # still has open raises PermissionError, and the blocked unlink leaves the
+        # file on disk. This is candidate (a)'s mechanism, proven on the platform.
+        path = pathlib.Path(self.dir) / "platform.lock"
+        path.write_text("holder", encoding="utf-8")
+        reader = path.open("r", encoding="utf-8")  # the way _read_holder opens it
+        try:
+            with self.assertRaises(PermissionError):
+                path.unlink()
+            self.assertTrue(path.exists())  # the blocked unlink left the file on disk
+        finally:
+            reader.close()
+        path.unlink()  # once the short reader handle closes, the removal succeeds
+        self.assertFalse(path.exists())
+
+    @unittest.skipUnless(
+        os.name == "nt",
+        "Windows-only real-handle test: it depends on the Win32 sharing fact above "
+        "(an open reader without delete-sharing blocks unlink), which POSIX does not "
+        "have. RED on windows-latest before the repair (the single swallowed unlink "
+        "leaves the lock file on disk); GREEN after it (the bounded retry removes the "
+        "lock once the reader's short handle closes).")
+    def test_windows_release_removes_lock_despite_concurrent_reader(self) -> None:
+        # S5(v): a second REAL handle holds the lock file open briefly while
+        # release() runs; afterwards the lock file is gone. No os.open/unlink
+        # patching - a genuine concurrent handle on the real platform.
+        import threading
+        lock = self._lock("realhandle.lock", timeout_s=5.0, poll_s=0.005)
+        lock.acquire()
+        self.assertTrue(lock.path.exists())
+        reader = lock.path.open("r", encoding="utf-8")  # another racer's short read
+        closed = threading.Event()
+
+        def _close_soon() -> None:
+            time.sleep(0.1)
+            reader.close()
+            closed.set()
+
+        thread = threading.Thread(target=_close_soon)
+        thread.start()
+        try:
+            lock.release()
+        finally:
+            if not closed.is_set():
+                reader.close()
+            thread.join(timeout=5)
+        self.assertFalse(lock.path.exists())  # removed once the short handle closed
+
+    def test_release_that_never_clears_is_bounded_failclosed_and_observable(self) -> None:
+        # S5(ii), host-independent. A removal that NEVER succeeds must be bounded by
+        # the lock's own timeout, fail closed (our lock stays on disk; no contender
+        # over-admits on a guess), and be observable (typed release_error + an ERROR
+        # log), never silently swallowed. release() must not raise.
+        lock = self._lock("stuck.lock", timeout_s=0.2, poll_s=0.01)
+        lock.acquire()
+        fake_unlink, state = self._failing_unlink(
+            PermissionError(errno.EACCES, "sharing violation"), fail_times=10 ** 9)
+        start = time.monotonic()
+        with mock.patch.object(pathlib.Path, "unlink", fake_unlink), \
+                self.assertLogs(review_slots.logger, level="ERROR") as logs:
+            lock.release()
+        elapsed = time.monotonic() - start
+        self.assertLess(elapsed, 3.0)  # bounded, not an unbounded loop
+        self.assertGreater(state["calls"], 1)  # it retried (waited), not one-shot
+        self.assertTrue(lock.path.exists())  # fail closed: our lock is not removed
+        self.assertIsNotNone(lock.release_error)
+        self.assertEqual(lock.release_error.code, "slot_lock_release_failed")
+        self.assertTrue(any("slot_lock_release_failed" in line for line in logs.output))
+        lock.path.unlink()  # real unlink (patch gone) so teardown is clean
+
+    def test_release_never_removes_a_foreign_lock_id(self) -> None:
+        # S5(iii), host-independent. A lock file carrying a DIFFERENT lock_id (another
+        # process's live lock) is never removed, and a correct decline is not a
+        # failure (release_error stays None).
+        path = pathlib.Path(self.dir) / "foreign.lock"
+        owner = self._lock("foreign.lock", start_token="owner")
+        owner.acquire()  # writes a real lock file carrying owner._lock_id
+        owner_bytes = path.read_bytes()
+        intruder = self._lock("foreign.lock", start_token="intruder", timeout_s=0.2)
+        # intruder never acquired, so its _lock_id ('') != the on-disk owner lock_id.
+        intruder.release()
+        self.assertTrue(path.exists())  # untouched
+        self.assertEqual(path.read_bytes(), owner_bytes)  # byte-identical, not forged
+        self.assertIsNone(intruder.release_error)  # a correct decline, not a failure
+        owner.release()  # the real owner removes it cleanly
+        self.assertFalse(path.exists())
+
+
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
