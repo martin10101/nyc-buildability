@@ -346,7 +346,15 @@
     "D-090-R382",
     "D-090-R383",
     "D-090-R384",
-    "D-090-R385"
+    "D-090-R385",
+    "D-090-R393",
+    "D-090-R394",
+    "D-090-R423",
+    "D-090-R425",
+    "D-090-R426",
+    "D-090-R441",
+    "D-090-R442",
+    "D-090-R443"
    ],
    "producer": "rules-engineer",
    "verifier": "",
@@ -494,6 +502,54 @@
     },
     {
      "id": "D-090-R385",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R393",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R394",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R423",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R425",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R426",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R441",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R442",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R443",
      "state": "pending",
      "evidence": [],
      "reviewed_sha": null

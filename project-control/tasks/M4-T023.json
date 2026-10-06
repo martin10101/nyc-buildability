@@ -115,6 +115,36 @@
       "case": "no_gate_no_database_no_engine_change",
       "input": "git diff <claim-seam head>..<final head>",
       "expected": "only allowed_paths changed; no rule file, engine, registry, snapshot, coverage, CI, dependency or database file changed; no gate, task or check is made to depend on a human verdict; the full services/api pytest and ruff pass"
+    },
+    {
+      "id": "S12",
+      "case": "original_decision_kept_and_applicability_derived",
+      "input": "an entry with a recorded human decision, then a change to the rule file, to a cited law capture, or to the entry's interpretation, applicability or example",
+      "expected": "the human review block keeps the reviewer's ORIGINAL decision exactly as given (decision, reviewer name and role, date, comments, the revision reviewed, the conditions reviewed) together with the identity of what was reviewed: the rule file's digest, the digests of the cited law captures and the entry's revision. A SEPARATE field says whether that decision applies to the current version; it is DERIVED by comparing those recorded identities with the current ones, never typed. The verdict shown in the table follows from the two: no decision -> 'Not reviewed'; a decision whose identities all match -> that decision; a decision whose identities do not all match -> 'Needs re-review', with the earlier decision still shown as 'earlier decision: Correct, given for revision N'. Tests prove: (a) a rule file changes under a 'Correct' decision and the register's recorded rule digest is updated in the same change -> the entry reads 'Needs re-review' and the original decision is still there; (b) merely updating or touching the register file cannot make an old 'Correct' apply to changed logic - the checker refuses a shown verdict of 'Correct' when any reviewed identity differs from the current one; (c) the same for a changed law capture digest; (d) a history event records the decision and a later event records that it no longer applies"
+    },
+    {
+      "id": "S13",
+      "case": "check_enforces_recordkeeping_only",
+      "input": "a rule change whose register entry is updated, with no human decision at all, and one with a decision that no longer applies",
+      "expected": "the build check passes in both cases: it requires only that the record is current (the entry's recorded identities match the files, a new revision and a history event exist). No check, test, gate or script requires a human decision, and none fails because an entry reads 'Not reviewed' or 'Needs re-review'. A test asserts exactly that, and GUIDE.md says it in one plain sentence"
+    },
+    {
+      "id": "S14",
+      "case": "planned_committed_tested_told_apart",
+      "input": "each entry's description of what the rule does",
+      "expected": "each detail page separates three lists in plain words: what the committed rule computes AND a named test exercises (with the test's name); what the committed rule contains that no test exercises; what is planned or not built (today's gaps that are missing behaviour). Nothing planned is described as existing. The lists are built by reading the rule file and its test file, not from memory; where it cannot be told whether a behaviour is exercised, the entry says so"
+    },
+    {
+      "id": "S15",
+      "case": "test_result_not_inventory",
+      "input": "the automated-tests field of every entry and the table's test column",
+      "expected": "the field holds a RESULT, not a count: status 'Passed', 'Failed' or 'Not run'; the exact commit the tests were run at; the date; the command; and a link to the evidence of that run (a committed log of the run under docs/zoning-rule-review/evidence/, with the counts). The result is bound to the identity of what was tested (the rule file's digest and the digests of the test files): the checker requires the shown status to be 'Not run' when any of them differs from the current files, so a result for an earlier version is never shown as current. The table column shows the status and the short commit, never 'N test files'. The test result stays a separate field from the human review block, and nothing derives one from the other"
+    },
+    {
+      "id": "S16",
+      "case": "wording_and_review_notes",
+      "input": "REGISTER.md, GUIDE.md and the entries named in the first review's notes",
+      "expected": "the introduction says the register covers the 23 rule-definition files the program has today and that this is not complete coverage of the law; agent reviews are called agent reviews and nothing reads as a human or professional review; the five notes of the first independent review are applied: F1 (r5a-height basis wording), F2 (r5b-height and r5d-height: the statement-to-district mapping named as a gap), F3 (the misnamed test strengthened to run the checker on a tampered copy), F4 (the append-only limit stated as a standing duty of each reviewer), F5 (r2x-r4-residential-far: 'R4 1.50; R2X unchanged at 1.00')"
     }
   ],
   "required_gates": [
@@ -168,7 +198,15 @@
         "D-090-R382",
         "D-090-R383",
         "D-090-R384",
-        "D-090-R385"
+        "D-090-R385",
+        "D-090-R393",
+        "D-090-R394",
+        "D-090-R423",
+        "D-090-R425",
+        "D-090-R426",
+        "D-090-R441",
+        "D-090-R442",
+        "D-090-R443"
       ]
     }
   ],
@@ -191,6 +229,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claim seam: G0 PASS at 6bcb9e92; producer rules-engineer dispatched; stacked on the integration head 80d51b99 (race-test fix and source-042 merged)"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-06T15:39:55+00:00",
+      "actor": "orchestrator",
+      "change": "After the first independent review and before any gate: owner messages 94 and 95 (D-090 source-043 and source-044) change the register's design. Rows D-090-R393, R394, R423, R425, R426, R441, R442 and R443 are bound to this task and scenarios S12 to S16 are added: the reviewer's original decision kept apart from a derived applies-to-current field; a check that enforces record keeping only; planned, committed and tested behaviour told apart; a test column that shows a result, the commit tested and its evidence; the wording about coverage and agent reviews; the five notes of the first review. One path family is added to allowed_paths for the committed test-run logs: docs/zoning-rule-review/** already covers docs/zoning-rule-review/evidence/. S6 is read with S12: where they differ, S12 governs (the stored original decision is not overwritten). No gate or reviewer changed."
     }
   ]
 }
