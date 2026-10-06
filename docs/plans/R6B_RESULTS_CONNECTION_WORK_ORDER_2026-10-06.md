@@ -220,8 +220,10 @@ answer and proves nothing about whether the law was read correctly.
 **How they were made.** A helper that had no part in writing the rules was given a sealed folder: the
 20 pinned law-text captures (without the notes that describe how the program encoded them) and the
 recorded official facts for the lot (without any floor-area-ratio field). It was told not to open the
-repository and reported that it did not. It worked the numbers by hand and also read the live official
-pages for the rows it relied on (2026-10-06): ZR 23-22, 23-432, 23-362 and 23-52 matched the captures.
+repository. Its own tool log (31 calls, read by the orchestrator) shows no file read outside the sealed
+folder and six page reads, all on the official Zoning Resolution site. It worked the numbers by hand and
+read the live official pages for the rows it relied on (2026-10-06): ZR 23-22, 23-432, 23-362 and 23-52
+matched the captures; ZR 12-10 (lot definitions) and 23-342 are not captured and were read there only.
 The orchestrator re-read 23-22 ("R6B 2.00 2.40") and 23-52 ("680"; "Fractions equal to or greater
 than three-quarters") on the official site the same day. **Only afterwards** were the results set
 beside the program's answers: the saved journey fixture at #440 for the lot, and the engine run on
