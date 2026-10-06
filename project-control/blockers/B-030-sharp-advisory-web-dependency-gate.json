@@ -1,7 +1,7 @@
 {
  "blocker_id": "B-030",
  "title": "sharp 0.35.4 advisory GHSA-wq5f-xc86-pv6w (high; fixed in 0.35.5) fails the web-dependency-security gate on every new run since 2026-10-06 ~13:44 UTC; the fixed version already meets the 7-day age rule",
- "status": "open",
+ "status": "resolved",
  "created_at": "2026-10-06T15:24:03+00:00",
  "created_by": "orchestrator",
  "affects": [
@@ -23,5 +23,17 @@
    "change": "[ORCH-CORRECTED 2026-10-06, owner R438 and the producer's registry research] the advisory's two dates are now both given (the maintainer's publication on 2026-09-30 and its entry in GitHub's advisory database on 2026-10-06, the day the check began to report it; the record first said only 'published 2026-10-06'); the count of @img/sharp-* platform packages is 16, not 23, and @img/sharp-wasm32 stays in the lock and moves to 0.35.5 (the record first expected it to leave). No path, gate, reviewer or scenario changed."
   }
  ],
- "history_note": "Found on 2026-10-06 at about 15:14 UTC: the integration run after pull request 431 merged failed this one check. Its state was read before anything else; nothing was rerun. Pull request 431's own runs had finished green at about 15:05 UTC with the same lock, because the audit service had not yet begun to report the advisory."
+ "history_note": "Found on 2026-10-06 at about 15:14 UTC: the integration run after pull request 431 merged failed this one check. Its state was read before anything else; nothing was rerun. Pull request 431's own runs had finished green at about 15:05 UTC with the same lock, because the audit service had not yet begun to report the advisory.",
+ "resolved_at": "2026-10-06T16:57:00+00:00",
+ "resolution": {
+  "summary": "Resolved by the fixed version under the normal dependency policy; no waiver and no exception. The ledger task contracted with this record (ACCEPTED) moved the sharp override to exactly 0.35.5. The lock was regenerated and validated by the generate-lockfile workflow and committed by the workflow itself; only sharp and its 26 platform packages moved (397 entries before and after, none added or removed); npm audit reports 0 at every severity; every moved package was more than 604800 s old. Gates G0/G2/G3/G4/G5 PASS (G3/G4 independent code-reviewer, G5 independent security-reviewer; agent reviews, not human reviews); directive check PASS for D-009-R017. Resolved at 16:57 UTC, when the integration branch's own run after the merge had completed with every job a success.",
+  "evidence": [
+   "PR #450 merged 2026-10-06T16:42:06Z as edb49725; 48 of 48 checks success on its final head bd073a40 (runs 37495850007 and 37495859311, 21 of 21 jobs each)",
+   "generate-lockfile run 37489036864 success; bot lock commit 148cf93e",
+   "integration branch CI at edb49725: run 37497774493 success, 21 of 21 jobs (web-dependency-security green)",
+   "project-control/reports/M0-T185-G3G4.md, M0-T185-G5.md, M0-T185-DCV.md; the independent pre-merge check of the final head returned MERGE-READY",
+   "the four waiting pull requests merged afterwards, one at a time, each on a fresh all-green run of its merge head (46 of 46 checks): #443 as 2bc7517e, #447 as be9df689, #448 as 12381eaa, #451 as 9c90ffbf; the integration run after each completed with 21 of 21 jobs a success (37500439775, 37502954248, 37505964724, 37508735979)"
+  ],
+  "follow_up": "None for this advisory. The one-time age exception for another package (source-map-js) is unrelated to this blocker; its removal is task M0-T183, not before 2026-10-07 14:09 UTC."
+ }
 }
