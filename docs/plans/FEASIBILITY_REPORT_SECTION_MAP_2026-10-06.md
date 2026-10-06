@@ -3,11 +3,15 @@
 Written 2026-10-06 by the orchestrator. Asked for by the owner (D-090 source-035: R248 to R254,
 R261). Corrected the same day after the owner's check (source-036: R266 to R273): it now says what a
 user can already see on the existing property screens, apart from the new results and the PDF that
-are not connected; and it drops nothing. Documents only: nothing is built by it.
+are not connected; and it drops nothing. Corrected again after the owner's reviewer's check of the
+handoff (source-037: R278, R281 to R283): the sizes in section 4 are marked as first guesses, the
+comparable-sales row no longer rests on the data existing, and the recommendations are marked as not
+decided. Documents only: nothing is built by it.
 
 **The goal (R248, R249, R251).** A full feasibility report of the kind of the owner's sample, with
 numbers that can be relied on. Not a zoning summary. It is built one piece at a time, and a finished
-piece is a milestone, never completion.
+piece is a milestone, not completion. Completion is reported only when the agreed requirements and
+tests pass (R278).
 
 **The sample.** The 88-page "Zoning Analysis and Massing Study" for 215-16 Northern Boulevard that
 the owner supplied (dated September 18, 2026). It is the KIND of report (R142). None of its numbers is
@@ -144,6 +148,14 @@ Nothing below removes a section of the sample or an option. Each choice says wha
 and what it adds to the work. "A piece" means: its law text captured and read, worked reference
 cases, the rule or calculation, its place on the screen and in the PDF, and its tests.
 
+**The recommendations are not decisions (R283).** Each recommendation below is the orchestrator's
+proposal. None is the owner's answer. Nothing is recorded as decided, contracted or built on one
+until the owner answers that choice.
+
+**The sizes are first guesses (R281).** "Small", "medium" and "large" below are preliminary. Nothing
+was measured, none is a commitment, and each can change once the piece is examined. That data or a
+file exists does not show that a section can be built correctly from it (R282).
+
 **Settled by the owner, no longer a choice:** how conditions the program cannot check are treated
 (R268). Answers they cannot change stay visible; answers that hold only if they do not apply are
 conditional and name them; answers that cannot be supported are withheld. A district limit is not
@@ -151,11 +163,11 @@ the property's confirmed maximum (R269). What it adds: a data source for each of
 (waterfront rules, airport height limits, transit easements, a lot close to a district line), four
 research-and-connect pieces, before the affected results can be settled.
 
-| # | Choice | Recommendation | What it adds to the work |
+| # | Choice | Recommendation (not a decision) | What it adds to the work (sizes are first guesses) |
 |---|---|---|---|
 | 1 | **The order of the sample's eleven development options.** All eleven stay promised. | Standard residences first; then qualifying affordable housing; qualifying senior housing; the "more, smaller apartments" variant; ground-floor shops with residences above; residences with a community facility; community facility alone; a split lot with two buildings; shared housing and its parking-waiver variant; all programs combined last, because it needs the others. | One piece per option. The first three reuse rules that largely exist. The "more, smaller apartments" variant reuses them too, but cannot be shown before the realistic estimate (choice 3) is built. Shops and community facility each need a rule family that is not captured. The split lot needs two-building modelling with building and site figures kept apart. Shared housing needs its own use and parking rules. |
-| 2a | Comparable sales nearby | Keep. Build after the options. | Small: the data and a workspace tool exist; it needs a report page. Averages and price per square foot are a product choice not made yet. |
-| 2b | Block description (neighbours, largest property) | Keep. | Small to medium: uses the same neighbour data; the wording must be generated from facts. |
+| 2a | Comparable sales nearby | Keep. Build after the options. | Not sized yet. The sales data and a workspace tool exist, and a report page is needed. That does not show the program can choose properties that are truly comparable (R282): how they are chosen, and reference cases that prove the choice, have not been examined. Averages and price per square foot are a product choice not made yet. |
+| 2b | Block description (neighbours, largest property) | Keep. | Small to medium, a first guess: uses the same neighbour data; the wording must be generated from facts. |
 | 2c | Parking, loading and bicycle-parking counts | Keep. Build after the first four options. | Medium: a rule family that is not captured; only the transit-zone status exists. |
 | 2d | Aerial and street photographs | Keep, once the imagery licence is decided. The vector maps go in regardless. | Small after the licence. |
 | 2e | Tax abatement eligibility | Keep in the goal and build it last. It is tax law, not zoning. If the owner would rather drop it, that is the owner's to say. | Large: new law text, eligibility rules for each option, its own reference cases. |
@@ -174,4 +186,5 @@ and apartments, and a designed building core.
   re-tested for this document. "On a screen today" was read from the website's code, not by running
   the website.
 - It does not show that the website is deployed anywhere.
-- It does not decide the scope choices of section 4, and it drops nothing.
+- It does not decide the scope choices of section 4, and it drops nothing. Its recommendations are
+  not the owner's decisions (R283), and its sizes are first guesses (R281).
