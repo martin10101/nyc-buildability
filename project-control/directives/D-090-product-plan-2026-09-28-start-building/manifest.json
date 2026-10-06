@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T15:19:59+00:00",
+ "updated_at": "2026-10-06T15:36:47+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -450,10 +450,28 @@
   "D-090-R426",
   "D-090-R427",
   "D-090-R428",
-  "D-090-R429"
+  "D-090-R429",
+  "D-090-R430",
+  "D-090-R431",
+  "D-090-R432",
+  "D-090-R433",
+  "D-090-R434",
+  "D-090-R435",
+  "D-090-R436",
+  "D-090-R437",
+  "D-090-R438",
+  "D-090-R439",
+  "D-090-R440",
+  "D-090-R441",
+  "D-090-R442",
+  "D-090-R443",
+  "D-090-R444",
+  "D-090-R445",
+  "D-090-R446",
+  "D-090-R447"
  ],
- "requirements_id_digest_sha256": "682fb6bc5ef6dd232515b24704794a44500a5181cf09a45997b2ef5a73eaba7e",
- "requirements_content_digest_sha256": "40e72a5ada6d3d25a74c2569479bad45ffdac49707d15e4ecc28da0368235542",
+ "requirements_id_digest_sha256": "e330ae0e9ec283bd1fa27b59f08e4272dae224253ece5dd739e537c20b4ae570",
+ "requirements_content_digest_sha256": "bb6b2a74e76d29f6fa8bf7789293a3f9a3f8830e9a4fc725b09ce3ab8291aea6",
  "sources": [
   {
    "file": "source-001.md",
@@ -797,6 +815,14 @@
    "recorded_at": "2026-10-06T15:19:59+00:00",
    "content_digest_sha256": "5bda4ce92e86355d1d837f8f8c45f58b190cd65d78a7700c6dd3e43e0d74cbed",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-044-amendment.md",
+   "kind": "amendment",
+   "sequence": 44,
+   "recorded_at": "2026-10-06T15:36:47+00:00",
+   "content_digest_sha256": "d2ca316b29f3eb727e6410cef217e35165400fe13c9aac92030839c41631e9e8",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -841,7 +867,8 @@
   "source-040-amendment.md",
   "source-041-amendment.md",
   "source-042-amendment.md",
-  "source-043-amendment.md"
+  "source-043-amendment.md",
+  "source-044-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1152,6 +1179,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-043 (session 013RaGmC message 94, 2026-10-06: the owner's reviewer's audit of the research update, findings 1 to 9, and the owner's instruction after 'Send Claude this:' - resolve the measurement basis before any apartment estimator; no generic gross-to-net percentage on zoning floor area; show the conversion without double deductions; correct the HPD area description; 700 sq ft and 25 percent stay unapproved assumptions; the estimate apart from the legal limit; continue the register with planned, committed and tested told apart; a register check that enforces recordkeeping only) and requirements D-090-R387..R429, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-06T15:36:47+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-044 (session 013RaGmC message 95, 2026-10-06: the owner's reviewer's second audit - zoning floor area and HPD apartment area worked out separately from one measured area schedule and reconciled, no subtraction-only conversion, the measured space from a proposed layout, examples validate no percentage, the mixed-use input named correctly, two reporting precisions on the sharp advisory, the register's test column as a result with the version tested and its evidence, the register branch to be inspectable) and requirements D-090-R430..R447, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

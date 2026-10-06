@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 429,
+ "requirement_count": 447,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T15:19:59+00:00",
+ "updated_at": "2026-10-06T15:36:47+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -14428,6 +14428,602 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-06 (message 94).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R430",
+   "text": "'The substantive change to send back is: derive zoning area and HPD apartment area independently from the same measured area schedule, then reconcile them.' '1. Calculate the two area measurements separately.': the two areas are each worked out on their own from one and the same schedule of measured areas, and then compared: residential zoning floor area from the measured space less the zoning exclusions that apply; apartment area as HPD measures it from the same measured space less what HPD's rules leave out. Neither is derived from the other.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R387",
+    "D-090-R389"
+   ],
+   "required_harness": "The record shows both calculations side by side from one schedule, and their reconciliation.",
+   "required_evidence": "The measurement-basis record and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R431",
+   "text": "'Some eligible wall or mechanical areas may already have been excluded when calculating zoning floor area.' 'Subtracting their full areas afterward could deduct them twice.' 'Certain zoning allowances also are not limited to non-apartment space, so a subtraction-only conversion is not universally valid.': apartment area is never reached by subtracting walls, shafts or other space from zoning floor area. The outline in the orchestrator's update that did so is withdrawn.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R430",
+    "D-090-R397"
+   ],
+   "required_harness": "No record, formula or code derives apartment area by subtraction from zoning floor area.",
+   "required_evidence": "The measurement-basis record and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R432",
+   "text": "'Residential zoning floor area\tMeasured physical residential space\tApplicable zoning exclusions' 'Total HPD dwelling-unit area\tThe same measured physical space\tEverything excluded under HPD\u2019s measurement rules' 'Then calculate HPD dwelling-unit area \u00f7 residential zoning floor area.': the method is the reviewer's table: each area starts from the measured physical residential space and takes its own deductions; the ratio is the second divided by the first.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R430",
+    "D-090-R396"
+   ],
+   "required_harness": "The record follows that table.",
+   "required_evidence": "The measurement-basis record and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R433",
+   "text": "'Each component\u2014apartments, corridors, walls, chases, mechanical rooms\u2014should appear in one area schedule showing its treatment under both systems.': one area schedule lists every component of the building (apartments, corridors, walls, chases, mechanical rooms and the rest) with how zoning treats it and how HPD's measurement treats it.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R430"
+   ],
+   "required_harness": "The schedule has one line per component and a column for each system.",
+   "required_evidence": "The measurement-basis record and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R434",
+   "text": "'For HPD, use the precise term mechanical and plumbing chases, rather than treating every kind of shaft identically.': for HPD's measurement the words used are 'mechanical and plumbing chases'; other shafts (lifts, stairs, refuse) are named for what they are and treated by their own rule.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R390"
+   ],
+   "required_harness": "No record says 'shafts' where HPD's rule says mechanical and plumbing chases.",
+   "required_evidence": "The measurement-basis record and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R435",
+   "text": "'Also, the measured physical space must come from a proposed building layout.' 'The maximum FAR allowance does not establish that physical space.': the measured physical space is taken from a proposed building layout. The floor area the district's ratio allows is a legal ceiling and is never used as if it were the measured space.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R430",
+    "D-090-R428"
+   ],
+   "required_harness": "Every schedule names the layout it measures; none starts from the maximum allowed floor area.",
+   "required_evidence": "The measurement-basis record and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R436",
+   "text": "'2. Two or three examples can check the method, but cannot validate a general percentage.' 'The examples should demonstrate that the calculations reconcile and nothing is deducted twice.' 'Their resulting ratios remain specific to those examples.' 'They would not establish that 25%, or any replacement percentage, is representative of R6B buildings.': worked examples are used to show that the method reconciles and deducts nothing twice. Their ratios are reported as belonging to those examples only; no percentage is presented as typical of R6B buildings because of them.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R391",
+    "D-090-R421"
+   ],
+   "required_harness": "The record states this limit beside the examples.",
+   "required_evidence": "The measurement-basis record and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R437",
+   "text": "'One wording adjustment: the mixed-use calculation needs the residential portion\u2019s zoning floor area, including any counted residential circulation/support space.' '\u201cArea actually given to apartments\u201d could mistakenly imply that the input is already apartment-only area.': for a mixed-use building the input is the zoning floor area of the residential part, which includes the residential circulation and support space that counts as floor area. The words 'area actually given to apartments' are not used for it.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R407"
+   ],
+   "required_harness": "Records and updates use 'the residential portion's zoning floor area'.",
+   "required_evidence": "The measurement-basis record and its independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R438",
+   "text": "'The maintainer published the advisory September 30; it entered GitHub\u2019s Advisory Database October 6.' '\u201cNewly picked up by the dependency check today\u201d is more accurate than \u201cfirst published today.\u201d': the advisory is described as newly picked up by the dependency check on 2026-10-06, the day it entered GitHub's advisory database; it is not said to have been first published that day. ORCHESTRATOR'S READING: the maintainer's own publication date is read at its source before it is written into a record.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "The blocker record, the task's reports and updates use that description and give both dates with their sources.",
+   "required_evidence": "The blocker record, the task's reports and the owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R439",
+   "text": "'In the failed integration run, the dependency-security job failed; the production build and end-to-end tests passed.': a failed run is reported by naming the job that failed and saying that the others passed, among them the website's build and its browser tests.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R424"
+   ],
+   "required_harness": "Updates about a failed run name the failed job and the passing ones.",
+   "required_evidence": "The owner updates and the blocker record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R440",
+   "text": "'Your repository\u2019s age rule still checks the official package-registry timestamp and any other changed dependencies.' 'The hold should clear after the updated dependency tree passes those checks.': the hold is called cleared only after the updated dependency tree has passed the repository's own checks: the age rule on every package that changed, read from the official registry, and the audit.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "The workflow run and the check run on the updated lock, read before the hold is called over.",
+   "required_evidence": "The blocker record, the task's reports and the owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R441",
+   "text": "'But \u201c1 test file\u201d is an inventory count, not a test result.' 'The register should show:' '- Passed / Failed / Not run.' '- The exact version or commit tested.' '- A link to the evidence.': the register's test column shows a result, not a count: Passed, Failed or Not run; the exact version or commit that was tested; and a link to the evidence of that run.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R373",
+    "D-090-R393"
+   ],
+   "required_harness": "Every entry shows the three; a result recorded for an earlier version of the rule or of its tests is not shown as the current result.",
+   "required_evidence": "The register, its checker, its tests and their independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R442",
+   "text": "'Keeping the original human decision separate from its applicability to the current version is correct.' 'So is enforcing record maintenance without requiring an examiner before every merge.': the two register changes stand as planned: the reviewer's original decision kept apart from whether it applies to the current version, and a check that enforces record keeping without waiting for an examiner.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R426",
+    "D-090-R394"
+   ],
+   "required_harness": "The register implements both.",
+   "required_evidence": "The register, its checker, its tests and their independent review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R443",
+   "text": "'I could not inspect the new register implementation or its five review notes: the file remains absent from the integration branch, and I found no pushed register branch.': work that is reported is made inspectable: the register's branch is pushed, and the review notes are in the repository, so that the owner's reviewer can read them. ORCHESTRATOR'S READING: the sentence is a finding, not an order; the remedy is to push the branch and to say in each update where the work can be read.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R424"
+   ],
+   "required_harness": "The register's branch and its review record are on GitHub; updates name where.",
+   "required_evidence": "The branch on GitHub and the owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R444",
+   "text": "'The accepted corrections and proposed register direction can otherwise proceed, with the assumptions remaining explicitly unvalidated.': the corrections already accepted and the register work go ahead; 700 sq ft, 25 percent and 10 ft stay labelled as unvalidated assumptions.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R391",
+    "D-090-R427"
+   ],
+   "required_harness": "The assumptions carry that label wherever they appear.",
+   "required_evidence": "The records and the owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R445",
+   "text": "'This update addresses most of the earlier concerns.' 'The security explanation checks out, but the proposed area conversion still needs one important correction.' '3. The sharp problem is real.' '4. The register plan is sound; the sample test column needs improvement.': the audit is the owner's reviewer's second check, sent by the owner as direction. The security update proceeds under the normal policy; the area conversion is corrected as rows R430 to R437 say; the register changes as row R441 says.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R395"
+   ],
+   "required_harness": "Every finding has a row here and a correction or a stated reason.",
+   "required_evidence": "The records and the owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R446",
+   "text": "'- The committed dependency resolves to sharp@0.35.4.' '- GHSA-wq5f-xc86-pv6w affects versions below 0.35.5.' '- 0.35.5 is the identified patched version, released September 27.': the reviewer's three checks agree with the orchestrator's reading of the lock, the advisory and the registry on 2026-10-06.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "The task's registry research states the same three facts from its own reading.",
+   "required_evidence": "The blocker record, the task's reports and the owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R447",
+   "text": "'The nine-day release age supports proceeding normally.': the update proceeds under the normal policy; no exception is sought.",
+   "source_ref": "source-044-amendment.md#owner-message-95-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R440"
+   ],
+   "required_harness": "No exception, exclusion or waiver is added.",
+   "required_evidence": "The blocker record, the task's reports and the owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 95).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
