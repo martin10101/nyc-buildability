@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 265,
+ "requirement_count": 273,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T04:07:48+00:00",
+ "updated_at": "2026-10-06T04:31:04+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -8967,6 +8967,275 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-06 (message 79).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R266",
+   "text": "'The revised direction is right.' 'Keep the full report as the goal.': the direction of the revised work order stands, and the goal stays the full report.",
+   "source_ref": "source-036-amendment.md#owner-message-80-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R248",
+    "D-090-R249"
+   ],
+   "required_harness": "No later change narrows the goal.",
+   "required_evidence": "The plans and the work order.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 80).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R267",
+   "text": "'\u201cnot checked\u201d must not become \u201cconfirmed\u201d just because there\u2019s a disclaimer.': a result that depends on something the program did not check is never presented as confirmed; a disclaimer or a list of unchecked items does not make it confirmed.",
+   "source_ref": "source-036-amendment.md#owner-message-80-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R255"
+   ],
+   "required_harness": "No result that an unchecked condition could change is shown as settled; a test asserts it is conditional or withheld.",
+   "required_evidence": "The work order's gap table and tests; later, those tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 80).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R268",
+   "text": "'For unchecked conditions, keep unaffected answers visible, label defensible assumptions as conditional, and withhold only the answers that cannot be supported.': for a condition the program does not check: an answer the condition cannot change stays visible; an answer that holds only if the condition does not apply is shown as conditional on that assumption, where the assumption is defensible; only an answer that cannot be supported is withheld. ORCHESTRATOR'S READING: this settles open scope decision 3 of the section map (conditions with no data source); neither blanket withholding nor a bare not-checked list.",
+   "source_ref": "source-036-amendment.md#owner-message-80-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R255",
+    "D-090-R258",
+    "D-090-R267"
+   ],
+   "required_harness": "For each unchecked condition the work order names the answers it can change; tests show the unaffected answers visible, the dependent ones conditional and naming the assumption, and the unsupported ones withheld.",
+   "required_evidence": "The work order; later, those tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 80).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R269",
+   "text": "'A base R6B height is not automatically the confirmed maximum for that property.': the height limit of the R6B table is the district's limit; it is not shown as the confirmed maximum height for a property unless every other height rule that could apply has been checked.",
+   "source_ref": "source-036-amendment.md#owner-message-80-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R267",
+    "D-090-R268"
+   ],
+   "required_harness": "A test that the height limits are shown as the district's limit, conditional on the unchecked height conditions, and never as the property's settled maximum.",
+   "required_evidence": "The work order's height rows and tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 80).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R270",
+   "text": "'Update the planned height tests accordingly.': the planned tests of the height limits are changed to expect that.",
+   "source_ref": "source-036-amendment.md#owner-message-80-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R269"
+   ],
+   "required_harness": "Every planned test that touched the height limits expects a conditional result.",
+   "required_evidence": "The revised work order and its independent check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 80).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R271",
+   "text": "'Give me the remaining scope choices in plain English, with your recommendation and what each choice adds to the work.': the reply lists the scope choices still open, in plain English, each with a recommendation and what it adds to the work.",
+   "source_ref": "source-036-amendment.md#owner-message-80-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R264"
+   ],
+   "required_harness": "A reply with that list.",
+   "required_evidence": "The reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 80).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R272",
+   "text": "'Don\u2019t remove sample-report sections or reduce the promised options without my agreement.': no section of the sample report is dropped from the intended report, and no option is taken off the promised list, unless the owner agrees. ORCHESTRATOR'S READING: every sample section inside the apartment-layout and permit-plan line, and all eleven of the sample's options, stay in the goal by default; what may be proposed is the order of building, and removal only as a question for the owner.",
+   "source_ref": "source-036-amendment.md#owner-message-80-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R248",
+    "D-090-R254"
+   ],
+   "required_harness": "The section map marks nothing as out of the report except what is outside the line or what the owner has agreed to drop.",
+   "required_evidence": "The section map.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 80).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R273",
+   "text": "'Distinguish what already exists on the property screens from the new results and full PDF that still need connecting.': the map says separately what a user can already see on the existing property screens, and what belongs to the new results and the full PDF, which still have to be connected.",
+   "source_ref": "source-036-amendment.md#owner-message-80-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R261"
+   ],
+   "required_harness": "A map column or section for the existing screens, checked against the website's code and its switches, apart from the results and PDF that are not connected.",
+   "required_evidence": "The section map and its independent check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 80).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

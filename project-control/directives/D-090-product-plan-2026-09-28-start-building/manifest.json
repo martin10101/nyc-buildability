@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T04:07:48+00:00",
+ "updated_at": "2026-10-06T04:31:04+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -286,10 +286,18 @@
   "D-090-R262",
   "D-090-R263",
   "D-090-R264",
-  "D-090-R265"
+  "D-090-R265",
+  "D-090-R266",
+  "D-090-R267",
+  "D-090-R268",
+  "D-090-R269",
+  "D-090-R270",
+  "D-090-R271",
+  "D-090-R272",
+  "D-090-R273"
  ],
- "requirements_id_digest_sha256": "8de5294e11a239dd9c62813cf1883e3e20f5c0c3075c92eebaee40ec142dfc0c",
- "requirements_content_digest_sha256": "23b469301fdbc52f21fe36eadc0052fba1f28a6d2600b4a363cd6ec53d2441d7",
+ "requirements_id_digest_sha256": "7cd8a86520cd27428304582a658f6746116197ecbc515aadfe6fdf6357d0c0eb",
+ "requirements_content_digest_sha256": "16a3b4476123e1c52a4c9c790f08cf022635f4a0bc9763c2f79c02934843f7a4",
  "sources": [
   {
    "file": "source-001.md",
@@ -569,6 +577,14 @@
    "recorded_at": "2026-10-06T04:07:48+00:00",
    "content_digest_sha256": "ebdf23f3433dc696d5358e85bf344962365bad6f0fedbfc74ea0feaaa2398efc",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-036-amendment.md",
+   "kind": "amendment",
+   "sequence": 36,
+   "recorded_at": "2026-10-06T04:31:04+00:00",
+   "content_digest_sha256": "6b7c649f7d5349cd77f5d6a4d508f58094e4ca97991b3c428152c426782104b0",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -605,7 +621,8 @@
   "source-032-amendment.md",
   "source-033-amendment.md",
   "source-034-amendment.md",
-  "source-035-amendment.md"
+  "source-035-amendment.md",
+  "source-036-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -854,6 +871,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-035 (session 013RaGmC message 79, 2026-10-06: the full feasibility report of the kind of the sample, its nine contents, legal maximums apart from practical estimates, six decisions on the open questions, a section-by-section map of the sample, one revision of the work order with the three audit corrections and an independent check, existing security and merge restrictions kept, open scope decisions explained first, and where the information is saved) and requirements D-090-R248..R265, all pending. Text extracted by script; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-06T04:31:04+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-036 (session 013RaGmC message 80, 2026-10-06, the owner's reviewer's check of the revision, sent by the owner: 'not checked' must not become 'confirmed'; for unchecked conditions unaffected answers stay visible, defensible assumptions are conditional, only unsupported answers are withheld; a base R6B height is not the property's confirmed maximum; update the height tests; the scope choices in plain English with what each adds; no section or option removed without agreement; existing property screens apart from the new results and PDF) and requirements D-090-R266..R273, all pending. Text extracted by script; nothing retyped; no existing row edited."
   }
  ]
 }
