@@ -98,8 +98,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "A second advisory or a younger transitive version could appear between this packet and the workflow run -> the machine gates decide at run time (S3, S6); the packet's registry facts are a reading, not a guarantee",
     "`npm install --package-lock-only` could move packages other than sharp -> S4 compares the locks entry by entry and stops on any other change",
@@ -108,7 +108,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T15:24:03.226697+00:00",
-  "updated_at": "2026-10-06T15:24:35.720675+00:00",
+  "updated_at": "2026-10-06T15:42:47.045826+00:00",
   "directive_refs": [
     {
       "directive_id": "D-009",
