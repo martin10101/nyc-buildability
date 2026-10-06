@@ -18,6 +18,7 @@ import { CapturedRecord } from "./EvidenceRecord";
 import { CalculationEvidence } from "./CalculationEvidence";
 import { ReportSources } from "./ReportSources";
 import { AnalysisIdentityNotice } from "./AnalysisIdentityNotice";
+import { StandingReviewLabel } from "./StandingReviewLabel";
 import { FLOOR_AREA_REMINDER } from "./workspace/dashboard-status";
 import type { VerifiedZoningLot } from "@/lib/architect/tax-lot-scope";
 export function ReportView({ profile, scenario: returnedScenario, evaluation: returnedEvaluation, label, condoDecision, unusedFloorAreaSectionEnabled = false, zoningLot = null }: {
@@ -75,6 +76,10 @@ export function ReportView({ profile, scenario: returnedScenario, evaluation: re
     }, [auditAppendix]);
     const print = () => { preparePrint.current(); window.print(); };
     return <div ref={reportRef} className={`architect-report ${auditAppendix ? "includes-audit" : ""}`}>
+    {/* D-090-R164/R165 (ADR-007): the one standing not-reviewed label, on the brief face so it
+        prints and shows once on the report preview. It owns this surface, so the dashboard and
+        property-screen banners are not rendered over the report view (no per-card repetition). */}
+    <StandingReviewLabel/>
     <section className="card architect-report-intro">
       <div>
         <p className="architect-eyebrow">Property brief</p>

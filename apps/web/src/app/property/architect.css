@@ -316,3 +316,9 @@
 .tax-lot-only-notice,.architect-shell .tax-lot-only-notice { margin:12px 0;padding:10px 12px;border-left:4px solid var(--arch-accent,#a46d16);background:#fbf4e6;color:#3d2f12;font-size:14px;line-height:1.5; }
 .tax-lot-only-qualifier,.architect-shell .tax-lot-only-qualifier { margin:4px 0 8px;color:#3d2f12;font-size:14px;font-weight:600;line-height:1.4; }
 @media print { .tax-lot-only-notice,.architect-shell .tax-lot-only-notice { background:none;border-left-color:#000;color:#000; } }
+/* D-090-R164/R165 (ADR-007): the one standing not-reviewed label. Plain text, readable size
+   (>=14px), status carried by the heading text and not colour alone; visible without a tap. */
+.standing-review-label,.architect-shell .standing-review-label { display:block;margin:0 0 18px;padding:12px 16px;border:1px solid var(--arch-line,#d9d9d9);border-left:4px solid #8a6d00;border-radius:6px;background:#fff8e6;color:#1a1a1a;font-size:14px;line-height:1.5; }
+.standing-review-label__heading { display:block;font-size:15px;font-weight:650;margin-bottom:4px;color:#1a1a1a; }
+.standing-review-label__body { margin:0; }
+@media print { .standing-review-label,.architect-shell .standing-review-label { background:none;border-color:#000;border-left-color:#000;color:#000; } }
