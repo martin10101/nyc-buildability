@@ -70,7 +70,7 @@ A made-up detached house on a bare R1 lot (not a real address).
 
 - The sloping-plane envelope between the 25-foot wall and the 35-foot ridge is not computed.
 - The base plane the heights are measured from is not determined by the program.
-- Overlay, special-district, historic-district, large-site and transportation adjustments are not computed; the result is sent to professional review.
+- Overlay, special-district, historic-district, large-site and transportation adjustments are not computed.
 
 ## Automated test result
 
@@ -79,11 +79,11 @@ A made-up detached house on a bare R1 lot (not a real address).
 - Date tested: 2026-10-06
 - Command: `python -m pytest -q tests/rules/test_r1_r2_height_setback.py`
 - Counts: 110 passed
-- Evidence: [run log](../evidence/test_r1_r2_height_setback.txt)
+- Evidence: [run log](../evidence/r1-r2-bare-pitched-height.txt)
 - Rule file digest tested: `b08d5a1e4825f9c715eb7c54323a05d772a4450e8eb19fa43690d4084046bc24`
 - Test files tested:
   - `services/api/tests/rules/test_r1_r2_height_setback.py` (`30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

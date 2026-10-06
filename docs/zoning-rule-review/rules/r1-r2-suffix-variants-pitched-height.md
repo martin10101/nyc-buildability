@@ -68,9 +68,8 @@ A made-up detached house on an R2A lot (not a real address).
 
 ## Planned, not built
 
-- The suffix inheritance rests on ZR 11-25 rather than an express per-district citation; it is recorded as a documented limitation, not resolved.
 - The sloping-plane setback geometry is not computed.
-- Overlay, special-district, historic-district, large-site and transportation adjustments are sent to professional review.
+- Overlay, special-district, historic-district, large-site and transportation adjustments are not computed.
 
 ## Automated test result
 
@@ -79,11 +78,11 @@ A made-up detached house on an R2A lot (not a real address).
 - Date tested: 2026-10-06
 - Command: `python -m pytest -q tests/rules/test_r1_r2_height_setback.py`
 - Counts: 110 passed
-- Evidence: [run log](../evidence/test_r1_r2_height_setback.txt)
+- Evidence: [run log](../evidence/r1-r2-suffix-variants-pitched-height.txt)
 - Rule file digest tested: `f4f840be26eb17a78b0b935d24df2a5367c495d9f9990a916db5a6418ee43dd3`
 - Test files tested:
   - `services/api/tests/rules/test_r1_r2_height_setback.py` (`30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

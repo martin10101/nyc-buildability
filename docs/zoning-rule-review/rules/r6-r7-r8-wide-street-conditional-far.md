@@ -51,6 +51,7 @@ A made-up 5,000 sq ft R6 lot with standard residences and no wide-street informa
 ## Tests
 
 - `services/api/tests/rules/test_r1_r12_residential_far.py`
+- `services/api/tests/rules/test_r6b_far_heights.py`
 
 ## What the program does today and a test checks
 
@@ -65,7 +66,7 @@ A made-up 5,000 sq ft R6 lot with standard residences and no wide-street informa
 
 ## Planned, not built
 
-- Which FAR applies cannot be settled without a wide-street determination, which this rule does not make; it returns the conservative value and marks it conditional.
+- The wide-street determination is not made by this rule, so which FAR applies cannot be settled from it alone.
 - The ZR 23-22 split of one lot between two FAR values ('or portions thereof') is not computed.
 
 ## Automated test result
@@ -73,13 +74,14 @@ A made-up 5,000 sq ft R6 lot with standard residences and no wide-street informa
 - Status: Passed
 - Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
 - Date tested: 2026-10-06
-- Command: `python -m pytest -q tests/rules/test_r1_r12_residential_far.py`
-- Counts: 15 passed
-- Evidence: [run log](../evidence/test_r1_r12_residential_far.txt)
+- Command: `python -m pytest -q tests/rules/test_r1_r12_residential_far.py tests/rules/test_r6b_far_heights.py`
+- Counts: 47 passed
+- Evidence: [run log](../evidence/r6-r7-r8-wide-street-conditional-far.txt)
 - Rule file digest tested: `a33e50f3015bb50c43720ad8bf9c58bf14b4ebd52ac8c1aa721c638b40533463`
 - Test files tested:
   - `services/api/tests/rules/test_r1_r12_residential_far.py` (`5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+  - `services/api/tests/rules/test_r6b_far_heights.py` (`7e7f505c58155f4dcc6172d78d81f4957a6764d558fb31c0f476b2e0c924daf4`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

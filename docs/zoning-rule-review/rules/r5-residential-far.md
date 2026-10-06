@@ -50,6 +50,7 @@ A made-up 4,000 sq ft R5 lot (not a real address).
 ## Tests
 
 - `services/api/tests/rules/test_rules_engine.py`
+- `services/api/tests/rules/test_r1_r12_residential_far.py`
 
 ## What the program does today and a test checks
 
@@ -72,13 +73,14 @@ A made-up 4,000 sq ft R5 lot (not a real address).
 - Status: Passed
 - Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
 - Date tested: 2026-10-06
-- Command: `python -m pytest -q tests/rules/test_rules_engine.py`
-- Counts: 36 passed
-- Evidence: [run log](../evidence/test_rules_engine.txt)
+- Command: `python -m pytest -q tests/rules/test_rules_engine.py tests/rules/test_r1_r12_residential_far.py`
+- Counts: 51 passed
+- Evidence: [run log](../evidence/r5-residential-far.txt)
 - Rule file digest tested: `ca6ccb5286cdbb31c318d9e0ff4342cb7d649fd03be7a79af7ec3521b274b13e`
 - Test files tested:
   - `services/api/tests/rules/test_rules_engine.py` (`1098e99b91df603037395d035f7ba47e5b4b6b743048129818d5d9032551bcb7`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+  - `services/api/tests/rules/test_r1_r12_residential_far.py` (`5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

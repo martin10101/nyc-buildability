@@ -27,8 +27,9 @@ filled only by a named human reviewer, and every rule reads "Not reviewed" today
 - `REGISTER.md` - the short current table, one row per rule, rendered from the data.
 - `rules/<rule id>.md` - one detail page per rule, rendered from the data.
 - `HISTORY.md` - the append-only history, oldest first, rendered from the data.
-- `evidence/<test file>.log` - a committed log of each rule's automated test run (command, date,
-  commit, exit code and the pytest summary). The test-result field links to these.
+- `evidence/<rule id>.txt` - a committed log of each rule's automated test run (command, date,
+  commit, exit code and the pytest summary). There is one log per entry, named for the rule, and it
+  is the run of exactly that entry's linked test file(s). The test-result field links to it.
 - `GUIDE.md` - this guide (hand-written).
 - `../../services/api/app/rules/review_register/register.json` - the authored source. The Markdown
   is rendered from it; do not edit the Markdown by hand. Re-render with
@@ -64,20 +65,31 @@ Each entry in `register.json` has these fixed field names:
   - **agrees** - `true`, `false`, or `null`. `null` means the expected answer is a gap. The expected
     answer is never taken from a program run; if expected and actual differ, the entry says so
     plainly and the rule is not changed to force a match.
-- **code_links**, **test_links** - the code and tests behind the rule.
+- **code_links**, **test_links** - the code and the test file(s) behind the rule. An entry links one
+  test file, or more when its behaviour is exercised across more than one (for example a rule whose
+  benchmark assertion lives in the R6B suite as well as its own family suite). Every test function a
+  `behaviour.tested` item names must be defined in one of the entry's linked test files, and
+  `automated_tests.tested_test_file_sha256s` lists exactly those files (the checker enforces both).
 - **behaviour** - three plain-sentence lists, told apart:
   - **tested** - what the committed rule computes AND a named test exercises; each item names the
-    test function(s).
+    test function(s), and each named function is defined in one of the entry's linked test files.
   - **committed_untested** - what the committed rule contains that no test exercises; where it cannot
     be told, the item says "no test found that exercises this".
-  - **planned** - what is planned or not built (today's gaps that are missing behaviour). Nothing
-    planned is described as existing.
-- **automated_tests** - the RESULT of running the rule's own test file(s), kept apart from the human
-  verdict and never derived from it:
+  - **planned** - ONLY missing behaviour: what the program does not compute today, worded as what is
+    not built, with no clause about what the program does instead. Behaviour that exists goes under
+    `tested` or `committed_untested`; a characteristic of the law or a documented limit goes under
+    "Exceptions and limits" or the gaps, not here. An empty list is fine and reads "Nothing recorded
+    as planned for this rule."
+- **automated_tests** - the RESULT of one run of the rule's linked test file(s), kept apart from the
+  human verdict and never derived from it. The form is the same for every entry: one command runs
+  all of the entry's linked test file(s) in a single pytest invocation, and one run log named for the
+  entry records it; an entry that links two test files still has one command, one log and one combined
+  count.
   - **status** - `Passed`, `Failed` or `Not run`.
   - **tested_commit**, **tested_on**, **command**, **counts** - the commit the tests ran at, the date,
-    the command, and the pass/fail counts.
-  - **evidence** - a path under `docs/zoning-rule-review/evidence/` to the committed run log.
+    the command (all linked files in one invocation), and the pass/fail counts of that run.
+  - **evidence** - a path under `docs/zoning-rule-review/evidence/<rule id>.txt` to the committed run
+    log of exactly that command.
   - **tested_rule_file_sha256**, **tested_test_file_sha256s** - the fingerprints of the rule file and
     test file(s) the result is bound to. If any of them differs from the current file, the checker
     requires the status to read `Not run`, so a result for an earlier version is never shown as

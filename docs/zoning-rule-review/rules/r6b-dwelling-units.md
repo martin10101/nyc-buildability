@@ -61,6 +61,7 @@ A made-up R6B case: a 5,000 sq ft lot with 10,000 sq ft of residential floor are
 - Is the only rule in the registry that emits a dwelling-unit output for R6B (test: test_units_are_one_place_across_the_registry).
 - Returns no estimate for qualifying senior housing or a special density area (no factor applies), and sends qualifying affordable housing to professional review (test: test_qualifying_senior_housing_has_no_factor, test_special_density_area_has_no_factor, test_qualifying_affordable_is_computed_but_sent_to_review).
 - Fails closed to professional review on a missing or invalid floor area, program or special-density flag (test: test_unknown_program_area_or_floor_area_gives_no_estimate, test_units_fail_closed_on_a_bad_floor_area).
+- Reaches R6B through the ZR 11-25 suffix reading, flagged on every result (test: test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so).
 
 ## In the program but no test checks it
 
@@ -68,9 +69,7 @@ A made-up R6B case: a 5,000 sq ft lot with 10,000 sq ft of residential floor are
 
 ## Planned, not built
 
-- Conversions and mixed-factor applicability are not computed; they are recorded as documented limitations.
-- The qualifying-affordable dividend is sent to professional review rather than decided.
-- R6B is reached through the ZR 11-25 suffix reading, recorded as a documented limitation.
+- Conversions and mixed-factor applicability are not computed.
 
 ## Automated test result
 
@@ -79,11 +78,11 @@ A made-up R6B case: a 5,000 sq ft lot with 10,000 sq ft of residential floor are
 - Date tested: 2026-10-06
 - Command: `python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py`
 - Counts: 88 passed
-- Evidence: [run log](../evidence/test_r6b_coverage_yard_units.txt)
+- Evidence: [run log](../evidence/r6b-dwelling-units.txt)
 - Rule file digest tested: `404179f2c2aab9c25826c59c92c4715fe0647a8f552cb1e385c72ccc7cb7ef02`
 - Test files tested:
   - `services/api/tests/rules/test_r6b_coverage_yard_units.py` (`1e0762436eb031d0e905fe67fd21a0f96ad2acf1ade21b618abacd6e288a2053`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

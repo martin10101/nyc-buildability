@@ -68,9 +68,9 @@ A made-up R2A lot flagged as a qualifying residential site (not a real address).
 
 ## Planned, not built
 
-- Whether a lot is a qualifying residential site is a separate legal and geographic determination the program does not make.
-- The ZR 23-423 setback for this envelope is recorded as a limitation, not computed.
-- Overlay and special-district adjustments are not computed; the result is sent to professional review.
+- Whether a lot is a qualifying residential site is a determination the program does not make.
+- The ZR 23-423 setback for this envelope is not computed.
+- Overlay and special-district adjustments are not computed.
 
 ## Automated test result
 
@@ -79,11 +79,11 @@ A made-up R2A lot flagged as a qualifying residential site (not a real address).
 - Date tested: 2026-10-06
 - Command: `python -m pytest -q tests/rules/test_r1_r2_height_setback.py`
 - Counts: 110 passed
-- Evidence: [run log](../evidence/test_r1_r2_height_setback.txt)
+- Evidence: [run log](../evidence/r1-r2-qrs-height.txt)
 - Rule file digest tested: `f1571d89989823974211668a29802806fefc26ece611cbe7ba3fab9b80e36a26`
 - Test files tested:
   - `services/api/tests/rules/test_r1_r2_height_setback.py` (`30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

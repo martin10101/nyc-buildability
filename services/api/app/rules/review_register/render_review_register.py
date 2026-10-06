@@ -280,8 +280,11 @@ def render_detail_md(entry: dict) -> str:
 
     lines.append("## Planned, not built")
     lines.append("")
-    for item in beh["planned"] or ["(none recorded)"]:
-        lines.append(f"- {item}")
+    if beh["planned"]:
+        for item in beh["planned"]:
+            lines.append(f"- {item}")
+    else:
+        lines.append("- Nothing recorded as planned for this rule.")
     lines.append("")
 
     at = entry["automated_tests"]

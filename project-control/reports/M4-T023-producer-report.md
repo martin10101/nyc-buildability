@@ -113,3 +113,108 @@ test_rules_engine 36 passed; test_r6b_coverage_yard_units 88 passed; test_r6b_fa
   the worktree besides the committed evidence logs.
 - Behaviour "tested" claims were written by reading each rule file and its test file(s); an
   independent reviewer should re-check them against those files.
+
+## Round 3 - the three review corrections (F1, F2, F3)
+
+The second independent review passed the rework (G3 PASS, G4 PASS) with three corrections. All build
+only; no engine/rule/registry/coverage/capture/CI/dependency/database file touched; all 23 entries
+stay revision 1 with their one `created` event; no change to any other first-reviewed field
+(law, applies_where, interpretation, example, code_links), and NO change to any `exceptions` or `gaps`
+text.
+
+### F1 - every cited test is in a linked, bound file
+- Checker: `behaviour_errors` now reads the entry's linked test files and refuses any `tested` item
+  whose named `test_` function is not `def`-defined in one of them (a bare "test_" substring is no
+  longer enough); `automated_tests_errors` now requires `tested_test_file_sha256s` keys to equal the
+  entry's `test_links` (binding and the reverse).
+- Data: the three flagged entries now link AND bind the second file that holds their cited test -
+  r5-residential-far adds `test_r1_r12_residential_far.py` (holds test_as9_r5_*); r6-r12-residential-far
+  and r6-r7-r8-wide-street-conditional-far add `test_r6b_far_heights.py` (holds
+  test_c2_benchmark_standard_and_qualifying_allowances / test_r6b_has_no_wide_street_increase).
+- Uniform form (described in GUIDE.md): every entry's `automated_tests` is one pytest command over all
+  its linked test file(s), one combined count, and one run log named `evidence/<rule id>.txt`. The 7
+  per-file logs were replaced by 23 per-entry logs, each produced by running the entry's command
+  against an exported copy of commit 52e3d8a4 (`git archive 52e3d8a4 | tar -x`; run from that copy's
+  services/api with the lanes venv). `tested_commit` stays 52e3d8a4.
+- Tests: `test_tested_item_naming_a_function_not_in_a_linked_file_is_refused`;
+  `test_every_committed_tested_citation_is_defined_in_a_linked_file` (all 23);
+  `test_changed_second_linked_test_file_digest_demands_not_run` (r5-residential-far, 2 files);
+  `test_a_linked_test_file_not_bound_by_a_digest_is_caught`.
+
+### F2 - GUIDE.md evidence extension
+`GUIDE.md` now says `evidence/<rule id>.txt` (was `.log`) and documents the one-log-per-entry form.
+
+### F3 - "Planned, not built" holds only missing behaviour
+Went through all 49 original planned items. Result: **kept 18; reworded to missing-only 27** (6 of
+these are the kept half of a split); **moved to tested 4; moved to committed_untested 4; removed 2**
+(already stated elsewhere); 0 moved to exceptions/gaps. New totals across 23 entries:
+**tested 108, committed_untested 10, planned 45.** Disposition of every item:
+
+| Entry | Old planned item (short) | What I did |
+|---|---|---|
+| r1-r2-bare | sloping envelope not computed | kept |
+| r1-r2-bare | base plane not determined | kept |
+| r1-r2-bare | overlay/etc not computed; sent to PR | reworded (dropped "sent to PR"; already tested) |
+| r1-r2-qrs | qualifying-site determination not made | kept |
+| r1-r2-qrs | 23-423 setback recorded as limitation, not computed | reworded (missing-only) |
+| r1-r2-qrs | overlay/special not computed; sent to PR | reworded (dropped "sent to PR") |
+| r1-r2-r3 | qualifying FAR determination not made | kept |
+| r1-r2-r3 | SPD/overlay FAR not applied | kept |
+| r1-r2-ref-plane | reference plane feeds sloping geometry, not computed | reworded (missing-only) |
+| r1-r2-ref-plane | site-specific modifiers not modelled | kept |
+| r1-r2-suffix | 11-25 suffix inheritance documented limitation | removed (already in exceptions + gaps) |
+| r1-r2-suffix | sloping setback geometry not computed | kept |
+| r1-r2-suffix | overlay/etc sent to PR | reworded to missing "not computed" (escalation already tested) |
+| r2x-r4 | qualifying FAR determination not made | kept |
+| r2x-r4 | SPD/overlay FAR not applied | kept |
+| r3-2-r4-flat | overlay/etc not computed; sent to PR | reworded (dropped "sent to PR") |
+| r3-r4-pitched | sloping envelope not computed | kept |
+| r3-r4-pitched | overlay/etc sent to PR | reworded to missing "not computed" |
+| r4b | overlay/etc not computed; sent to PR | reworded (dropped "sent to PR") |
+| r5-height | no min base height; recorded as documented limitation | reworded (missing-only) |
+| r5-height | overlay/etc sent to PR | reworded to missing "not computed" |
+| r5-qrs | qualifying-site determination not made | kept |
+| r5-qrs | 23-423 setback recorded as limitation, not computed | reworded (missing-only) |
+| r5-qrs | overlay/special sent to PR | split: reworded missing "not computed" (kept) + moved escalation to committed_untested |
+| r5-residential-far | qualifying FAR determination not made | kept |
+| r5-residential-far | SPD/overlay FAR not applied | kept |
+| r5-setback | 23-423 modifications not computed; final unresolved | reworded (missing-only; "unresolved" flag already tested) |
+| r5-setback | overlay/special sent to PR | reworded to missing "not computed" |
+| r5a | sloping setback geometry not computed | kept |
+| r5a | overlay/etc sent to PR | split: reworded missing "not computed" (kept) + moved escalation to committed_untested |
+| r5b | no base/setback split; single flat cap reported | reworded (missing-only) |
+| r5b | overlay/etc sent to PR | split: reworded missing "not computed" (kept) + moved escalation to committed_untested |
+| r5d | no base/setback split; single flat cap reported | reworded (missing-only) |
+| r5d | overlay/etc sent to PR | split: reworded missing "not computed" (kept) + moved escalation to committed_untested |
+| r6-r12 | qualifying-housing FAR determination not made | kept |
+| r6-r12 | SPD/overlay FAR not applied | kept |
+| r6-r7-r8 | wide-street determination not made; returns conservative, conditional | reworded (missing-only; "returns conservative/conditional" already tested) |
+| r6-r7-r8 | 23-22 lot split not computed | kept |
+| r6b-dwelling-units | conversions/mixed-factor not computed; documented limitations | reworded (missing-only) |
+| r6b-dwelling-units | qualifying-affordable dividend sent to PR | removed (already built + in tested) |
+| r6b-dwelling-units | reached through 11-25 documented limitation | moved to tested (test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so) |
+| r6b-height | 23-433 setback not encoded | kept |
+| r6b-height | R6B heights do not depend on street width | moved to tested (test_c1_benchmark_heights_from_the_one_lookup) |
+| r6b-height | commercial overlays not captured; special districts sent to PR | reworded to missing "overlays not captured" (special-district already tested) |
+| r6b-lot-coverage | only standard lots; special interior/through rules documented limitation | reworded (missing-only; eligible-site % and special rules not computed) |
+| r6b-lot-coverage | commercial overlays not captured; special districts sent to PR | split: reworded missing "overlays not captured" (kept) + moved special-district fail-closed to tested (test_special_district_or_unattested_special_district_fails_closed) |
+| r6b-qualifying-housing | qualifying determination not made; FAR surfaced as alternative | reworded (missing-only) |
+| r6b-rear-yard | only waiver within 100 ft computed; ordinary depth beyond not computed | reworded (missing-only: ordinary depth beyond not computed) |
+| r6b-rear-yard | commercial overlays not captured; special districts sent to PR | split: reworded missing "overlays not captured" (kept) + moved special-district fail-closed to tested (test_special_district_or_unattested_special_district_fails_closed) |
+
+Entries that now bind two test files: r5-residential-far (51 passed), r6-r12-residential-far (47 passed),
+r6-r7-r8-wide-street-conditional-far (47 passed). All 23 statuses remain Passed at 52e3d8a4.
+
+### Round 3 checks (each run on its own)
+
+| # | Command | Exit | Result |
+|---|---|---|---|
+| 1 | `cd services/api && python -m ruff check .` | 0 | All checks passed! |
+| 2 | `cd services/api && python -m pytest -q -p no:cacheprovider tests/rules/test_zoning_rule_review_register.py tests/rules/test_coverage_matrix.py` | 0 | 59 passed |
+| 3 | `python services/api/app/rules/review_register/render_review_register.py --check` | 0 | register check PASSED (no issues) |
+| 4 | `python3 tools/modularity_check.py --check` | 0 | failures 0 (render 423, check 498, test 538; all < 600) |
+| 5 | `cd services/api && python -m pytest -q -p no:cacheprovider` (FULL api suite, once, last) | 1 | 8043 passed, 8 skipped, 1 FAILED - the one failure is OUT OF SCOPE: `tests/drawings/test_dxf_reader.py::test_t097_b1_mutation_double_find_reddens_time_guard`, a timing-threshold guard asserting a measured quadratic ratio >= 8.0x; it measured 7.95x. It fails the same way in isolation and does not touch the review register (I changed only review_register, docs/zoning-rule-review and the register test). Reported, not edited. |
+
+Out-of-scope failure detail: `AssertionError: the double-find should scale quadratically (>= 8.0x);
+measured 7.9x - the guard did not redden` (`7.948... >= 8.0`), at tests/drawings/test_dxf_reader.py:912.
+This is a machine-timing-sensitive performance guard, not a review-register regression.

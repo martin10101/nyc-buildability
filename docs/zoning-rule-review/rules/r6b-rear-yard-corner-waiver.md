@@ -59,6 +59,7 @@ A made-up R6B corner lot where two street lines meet at about 89.7 degrees, a po
 - Does not apply beyond 100 feet and emits nothing there (test: test_beyond_100_ft_the_waiver_does_not_apply_and_nothing_is_emitted).
 - Fails closed to professional review on missing geometry or an impossible angle, naming the missing input (test: test_unknown_geometry_means_no_rear_yard_result_with_the_reason, test_an_impossible_angle_fails_closed).
 - Is R6B-only, draft/needs_review and lane-A-gated, reached through the ZR 11-25 suffix reading (test: test_rules_are_r6b_only, test_rules_are_draft_needs_review_and_lane_a_gated, test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so).
+- Fails closed to professional review on a special district or an unattested special-district flag (test: test_special_district_or_unattested_special_district_fails_closed, test_unattested_overlay_fails_closed).
 
 ## In the program but no test checks it
 
@@ -66,8 +67,8 @@ A made-up R6B corner lot where two street lines meet at about 89.7 degrees, a po
 
 ## Planned, not built
 
-- Only the waiver within 100 feet of the corner is computed; the ordinary rear-yard depth beyond that is not computed.
-- Commercial overlays are not captured and special districts are sent to professional review.
+- The ordinary rear-yard depth beyond 100 feet of the corner (ZR 23-342) is not computed.
+- Commercial overlays are not captured.
 
 ## Automated test result
 
@@ -76,11 +77,11 @@ A made-up R6B corner lot where two street lines meet at about 89.7 degrees, a po
 - Date tested: 2026-10-06
 - Command: `python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py`
 - Counts: 88 passed
-- Evidence: [run log](../evidence/test_r6b_coverage_yard_units.txt)
+- Evidence: [run log](../evidence/r6b-rear-yard-corner-waiver.txt)
 - Rule file digest tested: `ee909d7e0074490cbd59b2f965fbcda823182c9b57fa2fa94bf26b5d85260da4`
 - Test files tested:
   - `services/api/tests/rules/test_r6b_coverage_yard_units.py` (`1e0762436eb031d0e905fe67fd21a0f96ad2acf1ade21b618abacd6e288a2053`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

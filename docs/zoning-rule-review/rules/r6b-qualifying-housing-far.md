@@ -64,7 +64,7 @@ A made-up 5,000 sq ft R6B lot with qualifying affordable housing (not a real add
 
 ## Planned, not built
 
-- Whether a development qualifies for qualifying affordable or senior housing is a determination the program does not make; the FAR is surfaced as a labelled alternative.
+- Whether a development qualifies for qualifying affordable or senior housing is a determination the program does not make.
 
 ## Automated test result
 
@@ -73,11 +73,11 @@ A made-up 5,000 sq ft R6B lot with qualifying affordable housing (not a real add
 - Date tested: 2026-10-06
 - Command: `python -m pytest -q tests/rules/test_r6b_far_heights.py`
 - Counts: 32 passed
-- Evidence: [run log](../evidence/test_r6b_far_heights.txt)
+- Evidence: [run log](../evidence/r6b-qualifying-housing-far.txt)
 - Rule file digest tested: `56e70534c8caff490f6b6a89f51684d371bbb75bc40818a840bdc54bf5f38982`
 - Test files tested:
   - `services/api/tests/rules/test_r6b_far_heights.py` (`7e7f505c58155f4dcc6172d78d81f4957a6764d558fb31c0f476b2e0c924daf4`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

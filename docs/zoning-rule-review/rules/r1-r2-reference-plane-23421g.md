@@ -65,7 +65,7 @@ A made-up 10,000 sq ft, 100 ft wide detached R2 lot (not a real address); it mee
 
 ## Planned, not built
 
-- The reference plane feeds the sloping-plane geometry, which the program does not compute.
+- The sloping-plane geometry the 5-foot reference plane feeds is not computed.
 - Site-specific modifiers are not modelled in this rule.
 
 ## Automated test result
@@ -75,11 +75,11 @@ A made-up 10,000 sq ft, 100 ft wide detached R2 lot (not a real address); it mee
 - Date tested: 2026-10-06
 - Command: `python -m pytest -q tests/rules/test_r1_r2_height_setback.py`
 - Counts: 110 passed
-- Evidence: [run log](../evidence/test_r1_r2_height_setback.txt)
+- Evidence: [run log](../evidence/r1-r2-reference-plane-23421g.txt)
 - Rule file digest tested: `39632cfe424a48fbf68c9553e31658b823743a208eb4bbd403fd8ee661e003fa`
 - Test files tested:
   - `services/api/tests/rules/test_r1_r2_height_setback.py` (`30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

@@ -50,6 +50,7 @@ A made-up 5,000 sq ft R6B lot with standard residences (not a real address).
 ## Tests
 
 - `services/api/tests/rules/test_r1_r12_residential_far.py`
+- `services/api/tests/rules/test_r6b_far_heights.py`
 
 ## What the program does today and a test checks
 
@@ -72,13 +73,14 @@ A made-up 5,000 sq ft R6B lot with standard residences (not a real address).
 - Status: Passed
 - Commit tested: `52e3d8a461cf08577273c82f802b85433f6f1ec3`
 - Date tested: 2026-10-06
-- Command: `python -m pytest -q tests/rules/test_r1_r12_residential_far.py`
-- Counts: 15 passed
-- Evidence: [run log](../evidence/test_r1_r12_residential_far.txt)
+- Command: `python -m pytest -q tests/rules/test_r1_r12_residential_far.py tests/rules/test_r6b_far_heights.py`
+- Counts: 47 passed
+- Evidence: [run log](../evidence/r6-r12-residential-far.txt)
 - Rule file digest tested: `6338d2fae4a85f50161e44af4373d5cf1c3b91e83700d64b8c804fb87e4e4cce`
 - Test files tested:
   - `services/api/tests/rules/test_r1_r12_residential_far.py` (`5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+  - `services/api/tests/rules/test_r6b_far_heights.py` (`7e7f505c58155f4dcc6172d78d81f4957a6764d558fb31c0f476b2e0c924daf4`)
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

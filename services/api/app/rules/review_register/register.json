@@ -119,7 +119,7 @@
         "planned": [
           "The sloping-plane envelope between the 25-foot wall and the 35-foot ridge is not computed.",
           "The base plane the heights are measured from is not determined by the program.",
-          "Overlay, special-district, historic-district, large-site and transportation adjustments are not computed; the result is sent to professional review."
+          "Overlay, special-district, historic-district, large-site and transportation adjustments are not computed."
         ]
       },
       "automated_tests": {
@@ -128,12 +128,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r1_r2_height_setback.py",
         "counts": "110 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r1_r2_height_setback.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r1-r2-bare-pitched-height.txt",
         "tested_rule_file_sha256": "b08d5a1e4825f9c715eb7c54323a05d772a4450e8eb19fa43690d4084046bc24",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r1_r2_height_setback.py": "30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -238,9 +238,9 @@
         ],
         "committed_untested": [],
         "planned": [
-          "Whether a lot is a qualifying residential site is a separate legal and geographic determination the program does not make.",
-          "The ZR 23-423 setback for this envelope is recorded as a limitation, not computed.",
-          "Overlay and special-district adjustments are not computed; the result is sent to professional review."
+          "Whether a lot is a qualifying residential site is a determination the program does not make.",
+          "The ZR 23-423 setback for this envelope is not computed.",
+          "Overlay and special-district adjustments are not computed."
         ]
       },
       "automated_tests": {
@@ -249,12 +249,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r1_r2_height_setback.py",
         "counts": "110 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r1_r2_height_setback.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r1-r2-qrs-height.txt",
         "tested_rule_file_sha256": "f1571d89989823974211668a29802806fefc26ece611cbe7ba3fab9b80e36a26",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r1_r2_height_setback.py": "30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -362,12 +362,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r1_r12_residential_far.py",
         "counts": "15 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r1_r12_residential_far.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r1-r2-r3-residential-far.txt",
         "tested_rule_file_sha256": "515ee0eb4a46c3735ca20ec5d4b6afe5c1682ff332e98978cf15cfde77aa9218",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r1_r12_residential_far.py": "5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -461,7 +461,7 @@
         ],
         "committed_untested": [],
         "planned": [
-          "The reference plane feeds the sloping-plane geometry, which the program does not compute.",
+          "The sloping-plane geometry the 5-foot reference plane feeds is not computed.",
           "Site-specific modifiers are not modelled in this rule."
         ]
       },
@@ -471,12 +471,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r1_r2_height_setback.py",
         "counts": "110 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r1_r2_height_setback.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r1-r2-reference-plane-23421g.txt",
         "tested_rule_file_sha256": "39632cfe424a48fbf68c9553e31658b823743a208eb4bbd403fd8ee661e003fa",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r1_r2_height_setback.py": "30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -587,9 +587,8 @@
         ],
         "committed_untested": [],
         "planned": [
-          "The suffix inheritance rests on ZR 11-25 rather than an express per-district citation; it is recorded as a documented limitation, not resolved.",
           "The sloping-plane setback geometry is not computed.",
-          "Overlay, special-district, historic-district, large-site and transportation adjustments are sent to professional review."
+          "Overlay, special-district, historic-district, large-site and transportation adjustments are not computed."
         ]
       },
       "automated_tests": {
@@ -598,12 +597,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r1_r2_height_setback.py",
         "counts": "110 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r1_r2_height_setback.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r1-r2-suffix-variants-pitched-height.txt",
         "tested_rule_file_sha256": "f4f840be26eb17a78b0b935d24df2a5367c495d9f9990a916db5a6418ee43dd3",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r1_r2_height_setback.py": "30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -709,12 +708,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r1_r12_residential_far.py",
         "counts": "15 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r1_r12_residential_far.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r2x-r4-residential-far.txt",
         "tested_rule_file_sha256": "9842c6764d1b27a6f6c8a85cfd43334fcdb5411442585bb0f728828537c7efe4",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r1_r12_residential_far.py": "5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -813,7 +812,7 @@
         ],
         "committed_untested": [],
         "planned": [
-          "Overlay, special-district and historic-district adjustments are not computed; the result is sent to professional review."
+          "Overlay, special-district and historic-district adjustments are not computed."
         ]
       },
       "automated_tests": {
@@ -822,12 +821,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r3_r4_height.py",
         "counts": "90 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r3_r4_height.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r3-2-r4-flat-height.txt",
         "tested_rule_file_sha256": "6a8732b1b2644b868c8fda50d78fc6e86dc84a63f3d381aedfed354f167edaf7",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r3_r4_height.py": "155e064f1aad76181651c81027d9851cc4897e9affc184e0d53b08e492420595"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -930,7 +929,7 @@
         "committed_untested": [],
         "planned": [
           "The sloping-plane envelope between the 25-foot wall and the 35-foot ridge is not computed.",
-          "Overlay, special-district and historic-district adjustments are sent to professional review."
+          "Overlay, special-district and historic-district adjustments are not computed."
         ]
       },
       "automated_tests": {
@@ -939,12 +938,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r3_r4_height.py",
         "counts": "90 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r3_r4_height.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r3-r4-pitched-height.txt",
         "tested_rule_file_sha256": "039bd5bfb172950cb19d54a242478e5b5bd7188103a9d548380004abd142ca8c",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r3_r4_height.py": "155e064f1aad76181651c81027d9851cc4897e9affc184e0d53b08e492420595"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -1034,7 +1033,7 @@
         ],
         "committed_untested": [],
         "planned": [
-          "Overlay, special-district and historic-district adjustments are not computed; the result is sent to professional review."
+          "Overlay, special-district and historic-district adjustments are not computed."
         ]
       },
       "automated_tests": {
@@ -1043,12 +1042,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r3_r4_height.py",
         "counts": "90 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r3_r4_height.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r4b-height.txt",
         "tested_rule_file_sha256": "320c6d53feb8e6e74618ca31663f4d57414cecf8b32930c1d4b1f7d807576c3e",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r3_r4_height.py": "155e064f1aad76181651c81027d9851cc4897e9affc184e0d53b08e492420595"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -1140,8 +1139,8 @@
         ],
         "committed_untested": [],
         "planned": [
-          "No minimum base height is encoded; it is recorded as a documented limitation.",
-          "Overlay, special-district and historic-district adjustments are sent to professional review."
+          "A minimum base height is not computed; the rule reports only the maximum base and building heights.",
+          "Overlay, special-district, historic-district and large-site adjustments are not computed."
         ]
       },
       "automated_tests": {
@@ -1150,12 +1149,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r5_height_setback.py",
         "counts": "47 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r5_height_setback.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r5-height.txt",
         "tested_rule_file_sha256": "30eab3ebe05c2415c5666e515c420d86761714d20035625d5914df9e3294db0f",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r5_height_setback.py": "93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -1255,12 +1254,13 @@
           "Every family rule, this one included, is needs_review, verified-ineligible and effective from 2024-12-05 (test: test_as5_every_family_rule_is_needs_review_and_verified_ineligible)."
         ],
         "committed_untested": [
-          "The 35-foot base and 35-foot building height this rule reports for a qualifying site are not asserted by a value test in this suite; no test found that exercises the emitted values (the conflict and fail-closed paths are tested instead)."
+          "The 35-foot base and 35-foot building height this rule reports for a qualifying site are not asserted by a value test in this suite; no test found that exercises the emitted values (the conflict and fail-closed paths are tested instead).",
+          "The rule escalates a commercial overlay or special district to professional review, but no test found that exercises this escalation for this rule."
         ],
         "planned": [
           "Whether a lot is a qualifying residential site is a determination the program does not make.",
-          "The ZR 23-423 setback is recorded as a limitation, not computed.",
-          "Overlay and special-district adjustments are sent to professional review."
+          "The ZR 23-423 setback is not computed.",
+          "Overlay and special-district adjustments are not computed."
         ]
       },
       "automated_tests": {
@@ -1269,12 +1269,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r5_height_setback.py",
         "counts": "47 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r5_height_setback.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r5-qrs-height.txt",
         "tested_rule_file_sha256": "f1364c06d5a4239146dd6686bdae8555f6a176fe829c6d9c7e51df5444457b8e",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r5_height_setback.py": "93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -1355,7 +1355,8 @@
         "services/api/app/rules/registry.py"
       ],
       "test_links": [
-        "services/api/tests/rules/test_rules_engine.py"
+        "services/api/tests/rules/test_rules_engine.py",
+        "services/api/tests/rules/test_r1_r12_residential_far.py"
       ],
       "behaviour": {
         "tested": [
@@ -1376,14 +1377,15 @@
         "status": "Passed",
         "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
         "tested_on": "2026-10-06",
-        "command": "python -m pytest -q tests/rules/test_rules_engine.py",
-        "counts": "36 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_rules_engine.txt",
+        "command": "python -m pytest -q tests/rules/test_rules_engine.py tests/rules/test_r1_r12_residential_far.py",
+        "counts": "51 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r5-residential-far.txt",
         "tested_rule_file_sha256": "ca6ccb5286cdbb31c318d9e0ff4342cb7d649fd03be7a79af7ec3521b274b13e",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_rules_engine.py": "1098e99b91df603037395d035f7ba47e5b4b6b743048129818d5d9032551bcb7"
+          "services/api/tests/rules/test_rules_engine.py": "1098e99b91df603037395d035f7ba47e5b4b6b743048129818d5d9032551bcb7",
+          "services/api/tests/rules/test_r1_r12_residential_far.py": "5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -1491,8 +1493,8 @@
         ],
         "committed_untested": [],
         "planned": [
-          "The ZR 23-423 reductions and modifications (front-yard offset, recesses, orientation, dormers) are not computed; the modified final setback is unresolved.",
-          "Overlay and special-district adjustments are sent to professional review."
+          "The ZR 23-423 reductions and modifications (front-yard offset, recesses, orientation, dormers) are not computed.",
+          "Overlay and special-district adjustments are not computed."
         ]
       },
       "automated_tests": {
@@ -1501,12 +1503,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r5_height_setback.py",
         "counts": "47 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r5_height_setback.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r5-setback.txt",
         "tested_rule_file_sha256": "6dd97c4488ce8cb8ac8095314e8ba77b31b2a770ce23af2405d8f75e67ecb37f",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r5_height_setback.py": "93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -1597,10 +1599,12 @@
           "Is not applied to R5 or an unknown R5 variant (test: test_nc1_variant_value_not_applied_to_another, test_nc1_unknown_r5_variant_is_unsupported_not_nearest).",
           "Is needs_review, verified-ineligible and conditional/never verified (test: test_as5_every_family_rule_is_needs_review_and_verified_ineligible, test_as1_conditional_never_verified_for_every_variant)."
         ],
-        "committed_untested": [],
+        "committed_untested": [
+          "The rule escalates a commercial overlay, special district or historic district to professional review, but no test found that exercises this escalation for this rule."
+        ],
         "planned": [
           "The sloping-plane setback geometry above 25 feet is not computed.",
-          "Overlay, special-district and historic-district adjustments are sent to professional review."
+          "Overlay, special-district and historic-district adjustments are not computed."
         ]
       },
       "automated_tests": {
@@ -1609,12 +1613,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r5_height_setback.py",
         "counts": "47 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r5_height_setback.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r5a-height.txt",
         "tested_rule_file_sha256": "38661a9d39ddf941a493aba1a28853150a043d6bf81f67a3ec996f527c9c8192",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r5_height_setback.py": "93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -1699,10 +1703,12 @@
           "Is not applied to R5 or an unknown R5 variant (test: test_nc1_variant_value_not_applied_to_another, test_nc1_unknown_r5_variant_is_unsupported_not_nearest).",
           "Is needs_review, verified-ineligible, conditional/never verified and not effective before 2024-12-05 (test: test_as5_every_family_rule_is_needs_review_and_verified_ineligible, test_as3_before_amendment_not_effective)."
         ],
-        "committed_untested": [],
+        "committed_untested": [
+          "The rule escalates a commercial overlay, special district or historic district to professional review, but no test found that exercises this escalation for this rule."
+        ],
         "planned": [
-          "No base-height or setback split is modelled; only a single flat building-height cap is reported.",
-          "Overlay, special-district and historic-district adjustments are sent to professional review."
+          "No base-height or setback split is modelled for R5B.",
+          "Overlay, special-district and historic-district adjustments are not computed."
         ]
       },
       "automated_tests": {
@@ -1711,12 +1717,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r5_height_setback.py",
         "counts": "47 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r5_height_setback.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r5b-height.txt",
         "tested_rule_file_sha256": "3a22a04911e94465669731768a6ea1cf5167de69a8c9132cd93baf183a44cc74",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r5_height_setback.py": "93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -1802,10 +1808,12 @@
           "Is not applied to R5 or an unknown R5 variant (test: test_nc1_variant_value_not_applied_to_another, test_nc1_unknown_r5_variant_is_unsupported_not_nearest).",
           "Is needs_review, verified-ineligible, conditional/never verified and not effective before 2024-12-05 (test: test_as5_every_family_rule_is_needs_review_and_verified_ineligible, test_as3_before_amendment_not_effective)."
         ],
-        "committed_untested": [],
+        "committed_untested": [
+          "The rule escalates a commercial overlay, special district or historic district to professional review, but no test found that exercises this escalation for this rule."
+        ],
         "planned": [
-          "No base-height or setback split is modelled; only a single flat building-height cap is reported.",
-          "Overlay, special-district and historic-district adjustments are sent to professional review."
+          "No base-height or setback split is modelled for R5D.",
+          "Overlay, special-district and historic-district adjustments are not computed."
         ]
       },
       "automated_tests": {
@@ -1814,12 +1822,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r5_height_setback.py",
         "counts": "47 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r5_height_setback.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r5d-height.txt",
         "tested_rule_file_sha256": "129e4fd69be0688f4aea870713e4b7de5192f70177a10098a800b806b7432dfc",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r5_height_setback.py": "93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -1902,7 +1910,8 @@
         "services/api/app/rules/registry.py"
       ],
       "test_links": [
-        "services/api/tests/rules/test_r1_r12_residential_far.py"
+        "services/api/tests/rules/test_r1_r12_residential_far.py",
+        "services/api/tests/rules/test_r6b_far_heights.py"
       ],
       "behaviour": {
         "tested": [
@@ -1921,14 +1930,15 @@
         "status": "Passed",
         "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
         "tested_on": "2026-10-06",
-        "command": "python -m pytest -q tests/rules/test_r1_r12_residential_far.py",
-        "counts": "15 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r1_r12_residential_far.txt",
+        "command": "python -m pytest -q tests/rules/test_r1_r12_residential_far.py tests/rules/test_r6b_far_heights.py",
+        "counts": "47 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r6-r12-residential-far.txt",
         "tested_rule_file_sha256": "6338d2fae4a85f50161e44af4373d5cf1c3b91e83700d64b8c804fb87e4e4cce",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_r1_r12_residential_far.py": "5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca"
+          "services/api/tests/rules/test_r1_r12_residential_far.py": "5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca",
+          "services/api/tests/rules/test_r6b_far_heights.py": "7e7f505c58155f4dcc6172d78d81f4957a6764d558fb31c0f476b2e0c924daf4"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -2008,7 +2018,8 @@
         "services/api/app/rules/registry.py"
       ],
       "test_links": [
-        "services/api/tests/rules/test_r1_r12_residential_far.py"
+        "services/api/tests/rules/test_r1_r12_residential_far.py",
+        "services/api/tests/rules/test_r6b_far_heights.py"
       ],
       "behaviour": {
         "tested": [
@@ -2019,7 +2030,7 @@
         ],
         "committed_untested": [],
         "planned": [
-          "Which FAR applies cannot be settled without a wide-street determination, which this rule does not make; it returns the conservative value and marks it conditional.",
+          "The wide-street determination is not made by this rule, so which FAR applies cannot be settled from it alone.",
           "The ZR 23-22 split of one lot between two FAR values ('or portions thereof') is not computed."
         ]
       },
@@ -2027,14 +2038,15 @@
         "status": "Passed",
         "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
         "tested_on": "2026-10-06",
-        "command": "python -m pytest -q tests/rules/test_r1_r12_residential_far.py",
-        "counts": "15 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r1_r12_residential_far.txt",
+        "command": "python -m pytest -q tests/rules/test_r1_r12_residential_far.py tests/rules/test_r6b_far_heights.py",
+        "counts": "47 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r6-r7-r8-wide-street-conditional-far.txt",
         "tested_rule_file_sha256": "a33e50f3015bb50c43720ad8bf9c58bf14b4ebd52ac8c1aa721c638b40533463",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_r1_r12_residential_far.py": "5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca"
+          "services/api/tests/rules/test_r1_r12_residential_far.py": "5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca",
+          "services/api/tests/rules/test_r6b_far_heights.py": "7e7f505c58155f4dcc6172d78d81f4957a6764d558fb31c0f476b2e0c924daf4"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -2146,13 +2158,12 @@
           "Rounds correctly across the three-quarters boundary over a range of floor areas (test: test_units_round_up_only_at_three_quarters).",
           "Is the only rule in the registry that emits a dwelling-unit output for R6B (test: test_units_are_one_place_across_the_registry).",
           "Returns no estimate for qualifying senior housing or a special density area (no factor applies), and sends qualifying affordable housing to professional review (test: test_qualifying_senior_housing_has_no_factor, test_special_density_area_has_no_factor, test_qualifying_affordable_is_computed_but_sent_to_review).",
-          "Fails closed to professional review on a missing or invalid floor area, program or special-density flag (test: test_unknown_program_area_or_floor_area_gives_no_estimate, test_units_fail_closed_on_a_bad_floor_area)."
+          "Fails closed to professional review on a missing or invalid floor area, program or special-density flag (test: test_unknown_program_area_or_floor_area_gives_no_estimate, test_units_fail_closed_on_a_bad_floor_area).",
+          "Reaches R6B through the ZR 11-25 suffix reading, flagged on every result (test: test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so)."
         ],
         "committed_untested": [],
         "planned": [
-          "Conversions and mixed-factor applicability are not computed; they are recorded as documented limitations.",
-          "The qualifying-affordable dividend is sent to professional review rather than decided.",
-          "R6B is reached through the ZR 11-25 suffix reading, recorded as a documented limitation."
+          "Conversions and mixed-factor applicability are not computed."
         ]
       },
       "automated_tests": {
@@ -2161,12 +2172,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py",
         "counts": "88 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r6b_coverage_yard_units.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-dwelling-units.txt",
         "tested_rule_file_sha256": "404179f2c2aab9c25826c59c92c4715fe0647a8f552cb1e385c72ccc7cb7ef02",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r6b_coverage_yard_units.py": "1e0762436eb031d0e905fe67fd21a0f96ad2acf1ade21b618abacd6e288a2053"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -2264,13 +2275,13 @@
           "The rule parameters are byte-equal to the ZR 23-432 R6B snapshot row (test: test_rule_parameters_are_byte_equal_to_the_snapshot_rows).",
           "Is the only rule that emits a height in feet for R6B (test: test_c1_no_other_rule_emits_a_height_for_r6b).",
           "Attaches the overlay note only when an overlay is mapped, and fails closed on a special district or unattested inputs (test: test_c1_overlay_note_only_when_an_overlay_is_mapped, test_c1_special_district_or_unattested_inputs_fail_closed).",
-          "Is R6B-only, draft/needs_review, lane-A-gated and not effective before 2024-12-05 (test: test_c1_height_rule_is_r6b_only, test_new_rules_are_draft_needs_review_and_lane_a_gated, test_before_the_amendment_date_nothing_is_emitted)."
+          "Is R6B-only, draft/needs_review, lane-A-gated and not effective before 2024-12-05 (test: test_c1_height_rule_is_r6b_only, test_new_rules_are_draft_needs_review_and_lane_a_gated, test_before_the_amendment_date_nothing_is_emitted).",
+          "Records that R6B heights do not depend on street width (test: test_c1_benchmark_heights_from_the_one_lookup)."
         ],
         "committed_untested": [],
         "planned": [
           "The ZR 23-433 setback above the base height is not encoded.",
-          "R6B heights do not depend on street width (recorded as a documented limitation).",
-          "Commercial overlays are not captured and special districts are sent to professional review."
+          "Commercial overlays are not captured."
         ]
       },
       "automated_tests": {
@@ -2279,12 +2290,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r6b_far_heights.py",
         "counts": "32 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r6b_far_heights.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-height.txt",
         "tested_rule_file_sha256": "86507408a473f672cae795b488d308508872822617a01348b978a49a28e4a792",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r6b_far_heights.py": "7e7f505c58155f4dcc6172d78d81f4957a6764d558fb31c0f476b2e0c924daf4"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -2383,12 +2394,13 @@
           "Reports 100 percent coverage for a corner lot (the benchmark) and 80 percent for interior or through lots, byte-matched to ZR 23-362(a) (test: test_benchmark_corner_lot_coverage_is_100_percent, test_interior_and_through_lots_are_80_percent_with_the_23_363_note).",
           "Fails closed to professional review and names the input when the lot type is missing, and rejects an unlisted lot type rather than guessing (test: test_unknown_lot_type_gives_no_coverage_and_names_the_input, test_an_unlisted_lot_type_is_rejected_not_guessed).",
           "Is R6B-only, draft/needs_review, lane-A-gated and not effective before 2024-12-05 (test: test_rules_are_r6b_only, test_rules_are_draft_needs_review_and_lane_a_gated, test_before_the_amendment_date_nothing_is_emitted).",
-          "Reaches R6B through the ZR 11-25 suffix reading, flagged on every result (test: test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so)."
+          "Reaches R6B through the ZR 11-25 suffix reading, flagged on every result (test: test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so).",
+          "Fails closed to professional review on a special district or an unattested overlay (test: test_special_district_or_unattested_special_district_fails_closed, test_unattested_overlay_fails_closed)."
         ],
         "committed_untested": [],
         "planned": [
-          "Only standard lots are covered; special interior/through-lot rules are a documented limitation.",
-          "Commercial overlays are not captured and special districts are sent to professional review."
+          "Only standard lots are covered; the eligible-site percentages and the special interior/through-lot rules are not computed.",
+          "Commercial overlays are not captured."
         ]
       },
       "automated_tests": {
@@ -2397,12 +2409,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py",
         "counts": "88 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r6b_coverage_yard_units.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-lot-coverage.txt",
         "tested_rule_file_sha256": "6d1f5c0adb5a6d3a85a28e57466336a0f83b16e96bb72a46fa6196a6256ce95f",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r6b_coverage_yard_units.py": "1e0762436eb031d0e905fe67fd21a0f96ad2acf1ade21b618abacd6e288a2053"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -2496,7 +2508,7 @@
         ],
         "committed_untested": [],
         "planned": [
-          "Whether a development qualifies for qualifying affordable or senior housing is a determination the program does not make; the FAR is surfaced as a labelled alternative."
+          "Whether a development qualifies for qualifying affordable or senior housing is a determination the program does not make."
         ]
       },
       "automated_tests": {
@@ -2505,12 +2517,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r6b_far_heights.py",
         "counts": "32 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r6b_far_heights.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-qualifying-housing-far.txt",
         "tested_rule_file_sha256": "56e70534c8caff490f6b6a89f51684d371bbb75bc40818a840bdc54bf5f38982",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r6b_far_heights.py": "7e7f505c58155f4dcc6172d78d81f4957a6764d558fb31c0f476b2e0c924daf4"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",
@@ -2608,12 +2620,13 @@
           "Checks the 135-degree boundary and that the waiver does not apply above it (test: test_angle_boundary_is_135_degrees_or_less).",
           "Does not apply beyond 100 feet and emits nothing there (test: test_beyond_100_ft_the_waiver_does_not_apply_and_nothing_is_emitted).",
           "Fails closed to professional review on missing geometry or an impossible angle, naming the missing input (test: test_unknown_geometry_means_no_rear_yard_result_with_the_reason, test_an_impossible_angle_fails_closed).",
-          "Is R6B-only, draft/needs_review and lane-A-gated, reached through the ZR 11-25 suffix reading (test: test_rules_are_r6b_only, test_rules_are_draft_needs_review_and_lane_a_gated, test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so)."
+          "Is R6B-only, draft/needs_review and lane-A-gated, reached through the ZR 11-25 suffix reading (test: test_rules_are_r6b_only, test_rules_are_draft_needs_review_and_lane_a_gated, test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so).",
+          "Fails closed to professional review on a special district or an unattested special-district flag (test: test_special_district_or_unattested_special_district_fails_closed, test_unattested_overlay_fails_closed)."
         ],
         "committed_untested": [],
         "planned": [
-          "Only the waiver within 100 feet of the corner is computed; the ordinary rear-yard depth beyond that is not computed.",
-          "Commercial overlays are not captured and special districts are sent to professional review."
+          "The ordinary rear-yard depth beyond 100 feet of the corner (ZR 23-342) is not computed.",
+          "Commercial overlays are not captured."
         ]
       },
       "automated_tests": {
@@ -2622,12 +2635,12 @@
         "tested_on": "2026-10-06",
         "command": "python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py",
         "counts": "88 passed",
-        "evidence": "docs/zoning-rule-review/evidence/test_r6b_coverage_yard_units.txt",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-rear-yard-corner-waiver.txt",
         "tested_rule_file_sha256": "ee909d7e0074490cbd59b2f965fbcda823182c9b57fa2fa94bf26b5d85260da4",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_r6b_coverage_yard_units.py": "1e0762436eb031d0e905fe67fd21a0f96ad2acf1ade21b618abacd6e288a2053"
         },
-        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
       "revision": 1,
       "last_changed": "2026-10-06",

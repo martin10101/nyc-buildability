@@ -382,6 +382,23 @@ def test_behaviour_rejects_a_tested_item_without_a_test_name():
     assert any("name the test" in m for m in checker.behaviour_errors(e))
 
 
+def test_tested_item_naming_a_function_not_in_a_linked_file_is_refused():
+    # F1(d): a cited function that is not DEFINED in one of the entry's linked
+    # test files is refused (a bare "test_" substring is no longer enough).
+    e = copy.deepcopy(BY_ID["r6b-height"])
+    e["behaviour"]["tested"] = ["does something (test: test_this_function_is_defined_nowhere_xyz)"]
+    errs = checker.behaviour_errors(e)
+    assert any(
+        "test_this_function_is_defined_nowhere_xyz" in m and "not defined" in m for m in errs
+    )
+
+
+def test_every_committed_tested_citation_is_defined_in_a_linked_file():
+    # The committed register must satisfy the stronger rule for all 23 entries.
+    for e in ENTRIES:
+        assert checker.behaviour_errors(e) == [], e["rule_id"]
+
+
 # --------------------------------------------------------------------------
 # S15 - the automated-tests field is a RESULT bound to what was tested
 # --------------------------------------------------------------------------
@@ -412,6 +429,26 @@ def test_changed_rule_file_demands_status_not_run():
     assert any("Not run" in m for m in errs)
     e["automated_tests"]["status"] = "Not run"
     assert checker.automated_tests_errors(e) == []
+
+
+def test_changed_second_linked_test_file_digest_demands_not_run():
+    # F1(d): an entry that binds TWO test files must flip to "Not run" when the
+    # SECOND linked file's recorded digest no longer matches.
+    e = copy.deepcopy(BY_ID["r5-residential-far"])
+    assert len(e["test_links"]) == 2
+    second = e["test_links"][1]
+    e["automated_tests"]["tested_test_file_sha256s"][second] = "0" * 64
+    assert any("Not run" in m for m in checker.automated_tests_errors(e))
+    e["automated_tests"]["status"] = "Not run"
+    assert checker.automated_tests_errors(e) == []
+
+
+def test_a_linked_test_file_not_bound_by_a_digest_is_caught():
+    # F1(a) reverse binding: every linked test file must be in the digest map.
+    e = copy.deepcopy(BY_ID["r5-residential-far"])
+    second = e["test_links"][1]
+    del e["automated_tests"]["tested_test_file_sha256s"][second]
+    assert any("tested_test_file_sha256s" in m for m in checker.automated_tests_errors(e))
 
 
 # --------------------------------------------------------------------------

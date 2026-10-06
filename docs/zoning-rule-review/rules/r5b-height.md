@@ -58,12 +58,12 @@ A made-up R5B lot (not a real address).
 
 ## In the program but no test checks it
 
-- (none recorded)
+- The rule escalates a commercial overlay, special district or historic district to professional review, but no test found that exercises this escalation for this rule.
 
 ## Planned, not built
 
-- No base-height or setback split is modelled; only a single flat building-height cap is reported.
-- Overlay, special-district and historic-district adjustments are sent to professional review.
+- No base-height or setback split is modelled for R5B.
+- Overlay, special-district and historic-district adjustments are not computed.
 
 ## Automated test result
 
@@ -72,11 +72,11 @@ A made-up R5B lot (not a real address).
 - Date tested: 2026-10-06
 - Command: `python -m pytest -q tests/rules/test_r5_height_setback.py`
 - Counts: 47 passed
-- Evidence: [run log](../evidence/test_r5_height_setback.txt)
+- Evidence: [run log](../evidence/r5b-height.txt)
 - Rule file digest tested: `3a22a04911e94465669731768a6ea1cf5167de69a8c9132cd93baf183a44cc74`
 - Test files tested:
   - `services/api/tests/rules/test_r5_height_setback.py` (`93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

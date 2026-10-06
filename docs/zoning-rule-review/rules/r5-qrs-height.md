@@ -62,12 +62,13 @@ A made-up R5 lot flagged as a qualifying residential site (not a real address).
 ## In the program but no test checks it
 
 - The 35-foot base and 35-foot building height this rule reports for a qualifying site are not asserted by a value test in this suite; no test found that exercises the emitted values (the conflict and fail-closed paths are tested instead).
+- The rule escalates a commercial overlay or special district to professional review, but no test found that exercises this escalation for this rule.
 
 ## Planned, not built
 
 - Whether a lot is a qualifying residential site is a determination the program does not make.
-- The ZR 23-423 setback is recorded as a limitation, not computed.
-- Overlay and special-district adjustments are sent to professional review.
+- The ZR 23-423 setback is not computed.
+- Overlay and special-district adjustments are not computed.
 
 ## Automated test result
 
@@ -76,11 +77,11 @@ A made-up R5 lot flagged as a qualifying residential site (not a real address).
 - Date tested: 2026-10-06
 - Command: `python -m pytest -q tests/rules/test_r5_height_setback.py`
 - Counts: 47 passed
-- Evidence: [run log](../evidence/test_r5_height_setback.txt)
+- Evidence: [run log](../evidence/r5-qrs-height.txt)
 - Rule file digest tested: `f1364c06d5a4239146dd6686bdae8555f6a176fe829c6d9c7e51df5444457b8e`
 - Test files tested:
   - `services/api/tests/rules/test_r5_height_setback.py` (`93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

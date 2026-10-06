@@ -25,8 +25,12 @@ from __future__ import annotations
 import hashlib
 import json
 import pathlib
+import re
 
 from . import render_review_register as render
+
+# A pytest function name as cited in a behaviour "tested" item.
+TEST_FN_RE = re.compile(r"test_[A-Za-z0-9_]+")
 
 REPO_ROOT = render.REPO_ROOT
 RULESET_DIR = render.RULESET_DIR
@@ -197,13 +201,31 @@ def behaviour_errors(entry: dict) -> list[str]:
             isinstance(s, str) and s.strip() for s in items
         ):
             errs.append(f"{rid}: behaviour.{key} must be a list of non-empty plain sentences")
-    # Every 'tested' item names the test function(s) that exercise it.
+    # Every 'tested' item names the test function(s) that exercise it, and each named
+    # function must be DEFINED in one of the entry's OWN linked test files (a bare
+    # "test_" substring is not enough - a cited test in a file the entry does not link
+    # and bind would not flip the entry's result to "Not run" when that file changes).
+    linked_text = ""
+    for rel in entry.get("test_links", []):
+        path = REPO_ROOT / rel
+        if path.is_file():
+            linked_text += path.read_text()
     for item in b.get("tested", []):
-        if isinstance(item, str) and "test_" not in item:
+        if not isinstance(item, str):
+            continue
+        names = TEST_FN_RE.findall(item)
+        if not names:
             errs.append(
                 f"{rid}: a 'tested' behaviour must name the test function(s) that exercise it: "
                 f"{item!r}"
             )
+            continue
+        for name in names:
+            if f"def {name}(" not in linked_text:
+                errs.append(
+                    f"{rid}: tested item names {name}, which is not defined in any of the entry's "
+                    f"linked test files {entry.get('test_links')}: {item!r}"
+                )
     return errs
 
 
@@ -217,6 +239,14 @@ def automated_tests_errors(entry: dict) -> list[str]:
     if set(at) != AT_KEYS:
         errs.append(f"{rid}: automated_tests keys {sorted(at)} != {sorted(AT_KEYS)}")
         return errs
+    # Every linked test file is bound by a digest, and the reverse: the result is
+    # bound to exactly the test files the entry links (F1).
+    if set(at["tested_test_file_sha256s"]) != set(entry.get("test_links", [])):
+        errs.append(
+            f"{rid}: automated_tests.tested_test_file_sha256s keys "
+            f"{sorted(at['tested_test_file_sha256s'])} must equal the entry's test_links "
+            f"{sorted(entry.get('test_links', []))}"
+        )
     if at["status"] not in AT_STATUS:
         errs.append(
             f"{rid}: automated_tests status {at['status']!r} is not one of {list(AT_STATUS)}"

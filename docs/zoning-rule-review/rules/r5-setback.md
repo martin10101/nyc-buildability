@@ -66,8 +66,8 @@ A made-up R5 lot with a street wall fronting a wide street (not a real address).
 
 ## Planned, not built
 
-- The ZR 23-423 reductions and modifications (front-yard offset, recesses, orientation, dormers) are not computed; the modified final setback is unresolved.
-- Overlay and special-district adjustments are sent to professional review.
+- The ZR 23-423 reductions and modifications (front-yard offset, recesses, orientation, dormers) are not computed.
+- Overlay and special-district adjustments are not computed.
 
 ## Automated test result
 
@@ -76,11 +76,11 @@ A made-up R5 lot with a street wall fronting a wide street (not a real address).
 - Date tested: 2026-10-06
 - Command: `python -m pytest -q tests/rules/test_r5_height_setback.py`
 - Counts: 47 passed
-- Evidence: [run log](../evidence/test_r5_height_setback.txt)
+- Evidence: [run log](../evidence/r5-setback.txt)
 - Rule file digest tested: `6dd97c4488ce8cb8ac8095314e8ba77b31b2a770ce23af2405d8f75e67ecb37f`
 - Test files tested:
   - `services/api/tests/rules/test_r5_height_setback.py` (`93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 

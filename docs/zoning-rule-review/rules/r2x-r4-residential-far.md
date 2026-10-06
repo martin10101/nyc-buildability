@@ -75,11 +75,11 @@ A made-up 4,000 sq ft R4 lot (not a real address).
 - Date tested: 2026-10-06
 - Command: `python -m pytest -q tests/rules/test_r1_r12_residential_far.py`
 - Counts: 15 passed
-- Evidence: [run log](../evidence/test_r1_r12_residential_far.txt)
+- Evidence: [run log](../evidence/r2x-r4-residential-far.txt)
 - Rule file digest tested: `9842c6764d1b27a6f6c8a85cfd43334fcdb5411442585bb0f728828537c7efe4`
 - Test files tested:
   - `services/api/tests/rules/test_r1_r12_residential_far.py` (`5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca`)
-- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or a test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
+- These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Gaps
 
