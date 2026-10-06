@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 464,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T20:37:43+00:00",
+ "updated_at": "2026-10-06T20:40:45+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -13467,7 +13467,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M4-T025"
     ],
     "task_types": [],
     "milestones": [],
@@ -13566,7 +13567,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M4-T025"
     ],
     "task_types": [],
     "milestones": [],
