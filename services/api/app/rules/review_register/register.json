@@ -1,0 +1,2877 @@
+{
+  "schema": "zoning_rule_review_register",
+  "schema_version": "1.0",
+  "generated_note": "Authored source of the zoning-rule review register. The Markdown under docs/zoning-rule-review/ is rendered from this file; do not edit the Markdown by hand. See docs/zoning-rule-review/GUIDE.md.",
+  "field_guide": {
+    "verdict_values": [
+      "Not reviewed",
+      "Correct",
+      "Incorrect",
+      "Needs re-review"
+    ],
+    "decision_values": [
+      "Correct",
+      "Incorrect",
+      "no decision"
+    ],
+    "applies_to_current_values": [
+      "true",
+      "false",
+      "null"
+    ],
+    "automated_test_status_values": [
+      "Passed",
+      "Failed",
+      "Not run"
+    ],
+    "basis_kind_values": [
+      "law_text",
+      "reference_case",
+      "gap"
+    ],
+    "event_values": [
+      "created",
+      "interpretation_changed",
+      "applicability_changed",
+      "implementation_changed",
+      "evidence_changed",
+      "human_verdict_recorded",
+      "flagged_for_re_review"
+    ],
+    "agrees_values": [
+      "true",
+      "false",
+      "null"
+    ]
+  },
+  "entries": [
+    {
+      "entry_id": "r1-r2-bare-pitched-height",
+      "rule_id": "r1-r2-bare-pitched-height",
+      "rule_file": "services/api/app/rules/rulesets/r1_r2_bare_pitched_height.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "b08d5a1e4825f9c715eb7c54323a05d772a4450e8eb19fa43690d4084046bc24",
+      "title": "R1/R2 bare group labels (pitched-roof envelope, ZR 23-421) - maximum perimeter-wall height and maximum ridge/building height",
+      "family": "residential_height_setback_r1_r2",
+      "law": [
+        {
+          "section": "23-421",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18075",
+          "snapshot_id": "zr-23-421-r1-r2",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-421-r1-r2.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-13T02:44:00Z",
+          "content_digest_sha256": "1bce881805d9ee4d79253432ad86128b7203f81f2054ff25e1ba8dfb1dad1e8b"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "Bare R1 and R2 districts (no letter suffix) for a single- or two-family detached, semi-detached or zero-lot-line building. Other districts or building types are reported as not applicable.",
+      "exceptions": [
+        "The sloping-plane setback geometry above the 25 ft wall is not computed; it is recorded as a limitation and sent for professional review.",
+        "A commercial overlay, special district, historic district or large site is not adjusted by the program; when one is present the result is sent for professional review instead of a changed number.",
+        "Nearby transportation infrastructure may raise the height; the program sends that case for professional review."
+      ],
+      "interpretation": "For the pitched-roof building form the program reports the two anchor heights from ZR 23-421: a perimeter wall up to 25 feet above the base plane, and a ridge line up to 35 feet above the base plane. It marks the result for professional review because the actual envelope between those heights is a set of sloping planes the program does not compute.",
+      "example": {
+        "description": "A made-up detached house on a bare R1 lot (not a real address).",
+        "inputs": {
+          "zoning_district": "R1",
+          "building_type": "detached"
+        },
+        "expected": {
+          "values": {
+            "max_perimeter_wall_height": 25,
+            "max_building_height": 35
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-421: 'Perimeter walls are subject to setback regulations at a maximum height above the base plane of 25 feet'; the sloping planes 'meet at a ridge line of 35 feet above the base plane.'",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_perimeter_wall_height": 25.0,
+            "max_building_height": 35.0
+          },
+          "coverage_status": "professional_review_required"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r1_r2_bare_pitched_height.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r1_r2_height_setback.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports a 25-foot maximum perimeter-wall height and a 35-foot maximum ridge/building height for a bare R1 or R2 district with a pitched building form, as two separate values (test: test_as1_bare_confident_wall_and_ridge_separate).",
+          "Keeps the result conditional and never verified (test: test_as1_conditional_never_verified_for_every_rule).",
+          "Applies to bare R1/R2 only and is not applicable to any other or unknown district (test: test_nc1_bare_rule_scoped_to_bare_labels_only, test_nc1_unknown_variant_is_unsupported_not_nearest).",
+          "Fails closed to professional review when the building form or district is missing or invalid (test: test_nc4_bare_building_type_unavailable_fails_closed, test_nc4_invalid_building_type_fails_closed, test_nc5_missing_district_fails_closed).",
+          "Escalates to professional review when an overlay, special district, historic district, large site or nearby transportation is present or merely unknown (test: test_nc3_bare_rule_modifier_downgrades, test_nc3_omitted_modifier_flag_is_indeterminate_not_confident).",
+          "Is not effective before 2024-12-05 and is effective on that date (test: test_as3_before_amendment_not_effective, test_as3_on_amendment_date_effective).",
+          "Leaves the sloping-plane setback out of the numeric output and records it as a documented limitation (test: test_nc8_setback_geometry_never_a_numeric_output)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The sloping-plane envelope between the 25-foot wall and the 35-foot ridge is not computed.",
+          "The base plane the heights are measured from is not determined by the program.",
+          "Overlay, special-district, historic-district, large-site and transportation adjustments are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r1_r2_height_setback.py",
+        "counts": "110 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r1-r2-bare-pitched-height.txt",
+        "tested_rule_file_sha256": "b08d5a1e4825f9c715eb7c54323a05d772a4450e8eb19fa43690d4084046bc24",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r1_r2_height_setback.py": "30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The program does not compute the sloping-plane geometry above 25 feet; it reports the 25 ft wall and 35 ft ridge as anchor heights and marks the result for professional review.",
+        "Heights are measured above the base plane, which is itself a separate professional input the program does not determine.",
+        "Overlays, special districts, historic districts, large sites and transportation-infrastructure increases send the result for professional review rather than changing the number.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r1-r2-qrs-height",
+      "rule_id": "r1-r2-qrs-height",
+      "rule_file": "services/api/app/rules/rulesets/r1_r2_qrs_height.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "f1571d89989823974211668a29802806fefc26ece611cbe7ba3fab9b80e36a26",
+      "title": "R1/R2-series qualifying residential site - alternative maximum base height and building height (section 23-424)",
+      "family": "residential_height_setback_r1_r2",
+      "law": [
+        {
+          "section": "23-424",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/22770",
+          "snapshot_id": "zr-23-424-r1-r2",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-424-r1-r2.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-13T02:45:00Z",
+          "content_digest_sha256": "336ba2cbbe73689e8b24caf3b3d8bb396eaee5d3b8a89b018328213801c798cc"
+        },
+        {
+          "section": "23-423",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-423",
+          "snapshot_id": "zr-23-423",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-423.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-07-22T00:00:00Z",
+          "content_digest_sha256": "b0b062fbb570ea5bc437572a144eb63f207aa73bdfe8cc612e938f0f3cb72903"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R1/R2-series qualifying residential sites (R1-1, R1-2, R1-2A, R2, R2A, R2X) - only when the lot is flagged as a qualifying residential site.",
+      "exceptions": [
+        "The ZR 23-423 setback for this envelope is a separate street-width-based constraint, not restated here.",
+        "Whether a lot is a qualifying residential site is a separate legal/geographic determination the program cannot make; without it the rule sends the case for professional review.",
+        "A commercial overlay or special district sends the result for professional review."
+      ],
+      "interpretation": "For a qualifying residential site the program reports the alternative envelope from the ZR 23-424 table: maximum base height 35 feet and maximum building height 35 feet. It marks the result for professional review, and this alternative competes with the base-district height rule rather than silently overriding it.",
+      "example": {
+        "description": "A made-up R2A lot flagged as a qualifying residential site (not a real address).",
+        "inputs": {
+          "zoning_district": "R2A",
+          "qualifying_residential_site": true
+        },
+        "expected": {
+          "values": {
+            "max_base_height": 35,
+            "max_building_height": 35
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-424 table, row R1-1/R1-2/R1-2A/R2/R2A/R2X/R3-1/R3-2/R3A/R3X: maximum base height 35, maximum height of buildings 35.",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_base_height": 35.0,
+            "max_building_height": 35.0
+          },
+          "coverage_status": "professional_review_required"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r1_r2_qrs_height.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r1_r2_height_setback.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports a 35-foot maximum base height and a 35-foot maximum building height for an R1/R2-series qualifying residential site (test: test_as1_qrs_confident_base_and_building_height).",
+          "Keeps the result conditional and never verified (test: test_as1_conditional_never_verified_for_every_rule).",
+          "Fails closed to professional review when the qualifying-site flag is missing (test: test_nc5_qrs_missing_qualifying_flag_fails_closed).",
+          "Escalates to professional review on a commercial overlay or special district (test: test_nc3_qrs_modifier_downgrades).",
+          "Is not applicable to foreign districts even with the qualifying flag set (test: test_nc1_qrs_rule_never_matches_foreign_districts).",
+          "Is reported as a same-family conflict against the base envelope rules for building height, with no single value chosen (test: test_nc7_qrs_and_suffix_variant_rules_conflict_no_value, test_nc7_qrs_and_bare_rule_conflict_no_value)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "Whether a lot is a qualifying residential site is a determination the program does not make.",
+          "The ZR 23-423 setback for this envelope is not computed.",
+          "Overlay and special-district adjustments are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r1_r2_height_setback.py",
+        "counts": "110 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r1-r2-qrs-height.txt",
+        "tested_rule_file_sha256": "f1571d89989823974211668a29802806fefc26ece611cbe7ba3fab9b80e36a26",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r1_r2_height_setback.py": "30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "Whether a lot qualifies as a qualifying residential site is not decided by the program.",
+        "This alternative competes with the base-district height rule; the program surfaces the conflict rather than picking one.",
+        "The ZR 23-423 setback for this envelope is not restated here.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r1-r2-r3-residential-far",
+      "rule_id": "r1-r2-r3-residential-far",
+      "rule_file": "services/api/app/rules/rulesets/r1_r2_r3_residential_far.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "515ee0eb4a46c3735ca20ec5d4b6afe5c1682ff332e98978cf15cfde77aa9218",
+      "title": "R1/R2/R3 residence districts (first ZR 23-21 table row) - maximum residential floor area ratio (standard zoning lots)",
+      "family": "residential_far",
+      "law": [
+        {
+          "section": "23-21",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-21",
+          "snapshot_id": "zr-23-21",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-21.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-11T00:00:00Z",
+          "content_digest_sha256": "b52771e629b6afa9f9a6843a657dbfd143294f721cd757f953792e747a48ad8a"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R1, R2 and R3 lower-density residence districts (the first row of the ZR 23-21 floor-area table: R1-1, R1-2, R1-2A, R2, R2A, R3A, R3X, R3-1, R3-2). Any other district is reported as not applicable.",
+      "exceptions": [
+        "A qualifying residential site is allowed a higher FAR (1.00); the program shows this as a labelled alternative and does not decide whether a site qualifies.",
+        "On a standard lot of 4,000 sq ft or more, no single dwelling unit's floor area may exceed an equivalent FAR of 0.60; the program records this as a limitation and does not compute it.",
+        "A Special Purpose District or other overlay may change the floor area; the program does not apply that change."
+      ],
+      "interpretation": "The program looks up the district's standard floor area ratio (FAR) and multiplies it by the lot area to give the largest residential floor area allowed. For these districts the standard FAR is 0.75 (R2X is 1.00 and sits in its own row).",
+      "example": {
+        "description": "A made-up 4,000 sq ft R3A lot (not a real address).",
+        "inputs": {
+          "zoning_district": "R3A",
+          "lot_area_sq_ft": 4000
+        },
+        "expected": {
+          "values": {
+            "max_residential_far": 0.75,
+            "max_residential_floor_area_sq_ft": 3000
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-21 table, first row (R1-1, R1-2, R1-2A, R2, R2A, R3A, R3X, R3-1, R3-2): standard zoning lots 0.75. 0.75 x 4,000 sq ft = 3,000 sq ft.",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_residential_far": 0.75,
+            "max_residential_floor_area_sq_ft": 3000.0
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r1_r2_r3_residential_far.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r1_r12_residential_far.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "The first-row ZR 23-21 residential FAR of 0.75 for R1, R2 and R3 standard zoning lots is checked byte-for-byte against the captured table (test: test_as1_flat_rule_values_match_snapshot).",
+          "Carries the footnote-1 single-dwelling-unit 0.60 cap as a documented limitation that only this first-row rule carries (test: test_as4_footnote_1_cap_only_on_first_row_rule, test_as9_r5_no_longer_carries_footnote_cap_r1r2r3_does).",
+          "The qualifying-residential-site FAR values are checked byte-for-byte against the captured second column (test: test_as1_flat_rule_values_match_snapshot).",
+          "Is draft/needs_review, never verified, and effective from 2024-12-05 (test: test_as7_all_rules_are_draft_and_unapproved, test_as7_no_family_result_is_ever_verified).",
+          "Is the only rule that claims R1/R2/R3, with no district claimed twice and none invented beyond the snapshot (test: test_as2_every_snapshot_district_is_covered_or_excluded)."
+        ],
+        "committed_untested": [
+          "The maximum residential floor area (FAR x lot area) is computed by the rule but its number is not asserted by a test for R1/R2/R3; no test found that exercises this value (the same multiply step is asserted for R5 and for R6-R12).",
+          "Evaluating the rule to surface the qualifying-residential-site FAR as a conditional alternative is not exercised for this rule; no test found that exercises this (the mechanism is exercised for R6-R12)."
+        ],
+        "planned": [
+          "Whether a site qualifies for the higher qualifying-residential-site FAR is a determination the program does not make.",
+          "Special Purpose District and overlay changes to FAR are not applied."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r1_r12_residential_far.py",
+        "counts": "15 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r1-r2-r3-residential-far.txt",
+        "tested_rule_file_sha256": "515ee0eb4a46c3735ca20ec5d4b6afe5c1682ff332e98978cf15cfde77aa9218",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r1_r12_residential_far.py": "5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The qualifying-residential-site FAR (1.00) and the per-dwelling-unit 0.60 equivalent-FAR cap are shown as alternatives/limitations, not computed.",
+        "Special Purpose District and overlay changes are not applied.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r1-r2-reference-plane-23421g",
+      "rule_id": "r1-r2-reference-plane-23421g",
+      "rule_file": "services/api/app/rules/rulesets/r1_r2_reference_plane_23421g.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "39632cfe424a48fbf68c9553e31658b823743a208eb4bbd403fd8ee661e003fa",
+      "title": "R1/R2 no-letter-suffix districts (R1-1, R1-2, R2) - section 23-421(g) reference-plane elevation allowance",
+      "family": "residential_height_setback_r1_r2",
+      "law": [
+        {
+          "section": "23-421(g)",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18075",
+          "snapshot_id": "zr-23-421-g",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-421-g.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-13T02:44:00Z",
+          "content_digest_sha256": "52dd8aab6e2a7e53f65c953157b70e899f7be94438d0c3456731ff430c626536"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R1 and R2 districts without a letter suffix (R1-1, R1-2, R2), for a detached, semi-detached or zero-lot-line building, where the lot is either at least 9,500 sq ft and 100 ft wide, or has a rear-to-front slope of at least five percent.",
+      "exceptions": [
+        "The 5-ft allowance feeds a sloping-plane geometry the program does not compute; recorded as a limitation.",
+        "Site-specific modifiers are not modelled here."
+      ],
+      "interpretation": "When the lot meets the ZR 23-421(g) trigger, the program reports that the reference plane used for the pitched-envelope rules may sit up to 5 feet above the base plane. This is an allowance that feeds the pitched-plane geometry; it does not change the 25 ft wall or 35 ft ridge caps.",
+      "example": {
+        "description": "A made-up 10,000 sq ft, 100 ft wide detached R2 lot (not a real address); it meets the area-and-width trigger.",
+        "inputs": {
+          "zoning_district": "R2",
+          "building_type": "detached",
+          "lot_area_sqft": 10000,
+          "lot_width_ft": 100,
+          "rear_wall_slope_percent": 0
+        },
+        "expected": {
+          "values": {
+            "reference_plane_elevation_max_ft": 5
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-421(g): for R1/R2 without a letter suffix on a lot of at least 9,500 sq ft and 100 ft wide (or a slope of at least five percent), 'the reference plane ... may be located up to five feet above the base plane.'",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "reference_plane_elevation_max_ft": 5.0
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r1_r2_reference_plane_23421g.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r1_r2_height_setback.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports a 5-foot reference-plane elevation allowance when the lot meets the area-and-width path (at least 9,500 sq ft and 100 ft wide) or the slope path (at least 5 percent) (test: test_as1_reference_plane_g_confident_when_area_and_width_satisfy, test_as1_reference_plane_g_confident_when_slope_satisfies).",
+          "Checks the exact trigger boundaries (9,500 / 100 / 5 percent) and returns not applicable just below them (test: test_nc8_trigger_boundary_values).",
+          "Excludes the letter-suffix districts (R1-2A, R2A, R2X) and bare R1 even with a satisfying trigger, and admits the no-suffix members R1-1, R1-2, R2 (test: test_nc2_letter_suffix_and_bare_r1_excluded_from_reference_plane, test_nc2_no_letter_suffix_members_eligible).",
+          "Fails closed to professional review when any one of the three geometry inputs, or the building form, is missing (test: test_nc5_reference_plane_missing_any_single_geometry_input_fails_closed, test_nc4_reference_plane_building_type_unavailable_fails_closed).",
+          "Is complementary to the envelope rules and never a same-family conflict (test: test_nc7_reference_plane_rule_never_conflicts_with_envelope_rules)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The sloping-plane geometry the 5-foot reference plane feeds is not computed.",
+          "Site-specific modifiers are not modelled in this rule."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r1_r2_height_setback.py",
+        "counts": "110 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r1-r2-reference-plane-23421g.txt",
+        "tested_rule_file_sha256": "39632cfe424a48fbf68c9553e31658b823743a208eb4bbd403fd8ee661e003fa",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r1_r2_height_setback.py": "30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The 5-ft allowance only feeds the pitched-plane geometry, which the program does not compute.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r1-r2-suffix-variants-pitched-height",
+      "rule_id": "r1-r2-suffix-variants-pitched-height",
+      "rule_file": "services/api/app/rules/rulesets/r1_r2_suffix_variants_pitched_height.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "f4f840be26eb17a78b0b935d24df2a5367c495d9f9990a916db5a6418ee43dd3",
+      "title": "R1/R2 suffixed districts (R1-1, R1-2, R1-2A, R2A, R2X) - pitched-roof envelope: maximum perimeter-wall height and maximum ridge/building height",
+      "family": "residential_height_setback_r1_r2",
+      "law": [
+        {
+          "section": "11-25",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18433",
+          "snapshot_id": "zr-11-25",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-11-25.snapshot.json",
+          "last_amended": "1994-06-29",
+          "captured_on": "2026-09-13T02:45:00Z",
+          "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+        },
+        {
+          "section": "23-421",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18075",
+          "snapshot_id": "zr-23-421-r1-r2",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-421-r1-r2.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-13T02:44:00Z",
+          "content_digest_sha256": "1bce881805d9ee4d79253432ad86128b7203f81f2054ff25e1ba8dfb1dad1e8b"
+        },
+        {
+          "section": "23-21",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-21",
+          "snapshot_id": "zr-23-21",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-21.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-11T00:00:00Z",
+          "content_digest_sha256": "b52771e629b6afa9f9a6843a657dbfd143294f721cd757f953792e747a48ad8a"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "The suffixed R1/R2 districts (R1-1, R1-2, R1-2A, R2A, R2X) for a detached, semi-detached or zero-lot-line building. Bare R1/R2 are handled by a separate rule.",
+      "exceptions": [
+        "Applying the pitched envelope to these suffixed districts rests on ZR 11-25 (suffix inheritance), not on an express provision naming them; the program records this as an owner-decision limitation.",
+        "The sloping-plane setback geometry above the 25 ft wall is not computed.",
+        "A commercial overlay, special district, historic district or large site is not adjusted by the program; when one is present the result is sent for professional review instead of a changed number."
+      ],
+      "interpretation": "The program reports the same 25 ft wall and 35 ft ridge anchor heights as the bare R1/R2 pitched rule, applying them to the suffixed districts through the ZR 11-25 suffix-inheritance provision, and marks the result for professional review.",
+      "example": {
+        "description": "A made-up detached house on an R2A lot (not a real address).",
+        "inputs": {
+          "zoning_district": "R2A",
+          "building_type": "detached"
+        },
+        "expected": {
+          "values": {
+            "max_perimeter_wall_height": 25,
+            "max_building_height": 35
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-421 caps (perimeter wall 25 ft, ridge 35 ft above the base plane), reached for the suffixed R2A district through ZR 11-25: 'All regulations applicable to a district designation shall be applicable to such district designation appended with a suffix, except as otherwise set forth in express provisions.'",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_perimeter_wall_height": 25.0,
+            "max_building_height": 35.0
+          },
+          "coverage_status": "professional_review_required"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r1_r2_suffix_variants_pitched_height.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r1_r2_height_setback.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports the same 25-foot wall / 35-foot ridge envelope for R1-1, R1-2, R1-2A, R2A and R2X, reached through the ZR 11-25 suffix reading (test: test_as1_suffix_variant_confident_wall_and_ridge_separate).",
+          "Cites 11-25 as owner-decision provenance in addition to 23-421, which the bare rule does not (test: test_as1_bare_and_suffix_rules_cite_distinct_provenance).",
+          "Records R2X's distinct 23-21 FAR row as a floor-area-only note that does not change the height, and omits that note for other variants (test: test_as1_r2x_far_row_documented_as_floor_area_only).",
+          "Is not applicable to bare or foreign districts (test: test_nc1_suffix_variant_rule_never_matches_bare_or_foreign).",
+          "Fails closed to professional review on a missing building form, and escalates on an overlay, special district, historic district, large site or transportation (test: test_nc4_suffix_variant_building_type_unavailable_fails_closed, test_nc3_suffix_variant_rule_modifier_downgrades)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The sloping-plane setback geometry is not computed.",
+          "Overlay, special-district, historic-district, large-site and transportation adjustments are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r1_r2_height_setback.py",
+        "counts": "110 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r1-r2-suffix-variants-pitched-height.txt",
+        "tested_rule_file_sha256": "f4f840be26eb17a78b0b935d24df2a5367c495d9f9990a916db5a6418ee43dd3",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r1_r2_height_setback.py": "30e10fe9dd52e85b79c63ee5d811f6d24df42beef3fe341f46ae75ebe1cfd10d"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "Reading the pitched envelope onto the suffixed districts is an owner decision via ZR 11-25, not an express provision; a reviewer should confirm it.",
+        "The sloping-plane geometry above 25 feet is not computed; the result is marked for professional review.",
+        "Overlays, special districts, historic districts, large sites and transportation-infrastructure increases send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r2x-r4-residential-far",
+      "rule_id": "r2x-r4-residential-far",
+      "rule_file": "services/api/app/rules/rulesets/r2x_r4_residential_far.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "9842c6764d1b27a6f6c8a85cfd43334fcdb5411442585bb0f728828537c7efe4",
+      "title": "R2X and R4 residence districts (ZR 23-21 rows 2-3) - maximum residential floor area ratio (standard zoning lots)",
+      "family": "residential_far",
+      "law": [
+        {
+          "section": "23-21",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-21",
+          "snapshot_id": "zr-23-21",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-21.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-11T00:00:00Z",
+          "content_digest_sha256": "b52771e629b6afa9f9a6843a657dbfd143294f721cd757f953792e747a48ad8a"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R2X and the R4 districts (R2X, R4A, R4B, R4, R4-1) of the ZR 23-21 floor-area table. Any other district is reported as not applicable.",
+      "exceptions": [
+        "A qualifying residential site is allowed a higher FAR (R4 1.50; R2X unchanged at 1.00); the program shows this as a labelled alternative and does not decide whether a site qualifies.",
+        "A Special Purpose District or other overlay may change the floor area; the program does not apply that change."
+      ],
+      "interpretation": "The program looks up the district's standard FAR (1.00 for all of these) and multiplies it by the lot area to give the largest residential floor area allowed.",
+      "example": {
+        "description": "A made-up 4,000 sq ft R4 lot (not a real address).",
+        "inputs": {
+          "zoning_district": "R4",
+          "lot_area_sq_ft": 4000
+        },
+        "expected": {
+          "values": {
+            "max_residential_far": 1.0,
+            "max_residential_floor_area_sq_ft": 4000
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-21 table, row R4A/R4B/R4/R4-1: standard zoning lots 1.00. 1.00 x 4,000 sq ft = 4,000 sq ft.",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_residential_far": 1.0,
+            "max_residential_floor_area_sq_ft": 4000.0
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r2x_r4_residential_far.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r1_r12_residential_far.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "The ZR 23-21 standard FAR of 1.00 for R2X, R4A, R4B, R4 and R4-1 is checked byte-for-byte against the captured table (test: test_as1_flat_rule_values_match_snapshot).",
+          "Does not carry the footnote-1 0.60 single-dwelling-unit cap, which only the first ZR 23-21 row carries (test: test_as4_footnote_1_cap_only_on_first_row_rule).",
+          "The qualifying-residential-site FAR values are checked byte-for-byte against the captured second column (test: test_as1_flat_rule_values_match_snapshot).",
+          "Is draft/needs_review, never verified, and effective from 2024-12-05 (test: test_as7_all_rules_are_draft_and_unapproved, test_as7_no_family_result_is_ever_verified)."
+        ],
+        "committed_untested": [
+          "The maximum residential floor area (FAR x lot area) is computed by the rule but its number is not asserted by a test for R2X/R4; no test found that exercises this value (the same multiply step is asserted for R5 and for R6-R12).",
+          "Evaluating the rule to surface the qualifying alternative as a conditional alternative is not exercised for this rule; no test found that exercises this."
+        ],
+        "planned": [
+          "Whether a site qualifies for the higher qualifying FAR (R4 1.50; R2X unchanged at 1.00) is a determination the program does not make.",
+          "Special Purpose District and overlay changes to FAR are not applied."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r1_r12_residential_far.py",
+        "counts": "15 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r2x-r4-residential-far.txt",
+        "tested_rule_file_sha256": "9842c6764d1b27a6f6c8a85cfd43334fcdb5411442585bb0f728828537c7efe4",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r1_r12_residential_far.py": "5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The qualifying-residential-site FAR is shown as an alternative, not computed.",
+        "Special Purpose District and overlay changes are not applied.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r3-2-r4-flat-height",
+      "rule_id": "r3-2-r4-flat-height",
+      "rule_file": "services/api/app/rules/rulesets/r3_2_r4_flat_height.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "6a8732b1b2644b868c8fda50d78fc6e86dc84a63f3d381aedfed354f167edaf7",
+      "title": "R3-2 and R4 districts (flat-roof envelope, ZR 23-422, residences not subject to 23-421) - maximum building height",
+      "family": "residential_height_setback_r3_r4",
+      "law": [
+        {
+          "section": "23-422",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-422",
+          "snapshot_id": "zr-23-422-r3-r4",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-422-r3-r4.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-13T00:00:00Z",
+          "content_digest_sha256": "0268089074b51d7b2457fa280bb19f5a2ce1c49b708dbb6654f49df78ea61b18"
+        },
+        {
+          "section": "23-42",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-42",
+          "snapshot_id": "zr-23-42",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-42.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-13T00:00:00Z",
+          "content_digest_sha256": "3fea4ca54cfee304698506e83f126949863b6a539b2e6de8731a58cfb494070d"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R3-2 and R4 districts for a flat-roof building (building types 'attached' or 'other', i.e. residences not using the pitched-roof envelope of ZR 23-421).",
+      "exceptions": [
+        "A commercial overlay, special district, historic district or large site is not adjusted by the program; when one is present the result is sent for professional review instead of a changed number."
+      ],
+      "interpretation": "The program reports a single maximum building height of 35 feet (ZR 23-422) for these flat-roof residences and marks the result for professional review.",
+      "example": {
+        "description": "A made-up attached (flat-roof) building on an R4 lot (not a real address).",
+        "inputs": {
+          "zoning_district": "R4",
+          "building_type": "attached"
+        },
+        "expected": {
+          "values": {
+            "max_building_height": 35
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-422: 'In the districts indicated, for residences not subject to the provisions of Section 23-421, the maximum building height shall be 35 feet' (R3-2, R4).",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_building_height": 35.0
+          },
+          "coverage_status": "professional_review_required"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r3_2_r4_flat_height.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r3_r4_height.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports a single 35-foot maximum building height for R3-2 and R4 with a non-pitched building form, and invents no base-height or perimeter-wall value (test: test_as1_flat_r3_2_r4_confident_building_height_only).",
+          "Keeps the flat 35-foot value off a pitched reading and never lets a pitched value leak in (test: test_nc2_r4_flat_value_never_leaks_into_pitched_constraint, test_nc2_r4_pitched_value_never_emitted_by_flat_rule).",
+          "Does not cover R4B or the pitched-only R3/R4 variants (test: test_nc1_flat_rule_scoped_to_r3_2_and_r4_only, test_nc8_pitched_only_variants_have_no_flat_envelope).",
+          "Fails closed to professional review on a missing building form or district, and escalates on an overlay, special district or historic district (test: test_nc4_flat_building_type_unavailable_fails_closed, test_nc5_missing_district_fails_closed, test_nc3_flat_modifier_downgrades_to_professional_review).",
+          "Is not effective before 2024-12-05 (test: test_as3_before_amendment_not_effective)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "Overlay, special-district and historic-district adjustments are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r3_r4_height.py",
+        "counts": "90 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r3-2-r4-flat-height.txt",
+        "tested_rule_file_sha256": "6a8732b1b2644b868c8fda50d78fc6e86dc84a63f3d381aedfed354f167edaf7",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r3_r4_height.py": "155e064f1aad76181651c81027d9851cc4897e9affc184e0d53b08e492420595"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "Only a single flat building-height cap is given; no base-height / setback split is modelled.",
+        "Overlays, special districts and historic districts send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r3-r4-pitched-height",
+      "rule_id": "r3-r4-pitched-height",
+      "rule_file": "services/api/app/rules/rulesets/r3_r4_pitched_height.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "039bd5bfb172950cb19d54a242478e5b5bd7188103a9d548380004abd142ca8c",
+      "title": "R3/R4-series districts (pitched-roof envelope, ZR 23-421) - maximum perimeter-wall height and maximum ridge/building height",
+      "family": "residential_height_setback_r3_r4",
+      "law": [
+        {
+          "section": "23-421",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-421",
+          "snapshot_id": "zr-23-421-r3-r4",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-421-r3-r4.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-13T00:00:00Z",
+          "content_digest_sha256": "68e4d147a351188ce0df06d8609b1c3766c76776e0a87482e04ac2cc9459e046"
+        },
+        {
+          "section": "23-42",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-42",
+          "snapshot_id": "zr-23-42",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-42.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-13T00:00:00Z",
+          "content_digest_sha256": "3fea4ca54cfee304698506e83f126949863b6a539b2e6de8731a58cfb494070d"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R3 and R4 districts listed for the pitched-roof envelope (R3A, R3X, R3-1, R3-2, R4, R4-1, R4A) for a detached, semi-detached or zero-lot-line building.",
+      "exceptions": [
+        "The sloping-plane setback geometry above the 25 ft wall is not computed.",
+        "A commercial overlay, special district, historic district or large site is not adjusted by the program; when one is present the result is sent for professional review instead of a changed number."
+      ],
+      "interpretation": "For the pitched-roof building form the program reports a perimeter wall up to 25 feet and a ridge up to 35 feet above the base plane (ZR 23-421), and marks the result for professional review because the sloping planes between them are not computed.",
+      "example": {
+        "description": "A made-up detached house on an R3A lot (not a real address).",
+        "inputs": {
+          "zoning_district": "R3A",
+          "building_type": "detached"
+        },
+        "expected": {
+          "values": {
+            "max_perimeter_wall_height": 25,
+            "max_building_height": 35
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-421 lists R3A among the covered districts: perimeter wall maximum 25 feet, ridge line 35 feet above the base plane.",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_perimeter_wall_height": 25.0,
+            "max_building_height": 35.0
+          },
+          "coverage_status": "professional_review_required"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r3_r4_pitched_height.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r3_r4_height.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports a 25-foot wall and 35-foot ridge/building height for the R3/R4-series pitched districts (R3A, R3X, R3-1, R3-2, R4, R4-1, R4A) as two separate values (test: test_as1_pitched_confident_wall_and_ridge_separate).",
+          "Carries the two citations (23-421 and 23-42) with provenance digests (test: test_as2_pitched_dimensions_trace_to_snapshot_provenance).",
+          "Is not applicable to non-enumerated or unknown districts, including R4B (test: test_nc1_pitched_rule_not_applicable_to_non_enumerated_districts, test_nc8_r4b_is_flat_only_no_pitched_envelope).",
+          "Fails closed to professional review on a missing/invalid building form or district, and escalates on an overlay, special district or historic district (test: test_nc4_pitched_building_type_unavailable_fails_closed, test_nc4_invalid_building_type_fails_closed, test_nc3_pitched_modifier_downgrades_to_professional_review).",
+          "Keeps the sloping-plane setback out of the numeric output, as a documented limitation (test: test_nc8_pitched_setback_is_documented_limitation_not_numeric)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The sloping-plane envelope between the 25-foot wall and the 35-foot ridge is not computed.",
+          "Overlay, special-district and historic-district adjustments are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r3_r4_height.py",
+        "counts": "90 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r3-r4-pitched-height.txt",
+        "tested_rule_file_sha256": "039bd5bfb172950cb19d54a242478e5b5bd7188103a9d548380004abd142ca8c",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r3_r4_height.py": "155e064f1aad76181651c81027d9851cc4897e9affc184e0d53b08e492420595"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The sloping-plane geometry above 25 feet is not computed; the result is marked for professional review.",
+        "Heights are measured above the base plane, a separate professional input.",
+        "Overlays, special districts and historic districts send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r4b-height",
+      "rule_id": "r4b-height",
+      "rule_file": "services/api/app/rules/rulesets/r4b_height.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "320c6d53feb8e6e74618ca31663f4d57414cecf8b32930c1d4b1f7d807576c3e",
+      "title": "R4B district (flat-roof envelope, ZR 23-422) - maximum building height",
+      "family": "residential_height_setback_r3_r4",
+      "law": [
+        {
+          "section": "23-422",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-422",
+          "snapshot_id": "zr-23-422-r3-r4",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-422-r3-r4.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-13T00:00:00Z",
+          "content_digest_sha256": "0268089074b51d7b2457fa280bb19f5a2ce1c49b708dbb6654f49df78ea61b18"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R4B districts (any building; R4B has no pitched-roof counterpart).",
+      "exceptions": [
+        "A commercial overlay, special district, historic district or large site is not adjusted by the program; when one is present the result is sent for professional review instead of a changed number."
+      ],
+      "interpretation": "The program reports a single maximum building height of 25 feet (ZR 23-422) for R4B and marks the result for professional review.",
+      "example": {
+        "description": "A made-up R4B lot (not a real address).",
+        "inputs": {
+          "zoning_district": "R4B"
+        },
+        "expected": {
+          "values": {
+            "max_building_height": 25
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-422: 'R4B ... the maximum building height shall be 25 feet.'",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_building_height": 25.0
+          },
+          "coverage_status": "professional_review_required"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r4b_height.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r3_r4_height.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports a single 25-foot maximum building height for R4B and invents no base-height value (test: test_as1_r4b_confident_building_height_only).",
+          "Keeps the R4B 25-foot cap distinct from the R3-2/R4 35-foot cap; neither rule fires for the other's district (test: test_nc2_r4b_25_never_merges_with_r3_2_r4_35).",
+          "Is applicable to R4B only and not to foreign or unknown districts (test: test_nc1_r4b_rule_scoped_to_r4b_only).",
+          "Fails closed to professional review on a missing district, and escalates on an overlay, special district or historic district (test: test_nc5_missing_district_fails_closed, test_nc3_flat_modifier_downgrades_to_professional_review).",
+          "Loads from the packaged registry and evaluates to the 25-foot value (test: test_as6_family_loads_from_default_packaged_registry)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "Overlay, special-district and historic-district adjustments are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r3_r4_height.py",
+        "counts": "90 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r4b-height.txt",
+        "tested_rule_file_sha256": "320c6d53feb8e6e74618ca31663f4d57414cecf8b32930c1d4b1f7d807576c3e",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r3_r4_height.py": "155e064f1aad76181651c81027d9851cc4897e9affc184e0d53b08e492420595"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "Only a single flat building-height cap is given; no base-height / setback split is modelled.",
+        "Overlays, special districts and historic districts send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r5-height",
+      "rule_id": "r5-height",
+      "rule_file": "services/api/app/rules/rulesets/r5_height.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "30eab3ebe05c2415c5666e515c420d86761714d20035625d5914df9e3294db0f",
+      "title": "R5 district (flat-roof envelope) - maximum base height and maximum building height",
+      "family": "residential_height_setback",
+      "law": [
+        {
+          "section": "23-422",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-422",
+          "snapshot_id": "zr-23-422",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-422.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-07-22T00:00:00Z",
+          "content_digest_sha256": "7e910c245bfc4c8f1a65ffdbdaf9b4985b71477338d3173c13f2a77395f0148a"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "Bare R5 districts (no letter suffix), any building.",
+      "exceptions": [
+        "No minimum base height is stated for R5; recorded as a limitation.",
+        "A commercial overlay, special district, historic district or large site is not adjusted by the program; when one is present the result is sent for professional review instead of a changed number."
+      ],
+      "interpretation": "The program reports a maximum base height of 35 feet and a maximum building height of 45 feet (ZR 23-422), and marks the result for professional review. A setback above the base height is governed by a separate rule.",
+      "example": {
+        "description": "A made-up bare R5 lot (not a real address).",
+        "inputs": {
+          "zoning_district": "R5"
+        },
+        "expected": {
+          "values": {
+            "max_base_height": 35,
+            "max_building_height": 45
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-422: 'except R5 Districts with a letter suffix, the maximum base height shall be 35 feet, and the maximum building height shall be 45 feet.'",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_base_height": 35.0,
+            "max_building_height": 45.0
+          },
+          "coverage_status": "professional_review_required"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r5_height.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r5_height_setback.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports a 35-foot maximum base height and a 45-foot maximum building height for R5 as two separate values, and records the absence of a minimum base height as a documented limitation (test: test_as1_r5_height_confident_base_and_building_separate).",
+          "Every emitted dimension traces to a snapshot citation with a provenance digest (test: test_as2_every_emitted_dimension_traces_to_snapshot_provenance).",
+          "Is not applied to R5A/R5B/R5D or an unknown R5 variant (test: test_nc1_variant_value_not_applied_to_another, test_nc1_unknown_r5_variant_is_unsupported_not_nearest).",
+          "Escalates to professional review on an overlay, special district or historic district, and fails closed on a missing district (test: test_nc3_overlay_or_special_district_downgrades_never_silent_base, test_nc3_historic_district_downgrades, test_nc5_missing_district_fails_closed).",
+          "Is reported as a same-family conflict against the qualifying-site rule, with no value chosen (test: test_nc7_base_and_qrs_rules_conflict_no_value)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "A minimum base height is not computed; the rule reports only the maximum base and building heights.",
+          "Overlay, special-district, historic-district and large-site adjustments are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r5_height_setback.py",
+        "counts": "47 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r5-height.txt",
+        "tested_rule_file_sha256": "30eab3ebe05c2415c5666e515c420d86761714d20035625d5914df9e3294db0f",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r5_height_setback.py": "93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The setback above the base height is in a separate rule (ZR 23-423), not combined here.",
+        "Overlays, special districts, historic districts and large sites send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r5-qrs-height",
+      "rule_id": "r5-qrs-height",
+      "rule_file": "services/api/app/rules/rulesets/r5_qrs_height.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "f1364c06d5a4239146dd6686bdae8555f6a176fe829c6d9c7e51df5444457b8e",
+      "title": "R5-series qualifying residential site - alternative maximum base height and building height (section 23-424)",
+      "family": "residential_height_setback",
+      "law": [
+        {
+          "section": "23-424",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-424",
+          "snapshot_id": "zr-23-424",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-424.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-07-22T00:00:00Z",
+          "content_digest_sha256": "1ad17144b64593652e67e49edf7c1006e9c476074ce62d076e9804da844ce506"
+        },
+        {
+          "section": "23-423",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-423",
+          "snapshot_id": "zr-23-423",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-423.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-07-22T00:00:00Z",
+          "content_digest_sha256": "b0b062fbb570ea5bc437572a144eb63f207aa73bdfe8cc612e938f0f3cb72903"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R5-series qualifying residential sites (R5, R5A, R5B, R5D) - only when the lot is flagged as a qualifying residential site.",
+      "exceptions": [
+        "The ZR 23-423 setback for this envelope is a separate constraint, not restated here.",
+        "Whether a lot is a qualifying residential site is a separate determination the program cannot make.",
+        "A commercial overlay or special district sends the result for professional review."
+      ],
+      "interpretation": "For a qualifying residential site the program reports the alternative envelope from the ZR 23-424 table: maximum base height 45 feet and maximum building height 55 feet. It marks the result for professional review.",
+      "example": {
+        "description": "A made-up R5 lot flagged as a qualifying residential site (not a real address).",
+        "inputs": {
+          "zoning_district": "R5",
+          "qualifying_residential_site": true
+        },
+        "expected": {
+          "values": {
+            "max_base_height": 45,
+            "max_building_height": 55
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-424 table, row R5 R5A R5B R5D: maximum base height 45, maximum building height 55.",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_base_height": 45.0,
+            "max_building_height": 55.0
+          },
+          "coverage_status": "professional_review_required"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r5_qrs_height.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r5_height_setback.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Fails closed to professional review when the qualifying-residential-site geography is not supplied (test: test_nc4_qualifying_site_geography_unavailable_fails_closed).",
+          "Is reported as a same-family conflict against the base R5 height rule for base and building height, with no value chosen (test: test_nc7_base_and_qrs_rules_conflict_no_value).",
+          "Every family rule, this one included, is needs_review, verified-ineligible and effective from 2024-12-05 (test: test_as5_every_family_rule_is_needs_review_and_verified_ineligible)."
+        ],
+        "committed_untested": [
+          "The 35-foot base and 35-foot building height this rule reports for a qualifying site are not asserted by a value test in this suite; no test found that exercises the emitted values (the conflict and fail-closed paths are tested instead).",
+          "The rule escalates a commercial overlay or special district to professional review, but no test found that exercises this escalation for this rule."
+        ],
+        "planned": [
+          "Whether a lot is a qualifying residential site is a determination the program does not make.",
+          "The ZR 23-423 setback is not computed.",
+          "Overlay and special-district adjustments are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r5_height_setback.py",
+        "counts": "47 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r5-qrs-height.txt",
+        "tested_rule_file_sha256": "f1364c06d5a4239146dd6686bdae8555f6a176fe829c6d9c7e51df5444457b8e",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r5_height_setback.py": "93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "Whether a lot qualifies as a qualifying residential site is not decided by the program.",
+        "The ZR 23-423 setback for this envelope is not restated here.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r5-residential-far",
+      "rule_id": "r5-residential-far",
+      "rule_file": "services/api/app/rules/rulesets/r5_residential_far.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "ca6ccb5286cdbb31c318d9e0ff4342cb7d649fd03be7a79af7ec3521b274b13e",
+      "title": "R5 residence districts - maximum residential floor area ratio (standard zoning lots)",
+      "family": "residential_far",
+      "law": [
+        {
+          "section": "23-21",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-21",
+          "snapshot_id": "zr-23-21",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-21.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-11T00:00:00Z",
+          "content_digest_sha256": "b52771e629b6afa9f9a6843a657dbfd143294f721cd757f953792e747a48ad8a"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R5 districts (R5A, R5B, R5) of the ZR 23-21 floor-area table. R5D sits in its own row (2.00) and other districts are reported as not applicable.",
+      "exceptions": [
+        "A qualifying residential site is allowed a higher FAR (2.00); the program shows this as a labelled alternative and does not decide whether a site qualifies.",
+        "A Special Purpose District or other overlay may change the floor area; the program does not apply that change."
+      ],
+      "interpretation": "The program looks up the district's standard FAR (1.50 for R5/R5A/R5B) and multiplies it by the lot area to give the largest residential floor area allowed.",
+      "example": {
+        "description": "A made-up 4,000 sq ft R5 lot (not a real address).",
+        "inputs": {
+          "zoning_district": "R5",
+          "lot_area_sq_ft": 4000
+        },
+        "expected": {
+          "values": {
+            "max_residential_far": 1.5,
+            "max_residential_floor_area_sq_ft": 6000
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-21 table, row R5A/R5B/R5: standard zoning lots 1.50. 1.50 x 4,000 sq ft = 6,000 sq ft.",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_residential_far": 1.5,
+            "max_residential_floor_area_sq_ft": 6000.0
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r5_residential_far.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_rules_engine.py",
+        "services/api/tests/rules/test_r1_r12_residential_far.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports max_residential_far = 1.50 and max_residential_floor_area_sq_ft via an identity-then-multiply step for an R5 10,000 sq ft lot, with the full trace (test: test_re_s1_dsl_round_trip_and_full_trace).",
+          "Gives a deterministic, byte-identical trace for the same inputs, with R5D at 2.00 (test: test_re_s8_determinism_same_inputs_identical_trace).",
+          "Is conditional and never verified without a recorded professional approval (test: test_re_s2_draft_rule_never_verified, test_re_s2_verified_only_for_published_with_matching_approval).",
+          "No longer carries the footnote-1 0.60 cap, and its FAR values match the captured ZR 23-21 table (test: test_as9_r5_no_longer_carries_footnote_cap_r1r2r3_does, test_as9_r5_far_values_unchanged_and_match_snapshot)."
+        ],
+        "committed_untested": [
+          "Evaluating the rule to surface the qualifying-residential-site FAR as a conditional alternative is not exercised for this rule; no test found that exercises this."
+        ],
+        "planned": [
+          "Whether a site qualifies for the higher qualifying FAR is a determination the program does not make.",
+          "Special Purpose District and overlay changes to FAR are not applied."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_rules_engine.py tests/rules/test_r1_r12_residential_far.py",
+        "counts": "51 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r5-residential-far.txt",
+        "tested_rule_file_sha256": "ca6ccb5286cdbb31c318d9e0ff4342cb7d649fd03be7a79af7ec3521b274b13e",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_rules_engine.py": "1098e99b91df603037395d035f7ba47e5b4b6b743048129818d5d9032551bcb7",
+          "services/api/tests/rules/test_r1_r12_residential_far.py": "5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The qualifying-residential-site FAR is shown as an alternative, not computed.",
+        "Special Purpose District and overlay changes are not applied.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r5-setback",
+      "rule_id": "r5-setback",
+      "rule_file": "services/api/app/rules/rulesets/r5_setback.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "6dd97c4488ce8cb8ac8095314e8ba77b31b2a770ce23af2405d8f75e67ecb37f",
+      "title": "R5 district (flat-roof envelope) - required setback depth above the base height",
+      "family": "residential_height_setback",
+      "law": [
+        {
+          "section": "23-423",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-423",
+          "snapshot_id": "zr-23-423",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-423.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-07-22T00:00:00Z",
+          "content_digest_sha256": "b0b062fbb570ea5bc437572a144eb63f207aa73bdfe8cc612e938f0f3cb72903"
+        },
+        {
+          "section": "12-10",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+          "snapshot_id": "zr-12-10",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-14T02:15:06Z",
+          "content_digest_sha256": "23a9ccad31f1081fd15de94d796c22d540e7e8bcfe986e64c9ba302bf8fa4fde"
+        },
+        {
+          "section": "23-422",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-422",
+          "snapshot_id": "zr-23-422",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-422.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-07-22T00:00:00Z",
+          "content_digest_sha256": "7e910c245bfc4c8f1a65ffdbdaf9b4985b71477338d3173c13f2a77395f0148a"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R5 districts, for the setback above the base height of a flat-roof building, keyed by whether the street wall fronts a wide or a narrow street.",
+      "exceptions": [
+        "Other modifications to the ZR 23-423 setback are not resolved; recorded as a limitation.",
+        "A commercial overlay or special district sends the result for professional review."
+      ],
+      "interpretation": "The program reports the required setback depth from ZR 23-423: 10 feet from a street wall on a wide street, 15 feet on a narrow street. It marks the result for professional review.",
+      "example": {
+        "description": "A made-up R5 lot with a street wall fronting a wide street (not a real address).",
+        "inputs": {
+          "zoning_district": "R5",
+          "street_width_class": "wide"
+        },
+        "expected": {
+          "values": {
+            "required_setback_depth": 10
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-423: 'The depth of the setback shall be at least 10 feet from a street wall fronting on a wide street, and at least 15 feet from a street wall fronting on a narrow street.' Wide street -> 10 feet.",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "required_setback_depth": 10.0
+          },
+          "coverage_status": "professional_review_required"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r5_setback.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r5_height_setback.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports a 10-foot setback on a wide street and a 15-foot setback on a narrow street (test: test_as1_r5_setback_confident_min_depth_by_street).",
+          "Marks the 10/15-foot depths as the standard unmodified starting setback and flags the ZR 23-423 modifications as unresolved, so 10/15 is never presented as the final setback (test: test_as1_r5_setback_10_15_are_standard_unmodified_not_final).",
+          "Carries the three citations 12-10, 23-422 and 23-423 (test: test_as2_setback_carries_all_three_citations).",
+          "Fails closed to professional review on a missing or out-of-enum street-width class (test: test_nc2_missing_street_width_fails_closed, test_nc2_invalid_street_class_fails_closed)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The ZR 23-423 reductions and modifications (front-yard offset, recesses, orientation, dormers) are not computed.",
+          "Overlay and special-district adjustments are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r5_height_setback.py",
+        "counts": "47 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r5-setback.txt",
+        "tested_rule_file_sha256": "6dd97c4488ce8cb8ac8095314e8ba77b31b2a770ce23af2405d8f75e67ecb37f",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r5_height_setback.py": "93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "Only the plain 10 ft / 15 ft depth is reported; other ZR 23-423 modifications are not resolved.",
+        "Whether a street is wide or narrow must be supplied; the program does not determine it in this rule.",
+        "Overlays and special districts send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r5a-height",
+      "rule_id": "r5a-height",
+      "rule_file": "services/api/app/rules/rulesets/r5a_height.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "38661a9d39ddf941a493aba1a28853150a043d6bf81f67a3ec996f527c9c8192",
+      "title": "R5A district (pitched-roof envelope) - maximum perimeter-wall height and maximum ridge/building height",
+      "family": "residential_height_setback",
+      "law": [
+        {
+          "section": "23-421",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-421",
+          "snapshot_id": "zr-23-421",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-421.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-07-22T00:00:00Z",
+          "content_digest_sha256": "d561048b812284eb8849d2bd7aec3deee9af4285075dd972f8cb2b1719999287"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R5A districts for a detached, semi-detached or zero-lot-line building (the pitched-roof envelope).",
+      "exceptions": [
+        "The sloping-plane setback geometry above the 25 ft wall is not computed.",
+        "A commercial overlay, special district, historic district or large site is not adjusted by the program; when one is present the result is sent for professional review instead of a changed number."
+      ],
+      "interpretation": "The program reports a perimeter wall up to 25 feet and a ridge up to 35 feet above the base plane (ZR 23-421), and marks the result for professional review.",
+      "example": {
+        "description": "A made-up detached house on an R5A lot (not a real address).",
+        "inputs": {
+          "zoning_district": "R5A",
+          "building_type": "detached"
+        },
+        "expected": {
+          "values": {
+            "max_perimeter_wall_height": 25,
+            "max_building_height": 35
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-421's pitched-roof envelope covers R5A: perimeter wall maximum 25 feet, ridge line 35 feet above the base plane. This capture's quoted text states the 25-foot and 35-foot values; the enumeration that includes R5A is recorded in this capture's notes and in the sibling R1/R2 and R3/R4 captures, not in the quoted excerpt here.",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_perimeter_wall_height": 25.0,
+            "max_building_height": 35.0
+          },
+          "coverage_status": "professional_review_required"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r5a_height.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r5_height_setback.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports a 25-foot wall and 35-foot ridge/building height for an R5A pitched building, as two separate values (test: test_as1_r5a_pitched_confident_wall_and_ridge_separate).",
+          "Fails closed to professional review when the building form is not supplied (test: test_nc4_building_type_unavailable_fails_closed).",
+          "Is not applied to R5 or an unknown R5 variant (test: test_nc1_variant_value_not_applied_to_another, test_nc1_unknown_r5_variant_is_unsupported_not_nearest).",
+          "Is needs_review, verified-ineligible and conditional/never verified (test: test_as5_every_family_rule_is_needs_review_and_verified_ineligible, test_as1_conditional_never_verified_for_every_variant)."
+        ],
+        "committed_untested": [
+          "The rule escalates a commercial overlay, special district or historic district to professional review, but no test found that exercises this escalation for this rule."
+        ],
+        "planned": [
+          "The sloping-plane setback geometry above 25 feet is not computed.",
+          "Overlay, special-district and historic-district adjustments are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r5_height_setback.py",
+        "counts": "47 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r5a-height.txt",
+        "tested_rule_file_sha256": "38661a9d39ddf941a493aba1a28853150a043d6bf81f67a3ec996f527c9c8192",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r5_height_setback.py": "93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The sloping-plane geometry above 25 feet is not computed; the result is marked for professional review.",
+        "Overlays, special districts and historic districts send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r5b-height",
+      "rule_id": "r5b-height",
+      "rule_file": "services/api/app/rules/rulesets/r5b_height.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "3a22a04911e94465669731768a6ea1cf5167de69a8c9132cd93baf183a44cc74",
+      "title": "R5B district (flat-roof envelope) - maximum building height",
+      "family": "residential_height_setback",
+      "law": [
+        {
+          "section": "23-422",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-422",
+          "snapshot_id": "zr-23-422",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-422.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-07-22T00:00:00Z",
+          "content_digest_sha256": "7e910c245bfc4c8f1a65ffdbdaf9b4985b71477338d3173c13f2a77395f0148a"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R5B districts (any building).",
+      "exceptions": [
+        "A commercial overlay, special district, historic district or large site is not adjusted by the program; when one is present the result is sent for professional review instead of a changed number."
+      ],
+      "interpretation": "The program reports a single maximum building height of 35 feet (ZR 23-422) for R5B and marks the result for professional review.",
+      "example": {
+        "description": "A made-up R5B lot (not a real address).",
+        "inputs": {
+          "zoning_district": "R5B"
+        },
+        "expected": {
+          "values": {
+            "max_building_height": 35
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-422: R5B maximum building height 35 feet (no base-height / setback split stated).",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_building_height": 35.0
+          },
+          "coverage_status": "professional_review_required"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r5b_height.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r5_height_setback.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports a single 35-foot maximum building height for R5B (test: test_as1_r5b_confident_building_height_only).",
+          "Is not applied to R5 or an unknown R5 variant (test: test_nc1_variant_value_not_applied_to_another, test_nc1_unknown_r5_variant_is_unsupported_not_nearest).",
+          "Is needs_review, verified-ineligible, conditional/never verified and not effective before 2024-12-05 (test: test_as5_every_family_rule_is_needs_review_and_verified_ineligible, test_as3_before_amendment_not_effective)."
+        ],
+        "committed_untested": [
+          "The rule escalates a commercial overlay, special district or historic district to professional review, but no test found that exercises this escalation for this rule."
+        ],
+        "planned": [
+          "No base-height or setback split is modelled for R5B.",
+          "Overlay, special-district and historic-district adjustments are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r5_height_setback.py",
+        "counts": "47 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r5b-height.txt",
+        "tested_rule_file_sha256": "3a22a04911e94465669731768a6ea1cf5167de69a8c9132cd93baf183a44cc74",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r5_height_setback.py": "93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "Only a single flat building-height cap is given; no base-height / setback split is modelled.",
+        "The R5B-to-35-foot mapping is assigned by the researcher from the ZR 23-422 capture's table row; the capture's quoted sentence is a generic 'in the district indicated' statement, so the statement-to-district mapping is unconfirmed.",
+        "Overlays, special districts and historic districts send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r5d-height",
+      "rule_id": "r5d-height",
+      "rule_file": "services/api/app/rules/rulesets/r5d_height.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "129e4fd69be0688f4aea870713e4b7de5192f70177a10098a800b806b7432dfc",
+      "title": "R5D district (flat-roof envelope) - maximum building height (no setback)",
+      "family": "residential_height_setback",
+      "law": [
+        {
+          "section": "23-422",
+          "official_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-422",
+          "snapshot_id": "zr-23-422",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-422.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-07-22T00:00:00Z",
+          "content_digest_sha256": "7e910c245bfc4c8f1a65ffdbdaf9b4985b71477338d3173c13f2a77395f0148a"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R5D districts (any building).",
+      "exceptions": [
+        "A commercial overlay, special district, historic district or large site is not adjusted by the program; when one is present the result is sent for professional review instead of a changed number."
+      ],
+      "interpretation": "The program reports a single maximum building height of 45 feet (ZR 23-422) for R5D and marks the result for professional review.",
+      "example": {
+        "description": "A made-up R5D lot (not a real address).",
+        "inputs": {
+          "zoning_district": "R5D"
+        },
+        "expected": {
+          "values": {
+            "max_building_height": 45
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-422: R5D maximum building height 45 feet (no base-height / setback split stated).",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_building_height": 45.0
+          },
+          "coverage_status": "professional_review_required"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r5d_height.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r5_height_setback.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports a single 45-foot maximum building height for R5D and invents no base height (test: test_as1_r5d_confident_building_height_no_setback).",
+          "Is not applied to R5 or an unknown R5 variant (test: test_nc1_variant_value_not_applied_to_another, test_nc1_unknown_r5_variant_is_unsupported_not_nearest).",
+          "Is needs_review, verified-ineligible, conditional/never verified and not effective before 2024-12-05 (test: test_as5_every_family_rule_is_needs_review_and_verified_ineligible, test_as3_before_amendment_not_effective)."
+        ],
+        "committed_untested": [
+          "The rule escalates a commercial overlay, special district or historic district to professional review, but no test found that exercises this escalation for this rule."
+        ],
+        "planned": [
+          "No base-height or setback split is modelled for R5D.",
+          "Overlay, special-district and historic-district adjustments are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r5_height_setback.py",
+        "counts": "47 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r5d-height.txt",
+        "tested_rule_file_sha256": "129e4fd69be0688f4aea870713e4b7de5192f70177a10098a800b806b7432dfc",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r5_height_setback.py": "93901f9646e17cd9e0b00b86da9af822a099ce0d6e5e2bfe4cc483760de750af"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "Only a single flat building-height cap is given; no base-height / setback split is modelled.",
+        "The R5D-to-45-foot mapping is assigned by the researcher from the ZR 23-422 capture's table row; the capture's quoted sentence is a generic 'in the district indicated' statement, so the statement-to-district mapping is unconfirmed.",
+        "Overlays, special districts and historic districts send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r6-r12-residential-far",
+      "rule_id": "r6-r12-residential-far",
+      "rule_file": "services/api/app/rules/rulesets/r6_r12_residential_far.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "6338d2fae4a85f50161e44af4373d5cf1c3b91e83700d64b8c804fb87e4e4cce",
+      "title": "R6 through R12 residence districts (flat ZR 23-22 rows) - maximum residential floor area ratio (standard residences)",
+      "family": "residential_far",
+      "law": [
+        {
+          "section": "23-22",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+          "snapshot_id": "zr-23-22",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-22.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-11T00:00:00Z",
+          "content_digest_sha256": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "The R6 through R12 districts whose standard FAR is a single table lookup in ZR 23-22 (for example R6A, R6B, R6D, R7A, R8A, R9, R10, R11, R12). The four districts that the table conditions on wide-street proximity (R6, R7-1, R7-2, R8) are handled by a separate rule and are reported here as not applicable.",
+      "exceptions": [
+        "Lots containing qualifying affordable housing or qualifying senior housing are allowed a higher FAR (the table's second column); the program shows this as a labelled alternative and does not decide whether a development qualifies.",
+        "A Special Purpose District or other overlay may change the floor area; the program does not apply that change."
+      ],
+      "interpretation": "The program looks up the district's standard-residences FAR and multiplies it by the lot area to give the largest residential floor area allowed. For R6B the standard FAR is 2.00.",
+      "example": {
+        "description": "A made-up 5,000 sq ft R6B lot with standard residences (not a real address).",
+        "inputs": {
+          "zoning_district": "R6B",
+          "lot_area_sq_ft": 5000,
+          "housing_program": "standard_residence"
+        },
+        "expected": {
+          "values": {
+            "max_residential_far": 2.0,
+            "max_residential_floor_area_sq_ft": 10000
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-22 table, R6B row: standard residences 2.00. 2.00 x 5,000 sq ft = 10,000 sq ft.",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_residential_far": 2.0,
+            "max_residential_floor_area_sq_ft": 10000.0
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r6_r12_residential_far.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r1_r12_residential_far.py",
+        "services/api/tests/rules/test_r6b_far_heights.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "The ZR 23-22 standard residential FAR (2.00 for R6B) is checked byte-for-byte against the captured table, and the benchmark R6B lot yields 20,150 sq ft (test: test_as1_flat_rule_values_match_snapshot, test_c2_benchmark_standard_and_qualifying_allowances).",
+          "Multiplies the FAR by the lot area to report the maximum residential floor area for the benchmark lot (test: test_c2_benchmark_standard_and_qualifying_allowances).",
+          "Is draft/needs_review, never verified, and effective from 2024-12-05 (test: test_as7_all_rules_are_draft_and_unapproved, test_as7_no_family_result_is_ever_verified).",
+          "Covers exactly the ZR 23-21/23-22 districts, with none claimed twice or invented (test: test_as2_every_snapshot_district_is_covered_or_excluded)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "Whether a site qualifies for the higher qualifying-housing FAR is a determination the program does not make (it is a separate labelled rule).",
+          "Special Purpose District and overlay changes to FAR are not applied."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r1_r12_residential_far.py tests/rules/test_r6b_far_heights.py",
+        "counts": "47 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r6-r12-residential-far.txt",
+        "tested_rule_file_sha256": "6338d2fae4a85f50161e44af4373d5cf1c3b91e83700d64b8c804fb87e4e4cce",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r1_r12_residential_far.py": "5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca",
+          "services/api/tests/rules/test_r6b_far_heights.py": "7e7f505c58155f4dcc6172d78d81f4957a6764d558fb31c0f476b2e0c924daf4"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The qualifying-housing FAR (the table's second column) is shown as an alternative, not computed.",
+        "Special Purpose District and overlay changes are not applied.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r6-r7-r8-wide-street-conditional-far",
+      "rule_id": "r6-r7-r8-wide-street-conditional-far",
+      "rule_file": "services/api/app/rules/rulesets/r6_r7_r8_wide_street_conditional_far.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "a33e50f3015bb50c43720ad8bf9c58bf14b4ebd52ac8c1aa721c638b40533463",
+      "title": "R6, R7-1, R7-2, R8 residence districts (ZR 23-22 wide-street conditional) - maximum residential floor area ratio (conservative value)",
+      "family": "residential_far",
+      "law": [
+        {
+          "section": "23-22",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+          "snapshot_id": "zr-23-22",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-22.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-11T00:00:00Z",
+          "content_digest_sha256": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "The four ZR 23-22 districts whose FAR depends on wide-street proximity: R6, R7-1, R7-2 and R8. These districts appear twice in the table - a higher value within 100 feet of a wide street and a lower value otherwise.",
+      "exceptions": [
+        "Within 100 feet of a wide street a higher FAR applies (R6 3.00, R7-1/R7-2 4.00, R8 7.20); the program shows this as a labelled alternative and does not make the wide-street determination.",
+        "Lots containing qualifying affordable or senior housing are allowed a higher FAR again; shown as an alternative, not decided.",
+        "The R8 wide-street qualifying value carries a compound footnote (outside a Mandatory Inclusionary Housing area, within 100 feet of a wide street, and containing certain housing); the program does not evaluate it."
+      ],
+      "interpretation": "The program reports the lower (non-wide-street) FAR as the base value and marks the result conditional, because the higher value applies only for the part of the lot within 100 feet of a wide street. For R6 the lower value is 2.20 and the wide-street value is 3.00.",
+      "example": {
+        "description": "A made-up 5,000 sq ft R6 lot with standard residences and no wide-street information given (not a real address).",
+        "inputs": {
+          "zoning_district": "R6",
+          "lot_area_sq_ft": 5000,
+          "housing_program": "standard_residence"
+        },
+        "expected": {
+          "values": {},
+          "basis_kind": "gap",
+          "basis": "ZR 23-22 lists R6 twice: 3.00 within 100 feet of a wide street (footnote 1) and 2.20 otherwise. With no wide-street determination in the inputs, the single correct FAR cannot be worked from the captured text - it is 2.20 if the lot is not within 100 feet of a wide street and 3.00 if it is. The program returns the 2.20 base value and marks it conditional.",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_residential_far": 2.2,
+            "max_residential_floor_area_sq_ft": 11000.0
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": null
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r6_r7_r8_wide_street_conditional_far.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r1_r12_residential_far.py",
+        "services/api/tests/rules/test_r6b_far_heights.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Returns the conservative (non-wide-street) FAR for R6, R7-1, R7-2 and R8, never the higher wide-street value, and surfaces the higher value only as a labelled conditional alternative (test: test_as3_conditional_districts_return_conservative_value).",
+          "Proves the higher value is the ZR 23-22 footnote-1 wide-street row, and byte-checks the R8 footnote-2 qualifying value (8.64) against the snapshot (test: test_as3_higher_value_is_the_wide_street_footnote_row, test_as1_conditional_rule_values_match_snapshot).",
+          "Is not applicable to R6B (which has no wide-street increase) (test: test_r6b_has_no_wide_street_increase).",
+          "Is draft/needs_review and never verified (test: test_as7_all_rules_are_draft_and_unapproved, test_as7_no_family_result_is_ever_verified)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The wide-street determination is not made by this rule, so which FAR applies cannot be settled from it alone.",
+          "The ZR 23-22 split of one lot between two FAR values ('or portions thereof') is not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r1_r12_residential_far.py tests/rules/test_r6b_far_heights.py",
+        "counts": "47 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r6-r7-r8-wide-street-conditional-far.txt",
+        "tested_rule_file_sha256": "a33e50f3015bb50c43720ad8bf9c58bf14b4ebd52ac8c1aa721c638b40533463",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r1_r12_residential_far.py": "5f6f2278a72a59c9a0e124613107c15b255b870d256744c57eded000a71b0eca",
+          "services/api/tests/rules/test_r6b_far_heights.py": "7e7f505c58155f4dcc6172d78d81f4957a6764d558fb31c0f476b2e0c924daf4"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The program cannot settle the FAR without a wide-street determination; it returns the non-wide-street base value and marks the result conditional.",
+        "The wide-street footnote allows a single lot to be split between both values ('or portions thereof'); the program does not compute the split.",
+        "The qualifying-housing values and the R8 compound footnote are not computed.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r6b-dwelling-units",
+      "rule_id": "r6b-dwelling-units",
+      "rule_file": "services/api/app/rules/rulesets/r6b_dwelling_units.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "404179f2c2aab9c25826c59c92c4715fe0647a8f552cb1e385c72ccc7cb7ef02",
+      "title": "R6B district - maximum number of dwelling units: maximum residential floor area / 680, a fraction of three-quarters or more counting as one unit (ZR 23-52 paragraph (b))",
+      "family": "residential_dwelling_units",
+      "law": [
+        {
+          "section": "23-52",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52",
+          "snapshot_id": "zr-23-52",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-52.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T07:29:29Z",
+          "content_digest_sha256": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac"
+        },
+        {
+          "section": "23-52(b)",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52",
+          "snapshot_id": "zr-23-52",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-52.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T07:29:29Z",
+          "content_digest_sha256": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac"
+        },
+        {
+          "section": "11-25",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18433",
+          "snapshot_id": "zr-11-25",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-11-25.snapshot.json",
+          "last_amended": "1994-06-29",
+          "captured_on": "2026-09-13T02:45:00Z",
+          "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R6B districts, for a building with multiple dwelling residences, where there is no special density area and the housing is not qualifying senior housing (those have no dwelling-unit factor).",
+      "exceptions": [
+        "Qualifying senior housing, special density areas and conversions have no dwelling-unit factor; the rule does not apply to them.",
+        "The qualifying-affordable-housing dividend uses a different floor-area basis that the program sends for professional review.",
+        "A special district sends the result for professional review."
+      ],
+      "interpretation": "The program divides the maximum residential floor area by the dwelling-unit factor of 680 (ZR 23-52(b)) to get a dwelling-unit count, then rounds: a remaining fraction of three-quarters or more counts as one unit, otherwise it is dropped. R6B inherits ZR 23-52 through the suffix provision ZR 11-25.",
+      "example": {
+        "description": "A made-up R6B case: a 5,000 sq ft lot with 10,000 sq ft of residential floor area (not a real address).",
+        "inputs": {
+          "zoning_district": "R6B",
+          "max_residential_floor_area_sq_ft": 10000,
+          "housing_program": "standard_residence",
+          "special_density_area": false,
+          "special_district_present": false
+        },
+        "expected": {
+          "values": {
+            "dwelling_units_before_rounding": 14.705882352941176,
+            "max_dwelling_units": 14
+          },
+          "basis_kind": "reference_case",
+          "basis": "Independent reference case, work-order section 9 table B row P1 (an AI agent working ZR 23-52(b) from the sealed capture): factor 680; 10,000 / 680 = 14.71; a fraction below three-quarters is dropped, so 14.",
+          "prepared_by": "worked independently by a sealed-folder AI agent and recomputed by a second agent; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "dwelling_units_before_rounding": 14.705882352941176,
+            "max_dwelling_units": 14.0
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r6b_dwelling_units.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r6b_coverage_yard_units.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Divides the maximum residential floor area by 680 and rounds up only at a fraction of three-quarters or more, giving 29 units for the benchmark 20,150 sq ft lot, with the formula carried in the trace (test: test_c12_benchmark_units_29_with_the_formula).",
+          "Rounds correctly across the three-quarters boundary over a range of floor areas (test: test_units_round_up_only_at_three_quarters).",
+          "Is the only rule in the registry that emits a dwelling-unit output for R6B (test: test_units_are_one_place_across_the_registry).",
+          "Returns no estimate for qualifying senior housing or a special density area (no factor applies), and sends qualifying affordable housing to professional review (test: test_qualifying_senior_housing_has_no_factor, test_special_density_area_has_no_factor, test_qualifying_affordable_is_computed_but_sent_to_review).",
+          "Fails closed to professional review on a missing or invalid floor area, program or special-density flag (test: test_unknown_program_area_or_floor_area_gives_no_estimate, test_units_fail_closed_on_a_bad_floor_area).",
+          "Reaches R6B through the ZR 11-25 suffix reading, flagged on every result (test: test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "Conversions and mixed-factor applicability are not computed."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py",
+        "counts": "88 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-dwelling-units.txt",
+        "tested_rule_file_sha256": "404179f2c2aab9c25826c59c92c4715fe0647a8f552cb1e385c72ccc7cb7ef02",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r6b_coverage_yard_units.py": "1e0762436eb031d0e905fe67fd21a0f96ad2acf1ade21b618abacd6e288a2053"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The qualifying-affordable dividend, qualifying senior housing and conversions are not computed.",
+        "The rule takes the maximum residential floor area as an input; it does not itself check the density-area or unit-mix facts a real determination needs.",
+        "Special districts send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r6b-height",
+      "rule_id": "r6b-height",
+      "rule_file": "services/api/app/rules/rulesets/r6b_height.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "86507408a473f672cae795b488d308508872822617a01348b978a49a28e4a792",
+      "title": "R6B district - minimum base height, maximum base height and maximum building height, standard residences and qualifying affordable or senior housing (ZR 23-432)",
+      "family": "residential_height_setback",
+      "law": [
+        {
+          "section": "23-432",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-432",
+          "snapshot_id": "zr-23-432",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-432.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T06:49:08Z",
+          "content_digest_sha256": "9fab7be8940498b076f7a88dfdd170d9003907e69cefae62305daf807037c68c"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R6B districts (any building).",
+      "exceptions": [
+        "The qualifying-housing heights are shown as a labelled alternative; the program does not decide whether a development qualifies.",
+        "The setback above the base height (ZR 23-433) is not encoded in this rule.",
+        "A commercial overlay is not captured, and a special district sends the result for professional review."
+      ],
+      "interpretation": "The program reports the R6B row of the ZR 23-432 height table: minimum base height 30 feet, maximum base height 45 feet, maximum building height 55 feet for standard residences, and for qualifying housing a maximum base height of 45 feet and maximum building height of 65 feet. R6B heights do not depend on street width.",
+      "example": {
+        "description": "A made-up R6B lot with no overlay and no special district (not a real address).",
+        "inputs": {
+          "zoning_district": "R6B",
+          "overlay_present": false,
+          "special_district_present": false
+        },
+        "expected": {
+          "values": {
+            "min_base_height": 30,
+            "max_base_height": 45,
+            "max_building_height": 55,
+            "qualifying_max_base_height": 45,
+            "qualifying_max_building_height": 65
+          },
+          "basis_kind": "reference_case",
+          "basis": "Independent reference case, work-order section 9 table A rows L3 and L4 (an AI agent working ZR 23-432 from the sealed capture): R6B base 30 to 45 ft, building 55 ft standard; base 45 ft, building 65 ft qualifying.",
+          "prepared_by": "worked independently by a sealed-folder AI agent and recomputed by a second agent; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "min_base_height": 30.0,
+            "max_base_height": 45.0,
+            "max_building_height": 55.0,
+            "qualifying_max_base_height": 45.0,
+            "qualifying_max_building_height": 65.0
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r6b_height.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r6b_far_heights.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports all five R6B heights (min base 30, max base 45, building 55 standard; qualifying max base 45, building 65) from the one ZR 23-432 lookup, labelled and conditional, for the benchmark lot (test: test_c1_benchmark_heights_from_the_one_lookup).",
+          "The rule parameters are byte-equal to the ZR 23-432 R6B snapshot row (test: test_rule_parameters_are_byte_equal_to_the_snapshot_rows).",
+          "Is the only rule that emits a height in feet for R6B (test: test_c1_no_other_rule_emits_a_height_for_r6b).",
+          "Attaches the overlay note only when an overlay is mapped, and fails closed on a special district or unattested inputs (test: test_c1_overlay_note_only_when_an_overlay_is_mapped, test_c1_special_district_or_unattested_inputs_fail_closed).",
+          "Is R6B-only, draft/needs_review, lane-A-gated and not effective before 2024-12-05 (test: test_c1_height_rule_is_r6b_only, test_new_rules_are_draft_needs_review_and_lane_a_gated, test_before_the_amendment_date_nothing_is_emitted).",
+          "Records that R6B heights do not depend on street width (test: test_c1_benchmark_heights_from_the_one_lookup)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The ZR 23-433 setback above the base height is not encoded.",
+          "Commercial overlays are not captured."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r6b_far_heights.py",
+        "counts": "32 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-height.txt",
+        "tested_rule_file_sha256": "86507408a473f672cae795b488d308508872822617a01348b978a49a28e4a792",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r6b_far_heights.py": "7e7f505c58155f4dcc6172d78d81f4957a6764d558fb31c0f476b2e0c924daf4"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The setback above the base height (ZR 23-433) is not computed in this rule.",
+        "The qualifying-housing heights are shown as an alternative, not decided.",
+        "Commercial overlays are not captured; special districts send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r6b-lot-coverage",
+      "rule_id": "r6b-lot-coverage",
+      "rule_file": "services/api/app/rules/rulesets/r6b_lot_coverage.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "6d1f5c0adb5a6d3a85a28e57466336a0f83b16e96bb72a46fa6196a6256ce95f",
+      "title": "R6B district - maximum residential lot coverage for corner, interior and through lots (ZR 23-362 paragraph (a), standard lots)",
+      "family": "residential_lot_coverage",
+      "law": [
+        {
+          "section": "23-362",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362",
+          "snapshot_id": "zr-23-362",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-362.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T07:29:06Z",
+          "content_digest_sha256": "f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9"
+        },
+        {
+          "section": "11-25",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18433",
+          "snapshot_id": "zr-11-25",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-11-25.snapshot.json",
+          "last_amended": "1994-06-29",
+          "captured_on": "2026-09-13T02:45:00Z",
+          "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R6B districts, standard lots, keyed by lot type (corner, interior or through).",
+      "exceptions": [
+        "Only standard lots are covered; the eligible-site percentages (65 or 50 percent) are not computed.",
+        "Special rules for parts of interior or through lots are not captured.",
+        "A commercial overlay is not captured, and a special district sends the result for professional review."
+      ],
+      "interpretation": "The program reports the maximum residential lot coverage from ZR 23-362(a): 100 percent on a corner lot, 80 percent on an interior or through lot. R6B inherits ZR 23-362 through the suffix provision ZR 11-25.",
+      "example": {
+        "description": "A made-up interior R6B lot with no overlay and no special district (not a real address).",
+        "inputs": {
+          "zoning_district": "R6B",
+          "lot_type": "interior",
+          "overlay_present": false,
+          "special_district_present": false
+        },
+        "expected": {
+          "values": {
+            "max_residential_lot_coverage_percent": 80
+          },
+          "basis_kind": "reference_case",
+          "basis": "Independent reference case, work-order section 9 (table B and table A row L5, an AI agent working ZR 23-362(a) and ZR 11-25 from the sealed capture): interior and through lots 80 percent; corner lots 100 percent.",
+          "prepared_by": "worked independently by a sealed-folder AI agent and recomputed by a second agent; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_residential_lot_coverage_percent": 80.0
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r6b_lot_coverage.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r6b_coverage_yard_units.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports 100 percent coverage for a corner lot (the benchmark) and 80 percent for interior or through lots, byte-matched to ZR 23-362(a) (test: test_benchmark_corner_lot_coverage_is_100_percent, test_interior_and_through_lots_are_80_percent_with_the_23_363_note).",
+          "Fails closed to professional review and names the input when the lot type is missing, and rejects an unlisted lot type rather than guessing (test: test_unknown_lot_type_gives_no_coverage_and_names_the_input, test_an_unlisted_lot_type_is_rejected_not_guessed).",
+          "Is R6B-only, draft/needs_review, lane-A-gated and not effective before 2024-12-05 (test: test_rules_are_r6b_only, test_rules_are_draft_needs_review_and_lane_a_gated, test_before_the_amendment_date_nothing_is_emitted).",
+          "Reaches R6B through the ZR 11-25 suffix reading, flagged on every result (test: test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so).",
+          "Fails closed to professional review on a special district or an unattested overlay (test: test_special_district_or_unattested_special_district_fails_closed, test_unattested_overlay_fails_closed)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "Only standard lots are covered; the eligible-site percentages and the special interior/through-lot rules are not computed.",
+          "Commercial overlays are not captured."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py",
+        "counts": "88 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-lot-coverage.txt",
+        "tested_rule_file_sha256": "6d1f5c0adb5a6d3a85a28e57466336a0f83b16e96bb72a46fa6196a6256ce95f",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r6b_coverage_yard_units.py": "1e0762436eb031d0e905fe67fd21a0f96ad2acf1ade21b618abacd6e288a2053"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "Only the standard-lot percentages are computed; eligible-site reductions are not.",
+        "For a corner lot the 100 percent applies only to the part within 100 feet of each street line; this rule returns a single percentage and does not compute the corner reach.",
+        "Commercial overlays are not captured; special districts send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r6b-qualifying-housing-far",
+      "rule_id": "r6b-qualifying-housing-far",
+      "rule_file": "services/api/app/rules/rulesets/r6b_qualifying_housing_far.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "56e70534c8caff490f6b6a89f51684d371bbb75bc40818a840bdc54bf5f38982",
+      "title": "R6B district - maximum residential floor area ratio with qualifying affordable housing or qualifying senior housing (ZR 23-22 second column), computed as a separately labeled alternative",
+      "family": "residential_far_qualifying_housing",
+      "law": [
+        {
+          "section": "23-22",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+          "snapshot_id": "zr-23-22",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-22.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-11T00:00:00Z",
+          "content_digest_sha256": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R6B districts, for a lot containing qualifying affordable housing or qualifying senior housing (not standard residences).",
+      "exceptions": [
+        "Whether a development is qualifying affordable or qualifying senior housing is a separate legal determination the program does not make.",
+        "R6B has no wide-street FAR increase, so none is applied."
+      ],
+      "interpretation": "The program looks up the R6B qualifying FAR of 2.40 (the second column of ZR 23-22) and multiplies it by the lot area to give the largest residential floor area for qualifying housing. It does not decide whether a development qualifies.",
+      "example": {
+        "description": "A made-up 5,000 sq ft R6B lot with qualifying affordable housing (not a real address).",
+        "inputs": {
+          "zoning_district": "R6B",
+          "lot_area_sq_ft": 5000,
+          "housing_program": "qualifying_affordable_housing"
+        },
+        "expected": {
+          "values": {
+            "qualifying_max_residential_far": 2.4,
+            "qualifying_max_residential_floor_area_sq_ft": 12000
+          },
+          "basis_kind": "law_text",
+          "basis": "ZR 23-22 table, R6B row: qualifying affordable or senior housing 2.40. 2.40 x 5,000 sq ft = 12,000 sq ft.",
+          "prepared_by": "worked by an AI agent from the captured text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "qualifying_max_residential_far": 2.4,
+            "qualifying_max_residential_floor_area_sq_ft": 12000.0
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r6b_qualifying_housing_far.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r6b_far_heights.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports the ZR 23-22 qualifying-housing FAR of 2.40 for R6B as a labelled conditional alternative, giving 24,180 sq ft on the benchmark lot, and never shares a label or family with the standard FAR rule (test: test_c2_benchmark_standard_and_qualifying_allowances, test_c2_the_two_allowances_never_share_a_label_or_family).",
+          "Is not applicable when the housing program is standard residence, and is R6B-only (test: test_c2_standard_program_makes_the_alternative_not_applicable, test_c2_qualifying_rule_is_r6b_only).",
+          "Records that R6B has no wide-street increase (test: test_r6b_has_no_wide_street_increase).",
+          "Fails closed to professional review on a bad lot area, and is draft/needs_review and lane-A-gated (test: test_c2_qualifying_rule_fails_closed_on_bad_lot_area, test_new_rules_are_draft_needs_review_and_lane_a_gated)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "Whether a development qualifies for qualifying affordable or senior housing is a determination the program does not make."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r6b_far_heights.py",
+        "counts": "32 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-qualifying-housing-far.txt",
+        "tested_rule_file_sha256": "56e70534c8caff490f6b6a89f51684d371bbb75bc40818a840bdc54bf5f38982",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r6b_far_heights.py": "7e7f505c58155f4dcc6172d78d81f4957a6764d558fb31c0f476b2e0c924daf4"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The program does not decide whether a development qualifies for the higher FAR.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r6b-rear-yard-corner-waiver",
+      "rule_id": "r6b-rear-yard-corner-waiver",
+      "rule_file": "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "ee909d7e0074490cbd59b2f965fbcda823182c9b57fa2fa94bf26b5d85260da4",
+      "title": "R6B district - no rear yard required within 100 feet of the point of intersection of two street lines intersecting at 135 degrees or less (ZR 23-344 paragraph (a))",
+      "family": "residential_rear_yard_corner_waiver",
+      "law": [
+        {
+          "section": "23-344(a)",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344",
+          "snapshot_id": "zr-23-344",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-344.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T07:29:17Z",
+          "content_digest_sha256": "91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007"
+        },
+        {
+          "section": "11-25",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18433",
+          "snapshot_id": "zr-11-25",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-11-25.snapshot.json",
+          "last_amended": "1994-06-29",
+          "captured_on": "2026-09-13T02:45:00Z",
+          "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R6B districts, for the rear-yard waiver near a corner: whether a point is within 100 feet of the intersection of two street lines that meet at 135 degrees or less.",
+      "exceptions": [
+        "The waiver only covers the area within 100 feet of the intersection; it says nothing about the rest of the lot.",
+        "A commercial overlay is not captured, and a special district sends the result for professional review."
+      ],
+      "interpretation": "The program reports that no rear yard is required within 100 feet of the point where two street lines meet at 135 degrees or less (ZR 23-344(a)); within that area the required rear yard is 0. R6B inherits ZR 23-344 through the suffix provision ZR 11-25.",
+      "example": {
+        "description": "A made-up R6B corner lot where two street lines meet at about 89.7 degrees, a point within 100 feet of that corner (not a real address).",
+        "inputs": {
+          "zoning_district": "R6B",
+          "within_100_ft_of_street_line_intersection": true,
+          "street_line_intersection_angle_degrees": 89.7,
+          "overlay_present": false,
+          "special_district_present": false
+        },
+        "expected": {
+          "values": {
+            "rear_yard_required_within_100_ft_of_corner": 0
+          },
+          "basis_kind": "reference_case",
+          "basis": "Independent reference case, work-order section 9 table A row L12 (an AI agent working ZR 23-344(a) from the sealed capture): no rear yard required within 100 feet of the intersection of two street lines meeting at 135 degrees or less; at 89.7 degrees within 100 feet the required rear yard is 0.",
+          "prepared_by": "worked independently by a sealed-folder AI agent and recomputed by a second agent; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "rear_yard_required_within_100_ft_of_corner": 0.0
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json",
+        "services/api/app/rules/evaluator.py",
+        "services/api/app/rules/registry.py"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_r6b_coverage_yard_units.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "Reports that no rear yard is required within 100 feet of a corner where two street lines meet at 135 degrees or less (the benchmark), returning 0 (test: test_benchmark_rear_yard_is_not_required_within_100_ft_of_the_corner).",
+          "Checks the 135-degree boundary and that the waiver does not apply above it (test: test_angle_boundary_is_135_degrees_or_less).",
+          "Does not apply beyond 100 feet and emits nothing there (test: test_beyond_100_ft_the_waiver_does_not_apply_and_nothing_is_emitted).",
+          "Fails closed to professional review on missing geometry or an impossible angle, naming the missing input (test: test_unknown_geometry_means_no_rear_yard_result_with_the_reason, test_an_impossible_angle_fails_closed).",
+          "Is R6B-only, draft/needs_review and lane-A-gated, reached through the ZR 11-25 suffix reading (test: test_rules_are_r6b_only, test_rules_are_draft_needs_review_and_lane_a_gated, test_r6b_is_reached_through_zr_11_25_and_every_rule_says_so).",
+          "Fails closed to professional review on a special district or an unattested special-district flag (test: test_special_district_or_unattested_special_district_fails_closed, test_unattested_overlay_fails_closed)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The ordinary rear-yard depth beyond 100 feet of the corner (ZR 23-342) is not computed.",
+          "Commercial overlays are not captured."
+        ]
+      },
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "52e3d8a461cf08577273c82f802b85433f6f1ec3",
+        "tested_on": "2026-10-06",
+        "command": "python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py",
+        "counts": "88 passed",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-rear-yard-corner-waiver.txt",
+        "tested_rule_file_sha256": "ee909d7e0074490cbd59b2f965fbcda823182c9b57fa2fa94bf26b5d85260da4",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_r6b_coverage_yard_units.py": "1e0762436eb031d0e905fe67fd21a0f96ad2acf1ade21b618abacd6e288a2053"
+        },
+        "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-06",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The waiver only covers the area within 100 feet of the corner; the ordinary rear-yard depth beyond that (ZR 23-342) is not computed here.",
+        "Commercial overlays are not captured; special districts send the result for professional review.",
+        "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    }
+  ],
+  "history": [
+    {
+      "seq": 1,
+      "date": "2026-10-06",
+      "entry_id": "r1-r2-bare-pitched-height",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 2,
+      "date": "2026-10-06",
+      "entry_id": "r1-r2-qrs-height",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 3,
+      "date": "2026-10-06",
+      "entry_id": "r1-r2-r3-residential-far",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 4,
+      "date": "2026-10-06",
+      "entry_id": "r1-r2-reference-plane-23421g",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 5,
+      "date": "2026-10-06",
+      "entry_id": "r1-r2-suffix-variants-pitched-height",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 6,
+      "date": "2026-10-06",
+      "entry_id": "r2x-r4-residential-far",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 7,
+      "date": "2026-10-06",
+      "entry_id": "r3-2-r4-flat-height",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 8,
+      "date": "2026-10-06",
+      "entry_id": "r3-r4-pitched-height",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 9,
+      "date": "2026-10-06",
+      "entry_id": "r4b-height",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 10,
+      "date": "2026-10-06",
+      "entry_id": "r5-height",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 11,
+      "date": "2026-10-06",
+      "entry_id": "r5-qrs-height",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 12,
+      "date": "2026-10-06",
+      "entry_id": "r5-residential-far",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 13,
+      "date": "2026-10-06",
+      "entry_id": "r5-setback",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 14,
+      "date": "2026-10-06",
+      "entry_id": "r5a-height",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 15,
+      "date": "2026-10-06",
+      "entry_id": "r5b-height",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 16,
+      "date": "2026-10-06",
+      "entry_id": "r5d-height",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 17,
+      "date": "2026-10-06",
+      "entry_id": "r6-r12-residential-far",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 18,
+      "date": "2026-10-06",
+      "entry_id": "r6-r7-r8-wide-street-conditional-far",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 19,
+      "date": "2026-10-06",
+      "entry_id": "r6b-dwelling-units",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 20,
+      "date": "2026-10-06",
+      "entry_id": "r6b-height",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 21,
+      "date": "2026-10-06",
+      "entry_id": "r6b-lot-coverage",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 22,
+      "date": "2026-10-06",
+      "entry_id": "r6b-qualifying-housing-far",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    },
+    {
+      "seq": 23,
+      "date": "2026-10-06",
+      "entry_id": "r6b-rear-yard-corner-waiver",
+      "revision": 1,
+      "event": "created",
+      "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
+      "by": "backfill"
+    }
+  ]
+}

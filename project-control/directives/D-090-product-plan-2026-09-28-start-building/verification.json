@@ -3,7 +3,7 @@
  "directive_id": "D-090",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-090-BOOTSTRAP at capture; tasks cite them through directive_refs. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": "2026-10-06T14:02:26+00:00",
+ "verified_at": "2026-10-06T19:59:11+00:00",
  "task_verifications": [
   {
    "directive_id": "D-090",
@@ -316,6 +316,347 @@
       "Verifier's carry-forward condition met at e1e8b71d: the nine allowed-path blobs are identical to those verified at 4acd2a49 (content identity 4367c8a5), the only later commit adds project-control/reports/M0-T184-DCV.md, the DB-150 row and the corrected handoff sentences are unchanged, and pull requests #431, #443, #447 and #448 were read OPEN and unmerged at acceptance (integration head 4b6a4d8c). Gates G0/G2/G3/G4/G5 PASS at that content identity (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer backend-engineer is neither). DCV report: project-control/reports/M0-T184-DCV.md (validator direct exit 0 at 4acd2a49)."
      ],
      "reviewed_sha": "e1e8b71d04206baa05b64f4489b852caec7f0d26"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M4-T023",
+   "applicable_requirement_ids": [
+    "D-090-R362",
+    "D-090-R363",
+    "D-090-R364",
+    "D-090-R365",
+    "D-090-R366",
+    "D-090-R367",
+    "D-090-R368",
+    "D-090-R369",
+    "D-090-R370",
+    "D-090-R371",
+    "D-090-R372",
+    "D-090-R373",
+    "D-090-R374",
+    "D-090-R375",
+    "D-090-R376",
+    "D-090-R377",
+    "D-090-R378",
+    "D-090-R379",
+    "D-090-R380",
+    "D-090-R381",
+    "D-090-R382",
+    "D-090-R383",
+    "D-090-R384",
+    "D-090-R385",
+    "D-090-R393",
+    "D-090-R394",
+    "D-090-R423",
+    "D-090-R425",
+    "D-090-R426",
+    "D-090-R441",
+    "D-090-R442",
+    "D-090-R443"
+   ],
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37",
+   "reviewed_manifest_sha256": "fc03d010be3cac32f74bbd97f49833c1d912faebda1d66fe7620b285850c7dde",
+   "requirements": [
+    {
+     "id": "D-090-R362",
+     "state": "PASS",
+     "evidence": [
+      "The register exists and reads without the code: docs/zoning-rule-review/REGISTER.md (23-row current table), 23 detail pages under docs/zoning-rule-review/rules/, HISTORY.md and GUIDE.md, all tracked at HEAD and rendered from services/api/app/rules/review_register/register.json.",
+      "REGISTER.md and every detail page show, per rule, the law, where it applies, the program's plain-English reading, a worked example and a human-verdict placeholder; `render_review_register.py --check` exits 0 and test_register_md_is_byte_identical passes, so the rendered record matches the data.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R363",
+     "state": "PASS",
+     "evidence": [
+      "docs/zoning-rule-review/REGISTER.md is a standalone Markdown file holding one simple table of 23 rows (columns Rule | Law | Revision | Tests | Human verdict | Reviewer and date | Details).",
+      "test_register_md_is_byte_identical (44-test suite, all passed) asserts the committed table equals render.render_register_md(register.json).",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R364",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified across all 23 entries in register.json: entry_id == rule_id (23/23), ids unique, and each rule_file_sha256 equals my own LF-normalized sha256 of the live services/api/app/rules/rulesets/*.rule.json (0 mismatch); rule_id and rule_version inside each live rule file match the entry.",
+      "35 law references each carry content_digest_sha256 and snapshot_id byte-equal to the live docs/research/zr-snapshots/v1/*.snapshot.json; code_links/test_links reuse 55 existing files (all tracked at HEAD, confirmed via git ls-files), no record copied. Tests test_one_entry_per_rule_file_and_reverse, test_rule_version_and_sha256_match_live_files, test_law_digest_matches_live_capture pass.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R365",
+     "state": "PASS",
+     "evidence": [
+      "Every entry's law[] carries section, official_url, last_amended and content_digest_sha256, plus applicable_from (verified present and non-empty for all 23); REGISTER.md column 2 renders \"[section](official_url), applies from <date>\" (e.g. row r1-r2-bare-pitched-height: \"[23-421](...node/18075), applies from 2024-12-05\").",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R366",
+     "state": "PASS",
+     "evidence": [
+      "All 23 entries have non-empty applies_where and a populated exceptions list; the detail page renders them under \"Where it applies\" and \"Exceptions and limits\" (e.g. r2x-r4-residential-far lists the qualifying-site and Special-Purpose-District exceptions).",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R367",
+     "state": "PASS",
+     "evidence": [
+      "All 23 entries have a non-empty interpretation field, rendered under \"How the program reads it\" (e.g. r2x-r4: \"looks up the district's standard FAR (1.00 ...) and multiplies it by the lot area\").",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R368",
+     "state": "PASS",
+     "evidence": [
+      "Each entry's example has inputs, expected{values,basis_kind,basis,prepared_by}, actual and agrees. test_example_actual_is_recomputed_through_the_engine evaluates every example's inputs through RuleRegistry.evaluate and asserts result.outputs == recorded actual.values and result.coverage_status == actual.coverage_status (not circular: actual is bound to the live engine).",
+      "Expected is independent: basis_kind distribution is law_text 18, reference_case 4, gap 1; test_agrees_equals_expected_vs_actual_or_null_for_gap asserts basis non-empty and prepared_by contains \"not checked by a professional\", and agrees == (expected.values == actual.values) or null for the gap (r6-r7-r8-wide-street-conditional-far).",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R369",
+     "state": "PASS",
+     "evidence": [
+      "All 23 entries carry non-empty code_links and test_links; I resolved every referenced code/test file (55 unique paths incl. evidence) against `git ls-files` at HEAD: 0 absent. test_linked_code_test_and_capture_files_exist passes; detail pages list them under \"Code\" and \"Tests\".",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R370",
+     "state": "PASS",
+     "evidence": [
+      "All 23 entries carry integer revision (all == 1) and a non-empty last_changed date, rendered in REGISTER.md column 3 (\"1 (2026-10-06)\"); check_review_register.history_errors requires current revision == latest history event (test_current_revision_must_match_latest_event).",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R371",
+     "state": "PASS",
+     "evidence": [
+      "register.json field_guide.verdict_values == exactly [\"Not reviewed\",\"Correct\",\"Incorrect\",\"Needs re-review\"]; all 23 entries' human_review.verdict read \"Not reviewed\"; check_review_register.derive_human_review yields only those four values and human_review_errors refuses a stored verdict differing from the derived one.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R372",
+     "state": "PASS",
+     "evidence": [
+      "All 23 human_review blocks contain reviewer_name, reviewer_role, review_date and comments, all empty; tests test_all_backfilled_entries_read_not_reviewed and test_not_reviewed_with_a_reviewer_name_is_rejected (a reviewer field set with decision null is refused) pass.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R373",
+     "state": "PASS",
+     "evidence": [
+      "automated_tests is a block of its own; no \"decision\" key appears inside it and \"automated_tests\" is not inside human_review (verified for all 23; test_fields_are_fixed_and_structured). REGISTER.md shows \"Tests\" and \"Human verdict\" as separate columns; detail pages use separate \"Automated test result\" and \"Human review\" headings.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R374",
+     "state": "PASS",
+     "evidence": [
+      "All 23 entries: human_review.decision is null and verdict \"Not reviewed\" (verified directly). check_review_register refuses a decision lacking a named reviewer/date/identity (test_decision_refused_without_a_named_reviewer_and_identity).",
+      "GUIDE.md (\"How a human verdict is recorded\") and REGISTER.md intro state a verdict comes only from a named human reviewer, never because tests passed or an agent agreed; CLAUDE.md principle 20 at HEAD ends \"No session enters a human verdict.\" No production code outside the register package references human_review (grep over services/api/app = none).",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R375",
+     "state": "PASS",
+     "evidence": [
+      "A decision stores reviewed_revision, reviewed_conditions, reviewed_rule_file_sha256 and reviewed_law_digests; derive_human_review compares them to the entry's current revision/rule-digest/law-digests so a decision counts only for the version and conditions reviewed (tests test_s12a_rule_change_under_a_correct_decision_reads_needs_re_review and test_s12c_changed_law_capture_digest_flags_needs_re_review pass).",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R376",
+     "state": "PASS",
+     "evidence": [
+      "docs/zoning-rule-review/REGISTER.md is the short current table (one row per rule, linking each detail page); docs/zoning-rule-review/HISTORY.md is the append-only history (23 \"created\" events, contiguous seq 1-23). history_errors enforces contiguous seq, one created event per entry at revision 1, and current revision == latest event (tests test_history_rules_hold_for_committed_register, test_missing_created_event_is_caught, test_non_contiguous_seq_is_caught).",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R377",
+     "state": "PASS",
+     "evidence": [
+      "derive_human_review flips the shown verdict to \"Needs re-review\" when the rule digest, a law digest or the revision changes while keeping the stored original decision (tests test_s12a, test_s12b_touching_the_file_cannot_keep_an_old_correct, test_s12c); history records human_verdict_recorded then flagged_for_re_review (test_s12d). A changed rule whose entry is not updated is caught naming the rule (test_tampered_rule_sha_is_caught_and_names_the_rule asserts the message contains the rule id and \"same change\").",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R378",
+     "state": "PASS",
+     "evidence": [
+      "One entry per rule id/file and exactly one \"created\" event at revision 1 per entry (tests test_one_entry_per_rule_file_and_reverse, test_each_entry_has_a_created_event_at_revision_1); all 23 revisions == 1 and HISTORY.md has no duplicate event. GUIDE.md \"Which changes move an entry's revision\" states a register layout/wording change does not move a revision and forbids a second entry or a no-change event.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R379",
+     "state": "PASS",
+     "evidence": [
+      "CLAUDE.md at HEAD, permanent principle 20 (one line): \"Zoning-rule review register (D-090-R379): every session that adds or changes zoning-rule behavior must update the register (`docs/zoning-rule-review/`; how: its `GUIDE.md`) as part of the same change. No session enters a human verdict.\"",
+      "tools/context_budget_check.py = PASS, eager total 9922 of 10000 tokens, so the added instruction fits the cap.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R380",
+     "state": "PASS",
+     "evidence": [
+      "The register and its history live only under docs/zoning-rule-review/ and services/api/app/rules/review_register/; context_budget_check.py shows the eager auto-loaded set is CLAUDE.md + three .claude/rules/* files only (register files absent), so the detail is not auto-loaded; CLAUDE.md principle 20 points to the register (docs/zoning-rule-review/) rather than containing it.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R381",
+     "state": "PASS",
+     "evidence": [
+      "23 register entries for the 23 services/api/app/rules/rulesets/*.rule.json files (one-to-one, independently counted and matched; test_one_entry_per_rule_file_and_reverse asserts 23==23). Each entry is filled from checkable evidence: rule_file_sha256 (matches my LF recompute), law content_digest (matches live snapshot), an example recomputed through the engine, and automated_tests with a committed run log under docs/zoning-rule-review/evidence/<rule id>.txt (23 logs present).",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R382",
+     "state": "PASS",
+     "evidence": [
+      "All 23 entries carry a non-empty gaps[] list; the gap example (r6-r7-r8-wide-street-conditional-far) records basis_kind \"gap\" with empty expected.values and agrees null; committed_untested items read \"no test found that exercises this\" (test_committed_untested_items_say_no_test_was_found); r5b-height and r5d-height carry the gap line that the statement-to-district mapping is researcher-assigned/unconfirmed (first review note F2). No invented values (basis non-empty for non-gaps).",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R383",
+     "state": "PASS",
+     "evidence": [
+      "REGISTER.md intro and GUIDE.md state \"This is a review record: nothing in the program waits for a verdict (ADR-007)\"; no production code outside the register package references the verdict (grep services/api/app for review_register/human_review/applies_to_current = none). The check passes with no human decision at all (tests test_s13_updated_entry_without_a_decision_passes_the_check, test_s13_entry_whose_decision_no_longer_applies_passes_the_check); the task's required_gates are the ordinary G0/G2/G3/G4, none keyed to a register verdict.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R384",
+     "state": "PASS",
+     "evidence": [
+      "entry_id is stable and equals rule_id (never changes); register.json carries schema \"zoning_rule_review_register\" and schema_version 1.0; field_guide fixes field names and closed value sets (verdict_values four, automated_test_status_values three, basis_kind three); test_fields_are_fixed_and_structured enforces ENTRY_KEYS/HR_KEYS/AT_KEYS/BEHAVIOUR_KEYS. GUIDE.md \"Moving the register into a database later\" maps entries to rows/columns.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R385",
+     "state": "PASS",
+     "evidence": [
+      "`git diff --name-only 9c90ffbf HEAD` contains no supabase/**, no migration, no *.sql and no DB-connection code; the only services/api files changed are services/api/app/rules/review_register/{__init__,check_review_register,render_review_register}.py + register.json and the one test file. register.json is a flat JSON data file and GUIDE.md states \"No database work is done now.\" (The lone project-control/blockers/B-030-...json in the diff is an unrelated sharp-advisory control record, not register DB code.)",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R393",
+     "state": "PASS",
+     "evidence": [
+      "Each entry has behaviour{tested, committed_untested, planned}; counts across 23 entries: 108 tested, 10 committed_untested in 7 entries, 45 planned. Every tested item names a test function and that function must be defined in one of the entry's linked test files (tests test_behaviour_is_structured_and_tested_items_name_a_test, test_tested_item_naming_a_function_not_in_a_linked_file_is_refused, test_every_committed_tested_citation_is_defined_in_a_linked_file); detail pages render the three lists under distinct headings.",
+      "\"Planned, not built\" holds missing behaviour only (first review note F3 applied); GUIDE.md documents the three-way split and the owner-update discipline (planned/committed/merged/tested).",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R394",
+     "state": "PASS",
+     "evidence": [
+      "The build check requires only that the record is current and never a human decision: tests test_s13_updated_entry_without_a_decision_passes_the_check and test_s13_entry_whose_decision_no_longer_applies_passes_the_check both pass (checker.validate returns [] while the verdict reads \"Not reviewed\"/\"Needs re-review\"); GUIDE.md states \"The check enforces record-keeping only ... Development never waits for an examiner.\" No production code consumes the verdict.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R423",
+     "state": "PASS",
+     "evidence": [
+      "REGISTER.md intro: \"This register covers the 23 rule-definition files the program has today - one entry per rule. That is not complete coverage of the New York City Zoning Resolution\"; GUIDE.md \"What the register is, and is not\" repeats it.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R425",
+     "state": "PASS",
+     "evidence": [
+      "applies_to_current is derived by comparing the reviewed rule-file digest, law digests and revision with the current ones; the checker recomputes it and refuses a stored \"Correct\" when any reviewed identity differs, so touching/updating register.json cannot keep an old approval (test_s12b_touching_the_file_cannot_keep_an_old_correct asserts human_review_errors flags \"Needs re-review\"; test_s12a confirms a rule-digest change yields applies False/\"Needs re-review\" with the original decision retained).",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R426",
+     "state": "PASS",
+     "evidence": [
+      "human_review stores the original decision plus reviewer_name/role, review_date, comments, reviewed_revision, reviewed_conditions, reviewed_rule_file_sha256 and reviewed_law_digests unchanged; applies_to_current is a separate derived field; the detail page shows \"Earlier decision ... it does not apply to the current version\" when it lapses (test_s12d_history_records_the_decision_and_its_later_non_application).",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R441",
+     "state": "PASS",
+     "evidence": [
+      "automated_tests holds status (all 23 \"Passed\"), tested_commit (all 52e3d8a461cf08577273c82f802b85433f6f1ec3, 40 chars), tested_on, command, counts, evidence (a committed docs/zoning-rule-review/evidence/<rule id>.txt run log with command/date/commit/exit code/pytest summary, e.g. r6b-height.txt \"32 passed\", exit 0), tested_rule_file_sha256 and tested_test_file_sha256s. The checker demands \"Not run\" when a recorded rule- or test-file digest differs (tests test_changed_test_file_demands_status_not_run, test_changed_rule_file_demands_status_not_run, test_changed_second_linked_test_file_digest_demands_not_run). REGISTER.md \"Tests\" column shows status + short commit + log link, never a file count.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R442",
+     "state": "PASS",
+     "evidence": [
+      "Both changes are built: the original decision is kept apart from the derived applies_to_current field (R425/R426 evidence) and the build check enforces record-keeping without requiring an examiner (R394 evidence); GUIDE.md affirms both.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
+    },
+    {
+     "id": "D-090-R443",
+     "state": "PASS",
+     "evidence": [
+      "The register's branch task/M4-T023-zoning-rule-review-register containing HEAD is on the remote (`git branch -r --contains HEAD` = origin/...; `git remote -v` origin = https://github.com/martin10101/nyc-buildability). The review notes are committed in the repository at HEAD: project-control/reports/M4-T023-G3G4.md (first review, agent c55b7c47, five notes F1-F5), M4-T023-G3G4-rework.md and M4-T023-producer-report.md; the evidence map and reviewer records name where the work can be read.",
+      "The verifier could not query GitHub; the orchestrator read it at acceptance: pull request #452 is OPEN and its head on GitHub is fd5d7252; the first review's notes, the rework review and the producer's report are in project-control/reports/ on that branch.",
+      "Verifier's carry-forward condition met at f1d7b94f: every file under the task's allowed paths has the blob it had at the verified head fd5d7252 (content identity fc03d010), CLAUDE.md, the rule files, the law captures and the rule tests are unchanged, .claude/rules/ and the D-090 sources 042 to 045 and requirement rows are unchanged, and the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). DCV report: project-control/reports/M4-T023-DCV.md."
+     ],
+     "reviewed_sha": "f1d7b94f6204f845630a990839d5e50a30f82d37"
     }
    ]
   }
