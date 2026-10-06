@@ -9,8 +9,12 @@
   passing test. Empty python test files are fine.
 - DO keep every seeded placeholder line <= 100 chars — ruff E501 lints app/ placeholders and is
   the api CI job's first step (wave-10 seam 06db6449 reddened CI until 580d1125).
-- DON'T run or document npm/npx/node locally (thin client) — web tests prove ONLY in CI on the
-  pushed head; never mark web behavior verified from local reasoning.
+- DO run the web checks on the Linux dev server before pushing (owner D-090-R170/R171): in
+  `apps/web`, `npx --yes npm@11.18.0 ci --no-audit --no-fund` (once per checkout or worktree), then
+  `npm run lint`, `typecheck`, `test`, `build`, and `CI=true npm run test:e2e` with the lanes venv
+  first on PATH and `PYTHONPATH=<checkout>/services/api`. Lockfile packages only; CI on the pushed
+  head stays the final word; never mark web behavior verified from reasoning alone. NEVER on the
+  owner's PC (thin client).
 - DO run `python -m ruff check services/api` before any api checkpoint/commit — it is the api
   CI job's first step; a lint miss costs a CI round.
 - DON'T read jsdom `getContext`/WebGL console noise as the failure (MapLibre components spam
