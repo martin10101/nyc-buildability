@@ -23,6 +23,14 @@ open, or dictate results into the chat — it does the file work.
 - Ask for **citations, section numbers, and exact quotes with URLs** in every answer — a claim
   without a pinpoint citation costs verification time instead of saving it.
 
+**How a request is worked now (owner, 2026-10-06; D-090 R285 to R288).** Deep questions, such as a
+starting floor height, are written here. For each one the orchestrator first runs its own research
+helper, which searches widely online and reports an answer with its sources; the answer is written
+into the entry. If the helper finds no well-supported answer, or its answer leaves the question less
+clear, the entry stays OPEN and is marked **FOR THE OWNER'S OTHER AGENT**, and the owner is reminded
+to hand it on. A request is never a blocker. Everything above still holds: an answer is a lead to be
+checked, never a source of record.
+
 **Entry format:** question · why it matters · what it unlocks · status (OPEN / ANSWERED
 <date> / ROUTED-to-architect-doc).
 
@@ -168,6 +176,61 @@ history). The active queue never carries figured-out material.
 *Loop: append new requests below with the same format. Owner: paste results to the companion
 session or the build session; the receiving session marks the entry ANSWERED and names the
 verification target.*
+
+## RQ-006 — A starting floor-to-floor height for the floor estimate (R6B first) — OPEN; research helper to run
+
+- **Question:** What floor-to-floor height should a feasibility estimate start from for a new
+  residential building of the size R6B allows in New York City, and for its ground floor? Wanted:
+  (a) what the Zoning Resolution itself says that bears on it (any rule that ties the number of
+  storeys to height, or a ground-floor height, with section numbers and exact quotes); (b) the
+  minimum ceiling heights in the NYC Building Code and Housing Maintenance Code (section numbers,
+  quotes); (c) what City design guidance says (for example HPD design guidelines, DCP's zoning
+  handbook); (d) what architects and feasibility studies commonly assume, with the reasoning
+  (structure depth, services, finished ceiling); (e) whether the common value differs for a
+  ground floor with shops or a community facility.
+- **Why it matters:** the estimated number of floors is the height limit divided by the
+  floor-to-floor height. The program holds 10 ft as a stated, editable starting value
+  (`services/api/app/scenario/three_answers/inputs.py`). The owner's rule is that a design choice
+  may have a visible, editable starting value and no hidden default (D-090-R256), and the owner
+  approves the starting values (section map, choice 4).
+- **What it unlocks:** a proposed starting value with its basis for the owner's approval; the
+  "estimated floors" part of the report. Until then the result is shown as conditional on the
+  value on screen.
+- **Not asked here:** what any law means for a particular lot.
+- **Status:** OPEN (2026-10-06). Research helper: not run yet.
+
+## RQ-007 — A starting average apartment size for the realistic apartment-count estimate — OPEN; research helper to run
+
+- **Question:** What average apartment size should a realistic apartment-count estimate start
+  from for new multifamily housing in New York City (low-rise and mid-rise, outer boroughs)?
+  Wanted: (a) what the Zoning Resolution says about the number of dwelling units allowed per
+  floor area (the dwelling-unit factor: section number, current value, exact quote), kept apart
+  because that is the LEGAL limit, not the realistic count; (b) minimum apartment or room sizes
+  in City codes and HPD design guidelines by apartment type; (c) published figures for the
+  average size of newly built apartments in New York City or Queens, with source and year;
+  (d) how feasibility studies usually pick the figure, and whether they state net or gross area.
+- **Why it matters:** the realistic count is the floor area available for apartments divided by
+  an average apartment size. The owner wants legal maximums kept apart from practical estimates
+  and every estimate to state its assumptions (D-090 source-035).
+- **What it unlocks:** a proposed starting value with its basis for the owner's approval (section
+  map, choices 3 and 4); the "realistic apartment-count estimates" part of the report.
+- **Status:** OPEN (2026-10-06). Research helper: not run yet.
+
+## RQ-008 — A starting shared-space allowance (the part of a residential building that is not inside apartments) — OPEN; research helper to run
+
+- **Question:** What share of a new New York City apartment building's floor area is commonly
+  taken by halls, stairs, lifts, lobby, refuse and service rooms, so that a feasibility estimate
+  can turn floor area into apartment area? Wanted: (a) published efficiency or loss-factor figures
+  for low-rise and mid-rise multifamily buildings, with source, year, and whether the base is
+  gross floor area or zoning floor area; (b) which spaces the Zoning Resolution leaves out of
+  "floor area" for a residential building (section numbers and exact quotes), because that changes
+  the base the percentage applies to; (c) how the figure changes with building size and with the
+  number of stairs and lifts the Building Code requires.
+- **Why it matters:** the owner's accuracy rules require gross, net and zoning floor area to stay
+  distinct and every efficiency percentage to state its denominator (D-090 source-030, item 4).
+- **What it unlocks:** a proposed starting value with its basis for the owner's approval (section
+  map, choices 3 and 4); the realistic apartment-count estimate.
+- **Status:** OPEN (2026-10-06). Research helper: not run yet.
 
 ---
 
