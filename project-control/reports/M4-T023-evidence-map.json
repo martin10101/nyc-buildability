@@ -2,17 +2,19 @@
  "task_id": "M4-T023",
  "material_commits": [
   "c55b7c47 (producer rules-engineer, first build: the register data, renderer, checker, test, guide and rendered pages)",
-  "8ac78417 (cherry-pick of the second producer's commit 860d175e, the rework for owner messages 94 and 95 and the first review's notes F1 to F5) = material head",
+  "8ac78417 (cherry-pick of the second producer's commit 860d175e, the rework for owner messages 94 and 95 and the first review's notes F1 to F5)",
+  "9cb147a3 (cherry-pick of the second producer's commit 4da135ef, round 3: the corrections F1, F2 and F3 of the independent review at 326c8560) = material head",
   "4cd2fc4a (orchestrator: the one-line standing instruction in CLAUDE.md, outside the task's allowed paths)"
  ],
  "contract_head": "6bcb9e92",
  "claim_seam_head": "10ce8cad",
  "checks_at_material_head": [
   "ruff check . (services/api): exit 0",
-  "pytest tests/rules/test_zoning_rule_review_register.py tests/rules/test_coverage_matrix.py: exit 0, 55 passed",
+  "pytest tests/rules/test_zoning_rule_review_register.py tests/rules/test_coverage_matrix.py: exit 0, 59 passed",
   "render_review_register.py --check: exit 0, register check PASSED",
   "tools/modularity_check.py --check: exit 0",
-  "full services/api pytest, run alone by the orchestrator at 8ac78417 (the branch with the integration branch merged in): exit 0, 8040 passed, 8 skipped"
+  "full services/api pytest, run alone by the orchestrator at 9cb147a3 (the branch with the integration branch merged in): exit 0, 8044 passed, 8 skipped",
+  "the producer's own full run in its worktree (which does not contain the integration branch's timing-test fix, pull request 443) had 1 failure, tests/drawings/test_dxf_reader.py::test_t097_b1_mutation_double_find_reddens_time_guard in its pre-fix form; that test passes on this branch, which contains the fix"
  ],
  "requirements": {
   "D-090-R362": [
@@ -97,7 +99,7 @@
    "No database table, migration or connection is in the change: `git diff --name-only` of the task's commits against the integration branch lists only services/api/app/rules/review_register/**, docs/zoning-rule-review/**, the one test file, CLAUDE.md (one line) and project-control/**; nothing under supabase/ or any migration path."
   ],
   "D-090-R393": [
-   "Each entry has behaviour {tested, committed_untested, planned}: 104 tested items (each names its test function), 6 committed-untested items in 4 entries, 49 planned items; the detail page renders them under 'What the program does today and a test checks', 'In the program but no test checks it' and 'Planned, not built' (services/api/tests/rules/test_zoning_rule_review_register.py::test_behaviour_is_structured_and_tested_items_name_a_test, test_behaviour_rejects_a_tested_item_without_a_test_name)."
+   "Each entry has behaviour {tested, committed_untested, planned}: 108 tested items, 10 committed-untested items in 7 entries, 45 planned items (missing behaviour only, after the independent review's note F3); the detail page renders them under 'What the program does today and a test checks', 'In the program but no test checks it' and 'Planned, not built' (services/api/tests/rules/test_zoning_rule_review_register.py::test_behaviour_is_structured_and_tested_items_name_a_test, test_behaviour_rejects_a_tested_item_without_a_test_name). Every test function named by a tested item must be defined in a test file the entry links, and every linked test file must be bound by a digest (services/api/tests/rules/test_zoning_rule_review_register.py::test_tested_item_naming_a_function_not_in_a_linked_file_is_refused, test_every_committed_tested_citation_is_defined_in_a_linked_file, test_a_linked_test_file_not_bound_by_a_digest_is_caught; the independent review's finding F1)."
   ],
   "D-090-R394": [
    "The check requires only that the record is current (recorded identities match the files, a revision and a history event exist). No check, test, gate or script requires a human decision (services/api/tests/rules/test_zoning_rule_review_register.py::test_s13_updated_entry_without_a_decision_passes_the_check, test_s13_entry_whose_decision_no_longer_applies_passes_the_check); GUIDE.md says so in one sentence ('The check enforces record-keeping only')."
@@ -112,8 +114,8 @@
    "human_review keeps the original decision, reviewer, date, comments, revision, conditions and identities unchanged; applies_to_current is a separate derived field; the detail page shows 'Earlier decision: ...; it does not apply to the current version' when it no longer applies; history keeps both events (services/api/tests/rules/test_zoning_rule_review_register.py::test_s12d_history_records_the_decision_and_its_later_non_application)."
   ],
   "D-090-R441": [
-   "automated_tests holds status (Passed, Failed or Not run), tested_commit, tested_on, command, counts, evidence (a committed run log under docs/zoning-rule-review/evidence/), tested_rule_file_sha256 and tested_test_file_sha256s. All 23 read Passed at 52e3d8a4 (7 run logs). The table column shows the status, the short commit and a link to the log, never a count of test files (services/api/tests/rules/test_zoning_rule_review_register.py::test_automated_tests_result_shape_and_status).",
-   "The checker requires 'Not run' when a recorded rule-file or test-file digest differs from the current file (services/api/tests/rules/test_zoning_rule_review_register.py::test_changed_test_file_demands_status_not_run, test_changed_rule_file_demands_status_not_run). The run logs are .txt files because *.log is ignored repository-wide."
+   "automated_tests holds status (Passed, Failed or Not run), tested_commit, tested_on, command, counts, evidence (a committed run log under docs/zoning-rule-review/evidence/), tested_rule_file_sha256 and tested_test_file_sha256s. All 23 read Passed at 52e3d8a4, each with its own run log docs/zoning-rule-review/evidence/<rule id>.txt (23 logs; each a run of the entry's command against an exported copy of commit 52e3d8a4). Three entries bind two test files (r5-residential-far, r6-r12-residential-far, r6-r7-r8-wide-street-conditional-far). The table column shows the status, the short commit and a link to the log, never a count of test files (services/api/tests/rules/test_zoning_rule_review_register.py::test_automated_tests_result_shape_and_status).",
+   "The checker requires 'Not run' when a recorded rule-file or test-file digest differs from the current file (services/api/tests/rules/test_zoning_rule_review_register.py::test_changed_test_file_demands_status_not_run, test_changed_rule_file_demands_status_not_run, test_changed_second_linked_test_file_digest_demands_not_run). The run logs are .txt files because *.log is ignored repository-wide."
   ],
   "D-090-R442": [
    "Both register changes are built as planned: the original decision kept apart from its applicability to the current version (R425, R426 evidence) and a check that enforces record keeping without waiting for an examiner (R394 evidence)."
