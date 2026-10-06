@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T06:56:23+00:00",
+ "updated_at": "2026-10-06T07:14:11+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -309,10 +309,21 @@
   "D-090-R285",
   "D-090-R286",
   "D-090-R287",
-  "D-090-R288"
+  "D-090-R288",
+  "D-090-R289",
+  "D-090-R290",
+  "D-090-R291",
+  "D-090-R292",
+  "D-090-R293",
+  "D-090-R294",
+  "D-090-R295",
+  "D-090-R296",
+  "D-090-R297",
+  "D-090-R298",
+  "D-090-R299"
  ],
- "requirements_id_digest_sha256": "3425f9ea3e6df339ce335c47eaa19eb51d952e8b03691f9cf440bf08cabcdda6",
- "requirements_content_digest_sha256": "43c3043c04ca9bd6ac68ab0bea4f1e5192e30c417cf79a14a0fdfb6af4a64375",
+ "requirements_id_digest_sha256": "1c65345189506c5ba5690a118106e72339ff084a3580999ff861854dcf044ba4",
+ "requirements_content_digest_sha256": "71d31412f3a5682ab02ea812df2cdc94daa493090f6df30b45e6e14356e82ff4",
  "sources": [
   {
    "file": "source-001.md",
@@ -616,6 +627,14 @@
    "recorded_at": "2026-10-06T06:56:23+00:00",
    "content_digest_sha256": "5453250e293641ab048ca68c468bc432891abb702e6ab503010ec4fa9a7d7178",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-039-amendment.md",
+   "kind": "amendment",
+   "sequence": 39,
+   "recorded_at": "2026-10-06T07:14:11+00:00",
+   "content_digest_sha256": "fe88801e4b4d1838d9b500814cf9cc88cbee030c4f72ead461c0b242cb02fe9f",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -655,7 +674,8 @@
   "source-035-amendment.md",
   "source-036-amendment.md",
   "source-037-amendment.md",
-  "source-038-amendment.md"
+  "source-038-amendment.md",
+  "source-039-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -922,6 +942,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-038 (session 013RaGmC messages 85, 86 and 87, 2026-10-06: a question about what comes next; 'Ok go ahead and continue'; and the owner's instruction that deep questions such as the starting floor height go into the research file, a research helper searches online for the answer, the owner is reminded to pass the file to their other agent when no well-supported answer is found, and it is never a blocker) and requirements D-090-R284..R288, all pending. Messages 83 and 84 are in D-092. Text extracted by script; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-06T07:14:11+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-039 (session 013RaGmC message 88, 2026-10-06, the owner's reviewer's advice on the order of the work, sent by the owner: eight steps from the waiting merges to the full journey test; research answers the next building decision; build and test a piece once its decision is settled instead of rewriting the plan; the temporary security exception is removed after October 7, 10:09 a.m. New York time) and requirements D-090-R289..R299, all pending. Text extracted by script; nothing retyped; no existing row edited."
   }
  ]
 }

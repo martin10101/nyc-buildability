@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 288,
+ "requirement_count": 299,
  "producer": "orchestrator",
- "updated_at": "2026-10-06T06:56:23+00:00",
+ "updated_at": "2026-10-06T07:14:11+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -9740,6 +9740,369 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-06 (message 87).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R289",
+   "text": "'I\u2019d keep this order:' '1. Finish the waiting merges, one at a time, with fresh tests and independent review.' 'The security update is now merged.': the work keeps the order of the eight numbered steps; step 1 is to finish the waiting merges one at a time, each with a fresh test run and an independent review. ORCHESTRATOR'S READING: the text reads as the owner's reviewer's advice, sent by the owner; it refines the order given under R284 by placing the report choices (step 2) before the R6B checks.",
+   "source_ref": "source-039-amendment.md#owner-message-88-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R284"
+   ],
+   "required_harness": "Each waiting change merges alone, on a fresh run in which every expected check is a completed success, after an independent check of its exact head.",
+   "required_evidence": "The merge records and the review records on each pull request.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 88).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R290",
+   "text": "'2. Settle the report choices.' 'Have Claude recommend starting values with reasons for you to approve.' 'Keep design assumptions separate from facts and legal rules.': step 2: the open report choices are settled next. The orchestrator recommends starting values with the reasons for each, and the owner approves them. In the proposal and in the product a design assumption is kept apart from a fact and from a legal rule.",
+   "source_ref": "source-039-amendment.md#owner-message-88-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R256",
+    "D-090-R283",
+    "D-090-R289"
+   ],
+   "required_harness": "A proposal of starting values, each with its basis and marked as a design assumption; the owner's answer recorded before a value is used as approved.",
+   "required_evidence": "The proposal, the research file and the owner's answer.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 88).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R291",
+   "text": "'3. Check the R6B answers.' 'Resolve missing rules and conflicting inputs, and save independently calculated examples to test against.': step 3: the R6B answers are checked: missing rules and conflicting inputs are resolved, and independently calculated examples are saved as files to test against.",
+   "source_ref": "source-039-amendment.md#owner-message-88-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R290"
+   ],
+   "required_harness": "The reference examples exist as files apart from program output; each known gap is resolved or shown as not known.",
+   "required_evidence": "The reference files, the law captures and their independent reading.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 88).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R292",
+   "text": "'4. Connect one option to the screen.' 'Prove that changing inputs updates every affected result correctly.': step 4: one development option is connected to the screen, with proof that a changed input changes every result that depends on it, correctly.",
+   "source_ref": "source-039-amendment.md#owner-message-88-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R291"
+   ],
+   "required_harness": "Tests that change an input and check every affected result against the reference examples.",
+   "required_evidence": "The tests and their runs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 88).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R293",
+   "text": "'5. Add floors, simple building shapes and realistic apartment estimates, clearly separated from legal maximums.': step 5: floors, simple building shapes and realistic apartment estimates are added, each clearly separate from the legal maximums.",
+   "source_ref": "source-039-amendment.md#owner-message-88-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R292"
+   ],
+   "required_harness": "The screen and the data keep the legal maximum and the practical estimate apart, each estimate with its stated assumptions.",
+   "required_evidence": "The screens, the contract and the tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 88).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R294",
+   "text": "'6. Build the remaining promised development options and their comparison, one at a time.': step 6: the remaining promised development options and the comparison between them are built one at a time.",
+   "source_ref": "source-039-amendment.md#owner-message-88-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R293"
+   ],
+   "required_harness": "One option per piece of work, each reviewed and merged before the next.",
+   "required_evidence": "The task and merge records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 88).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R295",
+   "text": "'7. Assemble the full report and PDF, including the agreed supporting sections.': step 7: the full report and its PDF are assembled, with the supporting sections the owner has agreed.",
+   "source_ref": "source-039-amendment.md#owner-message-88-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R294"
+   ],
+   "required_harness": "The report and PDF contain the agreed sections and the same results as the screen.",
+   "required_evidence": "The report builder, the PDF and their tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 88).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R296",
+   "text": "'8. Test the complete journey against the reference examples and inspect the actual PDF.' 'Finish the agreed R6B coverage before moving to the next district.': step 8: the whole journey is tested against the reference examples and the actual PDF is inspected; the agreed R6B coverage is finished before the next district starts.",
+   "source_ref": "source-039-amendment.md#owner-message-88-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R295"
+   ],
+   "required_harness": "A full-journey test on the reference examples; a record of the PDF inspection; the R6B checklist complete before another district is begun.",
+   "required_evidence": "The journey test, the inspection record and the district checklist.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 88).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R297",
+   "text": "'Research should answer the next building decision.': research is done for the decision the next piece of building needs, not for its own sake.",
+   "source_ref": "source-039-amendment.md#owner-message-88-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R285"
+   ],
+   "required_harness": "Each research question names the building decision it serves.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 88).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R298",
+   "text": "'Once the necessary decision is settled, build and test that piece rather than endlessly rewriting the plan.': once the decision a piece needs is settled, that piece is built and tested; the plan is not rewritten again in its place.",
+   "source_ref": "source-039-amendment.md#owner-message-88-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [
+    "D-090-R297"
+   ],
+   "required_harness": "After a decision is recorded, the next record for that piece is a task with code and tests, not a further revision of the plan.",
+   "required_evidence": "The ledger and the plan documents' history.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 88).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R299",
+   "text": "'One cleanup must also stay on the list: remove the temporary security exception after October 7 at 10:09 a.m. New York time.': the removal of the temporary security exception stays on the list of work and is done after October 7, 10:09 a.m. New York time. ORCHESTRATOR'S READING: that is 2026-10-07 14:09 UTC; the work is ledger task M0-T183 (directive D-092, row R016): remove the installer exclusion and the age checker's exception entry.",
+   "source_ref": "source-039-amendment.md#owner-message-88-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-06"
+   },
+   "dependencies": [],
+   "required_harness": "Task M0-T183 stays listed as open work in every handoff and update until it is merged; it is not started before that time.",
+   "required_evidence": "The ledger, the handoff and the task's records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-06 (message 88).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
