@@ -1,0 +1,24 @@
+{
+ "blocker_id": "B-029",
+ "title": "source-map-js 1.2.1 advisory GHSA-68fv-2mgg-jv7q (high; fixed in 1.2.2) fails the web-dependency-security gate on every new run since 2026-10-05 ~23:31 UTC; the fixed version passes the 7-day age rule only at 2026-10-07T14:08:09Z",
+ "status": "open",
+ "created_at": "2026-10-06T01:55:00+00:00",
+ "created_by": "orchestrator",
+ "affects": [
+  "Every open and future PR into candidate/D-024-mrl-option-b: the web-dependency-security step 'npm audit --audit-level=low' fails with 1 high finding (first seen on PR #443, run 37400356925, job 112065939517, 2026-10-06).",
+  "The seven reviewed PRs waiting to merge (#432, #433, #439, #440, #442, #441, #431): their 46/46 green runs predate the advisory, so none merges until a fresh run is green after the fix.",
+  "The integration branch's own runs after any merge."
+ ],
+ "detail": "Advisory GHSA-68fv-2mgg-jv7q: 'source-map-js allows event-loop denial of service through indexed source-map section offsets', severity high, vulnerable range >= 1.0.0, < 1.2.2, first patched 1.2.2 (published 2026-09-18, updated 2026-10-05T23:31:22Z, which is when npm audit began to report it). apps/web/package-lock.json locks source-map-js 1.2.1 as a transitive dependency of postcss 8.5.23 (range ^1.2.1). Registry facts read 2026-10-06 01:42 UTC: 1.2.2 published 2026-09-30T14:08:09.382Z (5.48 days old), so it fails the 7-complete-days age rule until 2026-10-07T14:08:09Z. CLAUDE.md principle 15: no waiver of an advisory exists; the only exception is an owner-authorized, single-package, auto-expiring waiver of the AGE requirement.",
+ "needs": [
+  "EITHER wait until 2026-10-07T14:08:09Z, OR an owner-authorized, single-package, auto-expiring age waiver for source-map-js 1.2.2 (owner-only; never a waiver of the advisory).",
+  "Then, through the dependency-security process: move source-map-js to 1.2.2 (exact pin in the lock, integrity matched to the registry), regenerate and prove the lock through .github/workflows/generate-lockfile.yml (never locally), G5 provenance review, a green web-dependency-security run.",
+  "Then a fresh green run on each waiting PR before it merges."
+ ],
+ "workaround_in_effect": "None. No waiver exists; nothing merges on a run that predates the advisory or with a red check.",
+ "candidate_followup": "A small dependency-security change (lockfile only) contracted by the successor session; this blocker is resolved at its merge with the green run ids as evidence.",
+ "scope_corrections": [],
+ "history_note": "Found on 2026-10-06 ~01:41 UTC while landing the seq 142 handoff: the first PR opened after the advisory update (#443, a test-only change) failed web-dependency-security.",
+ "resolved_at": null,
+ "resolution": null
+}
