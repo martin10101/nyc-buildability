@@ -595,6 +595,45 @@ class ReleaseLockRemovalTests(unittest.TestCase):
             thread.join(timeout=5)
         self.assertFalse(lock.path.exists())  # removed once the short handle closed
 
+    def test_release_that_never_clears_is_bounded_failclosed_and_observable(self) -> None:
+        # S5(ii), host-independent. A removal that NEVER succeeds must be bounded by
+        # the lock's own timeout, fail closed (our lock stays on disk; no contender
+        # over-admits on a guess), and be observable (typed release_error + an ERROR
+        # log), never silently swallowed. release() must not raise.
+        lock = self._lock("stuck.lock", timeout_s=0.2, poll_s=0.01)
+        lock.acquire()
+        fake_unlink, state = self._failing_unlink(
+            PermissionError(errno.EACCES, "delete pending"), fail_times=10 ** 9)
+        start = time.monotonic()
+        with mock.patch.object(pathlib.Path, "unlink", fake_unlink), \
+                self.assertLogs(review_slots.logger, level="ERROR") as logs:
+            lock.release()
+        elapsed = time.monotonic() - start
+        self.assertLess(elapsed, 3.0)  # bounded, not an unbounded loop
+        self.assertGreater(state["calls"], 1)  # it retried (waited), not one-shot
+        self.assertTrue(lock.path.exists())  # fail closed: our lock is not removed
+        self.assertIsNotNone(lock.release_error)
+        self.assertEqual(lock.release_error.code, "slot_lock_release_failed")
+        self.assertTrue(any("slot_lock_release_failed" in line for line in logs.output))
+        lock.path.unlink()  # real unlink (patch gone) so teardown is clean
+
+    def test_release_never_removes_a_foreign_lock_id(self) -> None:
+        # S5(iii), host-independent. A lock file carrying a DIFFERENT lock_id (another
+        # process's live lock) is never removed, and a correct decline is not a
+        # failure (release_error stays None).
+        path = pathlib.Path(self.dir) / "foreign.lock"
+        owner = self._lock("foreign.lock", start_token="owner")
+        owner.acquire()  # writes a real lock file carrying owner._lock_id
+        owner_bytes = path.read_bytes()
+        intruder = self._lock("foreign.lock", start_token="intruder", timeout_s=0.2)
+        # intruder never acquired, so its _lock_id ('') != the on-disk owner lock_id.
+        intruder.release()
+        self.assertTrue(path.exists())  # untouched
+        self.assertEqual(path.read_bytes(), owner_bytes)  # byte-identical, not forged
+        self.assertIsNone(intruder.release_error)  # a correct decline, not a failure
+        owner.release()  # the real owner removes it cleanly
+        self.assertFalse(path.exists())
+
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()

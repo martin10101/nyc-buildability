@@ -45,6 +45,7 @@ from __future__ import annotations
 import contextlib
 import dataclasses
 import json
+import logging
 import os
 import pathlib
 import time
@@ -57,6 +58,10 @@ from .run_budget import (
     AdmissionVerdict,
     admit_review_or_combine,
 )
+
+#: A slot-lock release that cannot complete inside its bound is surfaced here
+#: (fail closed, never silently swallowed) so an operator can see a stuck lock.
+logger = logging.getLogger(__name__)
 
 #: Design §5 default per-lane ceiling (one review/combine in flight per lane).
 LANE_REVIEW_OR_COMBINE_DEFAULT = 1
@@ -223,6 +228,10 @@ class _SlotLock:
         self.timeout_s = float(timeout_s)
         self.poll_s = float(poll_s)
         self._lock_id = ""
+        #: Set to the typed error if release() cannot remove this lock within its
+        #: bound; stays None on a clean release. Observable (also logged), never a
+        #: silently swallowed failure (M0-T184).
+        self.release_error: SlotError | None = None
 
     def _payload(self) -> bytes:
         return canonical_json({
@@ -331,11 +340,57 @@ class _SlotLock:
             return
 
     def release(self) -> None:
-        holder = self._read_holder()
-        if holder is None or holder.get("lock_id") != self._lock_id:
-            return  # never remove another process's lock
-        with contextlib.suppress(OSError):
-            self.path.unlink()
+        """Remove this process's own lock file. Bounded, fail-closed, observable.
+
+        On Windows CPython opens a file for reading WITHOUT ``FILE_SHARE_DELETE``, so
+        while another racer's short ``_read_holder`` read has this lock file open the
+        ``unlink`` raises ``PermissionError`` (ERROR_ACCESS_DENIED). The prior code
+        issued ONE unlink inside ``contextlib.suppress`` and abandoned it, leaving the
+        lock file on disk owned by this STILL-LIVE process — no contender could take
+        over a live holder, so every racer waited out its full lock timeout and
+        refused ``slot_lock_timeout`` (M0-T184; CI jobs 112160344138 / 112164492630 /
+        112181006630). The reader's handle is short-lived, so the removal is now
+        RETRIED to the lock's own deadline instead of swallowed once.
+
+        Invariants kept: the file is removed ONLY once confirmed to carry OUR
+        ``lock_id`` (a foreign lock is never touched); a transient unreadable read of
+        a file still present is waited out rather than mistaken for "not ours"; a
+        removal that cannot complete within the bound leaves the file in place (fail
+        closed — no contender over-admits on a guess) and is recorded on
+        ``release_error`` and logged, never silently dropped. Never raises, so an
+        already-written reservation is never turned into a refusal by a late lock
+        problem.
+        """
+        deadline = time.monotonic() + self.timeout_s
+        while True:
+            holder = self._read_holder()
+            if holder is None:
+                if not self.path.exists():
+                    return  # already gone
+                # Present but transiently unreadable (a concurrent short read may hold
+                # it open on Windows): we cannot yet confirm ownership, so wait and
+                # re-read rather than remove an unconfirmed file.
+            elif holder.get("lock_id") != self._lock_id:
+                return  # another process's lock: never remove it
+            else:
+                # Confirmed ours. Remove it, retrying a Windows sharing/delete-pending
+                # failure within the bound (the colliding reader's handle is brief).
+                try:
+                    self.path.unlink()
+                    return
+                except FileNotFoundError:
+                    return  # already gone
+                except OSError:
+                    pass  # busy: another handle has it open; retry within the bound
+            if time.monotonic() >= deadline:
+                self.release_error = SlotError(
+                    "slot_lock_release_failed",
+                    f"the slot lock {self.path} could not be removed within "
+                    f"{self.timeout_s:g}s (a concurrent handle held it open); leaving "
+                    f"it in place (fail closed)")
+                logger.error("%s", self.release_error)
+                return
+            time.sleep(self.poll_s)
 
     def __enter__(self) -> "_SlotLock":
         self.acquire()
