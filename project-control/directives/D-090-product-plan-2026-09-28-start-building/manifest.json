@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-06T07:33:12+00:00",
+ "updated_at": "2026-10-06T09:04:10+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -350,10 +350,24 @@
   "D-090-R326",
   "D-090-R327",
   "D-090-R328",
-  "D-090-R329"
+  "D-090-R329",
+  "D-090-R330",
+  "D-090-R331",
+  "D-090-R332",
+  "D-090-R333",
+  "D-090-R334",
+  "D-090-R335",
+  "D-090-R336",
+  "D-090-R337",
+  "D-090-R338",
+  "D-090-R339",
+  "D-090-R340",
+  "D-090-R341",
+  "D-090-R342",
+  "D-090-R343"
  ],
- "requirements_id_digest_sha256": "6c945bf97b3a448f67961472e48bcba6755582e800e9c84cb55f97f9df822204",
- "requirements_content_digest_sha256": "1e0fb418ede5b1ff43ef5f69142ed542296571aa4905c86c31b7ef4a3a2a81bd",
+ "requirements_id_digest_sha256": "012157ff7ef35492b4c44eea3d531b019c87c8e91c63a3e5398b595e256b6d26",
+ "requirements_content_digest_sha256": "67ef2cb70f605b16782afb08b3415a2950d99e0b10518ef5f4df38fcf989b1d1",
  "sources": [
   {
    "file": "source-001.md",
@@ -673,6 +687,14 @@
    "recorded_at": "2026-10-06T07:33:12+00:00",
    "content_digest_sha256": "625399fd59cea47703a153750c4d7732c6d0c976119a7af4c53a14e1a15b2912",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-041-amendment.md",
+   "kind": "amendment",
+   "sequence": 41,
+   "recorded_at": "2026-10-06T09:04:10+00:00",
+   "content_digest_sha256": "aeb5c8be30199bd9b6ff111aef324a259682211a19600843f0b4d3489afb5107",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -714,7 +736,8 @@
   "source-037-amendment.md",
   "source-038-amendment.md",
   "source-039-amendment.md",
-  "source-040-amendment.md"
+  "source-040-amendment.md",
+  "source-041-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -993,6 +1016,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-040 (session 013RaGmC message 89, 2026-10-06, sent mid-turn: record the owner's working guidance - goal, work efficiently, agents, accuracy, continuity and updates, existing restrictions preserved - in the existing main instruction file, reference it from the handoff, verify the file, no duplicate, normal review) and requirements D-090-R300..R329, all pending. Text extracted by script from the queued-command attachment; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-06T09:04:10+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-041 (session 013RaGmC messages 90 and 91, 2026-10-06, both sent mid-turn: hand over at a seam; the next session does the testing, give the start prompt; and message 92, the seq 144 start prompt pasted by the owner: start-up checks, the race tests fail on CI and their tracked, reviewed fix comes first, correct the DB-150 record, the order of the next steps, the standing stops) and requirements D-090-R330..R343, all pending. Text extracted by script from the transcripts; nothing retyped; no existing row edited."
   }
  ]
 }
