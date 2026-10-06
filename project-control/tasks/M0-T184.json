@@ -89,7 +89,7 @@
       "id": "S7",
       "case": "verified_at_the_frozen_candidate",
       "input": "the final head",
-      "expected": "Linux local: `python -m pytest -q tools/test_agent_supervisor_review_slots.py` and one full `python -m pytest -q -p no:cacheprovider tools/test_agent_supervisor_*.py` pass with direct exit code 0 (counts recorded; the supervisor-freeze baseline is at least 1165 tests, 0 failures); `python tools/supervisor_command_doc_check.py` and `python3 tools/modularity_check.py --check` pass; windows-latest: the supervisor-bridge job is green on the PR head (run id recorded by the orchestrator). One green run proves nothing by itself: the record argues the mechanism"
+      "expected": "Linux local: `python -m pytest -q -p no:cacheprovider tools/test_agent_supervisor_review_slots.py` passes with direct exit code 0 (counts recorded); `python tools/supervisor_command_doc_check.py` and `python3 tools/modularity_check.py --check` pass; windows-latest: the supervisor-bridge job, which runs the whole `tools/test_agent_supervisor_*.py` suite, is green on the PR head (run id and counts recorded by the orchestrator; the supervisor-freeze baseline is at least 1165 tests, 0 failures). The whole suite is NOT run on this Linux server (ci.yml records that the whole glob starved an ubuntu runner on 2026-08-03; M0-T181 ran focused files only). One green run proves nothing by itself: the record argues the mechanism"
     },
     {
       "id": "S8",
@@ -146,8 +146,8 @@
   "directive_regime_entered_at": "2026-10-06T09:05:35.678396+00:00",
   "path_notes": "PRODUCER = backend-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). Loads /deficit-convergence BEFORE editing. The orchestrator cherry-picks producer commits onto task/M0-T184-review-slot-lock-release (worktree /root/project/w-M0-T184) and pushes; a CI experiment branch (ci-exp/M0-T184-*) is orchestrator-pushed from a producer-prepared commit when S3 needs one. The frozen CI evidence excerpts are written by the orchestrator at contract time and are read-only for the producer. Separate PR (D-090-R093). Not commissioning. task/ branches are not lane branches (check_lane_paths.py passes). Row DB-150 and the handoff sentence (R338) are corrected by the orchestrator in the contract commit, outside the producer's scope. MODULARITY ANSWERS: (1) owner of the change = the slot lock's acquire/release critical section; (2) module = tools/agent_supervisor/review_slots.py (class _SlotLock); (3) the file is 523 lines, under the 600-line warning threshold; (4) no extraction needed for a change of this size; (5) stable public interface = ReviewSlots.try_reserve / release / reserve / active, Reservation, SlotGrant, SlotError codes, reservation_owner_alive; (6) focused tests = tools/test_agent_supervisor_review_slots.py; (7) `python3 tools/modularity_check.py --check` passes before submission.",
   "documented_test_commands": [
-    "python -m pytest -q tools/test_agent_supervisor_review_slots.py (Linux local, direct exit code)",
-    "python -m pytest -q -p no:cacheprovider tools/test_agent_supervisor_*.py (Linux local, ONCE at the final candidate - a heavy run, nothing else running; the windows-latest CI job runs the same glob)",
+    "python -m pytest -q -p no:cacheprovider tools/test_agent_supervisor_review_slots.py (Linux local, direct exit code)",
+    "the whole `tools/test_agent_supervisor_*.py` suite runs ONLY in the windows-latest supervisor-bridge CI job (never the whole glob on this Linux server)",
     "python tools/supervisor_command_doc_check.py",
     "python3 tools/modularity_check.py --check",
     "python3 scripts/lanes/check_lane_paths.py --branch task/M0-T184-review-slot-lock-release (not a lane branch: passes)",
@@ -161,6 +161,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claim seam: G0 PASS at 0f23b435; producer backend-engineer dispatched under /deficit-convergence; frozen CI evidence committed; stacked on the source-041 capture"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-06T09:10:21+00:00",
+      "actor": "orchestrator",
+      "change": "Before dispatch: S7 and documented_test_commands no longer ask for the whole supervisor suite on the Linux server. .github/workflows/ci.yml records that the whole glob starved an ubuntu runner (2026-08-03), and M0-T181's producer ran focused files only. The whole-suite baseline is the windows-latest supervisor-bridge job on the PR head. No path, gate, reviewer or other scenario changed."
     }
   ]
 }
