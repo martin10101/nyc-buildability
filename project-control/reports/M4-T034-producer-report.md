@@ -49,15 +49,17 @@ The reviewer's lead `35-31` IS borne out: the site shows **35-31 "Maximum Floor 
 portion shall be attributed to each #use# proportionately, based on the percentage each #use# occupies
 of the total #floor area# of the #zoning lot# less any shared #floor area#"). 35-31 is NOT a parent; the
 site shows it as a leaf under parent **35-30 "APPLICABILITY OF FLOOR AREA AND OPEN SPACE REGULATIONS"**
-(/node/18265, header-only, children 35-31 … 35-362). The sibling sections that state how mixed-building
+(/node/18265, header-only; its children are listed one by one under "Header captures — children as the
+site's contents page lists them" below). The sibling sections that state how mixed-building
 floor areas combine are **35-32 "Maximum Floor Area for Mixed Buildings on Qualifying Residential Sites"**
 (/node/22820, one table) and **35-33 "Maximum Floor Area and Special Provisions for Mixed Buildings or
 Zoning Lots With Multiple Buildings Containing Community Facility Use in Certain Districts"**
 (/node/18267, tables). Captured `zr-35-30` (header, children list), `zr-35-31`, `zr-35-32`, `zr-35-33`.
 Channel: HTML authoritative + section print/PDF text-check (all HTTP 200, word/cell match). Related
 section 35-24 ("Applicability of Residential Bulk Rules to Non-residential Portions of Mixed Buildings",
-/node/22817) was found but concerns bulk (height/setback) applicability, not floor-area combination —
-listed, not captured.
+/node/22817) was found; by its own first sentence its subject is "the applicability of certain #bulk#
+regulations from Article II, Chapter 3" to the non-residential portion of mixed buildings — listed, not
+captured.
 
 ### (2) ZR 12-10 definitions behind the energy exclusion — ALL FOUND (searched three ways)
 The 'floor area' definition's exclusion item (15) excludes 5% of floor area within a `#fully electrified
@@ -65,13 +67,15 @@ building#` or `#ultra low energy building#` (existing capture `zr-12-10-floor-ar
 exact-title, inverted/comma-title and combined-title against the 484 defined-term titles on the §12-10
 page:
 - **fully electrified building** /node/22338 (Last Amended 12/6/2023) — exact title; no inverted variant.
-  Captured `zr-12-10-fully-electrified-building`. Rests on `#building#`; eligibility also turns on being
-  a building "existing on December 6, 2023" and on Local Law 154 of 2021 (external statute, not a ZR term).
+  Captured `zr-12-10-fully-electrified-building`. Its words: "a #building# existing on December 6, 2023
+  which complies with the requirements of Local Law 154 of 2021 ...". It uses the ZR term `#building#`;
+  Local Law 154 of 2021 is an external statute, not a ZR defined term.
 - **ultra low energy building** /node/22341 (Last Amended 12/6/2023) — exact title; no inverted variant.
-  Captured `zr-12-10-ultra-low-energy-building`. Rests on `#building#` and `#stories#` (three-stories-or-
-  less threshold) and on external standards (Local Law 154 of 2021, NYC Energy Conservation Code, NYC
-  Building Code). "net-zero energy building" is NOT a defined term (descriptive phrase; only `#building#`
-  is marked) — searched, absent, not captured.
+  Captured `zr-12-10-ultra-low-energy-building`. Its words set a different energy standard for #buildings#
+  "three #stories# or less" versus "all other #buildings#"; it uses the ZR terms `#building#` and
+  `#stories#`, and names external standards (Local Law 154 of 2021, the New York City Energy Conservation
+  Code, the New York City Building Code). "net-zero energy building" is NOT a defined term (a descriptive
+  phrase; only `#building#` is marked) — searched, absent, not captured.
 - Defined terms the two rest on that were NOT captured yet: **building** /node/21521 (2/2/2011) and
   **story** /node/21675 (2/2/2011). Captured `zr-12-10-building`, `zr-12-10-story`.
 
@@ -96,27 +100,48 @@ Residential off-street parking in a Residence District lives in **Article II, Ch
   parking and bicycle parking. Captured `zr-25-02`.
 - **25-20 "REQUIRED ACCESSORY OFF-STREET PARKING SPACES FOR RESIDENCES"** (/node/17540, 12/5/2024) —
   the requirement, routing to 25-21/25-22/25-23 by transit zone. Captured `zr-25-20`.
-- **25-211 "General provisions"** (Inner Transit Zone; /node/17541) — "no #accessory# off-street parking
-  spaces shall be required for #dwelling units# or #rooming units# created after December 5, 2024."
-  Captured `zr-25-211`. (Parent 25-21 is header-only.)
-- **25-221 "General provisions"** (Outer Transit Zone; /node/22798) — parking required per 25-222.
-  Captured `zr-25-221`.
-- **25-231 "General provisions"** (Beyond Greater Transit Zone; /node/17545) — parking required per
-  25-232. Captured `zr-25-231`. (Parents 25-22, 25-23 are header-only.)
+- **25-211 "General provisions"** (Inner Transit Zone; /node/17541, Last Amended 12/5/2024) — its words:
+  "no #accessory# off-street parking spaces shall be required for #dwelling units# or #rooming units#
+  created after December 5, 2024"; and, for #dwelling units# or #rooming units# in #multiple dwelling
+  residences# created between July 20, 1950 and December 5, 2024, off-street parking spaces "shall continue
+  to be provided in accordance with the calculation methods set forth in Section 25-212 (Existing parking
+  requirements in the Inner Transit Zone)." Captured `zr-25-211`. (Parent 25-21 is header-only.)
+- **25-221 "General provisions"** (Outer Transit Zone; /node/22798, 12/5/2024) — its words: off-street
+  parking spaces "shall be required for #dwelling units# created as part of a #development# or #enlargement#
+  after December 5, 2024, in accordance with the provisions of Section 25-222"; "No #accessory# off-street
+  parking spaces shall be required for #rooming units# created as part of a #development# or #enlargement#
+  after March 22, 2016." Captured `zr-25-221`.
+- **25-231 "General provisions"** (Beyond Greater Transit Zone; /node/17545, 12/5/2024) — its words:
+  off-street parking spaces "shall be required for #dwelling units# created as part of a #development# or
+  #enlargement# December 5, 2024 [the page omits 'after' here — see Doubt 6], in accordance with the
+  provisions of Section 25-232"; "No #accessory# off-street parking spaces shall be required for #rooming
+  units# created as part of a #development# or #enlargement# after March 22, 2016." Captured `zr-25-231`.
+  (Parents 25-22, 25-23 are header-only.)
 
-LEAD/EXPECTATION DISCREPANCY (parking waiver/reduction "on a small lot or for a small number of spaces"):
-the site shows the residential requirement sections 25-221/25-231 allow reduction/elimination of required
-spaces only pursuant to **73-432, 73-433, 74-52** (income-restricted / qualifying-senior-housing /
-special-permit reductions, in Article VII) — NOT a small-lot / small-number waiver. The Inner Transit
-Zone (25-211) requires no residential parking at all. The small-lot / below-minimum / mixed-use waivers
-(25-33, 25-36, 25-37) sit under the NON-residential subchapter 25-30 and are listed, not captured.
+LEAD/EXPECTATION DISCREPANCY (the reviewer's expected "waiver or reduction on a small lot or for a small
+number of spaces"): the captured words name no small-lot / small-number waiver in these residential
+sections. As each section's own words name them: **25-211** says the spaces required under Section 25-212
+"may only be reduced or eliminated pursuant to the provisions of Section 73-432 (Reduction of existing
+parking spaces for income-restricted housing units) or Section 75-31 (Authorization to Remove Required
+Parking)"; **25-221** says the spaces required under Section 25-22 "may only be reduced or eliminated
+pursuant to the provisions of Sections 73-432 ..., 73-433 (Reduction of existing parking spaces for
+qualifying senior housing) or 74-52 (Special Permit to Remove Required Parking)"; **25-231** says the
+spaces required under Section 25-23 "may only be reduced or eliminated pursuant to the provisions of
+Section 73-433 ... or Section 74-52 ...". The small-lot / below-minimum / mixed-use waivers (25-33, 25-36,
+25-37) are titled under subchapter 25-30 "REQUIRED ACCESSORY OFF-STREET PARKING SPACES FOR PERMITTED
+NON-RESIDENTIAL USES" and are listed, not captured.
 
-Bicycle parking (Article II, Chapter 5): **25-80 "BICYCLE PARKING"** (/node/17612, 12/5/2024) states
-WHETHER the bicycle provisions apply (to developments; enlargements increasing floor area ≥50%;
-conversions; new dwelling units after 4/22/2009; certain parking facilities). Captured `zr-25-80`. The
-reviewer's lead **25-811** IS borne out: the site shows **25-811 "Enclosed bicycle parking spaces"**
-(/node/17614, 12/5/2024) with the requirement TABLE giving the required amount per `#use#`, under parent
-**25-81 "Required Bicycle Parking Spaces"** (/node/17613, header-only). Captured `zr-25-81`, `zr-25-811`.
+Bicycle parking (Article II, Chapter 5): **25-80 "BICYCLE PARKING"** (/node/17612, 12/5/2024) — its words:
+the Section's bicycle-parking provisions "shall apply to: (a) #developments#; (b) #enlargements# that
+increase the #floor area# within a #building# by 50 percent or more; (c) #dwelling units# created by
+#conversions# of non-#residential# #floor area#; (d) new #dwelling units# in #buildings# or #building
+segments# constructed after April 22, 2009; (e) new enclosed #accessory# #group parking facilities# with
+35 or more automobile parking spaces; and (f) open parking areas #accessory# to #commercial# or #community
+facility# #uses#" meeting a stated size threshold. Captured `zr-25-80`. The reviewer's lead **25-811** IS
+borne out: the site shows **25-811 "Enclosed bicycle parking spaces"** (/node/17614, 12/5/2024) — its
+words: enclosed #accessory# bicycle parking spaces "shall be provided for at least that amount specified
+for the applicable #use# set forth in the table in this Section" — under parent **25-81 "Required Bicycle
+Parking Spaces"** (/node/17613, header-only). Captured `zr-25-81`, `zr-25-811`.
 
 Commercial-district counterparts (Article III, Chapter 6): **36-21 "General Provisions"** (/node/17903,
 12/5/2024, five requirement tables) — commercial / community-facility required parking (local retail
@@ -130,6 +155,21 @@ applicability), **36-71 "Required Bicycle Parking Spaces"** (/node/17987, header
 
 Group (4) count = 14 captures (≤ 20). See "found, not captured" below.
 
+## Header captures — children as the site's contents page lists them (one by one)
+Confirmed against the portal contents pages (`/article-iii/chapter-5`, `/article-ii/chapter-3`,
+`/article-ii/chapter-5`, `/article-iii/chapter-6`); the four header-only captures hold no own body, their
+children carry the provisions:
+- **35-30** (`zr-35-30`): 35-31 Maximum Floor Area Ratio; 35-32 Maximum Floor Area for Mixed Buildings on
+  Qualifying Residential Sites; 35-33 Maximum Floor Area and Special Provisions for Mixed Buildings or
+  Zoning Lots With Multiple Buildings Containing Community Facility Use in Certain Districts; 35-34 Existing
+  Public Amenities for Which Floor Area Bonuses Have Been Received; 35-35 Floor Area Bonus for a Public
+  Plaza or Arcade; 35-351 Arcades; 35-36 Special Floor Area Ratio and Related Bulk Provisions for Certain
+  Areas; 35-361 Special tower provisions; 35-362 Special provisions for certain Community Districts.
+- **23-24** (`zr-23-24`): 23-241 Special tower provisions; 23-242 Special provisions for certain community
+  districts; 23-243 Existing public amenities for which floor area bonuses have been received.
+- **25-81** (`zr-25-81`): 25-811 Enclosed bicycle parking spaces; 25-812 Unenclosed bicycle parking spaces.
+- **36-71** (`zr-36-71`): 36-711 Enclosed bicycle parking spaces; 36-712 Unenclosed bicycle parking spaces.
+
 ## (5) The reviewer's statements of law, against the section and capture (NO verdict)
 
 | Reviewer statement (source-055) | Section the site shows | Capture (id) holding the text |
@@ -139,7 +179,7 @@ Group (4) count = 14 captures (≤ 20). See "found, not captured" below.
 | Two energy routes: fully electrified (existing 12/6/2023) vs ultra-low-energy (new, performance + professional verification) | ZR 12-10 'fully electrified building'; 'ultra low energy building' | `zr-12-10-fully-electrified-building` (new); `zr-12-10-ultra-low-energy-building` (new) |
 | 5% energy floor-area exclusion; qualifying-wall exclusion | ZR 12-10 'floor area' exclusion items (12),(15); 'qualifying exterior wall thickness' | `zr-12-10-floor-area` (existing); `zr-12-10-qualifying-exterior-wall-thickness` (existing) |
 | R6B 45-ft max base height, setbacks above, 55/65-ft overall | 23-432 (R6B row: min base 30, standard max base 45 / max bldg 55; qualifying max base 45 / max bldg 65); setback 23-433 | `zr-23-432` (existing); `zr-23-433` (existing) |
-| Dwelling-unit factors by housing kind (29 / 35; 680 factor; senior none) | Message links at 23-22; the repository's current-text capture has the dwelling-unit factor at 23-52 | `zr-23-22` (existing); `zr-23-52` (existing) |
+| Dwelling-unit factors by housing kind (29 / 35; 680 factor; senior none) | 23-22 Floor Area Regulations for R6 Through R12 Districts (the #floor area ratios# for R6–R12 districts by kind of housing); 23-52 Maximum Number of Dwelling Units (the maximum number of #dwelling units# and the dwelling-unit factor) | `zr-23-22` (existing); `zr-23-52` (existing) |
 | Bicycle requirements vary by use and building configuration | 25-81 / 25-811 (and commercial 36-71 / 36-711) | `zr-25-81`, `zr-25-811` (new); `zr-36-71`, `zr-36-711` (new) |
 | Parking, loading and bicycle applicability must be resolved | 25-02, 25-20, 25-211/221/231; 36-21, 36-31, 36-62; 25-80/36-70 | the group-(4) captures above |
 
@@ -156,8 +196,9 @@ existing). No verdict is drawn on whether any statement is correct.
   Reduction of Spaces for Subsidized Housing".
 - Article III Ch 6: 36-20 (parent), 36-211, 36-22, 36-23 "Waiver … Below Minimum Number", 36-24, 36-25
   "Waiver for Certain Small Zoning Lots or Establishments", 36-26; 36-30 (parent), 36-32, 36-33; loading
-  36-60 (parent), 36-61, 36-63, 36-64, 36-65, 36-66x; bicycle 36-712, 36-72 "Authorization for Reduction
-  of Spaces", 36-73, 36-74, 36-75, 36-76.
+  36-60 (parent), 36-61, 36-63, 36-65, 36-66x (**36-64 "Special Provisions for Zoning Lots Divided by
+  District Boundaries" is already captured in the repository: `zr-36-64`**); bicycle 36-712, 36-72
+  "Authorization for Reduction of Spaces", 36-73, 36-74, 36-75, 36-76.
 - Residential parking reductions the requirement sections point to (Article VII; not captured):
   73-432, 73-433, 74-52.
 
@@ -196,6 +237,17 @@ Run with `/root/project/lanes-runtime/venv/bin/python`, `PYTHONDONTWRITEBYTECODE
   test is NOT edited. I did NOT run the full `services/api` pytest suite (the orchestrator runs it once at
   the wave's final candidate).
 
+### Round 2 (report-only; one commit on top of `5ab318e2`, no reset)
+Round 2 changes ONLY `project-control/reports/M4-T034-producer-report.md` (G4 findings F1–F6 and a full
+re-read; no capture, synced copy or test touched). Checks re-run at the round-2 head:
+- a. `python -m ruff check .` → "All checks passed!" — **exit 0**
+- b. `python scripts/sync_zr_snapshots.py --check` → "OK … byte-identical … (156 file(s))." — **exit 0**
+- c. `python -m pytest -q -p no:cacheprovider tests/rules/test_zr_snapshot_bundle.py
+  tests/rules/test_zoning_rule_review_register.py` → "50 passed" — **exit 0**
+- e. `git status --porcelain` empty after commit; `git diff --name-status 5ab318e2 HEAD` = **1 modified
+  (`M`)** = this report only. (Cumulative `git diff --name-status <contract-head> HEAD` unchanged:
+  46 added + 1 modified report.)
+
 ## Scope and the no-bend rules
 Changes confined to allowed paths: 23 new canonical captures, their 23 byte-identical synced copies, and
 this report. No existing capture, rule, rule engine, registry, review register, reference case, plan, other
@@ -219,5 +271,10 @@ on the reviewer's statements.
    sha256 + byte count (the re-fetch matched the accepted captures' pins, confirming byte-stability).
 5. No capture has been independently re-read by a second agent (`raw_html_verified: false`); the
    independent reading of these texts is a later task. None of these texts has been interpreted for any lot.
+6. `zr-25-231` preserves a SOURCE anomaly of the official page verbatim: its first operative sentence reads
+   "created as part of a #development# or #enlargement# December 5, 2024" with NO "after" before the date,
+   where the parallel sentence in `zr-25-221` reads "... after December 5, 2024." Confirmed in the capture
+   and on the page (node 17545); kept exactly as served, like the `zr-36-70` anomaly (Doubt 3). The capture
+   is NOT edited.
 
 END-OF-REPORT
