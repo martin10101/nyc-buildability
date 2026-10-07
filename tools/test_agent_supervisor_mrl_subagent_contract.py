@@ -2,13 +2,16 @@
 (D-024-R566..R579). Paired positive/negative cases for every contract clause."""
 from __future__ import annotations
 
+import collections
 import errno
 import json
 import os
 import pathlib
+import platform
 import subprocess
 import sys
 import threading
+import time
 
 import pytest
 
@@ -283,6 +286,242 @@ class TestExclusiveWindowsDeletePending:
                 os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
         finally:
             os.close(fd)
+
+
+# ---------------------------------------------- Windows lock PROBES (M0-T186 round 2; NEVER merged)
+
+def _describe_exc(exc: BaseException) -> str:
+    """One-line description of an exception for a probe message: class, errno, winerror.
+
+    Cross-platform safe: ``winerror`` is ``None`` off Windows. On windows-latest
+    ``os.open`` surfaces BOTH a pending-delete (ERROR_ACCESS_DENIED, winerror 5) and a
+    sharing violation (ERROR_SHARING_VIOLATION, winerror 32) as ``errno 13``, so only
+    the ``winerror`` tells them apart — that is what these probes capture.
+    """
+    if isinstance(exc, OSError):
+        return f"{type(exc).__name__}(errno={exc.errno}, winerror={getattr(exc, 'winerror', None)})"
+    return type(exc).__name__
+
+
+def _try_excl_create(path: str) -> str:
+    """Attempt ``os.open(O_CREAT|O_EXCL|O_WRONLY)`` on ``path``; close any fd; return
+    exactly what happened as a string (never raises)."""
+    fd = None
+    try:
+        fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        return "ok(created)"
+    except BaseException as exc:  # noqa: BLE001 - a probe records every outcome verbatim
+        return _describe_exc(exc)
+    finally:
+        if fd is not None:
+            os.close(fd)
+
+
+_WIN_ONLY = pytest.mark.skipif(
+    os.name != "nt",
+    reason="Windows-only PROBE (M0-T186 round 2): it measures the Win32 create/unlink "
+    "behaviour the repair rests on. It is for the ci-exp branch only and ends in "
+    "pytest.fail so its observations print in the CI FAILURES section; it is NEVER merged "
+    "and asserts nothing. Skipped off Windows, where the mechanism cannot be exercised.")
+
+
+@_WIN_ONLY
+class TestWindowsLockProbes:
+    """Windows-only experiment to FIND OUT (not assume) what the exclusive create and
+    the unlink actually do on windows-latest. Each probe is bounded in time, closes
+    every handle in ``finally``, writes only under ``tmp_path``, changes no existing
+    test, and ends with ``pytest.fail(<observed facts>)`` so the facts land in the CI
+    log. Round-1's platform-fact test was wrong: on windows-latest the ``os.unlink`` of
+    a file an ``os.open`` handle still held raised ERROR_SHARING_VIOLATION (WinError 32)
+    at the UNLINK (frozen job 112576591960), so it never reached its create and proved
+    nothing about the create. These probes decide between candidate (a) (a delete-pending
+    create denied by the OS) and candidate (b) (another process holding the file).
+    """
+
+    def test_p1_environment(self, tmp_path):
+        import ctypes
+        from ctypes import wintypes
+
+        root = os.path.splitdrive(str(tmp_path))[0] + "\\"
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        fs_buf = ctypes.create_unicode_buffer(261)
+        vol_buf = ctypes.create_unicode_buffer(261)
+        serial = wintypes.DWORD()
+        max_comp = wintypes.DWORD()
+        flags = wintypes.DWORD()
+        ok = kernel32.GetVolumeInformationW(
+            wintypes.LPCWSTR(root), vol_buf, ctypes.sizeof(vol_buf), ctypes.byref(serial),
+            ctypes.byref(max_comp), ctypes.byref(flags), fs_buf, ctypes.sizeof(fs_buf))
+        fs_name = fs_buf.value if ok else f"GetVolumeInformationW_failed(err={ctypes.get_last_error()})"
+        pytest.fail(
+            "P1 environment: "
+            f"getwindowsversion={tuple(sys.getwindowsversion())}; "
+            f"platform={platform.platform()}; python={sys.version.split()[0]}; "
+            f"tmp_volume_root={root!r}; tmp_filesystem={fs_name!r}")
+
+    def test_p2_pending_delete_with_share_delete_handle(self, tmp_path):
+        import ctypes
+        from ctypes import wintypes
+
+        path = str(tmp_path / "p2.lock")
+        fd = os.open(path, os.O_CREAT | os.O_WRONLY)
+        os.close(fd)
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.CreateFileW.restype = wintypes.HANDLE
+        kernel32.CreateFileW.argtypes = [
+            wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD, wintypes.LPVOID,
+            wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE]
+        kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+        share_rwd = 0x1 | 0x2 | 0x4  # READ | WRITE | DELETE
+        invalid = ctypes.c_void_p(-1).value
+        handle = kernel32.CreateFileW(path, 0x80000000, share_rwd, None, 3, 0x80, None)
+        if not handle or handle == invalid:
+            pytest.fail(f"P2 setup: CreateFileW(share RWD) failed err={ctypes.get_last_error()}")
+        closed = False
+        try:
+            try:
+                os.unlink(path)
+                unlink_result = "ok"
+            except OSError as exc:
+                unlink_result = _describe_exc(exc)
+            exists_after = os.path.exists(path)
+            create_while_open = _try_excl_create(path)
+            kernel32.CloseHandle(handle)
+            closed = True
+            create_after_close = _try_excl_create(path)
+        finally:
+            if not closed:
+                kernel32.CloseHandle(handle)
+        pytest.fail(
+            "P2 share-delete handle held open: "
+            f"unlink={unlink_result}; path_exists_after_unlink={exists_after}; "
+            f"O_EXCL_create_while_handle_open={create_while_open}; "
+            f"O_EXCL_create_after_handle_closed={create_after_close}")
+
+    def test_p3_pending_delete_with_plain_os_open_handle(self, tmp_path):
+        path = str(tmp_path / "p3.lock")
+        holder = os.open(path, os.O_CREAT | os.O_RDONLY)  # the way os.open opens it
+        closed = False
+        try:
+            try:
+                os.unlink(path)
+                unlink_result = "ok"
+            except OSError as exc:
+                unlink_result = _describe_exc(exc)
+            exists_after = os.path.exists(path)
+            create_while_open = _try_excl_create(path)
+            os.close(holder)
+            closed = True
+            create_after_close = _try_excl_create(path)
+        finally:
+            if not closed:
+                os.close(holder)
+        pytest.fail(
+            "P3 plain os.open handle held open (no explicit share-delete): "
+            f"unlink={unlink_result}; path_exists_after_unlink={exists_after}; "
+            f"O_EXCL_create_while_handle_open={create_while_open}; "
+            f"O_EXCL_create_after_handle_closed={create_after_close}")
+
+    def test_p4_real_race_raw_os_calls(self, tmp_path):
+        # 8 threads loop the literal pre-fix sequence (O_EXCL create, close, unlink) on
+        # ONE path with no third handle, bounded by time AND an iteration cap. Count per
+        # outcome what the CREATE raised and what the UNLINK raised. This shows whether
+        # the real race alone yields a PermissionError at the create (candidate (a)) with
+        # no external process involved.
+        path = str(tmp_path / "p4race.lock")
+        n, time_budget_s, cap = 8, 20.0, 400_000
+        barrier = threading.Barrier(n)
+        per_thread: list = [None] * n
+
+        def worker(idx: int) -> None:
+            c = collections.Counter()
+            iters = 0
+            barrier.wait()
+            deadline = time.monotonic() + time_budget_s
+            while time.monotonic() < deadline and iters < cap:
+                iters += 1
+                try:
+                    fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                except FileExistsError:
+                    c["create:FileExistsError"] += 1
+                    continue
+                except OSError as exc:
+                    c[f"create:{_describe_exc(exc)}"] += 1
+                    continue
+                c["create:ok"] += 1
+                os.close(fd)
+                try:
+                    os.unlink(path)
+                    c["unlink:ok"] += 1
+                except OSError as exc:
+                    c[f"unlink:{_describe_exc(exc)}"] += 1
+            per_thread[idx] = (c, iters)
+
+        start = time.monotonic()
+        threads = [threading.Thread(target=worker, args=(i,)) for i in range(n)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        elapsed = time.monotonic() - start
+        totals = collections.Counter()
+        total_iters = 0
+        for c, iters in per_thread:
+            totals.update(c)
+            total_iters += iters
+        pytest.fail(
+            f"P4 real race ({n} threads, {total_iters} iterations, {elapsed:.1f}s elapsed, "
+            f"budget {time_budget_s}s/cap {cap}): {dict(sorted(totals.items()))}")
+
+    def test_p5_real_race_through_repaired_exclusive(self, tmp_path):
+        # 8 threads contend on the REPAIRED _exclusive() for a bounded time. Count
+        # acquisitions, typed ContractError refusals, and any other exception that
+        # escapes; a guarded counter checks that at most one thread is ever inside the
+        # section (mutual exclusion). Reports what the repaired lock does on Windows.
+        base = tmp_path / "p5.json"
+        n, time_budget_s, cap = 8, 15.0, 400_000
+        barrier = threading.Barrier(n)
+        per_thread: list = [None] * n
+        inside = {"cur": 0, "max": 0}
+        inside_lock = threading.Lock()
+
+        def worker(idx: int) -> None:
+            c = collections.Counter()
+            iters = 0
+            barrier.wait()
+            deadline = time.monotonic() + time_budget_s
+            while time.monotonic() < deadline and iters < cap:
+                iters += 1
+                try:
+                    with msc._exclusive(base):
+                        with inside_lock:
+                            inside["cur"] += 1
+                            inside["max"] = max(inside["max"], inside["cur"])
+                        with inside_lock:
+                            inside["cur"] -= 1
+                        c["acquired"] += 1
+                except ContractError:
+                    c["refused:ContractError"] += 1
+                except BaseException as exc:  # noqa: BLE001 - a probe records every escape
+                    c[f"escaped:{_describe_exc(exc)}"] += 1
+            per_thread[idx] = (c, iters)
+
+        start = time.monotonic()
+        threads = [threading.Thread(target=worker, args=(i,)) for i in range(n)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        elapsed = time.monotonic() - start
+        totals = collections.Counter()
+        total_iters = 0
+        for c, iters in per_thread:
+            totals.update(c)
+            total_iters += iters
+        pytest.fail(
+            f"P5 repaired _exclusive race ({n} threads, {total_iters} iterations, "
+            f"{elapsed:.1f}s, budget {time_budget_s}s/cap {cap}): "
+            f"max_concurrent_inside={inside['max']} (expect 1); {dict(sorted(totals.items()))}")
 
 
 # ---------------------------------------------------------------- restricted profile
