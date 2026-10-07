@@ -116,6 +116,120 @@ c `pytest tests/contracts tests/spatial` = 0, 887 passed, 3 xfailed. d `modulari
 (9133 files). e the three mutation re-runs above (M8/M10/M11 all caught). f git status empty after the
 commit; `git diff --name-status f8cd19af HEAD` = only allowed paths.
 
+## Round 4 (G4 re-review closed F1-F8; FAILed on one unpinned state: the lot type not given)
+
+TESTS ONLY; the three module files are byte-unchanged (`git diff --stat 319806c9 HEAD -- services/api/app`
+empty). G3 passed the module again at this content, so no behaviour changes. This round adds the
+F9 test, audits EVERY field and state of the inputs, adds a test for every acted-on state that
+no test pinned, and proves each new test bites with a mutation outside the repository.
+
+Source-line counts: app unchanged (result_ways.py 448, result_way_inputs.py 413,
+result_way_conditions.py 320); tests test_result_ways.py 211, _lib.py 121, _benchmark.py 119,
+_corner_interior.py 86, _facts_area_overlay.py 135, _input_states.py 239. All under 600.
+
+Tests added (name : state pinned), all in `test_result_ways_input_states.py`:
+- `test_f9_lot_type_not_given_withholds_coverage_and_rear_yard_only` : lot_type=None (F9; H5 /
+  section 4 item 3; a missing input leaves dependent results "not known"). Asserts coverage and
+  rear yard withheld missing_information "lot type is not given", every other result unchanged.
+- `test_housing_kind_not_given_changes_no_result` : housing_kind=None (a design choice carried
+  for the wording; identical ResultWays to a kind given).
+- `test_large_lot_threshold_met_none_is_not_a_large_lot` : large_lot_threshold_met=None (falsy;
+  same path as False; the caller states the K3 comparison - O8/O5).
+- `test_street_line_reach_unknown_withholds_coverage_missing_information` : a street-line reach
+  unknown (K12).
+- `test_corner_reach_unknown_withholds_rear_yard_missing_information` : the corner reach unknown.
+- `test_corner_angle_unknown_withholds_rear_yard_missing_information` : the corner angle unknown.
+- `test_corner_angle_above_135_withholds_rear_yard_work_owed` : angle > 135 deg (O9 / ZR 23-344).
+- `test_disagree_with_no_outline_figure_uses_the_fallback_wording` : area DISAGREES + outline None.
+- `test_overlay_code_present_appears_in_the_reason` : commercial_overlay_code present.
+- `test_overlay_code_none_with_overlay_present_still_withholds_without_a_code` : code None.
+- `test_overlay_not_supported_without_reading_owed_uses_the_fallback_reading` : OverlayResultSupport
+  not supported with no reading_owed (the fallback owed-reading).
+- `test_each_k20_condition_present_withholds_every_result[waterfront|airport_height|transit_easement|near_district_line]`
+  : each of the four K20 conditions recorded PRESENT (O6; the two the earlier tests did not use).
+
+Every input state and the test that pins it (field : state -> outcome -> test / note):
+- district: None -> blanket missing_info -> test_o11_district_not_given; "R6B" -> proceed ->
+  every passing test; other -> blanket work_owed -> test_o11_district_not_r6b.
+- lot_type: CORNER -> reach-based -> H3 tests; INTERIOR -> coverage K2 / rear yard withheld ->
+  test_h4_interior_coverage, test_h9...; THROUGH -> same -> test_f7b; None -> no_lot_type -> test_f9.
+- housing_kind: any / None -> no branch (does not act) -> test_housing_kind_not_given.
+- area.recorded_sq_ft: None -> withheld missing_info -> test_h5_no_lot_area, test_s5_no_recorded_area;
+  value -> proceed -> many.
+- area.agreement: AGREES -> no condition -> test_s5_figures_that_agree; DISAGREES -> contradicted_record
+  -> test_s5_figures_that_disagree; COULD_NOT_COMPARE -> unchecked_condition (O4) ->
+  test_s5_figure_that_could_not_be_compared; None -> unchecked_condition (G3-F5) -> test_g3f5_agreement_none.
+- area.outline_sq_ft: present + DISAGREES -> names the figure -> test_s5_figures_that_disagree;
+  None + DISAGREES -> "another" -> test_disagree_with_no_outline; otherwise unused (does not act).
+- reach: None -> no_outline -> test_h5_no_outline; present -> used.
+- reach.street_lines: a reach unknown -> coverage no_outline -> test_street_line_reach_unknown;
+  all known -> compared -> H3.
+- reach.corner.reach: unknown -> rear yard no_outline -> test_corner_reach_unknown; >100 ->
+  withheld work_owed -> test_s1b (144.60), test_h3_c1 (107.70); <=100 -> within -> test_h3_c2.
+- reach.corner.angle: unknown -> rear yard no_outline -> test_corner_angle_unknown; >135 ->
+  withheld work_owed -> test_corner_angle_above_135; <=135 -> within -> H3.
+- special_purpose_district: PRESENT -> blanket work_owed -> test_s6_recorded_special_district;
+  NOT_READ -> blanket missing_info -> test_h5_special_district_column_not_read, F6; ABSENT -> none.
+- split_by_district_line: PRESENT -> blanket work_owed -> test_h5_recorded_special_district_or_split;
+  NOT_READ -> blanket missing_info -> test_h5_split_lot_record_not_read; ABSENT -> none.
+- commercial_overlay: ABSENT -> without overlay -> plain tests; PRESENT -> per family -> S1/S8;
+  NOT_READ -> every residential missing_info -> test_f4_overlay_not_read.
+- commercial_overlay_code: present -> "(code)" in reason -> test_overlay_code_present; None ->
+  no code -> test_overlay_code_none.
+- inclusionary_housing_area: PRESENT -> floor area work_owed -> test_f1 (present); NOT_READ ->
+  missing_info -> test_f1 (not_read); ABSENT -> none.
+- flood_zone: PRESENT -> heights work_owed -> test_f2 (present); NOT_READ -> missing_info ->
+  test_f2 (not_read); ABSENT -> none.
+- landmark_or_historic: PRESENT / NOT_READ / ABSENT -> changes no zoning result (does not act) ->
+  test_f7a_landmark.
+- waterfront / airport_height / transit_easement / near_district_line (x4): NOT_CHECKED ->
+  unchecked_condition -> S6 not-checked; ABSENT -> drops -> S6 all-absent, H3; PRESENT -> blanket
+  work_owed -> test_each_k20_condition_present[each].
+- special_density: NOT_GIVEN -> withheld work_owed -> test_h4_h9; EVIDENCE_NOT_IN_ONE -> withheld
+  work_owed -> test_density_evidence_not_in_one; EVIDENCE_IN_ONE -> withheld work_owed -> test_f3;
+  USER_STATEMENT_NOT_IN_ONE -> conditional user_statement -> test_h9_user_statement.
+- large_lot_threshold_met: True -> coverage work_owed -> test_f5; False -> no K3 -> base; None ->
+  falsy, same path as False (does not act distinctly) -> test_large_lot_threshold_met_none.
+- overlay_support: None (overlay present) -> every residential withheld ->
+  test_s1_recorded_overlay_with_no_support; all True -> supported -> test_s1b; all/partial False ->
+  not supported -> test_s1a; per family -> test_s8_*. supported True/False -> S1a/S8; reading_owed
+  given -> used -> test_s8_not_supported; "" -> fallback -> test_overlay_not_supported_without_reading_owed;
+  zr_sections given -> set -> test_s8_not_supported; () -> omitted -> S7 battery.
+
+Table summary: ~44 input states across the 21 fields/record-fields; the module acts on ~38 of
+them (housing_kind, every landmark state, large_lot None-vs-False, and the outline figure outside
+the DISAGREES path create no distinct branch); 13 acted-on states were unpinned before this round
+and are now pinned (the rest were pinned in rounds 1-3). No state was found whose outcome differs
+from the work order or the readings (point 5): see the one standing observation below.
+
+Mutations (each a single change in a copy OUTSIDE the repository; the repo is never touched):
+- MA no_lot_type -> Settled (the reviewer's F9 probe): 1 failed - test_f9_lot_type_not_given...
+- MC no_outline -> Settled: 4 failed - test_h5_no_outline (existing) + test_street_line_reach_unknown,
+  test_corner_reach_unknown, test_corner_angle_unknown.
+- MD rear-yard angle check always passes (within_angle=True): 1 meaningful fail -
+  test_corner_angle_above_135 (plus the 3 invariant tests that read result_ways via rw.__file__,
+  an injection artifact of mutating result_ways itself).
+- MB area DISAGREES "another" fallback changed: 1 failed - test_disagree_with_no_outline...
+- MF overlay code never in the reason: 1 failed - test_overlay_code_present...
+- ME overlay not-supported fallback owed-reading removed: 1 failed -
+  test_overlay_not_supported_without_reading_owed...
+- MG K20-present detection disabled: 7 failed, incl. the new
+  test_each_k20_condition_present[transit_easement|near_district_line] (the two previously untested).
+
+Point 5 (states whose outcome is NOT what the work order / readings say): NONE requiring a module
+change. One standing observation (already flagged round 1, G3-passed, module unchanged by design):
+`large_lot_threshold_met=None` is treated as "not a large lot" (K3 not applied), the same as
+False - the module holds no 30,000 threshold and the caller states the K3 comparison (O8/O5), so an
+unset flag is not a large lot; the wiring piece must set it from the recorded area. Reported, not
+changed.
+
+Checks (DIRECT exit codes, round 4): a `ruff check .` = 0. b `pytest tests/scenario/three_answers`
+= 0, 128 passed + 2 pre-existing skips (was 113; 15 new test items, all in `_input_states.py`).
+c `modularity_check --check` = 0 (failures 0, 29 warnings; `grep result_way` = NONE);
+`check_lane_paths --coverage` = 0 (9134 files). d the seven mutations above (each caught). e git
+status empty after the commit; `git diff --name-status 319806c9 HEAD` = test files and the report
+only; `git diff --stat 319806c9 HEAD -- services/api/app` empty.
+
 ## Interface
 
 Input records (`result_way_inputs.py`): `ResultWayInputs` holds `district`, `lot_type`

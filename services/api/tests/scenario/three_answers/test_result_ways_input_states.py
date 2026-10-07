@@ -6,21 +6,33 @@ orchestrator's reading quoted beside the test, never the module.
 
 from __future__ import annotations
 
+import pytest
+
 from app.scenario.three_answers.result_way_inputs import (
+    AreaAgreement,
+    Checked,
+    CornerReach,
     DensityKnowledge,
     LotAreaFigures,
     LotType,
+    OverlayResultSupport,
+    ReachMeasurements,
+    ReachValue,
     Recorded,
+    ResultFamily,
+    StreetReach,
 )
 from app.scenario.three_answers.result_ways import decide_result_ways
 
 from .test_result_ways_lib import (
     base_inputs,
+    c2_reach,
     condition_kinds,
     is_conditional,
     is_settled,
     is_withheld,
     k20,
+    make_reach,
     plain_inputs,
 )
 
@@ -200,3 +212,152 @@ def test_o12_standard_unit_label_carries_the_k14_words():
     label = ways.unit_limit_standard.label
     assert "new all-residential building" in label
     assert "standard residences" in label
+
+
+# ======================= ROUND 4: the remaining input states =======================
+# Work order test H5 / section 4 item 3: a fact not given leaves the results that depend on it
+# withheld and names it, and every other result is unchanged; owner's rule: a missing input
+# leaves its dependent results "not known". The packet's objective: the housing kind is a
+# design choice carried for the wording.
+
+
+def _env_heights(ways):
+    return tuple(ways.permitted_envelope.values[:6])
+
+
+def test_f9_lot_type_not_given_withholds_coverage_and_rear_yard_only():
+    """G4-F9: lot_type=None reaches no_lot_type -> coverage and rear yard withheld, missing
+    information, 'lot type is not given'; every other result unchanged."""
+    given = decide_result_ways(plain_inputs(lot_type=LotType.CORNER, reach=c2_reach(), **k20(True)))
+    none = decide_result_ways(plain_inputs(lot_type=None, reach=c2_reach(), **k20(True)))
+    # with the lot type given (C2 is within the reaches) coverage and rear yard are shown:
+    assert is_settled(_coverage(given)) and is_settled(given.rear_yard)
+    # with it not given, both are withheld, missing information, naming the lot type:
+    for row in (_coverage(none), none.rear_yard):
+        assert is_withheld(row) and row.way.gap_kind == "missing_information"
+        assert "lot type is not given" in row.way.reason
+    # every other result is unchanged (identical ways to the lot-type-given case):
+    assert none.floor_area_allowance == given.floor_area_allowance
+    assert _env_heights(none) == _env_heights(given)
+    assert none.building_option == given.building_option
+    assert none.setback_above_base == given.setback_above_base
+    assert none.unit_limit_standard == given.unit_limit_standard
+    assert none.unit_limit_qualifying_affordable == given.unit_limit_qualifying_affordable
+    assert none.unit_limit_qualifying_senior == given.unit_limit_qualifying_senior
+
+
+def test_housing_kind_not_given_changes_no_result():
+    """The housing kind is a design choice carried for the wording (packet objective); any
+    value, or None, gives the identical ResultWays."""
+    given = decide_result_ways(plain_inputs(housing_kind="standard_residence", **k20(True)))
+    none = decide_result_ways(plain_inputs(housing_kind=None, **k20(True)))
+    assert none == given
+
+
+def test_large_lot_threshold_met_none_is_not_a_large_lot():
+    """large_lot_threshold_met=None is falsy: the gap-K3 branch does not fire (the same path as
+    False); the caller states the comparison, so an unstated flag is not a large lot. With the
+    K20 conditions absent and a corner lot within the reaches, coverage is shown."""
+    ways = decide_result_ways(plain_inputs(
+        lot_type=LotType.CORNER, reach=c2_reach(), large_lot_threshold_met=None, **k20(True)))
+    assert is_settled(_coverage(ways))
+
+
+# ---- the reach records (ReachMeasurements / StreetReach / CornerReach / ReachValue) ----
+# K12 / section 4 item 5: the reach is measured from the recorded outline; an unknown reach is
+# "no outline" and the results that need it are withheld as missing information. O9: the waiver
+# needs the two street lines to meet at 135 degrees or less.
+def _reach(a_known=True, b_known=True, corner_known=True, angle=90.0, angle_known=True,
+           corner_ft=50.0):
+    a = ReachValue(40.0 if a_known else None)
+    b = ReachValue(50.0 if b_known else None)
+    corner = CornerReach(
+        ReachValue(corner_ft if corner_known else None),
+        ReachValue(angle if angle_known else None),
+    )
+    return ReachMeasurements((StreetReach("street A", a), StreetReach("street B", b)), corner)
+
+
+def test_street_line_reach_unknown_withholds_coverage_missing_information():
+    ways = decide_result_ways(plain_inputs(
+        lot_type=LotType.CORNER, reach=_reach(a_known=False), **k20(True)))
+    coverage = _coverage(ways)
+    assert is_withheld(coverage) and coverage.way.gap_kind == "missing_information"
+    assert "not measured" in coverage.way.reason
+
+
+def test_corner_reach_unknown_withholds_rear_yard_missing_information():
+    ways = decide_result_ways(plain_inputs(
+        lot_type=LotType.CORNER, reach=_reach(corner_known=False), **k20(True)))
+    assert is_withheld(ways.rear_yard) and ways.rear_yard.way.gap_kind == "missing_information"
+
+
+def test_corner_angle_unknown_withholds_rear_yard_missing_information():
+    ways = decide_result_ways(plain_inputs(
+        lot_type=LotType.CORNER, reach=_reach(angle_known=False), **k20(True)))
+    assert is_withheld(ways.rear_yard) and ways.rear_yard.way.gap_kind == "missing_information"
+
+
+def test_corner_angle_above_135_withholds_rear_yard_work_owed():
+    """O9 (ZR 23-344): the waiver holds only where the two street lines meet at 135 degrees or
+    less; above that the rear yard is withheld even when the corner reach is within 100 ft."""
+    ways = decide_result_ways(plain_inputs(
+        lot_type=LotType.CORNER, reach=make_reach(
+            (("street A", 40.0), ("street B", 50.0)), 140.0, 50.0), **k20(True)))
+    assert is_withheld(ways.rear_yard) and ways.rear_yard.way.gap_kind == "work_owed"
+
+
+# ---- the area outline figure with a DISAGREES state (LotAreaFigures.outline_sq_ft) ----
+def test_disagree_with_no_outline_figure_uses_the_fallback_wording():
+    """Section 6: when the figures disagree the condition names the other figure; with no
+    outline figure recorded the module still names it (as 'another'), conditional, never
+    settled, kind contradicted_record."""
+    ways = decide_result_ways(plain_inputs(
+        area=LotAreaFigures(10075.0, AreaAgreement.DISAGREES, None), **k20(True)))
+    value = ways.floor_area_allowance.values[0]
+    assert is_conditional(value)
+    cond = next(c for c in value.way.conditions if c.kind == "contradicted_record")
+    assert "another" in cond.assumption
+
+
+# ---- the commercial overlay code (commercial_overlay_code) with the overlay recorded present ----
+def test_overlay_code_present_appears_in_the_reason():
+    ways = decide_result_ways(base_inputs(
+        commercial_overlay=Recorded.PRESENT, commercial_overlay_code="C2-2", overlay_support=None))
+    assert "(C2-2)" in _coverage(ways).way.reason
+
+
+def test_overlay_code_none_with_overlay_present_still_withholds_without_a_code():
+    ways = decide_result_ways(base_inputs(
+        commercial_overlay=Recorded.PRESENT, commercial_overlay_code=None, overlay_support=None))
+    reason = _coverage(ways).way.reason
+    assert is_withheld(_coverage(ways))
+    assert "recorded commercial overlay;" in reason  # no " (code)" before the semicolon
+
+
+# ---- overlay_support: a family marked not supported WITHOUT the reading owed ----
+def test_overlay_not_supported_without_reading_owed_uses_the_fallback_reading():
+    support = {f: OverlayResultSupport(True) for f in ResultFamily}
+    # supported=False with no reading_owed given:
+    support[ResultFamily.COVERAGE] = OverlayResultSupport(False)
+    ways = decide_result_ways(base_inputs(
+        commercial_overlay=Recorded.PRESENT, commercial_overlay_code="C2-2",
+        overlay_support=support))
+    coverage = _coverage(ways)
+    assert is_withheld(coverage) and coverage.way.gap_kind == "work_owed"
+    assert "Article III sections" in coverage.way.reason  # the fallback owed-reading text
+
+
+# ---- the four K20 conditions, each recorded PRESENT -> blanket (reading O6) ----
+@pytest.mark.parametrize(
+    "field",
+    ["waterfront", "airport_height", "transit_easement", "near_district_line"],
+)
+def test_each_k20_condition_present_withholds_every_result(field: str):
+    """Reading O6 / H11: with one no-data-source condition recorded present, every zoning
+    result is withheld (each of the four conditions, not only the two the earlier tests used)."""
+    ways = decide_result_ways(plain_inputs(**{field: Checked.PRESENT}))
+    assert not ways.floor_area_allowance.is_available
+    assert not ways.permitted_envelope.is_available
+    assert is_withheld(ways.rear_yard)
+    assert "recorded as present" in _heights(ways)[0].way.reason
