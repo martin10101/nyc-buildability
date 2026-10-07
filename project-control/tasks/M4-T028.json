@@ -90,7 +90,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the cases say agreement is not proof (R259); each row is followable",
     "A reading that fills a gap the captured text does not settle -> S2 and S6",
@@ -98,7 +98,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T06:42:21.482900+00:00",
-  "updated_at": "2026-10-07T08:05:12.838221+00:00",
+  "updated_at": "2026-10-07T08:05:32.253664+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",

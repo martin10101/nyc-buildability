@@ -83,7 +83,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "A street line taken from the wrong lot edge or the wrong side -> S1 and S2 against values worked independently by two readers and re-worked by a reviewer",
     "A measurement that quietly becomes a legal test -> S4: no threshold and no law in the module",
@@ -92,7 +92,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T06:42:20.450507+00:00",
-  "updated_at": "2026-10-07T08:05:12.369366+00:00",
+  "updated_at": "2026-10-07T08:05:31.290016+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
