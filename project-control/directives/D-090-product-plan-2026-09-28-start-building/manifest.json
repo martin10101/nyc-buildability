@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-07T11:39:28+00:00",
+ "updated_at": "2026-10-07T15:04:57+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -518,10 +518,12 @@
   "D-090-R494",
   "D-090-R495",
   "D-090-R496",
-  "D-090-R497"
+  "D-090-R497",
+  "D-090-R498",
+  "D-090-R499"
  ],
- "requirements_id_digest_sha256": "07b4abc83d7eaaf3619255ef62abf6d802e4b7335bde29e5cb5a099a13a4b298",
- "requirements_content_digest_sha256": "959d5a4e8dcc9b6422481109f34223c6b59615127213086911632dcb0fa355b4",
+ "requirements_id_digest_sha256": "6f6f278e89cf7fdcad1b10f41dc28aefdb6d023ee40fb816dd0deaf195626722",
+ "requirements_content_digest_sha256": "1a3c0cad6a560998bfcbc33825f48b737171597c8456afd85372ab6f23d0923e",
  "sources": [
   {
    "file": "source-001.md",
@@ -937,6 +939,14 @@
    "recorded_at": "2026-10-07T05:05:14+00:00",
    "content_digest_sha256": "cc01bdb05816433a3b3f38db4178518cc3fb7bc0f98bc4922596e3b0192bc660",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-053-amendment.md",
+   "kind": "amendment",
+   "sequence": 53,
+   "recorded_at": "2026-10-07T15:04:57+00:00",
+   "content_digest_sha256": "f255fa5c281f90ca8bb683340540bb7a1715b7ae76f6688ddddf6b9bd6b730ab",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -990,7 +1000,8 @@
   "source-049-amendment.md",
   "source-050-amendment.md",
   "source-051-amendment.md",
-  "source-052-amendment.md"
+  "source-052-amendment.md",
+  "source-053-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1459,6 +1470,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M4-T032 (the independent reading of the law text captured by M4-T031, written into the R6B reference cases) to R226, R241, R259, R291, R318 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-07T15:04:57+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-053 (session 013RaGmC message 109, 2026-10-07: explain every question that waits on the owner, in depth) and requirements D-090-R498 and R499, both pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
