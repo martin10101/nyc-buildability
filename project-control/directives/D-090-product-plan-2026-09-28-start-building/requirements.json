@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 486,
+ "requirement_count": 489,
  "producer": "orchestrator",
- "updated_at": "2026-10-07T03:27:10+00:00",
+ "updated_at": "2026-10-07T03:53:19+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -16455,6 +16455,114 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-07 (message 103).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R487",
+   "text": "'So explin to me in simple to understand English where we stand' 'how far along to get the pdf like my comption': an explanation is given at once, in simple English, of where the work stands and how far it is from the downloadable report (the PDF) comparable to the owner's sample. ORCHESTRATOR'S READING: 'my comption' is the competitor's report, the owner's sample PDF; the answer says what is on a screen, what exists only as code, what is not built, the order of the remaining steps, and gives no date that observed delivery does not support (R326); it carries no table (R475).",
+   "source_ref": "source-050-amendment.md#owner-message-104-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R326",
+    "D-090-R393",
+    "D-090-R474",
+    "D-090-R475"
+   ],
+   "required_harness": "The reply that follows the message is in plain words, has no table, overstates nothing and names what is still owed.",
+   "required_evidence": "The session transcript (the reply to message 104).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 104).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R488",
+   "text": "'Yes they should run together': a research helper may run at the same time as a builder. ORCHESTRATOR'S READING: the message answers the last open point of the reply before it ('Whether a research helper may work at the same time as a builder. Today I run one at a time.'); 'they' are the research helper and the builder. It changes the limit of R211 and R314 for this pair only: at most one builder and one research helper at once. Not approved by it, and unchanged: two builders at once, a second research helper, any larger number of helpers, one heavy run at a time, the independence of parallel work (no shared files or tests), one ledger-touching branch at a time, and that research approves no default and is never a blocker.",
+   "source_ref": "source-050-amendment.md#owner-message-105-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R211",
+    "D-090-R286",
+    "D-090-R314",
+    "D-090-R315",
+    "D-090-R482",
+    "D-090-R484"
+   ],
+   "required_harness": "At no time do more than one builder and one research helper run together; the two write to different files.",
+   "required_evidence": "The session transcripts and notes (which helpers ran when).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 105).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R489",
+   "text": "'Yes they should run together to speed thinks up': the message decides that one point and no other. ORCHESTRATOR'S READING: the reply before it also asked whether the owner wants an early simple PDF, and named the starting figures and the order of the options as open; 'Yes they should run together' speaks of the helper and the builder, so those choices stay open and are asked again (R283, R482). The purpose the owner gives is speed; it lifts no check, review or restriction.",
+   "source_ref": "source-050-amendment.md#owner-message-105-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R482"
+   ],
+   "required_harness": "No record, task or update treats the early PDF, a starting value, the order of the options or the instruction-file question as answered by this message.",
+   "required_evidence": "The ledger, the registry and the owner updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 105).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
