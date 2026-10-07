@@ -157,4 +157,7 @@ def _answer_violations(answer_name: str, answer: Mapping[str, Any]) -> list[WayR
             )
         # not shown + withheld  -> allowed: that is what withheld means
         # shown + settled/conditional -> the correct case
+        # An unknown `way`, or any value_states entry on a not-available answer, is refused by
+        # the schema, which both validators run before this rule; this rule is a check AFTER
+        # the schema, so those cases never reach here.
     return out

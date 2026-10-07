@@ -73,6 +73,8 @@ All callers consume pre-1.3.0 documents today (nothing emits 1.3.0), so the rule
   was always present can now be missing. A later reader (web, drawings, PDF, DXF) must read the way
   from `value_states[key]` and must NOT treat an absent value as zero. Forward guidance; nothing emits
   1.3.0 now.
+- a key repeated in an answer's values list is refused neither by the schema nor by this rule
+  (reviewer's note F1); owed to the piece that emits.
 
 ## The module does not reach the provenance serializer
 
@@ -107,14 +109,17 @@ else in that file was changed (`_base_1_3_0` and the other tests are byte-identi
 the bare bundled schema (via `validate_study_contract_document("results", doc)`, which runs the schema
 but NOT the way-rule) still ACCEPTS all three documents while `results_way_violations` reports a breach.
 
-A grep for `KNOWN_LIMIT` / "known limit" across `services/api/tests`, `packages/contracts`,
-`docs/DISCOVERY_BACKLOG.md` and `.github` left exactly one hit:
-`test_results_three_ways_slot.py:304`, a NOTE inside `test_one_entry_mixing_two_ways_is_rejected`
-("the schema does NOT refuse that (see the KNOWN_LIMIT xfail tests below)"). Its factual claim (the
-SCHEMA does not refuse that case) is still true; only the pointer "KNOWN_LIMIT xfail tests" is now a
-stale label. That line is inside another test, outside this task's allowed edit of this file, so it
-was left unchanged and is reported here. DB-171 and the schema's own descriptions speak of the SCHEMA
-and remain true (the orchestrator's to update DB-171).
+A round-2 grep for `KNOWN_LIMIT` / "known limit" across `services/api/tests`, `packages/contracts`,
+`docs/DISCOVERY_BACKLOG.md` and `.github` found one surviving pointer: a NOTE inside
+`test_one_entry_mixing_two_ways_is_rejected` that read "the schema does NOT refuse that (see the
+KNOWN_LIMIT xfail tests below)". Its factual claim (the SCHEMA does not refuse that case) was true,
+but the pointer was stale (those tests had been renamed and are no longer expected failures). Round 2
+left it untouched because it is inside another test, outside this task's allowed edit of this file,
+and reported it; round 3 reworded that one comment at the orchestrator's instruction to point to the
+tests below as what they now are (the validator's shared rule refusing what the schema alone accepts),
+keeping the schema claim. No `KNOWN_LIMIT` or expected-failure (`xfail`) marker now remains under
+`services/api/tests`. DB-171 and the schema's own descriptions speak of the SCHEMA and remain true
+(the orchestrator's to update DB-171).
 
 ## Checks (direct exit codes; venv python, PYTHONDONTWRITEBYTECODE=1, pytest -p no:cacheprovider, from services/api)
 
@@ -130,7 +135,9 @@ and remain true (the orchestrator's to update DB-171).
   not flagged).
 - e. mutation proofs (in-place, reverted by re-edit): removing the shared-rule call from the study
   validator fails 5 study_contracts refusal tests (engine still passes); making the rule apply below
-  1.3.0 fails 25 tests (valid fixtures + prior-version + pure below-1.3.0). Both reverted; the new test
+  1.3.0 — done by removing the version gate in the rule's source (`results_way_rules.py`), not by
+  patching the two validators' call sites — fails 25 tests (valid fixtures + prior-version + pure
+  below-1.3.0) run as `pytest tests/contracts/test_results_way_rules.py`. Both reverted; the new test
   file is 77 passed afterward.
 - f. `git status --porcelain` empty after the round-2 commit; `git diff --stat <contract-head> HEAD --
   packages services/api/app/_contract_schemas` empty (no schema, generated-type or fixture change).
