@@ -42,7 +42,8 @@ def test_everything_validates_clean():
 # --------------------------------------------------------------------------
 def test_each_case_has_a_data_file_and_a_page():
     assert lib.CASE_IDS == (
-        "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked"
+        "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
+        "overlay-reading"
     )
     for case_id in lib.CASE_IDS:
         assert lib.case_path(case_id).is_file(), f"missing data file for {case_id}"
@@ -215,6 +216,72 @@ def test_a_step_p1_value_where_the_readings_differ_is_refused():
 
 
 # --------------------------------------------------------------------------
+# S1/S2 (step P2) - the commercial-overlay reading: two readings present
+# unchanged; a value only where both agree, 'changed'/'same'/'not known'
+# --------------------------------------------------------------------------
+def test_the_two_overlay_readings_are_present_unchanged():
+    assert check.overlay_reading_errors() == []
+    for name, spec in check.OVERLAY_READINGS.items():
+        raw = (lib.PROVENANCE_DIR / name).read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == spec["digest"], name
+        text = raw.decode("utf-8")
+        assert "sealed folder" in text, name
+        assert text.rstrip().endswith("END-OF-REPORT"), name
+    five = (lib.PROVENANCE_DIR / "return-independent-hand-calculation-5.md").read_text()
+    six = (lib.PROVENANCE_DIR / "return-independent-hand-calculation-6.md").read_text()
+    assert five != six
+
+
+def test_a_changed_overlay_reading_is_caught(monkeypatch):
+    bad = {
+        "return-independent-hand-calculation-5.md": {
+            "marker": "ONE HARD RULE", "digest": "0" * 64,
+        },
+        "return-independent-hand-calculation-6.md":
+            check.OVERLAY_READINGS["return-independent-hand-calculation-6.md"],
+    }
+    monkeypatch.setattr(check, "OVERLAY_READINGS", bad)
+    errs = check.overlay_reading_errors()
+    assert errs and any("digest changed" in m for m in errs), errs
+
+
+def test_overlay_case_rows_name_both_readings():
+    data = CASES["overlay-reading"]
+    for row in data["rows"]:
+        assert check.both_readings_errors("overlay-reading", row) == [], row["row_id"]
+
+
+def test_an_overlay_row_missing_a_reading_is_refused():
+    row = copy.deepcopy(lib.find_row_or_none("overlay-reading", "floor-area-ratio"))
+    row["source_reference"] = "return-independent-hand-calculation-5.md only"
+    errs = check.both_readings_errors("overlay-reading", row)
+    assert errs and any("both overlay readings" in m for m in errs), errs
+
+
+def test_overlay_settled_changed_and_not_known_rows():
+    # FAR, coverage, units, heights, setback, rear yard: same as plain R6B
+    for rid in ("floor-area-ratio", "lot-coverage", "dwelling-units",
+                "base-and-building-height", "setback-above-base", "rear-yard"):
+        assert "same as plain R6B" in lib.load_row("overlay-reading", rid)["value"], rid
+    # street wall: changed by the overlay
+    street_wall = lib.load_row("overlay-reading", "street-wall-location")
+    assert "changed by the overlay" in street_wall["value"]
+    # what 35-633 adds: not known (23-436 not captured; the two readings differ)
+    assert lib.load_row("overlay-reading", "section-35-633")["kind"] == "not_known"
+
+
+def test_an_overlay_value_where_the_readings_differ_is_refused():
+    data = copy.deepcopy(CASES["overlay-reading"])
+    for row in data["rows"]:
+        if row["row_id"] == "section-35-633":
+            row["expected"]["kind"] = "value"
+            row["expected"]["value"] = "nothing extra applies"
+            row["expected"]["reason"] = ""
+    errs = check.readings_differ_errors("overlay-reading", data)
+    assert errs and any("section-35-633" in m for m in errs), errs
+
+
+# --------------------------------------------------------------------------
 # S5 - arithmetic recomputed exactly (positive + the required worked numbers)
 # --------------------------------------------------------------------------
 def test_all_arithmetic_recomputes():
@@ -284,6 +351,7 @@ NOT_KNOWN = {
                        "corner-200x120-coverage", "corner-200x120-rear-yard",
                        "interior-40x100-rear-yard", "through-40x200-rear-yard",
                        "special-density-real-lot"},
+    "overlay-reading": {"section-35-633"},
 }
 
 

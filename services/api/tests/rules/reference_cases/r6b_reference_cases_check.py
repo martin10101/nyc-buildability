@@ -49,13 +49,34 @@ FORBIDDEN_VALUE_PHRASES = (
 # The sections the cases still rely on that are NOT captured (named in the
 # README). Step P1 (task M4-T025) captured ZR 12-10 (the lot-type and
 # special-density definitions), ZR 23-342 and ZR 23-363; these remain uncaptured.
-NOT_CAPTURED_SECTIONS = ("23-343", "23-434")
+# The step-P2 overlay readings (task M4-T028) found further sections the captured
+# commercial-overlay texts point to that the repository does not hold.
+NOT_CAPTURED_SECTIONS = (
+    "23-343", "23-434", "23-435", "23-436", "23-41",
+    "34-21", "34-22", "34-23", "35-64", "35-71", "36-64",
+)
 
-# The step-P1 case (M4-T027), and the one row whose two readings disagree, which
-# must therefore stay "not known" (S2): a value may be recorded only where both
-# readings agree on the same basis.
+# The cases whose rows rest on two independent readings (step-P1 and step-P2),
+# and the two reading files whose agreement a value needs (S2): a value may be
+# recorded only where both readings agree on the same basis.
 STEP_P1_CASE_ID = "step-p1-worked"
-READINGS_DIFFER = {"interior-40x100-rear-yard"}
+OVERLAY_CASE_ID = "overlay-reading"
+CASE_READINGS = {
+    STEP_P1_CASE_ID: (
+        "return-independent-hand-calculation-3", "return-independent-hand-calculation-4",
+    ),
+    OVERLAY_CASE_ID: (
+        "return-independent-hand-calculation-5", "return-independent-hand-calculation-6",
+    ),
+}
+# The human label for each such case, used in the "name both readings" message.
+_READINGS_LABEL = {STEP_P1_CASE_ID: "step-P1", OVERLAY_CASE_ID: "overlay"}
+# Per case, the rows whose two readings disagree (or where one says not known),
+# which must therefore stay "not known".
+READINGS_DIFFER = {
+    STEP_P1_CASE_ID: {"interior-40x100-rear-yard"},
+    OVERLAY_CASE_ID: {"section-35-633"},
+}
 
 
 # --------------------------------------------------------------------------
@@ -359,6 +380,20 @@ STEP_P1_READINGS = {
     },
 }
 
+# The two step-P2 commercial-overlay readings (task M4-T028), each saved unchanged
+# below a short header. The digest pins the whole saved file so a later edit is
+# caught (S1).
+OVERLAY_READINGS = {
+    "return-independent-hand-calculation-5.md": {
+        "marker": "ONE HARD RULE",
+        "digest": "3f7cd65e125ac4343a8a01660e549e49a38113dfc815cab053815df1beec3ff6",
+    },
+    "return-independent-hand-calculation-6.md": {
+        "marker": "ONE-HARD-RULE COMPLIANCE",
+        "digest": "2c3d3c3df850735d5a72d1e2bd1e0590dea690c48908838107173e7b5824a426",
+    },
+}
+
 
 def provenance_errors() -> list[str]:
     errs: list[str] = []
@@ -373,61 +408,71 @@ def provenance_errors() -> list[str]:
         if "END-OF-REPORT" not in text:
             errs.append(f"provenance file {name} is not the return in full (no END-OF-REPORT)")
     errs += step_p1_reading_errors()
+    errs += overlay_reading_errors()
     return errs
 
 
-def step_p1_reading_errors() -> list[str]:
-    """The two step-P1 readings are present unchanged: each carries its marker and
-    its END-OF-REPORT, says it was made from the sealed folder, and hashes to the
+def _reading_digest_errors(readings: dict, label: str) -> list[str]:
+    """A saved reading is present unchanged: it carries its marker and its
+    END-OF-REPORT, says it was made from the sealed folder, and hashes to the
     recorded digest, so any later edit to a saved reading is caught (S1)."""
     errs: list[str] = []
-    for name, spec in STEP_P1_READINGS.items():
+    for name, spec in readings.items():
         path = lib.PROVENANCE_DIR / name
         if not path.is_file():
-            errs.append(f"step-P1 reading missing: {name}")
+            errs.append(f"{label} reading missing: {name}")
             continue
         raw = path.read_bytes()
         text = raw.decode("utf-8")
         if spec["marker"] not in text:
-            errs.append(f"step-P1 reading {name} does not carry the reading's return")
+            errs.append(f"{label} reading {name} does not carry the reading's return")
         if "END-OF-REPORT" not in text:
-            errs.append(f"step-P1 reading {name} is not the return in full (no END-OF-REPORT)")
+            errs.append(f"{label} reading {name} is not the return in full (no END-OF-REPORT)")
         if "sealed folder" not in text:
-            errs.append(f"step-P1 reading {name} does not say it was made from the sealed folder")
+            errs.append(f"{label} reading {name} does not say it was made from the sealed folder")
         got = hashlib.sha256(raw).hexdigest()
         if got != spec["digest"]:
             errs.append(
-                f"step-P1 reading {name} digest changed: {got} != recorded {spec['digest']} "
+                f"{label} reading {name} digest changed: {got} != recorded {spec['digest']} "
                 "(the saved reading must stay byte-for-byte unchanged)"
             )
     return errs
+
+
+def step_p1_reading_errors() -> list[str]:
+    return _reading_digest_errors(STEP_P1_READINGS, "step-P1")
+
+
+def overlay_reading_errors() -> list[str]:
+    return _reading_digest_errors(OVERLAY_READINGS, "overlay")
 
 
 # --------------------------------------------------------------------------
 # S2 (step-P1 case): a value only where both readings agree on the same basis
 # --------------------------------------------------------------------------
 def both_readings_errors(case_id: str, row: dict) -> list[str]:
-    """In the step-P1 case, every row must name BOTH readings in its source
-    reference, so a value rests on both and a 'not known' names both (S2)."""
-    if case_id != STEP_P1_CASE_ID:
+    """In a two-reading case (step P1, step P2), every row must name BOTH readings
+    in its source reference, so a value rests on both and a 'not known' names both
+    (S2)."""
+    needed = CASE_READINGS.get(case_id)
+    if not needed:
         return []
     ref = str(row.get("source_reference", ""))
-    needed = ("return-independent-hand-calculation-3", "return-independent-hand-calculation-4")
     if any(name not in ref for name in needed):
-        return [f"{case_id}/{row.get('row_id', '?')}: source reference must name both step-P1 "
+        label = _READINGS_LABEL.get(case_id, "")
+        return [f"{case_id}/{row.get('row_id', '?')}: source reference must name both {label} "
                 "readings (a value needs both readings to agree)"]
     return []
 
 
 def readings_differ_errors(case_id: str, data: dict) -> list[str]:
-    """In the step-P1 case, a row whose two readings disagree (or where one says
+    """In a two-reading case, a row whose two readings disagree (or where one says
     not known) must stay 'not known': a value is recorded only where both readings
     agree on the same basis (S2). Giving such a row a value is refused."""
-    if case_id != STEP_P1_CASE_ID:
-        return []
+    differ = READINGS_DIFFER.get(case_id, set())
     errs: list[str] = []
     for row in data.get("rows", []):
-        if row.get("row_id") in READINGS_DIFFER:
+        if row.get("row_id") in differ:
             kind = row.get("expected", {}).get("kind")
             if kind != "not_known":
                 errs.append(

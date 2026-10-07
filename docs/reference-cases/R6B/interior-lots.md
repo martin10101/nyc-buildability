@@ -261,6 +261,16 @@ Law relied on:
   - Content digest: `7ff320d2f18feec7cc53f609c066d09ac349a714b83c6dbd014e2cb51932ab34`.
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-363.
   - Quoted: "may be increased in accordance with the provisions of this Section"
+- ZR 23-362 (Maximum lot coverage in R6 through R12 Districts) - captured.
+  - Capture: snapshot `zr-23-362`, file `docs/research/zr-snapshots/v1/zr-23-362.snapshot.json`.
+  - Content digest: `f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362.
+  - Quoted: "for #zoning lots# with #buildings# utilizing the eligible site provisions of Section 23-434"
+- ZR 23-362 (Maximum lot coverage in R6 through R12 Districts) - captured.
+  - Capture: snapshot `zr-23-362`, file `docs/research/zr-snapshots/v1/zr-23-362.snapshot.json`.
+  - Content digest: `f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362.
+  - Quoted: "65 percent on #zoning lots# with a #lot area# of 30,000 square feet or more that are not #large sites#"
 
 Why the rule applies: ZR 23-362(a) gives interior and through lots a maximum residential lot coverage of 80 percent; the captured ZR 23-363 may only increase that maximum under its triggers, never decrease it.
 
@@ -268,12 +278,12 @@ Expected value: 80 percent
 
 Where this stands in the independent reading: return-independent-hand-calculation-1.md, Task 2 ('80% -> 4,000 sf' for the interior probe), and the work order's table B note that the independent reading gives 80 percent from ZR 23-362(a); both step-P1 readings read ZR 23-363 as only able to increase the 80 percent and as not changing it on the bare facts (return-independent-hand-calculation-3.md and -4.md, Q2c).
 
-What this row does not establish: ZR 23-363 is now captured and may only increase the 80 percent for some interior and through lots - to 90 percent for a shallow lot, or 100 percent for a portion within 100 feet of a qualifying corner or where the front lot line is on the block's short dimension - never decrease it, and does not change the 80 percent on the bare facts; a different maximum also applies to lots of 30,000 sq ft or more.
+What this row does not establish: ZR 23-363 is now captured and may only increase the 80 percent for some interior and through lots - to 90 percent for a shallow lot, or 100 percent for a portion within 100 feet of a qualifying corner or where the front lot line is on the block's short dimension - never decrease it, and does not change the 80 percent on the bare facts. The different maximum of ZR 23-362(b) applies only to zoning lots 'with buildings utilizing the eligible site provisions of Section 23-434' - '65 percent on zoning lots with a lot area of 30,000 square feet or more that are not large sites', and 50 percent on large sites - not to every lot of 30,000 square feet or more (a corrected reading; backlog DB-168).
 
 ## What this case does not establish
 
 - These lots are made up; they do not describe any real property.
-- The 80-percent coverage may be increased (never decreased) by ZR 23-363 (now captured, task M4-T025) under its triggers, and does not apply to lots of 30,000 sq ft or more.
+- The 80-percent coverage may be increased (never decreased) by ZR 23-363 (now captured, task M4-T025) under its triggers; the different maximum of ZR 23-362(b) applies only to zoning lots 'with buildings utilizing the eligible site provisions of Section 23-434' - '65 percent on zoning lots with a lot area of 30,000 square feet or more that are not large sites', and 50 percent on large sites - not to every lot of 30,000 square feet or more.
 - It is not a professional or legal determination.
 
 ## Sources
@@ -289,4 +299,6 @@ What this row does not establish: ZR 23-363 is now captured and may only increas
 |---|---|---|
 | 2026-10-06 | Case created from the independent hand-calculation returns (step R0). | rules-engineer (M4-T024) |
 | 2026-10-07 | Row interior-coverage: expected value unchanged (80 percent). ZR 23-363 is now captured (task M4-T025); a captured ZR 23-363 citation is added and the 'does not establish' note records that ZR 23-363 may only increase the 80 percent (to 90 percent for a shallow lot, or 100 percent near a corner or on the block's short dimension) under conditions, never decrease it, and does not change the 80 percent on the bare facts. Both step-P1 readings read it the same way (return-independent-hand-calculation-3.md and -4.md, Q2c). Reason: newly captured text. | rules-engineer (M4-T027) |
+| 2026-10-07 | Row interior-coverage: expected value unchanged (80 percent). The 'does not establish' sentence about lots of 30,000 sq ft or more (written by task M4-T024) was too broad (backlog DB-168). Read against the captured ZR 23-362(b), that maximum applies only to zoning lots whose buildings use the eligible-site provisions of Section 23-434 (65 percent for a lot area of 30,000 square feet or more that are not large sites, 50 percent on large sites), not to every lot of 30,000 square feet or more. The sentence is replaced with the captured words and two ZR 23-362(b) citations are added. Reason: a corrected reading. | rules-engineer (M4-T028) |
+| 2026-10-07 | Case-level 'what it does not establish' item 2 carried the same too-broad clause 'and does not apply to lots of 30,000 sq ft or more' (review note F3). No expected value changed. The clause is replaced with what the captured ZR 23-362(b) says: the different maximum applies only to zoning lots with buildings using the eligible-site provisions of Section 23-434 (65 percent for a lot area of 30,000 square feet or more that are not large sites, 50 percent on large sites), not to every lot of that size. Reason: a corrected reading. | rules-engineer (M4-T028 round 2) |
 

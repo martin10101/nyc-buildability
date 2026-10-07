@@ -1,0 +1,52 @@
+{
+  "snapshot_id": "zr-12-10-special-downtown-brooklyn-district",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "12-10",
+  "section_title": "Definitions - Special Downtown Brooklyn District",
+  "article": "I",
+  "chapter": "2",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+    "retrieved_at": "2026-10-07T07:10:58Z",
+    "http_status": 200,
+    "response_bytes": 1316758,
+    "raw_html_sha256": "3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc",
+    "portal_node_id": "18523",
+    "defined_term": "Special Downtown Brooklyn District",
+    "defined_term_node_id": "21721",
+    "last_amended_machine_readable": "2011-02-02T12:00:00Z",
+    "last_amended_display": "2/2/2011",
+    "section_last_amended": "2011-02-02",
+    "section_last_amended_source_text": "Last Amended 2/2/2011 (ZR 12-10 term 'Special Downtown Brooklyn District', /node/21721)",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "The §12-10 page header (node 18523) shows Last Amended 3/26/2026 (the §12-10 page header, node 18523, data-section-number=\"12-10\"), which is the date of the most-recently-amended term on the page; the operative provenance for THIS term is its own per-term Last Amended stamp (2/2/2011, /node/21721) recorded above.",
+    "capture_method": "M4-T029 in-task capture 2026-10-07 (direct HTTPS GET, curl -A Mozilla/5.0; whole-page HTML node 18523)",
+    "raw_html_verified": false,
+    "verification_required": "Captured source text only from the canonical §12-10 HTML (node 18523; sha256 pinned). The whole-page print/PDF completeness channel returned HTTP 504 (attempted twice) so the Resolution's own list-marker glyphs could not be confirmed from the glyph-authoritative channel; this is the documented fallback (DB-167). The text has NOT been re-read by a second agent, so raw_html_verified stays false and extraction_status stays extracted_draft. Nothing here is a Verified zoning determination and nothing here is a rule, an interpretation of the text for any lot, or a derived number: it is the official source text of one ZR 12-10 defined term only. Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  },
+  "cross_check": {
+    "channel": "print_pdf",
+    "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18523",
+    "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/18523",
+    "retrieved_at": "2026-10-07T07:11:02Z",
+    "http_status": 504,
+    "content_type": "text/plain; charset=utf-8",
+    "response_bytes": 41,
+    "raw_pdf_sha256": null,
+    "method": "The §12-10 completeness channel is the whole-page print/PDF entityprint/pdf/node/18523, which returned HTTP 504 (Gateway Timeout) on 2026-10-07 at 2026-10-07T07:11:02Z and again on retry at 2026-10-07T07:12:26Z (~59 s) - the documented DB-167 behaviour. Per that documented fallback the canonical-HTML channel (node 18523, sha256 and byte count pinned in source) was used; the term's definition text was extracted PROGRAMMATICALLY from that raw HTML (the defined-term article id=\"term-<name>\", its definition__definition body) and self-checked for word-completeness against the raw HTML bytes (every word of the definition present; whitespace normalised; defined terms bold-italic <strong><em> written #term#). THIS term's definition contains NO ordered list (no <ol>), so there are NO list-position labels in this capture: any parenthesised (a)/(b)/(1) shown is LITERAL text of the official definition, not a position label added by the capture. The DB-167 F1 label-confirmation gap (whole-page PDF 504) therefore does not affect any text here.",
+    "result": "unavailable_documented_fallback"
+  },
+  "verbatim_excerpt": "The \"Special Downtown Brooklyn District\" is a Special Purpose District designated by the letters \"DB\" in which special regulations set forth in Article X, Chapter 1, apply.",
+  "verbatim_excerpt_composition": "Verbatim blocks joined by a blank line, in page order: each paragraph of the defined term's definition body. Defined terms (bold-italic in the HTML) are written #term#. Runs of whitespace and non-breaking spaces are written as one space and each block is trimmed; embedded figures are omitted; no word was changed. The definition has no ordered-list markup (no <ol>); any parenthesised (a)/(b)/(1) shown is LITERAL text of the official definition, not a position label added by the capture.",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Captured as source text only (ZR 12-10 defined term 'Special Downtown Brooklyn District') for the law text the independent readings and the earlier captures named as needed and not captured (task M4-T029, D-090 R291). The capture holds the official definition text and its provenance; it encodes no rule, no reading of the text for any lot, and no derived number.",
+    "Channel: canonical §12-10 HTML (node 18523; sha256 and byte count pinned). The whole-page print/PDF completeness channel returned HTTP 504 twice (the documented DB-167 fallback), so the Resolution's own list-marker glyphs could not be confirmed from the glyph-authoritative channel. This term's definition contains no ordered list, so no list-position label is used anywhere in it.",
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  ],
+  "content_digest_sha256": "ae66c93e8ec466de81587358a332c40c15fd500fc4f34ae4102c11ab43d7dd2d"
+}

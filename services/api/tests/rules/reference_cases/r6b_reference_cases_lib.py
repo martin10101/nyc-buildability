@@ -34,8 +34,13 @@ PROVENANCE_DIR = DOCS_DIR / "provenance"
 SNAPSHOT_DIR = REPO_ROOT / "docs" / "research" / "zr-snapshots" / "v1"
 
 # The cases, by the file stem of their data file and rendered page. The fifth
-# case (step-p1-worked) holds the rows worked from the step-P1 captures (M4-T027).
-CASE_IDS = ("real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked")
+# case (step-p1-worked) holds the rows worked from the step-P1 captures (M4-T027);
+# the sixth (overlay-reading) holds the commercial-overlay reading worked from the
+# step-P2 captures (M4-T028).
+CASE_IDS = (
+    "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
+    "overlay-reading",
+)
 
 # The base ids every one of the work order's table rows must appear under (S1).
 # A base id is "present" when a row's id equals it or starts with it + "-".
@@ -47,6 +52,11 @@ REQUIRED_BASE_IDS = {
     "step-p1-worked": [
         "lot-area", "corner-100x100", "corner-150x100", "corner-200x120",
         "interior-40x100", "through-40x200", "special-density",
+    ],
+    "overlay-reading": [
+        "bulk-regulations", "floor-area-ratio", "lot-coverage", "dwelling-units",
+        "base-and-building-height", "setback-above-base", "street-wall-location",
+        "rear-yard", "paragraphs-applicable", "section-35-633", "not-captured",
     ],
 }
 
