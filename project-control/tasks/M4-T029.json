@@ -1,0 +1,117 @@
+{
+  "task_id": "M4-T029",
+  "title": "Law-text captures the readings named as missing: ZR 23-343; 23-43 with 23-434 to 23-436; 23-41 and its sections; 34-112, 34-113, 34-21; 35-62, 35-64, 35-71 and its sections, 36-64; eleven ZR 12-10 definitions - source text only (D-090 R291)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Capture, as source text only, the law text that the independent readings and the captures of tasks M4-T025, M4-T026 and M4-T027 named as needed and not captured. From the official Zoning Resolution site (zoningresolution.planning.nyc.gov), with the capture method and file format of task M4-T026 (each section WHOLE; each request's own time; the print/PDF as a text check; labels from a channel that prints them, or disclosed as positions in the page's markup): (1) ZR 23-343 (rear yard equivalents for through lots); (2) ZR 23-434 and ZR 23-435 and ZR 23-436 and the text of ZR 23-43 itself (the height and setback sections the overlay text and ZR 23-362(b) point to); (3) ZR 23-41 and every section numbered under it that the official page shows (permitted obstructions, pointed to by ZR 35-53); (4) ZR 34-112 and ZR 34-113 and ZR 34-21 (the neighbours of the captured 34-11 family and the range ZR 34-11 names); (5) ZR 35-62, ZR 35-64, ZR 35-71 with every section under it, and ZR 36-64 (pointed to by ZR 34-24 and ZR 35-63); (6) the ZR 12-10 definitions of 'lot line, front', 'lot line, rear', 'lot line, side', 'lot width', 'lot depth', 'zoning lot', 'street line', 'residential', 'Manhattan Core', 'base plane' and, if ZR 12-10 defines it, 'Special Downtown Brooklyn District' (if it is defined elsewhere, the report says where and it is not captured here). One file per section and one per 12-10 defined term. A capture holds source text only: no rule, no reading for a lot, no derived number. No existing capture is edited. Anything that cannot be read in full is said so in the capture and the report; nothing is filled from memory, a lead or another site. No rule file, rule engine, register entry, reference case or screen changes.",
+  "business_reason": "The reference cases keep rows 'not known' for want of this text (the through-lot rear yard, ZR 23-343; the eligible-site maximum of ZR 23-362(b), ZR 23-434; which lot line is the rear lot line and what the lot width is; whether the test lot is in a special density area), the measurement record keeps the base of the amenity allowance 'not sure' ('residential floor area'), and the overlay text points to sections that are not captured. Step 3 of the owner's eight steps (R291): the text must be captured before any missing rule can be resolved.",
+  "inputs": [
+    "project-control/reports/M4-T026-producer-report.md (sections 7 and 8: what the overlay texts point to and whether it is captured) and M4-T027-producer-report.md (what stays 'not known' and which text it needs); docs/reference-cases/R6B/README.md (the list of law text that is not captured); docs/measurement-basis/MEASUREMENT_BASIS.md section 8, point 5",
+    "The captures made by tasks M4-T025 and M4-T026 under docs/research/zr-snapshots/v1/ (file format, notes on channels); project-control/reports/M4-T025-G3G4.md and M4-T026-G3G4.md (the reviewers' notes); docs/DISCOVERY_BACKLOG.md row DB-167 (the print/PDF of the whole 12-10 page has returned HTTP 504; labels in 12-10 definitions may be positions in the page's markup)",
+    "services/api/scripts/sync_zr_snapshots.py and services/api/tests/rules/test_zr_snapshot_bundle.py; .claude/rules/legal-rules.md",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json row R291"
+  ],
+  "outputs": [
+    "New capture files under docs/research/zr-snapshots/v1/ in the existing schema, one per section or defined term, each with its verbatim text, source block, cross-check block and digests",
+    "The synced copies under services/api/app/_zr_snapshots/v1/, made with services/api/scripts/sync_zr_snapshots.py",
+    "project-control/reports/M4-T029-producer-report.md: for each capture the address, channel, the time of each request, amendment date, byte counts and digests; the sections found under 23-41 and 35-71; what was NOT captured and why; every further section or defined term the new texts point to, with the pointing words; every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M4-T026"
+  ],
+  "allowed_paths": [
+    "docs/research/zr-snapshots/v1/**",
+    "services/api/app/_zr_snapshots/v1/**",
+    "services/api/tests/rules/test_zr_snapshot_bundle.py",
+    "project-control/reports/M4-T029-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "the existing capture files (no edit to a capture that is already committed; new files only)",
+    "services/api/app/rules/** (no rule file, engine, registry or register change)",
+    "docs/reference-cases/**, docs/zoning-rule-review/**, docs/plans/**, docs/measurement-basis/**, docs/research/helper-research/**",
+    "every other test file; apps/**; packages/**; .github/**; CLAUDE.md; .claude/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "each_named_text_is_captured_or_accounted_for",
+      "input": "ls docs/research/zr-snapshots/v1 and the producer report",
+      "expected": "a capture exists for each named section and defined term, or the report names it as not captured with the reason (for example: not a 12-10 definition; a page that did not answer)"
+    },
+    {
+      "id": "S2",
+      "case": "source_text_only",
+      "input": "each new capture file",
+      "expected": "verbatim text with its address, channel, request times and amendment date; no rule, no interpretation for a lot, no derived number; notes say only what the channel supports"
+    },
+    {
+      "id": "S3",
+      "case": "the_text_is_what_the_official_page_says",
+      "input": "an independent re-read of each official page by the reviewer",
+      "expected": "the captured text equals the official text read again by a different agent; the recorded digests recompute; the amendment date matches"
+    },
+    {
+      "id": "S4",
+      "case": "whole_sections_and_true_labels",
+      "input": "each capture's text and its composition note",
+      "expected": "every paragraph, list item and table of the section is in the capture; a table is captured cell by cell and the capture says how; a label in front of a list item is the label the print/PDF prints, or the capture says plainly that it is a position in the page's markup"
+    },
+    {
+      "id": "S5",
+      "case": "existing_captures_untouched",
+      "input": "git diff <claim-seam head>..<final head> -- docs/research/zr-snapshots/v1",
+      "expected": "only added files; every existing capture and its digest is unchanged"
+    },
+    {
+      "id": "S6",
+      "case": "synced_copy_and_bundle_check",
+      "input": "services/api/scripts/sync_zr_snapshots.py and tests/rules/test_zr_snapshot_bundle.py",
+      "expected": "the synced copies are byte-identical to the captures; the bundle test passes"
+    },
+    {
+      "id": "S7",
+      "case": "scope",
+      "input": "git show --name-status <the builder's commit>",
+      "expected": "the builder's commit changes only allowed_paths; ruff and the full services/api pytest pass at the wave's final candidate"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A table (heights, obstructions) captured with a cell wrong or missing -> S3 and S4: an independent re-read, cell by cell",
+    "A defined term that is not where the packet assumes -> S1: the report says where it is and it is not captured from a guess",
+    "A capture mistaken for a reading or for permission to show a number -> S2"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T06:42:22.489953+00:00",
+  "updated_at": "2026-10-07T06:42:22.883863+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R291"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T06:42:22.490260+00:00",
+  "path_notes": "PRODUCER = legal-corpus-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). PART OF PARALLEL WAVE 2 with M5-T127 and M4-T028: the three share no file (M4-T028's tests read existing captures only; this task adds new files). MODULARITY ANSWERS: no handwritten production source changes; capture files and their synced copies only.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python scripts/sync_zr_snapshots.py --check",
+    "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py tests/rules/test_zoning_rule_review_register.py",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ]
+}

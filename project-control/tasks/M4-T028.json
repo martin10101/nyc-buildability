@@ -1,0 +1,124 @@
+{
+  "task_id": "M4-T028",
+  "title": "The independent reading of the commercial-overlay text captured in step P2, written into the R6B reference cases: two readings from a sealed folder, a value only where both agree (gap K9; D-090 R226, R241, R259, R291, R318)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Read the commercial-overlay text captured by task M4-T026 independently, and write what the readings settle into the R6B reference cases (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, section 5 gap K9 and section 8: 'capture the missing law text, then read it independently'; the work order withholds every residential result on a lot with a recorded overlay until this reading exists). INPUT MADE BY THE ORCHESTRATOR BEFORE THE BUILDER STARTS: two readings by two different AI helpers that took no part in writing the program's rules, each working alone from a sealed folder (every pinned law capture without its notes, the benchmark lot's recorded official facts and outline, no floor-area-ratio field, no program output) and with no access to the program or the repository. The readings cover, for a residential building on a lot where a C2-2 overlay is mapped within an R6B district (the benchmark lot) and for the same lot without the overlay: (1) which district's residential bulk regulations ZR 34-111 and ZR 34-11 make applicable, and what they route to; (2) the height and setback route of ZR 34-24, ZR 35-63, 35-631, 35-632 and 35-633 for a district with R6B equivalency, and whether it changes the base heights, the building height or the setback the R6B table and ZR 23-433 give; (3) the street-wall location rule of ZR 35-631 and whether its conditions are met or not known for the lot; (4) the rear-yard provision of ZR 35-53 and to which buildings its own words apply; (5) whether any captured overlay text changes the floor area ratio, the lot coverage or the dwelling-unit limit; (6) every section the texts point to that is not captured, and what stays not known because of it. THE BUILDER then: saves the two returns unchanged under docs/reference-cases/R6B/provenance/; adds a case (or rows) for the overlay reading in which a value or a yes/no is recorded only where BOTH readings give it on the same basis, and everything else is 'not known' with the reason and both readings named; updates the real-lot rows that an overlay bears on only by adding the overlay reading beside them with a recorded reason (no expected value changes unless both readings support the change); corrects the sentence about lots of 30,000 sq ft or more in the interior-lots case to what the captured ZR 23-362(b) says (backlog row DB-168), with a change-log entry; updates the README; re-renders the pages; extends the test support only as the new rows need. Nothing in a case comes from a program run. No rule file, rule engine, capture, register entry, plan or screen changes.",
+  "business_reason": "Gap K9: the benchmark lot has a recorded C2-2 overlay, so the work order shows nothing for it until the governing sections are captured (done, task M4-T026) and read independently (this task). Step 3 of the owner's eight steps (R291) and the owner's rule that interpretation is checked with independently worked, source-backed examples kept apart from program output (R226, R241, R259, R318).",
+  "inputs": [
+    "The two independent readings (returns saved by the orchestrator; given to the builder with its instructions)",
+    "docs/reference-cases/R6B/ and services/api/tests/rules/reference_cases/ as task M4-T027 left them",
+    "The captures made by task M4-T026 under docs/research/zr-snapshots/v1/ (zr-34-11, zr-34-111, zr-34-24, zr-35-53, zr-35-63, zr-35-631, zr-35-632, zr-35-633) and the existing zr-23-431, zr-23-432, zr-23-433, zr-23-22, zr-23-362, zr-23-52, zr-11-25 captures",
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 5 (gap K9) and section 9; docs/DISCOVERY_BACKLOG.md rows DB-166 and DB-168",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R226, R241, R259, R291, R318"
+  ],
+  "outputs": [
+    "docs/reference-cases/R6B/provenance/: the two new returns, unchanged, each with a short header",
+    "docs/reference-cases/R6B/cases/*.json and the pages rendered from them: the overlay reading as rows (a value or a yes/no only where both readings agree; otherwise 'not known' with both named); the corrected sentence in interior-lots.json with its change-log entry",
+    "docs/reference-cases/R6B/README.md: the list of cases and the list of law text that is not captured, brought up to date",
+    "services/api/tests/rules/reference_cases/: the checker, renderer, loader and test extended only as the new rows need",
+    "project-control/reports/M4-T028-producer-report.md"
+  ],
+  "dependencies": [
+    "M4-T026",
+    "M4-T027"
+  ],
+  "allowed_paths": [
+    "docs/reference-cases/R6B/**",
+    "services/api/tests/rules/reference_cases/**",
+    "project-control/reports/M4-T028-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/** (no rule file, engine, registry, register or capture copy change)",
+    "docs/research/** (no capture and no helper file), docs/zoning-rule-review/**, docs/plans/**, docs/measurement-basis/**",
+    "every other test file; apps/**; packages/**; .github/**; CLAUDE.md; .claude/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "two_independent_readings_kept_unchanged",
+      "input": "docs/reference-cases/R6B/provenance/",
+      "expected": "the two new returns are present unchanged (a test pins their digests)"
+    },
+    {
+      "id": "S2",
+      "case": "a_value_only_where_both_readings_agree",
+      "input": "each added or changed row",
+      "expected": "a value or a yes/no is recorded only where both readings give it on the same basis; otherwise 'not known' with the reason and both readings named; the builder resolves no disagreement and adds no reading of its own"
+    },
+    {
+      "id": "S3",
+      "case": "each_row_followable",
+      "input": "each added or changed row",
+      "expected": "facts with their source, the law quoted with its capture id and content digest, why the provision applies; a test checks every citation against the live capture"
+    },
+    {
+      "id": "S4",
+      "case": "no_expected_value_changed_without_both_readings",
+      "input": "the existing rows of real-lot.json, corner-reach.json, interior-lots.json, suffix.json and step-p1-worked.json",
+      "expected": "no existing expected value changes unless both readings support the change and the change log says so; the one planned wording correction (DB-168) changes no value"
+    },
+    {
+      "id": "S5",
+      "case": "nothing_from_a_program_run",
+      "input": "the case files and the support code",
+      "expected": "no case file holds a program result; the support code imports nothing from the rule or scenario engine"
+    },
+    {
+      "id": "S6",
+      "case": "what_is_not_captured_is_named",
+      "input": "docs/reference-cases/R6B/README.md and the new rows",
+      "expected": "every section the readings needed and the repository does not hold is named, with the rows that stay 'not known' because of it"
+    },
+    {
+      "id": "S7",
+      "case": "scope",
+      "input": "git show --name-status <the builder's commit>",
+      "expected": "only allowed_paths changed; ruff and the full services/api pytest pass at the wave's final candidate; pages byte-identical to the renderer's output"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A legal reading presented as settled because two AI readings agree -> the cases say agreement is not proof (R259); each row is followable",
+    "A reading that fills a gap the captured text does not settle -> S2 and S6",
+    "An existing value changed to fit the overlay reading without support -> S4"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T06:42:21.482900+00:00",
+  "updated_at": "2026-10-07T06:42:21.899376+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R226",
+        "D-090-R241",
+        "D-090-R259",
+        "D-090-R291",
+        "D-090-R318"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T06:42:21.483153+00:00",
+  "path_notes": "PRODUCER = rules-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first), started only after the orchestrator holds BOTH independent readings. PART OF PARALLEL WAVE 2 with M5-T127 and M4-T029: the three share no file. MODULARITY ANSWERS: no handwritten production source changes; documents and test support only (each support file stays under the 600-line warning threshold; split before growing one past it: the checker is at 475 lines).",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/rules/reference_cases",
+    "the renderer's check mode (pages byte-identical to the data)",
+    "python3 tools/modularity_check.py --check",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ]
+}

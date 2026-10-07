@@ -1,0 +1,116 @@
+{
+  "task_id": "M5-T127",
+  "title": "The lot-reach measurements: how far a lot reaches from each street line and from its corner point, from the recorded outline - measurements only, no law (work order Part 0, first new file; gaps K1, K4, K12; D-090 R227, R229, R238)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Add the lot-reach measurements the work order's Part 0 needs (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, section 8 'Part 0', the new file services/api/app/spatial/lot_reach.py and its test; section 5 gaps K1, K4 and K12). A pure, deterministic module that takes what the existing single-lot site geometry already derives (services/api/app/spatial/site_geometry: the prepared outline in EPSG:2263 feet, the confirmed street frontages and the relation between two frontage streets) and measures: (1) for each confirmed street frontage, the farthest perpendicular distance of any point of the outline from that frontage's street line; (2) where exactly two confirmed frontage streets meet as a corner: the angle between the two street lines, the corner point where their lines intersect, and the farthest straight-line distance of any point of the outline from that corner point. Each measurement is a labelled value in the package's own way (approximate, from the tax-map outline, with its basis in plain words); where it cannot be stated (no outline, a refused outline, an uncertain frontage, a frontage that is not straight, no corner relation) the value is unknown with the reason, never a zero and never a default. The module states measurements only: it applies no law, holds no 100-foot or 135-degree threshold, decides no coverage and no rear yard, and is called by nothing yet. No existing file changes.",
+  "business_reason": "Gaps K1, K4 and K12 of the work order: the corner provisions reach only part of some corner lots, and today the engine takes one typed yes/no for the whole lot. The reach must be computed from the recorded outline and street lines and never typed by a user or a test. The owner's rules: no coverage of 100 percent for a whole lot until the geometry supports it (R238); a value the program does not have is shown as not known (R229); each important number has a test whose expected value comes independently of the program (R227). Independent expected values exist: the corner-reach reference case (the real lot and three made-up lots), reviewed and merged.",
+  "inputs": [
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 8 ('Part 0'), section 5 (gaps K1, K4, K12) and section 9 (table C)",
+    "services/api/app/spatial/site_geometry/ (results.py, outline.py, frontage.py, depth.py, labels.py, lot_type.py, parameters.py, derive.py) READ ONLY: the types to consume and the package's way of labelling a measurement and an unknown",
+    "docs/reference-cases/R6B/cases/corner-reach.json (rows real-lot-reach, C1-reach, C2-reach, C3-reach) and services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py (the loader): the ONLY source of the test's expected numbers",
+    "services/api/tests/spatial/test_site_geometry_benchmark_215_16_northern.py and test_site_geometry_synthetic.py (how the benchmark lot's site geometry and made-up lots are built in tests, offline, from the recorded pack)",
+    "docs/CODE_MODULARITY_POLICY.md and .claude/rules/code-architecture.md",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R227, R229, R238"
+  ],
+  "outputs": [
+    "services/api/app/spatial/lot_reach.py: the module (one responsibility: the reach measurements; no I/O, no flag, no law)",
+    "services/api/tests/spatial/test_lot_reach.py: the benchmark lot and the three made-up lots of the corner-reach reference case, expected numbers read from the case file through its loader (never retyped, never taken from the module's own output), each with a stated tolerance; the unknown cases; a mutation proof",
+    "project-control/reports/M5-T127-producer-report.md: the interface, each measurement beside its reference value, what is unknown and why, the modularity answers, every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M4-T027"
+  ],
+  "allowed_paths": [
+    "services/api/app/spatial/lot_reach.py",
+    "services/api/tests/spatial/test_lot_reach.py",
+    "project-control/reports/M5-T127-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "every existing file under services/api/app/** (the module consumes site_geometry; it changes nothing there and nothing calls it yet)",
+    "services/api/app/scenario/**, services/api/app/rules/**, services/api/app/contracts/**, services/api/app/api/**",
+    "docs/**; packages/**; apps/**; .github/**; CLAUDE.md; .claude/**; any dependency file",
+    "every other test file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "benchmark_lot_matches_the_reference_case",
+      "input": "the recorded pack for BBL 4073340070 through the existing site geometry, then the module",
+      "expected": "the farthest reach from each of the two street lines, the angle and the farthest distance from the corner point equal the corner-reach reference case's row real-lot-reach within the stated tolerance; the test reads the expected numbers from the case file"
+    },
+    {
+      "id": "S2",
+      "case": "made_up_lots_match_the_reference_case",
+      "input": "the three made-up corner lots of the corner-reach case, built in the test as outlines",
+      "expected": "each reach and each corner distance equals rows C1-reach, C2-reach and C3-reach within the stated tolerance"
+    },
+    {
+      "id": "S3",
+      "case": "unknown_stays_unknown",
+      "input": "no outline; a refused outline; an uncertain frontage; a frontage that is not straight; an interior lot (one frontage); a through lot (two opposite streets)",
+      "expected": "each measurement that cannot be stated is unknown with a plain reason; no zero, no default; for an interior or through lot the reach from each street line is still given where its frontage is confirmed and straight, and the corner measurements are unknown because there is no corner"
+    },
+    {
+      "id": "S4",
+      "case": "measurements_only_no_law",
+      "input": "the module's source",
+      "expected": "no 100-foot or 135-degree constant, no word about coverage, yards or what a lot may build; nothing imported from the rule or scenario engines; nothing calls the module"
+    },
+    {
+      "id": "S5",
+      "case": "expected_values_are_independent",
+      "input": "the test file",
+      "expected": "no expected number is typed into the test or computed by the module under test; MUTATION PROOF: a reach measured along the wrong axis, or from the wrong corner, fails the test and names the row"
+    },
+    {
+      "id": "S6",
+      "case": "scope_and_modularity",
+      "input": "git show --name-status <the builder's commit>",
+      "expected": "only allowed_paths changed; the new module is one focused file well under the 600-line warning threshold; tools/modularity_check.py --check passes; ruff and the full services/api pytest pass at the wave's final candidate"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A street line taken from the wrong lot edge or the wrong side -> S1 and S2 against values worked independently by two readers and re-worked by a reviewer",
+    "A measurement that quietly becomes a legal test -> S4: no threshold and no law in the module",
+    "A missing input turned into a zero -> S3",
+    "Expected values copied from the module -> S5: read from the reference case only"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T06:42:20.450507+00:00",
+  "updated_at": "2026-10-07T06:42:20.881377+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R227",
+        "D-090-R229",
+        "D-090-R238"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T06:42:20.450732+00:00",
+  "path_notes": "PRODUCER = geospatial-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). PART OF PARALLEL WAVE 2 with M4-T028 and M4-T029 (owner messages 107 and 108, D-090 source-052): the three share no file; see the wave's concurrency record. MODULARITY ANSWERS: (1) owning responsibility = the reach of a lot from its street lines and its corner, a measurement; (2) module = a new file services/api/app/spatial/lot_reach.py beside the site_geometry package it consumes; (3) new file, expected well under 300 lines; (4) nothing extracted or moved; (5) public interface = one function and its result record, stated in the producer report; (6) focused test = services/api/tests/spatial/test_lot_reach.py; (7) no persistence, serialization, external I/O, API wiring or presentation in the module.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/spatial/test_lot_reach.py",
+    "cd services/api && python -m pytest -q tests/spatial tests/rules/reference_cases",
+    "python3 tools/modularity_check.py --check",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ]
+}
