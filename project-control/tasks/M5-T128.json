@@ -62,7 +62,7 @@
       "id": "S5",
       "case": "no_way_by_silence",
       "input": "a 1.3.0 document in which one shown value states no way",
-      "expected": "rejected"
+      "expected": "rejected by the schema where a way entry is present and states no way, and where an available answer of a 1.3.0 document carries no way entries at all; a shown value that simply has NO entry among the way entries is NOT refused by the schema (the schema language cannot compare the keys of the values list with the keys of the map): a test pins that limit, and refusing it is owed to the validator of the engine that first emits 1.3.0 (backlog row DB-171)"
     },
     {
       "id": "S6",
@@ -74,7 +74,7 @@
       "id": "S7",
       "case": "never_a_number_and_never_both",
       "input": "a withheld entry that carries a number; one key both shown and withheld",
-      "expected": "each rejected"
+      "expected": "a withheld entry that carries a number: rejected by the schema; one entry mixing the fields of two ways: rejected by the schema; a key present among the shown values AND marked withheld among the way entries is NOT refused by the schema (the same limit of the schema language): a test pins that limit, and refusing it is owed to the validator of the engine that first emits 1.3.0 (backlog row DB-171)"
     },
     {
       "id": "S8",
@@ -101,7 +101,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 70,
   "risks": [
     "A change that is not additive breaks a present reader (the engine's validator, the drawings, the website's fixtures) -> S1, S2, S8, S9 and the compatibility part of the independent review",
     "A shape that lets a value be settled by silence, or a withheld value carry a number -> S5, S7",
@@ -110,7 +110,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T08:45:33.285633+00:00",
-  "updated_at": "2026-10-07T08:46:00.730229+00:00",
+  "updated_at": "2026-10-07T09:45:27.832570+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -140,6 +140,20 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed in wave 3 at the contract head 40019320 (integration head 5743630e); builder backend-engineer in an isolated worktree; see project-control/reports/WAVE3-2026-10-07-concurrency-record.md."
+    },
+    {
+      "at": "2026-10-07T09:45:27.832456+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Independent review (data-contract-verifier) at a5adb3df, before submit: G4 (compatibility) PASS; G3 (data contract) FAIL on three findings. F1: the builder's report says the shape makes 'the same key both shown and withheld' impossible; the reviewer's own document (a key in values with a number AND withheld in value_states) validates. F2: the test named for that case tests a different thing (one entry mixing two ways). F3: two rules cannot be expressed in the schema language at all (every shown value has a stated way; no key both shown and withheld) and must be recorded as work owed to the validator of the engine that first emits 1.3.0. The schema itself is sound and strictly additive. Rework: the same builder corrects the report and the test and adds tests that pin the two limits; the orchestrator records the owed work (backlog row DB-171) and corrects scenarios S5 and S7 (scope_corrections). The failed review is kept unchanged in project-control/reports/M5-T128-G3G4.md."
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-07T09:45:28+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-07, after the builder's work and the independent data-contract review, before submit] The packet's properties (c) (in a 1.3.0 document no value is settled by silence) and (e) (the same key is never both shown and withheld), and scenarios S5 and S7, presumed that a JSON schema can enforce both in full. The independent reviewer showed with its own documents that it cannot: JSON Schema 2020-12 has no way to compare the keys of the items of the values list with the property names of a sibling object, in this shape or any other. What the schema does enforce stays required: a way entry that states no way is refused; an available answer of a 1.3.0 document without way entries is refused; a withheld entry with a number is refused; one entry mixing two ways is refused. The two cross-list rules stay requirements of the work order's Part 0 as a whole: they are owed to the validator of the engine that first emits 1.3.0 and are recorded as backlog row DB-171, to be bound into that task's packet. In this task they are pinned by tests that fail the day the gap is closed. Scenario S5 'expected' was: 'rejected'. Scenario S7 'expected' was: 'each rejected'. Both now say exactly what is refused by the schema and what is owed. No path, gate, reviewer or other scenario changed. The reviewer's ruling: these cannot be met inside the task's allowed paths, and need not be closed in this task while nothing emits 1.3.0."
     }
   ]
 }
