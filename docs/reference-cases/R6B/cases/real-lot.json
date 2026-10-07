@@ -106,6 +106,16 @@
       "date": "2026-10-07",
       "summary": "No expected value changed. The C2-2 overlay has now been read independently in step P2 (task M4-T028, cases/overlay-reading.json); the first 'does not establish' item is extended to point to that reading, which finds the overlay changes only the street-wall location rule and leaves the floor area ratio, lot coverage, dwelling units, base and building heights, the setback and the all-residential rear yard the same as plain R6B. Both step-P2 readings support this. No row value changes; in particular row L5 (lot coverage) stays not known for its per-portion reason. Reason: a corrected reading (the overlay reading now exists).",
       "by": "rules-engineer (M4-T028)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Row L12 (rear yard): expected value unchanged (not known beyond the corner). The ZR 12-10 side- and rear-lot-line definitions were captured by task M4-T029 and read independently in step P3 (cases/step-p3-worked.json); the row's wording is brought from 'not captured' into 'the readers did not have' form and records that both step-P3 readings again read the beyond-100-foot rear yard as not known. Row L5 (lot coverage) is unchanged and stays not known for its per-portion reason - the step-P3 readings' passing remark that the standard coverage for this corner lot is 100 percent did not work the corner-lot-portion rule and is not a reading of whole-lot coverage. Row L14 (ordinary rear-yard depth) is unchanged and stays not known (it carries no 'not captured' wording; the step-P3 readings also find the real lot's lot width itself not known). Reason: corrected evidence - the text is now captured and read.",
+      "by": "rules-engineer (M4-T030)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Round 2 (review finding F2): row L12 (rear yard) is marked superseded_by step-p3-worked#real-lot-rear-yard-beyond-corner, the step-P3 row that holds the current reading of the real lot's rear yard beyond the corner; kept as the historical record, and the loader no longer hands it out as current. Rows L5 and L14 are left: no step-P3 row gives their current answer (L5's per-portion coverage is unchanged and the Q7c '100 percent' remark is a passing remark; L14's ordinary rear-yard depth only gains the finding that the real lot's lot width itself is not known). No expected value or kind changed. Reason: a corrected reading - one current expected answer per question.",
+      "by": "rules-engineer (M4-T030)"
     }
   ],
   "rows": [
@@ -700,6 +710,7 @@
     },
     {
       "row_id": "L12",
+      "superseded_by": ["step-p3-worked#real-lot-rear-yard-beyond-corner"],
       "quantity": "Rear yard",
       "facts_used": [
         {
@@ -751,10 +762,10 @@
         "kind": "not_known",
         "value": null,
         "unit": "",
-        "reason": "Within 100 feet of the corner point no rear yard is required (ZR 23-344(a)); but the far corner of the lot is 144.60 feet from the corner point, so part of the lot lies beyond that 100-foot reach, and whether a rear yard is required there is not settled. ZR 23-342 is now captured, but the depth it sets depends on the building type and lot width (not given), and the ZR 12-10 side-/rear-lot-line definitions are not captured; both step-P1 readings read it the same way (no rear yard within 100 feet of the corner; beyond, not known)."
+        "reason": "Within 100 feet of the corner point no rear yard is required (ZR 23-344(a)); but the far corner of the lot is 144.60 feet from the corner point, so part of the lot lies beyond that 100-foot reach, and whether a rear yard is required there is not settled. ZR 23-342 is now captured, but the depth it sets depends on the building type and lot width (not given); the first and step-P1 readers did not have the ZR 12-10 side- and rear-lot-line definitions, and both step-P1 readings read it the same way (no rear yard within 100 feet of the corner; beyond, not known). Those definitions were since captured (task M4-T029) and read in step P3 (cases/step-p3-worked.json), where both step-P3 readings again read the beyond-100-foot rear yard as not known (it needs the adjoining lot-line type and the building type, height and lot width, and the overlay yard rule ZR 34-23 was not available)."
       },
       "source_reference": "return-independent-hand-calculation-1.md, Task 1(f), and return-independent-hand-calculation-2.md, Q1(c); confirmed by both step-P1 readings (return-independent-hand-calculation-3.md and -4.md, Q3a).",
-      "does_not_establish": "It gives no rear-yard requirement for the part of the lot beyond 100 feet of the corner; that needs neighbouring lot-line data, the building type and lot width, and the uncaptured ZR 12-10 lot-line definitions."
+      "does_not_establish": "It gives no rear-yard requirement for the part of the lot beyond 100 feet of the corner; that needs neighbouring lot-line data, the building type and lot width, and the ZR 12-10 lot-line definitions the earlier readers did not have (now captured and read in cases/step-p3-worked.json)."
     },
     {
       "row_id": "L13",

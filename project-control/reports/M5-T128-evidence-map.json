@@ -1,0 +1,53 @@
+{
+ "task_id": "M5-T128",
+ "material_commits": [
+  "a5adb3df (cherry-pick of the producer's commit 7abdba88, producer backend-engineer: the schema with version 1.3.0, its runtime copy, the generated types, the new test file, the producer report)",
+  "0c44039d (cherry-pick of the same producer's round-2 commit b98c37f2: the report and one test corrected; two tests pin two limits; after the review's findings F1 and F2)",
+  "87371436 (cherry-pick of the same producer's round-3 commit 906bd518: the schema's descriptions say what it enforces and what it cannot; description text only, with the runtime copy re-synced)",
+  "f56f65dc (cherry-pick of the same producer's round-4 commit a2dd1f95, after CI failed on the pushed branch: two keywords outside the repository validator's subset removed from value_states; a third pinning test and a test that runs the repository validator's keyword check)",
+  "material head: f56f65dc"
+ ],
+ "claim_seam_head": "d952c612",
+ "contract_version_added": "1.3.0",
+ "condition_kinds": [
+  "user_statement",
+  "contradicted_record",
+  "unchecked_condition"
+ ],
+ "gap_kinds": [
+  "missing_information",
+  "work_owed"
+ ],
+ "owed_work": "docs/DISCOVERY_BACKLOG.md row DB-171",
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/contracts: exit 0, 475 passed, 3 expected failures (the three KNOWN_LIMIT tests)",
+  "python .github/scripts/validate_contracts.py: exit 0 (23 schema files, 0 failures); pytest .github/scripts/tests: exit 0, 24 passed",
+  "scripts/sync_contract_schemas.py --check: exit 0 (the runtime copy is byte-identical)",
+  "packages/contracts/scripts/generate_ts_types.py --check: exit 0",
+  "the schema at the first reviewed commit and at the material head differ, once every description is removed, only in the definition value_states (the two keywords removed; checked by script); the runtime copy is byte-identical to the schema; packages/contracts/generated/results.ts did not change after the first commit",
+  "full services/api suite, run alone by the orchestrator at f56f65dc with all three pieces and every correction integrated: exit 0, 8186 passed, 8 skipped, 3 expected failures (the three tests that pin the schema's known limits); earlier full runs: 8185 passed at 25ba6c04 (before the last correction of M5-T128) and 8178 passed at f5c2a8f2 (before any correction)"
+ ],
+ "requirements": {
+  "D-090-R229": [
+   "The contract can now carry 'not known' for ONE value while the other values of the same answer are shown: packages/contracts/schemas/v1/results.schema.json, version 1.3.0, an optional map `value_states` on an available answer whose `withheld` entry holds the value's label, the reason, the kind of gap and what would resolve it, and no number (services/api/tests/contracts/test_results_three_ways_slot.py::test_withheld_value_sits_beside_shown_values; a withheld entry that carries a number is refused: test_withheld_value_carrying_a_number_is_rejected). Before this a value had to be a number and only a whole answer could be 'not available'.",
+   "What the schema cannot refuse, said plainly in the schema's own descriptions, in the builder's report and in three tests that pin it (test_KNOWN_LIMIT_...): a shown value with no way entry, an empty map of way entries, and a key both shown and withheld. Refusing them is owed to the validator of the engine that first emits 1.3.0 (docs/DISCOVERY_BACKLOG.md row DB-171; the packet's scope_corrections entry).",
+   "Two failures on the way, both recorded in the task's progress log and its review record: the first independent review failed the data contract (the report claimed one of those cases was refused); and CI on the first pushed head failed two checks because the schema used two keywords (minProperties, propertyNames) outside the subset that the repository's own contract validator accepts. The schema now uses subset keywords only; the validator accepts it (.github/scripts/validate_contracts.py: exit 0) and a test in the api suite runs that validator's keyword check on the schema (test_repository_contract_validator_accepts_results_schema).",
+   "NOT done by this task, and not claimed: nothing emits version 1.3.0; no result, screen, drawing or PDF shows 'not known' because of it. The row is met for the contract's share only."
+  ],
+  "D-090-R255": [
+   "A value can be marked conditional only with at least one named condition, each with its kind, the assumption in words and what would settle it; one of the three kinds is a user's statement about the lot (`user_statement`), which the description says is never stored as a fact (services/api/tests/contracts/test_results_three_ways_slot.py::test_conditional_value_names_its_assumptions, test_conditional_without_a_condition_is_rejected, test_conditional_with_an_empty_condition_list_is_rejected; a settled value carrying a condition is refused: test_settled_value_with_a_condition_is_rejected).",
+   "NOT done by this task: no engine produces a conditional result and no screen sets one apart; where facts and eligibility come from is the engine's work."
+  ],
+  "D-090-R258": [
+   "The two things the owner told apart have separate values in the contract: `gap_kind` is `missing_information` (information missing for this property) or `work_owed` (a feature the program still owes), on a withheld value and, in 1.3.0, on a whole answer that is not available, each with what would resolve it (services/api/tests/contracts/test_results_three_ways_slot.py::test_withheld_value_sits_beside_shown_values, test_whole_answer_not_available_carries_resolution_fields_at_1_3_0).",
+   "NOT done by this task: nothing yet labels any result with either kind."
+  ],
+  "D-090-R268": [
+   "For a condition the program did not check, the contract has the kind `unchecked_condition` on a conditional value (the answer stays visible and names the condition), beside `contradicted_record` for a recorded figure another figure contradicts; an answer the condition cannot change stays a settled value, and one that cannot be supported is a withheld entry (services/api/tests/contracts/test_results_three_ways_slot.py::test_conditional_value_names_its_assumptions builds a value conditional on two things at once).",
+   "A document that declares 1.3.0 must carry the map of way entries on every available answer, and every entry present must state its way (test_available_answer_without_a_way_layer_is_rejected_at_1_3_0, test_value_state_that_states_no_way_is_rejected); that the map is not empty and that EVERY shown value has an entry are rules the schema cannot check (row DB-171).",
+   "Compatibility, which the row's 'keep unaffected answers visible' depends on for today's results: every valid results fixture still validates unchanged, every invalid one is still refused, the remaining-floor-area part is unchanged, and the readers' tests pass (the independent reviewer's run: 1,898 passed).",
+   "NOT done by this task: which results are conditional on which unchecked conditions is decided by the engine (work order gap K20), not by the contract."
+  ]
+ }
+}

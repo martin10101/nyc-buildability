@@ -1,0 +1,53 @@
+{
+  "snapshot_id": "zr-12-10-qualifying-residential-site",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "12-10",
+  "section_title": "Definitions - qualifying residential site",
+  "article": "I",
+  "chapter": "2",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+    "retrieved_at": "2026-10-07T08:54:21Z",
+    "http_status": 200,
+    "response_bytes": 1316758,
+    "raw_html_sha256": "3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc",
+    "portal_node_id": "18523",
+    "defined_term": "qualifying residential site",
+    "defined_term_node_id": "22722",
+    "last_amended_machine_readable": "2024-12-05T12:00:00Z",
+    "last_amended_display": "12/5/2024",
+    "section_last_amended": "2024-12-05",
+    "section_last_amended_source_text": "Last Amended 12/5/2024 (ZR 12-10 term 'qualifying residential site', /node/22722)",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "The §12-10 page header (node 18523, data-section-number=\"12-10\", title \"DEFINITIONS\") shows Last Amended 3/26/2026, which is the date of the most-recently-amended term on the page; the operative provenance for THIS term is its own per-term Last Amended stamp (12/5/2024, /node/22722) recorded above. The whole §12-10 page fetched for this capture (2026-10-07T08:54:21Z) is byte-identical (raw_html_sha256 and response_bytes) to the page pinned by the accepted M4-T025/M4-T029 §12-10 term captures; those captures are not touched.",
+    "capture_method": "M4-T031 in-task capture 2026-10-07 (direct HTTPS GET, curl -A Mozilla/5.0; whole-page HTML node 18523)",
+    "raw_html_verified": false,
+    "verification_required": "Captured source text only from the canonical §12-10 HTML (node 18523; sha256 pinned). The whole-page print/PDF completeness channel returned HTTP 504 (the documented DB-167 fallback) so the Resolution's own list-marker glyphs could not be confirmed from the glyph-authoritative channel. The text has NOT been re-read by a second agent, so raw_html_verified stays false and extraction_status stays extracted_draft. Nothing here is a Verified zoning determination and nothing here is a rule, an interpretation of the text for any lot, or a derived number: it is the official source text of one ZR 12-10 defined-term article only. Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  },
+  "cross_check": {
+    "channel": "print_pdf",
+    "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18523",
+    "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/18523",
+    "retrieved_at": "2026-10-07T08:54:31Z",
+    "http_status": 504,
+    "content_type": "text/plain; charset=utf-8",
+    "response_bytes": 41,
+    "raw_pdf_sha256": null,
+    "method": "The §12-10 completeness channel is the whole-page print/PDF entityprint/pdf/node/18523, which returned HTTP 504 (Gateway Timeout) on 2026-10-07 at 2026-10-07T08:54:31Z - the documented DB-167 behaviour. Per that documented fallback the canonical-HTML channel (node 18523, sha256 and byte count pinned in source) was used; the term's definition text was extracted PROGRAMMATICALLY from that raw HTML (the defined-term article id=\"term-qualifying residential site\", its definition__definition body; defined terms bold-italic <strong><em> written #term#; whitespace normalised). THIS article's definition DOES contain an ordered list (<ol>). The list-position labels in this capture ((a)/(b)/(c), (1)-(4), (i)-(iv)) are POSITIONS IN THE PAGE'S MARKUP (the HTML's ordered-list nesting), NOT confirmed printed-glyph labels: the whole-page print/PDF returned HTTP 504 and the per-term print/PDF (entityprint/pdf/node/22722) returned HTTP 403 on 2026-10-07 at 2026-10-07T09:09:42Z, so no glyph-authoritative channel was available to confirm the Resolution's own list-marker glyphs for this term (DB-167 F1). The labels follow the Zoning Resolution's standard nesting scheme (letter / number / lower-case roman).",
+    "result": "unavailable_documented_fallback (list labels are markup positions; see method and notes)"
+  },
+  "verbatim_excerpt": "A “qualifying residential site” is a #zoning lot#, or portion thereof:\n\n(a) in an R1 through R5 District, that:\n\n(1) meets the following criteria:\n\n(i) has a minimum #lot area# of at least 5,000 square feet;\n\n(ii) is located within the #Greater Transit Zone#. For the purposes of this definition, the geography of the #Outer Transit Zone# shall only include those areas within a specified distance of #mass transit stations#, as defined in Section 66-11 (Definitions), existing on December 5, 2024;\n\n(iii) has frontage along a #wide street# or along the #short dimension of a block#; and\n\n(iv) is not located within an R1 or R2 District; or\n\n(2) is located within the #Greater Transit Zone# and includes a #building# that contains floor space allocated to #community facility# #uses# existing on December 5, 2024;\n\n(3) is located outside of the #Greater Transit Zone#, has a minimum #lot area# of at least 5,000 square feet and includes a #building# that contains floor space allocated to #community facility# #uses# existing on December 5, 2024; or\n\n(4) is located in an R3-2, R4 without a letter or number suffix, R5 or R5B District, and contains #qualifying senior housing#;\n\n(b) in a C1, C2 or C4 District mapped within, or with a #residential equivalent# of, an R1 through R5 District:\n\n(1) that meets the following criteria:\n\n(i) the #Commercial District# in which the #zoning lot# is located, or a combination of #Commercial Districts#, extends continuously over an entire #street# frontage on the #block# and on at least one adjacent #block#, whether on the same or opposite side of the #street#, a #Commercial District# is mapped along the same #street# frontage; and\n\n(ii) along the long dimension of the #Commercial District# in which the #zoning lot# is located, or a combination of #Commercial Districts#, not more than 50 percent of the length of the #zoning lots# located entirely within such #Commercial District# consists of #zoning lots# that were #developed# exclusively with #single-# or #two-family residences#, and such #residences# were also in existence as #single-# or #two-family residences# on December 5, 2024; or\n\n(2) where the conditions of (b)(1) cannot be met, the #zoning lot# meets one of the criteria set forth in paragraph (a). For the purposes of applying such provisions, where #Residence District# limitations apply, they shall not extend where a #Commercial District# is mapped within such #Residence Districts#; or\n\n(c) in an M1 District paired with an R1 through R5 District.\n\nFor #zoning lots# utilizing the #floor area ratio# provisions for #qualifying residential sites# in Section 23-21 (Floor Area Regulations for R1 Through R5 Districts), where the permitted #residential# #floor area# on the #zoning lot# exceeds 50,000 square feet, all of the #residential floor area# that exceeds an amount equivalent to the maximum #floor area ratio# in such Section divided by 1.2, shall be restricted pursuant to an #affordable housing regulatory agreement#, or restricted pursuant to a #restrictive declaration# to occupancy by #households# having an income less than or equal to a weighted average of 80 percent of the #income index# at initial occupancy, with no more than three #income bands# and no #income band# exceeding 100 percent of the #income index#, and shall meet any additional requirements as specified by HPD in the #guidelines#, as those terms are defined in Section 27-111 (General definitions).",
+  "verbatim_excerpt_composition": "Verbatim blocks joined by a blank line, in page order: each paragraph and ordered-list item of the defined term's definition body. A list item is written with the label its position in the page's ordered-list markup implies (letter / number / lower-case roman by nesting depth), followed by one space; the first block of an item carries the label. Defined terms (bold-italic in the HTML) are written #term#. Runs of whitespace and non-breaking spaces are written as one space and each block is trimmed; embedded figures are omitted; no word was changed. IMPORTANT: the glyph-authoritative channel (whole-page print/PDF) returned HTTP 504 and the per-term print/PDF returned HTTP 403, so these list-position labels are POSITIONS IN THE PAGE'S MARKUP, NOT confirmed printed labels (DB-167 F1); any label-referenced item should be cited by its words until that channel answers. References such as '(b)(1)' inside the text are literal source text.",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Captured as source text only (ZR 12-10 defined-term article 'qualifying residential site') for the law text the merged captures, readings and reviews named as needed and not captured (task M4-T031, D-090 R291; backlog DB-170 item (b)). The capture holds the official definition text and its provenance; it encodes no rule, no reading of the text for any lot, and no derived number.",
+    "Channel: canonical §12-10 HTML (node 18523; sha256 and byte count pinned). The whole-page print/PDF completeness channel returned HTTP 504 (the documented DB-167 fallback).",
+    "This article's definition contains an ordered list; its list-position labels are positions in the page's markup (letter/number/lower-roman by nesting), NOT confirmed printed-glyph labels, because the whole-page print/PDF returned 504 and the per-term print/PDF returned 403 (DB-167 F1). Nothing is cited here by label as authoritative; the words are the record.",
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  ],
+  "content_digest_sha256": "310807a9d82fd3681b829430c548d66c6c40edb5c534db4dec5060db330a16a5"
+}

@@ -205,6 +205,14 @@ def _render_row(row: dict) -> list[str]:
     lines.append("")
     lines.append(f"What this row does not establish: {row['does_not_establish']}")
     lines.append("")
+    superseded = row.get("superseded_by")
+    if superseded:
+        targets = ", ".join(superseded)
+        lines.append(
+            f"Superseded by: {targets} (kept as the record of what the earlier readers could "
+            "settle; the current answer is in the named row(s))."
+        )
+        lines.append("")
     return lines
 
 

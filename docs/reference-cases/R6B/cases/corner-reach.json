@@ -59,8 +59,18 @@
     },
     {
       "date": "2026-10-07",
-      "summary": "Rows real-lot-rear-yard, C1-rear-yard and C3-rear-yard: expected values unchanged (not known beyond the corner). ZR 23-342 is now captured (task M4-T025); a captured ZR 23-342 citation is added and the reason records that the depth it sets needs the building type and lot width (not given) and the ZR 12-10 side-/rear-lot-line definitions are not captured. Reason: newly captured text.",
+      "summary": "Rows real-lot-rear-yard, C1-rear-yard and C3-rear-yard: expected values unchanged (not known beyond the corner). ZR 23-342 is now captured (task M4-T025); a captured ZR 23-342 citation is added and the reason records that the depth it sets needs the building type and lot width (not given) and that the step-P1 readers did not have the ZR 12-10 side- and rear-lot-line definitions. Reason: newly captured text.",
       "by": "rules-engineer (M4-T027)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Row real-lot-rear-yard: expected value unchanged (not known beyond the corner). The ZR 12-10 side- and rear-lot-line definitions were captured by task M4-T029 and read independently in step P3 (cases/step-p3-worked.json); the row's wording is brought from 'not captured' into 'the readers did not have' form and points to the step-P3 reading, which both step-P3 readings support. Rows C1-rear-yard and C3-rear-yard are unchanged: the step-P3 readers worked a made-up 150-by-100 corner lot (recorded in cases/step-p3-worked.json), not a 40-by-100 corner lot, and neither C1-rear-yard nor C3-rear-yard carries 'not captured' wording. Reason: corrected evidence - the text is now captured and read.",
+      "by": "rules-engineer (M4-T030)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Round 2 (review finding F2): rows real-lot-rear-yard and C3-rear-yard are marked superseded_by the step-P3 rows that now hold the current reading of the same question (step-p3-worked#real-lot-rear-yard-beyond-corner; and step-p3-worked#corner-150x100-rear-yard-beyond-corner for the made-up 150-by-100 corner lot that C3 is). They are kept as the historical record, and the loader no longer hands them out as current. C1-rear-yard is left: it is a 40-by-100 corner lot, which no step-P3 row reads; and the *-reach rows (read by tests/spatial/test_lot_reach.py) are not superseded. No expected value or kind changed. Reason: a corrected reading - one current expected answer per question.",
+      "by": "rules-engineer (M4-T030)"
     }
   ],
   "rows": [
@@ -151,6 +161,7 @@
     },
     {
       "row_id": "real-lot-rear-yard",
+      "superseded_by": ["step-p3-worked#real-lot-rear-yard-beyond-corner"],
       "quantity": "The real lot: rear yard beyond the corner area",
       "facts_used": [
         {
@@ -197,10 +208,10 @@
         "kind": "not_known",
         "value": null,
         "unit": "",
-        "reason": "Within 100 feet of the corner point no rear yard is required; the far corner is 144.60 feet away, so part of the lot lies beyond, and what is required there is not settled. ZR 23-342 is now captured, but the depth it sets needs the building type and lot width (not given), and the ZR 12-10 side-/rear-lot-line definitions are not captured; both step-P1 readings read it the same way."
+        "reason": "Within 100 feet of the corner point no rear yard is required; the far corner is 144.60 feet away, so part of the lot lies beyond, and what is required there is not settled. ZR 23-342 is now captured, but the depth it sets needs the building type and lot width (not given); the first and step-P1 readers did not have the ZR 12-10 side- and rear-lot-line definitions, and both step-P1 readings read it the same way. Those definitions were since captured (task M4-T029) and read in step P3 (cases/step-p3-worked.json), where both step-P3 readings read, beyond 100 feet of the 215 Place street line, a small portion of a side lot line deemed a rear lot line, with whether a rear yard is required there still not known."
       },
       "source_reference": "return-independent-hand-calculation-2.md, Q1(c), and the work order's table C ('not known beyond the corner area'); confirmed by both step-P1 readings (return-independent-hand-calculation-3.md and -4.md, Q3a).",
-      "does_not_establish": "It does not give a rear-yard requirement beyond 100 feet of the corner point; that needs the neighbouring lot lines, the building type and lot width, and the uncaptured ZR 12-10 lot-line definitions."
+      "does_not_establish": "It does not give a rear-yard requirement beyond 100 feet of the corner point; that needs the neighbouring lot lines, the building type and lot width, and the ZR 12-10 lot-line definitions the earlier readers did not have (now captured and read in cases/step-p3-worked.json)."
     },
     {
       "row_id": "C1-reach",
@@ -603,6 +614,7 @@
     },
     {
       "row_id": "C3-rear-yard",
+      "superseded_by": ["step-p3-worked#corner-150x100-rear-yard-beyond-corner"],
       "quantity": "C3: rear yard beyond the corner area",
       "facts_used": [
         {

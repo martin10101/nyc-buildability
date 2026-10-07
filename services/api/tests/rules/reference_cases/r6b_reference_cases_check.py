@@ -38,6 +38,7 @@ import hashlib  # noqa: E402
 import json  # noqa: E402
 
 import r6b_reference_cases_lib as lib  # noqa: E402
+import r6b_reference_cases_step_p3 as step_p3  # noqa: E402
 
 # A field name (key) that would smuggle a program result into a case file.
 FORBIDDEN_KEY_SUBSTRINGS = ("program", "actual", "first_screen", "firstscreen")
@@ -46,11 +47,13 @@ FORBIDDEN_VALUE_PHRASES = (
     "program today", "first screen", "the program gives", "program's answer",
     "program result", "as the program", "what the program",
 )
-# The sections the cases still rely on that are NOT captured (named in the
-# README). Step P1 (task M4-T025) captured ZR 12-10 (the lot-type and
-# special-density definitions), ZR 23-342 and ZR 23-363; these remain uncaptured.
-# The step-P2 overlay readings (task M4-T028) found further sections the captured
-# commercial-overlay texts point to that the repository does not hold.
+# The sections the README's "what the readers did not have" lists name - the
+# step-P1 (M4-T025) and step-P2 (M4-T026/M4-T028) readers did not have these when
+# they made their readings (on 2026-10-06 and 2026-10-07). Several (ZR 23-343,
+# 23-434, 23-435, 23-436, 23-41, 34-21) have since been captured by task M4-T029
+# and read independently in step P3 (M4-T030, cases/step-p3-worked.json); the step-P3
+# readers still did not have 34-22 and 34-23. The README still names each item so a
+# reader can trace which readers had which text and when.
 NOT_CAPTURED_SECTIONS = (
     "23-343", "23-434", "23-435", "23-436", "23-41",
     "34-21", "34-22", "34-23", "35-64", "35-71", "36-64",
@@ -68,9 +71,13 @@ CASE_READINGS = {
     OVERLAY_CASE_ID: (
         "return-independent-hand-calculation-5", "return-independent-hand-calculation-6",
     ),
+    step_p3.STEP_P3_CASE_ID: step_p3.STEP_P3_READING_STEMS,
 }
 # The human label for each such case, used in the "name both readings" message.
-_READINGS_LABEL = {STEP_P1_CASE_ID: "step-P1", OVERLAY_CASE_ID: "overlay"}
+_READINGS_LABEL = {
+    STEP_P1_CASE_ID: "step-P1", OVERLAY_CASE_ID: "overlay",
+    step_p3.STEP_P3_CASE_ID: "step-P3",
+}
 # Per case, the rows whose two readings disagree (or where one says not known),
 # which must therefore stay "not known".
 READINGS_DIFFER = {
@@ -409,6 +416,7 @@ def provenance_errors() -> list[str]:
             errs.append(f"provenance file {name} is not the return in full (no END-OF-REPORT)")
     errs += step_p1_reading_errors()
     errs += overlay_reading_errors()
+    errs += step_p3_reading_errors()
     return errs
 
 
@@ -445,6 +453,10 @@ def step_p1_reading_errors() -> list[str]:
 
 def overlay_reading_errors() -> list[str]:
     return _reading_digest_errors(OVERLAY_READINGS, "overlay")
+
+
+def step_p3_reading_errors() -> list[str]:
+    return _reading_digest_errors(step_p3.STEP_P3_READINGS, "step-P3")
 
 
 # --------------------------------------------------------------------------
@@ -494,8 +506,11 @@ def validate_case(case_id: str, data: dict) -> list[str]:
     errs += change_log_errors(case_id, data)
     errs += coverage_errors(case_id, data)
     errs += readings_differ_errors(case_id, data)
+    errs += step_p3.must_stay_not_known_errors(case_id, data)
     for row in data["rows"]:
-        if set(row) != lib.ROW_KEYS:
+        missing = lib.ROW_KEYS - set(row)
+        extra = set(row) - lib.ROW_KEYS - lib.OPTIONAL_ROW_KEYS
+        if missing or extra:
             errs.append(f"{case_id}/{row.get('row_id', '?')}: row keys differ from the fixed set")
             continue
         errs += citation_errors(case_id, row)
@@ -517,4 +532,6 @@ def validate_all() -> list[str]:
         errs += validate_case(case_id, lib.load_case(case_id))
     errs += readme_errors()
     errs += provenance_errors()
+    errs += step_p3.pinned_coverage_errors(lib.load_case)
+    errs += step_p3.superseded_by_errors(lib.load_case, lib.CASE_IDS)
     return errs

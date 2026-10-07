@@ -1,0 +1,64 @@
+{
+ "task_id": "M4-T031",
+ "material_commits": [
+  "cbbdb6b8 (cherry-pick of the producer's commit 061a4741, producer legal-corpus-engineer: 38 capture files, their 38 synced copies and the producer report)",
+  "material head: cbbdb6b8"
+ ],
+ "claim_seam_head": "d952c612",
+ "new_capture_ids": [
+  "zr-12-10-curb-level",
+  "zr-12-10-dwelling-unit",
+  "zr-12-10-large-site",
+  "zr-12-10-lot-coverage",
+  "zr-12-10-mixed-building",
+  "zr-12-10-prevailing-street-wall-frontage",
+  "zr-12-10-qualifying-affordable-housing",
+  "zr-12-10-qualifying-residential-site",
+  "zr-12-10-qualifying-senior-housing",
+  "zr-12-10-residential-equivalent",
+  "zr-12-10-rooming-unit",
+  "zr-12-10-street-wall",
+  "zr-12-10-yard",
+  "zr-12-10-yard-equivalent-rear",
+  "zr-12-10-yard-front",
+  "zr-12-10-yard-rear",
+  "zr-12-10-yard-side",
+  "zr-23-311",
+  "zr-23-312",
+  "zr-23-34",
+  "zr-23-341",
+  "zr-23-44",
+  "zr-23-441",
+  "zr-23-442",
+  "zr-23-443",
+  "zr-34-22",
+  "zr-34-221",
+  "zr-34-222",
+  "zr-34-223",
+  "zr-34-224",
+  "zr-34-23",
+  "zr-34-231",
+  "zr-34-232",
+  "zr-34-233",
+  "zr-35-22",
+  "zr-35-641",
+  "zr-35-642",
+  "zr-35-643"
+ ],
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "scripts/sync_zr_snapshots.py --check: exit 0 (110 files byte-identical)",
+  "pytest tests/rules/test_zr_snapshot_bundle.py tests/rules/test_zoning_rule_review_register.py: exit 0, 50 passed",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "full services/api suite, run alone by the orchestrator at 25ba6c04 with all three pieces and every correction integrated: exit 0, 8185 passed, 8 skipped, 2 expected failures (the two tests that pin the schema's known limits); an earlier full run at f5c2a8f2, before the corrections: 8178 passed, 8 skipped"
+ ],
+ "requirements": {
+  "D-090-R291": [
+   "38 further texts are captured as source text from the official Zoning Resolution site, each in a file of its own under docs/research/zr-snapshots/v1/ with its address, the time of each request, the amendment date the page shows, the verbatim text and its digests: 21 sections (ZR 34-22 with 34-221 to 34-224; 34-23 with 34-231 to 34-233; 35-641 to 35-643; 35-22; 23-34 and 23-341; 23-311 and 23-312; 23-44 with 23-441 to 23-443, their tables cell by cell) and 17 ZR 12-10 definitions (rear yard, rear yard equivalent, yard, front yard, side yard, lot coverage, curb level, street wall, mixed building, residential equivalent, large site, qualifying residential site, dwelling unit, rooming unit, qualifying affordable housing, qualifying senior housing, prevailing street wall frontage).",
+   "The synced copies under services/api/app/_zr_snapshots/v1/ are byte-identical (services/api/scripts/sync_zr_snapshots.py --check: exit 0, 110 files); services/api/tests/rules/test_zr_snapshot_bundle.py recomputes each content digest.",
+   "Each named term was looked for under its exact, inverted and combined titles (four are under inverted titles such as 'yard, rear'); none is reported as not defined. The independent reviewer fetched every page itself, found all 22 pages byte-identical to the pinned ones and every text equal, and found every statement the report makes about the official source true.",
+   "One disclosed limit: in zr-12-10-qualifying-residential-site the labels in front of list items are positions in the page's markup (the print/PDF of the ZR 12-10 page answers HTTP 504 and the per-term print/PDF HTTP 403); the capture says so. The report lists the further sections the new texts point to (among them ZR 23-20, 23-21, 23-381, 23-62, 25-621, 25-622, 25-85, 26-50, 37-70, 37-80, 66-11, 27-111), not captured.",
+   "NOT done by this task, and not claimed: no missing rule and no conflicting input is resolved; the new text is not read for any lot (the readers of task M4-T030 did not have it); no reference case and no result changes. Row R291 covers the whole of step 3; this task is one share of it: the text is captured."
+  ]
+ }
+}

@@ -93,11 +93,13 @@ Law relied on:
 
 Why the rule applies: ZR 23-344(a) waives the rear yard within 100 feet of the corner point; the far corner is 144.60 feet away, so part of the lot lies beyond that reach, where ZR 23-342 may require a rear yard on the interior-lot portion.
 
-Expected value: not known. Within 100 feet of the corner point no rear yard is required; the far corner is 144.60 feet away, so part of the lot lies beyond, and what is required there is not settled. ZR 23-342 is now captured, but the depth it sets needs the building type and lot width (not given), and the ZR 12-10 side-/rear-lot-line definitions are not captured; both step-P1 readings read it the same way.
+Expected value: not known. Within 100 feet of the corner point no rear yard is required; the far corner is 144.60 feet away, so part of the lot lies beyond, and what is required there is not settled. ZR 23-342 is now captured, but the depth it sets needs the building type and lot width (not given); the first and step-P1 readers did not have the ZR 12-10 side- and rear-lot-line definitions, and both step-P1 readings read it the same way. Those definitions were since captured (task M4-T029) and read in step P3 (cases/step-p3-worked.json), where both step-P3 readings read, beyond 100 feet of the 215 Place street line, a small portion of a side lot line deemed a rear lot line, with whether a rear yard is required there still not known.
 
 Where this stands in the independent reading: return-independent-hand-calculation-2.md, Q1(c), and the work order's table C ('not known beyond the corner area'); confirmed by both step-P1 readings (return-independent-hand-calculation-3.md and -4.md, Q3a).
 
-What this row does not establish: It does not give a rear-yard requirement beyond 100 feet of the corner point; that needs the neighbouring lot lines, the building type and lot width, and the uncaptured ZR 12-10 lot-line definitions.
+What this row does not establish: It does not give a rear-yard requirement beyond 100 feet of the corner point; that needs the neighbouring lot lines, the building type and lot width, and the ZR 12-10 lot-line definitions the earlier readers did not have (now captured and read in cases/step-p3-worked.json).
+
+Superseded by: step-p3-worked#real-lot-rear-yard-beyond-corner (kept as the record of what the earlier readers could settle; the current answer is in the named row(s)).
 
 ### C1-reach - C1 (40 ft x 100 ft, 4,000 sq ft): reach from each street line and the corner
 
@@ -329,6 +331,8 @@ Where this stands in the independent reading: return-independent-hand-calculatio
 
 What this row does not establish: It does not settle the rear yard along the strip beyond the corner-lot portion; that needs the neighbouring lot lines, the building type and lot width.
 
+Superseded by: step-p3-worked#corner-150x100-rear-yard-beyond-corner (kept as the record of what the earlier readers could settle; the current answer is in the named row(s)).
+
 ## What this case does not establish
 
 - The real lot's reaches are measured from an approximate outline, not a survey; the strip and wedge areas are grid approximations.
@@ -350,5 +354,7 @@ What this row does not establish: It does not settle the rear yard along the str
 |---|---|---|
 | 2026-10-06 | Case created from the independent hand-calculation returns (step R0). | rules-engineer (M4-T024) |
 | 2026-10-07 | Rows real-lot-coverage, C1-coverage, C2-coverage and C3-coverage: expected values unchanged (real-lot-coverage and C3-coverage stay not known; C1-coverage and C2-coverage stay 100 percent). The ZR 12-10 corner-lot-portion definition is now captured (task M4-T025), so their citation changes from not-captured to the captured snapshot zr-12-10-lot-corner. The two step-P1 readings read the same corner-lot-portion method and the same per-portion 100/80 coverage (their own made-up corner lots are in cases/step-p1-worked.json). Reason: newly captured text. | rules-engineer (M4-T027) |
-| 2026-10-07 | Rows real-lot-rear-yard, C1-rear-yard and C3-rear-yard: expected values unchanged (not known beyond the corner). ZR 23-342 is now captured (task M4-T025); a captured ZR 23-342 citation is added and the reason records that the depth it sets needs the building type and lot width (not given) and the ZR 12-10 side-/rear-lot-line definitions are not captured. Reason: newly captured text. | rules-engineer (M4-T027) |
+| 2026-10-07 | Rows real-lot-rear-yard, C1-rear-yard and C3-rear-yard: expected values unchanged (not known beyond the corner). ZR 23-342 is now captured (task M4-T025); a captured ZR 23-342 citation is added and the reason records that the depth it sets needs the building type and lot width (not given) and that the step-P1 readers did not have the ZR 12-10 side- and rear-lot-line definitions. Reason: newly captured text. | rules-engineer (M4-T027) |
+| 2026-10-07 | Row real-lot-rear-yard: expected value unchanged (not known beyond the corner). The ZR 12-10 side- and rear-lot-line definitions were captured by task M4-T029 and read independently in step P3 (cases/step-p3-worked.json); the row's wording is brought from 'not captured' into 'the readers did not have' form and points to the step-P3 reading, which both step-P3 readings support. Rows C1-rear-yard and C3-rear-yard are unchanged: the step-P3 readers worked a made-up 150-by-100 corner lot (recorded in cases/step-p3-worked.json), not a 40-by-100 corner lot, and neither C1-rear-yard nor C3-rear-yard carries 'not captured' wording. Reason: corrected evidence - the text is now captured and read. | rules-engineer (M4-T030) |
+| 2026-10-07 | Round 2 (review finding F2): rows real-lot-rear-yard and C3-rear-yard are marked superseded_by the step-P3 rows that now hold the current reading of the same question (step-p3-worked#real-lot-rear-yard-beyond-corner; and step-p3-worked#corner-150x100-rear-yard-beyond-corner for the made-up 150-by-100 corner lot that C3 is). They are kept as the historical record, and the loader no longer hands them out as current. C1-rear-yard is left: it is a 40-by-100 corner lot, which no step-P3 row reads; and the *-reach rows (read by tests/spatial/test_lot_reach.py) are not superseded. No expected value or kind changed. Reason: a corrected reading - one current expected answer per question. | rules-engineer (M4-T030) |
 

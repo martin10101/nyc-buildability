@@ -24,6 +24,7 @@ if str(_HERE) not in sys.path:
 import r6b_reference_cases_check as check  # noqa: E402
 import r6b_reference_cases_lib as lib  # noqa: E402
 import r6b_reference_cases_render as render  # noqa: E402
+import r6b_reference_cases_step_p3 as step_p3  # noqa: E402
 
 CASES = lib.load_all()
 SUPPORT_FILES = sorted(_HERE.glob("*.py"))
@@ -43,7 +44,7 @@ def test_everything_validates_clean():
 def test_each_case_has_a_data_file_and_a_page():
     assert lib.CASE_IDS == (
         "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
-        "overlay-reading"
+        "overlay-reading", "step-p3-worked"
     )
     for case_id in lib.CASE_IDS:
         assert lib.case_path(case_id).is_file(), f"missing data file for {case_id}"
@@ -188,7 +189,10 @@ def test_step_p1_settled_values_where_both_readings_agree():
             == "the area of a zoning lot")
     assert lib.load_row("step-p1-worked", "special-density-areas-list")["kind"] == "value"
     # the two readings differ on the 40x100 interior-lot rear-yard depth -> not known
-    assert lib.load_row("step-p1-worked", "interior-40x100-rear-yard")["kind"] == "not_known"
+    # (now superseded by the step-P3 row, so read the historical row explicitly)
+    assert lib.load_row(
+        "step-p1-worked", "interior-40x100-rear-yard", allow_superseded=True
+    )["kind"] == "not_known"
 
 
 def test_step_p1_case_rows_name_both_readings():
@@ -266,8 +270,11 @@ def test_overlay_settled_changed_and_not_known_rows():
     # street wall: changed by the overlay
     street_wall = lib.load_row("overlay-reading", "street-wall-location")
     assert "changed by the overlay" in street_wall["value"]
-    # what 35-633 adds: not known (23-436 not captured; the two readings differ)
-    assert lib.load_row("overlay-reading", "section-35-633")["kind"] == "not_known"
+    # what 35-633 adds: not known for the step-P2 readers (now superseded by the step-P3
+    # rows, so read the historical row explicitly)
+    assert lib.load_row(
+        "overlay-reading", "section-35-633", allow_superseded=True
+    )["kind"] == "not_known"
 
 
 def test_an_overlay_value_where_the_readings_differ_is_refused():
@@ -279,6 +286,83 @@ def test_an_overlay_value_where_the_readings_differ_is_refused():
             row["expected"]["reason"] = ""
     errs = check.readings_differ_errors("overlay-reading", data)
     assert errs and any("section-35-633" in m for m in errs), errs
+
+
+# --------------------------------------------------------------------------
+# S1/S2 (step P3) - the step-P3 readings of the newly captured law text: two
+# readings present unchanged; a value only where both agree; the rows the two
+# readings do not jointly settle stay not known; the corner-coverage pins hold
+# --------------------------------------------------------------------------
+def test_the_two_step_p3_readings_are_present_unchanged():
+    assert check.step_p3_reading_errors() == []
+    for name, spec in step_p3.STEP_P3_READINGS.items():
+        raw = (lib.PROVENANCE_DIR / name).read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == spec["digest"], name
+        text = raw.decode("utf-8")
+        assert "sealed folder" in text, name
+        assert text.rstrip().endswith("END-OF-REPORT"), name
+    seven = (lib.PROVENANCE_DIR / "return-independent-hand-calculation-7.md").read_text()
+    eight = (lib.PROVENANCE_DIR / "return-independent-hand-calculation-8.md").read_text()
+    assert seven != eight
+
+
+def test_a_changed_step_p3_reading_is_caught(monkeypatch):
+    bad = {
+        "return-independent-hand-calculation-7.md": {
+            "marker": "ONE HARD RULE", "digest": "0" * 64,
+        },
+        "return-independent-hand-calculation-8.md":
+            step_p3.STEP_P3_READINGS["return-independent-hand-calculation-8.md"],
+    }
+    monkeypatch.setattr(step_p3, "STEP_P3_READINGS", bad)
+    errs = check.step_p3_reading_errors()
+    assert errs and any("digest changed" in m for m in errs), errs
+
+
+def test_step_p3_case_rows_name_both_readings():
+    data = CASES["step-p3-worked"]
+    for row in data["rows"]:
+        assert check.both_readings_errors("step-p3-worked", row) == [], row["row_id"]
+
+
+def test_step_p3_settled_and_not_known_rows():
+    # settled where both readings agree on the same basis
+    assert lib.load_row("step-p3-worked", "real-lot-lot-lines")["kind"] == "value"
+    assert lib.load_row("step-p3-worked", "interior-40x100-rear-yard")["kind"] == "value"
+    assert lib.load_row("step-p3-worked", "manhattan-core")["kind"] == "value"
+    assert lib.load_row("step-p3-worked", "zr-34-111-governs")["kind"] == "value"
+    # both reach "outside" on the SDBD, but one holds it subject to a text the
+    # readers did not have: recorded as a value that names the condition
+    sdbd = lib.load_row("step-p3-worked", "special-downtown-brooklyn-district")
+    assert sdbd["kind"] == "value"
+    assert "subject to" in sdbd["value"] and "Article X" in sdbd["value"]
+    # neither reading settles these -> not known
+    for rid in ("real-lot-lot-width", "real-lot-rear-yard-beyond-corner",
+                "corner-150x100-rear-yard-beyond-corner", "base-plane-real-lot"):
+        assert lib.load_row("step-p3-worked", rid)["kind"] == "not_known", rid
+
+
+def test_a_step_p3_unsettled_row_given_a_value_is_refused():
+    data = copy.deepcopy(CASES["step-p3-worked"])
+    for row in data["rows"]:
+        if row["row_id"] == "real-lot-lot-width":
+            row["expected"]["kind"] = "value"
+            row["expected"]["value"] = "about 103.9 feet"
+            row["expected"]["reason"] = ""
+    errs = step_p3.must_stay_not_known_errors("step-p3-worked", data)
+    assert errs and any("real-lot-lot-width" in m for m in errs), errs
+
+
+def test_the_corner_coverage_pins_hold_and_a_moved_pin_is_refused():
+    # the passing Q7c "100 percent" remark must not move the whole-lot coverage rows
+    assert step_p3.pinned_coverage_errors(lib.load_case) == []
+    mutated = copy.deepcopy(CASES)
+    for row in mutated["real-lot"]["rows"]:
+        if row["row_id"] == "L5":
+            row["expected"]["kind"] = "value"
+            row["expected"]["value"] = "100 percent"
+    errs = step_p3.pinned_coverage_errors(lambda cid: mutated[cid])
+    assert errs and any("real-lot/L5" in m for m in errs), errs
 
 
 # --------------------------------------------------------------------------
@@ -352,6 +436,8 @@ NOT_KNOWN = {
                        "interior-40x100-rear-yard", "through-40x200-rear-yard",
                        "special-density-real-lot"},
     "overlay-reading": {"section-35-633"},
+    "step-p3-worked": {"real-lot-lot-width", "real-lot-rear-yard-beyond-corner",
+                       "corner-150x100-rear-yard-beyond-corner", "base-plane-real-lot"},
 }
 
 

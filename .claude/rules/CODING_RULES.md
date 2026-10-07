@@ -50,3 +50,5 @@
 - DO run the FULL `pytest -q` from services/api before any api PR: a new fixture in a shared
   `packages/contracts/fixtures/valid/<schema>/` dir is globbed by the Lane D/E snapshot suites (tests/cad,
   tests/drawings) and needs an approved snapshot per fixture (#387 F1: 3 red tests a subset run missed).
+- DO run `python .github/scripts/validate_contracts.py` + `pytest .github/scripts/tests` before pushing a
+  contract schema: it fails closed on any keyword outside KNOWN_KEYWORDS (M5-T128: `minProperties`).
