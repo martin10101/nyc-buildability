@@ -729,3 +729,21 @@ working guidance was added to CLAUDE.md (D-090 R300). The seven notes below are 
   Worker-pin flips AND the shared allowlist (`C:\Program Files\SupervisorConfig\config.toml`
   [claude].allowed_models + [approved_models].models) are OWNER edits (classifier-blocked;
   B-025 resolved by owner actuation - all three lanes + allowlist on opus-5-5 since 2026-09-23).
+
+## Cloud session 2026-10-07 (9c3a3cee; seq 147)
+
+- A Windows repair needs Windows evidence BEFORE its tests and record are written: nobody here can run Windows. Ask the builder
+  in the FIRST round for a probe commit beside the tests and the repair: Windows-only tests that each end in `pytest.fail(<what was
+  observed>)`, pushed to `ci-exp/<task>-probe` (never merged). M0-T186's builder guessed a Windows file rule wrong and needed five
+  rounds; one probe run settled it. A permanent test should assert an invariant under the real race; its red-before proof is one
+  more experiment commit that restores the pre-repair code (`ci-exp/<task>-red2`).
+- Freeze every CI job used as evidence from the jobs API (byte count, sha256, the FAILURES section) under
+  `project-control/reports/<task>-ci-evidence/`; reviewers then match it with GitHub by digest.
+- One ledger-touching branch at a time: every ledger command rewrites `updated_at` in `project-control/state.json` (not tested
+  as a conflict; avoided). The record of an owner message rides on the active task branch, committed before any other action.
+- CI waits without a watcher: read `gh pr view <n> --json statusCheckRollup` by hand between other work; start the pre-merge
+  check's first round (everything but CI) while the last run finishes, then send the CI part to the same verifier.
+- This gh build: `gh run view --json` has no `attempt` field; use `gh api repos/<o>/<r>/actions/runs/<id> --jq .run_attempt`.
+- The registry validator now takes about one minute on this server; the ledger tool's own tests about two.
+- A scope correction after a submit (packet scenario text only) does not move the submitted content identity; record G0 again
+  at that head and say so in the readiness report.
