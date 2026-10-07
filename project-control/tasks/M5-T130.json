@@ -107,7 +107,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 60,
+  "progress_percent": 70,
   "risks": [
     "An empty column taken as 'the lot has none' -> reading O14 and S2; if it cannot be told, everything is 'not read'",
     "A tolerance invented without data -> reading O15: none is invented",
@@ -117,7 +117,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:28.703315+00:00",
-  "updated_at": "2026-10-07T16:50:25.872138+00:00",
+  "updated_at": "2026-10-07T17:11:31.278650+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -164,6 +164,13 @@
       "percent": 60,
       "status": "in_progress",
       "message": "Builder's commit daad5efb integrated as 1ed440c4 (three new modules: result_way_facts.py, result_way_bridge.py, result_way_bridge_overlay.py; three new test files; ONE test function changed in each of the two guard tests; the report; nothing else). Checked by the orchestrator: ruff clean; tests/contracts, tests/journey, tests/spatial, tests/scenario and the reference cases: 2105 passed, 2 skipped; no modularity warning for the new files; the orchestrator drove the entry function on the recorded benchmark lot and for nine missing-input cases and read all 73 texts it returned: none carries an internal name or a statement about what is captured. For the benchmark lot it returns: the overlay recorded as present (C2-2); the split-lot record, the special district, inclusionary housing, the flood zone and the landmark record as 'recorded as absent' (the builder's proof for reading O14 is for the G3 reviewer to test at the root); the two area figures as disagreeing; coverage, rear yard, setback, building option and unit limits withheld; heights and floor-area figures conditional. Five points the packet did not decide are listed by the builder for the reviewers. Two independent reviews started at 1ed440c4: data-contract-verifier (G3) and qa-engineer (G4)."
+    },
+    {
+      "at": "2026-10-07T17:11:31.278518+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "TWO INDEPENDENT REVIEWS at 1ed440c4. GATE G3 (data-contract-verifier): PASS, no must-fix, seven notes. It tested reading O14 at the root and confirmed it: the connector requests the whole city record, a profile exists only for a successful fetch, so a column missing from the served row is empty in the city's record, and 'City records list no ...' is what the record shows and what the work order's gap K10 requires; it drove the entry function on the recorded benchmark lot (every fact matches the recorded files; the ways match the work order's test H2; nothing settled) and read 721 returned texts (none internal or untrue); readings O15 to O18 applied as stated. Its note F1, for the orchestrator: two earlier modules read the same empty columns as 'none or unknown: check needed', while this one reads 'recorded as absent' as the work order directs: the orchestrator confirms that this is intended and records it in the backlog. GATE G4 (qa-engineer): FAIL. Scenarios S1 to S6 and S8 met, 24 of 26 tests independent of the code, 10 of 13 of its mutations caught; but scenario S7 is NOT met: two branches of the new code act on input states that no test pins, each shown by a mutation that passed every test: (F1) a reach measurement or an angle that is UNKNOWN (made into 0.0: no test failed; that would show a coverage or a rear yard on an unknown measurement); (F2) the lot types 'interior' and 'through' (removed from the mapping: no test failed). The builder's table said both were pinned; they were not. Notes: F3 marking one of the four conditions as 'checked and absent' fails no test; F4 seven returnable texts are outside the text guard's battery. The code was found correct by both reviews; the defect is in the tests and the report's table. It goes back to the same builder for a tests-only round; the same QA reviewer reviews again; the G3 reviewer confirms that the modules did not change."
     }
   ],
   "scope_corrections": [
