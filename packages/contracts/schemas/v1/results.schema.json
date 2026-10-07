@@ -37,8 +37,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0", "1.1.0", "1.2.0"],
-      "description": "CLOSED enum of published results contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). 1.1.0 (D-090-R108) adds the OPTIONAL top-level 'scope' object (purpose: put the scope beside the numbers - the headline cards and exported drawings visibly carry the 'Tax-lot-only estimate' label, identify the lot, and disclose the assumed corner conditions, while whole-site and remaining capacity stay unconfirmed). scope is OPTIONAL and may be absent or null; a document carrying a NON-NULL scope object declares 1.1.0 (the version-binding allOf below), while a document with an absent or null scope may declare 1.0.0 or 1.1.0, so every valid 1.0.0 instance stays valid unchanged. 1.2.0 (D-090-R132) adds the OPTIONAL 'notes' array on the building-option answer only (purpose: carry the engine's COMPUTED minimum-base-height note into the results document so it can be shown beside the heights instead of being dropped before the document; DB-119). notes is OPTIONAL and may be absent, null or empty; a document whose building-option answer carries a NON-EMPTY notes array declares 1.2.0 (the version-binding allOf below), while a document with an absent, null or empty notes array may declare 1.0.0, 1.1.0 or 1.2.0, so every valid 1.0.0 and 1.1.0 instance stays valid byte-for-byte. The enum is append-only (new versions are admitted only by an accepted contract task that appends to it); the emitter decides when to declare a higher version."
+      "enum": ["1.0.0", "1.1.0", "1.2.0", "1.3.0"],
+      "description": "CLOSED enum of published results contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). 1.1.0 (D-090-R108) adds the OPTIONAL top-level 'scope' object (purpose: put the scope beside the numbers - the headline cards and exported drawings visibly carry the 'Tax-lot-only estimate' label, identify the lot, and disclose the assumed corner conditions, while whole-site and remaining capacity stay unconfirmed). scope is OPTIONAL and may be absent or null; a document carrying a NON-NULL scope object declares 1.1.0 (the version-binding allOf below), while a document with an absent or null scope may declare 1.0.0 or 1.1.0, so every valid 1.0.0 instance stays valid unchanged. 1.2.0 (D-090-R132) adds the OPTIONAL 'notes' array on the building-option answer only (purpose: carry the engine's COMPUTED minimum-base-height note into the results document so it can be shown beside the heights instead of being dropped before the document; DB-119). notes is OPTIONAL and may be absent, null or empty; a document whose building-option answer carries a NON-EMPTY notes array declares 1.2.0 (the version-binding allOf below), while a document with an absent, null or empty notes array may declare 1.0.0, 1.1.0 or 1.2.0, so every valid 1.0.0 and 1.1.0 instance stays valid byte-for-byte. 1.3.0 (M5-T128, work order docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 0 'How a result may appear', decision D5; D-090-R229/R255/R258/R268) lets ONE value inside an answer carry which of the three ways it appears in. It adds (a) the OPTIONAL 'value_states' object on each AVAILABLE answer (floor_area_allowance, permitted_envelope and the building option): a map keyed by the answer value's key, each entry declaring the value's way - 'settled' (no condition), 'conditional' (one or more named conditions, each with its kind, the assumption in words and what would settle it) or 'withheld' (no number; its label, reason, which of the two gap kinds it is, what would resolve it, and the law section where one applies); and (b) the OPTIONAL 'resolved_by' and 'gap_kind' fields on a whole-answer 'not available' object, so a withheld whole answer can also say what would resolve it and which gap kind it is. value_states and the not-available resolution fields are OPTIONAL and additive: a document carrying ANY of them declares 1.3.0 (the version-binding allOf below), and a document declaring 1.3.0 must state the way of every available answer (the forward-binding allOf below) so none is settled by silence; a document carrying none of them may declare 1.0.0, 1.1.0 or 1.2.0, so every valid 1.0.0 / 1.1.0 / 1.2.0 instance stays valid byte-for-byte. The remaining-floor-area line is UNCHANGED (it keeps the shared not_available shape). The enum is append-only (new versions are admitted only by an accepted contract task that appends to it); the emitter decides when to declare a higher version."
     },
     "results_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
     "study_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
@@ -253,7 +253,7 @@
       "description": "Version binding (contract 1.1.0, D-090-R108; widened to the enum by D-090-R132/R137, DB-129): a document carrying a non-null scope object declares contract_version 1.1.0 OR 1.2.0, not const 1.1.0. 1.2.0 is a strict superset of 1.1.0 - the scope object is allowed AND the building-option notes array is allowed - so a single document may carry BOTH a non-null scope and a non-empty notes array and still declare a valid version (it resolves to 1.2.0). Before this widening the scope clause pinned const 1.1.0 while the notes clause (the allOf below) pins const 1.2.0, so a document carrying both was unsatisfiable: no single contract_version could satisfy both clauses (the scope emitter and the notes emitter each fire on the R6B 215-16 Northern path). An absent or null scope still leaves the version unconstrained, so every 1.0.0 instance stays valid. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either scope is null (or absent, since 'properties' is vacuous for an absent key), or contract_version is one of 1.1.0 / 1.2.0. The notes binding below is unchanged (a non-empty notes array still binds to const 1.2.0), so a document with both a scope and non-empty notes resolves to exactly 1.2.0, while a scope-only document stays valid at either 1.1.0 or 1.2.0.",
       "anyOf": [
         { "properties": { "scope": { "type": "null" } } },
-        { "properties": { "contract_version": { "enum": ["1.1.0", "1.2.0"] } } }
+        { "properties": { "contract_version": { "enum": ["1.1.0", "1.2.0", "1.3.0"] } } }
       ]
     },
     {
@@ -277,11 +277,199 @@
             }
           }
         },
-        { "properties": { "contract_version": { "const": "1.2.0" } } }
+        { "properties": { "contract_version": { "enum": ["1.2.0", "1.3.0"] } } }
+      ]
+    },
+    {
+      "description": "Version binding (contract 1.3.0, M5-T128, work order section 0 / decision D5; D-090-R229/R255/R258/R268): REVERSE direction. A document carrying ANY 1.3.0 field declares contract_version 1.3.0. The 1.3.0 fields are the OPTIONAL 'value_states' map on any available answer (floor_area_allowance, permitted_envelope or the building option) and the OPTIONAL 'resolved_by' / 'gap_kind' fields on a whole-answer not-available object. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either NONE of the three answers carries a value_states map or a not-available resolution field (each is null or absent - 'properties' is vacuous for an absent key, and an available answer has no resolved_by/gap_kind key, a not-available answer has no value_states key), or contract_version is 1.3.0. An absent/null value_states and absent resolution fields leave the version unconstrained, so every 1.0.0 / 1.1.0 / 1.2.0 instance stays valid byte-for-byte.",
+      "anyOf": [
+        {
+          "properties": {
+            "answers": {
+              "properties": {
+                "floor_area_allowance": {
+                  "properties": {
+                    "value_states": { "type": "null" },
+                    "resolved_by": { "type": "null" },
+                    "gap_kind": { "type": "null" }
+                  }
+                },
+                "permitted_envelope": {
+                  "properties": {
+                    "value_states": { "type": "null" },
+                    "resolved_by": { "type": "null" },
+                    "gap_kind": { "type": "null" }
+                  }
+                },
+                "building_option": {
+                  "properties": {
+                    "value_states": { "type": "null" },
+                    "resolved_by": { "type": "null" },
+                    "gap_kind": { "type": "null" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        { "properties": { "contract_version": { "const": "1.3.0" } } }
+      ]
+    },
+    {
+      "description": "Version binding (contract 1.3.0, M5-T128, work order section 0 property (c); D-090-R268): FORWARD direction. A document that declares 1.3.0 must state the way of every value of every AVAILABLE answer, so none is settled by silence: each available answer (status 'available') carries a non-empty value_states map, each of whose entries declares a way ('settled', 'conditional' or 'withheld'). A not-available answer has no values and needs no value_states map. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either contract_version is 1.0.0 / 1.1.0 / 1.2.0 (this clause then imposes nothing, so every earlier instance stays valid byte-for-byte), or every answer is either not-available (status const 'not_available') or carries a value_states map (required). JSON Schema 2020-12 cannot quantify that each value key in an available answer's 'values' array also appears in its value_states map; the emitter is responsible for emitting one value_states entry per value key (engine duty), while this clause guarantees the way-layer is present and non-empty and every entry it carries states a way.",
+      "anyOf": [
+        { "properties": { "contract_version": { "enum": ["1.0.0", "1.1.0", "1.2.0"] } } },
+        {
+          "properties": {
+            "answers": {
+              "properties": {
+                "floor_area_allowance": {
+                  "anyOf": [
+                    { "properties": { "status": { "const": "not_available" } } },
+                    { "required": ["value_states"] }
+                  ]
+                },
+                "permitted_envelope": {
+                  "anyOf": [
+                    { "properties": { "status": { "const": "not_available" } } },
+                    { "required": ["value_states"] }
+                  ]
+                },
+                "building_option": {
+                  "anyOf": [
+                    { "properties": { "status": { "const": "not_available" } } },
+                    { "required": ["value_states"] }
+                  ]
+                }
+              }
+            }
+          }
+        }
       ]
     }
   ],
   "$defs": {
+    "value_states": {
+      "description": "OPTIONAL per-value way-layer for an AVAILABLE answer (contract 1.3.0, M5-T128, work order section 0 / decision D5). A map keyed by the answer value's key (the same key namespace as answer_value.key): each entry declares which of the three ways that value appears in - settled, conditional or withheld (value_state below). The shown values (settled and conditional) keep their present value object and number in the answer's 'values' array (nothing is duplicated here, and value_state carries no number); a withheld value has NO entry in 'values' (it carries no number anywhere) and appears only here with its label, reason, gap kind, what would resolve it and, where one applies, the law section. Because this is a JSON object keyed by value key, a single key maps to exactly ONE way, so the same key is never both shown and withheld in one answer. OPTIONAL and additive: absent or null leaves the contract version unconstrained; a non-null map binds contract_version to 1.3.0 (the reverse version-binding allOf above), and a document declaring 1.3.0 must carry a non-empty map on every available answer (the forward version-binding allOf above) so none is settled by silence.",
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "$ref": "#/$defs/value_state" },
+          "propertyNames": { "pattern": "^[a-z][a-z0-9_]*$" }
+        }
+      ]
+    },
+    "value_state": {
+      "description": "One value's way (contract 1.3.0, work order section 0 'How a result may appear'): exactly one of settled, conditional or withheld, discriminated by 'way'. Each branch is closed (additionalProperties false), so an entry that mixes fields of two ways - e.g. a settled entry carrying a condition or a reason, or a withheld entry carrying a number or a condition - matches no branch and is rejected; an entry that states no 'way' is rejected.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["way"],
+          "description": "SETTLED: every fact behind the value comes from evidence, a reference case supports the reading of the law, and every condition that could change it has been checked (work order section 0). The number, its law section and its sources are in the answer's 'values' array. A settled value carries NO condition (no 'conditions' key).",
+          "properties": {
+            "way": { "type": "string", "const": "settled", "description": "This value is settled." }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["way", "conditions"],
+          "description": "CONDITIONAL: the value rests on one or more explicit, defensible assumptions that are not evidence (work order section 0). The number stays in the answer's 'values' array; this entry names at least one condition, each with its kind, the assumption in words and what would settle it. 'If <the assumption>: <the number>'.",
+          "properties": {
+            "way": { "type": "string", "const": "conditional", "description": "This value is conditional on the assumptions listed in 'conditions'." },
+            "conditions": {
+              "type": "array",
+              "minItems": 1,
+              "description": "The assumptions the value rests on (at least one). A conditional value with an empty or absent list is rejected.",
+              "items": { "$ref": "#/$defs/value_condition" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["way", "label", "reason", "gap_kind", "resolved_by"],
+          "description": "WITHHELD: a known gap affects the value and no defensible condition covers it (work order section 0). It carries NO number (no 'value' or number key). It is listed here beside the shown values of the same answer, with its label, the reason, which of the two gap kinds it is, what would resolve it and, where one applies, the law section.",
+          "properties": {
+            "way": { "type": "string", "const": "withheld", "description": "This value is withheld - 'not known'." },
+            "label": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "The human label of the withheld value, e.g. 'Maximum lot coverage' (the key itself is the value_states map key)." },
+            "reason": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "Why it is not known, e.g. 'The lot reaches 103.93 ft from the 215 Place street line, beyond the 100 ft corner-coverage area; the ZR 12-10 corner definition is not captured.'" },
+            "gap_kind": { "$ref": "#/$defs/gap_kind" },
+            "resolved_by": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "What would resolve the gap, e.g. 'Capturing the ZR 12-10 corner definition and reading it against the recorded outline.'" },
+            "zr_sections": {
+              "type": "array",
+              "minItems": 1,
+              "description": "The Zoning Resolution section(s) the withheld value would rely on, where one applies (OPTIONAL).",
+              "items": { "$ref": "#/$defs/zr_section" }
+            }
+          }
+        }
+      ]
+    },
+    "value_condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "assumption", "settled_by"],
+      "description": "One explicit, defensible assumption behind a CONDITIONAL value (work order section 0 'conditional'; owner rules 1 and 3, R255/R257). Names the assumption, its kind and what would settle it. A conditional value carries at least one; a settled value carries none.",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["user_statement", "contradicted_record", "unchecked_condition"],
+          "description": "The kind of assumption (work order section 0): 'user_statement' = a user's statement about the lot, used only for a clearly labelled conditional result and never stored as a fact (R255; e.g. the special-density-area answer, gap K11); 'contradicted_record' = a recorded figure that another recorded figure contradicts (R257; e.g. the two lot-area figures, gap K5); 'unchecked_condition' = a condition that was not checked and is assumed not to apply (R268; e.g. the K20 conditions - waterfront, airport height, transit easement, a lot near a district line)."
+        },
+        "assumption": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The assumption in plain words, as the face shows it, e.g. 'If the recorded lot area of 10,075 sq ft is confirmed' or 'If none of the unchecked conditions (waterfront, airport height, transit easement, near a district line) applies to this lot'."
+        },
+        "settled_by": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "What would settle the assumption (make the value settled, or withhold it), e.g. 'A survey or deed dimensions' or 'Capturing and reading the governing law text, then confirming the condition is absent'."
+        }
+      }
+    },
+    "gap_kind": {
+      "type": "string",
+      "enum": ["missing_information", "work_owed"],
+      "description": "Which of the two kinds a withheld value or a withheld whole answer is (owner rule 4, R258): 'missing_information' = something only this property's evidence can settle is not known; 'work_owed' = a promised feature the program has not built yet. The two are never conflated: calling unfinished work 'unsupported' does not finish it."
+    },
+    "answer_not_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reason", "reason_kind"],
+      "description": "The 'not available' shape for a WHOLE answer (floor_area_allowance, permitted_envelope or the building option). It is the shared not_available shape (status, reason, reason_kind) PLUS the OPTIONAL additive 1.3.0 fields 'resolved_by' and 'gap_kind' (M5-T128, work order property (f)), so a withheld whole answer can also say what would resolve it and which of the two gap kinds it is, WITHOUT changing the present required fields. Every valid 1.0.0 / 1.1.0 / 1.2.0 not-available answer (no resolved_by / gap_kind key) stays valid byte-for-byte because both are optional and absent is allowed; a NON-NULL resolved_by or gap_kind binds contract_version to 1.3.0 (the reverse version-binding allOf above). The shared not_available def is UNCHANGED and still used everywhere else (remaining_floor_area, shortfall, the geometry layers, add-on gains, etc.), so nothing outside the three answers changes.",
+      "properties": {
+        "status": { "type": "string", "const": "not_available" },
+        "reason": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "reason_kind": {
+          "type": "string",
+          "enum": [
+            "missing_input",
+            "rule_not_implemented",
+            "rule_not_reviewed",
+            "eligibility_unresolved",
+            "geometry_unsupported"
+          ],
+          "description": "Which section 5 condition failed: a missing number, a missing or unreviewed rule, unresolved eligibility, or unsupported geometry (plan sections 5 and 8). Same vocabulary as the shared not_available."
+        },
+        "resolved_by": {
+          "description": "OPTIONAL (contract 1.3.0): what would resolve this whole withheld answer, in plain words, e.g. 'Capturing and reading the Article III sections that govern a residential building in a commercial overlay, then a reference case'. Absent or null for a 1.0.0 / 1.1.0 / 1.2.0 answer.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "gap_kind": {
+          "description": "OPTIONAL (contract 1.3.0): which of the two gap kinds this whole withheld answer is - missing information or work the program still owes (owner rule 4, R258). Absent or null for a 1.0.0 / 1.1.0 / 1.2.0 answer.",
+          "anyOf": [
+            { "$ref": "#/$defs/gap_kind" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
     "scope": {
       "type": "object",
       "additionalProperties": false,
@@ -523,7 +711,7 @@
     "answer": {
       "oneOf": [
         { "$ref": "#/$defs/answer_available" },
-        { "$ref": "#/$defs/not_available" }
+        { "$ref": "#/$defs/answer_not_available" }
       ]
     },
     "answer_available": {
@@ -540,14 +728,15 @@
         "measurement": {
           "$ref": "site_fact.schema.json#/$defs/measurement_known",
           "description": "The measurement label of this answer's weakest input (plan section 4 'How labels carry through'). In a street_width_case document the assumed width counts as an 'assumed' input."
-        }
+        },
+        "value_states": { "$ref": "#/$defs/value_states" }
       }
     },
     "building_option_answer": {
-      "description": "The building-option answer (plan section 5 answer 3). Same oneOf as 'answer' - available or not_available - but the available branch adds the OPTIONAL additive 'notes' array (contract 1.2.0, D-090-R132). Only the building option uses this shape; floor_area_allowance and permitted_envelope use the plain 'answer' shape with no notes slot.",
+      "description": "The building-option answer (plan section 5 answer 3). Same oneOf as 'answer' - available or not_available - but the available branch adds the OPTIONAL additive 'notes' array (contract 1.2.0, D-090-R132). Only the building option uses this shape; floor_area_allowance and permitted_envelope use the plain 'answer' shape with no notes slot. The not-available branch is the shared answer_not_available shape, so a withheld building option may carry the 1.3.0 resolved_by / gap_kind fields.",
       "oneOf": [
         { "$ref": "#/$defs/building_option_answer_available" },
-        { "$ref": "#/$defs/not_available" }
+        { "$ref": "#/$defs/answer_not_available" }
       ]
     },
     "building_option_answer_available": {
@@ -575,7 +764,8 @@
               "items": { "$ref": "#/$defs/building_option_note" }
             }
           ]
-        }
+        },
+        "value_states": { "$ref": "#/$defs/value_states" }
       }
     },
     "building_option_note": {

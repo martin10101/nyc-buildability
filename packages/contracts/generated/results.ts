@@ -11,6 +11,35 @@ export type Bbl = string;
 export type BoroughName = "Manhattan" | "Bronx" | "Brooklyn" | "Queens" | "Staten Island";
 export type DateTime = string;
 export type NonEmptyString = string;
+export type ValueStates = null | {
+  [key: string]: ValueState;
+};
+export type ValueState = {
+  way: "settled";
+} | {
+  way: "conditional";
+  conditions: ValueCondition[];
+} | {
+  way: "withheld";
+  label: NonEmptyString;
+  reason: NonEmptyString;
+  gap_kind: GapKind;
+  resolved_by: NonEmptyString;
+  zr_sections?: ZrSection[];
+};
+export interface ValueCondition {
+  kind: "user_statement" | "contradicted_record" | "unchecked_condition";
+  assumption: NonEmptyString;
+  settled_by: NonEmptyString;
+}
+export type GapKind = "missing_information" | "work_owed";
+export interface AnswerNotAvailable {
+  status: "not_available";
+  reason: NonEmptyString;
+  reason_kind: "missing_input" | "rule_not_implemented" | "rule_not_reviewed" | "eligibility_unresolved" | "geometry_unsupported";
+  resolved_by?: NonEmptyString | null;
+  gap_kind?: GapKind | null;
+}
 export interface Scope {
   basis: "tax_lot_only";
   label: "Tax-lot-only estimate";
@@ -67,18 +96,20 @@ export interface NotApplicable {
   status: "not_applicable";
   reason: NonEmptyString;
 }
-export type Answer = AnswerAvailable | NotAvailable;
+export type Answer = AnswerAvailable | AnswerNotAvailable;
 export interface AnswerAvailable {
   status: "available";
   values: AnswerValue[];
   measurement: MeasurementKnown;
+  value_states?: ValueStates;
 }
-export type BuildingOptionAnswer = BuildingOptionAnswerAvailable | NotAvailable;
+export type BuildingOptionAnswer = BuildingOptionAnswerAvailable | AnswerNotAvailable;
 export interface BuildingOptionAnswerAvailable {
   status: "available";
   values: AnswerValue[];
   measurement: MeasurementKnown;
   notes?: null | BuildingOptionNote[];
+  value_states?: ValueStates;
 }
 export interface BuildingOptionNote {
   text: NonEmptyString;
@@ -303,7 +334,7 @@ export interface Goal {
   text: NonEmptyString | null;
 }
 export interface Results {
-  contract_version: "1.0.0" | "1.1.0" | "1.2.0";
+  contract_version: "1.0.0" | "1.1.0" | "1.2.0" | "1.3.0";
   results_id: NonEmptyString;
   study_id: NonEmptyString;
   option_id: NonEmptyString;
