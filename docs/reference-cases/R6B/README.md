@@ -37,7 +37,7 @@ a page rendered from it that a person can read. The helper returns are kept unch
 `provenance/`: the two first-round returns, the two step-P1 readings and the two step-P2
 commercial-overlay readings.
 
-## Law text: what steps P1 and P2 captured, and what is still not captured
+## Law text: what steps P1 and P2 captured, and what the readers did not have
 
 **Step P1** (task M4-T025) captured the law text these cases waited for, and task M4-T027 worked the
 rows from it (see `cases/step-p1-worked.json`): the ZR 12-10 definitions of a corner, interior and
@@ -52,8 +52,13 @@ find the C2-2 overlay changes only the street-wall location rule (from the R6B l
 to the percentage rule of ZR 35-631(b)) and leaves the floor area ratio, lot coverage, dwelling units,
 base and building heights, the setback and the all-residential rear yard the same as plain R6B.
 
-Some readings still rely on law text that is not captured. These cases name each such item and record
-the affected value as "not known" where the text is needed for a number:
+The list below is the law text the readers did NOT have when they made these readings (on 2026-10-06
+and 2026-10-07). Wherever a case file says a text is "not captured" or "uncaptured", it means exactly
+that: it was not captured when that reading was made, so the readers did not have it. A text on the
+list may be captured later without having been read for these cases; `docs/research/zr-snapshots/v1/`
+shows what is captured now. Capturing a text changes no row on its own: a row changes only when two
+independent readings of the new text are made, under the rule in the next section. These cases name
+each such item and record the affected value as "not known" where the text is needed for a number:
 
 - **ZR 23-343** (rear yard equivalent requirements) - the rear yard for a through lot.
 - **ZR 23-434** (eligible sites) - the 65/50-percent lot-coverage branch of ZR 23-362(b).
@@ -62,12 +67,12 @@ the affected value as "not known" where the text is needed for a number:
 - The geographic **boundary definitions** of the *Manhattan Core* and the *Special Downtown Brooklyn
   District* - needed to place a lot in or out of a special density area.
 - The **base plane** and height-measurement rule for R6 through R12 districts.
-- The sections the **step P2** overlay readings point to that are still not captured: **ZR 34-21**,
+- The sections the **step P2** overlay readings point to that the readers did not have: **ZR 34-21**,
   **ZR 34-22** and **ZR 34-23** (exceptions to applicability of Residence District controls, pointed
   to by ZR 34-11); **ZR 36-64** (special-area height and setback); **ZR 35-71** (the optional
   sky-exposure-plane envelope); **ZR 35-64** (additional height and setback); **ZR 23-435** (towers);
   and **ZR 23-436** (the additional height and setback regulations that ZR 35-633 brings in) - so what
-  ZR 35-633 adds stays "not known". Also not captured: **ZR 23-41** (permitted obstructions, inside
+  ZR 35-633 adds stays "not known". Also not among what the readers had: **ZR 23-41** (permitted obstructions, inside
   the mixed-building rule of ZR 35-53) and the defined terms *Manhattan Core*, *mixed building* and
   *prevailing street wall frontage*.
 

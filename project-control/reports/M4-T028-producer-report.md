@@ -98,3 +98,13 @@ On top of 57a5d454. No expected value kind changed; no existing numeric/settled 
 - Pages re-rendered (6, byte-identical to data). No test change was needed (no pinned text or digest moved; "same as plain R6B" still present in each of the three values).
 
 Round 2 checks (services/api cwd; root for modularity): ruff exit 0; pytest `tests/rules/reference_cases` exit 0, 43 passed; renderer --check exit 0; modularity --check exit 0 (716 files, failures 0).
+
+## Round 3 (README wording) — the README says what the readers did not have, not what the repository lacks
+
+On top of 24401974. README only; no case file, row, page or test logic changed. The reason: other capture work may later add much of the law text this section lists, so "is not captured" would become a false statement about the repository while staying true about what the readers had. The cases must say the second thing and stay true either way.
+
+- Section title changed from "... and what is still not captured" to "Law text: what steps P1 and P2 captured, and what the readers did not have". No test or other README place pins the old title (the checker's README needles are lowercase phrases like "step p1" and the section-number strings, all unchanged).
+- The sentence "Some readings still rely on law text that is not captured. These cases name each such item ..." was replaced with a paragraph saying: the list is the law text the readers did NOT have when they read (2026-10-06 and 2026-10-07); "not captured"/"uncaptured" in a case file means not captured when that reading was made; a listed text may be captured later without being read for these cases, and `docs/research/zr-snapshots/v1/` shows what is captured now; capturing a text changes no row on its own - a row changes only when two independent readings of the new text are made, under the next section's rule.
+- In the list, "that are still not captured" -> "that the readers did not have"; "Also not captured:" -> "Also not among what the readers had:". Every list item kept (all NOT_CAPTURED_SECTIONS strings still present, so the checker still passes).
+
+Round 3 checks (services/api cwd): ruff exit 0 ("All checks passed!"); pytest `tests/rules/reference_cases` exit 0, 43 passed; renderer --check exit 0 ("reference-case check PASSED (no issues)").
