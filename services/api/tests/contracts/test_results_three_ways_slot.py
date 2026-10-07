@@ -22,6 +22,7 @@ fixture loaded read-only; no fixture file is added, changed or removed.
 
 from __future__ import annotations
 
+import importlib.util
 import json
 from pathlib import Path
 
@@ -312,11 +313,14 @@ def test_one_entry_mixing_two_ways_is_rejected() -> None:
 
 
 # ---------------------------------------------------------------------------
-# KNOWN LIMITS (reviewer C6 and C7b, both reproduced). JSON Schema 2020-12 cannot
-# express either rule in this shape or any other, so the contract does NOT refuse
-# these two wrong documents today; refusing them is owed to the validator of the
-# engine that first emits 1.3.0 (backlog row DB-171). strict=True makes each test
-# FAIL the day the gap is closed, forcing whoever closes it to remove the mark.
+# KNOWN LIMITS. The schema is expressed with only the keywords the repository's
+# contract validator accepts (.github/scripts/validate_contracts.py), so it does
+# NOT refuse three wrong documents: a shown value with no way entry (C7b), a key
+# both shown and withheld (C6), and an EMPTY value_states map on an available
+# answer (round 4 - the empty map is the same gap as a shown value with no entry).
+# Refusing them is owed to the validator of the engine that first emits 1.3.0
+# (backlog row DB-171). strict=True makes each test FAIL the day the gap is
+# closed, forcing whoever closes it to remove the mark.
 # ---------------------------------------------------------------------------
 
 
@@ -361,6 +365,26 @@ def test_KNOWN_LIMIT_a_key_both_shown_and_withheld_is_not_refused_by_the_schema(
         "gap_kind": "missing_information",
         "resolved_by": "a survey",
     }
+    with pytest.raises(StudyContractError):
+        validate_results_document(doc)
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="KNOWN LIMIT (DB-171): the schema uses only the keywords the repository's contract "
+    "validator accepts, which cannot require a non-empty object (no minProperties), so an EMPTY "
+    "value_states map on an available answer of a 1.3.0 document is NOT refused. An available "
+    "answer always has a shown value, so this is the same gap as a shown value with no entry. "
+    "Refusing it is owed to the validator of the engine that first emits 1.3.0; strict xfail "
+    "fails when that lands.",
+)
+def test_KNOWN_LIMIT_an_empty_way_map_is_not_refused_by_the_schema() -> None:
+    doc = _base_1_3_0()
+    # An available answer carries an EMPTY value_states map (present, satisfying the
+    # forward binding's 'required', but with no ways at all). The desired rule is
+    # that the contract refuses this; it does not today, so this assertion fails -> xfail.
+    doc["answers"]["floor_area_allowance"]["value_states"] = {}
+    assert doc["answers"]["floor_area_allowance"]["status"] == "available"
     with pytest.raises(StudyContractError):
         validate_results_document(doc)
 
@@ -448,3 +472,28 @@ def test_shown_value_number_stays_a_number_in_generated_types() -> None:
 
 def test_runtime_copy_accepts_a_1_3_0_document() -> None:
     validate_results_document(_base_1_3_0())
+
+
+# ---------------------------------------------------------------------------
+# Round 4 guard: the repository's contract validator (.github/scripts/
+# validate_contracts.py, CI job "contracts") accepts only a fixed keyword subset.
+# Run its structural check over results.schema.json so a keyword outside that
+# subset (the round-4 CI failure: minProperties / propertyNames) can never reach
+# CI unseen from the api test suite. Loaded by path - it is a standalone stdlib
+# script whose module-level code defines functions and does not run main() unless
+# invoked as __main__ - so importing it here is sound; skip only if the repo tree
+# (and thus the CI script) is absent from this checkout.
+# ---------------------------------------------------------------------------
+
+
+def test_repository_contract_validator_accepts_results_schema() -> None:
+    validator_path = REPO_ROOT / ".github" / "scripts" / "validate_contracts.py"
+    if not validator_path.exists():
+        pytest.skip("repository contract validator not present in this checkout")
+    spec = importlib.util.spec_from_file_location("results_slot_vc_guard", validator_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    schema = _load(REPO_ROOT / "packages" / "contracts" / "schemas" / "v1" / "results.schema.json")
+    errors: list[str] = []
+    module.structural_check(schema, schema["$id"], "#", errors, [])
+    assert errors == [], errors

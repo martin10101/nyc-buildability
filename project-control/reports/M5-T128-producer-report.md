@@ -23,9 +23,10 @@ Version `1.3.0` is appended to the closed `contract_version` enum. Two optional,
    shortfall, geometry layers, add-on gains…) keeps the UNCHANGED shared `not_available`.
 
 Required-when: both carriers are optional. Reverse binding — a document carrying any non-null
-`value_states` or any non-null answer-level `resolved_by`/`gap_kind` MUST declare `1.3.0`. Forward
-binding — a document that declares `1.3.0` MUST carry a non-empty `value_states` on every AVAILABLE
-answer (a not-available answer owes none). The `scope` (1.1.0) and `notes` (1.2.0) version-binding
+`value_states` (even an empty map) or any non-null answer-level `resolved_by`/`gap_kind` MUST declare
+`1.3.0`. Forward binding — a document that declares `1.3.0` MUST carry a `value_states` map on every
+AVAILABLE answer (a not-available answer owes none); the schema cannot require that map to be
+non-empty (round 4 — see below). The `scope` (1.1.0) and `notes` (1.2.0) version-binding
 clauses were widened to admit `1.3.0` so a 1.3.0 document may still carry scope/notes (additive:
 admits more, rejects nothing previously valid).
 
@@ -47,19 +48,22 @@ admits more, rejects nothing previously valid).
   become schema-rejectable": object-key uniqueness holds only WITHIN the map and says nothing about
   the separate `values[]` array. Both uncovered rules are owed to the validator of the engine that
   first emits 1.3.0 (backlog row DB-171); the forward binding only guarantees the way-layer is
-  present and non-empty and that every entry it carries states a way.
+  present and that every entry it carries states a way (round 4: it cannot require the map be
+  non-empty either — subset keywords only).
 
 ## Properties (a)–(h) and the test that proves each
 - (a) every valid doc stays valid, every invalid stays invalid →
   `test_every_valid_results_fixture_still_validates`, `test_every_invalid_results_fixture_still_rejected`.
 - (b) new fields optional; any binds 1.3.0 →
   `test_value_states_under_a_lower_version_is_rejected`, `test_not_available_resolution_fields_bind_1_3_0`.
-- (c) in 1.3.0 the way-layer is mandatory on every available answer (present, non-empty) and every
+- (c) in 1.3.0 the way-layer is mandatory on every available answer (present) and every
   entry it carries states a way → `test_value_state_that_states_no_way_is_rejected`,
-  `test_available_answer_without_a_way_layer_is_rejected_at_1_3_0`. PARTIAL: the schema does NOT
-  refuse a shown value in `values[]` with no way entry (settled by silence) — JSON Schema 2020-12
-  cannot quantify it; pinned as a known limit (`test_KNOWN_LIMIT_a_shown_value_with_no_way_entry_is_not_refused_by_the_schema`,
-  xfail strict) and owed to the engine validator (DB-171).
+  `test_available_answer_without_a_way_layer_is_rejected_at_1_3_0`. PARTIAL (subset keywords only):
+  the schema does NOT refuse a shown value in `values[]` with no way entry, nor an EMPTY `value_states`
+  map (round 4 — same gap; an available answer always has a shown value) — both are settled by
+  silence; pinned as known limits (`test_KNOWN_LIMIT_a_shown_value_with_no_way_entry_is_not_refused_by_the_schema`,
+  `test_KNOWN_LIMIT_an_empty_way_map_is_not_refused_by_the_schema`, both xfail strict) and owed to
+  the engine validator (DB-171). An ABSENT map on an available answer IS still refused (that test).
 - (d) shown value keeps its value object/number; conditional ≥1 condition; settled none →
   `test_conditional_value_names_its_assumptions`, `test_conditional_without_a_condition_is_rejected`,
   `test_conditional_with_an_empty_condition_list_is_rejected`, `test_settled_value_with_a_condition_is_rejected`.
@@ -133,7 +137,11 @@ gain `value_states?`; `Results.contract_version` adds `"1.3.0"`. **`AnswerValue`
 Round 1 (schema + tests at 7abdba88): a ruff → 0; b `pytest tests/contracts` → 0 (474 passed);
 c readers → 0 (1424 passed, 8 skipped); d sync/generate `--check` → 0 (byte-identical, all .ts in
 step); e modularity → 0, lane-paths → 0 (9013 files), generator harness → 0 (74 passed); f forbidden
-paths diff empty; g new field names unused outside the bundled copy.
+paths diff empty; g new field names unused outside the bundled copy. CORRECTION (round 4): round 1
+also claimed "no separate schema validator exists beyond tests/contracts and the generator harness" —
+WRONG. The repository also runs `.github/scripts/validate_contracts.py` (CI "contracts") and
+`.github/scripts/tests` (CI "validation-suite"), a stricter keyword-subset validator that round 1
+did not run and that later failed on `minProperties`/`propertyNames` — see the Round 4 section.
 
 Round 2 (test + report only; schema/copy/types unchanged):
 - a. `python -m ruff check .` (services/api) → exit 0 ("All checks passed!").
@@ -222,3 +230,75 @@ citations already in the file ("contract 1.3.0, M5-T128, ...", matching 1.1.0/1.
   services/api/app/_contract_schemas/v1/results.schema.json; project-control/reports/M5-T128-producer-report.md.
   (packages/contracts/generated/results.ts unchanged — descriptions do not flow into it; the test
   file unchanged — no test pins a description.)
+
+## Round 4 — value_states uses only keywords the repository's contract validator accepts
+WHAT CI CAUGHT. After re-review the branch was pushed and two checks failed — CI job "contracts"
+(`.github/scripts/validate_contracts.py`) and CI job "validation-suite" (`.github/scripts/tests`,
+the test `test_full_validator_run_exits_zero`). Cause: that validator accepts only a fixed
+`KNOWN_KEYWORDS` subset of JSON Schema and fails closed on anything else; `$defs/value_states` used
+`minProperties` and `propertyNames`, both outside the subset. Reproduced before fixing: the validator
+printed two FAIL lines for `#/$defs/value_states/anyOf/1` and exited 1; the validation-suite gave 1
+failed, 23 passed.
+
+WHY IT WAS MISSED. The round-1 report said "No separate fixture/schema validator exists beyond
+tests/contracts and the generator harness" — that was WRONG. The repository has a second, stricter
+contract validator under `.github/**` (the "contracts" and "validation-suite" CI jobs) that none of
+the producer, reviewer or orchestrator ran. The validator is CI tooling and is forbidden to this
+task; by the orchestrator's decision it is NOT changed — the schema is expressed with subset
+keywords only.
+
+NON-DESCRIPTION SCHEMA CHANGE (the whole of it): in `$defs/value_states`, the object branch lost two
+lines — `"minProperties": 1,` and `"propertyNames": { "pattern": "^[a-z][a-z0-9_]*$" }`. The
+remaining `"additionalProperties": { "$ref": "#/$defs/value_state" }` line changed only by dropping
+its now-trailing comma (it is the last key). No keyword, enum, type or required list changed anywhere
+else. Searched the whole schema for every out-of-subset keyword (`minProperties maxProperties
+propertyNames patternProperties not if then else uniqueItems dependentRequired dependentSchemas
+contains minContains maxContains prefixItems unevaluatedProperties/Items multipleOf $dynamic* $anchor
+$vocabulary contentEncoding contentMediaType`): only `minProperties` and `propertyNames` were
+present, both in value_states; none remain.
+
+WHAT THE SCHEMA NO LONGER REFUSES, and how each is said and pinned:
+1. An EMPTY `value_states` map on an available answer (no `minProperties`). Because an available
+   answer always has at least one shown value, an empty map is the same gap as "a shown value with no
+   way entry" — already owed to the engine validator (DB-171). Said in the `value_states`, forward-
+   binding and `contract_version` descriptions; pinned by new strict-xfail
+   `test_KNOWN_LIMIT_an_empty_way_map_is_not_refused_by_the_schema`.
+2. The FORM of the map's keys (no `propertyNames`). The keys must equal the answer's value keys,
+   whose form is checked on the value object (`answer_value.key`'s pattern). Said in the
+   `value_states` description. Neither rule could be re-expressed with subset keywords without
+   changing the shape, so no workaround was invented.
+
+ABSENT MAP STILL REFUSED: yes — the forward-binding clause still lists `value_states` in `required`
+for an available answer, so an absent map on an available 1.3.0 answer is still rejected
+(`test_available_answer_without_a_way_layer_is_rejected_at_1_3_0`, a plain passing test).
+
+GUARD ADDED: `test_repository_contract_validator_accepts_results_schema` loads
+`.github/scripts/validate_contracts.py` by path and runs its `structural_check` over
+`results.schema.json`, asserting no keyword error — so this failure class cannot return unseen from
+the api suite. It is sound (the .github tests themselves import that module in-process; loading by
+path does not run `main()`); it skips only if the repo tree is absent from the checkout.
+
+"non-empty" wording corrected in the schema (forward-binding clause, `value_states`, the 1.3.0
+passage of `contract_version`) and in this report (the shape summary, property (c)); the round-3
+historical quotes above are left as the record of what round 3 said. The round-1 "no separate
+validator" sentence is corrected here.
+
+### Round 4 checks (direct exit codes)
+- a. `python .github/scripts/validate_contracts.py` → exit 0 (last line "Checked 23 schema file(s);
+  0 failure(s)."; `OK results.schema.json`); `pytest .github/scripts/tests` → exit 0 (24 passed,
+  was 23 passed + 1 failed).
+- b. `ruff check .` (services/api) → 0; `pytest tests/contracts -rx` → 0 (475 passed, 3 xfailed — the
+  three DB-171 KNOWN_LIMIT tests); readers (`tests/scenario/three_answers tests/journey tests/cad
+  tests/drawings`) → 0 (1424 passed, 8 skipped).
+- c. `sync_contract_schemas.py --check` → 0; `generate_ts_types.py --check` → 0;
+  `pytest packages/contracts/scripts/tests` → 0 (74 passed).
+- d. the two fixture-verdict tests `test_every_valid_results_fixture_still_validates` and
+  `test_every_invalid_results_fixture_still_rejected` both pass (inside the 475) — every valid
+  results fixture still validates and every invalid one is still refused.
+- e. `git diff --stat 906bd518 HEAD`: results.schema.json; its runtime copy; the test file; this
+  report (generated results.ts does NOT move — `minProperties`/`propertyNames` never affected the
+  emitted TS). Non-description schema lines changed: the two removals above only.
+- Files changed round 4: packages/contracts/schemas/v1/results.schema.json;
+  services/api/app/_contract_schemas/v1/results.schema.json;
+  services/api/tests/contracts/test_results_three_ways_slot.py;
+  project-control/reports/M5-T128-producer-report.md.
