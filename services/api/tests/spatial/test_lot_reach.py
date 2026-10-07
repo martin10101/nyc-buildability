@@ -30,6 +30,7 @@ from app.spatial.site_geometry import (
     StreetData,
     derive_site_geometry,
     lot_outline_from_mappluto,
+    refused_site_geometry,
     street_data_from_pages,
 )
 from app.spatial.site_geometry.labels import LABEL_TAX_MAP, LABEL_UNKNOWN
@@ -209,6 +210,7 @@ def test_interior_lot_gives_its_one_reach_and_no_corner():
     geometry, result = _measure(points, main)
     assert geometry.lot_type.kind == "interior"
     reaches = _reach_by_street(result)
+    # 100.0 is this constructed rectangle's own depth, not a reference-case number.
     assert reaches["Main Street"].value == pytest.approx(100.0, abs=REACH_TOL_FT)
     assert reaches["Main Street"].label == LABEL_TAX_MAP
     corner = result.corner
@@ -224,6 +226,7 @@ def test_through_lot_gives_both_reaches_but_no_corner():
     geometry, result = _measure(points, main, back)
     assert geometry.lot_type.kind == "through"
     reaches = _reach_by_street(result)
+    # 100.0 is this constructed rectangle's own depth, not a reference-case number.
     assert reaches["Main Street"].value == pytest.approx(100.0, abs=REACH_TOL_FT)
     assert reaches["Back Street"].value == pytest.approx(100.0, abs=REACH_TOL_FT)
     corner = result.corner
@@ -239,6 +242,7 @@ def test_uncertain_frontage_reach_is_unknown():
     first = _street_for_edge("First Avenue", (0.0, 100.0), (0.0, 0.0), "80", extra_offset=16.0)
     geometry, result = _measure(points, main, first)
     reaches = _reach_by_street(result)
+    # 100.0 is this constructed rectangle's own depth, not a reference-case number.
     assert reaches["Main Street"].value == pytest.approx(100.0, abs=REACH_TOL_FT)
     assert reaches["First Avenue"].value is None
     assert reaches["First Avenue"].label == LABEL_UNKNOWN
@@ -261,6 +265,39 @@ def test_bending_frontage_reach_is_unknown():
     reach = _reach_by_street(result)["Bend Street"]
     assert reach.value is None and reach.label == LABEL_UNKNOWN
     assert "not straight" in reach.reason
+
+
+def test_more_than_two_confirmed_streets_give_reaches_but_no_corner():
+    # Three confirmed frontages (bottom, right and left of a 100x50 lot). Each street's reach is
+    # still given; there is no single corner, so the corner values are unknown with their reason.
+    points = [(0.0, 0.0), (100.0, 0.0), (100.0, 50.0), (0.0, 50.0)]
+    main = _street_for_edge("Main Street", (0.0, 0.0), (100.0, 0.0))
+    east = _street_for_edge("East Street", (100.0, 0.0), (100.0, 50.0))
+    west = _street_for_edge("West Street", (0.0, 50.0), (0.0, 0.0))
+    geometry, result = _measure(points, main, east, west)
+    reaches = _reach_by_street(result)
+    assert set(reaches) == {"Main Street", "East Street", "West Street"}
+    for reach in reaches.values():
+        assert reach.value is not None and reach.label == LABEL_TAX_MAP
+    corner = result.corner
+    assert corner.reach.value is None and corner.angle.value is None
+    assert corner.reach.label == LABEL_UNKNOWN and corner.corner_point is None
+    assert "more than two streets" in corner.reach.reason.lower()
+
+
+def test_outline_present_but_geometry_refused_leaves_everything_unknown():
+    # The guard also fires when the outline prepared but the site geometry is refused: no reach
+    # is measured and every corner value is unknown with the refusal reason.
+    prepared, _reason = prepare_outline(_lot([(0.0, 0.0), (25.0, 0.0), (25.0, 100.0),
+                                              (0.0, 100.0)]))
+    assert prepared is not None
+    refused = refused_site_geometry("the recorded outline was refused for this lot")
+    result = lot_reach.measure_lot_reach(prepared, refused)
+    assert result.street_lines == ()
+    corner = result.corner
+    assert corner.reach.value is None and corner.reach.label == LABEL_UNKNOWN
+    assert corner.angle.value is None and corner.corner_point is None
+    assert "refused for this lot" in corner.reach.reason
 
 
 # --------------------------------------------------------------------------- S4 measurements only

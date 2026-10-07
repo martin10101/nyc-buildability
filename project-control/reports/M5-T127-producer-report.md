@@ -132,3 +132,33 @@ Run with `/root/project/lanes-runtime/venv/bin/python`, `PYTHONDONTWRITEBYTECODE
   re-indexes the ring, so the same geometric corner is the prepared outline's vertex 3. The
   measured corner reach (144.60 ft) matches the reference, so the labels differ but the geometry
   agrees.
+
+## Round 2 (review notes F1–F3; no measurement changed)
+
+Applied the independent review's three notes (it passed G3 and G4 with no must-fix). No computed
+value, constant or reference comparison changed; the module is 245 lines (still well under the
+warning threshold).
+
+- **F1 — the carried angle stated plainly.** Added one sentence to the `CornerReach` docstring
+  and one clause to the angle value's basis text: the carried angle is the site-geometry interior
+  angle at the shared corner vertex (between the two lot lines that meet there), exact when each
+  frontage is a single lot line, and slightly different from the angle between the averaged street
+  lines whose crossing is the corner point when a frontage is made of several lot lines. No value
+  changed (benchmark angle stays 89.7°; rectangles 90.0°).
+- **F2 — two untested guards.** Added `test_more_than_two_confirmed_streets_give_reaches_but_no_corner`
+  (a 100×50 lot with confirmed frontages on three sides: each street's reach is given — 50/100/100
+  ft — and the corner is unknown, "more than two streets front the lot …") and
+  `test_outline_present_but_geometry_refused_leaves_everything_unknown` (a valid prepared outline
+  passed with a `refused_site_geometry(...)`: no street lines, every corner value unknown with the
+  refusal reason). Both build offline with the existing synthetic helpers; no other file touched.
+- **F3 — clarifying comments.** Added a one-line comment at the interior, through and
+  uncertain-frontage tests noting the literal `100.0` is the constructed rectangle's own depth,
+  not a reference-case number.
+
+Round 2 checks (same runner, from `services/api`; d from the repo root):
+- `python -m ruff check .` → **EXIT 0** ("All checks passed!").
+- `python -m pytest -q -p no:cacheprovider tests/spatial/test_lot_reach.py` → **EXIT 0** (14 passed).
+- `python -m pytest -q -p no:cacheprovider tests/spatial tests/rules/reference_cases` → **EXIT 0**
+  (449 passed).
+- `python3 tools/modularity_check.py --check` → **EXIT 0** (716 files; failures 0; no signal for
+  `lot_reach.py`).

@@ -68,9 +68,13 @@ class CornerReach:
     ``corner_point`` is the (x, y) in EPSG:2263 feet where the two street lines cross;
     ``angle`` is the angle between the two street lines there (carried from the site_geometry
     corner relation); ``reach`` is the farthest straight-line distance of any point of the
-    outline from ``corner_point``. All three are unknown, ``corner_point`` is None and the two
-    street names are None when there is no such corner (no confirmed straight pair, streets on
-    opposite sides, more than two streets, or no usable outline).
+    outline from ``corner_point``. The carried ``angle`` is the site-geometry interior angle at
+    the shared corner vertex, between the two lot lines that meet there; it is exactly the angle
+    between the two street lines the reaches are measured from when each frontage is a single lot
+    line, and can differ slightly when a frontage is made of several lot lines. All three are
+    unknown, ``corner_point`` is None and the two street names are None when there is no such
+    corner (no confirmed straight pair, streets on opposite sides, more than two streets, or no
+    usable outline).
     """
 
     first_street: str | None
@@ -212,7 +216,8 @@ def _corner_reach(
                           "not cross at a single point.")
     names = f"{relation.first} and {relation.second}"
     angle_basis = (f"The angle between the {names} street lines where they meet, carried from "
-                   "the site-geometry corner relation")
+                   "the site-geometry corner relation (the interior angle at the shared corner "
+                   "vertex; exact when each frontage is a single lot line)")
     reach_basis = (f"The farthest straight-line distance of any point of the {source} outline "
                    f"from the point where the {names} street lines meet")
     angle = (tax_map_value(relation.angle_deg, "degrees", angle_basis)
