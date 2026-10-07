@@ -106,8 +106,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "An example repaired by changing the stated outline to match the sum without a building that makes sense (rooms with no corridor to reach them) -> the reviewers read the layout, not only the sum",
     "A statement of law written from the reviewer's message or from memory -> S8",
@@ -116,7 +116,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:41.852253+00:00",
-  "updated_at": "2026-10-07T22:07:44.177637+00:00",
+  "updated_at": "2026-10-07T22:34:52.301597+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -190,5 +190,7 @@
       "status": "in_progress",
       "message": "SECOND REVIEWS at 7c67cbea (the content of the builder's third commit, 55cf2ac4). GATE G3 (data-contract-verifier): PASS; its finding F1 is closed (the diff of Example B's data is the one corrected line; the rendered page follows); its own sweep for figures of the old layouts found none left; the record and Examples A and C are unchanged; every quote still stands in its capture. GATE G4 (qa-engineer): PASS; the fit check now reports every floor in one run; all of its 14 mutations still make the examples' checks fail (the stair that skips a floor only through another check: its note F2 stands and is carried as backlog row DB-182); the new cap test fails on the old file and on two mutations of its own and takes its expected value from the data; one new note, F4 (that test recognises the sentence by its exact wording; carried in DB-182). The task is reviewed at its final content (material commits 38efb977, cacac6aa, 55cf2ac4). The full services/api suite, run alone at fedd6ca1: 8519 passed, 8 skipped, exit 0. Evidence map written."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T22:34:52.301438+00:00"
 }

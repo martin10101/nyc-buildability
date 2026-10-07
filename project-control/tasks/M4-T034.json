@@ -77,8 +77,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A section number taken from the reviewer's message instead of found on the site -> the targets are named by what they are; the builder reports what the site shows",
     "A term reported as not defined that sits under an inverted or combined title (seen in M4-T029) -> S1",
@@ -87,7 +87,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:42.747766+00:00",
-  "updated_at": "2026-10-07T22:07:45.850317+00:00",
+  "updated_at": "2026-10-07T22:34:53.345314+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -147,5 +147,7 @@
       "status": "in_progress",
       "message": "CONFIRMATION by the same reviewer at 37563716 (the content of the builder's second commit, b35cacfb, the report only): GATE G3 PASS and GATE G4 PASS; its findings F1 and F2 are closed (the two sentences now give the sections' own words, checked against the captures); the five further paraphrases the builder turned into quotes each stand in their capture or page; the children of the header 35-30 checked against the site's contents page; no capture changed; one new note, F7 (a few short labels that mirror section titles). The task is reviewed at its final content (material commits 3736a22d, b35cacfb). The full services/api suite, run alone at fedd6ca1: 8519 passed, 8 skipped, exit 0. Evidence map written."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T22:34:53.345143+00:00"
 }
