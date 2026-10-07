@@ -300,8 +300,9 @@ def test_one_entry_mixing_two_ways_is_rejected() -> None:
     # One value_state entry that carries BOTH a shown way (way: settled) and the
     # fields of a withheld way (label/reason/gap_kind/resolved_by) matches none of
     # the three closed value_state branches and is rejected. NOTE: this is NOT the
-    # "same key shown in values[] and withheld in the map" case - the schema does
-    # NOT refuse that (see the KNOWN_LIMIT xfail tests below).
+    # "same key shown in values[] and withheld in the map" case - the schema alone
+    # does NOT refuse that (see the tests below that show the validator's shared rule
+    # refusing what the schema alone accepts).
     states["max_residential_far"] = {
         "way": "settled",
         "label": "Maximum residential FAR",

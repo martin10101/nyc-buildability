@@ -144,3 +144,5 @@ Allowed paths only: `services/api/app/contracts/results_way_rules.py` (new),
 `services/api/tests/contracts/test_results_three_ways_slot.py` (the three tests, round 2), and this
 report. The schema, its runtime copy, the generated types and every fixture are byte-unchanged.
 Nothing emits contract 1.3.0 after this task.
+
+round 3: one stale comment in test_one_entry_mixing_two_ways_is_rejected reworded at the orchestrator's instruction
