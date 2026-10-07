@@ -115,11 +115,14 @@ captured citations; 10/10 record law block-quotes; 8/8 digests; R6B table number
   floors exist, then "preliminary capacity estimate"; what the user must see and edit. Each
   carries: recommended by the owner's reviewer on 2026-10-07; NOT decided until the owner says
   so.
-- **8b Questions of law** (settled by capture and reading, never by preference): the order of
-  the amenity 5% calculation; how a mixed building combines residential + commercial floor
-  areas (ZR 35-31 not captured yet); the eligibility of the energy and wall exclusions; the
-  dwelling-unit factor pointer (ZR 23-52 vs the reviewer's 23-22 link). Former points 5, 6, 7
-  moved here.
+- **8b Questions of law** (settled by capture and reading, never by preference): THREE items -
+  the order of the amenity 5% calculation; how a mixed building combines residential +
+  commercial floor areas (ZR 35-31 not captured yet); the eligibility of the energy and wall
+  exclusions. (Round 2: the fourth item, "the dwelling-unit factor and where the current text
+  sits", was REMOVED - it is not a question of law and it repeated a misreading, since
+  corrected in backlog DB-178 point (g), that the reviewer's ZR 23-22 link differed from the
+  repository; no difference exists, and section 5 already states the factor from capture
+  `zr-23-52`.) Former points 5, 6, 7 moved here.
 - **8c** unequal floors (R6B 45 ft base / 55 ft building; setback above base per ZR 23-432/
   23-433; the program does not work out the setback yet). **8d** what the estimator would need.
 

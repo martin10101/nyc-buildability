@@ -469,12 +469,6 @@ doubt. None is put to the owner as a preference (R515).
    example takes it. A user's statement supports only a conditional result; it never
    establishes eligibility. There is no general "confirm it applies" choice.
 
-4. **The dwelling-unit factor and where the current text sits.** The legal unit cap uses the
-   dwelling-unit factor 680 under ZR 23-52 (section 5; capture `zr-23-52`). The reviewer's
-   message linked the dwelling-unit rule at ZR 23-22; in the captured current text, ZR 23-22
-   holds the residential floor-area ratios for R6-R12 and the dwelling-unit factor is in ZR
-   23-52 (both captured). This is a pointer for the owner, not a difference in the law.
-
 ### 8c. How an assumption changes the count, and why floors are not equal (R519)
 
 **Direction only, no number computed here.** A larger assumed average apartment size would
