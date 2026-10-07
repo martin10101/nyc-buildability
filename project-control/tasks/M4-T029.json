@@ -82,13 +82,13 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "legal-corpus-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "A table (heights, obstructions) captured with a cell wrong or missing -> S3 and S4: an independent re-read, cell by cell",
     "A defined term that is not where the packet assumes -> S1: the report says where it is and it is not captured from a guess",
@@ -96,7 +96,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T06:42:22.489953+00:00",
-  "updated_at": "2026-10-07T06:42:22.883863+00:00",
+  "updated_at": "2026-10-07T06:43:06.741155+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -113,5 +113,15 @@
     "cd services/api && python scripts/sync_zr_snapshots.py --check",
     "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py tests/rules/test_zoning_rule_review_register.py",
     "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ],
+  "worktree": "/root/project/w-wave2",
+  "progress_log": [
+    {
+      "at": "2026-10-07T06:43:06.741073+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed in wave 2 at the contract head 3a08b2c6 (integration head 4fc0d85c); builder legal-corpus-engineer in an isolated worktree; see project-control/reports/WAVE2-2026-10-07-concurrency-record.md."
+    }
   ]
 }
