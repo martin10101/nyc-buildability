@@ -116,6 +116,30 @@ change and engine-free support files - all covered by the committed tests.
 - No internal ledger task ids appear in the reader-facing record or example pages; directive
   D-090 requirement ids are retained as the owner's own provenance vocabulary.
 
+## Round 2 (review note F1) - the amenity cap's base tied to stated figures
+
+What changed and why: the review found that example B's amenity/laundry 5% cap candidate used
+an untraced base of 13,000 sq ft (stated nowhere else and larger than both the example's
+measured residential zoning floor area 11,291 and its stated maximum 12,000). To make the
+number traceable without deciding the legal base, that single candidate was replaced by two
+candidates, each tied to a figure the example itself states: 5% of the measured residential
+zoning floor area (11,291 x 0.05 = 564.55 sq ft) and 5% of the stated maximum residential
+floor area (12,000 x 0.05 = 600 sq ft). The row's note now says this is shown only to
+illustrate the cap's arithmetic, that the 480 sq ft amenity room is within the cap on every
+stated figure (480 <= 564.55 and 480 <= 600), so the cap does not bind and no base need be
+chosen, and that which figure the law's "residential floor area" means is not sure (open
+point 5); it does not decide the legal base. The amenity exclusion stays 480 sq ft.
+
+Unchanged (verified): example B residential zoning floor area 11,291 sq ft, total HPD
+dwelling-unit area 6,800 sq ft, ratio 0.6022, and all nine reconciliation bridge steps
+(sum 4,491 sq ft). The rendered example B page did not change (candidates are not rendered),
+so its totals, ratio and reconciliation are byte-identical. Examples A and C, the record text
+and all other files are unchanged. Only `example-b-allowances-conditions-shown.json` changed.
+
+Round 2 checks (direct exit codes): ruff check . -> 0; pytest tests/scenario/measurement_basis
+-> 0 (27 passed); renderer --check -> 0 (pages byte-identical); modularity_check.py --check
+-> 0 (failures 0).
+
 ## Requested status
 
 awaiting_gate (G0 already recorded at the claim seam; requesting G2 producer self-check and

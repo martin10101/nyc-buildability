@@ -697,16 +697,25 @@
           "method": "min_of",
           "candidates": [
             {
-              "label": "5 percent of the residential floor area (base stated for this example)",
+              "label": "5 percent of this example's measured residential zoning floor area (11,291 sq ft)",
               "operation": "multiply",
               "operands": [
-                "13000",
+                "11291",
                 "0.05"
               ],
-              "result": 650
+              "result": 564.55
+            },
+            {
+              "label": "5 percent of this example's stated maximum residential floor area (12,000 sq ft)",
+              "operation": "multiply",
+              "operands": [
+                "12000",
+                "0.05"
+              ],
+              "result": 600
             }
           ],
-          "note": "The 5% cap (about 650 sq ft here) does not bind; the whole 480 sq ft is within it. The exact legal base for the 5% is an open point."
+          "note": "Shown only to illustrate the cap's arithmetic. The 480 sq ft amenity room is within the 5% cap on every figure this example states: 564.55 sq ft (5% of the 11,291 sq ft measured residential zoning floor area) and 600 sq ft (5% of the 12,000 sq ft stated maximum). So the cap does not bind and no base need be chosen. Which figure the law's 'residential floor area' means for this cap is not sure (open point 5 of the record); this record does not decide it."
         },
         "citations": [
           {
