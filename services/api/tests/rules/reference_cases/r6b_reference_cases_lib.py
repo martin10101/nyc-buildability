@@ -37,10 +37,14 @@ SNAPSHOT_DIR = REPO_ROOT / "docs" / "research" / "zr-snapshots" / "v1"
 # case (step-p1-worked) holds the rows worked from the step-P1 captures (M4-T027);
 # the sixth (overlay-reading) holds the commercial-overlay reading worked from the
 # step-P2 captures (M4-T028); the seventh (step-p3-worked) holds the readings worked
-# from the law text captured by task M4-T029 and read independently in step P3 (M4-T030).
+# from the law text captured by task M4-T029 and read independently in step P3 (M4-T030);
+# the eighth (step-p4-worked) holds the readings worked from the law text captured by
+# task M4-T031 and read independently in step P4 (M4-T032): ZR 34-22 and 34-23 and their
+# sections, ZR 35-22 and 35-62 to 35-643, ZR 23-44, and the lot-coverage, yard, street-wall,
+# large-site, qualifying-residential-site, dwelling-unit and qualifying-housing definitions.
 CASE_IDS = (
     "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
-    "overlay-reading", "step-p3-worked",
+    "overlay-reading", "step-p3-worked", "step-p4-worked",
 )
 
 # The base ids every one of the work order's table rows must appear under (S1).
@@ -67,6 +71,16 @@ REQUIRED_BASE_IDS = {
         "special-downtown-brooklyn-district", "height-measured-from-base-plane",
         "base-plane-real-lot", "zr-23-434", "zr-23-362b",
         "residence-residential-definition", "floor-area-share-bases",
+        "sections-and-facts-not-had",
+    ],
+    "step-p4-worked": [
+        "zr-34-22-sections", "zr-34-23-sections", "floor-area-ratio", "lot-coverage",
+        "rear-yard", "overlay-text-on-lot-coverage", "zr-35-sections",
+        "mixed-building-definition", "lot-coverage-definition", "yard-definitions",
+        "rear-yard-obstructions", "street-wall-definitions", "real-lot-prevailing-frontage",
+        "large-site", "qualifying-residential-site", "zr-34-111-exceptions",
+        "dwelling-unit-and-qualifying-housing-definitions", "dwelling-unit-factors",
+        "made-up-100x100-units", "zr-23-441-reach", "zr-23-442-reach", "zr-23-443-reach",
         "sections-and-facts-not-had",
     ],
 }

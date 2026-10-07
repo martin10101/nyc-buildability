@@ -70,6 +70,11 @@
       "date": "2026-10-07",
       "summary": "Round 2 (review findings F2, F3): row section-35-633 is marked superseded_by step-p3-worked#zr-23-436-paragraphs and step-p3-worked#zr-35-633-paragraphs, the step-P3 rows that read the now-captured Section 23-436 and hold the current answer; kept as the historical record of what the step-P2 readers could settle, and the loader no longer hands it out as current. Separately (F3), every case-level and row sentence that said 'the repository does not hold' or 'not captured'/'uncaptured' in the present tense is brought into 'the step-P2 readers did not have' form, true whatever is captured later; the not-captured row's value is reworded keeping every item it lists - this is a rewording, not a change of what it names. No expected value or kind changed. Reason: a corrected reading - one current expected answer per question, and wording made true whatever is captured later.",
       "by": "rules-engineer (M4-T030)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Step P4 (task M4-T032): rows floor-area-ratio, lot-coverage and rear-yard are marked superseded_by step-p4-worked#floor-area-ratio, step-p4-worked#lot-coverage and step-p4-worked#rear-yard. Those three rows held their 'same as plain R6B' answer subject to ZR 34-21 through 34-23, which the step-P2 readers did not have; ZR 34-22 and 34-23 were captured by task M4-T031 and read independently in step P4 (cases/step-p4-worked.json), where both step-P4 readings find none of ZR 34-21 through 34-23 modifies the floor area ratio, the lot coverage or the rear yard, so the step-P4 rows hold the current answer and the loader no longer hands these three out as current. The row not-captured is kept unchanged as the true record of what the step-P2 readers did not have (ZR 34-21, 34-22 and 34-23 among them), now captured and read in step P4. No expected value or kind changed in this case. Reason: a corrected reading - one current expected answer per question.",
+      "by": "rules-engineer (M4-T032)"
     }
   ],
   "rows": [
@@ -163,6 +168,7 @@
     },
     {
       "row_id": "floor-area-ratio",
+      "superseded_by": ["step-p4-worked#floor-area-ratio"],
       "quantity": "Floor area ratio: does the overlay change it",
       "facts_used": [
         {
@@ -246,6 +252,7 @@
     },
     {
       "row_id": "lot-coverage",
+      "superseded_by": ["step-p4-worked#lot-coverage"],
       "quantity": "Lot coverage: does the overlay change it",
       "facts_used": [
         {
@@ -658,6 +665,7 @@
     },
     {
       "row_id": "rear-yard",
+      "superseded_by": ["step-p4-worked#rear-yard"],
       "quantity": "Rear yard: does the overlay change it for an all-residential building",
       "facts_used": [
         {
