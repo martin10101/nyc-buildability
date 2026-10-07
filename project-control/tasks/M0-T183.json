@@ -85,8 +85,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The clean-up lands before the version is old enough and CI's age gate fails -> the task is not started before 2026-10-07T14:08:09.382Z; S3 reads the registry's own time",
     "A change to a security gate that removes more than the exception -> S2: byte-identical to the content before the exception was added; G5 by the security-reviewer",
@@ -95,7 +95,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T05:43:03.410751+00:00",
-  "updated_at": "2026-10-07T15:27:03.735129+00:00",
+  "updated_at": "2026-10-07T15:35:20.769396+00:00",
   "directive_refs": [
     {
       "directive_id": "D-092",
@@ -136,5 +136,7 @@
       "status": "in_progress",
       "message": "TWO INDEPENDENT REVIEWS at bf134ab0. Gates G3 and G4 (code-reviewer): PASS, three notes, none must-fix: every line the exception's commit added was the exception, so restoring the three files loses nothing else; it ran the 40 tests and the live gate itself (source-map-js 1.2.2 at 609255 seconds, an ordinary pass); the policy matches the gates and keeps the dated record; one command of the packet does not run as written on this server and the form CI uses does. Gate G5 (security-reviewer): PASS; it CONFIRMED the orchestrator's decision to remove the whole mechanism: the gate is byte-identical to its state before the exception, so at least as strict; an emptied list left in place would be live but untested code in a security gate; no exception path remains in either gate or in the installer setting; the pin and the lockfile's integrity are the directive's and unchanged; two notes, none must-fix. Evidence map written; ready to submit."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T15:35:20.769205+00:00"
 }

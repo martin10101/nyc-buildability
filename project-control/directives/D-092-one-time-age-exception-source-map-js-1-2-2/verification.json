@@ -3,7 +3,7 @@
   "directive_id": "D-092",
   "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. No completion claim exists at capture time.",
   "verified_by": null,
-  "verified_at": null,
+  "verified_at": "2026-10-07T15:35:19+00:00",
   "task_verifications": [
     {
       "directive_id": "D-092",
@@ -106,16 +106,24 @@
         "D-092-R016"
       ],
       "producer": "frontend-engineer",
-      "verifier": "",
+      "verifier": "directive-compliance-verifier",
       "schema_version": "directive_verification/v2",
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
+      "reviewed_sha": "159231f9650050b57046b8578a35a4a8caa14671",
+      "reviewed_manifest_sha256": "68b19630113a52c826088d363f650ca82bd58603699c2a0082757c2f15e05ed4",
       "requirements": [
         {
           "id": "D-092-R016",
-          "state": "pending",
-          "evidence": [],
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "Tracked clean-up task exists and is separate: `project-control/tasks/M0-T183.json` is its own ledger task with gates G0/G2/G3/G4/G5 all PASS (`project-control/gates/M0-T183-G*.json`); material commit bf134ab0 is distinct from M0-T182's exception commit 8fe57ca0 (`git show -s 8fe57ca0` = \"M0-T182 ... age exception ... pin, gate rule, installer exclusion, tests\").",
+            "Neither exclusion nor exception entry remains: `git diff --stat 8fe57ca0^ 716bd7fd -- apps/web/.npmrc apps/web/scripts/dependency_age_gate.mjs apps/web/scripts/tests/dependency_age_gate.test.mjs` is EMPTY (exit 0); grep of those three files for min-release-age-exclude|OWNER_AGE_EXCEPTIONS|matchOwnerAgeException|owner_age_exception|source-map-js|D-092 returns nothing (exit 1). `apps/web/.npmrc` holds only min-release-age=7, save-exact=true, package-lock=true (lines 10/14/19).",
+            "Second, reviewed change by non-producers: material commit bf134ab0 (five files: the four + producer report); G3/G4 by code-reviewer, G5 by security-reviewer (producer was frontend-engineer); G2/G3/G4/G5 share one content identity content_manifest_sha256 68b19630... and the four source files are byte-unchanged bf134ab0..HEAD (no post-submit drift).",
+            "After the seven-day point 2026-10-07T14:08:09.382Z: claimed 15:05:18Z, material commit bf134ab0 at 15:19:58Z (`git log 51b3375a..HEAD`); G0 report line 6 states it was written 2026-10-07 15:04:58 UTC.",
+            "Dated record kept: `docs/DEPENDENCY_SECURITY_POLICY.md` \"Exceptions on record\" table still holds the source-map-js 1.2.2 row, clean-up now \"task M0-T183 removed ... on 2026-10-07, after the expiry\"; section 6 keeps owner-only authority (\"No agent may create, approve, or apply an age exception\") plus the new reviewed-change sentence; enforcement map dropped the temporary exclusion.",
+            "Nothing else changed: `git diff --stat 51b3375a 716bd7fd -- apps/web/package.json apps/web/package-lock.json .github` EMPTY; source-map-js pinned \"1.2.2\" (package.json line 51; lockfile resolves 1.2.2). `.claude/` and `CLAUDE.md` unchanged.",
+            "Verifier's carry-forward condition met at 159231f9: every file under this task's allowed paths has the blob it had at the verified head 716bd7fd (content identity 68b19630); CLAUDE.md, .claude/rules/, .github/, apps/web/package.json, apps/web/package-lock.json, the web scripts, the D-092 requirement rows and manifest, the source the row traces to, and the task's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4/G5 PASS at that content identity (independent review: code-reviewer (G3, G4) and security-reviewer (G5); the producer was a frontend-engineer agent). Pull request 463 is OPEN with head 716bd7fd on GitHub. DCV report: project-control/reports/M0-T183-DCV.md."
+          ],
+          "reviewed_sha": "159231f9650050b57046b8578a35a4a8caa14671"
         }
       ]
     }
