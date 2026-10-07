@@ -87,8 +87,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 80,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "A table (heights, obstructions) captured with a cell wrong or missing -> S3 and S4: an independent re-read, cell by cell",
     "A defined term that is not where the packet assumes -> S1: the report says where it is and it is not captured from a guess",
@@ -96,7 +96,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T06:42:22.489953+00:00",
-  "updated_at": "2026-10-07T08:04:49.485917+00:00",
+  "updated_at": "2026-10-07T08:05:13.317337+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
