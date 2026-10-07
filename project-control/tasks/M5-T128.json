@@ -100,8 +100,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "rework",
+  "progress_percent": 70,
   "risks": [
     "A change that is not additive breaks a present reader (the engine's validator, the drawings, the website's fixtures) -> S1, S2, S8, S9 and the compatibility part of the independent review",
     "A shape that lets a value be settled by silence, or a withheld value carry a number -> S5, S7",
@@ -110,7 +110,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T08:45:33.285633+00:00",
-  "updated_at": "2026-10-07T10:20:42.238958+00:00",
+  "updated_at": "2026-10-07T10:24:36.910386+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -154,6 +154,13 @@
       "percent": 85,
       "status": "in_progress",
       "message": "Rework by the same builder (backend-engineer): commits 0c44039d (the report and one test corrected; two strict expected-failure tests pin what the schema cannot refuse) and 87371436 (the schema's descriptions corrected; description text only). Re-review by the same reviewer (data-contract-verifier) at 87371436: G3 PASS, G4 PASS; findings F1, F2 and F3 closed."
+    },
+    {
+      "at": "2026-10-07T10:24:36.910249+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "rework",
+      "message": "CI on the pushed head ec5c0155 failed two checks, both for one cause: the job 'contracts (JSON Schema validation)' and the test of that validator in the job 'validation-suite'. The repository's contract validator (.github/scripts/validate_contracts.py) accepts only a fixed subset of JSON Schema keywords and refuses any other; the new definition value_states uses two outside it, minProperties and propertyNames. Reproduced locally by the orchestrator (the validator: exit 1, two FAIL lines; its test suite: 1 failed, 23 passed). Neither the builder, the reviewer nor the orchestrator had run that validator before the push: the builder's instructions named the scripts under packages/contracts and tools, not the one under .github/scripts. The two rule checks that had started at ec5c0155 were stopped. Rework: the same builder expresses the definition with keywords of the subset and runs the validator; the same reviewer reviews the data contract and compatibility again; then the task is submitted again. Nothing is merged; no CI job was re-run."
     }
   ],
   "scope_corrections": [
