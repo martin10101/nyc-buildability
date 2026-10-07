@@ -230,6 +230,76 @@ c `modularity_check --check` = 0 (failures 0, 29 warnings; `grep result_way` = N
 status empty after the commit; `git diff --name-status 319806c9 HEAD` = test files and the report
 only; `git diff --stat 319806c9 HEAD -- services/api/app` empty.
 
+## Round 5 (reading O13: the large-lot question of gap K3 not stated -> coverage withheld)
+
+The producer's round-4 standing observation became an orchestrator ruling. Reading O13 (marked
+in `result_ways._coverage_way` and here): `large_lot_threshold_met` is a fact the caller states;
+None is "not stated", not "no". The module used to read None as falsy and could show a corner
+lot's coverage as settled without knowing whether the lot is a large lot - a default standing for
+a fact, which the packet forbids ("never filled by a default"). Now None -> coverage WITHHELD,
+missing_information.
+
+Source-line counts: `result_ways.py` 462 (was 448; +14 for the branch), `result_way_inputs.py`
+413, `result_way_conditions.py` 320 (unchanged); tests `test_result_ways.py` 211,
+`_input_states.py` 267, others <= 135. All under 600. No new numeric literal: the ast
+no-zoning-number test still passes with literals == {100.0, 135.0} (the O13 reason is a string
+and, like the existing K3 reason, does not write "30,000").
+
+The branch and where it sits: in `_coverage_way`, a new `if inp.large_lot_threshold_met is None:`
+placed AFTER the blanket rules, the lot-type-not-given check, the interior/through check and the
+reach check, and just before the K20/shown tail. So the more fundamental reasons still win (a
+blanket, a missing lot type, an interior/through lot, or a reach beyond the corner portion
+withholds for its own reason first); the O13 gap fires only when coverage would otherwise be
+shown. `True` is unchanged (withheld, work_owed, before the lot-type check, as today); `False` is
+decided as today. No other result changes.
+
+Test: `test_o13_large_lot_not_stated_withholds_coverage_missing_information` (replaces the round-4
+`..._none_is_not_a_large_lot`): None -> coverage withheld, missing_information, the reason names
+what was not stated ("was not stated", "recorded lot area"); False -> coverage shown; and every
+OTHER result is identical between None and False (asserted field by field). Quotes the packet
+("never filled by a default") and reading O13. The `True` test (`test_f5_large_lot_...`) stays.
+The round-4 input-state table row for `large_lot_threshold_met` is updated: None now ACTS
+(coverage withheld missing_information -> this test).
+
+Point 3 - every other place a None / empty / missing entry is read by truthiness, and what it
+does:
+- `result_ways._coverage_way` `if inp.large_lot_threshold_met:` (+ the new `is None` branch) -
+  FIXED this round; True unchanged, None now explicit withheld, False decided.
+- `result_way_conditions.overlay_block` `(inp.overlay_support or {}).get(family)` then
+  `if support is None:` -> a None mapping OR a family missing from the mapping -> WITHHELD "no
+  independent reading" (SAFE, never shown). Pinned: test_s1_recorded_overlay_with_no_support (None
+  mapping) and the NEW test_overlay_present_with_a_family_missing_from_the_mapping_is_withheld.
+- `result_way_conditions.overlay_block` `code = f" (...)" if inp.commercial_overlay_code else ""`
+  -> None code -> no code text; the overlay result is still withheld (presentation only). Pinned:
+  test_overlay_code_none_with_overlay_present...
+- `result_way_conditions.overlay_block` `owed = support.reading_owed or (...)` -> empty -> fallback
+  owed-reading text; still withheld (presentation only). Pinned:
+  test_overlay_not_supported_without_reading_owed...
+- `result_way_conditions.area_condition` `outline ... if area.outline_sq_ft is not None else
+  "another"` -> None outline -> "another" in the DISAGREES wording (presentation only). Pinned:
+  test_disagree_with_no_outline...
+- Everywhere else a missing/unknown/None fact is treated as WITHHELD or by an explicit
+  `is None` / enum check, never as "no": area recorded None (the floor-area/unit deciders withhold
+  before area_condition is called), area agreement None (explicit G3-F5 branch), street_reaches_within
+  (None/empty/unknown reach -> no_outline withheld), _rear_yard_way (corner/reach/angle None ->
+  no_outline withheld), _unit_standard_way (area None -> withheld), blanket_withhold (district None ->
+  explicit withheld), condition_withhold (explicit Recorded enum). Found: only `large_lot_threshold_met`
+  None let a result be shown on a not-given fact (now fixed); the overlay missing-family case was
+  already safe (withheld) and is now pinned. Nothing else reported.
+
+Mutation (a copy OUTSIDE the repository; the repo is never touched): the O13 branch neutered so
+None falls through to "not large" again -> 1 meaningful fail,
+test_o13_large_lot_not_stated_withholds_coverage_missing_information (plus the 3 invariant tests
+that read result_ways via rw.__file__, an injection artifact of mutating result_ways itself).
+
+Checks (DIRECT exit codes, round 5): a `ruff check .` = 0. b `pytest tests/scenario/three_answers`
+= 0, 129 passed + 2 pre-existing skips (round 4 was 128; the None test was replaced and one
+overlay-missing-family test added). c `pytest tests/contracts tests/spatial` = 0, 887 passed, 3
+xfailed. d `modularity_check --check` = 0 (failures 0, 29 warnings; `grep result_way` = NONE);
+`check_lane_paths --coverage` = 0 (9134 files). e the mutation above (caught). f git status empty
+after the commit; `git diff --name-status 0943f5de HEAD` = the three-answers test files and the
+report.
+
 ## Interface
 
 Input records (`result_way_inputs.py`): `ResultWayInputs` holds `district`, `lot_type`

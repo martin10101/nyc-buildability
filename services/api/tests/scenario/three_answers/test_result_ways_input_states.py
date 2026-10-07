@@ -254,13 +254,31 @@ def test_housing_kind_not_given_changes_no_result():
     assert none == given
 
 
-def test_large_lot_threshold_met_none_is_not_a_large_lot():
-    """large_lot_threshold_met=None is falsy: the gap-K3 branch does not fire (the same path as
-    False); the caller states the comparison, so an unstated flag is not a large lot. With the
-    K20 conditions absent and a corner lot within the reaches, coverage is shown."""
-    ways = decide_result_ways(plain_inputs(
+def test_o13_large_lot_not_stated_withholds_coverage_missing_information():
+    """Reading O13 and the packet's rule that a fact is 'never filled by a default':
+    large_lot_threshold_met=None is NOT read as 'no'. With a corner lot within the reaches and
+    the K20 conditions absent, coverage would otherwise be settled; not stated -> coverage
+    withheld, missing information, the reason names what was not stated. Every other result is as
+    with False."""
+    none = decide_result_ways(plain_inputs(
         lot_type=LotType.CORNER, reach=c2_reach(), large_lot_threshold_met=None, **k20(True)))
-    assert is_settled(_coverage(ways))
+    false = decide_result_ways(plain_inputs(
+        lot_type=LotType.CORNER, reach=c2_reach(), large_lot_threshold_met=False, **k20(True)))
+    coverage = _coverage(none)
+    assert is_withheld(coverage) and coverage.way.gap_kind == "missing_information"
+    assert "was not stated" in coverage.way.reason
+    assert "recorded lot area" in coverage.way.reason
+    # with False the lot is not a large lot, so coverage is shown (settled, K20 absent):
+    assert is_settled(_coverage(false))
+    # None differs from False ONLY in coverage; every other result is identical:
+    assert none.floor_area_allowance == false.floor_area_allowance
+    assert none.permitted_envelope.values[:6] == false.permitted_envelope.values[:6]
+    assert none.building_option == false.building_option
+    assert none.rear_yard == false.rear_yard
+    assert none.setback_above_base == false.setback_above_base
+    assert none.unit_limit_standard == false.unit_limit_standard
+    assert none.unit_limit_qualifying_affordable == false.unit_limit_qualifying_affordable
+    assert none.unit_limit_qualifying_senior == false.unit_limit_qualifying_senior
 
 
 # ---- the reach records (ReachMeasurements / StreetReach / CornerReach / ReachValue) ----
@@ -333,6 +351,21 @@ def test_overlay_code_none_with_overlay_present_still_withholds_without_a_code()
     reason = _coverage(ways).way.reason
     assert is_withheld(_coverage(ways))
     assert "recorded commercial overlay;" in reason  # no " (code)" before the semicolon
+
+
+# ---- overlay_support: a family MISSING from the mapping while the overlay is recorded present ----
+def test_overlay_present_with_a_family_missing_from_the_mapping_is_withheld():
+    """Reading O5: a family MISSING from a non-empty overlay_support mapping (not merely marked
+    not supported) is 'no reading stated' and withheld - a missing entry is never read as
+    support. Here coverage is omitted while every other family is supported."""
+    support = {f: OverlayResultSupport(True) for f in ResultFamily}
+    del support[ResultFamily.COVERAGE]
+    ways = decide_result_ways(base_inputs(
+        commercial_overlay=Recorded.PRESENT, commercial_overlay_code="C2-2",
+        overlay_support=support))
+    coverage = _coverage(ways)
+    assert is_withheld(coverage) and coverage.way.gap_kind == "work_owed"
+    assert "no independent reading" in coverage.way.reason
 
 
 # ---- overlay_support: a family marked not supported WITHOUT the reading owed ----

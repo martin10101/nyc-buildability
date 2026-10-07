@@ -237,6 +237,24 @@ def _coverage_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
             ),
             zr_sections=zr,
         )
+    if inp.large_lot_threshold_met is None:
+        # (O13) the large-lot question of gap K3 was NOT STATED. None is not "no": a missing
+        # input leaves its dependent result not known, never filled by a default. Sits here,
+        # after the blanket rules, the lot type, an interior/through lot and the reach, so those
+        # more fundamental reasons still win; it fires only when coverage would otherwise show.
+        return Withheld(
+            label=label,
+            reason=(
+                "Whether this lot meets the gap-K3 large-lot threshold was not stated; it rests "
+                "on the recorded lot area, and a different maximum applies to such lots "
+                "(ZR 23-362), so coverage is not known."
+            ),
+            gap_kind=MISSING_INFORMATION,
+            resolved_by=(
+                "The caller comparing the recorded lot area with the gap-K3 large-lot measure."
+            ),
+            zr_sections=zr,
+        )
     k20 = k20_condition(inp)
     return shown([k20] if k20 is not None else [])
 
