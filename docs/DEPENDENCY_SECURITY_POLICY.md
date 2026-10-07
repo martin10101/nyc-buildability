@@ -43,13 +43,7 @@ interpreted as "advisory-free" or "old enough". No check is ever warning-only.
 
 **No agent waiver. No unlocked bootstrap tool. No dynamic download outside a reviewed lock.**
 No agent may add an allowlist, suppression, `--ignore`, exception file, or "warning-only"
-downgrade to any gate, and no agent may add an exception of any kind. The advisory gates
-contain no exception path whatsoever; the Python age gate contains none. The npm committed-lock
-age gate has exactly one mechanism: an owner-authorized entry for a single `name@version` bound
-to the registry integrity and the registry publication time, usable only while the version is
-below 604800 s old, and each such entry needs its own owner approval, directive record and G5
-security review (section 6). An advisory, an integrity mismatch, an unexpected host, or any
-unverifiable condition is **never** exceptionable.
+downgrade to any gate. The age/advisory gates contain no exception path whatsoever.
 
 ---
 
@@ -72,12 +66,7 @@ official publication timestamp is `>= 604800 s` before the registry's own UTC cl
 the required push/PR CI and in the scheduled re-audit, fails closed on every ambiguous/outage
 condition (with a distinct `infrastructure_unavailable` outcome after bounded retries + backoff,
 so a transient outage is visibly different from a genuine too-new finding), and has **no**
-allowlist and **no** suppression. Its only exception path is the age-only owner mechanism of
-section 6: a frozen, owner-authorized `OWNER_AGE_EXCEPTIONS` entry for a single `name@version`
-bound to the registry integrity and publication instant, which yields a distinct
-`owner_age_exception` result (counted as a pass) **only** while the version is below 604800 s old
-and self-expires the moment it is old enough. It never waives an advisory, an integrity mismatch,
-an unexpected host, or any other fail-closed condition. This is what stops a hand-edited lock.
+allowlist/suppression/exception. This is what stops a hand-edited lock.
 
 **(c) Application-lock advisory auditing — `npm audit` (FE-S2).**
 `npm audit --audit-level=low` plus an explicit `npm audit --json` check requiring
@@ -151,16 +140,12 @@ There is exactly one narrow exception, and it applies to the **7-day age require
 can **never** waive an advisory affecting the installed version, an integrity mismatch, an
 unexpected host, or any other fail-closed condition.
 
-- **Authority:** owner only. No agent may create, approve, apply, or widen an age exception. The
-  Python machine gate (`dependency_age_gate.py`) contains no exception path at all. The npm
-  machine gate (`dependency_age_gate.mjs`) has exactly one mechanism: a frozen, owner-authorized
-  `OWNER_AGE_EXCEPTIONS` entry for a single `name@version` bound to the registry integrity and the
-  registry publication instant. It admits that one tarball (result kind `owner_age_exception`,
-  counted as a pass) only while the version is below 604800 s old; at 604800 s the ordinary
-  age-pass fires first, so the entry self-expires and can never apply again. Each entry needs its
-  own owner approval, directive record and G5 security review; it is data in the reviewed gate,
-  not a "paper" waiver, and it never makes the gate pass on an advisory, an integrity mismatch, an
-  unexpected host, or any other fail-closed condition.
+- **Authority:** owner only. No agent may create, approve, or apply an age exception. The
+  machine gates (`dependency_age_gate.mjs` / `.py`) contain no exception path, so a "paper"
+  exception cannot make a gate pass — the owner action happens outside the tool and the gate is
+  only satisfied once real registry time proves the age. An approved exception is implemented by a
+  reviewed change to the gate that carries its own expiry and is removed by a second reviewed
+  change, as owner directive D-092 was (tasks M0-T182 and M0-T183).
 - **Scope:** a single, named `package==version`. No wildcard, no org-wide, no
   category-wide, no permanent, and no undocumented exception.
 - **Record fields (all required):** package name + exact version; the exact age at the moment of
@@ -177,7 +162,7 @@ unexpected host, or any other fail-closed condition.
 
 | Package / version | Age at approval | Reason the wait cannot be met | Authorization | Pull request | Auto-expiry | Clean-up |
 |---|---|---|---|---|---|---|
-| `source-map-js` `1.2.2` | 487485 s | None given. The orchestrator recommended waiting; the owner decided to update early. | D-092, owner message 84, 2026-10-06, "Go ahead update it only this 1 time" | Pull request of task M0-T182, branch `task/M0-T182-source-map-js-one-time-age-exception` | 2026-10-07T14:08:09.382Z (registry publication 2026-09-30T14:08:09.382Z + 604800 s) | task M0-T183 removes the `.npmrc` `min-release-age-exclude[]=source-map-js` line and the `OWNER_AGE_EXCEPTIONS` entry after expiry |
+| `source-map-js` `1.2.2` | 487485 s | None given. The orchestrator recommended waiting; the owner decided to update early. | D-092, owner message 84, 2026-10-06, "Go ahead update it only this 1 time" | Pull request of task M0-T182, branch `task/M0-T182-source-map-js-one-time-age-exception` | 2026-10-07T14:08:09.382Z (registry publication 2026-09-30T14:08:09.382Z + 604800 s) | task M0-T183 removed the `.npmrc` `min-release-age-exclude[]=source-map-js` line and the checker's `OWNER_AGE_EXCEPTIONS` exception on 2026-10-07, after the expiry |
 
 ---
 
@@ -185,8 +170,8 @@ unexpected host, or any other fail-closed condition.
 
 | Concern | npm (web) | Python (api) |
 |---|---|---|
-| Resolver-time age filter | `apps/web/.npmrc` (`min-release-age=7`, `save-exact=true`; plus the temporary `min-release-age-exclude[]=source-map-js`, D-092, removed by M0-T183) | pinned `uv` + `--generate-hashes` locks |
-| Committed-lock age gate (fail-closed) | `apps/web/scripts/dependency_age_gate.mjs` + `scripts/tests/**` (one owner age exception, section 6) | `services/api/scripts/dependency_age_gate.py` + `scripts/tests/**` (no exception path) |
+| Resolver-time age filter | `apps/web/.npmrc` (`min-release-age=7`, `save-exact=true`) | pinned `uv` + `--generate-hashes` locks |
+| Committed-lock age gate (fail-closed) | `apps/web/scripts/dependency_age_gate.mjs` + `scripts/tests/**` | `services/api/scripts/dependency_age_gate.py` + `scripts/tests/**` |
 | Application advisory audit (blocking) | `npm audit --audit-level=low` + JSON total==0 | `pip-audit -r requirements.txt --strict` |
 | Tooling advisory audit (blocking) | `... --npm-cli-advisory 11.18.0` | `pip-audit -r requirements-tools.lock --strict` |
 | Runs on every push/PR | `web-dependency-security` job (`.github/workflows/ci.yml`) | `exact-production-install` / lock-verify jobs |
