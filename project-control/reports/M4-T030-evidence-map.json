@@ -1,0 +1,50 @@
+{
+ "task_id": "M4-T030",
+ "material_commits": [
+  "f5c2a8f2 (cherry-pick of the producer's commit 364aeae9, producer rules-engineer: the two readings saved unchanged, the new case with its page, the README, the checker, loader and test, the producer report)",
+  "25ba6c04 (cherry-pick of the same producer's round-2 commit 1a084d31: one row and the README corrected; superseded rows marked and refused by the loader; earlier wording made true; after the review's findings F1, F2 and F3; no expected value or kind changed)",
+  "material head: 25ba6c04"
+ ],
+ "claim_seam_head": "d952c612",
+ "new_case_rows": 21,
+ "superseded_rows": [
+  "corner-150x100-rear-yard",
+  "interior-40x100-rear-yard",
+  "special-density-real-lot",
+  "through-40x200-rear-yard"
+ ],
+ "readings": [
+  "return-independent-hand-calculation-7.md (reader 1, an official-source-researcher agent)",
+  "return-independent-hand-calculation-8.md (reader 2, a geospatial-engineer agent)"
+ ],
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/rules/reference_cases and tests/spatial/test_lot_reach.py: exit 0 (counts in the producer report)",
+  "r6b_reference_cases_render.py --check: exit 0 (pages byte-identical to the data)",
+  "tools/modularity_check.py --check: exit 0",
+  "full services/api suite, run alone by the orchestrator at 25ba6c04 with all three pieces and every correction integrated: exit 0, 8185 passed, 8 skipped, 2 expected failures (the two tests that pin the schema's known limits); an earlier full run at f5c2a8f2, before the corrections: 8178 passed, 8 skipped"
+ ],
+ "requirements": {
+  "D-090-R226": [
+   "The rows of the new case docs/reference-cases/R6B/cases/step-p3-worked.json (21 rows) are worked from the captured law text and the lot's recorded facts by two AI helpers, each alone, from a sealed folder without the program: their returns are in docs/reference-cases/R6B/provenance/ (return-independent-hand-calculation-7.md and -8.md), unchanged below their headers (test_the_two_step_p3_readings_are_present_unchanged pins their digests; test_a_changed_step_p3_reading_is_caught proves a changed copy fails).",
+   "Each row cites its sections with the quoted words, the capture's snapshot id and content digest; test_every_citation_matches_the_live_capture compares each with the live capture.",
+   "What the repository cannot show: that the two helpers had not read the program's answer rests on the orchestrator's instructions to them, on its audit of their tool logs (no file under the repository opened, no web page; recorded in the session notes, outside the repository) and on their own statements at the top of each return."
+  ],
+  "D-090-R241": [
+   "No expected value comes from, or was changed to match, a saved program result (test_no_program_result_in_any_case, test_support_code_imports_no_engine). No existing row's expected value or kind changed in this task; the rows about whole-lot corner coverage are pinned by a guard (test_the_corner_coverage_pins_hold_and_a_moved_pin_is_refused), although both new readings say in passing that the standard coverage for 'this corner lot' is 100 percent: that sentence is recorded as a passing remark and nowhere as a value.",
+   "Older rows that a new row now answers keep their own record and carry a machine-readable `superseded_by`; the loader the tests use refuses a superseded row unless the caller asks for the historical one, so a test cannot take a stale 'not known' as today's expected answer (rows: corner-150x100-rear-yard, interior-40x100-rear-yard, special-density-real-lot, through-40x200-rear-yard)."
+  ],
+  "D-090-R259": [
+   "The new readings are kept in files of their own under docs/reference-cases/R6B/, apart from any program output, and the case says that agreement between two AI answers is not proof.",
+   "A value is recorded only where both readings give it on the same basis (test_step_p3_case_rows_name_both_readings, test_step_p3_settled_and_not_known_rows, test_a_step_p3_unsettled_row_given_a_value_is_refused). Where one reading holds an answer subject to text the readers did not have, the row says so in its value (row special-downtown-brooklyn-district: both find the lot outside on the recorded facts; one holds that subject to the boundary text of Article X, Chapter 1)."
+  ],
+  "D-090-R291": [
+   "This task's share of step 3: independently calculated examples saved to test against, for the text captured by M4-T029: the lot lines and lot depth of the benchmark lot (about 103.9 ft by the corner rule; its lot width not known); the rear yard of a made-up interior lot (20 ft at or below 75 ft, 30 ft above) and the rear yard equivalent of a made-up through lot (40 ft and 60 ft, midway between the streets); which paragraph of ZR 23-436 binds; that ZR 34-111 and not ZR 34-112 governs a C2-2 district mapped within R6B; that the lot is not in the Manhattan Core; that heights are measured from the base plane; that ZR 23-434 does not reach R6B and that the different maximum of ZR 23-362(b) applies only to buildings using it.",
+   "NOT done by this task, and not claimed: no missing rule and no conflicting input is resolved; no result is shown or changed. Still 'not known' after these readings: the rear yard beyond the corner of the benchmark lot (it needs the neighbours' lot lines, the building type and ZR 34-23, which the readers did not have), the base plane's level, what ZR 35-633(b) requires, the lot width. Two AI readings that agree are not proof."
+  ],
+  "D-090-R318": [
+   "Interpretation is checked with independently worked, source-backed examples: the two readings were made before any comparison with the program, each row gives its law quotations with the captures, and docs/reference-cases/R6B/README.md keeps the rule that an expected value changes only with a recorded reason and never because the program disagrees.",
+   "The examples are two AI readings and an AI review; nothing here is a professional review, and the cases say so. The first review of this task FAILED on a row that recorded as agreed something only one reading said; it was corrected and re-reviewed."
+  ]
+ }
+}

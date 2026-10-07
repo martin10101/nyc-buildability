@@ -101,7 +101,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 70,
+  "progress_percent": 85,
   "risks": [
     "A change that is not additive breaks a present reader (the engine's validator, the drawings, the website's fixtures) -> S1, S2, S8, S9 and the compatibility part of the independent review",
     "A shape that lets a value be settled by silence, or a withheld value carry a number -> S5, S7",
@@ -110,7 +110,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T08:45:33.285633+00:00",
-  "updated_at": "2026-10-07T09:45:27.832570+00:00",
+  "updated_at": "2026-10-07T10:20:07.497387+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -147,6 +147,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "Independent review (data-contract-verifier) at a5adb3df, before submit: G4 (compatibility) PASS; G3 (data contract) FAIL on three findings. F1: the builder's report says the shape makes 'the same key both shown and withheld' impossible; the reviewer's own document (a key in values with a number AND withheld in value_states) validates. F2: the test named for that case tests a different thing (one entry mixing two ways). F3: two rules cannot be expressed in the schema language at all (every shown value has a stated way; no key both shown and withheld) and must be recorded as work owed to the validator of the engine that first emits 1.3.0. The schema itself is sound and strictly additive. Rework: the same builder corrects the report and the test and adds tests that pin the two limits; the orchestrator records the owed work (backlog row DB-171) and corrects scenarios S5 and S7 (scope_corrections). The failed review is kept unchanged in project-control/reports/M5-T128-G3G4.md."
+    },
+    {
+      "at": "2026-10-07T10:20:07.497271+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Rework by the same builder (backend-engineer): commits 0c44039d (the report and one test corrected; two strict expected-failure tests pin what the schema cannot refuse) and 87371436 (the schema's descriptions corrected; description text only). Re-review by the same reviewer (data-contract-verifier) at 87371436: G3 PASS, G4 PASS; findings F1, F2 and F3 closed."
     }
   ],
   "scope_corrections": [

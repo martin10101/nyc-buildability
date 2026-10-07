@@ -90,7 +90,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 70,
+  "progress_percent": 85,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the cases say agreement is not proof (R259); each row is followable",
     "A reading that fills a gap the captured text does not settle -> S2 and S6",
@@ -99,7 +99,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T08:45:34.165218+00:00",
-  "updated_at": "2026-10-07T09:50:31.432083+00:00",
+  "updated_at": "2026-10-07T10:20:07.820396+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -137,6 +137,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "Independent review (code-reviewer) at f5c2a8f2, before submit: G3 FAIL and G4 FAIL. F1 (must fix): row sections-and-facts-not-had of the new case and the README say both readers did not have ZR 36-64 and ZR 35-71; one reading says they were in its folder (they were: the sealed folder held all 72 captures), so the row records as agreed something the readings do not both say. F2 (must fix): three older rows stay 'not known' beside new rows that give the answer to the same question, and nothing a test reads marks the older rows as superseded. F3 (routed to this task by the orchestrator): the overlay case of task M4-T028 still says 'the repository does not hold' texts that are captured now. 20 of the 21 new rows hold; no existing value or kind changed; the corner-coverage rows did not move. Rework by the same builder; the failed review is kept unchanged in project-control/reports/M4-T030-G3G4.md."
+    },
+    {
+      "at": "2026-10-07T10:20:07.820286+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Rework by the same builder (rules-engineer): commit 25ba6c04 (the 'not had' list holds only what both readings name; eight older rows marked superseded_by and refused by the loader unless asked for as history; earlier sentences that had become false reworded). Re-review by the same reviewer (code-reviewer) at 25ba6c04: G3 PASS, G4 PASS; findings F1, F2 and F3 closed; no expected value or kind changed."
     }
   ]
 }
