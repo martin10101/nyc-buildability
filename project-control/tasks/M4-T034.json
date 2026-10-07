@@ -78,7 +78,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "A section number taken from the reviewer's message instead of found on the site -> the targets are named by what they are; the builder reports what the site shows",
     "A term reported as not defined that sits under an inverted or combined title (seen in M4-T029) -> S1",
@@ -87,7 +87,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:42.747766+00:00",
-  "updated_at": "2026-10-07T22:06:57.355996+00:00",
+  "updated_at": "2026-10-07T22:07:45.850317+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
