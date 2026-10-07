@@ -93,7 +93,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 50,
+  "progress_percent": 60,
   "risks": [
     "A valid document of today refused -> S6: every fixture through both validators",
     "The two validators drifting -> S7: one shared rule",
@@ -102,7 +102,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:29.581528+00:00",
-  "updated_at": "2026-10-07T16:32:24.862736+00:00",
+  "updated_at": "2026-10-07T16:46:17.805207+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -144,6 +144,13 @@
       "percent": 50,
       "status": "in_progress",
       "message": "The builder returned BLOCKED with its work committed in its own worktree (commit 5528282e: the shared rule, the one call in each validator, the new tests, the guard test's set). The block is a fault in the PACKET, found by the builder and confirmed by the orchestrator: the packet said the three tests that pin the schema's known limits (test_KNOWN_LIMIT_... in tests/contracts/test_results_three_ways_slot.py) 'stay as they are, because they test the schema alone'. They do not: each passes its document through the study validator and is marked as an expected failure that turns into a real failure the day the validator refuses, which is this task. Backlog row DB-171 itself says those tests are then turned to assert refusal. The builder did not touch the forbidden file. Scope correction recorded; one more round by the same builder: turn the three tests, and write the report file. Not integrated yet; no review yet. Also from the return: the schema already refuses an available answer whose every value is withheld (an empty values list), so point F4 of row DB-171 needs no rule of its own."
+    },
+    {
+      "at": "2026-10-07T16:46:17.805086+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Rounds 2 and 3 by the same builder (the three former known-limit tests turned to assert refusal, with a test that the bare schema still accepts the three documents; the report; one stale comment reworded) integrated with the first commit as edb2af6d, 1f53e5fb and fdab9401. Checked by the orchestrator: the schema, its copy, the generated types and the fixtures unchanged; the repository's contract validator exit 0; tests/contracts, tests/scenario, tests/journey, tests/cad and tests/drawings: 2971 passed, 8 skipped, no expected failure left. Independent review (data-contract-verifier) started at 99845581."
     }
   ],
   "scope_corrections": [
