@@ -81,7 +81,7 @@ its print/PDF).
 - `multiple dwelling residence` /node/22719 (12/5/2024) — exact title (singular article; the texts use
   "#multiple dwelling residences#", the plural of this same term).
 - `height factor` /node/21567 (3/22/2016) — exact title.
-- `open space` /node/21618 (12/15/1961) — exact title (distinct from "open space ratio", "designated
+- `open space` /node/21618 (7/8/2025) — exact title (distinct from "open space ratio", "designated
   open space", "open space network"); has literal (a)–(c) then (1)–(4) list in `<p>` text (no `<ol>`).
 - `open space ratio` /node/21619 (2/2/2011) — exact title.
 - `public park` /node/21630 (12/15/1961) — exact title (distinct from "public parking garage/lot").
@@ -175,5 +175,7 @@ nothing here is a Verified zoning determination (ADR-007).
    34-23 print/PDF subtree; it is a sub-section list, not a reading.
 4. No capture has been independently re-read by a second agent (`raw_html_verified: false`); the
    independent reading of these texts is a later task. None of these texts has been interpreted for any lot.
+
+Round 2: the amendment date of `open space` corrected from 12/15/1961 to 7/8/2025 (review finding F1); every date and node in this report compared with the capture files.
 
 END-OF-REPORT
