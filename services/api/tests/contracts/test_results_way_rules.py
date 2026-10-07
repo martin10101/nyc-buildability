@@ -34,6 +34,7 @@ from app.contracts.results_way_rules import (
 from app.contracts.study_contracts import (
     FIXTURE_ONLY_KEY,
     StudyContractError,
+    validate_study_contract_document,
 )
 from app.contracts.study_contracts import (
     validate_results_document as study_validate_results_document,
@@ -334,6 +335,43 @@ def test_S7_one_shared_rule_two_callers() -> None:
         study_validate_results_document(doc)
     with pytest.raises(ResultsContractError):
         engine_validate_results_document(copy.deepcopy(doc))
+
+
+# ---------------------------------------------------------------------------
+# The bare schema still accepts all three documents the rule refuses. The schema
+# alone is validate_study_contract_document("results", doc): it runs the bundled
+# canonical schema (plus strict-JSON and the fixture-annotation guard) and NOT
+# the way-rule, so it must ACCEPT each document while the shared rule reports a
+# breach for it. The schema's own descriptions say it cannot compare the values[]
+# keys with the map keys, and those descriptions do not change.
+# ---------------------------------------------------------------------------
+
+
+def _key_both_shown_and_withheld_doc() -> dict:
+    doc = _base_1_3_0()
+    doc["answers"]["floor_area_allowance"]["value_states"]["max_residential_far"] = _withheld_entry(
+        "Maximum residential FAR", "not known", "missing_information"
+    )
+    return doc
+
+
+def _empty_way_map_doc() -> dict:
+    doc = _base_1_3_0()
+    doc["answers"]["floor_area_allowance"]["value_states"] = {}
+    return doc
+
+
+def test_bare_schema_accepts_the_three_documents_the_rule_refuses() -> None:
+    docs = {
+        "shown_value_with_no_way_entry": _leave_second_far_value_unstated(_base_1_3_0()),
+        "key_both_shown_and_withheld": _key_both_shown_and_withheld_doc(),
+        "empty_way_map": _empty_way_map_doc(),
+    }
+    for name, doc in docs.items():
+        # The bare schema accepts it (no raise)...
+        validate_study_contract_document("results", doc)
+        # ...while the shared rule reports a breach, which is why both validators refuse.
+        assert results_way_violations(doc), name
 
 
 # ---------------------------------------------------------------------------
