@@ -76,7 +76,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 60,
+  "progress_percent": 70,
   "risks": [
     "A term reported as not defined that sits under an inverted or combined title (seen in M4-T029) -> S1",
     "A section number guessed instead of found -> the targets are named by what they are; the builder reports the number the site shows",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:30.664338+00:00",
-  "updated_at": "2026-10-07T16:46:18.141194+00:00",
+  "updated_at": "2026-10-07T17:04:32.386256+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -118,6 +118,13 @@
       "percent": 60,
       "status": "in_progress",
       "message": "Builder's commit e0ecabc3 integrated as 99845581 (46 added files: 23 captures and their 23 synced copies; the report; no existing capture modified; the copies byte-identical, 133 files). The builder reports: every target found, none reported as not defined (two terms are cross-references on the site and were captured from the articles that define them); the page of ZR 34-23 holds only its title and its children are exactly 34-231, 34-232 and 34-233; two disclosed limits (list labels of two definitions taken from markup positions because two print/PDF channels did not answer; one embedded diagram omitted). Independent review (a second data-contract-verifier agent) started at 99845581."
+    },
+    {
+      "at": "2026-10-07T17:04:32.386153+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "INDEPENDENT REVIEW (a data-contract-verifier agent) at 99845581: G3 PASS and G4 PASS with ONE required correction that blocks acceptance until applied. The reviewer fetched the official pages itself: all ten pages byte-identical to the pinned ones; the text of all 23 captures equals the official text; the two disclosed limits are real and disclosed; the page of ZR 34-23 lists exactly 34-231, 34-232 and 34-233 and nothing beyond; no existing capture changed. Required correction F1: the builder's REPORT gives the amendment date of the definition 'open space' as 12/15/1961; the official page and the capture itself say 7/8/2025. The capture is right; one line of the report is wrong. It goes back to the same builder; the same reviewer then confirms."
     }
   ]
 }
