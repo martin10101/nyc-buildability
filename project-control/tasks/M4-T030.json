@@ -89,8 +89,8 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the cases say agreement is not proof (R259); each row is followable",
     "A reading that fills a gap the captured text does not settle -> S2 and S6",
@@ -99,7 +99,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T08:45:34.165218+00:00",
-  "updated_at": "2026-10-07T10:20:43.164486+00:00",
+  "updated_at": "2026-10-07T10:58:35.058864+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -145,5 +145,7 @@
       "status": "in_progress",
       "message": "Rework by the same builder (rules-engineer): commit 25ba6c04 (the 'not had' list holds only what both readings name; eight older rows marked superseded_by and refused by the loader unless asked for as history; earlier sentences that had become false reworded). Re-review by the same reviewer (code-reviewer) at 25ba6c04: G3 PASS, G4 PASS; findings F1, F2 and F3 closed; no expected value or kind changed."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T10:58:35.058636+00:00"
 }

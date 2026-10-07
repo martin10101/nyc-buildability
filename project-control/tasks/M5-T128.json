@@ -100,8 +100,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A change that is not additive breaks a present reader (the engine's validator, the drawings, the website's fixtures) -> S1, S2, S8, S9 and the compatibility part of the independent review",
     "A shape that lets a value be settled by silence, or a withheld value carry a number -> S5, S7",
@@ -110,7 +110,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T08:45:33.285633+00:00",
-  "updated_at": "2026-10-07T10:42:58.717645+00:00",
+  "updated_at": "2026-10-07T10:58:34.150265+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -176,5 +176,7 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-07, after the builder's work and the independent data-contract review, before submit] The packet's properties (c) (in a 1.3.0 document no value is settled by silence) and (e) (the same key is never both shown and withheld), and scenarios S5 and S7, presumed that a JSON schema can enforce both in full. The independent reviewer showed with its own documents that it cannot: JSON Schema 2020-12 has no way to compare the keys of the items of the values list with the property names of a sibling object, in this shape or any other. What the schema does enforce stays required: a way entry that states no way is refused; an available answer of a 1.3.0 document without way entries is refused; a withheld entry with a number is refused; one entry mixing two ways is refused. The two cross-list rules stay requirements of the work order's Part 0 as a whole: they are owed to the validator of the engine that first emits 1.3.0 and are recorded as backlog row DB-171, to be bound into that task's packet. In this task they are pinned by tests that fail the day the gap is closed. Scenario S5 'expected' was: 'rejected'. Scenario S7 'expected' was: 'each rejected'. Both now say exactly what is refused by the schema and what is owed. No path, gate, reviewer or other scenario changed. The reviewer's ruling: these cannot be met inside the task's allowed paths, and need not be closed in this task while nothing emits 1.3.0."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T10:58:34.150069+00:00"
 }
