@@ -86,7 +86,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "The clean-up lands before the version is old enough and CI's age gate fails -> the task is not started before 2026-10-07T14:08:09.382Z; S3 reads the registry's own time",
     "A change to a security gate that removes more than the exception -> S2: byte-identical to the content before the exception was added; G5 by the security-reviewer",
@@ -95,7 +95,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T05:43:03.410751+00:00",
-  "updated_at": "2026-10-07T15:05:18.169227+00:00",
+  "updated_at": "2026-10-07T15:21:05.356873+00:00",
   "directive_refs": [
     {
       "directive_id": "D-092",
@@ -121,6 +121,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed at the contract head 48ffa19b (integration head 51b3375a, the merge of wave 4); builder frontend-engineer in an isolated worktree. The seven-day point of source-map-js 1.2.2 (2026-10-07T14:08:09.382Z) has passed."
+    },
+    {
+      "at": "2026-10-07T15:21:05.356748+00:00",
+      "agent": "frontend-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Builder's commit 42f4145a integrated as bf134ab0 (the four files and the report, nothing else). Checked by the orchestrator: the installer setting, the checker and its tests are byte-identical to their content before the exception was added (git diff 8fe57ca0^ bf134ab0 -- the three files: empty); the package file, the lockfile and the workflows are unchanged; the checker's 40 tests pass; the policy says again that neither gate holds an exception path and keeps the dated record. The builder's live run of the age gate (15:10 UTC): exit 0, source-map-js 1.2.2 at an age of 608559 seconds, an ordinary pass. One command of the packet does not run as written on this server (node --test with a folder name); the form CI uses was run instead. Two independent reviews started at bf134ab0: code-reviewer (G3, G4) and security-reviewer (G5)."
     }
   ]
 }
