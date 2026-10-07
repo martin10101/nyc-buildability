@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 535,
+ "requirement_count": 537,
  "producer": "orchestrator",
- "updated_at": "2026-10-07T20:17:45+00:00",
+ "updated_at": "2026-10-07T22:04:38+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -18210,6 +18210,76 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R536",
+   "text": "'give me a quick update where we stand in the build': the owner is given a short update, at once, on where the build stands: what is merged and tested, what is on a branch and in review, what is planned and not started, what is still to build, and what waits on the owner. ORCHESTRATOR'S READING: 'quick' asks for a short answer; it is in plain words and without a table (R474, R475), says of each part whether it is merged, on a branch or planned (R323), and gives the time as a first guess (R326).",
+   "source_ref": "source-056-amendment.md#owner-message-112-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R323",
+    "D-090-R326",
+    "D-090-R474",
+    "D-090-R475"
+   ],
+   "required_harness": "The reply that follows the message is short, has no table, and says for each part whether it is merged and tested, on a branch in review, planned, or waiting on the owner.",
+   "required_evidence": "The session transcript (the reply to message 112).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 112).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R537",
+   "text": "'where we stand in the build': the message asks where the work stands and decides nothing. ORCHESTRATOR'S READING: every open choice stays open after it; the four decisions asked of the owner in the update before it (the apartment-estimate choices, the order of the options, the six further sections, the list of instruction-file moves) are still asked; no estimator is contracted on it.",
+   "source_ref": "source-056-amendment.md#owner-message-112-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R533"
+   ],
+   "required_harness": "No record treats an open choice as answered because of this message.",
+   "required_evidence": "The session notes, the ledger and the handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 112).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

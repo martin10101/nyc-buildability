@@ -78,7 +78,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 80,
+  "progress_percent": 95,
   "risks": [
     "A section number taken from the reviewer's message instead of found on the site -> the targets are named by what they are; the builder reports what the site shows",
     "A term reported as not defined that sits under an inverted or combined title (seen in M4-T029) -> S1",
@@ -87,7 +87,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:42.747766+00:00",
-  "updated_at": "2026-10-07T21:43:56.300959+00:00",
+  "updated_at": "2026-10-07T22:05:30.943854+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -139,6 +139,13 @@
       "percent": 80,
       "status": "in_progress",
       "message": "Round 2 by the same builder (commit 0229ccf9: the report only; no capture, synced copy or test) integrated: the two sentences the review faulted now give the sections' own words (25-211: no accessory off-street parking spaces required for dwelling units or rooming units created after December 5, 2024, and units created between July 20, 1950 and that date continue under Section 25-212; which reduction sections each of 25-211, 25-221 and 25-231 itself names); the builder's re-read of the whole report corrected five further paraphrases into quoted words (35-24; the two energy definitions; 25-80; 25-811); the notes applied (36-64 marked as already captured; the children of the four header sections listed one by one; the anomaly of the official page of 25-231 disclosed; the row on the dwelling-unit sections reworded by site title). The snapshot sync check: OK, 156 files, no capture changed. The same reviewer is asked to confirm at the new head."
+    },
+    {
+      "at": "2026-10-07T22:05:30.943670+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "CONFIRMATION by the same reviewer at 37563716 (the content of the builder's second commit, b35cacfb, the report only): GATE G3 PASS and GATE G4 PASS; its findings F1 and F2 are closed (the two sentences now give the sections' own words, checked against the captures); the five further paraphrases the builder turned into quotes each stand in their capture or page; the children of the header 35-30 checked against the site's contents page; no capture changed; one new note, F7 (a few short labels that mirror section titles). The task is reviewed at its final content (material commits 3736a22d, b35cacfb). The full services/api suite, run alone at fedd6ca1: 8519 passed, 8 skipped, exit 0. Evidence map written."
     }
   ]
 }

@@ -1,0 +1,84 @@
+{
+ "task_id": "M5-T133",
+ "material_commits": [
+  "38efb977 M5-T133: the measurement-basis record and its worked examples corrected (cherry-pick of the builder's 1c27dd94)",
+  "cacac6aa M5-T133 round 2 (cherry-pick of 3c160edc)",
+  "55cf2ac4 M5-T133 round 3 (cherry-pick of e4553875)",
+  "material head: ecdfb8f8"
+ ],
+ "claim_seam_head": "d8ad46a8",
+ "ratios": {
+  "example-a-standard-residential": "0.7540",
+  "example-b-allowances-conditions-shown": "0.6483",
+  "example-c-mixed-use": "0.6828"
+ },
+ "withdrawn_ratios": {
+  "example-b": "0.6022",
+  "example-c": "0.6676"
+ },
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/scenario/measurement_basis: exit 0",
+  "pytest tests/scenario: exit 0",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "pytest (the FULL services/api suite, run alone at fedd6ca1, the final content of all three tasks): 8519 passed, 8 skipped, exit 0"
+ ],
+ "requirements": {
+  "D-090-R435": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 4: the estimate starts from the proposed building's residential zoning floor area, 'never from the \"allowed\" or maximum permitted floor area'; the maximum permitted floor area is a separate figure, a limit to check the proposal against. Section 3 keeps the sentence that the measured physical space comes from a proposed layout.",
+   "Every example takes its areas from stated dimensions (test_areas_come_from_the_stated_dimensions) and shows the legal cap as a separate figure (test_legal_cap_is_separate_and_recomputes)."
+  ],
+  "D-090-R436": [
+   "The examples check the method and validate no percentage: section 7 and section 4 ('The range is not established here') say so; the two withdrawn ratios (0.6022 and 0.6676) are named in the record and in the examples' change logs, with the reason (the buildings did not fit or could not be checked). The ratios are now 0.7540, 0.6483 and 0.6828, each for its own made-up layout only.",
+   "Pinned by services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_examples_do_not_present_a_typical_percentage and test_the_worked_ratios_are_example_specific_and_differ."
+  ],
+  "D-090-R509": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 4 states the formula once, in words: estimated apartments = (proposed building's residential zoning floor area x assumed apartment-area ratio) / assumed HPD-measured apartment size; the maximum permitted floor area is a separate figure; where a layout measures the apartments, that measured area is used directly; no count is computed in the record.",
+   "No sentence of the record starts the estimate from the allowed or permitted floor area (the independent reviewer searched for it: review record). The orchestrator's owner update of 2026-10-07 states the same correction of its own earlier wording."
+  ],
+  "D-090-R510": [
+   "Every floor of every example has a stated outside outline, and the components on it add up to exactly that outline: project-control/reports/M5-T133-producer-report.md lists per example and floor the outline, the sum of components and the difference (zero everywhere). Example C is rebuilt (ground floor 44 x 70; four residential floors 44 x 58), Example B is rebuilt with real outlines (cellar 40 x 50; ground and four typical floors 40 x 66), Example A gains its per-floor statement and is otherwise unchanged.",
+   "Pinned by services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_every_floor_of_every_example_fits (exact decimal arithmetic, services/api/tests/scenario/measurement_basis/measurement_basis_fit.py).",
+   "The independent reviewer of gate G3 added the floors up itself from the stated dimensions (review record). Its first review FAILED the task on one statement left over from the old layout of Example B (the refuse room's condition said '15 units here = 45 sq ft cap' where the rebuilt layout has 13 dwelling units and 39 sq ft); the failed review is in the progress log; the same builder corrected it, swept every free-text figure of the three examples against the data (no other leftover) and added test_cap_figures_in_a_condition_match_the_data; the reviewer then passed the task."
+  ],
+  "D-090-R511": [
+   "The fit check was written first and run on the examples as they were at the claim head d8ad46a8: Example C fails (1,743 against 1,260 sq ft per upper floor, 483 too much; the rooms fill the inside outline with other components on top; no ground-floor outline), Example B fails (no floor outline), Example A passes. The output is in project-control/reports/M5-T133-producer-report.md.",
+   "It bites: services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_fit_check_bites_no_outline, test_fit_check_bites_dimension_changed_by_a_foot, test_fit_check_bites_rooms_fill_inside_outline, test_fit_check_bites_on_a_real_example_mutation, test_fit_check_bites_when_a_floor_outline_is_removed.",
+   "The independent reviewer of gate G4 repeated the red proof against the old examples and ran 14 mutations of its own: 13 are caught by the fit check; the one that is not (a stair that skips a floor it serves, with the floor's areas rebalanced) is outside what an area check sees and is carried as backlog row DB-182. Its note that the check stopped at a floor without an outline was applied: the check now reports every floor in one run (test_fit_reports_every_floor_not_just_the_first_problem)."
+  ],
+  "D-090-R512": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 4, 'The range is not established here': the examples establish no realistic range; 0.60 to 0.75, if the owner adopts it, is 'a chosen sensitivity range, labelled unvalidated'. Section 8a item 1 words the owner's choice the same way.",
+   "No sentence calls the range realistic, expected or validated (searched by the independent reviewer: review record)."
+  ],
+  "D-090-R513": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 6: the attribution of shared floor area among the uses is a required step, quoted from the capture zr-23-20 with its digest ('... attributed to each use proportionately, based on the percentage each use occupies of the total floor area of the zoning lot, less any shared floor area'; the record leaves out the capture's term marks, as it does in every quote); no sentence offers it as a choice or a switch; where the areas it needs are missing the dependent result is 'not known' or explicitly conditional.",
+   "Example C marks every component exclusive or shared and carries the attribution as a line of its reconciliation (one shared 120 sq ft utility room, attributed by the captured sentence); the outcome is labelled conditional on the mixed-building text. Pinned by services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_every_component_is_marked_exclusive_or_shared and test_shared_floor_area_attribution_is_a_required_step_not_a_switch.",
+   "NOT done here, and said so in section 8b item 2: the mixed-building section the reviewer names (ZR 35-31) is captured by task M4-T034 of this wave and is not read in this record; how a mixed building in a commercial district combines its floor areas stays withheld until that text is read. The row stays open for that reading."
+  ],
+  "D-090-R514": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 1d: the amenity rule's base is quoted from the capture zr-23-231, 'the residential floor area of the building'; it covers amenity space provided for residents; circulation is not amenity space; it is never an automatic 5 percent added to apartment space.",
+   "The former open point that asked the owner what the base is has gone; what remains (the order of calculation when the cap binds) stands under the questions of law, section 8b item 1, with 'not sure'."
+  ],
+  "D-090-R515": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 8 is two lists: 8a 'Choices for the owner' holds only design assumptions and what is displayed, each marked 'NOT decided until the owner says so'; 8b 'Questions of law' holds what is settled by capturing and reading the text, 'never by preference'. The former points 5, 6 and 7 moved to 8b.",
+   "One item the builder had put under 8b (a remark on the reviewer's link to ZR 23-22) was removed in round 2 at the orchestrator's request: it was not a question of law and repeated the orchestrator's own misreading."
+  ],
+  "D-090-R516": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 1d and section 8b item 3: the exterior-wall exclusion is quoted from the capture zr-12-10-qualifying-exterior-wall-thickness (thickness added to a building existing on December 6, 2023) and is said not to be a deduction for a new building's ordinary walls; no example takes it.",
+   "The energy exclusion: the sentence of the 'floor area' definition is quoted from the capture zr-12-10-floor-area; the two definitions it rests on are written as 'not captured yet', its eligibility is withheld and no example takes it. A user's statement supports only a conditional result. No general 'confirm it applies' choice is offered.",
+   "NOT done here: the two definitions are captured by task M4-T034 of this wave and are not read in this record; stating the eligibility conditions from them is later work. The row stays open for it."
+  ],
+  "D-090-R519": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 8c: floors above the maximum base height are set back and are smaller, so a count of floors times one floorplate is an assumption and is labelled as one; the R6B heights are quoted from the captured table of ZR 23-432 (minimum base 30 ft, maximum base 45 ft, building 55 ft for standard residences; 45 and 65 ft for qualifying housing) and the setback from the capture of ZR 23-433; the program does not work out the setback yet.",
+   "The examples say that their equal floorplates are a simplification."
+  ],
+  "D-090-R532": [
+   "This correction is reported as finished nowhere on the builder's word: the progress log records the builder's statements as the builder's; the owner update of 2026-10-07 calls it in progress on a branch, not merged.",
+   "The independent reviews are the gate records G3 (data-contract-verifier: every quote against its capture; the floors added up by hand) and G4 (qa-engineer: the fit check) at a named commit and the review record project-control/reports/M5-T133-G3G4.md, recorded after this map."
+  ],
+  "D-090-R534": [
+   "The record and its examples are corrected by this contracted task, in two commits by one builder, and reviewed independently (gates G3 and G4) before the record is put to the owner again: the formula (R509), the examples and their test (R510, R511), the range (R512), shared floor area (R513), the amenity base (R514), the eligibility of the two exclusions as far as the captured text goes (R516), unequal floors (R519), and the list of open points rewritten so that it holds only the owner's choices beside the questions of law (R515).",
+   "NOT done here: putting the corrected record to the owner (the orchestrator's update after the merge); the reading of the texts captured by M4-T034 into the record. No estimator is built; no starting value is approved."
+  ]
+ }
+}

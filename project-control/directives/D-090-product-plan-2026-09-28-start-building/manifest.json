@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-07T20:17:45+00:00",
+ "updated_at": "2026-10-07T22:04:38+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -556,10 +556,12 @@
   "D-090-R532",
   "D-090-R533",
   "D-090-R534",
-  "D-090-R535"
+  "D-090-R535",
+  "D-090-R536",
+  "D-090-R537"
  ],
- "requirements_id_digest_sha256": "f0a2b6679faaf2f8438636bd56152fb3c450405a272d4fc2aec94b05e58a4460",
- "requirements_content_digest_sha256": "71d13aa9a05eeb23108a19dd8c40e82c517cdaea276f04a41a9bea52cb082ba4",
+ "requirements_id_digest_sha256": "f9553ea46cff6bbfa15808eb4e6bdbb7fd713ad5e99263328511d39637a078bd",
+ "requirements_content_digest_sha256": "b81547de42933a1d93a7bcd420fc643e4b9e4df89f85976d4160a3d9d68594e4",
  "sources": [
   {
    "file": "source-001.md",
@@ -999,6 +1001,14 @@
    "recorded_at": "2026-10-07T19:34:08+00:00",
    "content_digest_sha256": "84766169ec3545652c0f364660496a72f029f6e88e3c9e07b758c168791cdd81",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-056-amendment.md",
+   "kind": "amendment",
+   "sequence": 56,
+   "recorded_at": "2026-10-07T22:04:38+00:00",
+   "content_digest_sha256": "a0319db2e048347e9cf384f50e10845aa98b3e900980f7c648e38e811b60b719",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1055,7 +1065,8 @@
   "source-052-amendment.md",
   "source-053-amendment.md",
   "source-054-amendment.md",
-  "source-055-amendment.md"
+  "source-055-amendment.md",
+  "source-056-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1584,6 +1595,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Row D-090-R517: the orchestrator's reading corrected (it had called the reviewer's link to ZR 23-22 a difference from the repository; ZR 23-22 is the floor-area-ratio section and is captured as zr-23-22; no difference was found). The owner's quoted words, the classification, the harness and the evidence are unchanged; the row was pending and bound to no accepted task. Requirements content digest resynced in the same commit. Source-055 is append-only and is not edited; backlog row DB-178 carries a note."
+  },
+  {
+   "at": "2026-10-07T22:04:38+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-056 (session 013RaGmC message 112, 2026-10-07: a quick update on where the build stands) and requirements D-090-R536 and R537, both pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
