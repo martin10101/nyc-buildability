@@ -4,271 +4,271 @@ Method: `/deficit-convergence` (loaded before any edit). DB-157; D-090-R093/R094
 Qualifying evidence (supervisor-freeze §2, AD-093): a reproduced defect — CI run 37519342596,
 job 112460379795 (supervisor-bridge, windows-latest).
 
-Claim-seam head (reset target): `9371c1e4d87e332b42cebd369be88ae210ab838d`. Producer worktree:
+Claim-seam head: `9371c1e4d87e332b42cebd369be88ae210ab838d`. Producer worktree:
 `/root/project/nyc-buildability/.claude/worktrees/agent-af69907a37976d578`. This host is Linux
-(Python 3.12.3); the Windows delete-pending fact is argued from the frozen log + the code and is to
-be DEMONSTRATED on windows-latest (S3), never assumed from memory of the Win32 API.
+(Python 3.12.3). The Windows behaviour is now DEMONSTRATED on windows-latest by a designed probe
+(round 2), not assumed from memory of the Win32 API; this round writes only what the frozen files
+show.
 
-Commits in this worktree (not pushed): A `685ca1f374128a17967e10da46605bd5fb754134` (tests only),
-B `aba185655755c14c69e2c6224e337b5f22c16a27` (the repair), C (these two reports).
+Commit lineage (not pushed). Round 1: A (tests) `685ca1f3`, B (repair) `aba18565`, C (reports)
+`24aeb949`, cherry-picked onto the task branch as `d3eba6ca` / `7ee6299a` / `6d5899ce`. Round 2:
+P (Windows probe) `e3b5417f` — experiment branch only, NEVER merged. Round 3 (this round):
+D (the wrong platform test replaced by a real-race test + these reports), and X (experiment only,
+NEVER merged — the acquire loop restored to its pre-fix code, the real-platform mutation proof).
 
 ---
 
 ## 1. Frozen evidence (S1) — cited, not paraphrased from memory
 
-Read-only file `project-control/reports/M0-T186-ci-evidence/job-112460379795-windows-failure.txt`
-(written by the orchestrator at contract time; unchanged by this producer).
+Read-only files under `project-control/reports/M0-T186-ci-evidence/`.
 
-- Run **37519342596** (workflow CI, event `pull_request`, run attempt **1**; nothing was rerun).
-- Job **112460379795** — `supervisor-bridge` (`pytest tools/test_agent_supervisor_*.py`),
-  **windows-latest** (Python 3.12.10, path `C:\hostedtoolcache\windows\Python\3.12.10`).
-- Head **`1cdad2c07e825fff3a3344850466cad7d8accf18`**, branch
-  `task/M4-T023-zoning-rule-review-register`, pull request **452** (that change touches no file
-  under `tools/`).
-- Same head, push run **37519335445**: the same job **passed** (the race is narrow and
-  probabilistic).
-- Full log **55895 bytes**, sha256 **`5d21679450c65bb9a70775a9cbf12b469bba8e6de7e82c19b3439697f40a52f1`**
-  (downloaded 2026-10-06 through the jobs API).
-
-Quoted from the frozen FAILURES section (not paraphrased):
-
-- Failing test: `tools/test_agent_supervisor_mrl_subagent_contract.py::TestLedger::test_parallel_requests_never_exceed_limits`.
-- Assertion: `assert (2 == 2 and 5 == 6)` — `results.count(True) == 2` and `results.count(False) == 5`
-  (`[True, True, False, False, False, False, ...]`).
-- The lost thread's traceback (a `PytestUnhandledThreadExceptionWarning`, "Exception in thread
-  Thread-1830 (worker)"):
-  `_req(led)` → `ledger.request(**base)` → `with _exclusive(self.path):` (request line 200) →
-  contextlib `__enter__` → `_exclusive` line 133
+**The original failure — `job-112460379795-windows-failure.txt`:**
+- Run **37519342596** (CI, event `pull_request`, attempt **1**; nothing rerun). Job
+  **112460379795** — `supervisor-bridge`, **windows-latest** (Python 3.12.10). Head
+  `1cdad2c07e825fff3a3344850466cad7d8accf18`, branch `task/M4-T023-zoning-rule-review-register`,
+  PR **452** (touches no file under `tools/`). Same head, push run **37519335445**: the job
+  **passed** (the race is narrow). Full log **55895 bytes**, sha256
+  `5d21679450c65bb9a70775a9cbf12b469bba8e6de7e82c19b3439697f40a52f1`.
+- Failing test `TestLedger::test_parallel_requests_never_exceed_limits`; assertion
+  `assert (2 == 2 and 5 == 6)`. The lost worker thread's traceback ends at `_exclusive` line 133
   `fd = os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)` →
-  `PermissionError: [Errno 13] Permission denied: 'C:\…\pytest-0\test_parallel_requests_never_e0\l.json.lock'`.
-- Suite summary: `1 failed, 3956 passed, 60 skipped in 275.11s`.
+  `PermissionError: [Errno 13] Permission denied: '…\l.json.lock'`. Summary:
+  `1 failed, 3956 passed, 60 skipped in 275.11s`.
 
-Invariants the evidence fixes, which any explanation must satisfy:
-1. No request was admitted beyond the limits — exactly **2** admitted against `max_concurrent=2`;
-   the ledger's locked accounting held (safety intact).
-2. The failure is a hard **unhandled exception** at the O_EXCL create (`PermissionError [Errno 13]`),
-   not an under-count and not a `fail closed` refusal — a worker thread died before appending its
-   result, so `results` holds 7 of 8 entries (2 True, 5 False).
-3. It is rare: the push run on the same head passed the same job; one job in one run shows it.
+Invariants the evidence fixes: (1) exactly **2** admitted against `max_concurrent=2` — no
+over-admission, the ledger's locked accounting held; (2) the failure is a hard **unhandled
+exception** at the O_EXCL create (`PermissionError [Errno 13]`), so a worker died before appending
+its result (7 of 8 results: 2 True, 5 False); (3) it is rare (the same head's push run passed).
+
+**The Windows runs of this change (round 2, quoted in §3 and §8):** commit A alone
+(`job-112576500175-run-37554194212-attempt-1-ci-exp-red.txt`); A+B+C
+(`jobs-112576591960-112576606545-head-6d5899ce-failed.txt`); the probe P1–P5
+(`job-112580543291-run-37555462888-attempt-1-ci-exp-probe.txt`).
 
 ## 2. Causal path and candidate adjudication (S2)
 
 ### 2.1 The path from the eight threads to the one unhandled exception
 
-The test starts 8 threads; each calls `_req(led)` → `SubagentLedger.request(...)`, whose body is
-`with _exclusive(self.path): …`. `_exclusive()` (pre-fix) acquires a cross-process lock by
-`os.open(lock, O_CREAT|O_EXCL|O_WRONLY)` in a loop that retries **only** on `FileExistsError`
-(sleep 0.02 s to the `_LOCK_TIMEOUT_S` deadline, then the module's own fail-closed `_violation`).
-On acquire it `os.close(fd)`, yields (reads the ledger, decides, writes it whole), and in its
-`finally` releases with `lock.unlink()` under `contextlib.suppress(OSError)`.
+8 threads each call `_req(led)` → `SubagentLedger.request(...)` → `with _exclusive(self.path): …`.
+`_exclusive()` (pre-fix) acquires by `os.open(lock, O_CREAT|O_EXCL|O_WRONLY)` in a loop that retries
+**only** on `FileExistsError`; it `os.close(fd)`, yields, and in its `finally` releases with
+`lock.unlink()` under `contextlib.suppress(OSError)`. With `max_concurrent=2, max_total=5` and **no
+releases** in the test, at most 2 are ever admitted; 8 threads → 2 admitted, 6 refused expected. On
+windows-latest, while one thread's `lock.unlink()` raced another thread's `os.open(...O_EXCL...)`,
+the create raised `PermissionError [Errno 13]` (not `FileExistsError`). The pre-fix loop catches only
+`FileExistsError`, so the `PermissionError` propagated out and killed one worker → **2 admitted, 5
+refused, 1 lost**. No over-admission: the crash is on the ACQUIRE, before any accounting mutation.
 
-With `max_concurrent=2, max_total=5` and **no releases** in the test (workers only request), once two
-children are issued and live, every later request is refused by the concurrent limit. So at most 2
-can ever be admitted; 8 threads → 2 admitted, 6 refused **expected**. On windows-latest one thread,
-while another thread's `lock.unlink()` (its `finally`) was in flight, called `os.open(...O_EXCL...)`
-against a **delete-pending** lock file; Windows denied the create with `PermissionError [Errno 13]`
-instead of `FileExistsError`. The pre-fix loop catches only `FileExistsError`, so the
-`PermissionError` propagated out of `_exclusive` → `request` → `_req` → the worker thread, which
-died before appending to `results`. Hence **2 admitted, 5 refused, 1 lost** (7 of 8 results), and the
-assertion saw `5 == 6` fail. No over-admission occurred: the crash is on the ACQUIRE, before any
-accounting mutation, so the safety invariant (never more than `max_concurrent`/`max_total`) held;
-only liveness (one lost worker) broke.
+### 2.2 Candidate adjudication (rewritten to the probe evidence)
 
-### 2.2 Candidate adjudication
-
-- **(a) the exclusive create meeting a lock file whose removal by another thread is pending
-  (Windows reports access denied) — PROVED (the cause).** The frozen traceback shows
-  `PermissionError [Errno 13]` raised at exactly `os.open(lock, O_CREAT|O_EXCL|O_WRONLY)` while 8
-  threads hammer create/unlink on one `l.json.lock`; the pre-fix loop handles only `FileExistsError`,
-  so it escapes. Host-independent mutation proof (§5): with the pre-fix body restored, an injected
-  `PermissionError` at that create propagates unhandled and both repair-dependent tests fail. The
-  DECIDING PLATFORM FACT — that a delete-pending create raises `PermissionError`, not
-  `FileExistsError` — is witnessed by the frozen production traceback and is to be DEMONSTRATED
-  deterministically on windows-latest (S3 / §3): the nt-only platform-fact test, and the before/after
-  ci-exp and PR-head runs. The sibling `review_slots._SlotLock.acquire` already relies on and (via
-  M0-T176/M0-T184) demonstrated the same OS behaviour on windows-latest.
-- **(b) another process holding the file open (antivirus, indexer) — RULED OUT as the cause.** The
-  lock lives in a per-test `tmp_path` created and destroyed inside the test; the error coincides with
-  8 threads racing create/unlink on that one path; there is no external-process signature and the
-  mechanism of (a) needs none. (At the OS-error level an external open would surface as the same
-  transient create denial, and the repair's bounded retry covers it too — but there is no evidence for
-  it and it is not needed to explain the failure.)
-- **(c) a fault of the test itself (shared tmp_path, thread start order) — RULED OUT.** `tmp_path` is
-  pytest's per-test unique directory (`pytest-0/test_parallel_requests_never_e0`); threads do not
-  share it across tests. The exception originates in PRODUCTION code (`_exclusive` line 133), not the
-  test; the 2+5+lost count is the CONSEQUENCE of the lost thread, not a test bug. The assertion and
-  its limits are correct and are preserved (R094).
-- **(d) test timing — RULED OUT.** This is a crash at a syscall, not a timing-sensitive under-count a
-  slower/faster runner would shift (contrast DB-150/M0-T184, a genuine `slot_lock_timeout`). Raising a
-  timeout cannot help: the thread dies at the create, never reaching the deadline. The same head's
-  push run passed only because the race window is narrow; when the `PermissionError` does occur, the
-  pre-fix code has no path but to crash the thread.
+- **(a) the exclusive create meeting a lock file whose removal by another thread is pending (Windows
+  reports access denied) — the RACE is PROVED; the kernel reason is NOT ESTABLISHED.** Probe P4 (the
+  real 8-thread create/close/unlink race, raw `os` calls, no external process and no third handle)
+  shows the O_EXCL create raises `PermissionError(errno=13, winerror=None)` — deciding frozen line:
+  `P4 real race (8 threads, 61758 iterations, 20.0s elapsed …): {'create:FileExistsError': 39093,
+  'create:PermissionError(errno=13, winerror=None)': 1468, 'create:ok': 21197, 'unlink:ok': 21197}`.
+  So the concurrent create/unlink race ALONE reproduces the exact production error (errno-13
+  PermissionError at the create), with no external process. The specific kernel reason ("removal is
+  pending" / ERROR_ACCESS_DENIED) is NOT ESTABLISHED: `os.open` reports **no winerror** (P4
+  `winerror=None`), and neither deliberate delete-pending construction reproduces it — a held
+  **share-delete** handle makes the create SUCCEED and the file vanish at once (`P2 … unlink=ok;
+  path_exists_after_unlink=False; O_EXCL_create_while_handle_open=ok(created)`), and a held **plain**
+  handle makes the UNLINK fail and the create give FileExistsError (`P3 … unlink=PermissionError
+  (errno=13, winerror=32); … O_EXCL_create_while_handle_open=FileExistsError(errno=17,
+  winerror=None)`).
+- **(b) another process holding the file open (antivirus, indexer) — RULED OUT as a necessary
+  cause.** P4 reproduces the create's `PermissionError` with no external process and no held handle at
+  all, in an isolated `tmp_path` (frozen P4 line above), so an external process is **not needed** to
+  explain the failure. What P2/P3 CANNOT exclude: that some external handle also contributed in the
+  original 2026-10-06 job — they only show the race alone suffices and that a deliberately held
+  handle does **not** reproduce the create's `PermissionError` (P2 create succeeds; P3 create gives
+  FileExistsError). So (b) is unnecessary, not positively excluded for all time.
+- **(c) a fault of the test itself (shared tmp_path, thread start order) — RULED OUT.** P4 reproduces
+  the create `PermissionError` through raw `os` calls in an isolated per-test `tmp_path` (`…
+  /test_p4_real_race_raw_os_calls0`), independent of the ledger test; the original production
+  traceback is in `_exclusive` line 133. The 2+5+lost count is the consequence of the lost thread.
+- **(d) test timing — RULED OUT.** P4 shows the create `PermissionError` is a real OS outcome of the
+  race (1,468 genuine occurrences), not a test-timing threshold; a worker dies at the create
+  regardless of any timeout (contrast DB-150/M0-T184, a genuine `slot_lock_timeout`).
 
 ### 2.3 Classification
 
 **REAL SUPERVISOR DEFECT** in `tools/agent_supervisor/mrl_subagent_contract.py`, `_exclusive()`
-acquire loop (candidate (a)). NOT test timing, NOT a test fault. Same family as DB-150 (repaired by
-M0-T184, release side) and DB-160 (`locking.SingleInstanceLock.acquire`, same acquire-side pattern,
-not yet repaired); this module was not part of either.
+acquire loop: on windows-latest a concurrent create/unlink race on one lock path makes the O_EXCL
+create raise `PermissionError` errno 13, which the pre-fix loop (`FileExistsError`-only) did not
+catch, so it reached the caller and killed a worker thread (demonstrated by P4). The exact Win32
+reason is unproven, but the repair does not depend on it — it catches the transient `PermissionError`
+on Windows and retries, which probe P5 shows holds under the real race. NOT test timing, NOT a test
+fault. Same family as DB-150 (M0-T184, release side) and DB-160
+(`locking.SingleInstanceLock.acquire`, same acquire-side pattern, not yet repaired).
 
-## 3. Deciding Windows behaviour, to be demonstrated on windows-latest (S3) — PENDING
+**Round-1 statements WITHDRAWN (they did not stand):**
+1. "`os.open` shares delete on Windows" and the round-1 platform-fact test that rested on it —
+   FALSE. On windows-latest the `os.unlink` of a file a plain `os.open` handle still held raised
+   `PermissionError [WinError 32]` at the UNLINK (`test_windows_delete_pending_create_raises…` line
+   281, frozen jobs 112576591960 / 112576606545 and the probe), so that test never reached its create
+   and demonstrated nothing about the create. P3 confirms the plain-handle unlink is winerror 32, and
+   P2 shows an explicit share-delete handle makes the file vanish at once (no delete-pending on this
+   NTFS), not a lingering pending delete.
+2. Candidate (a) marked "PROVED" as a *delete-pending* mechanism — withdrawn. The RACE is proven
+   (P4); the delete-pending kernel reason is NOT established.
+3. Candidate (b) marked "RULED OUT" (fully excluded) — corrected to "ruled out as a necessary cause":
+   unnecessary to explain the failure, not provably never-occurred.
 
-The repair rests on one platform fact: on Windows an `O_EXCL` create against a delete-pending lock
-file raises `PermissionError` (ERROR_ACCESS_DENIED), not `FileExistsError`. It is witnessed by the
-frozen production traceback and is to be DEMONSTRATED deterministically by the orchestrator on
-windows-latest:
+## 3. What the probe DEMONSTRATED on windows-latest, and what it did not (S3)
 
-- The nt-only platform-fact test
-  `TestExclusiveWindowsDeletePending::test_windows_delete_pending_create_raises_permission_error_platform_fact`
-  (skipped on this Linux host; `os.name != 'nt'`): opens a lock file, unlinks it while a handle is
-  still open (delete-pending), and asserts a second `O_EXCL` create raises `PermissionError`.
-- Before the repair, on a `ci-exp/M0-T186-*` branch pushed by the orchestrator from commit A
-  `685ca1f3` (tests only): `test_transient_windows_permission_error_waits_then_succeeds` and
-  `test_persistent_windows_permission_error_times_out_fail_closed` RED, the platform-fact test
-  PASSED, `test_parallel_requests_never_exceed_limits` may still flake RED (the live defect).
-  `[ORCHESTRATOR TO SUPPLY: ci-exp branch name, run id, job id, runner image, full-log bytes + sha256,
-  the failing/passing test names and the suite summary.]`
-- After the repair, on the pull-request head (commits A+B+C): the supervisor-bridge job green in both
-  runs, with the two repair-dependent tests GREEN on Windows and
-  `test_parallel_requests_never_exceed_limits` green.
-  `[ORCHESTRATOR TO SUPPLY: PR head sha, both run ids and job ids, full-log bytes + sha256, the
-  supervisor-bridge suite summary (expect ≥ 1165 tests, 0 failures — the freeze baseline).]`
+Probe run (ci-exp/M0-T186-probe, head `e3b5417f` = commit P, NEVER merged): run **37555462888**
+(attempt 1, push), job **112580543291**, windows-latest (Windows Server 2025, image
+windows-2025-vs2026). Full log **72219 bytes**, sha256
+`1010705af297f7bf36235713d2bce260d2344f8bad7b9bfc23d68c864e1ae6db`. Each probe ends in `pytest.fail`
+on purpose, so its observation prints; summary `6 failed, 3961 passed, 60 skipped in 339.00s`.
 
-## 4. The one bounded repair (S4)
+DEMONSTRATED (quoted):
+- **Environment (P1):** `getwindowsversion=(10, 0, 26100, 2, ''); platform=
+  Windows-2025Server-10.0.26100-SP0; python=3.12.10; tmp_volume_root='C:\\'; tmp_filesystem='NTFS'`.
+- **The real race alone raises the create `PermissionError` (P4):** `{'create:FileExistsError':
+  39093, 'create:PermissionError(errno=13, winerror=None)': 1468, 'create:ok': 21197, 'unlink:ok':
+  21197}` over 61,758 iterations, 8 threads, 20.0 s, no external process, no held handle — and no
+  unlink error at all.
+- **The repaired `_exclusive()` holds under that exact race (P5):** `max_concurrent_inside=1 (expect
+  1); {'acquired': 32673}` over 32,673 iterations, 15.1 s — no refusal, no escaped exception, never
+  more than one thread inside the section.
 
-`_exclusive()` acquire loop only (the release `finally` and every other function are unchanged); a
-named `_is_windows()` seam (`os.name == 'nt'`) is added so either branch runs deterministically on
-either host without patching the global `os.name`.
+NOT DEMONSTRATED:
+- **The kernel reason for the errno-13 refusal.** `os.open` gives no `winerror` (P4
+  `winerror=None`), so whether it is ERROR_ACCESS_DENIED (a pending delete) or another transient is
+  unknown. The two deliberate delete-pending constructions do NOT reproduce it: a share-delete handle
+  (P2) lets the create succeed and the file disappear at once; a plain handle (P3) makes the UNLINK
+  fail (winerror 32) and the create give FileExistsError. The create's `PermissionError` arises only
+  from the genuine timing race, and its exact Win32 cause is left open.
 
-- The `O_EXCL` create loop now also catches `PermissionError`. On Windows it is treated as the same
-  transient "busy" as `FileExistsError`: waited out with the loop's own `time.sleep(0.02)` to the
-  lock's own deadline (`time.monotonic() + _LOCK_TIMEOUT_S`), and — if it never clears — ended in the
-  module's own fail-closed refusal (`_violation("…held past … refusing (fail closed)")`, the same kind
-  as a held lock past the timeout). Bounded; never an unbounded loop; never swallowed into an
-  admission.
-- On POSIX a `PermissionError` at the `O_EXCL` create is a genuine permission fault and stays loud —
-  re-raised at once (`if not _is_windows(): raise`), unchanged.
-- An OSError that is NOT the transient `PermissionError` (e.g. EIO) is caught by neither branch and
-  reaches the caller at once on both platforms — never waited out.
-- The `FileExistsError` path is behaviour-identical to before (wait to the deadline, then the same
-  `_violation`); the diff restructures it only to share the deadline/sleep tail with the new branch.
+## 4. The one bounded repair (S4) — KEPT (the evidence supports it)
 
-Diff: `tools/agent_supervisor/mrl_subagent_contract.py` **37 insertions, 4 deletions** (the 4 are the
-pre-fix one-line docstring and the inline deadline/sleep in the old `FileExistsError` branch). File is
-**478 lines** (< 600 warn threshold); nothing extracted; public interface (`SubagentLedger.request`
-and its `ContractError` refusal) unchanged.
+`_exclusive()` acquire loop only (the release `finally` and every other function unchanged); a named
+`_is_windows()` seam is added so either branch runs deterministically on either host. The O_EXCL
+create loop now also catches `PermissionError`: on Windows it is treated as the same transient "busy"
+as `FileExistsError` (waited out with `time.sleep(0.02)` to `_LOCK_TIMEOUT_S`, then the module's own
+fail-closed `_violation` if it never clears); on POSIX it is re-raised at once (`if not _is_windows():
+raise`). A non-`PermissionError` OSError (e.g. EIO) is caught by neither branch and stays loud.
 
-## 5. Tests and mutation proof (S5)
+The probe validates the behaviour directly: under the real Windows race P5 shows the repaired lock
+acquired 32,673 times with **no escaped exception** and **no over-admission** (max one thread inside),
+so the transient create `PermissionError` is correctly waited out and retried. The repair's
+correctness therefore rests on catching the transient `PermissionError` (P5), NOT on the exact kernel
+reason. RESIDUAL (out of commit D's scope — test + reports only; the module is not edited this round):
+the module's inline comment names "delete-pending (ERROR_ACCESS_DENIED)" as the reason, which the
+probe leaves unproven; a wording-only correction there is owed the next time the module is touched
+under qualifying evidence (listed in §8 "still open"). Diff of the repair (round 1, unchanged):
+`mrl_subagent_contract.py` **37 insertions, 4 deletions**; file **478 lines** (< 600); public
+interface unchanged.
 
-New class `TestExclusiveWindowsDeletePending` in
-`tools/test_agent_supervisor_mrl_subagent_contract.py` (additions only, 124 insertions, 0 deletions),
-plus the `_failing_lock_open` helper (injects the Windows error for `.lock` creates on any host) and
-the `errno`/`os` imports:
+## 5. Tests and mutation proof (S5) — rewritten to the final test set
 
-| Scenario | Test | Host | commit A | final head |
-|---|---|---|---|---|
-| S5(i) transient create fails 2× then succeeds; request served, limits intact | `test_transient_windows_permission_error_waits_then_succeeds` | any | RED | GREEN |
-| S5(ii) never-clears → bounded, module's typed `fail closed` refusal, no admission | `test_persistent_windows_permission_error_times_out_fail_closed` | any | RED | GREEN |
-| S5(iii) a non-PermissionError OSError (EIO) stays loud, not swallowed | `test_non_permission_oserror_at_create_stays_loud` | any | GREEN | GREEN |
-| S5(iii) a PermissionError on POSIX stays loud (real fault) | `test_permission_error_on_posix_stays_loud` | any | GREEN | GREEN |
-| S5(iv) Windows platform fact: delete-pending `O_EXCL` create raises `PermissionError` | `test_windows_delete_pending_create_raises_permission_error_platform_fact` | nt only | SKIP (non-nt) | SKIP (non-nt) / GREEN on nt |
+Corrected class `TestExclusiveWindowsRace` in `tools/test_agent_supervisor_mrl_subagent_contract.py`.
+The wrong platform-fact test is REMOVED; one real-race test is added in its place.
 
-**Mutation proof (host-independent).** With the repair reverted to the literal pre-fix body
-(`git checkout 9371c1e4 -- tools/agent_supervisor/mrl_subagent_contract.py`; the `except
-PermissionError` branch and `_is_windows()` absent, confirmed by grep), the two repair-dependent
-tests FAIL:
+| Test | Host | What it pins | commit D final head |
+|---|---|---|---|
+| `test_transient_windows_permission_error_waits_then_succeeds` | any (seam-injected) | a transient create PermissionError on Windows is waited out → served, limits intact | GREEN |
+| `test_persistent_windows_permission_error_times_out_fail_closed` | any (seam-injected) | a never-clearing one → bounded, module's typed `fail closed` refusal, no admission | GREEN |
+| `test_non_permission_oserror_at_create_stays_loud` | any | a non-PermissionError OSError (EIO) stays loud, not swallowed | GREEN |
+| `test_permission_error_on_posix_stays_loud` | any | a PermissionError on POSIX stays loud (real fault) | GREEN |
+| `test_real_race_through_exclusive_holds_mutual_exclusion` | **every host** | the REAL 8-thread race through `_exclusive()`: nothing but the typed refusal escapes, and never >1 thread inside the section | GREEN |
 
-```
-/root/project/lanes-runtime/venv/bin/python -m pytest -p no:cacheprovider \
-  "…::TestExclusiveWindowsDeletePending::test_transient_windows_permission_error_waits_then_succeeds" \
-  "…::TestExclusiveWindowsDeletePending::test_persistent_windows_permission_error_times_out_fail_closed"
-… PermissionError: [Errno 13] delete pending   (raised at _exclusive line 133; request line 200)
-2 failed in 0.53s      (direct exit code 1)
-```
-
-The failing mechanism: the injected `PermissionError` reaches the caller unhandled at the O_EXCL
-create. In (i) the line `decision = _req(ledger)` raises before `assert decision.allowed is True` is
-reached; in (ii) the raw `PermissionError` propagates instead of the expected `ContractError('…fail
-closed')`, so `pytest.raises(ContractError, match="fail closed")` does not match it. The source was
-then restored from HEAD (`git checkout HEAD -- …`), working tree verified clean; the mutation was
-never committed.
+**Mutation proof — two layers.**
+- *Host-independent (Linux), the seam-injected branch tests:* round 1 showed that reverting
+  `_exclusive()` to its pre-fix body makes `test_transient_…` and `test_persistent_…` FAIL
+  (`PermissionError [Errno 13]` escapes at `_exclusive` line 133; exit code 1, 2 failed). The new
+  real-race test stays GREEN on Linux (POSIX raises `FileExistsError`, already handled) — which is
+  exactly why the real-platform mutation below is required.
+- *Real platform (Windows):*
+  - **Commit A alone** (ci-exp/M0-T186-red, head `685ca1f3`, run **37554194212**, job
+    **112576500175**, full log 60574 bytes sha256
+    `7031741736ceefd101700bd541cc8baf5a8e20fa2f5b57d64f9c4e71ff334408`): with the tests present and
+    the repair absent, `test_transient_…` and `test_persistent_…` are RED on Windows —
+    `PermissionError: [Errno 13] delete pending` escaping at `_exclusive` line 133 (frozen FAILURES);
+    `3 failed, 3959 passed, 60 skipped` (the third failure is the wrong platform-fact test, WinError
+    32 at its unlink). This is the pre-fix code letting the create's PermissionError escape, shown on
+    the real platform.
+  - **Commit X** (this round, experiment only, NEVER merged): the acquire loop restored to the
+    literal pre-fix code (the body at `9371c1e4`), nothing else. On Windows this must turn the new
+    `test_real_race_through_exclusive_holds_mutual_exclusion` RED (a `PermissionError` escapes through
+    `_exclusive`) while it is GREEN with the repair (P5) — the real-platform mutation proof for the
+    race test, which cannot be shown on Linux. `[ORCHESTRATOR TO SUPPLY: commit X run id, job id,
+    and the race-test RED result.]`
 
 ## 6. No weakening (S6 / R094)
 
-- `test_parallel_requests_never_exceed_limits` is UNCHANGED — keeps `results.count(True) == 2 and
-  results.count(False) == 6`, the 8 threads, and `max_concurrent=2, max_total=5`. Its fix comes from
-  the production repair, not from touching the test.
-- Test-file diff is additions only (124 insertions, 0 deletions; `git diff 9371c1e4..HEAD --
-  <testfile>` shows no deletion lines). No test deleted, renamed, xfail-marked or loosened.
-- The only new skip is the Windows-only platform-fact test, skipped off-Windows with a stated reason
-  (`@pytest.mark.skipif(os.name != 'nt', …)` — the pytest form of `skipUnless(os.name == 'nt')`),
-  authorized by R094.
-- The retry added is INSIDE the production `_exclusive()` acquire loop (the real lock wait), bounded
-  by the lock's own deadline — not a retry/rerun of a test, no rerun/flaky plugin, no `.github/**`
-  change, no pytest-config change, no timeout raised to hide the failure (`_LOCK_TIMEOUT_S` is
-  unchanged at 5.0; the never-clears test monkeypatches it to 0.2 only within its own scope).
+- Every test that existed at the claim head stays **byte-identical**: `git diff 9371c1e4..HEAD --
+  <testfile>` is additions only (no pre-existing line removed or changed). `TestLedger::
+  test_parallel_requests_never_exceed_limits` keeps `results.count(True) == 2 and
+  results.count(False) == 6`, its 8 threads and `max_concurrent=2, max_total=5`.
+- No skip remains anywhere in this test file: the removed platform-fact test was the only
+  `skipUnless`/`skipif`; the replacement real-race test runs on EVERY host. No test is deleted that
+  belonged to the claim head, renamed from the claim head, xfail-marked or loosened.
+- The retry is INSIDE the production `_exclusive()` acquire loop (the real lock wait), bounded by
+  `_LOCK_TIMEOUT_S` — not a test retry/rerun, no rerun/flaky plugin, no `.github/**` change, no
+  pytest-config change, no timeout widened to hide the failure (`_LOCK_TIMEOUT_S` stays 5.0; the
+  never-clears branch test monkeypatches 0.2 only within its own scope).
 
 ## 7. Siblings (S8) — REPORTED, NOT CHANGED
 
 Allowed path is `mrl_subagent_contract.py` only; every other supervisor file is untouched.
 
-- `tools/agent_supervisor/review_slots.py` `_SlotLock.acquire` (lines ~314–330): ALREADY treats the
-  Windows delete-pending `PermissionError` as busy (the `_is_windows()` seam, wait-to-deadline, then
-  `slot_lock_timeout`), from M0-T176 and reinforced by M0-T184. Not exposed; no change needed — this
-  repair brings `_exclusive` to parity with it.
-- `tools/agent_supervisor/locking.py` `SingleInstanceLock.acquire` (line 261): catches ONLY
-  `FileExistsError` at its `O_EXCL` create — the SAME acquire-side pattern as the pre-fix `_exclusive`
-  (DB-160). Same latent Windows delete-pending exposure, but far lower: one holder per supervisor run
-  and few contenders, not 8 threads hammering create/unlink on one path. No failure seen.
+- `review_slots.py` `_SlotLock.acquire` (~L314–330): ALREADY catches a Windows `PermissionError` at
+  the O_EXCL create and treats it as busy (the `_is_windows()` seam, wait-to-deadline, then
+  `slot_lock_timeout`), from M0-T176/M0-T184. Not exposed; this repair brings `_exclusive` to parity.
+  (Its comment also names "delete-pending (ERROR_ACCESS_DENIED)"; the same residual wording note as
+  §4 applies — the behaviour is right, the named reason is not proven.)
+- `locking.py` `SingleInstanceLock.acquire` (L261): catches ONLY `FileExistsError` at its O_EXCL
+  create — the SAME acquire-side pattern as the pre-fix `_exclusive` (DB-160). Latent Windows
+  race exposure, far lower: one holder per supervisor run, few contenders, not 8 threads hammering
+  create/unlink on one path. No failure seen.
+- **DB-152** — `locking.py SingleInstanceLock.release()` (L307–310) one-shot `self.path.unlink()`
+  inside `except OSError: return False`; the mrl `_exclusive` `finally` (`lock.unlink()` under
+  `contextlib.suppress(OSError)`) is the same family. Neither was part of the OBSERVED failure (an
+  acquire-side crash, not a stranded lock); repairing a release path would widen beyond the proven
+  cluster. Repair only under a reproduced failure (supervisor freeze).
+- **DB-153** — a payload-write-after-create stranded lock applies to the two **payload-writing**
+  acquires; `_exclusive()` writes no payload, so it has no such exposure. Unchanged from M0-T184.
 
-DB-152 and DB-153 weighed again:
-
-- **DB-152** — `locking.py SingleInstanceLock.release()` (lines 307–310) issues ONE
-  `self.path.unlink()` inside `except OSError: return False`, the same one-shot swallow M0-T184
-  repaired in `review_slots._SlotLock.release()`. The mrl module's OWN release path (`lock.unlink()`
-  inside `contextlib.suppress(OSError)`, `_exclusive` `finally`) is the same family. Neither was part
-  of the OBSERVED failure, which is purely the acquire-side unhandled exception (a crash at the
-  create, not a stranded lock); repairing a release path here would widen beyond the proven causal
-  cluster. **Recommendation:** repair DB-152 and the mrl release swallow only with a reproduced
-  failure or a failed acceptance scenario — the supervisor freeze bars a speculative change; or add
-  the bounded-retry release when that lock is next touched under qualifying evidence.
-- **DB-153** — a payload-write failure AFTER the `O_EXCL` create leaves an empty/partial lock on disk
-  in the two **payload-writing** acquires (`review_slots._SlotLock.acquire`,
-  `SingleInstanceLock.acquire`). `_exclusive()` writes NO lock payload (it only creates and closes an
-  empty marker), so it has no DB-153 partial-write exposure. **Recommendation:** unchanged from
-  M0-T184 — an operator runbook note, or the next defect task that touches those two acquires.
-
-**Recertification cost:** this change alters the `tools/agent_supervisor/` tree hash, so it
-re-establishes the `M0-T039-supervisor-freeze.md` suite baseline (≥ 1165 tests, 0 failures) under the
-standard gates. A recorded cost authorized by D-090-R093, not a bar; the supervisor stays
-SHADOW-ONLY (no R595 change).
+**Recertification cost:** this change alters the `tools/agent_supervisor/` tree hash → re-establish
+the `M0-T039-supervisor-freeze.md` baseline (≥ 1165 tests, 0 failures) under the standard gates. A
+recorded cost (D-090-R093); the supervisor stays SHADOW-ONLY (no R595 change).
 
 ## 8. Verification (S7) and status (S9)
 
-Linux local (host Python `/root/project/lanes-runtime/venv/bin/python`, 3.12.3),
-`PYTHONDONTWRITEBYTECODE=1`, direct exit codes:
+Linux local (`/root/project/lanes-runtime/venv/bin/python`, 3.12.3), `PYTHONDONTWRITEBYTECODE=1`,
+direct exit codes, at commit D:
 
-| Check | When | Exit | Result |
-|---|---|---|---|
-| `pytest -q -p no:cacheprovider tools/test_agent_supervisor_mrl_subagent_contract.py` | claim head (baseline) | 0 | 45 passed |
-| same, at commit A `685ca1f3` (tests only) | commit A | 1 | 2 failed (the two repair-dependent S5 tests), 47 passed, 1 skipped |
-| same, at the repaired head (B/C) | final head | 0 | 49 passed, 1 skipped (the nt-only platform-fact test) |
-| `ruff check` on both files | final head | 0 | All checks passed |
-| `tools/supervisor_command_doc_check.py` | final head | 0 | 11 commands checked; 0 failures |
-| `tools/modularity_check.py --check` | final head | 0 | pass; `mrl_subagent_contract.py` 478 lines (< 600); printed warnings are pre-existing for other modules, not this file |
-| mutation proof (pre-fix restored) | §5 | 1 | 2 failed (both repair-dependent tests) |
-| `git diff --stat 9371c1e4..HEAD` | final head | — | only the two allowed code files (test 124/0; source 37/4) |
+| Check | Exit | Result |
+|---|---|---|
+| `pytest -q -p no:cacheprovider tools/test_agent_supervisor_mrl_subagent_contract.py` | 0 | 50 passed (the new real-race test ~2.0 s; no skips) |
+| `ruff check` on both files | 0 | All checks passed |
+| `tools/supervisor_command_doc_check.py` | 0 | 11 commands checked; 0 failures |
+| `tools/modularity_check.py --check` | 0 | pass; `mrl_subagent_contract.py` 478 lines (< 600); warnings pre-existing for other modules |
+| `git diff 9371c1e4..HEAD -- <testfile>` | — | additions only (no pre-existing test line removed/changed) |
 
-The whole `tools/test_agent_supervisor_*.py` glob is NOT run on this Linux server (it runs only in the
-windows-latest supervisor-bridge CI job). A green Linux run alone proves little; the proof is the
-MECHANISM (§2) + the host-independent mutation proof + the before/after Windows demonstration (§3,
-pending the orchestrator's runs).
+Windows CI captured (orchestrator):
+| Head | Run / job | Result |
+|---|---|---|
+| commit A alone `685ca1f3` (ci-exp/red) | 37554194212 / 112576500175 | the two branch tests RED (PermissionError errno 13 escapes); 3 failed, 3959 passed, 60 skipped |
+| A+B+C `6d5899ce` | 37554223543 / 112576591960 (push) and 37554228069 / 112576606545 (pr) | the four injected tests GREEN; only the wrong platform-fact test failed (WinError 32 at unlink); 1 failed, 3961 passed, 60 skipped each |
+| probe P `e3b5417f` (ci-exp/probe) | 37555462888 / 112580543291 | P1–P5 observations (§3); 6 failed (each is an intentional `pytest.fail`), 3961 passed, 60 skipped |
 
-**STATUS: PENDING WINDOWS DEMONSTRATION.** On Linux the cause is named and classified (real supervisor
-defect in `_exclusive()`'s acquire loop — an `O_EXCL` create against a delete-pending lock file raises
-`PermissionError`, caught by neither branch pre-fix), the repair is in place and bounded, the mutation
-proof shows it is load-bearing, and no test is weakened (R094). This record CLOSES to VERIFIED_CLOSED
-only after §3's placeholders are filled by the orchestrator: the ci-exp run showing the two
-repair-dependent tests RED on windows-latest at commit A with the platform-fact test PASSED, and the
-PR-head runs showing the supervisor-bridge job green with those tests GREEN on Windows. No blocker;
-the only open item is the Windows evidence, which the producer cannot run here (no Windows host).
+**STATUS: NOT VERIFIED_CLOSED yet.** What is established: the cause is a real supervisor defect in
+`_exclusive()`'s acquire loop (the concurrent create/unlink race makes the O_EXCL create raise
+`PermissionError` errno 13, uncaught pre-fix — P4); the exact kernel reason is not established (§3);
+the repair is correct under the real race (P5) and the pre-fix code is red on the real platform (A
+alone). CLOSING CONDITION — the record closes VERIFIED_CLOSED only when BOTH hold:
+1. commit D's final-head windows-latest supervisor-bridge job is GREEN in both runs (the wrong
+   platform-fact test removed; `test_real_race_through_exclusive_holds_mutual_exclusion` and the four
+   injected branch tests GREEN), and
+2. the commit-X experiment run shows the race test RED on Windows against the pre-fix acquire loop
+   (§5, the real-platform mutation).
+
+`[ORCHESTRATOR TO SUPPLY: final-head runs]` — the run ids, job ids, full-log bytes + sha256 and the
+supervisor-bridge suite summary (expect ≥ 1165 tests, 0 failures) for commit D's windows-latest runs,
+and the commit-X experiment result. No blocker; the only open items are these Windows runs (the
+producer cannot run Windows here) and the residual module-comment wording (§4), owed the next time the
+module is touched under qualifying evidence.
