@@ -121,4 +121,24 @@ The full services/api suite was NOT run (the orchestrator's single wave-final ru
 - `zr-34-111-exceptions` overlaps in part with the step-P3 `zr-34-111-governs` row. I judged they answer different questions (which-section-governs vs do-the-exceptions-reach, the latter now read with the qualifying-residential-site definition), recorded them as distinct and cross-referenced in `does_not_establish`, and did NOT supersede the step-P3 row (its which-section answer is not re-established by both P4 readings). A reviewer may prefer a tighter framing.
 - Geometry/area numbers (lot area, 1.5-acre threshold) are attributed to the readings and the recorded facts; I did not re-survey.
 
+## Round 2 (review note F1) — applied on one commit atop 183ee4ff
+
+The independent review PASSED both gates with two notes; F2 asked for no change (none made). F1: in
+`cases/step-p4-worked.json` row `sections-and-facts-not-had` (and the mirror in `README.md`), the
+Chapter-5 scope/heading section was placed among the pointers ONLY reading 10 names; reading 9 names
+it too, so the row understated what both readings say.
+
+Confirmed in the provenance files myself:
+- Reading 9 (return-independent-hand-calculation-9.md, Q4): "Whether 35-22 itself (a Chapter-5 section) formally governs an all-residential building, versus 34-111, is NOT settled by the captured text (the Chapter-5 scope/heading is not in the folder)."
+- Reading 10 (return-independent-hand-calculation-10.md, Q4 and its Q10 list): "the Chapter 5 scope/applicability provision (e.g. a 35-00/35-20/35-21) is not in the folder."
+
+Exactly what changed (smallest correction; no expected kind or other value text touched):
+- Reading-10-only sentence, OLD: "...additionally names the defined terms multiple dwelling residence, height factor and open space **and the Chapter-5 scope or applicability section**." NEW: "...additionally names the defined terms multiple dwelling residence, height factor and open space." (clause removed).
+- "Named by both readings as not had" list, inserted at its end: "**; and the Chapter-5 scope or heading section (named by reading 9 in its Q4 and reading 10 in its list), needed to say whether ZR 35-22 (Chapter 5) or ZR 34-111 (Chapter 4) formally governs an all-residential building (the effect is the same R6B bulk either way)**".
+- `README.md` step-P4 passage: the same move (added the Chapter-5 clause to the both-did-not-have sentence; removed "and the Chapter-5 scope section" from the reading-10 sentence).
+- Row `zr-35-sections` already recorded the governing-chapter point as "both readings" — left unchanged, as the reviewer noted.
+- Added a dated (2026-10-07) change-log entry to the case recording F1. Pages re-rendered (byte-identical).
+
+Round-2 checks (direct exit codes): a. ruff `All checks passed!` exit 0. b. pytest reference_cases + test_lot_reach.py **77 passed** exit 0 (includes the FORBIDDEN_PRESENT_TENSE scan — no "not captured"/"uncaptured"; the "both readings" list guards unaffected). c. renderer `--check` `reference-case check PASSED (no issues)` exit 0. d. `git status --porcelain` empty after the commit; `git diff --name-status 183ee4ff HEAD` = the case file, its page, the README and this report (no test file needed — no pinned text changed).
+
 END-OF-REPORT

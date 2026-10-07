@@ -141,11 +141,13 @@ front and side yard changes plain R6B is not known); the defined term
 Transit Zone* and *Outer Transit Zone* definitions (both note these are moot for the R6B reading); and
 the neighbouring buildings' street-wall data, the mapped street lines and any adjacent-district
 boundary for the real lot (so whether the lot has a prevailing street wall frontage, and whether ZR
-23-443(a), (b) or (d) reach it, stay not known). The two readings differ on some pointers, so those are
+23-443(a), (b) or (d) reach it, stay not known); and the Chapter-5 scope or heading section (named by
+reading 9 in its Q4 and reading 10 in its list), needed to say whether ZR 35-22 or ZR 34-111 formally
+governs an all-residential building. The two readings differ on some pointers, so those are
 recorded as differences, not as the agreed list: reading 9 names that the full ZR 34-23 sub-section
 list is not confirmed by the folder and the defined terms *Limited Height District*, *aggregate width
 of street walls*, *block* and *short dimension of a block*; reading 10 names the defined terms
-*multiple dwelling residence*, *height factor* and *open space* and the Chapter-5 scope section. Most
+*multiple dwelling residence*, *height factor* and *open space*. Most
 other texts the readings point to (including ZR 34-22 and 34-23 and all the definitions above) were in
 the step-P4 folder - all 110 pinned captures were - so they are NOT on the step-P4 "did not have" list;
 each reading also lists, separately, the texts that were in its folder and that it chose not to read.
