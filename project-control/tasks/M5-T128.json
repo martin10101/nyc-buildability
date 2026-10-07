@@ -1,0 +1,135 @@
+{
+  "task_id": "M5-T128",
+  "title": "The results contract can carry a value that is settled, conditional or withheld: version 1.3.0, strictly additive, with its runtime copy, generated types and one contract test; nothing emits it yet (work order Part 0, decision D5; D-090 R229, R255, R258, R268)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Make the results contract able to say, for ONE value inside an answer, which of the three ways of the work order it appears in (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, section 0 'How a result may appear', section 4 item 4, section 7 decision D5, section 10): settled (the number, its law section, its sources), conditional ('If <the assumption>: <the number>', naming each assumption, its kind and what would settle it) or withheld ('not known', the reason, what would resolve it, and whether it is missing information or work still owed; never a number, never a zero). Today a value must be a number and only a whole answer can be 'not available', so coverage cannot read 'not known' beside heights that are shown. THE ORCHESTRATOR'S DECISION ON D5 (the work order's recommendation): a new contract version, 1.3.0, added in the same way versions 1.1.0 and 1.2.0 were added: STRICTLY ADDITIVE. Required properties of the design: (a) every document that is valid today stays valid byte for byte, and every fixture that is invalid today stays invalid; (b) the new fields are optional in the schema and a document that carries any of them declares 1.3.0 (a version-binding rule like the two existing ones); (c) in a document that declares 1.3.0 every value of every available answer states its way: none is settled by silence; (d) a value that is shown (settled or conditional) keeps the present value object and its number; a conditional value carries at least one condition with its kind (a user's statement about the lot; a recorded figure that another figure contradicts; a condition that was not checked and is assumed not to apply), the assumption in words and what would settle it; a settled value carries no condition; (e) a withheld value carries NO number: it is listed beside the shown values of the same answer with its key, its label, the reason, the kind (missing information for this property, or work the program still owes), what would resolve it and, where one applies, the law section; the same key is never both shown and withheld in one answer; (f) the whole-answer 'not available' object may say, in 1.3.0, what would resolve it and which of the two kinds it is, without changing its present required fields; (g) nothing about the remaining-floor-area line changes (its wording is settled by the owner); (h) the existing type of a shown value's number stays a number in the generated types, so no present reader of a results document has to change. The builder may choose the field names and the exact shape inside these properties, and says in its report what it chose and why. Then: the runtime copy of the schema is re-synced and the generated types are regenerated, each with its script; one new contract test file proves the properties above with documents built in the test (valid: one answer with shown heights and a withheld coverage; a conditional floor area naming a contradicted recorded figure and an unchecked condition; a withheld unit limit that is missing information; invalid: a conditional value without a condition, a settled value with one, a withheld value carrying a number, a key both shown and withheld, a 1.3.0 document with a value that states no way, the new fields under a lower version). NOTHING EMITS 1.3.0 IN THIS TASK: no engine, route, screen, drawing or saved result changes, and NO new file is added under packages/contracts/fixtures/valid/results/ (the drawing and CAD snapshot suites read every file there).",
+  "business_reason": "Part 0 of the work order cannot make a result honest while the contract can only carry a number or drop a whole answer. With the contract merged first and nothing using it, the engine and the website can then be built at the same time by different builders without writing the same file. The owner's rules: unknown information stays unknown (R229); a user's assumption supports only a clearly labelled conditional result (R255); missing information and unfinished work are different (R258); for unchecked conditions, unaffected answers stay visible, defensible assumptions are labelled conditional and only what cannot be supported is withheld (R268).",
+  "inputs": [
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md sections 0, 4 (item 4), 5, 7 (D5) and 10",
+    "packages/contracts/schemas/v1/results.schema.json (the two existing version additions: the optional 'scope' object of 1.1.0 and the optional building-option 'notes' of 1.2.0, each with a version-binding rule), packages/contracts/schemas/v1/common.schema.json, packages/contracts/README.md",
+    "services/api/tests/contracts/test_results_scope_slot.py, test_results_notes_slot.py and test_results_scope_notes_binding.py (how the earlier additions are tested); services/api/app/scenario/three_answers/contract.py (the validator the engine uses)",
+    "packages/contracts/scripts/generate_ts_types.py and services/api/scripts/sync_contract_schemas.py; the fixtures under packages/contracts/fixtures/valid/results/ and fixtures/invalid/results/ (read only)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R229, R255, R258, R268; .claude/rules/code-architecture.md"
+  ],
+  "outputs": [
+    "packages/contracts/schemas/v1/results.schema.json: version 1.3.0 appended to the closed list; the new optional fields and their version-binding rule; descriptions in plain words",
+    "services/api/app/_contract_schemas/v1/results.schema.json (the runtime copy, re-synced by the script) and packages/contracts/generated/results.ts (regenerated by the script)",
+    "services/api/tests/contracts/test_results_three_ways_slot.py: the valid and invalid documents of the objective, built in the test; every present valid results fixture still valid and every present invalid one still invalid",
+    "project-control/reports/M5-T128-producer-report.md: the shape chosen and why; each property (a) to (h) with the test that proves it; what a later engine and a later screen must do to use it; every check with its DIRECT exit code"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "packages/contracts/schemas/v1/results.schema.json",
+    "services/api/app/_contract_schemas/v1/results.schema.json",
+    "packages/contracts/generated/results.ts",
+    "services/api/tests/contracts/test_results_three_ways_slot.py",
+    "project-control/reports/M5-T128-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/fixtures/** (no fixture is added, changed or removed)",
+    "services/api/app/** except the runtime copy of the schema named in allowed_paths (no engine, route, validator or drawing change)",
+    "apps/** (no website change); services/api/tests/** except the one new test file; every other schema and generated file",
+    "docs/**; .github/**; CLAUDE.md; .claude/**; tools/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "every_valid_document_stays_valid",
+      "input": "every file under packages/contracts/fixtures/valid/results/ against the new schema",
+      "expected": "all valid, unchanged; none had to be edited"
+    },
+    {
+      "id": "S2",
+      "case": "every_invalid_document_stays_invalid",
+      "input": "every file under packages/contracts/fixtures/invalid/results/",
+      "expected": "all still rejected"
+    },
+    {
+      "id": "S3",
+      "case": "one_value_can_be_withheld_beside_shown_values",
+      "input": "a 1.3.0 document whose envelope answer shows the heights and withholds coverage",
+      "expected": "valid; the withheld entry has no number and carries its reason, its kind (missing information or work owed) and what would resolve it"
+    },
+    {
+      "id": "S4",
+      "case": "a_conditional_value_names_its_assumptions",
+      "input": "a 1.3.0 document with a conditional floor-area value",
+      "expected": "valid with one or more conditions, each with its kind, the assumption in words and what would settle it; rejected with none; a settled value with a condition is rejected"
+    },
+    {
+      "id": "S5",
+      "case": "no_way_by_silence",
+      "input": "a 1.3.0 document in which one shown value states no way",
+      "expected": "rejected"
+    },
+    {
+      "id": "S6",
+      "case": "version_binding",
+      "input": "the new fields in a document that declares 1.0.0, 1.1.0 or 1.2.0",
+      "expected": "rejected; a document without the new fields may declare any published version"
+    },
+    {
+      "id": "S7",
+      "case": "never_a_number_and_never_both",
+      "input": "a withheld entry that carries a number; one key both shown and withheld",
+      "expected": "each rejected"
+    },
+    {
+      "id": "S8",
+      "case": "copies_and_generated_types_in_step",
+      "input": "the sync script's check mode and the type generator's check mode",
+      "expected": "the runtime copy is byte-identical to the schema; the generated file is what the generator produces; in the generated types the number of a shown value is still a number"
+    },
+    {
+      "id": "S9",
+      "case": "nothing_emits_it",
+      "input": "git show --name-status <the builder's commit>; a search of services/api/app and apps/web for the new field names",
+      "expected": "only allowed_paths changed; no engine, screen, drawing or fixture uses the new fields; ruff and the full services/api pytest pass at the wave's final candidate; the website's checks pass in CI"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A change that is not additive breaks a present reader (the engine's validator, the drawings, the website's fixtures) -> S1, S2, S8, S9 and the compatibility part of the independent review",
+    "A shape that lets a value be settled by silence, or a withheld value carry a number -> S5, S7",
+    "The remaining-floor-area wording touched -> forbidden; the reviewer compares that part of the schema byte for byte",
+    "A new valid fixture pulled into the drawing snapshot suites -> forbidden_paths"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T08:45:33.285633+00:00",
+  "updated_at": "2026-10-07T08:45:33.611582+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R229",
+        "D-090-R255",
+        "D-090-R258",
+        "D-090-R268"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T08:45:33.285828+00:00",
+  "path_notes": "PRODUCER = backend-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). PART OF PARALLEL WAVE 3 with M4-T030 and M4-T031: the three share no file. ADR-006 Tier B, 'Contract/schema addition': the required review is data-contract plus compatibility, done by the data-contract-verifier at gates G3 and G4. MODULARITY ANSWERS: no handwritten production source grows; one schema (data), its copy, a generated file and one new test file.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/contracts",
+    "cd services/api && python scripts/sync_contract_schemas.py --check   (or the script's own check mode)",
+    "python packages/contracts/scripts/generate_ts_types.py --check   (or the script's own check mode)",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ]
+}
