@@ -75,8 +75,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 95,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "A term reported as not defined that sits under an inverted or combined title (seen in M4-T029) -> S1",
     "A section number guessed instead of found -> the targets are named by what they are; the builder reports the number the site shows",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:30.664338+00:00",
-  "updated_at": "2026-10-07T17:36:06.649958+00:00",
+  "updated_at": "2026-10-07T17:36:46.970308+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",

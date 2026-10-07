@@ -92,8 +92,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 95,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "A valid document of today refused -> S6: every fixture through both validators",
     "The two validators drifting -> S7: one shared rule",
@@ -102,7 +102,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:29.581528+00:00",
-  "updated_at": "2026-10-07T17:36:06.349870+00:00",
+  "updated_at": "2026-10-07T17:36:45.659747+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
