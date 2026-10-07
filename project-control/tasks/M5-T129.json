@@ -105,7 +105,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 80,
+  "progress_percent": 85,
   "risks": [
     "A decision that shows more than the work order allows (a result settled by silence; a district's limit shown as the property's) -> S1, S6 and the reviewers' line-by-line check of the decision table against section 5",
     "A point the work order leaves open filled in silently -> the readings O1 to O10 are named in the packet; O10 withholds everything else and lists it",
@@ -115,7 +115,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T11:39:26.898326+00:00",
-  "updated_at": "2026-10-07T13:29:16.564911+00:00",
+  "updated_at": "2026-10-07T13:41:21.751766+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -172,6 +172,13 @@
       "percent": 80,
       "status": "in_progress",
       "message": "Round 3 by the same builder integrated as df7060ee (15 new tests in test_result_ways_input_states.py; readings O11 and O12; the reviewers' notes). The full api suite at df7060ee, run alone by the orchestrator: 8250 passed, 8 skipped, 3 expected failures. RE-REVIEWS by the same two reviewers at df7060ee. GATE G3 (data-contract-verifier): PASS; readings O11 and O12 judged fair; its line-by-line driver re-run with no mismatch; no new finding. GATE G4 (qa-engineer): FAIL AGAIN, on one point. Its findings F1 to F8 are all closed by tests whose expected outcomes come from outside the module, and all 16 of its mutations are now caught (the three that were silent included). But one input state the module acts on is still pinned by no test: the lot type not given (coverage and rear yard withheld as missing information); it made that branch return 'settled' and every test still passed. New must-fix F9: one test. The reviewer says it should have raised this with F1 to F8. The task goes back to the same builder for that test and a check of every input field and state against the tests; the QA reviewer reviews again, and the G3 reviewer confirms that the module files did not change."
+    },
+    {
+      "at": "2026-10-07T13:41:21.751652+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Round 4 by the same builder (tests only; the three modules byte-unchanged since df7060ee) integrated as bcf44969: the test for the lot type not given (QA finding F9), and 14 more after the builder went through every input field and state against the tests (its table is in the report): each of the four conditions without a data source recorded as present, an unknown street-line reach, corner reach and angle, an angle above 135 degrees, the overlay's code given and not given, and others; 128 tests pass in the folder. AT INTEGRATION THE ORCHESTRATOR FOUND ONE POINT, which the builder had flagged as an observation: the module takes the answer to 'is the lot 30,000 sq ft or more' (gap K3) from its caller, and where the caller does not state it the module reads that as 'no' and can show the coverage; a new test of this round pins exactly that. That is a default standing for a fact, which the packet forbids ('never filled by a default'). Ruling (third scope-correction entry, reading O13): not stated -> coverage withheld as missing information. One more round by the same builder (one branch and its test); then the G3 reviewer reviews that change and the QA reviewer reviews rounds 4 and 5 together."
     }
   ],
   "scope_corrections": [
@@ -184,6 +191,11 @@
       "at": "2026-10-07T13:04:08+00:00",
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-07, after the two independent reviews at 6774d4b0 (G3 PASS with notes; G4 FAIL on test completeness) and before the correction round] Two further readings of the orchestrator, for the reviewers to judge at the re-review: (O11) THE DISTRICT. The packet listed the district among the inputs that may be 'not given' and did not say what follows. The builder carried it for wording only, so a lot with no district still had results shown; the G3 reviewer flagged it (its note F1). Reading: with the district not given every zoning result is withheld as missing information (the owner's rule that a missing input leaves its dependent results 'not known', R240); with a district other than R6B every result is withheld as work owed, because the work order's gaps and rules are written for R6B only and decide nothing for another district (reading O10 applied). The district's name R6B in the module is the scope of the work order, not a zoning number. (O12) GAP K14. The work order says of the legal unit limit: 'The limit is labelled \"new all-residential building\". Other cases are withheld.' The label the module returns for the standard unit limit carries those words (the G3 reviewer's note F3). The module has no input for a conversion or a mixed building; that stays with the piece that wires it in. ALSO REQUIRED in the correction round (the G4 reviewer's must-fix F1 to F4 and notes F5 to F8; the G3 reviewer's notes F4 and F5): tests that pin every input state the module acts on, each with the work order sentence or the reading it comes from; an explicit branch where the agreement of the two area figures is not given; a marker at each place where a reading of the orchestrator is applied. No scenario of the packet changes; scenario S4 is read as covering every fact 'not given', the district included."
+    },
+    {
+      "at": "2026-10-07T13:41:21+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-07, at the integration of the builder's fourth commit, before the reviewers' next round] (O13) THE LARGE-LOT QUESTION OF GAP K3. The packet did not list it among the inputs. The builder, so that the module holds no zoning number, has the caller state whether the lot is 30,000 sq ft or more (`large_lot_threshold_met`: yes, no, or not stated), and read 'not stated' as 'no', so that the coverage of a corner lot could be shown without knowing it; the G3 reviewer accepted the input and did not rule on the 'not stated' case, and the builder flagged it. Reading: 'not stated' is a fact that is not given, and the packet says of every input that it is never filled by a default. Where it is not stated, the lot coverage is withheld as missing information (it rests on the recorded lot area), with what would resolve it; no other result changes because of it. The orchestrator's reading, for the reviewers to judge."
     }
   ]
 }
