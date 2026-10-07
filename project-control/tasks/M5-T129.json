@@ -1,0 +1,145 @@
+{
+  "task_id": "M5-T129",
+  "title": "Decide how each result appears - settled, conditional or withheld: a pure decision module in new files that nothing calls yet; it computes no zoning number (work order Part 0, sections 0, 5, 6 and 10; D-090 R229, R237, R238, R240, R255, R257, R258, R267, R268, R269)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build the part of the engine work that DECIDES HOW EACH RESULT APPEARS, as a pure, deterministic module in NEW files that nothing calls yet (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, Part 0; the first of two engine pieces, built one after the other; this one changes no present behaviour). Given what is known about a lot, the module returns, for each result, one of the three ways of the work order's section 0: settled; conditional, with every condition named (its kind, the assumption in words, what would settle it); or withheld, with the reason, the kind of gap and what would resolve it. It computes NO zoning number: the numbers stay where the engine computes them today. Its output for a value mirrors the merged contract 1.3.0 (`value_state` of packages/contracts/schemas/v1/results.schema.json: way, conditions[kind, assumption, settled_by], or label, reason, gap_kind, resolved_by, zr_sections), and a test validates every way object the module can return against the bundled schema. THE RESULTS IT DECIDES: every value key the engine emits today (floor area allowance: max_residential_far, max_residential_floor_area and their two qualifying keys; permitted envelope: min_base_height, max_base_height, max_building_height and their three qualifying keys, max_lot_coverage; building option: achieved_zoning_floor_area, building_floors, building_height, floor_plate_area) and four results that are not value keys today: the rear yard, the setback above the base, the legal unit limit for standard residences, and the legal unit limits for qualifying affordable and for qualifying senior housing. Where every value of an answer is withheld the module says that the whole answer is not available, with its reason, kind and what would resolve it (the contract cannot keep an answer 'available' with no shown value). THE INPUTS, each of which may be 'not given' or 'not read' and is never filled by a default: the district; the lot type; the housing kind chosen (a design choice); the recorded lot area and whether the tax-map outline's area agrees with it (agrees, disagrees, or could not be compared), with both figures for the wording; the lot-reach measurements (services/api/app/spatial/lot_reach.py: from each street line and from the corner point, and the angle; each a value or unknown); the recorded conditions, each 'not read', 'recorded as absent' or 'recorded as present': a special purpose district, a lot split by a district line, a commercial overlay (with its code), an inclusionary housing area, a flood zone, a landmark or historic district; the four conditions that have no data source (waterfront rules, airport height limits, transit easements, a lot close to a district line), each 'not checked', 'checked and absent' or 'recorded as present'; what is known about a special density area ('not given', evidence that the lot is not in one, evidence that it is, or only a user's statement that it is not). The module defines its own input records; it does not import or change the engine's present input object. THE RULES come from the work order: section 0 (the three ways; 'not checked' is never 'confirmed'), section 5 (gaps K1 to K20: the column 'How the result appears in this milestone' and the kinds defined at the head of that section), section 6 (the two lot-area figures) and section 10. The builder writes them out as one decision table in its report, one line per gap and affected result, each line quoting the sentence of the work order it comes from. THE ORCHESTRATOR'S READINGS of points the work order's words leave open (each is the orchestrator's reading, said so in the code and the report, and to be confirmed or corrected by the reviewers): (O1) the contract has two kinds of gap and the work order four: 'information' is missing information; 'owed' and 'question' (which the work order itself calls owed research) are work owed; 'evidence' is missing information when the recorded fact was not read, and work owed when a recorded condition is one the program cannot yet handle; a gap marked 'owed; question' is work owed. (O2) Withheld wins over conditional: where the work order says 'every result is withheld' (a recorded special district, a recorded split lot, a column that was not read) every result is withheld, a user's statement included. Conditions add up: a shown value carries every condition that applies to it. (O3) A result computed from a withheld result is withheld and names it; a result computed from a conditional result carries its conditions. (O4) The recorded lot area with no outline area to compare it with: results that need the area are conditional on the recorded figure, saying that it could not be compared (never settled). No recorded area: withheld; the outline's area is never used in its place. The tolerance of the comparison is not this task's: agreement is an input. (O5) Gap K9: on a lot with a recorded overlay a residential result may be shown only where an independent reading of the overlay text supports it, and a legal reading is never the subject of a conditional result. WHICH results the merged readings support is NOT decided in this module and it holds no table of them: for each result the caller says 'an independent reading supports showing this result under this overlay' or 'no reading supports it yet' (with the sections whose reading is owed). Supported: the result is decided as for a lot without an overlay. Not supported: WITHHELD as work owed, naming the reading that is owed, together with everything computed from it. A recorded overlay with no statement of support at all: every residential result withheld. (The other task of this wave is writing a new reading of the overlay text into the reference cases; which results that reading supports is settled, with a test tied to the merged rows, by the piece that wires this module in.) (O6) One of the four conditions without a data source recorded as PRESENT: every zoning result is withheld (the work order says which results each can change is not established). (O7) An inclusionary housing area, a flood zone or a landmark 'not read': the results the work order says it can change are withheld as missing information (a column that was not read is never taken as 'none'). (O8) Gap K3 is applied as the work order states it (coverage withheld for a lot of 30,000 sq ft or more), although the merged step-P3 reading suggests that the different maximum does not reach R6B; the report says so and changes nothing. (O9) The two legal measures used to compare the reach (100 feet; 135 degrees) are taken from the captured ZR 12-10 definition of a corner lot and ZR 23-344, each with its capture id beside it and the comparison written as the captured words have it. (O10) Any combination that neither the work order nor these readings decide is WITHHELD as work owed and is listed in the report as an open question. Nothing is guessed. TESTS take their expected outcomes from outside the module: from the sentences of the work order's sections 5 and 6 and of its tests H2, H3, H4, H5, H6, H9 and H11, each quoted beside the test that uses it, at the level of 'which way does each result appear'; whether a result is settled or conditional follows from the case the test builds (the conditions it supplies as checked and absent, a user's statement, two figures that disagree). The lots' measurements are read from the reach rows of the corner-reach reference case through the loader. To keep the two pieces of this wave independent, the tests read NO other reference row (the other task may supersede rows while this one is built); the reviewers compare the outcomes with the merged rows by hand. No reason text contains the phrase of gap K7. NOT IN THIS TASK: any edit to an existing file; calling the module; emitting anything; any zoning number; any rule file, register entry, schema, fixture, screen or drawing.",
+  "business_reason": "Part 0 of the work order makes the result honest. Cutting the engine work in two keeps each piece reviewable: this piece holds the whole question of how a result may appear, in new files that change nothing, so it can be checked line by line against the work order and the reference cases before the second piece wires it into the engine and emits contract 1.3.0. The owner's rules it serves: unknown stays unknown (R229); every known gap is corrected and tested or the result shows 'not known' (R237); no whole-lot 100 percent coverage until the geometry supports it (R238); missing inputs stay unanswered (R240); a user's assumption supports only a labelled conditional result (R255); conflicting areas are never chosen between automatically (R257); missing information and unfinished work are different (R258); 'not checked' is not 'confirmed' and a district's height limit is not the property's confirmed maximum (R267, R268, R269).",
+  "inputs": [
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md sections 0, 4, 5, 6, 8 (Part 0 and tests H1 to H11) and 10. Its line numbers for code are stale; trust the files",
+    "packages/contracts/schemas/v1/results.schema.json (version 1.3.0: value_states, value_state, value_condition, gap_kind, answer_not_available) and docs/DISCOVERY_BACKLOG.md row DB-171",
+    "services/api/app/spatial/lot_reach.py (the measurements and how an unknown is labelled) and services/api/app/spatial/site_geometry/labels.py",
+    "docs/reference-cases/R6B/ (README.md and cases/*.json) and the loader services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py (load_row refuses a superseded row)",
+    "services/api/app/scenario/three_answers/ READ ONLY (answers.py, building_option.py, dwelling_units.py, geometry.py, rule_access.py: the value keys the engine emits and where)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R229, R237, R238, R240, R255, R257, R258, R267, R268, R269; docs/CODE_MODULARITY_POLICY.md and .claude/rules/code-architecture.md"
+  ],
+  "outputs": [
+    "services/api/app/scenario/three_answers/result_ways.py (and, if the size asks for it, services/api/app/scenario/three_answers/result_way_inputs.py): the input records, the way records and one public function; no import from the engine's present modules except constants it must share, and none that forces an edit",
+    "services/api/tests/scenario/three_answers/test_result_ways.py (and further test_result_ways_*.py files if one would grow past the modularity threshold): the cases of H2, H3, H4, H5, H6, H9 and H11 at the level of ways; conformance of every way object to the bundled contract; the overlay decided by what the caller states; no K7 phrase; nothing imports the module",
+    "project-control/reports/M5-T129-producer-report.md: the decision table (one line per gap and result, each with the work order sentence it comes from); the orchestrator's readings O1 to O10 and where each is used; every combination left withheld as an open question; where each expected outcome of each test comes from; the modularity answers; every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M5-T127",
+    "M5-T128"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/tests/scenario/three_answers/test_result_ways.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_*.py",
+    "project-control/reports/M5-T129-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "every existing file under services/api/app/** (no engine, validator, route or drawing edit; not even an export in services/api/app/scenario/three_answers/__init__.py)",
+    "packages/** (no schema, generated file or fixture); apps/**; docs/**; every other test",
+    ".github/**; CLAUDE.md; .claude/**; tools/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "benchmark_lot_as_recorded",
+      "input": "the benchmark lot: R6B, a recorded C2-2 overlay, corner lot, reach 99.97 ft and 103.93 ft from the two street lines and 144.60 ft from the corner point (read from the reference rows), the two area figures disagreeing, no special district, not split, the four conditions not checked, no density evidence",
+      "expected": "the height limits conditional on the four unchecked conditions and never settled. With the overlay's support stated as 'heights supported; floor area ratio, coverage and rear yard not yet supported': the floor area ratio, floor area, coverage and rear yard withheld (a reading is owed). With all of them stated as supported: the floor-area figures conditional (on the recorded area and on the four conditions), coverage still withheld (the lot reaches 103.93 ft from a street line) and the rear yard still withheld (144.60 ft from the corner point). In both: the setback, the building option and the unit limits withheld; never a zero; each with reason, kind and what would resolve it (work order H2, H1, gap K9)"
+    },
+    {
+      "id": "S2",
+      "case": "made_up_corner_lots",
+      "input": "the three made-up corner lots of the corner-reach reference case (40 x 100, 60 x 80, 150 x 100), no overlay",
+      "expected": "coverage and rear yard as the work order's test H3 states them (100 percent and rear yard withheld; 100 percent and no rear yard required anywhere; coverage withheld and rear yard withheld): conditional with the four conditions not checked, settled with all four checked and absent (H3)"
+    },
+    {
+      "id": "S3",
+      "case": "interior_lots_and_the_unit_limit",
+      "input": "the made-up interior lots of the reference cases with one area figure",
+      "expected": "floor area conditional or settled as in S2; the unit limit withheld with no density evidence, conditional naming the user's statement when the user states it, and the statement never among the facts; coverage as the merged reference rows support and no further (H4, H9)"
+    },
+    {
+      "id": "S4",
+      "case": "facts_not_given_one_at_a_time",
+      "input": "the special-district column not read; no outline; no lot area; the split-lot record not read; a recorded special district; a recorded split lot",
+      "expected": "each time the results that depend on it are withheld and name it, every other result is unchanged; a recorded special district or split lot withholds every result (H5)"
+    },
+    {
+      "id": "S5",
+      "case": "the_two_area_figures",
+      "input": "figures that agree; figures that disagree; a recorded area that could not be compared; no recorded area",
+      "expected": "agree: no area condition; disagree: conditional naming the recorded figure, both figures and what would settle it, no choice made; could not be compared: conditional on the recorded figure; none: withheld; the outline's area never stands in (H6, section 6)"
+    },
+    {
+      "id": "S6",
+      "case": "not_checked_is_not_confirmed",
+      "input": "the four conditions not checked; one recorded as present; all checked and absent",
+      "expected": "no zoning result settled, each conditional and naming the conditions, the heights never called the property's maximum; one present: every zoning result withheld; all absent: the heights settled where nothing else applies (H11)"
+    },
+    {
+      "id": "S7",
+      "case": "every_way_object_fits_the_contract",
+      "input": "every way object the module returns in the tests",
+      "expected": "each validates as a value_state (or as the not-available form of an answer) of the bundled schema; a withheld way never carries a number; no reason contains the phrase of gap K7; every withheld way has a reason, a kind and what would resolve it (H7)"
+    },
+    {
+      "id": "S8",
+      "case": "the_overlay_is_decided_by_what_the_caller_states",
+      "input": "a recorded overlay with support stated per result; with none stated; a result computed from an unsupported one",
+      "expected": "supported: decided as without an overlay; not supported: withheld as work owed, naming the reading owed; none stated: every residential result withheld; a dependent result withheld and naming what it depends on; the module holds no table of what any reading supports (a test searches the source for section numbers of the overlay chapters)"
+    },
+    {
+      "id": "S9",
+      "case": "new_files_only_and_nothing_calls_it",
+      "input": "git show --name-status <the builder's commit>; a search of services/api/app for imports of the module",
+      "expected": "only allowed_paths, all added (the report replaces its placeholder); no existing file changed; nothing imports the module; it computes no zoning number (no FAR, percentage or height constant: a test searches the source); ruff and the full services/api pytest pass at the wave's final candidate"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A decision that shows more than the work order allows (a result settled by silence; a district's limit shown as the property's) -> S1, S6 and the reviewers' line-by-line check of the decision table against section 5",
+    "A point the work order leaves open filled in silently -> the readings O1 to O10 are named in the packet; O10 withholds everything else and lists it",
+    "A table of what a reading supports hidden in the module and going stale when a new reading is merged -> reading O5 and S8: the module holds none; the caller states it",
+    "Expected outcomes taken from the module itself -> the tests read the reference rows and the work order's cases; the QA reviewer checks where each comes from",
+    "A legal number inside the module -> S9; the only legal measures are the two of reading O9, each with its capture id"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T11:39:26.898326+00:00",
+  "updated_at": "2026-10-07T11:39:27.286337+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R229",
+        "D-090-R237",
+        "D-090-R238",
+        "D-090-R240",
+        "D-090-R255",
+        "D-090-R257",
+        "D-090-R258",
+        "D-090-R267",
+        "D-090-R268",
+        "D-090-R269"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T11:39:26.898516+00:00",
+  "path_notes": "PRODUCER = scenario-optimization-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). PART OF PARALLEL WAVE 4 with M4-T032: the two share no file, and this task's tests read only the reach rows of the reference cases, which M4-T032 does not change (see the wave's concurrency record). ADR-006 Tier B, 'Scenario calculation': the required review is data-contract plus QA: gate G3 by the data-contract-verifier (the decision table against the work order, the reference rows and the contract), gate G4 by the qa-engineer (where each expected outcome comes from, completeness, mutation proofs). MODULARITY ANSWERS: new focused modules only; each file stays under the 600-line warning threshold (split the inputs or the tests before one grows past it); no existing file grows.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/scenario/three_answers",
+    "cd services/api && python -m pytest -q tests/rules/reference_cases tests/contracts",
+    "python3 tools/modularity_check.py --check ; python3 scripts/lanes/check_lane_paths.py --coverage",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ]
+}

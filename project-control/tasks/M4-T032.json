@@ -1,0 +1,125 @@
+{
+  "task_id": "M4-T032",
+  "title": "The independent reading of the law text captured by M4-T031 (ZR 34-22 and 34-23 with their sections; 35-22 and 35-641 to 35-643; lot coverage and the yards as defined; the street wall; large and qualifying residential sites; dwelling units and qualifying housing; ZR 23-44), written into the R6B reference cases - two independent readings from a sealed folder, a value only where both agree, one current answer per question (D-090 R226, R241, R259, R291, R318)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Read independently the law text captured by task M4-T031 (38 texts), and write what the readings settle into the R6B reference cases (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, section 8: 'capture the missing law text, then read it independently'; backlog row DB-170). INPUT MADE BY THE ORCHESTRATOR BEFORE THE BUILDER STARTS: two readings by two different AI helpers that took no part in writing the program's rules, each working alone from a sealed folder (all 110 pinned law captures without their notes, the benchmark lot's recorded official facts and outline, two made-up lots' dimensions, no program output) and with no access to the program, the repository or the web. The readings cover: (1) ZR 34-22 and its sections and (2) ZR 34-23 and its sections: what they change for a residential building in a C2-2 district mapped within R6B; (3) with them, whether the floor area ratio, the lot coverage and the rear yard are the same as plain R6B (the overlay case holds these three answers subject to those sections); (4) ZR 35-22 and ZR 35-641 to 35-643 and to which buildings they apply; (5) lot coverage and the yards as defined, and what may stand in a required rear yard; (6) the street wall, curb level and 'prevailing street wall frontage'; (7) large sites and qualifying residential sites; (8) dwelling units and qualifying housing under ZR 23-52, with a worked unit count for a made-up lot; (9) ZR 23-44 and its sections and whether any can reach an R6B lot. THE BUILDER then: saves the two returns unchanged under docs/reference-cases/R6B/provenance/; records a value or a yes/no only where BOTH readings give it on the same basis, and 'not known' with the reason and both readings named everywhere else; where one reading holds an answer subject to a text or a fact the readers did not have, says that condition in the value; where a new row gives the current answer to a question an older row holds, marks the older row `superseded_by` (the overlay case's three rows held subject to ZR 34-21 to 34-23 are the known candidates) and never leaves two current answers for one question; changes an existing row's expected value or kind only where both readings support it, with a dated change-log entry; says 'the readers did not have' a text, and 'not read by reading N' for a text that was in the folder and that a reader chose not to read, never 'not captured'; updates the README; re-renders the pages; extends the test support only as the new rows need. The rows about whole-lot corner coverage (row L5 of the real lot and its three companions) do not move unless BOTH readings work the corner-lot portion rule for the lot; a sentence in passing is not a reading. Nothing in a case comes from a program run. No rule file, rule engine, capture, register entry, plan, measurement-basis record or screen changes.",
+  "business_reason": "The overlay case holds the floor area ratio, the lot coverage and the rear yard subject to ZR 34-21 to 34-23, so on the benchmark lot, which has a recorded C2-2 overlay, those results must stay withheld until ZR 34-22 and 34-23 are read. The legal unit limit for qualifying housing (gap K13) and the yard and coverage definitions also wait for this reading. Step 3 of the owner's eight steps (R291) and the owner's rule that interpretation is checked with independently worked, source-backed examples kept apart from program output (R226, R241, R259, R318).",
+  "inputs": [
+    "The two independent readings (returns saved by the orchestrator; given to the builder with its instructions)",
+    "docs/reference-cases/R6B/ and services/api/tests/rules/reference_cases/ as task M4-T030 left them (the `superseded_by` field, the loader that refuses a superseded row, the guard on the corner coverage rows)",
+    "The captures made by task M4-T031 under docs/research/zr-snapshots/v1/ and the earlier captures the rows cite",
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md sections 5 and 9; docs/DISCOVERY_BACKLOG.md rows DB-169, DB-170 and DB-171",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R226, R241, R259, R291, R318"
+  ],
+  "outputs": [
+    "docs/reference-cases/R6B/provenance/: the two new returns, unchanged, each with a short header",
+    "docs/reference-cases/R6B/cases/*.json and the pages rendered from them: the new readings as rows; older rows that a new row answers marked `superseded_by`; every change to an existing row with its dated reason",
+    "docs/reference-cases/R6B/README.md brought up to date",
+    "services/api/tests/rules/reference_cases/: the checker, renderer, loader and tests extended only as the new rows need",
+    "project-control/reports/M4-T032-producer-report.md"
+  ],
+  "dependencies": [
+    "M4-T030",
+    "M4-T031"
+  ],
+  "allowed_paths": [
+    "docs/reference-cases/R6B/**",
+    "services/api/tests/rules/reference_cases/**",
+    "project-control/reports/M4-T032-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/** (no rule file, engine, registry, register or capture copy change)",
+    "docs/research/** (no capture and no helper file), docs/zoning-rule-review/**, docs/plans/**, docs/measurement-basis/**",
+    "every other test file; apps/**; packages/**; .github/**; CLAUDE.md; .claude/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "two_independent_readings_kept_unchanged",
+      "input": "docs/reference-cases/R6B/provenance/",
+      "expected": "the two new returns are present unchanged (a test pins their digests)"
+    },
+    {
+      "id": "S2",
+      "case": "a_value_only_where_both_readings_agree",
+      "input": "each added or changed row",
+      "expected": "a value or a yes/no is recorded only where both readings give it on the same basis; otherwise 'not known' with the reason and both readings named; a condition one reading attaches is said in the value; a list of what the readers 'did not have' holds only what BOTH say they did not have; the builder resolves no disagreement and adds no reading of its own"
+    },
+    {
+      "id": "S3",
+      "case": "each_row_followable",
+      "input": "each added or changed row",
+      "expected": "facts with their source, the law quoted with its capture id and content digest, why the provision applies, the arithmetic where there is any; a test checks every citation against the live capture"
+    },
+    {
+      "id": "S4",
+      "case": "one_current_answer_per_question",
+      "input": "every case file",
+      "expected": "no question has two current answers: an older row that a new row answers carries `superseded_by`, validated by the checker; an existing value or kind changes only where both readings support it, with a dated change-log entry; the corner coverage rows keep their kind and value unless both readings work the corner-lot portion rule for that lot"
+    },
+    {
+      "id": "S5",
+      "case": "nothing_from_a_program_run",
+      "input": "the case files and the support code",
+      "expected": "no case file holds a program result; the support code imports nothing from the rule or scenario engine"
+    },
+    {
+      "id": "S6",
+      "case": "what_the_readers_did_not_have_is_named_truthfully",
+      "input": "docs/reference-cases/R6B/README.md and the new and changed rows",
+      "expected": "'the readers did not have' for a text outside their folder; 'not read by reading N' for a text in the folder that a reader chose not to read; never 'not captured', 'uncaptured' or 'the repository does not hold' (the existing test enforces it)"
+    },
+    {
+      "id": "S7",
+      "case": "scope",
+      "input": "git show --name-status <the builder's commit>",
+      "expected": "only allowed_paths changed; ruff and the full services/api pytest pass at the wave's final candidate; pages byte-identical to the renderer's output"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A legal reading presented as settled because two AI readings agree -> the cases say agreement is not proof (R259); each row is followable",
+    "A row that records as agreed something only one reading says (seen in M4-T030) -> S2",
+    "Two current answers for one question (seen in M4-T030) -> S4",
+    "A superseded row breaking the other task of this wave -> that task's tests read only the reach rows of the corner-reach case, which this task must not supersede or change (the orchestrator runs both tasks' tests after both commits are on the branch)"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T11:39:27.802047+00:00",
+  "updated_at": "2026-10-07T11:39:28.182001+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R226",
+        "D-090-R241",
+        "D-090-R259",
+        "D-090-R291",
+        "D-090-R318"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T11:39:27.802266+00:00",
+  "path_notes": "PRODUCER = rules-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first), started only after the orchestrator holds BOTH independent readings. PART OF PARALLEL WAVE 4 with M5-T129: the two share no file. MODULARITY ANSWERS: no handwritten production source changes; documents and test support only (each support file stays under the 600-line warning threshold: the test file is at 568 and the checker at 537 lines, so new rules and tests go into new focused modules).",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/rules/reference_cases tests/spatial/test_lot_reach.py",
+    "the renderer's check mode (pages byte-identical to the data)",
+    "python3 tools/modularity_check.py --check",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ]
+}
