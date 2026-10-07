@@ -123,9 +123,33 @@ class Decision:
     reason: str
 
 
+def _is_windows() -> bool:
+    """True on Windows (``os.name == 'nt'``).
+
+    The acquire loop's handling of the Windows create/unlink-race ``PermissionError``
+    is Windows-only, so it branches on this named seam over ``os.name``. Naming the
+    read lets a host-independent test drive either branch deterministically without
+    patching the global ``os.name`` (which would make ``pathlib`` build a
+    ``WindowsPath`` and raise on POSIX). Platform never changes mid-process, so this
+    is a pure read.
+    """
+    return os.name == "nt"
+
+
 @contextlib.contextmanager
 def _exclusive(path: pathlib.Path) -> Iterator[None]:
-    """Cross-process exclusive section via an O_EXCL lock file; fail closed on timeout."""
+    """Cross-process exclusive section via an O_EXCL lock file; fail closed on timeout.
+
+    On Windows a concurrent create/unlink race of the lock file can make the
+    ``O_EXCL`` create raise ``PermissionError`` (errno 13) instead of
+    ``FileExistsError`` (frozen probe, windows-latest: 1,468 of 61,758 iterations, no
+    other handle held). The kernel-level reason is not established (``os.open`` gives
+    no ``winerror``); it is transient (other creates succeed), so it is waited out as
+    "busy" to the lock's own deadline exactly like ``FileExistsError`` and then refused
+    fail-closed with the module's own ``_violation`` — never swallowed into an
+    admission and never an unbounded loop. On POSIX a ``PermissionError`` at the
+    create stays loud (re-raised at once, unchanged).
+    """
     lock = path.with_suffix(path.suffix + ".lock")
     deadline = time.monotonic() + _LOCK_TIMEOUT_S
     while True:
@@ -133,9 +157,18 @@ def _exclusive(path: pathlib.Path) -> Iterator[None]:
             fd = os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
             break
         except FileExistsError:
-            if time.monotonic() >= deadline:
-                raise _violation(f"ledger lock {lock} held past {_LOCK_TIMEOUT_S}s; refusing (fail closed)")
-            time.sleep(0.02)
+            pass  # the lock is held by another worker; wait and retry below
+        except PermissionError:
+            # Windows only: under a concurrent create/unlink race the O_EXCL create can
+            # raise PermissionError (errno 13) instead of FileExistsError; the kernel
+            # reason is not established and it is transient, so treat it as the same
+            # "busy". POSIX never produces this for an O_EXCL create, so there it is a
+            # real permission fault and stays loud.
+            if not _is_windows():
+                raise
+        if time.monotonic() >= deadline:
+            raise _violation(f"ledger lock {lock} held past {_LOCK_TIMEOUT_S}s; refusing (fail closed)")
+        time.sleep(0.02)
     try:
         os.close(fd)
         yield

@@ -1,0 +1,261 @@
+# CI experiment evidence for M0-T186 - the PROBE (never merged): supervisor-bridge job 112580543291 (run 37555462888, attempt 1, event push); written by the orchestrator, read-only
+# Head e3b5417fea2095b0e48bbe079f2fc1e1664a8edc = commit P (Windows-only probe tests on top of the tests and the repair), branch ci-exp/M0-T186-probe; job conclusion: failure (each probe ends in pytest.fail on purpose, so that what it observed is printed); runner: Microsoft Windows Server 2025; Image: windows-2025-vs2026
+# Full job log: 72219 bytes, sha256 1010705af297f7bf36235713d2bce260d2344f8bad7b9bfc23d68c864e1ae6db
+# Source: gh api repos/martin10101/nyc-buildability/actions/jobs/112580543291/logs. Excerpt = this test file's progress line(s), then the FAILURES section through the summary line, timestamps stripped, otherwise unchanged.
+
+tools\test_agent_supervisor_mrl_subagent_contract.py ................... [ 55%]
+............FFFFFF..................                                     [ 56%]
+
+================================== FAILURES ===================================
+_ TestExclusiveWindowsDeletePending.test_windows_delete_pending_create_raises_permission_error_platform_fact _
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestExclusiveWindowsDeletePending object at 0x000001BF52480140>
+tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_windows_delete_pending_cr0')
+
+    @pytest.mark.skipif(
+        os.name != "nt",
+        reason="Windows-only platform fact: on POSIX an O_EXCL create never raises "
+        "PermissionError for a delete race, so the mechanism cannot be exercised there. "
+        "This pins the Win32 behaviour the repair rests on; DEMONSTRATED on "
+        "windows-latest, never assumed from memory of the API.")
+    def test_windows_delete_pending_create_raises_permission_error_platform_fact(self, tmp_path):
+        # S5(iv) / S3: a file that another handle (opened the way os.open opens it,
+        # sharing delete) still holds open AFTER an unlink is delete-pending; an O_EXCL
+        # create on that name raises PermissionError and does NOT create the file.
+        # This is candidate (a)'s mechanism, proven on the platform.
+        lock = tmp_path / "l.json.lock"
+        fd = os.open(str(lock), os.O_CREAT | os.O_WRONLY)   # os.open shares delete on Windows
+        try:
+>           os.unlink(str(lock))                            # delete-pending while fd is open
+            ^^^^^^^^^^^^^^^^^^^^
+E           PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_windows_delete_pending_cr0\\l.json.lock'
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:284: PermissionError
+__________________ TestWindowsLockProbes.test_p1_environment __________________
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestWindowsLockProbes object at 0x000001BF523EA120>
+tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_p1_environment0')
+
+    def test_p1_environment(self, tmp_path):
+        import ctypes
+        from ctypes import wintypes
+    
+        root = os.path.splitdrive(str(tmp_path))[0] + "\\"
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        fs_buf = ctypes.create_unicode_buffer(261)
+        vol_buf = ctypes.create_unicode_buffer(261)
+        serial = wintypes.DWORD()
+        max_comp = wintypes.DWORD()
+        flags = wintypes.DWORD()
+        ok = kernel32.GetVolumeInformationW(
+            wintypes.LPCWSTR(root), vol_buf, ctypes.sizeof(vol_buf), ctypes.byref(serial),
+            ctypes.byref(max_comp), ctypes.byref(flags), fs_buf, ctypes.sizeof(fs_buf))
+        fs_name = fs_buf.value if ok else f"GetVolumeInformationW_failed(err={ctypes.get_last_error()})"
+>       pytest.fail(
+            "P1 environment: "
+            f"getwindowsversion={tuple(sys.getwindowsversion())}; "
+            f"platform={platform.platform()}; python={sys.version.split()[0]}; "
+            f"tmp_volume_root={root!r}; tmp_filesystem={fs_name!r}")
+E       Failed: P1 environment: getwindowsversion=(10, 0, 26100, 2, ''); platform=Windows-2025Server-10.0.26100-SP0; python=3.12.10; tmp_volume_root='C:\\'; tmp_filesystem='NTFS'
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:356: Failed
+____ TestWindowsLockProbes.test_p2_pending_delete_with_share_delete_handle ____
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestWindowsLockProbes object at 0x000001BF523F3C20>
+tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_p2_pending_delete_with_sh0')
+
+    def test_p2_pending_delete_with_share_delete_handle(self, tmp_path):
+        import ctypes
+        from ctypes import wintypes
+    
+        path = str(tmp_path / "p2.lock")
+        fd = os.open(path, os.O_CREAT | os.O_WRONLY)
+        os.close(fd)
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.CreateFileW.restype = wintypes.HANDLE
+        kernel32.CreateFileW.argtypes = [
+            wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD, wintypes.LPVOID,
+            wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE]
+        kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+        share_rwd = 0x1 | 0x2 | 0x4  # READ | WRITE | DELETE
+        invalid = ctypes.c_void_p(-1).value
+        handle = kernel32.CreateFileW(path, 0x80000000, share_rwd, None, 3, 0x80, None)
+        if not handle or handle == invalid:
+            pytest.fail(f"P2 setup: CreateFileW(share RWD) failed err={ctypes.get_last_error()}")
+        closed = False
+        try:
+            try:
+                os.unlink(path)
+                unlink_result = "ok"
+            except OSError as exc:
+                unlink_result = _describe_exc(exc)
+            exists_after = os.path.exists(path)
+            create_while_open = _try_excl_create(path)
+            kernel32.CloseHandle(handle)
+            closed = True
+            create_after_close = _try_excl_create(path)
+        finally:
+            if not closed:
+                kernel32.CloseHandle(handle)
+>       pytest.fail(
+            "P2 share-delete handle held open: "
+            f"unlink={unlink_result}; path_exists_after_unlink={exists_after}; "
+            f"O_EXCL_create_while_handle_open={create_while_open}; "
+            f"O_EXCL_create_after_handle_closed={create_after_close}")
+E       Failed: P2 share-delete handle held open: unlink=ok; path_exists_after_unlink=False; O_EXCL_create_while_handle_open=ok(created); O_EXCL_create_after_handle_closed=FileExistsError(errno=17, winerror=None)
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:395: Failed
+___ TestWindowsLockProbes.test_p3_pending_delete_with_plain_os_open_handle ____
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestWindowsLockProbes object at 0x000001BF523F1AC0>
+tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_p3_pending_delete_with_pl0')
+
+    def test_p3_pending_delete_with_plain_os_open_handle(self, tmp_path):
+        path = str(tmp_path / "p3.lock")
+        holder = os.open(path, os.O_CREAT | os.O_RDONLY)  # the way os.open opens it
+        closed = False
+        try:
+            try:
+                os.unlink(path)
+                unlink_result = "ok"
+            except OSError as exc:
+                unlink_result = _describe_exc(exc)
+            exists_after = os.path.exists(path)
+            create_while_open = _try_excl_create(path)
+            os.close(holder)
+            closed = True
+            create_after_close = _try_excl_create(path)
+        finally:
+            if not closed:
+                os.close(holder)
+>       pytest.fail(
+            "P3 plain os.open handle held open (no explicit share-delete): "
+            f"unlink={unlink_result}; path_exists_after_unlink={exists_after}; "
+            f"O_EXCL_create_while_handle_open={create_while_open}; "
+            f"O_EXCL_create_after_handle_closed={create_after_close}")
+E       Failed: P3 plain os.open handle held open (no explicit share-delete): unlink=PermissionError(errno=13, winerror=32); path_exists_after_unlink=True; O_EXCL_create_while_handle_open=FileExistsError(errno=17, winerror=None); O_EXCL_create_after_handle_closed=FileExistsError(errno=17, winerror=None)
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:419: Failed
+____________ TestWindowsLockProbes.test_p4_real_race_raw_os_calls _____________
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestWindowsLockProbes object at 0x000001BF523F2480>
+tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_p4_real_race_raw_os_calls0')
+
+    def test_p4_real_race_raw_os_calls(self, tmp_path):
+        # 8 threads loop the literal pre-fix sequence (O_EXCL create, close, unlink) on
+        # ONE path with no third handle, bounded by time AND an iteration cap. Count per
+        # outcome what the CREATE raised and what the UNLINK raised. This shows whether
+        # the real race alone yields a PermissionError at the create (candidate (a)) with
+        # no external process involved.
+        path = str(tmp_path / "p4race.lock")
+        n, time_budget_s, cap = 8, 20.0, 400_000
+        barrier = threading.Barrier(n)
+        per_thread: list = [None] * n
+    
+        def worker(idx: int) -> None:
+            c = collections.Counter()
+            iters = 0
+            barrier.wait()
+            deadline = time.monotonic() + time_budget_s
+            while time.monotonic() < deadline and iters < cap:
+                iters += 1
+                try:
+                    fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                except FileExistsError:
+                    c["create:FileExistsError"] += 1
+                    continue
+                except OSError as exc:
+                    c[f"create:{_describe_exc(exc)}"] += 1
+                    continue
+                c["create:ok"] += 1
+                os.close(fd)
+                try:
+                    os.unlink(path)
+                    c["unlink:ok"] += 1
+                except OSError as exc:
+                    c[f"unlink:{_describe_exc(exc)}"] += 1
+            per_thread[idx] = (c, iters)
+    
+        start = time.monotonic()
+        threads = [threading.Thread(target=worker, args=(i,)) for i in range(n)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        elapsed = time.monotonic() - start
+        totals = collections.Counter()
+        total_iters = 0
+        for c, iters in per_thread:
+            totals.update(c)
+            total_iters += iters
+>       pytest.fail(
+            f"P4 real race ({n} threads, {total_iters} iterations, {elapsed:.1f}s elapsed, "
+            f"budget {time_budget_s}s/cap {cap}): {dict(sorted(totals.items()))}")
+E       Failed: P4 real race (8 threads, 61758 iterations, 20.0s elapsed, budget 20.0s/cap 400000): {'create:FileExistsError': 39093, 'create:PermissionError(errno=13, winerror=None)': 1468, 'create:ok': 21197, 'unlink:ok': 21197}
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:472: Failed
+_____ TestWindowsLockProbes.test_p5_real_race_through_repaired_exclusive ______
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestWindowsLockProbes object at 0x000001BF523F2180>
+tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_p5_real_race_through_repa0')
+
+    def test_p5_real_race_through_repaired_exclusive(self, tmp_path):
+        # 8 threads contend on the REPAIRED _exclusive() for a bounded time. Count
+        # acquisitions, typed ContractError refusals, and any other exception that
+        # escapes; a guarded counter checks that at most one thread is ever inside the
+        # section (mutual exclusion). Reports what the repaired lock does on Windows.
+        base = tmp_path / "p5.json"
+        n, time_budget_s, cap = 8, 15.0, 400_000
+        barrier = threading.Barrier(n)
+        per_thread: list = [None] * n
+        inside = {"cur": 0, "max": 0}
+        inside_lock = threading.Lock()
+    
+        def worker(idx: int) -> None:
+            c = collections.Counter()
+            iters = 0
+            barrier.wait()
+            deadline = time.monotonic() + time_budget_s
+            while time.monotonic() < deadline and iters < cap:
+                iters += 1
+                try:
+                    with msc._exclusive(base):
+                        with inside_lock:
+                            inside["cur"] += 1
+                            inside["max"] = max(inside["max"], inside["cur"])
+                        with inside_lock:
+                            inside["cur"] -= 1
+                        c["acquired"] += 1
+                except ContractError:
+                    c["refused:ContractError"] += 1
+                except BaseException as exc:  # noqa: BLE001 - a probe records every escape
+                    c[f"escaped:{_describe_exc(exc)}"] += 1
+            per_thread[idx] = (c, iters)
+    
+        start = time.monotonic()
+        threads = [threading.Thread(target=worker, args=(i,)) for i in range(n)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        elapsed = time.monotonic() - start
+        totals = collections.Counter()
+        total_iters = 0
+        for c, iters in per_thread:
+            totals.update(c)
+            total_iters += iters
+>       pytest.fail(
+            f"P5 repaired _exclusive race ({n} threads, {total_iters} iterations, "
+            f"{elapsed:.1f}s, budget {time_budget_s}s/cap {cap}): "
+            f"max_concurrent_inside={inside['max']} (expect 1); {dict(sorted(totals.items()))}")
+E       Failed: P5 repaired _exclusive race (8 threads, 32673 iterations, 15.1s, budget 15.0s/cap 400000): max_concurrent_inside=1 (expect 1); {'acquired': 32673}
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:521: Failed
+=========================== short test summary info ===========================
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsDeletePending::test_windows_delete_pending_create_raises_permission_error_platform_fact - PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_windows_delete_pending_cr0\\l.json.lock'
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestWindowsLockProbes::test_p1_environment - Failed: P1 environment: getwindowsversion=(10, 0, 26100, 2, ''); platform=Windows-2025Server-10.0.26100-SP0; python=3.12.10; tmp_volume_root='C:\\'; tmp_filesystem='NTFS'
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestWindowsLockProbes::test_p2_pending_delete_with_share_delete_handle - Failed: P2 share-delete handle held open: unlink=ok; path_exists_after_unlink=False; O_EXCL_create_while_handle_open=ok(created); O_EXCL_create_after_handle_closed=FileExistsError(errno=17, winerror=None)
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestWindowsLockProbes::test_p3_pending_delete_with_plain_os_open_handle - Failed: P3 plain os.open handle held open (no explicit share-delete): unlink=PermissionError(errno=13, winerror=32); path_exists_after_unlink=True; O_EXCL_create_while_handle_open=FileExistsError(errno=17, winerror=None); O_EXCL_create_after_handle_closed=FileExistsError(errno=17, winerror=None)
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestWindowsLockProbes::test_p4_real_race_raw_os_calls - Failed: P4 real race (8 threads, 61758 iterations, 20.0s elapsed, budget 20.0s/cap 400000): {'create:FileExistsError': 39093, 'create:PermissionError(errno=13, winerror=None)': 1468, 'create:ok': 21197, 'unlink:ok': 21197}
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestWindowsLockProbes::test_p5_real_race_through_repaired_exclusive - Failed: P5 repaired _exclusive race (8 threads, 32673 iterations, 15.1s, budget 15.0s/cap 400000): max_concurrent_inside=1 (expect 1); {'acquired': 32673}
+=========== 6 failed, 3961 passed, 60 skipped in 339.00s (0:05:38) ============

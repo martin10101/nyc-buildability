@@ -1,0 +1,233 @@
+# CI experiment evidence for M0-T186 - supervisor-bridge job 112586391779 (run 37557306466, attempt 1, event push); written by the orchestrator, read-only
+# Head 968b49ec2fef7635897d217de9a2cc89e746f714 = commit X of M0-T186 (the final tests of commit D against the acquire loop restored to its pre-repair code; experiment only, never merged), branch ci-exp/M0-T186-red2; job conclusion: failure; runner: Microsoft Windows Server 2025; Image: windows-2025-vs2026
+# Full job log: 69079 bytes, sha256 b325f7909f75668abae8d54a2745a85fc556a5f00ba6763915c5abe00e990df5
+# Source: gh api repos/martin10101/nyc-buildability/actions/jobs/112586391779/logs. Excerpt = this test file's progress line, then the FAILURES section through the summary line, timestamps stripped, otherwise unchanged.
+# FAILED lines found in the excerpt: 3
+#   tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsRace::test_persistent_windows_permission_error_times_out_fail_closed
+#   tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsRace::test_real_race_through_exclusive_holds_mutual_exclusion
+#   tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsRace::test_transient_windows_permission_error_waits_then_succeeds
+
+tools\test_agent_supervisor_mrl_subagent_contract.py ................... [ 55%]
+........FF..F..................                                          [ 56%]
+
+================================== FAILURES ===================================
+_ TestExclusiveWindowsRace.test_transient_windows_permission_error_waits_then_succeeds _
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestExclusiveWindowsRace object at 0x0000018572833650>
+ledger = <tools.agent_supervisor.mrl_subagent_contract.SubagentLedger object at 0x0000018575363BF0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001857525D370>
+
+    def test_transient_windows_permission_error_waits_then_succeeds(self, ledger, monkeypatch):
+        # S5(i): the create fails twice with the Windows race PermissionError (errno 13),
+        # then succeeds -> the request is SERVED and the limits are intact (exactly one
+        # issued, nothing lost). RED pre-repair: the PermissionError reaches the caller
+        # unhandled instead of being waited out, so this line raises before the assert.
+        monkeypatch.setattr(msc, "_is_windows", lambda: True, raising=False)
+        fake_open, state = _failing_lock_open(
+            PermissionError(errno.EACCES, "windows create/unlink race"), fail_times=2)
+        monkeypatch.setattr(msc.os, "open", fake_open)
+>       decision = _req(ledger)
+                   ^^^^^^^^^^^^
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:224: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\test_agent_supervisor_mrl_subagent_contract.py:42: in _req
+    return ledger.request(**base)
+           ^^^^^^^^^^^^^^^^^^^^^^
+tools\agent_supervisor\mrl_subagent_contract.py:200: in request
+    with _exclusive(self.path):
+         ^^^^^^^^^^^^^^^^^^^^^
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+tools\agent_supervisor\mrl_subagent_contract.py:133: in _exclusive
+    fd = os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_transient_windows_permiss0\\ledger.json.lock'
+flags = 1281, args = (), kwargs = {}
+
+    def fake_open(path, flags, *args, **kwargs):  # type: ignore[no-untyped-def]
+        if str(path).endswith(".lock"):
+            state["calls"] += 1
+            if state["calls"] <= fail_times:
+>               raise error
+E               PermissionError: [Errno 13] windows create/unlink race
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:188: PermissionError
+_ TestExclusiveWindowsRace.test_persistent_windows_permission_error_times_out_fail_closed _
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestExclusiveWindowsRace object at 0x00000185727C7B60>
+ledger = <tools.agent_supervisor.mrl_subagent_contract.SubagentLedger object at 0x000001856FD65700>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000185727C7E00>
+
+    def test_persistent_windows_permission_error_times_out_fail_closed(self, ledger, monkeypatch):
+        # S5(ii): a Windows race PermissionError that NEVER clears is bounded by the
+        # lock's own deadline and ends in the module's typed fail-closed refusal
+        # (ContractError '...fail closed'), never an admission and never an unbounded
+        # loop. RED pre-repair: the raw PermissionError reaches the caller instead of
+        # the typed refusal, so pytest.raises(ContractError) does not match it.
+        monkeypatch.setattr(msc, "_is_windows", lambda: True, raising=False)
+        monkeypatch.setattr(msc, "_LOCK_TIMEOUT_S", 0.2)
+        fake_open, state = _failing_lock_open(
+            PermissionError(errno.EACCES, "windows create/unlink race"), fail_times=10 ** 9)
+        monkeypatch.setattr(msc.os, "open", fake_open)
+        with pytest.raises(ContractError, match="fail closed"):
+>           _req(ledger)
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:241: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\test_agent_supervisor_mrl_subagent_contract.py:42: in _req
+    return ledger.request(**base)
+           ^^^^^^^^^^^^^^^^^^^^^^
+tools\agent_supervisor\mrl_subagent_contract.py:200: in request
+    with _exclusive(self.path):
+         ^^^^^^^^^^^^^^^^^^^^^
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+tools\agent_supervisor\mrl_subagent_contract.py:133: in _exclusive
+    fd = os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_persistent_windows_permis0\\ledger.json.lock'
+flags = 1281, args = (), kwargs = {}
+
+    def fake_open(path, flags, *args, **kwargs):  # type: ignore[no-untyped-def]
+        if str(path).endswith(".lock"):
+            state["calls"] += 1
+            if state["calls"] <= fail_times:
+>               raise error
+E               PermissionError: [Errno 13] windows create/unlink race
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:188: PermissionError
+_ TestExclusiveWindowsRace.test_real_race_through_exclusive_holds_mutual_exclusion _
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestExclusiveWindowsRace object at 0x00000185727C52E0>
+tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_real_race_through_exclusi0')
+
+    def test_real_race_through_exclusive_holds_mutual_exclusion(self, tmp_path):
+        # S5 / S3: the REAL concurrent create/unlink race through _exclusive(), run on
+        # every host. On windows-latest this race alone makes the O_EXCL create raise
+        # PermissionError errno 13 (frozen probe P4: 1,468 of 61,758 iterations, 8
+        # threads, no external process and no held handle); on POSIX it raises
+        # FileExistsError. Either way the repaired acquire loop must keep the section
+        # mutually exclusive and let NOTHING but the module's typed refusal escape. The
+        # race outcome is non-deterministic, but these ASSERTIONS are invariants, so the
+        # test is deterministic in what it checks. (Probe P5 showed the repaired lock
+        # held under this race on Windows: 32,673 acquired, no refusal, no escape, at
+        # most one thread inside the section.) RED on windows-latest against the pre-fix
+        # acquire loop (a PermissionError escapes); GREEN with the repair.
+        base = tmp_path / "race.json"
+        n, time_budget_s, cap = 8, 2.0, 200_000
+        barrier = threading.Barrier(n)
+        inside = {"cur": 0, "max": 0}
+        tally_lock = threading.Lock()
+        counts = {"acquired": 0, "refused": 0}
+        escaped: list = []
+    
+        def worker() -> None:
+            barrier.wait()
+            deadline = time.monotonic() + time_budget_s
+            iters = 0
+            while time.monotonic() < deadline and iters < cap:
+                iters += 1
+                try:
+                    with msc._exclusive(base):
+                        with tally_lock:
+                            inside["cur"] += 1
+                            inside["max"] = max(inside["max"], inside["cur"])
+                        with tally_lock:
+                            inside["cur"] -= 1
+                            counts["acquired"] += 1
+                except ContractError:  # the module's own typed refusal is legitimate
+                    with tally_lock:
+                        counts["refused"] += 1
+                except BaseException as exc:  # noqa: BLE001 - record any escape for the assert
+                    with tally_lock:
+                        escaped.append(f"{type(exc).__name__}(errno={getattr(exc, 'errno', None)})")
+    
+        threads = [threading.Thread(target=worker) for _ in range(n)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+>       assert escaped == [], f"an exception other than the typed refusal escaped: {escaped}"
+E       AssertionError: an exception other than the typed refusal escaped: ['PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)']
+E       assert ['PermissionE...rno=13)', ...] == []
+E         
+E         Left contains 26 more items, first extra item: 'PermissionError(errno=13)'
+E         
+E         Full diff:
+E         - []
+E         + [
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         +     'PermissionError(errno=13)',
+E         + ]
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:317: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsRace::test_transient_windows_permission_error_waits_then_succeeds - PermissionError: [Errno 13] windows create/unlink race
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsRace::test_persistent_windows_permission_error_times_out_fail_closed - PermissionError: [Errno 13] windows create/unlink race
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsRace::test_real_race_through_exclusive_holds_mutual_exclusion - AssertionError: an exception other than the typed refusal escaped: ['PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)', 'PermissionError(errno=13)']
+assert ['PermissionE...rno=13)', ...] == []
+  
+  Left contains 26 more items, first extra item: 'PermissionError(errno=13)'
+  
+  Full diff:
+  - []
+  + [
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  +     'PermissionError(errno=13)',
+  + ]
+=========== 3 failed, 3959 passed, 60 skipped in 263.78s (0:04:23) ============

@@ -2,11 +2,13 @@
 (D-024-R566..R579). Paired positive/negative cases for every contract clause."""
 from __future__ import annotations
 
+import errno
 import json
 import pathlib
 import subprocess
 import sys
 import threading
+import time
 
 import pytest
 
@@ -159,6 +161,162 @@ class TestLedger:
         lock.write_text("held", encoding="utf-8")
         with pytest.raises(ContractError, match="fail closed"):
             _req(ledger)
+
+
+# --------------------------------------- exclusive lock: Windows create/unlink race (M0-T186)
+
+def _failing_lock_open(error: OSError, *, fail_times: int):
+    """A stand-in for ``os.open`` that raises ``error`` on the first ``fail_times``
+    LOCK-file creates, then delegates to the real ``os.open``.
+
+    Returns ``(fake_open, state)``; ``state['calls']`` counts lock-create attempts so
+    a test can prove the acquire loop retried (waited) or stayed loud one-shot. Only
+    paths ending in ``.lock`` are affected, so the ledger's own reads/writes pass
+    straight through. A huge ``fail_times`` models a fault that never clears. Host-
+    independent: it injects the Windows race ``PermissionError`` (errno 13) on any OS,
+    so the transient / never-clears branch behaviour is pinned deterministically
+    everywhere; the REAL race is exercised separately by
+    ``test_real_race_through_exclusive_holds_mutual_exclusion``.
+    """
+    real_open = msc.os.open
+    state = {"calls": 0}
+
+    def fake_open(path, flags, *args, **kwargs):  # type: ignore[no-untyped-def]
+        if str(path).endswith(".lock"):
+            state["calls"] += 1
+            if state["calls"] <= fail_times:
+                raise error
+        return real_open(path, flags, *args, **kwargs)
+
+    return fake_open, state
+
+
+class TestExclusiveWindowsRace:
+    """S5: ``_exclusive()``'s acquire loop treats ONLY a transient Windows
+    ``PermissionError`` as 'lock busy' — retried within the lock's own deadline, then
+    the module's own fail-closed refusal — while every other error stays loud.
+
+    On windows-latest a concurrent create/unlink race on one lock path makes
+    ``os.open(O_CREAT|O_EXCL|O_WRONLY)`` raise ``PermissionError`` (errno 13) at the
+    create — DEMONSTRATED by the round-2 probe P4 (1,468 of 61,758 iterations, 8
+    threads, no external process and no held handle; frozen job 112580543291). The
+    exact Win32 reason is NOT established: ``os.open`` reports no ``winerror`` (P4
+    winerror=None), and a held handle does not reproduce it (probe P2: a share-delete
+    handle lets the create succeed; probe P3: a plain handle makes the UNLINK fail with
+    winerror 32 and the create raise FileExistsError). The pre-repair loop caught only
+    ``FileExistsError``, so that ``PermissionError`` reached the caller unhandled and a
+    worker thread died (CI run 37519342596, job 112460379795). The branch cases below
+    are injected deterministically on BOTH hosts by patching ``msc._is_windows`` (the
+    platform seam) and ``msc.os.open`` — no real Windows-only syscall — so they run
+    identically everywhere; the REAL race is exercised by
+    ``test_real_race_through_exclusive_holds_mutual_exclusion``.
+    """
+
+    def test_transient_windows_permission_error_waits_then_succeeds(self, ledger, monkeypatch):
+        # S5(i): the create fails twice with the Windows race PermissionError (errno 13),
+        # then succeeds -> the request is SERVED and the limits are intact (exactly one
+        # issued, nothing lost). RED pre-repair: the PermissionError reaches the caller
+        # unhandled instead of being waited out, so this line raises before the assert.
+        monkeypatch.setattr(msc, "_is_windows", lambda: True, raising=False)
+        fake_open, state = _failing_lock_open(
+            PermissionError(errno.EACCES, "windows create/unlink race"), fail_times=2)
+        monkeypatch.setattr(msc.os, "open", fake_open)
+        decision = _req(ledger)
+        assert decision.allowed is True
+        assert state["calls"] == 3                            # 2 busy retries + 1 success
+        assert ledger.accounting()["subagents_issued"] == 1   # served exactly once
+
+    def test_persistent_windows_permission_error_times_out_fail_closed(self, ledger, monkeypatch):
+        # S5(ii): a Windows race PermissionError that NEVER clears is bounded by the
+        # lock's own deadline and ends in the module's typed fail-closed refusal
+        # (ContractError '...fail closed'), never an admission and never an unbounded
+        # loop. RED pre-repair: the raw PermissionError reaches the caller instead of
+        # the typed refusal, so pytest.raises(ContractError) does not match it.
+        monkeypatch.setattr(msc, "_is_windows", lambda: True, raising=False)
+        monkeypatch.setattr(msc, "_LOCK_TIMEOUT_S", 0.2)
+        fake_open, state = _failing_lock_open(
+            PermissionError(errno.EACCES, "windows create/unlink race"), fail_times=10 ** 9)
+        monkeypatch.setattr(msc.os, "open", fake_open)
+        with pytest.raises(ContractError, match="fail closed"):
+            _req(ledger)
+        assert state["calls"] > 1                             # it retried (waited), not one-shot
+        assert ledger.accounting()["subagents_issued"] == 0   # nothing admitted
+
+    def test_non_permission_oserror_at_create_stays_loud(self, ledger, monkeypatch):
+        # S5(iii): an OSError that is NOT the transient PermissionError (EIO) is caught
+        # by NEITHER except branch, so it reaches the caller at once on either platform
+        # -- never waited out, never turned into a refusal. (No _is_windows patch: the
+        # error is not a PermissionError, so the Windows branch is never consulted.)
+        assert not isinstance(OSError(errno.EIO, "x"), (PermissionError, FileExistsError))
+        fake_open, state = _failing_lock_open(
+            OSError(errno.EIO, "simulated I/O error"), fail_times=10 ** 9)
+        monkeypatch.setattr(msc.os, "open", fake_open)
+        with pytest.raises(OSError) as exc:
+            _req(ledger)
+        assert not isinstance(exc.value, ContractError)       # the raw fault, not a refusal
+        assert state["calls"] == 1                            # immediate, no retry/wait
+
+    def test_permission_error_on_posix_stays_loud(self, ledger, monkeypatch):
+        # S5(iii): on POSIX an O_EXCL create never yields such a race PermissionError,
+        # so a real one is a genuine permission fault and stays loud (re-raised at
+        # once) -- only Windows treats it as transient 'busy'.
+        monkeypatch.setattr(msc, "_is_windows", lambda: False, raising=False)
+        fake_open, state = _failing_lock_open(
+            PermissionError(errno.EACCES, "real permission fault"), fail_times=10 ** 9)
+        monkeypatch.setattr(msc.os, "open", fake_open)
+        with pytest.raises(PermissionError):
+            _req(ledger)
+        assert state["calls"] == 1                            # no wait on POSIX
+
+    def test_real_race_through_exclusive_holds_mutual_exclusion(self, tmp_path):
+        # S5 / S3: the REAL concurrent create/unlink race through _exclusive(), run on
+        # every host. On windows-latest this race alone makes the O_EXCL create raise
+        # PermissionError errno 13 (frozen probe P4: 1,468 of 61,758 iterations, 8
+        # threads, no external process and no held handle); on POSIX it raises
+        # FileExistsError. Either way the repaired acquire loop must keep the section
+        # mutually exclusive and let NOTHING but the module's typed refusal escape. The
+        # race outcome is non-deterministic, but these ASSERTIONS are invariants, so the
+        # test is deterministic in what it checks. (Probe P5 showed the repaired lock
+        # held under this race on Windows: 32,673 acquired, no refusal, no escape, at
+        # most one thread inside the section.) RED on windows-latest against the pre-fix
+        # acquire loop (a PermissionError escapes); GREEN with the repair.
+        base = tmp_path / "race.json"
+        n, time_budget_s, cap = 8, 2.0, 200_000
+        barrier = threading.Barrier(n)
+        inside = {"cur": 0, "max": 0}
+        tally_lock = threading.Lock()
+        counts = {"acquired": 0, "refused": 0}
+        escaped: list = []
+
+        def worker() -> None:
+            barrier.wait()
+            deadline = time.monotonic() + time_budget_s
+            iters = 0
+            while time.monotonic() < deadline and iters < cap:
+                iters += 1
+                try:
+                    with msc._exclusive(base):
+                        with tally_lock:
+                            inside["cur"] += 1
+                            inside["max"] = max(inside["max"], inside["cur"])
+                        with tally_lock:
+                            inside["cur"] -= 1
+                            counts["acquired"] += 1
+                except ContractError:  # the module's own typed refusal is legitimate
+                    with tally_lock:
+                        counts["refused"] += 1
+                except BaseException as exc:  # noqa: BLE001 - record any escape for the assert
+                    with tally_lock:
+                        escaped.append(f"{type(exc).__name__}(errno={getattr(exc, 'errno', None)})")
+
+        threads = [threading.Thread(target=worker) for _ in range(n)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        assert escaped == [], f"an exception other than the typed refusal escaped: {escaped}"
+        assert inside["max"] <= 1, f"two threads were inside the section at once: {inside['max']}"
+        assert counts["acquired"] > 0  # the race actually exercised the lock
 
 
 # ---------------------------------------------------------------- restricted profile

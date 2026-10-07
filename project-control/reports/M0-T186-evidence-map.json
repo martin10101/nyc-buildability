@@ -1,0 +1,32 @@
+{
+ "task_id": "M0-T186",
+ "material_commits": [
+  "d3eba6ca (commit A, cherry-pick of the builder's 685ca1f3: the first new tests, no repair - tools/test_agent_supervisor_mrl_subagent_contract.py)",
+  "7ee6299a (commit B, cherry-pick of aba18565: the repair in tools/agent_supervisor/mrl_subagent_contract.py `_exclusive()`; its message cites the qualifying evidence)",
+  "6d5899ce (commit C, cherry-pick of 24aeb949: the first convergence record and producer report)",
+  "cee80428, d421aab1, e133a971, bff9ac39, e49449a7 (orchestrator: the frozen Windows evidence under project-control/reports/M0-T186-ci-evidence/ - the failed first head, commit A alone, the probe, the second experiment, the passing head)",
+  "421d6f40 (commit D, cherry-pick of a075f128: the wrong platform test removed and the test of the real race added; the record rewritten to the Windows evidence)",
+  "1e77daeb (commit E, cherry-pick of 165e7524: comments and docstrings only in the module - the syntax tree without docstrings is identical; the wording says only what the evidence shows)",
+  "4d9478e6 (commit F, cherry-pick of 05696900: the record finished with the final Windows evidence; reports only) = material head"
+ ],
+ "contract_head": "bc7ab67d",
+ "claim_seam_head": "9371c1e4",
+ "requirements": {
+  "D-090-R093": [
+   "A separate pull request: #456, branch task/M0-T186-subagent-ledger-lock-windows, against candidate/D-024-mrl-option-b. Under tools/ and .github/ the branch changes only tools/agent_supervisor/mrl_subagent_contract.py and tools/test_agent_supervisor_mrl_subagent_contract.py (git diff --name-only 9371c1e4..HEAD -- tools .github).",
+   "Test timing or a real defect, decided on evidence (project-control/reports/M0-T186-convergence-record.md): a real defect in the acquire loop of `_exclusive()`, which caught only FileExistsError. The frozen log of the failed job of 2026-10-06 (run 37519342596, job 112460379795, windows-latest; project-control/reports/M0-T186-ci-evidence/job-112460379795-windows-failure.txt) shows PermissionError [Errno 13] raised by the exclusive create and reaching the caller: two requests admitted, five refused, one thread lost, none admitted beyond the limits.",
+   "The failing behaviour reproduced on windows-latest by a designed experiment (branch ci-exp/M0-T186-probe, never merged; project-control/reports/M0-T186-ci-evidence/job-112580543291-run-37555462888-attempt-1-ci-exp-probe.txt): eight threads looping the literal pre-repair sequence on one path, with no other handle, got PermissionError (errno 13) at the exclusive create 1,468 times in 61,758 iterations; a held handle of either kind did not reproduce it (with a share-delete handle the create succeeds; with a plain handle the create raises FileExistsError). The kernel-level reason for the refusal is NOT established (os.open gives no Windows error code); the record says so.",
+   "Shown on Windows before the repair: (1) commit A alone (branch ci-exp/M0-T186-red; project-control/reports/M0-T186-ci-evidence/job-112576500175-run-37554194212-attempt-1-ci-exp-red.txt): the two tests that inject the error fail, because it reaches the caller; (2) the tests of the final head with the acquire loop restored to its pre-repair code (branch ci-exp/M0-T186-red2, never merged; project-control/reports/M0-T186-ci-evidence/job-112586391779-run-37557306466-attempt-1-ci-exp-red2.txt): the test of the real race fails as well.",
+   "Shown on Windows after the repair: the same experiment ran the real race through the repaired `_exclusive()`: 32,673 acquisitions, no refusal, no escaped error, never more than one thread inside (project-control/reports/M0-T186-ci-evidence/job-112580543291-run-37555462888-attempt-1-ci-exp-probe.txt); and both runs on the repaired head pass the supervisor-bridge job with every test of this file passing (project-control/reports/M0-T186-ci-evidence/jobs-112587475709-112587488007-head-1e77daeb-green.txt).",
+   "The change is bounded to one function: `_exclusive()` now treats a PermissionError at the create as 'lock busy' on Windows only, retried with the loop's own sleep until the lock's own deadline, then the module's fail-closed refusal; on other systems it is re-raised at once. The release path and every other function are unchanged (git diff 9371c1e4..HEAD -- tools/agent_supervisor/mrl_subagent_contract.py).",
+   "One of the builder's first tests was wrong (it assumed Windows lets a held file be deleted) and both runs of the first repaired head failed on it (project-control/reports/M0-T186-ci-evidence/jobs-112576591960-112576606545-head-6d5899ce-failed.txt); it was removed and replaced by the test of the real race; the builder's first statements about the mechanism were withdrawn in the record. Nothing was rerun to obtain a pass.",
+   "What this task does NOT repair, and does not claim: the other Windows failure recorded as DB-163 (a PowerShell call that did not answer within a test's 60-second limit, in another test file), and the neighbouring lock weaknesses DB-152, DB-153 and DB-160, which the convergence record reports and leaves unchanged."
+  ],
+  "D-090-R094": [
+   "The test file's diff from the claim head is additions only (158 lines added, 0 removed: git diff --numstat 9371c1e4..HEAD -- tools/test_agent_supervisor_mrl_subagent_contract.py). No pre-existing test is deleted, renamed, skipped or xfail-marked, and no skip is added: the new test of the real race runs on every system.",
+   "No assertion loosened: test_parallel_requests_never_exceed_limits still asserts `results.count(True) == 2 and results.count(False) == 6` and its limits are unchanged.",
+   "No retry or rerun of a TEST, no rerun plugin, no pytest configuration change, no .github change, no timeout raised (`_LOCK_TIMEOUT_S` is unchanged). The retry that was added is in the product's lock acquire (a bounded wait for a transient refusal), which is the cause being repaired, not a retry to obtain a green run. No failed CI job of this task was rerun.",
+   "The safety property is unchanged and still asserted: a refusal that never clears ends in the module's typed fail-closed refusal and never in an admission (test_persistent_windows_permission_error_times_out_fail_closed); an error that is not the transient Windows case stays loud (test_non_permission_oserror_at_create_stays_loud, test_permission_error_on_posix_stays_loud); under the real race never more than one thread is inside the section (test_real_race_through_exclusive_holds_mutual_exclusion)."
+  ]
+ }
+}
