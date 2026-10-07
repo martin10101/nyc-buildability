@@ -172,7 +172,7 @@ def read_site_inputs(
     lot_type = _LOT_TYPE_BY_NAME.get(lot_type_name) if lot_type_name is not None else None
     if lot_type_name is not None and lot_type is None:
         held.append(
-            f"The recorded lot type {lot_type_name!r} is not one this piece decides from; the "
+            f"The recorded lot type {lot_type_name!r} is not one the program recognises, so the "
             "lot type is carried as not given."
         )
     area_value = area_rec.get("value") if area_rec else None
@@ -296,8 +296,8 @@ def _density(special_density_statement: bool | None) -> tuple[DensityKnowledge, 
     if special_density_statement is True:
         return DensityKnowledge.USER_STATEMENT_NOT_IN_ONE, ()
     return DensityKnowledge.NOT_GIVEN, (
-        "A user's statement that the lot IS in a special density area has no decided path; it is "
-        "held back and the special density area is carried as not given.",
+        "A statement that the lot is in a special density area is not yet handled, so the special "
+        "density area is carried as not given.",
     )
 
 

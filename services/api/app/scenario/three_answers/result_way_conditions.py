@@ -46,12 +46,14 @@ __all__ = [
     "blanket_way",
     "blanket_withhold",
     "condition_withhold",
+    "format_angle",
     "format_ft",
     "format_sq_ft",
     "k20_condition",
     "no_lot_type",
     "no_outline",
     "overlay_block",
+    "rear_yard_unmeasured",
     "relabel",
     "shown",
     "street_reaches_within",
@@ -83,6 +85,12 @@ def format_sq_ft(value: float) -> str:
 def format_ft(value: float) -> str:
     whole = int(round(value))
     return f"{whole} ft" if float(whole) == float(value) else f"{value:.2f} ft"
+
+
+def format_angle(value: float) -> str:
+    """A measured angle in degrees, whole where the value is whole (mirrors format_ft)."""
+    whole = int(round(value))
+    return f"{whole} degrees" if float(whole) == float(value) else f"{value:.1f} degrees"
 
 
 # ---------------------------------------------------------------------------
@@ -367,6 +375,40 @@ def no_outline(label: str, what: str, zr: tuple[str, ...]) -> Withheld:
         ),
         gap_kind=MISSING_INFORMATION,
         resolved_by="Measuring the lot's reach from the recorded outline and its street lines.",
+        zr_sections=zr,
+    )
+
+
+def rear_yard_unmeasured(
+    label: str, *, reach_known: bool, angle_known: bool, zr: tuple[str, ...],
+) -> Withheld:
+    """The corner reach records exist but a measurement the rear-yard waiver needs is missing:
+    the far corner's reach, the angle at which the two street lines meet, or both. Names exactly
+    the measurement that is missing and never one that is present, so a known reach is never
+    reported as unmeasured (missing information, not owed work)."""
+    if not reach_known and not angle_known:
+        what = (
+            "the far corner's reach from the point where the two street lines meet and the "
+            "angle at which they meet are not measured"
+        )
+    elif not reach_known:
+        what = (
+            "the far corner's reach from the point where the two street lines meet is not "
+            "measured"
+        )
+    else:
+        what = "the angle at which the two street lines meet is not measured"
+    return Withheld(
+        label=label,
+        reason=(
+            f"For this corner lot {what}, so whether the rear-yard waiver applies cannot be "
+            "decided and the rear yard is not known."
+        ),
+        gap_kind=MISSING_INFORMATION,
+        resolved_by=(
+            "Measuring the far corner's reach and the angle at which the two street lines meet, "
+            "from the recorded outline and its street lines."
+        ),
         zr_sections=zr,
     )
 
