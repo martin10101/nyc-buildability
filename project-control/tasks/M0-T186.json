@@ -106,14 +106,14 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "Swallowing every PermissionError would hide a real permission fault and could turn a fail-closed path into a silent wait -> S4: only the proven transient case, bounded by the lock's own deadline, ending in the typed refusal",
     "A green run obtained by a retry of the test instead of a repair -> S6 and R094",
@@ -123,7 +123,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T00:34:23.847931+00:00",
-  "updated_at": "2026-10-07T00:34:24.269776+00:00",
+  "updated_at": "2026-10-07T00:35:06.043510+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -142,5 +142,15 @@
     "python tools/supervisor_command_doc_check.py",
     "python3 tools/modularity_check.py --check",
     "CI: supervisor-bridge (windows-latest) on the pull request head; a ci-exp/M0-T186-* run when S3 uses one"
+  ],
+  "worktree": "/root/project/w-M0-T186",
+  "progress_log": [
+    {
+      "at": "2026-10-07T00:35:06.043408+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claim seam: G0 PASS at bc7ab67d; producer backend-engineer dispatched under /deficit-convergence; based on the integration head 523d6a28 (the reference-cases task merged)"
+    }
   ]
 }
