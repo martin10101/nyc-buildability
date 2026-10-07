@@ -3,7 +3,7 @@
  "directive_id": "D-090",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-090-BOOTSTRAP at capture; tasks cite them through directive_refs. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": "2026-10-07T02:20:20+00:00",
+ "verified_at": "2026-10-07T04:49:45+00:00",
  "task_verifications": [
   {
    "directive_id": "D-090",
@@ -736,22 +736,37 @@
     "D-090-R403"
    ],
    "producer": "legal-corpus-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "7e456bcff6a1aa03635f95d610104d4dbd37d81f",
+   "reviewed_manifest_sha256": "d371dfe19472c10429d5ad7b6425b7a7f97214de5aef0641a4ba4a8708f4d55b",
    "requirements": [
     {
      "id": "D-090-R400",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "ZR 23-23 captured in docs/research/zr-snapshots/v1/zr-23-23.snapshot.json (node 22754); I re-fetched the official page myself \u2014 raw HTML sha256 = 35e7e6781a95cc9a6446fc3d84c894430ed21640676aeda99f2f158383358b35 and 113064 bytes, both byte-identical to the recorded source block.",
+      "Completeness: the official 23-23 page contains subsection numbers 23-231, 23-232, 23-233, 23-234 only (no 23-235); all four are captured; so the section is complete, not excerpted.",
+      "I re-fetched 23-231/232/233/234 \u2014 each capture's recorded raw_html_sha256 (f84b6666\u2026, 980e430e\u2026, 5e9e0de0\u2026, 3f8dcbed\u2026) and byte count match the live official pages exactly; \"Last Amended 12/5/2024\" present on all five; every captured body line is an exact substring of the official page text (0 not-contained).",
+      "The owner's four figures all appear verbatim in the captured text and in the official pages I read: 23-231 \"not to exceed five percent of the #residential floor area#\"+\"laundry facilities\"+\"accessible to the residents\"; 23-232 \"Fifty percent\u2026\" under (a) and (b), \"does not exceed 100 linear feet\", \"applied individually or in combination\"; 23-233 \"a maximum of three square feet per #dwelling unit#\"; 23-234 \"up to 100 square feet\u2026for each foot of difference\u2026no more than a maximum of 500 square feet\u2026for each #building#\".",
+      "Where the captured text differs from the owner's summary (stated, NOT resolved): the owner's corridor summary labels branch (a) \"termination/daylighting/outdoor-access\", but the official/captured 23-232(a) has THREE alternative criteria \u2014 (1) outdoor access, (2) daylighting (three sub-cases), (3) the corridor terminates with a #dwelling unit# of at least three bedrooms; the owner's summary omits the three-bedroom criterion, and writes \"100 ft\" where the text says \"100 linear feet\". The capture holds the full official text; the difference is in the owner's condensed summary.",
+      "Figures recorded as law only from the capture: grep across services/api/app/rules (rulesets/engine/register/coverage), docs/reference-cases, docs/measurement-basis found NONE of the four figures and NO rule citing 23-23/231-234; all 14 captures are source-text-only (no provisions/rule/interpretation/derived key); each content_digest_sha256 recomputes as sha256(verbatim_excerpt). Left to M5-T126 (not claimed here): the measurement-basis record that STATES each allowance with its conditions (R400 required_harness/required_evidence name \"the measurement-basis record\").",
+      "Verifier's carry-forward condition met at 7e456bcf: every file under the task's allowed paths has the blob it had at the verified head 4a3173f6 (content identity d371dfe1); CLAUDE.md, .claude/rules/, services/api/app/ (the rule files, the engine and the synced captures), every law capture, the helper's reading, the reference cases, the review register, the work order, the D-090 requirement rows and manifest, the sources 043, 049, 050 and 051, and the four gate records are unchanged; the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent data-contract-verifier; the producer was a legal-corpus-engineer agent). Pull request 458 is OPEN with head 4a3173f6 on GitHub. DCV report: project-control/reports/M4-T025-DCV.md."
+     ],
+     "reviewed_sha": "7e456bcff6a1aa03635f95d610104d4dbd37d81f"
     },
     {
      "id": "D-090-R403",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "ZR 12-10 \"floor area\" captured in full in zr-12-10-floor-area.snapshot.json (term node 21558, Last Amended 12/5/2024): 12 \"includes\" items and 17 \"shall not include\" items. I re-fetched the whole \u00a712-10 page \u2014 recorded raw_html_sha256 3c7197026d616c45\u2026 and 1316758 bytes match exactly; all 53 captured lines are contained in the official text (0 not-contained after punctuation-space normalization); the definition ends at exclusion item (17) and is immediately followed by the next term \"floor area ratio\", so nothing is omitted mid-definition.",
+      "Both relevant exclusions are present in the captured definition: item (12) \"#qualifying exterior wall thickness#\" and item (15) \"floor space within a #fully electrified building# or an #ultra low energy building#\" (the energy-related case); item (16) references Section 23-23.",
+      "The \"qualifying exterior wall thickness\" definition it relies on is captured separately (zr-12-10-qualifying-exterior-wall-thickness.snapshot.json, term node 22339, Last Amended 12/6/2023 \u2014 I confirmed \"General Definition Last Amended 12/6/2023\" in the official page); all 5 captured lines contained in the official text.",
+      "Short list not treated as complete: the floor-area capture's notes list the other \u00a712-10 defined terms the exclusions name as NOT captured (incl. 'fully electrified building', 'ultra low energy building', 'qualifying rooftop greenhouse') and state qualifying exterior wall thickness IS captured \u2014 nothing treats the inclusion/exclusion list as complete.",
+      "No overstatement: the evidence map and capture notes explicitly state capture-only, and that \"checking these exclusions where they bear on a result, and the record that says the short list is partial and names them, belong to M5-T126\"; no number is shown because of a capture. Left to M5-T126 (not claimed here): the record that SAYS the list is partial and names/checks those exclusions where they bear on a result (R403 required_harness).",
+      "Verifier's carry-forward condition met at 7e456bcf: every file under the task's allowed paths has the blob it had at the verified head 4a3173f6 (content identity d371dfe1); CLAUDE.md, .claude/rules/, services/api/app/ (the rule files, the engine and the synced captures), every law capture, the helper's reading, the reference cases, the review register, the work order, the D-090 requirement rows and manifest, the sources 043, 049, 050 and 051, and the four gate records are unchanged; the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent data-contract-verifier; the producer was a legal-corpus-engineer agent). Pull request 458 is OPEN with head 4a3173f6 on GitHub. DCV report: project-control/reports/M4-T025-DCV.md."
+     ],
+     "reviewed_sha": "7e456bcff6a1aa03635f95d610104d4dbd37d81f"
     }
    ]
   },
