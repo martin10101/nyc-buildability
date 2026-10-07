@@ -3,7 +3,7 @@
  "directive_id": "D-090",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-090-BOOTSTRAP at capture; tasks cite them through directive_refs. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": "2026-10-07T00:09:17+00:00",
+ "verified_at": "2026-10-07T02:20:20+00:00",
  "task_verifications": [
   {
    "directive_id": "D-090",
@@ -916,22 +916,38 @@
     "D-090-R094"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "c136fabff5d9501492374dd7b24221773605e9a9",
+   "reviewed_manifest_sha256": "7e00f47ad45cc13735ebf8a3c20261d0028091e289501fda001ceace1d3bb744",
    "requirements": [
     {
      "id": "D-090-R093",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Cause decided on evidence as a REAL supervisor defect, not test timing: the frozen probe (project-control/reports/M0-T186-ci-evidence/job-112580543291-...-probe.txt, line 194) shows P4 \u2014 the real 8-thread create/unlink race alone, no held handle \u2014 produced `create:PermissionError(errno=13, winerror=None)` 1,468 of 61,758 iterations on windows-latest; P2 (line 105, share-delete handle) and P3 (line 136, plain handle: unlink raises WinError 32, create raises FileExistsError) rule out a held handle (candidate b), and the real race through the real lock rules out a test-only fault (candidate c) / timing (candidate d).",
+      "Failing behaviour shown on windows-latest BEFORE repair: ci-exp branch commit A (tests only, no repair), job 112576500175, shows test_transient_...waits_then_succeeds and test_persistent_...times_out_fail_closed RED (PermissionError errno 13 reaches caller); the final-tests-against-pre-fix-code experiment (commit X, job 112586391779, red2) shows test_real_race_through_exclusive_holds_mutual_exclusion RED (26 PermissionError errno=13 escaped). I independently reproduced this on Linux by forcing the non-Windows branch (byte-identical to pre-fix for a create PermissionError): scenario (i) raises unhandled, scenario (ii) raises raw PermissionError not the typed ContractError \u2014 the repair is load-bearing (mutation proof).",
+      "Failing behaviour ABSENT after repair: green head 1e77daeb, jobs 112587475709 (push) and 112587488007 (pull_request), both conclusion=success, 3962 passed / 60 skipped. I re-downloaded both live logs: byte counts 49957 / 50655 and sha256 25fc47ec\u2026 / 002eb872\u2026 match the frozen file jobs-112587475709-112587488007-head-1e77daeb-green.txt exactly. The original failure (job 112460379795, run 37519342596, attempt 1) also matches live: 55895 bytes, sha256 5d216794\u2026.",
+      "Change bounded to the acquire path: `git diff 9371c1e4 9df713a7 -- tools/agent_supervisor/mrl_subagent_contract.py` touches only `_exclusive()`'s acquire loop (catch PermissionError \u2192 on non-Windows re-raise loud, on Windows fall through to the shared deadline/sleep) plus a new 1-line module seam `_is_windows()`; the release path and every other function are unchanged (37 add / 4 del).",
+      "Separate PR confirmed: PR 456, branch task/M0-T186-subagent-ledger-lock-windows, base candidate/D-024-mrl-option-b, its own PR for the supervisor repair; `git diff --name-only 1e77daeb 9df713a7 -- tools/ .github/` = 0 files (no production/CI change after the green head).",
+      "No overstatement: the kernel reason is stated NOT established in all four places \u2014 code comment in _exclusive (\"the kernel reason is not established\"), convergence-record.md (\"Still NOT established: the kernel-level reason\u2026 os.open gives no winerror\"), evidence-map.json R093 (\"The kernel-level reason\u2026 is NOT established\"), PR 456 body (\"Not established: the reason inside Windows\u2026 os.open gives no Windows error code\"); matches P4 winerror=None. DB-163 (the other windows-latest flake, a PowerShell timeout in test_agent_supervisor_os_acl.py) is explicitly reported as out of scope and NOT repaired in the convergence record (\u00a7 near line 295), producer report (line 138) and PR body \u2014 not silent. The scope correction's S5(iv) premise is honest and supported by the frozen probe (P2/P3 = no held-handle reproduction; P4 = 1,468/61,758 real-race reproduction), and the code-reviewer judged the substitute meets the scenario (G3G4 note F1).",
+      "Verifier's carry-forward condition met at c136fabf: every file under the task's allowed paths (the module, its test, the two reports, the frozen CI evidence) has the blob it had at the verified head 9df713a7 (content identity 7e00f47a); every file under tools/ and .github/, CLAUDE.md, .claude/rules/, docs/DISCOVERY_BACKLOG.md, the D-090 requirement rows and manifest, source-048 and the five gate records are unchanged; the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4/G5 PASS at that content identity (G3/G4 independent code-reviewer, G5 independent security-reviewer; the producer was a backend-engineer agent). Pull request 456 is OPEN with head 9df713a7 on GitHub. DCV report: project-control/reports/M0-T186-DCV.md."
+     ],
+     "reviewed_sha": "c136fabff5d9501492374dd7b24221773605e9a9"
     },
     {
      "id": "D-090-R094",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Test diff is additions-only: `git diff --numstat 9371c1e4 9df713a7 -- tools/test_agent_supervisor_mrl_subagent_contract.py` = 158 added / 0 removed. No test deleted, renamed, skipped, or xfail-marked; grep for skip/xfail/skipif/skipUnless/rerun/flaky in the frozen test file finds none (the only `@pytest.mark` are two pre-existing parametrize at lines 52,105). At the frozen head the added real-race test (S5 iv) is NOT skipped \u2014 it runs on every host.",
+      "No assertion loosened: test_parallel_requests_never_exceed_limits (line 143) is untouched by the diff and still asserts `results.count(True) == 2 and results.count(False) == 6` with max_concurrent=2/max_total=5.",
+      "The added retry is in the PRODUCT lock, not a test retry for green: _exclusive treats the transient Windows PermissionError as \"busy\", bounded by `_LOCK_TIMEOUT_S` (unchanged \u2014 no timeout raised), ending in the module's typed `_violation` fail-closed refusal; a non-transient OSError and a POSIX PermissionError stay loud (tests test_non_permission_oserror_at_create_stays_loud, test_permission_error_on_posix_stays_loud pass \u2014 part of 50 passed). Safety/concurrency preserved: persistent-error case ends in typed refusal with 0 admitted; the real-race test asserts inside[\"max\"] <= 1.",
+      "No rerun plugin / config / .github change: running the focused file shows `plugins: anyio-4.14.2` only (no pytest-rerunfailures/flaky); full file list 9371c1e4\u21929df713a7 contains no .github/** and no pytest.ini/pyproject/conftest; only tools/ changes are the two named files.",
+      "No failed CI job of this task was rerun: live `gh api .../jobs/<id>` for all eight frozen jobs (112460379795, 112587475709, 112587488007, 112576591960, 112576606545, 112576500175, 112580543291, 112586391779) each report run_attempt=1. The first repaired head 6d5899ce failed (attempt 1, jobs 112576591960/112576606545) and was NOT rerun; the wrong test was removed and a new head pushed.",
+      "The removed first Windows-only test was the removal of a WRONG test, not a weakened check: the frozen failed-head log shows test_windows_delete_pending_create_raises_permission_error_platform_fact failed because its own setup `os.unlink` raised PermissionError [WinError 32] (false premise that Windows lets a held file be deleted), confirmed by probe P3; it was replaced by the stronger real-race test run on every system (strengthening).",
+      "Verifier's carry-forward condition met at c136fabf: every file under the task's allowed paths (the module, its test, the two reports, the frozen CI evidence) has the blob it had at the verified head 9df713a7 (content identity 7e00f47a); every file under tools/ and .github/, CLAUDE.md, .claude/rules/, docs/DISCOVERY_BACKLOG.md, the D-090 requirement rows and manifest, source-048 and the five gate records are unchanged; the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4/G5 PASS at that content identity (G3/G4 independent code-reviewer, G5 independent security-reviewer; the producer was a backend-engineer agent). Pull request 456 is OPEN with head 9df713a7 on GitHub. DCV report: project-control/reports/M0-T186-DCV.md."
+     ],
+     "reviewed_sha": "c136fabff5d9501492374dd7b24221773605e9a9"
     }
    ]
   }

@@ -112,8 +112,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Swallowing every PermissionError would hide a real permission fault and could turn a fail-closed path into a silent wait -> S4: only the proven transient case, bounded by the lock's own deadline, ending in the typed refusal",
     "A green run obtained by a retry of the test instead of a repair -> S6 and R094",
@@ -123,7 +123,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T00:34:23.847931+00:00",
-  "updated_at": "2026-10-07T02:03:34.486687+00:00",
+  "updated_at": "2026-10-07T02:20:20.831534+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -159,5 +159,7 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-07, after the builder's work and the independent code review, before acceptance] Scenario S5 item (iv) asked for 'a Windows-only test of the platform fact itself'. The packet presumed a fact that a single call can show: that an exclusive create raises PermissionError while the lock file's removal is pending. A designed experiment on windows-latest showed there is no such deterministic fact: with a file held open, in either of the two possible ways, the create does not raise PermissionError (frozen probe P2 and P3); the refusal appears only under the real race of threads creating and removing the file (P4: 1,468 of 61,758 attempts). The builder's first test of the presumed fact was wrong and failed on Windows; it was removed. Item (iv) is therefore a test of the real race through the lock, run on every system and not skipped anywhere; that it fails against the pre-repair code is shown on Windows by a second experiment (frozen under project-control/reports/M0-T186-ci-evidence/). The independent code reviewer judged the substitute to meet the scenario's purpose (its note F1, project-control/reports/M0-T186-G3G4.md). Scenario S3 already allows this case ('if no deterministic reproduction is possible, the record says so plainly'). No other scenario, gate, reviewer or path changed; the readiness gate is recorded again at the corrected head."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T02:20:20.831340+00:00"
 }
