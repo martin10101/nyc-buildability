@@ -1,0 +1,113 @@
+{
+  "task_id": "M4-T034",
+  "title": "Law-text captures behind the owner's reviewer's check: the mixed-building floor-area section, the ZR 12-10 definitions behind the energy exclusion, the section ZR 23-20 points to for certain areas, and the sections that say whether parking, loading berths and bicycle parking are required; source text only (D-090 R291, R513, R516, R517, R526)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Capture, as source text only, the law texts behind the check by the owner's reviewer (project-control/directives/D-090-product-plan-2026-09-28-start-building/source-055-amendment.md), from the official Zoning Resolution site, each in a file of its own under docs/research/zr-snapshots/v1/ in the form of the existing captures, with the synced copy under services/api/app/_zr_snapshots/v1/. THE TARGETS are named by what they are. A section number given here is the reviewer's LEAD, to be confirmed at the site; the builder reports the number, title and page the site shows, and where the site differs from the lead it says so in the report. (1) THE MIXED-BUILDING FLOOR-AREA SECTION of Article III, Chapter 5 that the reviewer names as 35-31, whole; if its page is a parent, the list of its child sections by number and title as the site shows it, and each child that states how the floor areas of the uses of a mixed building combine or how shared floor area is attributed. (2) THE ZR 12-10 DEFINITIONS behind the energy exclusion of the 'floor area' definition, each whole: 'fully electrified building' and 'ultra low energy building'; and every defined term those two definitions rest on for eligibility that is not captured yet. (3) THE SECTION ZR 23-20 POINTS TO for certain areas (it names Section 23-24), whole or, if a parent, with its list of children. (4) PARKING, LOADING AND BICYCLE PARKING, the sections that say WHETHER a requirement applies (not the design standards): (a) for accessory off-street parking for residences in a Residence District: the section of Article II, Chapter 5 that states the requirement for R6 to R12 districts or by transit zone, the general section on its applicability, and each section those two point to for a waiver or reduction on a small lot or for a small number of spaces; (b) the counterpart sections of Article III, Chapter 6 for a commercial overlay's residences and local retail uses, loading berths included; (c) bicycle parking: the section the reviewer names as 25-811 with its parent, and the commercial-district counterpart. Group (4) is bounded at twenty captures: what the builder finds beyond that is listed in the report as 'found, not captured', with its number and title. For each target: search the exact title, the inverted title and combined titles; a term is reported as 'not defined in ZR 12-10' ONLY after all three and with the search shown. A term defined inside another article is captured with that article whole. Tables cell by cell. Each capture carries the page address, the time of each request, the amendment date the page shows, the verbatim text and its digests, and the channel used (the print/PDF channel where it answers; the disclosed fallback where it does not). ALSO, FROM THE OFFICIAL PAGES AND WITHOUT ANY READING: a list, in the report, of each statement of law in the reviewer's message with the section the site shows for it and the capture id that now holds it (new or existing), so that a later reader can check the message against the text; where the builder cannot find the text a statement rests on, it says 'not found' with the searches. The captures are NOT a reading: no rule, no reference case, no register entry, no record and no result changes, and the report draws no conclusion about what any text means for a lot or whether the reviewer's statement is right.",
+  "business_reason": "The reviewer's corrections rest on law text that the repository does not hold: the mixed-building section, the two energy definitions, and the sections that decide whether parking, loading and bicycle parking apply to an option. The owner's rule is that a statement of law is checked at its official source before a record changes (R517) and that a legal reading not captured and read is withheld. Capturing is the first half; the independent reading follows in a later task.",
+  "inputs": [
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/source-055-amendment.md (the reviewer's statements of law and the sections it names)",
+    "docs/research/zr-snapshots/v1/ (the existing captures: the file form, the fields, the digests; which targets are already there; `zr-23-20`, `zr-12-10-floor-area`, `zr-12-10-qualifying-exterior-wall-thickness`, `zr-35-01`, `zr-35-21`, `zr-35-22`) and project-control/reports/M4-T033-producer-report.md (how the last captures were made; the channels; the limits disclosed there)",
+    "services/api/scripts/sync_zr_snapshots.py and services/api/tests/rules/test_zr_snapshot_bundle.py",
+    "The official site zoningresolution.planning.nyc.gov (the only source)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R291, R513, R516, R517, R526"
+  ],
+  "outputs": [
+    "New capture files under docs/research/zr-snapshots/v1/ and their byte-identical copies under services/api/app/_zr_snapshots/v1/",
+    "project-control/reports/M4-T034-producer-report.md: per target: found or not (with the searches), the section number and title the site shows, the page, the channel, the capture id; where the site differs from a lead; the list of the reviewer's statements of law with the section and capture for each; what was found beyond the bound of group (4); every further section the new texts point to that is not captured; every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M4-T033"
+  ],
+  "allowed_paths": [
+    "docs/research/zr-snapshots/v1",
+    "docs/research/zr-snapshots/v1/**",
+    "services/api/app/_zr_snapshots/v1",
+    "services/api/app/_zr_snapshots/v1/**",
+    "services/api/tests/rules/test_zr_snapshot_bundle.py",
+    "project-control/reports/M4-T034-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "every EXISTING capture file (none is edited or re-fetched in place)",
+    "docs/reference-cases/**, docs/zoning-rule-review/**, docs/plans/**, docs/measurement-basis/**",
+    "services/api/app/** except the synced copies under services/api/app/_zr_snapshots/v1/; every other test",
+    "apps/**; packages/**; .github/**; CLAUDE.md; .claude/**; tools/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "each_target_captured_or_honestly_reported",
+      "input": "the four groups of targets of the objective",
+      "expected": "each target is captured in a file of its own, or the report says exactly what was searched and what the official site shows; nothing is reported as 'not defined' that the site defines; a lead the site does not bear out is reported as such"
+    },
+    {
+      "id": "S2",
+      "case": "the_text_is_the_official_text",
+      "input": "each new capture",
+      "expected": "the verbatim text equals the official page's text for that section or article, whole; tables cell by cell; the address, request times, amendment date, channel and digests are recorded; a disclosed limit where a channel did not answer"
+    },
+    {
+      "id": "S3",
+      "case": "the_reviewers_statements_listed_against_the_text",
+      "input": "the report's list",
+      "expected": "each statement of law of the message has the section the site shows and the capture id, or 'not found' with the searches; no verdict on whether the statement is right"
+    },
+    {
+      "id": "S4",
+      "case": "copies_identical_and_existing_untouched",
+      "input": "git show --name-status <the builder's commit>; the sync script's check",
+      "expected": "only added files under the two capture folders (and the report, and the bundle test only if it lists ids); no existing capture modified; the synced copies byte-identical; the bundle test passes"
+    },
+    {
+      "id": "S5",
+      "case": "source_text_only",
+      "input": "the report and the captures",
+      "expected": "no statement of what a text means for any lot; no rule, case, register, record or result file changed"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A section number taken from the reviewer's message instead of found on the site -> the targets are named by what they are; the builder reports what the site shows",
+    "A term reported as not defined that sits under an inverted or combined title (seen in M4-T029) -> S1",
+    "Group (4) growing without end -> bounded at twenty captures; the rest is listed",
+    "An existing capture edited -> S4"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T20:17:42.747766+00:00",
+  "updated_at": "2026-10-07T20:17:43.124079+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R291",
+        "D-090-R513",
+        "D-090-R516",
+        "D-090-R517",
+        "D-090-R526"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T20:17:42.747938+00:00",
+  "path_notes": "PRODUCER = legal-corpus-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). PART OF PARALLEL WAVE 6 with the two other tasks of the wave (M5-T132, M5-T133, M4-T034): the three share no file. ALLOWED PATHS: every folder and every existing file is named literally, because the registry builds a task's content identity from literal paths only and a pattern binds nothing (backlog row DB-181); the pattern entries beside them say the same for readers and cover files not yet created, which the orchestrator adds literally when it integrates them. MODULARITY ANSWERS: no handwritten production source changes; data files only.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python scripts/sync_zr_snapshots.py --check",
+    "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py",
+    "python3 scripts/lanes/check_lane_paths.py --coverage",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ]
+}

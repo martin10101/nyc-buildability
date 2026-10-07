@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 535,
  "producer": "orchestrator",
- "updated_at": "2026-10-07T19:34:08+00:00",
+ "updated_at": "2026-10-07T20:17:45+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -8746,7 +8746,8 @@
     "task_ids": [
      "D-090-BOOTSTRAP",
      "M5-T128",
-     "M5-T129"
+     "M5-T129",
+     "M5-T132"
     ],
     "task_types": [],
     "milestones": [],
@@ -9879,7 +9880,8 @@
      "M4-T030",
      "M4-T031",
      "M4-T032",
-     "M4-T033"
+     "M4-T033",
+     "M4-T034"
     ],
     "task_types": [],
     "milestones": [],
@@ -14694,7 +14696,8 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M5-T126"
+     "M5-T126",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -14729,7 +14732,8 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M5-T126"
+     "M5-T126",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17287,7 +17291,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17321,7 +17326,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17354,7 +17360,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17387,7 +17394,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17421,7 +17429,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133",
+     "M4-T034"
     ],
     "task_types": [],
     "milestones": [],
@@ -17455,7 +17465,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17488,7 +17499,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17521,7 +17533,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133",
+     "M4-T034"
     ],
     "task_types": [],
     "milestones": [],
@@ -17549,13 +17563,14 @@
   },
   {
    "id": "D-090-R517",
-   "text": "'I checked the repository as well as the official sources.' '[Zoning Resolution](https://zr.planning.nyc.gov/article-ii/chapter-3/23-22?utm_source=chatgpt.com)': each statement of law in the message (shared-space allocation; the amenity base; the two energy routes; the wall exclusion; the R6B base and overall heights; the dwelling-unit factors by option; the bicycle requirements; the imagery terms; the PDF tool's behaviour) is checked at its official source before a record is changed because of it, and a difference between the source and the message is told to the owner first. ORCHESTRATOR'S READING: seen at this capture, to be confirmed by the capture task: the message links the dwelling-unit rule at section 23-22 while the repository's capture of the current text has it at ZR 23-52 (last amended 2024-12-05); the link addresses in the message end in a tracking tag and are not copied into any record.",
+   "text": "'I checked the repository as well as the official sources.' '[Zoning Resolution](https://zr.planning.nyc.gov/article-ii/chapter-3/23-22?utm_source=chatgpt.com)': each statement of law in the message (shared-space allocation; the amenity base; the two energy routes; the wall exclusion; the R6B base and overall heights; the dwelling-unit factors by option; the bicycle requirements; the imagery terms; the PDF tool's behaviour) is checked at its official source before a record is changed because of it, and a difference between the source and the message is told to the owner first. ORCHESTRATOR'S READING: the link addresses in the message end in a tracking tag and are not copied into any record. CORRECTED 2026-10-07 at the contract seam of wave 6: this row first said, as a difference seen at the capture, that the message links the dwelling-unit rule at section 23-22 while the repository has it at ZR 23-52. That was the orchestrator's misreading, made before the captures were opened: ZR 23-22 holds the floor area ratios for R6 to R12 districts by kind of housing (capture zr-23-22), which is what the sentence it is linked from rests on, and the dwelling-unit factor is in ZR 23-52 (capture zr-23-52). No difference between the message and the source was found there. The sentence of source-055 that repeats it ('Seen so far ...') and point (g) of backlog row DB-178 are wrong in the same way; the source file is append-only and stays as written.",
    "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
    "classification": "external_fact",
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M4-T034"
     ],
     "task_types": [],
     "milestones": [],
@@ -17622,7 +17637,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17690,7 +17706,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T132"
     ],
     "task_types": [],
     "milestones": [],
@@ -17723,7 +17740,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T132"
     ],
     "task_types": [],
     "milestones": [],
@@ -17756,7 +17774,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T132"
     ],
     "task_types": [],
     "milestones": [],
@@ -17790,7 +17809,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T132"
     ],
     "task_types": [],
     "milestones": [],
@@ -17857,7 +17877,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M4-T034"
     ],
     "task_types": [],
     "milestones": [],
@@ -18060,7 +18081,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T132",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -18129,7 +18152,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],

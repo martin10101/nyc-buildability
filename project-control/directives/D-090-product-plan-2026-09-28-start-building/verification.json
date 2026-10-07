@@ -1845,6 +1845,213 @@
      "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5"
     }
    ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T132",
+   "applicable_requirement_ids": [
+    "D-090-R258",
+    "D-090-R521",
+    "D-090-R522",
+    "D-090-R523",
+    "D-090-R524",
+    "D-090-R532"
+   ],
+   "producer": "scenario-optimization-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R258",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R521",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R522",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R523",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R524",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R532",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T133",
+   "applicable_requirement_ids": [
+    "D-090-R435",
+    "D-090-R436",
+    "D-090-R509",
+    "D-090-R510",
+    "D-090-R511",
+    "D-090-R512",
+    "D-090-R513",
+    "D-090-R514",
+    "D-090-R515",
+    "D-090-R516",
+    "D-090-R519",
+    "D-090-R532",
+    "D-090-R534"
+   ],
+   "producer": "scenario-optimization-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R435",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R436",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R509",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R510",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R511",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R512",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R513",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R514",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R515",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R516",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R519",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R532",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R534",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M4-T034",
+   "applicable_requirement_ids": [
+    "D-090-R291",
+    "D-090-R513",
+    "D-090-R516",
+    "D-090-R517",
+    "D-090-R526"
+   ],
+   "producer": "legal-corpus-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R291",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R513",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R516",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R517",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R526",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }
