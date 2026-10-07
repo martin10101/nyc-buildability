@@ -107,7 +107,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 60,
+  "progress_percent": 65,
   "risks": [
     "An example repaired by changing the stated outline to match the sum without a building that makes sense (rooms with no corridor to reach them) -> the reviewers read the layout, not only the sum",
     "A statement of law written from the reviewer's message or from memory -> S8",
@@ -116,7 +116,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:41.852253+00:00",
-  "updated_at": "2026-10-07T21:05:53.332885+00:00",
+  "updated_at": "2026-10-07T21:11:19.582457+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -161,6 +161,13 @@
       "percent": 60,
       "status": "in_progress",
       "message": "Builder's commit 1c27dd94 integrated as 38efb977 (13 files, all under the task's allowed paths: the record; the three examples, JSON and Markdown; the examples' test files with one new helper measurement_basis_fit.py; the report). The builder wrote the fit check first and ran it on the examples as they were: Example C fails (1,743 against 1,260 sq ft per upper floor; no ground-floor outline), Example B fails (no floor outline), Example A passes. Rebuilt: Example B ratio 0.6483 (0.6022 withdrawn), Example C 0.6828 (0.6676 withdrawn), Example A unchanged at 0.7540; every floor's difference is zero. The orchestrator's run at 38efb977: tests/scenario/measurement_basis 35 passed; tests/scenario 1091 passed, 2 skipped; ruff clean; the ownership check passed. The integration branch's own run on f111b927 was read before this integration: complete, success, first attempt, 21 of 21 jobs. BEFORE THE REVIEW OF THE RECORD the orchestrator's own reading found one item to remove: section 8b item 4 repeats the orchestrator's misreading of the reviewer's link to ZR 23-22 (corrected in the backlog by a note at wave 5's rule-check seam); round 2 sent to the same builder (the record and the report only). Gate G4 (the fit test; the examples) is started at 38efb977; gate G3 (the record's statements and quotes) starts at the round-2 head."
+    },
+    {
+      "at": "2026-10-07T21:11:19.582327+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 65,
+      "status": "in_progress",
+      "message": "Round 2 by the same builder (commit 3c160edc: the record and the report only; no example or test file) integrated as cacac6aa: item 4 of section 8b removed (it repeated the orchestrator's misreading of the reviewer's link to ZR 23-22); section 8b now holds three questions of law. The orchestrator's run at 3736a22d: tests/scenario/measurement_basis within 2754 passed, 2 skipped (tests/rules, tests/scenario, tests/contracts, tests/journey, tests/spatial/test_lot_reach.py); ruff clean. Gate G4 (qa-engineer) was started at a329cee4, before round 2; it is asked to confirm at the round-2 head that the examples and the test files are unchanged. Gate G3 (data-contract-verifier) is started at the round-2 content."
     }
   ]
 }

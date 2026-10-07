@@ -78,7 +78,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "A section number taken from the reviewer's message instead of found on the site -> the targets are named by what they are; the builder reports what the site shows",
     "A term reported as not defined that sits under an inverted or combined title (seen in M4-T029) -> S1",
@@ -87,7 +87,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:42.747766+00:00",
-  "updated_at": "2026-10-07T20:19:21.557423+00:00",
+  "updated_at": "2026-10-07T21:11:20.130682+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -118,6 +118,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed in wave 6 at the contract head 4ce89144 (integration head f111b927, the merge of wave 5); builder legal-corpus-engineer in an isolated worktree; see project-control/reports/WAVE6-2026-10-07-concurrency-record.md. The integration branch's own run on f111b927 is read as complete and successful before any builder's commit is integrated."
+    },
+    {
+      "at": "2026-10-07T21:11:20.130566+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Builder's commit 5ab318e2 integrated as 3736a22d (46 added files: 23 captures and their 23 synced copies; the report; no existing capture modified; the copies byte-identical, 156 files). The builder reports: the three section numbers the reviewer names are borne out by the site (35-31 'Maximum Floor Area Ratio', a leaf under the header 35-30, captured with 35-30, 35-32 and 35-33; 23-24, a header with three children; 25-811 with its parent 25-81 and 25-80); the two energy definitions and the two terms they rest on ('building', 'story') captured; fourteen captures on whether parking, loading berths and bicycle parking are required (Article II Chapter 5 and Article III Chapter 6); a list of the reviewer's statements of law with the section and capture for each, no verdict. Disclosed limits: the print channel did not answer for the ZR 12-10 terms; one table section's print check is partial. These are the builder's claims until reviewed. The orchestrator's run at 3736a22d: the snapshot sync check OK (156 files); tests/rules within 2754 passed, 2 skipped; ruff clean; the ownership check passed (9318 files). The review (gates G3 and G4, one data-contract-verifier agent) starts when a review seat is free (at most four reviewers at once)."
     }
   ]
 }
