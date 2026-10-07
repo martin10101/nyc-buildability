@@ -192,7 +192,7 @@ def _coverage_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
     block = overlay_block(inp, ResultFamily.COVERAGE)
     if block is not None:
         return relabel(block, label)
-    if inp.large_lot_threshold_met:
+    if inp.large_lot_threshold_met:  # (O8) K3 applied as written; the module holds no 30,000
         return Withheld(
             label=label,
             reason=(
@@ -445,6 +445,8 @@ def decide_result_ways(inp: ResultWayInputs) -> ResultWays:
     )
     envelope = _answer("permitted_envelope", envelope_rows)
 
+    # (O3) a result computed from a withheld result is withheld and names it: the building
+    # option's footprint depends on the rear yard, which is not settled this milestone.
     option_withheld = Withheld(
         label="Building option",
         reason=(

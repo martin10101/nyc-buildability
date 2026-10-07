@@ -47,6 +47,7 @@ __all__ = [
     "UNIT_QUALIFYING_AFFORDABLE_KEY",
     "UNIT_QUALIFYING_SENIOR_KEY",
     "UNIT_STANDARD_KEY",
+    "WORK_ORDER_DISTRICT",
     "WORK_OWED",
     "AnswerWays",
     "AreaAgreement",
@@ -286,6 +287,11 @@ UNIT_STANDARD_KEY = "legal_unit_limit_standard"
 UNIT_QUALIFYING_AFFORDABLE_KEY = "legal_unit_limit_qualifying_affordable"
 UNIT_QUALIFYING_SENIOR_KEY = "legal_unit_limit_qualifying_senior"
 
+# The district the work order's gaps and rules are written for (reading O11). This is the
+# SCOPE of the work order, not a zoning number: a district other than this one has rules that
+# are owed, and the deciders withhold every result for it. Held once, as a named constant.
+WORK_ORDER_DISTRICT = "R6B"
+
 LABELS: dict[str, str] = {
     "max_residential_far": "Maximum residential floor area ratio",
     "max_residential_floor_area": "Maximum residential floor area",
@@ -314,7 +320,12 @@ LABELS: dict[str, str] = {
     "floor_plate_area": "Building option: floor plate area",
     "rear_yard": "Rear yard",
     "setback_above_base": "Setback above the base",
-    "legal_unit_limit_standard": "Legal dwelling-unit limit, standard residences",
+    # Reading O12 (gap K14): the standard limit is labelled for a new all-residential building;
+    # the work order's words ("The limit is labelled 'new all-residential building'. Other cases
+    # are withheld.") are carried alongside "standard residences".
+    "legal_unit_limit_standard": (
+        "Legal dwelling-unit limit, standard residences (new all-residential building)"
+    ),
     "legal_unit_limit_qualifying_affordable": (
         "Legal dwelling-unit limit, qualifying affordable housing"
     ),

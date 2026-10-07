@@ -36,6 +36,86 @@ Files (all NEW / placeholder-replacing; no existing file changed), with source-l
   `test_result_ways_corner_interior.py` (S2, S3), `test_result_ways_facts_area_overlay.py`
   (S4, S5, S8).
 
+## Round 3 (G4 FAIL on test completeness; one commit on top of f8cd19af)
+
+G3 (data-contract) PASSed with five advisory notes; G4 (QA) FAILed: the module's behaviour was
+found correct by BOTH reviews, but several input states the module acts on were pinned by NO
+test, and three single-line regressions passed silently (mutations M8, M10, M11). This round
+adds the missing tests, applies two orchestrator readings (O11, O12) and the G3 notes, and
+re-runs the three silent mutations to prove the new tests bite. No behaviour of the already-
+correct paths changed except the two readings below.
+
+Source-line counts now (tools/modularity_check.py): app `result_ways.py` 448, `result_way_inputs.py`
+413, `result_way_conditions.py` 320; tests `test_result_ways.py` 211, `_lib.py` 121,
+`_benchmark.py` 119, `_corner_interior.py` 86, `_facts_area_overlay.py` 135, `_input_states.py`
+126 (NEW). Every file under the 600 warning threshold; the check names none of them.
+
+What was added/changed per finding:
+- G4-F1 inclusionary: `test_f1_inclusionary_present_withholds_floor_area_work_owed`,
+  `test_f1_inclusionary_not_read_withholds_floor_area_missing_information` (K19; O7).
+- G4-F2 flood: `test_f2_flood_present_withholds_heights_work_owed`,
+  `test_f2_flood_not_read_withholds_heights_missing_information` (K19; O7).
+- G4-F3 density in one: `test_f3_density_evidence_in_one_withholds_the_unit_limit` (K11).
+- EVIDENCE_NOT_IN_ONE: `test_density_evidence_not_in_one_is_withheld_as_work_owed_o10` (K11; O10).
+- G4-F4 overlay not read: `test_f4_overlay_not_read_withholds_every_residential_result_missing_information`
+  (section 10 / K10 generalised; G3 confirmed the behaviour).
+- G4-F5 large lot: `test_f5_large_lot_threshold_withholds_coverage_work_owed` (K3; O8).
+- G4-F6 not-available reason_kind: `test_an_answer_is_not_available_only_when_every_value_is_withheld`
+  now asserts gap_kind/reason_kind for a work-owed case (K20 present -> rule_not_implemented) AND a
+  missing-information case (special-district not read -> missing_input).
+- G4-F7: (a) `test_f7a_landmark_changes_no_result` (PRESENT and NOT_READ give an identical
+  ResultWays to ABSENT; K19); (b) `test_f7b_through_lot_withholds_coverage_and_rear_yard`;
+  (c) `test_f7c_setback_reason_says_not_covered` (K8).
+- G4-F8: `test_decides_every_result_the_packet_lists` now compares against a LITERAL 20-key set
+  (`_PACKET_RESULT_KEYS`) written from the packet objective, not the module's constants.
+- G3-F1 (reading O11): `test_o11_district_not_given_withholds_every_result_missing_information`,
+  `test_o11_district_not_r6b_withholds_every_result_work_owed`.
+- G3-F3 (reading O12): `test_o12_standard_unit_label_carries_the_k14_words`.
+- G3-F4: inline `(O3)` marker at the building-option rear-yard dependency, `(O8)` at the large-lot
+  coverage branch (result_ways.py).
+- G3-F5: explicit None-agreement branch in `result_way_conditions.area_condition` (conditional,
+  never settled, kind unchecked_condition), pinned by
+  `test_g3f5_agreement_none_with_a_recorded_area_is_conditional_unchecked_never_settled`.
+- G3-F2: no change (the could-not-compare kind stays unchecked_condition, reading O4).
+
+Readings applied this round (marked in code and here as the orchestrator's):
+- **O11 THE DISTRICT** (in `result_way_conditions.blanket_withhold`, checked first with the other
+  blanket conditions). `district=None` -> EVERY result withheld, missing_information, reason: the
+  zoning district was not given and it comes from the city's zoning record. `district` other than
+  the work order's scope -> EVERY result withheld, work_owed, reason: the rules connected so far are
+  R6B's and this district's are owed. The scope string "R6B" is held once as the named constant
+  `WORK_ORDER_DISTRICT` (a comment says it is the work order's scope, not a zoning number; the ast
+  no-zoning-number test still passes - "R6B" is a string). `housing_kind` is unchanged (a design
+  choice, carried for the wording).
+- **O12 GAP K14** (in `result_way_inputs.LABELS`). The standard unit limit's label now reads
+  "Legal dwelling-unit limit, standard residences (new all-residential building)". The module has
+  no input for a conversion or a mixed building; that case stays with the piece that wires it in.
+
+Decision table addition for the district (reading O11): district -> EVERY result -> withheld;
+None = missing_information, not-R6B = work_owed.
+
+Open combinations now: **closed** - could-not-compare kind (O4, round 2); special-density
+EVIDENCE_NOT_IN_ONE (now pinned, withheld work_owed per O10); the district (O11). **Remaining
+open** - only the housing kind not given (a design choice carried for the wording; it changes no
+way this milestone). The overlay-column-not-read behaviour is now tested (G4-F4) and was confirmed
+by G3.
+
+The three silent mutations, re-run against a copy OUTSIDE the repository (the generic injector
+plugin loads the mutant under its real module name; the repo is never touched):
+- M8 (overlay NOT_READ treated as absent): now **1 failed** - test_f4_overlay_not_read... CAUGHT.
+- M10 (not-available reason_kind mapping swapped): now **2 failed** -
+  test_an_answer_is_not_available_only_when_every_value_is_withheld[floor_area_allowance|permitted_envelope].
+  CAUGHT.
+- M11 (condition_withhold returns None): now **4 failed** - test_f1 (PRESENT, NOT_READ) and test_f2
+  (PRESENT, NOT_READ). CAUGHT.
+
+Checks (DIRECT exit codes, round 3): a `ruff check .` = 0 (pass). b `pytest tests/scenario/three_answers`
+= 0, 113 passed + 2 pre-existing skips (was 98; 15 new tests, all in `test_result_ways_input_states.py`).
+c `pytest tests/contracts tests/spatial` = 0, 887 passed, 3 xfailed. d `modularity_check --check` = 0
+(failures 0, 29 warnings; `grep result_way` over the output = NONE); `check_lane_paths --coverage` = 0
+(9133 files). e the three mutation re-runs above (M8/M10/M11 all caught). f git status empty after the
+commit; `git diff --name-status f8cd19af HEAD` = only allowed paths.
+
 ## Interface
 
 Input records (`result_way_inputs.py`): `ResultWayInputs` holds `district`, `lot_type`

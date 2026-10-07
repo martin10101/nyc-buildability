@@ -59,6 +59,10 @@ def _battery() -> list[ResultWays]:
             area=LotAreaFigures(None, None, None),
             inclusionary_housing_area=Recorded.PRESENT, flood_zone=Recorded.NOT_READ,
         )),
+        decide_result_ways(plain_inputs(district=None)),  # O11 missing district
+        decide_result_ways(plain_inputs(district="R5")),  # O11 district not the work order's
+        decide_result_ways(plain_inputs(large_lot_threshold_met=True)),  # K3 coverage withheld
+        decide_result_ways(plain_inputs(special_density=DensityKnowledge.EVIDENCE_IN_ONE)),
     ]
 
 
@@ -100,25 +104,52 @@ def test_the_two_legal_measures_cite_their_captures():
     assert "135 degrees or less" in rw.REAR_YARD_WAIVER_MAX_ANGLE_135_DEG.captured_words
 
 
+# The 20 results the packet objective lists, written out as a LITERAL (not read from the
+# module's own constants, G4-F8): the 15 value keys of the three answers, then the rear yard,
+# the setback, and the three unit limits. A renamed key now fails this test.
+_PACKET_RESULT_KEYS = frozenset({
+    # floor_area_allowance (4)
+    "max_residential_far",
+    "max_residential_floor_area",
+    "max_residential_far_qualifying_affordable_or_senior",
+    "max_residential_floor_area_qualifying_affordable_or_senior",
+    # permitted_envelope (7)
+    "min_base_height",
+    "max_base_height",
+    "max_building_height",
+    "min_base_height_qualifying_affordable_or_senior",
+    "max_base_height_qualifying_affordable_or_senior",
+    "max_building_height_qualifying_affordable_or_senior",
+    "max_lot_coverage",
+    # building_option (4)
+    "achieved_zoning_floor_area",
+    "building_floors",
+    "building_height",
+    "floor_plate_area",
+    # the five that are not value keys today
+    "rear_yard",
+    "setback_above_base",
+    "legal_unit_limit_standard",
+    "legal_unit_limit_qualifying_affordable",
+    "legal_unit_limit_qualifying_senior",
+})
+
+
 # --------------------------------------------------------------------------- the public interface
 def test_decides_every_result_the_packet_lists():
+    """G4-F8: the expected key set is a literal written from the packet objective, not read
+    from the module's own constants, so a renamed key is caught."""
     ways = decide_result_ways(base_inputs())
-    answer_keys = {
+    keys = {
         row.key for answer in (ways.floor_area_allowance, ways.permitted_envelope,
                                ways.building_option) for row in answer.values
     }
-    assert rw.FLOOR_AREA_KEYS[0] in answer_keys
-    assert set(rw.FLOOR_AREA_KEYS) <= answer_keys
-    assert set(rw.HEIGHT_KEYS) | {rw.COVERAGE_KEY} <= answer_keys
-    assert set(rw.BUILDING_OPTION_KEYS) <= answer_keys
-    standalone = {
+    keys |= {
         ways.rear_yard.key, ways.setback_above_base.key, ways.unit_limit_standard.key,
         ways.unit_limit_qualifying_affordable.key, ways.unit_limit_qualifying_senior.key,
     }
-    assert standalone == {
-        rw.REAR_YARD_KEY, rw.SETBACK_KEY, rw.UNIT_STANDARD_KEY,
-        rw.UNIT_QUALIFYING_AFFORDABLE_KEY, rw.UNIT_QUALIFYING_SENIOR_KEY,
-    }
+    assert keys == _PACKET_RESULT_KEYS
+    assert len(_PACKET_RESULT_KEYS) == 20
 
 
 # --------------------------------------------------------------------------- S7: fits the contract
@@ -222,6 +253,17 @@ def test_an_answer_is_not_available_only_when_every_value_is_withheld(answer_nam
     answer: AnswerWays = getattr(withheld_all, answer_name)
     assert not answer.is_available
     assert all(isinstance(row.way, Withheld) for row in answer.values)
+    # G4-F6: the not-available object's reason_kind is pinned, not just a valid enum member.
+    # A work-owed case (a recorded K20 condition the program cannot handle) maps to
+    # 'rule_not_implemented'.
+    assert answer.whole_answer_not_available.gap_kind == "work_owed"
+    assert answer.whole_answer_not_available.reason_kind == "rule_not_implemented"
+    # A missing-information case (the special-district column not read) maps to 'missing_input'.
+    missing = getattr(
+        decide_result_ways(plain_inputs(special_purpose_district=Recorded.NOT_READ)), answer_name)
+    assert not missing.is_available
+    assert missing.whole_answer_not_available.gap_kind == "missing_information"
+    assert missing.whole_answer_not_available.reason_kind == "missing_input"
     # All K20 absent: the answer is available again (its values are shown).
     shown = decide_result_ways(plain_inputs(**k20(True)))
     assert getattr(shown, answer_name).is_available

@@ -24,6 +24,7 @@ from .result_way_inputs import (
     KIND_UNCHECKED_CONDITION,
     LABELS,
     MISSING_INFORMATION,
+    WORK_ORDER_DISTRICT,
     WORK_OWED,
     AreaAgreement,
     Checked,
@@ -140,16 +141,31 @@ def area_condition(inp: ResultWayInputs) -> Condition | None:
             ),
             settled_by="A survey, or deed dimensions, naming the document",
         )
-    # COULD_NOT_COMPARE (reading O4): the comparison was not made; nothing contradicts the
-    # recorded figure, so the kind is unchecked_condition, not contradicted_record.
+    if area.agreement is AreaAgreement.COULD_NOT_COMPARE:
+        # Reading O4: the comparison was not made; nothing contradicts the recorded figure, so
+        # the kind is unchecked_condition, not contradicted_record.
+        return Condition(
+            kind=KIND_UNCHECKED_CONDITION,
+            assumption=(
+                f"If the recorded lot area of {recorded} is correct - it was not compared with "
+                "the tax-map outline's area, which could not be computed"
+            ),
+            settled_by=(
+                "Computing the tax-map outline area to compare it, or a survey or deed dimensions"
+            ),
+        )
+    # agreement is None with a recorded area (G3 note F5): whether the figures agree was not
+    # recorded. Handled by an explicit branch, never a silent fall-through, with the same
+    # cautious outcome as could-not-compare - conditional, never settled, unchecked_condition.
     return Condition(
         kind=KIND_UNCHECKED_CONDITION,
         assumption=(
-            f"If the recorded lot area of {recorded} is correct - it was not compared with the "
-            "tax-map outline's area, which could not be computed"
+            f"If the recorded lot area of {recorded} is correct - whether it agrees with the "
+            "tax-map outline's area was not recorded"
         ),
         settled_by=(
-            "Computing the tax-map outline area to compare it, or a survey or deed dimensions"
+            "Comparing the recorded area with the tax-map outline's area, or a survey or deed "
+            "dimensions"
         ),
     )
 
@@ -174,8 +190,26 @@ class Blanket:
 
 def blanket_withhold(inp: ResultWayInputs) -> Blanket | None:
     """A condition that withholds EVERY result (a user's statement included, reading O2):
-    a recorded or not-read special purpose district (K10) or split lot (K18), or one of the
-    four no-data-source conditions recorded as present (reading O6)."""
+    the district not given or not the work order's scope (reading O11), a recorded or not-read
+    special purpose district (K10) or split lot (K18), or one of the four no-data-source
+    conditions recorded as present (reading O6). Checked in that order; the first match wins."""
+    # (O11) the district. A missing district leaves every dependent result not known; a
+    # district other than the work order's scope has rules that are owed. Every zoning result
+    # depends on the district, so either withholds EVERY result.
+    if inp.district is None:
+        return Blanket(
+            "The zoning district was not given; it comes from the city's zoning record, and "
+            "every zoning result depends on it, so every result is withheld until it is given.",
+            MISSING_INFORMATION,
+            "Reading the zoning district from the city's zoning record for this lot.",
+        )
+    if inp.district != WORK_ORDER_DISTRICT:
+        return Blanket(
+            f"The rules connected so far are those of {WORK_ORDER_DISTRICT}; this lot's "
+            f"district is {inp.district}, whose rules are owed, so every result is withheld.",
+            WORK_OWED,
+            f"Connecting the rules for the {inp.district} district, then reference cases.",
+        )
     if inp.special_purpose_district is Recorded.PRESENT:
         return Blanket(
             "City records record a special purpose district for this lot; the program does "
