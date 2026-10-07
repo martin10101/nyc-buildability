@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-07T00:54:31+00:00",
+ "updated_at": "2026-10-07T03:27:10+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -496,10 +496,21 @@
   "D-090-R472",
   "D-090-R473",
   "D-090-R474",
-  "D-090-R475"
+  "D-090-R475",
+  "D-090-R476",
+  "D-090-R477",
+  "D-090-R478",
+  "D-090-R479",
+  "D-090-R480",
+  "D-090-R481",
+  "D-090-R482",
+  "D-090-R483",
+  "D-090-R484",
+  "D-090-R485",
+  "D-090-R486"
  ],
- "requirements_id_digest_sha256": "e95f41def1488bd9aaa81ad9d0368ff2e450d6e93a00dbbede8ff7882993f32f",
- "requirements_content_digest_sha256": "0ccbf24b1dbe8fdbbcda546d28cc1f83c9de07fbb983f5504a51ac6ce44a0919",
+ "requirements_id_digest_sha256": "eec4986e675a95c86770a83dc1ccc0e0787dc8b69c88a67418b7247b51ebc33b",
+ "requirements_content_digest_sha256": "00203aee80fb8f0d28d94bdfb1b385b80f6ed86d4d72ac5e00b82219bff6e814",
  "sources": [
   {
    "file": "source-001.md",
@@ -883,6 +894,14 @@
    "recorded_at": "2026-10-07T00:54:31+00:00",
    "content_digest_sha256": "9c305ce332228b38bf8c451ecdf3543d803fde4f0ea26700d8e4d77d1babbd60",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-049-amendment.md",
+   "kind": "amendment",
+   "sequence": 49,
+   "recorded_at": "2026-10-07T03:27:10+00:00",
+   "content_digest_sha256": "ba0c428c8188c024b3e4cfd93846ca2334fe7d5b5313742399b1b51a7be5401b",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -932,7 +951,8 @@
   "source-045-amendment.md",
   "source-046-amendment.md",
   "source-047-amendment.md",
-  "source-048-amendment.md"
+  "source-048-amendment.md",
+  "source-049-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1307,6 +1327,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-048 (session 013RaGmC message 101, 2026-10-07, sent mid-turn: give an update in plain English on where the work stands, with no tables) and requirements D-090-R474..R475, both pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-07T03:27:10+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-049 (session 013RaGmC message 102, 2026-10-07: /session-handoff; message 103: the seq 147 start prompt - start-up checks, the position at the handover, the order of the next four steps, the standing stops) and requirements D-090-R476..R486, all pending. Text extracted by script from the transcripts; nothing retyped; no existing row edited."
   }
  ]
 }
