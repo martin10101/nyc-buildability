@@ -3,7 +3,7 @@
  "directive_id": "D-090",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-090-BOOTSTRAP at capture; tasks cite them through directive_refs. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": "2026-10-07T06:25:35+00:00",
+ "verified_at": "2026-10-07T08:17:24+00:00",
  "task_verifications": [
   {
    "directive_id": "D-090",
@@ -1173,28 +1173,43 @@
     "D-090-R238"
    ],
    "producer": "geospatial-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "3b42c49d18eadeb640de434c9b7081eec34b8a0c",
+   "reviewed_manifest_sha256": "a7b955e9d3eb53a7aadad98d7db4e616224a7250cd32e98a19790764514536e4",
    "requirements": [
     {
      "id": "D-090-R227",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Each reach measurement has a test whose expected number is PARSED (regex) from `docs/reference-cases/R6B/cases/corner-reach.json` via the loader `load_row` in `services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py` (lines 134-156, which reads the authored file and fetches no program output); in `services/api/tests/spatial/test_lot_reach.py` lines 120-126 and 163-165 the expected values are never typed and never read back from the module.",
+      "I read the authored expected values directly in corner-reach.json: real-lot-reach 99.97/103.93/144.60 ft (line 92), C1 100.00/40.00/107.70 (237), C2 80.00/60.00/100.00 (382), C3 100.00/150.00/180.28 (544); I independently recomputed the three made-up rectangles myself (hypot and opposite-dimension) and got exactly 100/40/107.70, 80/60/100.00, 100/150/180.28 \u2014 the reference numbers are arithmetically sound and program-independent.",
+      "Running the test at the frozen head (14 passed, exit 0) reproduces that the module's own geometry (`_farthest_perpendicular` cross-product, `_farthest_distance` math.dist, lot_reach.py lines 121-130) equals those independent values within 0.01 ft; `test_expected_values_are_read_from_the_reference_case_not_the_module` (test lines 329-337) is a direct independence guard.",
+      "The one quantity with no reference value, the corner angle, is a pass-through: lot_reach.py line 223 carries `relation.angle_deg` from site_geometry, not derived here. Its independent test is the 90.0-degree synthetic-rectangle check (test line 184); the real-lot angle is only checked against the program's own site_geometry value (test line 147). The module docstring (lines 71-77, 218-220) and the producer report/review disclose this honestly; it is not weakened, so PASS.",
+      "Verifier's carry-forward condition met at 3b42c49d: every file under this task's allowed paths has the blob it had at the verified head 3c08c8da (content identity a7b955e9); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a geospatial-engineer agent). Pull request 460 is OPEN with head 3c08c8da on GitHub. DCV report: project-control/reports/M5-T127-DCV.md."
+     ],
+     "reviewed_sha": "3b42c49d18eadeb640de434c9b7081eec34b8a0c"
     },
     {
      "id": "D-090-R229",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Every failure path in `services/api/app/spatial/lot_reach.py` returns a SourcedValue with value=None and a plain reason, never a zero/default: not-confirmed and not-straight frontages (lines 161-171), and `_no_corner` for 0/1/>2 measured, no relation, or non-crossing lines (lines 148-150, 193-216); the top guard returns empty street_lines tuple + all-unknown corner on no-outline/refused (lines 238-240). I grepped the module: no bare default distance returned on any branch.",
+      "All seven unknown branches have passing tests in test_lot_reach.py (lines 192-300): refused outline, outline-present-but-geometry-refused, uncertain frontage, bending frontage, interior lot, through lot, more-than-two-streets \u2014 each asserts `.value is None`, `.label == LABEL_UNKNOWN` and a non-empty reason, never zero.",
+      "The \"shown as not-known on website/drawings/PDF\" portion is correctly out of this measurement-only task's share: `test_nothing_imports_the_module_yet` (test 317-323) and my grep (`lot_reach` referenced by no other file under services/api/app) confirm nothing consumes it. The evidence map states this is \"NOT done by this task, and not claimed\" \u2014 an honest scope note, not a weakening.",
+      "Verifier's carry-forward condition met at 3b42c49d: every file under this task's allowed paths has the blob it had at the verified head 3c08c8da (content identity a7b955e9); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a geospatial-engineer agent). Pull request 460 is OPEN with head 3c08c8da on GitHub. DCV report: project-control/reports/M5-T127-DCV.md."
+     ],
+     "reviewed_sha": "3b42c49d18eadeb640de434c9b7081eec34b8a0c"
     },
     {
      "id": "D-090-R238",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The module holds no legal distance: my grep of lot_reach.py found no \"100\", no \"135\", no \"coverage\", no \"yard\" (case-insensitive), and no `app.rules`/`app.scenario` import; `test_measurements_only_no_law_in_the_module` (test 306-314) asserts the same. So no result or test in this task states whole-lot 100% coverage.",
+      "Nothing imports the module (grep + test 317-323), so it cannot cause any coverage figure; the engine's present whole-lot corner answer is untouched. The evidence map says connecting these measurements to withhold/split coverage is \"the next part of the work order's Part 0\" \u2014 i.e. the R238 \"100% vs not-known coverage test\" obligation lives in the reference case (M4-T027, merged) and later connection work, left explicitly to later. For THIS task (supply the geometry, assert no coverage), satisfied and not overclaimed.",
+      "Verifier's carry-forward condition met at 3b42c49d: every file under this task's allowed paths has the blob it had at the verified head 3c08c8da (content identity a7b955e9); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a geospatial-engineer agent). Pull request 460 is OPEN with head 3c08c8da on GitHub. DCV report: project-control/reports/M5-T127-DCV.md."
+     ],
+     "reviewed_sha": "3b42c49d18eadeb640de434c9b7081eec34b8a0c"
     }
    ]
   },
@@ -1209,40 +1224,65 @@
     "D-090-R318"
    ],
    "producer": "rules-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "3b42c49d18eadeb640de434c9b7081eec34b8a0c",
+   "reviewed_manifest_sha256": "c51ef938ddc6c2cb27f6984613b55d49a6497933f66486af5af55cf934e4dcac",
    "requirements": [
     {
      "id": "D-090-R226",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "docs/reference-cases/R6B/cases/overlay-reading.json holds 11 law-based rows, each citing its sections with snapshot_id + content_digest_sha256 + official_url (e.g. bulk-regulations cites 34-11 digest e54be53b.., 34-111 digest 5a71b0d9..); values trace to captured law text and the lot's PLUTO/DCM facts, never a program run.",
+      "The two readings are kept unchanged at docs/reference-cases/R6B/provenance/return-independent-hand-calculation-5.md and -6.md; I confirmed each states it worked only from a sealed folder with no program access, lists every file it read (all under sealed-p2), and marks NOT KNOWN rather than guess.",
+      "I diffed the saved readings against the returns the orchestrator received (owner-docs/.../return-reading-P2-1.txt and -2.txt): each received body is present byte-for-byte inside the saved file (received-body-in-saved=True); saved-file digests 3f7cd65e.. and 2c3d3c3d.. match the pins recorded in r6b_reference_cases_check.py OVERLAY_READINGS.",
+      "test_r6b_reference_cases.py asserts the case-file expected values, verifies both readings present unchanged (digest), and refuses a value where the readings differ; 49 tests pass. Limit: that the readers truly never saw program output is attested, not repository-provable (noted below).",
+      "Verifier's carry-forward condition met at 3b42c49d: every file under this task's allowed paths has the blob it had at the verified head 3c08c8da (content identity c51ef938); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a rules-engineer agent). Pull request 460 is OPEN with head 3c08c8da on GitHub. DCV report: project-control/reports/M4-T028-DCV.md."
+     ],
+     "reviewed_sha": "3b42c49d18eadeb640de434c9b7081eec34b8a0c"
     },
     {
      "id": "D-090-R241",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "git show 4b04689f -- cases/real-lot.json: the only edits are an extension of one \"does not establish\" sentence and a change_log entry that reads \"No expected value changed\"; no row value changed, L5 stays not known for its per-portion reason.",
+      "git show 4b04689f/d23f6faf -- cases/interior-lots.json: interior-coverage expected value is unchanged (\"80 percent\", confirmed by loading the row at HEAD); the DB-168 edits replace a too-broad prose sentence (a recorded \"corrected reading\") and add two ZR 23-362(b) citations \u2014 a prose/citation fix, not a value taken from or changed to match a saved result.",
+      "The overlay case asserts no whole-lot coverage percentage and no dwelling-unit count (rows lot-coverage, dwelling-units) and the README/check prove no case file carries a program result, so no expected value rests on a saved program result.",
+      "Verifier's carry-forward condition met at 3b42c49d: every file under this task's allowed paths has the blob it had at the verified head 3c08c8da (content identity c51ef938); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a rules-engineer agent). Pull request 460 is OPEN with head 3c08c8da on GitHub. DCV report: project-control/reports/M4-T028-DCV.md."
+     ],
+     "reviewed_sha": "3b42c49d18eadeb640de434c9b7081eec34b8a0c"
     },
     {
      "id": "D-090-R259",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Each reference case is its own pair of files under docs/reference-cases/R6B/cases/<id>.json + <id>.md (overlay-reading added; real-lot, interior-lots, corner-reach, suffix, step-p1-worked present), with facts, quoted law, arithmetic and expected value, apart from program output.",
+      "README.md and overlay-reading.json what_it_is_worth / checked_by both state in terms that two AI answers agreeing is not, alone, proof; the case records prepared_by (reading 1) and checked_by (reading 2) as two independent AIs.",
+      "r6b_reference_cases_check.py enforces FORBIDDEN_VALUE_PHRASES / no-program-result and the loader imports no rule or scenario engine; the README records the rule that an expected value changes only with a recorded reason (corrected evidence / corrected reading / law change), and the change_logs carry such reasons. 49 tests pass.",
+      "Verifier's carry-forward condition met at 3b42c49d: every file under this task's allowed paths has the blob it had at the verified head 3c08c8da (content identity c51ef938); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a rules-engineer agent). Pull request 460 is OPEN with head 3c08c8da on GitHub. DCV report: project-control/reports/M4-T028-DCV.md."
+     ],
+     "reviewed_sha": "3b42c49d18eadeb640de434c9b7081eec34b8a0c"
     },
     {
      "id": "D-090-R291",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "M4-T028's share of step 3 (save independently calculated examples to test against) is met: overlay-reading.json + overlay-reading.md are saved as files, and test_r6b_reference_cases.py reads their expected values; overlay-reading.md is a GENERATED FILE rendered from the json (header says so).",
+      "It resolves no missing rule and no conflicting input beyond what the captures allow, and shows that honestly: row section-35-633 is kind=not_known because Section 23-436 is uncaptured and the two readings differ on the 35-633(b) corner clause; rows floor-area-ratio, lot-coverage and rear-yard record the comparison \"subject to\" the uncaptured ZR 34-21 through 34-23 (reading 1 raised that residual, reading 2 read the route as settled), so no affected row reads as more settled than the more-cautious reading makes it.",
+      "No result is shown: M4-T028-producer-report.md line 6 \"Nothing in this work comes from a program run\"; I found no row recording a value the two readings do not both give on the same basis (the DU count and whole-lot coverage are explicitly not asserted). Resolving the remaining gaps (23-436, 34-21..23, etc.) is owed to a later reference-case task (DB-170 item a), not claimed here.",
+      "Verifier's carry-forward condition met at 3b42c49d: every file under this task's allowed paths has the blob it had at the verified head 3c08c8da (content identity c51ef938); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a rules-engineer agent). Pull request 460 is OPEN with head 3c08c8da on GitHub. DCV report: project-control/reports/M4-T028-DCV.md."
+     ],
+     "reviewed_sha": "3b42c49d18eadeb640de434c9b7081eec34b8a0c"
     },
     {
      "id": "D-090-R318",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Same primary artifacts as R226: the overlay-reading case is worked from the captured source text by two readers who state they could not see the program's output, and is kept as files; this is the \"independently worked, source-backed examples to check interpretation\" rule (R318 restates rule 5 of R255-R260).",
+      "The caveat handling (reading 1's ZR 34-21..23 residual carried into exactly floor-area-ratio, lot-coverage and rear-yard, with a zr-34-11 citation quoting \"except as modified by ... Sections 34-21 through 34-24\") keeps the source-backed reading intact without strengthening or weakening either reading; verified in the row expected/does_not_establish text and in the report's round-2 note.",
+      "Verifier's carry-forward condition met at 3b42c49d: every file under this task's allowed paths has the blob it had at the verified head 3c08c8da (content identity c51ef938); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a rules-engineer agent). Pull request 460 is OPEN with head 3c08c8da on GitHub. DCV report: project-control/reports/M4-T028-DCV.md."
+     ],
+     "reviewed_sha": "3b42c49d18eadeb640de434c9b7081eec34b8a0c"
     }
    ]
   },
@@ -1253,16 +1293,22 @@
     "D-090-R291"
    ],
    "producer": "legal-corpus-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "3b42c49d18eadeb640de434c9b7081eec34b8a0c",
+   "reviewed_manifest_sha256": "6eedbbef0f21dc54a99dcb3f364b3bca51c167c86d4a94dd5942ca522cc9be3e",
    "requirements": [
     {
      "id": "D-090-R291",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The 27 captures (26 in eba169c5, 1 in 2e60a66e) are source-text-only: each snapshot carries verbatim_excerpt, extraction_status=extracted_draft, and a note that \"nothing here is a rule, an interpretation of the text for any lot, or a number derived.\" I independently fetched the official site and confirmed four: zr-35-71 raw_html_sha256 396bc0f3.. and 84740 bytes match exactly (page titled \"Planting\"); zr-12-10-residence-or-residential content_digest fffb54b1.. recomputes and its text (\"A \\\"residence\\\" is one or more #dwelling units#...\", \"\\\"Residential\\\" means pertaining to a #residence#\") is present on the live \u00a712-10 page (1,316,758 bytes = the pin); zr-34-112 table section_title and cells (C4-6, R10, \"Applicable residential equivalent\") match the live page (97,134 bytes).",
+      "No record over-claims step 3: no rule resolved, no text read for a lot, no result shown. DB-170 states \"NOT YET READ for any lot: all 27 new texts\"; the capture notes and producer report keep to source text only.",
+      "The 34-24(b)(3) -> \"Section 35-71, inclusive\" (sky exposure plane) vs ZR 35-71 \"Planting\" conflict is recorded and left undecided: producer report section 4 (\"recorded, not resolved\"; nothing substituted) and DISCOVERY_BACKLOG DB-169 (status OPEN). I reproduced the conflict on the live site (35-71 body is the Section 23-613 planting text). The capture file correctly holds only the page's source text and does not embed the conflict reading.",
+      "The failed first review is honest: M4-T029-G3G4.md keeps the FAIL (G3/G4 FAIL at eba169c5, F1) unchanged; M4-T029.json progress_log records the FAIL, the rework and the re-review PASS; and the false \"ZR 12-10 does not define residential\" statement is gone from the producer report at the frozen head (\u00a77 now reads \"CAPTURED (round-2 correction)\" with an honest account of the round-1 miss). I verified on the live \u00a712-10 page that the definition does exist, so the correction is accurate.",
+      "Verifier's carry-forward condition met at 3b42c49d: every file under this task's allowed paths has the blob it had at the verified head 3c08c8da (content identity 6eedbbef); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent data-contract-verifier; the producer was a legal-corpus-engineer agent). Pull request 460 is OPEN with head 3c08c8da on GitHub. DCV report: project-control/reports/M4-T029-DCV.md."
+     ],
+     "reviewed_sha": "3b42c49d18eadeb640de434c9b7081eec34b8a0c"
     }
    ]
   }
