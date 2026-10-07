@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-07T03:53:19+00:00",
+ "updated_at": "2026-10-07T03:58:16+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -510,10 +510,13 @@
   "D-090-R486",
   "D-090-R487",
   "D-090-R488",
-  "D-090-R489"
+  "D-090-R489",
+  "D-090-R490",
+  "D-090-R491",
+  "D-090-R492"
  ],
- "requirements_id_digest_sha256": "67a0dac446db1a7d501563b2d9fa715ac106065afcba6ff2da9dab337fffef1c",
- "requirements_content_digest_sha256": "455b348bc9ecfc2406fd6748f05841c49f96bd362cfe0bb4a36c55841d3e1813",
+ "requirements_id_digest_sha256": "e8d10b5087e0d42346e21a7aff9d6d3f25ab7cf43927049a23323b48ae1721dd",
+ "requirements_content_digest_sha256": "a2ee0d318fc3164dbe388eb43fc231fa2ab943448a994c001910d88e3007c0de",
  "sources": [
   {
    "file": "source-001.md",
@@ -913,6 +916,14 @@
    "recorded_at": "2026-10-07T03:53:19+00:00",
    "content_digest_sha256": "7d556e03d02102089083290f76bd412e2346c811bd75125d75fe9ba97a759ea5",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-051-amendment.md",
+   "kind": "amendment",
+   "sequence": 51,
+   "recorded_at": "2026-10-07T03:58:16+00:00",
+   "content_digest_sha256": "a6015d4f4fe0bf797330ef4b7ec3a5cfd353e5a976395ba2541ec8488ef08adb",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -964,7 +975,8 @@
   "source-047-amendment.md",
   "source-048-amendment.md",
   "source-049-amendment.md",
-  "source-050-amendment.md"
+  "source-050-amendment.md",
+  "source-051-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1351,6 +1363,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-050 (session 013RaGmC message 104, 2026-10-07: explain in simple English where the work stands and how far it is from the PDF; message 105: a research helper may run at the same time as a builder) and requirements D-090-R487..R489, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-07T03:58:16+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-051 (session 013RaGmC message 106, 2026-10-07: are the rules entered in the review register; no early simple PDF, do the work in order) and requirements D-090-R490..R492, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 489,
+ "requirement_count": 492,
  "producer": "orchestrator",
- "updated_at": "2026-10-07T03:53:19+00:00",
+ "updated_at": "2026-10-07T03:58:16+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -16563,6 +16563,113 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-07 (message 105).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R490",
+   "text": "'Do u enter the roles in the md file we made with the tables?': the owner is told, from the repository, whether the rules are entered in the zoning-rule review register. ORCHESTRATOR'S READING: 'roles' is 'rules'; 'the md file we made with the tables' is the review register (docs/zoning-rule-review/REGISTER.md, made by task M4-T023, one row per rule). The answer says how many rules it lists, that a session which adds or changes a rule's behaviour updates it in the same change (R379), that the law-text captures add no rule and so add no row, and that no session enters a human verdict. If the owner meant another file, the owner says so.",
+   "source_ref": "source-051-amendment.md#owner-message-106-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R379",
+    "D-090-R474",
+    "D-090-R475"
+   ],
+   "required_harness": "The reply answers the question with what the register holds at the current head and has no table.",
+   "required_evidence": "The session transcript (the reply to message 106); docs/zoning-rule-review/.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 106).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R491",
+   "text": "'And no dont jump': the owner does not want the early simple PDF: no PDF is built ahead of its place in the order. ORCHESTRATOR'S READING: it answers the question put twice in this session ('do you want an early, simple PDF for the one test lot before the full report? I recommend yes.'), against the orchestrator's recommendation. The downloadable report stays part of the goal and is built at its own step (the report and the PDF, step 7 of the eight steps, R289 to R299). The choice of the PDF converter is not made by this message; it waits for that step.",
+   "source_ref": "source-051-amendment.md#owner-message-106-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R289",
+    "D-090-R482",
+    "D-090-R489"
+   ],
+   "required_harness": "No task for a PDF, a PDF converter or a report builder is contracted before the steps ahead of it in the order have merged.",
+   "required_evidence": "The ledger and the pull requests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 106).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R492",
+   "text": "'do in order': the work is done in the recorded order, one step after the other: the law-text captures, the measurement-basis record, the clean-up of the temporary security exception at its time, then the remaining steps of the work order and of the eight steps. No step is built, contracted or merged ahead of its place. ORCHESTRATOR'S READING: the research helper approved in message 105 may prepare notes for a later step while the builder works on the current one (R315, R488); such notes are a lead only, and nothing is built, contracted or merged from them before that step's turn.",
+   "source_ref": "source-051-amendment.md#owner-message-106-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R289",
+    "D-090-R315",
+    "D-090-R481",
+    "D-090-R488"
+   ],
+   "required_harness": "The ledger and the merge records show the steps in the recorded order.",
+   "required_evidence": "The ledger, the pull requests and the session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 106).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
