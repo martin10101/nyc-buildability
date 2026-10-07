@@ -95,13 +95,13 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "A change that is not additive breaks a present reader (the engine's validator, the drawings, the website's fixtures) -> S1, S2, S8, S9 and the compatibility part of the independent review",
     "A shape that lets a value be settled by silence, or a withheld value carry a number -> S5, S7",
@@ -110,7 +110,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T08:45:33.285633+00:00",
-  "updated_at": "2026-10-07T08:45:33.611582+00:00",
+  "updated_at": "2026-10-07T08:46:00.730229+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -131,5 +131,15 @@
     "cd services/api && python scripts/sync_contract_schemas.py --check   (or the script's own check mode)",
     "python packages/contracts/scripts/generate_ts_types.py --check   (or the script's own check mode)",
     "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ],
+  "worktree": "/root/project/w-wave3",
+  "progress_log": [
+    {
+      "at": "2026-10-07T08:46:00.730122+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed in wave 3 at the contract head 40019320 (integration head 5743630e); builder backend-engineer in an isolated worktree; see project-control/reports/WAVE3-2026-10-07-concurrency-record.md."
+    }
   ]
 }
