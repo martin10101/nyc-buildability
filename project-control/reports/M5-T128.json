@@ -2,16 +2,16 @@
   "task_id": "M5-T128",
   "producer_agent": "backend-engineer",
   "report_file": "project-control/reports/M5-T128-producer-report.md",
-  "submitted_at": "2026-10-07T10:20:21.594903+00:00",
+  "submitted_at": "2026-10-07T10:42:43.071365+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M5-T128-evidence-map.json",
-  "content_manifest_sha256": "71bdbe5054eb5c431183f610b67bf9c2334f5715ebc918161d7849bdbbfad1aa",
-  "reviewed_sha": "6d4f607b80276fa0b4e8e8987c734bbd085ac30b",
+  "content_manifest_sha256": "0f7749410fc9f216db2c24af8113246d7e21ad8cc1d903fff0f045528c993cc9",
+  "reviewed_sha": "b0fbac55eea248a4f706e34c0fc8a9e2a6bb23b1",
   "applicable_requirements": [
     "D-090-R229",
     "D-090-R255",
     "D-090-R258",
     "D-090-R268"
   ],
-  "updated_at": "2026-10-07T10:20:22.588327+00:00"
+  "updated_at": "2026-10-07T10:42:43.641596+00:00"
 }

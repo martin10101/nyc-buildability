@@ -100,8 +100,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 85,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "A change that is not additive breaks a present reader (the engine's validator, the drawings, the website's fixtures) -> S1, S2, S8, S9 and the compatibility part of the independent review",
     "A shape that lets a value be settled by silence, or a withheld value carry a number -> S5, S7",
@@ -110,7 +110,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T08:45:33.285633+00:00",
-  "updated_at": "2026-10-07T10:42:31.283886+00:00",
+  "updated_at": "2026-10-07T10:42:44.094443+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
