@@ -90,7 +90,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 70,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the cases say agreement is not proof (R259); each row is followable",
     "A reading that fills a gap the captured text does not settle -> S2 and S6",
@@ -99,7 +99,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T08:45:34.165218+00:00",
-  "updated_at": "2026-10-07T08:46:01.034847+00:00",
+  "updated_at": "2026-10-07T09:50:31.432083+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -130,6 +130,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed in wave 3 at the contract head 40019320 (integration head 5743630e); builder rules-engineer in an isolated worktree; see project-control/reports/WAVE3-2026-10-07-concurrency-record.md."
+    },
+    {
+      "at": "2026-10-07T09:50:31.431969+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Independent review (code-reviewer) at f5c2a8f2, before submit: G3 FAIL and G4 FAIL. F1 (must fix): row sections-and-facts-not-had of the new case and the README say both readers did not have ZR 36-64 and ZR 35-71; one reading says they were in its folder (they were: the sealed folder held all 72 captures), so the row records as agreed something the readings do not both say. F2 (must fix): three older rows stay 'not known' beside new rows that give the answer to the same question, and nothing a test reads marks the older rows as superseded. F3 (routed to this task by the orchestrator): the overlay case of task M4-T028 still says 'the repository does not hold' texts that are captured now. 20 of the 21 new rows hold; no existing value or kind changed; the corner-coverage rows did not move. Rework by the same builder; the failed review is kept unchanged in project-control/reports/M4-T030-G3G4.md."
     }
   ]
 }
