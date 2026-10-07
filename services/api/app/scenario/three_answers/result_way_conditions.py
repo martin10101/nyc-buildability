@@ -391,13 +391,16 @@ def rear_yard_unmeasured(
             "the far corner's reach from the point where the two street lines meet and the "
             "angle at which they meet are not measured"
         )
+        need = "the far corner's reach and the angle at which the two street lines meet"
     elif not reach_known:
         what = (
             "the far corner's reach from the point where the two street lines meet is not "
             "measured"
         )
+        need = "the far corner's reach from the point where the two street lines meet"
     else:
         what = "the angle at which the two street lines meet is not measured"
+        need = "the angle at which the two street lines meet"
     return Withheld(
         label=label,
         reason=(
@@ -405,10 +408,10 @@ def rear_yard_unmeasured(
             "decided and the rear yard is not known."
         ),
         gap_kind=MISSING_INFORMATION,
-        resolved_by=(
-            "Measuring the far corner's reach and the angle at which the two street lines meet, "
-            "from the recorded outline and its street lines."
-        ),
+        # The 'resolved by' names only the measurement(s) that are missing in this state, never
+        # one the state already holds (round 2): the reach when only the reach is missing, the
+        # angle when only the angle is missing, both when both are missing.
+        resolved_by=f"Measuring {need}, from the recorded outline and its street lines.",
         zr_sections=zr,
     )
 

@@ -298,3 +298,48 @@ reviewers / a later task.
   lot outside a special density area; how the legal dwelling-unit limit is shown on that evidence
   has not been worked out and checked against an independently worked example, so the legal
   dwelling-unit limit is not known."
+
+## 11. Round 2 (orchestrator's reading of 795c29ee; same worktree, one more commit)
+
+Four "resolved by" / truthfulness corrections. No way and no kind changed (the full
+`(key, way_type, gap_kind)` signature across all states is still byte-identical to the claim
+head). Corrected texts, one line each:
+
+- RY4 (corner reach not measured, angle known) `resolved_by` → "Measuring the far corner's reach
+  from the point where the two street lines meet, from the recorded outline and its street lines."
+  (names only the missing reach, not the known angle).
+- RY5 (angle not measured, reach KNOWN) `resolved_by` → "Measuring the angle at which the two
+  street lines meet, from the recorded outline and its street lines." (names only the missing
+  angle, not the known reach).
+- RY6 (both missing) `resolved_by` → "Measuring the far corner's reach and the angle at which the
+  two street lines meet, …" (names both). `rear_yard_unmeasured` now sets `need` per state.
+- WA2 (`_answer`, values withheld for >1 reason) `resolved_by` → now names every distinct value's
+  "resolved by" in value order (no duplicates); single text when all are the same.
+- USR1 qualifying senior: reason no longer asserts a "separate rule" exists → "…sets no factor for
+  qualifying senior housing (ZR 23-52(a)(2)), so this formula gives no unit limit for it; whether
+  any other provision limits the number of units has not been checked, … it is not set by this
+  formula." `resolved_by` → "Checking whether any other provision limits the number of units for
+  qualifying senior housing and checking the result against an independently worked example."
+- US4 (density not given): re-added the clause "where the dwelling-unit formula does not apply"
+  (the rest of the round-1 text unchanged).
+
+Table rows marked round 2: RY4, RY5, RY6 (resolved_by), WA2 (resolved_by), USR1 (reason +
+resolved_by), US4 (reason).
+
+Sharper check (b) swept over EVERY row's `resolved_by` (question: does it name anything the state
+already holds?). Caught: RY4/RY5/RY6 (asked for a held measurement) and WA2 (named only the first).
+No OTHER row caught. Considered and cleared: UA1 affordable ("Connecting the rule for qualifying
+affordable housing …" — ZR 23-52 does set an affordable factor, so a rule is known; names nothing
+held); C6 large-lot-not-stated ("Comparing the recorded lot area with the lot size …" — names the
+recorded area only as the input to the owed comparison, does not ask the user to supply it); US2
+`settled_by` ("A sourced fact …" — the state holds an unsourced user statement, not a sourced
+fact).
+
+Round-2 tests: USR1 and US4 table rows updated; three new tests — rear-yard-unmeasured resolved_by
+per state, whole-answer resolved_by names every distinct text, senior text asserts no separate
+rule. 232 cases in `tests/scenario/three_answers` now.
+
+Round-2 checks: a `ruff` exit 0; b `pytest tests/scenario/three_answers` 232 passed, 2 skipped,
+exit 0; c `pytest tests/contracts tests/journey tests/spatial/test_lot_reach.py` 572 passed, exit
+0; d `modularity_check --check` exit 0; mutation proofs (outside the repo, `mutate2.py`) — 4 of 4
+caught (RY5 resolved_by, WA2 resolved_by, senior "separate rule", US4 formula clause), exit 0.

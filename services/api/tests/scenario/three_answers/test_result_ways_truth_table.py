@@ -237,7 +237,8 @@ _TABLE = [
     ("US4_not_given", lambda: plain_inputs(
         special_density=DensityKnowledge.NOT_GIVEN, **k20(True)),
      "legal_unit_limit_standard", WAY_W, "work_owed",
-     ["There is no evidence", "has not been worked out", "conditional result"], []),
+     ["There is no evidence", "where the dwelling-unit formula does not apply",
+      "has not been worked out", "conditional result"], []),
     ("US5_evidence_not_in_one", lambda: plain_inputs(
         special_density=DensityKnowledge.EVIDENCE_NOT_IN_ONE, **k20(True)),
      "legal_unit_limit_standard", WAY_W, "work_owed",
@@ -249,7 +250,7 @@ _TABLE = [
      ["qualifying affordable housing"], []),
     ("USR1_senior", lambda: plain_inputs(**k20(True)),
      "legal_unit_limit_qualifying_senior", WAY_W, "work_owed",
-     ["not set by this formula", "not worked out yet", "ZR 23-52(a)(2)"], []),
+     ["not set by this formula", "ZR 23-52(a)(2)", "has not been checked"], ["separate rule"]),
     # --- building option ---
     ("BO1_option", lambda: plain_inputs(**k20(True)),
      "achieved_zoning_floor_area", WAY_W, "work_owed", ["rear yard"], []),
@@ -381,9 +382,56 @@ def test_whole_answer_reason_names_every_distinct_reason_not_just_the_first():
 
 def test_whole_answer_single_reason_keeps_the_single_reason_wording():
     """When every value is withheld for the SAME reason the whole-answer reason gives that one
-    reason (not the 'more than one reason' wording)."""
+    reason (not the 'more than one reason' wording), and the single 'resolved by' text."""
     ways = decide_result_ways(plain_inputs(district=None))
     na = ways.floor_area_allowance.whole_answer_not_available
     assert na is not None
     assert "for more than one reason" not in na.reason
     assert "zoning district was not given" in na.reason
+    assert na.resolved_by == (
+        "Reading the zoning district from the city's zoning record for this lot."
+    )
+
+
+# ===== round 2: the 'resolved by' names only what is missing =====
+def test_rear_yard_unmeasured_resolved_by_names_only_the_missing_measurement():
+    """Round 2 / check (b). The 'resolved by' names exactly the measurement(s) missing in the
+    state and never one the state already holds: the reach when only the reach is missing, the
+    angle when only the angle is missing, both when both are missing."""
+    reach_only = _focal(decide_result_ways(plain_inputs(
+        reach=_corner_reach(50.0, 90.0, reach_known=False), **k20(True))), "rear_yard")
+    assert "far corner's reach" in reach_only.resolved_by
+    assert "angle" not in reach_only.resolved_by  # the angle is known; do not ask for it
+    angle_only = _focal(decide_result_ways(plain_inputs(
+        reach=_corner_reach(50.0, 90.0, angle_known=False), **k20(True))), "rear_yard")
+    assert "angle at which the two street lines meet" in angle_only.resolved_by
+    assert "far corner's reach" not in angle_only.resolved_by  # the reach is known
+    both = _focal(decide_result_ways(plain_inputs(
+        reach=_corner_reach(50.0, 90.0, reach_known=False, angle_known=False), **k20(True))),
+        "rear_yard")
+    assert "far corner's reach" in both.resolved_by and "angle" in both.resolved_by
+
+
+def test_whole_answer_resolved_by_names_every_distinct_text():
+    """Round 2 / point 2. When the values are withheld for more than one reason, the whole-answer
+    'resolved by' names every distinct value's 'resolved by' (not just the first). Here the height
+    limits need the flood-zone rule and coverage needs the ZR 23-363 rule."""
+    ways = decide_result_ways(plain_inputs(
+        lot_type=LotType.INTERIOR, reach=None, flood_zone=Recorded.PRESENT, **k20(True)))
+    na = ways.permitted_envelope.whole_answer_not_available
+    assert na is not None
+    assert "flood-zone height rule" in na.resolved_by
+    assert "ZR 23-363" in na.resolved_by
+
+
+def test_senior_text_asserts_no_separate_rule_only_that_no_factor_is_set():
+    """Round 2 / point 3. The qualifying-senior text says ZR 23-52(a)(2) sets no factor and that
+    whether any other provision limits the units has not been checked; it never asserts a separate
+    rule is known (neither in the reason nor the 'resolved by'). The kind stays work owed."""
+    way = _focal(decide_result_ways(plain_inputs(**k20(True))),
+                 "legal_unit_limit_qualifying_senior")
+    assert isinstance(way, Withheld) and way.gap_kind == "work_owed"
+    assert "separate rule" not in way.reason and "separate rule" not in way.resolved_by
+    assert "the rule for qualifying senior housing" not in way.resolved_by
+    assert "sets no factor" in way.reason and "not set by this formula" in way.reason
+    assert "has not been checked" in way.reason

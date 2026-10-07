@@ -451,11 +451,12 @@ def _unit_standard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayReco
     return Withheld(
         label=label,
         reason=(
-            "There is no evidence of whether this lot is in a special density area, and how the "
-            "legal dwelling-unit limit is shown once that is known has not been worked out and "
-            "checked against an independently worked example, so the legal dwelling-unit limit "
-            "is not known; a user's statement that the lot is not in a special density area "
-            "would show it only as a conditional result."
+            "There is no evidence of whether this lot is in a special density area, where the "
+            "dwelling-unit formula does not apply, and how the legal dwelling-unit limit is "
+            "shown once that is known has not been worked out and checked against an "
+            "independently worked example, so the legal dwelling-unit limit is not known; a "
+            "user's statement that the lot is not in a special density area would show it only "
+            "as a conditional result."
         ),
         gap_kind=WORK_OWED,
         resolved_by=(
@@ -495,14 +496,14 @@ def _unit_qualifying_senior_way(blanket: Blanket | None) -> WayRecord:
         label=label,
         reason=(
             "The dwelling-unit formula sets no factor for qualifying senior housing (ZR "
-            "23-52(a)(2)), and the separate rule for qualifying senior housing is not worked out "
-            "yet, so the legal dwelling-unit limit for it is not known: it is not set by this "
-            "formula."
+            "23-52(a)(2)), so this formula gives no unit limit for it; whether any other "
+            "provision limits the number of units has not been checked, so the legal "
+            "dwelling-unit limit for it is not known: it is not set by this formula."
         ),
         gap_kind=WORK_OWED,
         resolved_by=(
-            "Connecting the rule for qualifying senior housing and checking it against an "
-            "independently worked example."
+            "Checking whether any other provision limits the number of units for qualifying "
+            "senior housing and checking the result against an independently worked example."
         ),
         zr_sections=("ZR 23-52",),
     )
@@ -520,17 +521,26 @@ def _answer(answer: str, rows: list[ResultWay]) -> AnswerWays:
         first = next(iter(withheld))
         # Name every distinct reason, not just the first: an answer whose values are withheld for
         # different reasons must not present the first value's reason as if it were the only one.
-        distinct: list[str] = []
+        # (round 2) the same for the 'resolved by': name every distinct 'resolved by', in value
+        # order, when they differ; a single text when they are all the same.
+        distinct_reasons: list[str] = []
+        distinct_resolved: list[str] = []
         for w in withheld:
-            if w.reason not in distinct:
-                distinct.append(w.reason)
-        if all(reason == first.reason for reason in distinct):
+            if w.reason not in distinct_reasons:
+                distinct_reasons.append(w.reason)
+            if w.resolved_by not in distinct_resolved:
+                distinct_resolved.append(w.resolved_by)
+        if all(reason == first.reason for reason in distinct_reasons):
             whole_reason = f"Every value of this answer is withheld: {first.reason}"
         else:
             whole_reason = (
                 "Every value of this answer is withheld, for more than one reason: "
-                + " ".join(distinct)
+                + " ".join(distinct_reasons)
             )
+        if all(text == first.resolved_by for text in distinct_resolved):
+            whole_resolved = first.resolved_by
+        else:
+            whole_resolved = " ".join(distinct_resolved)
         return AnswerWays(
             answer=answer,
             values=tuple(rows),
@@ -538,7 +548,7 @@ def _answer(answer: str, rows: list[ResultWay]) -> AnswerWays:
                 reason=whole_reason,
                 reason_kind=REASON_KIND_BY_GAP[gap],
                 gap_kind=gap,
-                resolved_by=first.resolved_by,
+                resolved_by=whole_resolved,
             ),
         )
     return AnswerWays(answer=answer, values=tuple(rows))
