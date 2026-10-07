@@ -100,14 +100,14 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "scenario-optimization-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "A text 'fixed' by changing what the result shows -> S6",
     "Only the two named states repaired and the same fault left elsewhere -> S5; the reviewers pick their own states",
@@ -116,7 +116,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:40.903384+00:00",
-  "updated_at": "2026-10-07T20:17:41.303471+00:00",
+  "updated_at": "2026-10-07T20:19:14.791730+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -140,5 +140,15 @@
     "python3 tools/modularity_check.py --check",
     "python3 scripts/lanes/check_lane_paths.py --coverage",
     "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ],
+  "worktree": "/root/project/w-wave6",
+  "progress_log": [
+    {
+      "at": "2026-10-07T20:19:14.791643+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed in wave 6 at the contract head 4ce89144 (integration head f111b927, the merge of wave 5); builder scenario-optimization-engineer in an isolated worktree; see project-control/reports/WAVE6-2026-10-07-concurrency-record.md. The integration branch's own run on f111b927 is read as complete and successful before any builder's commit is integrated."
+    }
   ]
 }

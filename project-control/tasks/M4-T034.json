@@ -72,13 +72,13 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "legal-corpus-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "A section number taken from the reviewer's message instead of found on the site -> the targets are named by what they are; the builder reports what the site shows",
     "A term reported as not defined that sits under an inverted or combined title (seen in M4-T029) -> S1",
@@ -87,7 +87,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:42.747766+00:00",
-  "updated_at": "2026-10-07T20:17:43.124079+00:00",
+  "updated_at": "2026-10-07T20:19:21.557423+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -109,5 +109,15 @@
     "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py",
     "python3 scripts/lanes/check_lane_paths.py --coverage",
     "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ],
+  "worktree": "/root/project/w-wave6",
+  "progress_log": [
+    {
+      "at": "2026-10-07T20:19:21.557337+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed in wave 6 at the contract head 4ce89144 (integration head f111b927, the merge of wave 5); builder legal-corpus-engineer in an isolated worktree; see project-control/reports/WAVE6-2026-10-07-concurrency-record.md. The integration branch's own run on f111b927 is read as complete and successful before any builder's commit is integrated."
+    }
   ]
 }
