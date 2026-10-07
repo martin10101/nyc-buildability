@@ -33,8 +33,9 @@ CASES_DIR = DOCS_DIR / "cases"
 PROVENANCE_DIR = DOCS_DIR / "provenance"
 SNAPSHOT_DIR = REPO_ROOT / "docs" / "research" / "zr-snapshots" / "v1"
 
-# The four cases, by the file stem of their data file and rendered page.
-CASE_IDS = ("real-lot", "interior-lots", "corner-reach", "suffix")
+# The cases, by the file stem of their data file and rendered page. The fifth
+# case (step-p1-worked) holds the rows worked from the step-P1 captures (M4-T027).
+CASE_IDS = ("real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked")
 
 # The base ids every one of the work order's table rows must appear under (S1).
 # A base id is "present" when a row's id equals it or starts with it + "-".
@@ -43,6 +44,10 @@ REQUIRED_BASE_IDS = {
     "interior-lots": ["P1", "P3", "P4", "P5", "interior-coverage"],
     "corner-reach": ["real-lot", "C1", "C2", "C3"],
     "suffix": ["23-362", "23-52", "23-344", "23-22", "23-432"],
+    "step-p1-worked": [
+        "lot-area", "corner-100x100", "corner-150x100", "corner-200x120",
+        "interior-40x100", "through-40x200", "special-density",
+    ],
 }
 
 EXPECTED_KINDS = ("value", "not_known")

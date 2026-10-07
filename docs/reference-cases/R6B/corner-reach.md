@@ -8,7 +8,7 @@ How far a corner lot reaches from each street line and from the corner point, wh
 
 ## What this case is worth
 
-Prepared by an AI helper and recomputed by a second AI; their agreement alone is not proof. The real lot's reaches are measured from the approximate tax-map outline; C1, C2 and C3 are made-up rectangles chosen to show the corner-lot-portion and rear-yard thresholds. It is a draft reading, not professionally reviewed. The corner-lot-portion definition it uses (ZR 12-10) is not captured.
+Prepared by an AI helper and recomputed by a second AI; their agreement alone is not proof. The real lot's reaches are measured from the approximate tax-map outline; C1, C2 and C3 are made-up rectangles chosen to show the corner-lot-portion and rear-yard thresholds. It is a draft reading, not professionally reviewed. The corner-lot-portion definition it uses (ZR 12-10) and ZR 23-342 are now captured (task M4-T025); the step-P1 readings worked their own made-up corner lots in cases/step-p1-worked.json.
 
 - Prepared by: An AI helper that took no part in writing the program's rules, working only from a sealed folder of pinned law-text captures and the lot's recorded facts, with no access to the program.
 - Checked by: A second AI recomputed the arithmetic and the geometry independently from the same sealed folder. Agreement between two AI answers alone is not proof.
@@ -58,16 +58,19 @@ Law relied on:
   - Content digest: `f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9`.
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362.
   - Quoted: "the maximum residential lot coverage for interior lots or through lots shall be 80 percent and the maximum residential lot coverage for corner lots shall be 100 percent"
-- ZR 12-10 (Definitions) - NOT captured. The repository capture of ZR 12-10 holds only the wide-street and narrow-street definitions; the lot-type and corner-lot-portion definitions are not captured and wait for step P1. Read on the official page https://zr.planning.nyc.gov/article-i/chapter-2/12-10 on 2026-10-06.
-  - Read there: "that portion bounded by the intersecting street line and lines parallel to and 100 feet from each intersecting street line"
+- ZR 12-10 (Definitions (lot, corner)) - captured.
+  - Capture: snapshot `zr-12-10-lot-corner`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-corner.snapshot.json`.
+  - Content digest: `86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "that portion bounded by the intersecting #street line# and lines parallel to and 100 feet from each intersecting #street line#"
 
-Why the rule applies: The 100-percent corner-lot rule (ZR 23-362(a)) covers only the ZR 12-10 corner-lot portion, within 100 feet of each street line; part of this lot lies beyond 100 feet of the 215 Place street line.
+Why the rule applies: The 100-percent corner-lot rule (ZR 23-362(a)) covers only the captured ZR 12-10 corner-lot portion, within 100 feet of each street line; part of this lot lies beyond 100 feet of the 215 Place street line, so it is a corner-lot portion plus a remaining interior-lot portion.
 
-Expected value: not known. The lot reaches 103.93 feet from the 215 Place street line, so it is not wholly within the corner-lot portion and there is no single whole-lot coverage figure. The ZR 12-10 corner-lot-portion definition is not captured.
+Expected value: not known. The lot reaches 103.93 feet from the 215 Place street line, so it is not wholly within the corner-lot portion and there is no single whole-lot coverage figure. Both step-P1 readings read it per portion: the corner-lot portion has a maximum residential lot coverage of 100 percent and the remaining interior-lot portion 80 percent.
 
-Where this stands in the independent reading: return-independent-hand-calculation-2.md, Q1(a)-(b), and the work order's table C ('not known').
+Where this stands in the independent reading: return-independent-hand-calculation-2.md, Q1(a)-(b), and the work order's table C ('not known'); the per-portion reading is confirmed by both step-P1 readings (return-independent-hand-calculation-3.md and -4.md, Q2a).
 
-What this row does not establish: It gives no whole-lot coverage percentage.
+What this row does not establish: It gives no whole-lot coverage percentage; the two step-P1 readings give about 9,998 and 9,997.6 square feet for the corner portion, resting on the approximate outline and a one-foot street-line tolerance.
 
 ### real-lot-rear-yard - The real lot: rear yard beyond the corner area
 
@@ -82,14 +85,19 @@ Law relied on:
   - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
   - Quoted: "no rear yard shall be required within 100 feet of the point of intersection of two street lines intersecting at an angle of 135 degrees or less"
+- ZR 23-342 (Rear yard requirements) - captured.
+  - Capture: snapshot `zr-23-342`, file `docs/research/zr-snapshots/v1/zr-23-342.snapshot.json`.
+  - Content digest: `1fece34420276aae6ca35f83b23929cea060b6cfee8871dbcea95edf44fb69c6`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-342.
+  - Quoted: "shall be provided on #interior lots# in accordance with this Section"
 
-Why the rule applies: ZR 23-344(a) waives the rear yard within 100 feet of the corner point; the far corner is 144.60 feet away, so part of the lot lies beyond that reach.
+Why the rule applies: ZR 23-344(a) waives the rear yard within 100 feet of the corner point; the far corner is 144.60 feet away, so part of the lot lies beyond that reach, where ZR 23-342 may require a rear yard on the interior-lot portion.
 
-Expected value: not known. Within 100 feet of the corner point no rear yard is required; the far corner is 144.60 feet away, so part of the lot lies beyond, and what is required there is not settled. ZR 23-342 and the ZR 12-10 side-/rear-lot-line definitions are not captured.
+Expected value: not known. Within 100 feet of the corner point no rear yard is required; the far corner is 144.60 feet away, so part of the lot lies beyond, and what is required there is not settled. ZR 23-342 is now captured, but the depth it sets needs the building type and lot width (not given), and the ZR 12-10 side-/rear-lot-line definitions are not captured; both step-P1 readings read it the same way.
 
-Where this stands in the independent reading: return-independent-hand-calculation-2.md, Q1(c), and the work order's table C ('not known beyond the corner area').
+Where this stands in the independent reading: return-independent-hand-calculation-2.md, Q1(c), and the work order's table C ('not known beyond the corner area'); confirmed by both step-P1 readings (return-independent-hand-calculation-3.md and -4.md, Q3a).
 
-What this row does not establish: It does not give a rear-yard requirement beyond 100 feet of the corner point.
+What this row does not establish: It does not give a rear-yard requirement beyond 100 feet of the corner point; that needs the neighbouring lot lines, the building type and lot width, and the uncaptured ZR 12-10 lot-line definitions.
 
 ### C1-reach - C1 (40 ft x 100 ft, 4,000 sq ft): reach from each street line and the corner
 
@@ -126,8 +134,11 @@ Law relied on:
   - Content digest: `f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9`.
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362.
   - Quoted: "the maximum residential lot coverage for interior lots or through lots shall be 80 percent and the maximum residential lot coverage for corner lots shall be 100 percent"
-- ZR 12-10 (Definitions) - NOT captured. The repository capture of ZR 12-10 holds only the wide-street and narrow-street definitions; the lot-type and corner-lot-portion definitions are not captured and wait for step P1. Read on the official page https://zr.planning.nyc.gov/article-i/chapter-2/12-10 on 2026-10-06.
-  - Read there: "that portion bounded by the intersecting street line and lines parallel to and 100 feet from each intersecting street line"
+- ZR 12-10 (Definitions (lot, corner)) - captured.
+  - Capture: snapshot `zr-12-10-lot-corner`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-corner.snapshot.json`.
+  - Content digest: `86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "that portion bounded by the intersecting #street line# and lines parallel to and 100 feet from each intersecting #street line#"
 
 Why the rule applies: The whole lot is within 100 feet of each street line, so it is entirely the ZR 12-10 corner-lot portion, and ZR 23-362(a) gives corner lots 100 percent.
 
@@ -135,7 +146,7 @@ Expected value: 100 percent
 
 Where this stands in the independent reading: return-independent-hand-calculation-2.md, Q2 C1(i).
 
-What this row does not establish: It relies on the ZR 12-10 corner-lot-portion definition, which is not captured.
+What this row does not establish: It relies on the captured ZR 12-10 corner-lot-portion definition; it is a made-up rectangle, not a real property.
 
 ### C1-rear-yard - C1: rear yard beyond the corner area
 
@@ -150,14 +161,19 @@ Law relied on:
   - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
   - Quoted: "no rear yard shall be required within 100 feet of the point of intersection of two street lines intersecting at an angle of 135 degrees or less"
+- ZR 23-342 (Rear yard requirements) - captured.
+  - Capture: snapshot `zr-23-342`, file `docs/research/zr-snapshots/v1/zr-23-342.snapshot.json`.
+  - Content digest: `1fece34420276aae6ca35f83b23929cea060b6cfee8871dbcea95edf44fb69c6`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-342.
+  - Quoted: "shall be provided on #interior lots# in accordance with this Section"
 
-Why the rule applies: Within 100 feet of the corner no rear yard is required (ZR 23-344(a); 90 degrees is 135 or less); the diagonal is 107.70 feet, so part of the lot lies beyond 100 feet of the corner.
+Why the rule applies: Within 100 feet of the corner no rear yard is required (ZR 23-344(a); 90 degrees is 135 or less); the diagonal is 107.70 feet, so part of the lot lies beyond 100 feet of the corner, where ZR 23-342 may require a rear yard on the interior-lot portion.
 
-Expected value: not known. A part of the lot lies beyond 100 feet of the corner point (the diagonal is 107.70 feet), and whether a rear yard is required there is not settled: it needs ZR 23-342 and the neighbouring lot lines, which are not available.
+Expected value: not known. A part of the lot lies beyond 100 feet of the corner point (the diagonal is 107.70 feet), and whether a rear yard is required there is not settled. ZR 23-342 is now captured, but the depth it sets needs the building type and lot width (not given), and whether a yard is required there needs the neighbouring lot lines (not available).
 
 Where this stands in the independent reading: return-independent-hand-calculation-2.md, Q2 C1(ii).
 
-What this row does not establish: It does not settle the rear yard beyond the corner area.
+What this row does not establish: It does not settle the rear yard beyond the corner area; that needs the neighbouring lot lines, the building type and lot width.
 
 ### C2-reach - C2 (60 ft x 80 ft, 4,800 sq ft): reach from each street line and the corner
 
@@ -194,8 +210,11 @@ Law relied on:
   - Content digest: `f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9`.
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362.
   - Quoted: "the maximum residential lot coverage for interior lots or through lots shall be 80 percent and the maximum residential lot coverage for corner lots shall be 100 percent"
-- ZR 12-10 (Definitions) - NOT captured. The repository capture of ZR 12-10 holds only the wide-street and narrow-street definitions; the lot-type and corner-lot-portion definitions are not captured and wait for step P1. Read on the official page https://zr.planning.nyc.gov/article-i/chapter-2/12-10 on 2026-10-06.
-  - Read there: "that portion bounded by the intersecting street line and lines parallel to and 100 feet from each intersecting street line"
+- ZR 12-10 (Definitions (lot, corner)) - captured.
+  - Capture: snapshot `zr-12-10-lot-corner`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-corner.snapshot.json`.
+  - Content digest: `86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "that portion bounded by the intersecting #street line# and lines parallel to and 100 feet from each intersecting #street line#"
 
 Why the rule applies: The whole lot is within 100 feet of each street line, so it is entirely the ZR 12-10 corner-lot portion, and ZR 23-362(a) gives corner lots 100 percent.
 
@@ -203,7 +222,7 @@ Expected value: 100 percent
 
 Where this stands in the independent reading: return-independent-hand-calculation-2.md, Q2 C2(i).
 
-What this row does not establish: It relies on the ZR 12-10 corner-lot-portion definition, which is not captured.
+What this row does not establish: It relies on the captured ZR 12-10 corner-lot-portion definition; it is a made-up rectangle, not a real property.
 
 ### C2-rear-yard - C2: rear yard
 
@@ -264,14 +283,17 @@ Law relied on:
   - Content digest: `f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9`.
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362.
   - Quoted: "the maximum residential lot coverage for interior lots or through lots shall be 80 percent and the maximum residential lot coverage for corner lots shall be 100 percent"
-- ZR 12-10 (Definitions) - NOT captured. The repository capture of ZR 12-10 holds only the wide-street and narrow-street definitions; the lot-type and corner-lot-portion definitions are not captured and wait for step P1. Read on the official page https://zr.planning.nyc.gov/article-i/chapter-2/12-10 on 2026-10-06.
-  - Read there: "that portion bounded by the intersecting street line and lines parallel to and 100 feet from each intersecting street line"
+- ZR 12-10 (Definitions (lot, corner)) - captured.
+  - Capture: snapshot `zr-12-10-lot-corner`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-corner.snapshot.json`.
+  - Content digest: `86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "that portion bounded by the intersecting #street line# and lines parallel to and 100 feet from each intersecting #street line#"
 
 Why the rule applies: The near part within 100 feet of each street line is the corner-lot portion (100 percent), while the 50-foot strip beyond 100 feet of street line B is an interior-lot portion (80 percent); ZR 23-362 as captured does not partition the lot.
 
-Expected value: not known. No single whole-lot coverage figure: the part within 100 feet of each street line is the corner-lot portion (100 percent) and the 50-foot strip beyond 100 feet of street line B is an interior-lot portion (80 percent). The captured ZR 23-362 does not partition the lot, and the ZR 12-10 corner-lot-portion definition is not captured.
+Expected value: not known. No single whole-lot coverage figure: the part within 100 feet of each street line is the corner-lot portion (100 percent) and the 50-foot strip beyond 100 feet of street line B is an interior-lot portion (80 percent). The captured ZR 23-362 does not partition the lot; the ZR 12-10 corner-lot-portion definition is now captured and both step-P1 readings read a 150-by-100 corner lot the same way (corner portion 100 percent, remaining interior 80 percent).
 
-Where this stands in the independent reading: return-independent-hand-calculation-2.md, Q2 C3(i).
+Where this stands in the independent reading: return-independent-hand-calculation-2.md, Q2 C3(i); the step-P1 readings' lot C2 (150 by 100) reads the same (return-independent-hand-calculation-3.md and -4.md, Q2b; see cases/step-p1-worked.json).
 
 What this row does not establish: It gives no single whole-lot coverage percentage.
 
@@ -293,26 +315,32 @@ Law relied on:
   - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
   - Quoted: "In R6 through R12 Districts, no rear yard shall be required where such rear lot line coincides with a side lot line of an adjoining zoning lot"
+- ZR 23-342 (Rear yard requirements) - captured.
+  - Capture: snapshot `zr-23-342`, file `docs/research/zr-snapshots/v1/zr-23-342.snapshot.json`.
+  - Content digest: `1fece34420276aae6ca35f83b23929cea060b6cfee8871dbcea95edf44fb69c6`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-342.
+  - Quoted: "shall be provided on #interior lots# in accordance with this Section"
 
-Why the rule applies: Within 100 feet of the corner no rear yard is required (ZR 23-344(a)); beyond 100 feet of the street line the side-lot-line portion is treated as a rear lot line (ZR 23-344(c)), and whether a rear yard is then required depends on whether that line coincides with a neighbour's lot line and on ZR 23-342 (depth), which are not available.
+Why the rule applies: Within 100 feet of the corner no rear yard is required (ZR 23-344(a)); beyond 100 feet of the street line the side-lot-line portion is treated as a rear lot line (ZR 23-344(c)), and whether a rear yard is then required depends on whether that line coincides with a neighbour's lot line and, for any depth, on ZR 23-342.
 
-Expected value: not known. Along the 50-foot strip beyond 100 feet of the street line, whether a rear yard is required depends on the neighbouring lot lines (ZR 23-344(c)(1) and (c)(3)) and on ZR 23-342 (depth), which are not available, so it is not known. Within 100 feet of the corner, ZR 23-344(a) waives it.
+Expected value: not known. Along the 50-foot strip beyond 100 feet of the street line, whether a rear yard is required depends on the neighbouring lot lines (ZR 23-344(c)(1) and (c)(3)), which are not available, so it is not known. Any required depth is set by ZR 23-342 (now captured) but depends on the building type and lot width, not given. Within 100 feet of the corner, ZR 23-344(a) waives it.
 
 Where this stands in the independent reading: return-independent-hand-calculation-2.md, Q2 C3(ii).
 
-What this row does not establish: It does not settle the rear yard along the strip beyond the corner-lot portion.
+What this row does not establish: It does not settle the rear yard along the strip beyond the corner-lot portion; that needs the neighbouring lot lines, the building type and lot width.
 
 ## What this case does not establish
 
 - The real lot's reaches are measured from an approximate outline, not a survey; the strip and wedge areas are grid approximations.
 - C1, C2 and C3 are made-up rectangles, not real properties.
-- It relies on the ZR 12-10 corner-lot-portion definition, which is not captured.
+- It relies on the ZR 12-10 corner-lot-portion definition (now captured, task M4-T025).
 - It is not a professional or legal determination.
 
 ## Sources
 
 - The independent hand-calculation, follow-up (tables C and D): provenance/return-independent-hand-calculation-2.md
 - The independent hand-calculation, first round: provenance/return-independent-hand-calculation-1.md
+- The two step-P1 readings that confirm the corner-portion and coverage rows from the newly captured text: provenance/return-independent-hand-calculation-3.md and provenance/return-independent-hand-calculation-4.md.
 - The sealed folder given to the helper: the pinned ZR captures (without the notes describing how the program encoded them) and the lot's recorded official facts, with no program access.
 - The law captures under docs/research/zr-snapshots/v1/, each pinned by its content digest.
 
@@ -321,4 +349,6 @@ What this row does not establish: It does not settle the rear yard along the str
 | Date | Change | By |
 |---|---|---|
 | 2026-10-06 | Case created from the independent hand-calculation returns (step R0). | rules-engineer (M4-T024) |
+| 2026-10-07 | Rows real-lot-coverage, C1-coverage, C2-coverage and C3-coverage: expected values unchanged (real-lot-coverage and C3-coverage stay not known; C1-coverage and C2-coverage stay 100 percent). The ZR 12-10 corner-lot-portion definition is now captured (task M4-T025), so their citation changes from not-captured to the captured snapshot zr-12-10-lot-corner. The two step-P1 readings read the same corner-lot-portion method and the same per-portion 100/80 coverage (their own made-up corner lots are in cases/step-p1-worked.json). Reason: newly captured text. | rules-engineer (M4-T027) |
+| 2026-10-07 | Rows real-lot-rear-yard, C1-rear-yard and C3-rear-yard: expected values unchanged (not known beyond the corner). ZR 23-342 is now captured (task M4-T025); a captured ZR 23-342 citation is added and the reason records that the depth it sets needs the building type and lot width (not given) and the ZR 12-10 side-/rear-lot-line definitions are not captured. Reason: newly captured text. | rules-engineer (M4-T027) |
 
