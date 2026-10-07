@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-07T22:04:38+00:00",
+ "updated_at": "2026-10-07T22:35:21+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -558,10 +558,32 @@
   "D-090-R534",
   "D-090-R535",
   "D-090-R536",
-  "D-090-R537"
+  "D-090-R537",
+  "D-090-R538",
+  "D-090-R539",
+  "D-090-R540",
+  "D-090-R541",
+  "D-090-R542",
+  "D-090-R543",
+  "D-090-R544",
+  "D-090-R545",
+  "D-090-R546",
+  "D-090-R547",
+  "D-090-R548",
+  "D-090-R549",
+  "D-090-R550",
+  "D-090-R551",
+  "D-090-R552",
+  "D-090-R553",
+  "D-090-R554",
+  "D-090-R555",
+  "D-090-R556",
+  "D-090-R557",
+  "D-090-R558",
+  "D-090-R559"
  ],
- "requirements_id_digest_sha256": "f9553ea46cff6bbfa15808eb4e6bdbb7fd713ad5e99263328511d39637a078bd",
- "requirements_content_digest_sha256": "b81547de42933a1d93a7bcd420fc643e4b9e4df89f85976d4160a3d9d68594e4",
+ "requirements_id_digest_sha256": "58763f0d7c87d6aba45f2eee43362a57b812b40c73c0f22d1d9870a183d998c6",
+ "requirements_content_digest_sha256": "76d6f7a2dec8f680056205c151dd216f4e75e543ac538376248be6259fc6f28a",
  "sources": [
   {
    "file": "source-001.md",
@@ -1009,6 +1031,14 @@
    "recorded_at": "2026-10-07T22:04:38+00:00",
    "content_digest_sha256": "a0319db2e048347e9cf384f50e10845aa98b3e900980f7c648e38e811b60b719",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-057-amendment.md",
+   "kind": "amendment",
+   "sequence": 57,
+   "recorded_at": "2026-10-07T22:35:21+00:00",
+   "content_digest_sha256": "102c2fe91d872d9af77d64ab13b4bcd7e3ce4d4a0b25df20d866c46768f2108b",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1066,7 +1096,8 @@
   "source-053-amendment.md",
   "source-054-amendment.md",
   "source-055-amendment.md",
-  "source-056-amendment.md"
+  "source-056-amendment.md",
+  "source-057-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1601,6 +1632,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-056 (session 013RaGmC message 112, 2026-10-07: a quick update on where the build stands) and requirements D-090-R536 and R537, both pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-07T22:35:21+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-057 (session 013RaGmC message 113, 2026-10-07: the owner's decisions on the open choices, sent as the text of a /session-handoff command) and requirements D-090-R538 to R559, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
