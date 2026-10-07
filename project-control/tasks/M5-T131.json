@@ -27,12 +27,13 @@
     "services/api/app/contracts/study_contracts.py",
     "services/api/tests/contracts/test_results_way_rules.py",
     "services/api/tests/contracts/test_contract_serializers.py",
+    "services/api/tests/contracts/test_results_three_ways_slot.py",
     "project-control/reports/M5-T131-producer-report.md"
   ],
   "forbidden_paths": [
     "packages/** (no schema, generated file or fixture changes); services/api/app/_contract_schemas/**",
     "every other file under services/api/app/** (no engine, route or drawing edit); the decision modules of M5-T129 and the new modules of M5-T130",
-    "services/api/tests/contracts/test_results_three_ways_slot.py and every other existing test except the one guard test named in the scope correction; apps/**; docs/**",
+    "every other existing test except the tests named in the two scope corrections; apps/**; docs/**",
     ".github/**; CLAUDE.md; .claude/**; tools/**; any dependency file",
     "project-control/** except the producer report named in allowed_paths"
   ],
@@ -71,7 +72,7 @@
       "id": "S6",
       "case": "nothing_valid_today_changes",
       "input": "every valid results fixture, every invalid one, and documents of versions 1.0.0, 1.1.0 and 1.2.0",
-      "expected": "each valid fixture is accepted and each invalid one refused by both validators exactly as before; the rule is not applied below 1.3.0; the three KNOWN_LIMIT tests still report the schema's limits unchanged; the full services/api suite passes at the wave's final candidate"
+      "expected": "each valid fixture is accepted and each invalid one refused by both validators exactly as before; the rule is not applied below 1.3.0; the three tests that pinned the schema's known limits as expected failures are TURNED (second scope correction): each now asserts that the validator refuses its document, and a test asserts that the bare schema still accepts it (the schema's own descriptions say so and do not change); the full services/api suite passes at the wave's final candidate"
     },
     {
       "id": "S7",
@@ -92,7 +93,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 50,
   "risks": [
     "A valid document of today refused -> S6: every fixture through both validators",
     "The two validators drifting -> S7: one shared rule",
@@ -101,7 +102,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:29.581528+00:00",
-  "updated_at": "2026-10-07T16:06:11.956509+00:00",
+  "updated_at": "2026-10-07T16:32:24.862736+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -136,6 +137,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Scope correction at the claim seam, before any builder was started: an existing guard test pins the set of modules of services/api/app/contracts/ and failed on this task's seeded placeholder; the placeholder was removed by the orchestrator and that one test function is added to the allowed paths (the builder adds the new module's name after showing that it does not reach the serializer)."
+    },
+    {
+      "at": "2026-10-07T16:32:24.862616+00:00",
+      "agent": "backend-engineer",
+      "percent": 50,
+      "status": "in_progress",
+      "message": "The builder returned BLOCKED with its work committed in its own worktree (commit 5528282e: the shared rule, the one call in each validator, the new tests, the guard test's set). The block is a fault in the PACKET, found by the builder and confirmed by the orchestrator: the packet said the three tests that pin the schema's known limits (test_KNOWN_LIMIT_... in tests/contracts/test_results_three_ways_slot.py) 'stay as they are, because they test the schema alone'. They do not: each passes its document through the study validator and is marked as an expected failure that turns into a real failure the day the validator refuses, which is this task. Backlog row DB-171 itself says those tests are then turned to assert refusal. The builder did not touch the forbidden file. Scope correction recorded; one more round by the same builder: turn the three tests, and write the report file. Not integrated yet; no review yet. Also from the return: the schema already refuses an available answer whose every value is withheld (an empty values list), so point F4 of row DB-171 needs no rule of its own."
     }
   ],
   "scope_corrections": [
@@ -143,6 +151,11 @@
       "at": "2026-10-07T16:04:44+00:00",
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-07, at the claim seam, before any builder was started] An existing guard, `services/api/tests/contracts/test_contract_serializers.py::test_study_contracts_is_the_proven_non_serializer_submodule`, pins the exact set of modules of `services/api/app/contracts/` that never reach the provenance serializer; the seeded placeholder of this task's new module `results_way_rules.py` made it fail at the claim head (found by the orchestrator's own run). The placeholder was removed by the orchestrator, and that ONE test is added to the allowed paths: the builder adds the new module's name to the set in that test, and only that, after showing that the module does not reach the serializer (which is what the test means). Nothing else in that file changes."
+    },
+    {
+      "at": "2026-10-07T16:32:25+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-07, after the builder's first return (BLOCKED) and before integration or review] THE PACKET WAS WRONG ON ONE POINT, found by the builder. It said that the three tests `test_KNOWN_LIMIT_...` of `services/api/tests/contracts/test_results_three_ways_slot.py` 'stay as they are, because they test the SCHEMA alone'. They pass their documents through the study validator and are marked as strict expected failures that fail the day the validator refuses such a document: that day is this task. Backlog row DB-171 says those tests are then turned to assert refusal. `services/api/tests/contracts/test_results_three_ways_slot.py` is added to the allowed paths for those THREE tests only: the expected-failure mark is removed so that each asserts that the validator refuses its document; each is renamed and its comment rewritten to say what it now proves; nothing else in the file changes. That the bare SCHEMA still accepts each of the three documents (its descriptions say so and do not change) is pinned by a test in this task's own new test file. ALSO: the builder showed that the schema already refuses an available answer whose every value is withheld (an empty values list); point F4 of row DB-171 therefore needs no rule of its own, and the test of scenario S4 tests the schema's refusal through both validators, as the scenario allows."
     }
   ]
 }
