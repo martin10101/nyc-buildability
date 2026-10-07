@@ -29,6 +29,8 @@ from functools import lru_cache
 from importlib import resources
 from typing import Any
 
+from app.contracts.results_way_rules import results_way_violations
+
 __all__ = [
     "STUDY_CONTRACT_STEMS",
     "StudyContractError",
@@ -195,6 +197,19 @@ def validate_study_document(document: Any) -> None:
 
 def validate_results_document(document: Any) -> None:
     validate_study_contract_document("results", document)
+    # After the schema: a 1.3.0 document must also honor the way-layer rule the schema
+    # cannot express (one shared rule; no copy here - see
+    # app.contracts.results_way_rules). Below 1.3.0 the shared rule returns nothing.
+    violations = results_way_violations(document)
+    if violations:
+        first = violations[0]
+        detail = "; ".join(violation.detail for violation in violations)
+        raise StudyContractError(
+            "results document declares contract 1.3.0 but breaks the value-state way "
+            f"rule: {detail}",
+            contract="results",
+            location=f"answers/{first.answer}/value_states/{first.key}",
+        )
 
 
 def validate_report_model_document(document: Any) -> None:

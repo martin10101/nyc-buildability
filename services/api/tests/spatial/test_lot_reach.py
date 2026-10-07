@@ -314,11 +314,16 @@ def test_measurements_only_no_law_in_the_module():
     assert "import" in source  # sanity: the source really was read
 
 
-def test_nothing_imports_the_module_yet():
+def test_only_task_m5_t130_bridge_imports_the_module():
+    # Task M5-T130's result-way bridge is the first caller of lot_reach (it adapts the
+    # measurement into the decision module's reach records). Only lot_reach itself and that
+    # bridge module may name it; any OTHER app file is an offender (proved by a mutation
+    # outside the repository).
+    permitted = {"lot_reach.py", "result_way_bridge.py"}
     app_root = pathlib.Path(lot_reach.__file__).resolve().parents[1]  # services/api/app
     offenders = [
         str(path) for path in app_root.rglob("*.py")
-        if path.name != "lot_reach.py" and "lot_reach" in path.read_text(encoding="utf-8")
+        if path.name not in permitted and "lot_reach" in path.read_text(encoding="utf-8")
     ]
     assert offenders == [], f"these modules already reference lot_reach: {offenders}"
 

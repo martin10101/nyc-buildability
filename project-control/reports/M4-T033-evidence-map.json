@@ -1,0 +1,50 @@
+{
+ "task_id": "M4-T033",
+ "material_commits": [
+  "99845581 (cherry-pick of the builder's commit e0ecabc3: 23 captures and their copies)",
+  "9ec94043 (of 950ec2c9: one date in the report, after the review's required correction)",
+  "material head: d9a003a1"
+ ],
+ "claim_seam_head": "6979d27d",
+ "new_capture_ids": [
+  "zr-12-10-aggregate-width-of-street-walls",
+  "zr-12-10-block",
+  "zr-12-10-floor-area-ratio",
+  "zr-12-10-height-factor",
+  "zr-12-10-limited-height-district",
+  "zr-12-10-multiple-dwelling-residence",
+  "zr-12-10-open-space",
+  "zr-12-10-open-space-ratio",
+  "zr-12-10-public-park",
+  "zr-12-10-short-dimension-of-a-block",
+  "zr-12-10-transit-zone-greater",
+  "zr-12-10-transit-zone-outer",
+  "zr-12-10-transportation-infrastructure-adjacent-frontage",
+  "zr-23-20",
+  "zr-23-322",
+  "zr-23-335",
+  "zr-23-381",
+  "zr-23-62",
+  "zr-34-23-contents",
+  "zr-35-00",
+  "zr-35-01",
+  "zr-35-20",
+  "zr-35-21"
+ ],
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "scripts/sync_zr_snapshots.py --check: exit 0 (133 files byte-identical)",
+  "pytest tests/rules/test_zr_snapshot_bundle.py tests/rules/test_zoning_rule_review_register.py: exit 0",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "the full services/api suite, run alone by the orchestrator at d1e6683c (the final content of all three tasks): exit 0, 8384 passed, 8 skipped, no expected failure"
+ ],
+ "requirements": {
+  "D-090-R291": [
+   "23 further texts are captured as source text from the official Zoning Resolution site, each in a file of its own under docs/research/zr-snapshots/v1/ with its address, the time of each request, the amendment date the page shows, the verbatim text and its digests: the ZR 12-10 definition of 'floor area ratio' and twelve further definitions (Limited Height District; aggregate width of street walls; block; short dimension of a block; transportation-infrastructure-adjacent frontage; Transit Zone, Greater; Transit Zone, Outer; multiple dwelling residence; height factor; open space; open space ratio; public park); the sections ZR 23-322 and 23-335 (the front and side yard requirements for R6 to R12), 23-381, 23-62, 23-20, 35-00, 35-01, 35-20 and 35-21; and a capture of what the page of ZR 34-23 lists under it (docs/research/zr-snapshots/v1/zr-34-23-contents.snapshot.json).",
+   "The synced copies under services/api/app/_zr_snapshots/v1/ are byte-identical (services/api/scripts/sync_zr_snapshots.py --check: exit 0, 133 files); no existing capture was modified.",
+   "Each target of the packet was found; none is reported as not defined (two terms are cross-references on the site and were captured from the articles that define them). The independent reviewer fetched the official pages itself (review record).",
+   "Disclosed limits: the list labels of two definitions are positions in the page's markup, because the print/PDF channel of the ZR 12-10 page answered HTTP 504 and two per-term PDFs HTTP 403; one definition's embedded diagram is omitted and its caption line kept; each capture says so.",
+   "NOT done by this task, and not claimed: no missing rule and no conflicting input is resolved; the new text is not read for any lot; no reference case and no result changes. What the new texts could settle once read independently (the unit count's condition on the definition of 'floor area ratio'; the caveat on the rear-yard answer about ZR 34-23) is a later task. Row R291 covers the whole of step 3; this task is one share of it: the text is captured."
+  ]
+ }
+}

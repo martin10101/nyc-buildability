@@ -1,0 +1,35 @@
+{
+ "task_id": "M5-T131",
+ "material_commits": [
+  "edb2af6d (cherry-pick of the builder's commit 5528282e: the rule, the two calls, the tests)",
+  "1f53e5fb (of d543b112: the three former known-limit tests turned; the report)",
+  "fdab9401 (of 9b188117: one stale comment)",
+  "816c5227 (of 10aa8c11: the review's notes: one comment, the report)",
+  "material head: d9a003a1"
+ ],
+ "claim_seam_head": "6979d27d",
+ "shared_rule": "services/api/app/contracts/results_way_rules.py::results_way_violations",
+ "scope_corrections": 2,
+ "owed_work": "docs/DISCOVERY_BACKLOG.md row DB-171, points F5 and F6",
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/contracts: exit 0, no expected failure left in the folder",
+  "pytest tests/scenario tests/journey tests/cad tests/drawings (every consumer of results documents): exit 0",
+  "python .github/scripts/validate_contracts.py: exit 0; pytest .github/scripts/tests: exit 0",
+  "tools/modularity_check.py --check: exit 0",
+  "the full services/api suite, run alone by the orchestrator at d1e6683c (the final content of all three tasks): exit 0, 8384 passed, 8 skipped, no expected failure"
+ ],
+ "requirements": {
+  "D-090-R229": [
+   "A results document that declares contract 1.3.0 is now refused by BOTH validators it passes through (services/api/app/scenario/three_answers/contract.py and services/api/app/contracts/study_contracts.py, each calling the one shared rule services/api/app/contracts/results_way_rules.py after its schema check) when a shown value has no statement of how it may be shown (an empty map included), when a key is both shown and withheld, or when a settled or conditional entry belongs to no shown value (services/api/tests/contracts/test_results_way_rules.py::test_S1_shown_value_with_no_way_entry_is_refused, test_S1_empty_way_map_is_refused, test_S2_key_both_shown_and_withheld_is_refused, test_S3_way_entry_for_no_value_is_refused). A withheld entry for a key that is not shown is accepted: that is what 'not known' for one value means (test_S3_withheld_entry_for_a_non_shown_key_is_accepted).",
+   "The three tests that pinned these cases as limits of the schema were expected failures passing through the study validator; they are turned to assert refusal (test_a_shown_value_with_no_way_entry_is_refused_by_the_validator and its two companions in test_results_three_ways_slot.py), and a test pins that the bare schema still accepts the three documents, as its own descriptions say (test_bare_schema_accepts_the_three_documents_the_rule_refuses). The packet had wrongly said those three tests would stay; the builder stopped and reported it, and the packet's second scope correction records the correction.",
+   "Nothing valid today changes: every valid results fixture is accepted and every invalid one refused by both validators as before; documents below 1.3.0 are not touched by the rule (test_S6_...); the schema, its runtime copy, the generated types and the fixtures are unchanged.",
+   "NOT done by this task, and not claimed: nothing emits version 1.3.0; no result, screen, drawing or PDF shows anything because of it. The row is met for the validators' share only. Backlog row DB-171 stays open for its points on the unit estimate (no way entries in 1.3.0) and on readers (an absent value is not zero)."
+  ],
+  "D-090-R267": [
+   "In a 1.3.0 document no value can be shown by silence: every shown value must carry exactly one entry that says settled or conditional, or both validators refuse the document; so a result that an unchecked condition could change cannot reach a reader without its condition or as a number with no statement (test_S1_..., test_S7_one_shared_rule_two_callers).",
+   "An available answer whose every value is withheld is refused already by the schema (an empty values list), shown through both validators (test_S4_all_withheld_available_answer_is_refused_by_both): the whole answer must then be 'not available'.",
+   "NOT done by this task: which results are conditional on which unchecked conditions is decided by the decision module (task M5-T129) and carried by the piece that emits; nothing emits yet."
+  ]
+ }
+}

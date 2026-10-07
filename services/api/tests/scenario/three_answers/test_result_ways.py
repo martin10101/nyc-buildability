@@ -66,14 +66,17 @@ def _battery() -> list[ResultWays]:
     ]
 
 
-# --------------------------------------------------------------------------- S9: new files only
-def test_nothing_under_app_imports_the_module_yet():
-    """S9: a test proves that nothing under services/api/app imports the module. The three
-    module files may reference each other (result_ways imports the other two); no OTHER app
-    file names any of them."""
+# --------------------------------------------------------------------------- S9 / M5-T130 callers
+def test_only_task_m5_t130_bridge_and_facts_modules_import_the_decision_module():
+    """Task M5-T130 is the first caller of the decision module. Only the three module files and
+    task M5-T130's bridge and facts modules (a literal list) may name it; any OTHER file under
+    services/api/app that names it is an offender (proved by a mutation outside the repository)."""
+    permitted = set(_MODULE_FILES) | {
+        "result_way_facts.py", "result_way_bridge.py", "result_way_bridge_overlay.py",
+    }
     offenders = [
         str(path) for path in _APP_ROOT.rglob("*.py")
-        if path.name not in _MODULE_FILES
+        if path.name not in permitted
         and "result_way" in path.read_text(encoding="utf-8")
     ]
     assert offenders == [], f"these modules already reference the result-way module: {offenders}"

@@ -3,7 +3,7 @@
  "directive_id": "D-090",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-090-BOOTSTRAP at capture; tasks cite them through directive_refs. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": "2026-10-07T14:34:07+00:00",
+ "verified_at": "2026-10-07T19:53:43+00:00",
  "task_verifications": [
   {
    "directive_id": "D-090",
@@ -1681,6 +1681,168 @@
       "Verifier's carry-forward condition met at 2d4dea7f: every file under this task's allowed paths has the blob it had at the verified head 1759c233 (content identity bff2190b); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: code-reviewer; the producer was a rules-engineer agent). Pull request 462 is OPEN with head 1759c233 on GitHub. DCV report: project-control/reports/M4-T032-DCV.md."
      ],
      "reviewed_sha": "2d4dea7f700279208276573fd57bc49be1c2737a"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T130",
+   "applicable_requirement_ids": [
+    "D-090-R229",
+    "D-090-R239",
+    "D-090-R240",
+    "D-090-R255",
+    "D-090-R257",
+    "D-090-R267",
+    "D-090-R268"
+   ],
+   "producer": "scenario-optimization-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5",
+   "reviewed_manifest_sha256": "ba219c3a9baeb7cc22d54593a70818811757b67fd5de09ebfe1b06fc4fa85182",
+   "requirements": [
+    {
+     "id": "D-090-R229",
+     "state": "PASS",
+     "evidence": [
+      "result_way_facts.py `_read_column`/`_state_from_readings` (lines 133-181): a column with no PLUTO fetch, a failed fetch, no row, or an untrusted value is carried as Recorded.NOT_READ, never ABSENT. I drove profile=None -> every condition NOT_READ, every result Withheld (no guess, no default).",
+      "result_way_bridge.py `adapt_reach` (lines 195-206) passes an unknown measurement through unchanged: `ReachValue(line.reach.value)`/`ReachValue(measured.corner.reach.value)` with no coercion. I drove an uncertain First Avenue frontage: reach={First Avenue: None, Main Street: 100.0}, corner None, angle None; coverage and rear_yard Withheld (gap_kind missing_information); NO way carries a numeric 'value'. Never a zero.",
+      "result_way_bridge.py `large_lot_answer(None)` (267-284) returns met=None \"...is not stated, because no lot area is recorded.\" I drove area=None: large_lot.met=None, max_residential_far Withheld, the outline area (10,387.99) NOT substituted (inputs.area.recorded_sq_ft stayed None).",
+      "Benchmark drive: no way carries a numeric value; every shown value is Conditional or Withheld.",
+      "Verifier's carry-forward condition met at a7ad56a6: every file under this task's allowed paths has the blob it had at the verified head db5020be (content identity ba219c3a); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 464 is OPEN with head db5020be on GitHub. DCV report: project-control/reports/M5-T130-DCV.md."
+     ],
+     "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5"
+    },
+    {
+     "id": "D-090-R239",
+     "state": "PASS",
+     "evidence": [
+      "Owner words traced to source-033-amendment.md#owner-message-77 (\"Resolve how the two area figures are used before calculating from them.\"); registry R239 carries them verbatim; the \"two figures = 10,075 record vs 10,388 outline\" is marked ORCHESTRATOR'S READING, not owner wording.",
+      "The one rule is written down in result_way_bridge.py `compare_lot_area` (227-261) docstring + returned statement, and applied before any consumer: AGREE only when round(outline)==recorded, else DISAGREE, else could-not-compare. I drove 10075 vs 10075.4 -> agrees; 10075.6 -> disagrees; 10076 -> disagrees; 10075 vs 10388 -> disagrees. No invented tolerance (honest strict rule; DB-173 records the owed wider tolerance).",
+      "No calculation mixes the figures: the decision module reads only `area.recorded_sq_ft` (result_ways.py 146, 348); `outline_sq_ft` appears only in wording (result_way_conditions.area_condition). I drove the benchmark: DISAGREES, both figures shown in area_statement, recorded figure used, outline never substituted. The difference is shown.",
+      "Verifier's carry-forward condition met at a7ad56a6: every file under this task's allowed paths has the blob it had at the verified head db5020be (content identity ba219c3a); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 464 is OPEN with head db5020be on GitHub. DCV report: project-control/reports/M5-T130-DCV.md."
+     ],
+     "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5"
+    },
+    {
+     "id": "D-090-R240",
+     "state": "PASS",
+     "evidence": [
+      "Owner words traced to source-033-amendment.md#owner-message-77 (\"Let missing inputs stay unanswered.\"); registry R240 verbatim.",
+      "result_way_bridge.py `read_site_inputs` (159-189) carries a missing key as None (never a default). I drove, one at a time: no-district -> every result Withheld; no-lot-type -> coverage+rear_yard Withheld while max_residential_far stays Conditional (others unchanged); no-area -> floor-area+unit Withheld, others unchanged; no-outline -> could-not-compare, coverage Withheld, floor area Conditional; no-profile -> every column NOT_READ -> every result Withheld. Each missing input leaves its dependents \"not known\" and the rest unchanged.",
+      "Verifier's carry-forward condition met at a7ad56a6: every file under this task's allowed paths has the blob it had at the verified head db5020be (content identity ba219c3a); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 464 is OPEN with head db5020be on GitHub. DCV report: project-control/reports/M5-T130-DCV.md."
+     ],
+     "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5"
+    },
+    {
+     "id": "D-090-R255",
+     "state": "PASS",
+     "evidence": [
+      "Owner words traced to source-035-amendment.md#owner-message-79 (\"Facts and legal eligibility must come from evidence.\" / \"A user assumption ... must not become a verified fact.\"); registry R255 verbatim.",
+      "result_way_bridge.py `_density` (290-301) turns `special_density_statement` into a DensityKnowledge enum passed to the decision module; it never reaches `gather_recorded_facts`. I drove statement=True: unit_limit_standard is Conditional naming KIND_USER_STATEMENT (\"If the lot is not in a special density area, as the user states\"); NO recorded fact statement mentions density/user/states (leak list empty); density input = user_statement_not_in_one.",
+      "result_way_facts.py reads only city data (docstring lines 32-34); the statement appears in no fact record. A statement that the lot IS in one has no decided path and is held back (not guessed).",
+      "Verifier's carry-forward condition met at a7ad56a6: every file under this task's allowed paths has the blob it had at the verified head db5020be (content identity ba219c3a); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 464 is OPEN with head db5020be on GitHub. DCV report: project-control/reports/M5-T130-DCV.md."
+     ],
+     "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5"
+    },
+    {
+     "id": "D-090-R257",
+     "state": "PASS",
+     "evidence": [
+      "Owner words traced to source-035-amendment.md#owner-message-79 (\"For conflicting areas, establish what each measures and which applies.\" / \"Don't automatically choose one.\" / \"If unresolved, show defensible conditional results or withhold the affected calculations.\"); registry R257 verbatim.",
+      "On DISAGREES, no single settled figure is shown: result_way_conditions.py `area_condition` (119-143) returns a Condition kind=contradicted_record (\"...neither is chosen automatically\"), so every area-dependent result is Conditional, never Settled. I drove the benchmark: max_residential_far/floor_area + unit_limit_standard all Conditional with the contradicted_record assumption naming both figures (10,075 vs 10,387.99); none settled.",
+      "On could-not-compare, kind=unchecked_condition (conditional); where no recorded area, the floor area and unit limit are Withheld (result_ways.py 146-156, 348-358) and the outline never stands in. I drove no-area -> max_residential_far Withheld. The two figures are never auto-picked; results are conditional or withheld.",
+      "Verifier's carry-forward condition met at a7ad56a6: every file under this task's allowed paths has the blob it had at the verified head db5020be (content identity ba219c3a); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 464 is OPEN with head db5020be on GitHub. DCV report: project-control/reports/M5-T130-DCV.md."
+     ],
+     "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5"
+    },
+    {
+     "id": "D-090-R267",
+     "state": "PASS",
+     "evidence": [
+      "Owner words traced to source-036-amendment.md#owner-message-80 (\"'not checked' must not become 'confirmed' just because there's a disclaimer.\"); registry R267 verbatim.",
+      "result_way_bridge.py `gather_result_ways` (357-361) hardwires the four K20 conditions to Checked.NOT_CHECKED, always; the entry signature has NO parameter to mark any checked. I confirmed the signature: {evaluator_inputs, geometry, housing_kind, outline, profile, special_density_statement} - none of waterfront/airport_height/transit_easement/near_district_line. I drove the benchmark: all four states = not_checked.",
+      "No result an unchecked condition could change is shown settled: on the benchmark every shown floor-area/height value is Conditional and its assumption names all four not-checked conditions (result_way_conditions.k20_condition, 100-116); no numeric value in any way. A disclaimer never upgrades to confirmed.",
+      "Verifier's carry-forward condition met at a7ad56a6: every file under this task's allowed paths has the blob it had at the verified head db5020be (content identity ba219c3a); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 464 is OPEN with head db5020be on GitHub. DCV report: project-control/reports/M5-T130-DCV.md."
+     ],
+     "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5"
+    },
+    {
+     "id": "D-090-R268",
+     "state": "PASS",
+     "evidence": [
+      "Owner words traced to source-036-amendment.md#owner-message-80 (\"For unchecked conditions, keep unaffected answers visible, label defensible assumptions as conditional, and withhold only the answers that cannot be supported.\"); registry R268 verbatim; \"settles scope decision 3\" is marked ORCHESTRATOR'S READING, not owner wording.",
+      "This task feeds the per-result deciders so the result is neither a blanket withhold nor a bare not-checked list. I drove the benchmark: unaffected answers visible (floor area, heights Conditional), the unchecked conditions shown as one named conditional assumption, and only the unsupported results withheld (coverage - reach beyond 100 ft; rear_yard; setback; building option; unit limits). I drove missing-input cases: dependents withheld, others unchanged.",
+      "Verifier's carry-forward condition met at a7ad56a6: every file under this task's allowed paths has the blob it had at the verified head db5020be (content identity ba219c3a); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 464 is OPEN with head db5020be on GitHub. DCV report: project-control/reports/M5-T130-DCV.md."
+     ],
+     "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T131",
+   "applicable_requirement_ids": [
+    "D-090-R229",
+    "D-090-R267"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5",
+   "reviewed_manifest_sha256": "a1d9eea12b18b7ce22b82aba5258672d5a9ea00a4709c37d5da370322233552b",
+   "requirements": [
+    {
+     "id": "D-090-R229",
+     "state": "PASS",
+     "evidence": [
+      "services/api/app/contracts/results_way_rules.py: ONE pure function results_way_violations; I built two malformed 1.3.0 documents of my own (a shown value with no way entry; a key both shown and withheld) from the valid fixture packages/contracts/fixtures/valid/results/synthetic_all_answers_available.json and both validators REFUSED each (shown_value_has_no_way_entry; shown_value_marked_withheld).",
+      "The one call site in services/api/app/scenario/three_answers/contract.py line 100 and in services/api/app/contracts/study_contracts.py line 203 both invoke the shared rule after their schema check; my correct 1.3.0 document was ACCEPTED by both and a 1.0.0 and a 1.2.0 fixture were ACCEPTED untouched (rule returns nothing below 1.3.0, confirmed at results_way_rules.py line 78).",
+      "Nothing emits 1.3.0: scenario/three_answers/engine.py emits at most \"1.2.0\" (CONSTANT RESULTS_CONTRACT_VERSION_WITH_NOTES in notes.py line 39 = \"1.2.0\"); no app .py sets value_states or results contract 1.3.0; the result_way_* bridge modules are imported by nothing outside scenario/three_answers and not by the emitter engine.",
+      "WHAT IS LEFT (not this task): because the emitter still emits 1.2.0 and the website/drawings/PDF do not yet consume value_states, \"unknown shown as not known on the website, the drawings and the PDF\" is delivered ONLY as the validators' guarantee that a malformed 1.3.0 document (a value settled by silence; a guess shown) is refused. The actual display on the three outputs is owed to the later emitting piece and the reader instructions (DB-171 F5, F6), which stay OPEN.",
+      "Verifier's carry-forward condition met at a7ad56a6: every file under this task's allowed paths has the blob it had at the verified head db5020be (content identity a1d9eea1); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier; the producer was a backend-engineer agent). Pull request 464 is OPEN with head db5020be on GitHub. DCV report: project-control/reports/M5-T131-DCV.md."
+     ],
+     "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5"
+    },
+    {
+     "id": "D-090-R267",
+     "state": "PASS",
+     "evidence": [
+      "results_way_rules.py rules 1-3 (lines 121-157): my third and fourth self-built documents (a settled/conditional way entry for no shown value; an available answer whose every value is withheld) were REFUSED by both validators \u2014 the first by the shared rule (way_entry_for_no_shown_value), the all-withheld one by the schema itself (answer_available.values minItems:1), confirming DB-171 point F4 needs no rule.",
+      "The rule forbids a shown value being settled by silence (no way entry) and forbids a withheld value carrying a number/being shown: a result resting on something unchecked cannot be presented as confirmed through the 1.3.0 contract; both validators raise their own error type naming the answer, key and clause.",
+      "tests/contracts/test_results_way_rules.py and the three former \"known-limit\" tests in tests/contracts/test_results_three_ways_slot.py (turned to assert refusal in commit 1f53e5fb per scope correction 253b3f9a and DB-171's own plan) pass; the bare schema still accepts the three documents is separately pinned.",
+      "WHAT IS LEFT (not this task): same as R229 \u2014 enforcement is at the validators only; presenting unchecked results as conditional/withheld on the actual outputs is the emitting piece's share (DB-171 F6, OPEN). No record claims DB-171 closed: docs/DISCOVERY_BACKLOG.md row DB-171 status = OPEN, and the wave-5 review-seam sweep (line 449) explicitly keeps it OPEN and lists F5, F6 and a new duplicate-key point as still owed.",
+      "Verifier's carry-forward condition met at a7ad56a6: every file under this task's allowed paths has the blob it had at the verified head db5020be (content identity a1d9eea1); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier; the producer was a backend-engineer agent). Pull request 464 is OPEN with head db5020be on GitHub. DCV report: project-control/reports/M5-T131-DCV.md."
+     ],
+     "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M4-T033",
+   "applicable_requirement_ids": [
+    "D-090-R291"
+   ],
+   "producer": "legal-corpus-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5",
+   "reviewed_manifest_sha256": "88ae0c41920a0f5b9ba1adb273275a33ec4940c10aa22ac20458570bfa3d8cfe",
+   "requirements": [
+    {
+     "id": "D-090-R291",
+     "state": "PASS",
+     "evidence": [
+      "The 23 capture files added by commit 99845581 (git show --name-status: all status A; synced copy under services/api/app/_zr_snapshots/v1/) are source text only: each carries verbatim_excerpt + provenance and a note stating \"no rule, no reading of the text for any lot, and no number derived\" (verified in zr-12-10-floor-area-ratio, zr-34-23-contents, zr-23-20). The report project-control/reports/M4-T033-producer-report.md draws no conclusion (line 165 disclaims any Verified determination) and claims every target FOUND, nothing \"not defined\".",
+      "I fetched the official pages myself: ZR \u00a712-10 (article-i/chapter-2/12-10) \u2014 raw_html_sha256 = 3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc and response_bytes 1316758 both equal the capture's recorded source values, and the \"floor area ratio\" definition text matches the capture verbatim (Last Amended 2/2/2011 matches).",
+      "Official Article III Chapter 4 contents (article-iii/chapter-4) lists 34-23 with EXACTLY 34-231, 34-232, 34-233 then sibling 34-24 \u2014 matches zr-34-23-contents verbatim; the pre-existing zr-34-23.snapshot.json blob is byte-identical at base and head (02f5a13f...), so no existing capture was edited (base..head shows 46 additions, 0 M/0 D).",
+      "F1 required correction genuinely closed: on the official \u00a712-10 page the \"open space\" term shows \"Last Amended 7/8/2025\"; the capture records 7/8/2025 and the report (commit 9ec94043) now reads 7/8/2025 (progress log + G3G4 record both carry the correction; 9ec94043 changed only the report, no capture). I also fetched ZR 23-20 (opening text matches the capture verbatim) and confirmed the claimed \u00a712-10 terms incl. the two cross-references (Transit Zone Greater/Outer) and \"short dimension of a block\" are genuinely present.",
+      "WHAT IS LEFT (not this task): R291 (step 3) as a whole also requires resolving missing rules/conflicting inputs and saving independently-calculated reference examples; M4-T033 is the law-text-capture share only and makes no such claim \u2014 the independent reading of these captures is named as the next task (DISCOVERY_BACKLOG line 449).",
+      "Verifier's carry-forward condition met at a7ad56a6: every file under this task's allowed paths has the blob it had at the verified head db5020be (content identity 88ae0c41); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier; the producer was a legal-corpus-engineer agent). Pull request 464 is OPEN with head db5020be on GitHub. DCV report: project-control/reports/M4-T033-DCV.md."
+     ],
+     "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5"
     }
    ]
   }

@@ -278,7 +278,8 @@ def test_a_document_without_the_new_fields_may_declare_any_prior_version(version
 # Property e (partial): a withheld value never carries a number; a SINGLE
 # value_state entry that mixes the fields of two ways is rejected. Two rules the
 # schema CANNOT express (a key shown in values[] AND withheld in the map; a shown
-# value with no entry) are pinned as known limits in the xfail tests below.
+# value with no entry) are refused instead by the shared rule of
+# app/contracts/results_way_rules.py, asserted in the validator tests below.
 # ---------------------------------------------------------------------------
 
 
@@ -299,8 +300,9 @@ def test_one_entry_mixing_two_ways_is_rejected() -> None:
     # One value_state entry that carries BOTH a shown way (way: settled) and the
     # fields of a withheld way (label/reason/gap_kind/resolved_by) matches none of
     # the three closed value_state branches and is rejected. NOTE: this is NOT the
-    # "same key shown in values[] and withheld in the map" case - the schema does
-    # NOT refuse that (see the KNOWN_LIMIT xfail tests below).
+    # "same key shown in values[] and withheld in the map" case - the schema alone
+    # does NOT refuse that (see the tests below that show the validator's shared rule
+    # refusing what the schema alone accepts).
     states["max_residential_far"] = {
         "way": "settled",
         "label": "Maximum residential FAR",
@@ -313,29 +315,25 @@ def test_one_entry_mixing_two_ways_is_rejected() -> None:
 
 
 # ---------------------------------------------------------------------------
-# KNOWN LIMITS. The schema is expressed with only the keywords the repository's
-# contract validator accepts (.github/scripts/validate_contracts.py), so it does
-# NOT refuse three wrong documents: a shown value with no way entry (C7b), a key
-# both shown and withheld (C6), and an EMPTY value_states map on an available
-# answer (round 4 - the empty map is the same gap as a shown value with no entry).
-# Refusing them is owed to the validator of the engine that first emits 1.3.0
-# (backlog row DB-171). strict=True makes each test FAIL the day the gap is
-# closed, forcing whoever closes it to remove the mark.
+# The three cases the SCHEMA cannot refuse, now refused by the validator
+# (task M5-T131, backlog row DB-171). The schema is expressed with only the
+# keywords the repository's contract validator accepts
+# (.github/scripts/validate_contracts.py), so it alone still ACCEPTS all three
+# documents below: a shown value with no way entry (C7b), a key both shown and
+# withheld (C6), and an EMPTY value_states map on an available answer (the empty
+# map is the same gap as a shown value with no entry). The shared rule of
+# app/contracts/results_way_rules.py refuses them through both validators; each
+# test below asserts that the validator (validate_results_document) refuses its
+# document. The bare schema still accepting all three is pinned in
+# test_results_way_rules.py (test_bare_schema_accepts_the_three_documents_the_rule_refuses).
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="KNOWN LIMIT (DB-171): JSON Schema 2020-12 cannot quantify that every value key "
-    "shown in an answer's values[] array also carries a value_state, so a shown value with no "
-    "way entry (settled by silence) is NOT refused by the schema. Refusing it is owed to the "
-    "validator of the engine that first emits 1.3.0; strict xfail fails when that lands.",
-)
-def test_KNOWN_LIMIT_a_shown_value_with_no_way_entry_is_not_refused_by_the_schema() -> None:
+def test_a_shown_value_with_no_way_entry_is_refused_by_the_validator() -> None:
     doc = _base_1_3_0()
     # Two values are shown in floor_area_allowance; leave only ONE value_state entry,
-    # so the second shown value states no way (C7b). The desired rule is that the
-    # contract refuses this; it does not today, so this assertion fails -> xfail.
+    # so the second shown value states no way (C7b). The SCHEMA alone still accepts
+    # this; the shared rule of app/contracts/results_way_rules.py refuses it.
     doc["answers"]["floor_area_allowance"]["value_states"] = {
         "max_residential_far": {"way": "settled"}
     }
@@ -344,18 +342,11 @@ def test_KNOWN_LIMIT_a_shown_value_with_no_way_entry_is_not_refused_by_the_schem
         validate_results_document(doc)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="KNOWN LIMIT (DB-171): JSON Schema 2020-12 cannot express cross-container key "
-    "disjointness for dynamic keys, so a key shown in an answer's values[] array AND carrying "
-    "a withheld value_state (both shown and withheld) is NOT refused by the schema. Refusing it "
-    "is owed to the validator of the engine that first emits 1.3.0; strict xfail fails on close.",
-)
-def test_KNOWN_LIMIT_a_key_both_shown_and_withheld_is_not_refused_by_the_schema() -> None:
+def test_a_key_both_shown_and_withheld_is_refused_by_the_validator() -> None:
     doc = _base_1_3_0()
     # max_residential_far stays a shown item of values[] (value 2.0) AND is given a
-    # withheld value_state (C6). The desired rule is that the contract refuses this;
-    # it does not today, so this assertion fails -> xfail.
+    # withheld value_state (C6). The SCHEMA alone still accepts this; the shared rule
+    # of app/contracts/results_way_rules.py refuses it.
     shown = {v["key"] for v in doc["answers"]["floor_area_allowance"]["values"]}
     assert "max_residential_far" in shown
     doc["answers"]["floor_area_allowance"]["value_states"]["max_residential_far"] = {
@@ -369,20 +360,11 @@ def test_KNOWN_LIMIT_a_key_both_shown_and_withheld_is_not_refused_by_the_schema(
         validate_results_document(doc)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="KNOWN LIMIT (DB-171): the schema uses only the keywords the repository's contract "
-    "validator accepts, which cannot require a non-empty object (no minProperties), so an EMPTY "
-    "value_states map on an available answer of a 1.3.0 document is NOT refused. An available "
-    "answer always has a shown value, so this is the same gap as a shown value with no entry. "
-    "Refusing it is owed to the validator of the engine that first emits 1.3.0; strict xfail "
-    "fails when that lands.",
-)
-def test_KNOWN_LIMIT_an_empty_way_map_is_not_refused_by_the_schema() -> None:
+def test_an_empty_way_map_on_an_available_answer_is_refused_by_the_validator() -> None:
     doc = _base_1_3_0()
     # An available answer carries an EMPTY value_states map (present, satisfying the
-    # forward binding's 'required', but with no ways at all). The desired rule is
-    # that the contract refuses this; it does not today, so this assertion fails -> xfail.
+    # forward binding's 'required', but with no ways at all). The SCHEMA alone still
+    # accepts this; the shared rule of app/contracts/results_way_rules.py refuses it.
     doc["answers"]["floor_area_allowance"]["value_states"] = {}
     assert doc["answers"]["floor_area_allowance"]["status"] == "available"
     with pytest.raises(StudyContractError):
