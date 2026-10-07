@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 499,
+ "requirement_count": 535,
  "producer": "orchestrator",
- "updated_at": "2026-10-07T16:00:32+00:00",
+ "updated_at": "2026-10-07T19:34:08+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -16971,6 +16971,1221 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-07 (message 109).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R500",
+   "text": "'/session-handoff': the session is handed over: the handoff file is written, checked by a different agent, put on a pull request and merged, and the next session's start prompt is printed. ORCHESTRATOR'S READING: the command carried no text, so no reason for the handover is recorded. It was carried out before this record: docs/SESSION_HANDOFF.md seq 148, pull request 465, merge commit 3f08c6c6.",
+   "source_ref": "source-054-amendment.md#owner-message-110-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R476"
+   ],
+   "required_harness": "docs/SESSION_HANDOFF.md at the integration head is seq 148 and the progress-auditor's returns for it are PASS.",
+   "required_evidence": "docs/SESSION_HANDOFF.md; pull request 465 and its checks; the auditor's two returns in the session folder of 2026-10-07a.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 110).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R501",
+   "text": "'Resume as the NYC Buildability orchestrator' 'Read-only checks first; change nothing until they pass' 'Never reset, clean, stash or discard work to pass a check.' 'Report READY TO RESUME or BLOCKED.': the session starts with the read-only checks of the prompt, changes nothing before they pass, and reports READY TO RESUME or BLOCKED. ORCHESTRATOR'S READING: it restates R477 for this session; what the checks found is in the source file.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R477"
+   ],
+   "required_harness": "The checks were run before any write and their results are recorded in the source file.",
+   "required_evidence": "source-055-amendment.md, 'What the start-up checks found'; the session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R502",
+   "text": "'NEXT ACTION, in order: (0) read by hand the main line's own run on the handoff merge 3f08c6c6' '(1) the handoff's \"Waiting work\" item 1: bring wave 5 to a merge' '(2) only then the next wave from \"Waiting work\" item 2, pieces that share no file, with a concurrency record first;' '(3) owner update in plain words and without tables, saying for each item whether it is planned, committed on a branch, merged or tested, and asking again for the open decisions.': the work is done in this order: the main line's own run on the handoff merge is read by hand; wave 5 is brought to a merge (CI read, the rule check, acceptance, the final description, the pre-merge check, the fail-closed merge); only then the next wave, with a concurrency record first and no two pieces on one file; then an owner update in plain words and without a table that says for each item whether it is planned, committed on a branch, merged or tested and asks again for the open decisions.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R475",
+    "D-090-R485",
+    "D-090-R495"
+   ],
+   "required_harness": "The session notes show the steps in this order with their times; no builder of the next wave starts before wave 5's merge commit exists.",
+   "required_evidence": "The session notes; the merge record of pull request 464; the next wave's concurrency record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R503",
+   "text": "'Owner message 110 (/session-handoff) is not recorded yet; number it with the next record.': message 110 is recorded with the next record and keeps the number 110. Done by source-054 and row R500 in this same commit.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R500"
+   ],
+   "required_harness": "source-054-amendment.md exists and row R500 cites it.",
+   "required_evidence": "source-054-amendment.md; requirements.json.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R504",
+   "text": "'STOPS: Tier D (production approval, payments, secrets, paid accounts); PR #241 never; the expansion \u00a72 hold; all production switches off;' 'no apartment estimator before the owner answers the measurement-basis questions; never offer the early simple PDF;' 'no restructuring of the instruction files before the owner answers;' 'this session's helpers cannot be resumed, so a correction needs a new builder;': every stop listed in the prompt stays in force. ORCHESTRATOR'S READING: the list restates stops already recorded (R484 to R486, R491, R495 to R497) and lifts none; the second half of the message (the reviewer's check) lifts none either.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R484",
+    "D-090-R491",
+    "D-090-R497"
+   ],
+   "required_harness": "No record, task or pull request of this session acts against a listed stop.",
+   "required_evidence": "The session notes, the ledger and the next handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R505",
+   "text": "'**I would not approve the whole package as written.**' 'I found a zoning error, an inconsistent worked example, and two remaining errors in the new module\u2019s explanations.': the recommendations put to the owner with the open questions (the reply to message 109, parts A to E) are not approved as written. ORCHESTRATOR'S READING: the text is the check made by the owner's reviewer, addressed to the owner and sent on by the owner without a word added; its findings are corrections to carry out (rows R509 to R531); it decides no open choice in the owner's own words, so every open choice stays open (R283) and the owner is asked again (R533).",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R499"
+   ],
+   "required_harness": "No record treats a choice of parts A to E as decided because of this message.",
+   "required_evidence": "The session notes, the ledger and the next handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R506",
+   "text": "'**The merged-work report checks out\u2014with an important limit.**' 'Nothing calls it yet.' 'That means its protections **do not yet govern the program\u2019s existing answers**.' 'The existing engine path still assigns 100% coverage to a lot classified as \u201ccorner\u201d without considering its actual reach.': until the decision module is called by the real path, every record and owner update says plainly that its protections do not govern the program's existing answers; the piece that wires it in makes the real path stop giving 100 percent coverage to a lot only because it is classified as a corner lot: the coverage then follows the measured reach or is withheld. ORCHESTRATOR'S READING: this is the planned wire-and-emit piece (handoff seq 148, waiting work 2 (i)); the row is bound to that task when it is contracted.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R505"
+   ],
+   "required_harness": "A test on the real path: a lot classified as a corner lot whose reach is beyond the corner area does not get 100 percent coverage for the whole lot; the review register entry r6b-lot-coverage is updated in the same change.",
+   "required_evidence": "The wire-and-emit task's tests, its review records and the review register.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R507",
+   "text": "'I did not verify whether that path is exposed on the deployed website.': the owner is told, from evidence, whether a user of the deployed website can reach the engine path that gives a corner lot 100 percent coverage. ORCHESTRATOR'S READING: the answer comes from the server's routes in the repository and, where it can be read without a secret, from the deployed service; if it cannot be established the update says 'not established'.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R506"
+   ],
+   "required_harness": "The owner update states the answer and names what it rests on.",
+   "required_evidence": "The session transcript (the owner update); the session notes with the commands run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R508",
+   "text": "'The security cleanup had advanced to [PR #463](https://github.com/martin10101/nyc-buildability/pull/463), still open when checked' 'This removes the expired **source-map-js** age exception; it is separate from the earlier **sharp** repair.': the state of the security clean-up is a dated fact and is read again before it is repeated. Read at this capture: pull request 463 is MERGED (2026-10-07T15:59:30Z, merge commit 596c034f), before this message arrived; it removes the one-time age exception for source-map-js and is separate from the earlier repair of sharp.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [],
+   "required_harness": "gh pr view 463 shows MERGED with merge commit 596c034f.",
+   "required_evidence": "GitHub pull request 463; the integration branch's history.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R509",
+   "text": "'**Use the floor area the proposed building can accommodate.**' 'The opening formula still says \u201callowed floor area.\u201d' 'The estimate should use:' '**Proposed building\u2019s residential zoning floor area \u00d7 assumed apartment-area ratio \u00f7 assumed HPD-measured apartment size.**' 'Keep the maximum permitted floor area separately.' 'If a detailed layout already measures the apartments themselves, use that measured area directly.': the realistic apartment estimate is stated, in the measurement-basis record and in every owner text, as: the proposed building's residential zoning floor area, times an assumed apartment-area ratio, divided by an assumed apartment size measured as HPD measures it. The maximum permitted floor area is kept as a separate figure and is never the starting area of the estimate; where a detailed layout measures the apartments, that measured area is used directly. ORCHESTRATOR'S READING: the words 'allowed floor area' were in the orchestrator's reply to message 109; the record itself (section 3) already says the measured space comes from a layout (R435) but states no formula for the estimate; it gains one.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R396",
+    "D-090-R435"
+   ],
+   "required_harness": "The measurement-basis record states the formula in these terms; no sentence of the record or of an owner update starts the estimate from the allowed or permitted floor area.",
+   "required_evidence": "docs/measurement-basis/MEASUREMENT_BASIS.md after the correction task; its independent review; the owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R510",
+   "text": "'the stated outside footprint is **30 \u00d7 42 = 1,260 sq ft per residential floor**' 'Those components total **1,743 sq ft per upper floor**, exceeding the stated footprint by **483 sq ft**.' 'If that footprint was intended to describe only part of the floor, the example must say so and supply the complete floor.' 'Correct this before using the examples as evidence.': the mixed-use worked example (Example C) is repaired so that the building it describes fits: on every floor the listed components add up to that floor's stated outline, and the complete floor is given. Until then no example is used as evidence. ORCHESTRATOR'S READING, from the file at 3f08c6c6: per upper floor the schedule lists 1,120 (apartment rooms, 28 x 40, the whole inside outline) + 35 + 25 + 140 + 200 + 165 + 48 + 10 = 1,743 sq ft against a stated outside outline of 30 x 42 = 1,260 sq ft: the finding is confirmed. The same check is made on the other two examples in the same change: Example A adds up to its 40 x 50 floor (2,000 sq ft per floor); Example B states no floor outline at all (an 'outer ring proxy'), so its fit cannot be checked and it is repaired too.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R436"
+   ],
+   "required_harness": "For each example and each floor: the sum of the components on that floor equals the floor's stated outside outline, recomputed by the examples' test with exact decimal arithmetic; an independent reviewer recomputes it by hand.",
+   "required_evidence": "docs/measurement-basis/examples/ after the correction task; services/api/tests/scenario/measurement_basis/; the review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R511",
+   "text": "'The arithmetic producing the ratio can pass while the underlying building does not fit.': the examples' test checks the building's fit, not only the arithmetic: it fails when the components of a floor do not add up to that floor's stated outline, when a floor has no stated outline, or when a room schedule fills the inside outline and further components are added on top. The test is shown to fail on the examples as they are today before they are repaired.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R510"
+   ],
+   "required_harness": "The new check fails on today's Example C (and on an example with no outline) and passes on the repaired examples; a reviewer breaks one dimension and sees it fail.",
+   "required_evidence": "services/api/tests/scenario/measurement_basis/; the review records of the correction task.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R512",
+   "text": "'**The examples do not establish a 60\u201375% realistic range\u2014and one needs repair.**' 'A 0.60\u20130.75 range could still be a **chosen sensitivity range**, clearly labelled as unvalidated.': no record, screen or owner update presents 0.60 to 0.75 as a realistic, expected or validated range, or says the examples support it; if the owner adopts the range it is shown as a chosen sensitivity range labelled as unvalidated.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R436",
+    "D-090-R361"
+   ],
+   "required_harness": "A search of the records and of the owner updates of this session finds no sentence that calls the range realistic, expected or validated.",
+   "required_evidence": "docs/measurement-basis/; docs/SESSION_HANDOFF.md; the session transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R513",
+   "text": "'**Shared-space allocation cannot be switched off.**' 'Sections 23-20 and 35-31 require shared floor area to be allocated proportionately among uses, based on their exclusive-use floor areas.' 'This is a required calculation, not an optional allowance, and it does not necessarily increase the residential estimate.' 'If the necessary areas are missing, the dependent result remains unknown or explicitly conditional.': in a building with more than one use, the allocation of shared floor area among the uses is a required step of the calculation: it is never an option a user switches on or off and never an owner preference. The provisions are captured from the official source and read independently before the record states the rule; where the areas the allocation needs are missing, the result that depends on it is withheld or shown as explicitly conditional. ORCHESTRATOR'S READING: the record's open point 6 and the reply to message 109 ('three special cases, off unless the user confirms them') treated it as a choice; both are corrected. The section numbers are the reviewer's; the capture establishes where the rule stands today (R517).",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R407",
+    "D-090-R517"
+   ],
+   "required_harness": "The record states the allocation rule from a captured provision with its link; no plan or record offers an on/off switch for it; a reference case works one mixed building by hand.",
+   "required_evidence": "docs/research/zr-snapshots/v1/ (the new captures); docs/measurement-basis/ after the correction task; the review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R514",
+   "text": "'**The amenity rule names its 5% basis.**' 'Section 23-231 specifies **the building\u2019s residential floor area**.' 'It concerns eligible amenity space actually provided and accessible to residents; circulation is excluded from this category.' 'It is not an automatic 5% increase in apartment space.': the record says that ZR 23-231 names the base of its 5 percent: the residential floor area of the building; that it covers eligible amenity space actually provided and accessible to residents; that circulation is not amenity space; and that it is never an automatic 5 percent added to apartment space. ORCHESTRATOR'S READING: the capture zr-23-231 in the repository already quotes 'an amount not to exceed five percent of the residential floor area of the building'; the record's open point 5 and the reply to message 109 ('I am not sure what the 5 percent is measured against') are corrected.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R403"
+   ],
+   "required_harness": "The record's statement of the amenity rule quotes the capture; point 5 no longer asks the owner what the base is.",
+   "required_evidence": "docs/measurement-basis/MEASUREMENT_BASIS.md after the correction task; capture zr-23-231; the review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R515",
+   "text": "'Any remaining question about calculation order should be resolved through research, rather than handed to you as a preference.': a question about what the law says or in what order it is applied is never put to the owner as a preference: it is resolved by capturing the text and reading it independently, and where that leaves doubt the record says 'not sure' with the link (R164). ORCHESTRATOR'S READING: it applies to the three 'special cases' and to every later list of owner decisions; owner decisions are design assumptions, scope, order and spending.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R164"
+   ],
+   "required_harness": "The list of open owner decisions in the handoff and in owner updates holds no question of legal reading.",
+   "required_evidence": "docs/SESSION_HANDOFF.md ('Owner decisions open'); the session transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R516",
+   "text": "'**Energy and wall exclusions need specific eligibility, not a general confirmation box.**' 'The \u201cfully electrified building\u201d route concerns buildings existing on December 6, 2023.' 'New construction can qualify through the separate ultra-low-energy definition, which includes performance and professional-verification requirements.' 'The qualifying-wall exclusion principally concerns specified existing-building recladding work and grandfathered walls\u2014not simply thicker walls in a new building.' 'User assertions may support conditional scenarios; they do not establish eligibility.': the record states, for the energy exclusion and for the exterior-wall exclusion, the specific conditions of eligibility from the captured definitions, and no plan offers a general 'confirm it applies' switch for them. A user's statement can only support a conditional result; it never establishes eligibility. ORCHESTRATOR'S READING: the repository holds the capture of 'qualifying exterior wall thickness' (a building existing on December 6, 2023); the definitions of 'fully electrified building' and 'ultra low energy building' are captured and read before the record states them (R517). The record's open point 7 is corrected.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R403",
+    "D-090-R517"
+   ],
+   "required_harness": "Each of the two exclusions is stated in the record with its conditions quoted from a capture; an independent reader confirms the quotes.",
+   "required_evidence": "docs/research/zr-snapshots/v1/; docs/measurement-basis/ after the correction task; the review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R517",
+   "text": "'I checked the repository as well as the official sources.' '[Zoning Resolution](https://zr.planning.nyc.gov/article-ii/chapter-3/23-22?utm_source=chatgpt.com)': each statement of law in the message (shared-space allocation; the amenity base; the two energy routes; the wall exclusion; the R6B base and overall heights; the dwelling-unit factors by option; the bicycle requirements; the imagery terms; the PDF tool's behaviour) is checked at its official source before a record is changed because of it, and a difference between the source and the message is told to the owner first. ORCHESTRATOR'S READING: seen at this capture, to be confirmed by the capture task: the message links the dwelling-unit rule at section 23-22 while the repository's capture of the current text has it at ZR 23-52 (last amended 2024-12-05); the link addresses in the message end in a tracking tag and are not copied into any record.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R164"
+   ],
+   "required_harness": "Every record changed because of this message cites a capture or a dated official page for the statement it changes; the differences found are listed in an owner update.",
+   "required_evidence": "docs/research/zr-snapshots/v1/; the research entries; the session transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R518",
+   "text": "'My recommendations on the remaining apartment choices are:' '| Choice | My recommendation |' 'Permit as an editable sensitivity assumption, not a validated expected range.' 'Reasonable as a chosen starting assumption, explicitly measured on the HPD basis.' 'Reasonable editable starting assumptions, subject to the actual building envelope.' 'Yes. Even afterward, call the result a preliminary capacity estimate.': the reviewer recommends: 0.60 to 0.75 as an editable sensitivity assumption and not a validated expected range; 700 sq ft as a chosen starting assumption measured on the HPD basis; 10 ft and 15 ft as editable starting assumptions subject to the actual building envelope; 'not known' until an option has a shape and floors, and after that the result is called a preliminary capacity estimate. ORCHESTRATOR'S READING: these are the reviewer's recommendations sent on by the owner, not the owner's own words; they are NOT recorded as decided (R283). The owner is asked to say yes or to change them (R533). If adopted, the labels are these exact ones.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R361"
+   ],
+   "required_harness": "No task is contracted on these values as approved before the owner answers in their own words; the answer, when given, is recorded as its own source.",
+   "required_evidence": "The ledger; the next owner message that answers.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R519",
+   "text": "'The example counts **17\u201321** and **22/19/16** are arithmetically correct, assuming all 20,150 sq ft is accommodated.' 'However, five floors do not mean five equal floorplates' 'R6B has a **45-foot maximum base height**, with setbacks required above it, alongside the 55/65-foot overall limits.': an illustration of the realistic count states the assumption it rests on (that the whole floor area fits), and no record or estimate treats the floors of an option as equal floorplates: above the maximum base height the setbacks reduce the floor, so the floor area comes floor by floor from the option's shape. ORCHESTRATOR'S READING: the reply to message 109 said 'five floors' fit under the height limit without saying that the upper floors are smaller; the record's section on how an assumption changes the count gains this. The heights are checked against the captured ZR 23-432 table (R517); the setback above the base is not worked out by the program yet.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R435",
+    "D-090-R517"
+   ],
+   "required_harness": "The record says so with the captured provision; no worked figure in a record or update multiplies one floorplate by the number of floors above the base height without saying it is an assumption.",
+   "required_evidence": "docs/measurement-basis/MEASUREMENT_BASIS.md after the correction task; the owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R520",
+   "text": "'Also retain the option-specific density figures: **29 for standard residences**, **35 for qualifying affordable housing** on the assumed full-residential lot, where the 680 factor applies.' 'Qualifying senior housing has no applicable dwelling-unit factor.' 'These remain conditional ceilings.': the legal ceilings on the number of apartments stay in the results option by option: 29 for standard residences and 35 for qualifying affordable housing on the test lot under the stated assumption, none for qualifying senior housing; each is shown as a conditional ceiling and never as the number that fits. ORCHESTRATOR'S READING: the figures are checked against the R6B reference cases before they are repeated; the realistic estimate does not replace them.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R392",
+    "D-090-R404"
+   ],
+   "required_harness": "The reference cases hold the three ceilings with their conditions; the decision module's results for the three options keep them apart from the estimate.",
+   "required_evidence": "docs/reference-cases/R6B/; the decision module's tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R521",
+   "text": "'Evidence establishes that the lot is outside a special density area' 'Says there is no evidence and asks for evidence already supplied.': when evidence establishes that the lot is outside a special density area, the decision module's explanation says so: it does not say there is no evidence, and what it names as resolving the result is not evidence already given. ORCHESTRATOR'S READING, from services/api/app/scenario/three_answers/result_ways.py at 3f08c6c6 (lines 384 to 395): the state EVIDENCE_NOT_IN_ONE falls through to the text written for 'not given'; the finding is confirmed by reading. The corrected text names what really holds the result back in that state, taken from the work order's reading.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R505"
+   ],
+   "required_harness": "A test for exactly this input state asserts the reason and the 'resolved by' text; it fails on the code as merged today.",
+   "required_evidence": "The correction task's tests and review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R522",
+   "text": "'Corner reach is 90 ft; intersection angle is 140\u00b0' 'Blames distance beyond the waiver area, although the failing condition is the angle.': when the corner reach is within the limit and the angle is not, the decision module's explanation names the angle as the failing condition, with the measured angle and the limit; it names the distance only when the distance fails, and both when both fail. ORCHESTRATOR'S READING, from result_ways.py at 3f08c6c6 (lines 300 to 316): one text serves 'not within the distance' and 'not within the angle'; the finding is confirmed by reading.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R505"
+   ],
+   "required_harness": "Tests for the three failing states (distance only, angle only, both) assert the reason and the 'resolved by' text; the angle-only test fails on the code as merged today.",
+   "required_evidence": "The correction task's tests and review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R523",
+   "text": "'**Two explanations still need fixing before the new module reaches users.**' 'Both results remain withheld.' 'The problem is the stated reason and what the user is told would resolve it.': the two explanations are corrected and merged before any route, screen or export shows the decision module's texts to a user. The correction changes texts only: both results stay withheld, and no result changes the way it appears.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R521",
+    "D-090-R522"
+   ],
+   "required_harness": "The correction's merge commit is an ancestor of the first commit that lets a route or a screen show the module's texts; a test pins that each of the two results is still withheld.",
+   "required_evidence": "The integration branch's history; the tasks' review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R524",
+   "text": "'Direct checks of the [merged module](https://github.com/martin10101/nyc-buildability/blob/51b3375a0785c7628eb39fdad694dc12925473f9/services/api/app/scenario/three_answers/result_ways.py) reproduced these cases:' '| Input | Incorrect explanation |': the two cases become regression tests, and the same fault is looked for everywhere before anything is fixed: for every result of the decision module and of the modules that carry facts to it, a table lists every input state with the reason shown and the 'resolved by' text, and each row is checked for (a) the reason naming the condition that really fails in that state and (b) the 'resolved by' text not asking for something the state already holds. All faults found are repaired in one change, one test per input state. ORCHESTRATOR'S READING: the reviewer found two by direct checks; the inventory is the orchestrator's addition under the repository's rule on related failures (CLAUDE.md principle 17).",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R521",
+    "D-090-R522"
+   ],
+   "required_harness": "The table is in the task's report; an independent reviewer picks input states the builder did not name and checks the texts; every row has a test.",
+   "required_evidence": "The correction task's report, tests and review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R525",
+   "text": "'**Option order:** acceptable as a development sequence.': the reviewer finds the proposed order of the options acceptable as an order of building. ORCHESTRATOR'S READING: a recommendation sent on by the owner; the order is NOT recorded as decided (R283); the owner is asked again (R533).",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283"
+   ],
+   "required_harness": "No record states the order as decided before the owner answers in their own words.",
+   "required_evidence": "The ledger; the next owner message that answers.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R526",
+   "text": "'But parking, loading and bicycle applicability must be resolved before presenting an option as feasible.' 'Their report section can come later.' 'Bicycle requirements alone vary by use and building configuration.': no option is presented as feasible while it is not resolved whether parking, loading and bicycle requirements apply to it: until then the option's results say that these requirements are not yet checked. The report section with the counts may be built later. ORCHESTRATOR'S READING: it binds the option comparison, the website's display and the report; the provisions are captured and read before a result depends on them (R517).",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R517"
+   ],
+   "required_harness": "Every display of an option carries a line for parking, loading and bicycle requirements that is either resolved from a captured provision or says 'not yet checked'; no text calls an option feasible without it.",
+   "required_evidence": "The display task's fixtures and tests; the option comparison's records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R527",
+   "text": "'**Additional sections:** keep them as proposed; retain the financial hold.': the six sections beyond the nine contents stay as proposed, none is dropped, and the owner's hold on the financial inputs stays. ORCHESTRATOR'S READING: a recommendation sent on by the owner; it changes nothing on record (nothing is dropped; the hold was never lifted); the timing of each section stays an open choice (R533).",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283"
+   ],
+   "required_harness": "No section is dropped in any plan; no task touches the financial inputs.",
+   "required_evidence": "docs/plans/; the ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R528",
+   "text": "'**Imagery:** Google Street View is more than a possible fee question.' 'Its standard guidelines prohibit print use, screenshots and separate offline copies.' 'Plan for licensed street photographs or a Street View link in saved reports.' 'Esri separately permits certain static report uses under its agreement, subject to applicable restrictions and attribution.': the plan for the saved report holds no Street View picture: it plans for licensed street photographs or a link to Street View. Esri imagery is planned only within what its agreement allows, with its attribution. ORCHESTRATOR'S READING: the reply to message 109 called this 'possibly a fee' question; that is corrected in the next owner update. Both sets of terms are read at their official pages at the PDF step before anything is built (R517); no spending or account follows from this row.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R517",
+    "D-090-R491"
+   ],
+   "required_harness": "The backlog and the plan for the PDF step carry this; no task embeds a Street View image in a saved report.",
+   "required_evidence": "docs/DISCOVERY_BACKLOG.md; the plan of the PDF step when written.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R529",
+   "text": "'**PDF:** a trial is sensible.' 'Chromium does not guarantee an exact website match; PDF generation uses print styling by default.' 'Immediate PDF download also does not require permanent report storage.': at the PDF step the converter is chosen after a trial, and two statements of the reply to message 109 are corrected: a hidden browser does not guarantee a PDF that matches the website exactly (it prints with print styling by default), and a PDF offered for immediate download does not need a permanent storage place, so storage is not a precondition of the first PDF. ORCHESTRATOR'S READING: the trial happens at the PDF step in the recorded order, never earlier (R491).",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R491",
+    "D-090-R517"
+   ],
+   "required_harness": "The backlog and the plan for the PDF step carry both corrections; the next owner update states them.",
+   "required_evidence": "docs/DISCOVERY_BACKLOG.md; the session transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R530",
+   "text": "'**Instruction files:** slimming them is sensible.' 'The reported **99.7%** usage is accurate.' 'Review the exact proposed moves and preserve a clear instruction for when the relocated material must be read.': when the slimming of the instruction files is proposed, the owner is shown the exact list of what moves and where, and every moved item keeps, in the always-loaded files, a clear instruction saying when it must be read. ORCHESTRATOR'S READING: a recommendation sent on by the owner; nothing is restructured before the owner answers in their own words (the stop in this same message, R504).",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R504"
+   ],
+   "required_harness": "No instruction file is restructured before the owner's answer; the proposal, when made, is a list of moves with a reading trigger for each.",
+   "required_evidence": "git history of CLAUDE.md and .claude/rules/; the proposal when written.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R531",
+   "text": "'I recommend allowing the ongoing integration work to continue, while requiring the example, allocation rule and explanation fixes before approving the apartment estimator or exposing these results.': the integration work continues (wave 5 to its merge; the piece that wires the decision module into the real path). The repair of the example, the allocation rule and the two explanations come before the apartment estimator is approved or contracted and before these results are shown to a user. ORCHESTRATOR'S READING: 'exposing these results' is a server route, a screen or an export that a user can reach; the three repairs are contracted in the next wave, first.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R510",
+    "D-090-R513",
+    "D-090-R523"
+   ],
+   "required_harness": "No estimator task is contracted and no route, screen or export shows the module's results before the three repairs are merged.",
+   "required_evidence": "The ledger; the integration branch's history.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R532",
+   "text": "'The progress report is largely accurate, and several recommendations are sensible.' 'No changes were made.': each correction of this message is finished only when an agent other than its builder has verified it against the file or the run it names; until then its status in every record and update is 'not finished'. No record says the reviewer's findings are 'addressed' or 'closed' from the builder's own report.",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R173"
+   ],
+   "required_harness": "Every row R506 to R531 that leads to a change has an independent review record at a named commit before it is reported as done.",
+   "required_evidence": "project-control/reports/ of the correction tasks; verification.json.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R533",
+   "text": "'needs the following corrections before implementation.' 'are mostly reasonable, with these adjustments.': the owner gets an answer to the check, item by item, in plain words and without a table: for each finding what was wrong and what is being changed, with no defence; the differences found between the message and the sources (R517); whether the corner-coverage path can be reached on the website (R507); and the open decisions asked again, among them whether the owner adopts the reviewer's four recommendations on the apartment choices (R518) and on the order of the options (R525).",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R475",
+    "D-090-R507",
+    "D-090-R518",
+    "D-090-R525"
+   ],
+   "required_harness": "The owner update of this session covers each finding and each open decision and holds no table.",
+   "required_evidence": "The session transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R534",
+   "text": "'In [Example C](https://github.com/martin10101/nyc-buildability/blob/38e45791ed87b19de59a2060356c9732872fc7f6/docs/measurement-basis/examples/example-c-mixed-use.json), the stated outside footprint is': the measurement-basis record and its examples are corrected by a contracted task of their own, reviewed independently, before the record is put to the owner again: the formula (R509), the examples and their test (R510, R511), the range (R512), the allocation rule (R513), the amenity base (R514), the eligibility conditions (R516) and the unequal floors (R519). The list of open points in the record is rewritten so that it holds only the owner's choices (R515).",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R509",
+    "D-090-R510",
+    "D-090-R513",
+    "D-090-R514",
+    "D-090-R515",
+    "D-090-R516",
+    "D-090-R519"
+   ],
+   "required_harness": "The corrected record and examples are merged after an independent review that recomputes the examples and checks each quoted provision against its capture.",
+   "required_evidence": "docs/measurement-basis/ at the merge commit of the correction task; its review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R535",
+   "text": "'WHERE WE ARE: the owner wants the FULL feasibility report comparable to their sample PDF, with reliable numbers, for all of R1\u2013R12, built one piece at a time; a finished piece is a milestone, not completion.' 'On a branch, reviewed by AI agents and NOT merged (draft pull request #464, wave 5)' 'Nothing of the report itself is on a screen beyond what existed.' 'No open choice is decided.': the position the prompt states is checked against the repository before it is relied on. Read at this capture: pull request 464 is an open draft at 910a39e5 with its three tasks awaiting review and 46 of 46 checks successful; the integration branch is at 3f08c6c6; the ledger counts equal the handoff's. The goal restates R478; no open choice is decided by the prompt or by the reviewer's check (R505).",
+   "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R478",
+    "D-090-R505"
+   ],
+   "required_harness": "The start-up checks recorded in the source file agree with the prompt's statements; a difference would have been reported as BLOCKED.",
+   "required_evidence": "source-055-amendment.md, 'What the start-up checks found'; the session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 111).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

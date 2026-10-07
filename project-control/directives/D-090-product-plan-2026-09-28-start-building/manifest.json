@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-07T16:00:32+00:00",
+ "updated_at": "2026-10-07T19:34:08+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -520,10 +520,46 @@
   "D-090-R496",
   "D-090-R497",
   "D-090-R498",
-  "D-090-R499"
+  "D-090-R499",
+  "D-090-R500",
+  "D-090-R501",
+  "D-090-R502",
+  "D-090-R503",
+  "D-090-R504",
+  "D-090-R505",
+  "D-090-R506",
+  "D-090-R507",
+  "D-090-R508",
+  "D-090-R509",
+  "D-090-R510",
+  "D-090-R511",
+  "D-090-R512",
+  "D-090-R513",
+  "D-090-R514",
+  "D-090-R515",
+  "D-090-R516",
+  "D-090-R517",
+  "D-090-R518",
+  "D-090-R519",
+  "D-090-R520",
+  "D-090-R521",
+  "D-090-R522",
+  "D-090-R523",
+  "D-090-R524",
+  "D-090-R525",
+  "D-090-R526",
+  "D-090-R527",
+  "D-090-R528",
+  "D-090-R529",
+  "D-090-R530",
+  "D-090-R531",
+  "D-090-R532",
+  "D-090-R533",
+  "D-090-R534",
+  "D-090-R535"
  ],
- "requirements_id_digest_sha256": "6f6f278e89cf7fdcad1b10f41dc28aefdb6d023ee40fb816dd0deaf195626722",
- "requirements_content_digest_sha256": "2a5fc60fe788881e17ac30262f36cc71af24e249a4c27f3eb2dd5739eda90e4b",
+ "requirements_id_digest_sha256": "f0a2b6679faaf2f8438636bd56152fb3c450405a272d4fc2aec94b05e58a4460",
+ "requirements_content_digest_sha256": "14c21546b932ea9996f079bf1237f37a49671d30286d905d8e4eb4b36cbc62b6",
  "sources": [
   {
    "file": "source-001.md",
@@ -947,6 +983,22 @@
    "recorded_at": "2026-10-07T15:04:57+00:00",
    "content_digest_sha256": "f255fa5c281f90ca8bb683340540bb7a1715b7ae76f6688ddddf6b9bd6b730ab",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-054-amendment.md",
+   "kind": "amendment",
+   "sequence": 54,
+   "recorded_at": "2026-10-07T19:34:08+00:00",
+   "content_digest_sha256": "ea46db651ed16242c9b63bc9b6ae77dfbeea01cd24e7aa937ee857656ea20ff7",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-055-amendment.md",
+   "kind": "amendment",
+   "sequence": 55,
+   "recorded_at": "2026-10-07T19:34:08+00:00",
+   "content_digest_sha256": "84766169ec3545652c0f364660496a72f029f6e88e3c9e07b758c168791cdd81",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1001,7 +1053,9 @@
   "source-050-amendment.md",
   "source-051-amendment.md",
   "source-052-amendment.md",
-  "source-053-amendment.md"
+  "source-053-amendment.md",
+  "source-054-amendment.md",
+  "source-055-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1497,6 +1551,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M4-T033 (further law-text captures named by the step-P4 readers as not had: the definition of floor area ratio, the yard requirements, the page of ZR 34-23 and others; source text only) to R291 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-07T19:34:08+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-054 (session 013RaGmC message 110, 2026-10-07: /session-handoff) with requirement D-090-R500, and source-055 (message 111, 2026-10-07: the seq 148 start prompt and the owner's reviewer's check of the open recommendations, the worked examples and the decision module's explanations) with requirements D-090-R501 to R535, all pending. Texts extracted by script from the transcripts; nothing retyped; no existing row edited."
   }
  ]
 }
