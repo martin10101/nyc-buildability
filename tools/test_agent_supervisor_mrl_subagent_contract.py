@@ -2,7 +2,9 @@
 (D-024-R566..R579). Paired positive/negative cases for every contract clause."""
 from __future__ import annotations
 
+import errno
 import json
+import os
 import pathlib
 import subprocess
 import sys
@@ -159,6 +161,128 @@ class TestLedger:
         lock.write_text("held", encoding="utf-8")
         with pytest.raises(ContractError, match="fail closed"):
             _req(ledger)
+
+
+# ------------------------------------------------- exclusive lock: Windows delete-pending (M0-T186)
+
+def _failing_lock_open(error: OSError, *, fail_times: int):
+    """A stand-in for ``os.open`` that raises ``error`` on the first ``fail_times``
+    LOCK-file creates, then delegates to the real ``os.open``.
+
+    Returns ``(fake_open, state)``; ``state['calls']`` counts lock-create attempts so
+    a test can prove the acquire loop retried (waited) or stayed loud one-shot. Only
+    paths ending in ``.lock`` are affected, so the ledger's own reads/writes pass
+    straight through. A huge ``fail_times`` models a fault that never clears. Host-
+    independent: it injects the Windows delete-pending failure on any OS, so the
+    transient / never-clears behaviour is pinned deterministically everywhere; the
+    raw Win32 fact is pinned separately by the nt-only platform test below.
+    """
+    real_open = msc.os.open
+    state = {"calls": 0}
+
+    def fake_open(path, flags, *args, **kwargs):  # type: ignore[no-untyped-def]
+        if str(path).endswith(".lock"):
+            state["calls"] += 1
+            if state["calls"] <= fail_times:
+                raise error
+        return real_open(path, flags, *args, **kwargs)
+
+    return fake_open, state
+
+
+class TestExclusiveWindowsDeletePending:
+    """S5: ``_exclusive()``'s acquire loop treats ONLY the proven transient Windows
+    delete-pending ``PermissionError`` as 'lock busy' — retried within the lock's own
+    deadline, then the module's own fail-closed refusal — while every other error
+    stays loud.
+
+    On windows-latest ``os.open(O_CREAT|O_EXCL)`` can raise ``PermissionError``
+    (ERROR_ACCESS_DENIED) when another thread's ``lock.unlink()`` (its ``finally``) is
+    in flight, so the lock file is delete-pending: the directory entry still exists
+    but the create is denied rather than told the file already exists. The pre-repair
+    loop caught only ``FileExistsError``, so that ``PermissionError`` reached the
+    caller unhandled and a worker thread died (CI run 37519342596, job 112460379795).
+    Every case here is injected deterministically on BOTH hosts by patching
+    ``msc._is_windows`` (the platform seam) and ``msc.os.open`` — no real Windows-only
+    syscall — so these run identically everywhere; the raw Win32 fact is pinned by the
+    nt-only test at the end.
+    """
+
+    def test_transient_windows_permission_error_waits_then_succeeds(self, ledger, monkeypatch):
+        # S5(i): the create fails twice with the Windows delete-pending error, then
+        # succeeds -> the request is SERVED and the limits are intact (exactly one
+        # issued, nothing lost). RED pre-repair: the PermissionError reaches the caller
+        # unhandled instead of being waited out, so this line raises before the assert.
+        monkeypatch.setattr(msc, "_is_windows", lambda: True, raising=False)
+        fake_open, state = _failing_lock_open(
+            PermissionError(errno.EACCES, "delete pending"), fail_times=2)
+        monkeypatch.setattr(msc.os, "open", fake_open)
+        decision = _req(ledger)
+        assert decision.allowed is True
+        assert state["calls"] == 3                            # 2 busy retries + 1 success
+        assert ledger.accounting()["subagents_issued"] == 1   # served exactly once
+
+    def test_persistent_windows_permission_error_times_out_fail_closed(self, ledger, monkeypatch):
+        # S5(ii): a delete-pending PermissionError that NEVER clears is bounded by the
+        # lock's own deadline and ends in the module's typed fail-closed refusal
+        # (ContractError '...fail closed'), never an admission and never an unbounded
+        # loop. RED pre-repair: the raw PermissionError reaches the caller instead of
+        # the typed refusal, so pytest.raises(ContractError) does not match it.
+        monkeypatch.setattr(msc, "_is_windows", lambda: True, raising=False)
+        monkeypatch.setattr(msc, "_LOCK_TIMEOUT_S", 0.2)
+        fake_open, state = _failing_lock_open(
+            PermissionError(errno.EACCES, "delete pending"), fail_times=10 ** 9)
+        monkeypatch.setattr(msc.os, "open", fake_open)
+        with pytest.raises(ContractError, match="fail closed"):
+            _req(ledger)
+        assert state["calls"] > 1                             # it retried (waited), not one-shot
+        assert ledger.accounting()["subagents_issued"] == 0   # nothing admitted
+
+    def test_non_permission_oserror_at_create_stays_loud(self, ledger, monkeypatch):
+        # S5(iii): an OSError that is NOT the transient PermissionError (EIO) is caught
+        # by NEITHER except branch, so it reaches the caller at once on either platform
+        # -- never waited out, never turned into a refusal. (No _is_windows patch: the
+        # error is not a PermissionError, so the Windows branch is never consulted.)
+        assert not isinstance(OSError(errno.EIO, "x"), (PermissionError, FileExistsError))
+        fake_open, state = _failing_lock_open(
+            OSError(errno.EIO, "simulated I/O error"), fail_times=10 ** 9)
+        monkeypatch.setattr(msc.os, "open", fake_open)
+        with pytest.raises(OSError) as exc:
+            _req(ledger)
+        assert not isinstance(exc.value, ContractError)       # the raw fault, not a refusal
+        assert state["calls"] == 1                            # immediate, no retry/wait
+
+    def test_permission_error_on_posix_stays_loud(self, ledger, monkeypatch):
+        # S5(iii): on POSIX an O_EXCL create never yields a delete-pending
+        # PermissionError, so a real one is a genuine permission fault and stays loud
+        # (re-raised at once) -- only Windows treats it as transient 'busy'.
+        monkeypatch.setattr(msc, "_is_windows", lambda: False, raising=False)
+        fake_open, state = _failing_lock_open(
+            PermissionError(errno.EACCES, "real permission fault"), fail_times=10 ** 9)
+        monkeypatch.setattr(msc.os, "open", fake_open)
+        with pytest.raises(PermissionError):
+            _req(ledger)
+        assert state["calls"] == 1                            # no wait on POSIX
+
+    @pytest.mark.skipif(
+        os.name != "nt",
+        reason="Windows-only platform fact: on POSIX an O_EXCL create never raises "
+        "PermissionError for a delete race, so the mechanism cannot be exercised there. "
+        "This pins the Win32 behaviour the repair rests on; DEMONSTRATED on "
+        "windows-latest, never assumed from memory of the API.")
+    def test_windows_delete_pending_create_raises_permission_error_platform_fact(self, tmp_path):
+        # S5(iv) / S3: a file that another handle (opened the way os.open opens it,
+        # sharing delete) still holds open AFTER an unlink is delete-pending; an O_EXCL
+        # create on that name raises PermissionError and does NOT create the file.
+        # This is candidate (a)'s mechanism, proven on the platform.
+        lock = tmp_path / "l.json.lock"
+        fd = os.open(str(lock), os.O_CREAT | os.O_WRONLY)   # os.open shares delete on Windows
+        try:
+            os.unlink(str(lock))                            # delete-pending while fd is open
+            with pytest.raises(PermissionError):
+                os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        finally:
+            os.close(fd)
 
 
 # ---------------------------------------------------------------- restricted profile
