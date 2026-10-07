@@ -90,7 +90,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the cases say agreement is not proof (R259); each row is followable",
     "A row that records as agreed something only one reading says (seen in M4-T030) -> S2",
@@ -99,7 +99,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T11:39:27.802047+00:00",
-  "updated_at": "2026-10-07T14:17:36.335147+00:00",
+  "updated_at": "2026-10-07T14:18:14.767338+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",

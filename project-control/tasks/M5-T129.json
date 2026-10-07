@@ -105,7 +105,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "A decision that shows more than the work order allows (a result settled by silence; a district's limit shown as the property's) -> S1, S6 and the reviewers' line-by-line check of the decision table against section 5",
     "A point the work order leaves open filled in silently -> the readings O1 to O10 are named in the packet; O10 withholds everything else and lists it",
@@ -115,7 +115,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T11:39:26.898326+00:00",
-  "updated_at": "2026-10-07T14:17:35.943063+00:00",
+  "updated_at": "2026-10-07T14:18:13.904946+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
