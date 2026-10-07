@@ -104,8 +104,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A decision that shows more than the work order allows (a result settled by silence; a district's limit shown as the property's) -> S1, S6 and the reviewers' line-by-line check of the decision table against section 5",
     "A point the work order leaves open filled in silently -> the readings O1 to O10 are named in the packet; O10 withholds everything else and lists it",
@@ -115,7 +115,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T11:39:26.898326+00:00",
-  "updated_at": "2026-10-07T14:18:13.904946+00:00",
+  "updated_at": "2026-10-07T14:34:08.348005+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -211,5 +211,7 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-07, at the integration of the builder's fourth commit, before the reviewers' next round] (O13) THE LARGE-LOT QUESTION OF GAP K3. The packet did not list it among the inputs. The builder, so that the module holds no zoning number, has the caller state whether the lot is 30,000 sq ft or more (`large_lot_threshold_met`: yes, no, or not stated), and read 'not stated' as 'no', so that the coverage of a corner lot could be shown without knowing it; the G3 reviewer accepted the input and did not rule on the 'not stated' case, and the builder flagged it. Reading: 'not stated' is a fact that is not given, and the packet says of every input that it is never filled by a default. Where it is not stated, the lot coverage is withheld as missing information (it rests on the recorded lot area), with what would resolve it; no other result changes because of it. The orchestrator's reading, for the reviewers to judge."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T14:34:08.347786+00:00"
 }
