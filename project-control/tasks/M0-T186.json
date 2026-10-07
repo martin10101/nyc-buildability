@@ -112,8 +112,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Swallowing every PermissionError would hide a real permission fault and could turn a fail-closed path into a silent wait -> S4: only the proven transient case, bounded by the lock's own deadline, ending in the typed refusal",
     "A green run obtained by a retry of the test instead of a repair -> S6 and R094",
@@ -123,7 +123,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T00:34:23.847931+00:00",
-  "updated_at": "2026-10-07T00:35:06.043510+00:00",
+  "updated_at": "2026-10-07T01:45:13.086525+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
