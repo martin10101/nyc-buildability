@@ -85,8 +85,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "The clean-up lands before the version is old enough and CI's age gate fails -> the task is not started before 2026-10-07T14:08:09.382Z; S3 reads the registry's own time",
     "A change to a security gate that removes more than the exception -> S2: byte-identical to the content before the exception was added; G5 by the security-reviewer",
@@ -95,7 +95,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T05:43:03.410751+00:00",
-  "updated_at": "2026-10-06T05:47:04.930329+00:00",
+  "updated_at": "2026-10-07T15:05:18.169227+00:00",
   "directive_refs": [
     {
       "directive_id": "D-092",
@@ -112,5 +112,15 @@
     "cd apps/web && node scripts/dependency_age_gate.mjs package-lock.json   (live; reads the registry)",
     "git diff --stat 8fe57ca0^ HEAD -- apps/web/.npmrc apps/web/scripts/dependency_age_gate.mjs apps/web/scripts/tests/dependency_age_gate.test.mjs   (expected: empty)",
     "cd apps/web && npm run lint && npm run typecheck && npm run test && npm run build   (Linux dev server; lockfile packages only)"
+  ],
+  "worktree": "/root/project/w-m0t183",
+  "progress_log": [
+    {
+      "at": "2026-10-07T15:05:18.169129+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed at the contract head 48ffa19b (integration head 51b3375a, the merge of wave 4); builder frontend-engineer in an isolated worktree. The seven-day point of source-map-js 1.2.2 (2026-10-07T14:08:09.382Z) has passed."
+    }
   ]
 }
