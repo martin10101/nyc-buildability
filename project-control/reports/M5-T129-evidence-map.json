@@ -1,0 +1,86 @@
+{
+ "task_id": "M5-T129",
+ "material_commits": [
+  "1d3d6964 (cherry-pick of the builder's commit 85bca681: the first version)",
+  "6774d4b0 (of f8cd19af: the split into a third module; reading O4)",
+  "df7060ee (of 319806c9: tests for the first failed G4 review; readings O11 and O12)",
+  "bcf44969 (of 0943f5de: tests only, for the second failed G4 review)",
+  "d96fb0b8 (of 70c765e1: reading O13)",
+  "71d52428 (of fdb186c6: the returned texts; a guard test)",
+  "material head: 71d52428"
+ ],
+ "claim_seam_head": "5f8b78ce",
+ "modules": [
+  "result_way_conditions.py",
+  "result_way_inputs.py",
+  "result_ways.py"
+ ],
+ "test_files": [
+  "test_result_ways.py",
+  "test_result_ways_benchmark.py",
+  "test_result_ways_corner_interior.py",
+  "test_result_ways_facts_area_overlay.py",
+  "test_result_ways_input_states.py",
+  "test_result_ways_lib.py"
+ ],
+ "results_decided": 20,
+ "orchestrator_readings": "O1 to O10 in the packet's objective; O4 completed, and O11 (the district), O12 (the K14 label) and O13 (the large-lot question not stated) added, by the packet's three scope_corrections entries",
+ "owed_work": "wiring into the engine and emitting contract 1.3.0 (the next pieces); docs/DISCOVERY_BACKLOG.md row DB-171",
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/scenario/three_answers: exit 0 (counts in the producer report and the review records)",
+  "pytest tests/contracts tests/spatial tests/rules/reference_cases with both tasks on the branch: exit 0",
+  "tools/modularity_check.py --check: exit 0; no warning names a file of this task (result_ways.py 482, result_way_inputs.py 413, result_way_conditions.py 328 source lines)",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "the orchestrator's script drove the module at the material head for seven cases (the benchmark lot with every overlay result supported and with none; the four conditions checked and absent with agreeing areas; the special-district column not read; a user's statement; the district not given; another district) and asserted the outcomes named above",
+  "the full services/api suite, run alone by the orchestrator at 71d52428 (the final content of both tasks): exit 0, 8267 passed, 8 skipped, 3 expected failures (the three tests that pin the results schema's known limits)"
+ ],
+ "requirements": {
+  "D-090-R229": [
+   "The decision exists as code, in new files that nothing calls: services/api/app/scenario/three_answers/result_ways.py (one public function, decide_result_ways), result_way_conditions.py and result_way_inputs.py. Every input may be 'not given' or 'not read' and none has a default that stands for a fact; for each of the 20 results the packet lists the function returns settled, conditional or withheld, and a withheld result carries its reason, the kind of gap and what would resolve it, never a number (services/api/tests/scenario/three_answers/test_result_ways.py::test_decides_every_result_the_packet_lists, test_every_withheld_way_has_a_reason_a_kind_and_what_would_resolve_it; every way object validates against the bundled contract 1.3.0: test_every_way_object_validates_against_the_bundled_contract).",
+   "Driven by the orchestrator's script at the material head for the benchmark lot with every overlay result stated as supported: lot coverage and the rear yard come back withheld (the lot reaches 103.93 ft from one street line and 144.60 ft from the corner point), the building option, the setback and the three unit limits withheld, the heights and the floor-area figures conditional; no result is settled and none is a zero.",
+   "NOT done by this task, and not claimed: nothing calls the module (test_nothing_under_app_imports_the_module_yet; no file under services/api/app or apps/web/src other than the three modules names it). No result, screen, drawing or PDF shows 'not known' because of it. The row is met for the decision's share only; wiring it into the engine and emitting contract 1.3.0 are the next pieces."
+  ],
+  "D-090-R237": [
+   "The builder's report holds the table the row asks for: one line per gap K1 to K20 of the work order's section 5 and each affected result, with the way it must appear, the kind of gap and the sentence of the work order it comes from (project-control/reports/M5-T129-producer-report.md); the gate G3 reviewer drove the module line by line against section 5 (review record).",
+   "For each gap whose choice is 'not known' a test asserts that the affected result is withheld (for example test_h4_interior_coverage_withheld_until_the_23_363_reading for K2; test_h3_c3_coverage_withheld_and_rear_yard_withheld for K1 and K4; test_s1_qualifying_unit_limits_read_not_known_h2 for K13; test_h5_special_district_column_not_read_withholds_every_result for K10).",
+   "Where neither the work order nor the orchestrator's stated readings decide a combination the module withholds the result as work owed and the report lists it (reading O10): evidence that a lot is NOT in a special density area (test_density_evidence_not_in_one_is_withheld_as_work_owed_o10) and a district other than R6B (reading O11: test_o11_district_not_r6b_withholds_every_result_work_owed).",
+   "The gate G4 review FAILED the tests twice: first because four behaviours the module ships were pinned by no test (a recorded or not-read inclusionary housing area or flood zone; evidence that the lot is in a special density area; the overlay column not read), shown by mutations that passed every test; then because one more input state was unpinned (the lot type not given). The same builder added the tests, then went through every input field and state against the tests (the table 'Every input state and the test that pins it' in its report; test_result_ways_input_states.py); the same reviewer passed gate G4 at the third review with all 25 of its mutations caught.",
+   "NOT done by this task: no gap is corrected in the engine and no result of the program changes; the row's 'corrected and tested, or shows not known' is met only as a decision that nothing applies yet."
+  ],
+  "D-090-R238": [
+   "The module returns the lot coverage of a corner lot as shown only when every street-line reach is within 100 feet (the measure is held with the capture id of the ZR 12-10 corner-lot definition: test_the_two_legal_measures_cite_their_captures); otherwise it is withheld: test_h3_c1_coverage_shown_rear_yard_withheld and test_h3_c2_coverage_shown_and_no_rear_yard_required_anywhere (lots whose geometry supports it) against test_h3_c3_coverage_withheld_and_rear_yard_withheld and test_s1b_overlay_supports_everything (the benchmark lot: 103.93 ft from one street line: withheld). The reach figures are read from the reach rows of the corner-reach reference case, not typed in.",
+   "The module holds no percentage: it decides whether the coverage may be shown, not its value (test_module_holds_no_zoning_number_only_the_two_legal_measures).",
+   "NOT done by this task: the engine still gives its present whole-lot answer; nothing changes until the module is wired in."
+  ],
+  "D-090-R240": [
+   "The zoning district not given: every zoning result withheld as missing information (the orchestrator's reading O11, in the packet's second scope-correction entry, made after the gate G3 reviewer found that the first version still showed results for a lot with no district: test_o11_district_not_given_withholds_every_result_missing_information; confirmed by the orchestrator's script). The lot type not given: coverage and rear yard withheld, every other result unchanged (test_f9_lot_type_not_given_withholds_coverage_and_rear_yard_only). Whether the lot is at or above the lot size of gap K3 not stated: the coverage withheld as missing information, where the first versions read 'not stated' as 'no' (the orchestrator's reading O13, third scope-correction entry: test_o13_large_lot_not_stated_withholds_coverage_missing_information).",
+   "A fact that is not given leaves the results that need it withheld and the others as they were: no outline: coverage and rear yard only (test_h5_no_outline_withholds_coverage_and_rear_yard_only); no lot area: the floor-area figures and the unit limit only, and the outline's area never stands in (test_h5_no_lot_area_withholds_floor_area_and_units_only, test_s5_no_recorded_area_is_withheld_and_the_outline_never_stands_in); a column that was not read is never taken as 'none' (test_h5_special_district_column_not_read_withholds_every_result, test_h5_split_lot_record_not_read_withholds_every_result, test_f4_overlay_not_read_withholds_every_residential_result_missing_information, test_f1_inclusionary_not_read_withholds_floor_area_missing_information, test_f2_flood_not_read_withholds_heights_missing_information).",
+   "NOT done by this task: the engine's own inputs still require a value for six facts (work order section 4 item 3); letting them be 'not given' is the next piece's work."
+  ],
+  "D-090-R255": [
+   "With only a user's statement that the lot is not in a special density area, the legal unit limit for standard residences comes back conditional with a condition of kind user_statement that names the statement; without it the limit is withheld; it is never settled (test_h9_user_statement_makes_the_unit_limit_a_conditional_result_only, test_h4_h9_unit_limit_withheld_without_density_evidence; confirmed by the orchestrator's script). The statement stays a condition on the result and is not among the module's fact records (test_h9_statement_is_never_stored_as_a_fact_it_stays_a_condition).",
+   "NOT done by this task: no screen takes such a statement and nothing is saved; that the statement is absent from the saved facts is the next pieces' test (work order H9)."
+  ],
+  "D-090-R257": [
+   "Two area figures that disagree: every result that needs the area is conditional with a condition of kind contradicted_record whose assumption names the recorded figure and both figures and says that neither is chosen; no figure is picked and the outline's area is never used (test_s5_figures_that_disagree_name_both_figures_and_make_no_choice). Figures that agree: no area condition (test_s5_figures_that_agree_carry_no_area_condition). A recorded area that could not be compared: conditional, never settled, kind unchecked_condition (the orchestrator's reading O4, in the packet's scope correction: test_s5_figure_that_could_not_be_compared_is_an_unchecked_condition_o4; the same where the agreement is not given: test_g3f5_agreement_none_with_a_recorded_area_is_conditional_unchecked_never_settled).",
+   "The module takes the agreement of the two figures as an input; the tolerance of the comparison is not set here (the work order: 'set when the part is contracted')."
+  ],
+  "D-090-R258": [
+   "Every withheld result carries one of two kinds: missing_information (information missing for this property, for example a column that was not read or no outline) or work_owed (work the program still owes, for example the rule for interior-lot coverage or the setback); the mapping of the work order's four kinds of gap onto these two is the orchestrator's reading O1, stated in the packet and marked as such in the code and the report (test_every_withheld_way_has_a_reason_a_kind_and_what_would_resolve_it).",
+   "No reason calls anything 'unsupported' or sends the reader to a professional review (test_no_reason_contains_the_phrase_of_gap_k7); each says what is not known, why, and what would resolve it. No returned text says whether a law text is captured, or names an internal thing (test_no_returned_text_uses_an_internal_name_or_a_capture_claim): the first versions said of two texts that they were 'not captured' although earlier tasks had captured them; the orchestrator found it by reading every returned text and the same builder corrected it.",
+   "NOT done by this task: nothing shows either kind to a user yet."
+  ],
+  "D-090-R267": [
+   "With any of the four conditions that have no data source 'not checked', no zoning result comes back settled: each shown result is conditional with a condition of kind unchecked_condition that names them (test_s6_not_checked_makes_every_zoning_result_conditional_not_settled; the orchestrator's script: for the benchmark lot no result is settled). The gate G4 reviewer's mutation proof: treating a 'not checked' condition as checked makes tests fail."
+  ],
+  "D-090-R268": [
+   "The owner's three cases are separate outcomes of the module: with the four conditions not checked the results they could change are conditional and name them; with all four checked and absent the height limits are settled where nothing else applies (test_s6_all_conditions_checked_and_absent_settles_the_height_limits); with one recorded as present every zoning result is withheld, because which results each can change is not established (the orchestrator's reading O6: test_s6_one_condition_present_withholds_every_zoning_result).",
+   "The property facts are not results of this module and are not touched by it.",
+   "NOT done by this task: nothing is shown to a user; 'keep unaffected answers visible' is the next pieces' work."
+  ],
+  "D-090-R269": [
+   "The three height limits come back conditional on the four unchecked conditions and never settled while any is not checked, and no text the module returns calls a height the property's maximum (test_no_text_calls_a_height_the_property_maximum_h11; the orchestrator's script: max_building_height is conditional with the kind unchecked_condition for the benchmark lot)."
+  ]
+ }
+}

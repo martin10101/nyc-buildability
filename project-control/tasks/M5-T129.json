@@ -105,7 +105,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 88,
+  "progress_percent": 95,
   "risks": [
     "A decision that shows more than the work order allows (a result settled by silence; a district's limit shown as the property's) -> S1, S6 and the reviewers' line-by-line check of the decision table against section 5",
     "A point the work order leaves open filled in silently -> the readings O1 to O10 are named in the packet; O10 withholds everything else and lists it",
@@ -115,7 +115,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T11:39:26.898326+00:00",
-  "updated_at": "2026-10-07T13:49:43.246272+00:00",
+  "updated_at": "2026-10-07T14:16:54.883956+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -186,6 +186,13 @@
       "percent": 88,
       "status": "in_progress",
       "message": "Round 5 by the same builder integrated as d96fb0b8 (reading O13: where the large-lot question is not stated the coverage is withheld as missing information; one more test for an overlay family missing from what the caller states). AT INTEGRATION THE ORCHESTRATOR READ EVERY TEXT THE MODULE CAN RETURN (109 distinct texts, collected by script) and found three kinds of fault in words a user would later see: (1) two reasons say that a law text 'is not captured' (the ZR 12-10 definition of special density areas; the qualifying-housing definitions): both were captured by earlier tasks (M4-T025, M4-T031), so the sentences are false; they were copied from the work order, which was written before those captures; (2) three texts name internal things ('gap-K3', 'the caller'); (3) several use project words ('in this milestone', 'a reference case', 'captured but not built'). The G3 reviewer's check of the words looked for forbidden claims, not for these. One more round by the same builder, wording only, with a test that guards it; then both reviewers review rounds 4 to 6 together."
+    },
+    {
+      "at": "2026-10-07T14:16:54.883783+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "Rounds 5 and 6 by the same builder integrated as d96fb0b8 and 71d52428 (reading O13; the returned texts made true and plain, with a guard test; no decision changed). THIRD REVIEWS by the same two reviewers at 71d52428: GATE G3 (data-contract-verifier) PASS: reading O13 judged fair, its line-by-line driver re-run with no mismatch, 102 returned texts read and none untrue or internal, no new finding. GATE G4 (qa-engineer) PASS: its finding F9 closed; every input state the module acts on has a test (its own sweep of the field list); all 25 of its mutations are caught; no assertion was weakened for the rewording; one note, F10 (the guard test's battery does not reach one clean branch), carried to the next piece as backlog row DB-172. The full api suite at 71d52428, run alone by the orchestrator: 8267 passed, 8 skipped, 3 expected failures. Evidence map written; ready to submit."
     }
   ],
   "scope_corrections": [
