@@ -105,7 +105,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 60,
+  "progress_percent": 70,
   "risks": [
     "A decision that shows more than the work order allows (a result settled by silence; a district's limit shown as the property's) -> S1, S6 and the reviewers' line-by-line check of the decision table against section 5",
     "A point the work order leaves open filled in silently -> the readings O1 to O10 are named in the packet; O10 withholds everything else and lists it",
@@ -115,7 +115,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T11:39:26.898326+00:00",
-  "updated_at": "2026-10-07T12:33:35.206888+00:00",
+  "updated_at": "2026-10-07T13:04:08.168663+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -158,6 +158,13 @@
       "percent": 60,
       "status": "in_progress",
       "message": "Builder's commit 85bca681 integrated as 1d3d6964 (8 files, allowed paths only, all new or placeholders replaced; focused tests with the other piece on the branch: 650 passed, 2 skipped, 3 expected failures). BEFORE REVIEW the orchestrator found two points and sent the piece back to its builder: (1) result_ways.py is 664 source lines, above the 600-line threshold the packet's own modularity answer promised to stay under; the builder had said so and that the packet allowed only two modules. Scope correction recorded in the packet: a third focused module is allowed. (2) For a recorded lot area that could not be compared with the outline's area the module used the condition kind 'contradicted_record', whose contract description is 'a recorded figure that another recorded figure contradicts': nothing contradicts it in that case. The orchestrator's reading O4 is completed: that case uses 'unchecked_condition' and says what was not checked. Both are for the reviewers to judge. No review has been made yet."
+    },
+    {
+      "at": "2026-10-07T13:04:08.168534+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Round 2 by the same builder integrated as 6774d4b0 (a third module, result_way_conditions.py; every file under the size threshold; reading O4's kind). TWO INDEPENDENT REVIEWS at 6774d4b0. GATE G3 (data-contract-verifier): PASS, no must-fix; it drove the module line by line against gaps K1 to K20 and section 6 of the work order (every line a match), validated every kind of way object against the bundled contract, judged the orchestrator's readings O1 to O10 fair or cautious, and left five notes, among them F1: with the district not given the module still shows the results that depend on the district. GATE G4 (qa-engineer): FAIL. Scenarios S1 to S9 and the work order's tests H2 to H11 at this level are covered and 41 of 42 tests take their expected outcome from outside the module, but completeness over the inputs is NOT met: four behaviours the module ships are pinned by no test, shown by its own mutation proofs in which a one-line regression passed all 42 tests: a recorded or not-read inclusionary housing area (floor area withheld), a recorded or not-read flood zone (heights withheld), evidence that the lot is in a special density area (unit limit withheld), and the overlay column not read (every residential result withheld). Must-fix F1 to F4: add those tests. Notes F5 to F8: the large-lot case, the reason kind of a whole answer that is not available, the landmark and through-lot cases, and one structural test that takes its expected keys from the module's own constants. The module's behaviour was found correct by both reviews; the defect is in the tests. The task goes back to the same builder for one round with both reviews' points and the orchestrator's rulings (a second scope-correction entry in the packet); both reviewers then review again."
     }
   ],
   "scope_corrections": [
@@ -165,6 +172,11 @@
       "at": "2026-10-07T12:33:35+00:00",
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-07, after the builder's first commit and before any review] (1) ALLOWED PATHS: `services/api/app/scenario/three_answers/result_way_*.py` added. The packet allowed two modules and promised that each new file stays under the 600-line warning threshold of the modularity policy; the builder's decision module came to 664 source lines and the builder reported that it could not split further inside the allowed paths. A third focused module in the same package (same prefix, new file only) is allowed so that every new file stays under the threshold; `result_ways.py` keeps the one public function. Nothing else about the scope changes: still new files only, nothing calls the module, no existing file changes. (2) READING O4 COMPLETED (the orchestrator's reading, for the reviewers to judge): where the recorded lot area could not be compared with the outline's area, the condition's kind is `unchecked_condition` (the comparison was not made), not `contradicted_record`, whose contract description is 'a recorded figure that another recorded figure contradicts'; the assumption says what was not checked. Where the two figures disagree the kind stays `contradicted_record`."
+    },
+    {
+      "at": "2026-10-07T13:04:08+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-07, after the two independent reviews at 6774d4b0 (G3 PASS with notes; G4 FAIL on test completeness) and before the correction round] Two further readings of the orchestrator, for the reviewers to judge at the re-review: (O11) THE DISTRICT. The packet listed the district among the inputs that may be 'not given' and did not say what follows. The builder carried it for wording only, so a lot with no district still had results shown; the G3 reviewer flagged it (its note F1). Reading: with the district not given every zoning result is withheld as missing information (the owner's rule that a missing input leaves its dependent results 'not known', R240); with a district other than R6B every result is withheld as work owed, because the work order's gaps and rules are written for R6B only and decide nothing for another district (reading O10 applied). The district's name R6B in the module is the scope of the work order, not a zoning number. (O12) GAP K14. The work order says of the legal unit limit: 'The limit is labelled \"new all-residential building\". Other cases are withheld.' The label the module returns for the standard unit limit carries those words (the G3 reviewer's note F3). The module has no input for a conversion or a mixed building; that stays with the piece that wires it in. ALSO REQUIRED in the correction round (the G4 reviewer's must-fix F1 to F4 and notes F5 to F8; the G3 reviewer's notes F4 and F5): tests that pin every input state the module acts on, each with the work order sentence or the reading it comes from; an explicit branch where the agreement of the two area figures is not given; a marker at each place where a reading of the orchestrator is applied. No scenario of the packet changes; scenario S4 is read as covering every fact 'not given', the district included."
     }
   ]
 }
