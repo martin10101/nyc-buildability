@@ -30,18 +30,27 @@ Nothing in a case comes from a program run: not a value, not a column, not a sen
 | `cases/corner-reach.json` + `corner-reach.md` | How far a corner lot reaches from each street line and from the corner point: the real lot and three made-up rectangles C1, C2 and C3 (table C). |
 | `cases/suffix.json` + `suffix.md` | Whether the sections that list the R6 group reach the suffixed R6B district, through ZR 11-25 (table D: ZR 23-362, 23-52, 23-344, and ZR 23-22 and 23-432 which list R6B directly). |
 | `cases/step-p1-worked.json` + `step-p1-worked.md` | The rows worked from the step-P1 captures (task M4-T027): the ZR 12-10 corner, interior, through and lot-area definitions, special density areas, ZR 23-342 and ZR 23-363. It covers three made-up corner lots (100 by 100, 150 by 100, 200 by 120), a 40-by-100 interior lot, a 40-by-200 through lot, and special density areas (section 5 gaps K1, K2, K4, K11). |
+| `cases/overlay-reading.json` + `overlay-reading.md` | The commercial-overlay reading worked from the step-P2 captures (task M4-T028): for the benchmark lot with its C2-2 overlay beside the same lot without the overlay, which district's bulk governs and by what route, floor area ratio, lot coverage, dwelling units, base and building heights, the setback, street-wall location, rear yard, which paragraphs of ZR 34-111, 34-24, 35-632 and 35-631 apply, what ZR 35-633 adds, and the sections and defined terms the overlay texts point to that are not captured (section 5 gap K9). |
 
 Each case is kept twice from one source: a structured data file under `cases/` that a test can load, and
 a page rendered from it that a person can read. The helper returns are kept unchanged under
-`provenance/`: the two first-round returns and the two step-P1 readings.
+`provenance/`: the two first-round returns, the two step-P1 readings and the two step-P2
+commercial-overlay readings.
 
-## Law text: what step P1 captured, and what is still not captured
+## Law text: what steps P1 and P2 captured, and what is still not captured
 
 **Step P1** (task M4-T025) captured the law text these cases waited for, and task M4-T027 worked the
 rows from it (see `cases/step-p1-worked.json`): the ZR 12-10 definitions of a corner, interior and
 through lot and of lot area; the ZR 12-10 definition of special density areas; **ZR 23-342** (rear
 yard requirements); and **ZR 23-363** (special coverage rules for some interior and through lots). The
 rows that were "not known" for want of that text now cite the captured snapshots.
+
+**Step P2** (task M4-T026) captured the eight commercial-overlay sections - **ZR 34-11**, **ZR
+34-111**, **ZR 34-24**, **ZR 35-53**, **ZR 35-63**, **ZR 35-631**, **ZR 35-632** and **ZR 35-633** -
+and task M4-T028 worked the overlay reading from them (see `cases/overlay-reading.json`). Both readings
+find the C2-2 overlay changes only the street-wall location rule (from the R6B line-up of ZR 23-431(a)
+to the percentage rule of ZR 35-631(b)) and leaves the floor area ratio, lot coverage, dwelling units,
+base and building heights, the setback and the all-residential rear yard the same as plain R6B.
 
 Some readings still rely on law text that is not captured. These cases name each such item and record
 the affected value as "not known" where the text is needed for a number:
@@ -53,8 +62,14 @@ the affected value as "not known" where the text is needed for a number:
 - The geographic **boundary definitions** of the *Manhattan Core* and the *Special Downtown Brooklyn
   District* - needed to place a lot in or out of a special density area.
 - The **base plane** and height-measurement rule for R6 through R12 districts.
-- The **commercial-overlay** sections of **step P2** (the C2-2 overlay and the Article III use and bulk
-  rules) - these cases read the residential rules only.
+- The sections the **step P2** overlay readings point to that are still not captured: **ZR 34-21**,
+  **ZR 34-22** and **ZR 34-23** (exceptions to applicability of Residence District controls, pointed
+  to by ZR 34-11); **ZR 36-64** (special-area height and setback); **ZR 35-71** (the optional
+  sky-exposure-plane envelope); **ZR 35-64** (additional height and setback); **ZR 23-435** (towers);
+  and **ZR 23-436** (the additional height and setback regulations that ZR 35-633 brings in) - so what
+  ZR 35-633 adds stays "not known". Also not captured: **ZR 23-41** (permitted obstructions, inside
+  the mixed-building rule of ZR 35-53) and the defined terms *Manhattan Core*, *mixed building* and
+  *prevailing street wall frontage*.
 
 ## The rule for changing an expected value
 

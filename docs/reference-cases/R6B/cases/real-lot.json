@@ -5,7 +5,7 @@
   "summary": "An independent, by-hand reading of the R6B zoning limits for one real lot, 215-16 Northern Boulevard in Queens (BBL 4073340070). A C2-2 commercial overlay is recorded; the overlay's own rules are not read here. Every value below comes from the law text and the lot's recorded facts, never from a program run.",
   "what_it_is_worth": "Prepared by an AI helper and recomputed by a second AI; their agreement alone is not proof. It is a draft reading of the law, not professionally reviewed, and is not a statement that anything complies. It is one lot. Most sections were read from the same captures the rules were written from, so an error in a capture would be shared; four sections (ZR 23-22, 23-432, 23-362 and 23-52) were also read on the official page on 2026-10-06. The corner-lot definition it uses (ZR 12-10) and ZR 23-342 are now captured (task M4-T025) and were read independently by two step-P1 readings (see cases/step-p1-worked.json).",
   "what_it_does_not_establish": [
-    "It does not read the C2-2 commercial overlay; every residential figure here is the residential reading only.",
+    "It does not read the C2-2 commercial overlay; every residential figure here is the residential reading only. The overlay is read independently in cases/overlay-reading.json, where both step-P2 readings find it changes only the street-wall location rule and leaves the floor area ratio, lot coverage, dwelling units, base and building heights, the setback and the all-residential rear yard the same as plain R6B; no value in this case changes.",
     "It does not prove the zoning lot; it is a tax-lot-only reading.",
     "It does not settle lot coverage, the rear yard beyond the corner area, the ordinary rear-yard depth, or any building massing.",
     "It is not a professional or legal determination and does not say the lot complies with anything."
@@ -101,6 +101,11 @@
       "date": "2026-10-07",
       "summary": "Row L14 (ordinary rear-yard depth): expected value unchanged (not known). ZR 23-342 is now captured (task M4-T025), so the citation changes from not-captured to the captured snapshot zr-23-342; the reason now records that the depth ZR 23-342 sets depends on the building type and lot width, which are not given, so the depth for this lot is still not known. Reason: newly captured text.",
       "by": "rules-engineer (M4-T027)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "No expected value changed. The C2-2 overlay has now been read independently in step P2 (task M4-T028, cases/overlay-reading.json); the first 'does not establish' item is extended to point to that reading, which finds the overlay changes only the street-wall location rule and leaves the floor area ratio, lot coverage, dwelling units, base and building heights, the setback and the all-residential rear yard the same as plain R6B. Both step-P2 readings support this. No row value changes; in particular row L5 (lot coverage) stays not known for its per-portion reason. Reason: a corrected reading (the overlay reading now exists).",
+      "by": "rules-engineer (M4-T028)"
     }
   ],
   "rows": [
