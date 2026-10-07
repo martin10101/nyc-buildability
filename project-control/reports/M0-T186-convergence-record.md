@@ -155,10 +155,10 @@ The probe validates the behaviour directly: under the real Windows race P5 shows
 acquired 32,673 times with **no escaped exception** and **no over-admission** (max one thread inside),
 so the transient create `PermissionError` is correctly waited out and retried. The repair's
 correctness therefore rests on catching the transient `PermissionError` (P5), NOT on the exact kernel
-reason. RESIDUAL (out of commit D's scope — test + reports only; the module is not edited this round):
-the module's inline comment names "delete-pending (ERROR_ACCESS_DENIED)" as the reason, which the
-probe leaves unproven; a wording-only correction there is owed the next time the module is touched
-under qualifying evidence (listed in §8 "still open"). Diff of the repair (round 1, unchanged):
+reason. The module's own docstrings and inline comment in `_exclusive()` / `_is_windows()` were
+corrected (commit E, wording only) to say exactly this — the race raises the create `PermissionError`
+(errno 13), the kernel reason is not established, and it is treated as transient "busy" — no longer
+naming "delete-pending (ERROR_ACCESS_DENIED)" as fact. Diff of the repair (round 1, unchanged):
 `mrl_subagent_contract.py` **37 insertions, 4 deletions**; file **478 lines** (< 600); public
 interface unchanged.
 
@@ -218,8 +218,9 @@ Allowed path is `mrl_subagent_contract.py` only; every other supervisor file is 
 - `review_slots.py` `_SlotLock.acquire` (~L314–330): ALREADY catches a Windows `PermissionError` at
   the O_EXCL create and treats it as busy (the `_is_windows()` seam, wait-to-deadline, then
   `slot_lock_timeout`), from M0-T176/M0-T184. Not exposed; this repair brings `_exclusive` to parity.
-  (Its comment also names "delete-pending (ERROR_ACCESS_DENIED)"; the same residual wording note as
-  §4 applies — the behaviour is right, the named reason is not proven.)
+  (Its own comment still names "delete-pending (ERROR_ACCESS_DENIED)"; the behaviour is right but the
+  named reason is unproven — a sibling wording item, out of this task's allowed path of
+  `mrl_subagent_contract.py` only.)
 - `locking.py` `SingleInstanceLock.acquire` (L261): catches ONLY `FileExistsError` at its O_EXCL
   create — the SAME acquire-side pattern as the pre-fix `_exclusive` (DB-160). Latent Windows
   race exposure, far lower: one holder per supervisor run, few contenders, not 8 threads hammering
@@ -269,6 +270,6 @@ alone). CLOSING CONDITION — the record closes VERIFIED_CLOSED only when BOTH h
 
 `[ORCHESTRATOR TO SUPPLY: final-head runs]` — the run ids, job ids, full-log bytes + sha256 and the
 supervisor-bridge suite summary (expect ≥ 1165 tests, 0 failures) for commit D's windows-latest runs,
-and the commit-X experiment result. No blocker; the only open items are these Windows runs (the
-producer cannot run Windows here) and the residual module-comment wording (§4), owed the next time the
-module is touched under qualifying evidence.
+and the commit-X experiment result. No blocker; the only open item is these Windows runs (the
+producer cannot run Windows here). The module-comment wording is now corrected (commit E, §4); the one
+remaining wording note is the review_slots.py sibling comment (§7), outside this task's allowed path.

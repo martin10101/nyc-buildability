@@ -126,8 +126,8 @@ class Decision:
 def _is_windows() -> bool:
     """True on Windows (``os.name == 'nt'``).
 
-    The acquire loop's handling of a delete-pending ``PermissionError`` is
-    Windows-only, so it branches on this named seam over ``os.name``. Naming the
+    The acquire loop's handling of the Windows create/unlink-race ``PermissionError``
+    is Windows-only, so it branches on this named seam over ``os.name``. Naming the
     read lets a host-independent test drive either branch deterministically without
     patching the global ``os.name`` (which would make ``pathlib`` build a
     ``WindowsPath`` and raise on POSIX). Platform never changes mid-process, so this
@@ -140,16 +140,15 @@ def _is_windows() -> bool:
 def _exclusive(path: pathlib.Path) -> Iterator[None]:
     """Cross-process exclusive section via an O_EXCL lock file; fail closed on timeout.
 
-    On Windows the ``O_EXCL`` create can raise ``PermissionError``
-    (ERROR_ACCESS_DENIED) while another holder's lock file is delete-pending: that
-    holder's ``lock.unlink()`` in its own ``finally`` is in flight, so the directory
-    entry still exists but the create is denied rather than told the file already
-    exists. That is a transient "busy", not a real permission fault, so it is waited
-    out to the lock's own deadline exactly like ``FileExistsError`` and refuses only
-    at the timeout with the module's own fail-closed ``_violation`` — never swallowed
-    into an admission and never an unbounded loop. On POSIX an ``O_EXCL`` create does
-    not produce this for a delete race, so a ``PermissionError`` there is a genuine
-    fault and stays loud (re-raised at once, unchanged).
+    On Windows a concurrent create/unlink race of the lock file can make the
+    ``O_EXCL`` create raise ``PermissionError`` (errno 13) instead of
+    ``FileExistsError`` (frozen probe, windows-latest: 1,468 of 61,758 iterations, no
+    other handle held). The kernel-level reason is not established (``os.open`` gives
+    no ``winerror``); it is transient (other creates succeed), so it is waited out as
+    "busy" to the lock's own deadline exactly like ``FileExistsError`` and then refused
+    fail-closed with the module's own ``_violation`` — never swallowed into an
+    admission and never an unbounded loop. On POSIX a ``PermissionError`` at the
+    create stays loud (re-raised at once, unchanged).
     """
     lock = path.with_suffix(path.suffix + ".lock")
     deadline = time.monotonic() + _LOCK_TIMEOUT_S
@@ -160,10 +159,11 @@ def _exclusive(path: pathlib.Path) -> Iterator[None]:
         except FileExistsError:
             pass  # the lock is held by another worker; wait and retry below
         except PermissionError:
-            # Windows only: a delete-pending lock file (another holder's unlink in
-            # flight) denies the create. Treat it as the same transient "busy" as
-            # FileExistsError. POSIX never produces this for an O_EXCL create, so
-            # there it is a real permission fault and stays loud.
+            # Windows only: under a concurrent create/unlink race the O_EXCL create can
+            # raise PermissionError (errno 13) instead of FileExistsError; the kernel
+            # reason is not established and it is transient, so treat it as the same
+            # "busy". POSIX never produces this for an O_EXCL create, so there it is a
+            # real permission fault and stays loud.
             if not _is_windows():
                 raise
         if time.monotonic() >= deadline:

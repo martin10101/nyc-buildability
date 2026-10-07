@@ -85,8 +85,9 @@ Probe P5 (frozen job 112580543291) ran the real 8-thread Windows race through th
 and retries the transient create `PermissionError` the race produces (probe P4: 1,468 of 61,758
 iterations raised `PermissionError(errno=13, winerror=None)`). The repair's correctness rests on
 catching the transient `PermissionError`, not on the exact kernel reason (which the probe leaves
-unproven). Residual: the module's inline comment still names "delete-pending (ERROR_ACCESS_DENIED)";
-a wording-only correction there is owed the next time the module is touched (out of commit D's scope).
+unproven). The module's own `_exclusive()` / `_is_windows()` docstrings and inline comment were
+corrected to say exactly this (commit E, wording only — AST with docstrings stripped is identical);
+they no longer name "delete-pending (ERROR_ACCESS_DENIED)" as fact.
 
 ## 5. R094 no-weakening statement (S6)
 
@@ -128,4 +129,4 @@ acquire-side crash. Recertification: alters the `tools/agent_supervisor/` tree h
 - STATUS: **NOT VERIFIED_CLOSED.** Closing condition (convergence record §8): commit D's final-head
   windows-latest job GREEN in both runs AND the commit-X experiment showing the race test RED on
   Windows against the pre-fix loop. Still open: those two Windows runs (the producer cannot run Windows
-  here) and the residual module-comment wording. No blocker.
+  here). The module-comment wording is now corrected (commit E). No blocker.
