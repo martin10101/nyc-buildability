@@ -1,0 +1,22 @@
+{
+ "task_id": "M0-T183",
+ "material_commits": [
+  "material head: bf134ab0"
+ ],
+ "claim_seam_head": "950bd4ca",
+ "checks_at_material_head": [
+  "node --test apps/web/scripts/tests/: exit 0 (counts in the producer report and the review records)",
+  "node scripts/dependency_age_gate.mjs package-lock.json (live): exit 0; source-map-js 1.2.2, uploaded 2026-09-30T14:08:09.382Z by the registry's own record, was 608559 seconds old in the builder's run (15:10 UTC), 609255 in the code reviewer's and 609269 in the security reviewer's: 604800 or more each time, an ordinary pass, with no exception line in the output (392 packages; exit 0)",
+  "git diff --stat 8fe57ca0^ <material head> -- the three files: empty",
+  "the builder's web checks on the Linux server with lockfile packages only: npm ci exit 0; lint exit 0 (two older warnings); typecheck exit 0; test exit 0 (2423 passed); build exit 0"
+ ],
+ "requirements": {
+  "D-092-R016": [
+   "Neither the installer exclusion nor the checker's exception remains: apps/web/.npmrc has no `min-release-age-exclude` line; apps/web/scripts/dependency_age_gate.mjs and apps/web/scripts/tests/dependency_age_gate.test.mjs hold no `OWNER_AGE_EXCEPTIONS`, `matchOwnerAgeException` or `owner_age_exception`. The three files are byte-identical to their content at the commit before the exception was added (`git diff --stat 8fe57ca0^ bf134ab0 -- <the three files>` is empty; no other commit had touched them since).",
+   "The clean-up is a second, reviewed change in a tracked task of its own (this task; gates G0, G2, G3, G4 and G5; the reviewers did not produce it), made after the seven-day point 2026-10-07T14:08:09.382Z: the task's G0 report states the time it was written, and the live run of the age gate on the committed lockfile shows the version passing by the ordinary rule: source-map-js 1.2.2, uploaded 2026-09-30T14:08:09.382Z by the registry's own record, was 608559 seconds old in the builder's run (15:10 UTC), 609255 in the code reviewer's and 609269 in the security reviewer's: 604800 or more each time, an ordinary pass, with no exception line in the output (392 packages; exit 0)",
+   "The orchestrator's decision, stated in the packet for the G5 reviewer: the whole mechanism is removed and not only its entry (with the list emptied, the matcher and the result kind would be code in a security gate that can never run). It is the orchestrator's decision, not the owner's words; the owner's words are 'only this 1 time' (row R013) and 'a second reviewed change to remove it' (this row).",
+   "docs/DEPENDENCY_SECURITY_POLICY.md says again that neither machine gate holds an exception path and keeps the dated record of the exception that was used (the table 'Exceptions on record': source-map-js 1.2.2, the authorization, the expiry, and that this task removed what was left); the rule that only the owner can authorize an age exception, for one named version and never for an advisory, stays.",
+   "Nothing else changes: apps/web/package.json and apps/web/package-lock.json are byte-unchanged (source-map-js stays pinned at exactly 1.2.2); no workflow file changes; no package is added, removed or updated."
+  ]
+ }
+}

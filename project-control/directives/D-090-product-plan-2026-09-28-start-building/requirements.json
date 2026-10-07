@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 497,
+ "requirement_count": 499,
  "producer": "orchestrator",
- "updated_at": "2026-10-07T11:39:28+00:00",
+ "updated_at": "2026-10-07T15:04:57+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -16892,6 +16892,75 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-07 (message 108).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R498",
+   "text": "'Explain all the waiting on me questions in a deep way so I can understand': the owner is given an explanation of every question that waits on the owner: what each question is, why it matters, the choices, the recommendation with its basis, and what waits on it. ORCHESTRATOR'S READING: 'all the waiting on me questions' are the owner decisions recorded as open: the five questions on the realistic apartment estimate (the share of floor area inside apartments; the average apartment size; the floor heights; 'not known' until an option has floors and a shape; the three special cases), the order of the eleven development options, the sections beyond the nine main contents, the PDF converter, where saved reports are stored, the imagery licence, and the instruction files. The explanation is in plain words and without a table (R474, R475); figures from one data set are named as such and no figure is presented as approved (R283).",
+   "source_ref": "source-053-amendment.md#owner-message-109-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R474",
+    "D-090-R475"
+   ],
+   "required_harness": "The reply that follows the message covers each open question with what it is, the choices, a recommendation and its basis, and has no table.",
+   "required_evidence": "The session transcript (the reply to message 109).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 109).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R499",
+   "text": "'Explain all the waiting on me questions': the message asks for an explanation and decides nothing. ORCHESTRATOR'S READING: every open choice stays open after it; a recommendation in the explanation is not a decision (R283); the realistic apartment estimate is not built before the owner answers; the instruction files are not restructured before the owner answers; the early simple PDF stays declined and is not offered again (R491).",
+   "source_ref": "source-053-amendment.md#owner-message-109-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R491"
+   ],
+   "required_harness": "No record treats an open choice as answered because of this message; no estimator task is contracted on it.",
+   "required_evidence": "The session notes, the ledger and the handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 109).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
