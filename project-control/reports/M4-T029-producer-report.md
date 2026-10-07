@@ -14,16 +14,17 @@ list-item labels). For a ZR 12-10 DEFINED TERM the authoritative channel is the 
 twice, the documented DB-167 fallback, so the canonical HTML was used. Each capture holds official
 **source text only**: no rule, no reading of the text for any lot, no derived number.
 
-26 new canonical files under `docs/research/zr-snapshots/v1/`; 26 byte-identical synced copies under
-`services/api/app/_zr_snapshots/v1/` (made by `services/api/scripts/sync_zr_snapshots.py`). No existing
-capture was edited. `services/api/tests/rules/test_zr_snapshot_bundle.py` was NOT edited: it discovers
-captures by directory glob and names none individually, so the allowed-paths condition for editing it
-was not triggered.
+27 new canonical files under `docs/research/zr-snapshots/v1/` (round 1: 26 = 16 sections + 10 ZR 12-10
+terms; round 2 adds one ZR 12-10 term, "residence, or residential" — see §11); 27 byte-identical synced
+copies under `services/api/app/_zr_snapshots/v1/` (made by `services/api/scripts/sync_zr_snapshots.py`).
+No existing capture was edited. `services/api/tests/rules/test_zr_snapshot_bundle.py` was NOT edited: it
+discovers captures by directory glob and names none individually, so the allowed-paths condition for
+editing it was not triggered.
 
 ## 1. The 16 section captures (one file per section)
 
 `content_digest_sha256` = sha256 of the UTF-8 `verbatim_excerpt`; the runtime loader
-(`app/rules/snapshots.py`) recomputes it and fails closed on any mismatch — it loaded all 71 files
+(`app/rules/snapshots.py`) recomputes it and fails closed on any mismatch — it loaded all 72 files
 clean. HTML channel is `official_channel: html`; `raw_html_sha256` + `response_bytes` are the pinned
 provenance. Each section's own print/PDF returned HTTP 200 and its body matched the HTML excerpt
 word-for-word (`cross_check.result = match`), EXCEPT the two table sections and the empty-body section,
@@ -56,14 +57,17 @@ bbd10ddac1a5, 92a0dd7ffb3b, 34026553b27f, 19da2b394d41, 9c239c6f9bd1, 74c1d56d4c
 are NOT pinned (F4): the portal regenerates the PDF per request with the day's date embedded; the
 observed bytes/sha256 are recorded only under `cross_check.observed_*_nonreproducible`.
 
-## 2. The 10 ZR 12-10 defined-term captures (one file per term)
+## 2. The 11 ZR 12-10 defined-term captures (one file per term)
 
-All ten were extracted from the SAME one whole-§12-10-page HTML fetch (node 18523, HTTP 200,
-response_bytes 1,316,758, raw_html_sha256 `3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc`,
+The first ten (below) were extracted from the SAME one whole-§12-10-page HTML fetch (node 18523, HTTP
+200, response_bytes 1,316,758, raw_html_sha256 `3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc`,
 retrieved 2026-10-07T07:10:58Z). The whole-page print/PDF (entityprint/pdf/node/18523) was attempted at
 07:11:02Z (HTTP 504) and retried at 07:12:26Z (HTTP 504, ~59 s) — the documented DB-167 behaviour — so
 the canonical HTML is the channel (`cross_check.result = unavailable_documented_fallback`). Each term's
-per-term Last Amended stamp and node id are its own.
+per-term Last Amended stamp and node id are its own. The ELEVENTH term, `zr-12-10-residence-or-residential`
+(bottom row), was captured in round 2 from a fresh whole-page fetch (2026-10-07T07:51:02Z) that is
+byte-identical (same raw_html_sha256 and response_bytes) to the round-1 page; its PDF channel 504'd again
+(07:51:06Z). See §11.
 
 | snapshot_id | defined term | term node | amended | verbatim bytes | content_digest_sha256 |
 |---|---|---|---|---|---|
@@ -77,10 +81,12 @@ per-term Last Amended stamp and node id are its own.
 | zr-12-10-manhattan-core | Manhattan Core | 21607 | (none shown) | 96 | 2c04132a96a435146c01f3c0a0578ea26520b10c2c5d1a894470ba8a47c59c56 |
 | zr-12-10-base-plane | base plane | 21517 | 5/12/2021 | 3226 | f57cd9b62e591236908fe65163f7162605e03ca8604c5c4e6fe4e48a4f56eae2 |
 | zr-12-10-special-downtown-brooklyn-district | Special Downtown Brooklyn District | 21721 | 2/2/2011 | 172 | ae66c93e8ec466de81587358a332c40c15fd500fc4f34ae4102c11ab43d7dd2d |
+| zr-12-10-residence-or-residential | residence, or residential | 21646 | 3/22/2016 | 831 | fffb54b13ef4afde340b09d1f075474f2b096a5ed367fca78b3758d1fb7b593b |
 
-**NONE of the ten term definitions contains an ordered list (no `<ol>` in any).** So there are NO
+**NONE of the eleven term definitions contains an ordered list (no `<ol>` in any).** So there are NO
 list-position labels in any term capture; any parenthesised `(a)/(b)/(1)` in a definition (e.g. "zoning
-lot" (a)-(f), "base plane" (a)-(c)) is LITERAL text of the official definition, not a label added by
+lot" (a)-(f), "base plane" (a)-(c), "residence, or residential" (a)-(c)) is LITERAL text of the official
+definition, not a label added by
 the capture. The DB-167 F1 gap (whole-page PDF 504 means list-marker glyphs are unconfirmable) therefore
 does not affect any text captured here; each file's notes state this. The §12-10 page header (node
 18523, title "DEFINITIONS") shows Last Amended 3/26/2026 (read first-hand), which is the date of the
@@ -148,15 +154,29 @@ field (`columns`, then one row object per table row with `cells` in left-to-righ
 
 ## 7. What was NOT captured, and why
 
-- **"residential" — NOT captured: ZR 12-10 does not define it as a standalone term.** The §12-10 page
-  (node 18523) has 446 defined-term articles; there is no `id="term-residential"`. The related terms
-  that DO exist as separate §12-10 definitions are: `residential building`, `residential equivalent`,
-  `residential plaza`, `residential street`, `residential use`. The task listed "residential" as a term
-  to capture "if ZR 12-10 defines it" (the explicit caveat the task attached to Special Downtown Brooklyn
-  District applies equally here per RULES: never guess); it does not define "residential" on its own, so
-  nothing is captured for it and nothing is filled from a guess. If the amenity-allowance base "residential
-  floor area" (measurement-basis gap) needs a defined base, that base is not a standalone §12-10 term and
-  remains an open gap for a rules/measurement task — not resolvable from a capture.
+- **"residential" — CAPTURED (round-2 correction of a round-1 error; review finding F1).** Round 1
+  searched the §12-10 page (node 18523) for a defined-term article titled exactly "residential"
+  (`id="term-residential"`) and, finding none among the page's 446 articles, WRONGLY reported that ZR
+  12-10 does not define "residential". It does: the word is defined inside the combined defined-term
+  article titled **"residence, or residential"** (node 21646, Last Amended 3/22/2016), whose closing
+  sentence is `"Residential" means pertaining to a #residence#.` I re-read the official page myself and
+  confirmed this before acting. The whole article (which defines both "residence" and "residential") is
+  now captured as `zr-12-10-residence-or-residential` (§2, §11). Why the first pass missed it: it matched
+  article titles exactly against the word "residential" and did not look for a combined/inverted title
+  that contains it. On "residential floor area": the §12-10 page has NO article for that phrase — the only
+  "floor area" articles on the page are `floor area` (captured), `floor area ratio` and `affordable floor
+  area`; "residential" is defined (above) and "floor area" is defined, but the combined phrase "residential
+  floor area" is not a §12-10 defined term. I draw no conclusion about what the amenity-allowance base is;
+  that is a rules/measurement question, not a capture.
+- **Nearby residential-family §12-10 terms (corrected list, F3).** Other §12-10 defined-term articles whose
+  titles contain "residen" are (not in this task's named set, not captured): `residence district`,
+  `residential building`, `residential equivalent`, `residential plaza` and its inverted-title sibling
+  `plaza, residential`, `residential street`, `residential use`, `building designed for residential use`
+  and its inverted-title sibling `designed for residential use, (building)`, `multiple dwelling residence`,
+  `non-residential building`, `single-family residence`, `two-family residence`, `affordable independent
+  residence for seniors`, `qualifying residential site`. Lesson: some §12-10 articles use combined titles
+  ("residence, or residential") or inverted titles ("plaza, residential"), so an exact-title search can
+  miss a definition — the round-2 sweep (§11) re-checked every named term against this.
 - **35-641/35-642/35-643** — subsections of 35-64, outside this task's named set (§5); listed, not captured.
 - The pointed-to sections in §8 marked "No" — outside this task's named set; listed, not captured.
 
@@ -167,7 +187,7 @@ the special regulations themselves (the definition text is what is captured here
 ## 8. Every further section / defined term the new texts point to (LISTED, not captured)
 
 Sections referenced by the new texts, with pointing words (≤25) and whether the repository already holds
-a capture (checked against all 71 snapshots now in the store):
+a capture (checked against all 72 snapshots now in the store):
 
 | section | pointed-to from | pointing words | already captured? |
 |---|---|---|---|
@@ -192,9 +212,9 @@ a capture (checked against all 71 snapshots now in the store):
 | 23-435 / 23-436 / 23-441 | 35-633, 35-64 family, 35-632 | tower / additional provisions cross-refs | 23-435, 23-436 captured here; 23-441 No |
 
 Defined terms the new texts use are all Article I / §12-10 terms. Of them, these now HAVE a §12-10
-capture in the repository (6 captured earlier or by this task): `base plane`, `floor area`, `lot area`,
-`qualifying exterior wall thickness`, `street line`, `zoning lot` — plus the ten captured by this task
-(§2). The many other defined terms used (e.g. `residential equivalent`, `Commercial District`,
+capture in the repository: the eleven captured by this task (§2 plus the round-2 `residence, or
+residential`) and the earlier-captured `floor area`, `lot area`, `qualifying exterior wall thickness`.
+The many other defined terms used (e.g. `residential equivalent`, `Commercial District`,
 `narrow street`, `wide street`, `rear yard`, `curb level`, `street wall line level`, `building segment`,
 `ground floor level`, `UAP development`, `qualifying senior housing`, `front lot line`, `corner lot`,
 `through lot`, `interior lot`, `side lot line`, `lot coverage`, `non-complying building`, etc.) are
@@ -204,7 +224,16 @@ Plain-text references (not section numbers), pointed to, not captured as units: 
 "Article III, Chapter 4", "Article III, Chapter 6", "Article X, Chapter 1" (Special Downtown Brooklyn),
 "the New York City Building Code", "the New York City Fire Code", "the New York City Administrative Code".
 
-## 9. Checks (each run with its DIRECT exit code; venv `/root/project/lanes-runtime/venv/bin/python`, `PYTHONDONTWRITEBYTECODE=1`, pytest `-p no:cacheprovider`)
+Article/Chapter pointer added in round 2 (review finding F2): **ZR 36-64 → "Article VII, Chapter 7"** —
+pointing words: "whenever a #zoning lot# is divided by a boundary between districts having different
+requirements for #accessory# off-street loading berths, the provisions set forth in Article VII, Chapter
+7, shall apply." NOT captured (a whole chapter, outside this task's named set; round 1 missed it because
+its reference is an Article/Chapter phrase, not a "Section NN-NN" number).
+
+## 9. Checks — ROUND 1 (each run with its DIRECT exit code; venv `/root/project/lanes-runtime/venv/bin/python`, `PYTHONDONTWRITEBYTECODE=1`, pytest `-p no:cacheprovider`)
+
+These are the round-1 check outputs (26 captures / 71 files); the authoritative round-2 re-runs (27
+captures / 72 files) are in §11.
 
 a. `cd services/api && python -m ruff check .` → "All checks passed!" — **exit 0**
 b. `cd services/api && python scripts/sync_zr_snapshots.py --check` → "OK: runtime-bundled ZR snapshots are byte-identical to the canonical source (71 file(s))." — **exit 0** (run after `sync_zr_snapshots.py` write, which synced the 26 new copies)
@@ -220,8 +249,8 @@ word-for-word, 1414 words), from the same official pages read now.
 
 ## 10. Scope and the no-bend rules
 
-Changes are confined to allowed paths: 26 new canonical capture files under
-`docs/research/zr-snapshots/v1/`, their 26 byte-identical synced copies under
+Changes are confined to allowed paths: 27 new canonical capture files under
+`docs/research/zr-snapshots/v1/`, their 27 byte-identical synced copies under
 `services/api/app/_zr_snapshots/v1/`, and this report. No existing capture, rule file, rule engine,
 registry, review register, reference case, plan, helper-research file, other test, dependency file,
 `.claude/**`, or any other `project-control/**` file was edited. No new package. No value is shown
@@ -229,5 +258,53 @@ anywhere because of a capture. Each capture holds source text only (`extraction_
 extracted_draft`, `raw_html_verified: false`); nothing here is a Verified zoning determination (ADR-007:
 a rule later citing a capture ships under the standing not-professionally-reviewed label with a direct
 source link; professional review is advisory).
+
+## 11. Round 2 — review findings F1 (must-fix), F2 and F3
+
+The independent review re-read all 26 round-1 captures against the official pages and found every one
+faithful (text, tables, labels, digests, dates). It failed the gates on one report statement (not a
+capture). Round 2 is one new commit on top of `ef6dc3b7d03582ddd18e090e4d91afd02547e278` (no reset); no
+round-1 capture was edited.
+
+- **F1 (must-fix) — fixed by capturing the missing definition.** I re-read the §12-10 page (node 18523)
+  myself and confirmed the reviewer: the word "residential" IS defined, inside the combined defined-term
+  article titled **"residence, or residential"** (node 21646, Last Amended 3/22/2016), ending with
+  `"Residential" means pertaining to a #residence#.` Round 1 reported it was not defined because it
+  searched for an article titled exactly "residential" and did not look inside a combined title. The whole
+  article is now captured as `docs/research/zr-snapshots/v1/zr-12-10-residence-or-residential.snapshot.json`
+  (id follows my slug rule: title lowercased, comma dropped, spaces→hyphens → `zr-12-10-residence-or-residential`),
+  verbatim bytes 831, content_digest `fffb54b13ef4afde340b09d1f075474f2b096a5ed367fca78b3758d1fb7b593b`,
+  with its byte-identical synced copy. The report §7 first bullet is rewritten (no false statement; what
+  the page shows; why the first pass missed it) and the "residential floor area" sentence now rests only
+  on what the page shows (no article for that phrase; `floor area`/`floor area ratio`/`affordable floor
+  area` are the only "floor area" articles) and draws no conclusion about the amenity base.
+- **Page-digest check.** The whole §12-10 page fetched now (2026-10-07T07:51:02Z) is byte-identical to
+  the page the ten round-1 term captures pinned (2026-10-07T07:10:58Z): same response_bytes 1,316,758 and
+  same raw_html_sha256 `3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc`. The whole-page
+  print/PDF 504'd again (07:51:06Z, ~63 s). This is recorded in the new capture's source/cross_check.
+- **F3 (sweep) — done.** I re-checked every named term against the page's 446 article titles for combined
+  or inverted forms. Result: all ten round-1 term captures have exact-title articles and none was
+  mis-captured from or into a combined article (e.g. "zoning lot" is its own article, distinct from the
+  combined `waterfront block or waterfront zoning lot`). The only named term whose definition sat in a
+  combined article is "residential" (in "residence, or residential"). The §7 nearby-terms list is
+  corrected and now flags the combined/inverted-title forms (`plaza, residential`, `designed for
+  residential use, (building)`). No other named term's definition sits in a different or larger article.
+- **F2 — added.** §8 now records ZR 36-64's pointer to "Article VII, Chapter 7" (loading-berth provisions
+  for split lots), with its pointing words and "not captured"; round 1 missed it because it is an
+  Article/Chapter phrase, not a "Section NN-NN" number.
+
+Round-2 checks (direct exit codes; from `services/api`, lanes venv, `PYTHONDONTWRITEBYTECODE=1`, pytest
+`-p no:cacheprovider`), after `sync_zr_snapshots.py` write synced the 27th copy:
+
+a. `python -m ruff check .` → "All checks passed!" — **exit 0**
+b. `python scripts/sync_zr_snapshots.py --check` → "OK: runtime-bundled ZR snapshots are byte-identical to the canonical source (72 file(s))." — **exit 0**
+c. `python -m pytest -q -p no:cacheprovider tests/rules/test_zr_snapshot_bundle.py tests/rules/test_zoning_rule_review_register.py` → "50 passed in 1.03s" — **exit 0**
+d. from root: `python3 scripts/lanes/check_lane_paths.py --coverage` → "LANE COVERAGE PASS: 8972 file(s), each owned by exactly one lane." — **exit 0**
+e. `git diff ef6dc3b7 HEAD --name-status` → the round-2 commit adds `zr-12-10-residence-or-residential.snapshot.json` (canonical + synced) and modifies this report only (captured in the RETURN after the commit).
+
+The new capture was validated the same way as the others: my extractor reproduces committed §12-10 term
+captures byte-for-byte from this same page; the runtime loader recomputed all 72 content digests clean.
+No round-1 capture, no rule file, no other `project-control/**` file, and nothing under `.claude/**` was
+touched in round 2.
 
 END-OF-REPORT

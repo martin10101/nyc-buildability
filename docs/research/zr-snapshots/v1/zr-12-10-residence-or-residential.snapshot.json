@@ -1,0 +1,53 @@
+{
+  "snapshot_id": "zr-12-10-residence-or-residential",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "12-10",
+  "section_title": "Definitions - residence, or residential",
+  "article": "I",
+  "chapter": "2",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+    "retrieved_at": "2026-10-07T07:51:02Z",
+    "http_status": 200,
+    "response_bytes": 1316758,
+    "raw_html_sha256": "3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc",
+    "portal_node_id": "18523",
+    "defined_term": "residence, or residential",
+    "defined_term_node_id": "21646",
+    "last_amended_machine_readable": "2016-03-22T12:00:00Z",
+    "last_amended_display": "3/22/2016",
+    "section_last_amended": "2016-03-22",
+    "section_last_amended_source_text": "Last Amended 3/22/2016 (ZR 12-10 term 'residence, or residential', /node/21646)",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "The §12-10 page header (node 18523) shows Last Amended 3/26/2026 (the §12-10 page header, node 18523, data-section-number=\"12-10\"), which is the date of the most-recently-amended term on the page; the operative provenance for THIS term is its own per-term Last Amended stamp (3/22/2016, /node/21646) recorded above. The whole §12-10 page fetched for this round-2 capture (2026-10-07T07:51:02Z) is byte-identical (raw_html_sha256 and response_bytes) to the page pinned by the ten round-1 term captures (2026-10-07T07:10:58Z); the ten earlier captures are not touched.",
+    "capture_method": "M4-T029 round-2 in-task capture 2026-10-07 (direct HTTPS GET, curl -A Mozilla/5.0; whole-page HTML node 18523)",
+    "raw_html_verified": false,
+    "verification_required": "Captured source text only from the canonical §12-10 HTML (node 18523; sha256 pinned). The whole-page print/PDF completeness channel returned HTTP 504 (the documented DB-167 fallback) so the Resolution's own list-marker glyphs could not be confirmed from the glyph-authoritative channel. The text has NOT been re-read by a second agent, so raw_html_verified stays false and extraction_status stays extracted_draft. Nothing here is a Verified zoning determination and nothing here is a rule, an interpretation of the text for any lot, or a derived number: it is the official source text of one ZR 12-10 defined term article only. Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  },
+  "cross_check": {
+    "channel": "print_pdf",
+    "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18523",
+    "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/18523",
+    "retrieved_at": "2026-10-07T07:51:06Z",
+    "http_status": 504,
+    "content_type": "text/plain; charset=utf-8",
+    "response_bytes": 41,
+    "raw_pdf_sha256": null,
+    "method": "The §12-10 completeness channel is the whole-page print/PDF entityprint/pdf/node/18523, which returned HTTP 504 (Gateway Timeout) on 2026-10-07 at 2026-10-07T07:51:06Z (~63 s; the same whole-page channel also returned 504 twice during round 1 at 07:11:02Z and 07:12:26Z) - the documented DB-167 behaviour. Per that documented fallback the canonical-HTML channel (node 18523, sha256 and byte count pinned in source) was used; the term's definition text was extracted PROGRAMMATICALLY from that raw HTML (the defined-term article id=\"term-residence, or residential\", its definition__definition body) and self-checked for word-completeness against the raw HTML bytes (defined terms bold-italic <strong><em> written #term#; whitespace normalised). THIS article's definition contains NO ordered list (no <ol>), so there are NO list-position labels in this capture: the (a)/(b)/(c) shown are LITERAL text of the official definition, not position labels added by the capture. The DB-167 F1 label-confirmation gap therefore does not affect any text here.",
+    "result": "unavailable_documented_fallback"
+  },
+  "verbatim_excerpt": "A \"residence\" is one or more #dwelling units# or #rooming units#, including common spaces such as hallways, lobbies, stairways, laundry facilities, recreation areas or storage areas. A #residence# may, for example, consist of one-family or two-family houses, multiple dwellings, boarding or rooming houses, or #apartment hotels#. However, #residences# do not include:\n\n(a) such transient accommodations as #transient hotels#, #motels# or #tourist cabins#, or #trailer camps#;\n\n(b) #non-profit hospital staff dwellings#; or\n\n(c) student dormitories, fraternity or sorority student houses, monasteries or convents, #long-term care facilities#, or other living or sleeping accommodations in #community facility buildings# or portions of #buildings# used for #community facility uses#.\n\n\"Residential\" means pertaining to a #residence#.",
+  "verbatim_excerpt_composition": "Verbatim blocks joined by a blank line, in page order: each paragraph of the defined term's definition body. Defined terms (bold-italic in the HTML) are written #term#. Runs of whitespace and non-breaking spaces are written as one space and each block is trimmed; embedded figures are omitted; no word was changed. The definition has no ordered-list markup (no <ol>); the (a)/(b)/(c) shown are LITERAL text of the official definition, not a position label added by the capture. This single ZR 12-10 article is titled 'residence, or residential' and defines BOTH '#residence#' (its opening) AND 'Residential' (its closing sentence, \"'Residential' means pertaining to a #residence#.\"); the whole article is captured, as the page shows it.",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Captured as source text only (ZR 12-10 defined-term article 'residence, or residential', which defines both 'residence' and 'residential') for the law text the independent readings and the earlier captures named as needed (task M4-T029 round 2, D-090 R291; review finding F1). The capture holds the official definition text and its provenance; it encodes no rule, no reading of the text for any lot, and no derived number.",
+    "Channel: canonical §12-10 HTML (node 18523; sha256 and byte count pinned). The whole-page print/PDF completeness channel returned HTTP 504 (the documented DB-167 fallback). This article's definition contains no ordered list, so no list-position label is used anywhere in it; any (a)/(b)/(c) is literal source text.",
+    "Round-1 miss, recorded: the round-1 pass searched the §12-10 page for a defined-term article titled exactly 'residential' (id=\"term-residential\") and found none, so it wrongly reported that ZR 12-10 does not define 'residential'. The word IS defined, inside this combined article titled 'residence, or residential' (node 21646). This capture corrects that; the M4-T029 producer report §7 is corrected in the same commit.",
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  ],
+  "content_digest_sha256": "fffb54b13ef4afde340b09d1f075474f2b096a5ed367fca78b3758d1fb7b593b"
+}
