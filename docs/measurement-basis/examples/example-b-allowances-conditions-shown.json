@@ -913,7 +913,7 @@
       "zoning": {
         "treatment": "exclude_if_condition",
         "provision": "ZR 23-23 / ZR 23-233 (refuse floor-area provisions)",
-        "condition": "up to three square feet per dwelling unit (15 units here = 45 sq ft cap)",
+        "condition": "up to three square feet per dwelling unit (13 units here = 39 sq ft cap)",
         "condition_shown": true,
         "exclusion": {
           "method": "min_of",

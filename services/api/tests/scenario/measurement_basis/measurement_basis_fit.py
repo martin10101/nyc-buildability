@@ -38,14 +38,18 @@ import measurement_basis_lib as lib  # noqa: E402
 # --------------------------------------------------------------------------
 # shape of the floor model
 # --------------------------------------------------------------------------
-def floor_shape_errors(example_id: str, example: dict) -> list[str]:
+def floor_structural_errors(example_id: str, example: dict) -> list[str]:
+    """Problems that make the deeper checks unsafe (malformed floor keys/types/dimensions).
+    A floor that is well-formed but simply has an EMPTY outline is NOT reported here - that
+    is a soft 'no outline' problem (see :func:`missing_outline_errors`), so the per-floor fit
+    can still run and report overflows on the floors that DO have an outline (G4 note F1)."""
     errs: list[str] = []
     floors = example.get("floors")
     if not isinstance(floors, list) or not floors:
         return [f"{example_id}: floors must be a non-empty list of floor types"]
     seen: set[str] = set()
     for floor in floors:
-        if set(floor) != lib.FLOOR_KEYS:
+        if not isinstance(floor, dict) or set(floor) != lib.FLOOR_KEYS:
             errs.append(f"{example_id}: a floor's keys differ from the fixed set")
             continue
         fid = floor["floor_id"]
@@ -57,14 +61,35 @@ def floor_shape_errors(example_id: str, example: dict) -> list[str]:
         if not isinstance(floor["count"], int) or floor["count"] < 1:
             errs.append(f"{example_id}/{fid}: a floor count must be a positive integer")
         parts = floor["outline_parts"]
-        if not isinstance(parts, list) or not parts:
-            errs.append(f"{example_id}/{fid}: the floor has no stated outside outline")
+        if not isinstance(parts, list):
+            errs.append(f"{example_id}/{fid}: outline_parts must be a list")
             continue
-        for part in parts:
+        for part in parts:  # an empty list is a soft 'no outline', reported elsewhere
             if set(part) != lib.OUTLINE_PART_KEYS:
                 errs.append(f"{example_id}/{fid}: an outline rectangle's keys differ from the set")
             elif lib._dec(part["width_ft"]) <= 0 or lib._dec(part["depth_ft"]) <= 0:
                 errs.append(f"{example_id}/{fid}: an outline rectangle must have positive sides")
+    return errs
+
+
+def missing_outline_errors(example_id: str, example: dict) -> list[str]:
+    """A well-formed floor that states no outside outline. Reported on its own so it does NOT
+    stop the per-floor fit from running on the other floors (G4 note F1)."""
+    errs: list[str] = []
+    for floor in example.get("floors", []):
+        if isinstance(floor, dict) and isinstance(floor.get("outline_parts"), list) \
+                and not floor["outline_parts"]:
+            errs.append(f"{example_id}/{floor['floor_id']}: the floor has no stated outside "
+                        "outline")
+    return errs
+
+
+def floor_shape_errors(example_id: str, example: dict) -> list[str]:
+    """All floor-shape problems (structural + missing-outline), kept for callers that want a
+    single list; the fit entry points below treat the two kinds differently."""
+    errs = floor_structural_errors(example_id, example)
+    if not errs:
+        errs += missing_outline_errors(example_id, example)
     return errs
 
 
@@ -223,23 +248,27 @@ def geometry_fit_errors(example_id: str, example: dict) -> list[str]:
 
     This is the check the owner's reviewer required and the one the red proof runs on the
     examples 'as they are'. It does NOT include the ZR 23-20 shared-area attribution, which
-    is a separate repair (C3)."""
-    shape = floor_shape_errors(example_id, example)
-    shape += floor_area_reference_errors(example_id, example)
-    if shape:
-        return shape  # the deeper checks assume a well-formed floor model
-    errs = consistency_errors(example_id, example)
+    is a separate repair (C3). A floor missing its outline no longer stops the per-floor fit
+    from running on the other floors, so an overflow elsewhere is reported in the same run
+    (G4 note F1)."""
+    hard = floor_structural_errors(example_id, example)
+    hard += floor_area_reference_errors(example_id, example)
+    if hard:
+        return hard  # the deeper checks assume a well-formed floor model
+    errs = missing_outline_errors(example_id, example)
+    errs += consistency_errors(example_id, example)
     errs += floor_fit_errors(example_id, example)
     return errs
 
 
 def fit_errors(example_id: str, example: dict) -> list[str]:
     """The full fit check: the geometry fit plus the shared-floor-area attribution."""
-    shape = floor_shape_errors(example_id, example)
-    shape += floor_area_reference_errors(example_id, example)
-    if shape:
-        return shape  # the deeper checks assume a well-formed floor model
-    errs = consistency_errors(example_id, example)
+    hard = floor_structural_errors(example_id, example)
+    hard += floor_area_reference_errors(example_id, example)
+    if hard:
+        return hard  # the deeper checks assume a well-formed floor model
+    errs = missing_outline_errors(example_id, example)
+    errs += consistency_errors(example_id, example)
     errs += floor_fit_errors(example_id, example)
     errs += shared_floor_area_errors(example_id, example)
     return errs

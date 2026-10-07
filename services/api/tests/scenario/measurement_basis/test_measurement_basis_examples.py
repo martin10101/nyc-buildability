@@ -13,6 +13,7 @@ from __future__ import annotations
 import ast
 import copy
 import pathlib
+import re
 import sys
 from decimal import Decimal
 
@@ -410,6 +411,69 @@ def test_fit_check_bites_when_a_floor_outline_is_removed():
     data["floors"][1]["outline_parts"] = []  # drop the ground-floor outline
     errs = fit.fit_errors("example-b-allowances-conditions-shown", data)
     assert any("no stated outside outline" in m for m in errs), errs
+
+
+def test_fit_reports_every_floor_not_just_the_first_problem():
+    # G4 note F1 (round 3): a floor missing its outline must NOT hide an overflow on another
+    # floor; both are reported in the same run.
+    doc = {
+        "floors": [
+            {"floor_id": "f1", "label": "no-outline floor", "count": 1, "outline_parts": []},
+            {"floor_id": "f2", "label": "overflowing floor", "count": 1,
+             "outline_parts": [{"width_ft": 20, "depth_ft": 20}]},  # 400
+        ],
+        "components": [
+            {"component_id": "apartment-interior", "portion": "residential",
+             "area_parts": [
+                 {"label": "a", "sign": "add", "width_ft": 10, "depth_ft": 10, "count": 1},
+                 {"label": "b", "sign": "add", "width_ft": 25, "depth_ft": 20, "count": 1},
+             ],
+             "floor_areas": [{"floor_id": "f1", "area": 100}, {"floor_id": "f2", "area": 500}]},
+        ],
+    }
+    errs = fit.geometry_fit_errors("two-floor", doc)
+    assert any("no stated outside outline" in m for m in errs), errs  # f1
+    assert any("add up to 500" in m for m in errs), errs  # f2 overflow, same run
+
+
+# --------------------------------------------------------------------------
+# round 3 - a figure stated in a cap condition must match the data (would have caught F1)
+# --------------------------------------------------------------------------
+def test_cap_figures_in_a_condition_match_the_data():
+    # F1: the dwelling-unit count and the resulting cap named in a refuse-type condition must
+    # equal the schedule's own exemption candidate (count, and three times it). A leftover
+    # from an old layout (e.g. "15 units here = 45 sq ft cap") must not stand.
+    pat = re.compile(r"\((\d+) units here = (\d+) sq ft cap\)")
+    checked = 0
+    for example_id, data in EXAMPLES.items():
+        for comp in data["components"]:
+            match = pat.search(str(comp["zoning"].get("condition", "")))
+            if not match:
+                continue
+            checked += 1
+            stated_units, stated_cap = int(match.group(1)), int(match.group(2))
+            cand = comp["zoning"]["exclusion"]["candidates"][0]
+            du = int(cand["operands"][1])
+            cap = int(lib.candidate_value(cand))  # 3 sq ft per DU x du
+            tag = f"{example_id}/{comp['component_id']}"
+            assert stated_units == du, f"{tag}: condition says {stated_units} units, data has {du}"
+            assert stated_cap == cap, f"{tag}: condition says {stated_cap} cap, data has {cap}"
+            assert cap == 3 * du, f"{tag}: cap {cap} is not 3 x {du}"
+    assert checked >= 1, "the refuse cap condition must be present and checked"
+
+
+def test_support_files_list_is_not_empty_and_names_the_known_modules():
+    # G4 note F3: SUPPORT_FILES is built from a glob; guard that it found the real modules.
+    names = {p.name for p in SUPPORT_FILES}
+    assert SUPPORT_FILES, "SUPPORT_FILES is empty (the glob matched nothing)"
+    for expected in (
+        "measurement_basis_lib.py",
+        "measurement_basis_check.py",
+        "measurement_basis_render.py",
+        "measurement_basis_fit.py",
+        "test_measurement_basis_examples.py",
+    ):
+        assert expected in names, f"SUPPORT_FILES is missing {expected}"
 
 
 # --------------------------------------------------------------------------

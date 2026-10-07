@@ -152,3 +152,43 @@ captured citations; 10/10 record law block-quotes; 8/8 digests; R6B table number
   anywhere.
 - The wall-thickness and energy quotes in the record are abridged with "..."; each fragment is
   verbatim (confirmed by the coverage script); the HPD quote is a guideline, not law.
+
+## Round 3 (on top of commit 3c160edc)
+
+**G3 finding F1 (must-fix).** `example-b` component `refuse`, `zoning.condition` read "up to
+three square feet per dwelling unit (15 units here = 45 sq ft cap)" - a leftover from the old
+layout. The rebuilt layout has 13 dwelling units and a 39 sq ft cap (the same example states
+13/39 in four other places and the exemption applied is 39). Corrected the condition to
+"(13 units here = 39 sq ft cap)" and re-rendered the page. No area and no ratio changed.
+
+**Sweep of every free-text figure against the rebuilt data.** Read the building, notes,
+condition, how_measured, labels, what_it_shows/does_not_show, assumptions and change_log of all
+three example JSONs, plus the record's section 7 figures (floors, apartments, dwelling units,
+dimensions, areas, caps, lengths; checked the old tokens 110 ft, 15 units, 45, six-storey,
+30x42, 28x40, 1,260, 1,120, 11,291, 6,800, 6,920, 4,620, 0.6022, 0.6676). **The refuse
+condition was the ONLY leftover.** All other matches are current and correct (B cellar 40x50,
+B corridor measured 1,120, C legal cap 11,000) or are deliberate references to the withdrawn
+figures in the change logs/withdrawn-notes (0.6022, 0.6676, 1,743/1,260). The record section 7
+has no stale area figures.
+
+**New tests.** (1) `test_cap_figures_in_a_condition_match_the_data` - parses "(N units here =
+M sq ft cap)" from any condition and asserts N and M equal the schedule's own exemption
+candidate (dwelling-unit count, and three times it); it FAILS on the 3c160edc file (condition
+15 vs data 13). (2) `test_fit_reports_every_floor_not_just_the_first_problem` - a document with
+one floor lacking an outline and another overflowing reports BOTH (G4 note F1). (3)
+`test_support_files_list_is_not_empty_and_names_the_known_modules` - guards the SUPPORT_FILES
+glob (G4 note F3).
+
+**Fit change (G4 note F1).** `measurement_basis_fit.py` split into `floor_structural_errors`
+(unsafe shape, gates) and `missing_outline_errors` (soft); the fit entry points now accumulate,
+so a missing outline on one floor no longer hides an overflow on another.
+
+**Not in this round:** G4 note F2 (a stair skipping a floor) -> backlog; G3 notes F2 (quote
+glyphs) and F3 (the cellar's stair) -> no change.
+
+**Round 3 checks (direct exit codes):** (a) ruff check . -> 0. (b) pytest
+tests/scenario/measurement_basis -> 38 passed, 0 (was 35; +3 new tests). (c) the F1 test on the
+3c160edc file FAILS as required (15 units vs data 13), exit 0; the three earlier mutations all
+FAIL as required, exit 0. (d) coverage script -> 0 misses (52 citations, 10 record quotes, 8
+digests), exit 0. (e) git status clean; diff 3c160edc..HEAD only allowed paths; rendered pages
+equal the renderer output, exit 0.
