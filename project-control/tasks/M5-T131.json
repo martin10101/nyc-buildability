@@ -85,13 +85,13 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "A valid document of today refused -> S6: every fixture through both validators",
     "The two validators drifting -> S7: one shared rule",
@@ -100,7 +100,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:29.581528+00:00",
-  "updated_at": "2026-10-07T16:00:29.990677+00:00",
+  "updated_at": "2026-10-07T16:00:54.221545+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -119,5 +119,15 @@
     "python .github/scripts/validate_contracts.py ; python -m pytest -q .github/scripts/tests",
     "python3 tools/modularity_check.py --check",
     "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ],
+  "worktree": "/root/project/w-wave5",
+  "progress_log": [
+    {
+      "at": "2026-10-07T16:00:54.221454+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed in wave 5 at the contract head 83a592df (integration head 596c034f, the merge of task M0-T183); builder backend-engineer in an isolated worktree; see project-control/reports/WAVE5-2026-10-07-concurrency-record.md."
+    }
   ]
 }
