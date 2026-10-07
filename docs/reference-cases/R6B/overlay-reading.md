@@ -75,6 +75,11 @@ Facts used:
 
 Law relied on:
 
+- ZR 34-11 (General Provisions) - captured.
+  - Capture: snapshot `zr-34-11`, file `docs/research/zr-snapshots/v1/zr-34-11.snapshot.json`.
+  - Content digest: `e54be53bf114e18e830ec36f526b2d2df6fcb4ce32d56f8327b2b172f071a3fc`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-11.
+  - Quoted: "except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of #Residence District# controls"
 - ZR 34-111 (Residential bulk regulations in C1 or C2 Districts whose bulk is governed by surrounding Residence District) - captured.
   - Capture: snapshot `zr-34-111`, file `docs/research/zr-snapshots/v1/zr-34-111.snapshot.json`.
   - Content digest: `5a71b0d973f9e78d24fcd325418abc47cfc53cda4cca0de6320c0624aeaa1acf`.
@@ -89,11 +94,11 @@ Law relied on:
 
 Why the rule applies: The overlay routes residential bulk to the R6B regulations (ZR 34-111), so the maximum residential floor area ratio is the R6B value of ZR 23-22 - 2.00 for standard residences. None of the eight captured overlay sections states a floor area ratio or changes the Residence District's; both readings read the captured overlay texts as adding no floor area ratio.
 
-Expected value: same as plain R6B: the captured overlay texts add no floor area ratio; the maximum residential floor area ratio is the R6B value of ZR 23-22 (2.00 for standard residences)
+Expected value: same as plain R6B: the captured overlay texts add no floor area ratio; the maximum residential floor area ratio is the R6B value of ZR 23-22 (2.00 for standard residences). This comparison holds subject to the uncaptured ZR 34-21 through 34-23, which ZR 34-11 names as exceptions ('except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of Residence District controls') and which neither reader had: reading 1 (return-independent-hand-calculation-5.md) raised that it cannot exclude an overlay-chapter modification of floor area, lot coverage or yards, while reading 2 (return-independent-hand-calculation-6.md) read the captured route as settled.
 
 Where this stands in the independent reading: return-independent-hand-calculation-5.md Q2a/Q2b ('NONE of the captured overlay texts states a FAR'; FAR = R6B 2.00 standard) and return-independent-hand-calculation-6.md Q2a/Q2b (same); both agree the overlay adds no floor area ratio (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).
 
-What this row does not establish: The separate 2.40 ratio for qualifying affordable or senior housing needs a qualifying-housing fact not recorded, so the choice between 2.00 and 2.40 is not settled by the facts (both readings). Because ZR 34-11 also points to the uncaptured Sections 34-21 through 34-23, an overlay-chapter modification of floor area cannot be fully excluded (reading 1's caveat). It asserts no floor-area figure and says nothing complies.
+What this row does not establish: The separate 2.40 ratio for qualifying affordable or senior housing needs a qualifying-housing fact not recorded, so the choice between 2.00 and 2.40 is not settled by the facts (both readings). Because ZR 34-11 also points to the uncaptured Sections 34-21 through 34-23 (its named exceptions), an overlay-chapter modification cannot be fully excluded - a caveat reading 1 raised and reading 2 did not, which is why the comparison is recorded subject to it rather than as settled. It asserts no floor-area figure and says nothing complies.
 
 ### lot-coverage - Lot coverage: does the overlay change it
 
@@ -105,6 +110,11 @@ Facts used:
 
 Law relied on:
 
+- ZR 34-11 (General Provisions) - captured.
+  - Capture: snapshot `zr-34-11`, file `docs/research/zr-snapshots/v1/zr-34-11.snapshot.json`.
+  - Content digest: `e54be53bf114e18e830ec36f526b2d2df6fcb4ce32d56f8327b2b172f071a3fc`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-11.
+  - Quoted: "except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of #Residence District# controls"
 - ZR 34-111 (Residential bulk regulations in C1 or C2 Districts whose bulk is governed by surrounding Residence District) - captured.
   - Capture: snapshot `zr-34-111`, file `docs/research/zr-snapshots/v1/zr-34-111.snapshot.json`.
   - Content digest: `5a71b0d973f9e78d24fcd325418abc47cfc53cda4cca0de6320c0624aeaa1acf`.
@@ -118,11 +128,11 @@ Law relied on:
 
 Why the rule applies: The overlay routes residential bulk to the R6B regulations (ZR 34-111), so lot coverage is set by the R6B ZR 23-362. None of the captured overlay texts states a lot-coverage rule or changes the Residence District's; both readings read the captured overlay texts as adding no lot-coverage rule.
 
-Expected value: same as plain R6B: the captured overlay texts add no lot-coverage rule; lot coverage is set by the R6B ZR 23-362
+Expected value: same as plain R6B: the captured overlay texts add no lot-coverage rule; lot coverage is set by the R6B ZR 23-362. This comparison holds subject to the uncaptured ZR 34-21 through 34-23, which ZR 34-11 names as exceptions ('except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of Residence District controls') and which neither reader had: reading 1 (return-independent-hand-calculation-5.md) raised that it cannot exclude an overlay-chapter modification of floor area, lot coverage or yards, while reading 2 (return-independent-hand-calculation-6.md) read the captured route as settled.
 
 Where this stands in the independent reading: return-independent-hand-calculation-5.md Q2a/Q3 (overlay states no lot-coverage rule) and return-independent-hand-calculation-6.md Q2a (same); both agree the overlay adds no lot-coverage rule (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).
 
-What this row does not establish: Both readings separately read the whole lot as a corner lot at 100 percent under ZR 23-362(a), but that single whole-lot figure is not settled: the per-portion reading in cases/real-lot.json row L5 and cases/step-p1-worked.json leaves the benchmark lot's coverage not known as a single whole-lot figure, because part of the lot lies beyond 100 feet of the 215 Place street line. This case therefore asserts no whole-lot coverage percentage and does not change row L5; it records only that the overlay adds no coverage rule. It says nothing complies.
+What this row does not establish: Both readings separately read the whole lot as a corner lot at 100 percent under ZR 23-362(a), but that single whole-lot figure is not settled: the per-portion reading in cases/real-lot.json row L5 and cases/step-p1-worked.json leaves the benchmark lot's coverage not known as a single whole-lot figure, because part of the lot lies beyond 100 feet of the 215 Place street line. This case therefore asserts no whole-lot coverage percentage and does not change row L5; it records only that the overlay adds no coverage rule. Because ZR 34-11 also points to the uncaptured Sections 34-21 through 34-23 (its named exceptions), an overlay-chapter modification cannot be fully excluded - a caveat reading 1 raised and reading 2 did not, which is why the comparison is recorded subject to it rather than as settled. It says nothing complies.
 
 ### dwelling-units - Dwelling units: does the overlay change the limit
 
@@ -275,6 +285,11 @@ Facts used:
 
 Law relied on:
 
+- ZR 34-11 (General Provisions) - captured.
+  - Capture: snapshot `zr-34-11`, file `docs/research/zr-snapshots/v1/zr-34-11.snapshot.json`.
+  - Content digest: `e54be53bf114e18e830ec36f526b2d2df6fcb4ce32d56f8327b2b172f071a3fc`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-11.
+  - Quoted: "except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of #Residence District# controls"
 - ZR 35-53 (Modification of Rear Yard Requirements) - captured.
   - Capture: snapshot `zr-35-53`, file `docs/research/zr-snapshots/v1/zr-35-53.snapshot.json`.
   - Content digest: `755aa5113e8ea050c21e41355448ed20d88610eeaadaea256a92c23611629ceb`.
@@ -293,11 +308,11 @@ Law relied on:
 
 Why the rule applies: The only captured overlay rear-yard text, ZR 35-53, applies by its own words to a residential portion of a mixed building; the subject is a new all-residential building, so ZR 35-53 does not set its rear yard. The rear yard stays the Article II reading: ZR 23-344(a) requires no rear yard within 100 feet of the corner point (the street lines meet at about 89.7 degrees, 135 or less), and ZR 23-342's interior-lot requirement governs beyond that. So the overlay does not change the all-residential rear-yard reading. Both readings read this the same way.
 
-Expected value: same as plain R6B for an all-residential building: the overlay's only rear-yard text, ZR 35-53, reaches only the residential portion of a mixed building, so it does not change the rear yard; within 100 feet of the corner no rear yard is required (ZR 23-344(a))
+Expected value: same as plain R6B for an all-residential building: the overlay's only rear-yard text, ZR 35-53, reaches only the residential portion of a mixed building, so it does not change the rear yard; within 100 feet of the corner no rear yard is required (ZR 23-344(a)). This comparison holds subject to the uncaptured ZR 34-21 through 34-23, which ZR 34-11 names as exceptions ('except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of Residence District controls') and which neither reader had: reading 1 (return-independent-hand-calculation-5.md) raised that it cannot exclude an overlay-chapter modification of floor area, lot coverage or yards, while reading 2 (return-independent-hand-calculation-6.md) read the captured route as settled.
 
 Where this stands in the independent reading: return-independent-hand-calculation-5.md Q5a/Q5b (35-53 reaches only mixed buildings; overlay effect none for an all-residential building) and return-independent-hand-calculation-6.md Q5a/Q5b (same); both agree (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).
 
-What this row does not establish: Beyond 100 feet of the corner the rear-yard outcome is not known (it needs the neighbouring lot-line configuration and, for any depth, the building type and lot width); that is the plain-R6B reading recorded in cases/real-lot.json row L12 and is unchanged here. The defined term mixed building is not captured. It says nothing complies.
+What this row does not establish: Beyond 100 feet of the corner the rear-yard outcome is not known (it needs the neighbouring lot-line configuration and, for any depth, the building type and lot width); that is the plain-R6B reading recorded in cases/real-lot.json row L12 and is unchanged here. The defined term mixed building is not captured. Because ZR 34-11 also points to the uncaptured Sections 34-21 through 34-23 (its named exceptions), an overlay-chapter modification cannot be fully excluded - a caveat reading 1 raised and reading 2 did not, which is why the comparison is recorded subject to it rather than as settled. It says nothing complies.
 
 ### paragraphs-applicable - Which paragraphs of ZR 34-111, 34-24, 35-632 and 35-631 apply or do not apply to this lot
 

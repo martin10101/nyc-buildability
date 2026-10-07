@@ -6,7 +6,7 @@
   "what_it_is_worth": "Prepared by an AI helper and recomputed by a second AI; their agreement alone is not proof. These are made-up lots, not a real property, and this is a draft reading of the law, not professionally reviewed. The floor-area and dwelling-unit sections were read from the captures and also on the official page on 2026-10-06 (ZR 23-22, 23-52, 23-362).",
   "what_it_does_not_establish": [
     "These lots are made up; they do not describe any real property.",
-    "The 80-percent coverage may be increased (never decreased) by ZR 23-363 (now captured, task M4-T025) under its triggers, and does not apply to lots of 30,000 sq ft or more.",
+    "The 80-percent coverage may be increased (never decreased) by ZR 23-363 (now captured, task M4-T025) under its triggers; the different maximum of ZR 23-362(b) applies only to zoning lots 'with buildings utilizing the eligible site provisions of Section 23-434' - '65 percent on zoning lots with a lot area of 30,000 square feet or more that are not large sites', and 50 percent on large sites - not to every lot of 30,000 square feet or more.",
     "It is not a professional or legal determination."
   ],
   "prepared_by": "An AI helper that took no part in writing the program's rules, working only from a sealed folder of pinned law-text captures and the lot's recorded facts, with no access to the program.",
@@ -49,6 +49,11 @@
       "date": "2026-10-07",
       "summary": "Row interior-coverage: expected value unchanged (80 percent). The 'does not establish' sentence about lots of 30,000 sq ft or more (written by task M4-T024) was too broad (backlog DB-168). Read against the captured ZR 23-362(b), that maximum applies only to zoning lots whose buildings use the eligible-site provisions of Section 23-434 (65 percent for a lot area of 30,000 square feet or more that are not large sites, 50 percent on large sites), not to every lot of 30,000 square feet or more. The sentence is replaced with the captured words and two ZR 23-362(b) citations are added. Reason: a corrected reading.",
       "by": "rules-engineer (M4-T028)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Case-level 'what it does not establish' item 2 carried the same too-broad clause 'and does not apply to lots of 30,000 sq ft or more' (review note F3). No expected value changed. The clause is replaced with what the captured ZR 23-362(b) says: the different maximum applies only to zoning lots with buildings using the eligible-site provisions of Section 23-434 (65 percent for a lot area of 30,000 square feet or more that are not large sites, 50 percent on large sites), not to every lot of that size. Reason: a corrected reading.",
+      "by": "rules-engineer (M4-T028 round 2)"
     }
   ],
   "rows": [

@@ -87,4 +87,14 @@ The full `services/api` pytest was NOT run by me (the orchestrator runs it once 
 
 ## Doubt
 
-- The case-level `interior-lots.json` `what_it_does_not_establish[1]` sibling phrase is the same DB-168 pattern but not named by the directive; left unchanged (flagged above) to honour "ONE WORDING CORRECTION". A reviewer may wish to decide whether it should be corrected in a later packet.
+- The case-level `interior-lots.json` `what_it_does_not_establish[1]` sibling phrase is the same DB-168 pattern but not named by the directive; left unchanged in round 1 (flagged here). It is now corrected in round 2 per review note F3 (see below).
+
+## Round 2 (review notes F1 to F3) — reading 1's caveat carried in each row it touches; a second sentence corrected
+
+On top of 57a5d454. No expected value kind changed; no existing numeric/settled expected value changed; the two readings and the other cases/rows are untouched.
+
+- F1/F2 — reading 1's 34-21/34-23 caveat, in exactly the rows reading 1 attaches it to. Reading 1 (return-independent-hand-calculation-5.md, Q6 item 1) attaches the "cannot exclude an overlay-chapter modification" caveat to exactly the floor area ratio, lot coverage and rear-yard answers, and to no other row (its dwelling-unit, height, setback and street-wall passages carry other caveats, not this one; reading 2 reads the captured route as settled). So the caveat was added to `floor-area-ratio`, `lot-coverage` and `rear-yard` only, in two places each: (a) appended to the expected value text (names ZR 34-21 through 34-23, quotes the ZR 34-11 "except as modified by ... Sections 34-21 through 34-24, relating to exceptions to applicability of Residence District controls" words, and says reading 1 raised it while reading 2 read the route as settled); (b) in each row's "does not establish" text. A `zr-34-11` citation (quote "except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of #Residence District# controls") was added to each of the three rows so the quoted words are tied to the live capture. The rows stay value rows ("same as plain R6B ..."); neither reading was weakened or strengthened.
+- F3 — the second too-broad sentence. `interior-lots.json` case-level `what_it_does_not_establish` item 2 clause "and does not apply to lots of 30,000 sq ft or more" replaced with the captured ZR 23-362(b) scope (the different maximum applies only to zoning lots with buildings using the eligible-site provisions of Section 23-434; "65 percent on zoning lots with a lot area of 30,000 square feet or more that are not large sites", 50 percent on large sites). No expected value changed. Dated change-log entry added, reason "a corrected reading".
+- Pages re-rendered (6, byte-identical to data). No test change was needed (no pinned text or digest moved; "same as plain R6B" still present in each of the three values).
+
+Round 2 checks (services/api cwd; root for modularity): ruff exit 0; pytest `tests/rules/reference_cases` exit 0, 43 passed; renderer --check exit 0; modularity --check exit 0 (716 files, failures 0).
