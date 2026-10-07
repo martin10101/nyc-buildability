@@ -274,8 +274,10 @@ def test_a_document_without_the_new_fields_may_declare_any_prior_version(version
 
 
 # ---------------------------------------------------------------------------
-# S7 (property e): a withheld value never carries a number; a key is never both
-# shown and withheld (one map entry = exactly one way).
+# Property e (partial): a withheld value never carries a number; a SINGLE
+# value_state entry that mixes the fields of two ways is rejected. Two rules the
+# schema CANNOT express (a key shown in values[] AND withheld in the map; a shown
+# value with no entry) are pinned as known limits in the xfail tests below.
 # ---------------------------------------------------------------------------
 
 
@@ -290,15 +292,70 @@ def test_withheld_value_carrying_a_number_is_rejected() -> None:
     validate_results_document(doc)
 
 
-def test_one_key_both_shown_and_withheld_is_rejected() -> None:
+def test_one_entry_mixing_two_ways_is_rejected() -> None:
     doc = _base_1_3_0()
     states = doc["answers"]["floor_area_allowance"]["value_states"]
-    # The key max_residential_far is shown (settled). Making its single state entry
-    # carry withheld fields too is the only way to say one key is both ways in the
-    # map (a JSON object key maps to exactly one entry); the closed value_state
-    # branches reject the mix.
+    # One value_state entry that carries BOTH a shown way (way: settled) and the
+    # fields of a withheld way (label/reason/gap_kind/resolved_by) matches none of
+    # the three closed value_state branches and is rejected. NOTE: this is NOT the
+    # "same key shown in values[] and withheld in the map" case - the schema does
+    # NOT refuse that (see the KNOWN_LIMIT xfail tests below).
     states["max_residential_far"] = {
         "way": "settled",
+        "label": "Maximum residential FAR",
+        "reason": "not known",
+        "gap_kind": "missing_information",
+        "resolved_by": "a survey",
+    }
+    with pytest.raises(StudyContractError):
+        validate_results_document(doc)
+
+
+# ---------------------------------------------------------------------------
+# KNOWN LIMITS (reviewer C6 and C7b, both reproduced). JSON Schema 2020-12 cannot
+# express either rule in this shape or any other, so the contract does NOT refuse
+# these two wrong documents today; refusing them is owed to the validator of the
+# engine that first emits 1.3.0 (backlog row DB-171). strict=True makes each test
+# FAIL the day the gap is closed, forcing whoever closes it to remove the mark.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="KNOWN LIMIT (DB-171): JSON Schema 2020-12 cannot quantify that every value key "
+    "shown in an answer's values[] array also carries a value_state, so a shown value with no "
+    "way entry (settled by silence) is NOT refused by the schema. Refusing it is owed to the "
+    "validator of the engine that first emits 1.3.0; strict xfail fails when that lands.",
+)
+def test_KNOWN_LIMIT_a_shown_value_with_no_way_entry_is_not_refused_by_the_schema() -> None:
+    doc = _base_1_3_0()
+    # Two values are shown in floor_area_allowance; leave only ONE value_state entry,
+    # so the second shown value states no way (C7b). The desired rule is that the
+    # contract refuses this; it does not today, so this assertion fails -> xfail.
+    doc["answers"]["floor_area_allowance"]["value_states"] = {
+        "max_residential_far": {"way": "settled"}
+    }
+    assert len(doc["answers"]["floor_area_allowance"]["values"]) == 2
+    with pytest.raises(StudyContractError):
+        validate_results_document(doc)
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="KNOWN LIMIT (DB-171): JSON Schema 2020-12 cannot express cross-container key "
+    "disjointness for dynamic keys, so a key shown in an answer's values[] array AND carrying "
+    "a withheld value_state (both shown and withheld) is NOT refused by the schema. Refusing it "
+    "is owed to the validator of the engine that first emits 1.3.0; strict xfail fails on close.",
+)
+def test_KNOWN_LIMIT_a_key_both_shown_and_withheld_is_not_refused_by_the_schema() -> None:
+    doc = _base_1_3_0()
+    # max_residential_far stays a shown item of values[] (value 2.0) AND is given a
+    # withheld value_state (C6). The desired rule is that the contract refuses this;
+    # it does not today, so this assertion fails -> xfail.
+    shown = {v["key"] for v in doc["answers"]["floor_area_allowance"]["values"]}
+    assert "max_residential_far" in shown
+    doc["answers"]["floor_area_allowance"]["value_states"]["max_residential_far"] = {
+        "way": "withheld",
         "label": "Maximum residential FAR",
         "reason": "not known",
         "gap_kind": "missing_information",
