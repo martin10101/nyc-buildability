@@ -965,6 +965,81 @@
      "reviewed_sha": "c136fabff5d9501492374dd7b24221773605e9a9"
     }
    ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M4-T026",
+   "applicable_requirement_ids": [
+    "D-090-R291"
+   ],
+   "producer": "legal-corpus-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R291",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M4-T027",
+   "applicable_requirement_ids": [
+    "D-090-R226",
+    "D-090-R238",
+    "D-090-R241",
+    "D-090-R259",
+    "D-090-R291",
+    "D-090-R318"
+   ],
+   "producer": "rules-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R226",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R238",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R241",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R259",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R291",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R318",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }

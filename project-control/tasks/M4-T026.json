@@ -1,0 +1,124 @@
+{
+  "task_id": "M4-T026",
+  "title": "Law-text captures for a residential building in a commercial overlay (work-order step P2; gap K9): ZR 34-11, 34-111, 34-24, 35-53, 35-63 and every section under it (35-631, 35-632 and any other) - source text only (D-090 R291)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Capture, as source text only, the Article III law text that governs a residential building on a lot where a C1 or C2 commercial overlay is mapped within a Residence District (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, section 4 item 7, section 5 gap K9 and section 8 'Step P1 and step P2'). From the official Zoning Resolution site (zoningresolution.planning.nyc.gov), with the capture method and file format of the captures made by task M4-T025 under docs/research/zr-snapshots/v1/ and the synced copy under services/api/app/_zr_snapshots/v1/, each section WHOLE (every paragraph, list item and table), one file per section: ZR 34-11 (General Provisions); ZR 34-111; ZR 34-24; ZR 35-53; ZR 35-63 (the text of the section itself) and EVERY section numbered under it that the official page shows (35-631, 35-632 and any other: the builder lists them from the page and captures each). The work order and one rule file name '34-24(b)(1)', '35-631(b)' and '35-632(a)': the builder reports, from the official page, whether each named paragraph exists as named, and captures the whole section either way. Every other section or defined term these texts point to (for example ZR 35-62, 36-64, 35-71, 23-41, 23-434, 23-435) is LISTED in the report with the pointing words and whether it is captured; it is not captured by this task. Each capture records the official address, the channel used (the page, and the print/PDF channel as the completeness check where it answers; a disclosed fallback where it does not), the time each request was made, the 'last amended' date shown, the verbatim text and its digests. A capture holds source text only: no rule, no reading of what the text means for a lot, no number derived from it. No existing capture is edited. No rule file, rule engine, register entry, reference case or screen changes, and no value is shown anywhere because of a capture.",
+  "business_reason": "Gap K9 of the work order: the rules for a commercial overlay are not captured, so on a lot with a recorded overlay (the benchmark lot has a C2-2 overlay) every residential result is withheld until the governing sections are captured and read independently. Step 3 of the owner's eight steps (D-090-R291): check the R6B answers, which needs this text before any missing rule can be resolved. A research helper read five of these pages on 2026-10-07 (docs/research/helper-research/P2_Article_III_Lead_2026-10-07.md; backlog row DB-166): a lead, not a capture; it reports that '34-24(b)(1)' does not exist as named.",
+  "inputs": [
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 4 (item 7), section 5 (gap K9) and section 8 ('Step P1 and step P2')",
+    "docs/research/helper-research/P2_Article_III_Lead_2026-10-07.md (a lead: the addresses and node ids a helper used and what it read; never the source of a capture) and docs/DISCOVERY_BACKLOG.md rows DB-166 and DB-167",
+    "The captures made by task M4-T025 under docs/research/zr-snapshots/v1/ (for the file format, the id pattern, the source and cross_check blocks, the digest fields and the notes on channels) and project-control/reports/M4-T025-G3G4.md (the reviewer's four notes: record each request's own time; treat the print/PDF as a text check; say plainly when a label is a position in the page's markup)",
+    "services/api/scripts/sync_zr_snapshots.py and services/api/tests/rules/test_zr_snapshot_bundle.py; .claude/rules/legal-rules.md",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json row R291"
+  ],
+  "outputs": [
+    "New capture files under docs/research/zr-snapshots/v1/ in the existing schema, one per section, each with its verbatim text, source block, cross-check block and digests",
+    "The synced copies under services/api/app/_zr_snapshots/v1/, made with services/api/scripts/sync_zr_snapshots.py",
+    "project-control/reports/M4-T026-producer-report.md: for each capture the address, channel, the time of each request, amendment date, byte counts and digests; the sections found under 35-63; whether each paragraph named by the work order exists as named; every section and defined term the texts point to, with the pointing words and whether it is captured; how each text compares with the helper's lead (every difference listed); every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M4-T025"
+  ],
+  "allowed_paths": [
+    "docs/research/zr-snapshots/v1/**",
+    "services/api/app/_zr_snapshots/v1/**",
+    "services/api/tests/rules/test_zr_snapshot_bundle.py",
+    "project-control/reports/M4-T026-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "the existing capture files (no edit to a capture that is already committed; new files only)",
+    "services/api/app/rules/** (no rule file, engine, registry or register change)",
+    "docs/reference-cases/**, docs/zoning-rule-review/**, docs/plans/**, docs/measurement-basis/**, docs/research/helper-research/**",
+    "every other test file; apps/**; packages/**; .github/**; CLAUDE.md; .claude/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "each_named_text_is_captured",
+      "input": "ls docs/research/zr-snapshots/v1",
+      "expected": "a capture exists for each of ZR 34-11, 34-111, 34-24, 35-53, 35-63 and every section the official page shows under 35-63 (35-631 and 35-632 among them); anything not captured is named in the report with the reason"
+    },
+    {
+      "id": "S2",
+      "case": "source_text_only",
+      "input": "each new capture file",
+      "expected": "verbatim text with its address, channel, request times and amendment date; no rule, no interpretation for a lot, no derived number; notes say only what the channel supports"
+    },
+    {
+      "id": "S3",
+      "case": "the_text_is_what_the_official_page_says",
+      "input": "an independent re-read of each official page by the reviewer",
+      "expected": "the captured text equals the official text read again by a different agent; the recorded digests recompute; the amendment date matches"
+    },
+    {
+      "id": "S4",
+      "case": "whole_sections_and_true_labels",
+      "input": "each capture's text and its composition note",
+      "expected": "every paragraph, list item and table of the section is in the capture; a label in front of a list item is the label the print/PDF prints, or the capture says plainly that it is a position in the page's markup; the report says for '34-24(b)(1)', '35-631(b)' and '35-632(a)' whether the paragraph exists as named"
+    },
+    {
+      "id": "S5",
+      "case": "existing_captures_untouched",
+      "input": "git diff <claim-seam head>..<final head> -- docs/research/zr-snapshots/v1",
+      "expected": "only added files; every existing capture and its digest is unchanged; the review register's check still passes"
+    },
+    {
+      "id": "S6",
+      "case": "synced_copy_and_bundle_check",
+      "input": "services/api/scripts/sync_zr_snapshots.py and tests/rules/test_zr_snapshot_bundle.py",
+      "expected": "the synced copies are byte-identical to the captures; the bundle test passes"
+    },
+    {
+      "id": "S7",
+      "case": "pointed_to_sections_listed_and_lead_compared",
+      "input": "the producer report",
+      "expected": "every section and defined term the captured texts point to is listed with the pointing words and whether it is captured; each capture is set beside the helper's lead and every difference is listed; none is resolved silently"
+    },
+    {
+      "id": "S8",
+      "case": "scope",
+      "input": "git show --name-status <the builder's commit>",
+      "expected": "the builder's commit changes only allowed_paths; no rule, engine, register, reference case, plan or screen changed; ruff and the full services/api pytest pass at the wave's final candidate"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A capture that silently omits a paragraph or a table row would mislead every later reading -> S3 and S4: an independent re-read and whole sections",
+    "A paragraph label taken from memory or from the rule file's note instead of the page -> S4: the report states what the page shows",
+    "A capture mistaken for permission to show a number, or for a reading of the overlay rules -> S2 and the work order: no number is shown because of a capture alone; the reading is a later step"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T05:05:15.349573+00:00",
+  "updated_at": "2026-10-07T05:05:15.765935+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R291"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T05:05:15.349877+00:00",
+  "path_notes": "PRODUCER = legal-corpus-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). PART OF A PARALLEL WAVE with M5-T126 and M4-T027 (owner messages 107 and 108, D-090 source-052): the three share no file; see the wave's concurrency record in project-control/reports/. MODULARITY ANSWERS: no handwritten production source changes; capture files and their synced copies only.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python scripts/sync_zr_snapshots.py --check",
+    "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py tests/rules/test_zoning_rule_review_register.py",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ]
+}
