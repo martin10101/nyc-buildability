@@ -1,0 +1,106 @@
+{
+  "task_id": "M4-T033",
+  "title": "Further law-text captures named by the step-P4 readers as not had (the definition of floor area ratio; the front and side yard requirements for R6 to R12; the page of ZR 34-23 and its sub-sections; further ZR 12-10 definitions; the scope of Article III Chapter 5): source text only (D-090 R291)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Capture, as source text only, the law texts that the two step-P4 readers named as not among their texts and that their answers wait for (docs/reference-cases/R6B/cases/step-p4-worked.json row `sections-and-facts-not-had`; the two readings under docs/reference-cases/R6B/provenance/, files 9 and 10, each at its Q10), from the official Zoning Resolution site, each in a file of its own under docs/research/zr-snapshots/v1/ in the form of the existing captures, with the synced copy under services/api/app/_zr_snapshots/v1/. THE TARGETS, named by what they are and NOT by guessed section numbers (the builder finds each on the official site and reports its section number, title and page): (1) the ZR 12-10 definition of 'floor area ratio' (the unit count of the reference cases is conditional on it); (2) the sections that state the front yard and the side yard REQUIREMENTS for residences in R6 through R12 districts, or the section that says none is required there (whether the overlay's 'no front yard' and 'no side yard' change anything against plain R6B waits for them); (3) the section the text of ZR 23-443(a) points to for zoning lots adjoining public parks; (4) the section on balconies that ZR 23-341 and ZR 23-312 point to; (5) these ZR 12-10 definitions, each whole: 'Limited Height District', 'aggregate width of street walls', 'block', 'short dimension of a block' (or the article that defines it), 'transportation-infrastructure-adjacent frontage', 'Greater Transit Zone', 'Outer Transit Zone', 'multiple dwelling residence', 'height factor', 'open space', 'open space ratio' and 'public park'; (6) the opening sections of Article III, Chapter 5 that state to which buildings the chapter applies (the readings could not say whether ZR 35-22 or ZR 34-111 formally governs an all-residential building); (7) the page of ZR 34-23 itself and the list of its sub-sections as the official site shows it (one reading holds the rear-yard answer subject to the capture of ZR 34-23 holding only its title line: capture what the page shows, its child sections by number and title, and say whether any child exists beyond 34-231, 34-232 and 34-233; the existing capture `zr-34-23` is NOT edited: if the page shows more than it holds, capture the list as a separate file and say so); (8) ZR 23-20 and its opening text, if a page of its own exists. For each target: search the exact title, the inverted title ('yard, front') and combined titles ('residence, or residential'); a term is reported as 'not defined in ZR 12-10' ONLY after all three and with the search shown. A term defined inside another article is captured with that article whole. Tables cell by cell. Each capture carries the page address, the time of each request, the amendment date the page shows, the verbatim text and its digests, and the channel used (the print/PDF channel where it answers; the disclosed fallback where it does not). The captures are NOT a reading: no rule, no reference case, no register entry and no result changes, and the report draws no conclusion about what any text means for a lot.",
+  "business_reason": "Step 3 of the owner's eight steps (R291) is not finished while answers of the reference cases wait for text nobody has captured: the unit count is conditional on the definition of 'floor area ratio'; the rear-yard answer under the overlay carries a caveat about ZR 34-23 that only the official page can close; the yards and the height provisions point to sections and terms the readers did not have. Capturing them is the first half; the independent reading follows in a later task.",
+  "inputs": [
+    "docs/reference-cases/R6B/cases/step-p4-worked.json (row `sections-and-facts-not-had`) and docs/reference-cases/R6B/provenance/return-independent-hand-calculation-9.md and -10.md (each reader's Q10)",
+    "docs/research/zr-snapshots/v1/ (the 110 existing captures: the file form, the fields, the digests; which targets are already there) and project-control/reports/M4-T031-producer-report.md (how the last captures were made; the channels; the limit disclosed there)",
+    "services/api/scripts/sync_zr_snapshots.py and services/api/tests/rules/test_zr_snapshot_bundle.py",
+    "The official site zoningresolution.planning.nyc.gov (the only source)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json row R291"
+  ],
+  "outputs": [
+    "New capture files under docs/research/zr-snapshots/v1/ and their byte-identical copies under services/api/app/_zr_snapshots/v1/",
+    "project-control/reports/M4-T033-producer-report.md: per target: found or not (with the searches), the section number and title, the page, the channel, the capture id; what the page of ZR 34-23 shows; every further section the new texts point to that is not captured; every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M4-T031"
+  ],
+  "allowed_paths": [
+    "docs/research/zr-snapshots/v1/**",
+    "services/api/app/_zr_snapshots/v1/**",
+    "services/api/tests/rules/test_zr_snapshot_bundle.py",
+    "project-control/reports/M4-T033-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "every EXISTING capture file (none is edited or re-fetched in place)",
+    "docs/reference-cases/**, docs/zoning-rule-review/**, docs/plans/**, docs/measurement-basis/**",
+    "services/api/app/** except the synced copies under services/api/app/_zr_snapshots/v1/; every other test",
+    "apps/**; packages/**; .github/**; CLAUDE.md; .claude/**; tools/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "each_target_captured_or_honestly_reported",
+      "input": "the eight groups of targets of the objective",
+      "expected": "each target is captured in a file of its own, or the report says exactly what was searched (exact, inverted, combined titles) and what the official site shows; nothing is reported as 'not defined' that the site defines"
+    },
+    {
+      "id": "S2",
+      "case": "the_text_is_the_official_text",
+      "input": "each new capture",
+      "expected": "the verbatim text equals the official page's text for that section or article, whole; tables cell by cell; the address, request times, amendment date, channel and digests are recorded; a disclosed limit where a channel did not answer"
+    },
+    {
+      "id": "S3",
+      "case": "the_page_of_34_23",
+      "input": "the official page of ZR 34-23 and its child sections",
+      "expected": "the report says what the page holds and lists every child section by number and title; the existing capture is not edited"
+    },
+    {
+      "id": "S4",
+      "case": "copies_identical_and_existing_untouched",
+      "input": "git show --name-status <the builder's commit>; the sync script's check",
+      "expected": "only added files under the two capture folders (and the report, and the bundle test only if it lists ids); no existing capture modified; the synced copies byte-identical; the bundle test passes"
+    },
+    {
+      "id": "S5",
+      "case": "source_text_only",
+      "input": "the report and the captures",
+      "expected": "no statement of what a text means for any lot; no rule, case, register or result file changed"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A term reported as not defined that sits under an inverted or combined title (seen in M4-T029) -> S1",
+    "A section number guessed instead of found -> the targets are named by what they are; the builder reports the number the site shows",
+    "An existing capture edited -> S4"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T16:00:30.664338+00:00",
+  "updated_at": "2026-10-07T16:00:31.094739+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R291"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T16:00:30.664623+00:00",
+  "path_notes": "PRODUCER = legal-corpus-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). PART OF PARALLEL WAVE 5 with M5-T130 and M5-T131: the three share no file. MODULARITY ANSWERS: no handwritten production source changes; data files only.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python scripts/sync_zr_snapshots.py --check",
+    "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py",
+    "python3 scripts/lanes/check_lane_paths.py --coverage",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ]
+}

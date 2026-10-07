@@ -1,0 +1,123 @@
+{
+  "task_id": "M5-T131",
+  "title": "The results validators refuse the 1.3.0 documents the schema cannot refuse (a shown value with no way entry; a key both shown and withheld; a way entry for no value; an available answer with every value withheld): one shared rule, both validators; nothing emits 1.3.0 (backlog row DB-171; D-090 R229, R267)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "THE RESULTS VALIDATORS REFUSE WHAT THE SCHEMA CANNOT (backlog row DB-171; work owed since task M5-T128 before any engine emits contract 1.3.0). The schema language cannot compare the keys of an answer's shown values with the keys of its way entries, so a 1.3.0 document can pass the schema while (i) a shown value has no way entry (an empty map of way entries included), (ii) one key is both shown and withheld, or (iii) a way entry's key is not the key of a value of that answer where the way is settled or conditional. BOTH validators that results documents pass through, `services/api/app/scenario/three_answers/contract.py` (`validate_results_document`) and `services/api/app/contracts/study_contracts.py` (`validate_results_document`), must refuse such a document after the schema check, with a message that names the answer and the key, and must do so from ONE shared rule in a new focused module (`services/api/app/contracts/results_way_rules.py`) that both call, so that the two cannot drift. The rule applies ONLY to a document that declares contract version 1.3.0; every document of an earlier version, and every valid fixture in the repository, validates exactly as today. ALSO from row DB-171: (F4) an available answer in a 1.3.0 document whose every value is withheld is refused (the contract cannot keep an answer 'available' with no shown value; the whole answer must then be 'not available'): implement it and test it; (F5) the unit estimate has no way entries in 1.3.0: do NOT change the schema; say in the report what the validators do with a unit estimate today and leave the decision to the piece that emits; (F6) is a rule for readers, not for the validators: restate it in the report. The three tests of `services/api/tests/contracts/test_results_three_ways_slot.py` that pin the schema's known limits (`test_KNOWN_LIMIT_...`, expected failures today) stay as they are, because they test the SCHEMA alone and the schema does not change; NEW tests assert that each of the three documents, and the all-withheld one, is refused by BOTH validators, and that a correct 1.3.0 document with settled, conditional and withheld values is accepted by both. The schema, its runtime copy, the generated types and every fixture are NOT edited. Nothing emits 1.3.0 after this task either. Messages are for developers and logs, not for users; they state the answer, the key and the rule broken, and no law.",
+  "business_reason": "Before any engine emits contract 1.3.0 the validators must make it impossible for a value to be shown with no statement of how it may be shown: otherwise a result could be settled by silence (the owner's rules R229, unknown stays unknown, and R267, 'not checked' must not become 'confirmed'). The independent review of M5-T128 recorded this as owed work; doing it now, beside the piece that carries the facts, shortens the piece that emits.",
+  "inputs": [
+    "docs/DISCOVERY_BACKLOG.md row DB-171 (the three cases, F4, F5, F6)",
+    "packages/contracts/schemas/v1/results.schema.json (version 1.3.0: `value_states`, `value_state`, `value_condition`, `answer_not_available`; READ ONLY) and services/api/tests/contracts/test_results_three_ways_slot.py (how documents of each kind are built; the three KNOWN_LIMIT tests; READ, and extend only by NEW test files)",
+    "services/api/app/scenario/three_answers/contract.py and services/api/app/contracts/study_contracts.py (the two validators), and every caller of each `validate_results_document` (search; list them in the report)",
+    "every valid and invalid results fixture under packages/contracts/fixtures/ (READ ONLY)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R229 and R267; project-control/reports/M5-T128-G3G4.md (the review that found the limits); docs/CODE_MODULARITY_POLICY.md"
+  ],
+  "outputs": [
+    "services/api/app/contracts/results_way_rules.py (new): the shared rule, pure, no I/O",
+    "services/api/app/scenario/three_answers/contract.py and services/api/app/contracts/study_contracts.py: each calls the shared rule after its schema check (the smallest edit; the public functions and their errors unchanged for every document that is valid today)",
+    "services/api/tests/contracts/test_results_way_rules.py (new): the refused and the accepted documents through BOTH validators; every existing results fixture through both, unchanged",
+    "project-control/reports/M5-T131-producer-report.md: the rule in words; each refused case with its message; the callers of both validators; F5 and F6; every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M5-T128"
+  ],
+  "allowed_paths": [
+    "services/api/app/contracts/results_way_rules.py",
+    "services/api/app/scenario/three_answers/contract.py",
+    "services/api/app/contracts/study_contracts.py",
+    "services/api/tests/contracts/test_results_way_rules.py",
+    "project-control/reports/M5-T131-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/** (no schema, generated file or fixture changes); services/api/app/_contract_schemas/**",
+    "every other file under services/api/app/** (no engine, route or drawing edit); the decision modules of M5-T129 and the new modules of M5-T130",
+    "services/api/tests/contracts/test_results_three_ways_slot.py and every other existing test; apps/**; docs/**",
+    ".github/**; CLAUDE.md; .claude/**; tools/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "a_shown_value_with_no_way_entry_is_refused",
+      "input": "a 1.3.0 document with an available answer of two values and a way entry for one; the same with an empty map of way entries",
+      "expected": "refused by BOTH validators after the schema check passes, naming the answer and the key without a way"
+    },
+    {
+      "id": "S2",
+      "case": "a_key_both_shown_and_withheld_is_refused",
+      "input": "a 1.3.0 document where a key is in the values list and its way entry is withheld",
+      "expected": "refused by both, naming the answer and the key"
+    },
+    {
+      "id": "S3",
+      "case": "a_way_entry_for_no_value_is_refused",
+      "input": "a 1.3.0 document with a settled or conditional way entry whose key is not a value of that answer",
+      "expected": "refused by both, naming the key; a withheld entry for a key that is not in the values list is ACCEPTED (that is what withheld means)"
+    },
+    {
+      "id": "S4",
+      "case": "an_available_answer_with_every_value_withheld_is_refused",
+      "input": "a 1.3.0 document with an available answer whose values list is empty and whose way entries are all withheld",
+      "expected": "refused by both (row DB-171 F4): the answer must be 'not available'. If the SCHEMA already refuses an empty values list, the builder shows that, says so and tests the schema's refusal instead"
+    },
+    {
+      "id": "S5",
+      "case": "a_correct_document_is_accepted",
+      "input": "a 1.3.0 document with settled, conditional and withheld values in one answer, and a whole answer that is not available",
+      "expected": "accepted by both validators"
+    },
+    {
+      "id": "S6",
+      "case": "nothing_valid_today_changes",
+      "input": "every valid results fixture, every invalid one, and documents of versions 1.0.0, 1.1.0 and 1.2.0",
+      "expected": "each valid fixture is accepted and each invalid one refused by both validators exactly as before; the rule is not applied below 1.3.0; the three KNOWN_LIMIT tests still report the schema's limits unchanged; the full services/api suite passes at the wave's final candidate"
+    },
+    {
+      "id": "S7",
+      "case": "one_rule_two_callers_and_scope",
+      "input": "the two validators' code; git show --name-status <the builder's commit>",
+      "expected": "both call the same function of the new module; no copy of the rule; only allowed_paths changed; the schema, its copy, the generated types and the fixtures byte-unchanged; the repository's contract validator (.github/scripts/validate_contracts.py) still exits 0"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A valid document of today refused -> S6: every fixture through both validators",
+    "The two validators drifting -> S7: one shared rule",
+    "The rule applied to older versions -> S6",
+    "A fourth case the review did not think of -> the builder states the rule as a whole (every shown value has exactly one way entry that is settled or conditional; every way entry that is settled or conditional belongs to a shown value; a withheld entry belongs to no shown value) and the reviewer tries documents of its own"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T16:00:29.581528+00:00",
+  "updated_at": "2026-10-07T16:00:29.990677+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R229",
+        "D-090-R267"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T16:00:29.581771+00:00",
+  "path_notes": "PRODUCER = backend-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). PART OF PARALLEL WAVE 5 with M5-T130 and M4-T033: the three share no file. ADR-006 Tier B, 'Contract/schema': the required review is data contract plus compatibility: gates G3 and G4 by a data-contract-verifier. MODULARITY ANSWERS: one new focused module; the two existing files grow by a call each (contract.py is 94 lines, study_contracts.py 233).",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/contracts",
+    "python .github/scripts/validate_contracts.py ; python -m pytest -q .github/scripts/tests",
+    "python3 tools/modularity_check.py --check",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ]
+}

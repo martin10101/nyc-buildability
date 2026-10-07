@@ -1683,6 +1683,115 @@
      "reviewed_sha": "2d4dea7f700279208276573fd57bc49be1c2737a"
     }
    ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T130",
+   "applicable_requirement_ids": [
+    "D-090-R229",
+    "D-090-R239",
+    "D-090-R240",
+    "D-090-R255",
+    "D-090-R257",
+    "D-090-R267",
+    "D-090-R268"
+   ],
+   "producer": "scenario-optimization-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R229",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R239",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R240",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R255",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R257",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R267",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R268",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T131",
+   "applicable_requirement_ids": [
+    "D-090-R229",
+    "D-090-R267"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R229",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R267",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M4-T033",
+   "applicable_requirement_ids": [
+    "D-090-R291"
+   ],
+   "producer": "legal-corpus-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R291",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }

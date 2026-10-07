@@ -1,0 +1,142 @@
+{
+  "task_id": "M5-T130",
+  "title": "Carry the lot's recorded facts to the decision module: the recorded city-record columns, the reach, the two area figures, what an independent reading supports under the overlay; new files only; the emitted results document does not change (work order Part 0; D-090 R229, R239, R240, R255, R257, R267, R268)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "CARRY THE FACTS (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, Part 0; the second of the engine pieces): gather, as sourced facts with their provenance, everything the merged decision module needs (`services/api/app/scenario/three_answers/result_way_inputs.py`: `ResultWayInputs`), build that input for a lot from the recorded official data, call `decide_result_ways`, and return the ways BESIDE the engine's output. NEW FILES ONLY: today no server route calls the engine and the whole chain from the study to the results document is assembled by tests, so this piece adds its own entry function, called by its own tests on the recorded benchmark lot; it edits no existing file, the engine still runs as it does, and the results document the engine emits does not change (every test, saved result and snapshot that pins today's output stays green untouched). The piece after it switches the emitted document to contract 1.3.0 and wires this entry function into the real path. WHAT IT GATHERS, each as a three-state fact where the module asks for one: (a) THE RECORDED CITY-RECORD COLUMNS, read from the same built property profile that `services/api/app/profile/hidden_issue_flags/map_based_rules.py` reads (reuse its reader; do not edit it): the special purpose district (`spdist1` to `spdist3`), the split-lot record (`splitzone`), the commercial overlay (`overlay1`, `overlay2`) with its code, the inclusionary housing columns (`mih_opt1` to `mih_opt4`), the flood columns (`firm07_flag`, `pfirm15_flag`), landmark and historic district. Each gathered fact carries where it came from (the dataset, the column, the lot's id, the fetch record). (b) THE LOT TYPE, THE DISTRICT AND THE RECORDED LOT AREA with its fact id, from the evaluator inputs as they are built today. (c) THE REACH: `measure_lot_reach` (`services/api/app/spatial/lot_reach.py`) on the prepared outline and the site geometry of the recorded lot, adapted into the module's own reach records; an unknown measurement stays unknown with its reason. (d) THE TWO AREA FIGURES and whether they agree (reading O15 below). (e) THE FOUR CONDITIONS WITH NO DATA SOURCE: 'not checked', always, until a source exists. (f) THE SPECIAL DENSITY AREA: 'not given' unless the request carries a user's statement; a statement is passed on as a statement and appears in NO fact record. (g) WHAT AN INDEPENDENT READING SUPPORTS UNDER A RECORDED OVERLAY (reading O16 below). (h) THE LARGE-LOT ANSWER of gap K3 (reading O17 below). The housing kind is the user's choice of option and is passed through. THE ORCHESTRATOR'S READINGS (each is the orchestrator's, said so in the code and the report, to be confirmed or corrected by the reviewers; they continue the numbering of task M5-T129): (O14) 'RECORDED AS ABSENT' AND 'NOT READ'. The city's open-data service leaves an empty column out of a served row. A column counts as 'recorded as absent' ONLY where the connector's own record of the fetch shows that the column was asked for and that a row for this lot was served without it (the builder proves from the connector's code and the recorded fetch how that can be told; `pluto_soda` keeps `absent_columns`); the wording for the user is that the city's records list none (work order gap K10: 'None recorded: stated as \"city records list no special purpose district\"'), never that the lot has none. No fetch record, a failed fetch, no row, or a column that was not asked for: 'not read' (work order: 'a column that was not read is never taken as \"none\"'). If the builder finds that 'asked for and served empty' cannot be told from the recorded data, EVERY such column is 'not read' and the builder says so; it does not guess. (O15) THE AREA TOLERANCE (work order section 6 item 4: 'set when the part is contracted, from the recorded lots'). Only one recorded lot in the repository holds both figures, and its figures differ by 313 sq ft (10,388 against 10,075: the work order calls that a disagreement). No recorded data supports a wider tolerance, so none is invented: the two figures AGREE only when the outline's area, rounded to the whole square foot, equals the recorded figure; otherwise they DISAGREE; where the outline's area cannot be computed the comparison 'could not be made'. The rule is stated in words with the comparison's result so that a later piece can print it. A wider tolerance needs recorded lots to rest on and is owed work (the orchestrator adds a backlog row). (O16) THE OVERLAY. App code cannot read `docs/reference-cases/` at run time. A small table in app code says, per result family of the module, whether an independent reading supports showing it under a C2-2 overlay mapped within R6B, each entry naming the reference row it rests on; a TEST reads those rows through the test-only loader (`services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py`, which refuses a superseded row) and fails if a row is superseded, is not a value row, or does not say 'same as plain R6B'. A family is SUPPORTED only where the current row gives the answer with no standing condition from either reading. By the rows as merged (`cases/step-p4-worked.json` and `cases/overlay-reading.json`): the floor area ratio and the lot-coverage rule are supported; the rear yard is NOT supported yet (its row gives 'same as plain R6B' with one reading's caveat that the capture of ZR 34-23 holds only its title line: a legal reading is never the subject of a conditional result, so the result stays withheld as work owed until that caveat is closed); the heights, the setback and the dwelling-unit rule rest on the rows of the overlay case that say 'same as plain R6B' (the builder reads each row and applies the same test: a standing condition means not supported). Any other overlay code, or an overlay within another district: nothing is supported. The street-wall location rule, which the readings say the overlay changes, is not a result of the module. (O17) THE LARGE-LOT ANSWER. The module asks its caller whether the lot is at or above the lot size at which a different maximum lot coverage applies. The answer is computed from the RECORDED lot area against the figure in the captured text of ZR 23-362, held once with its capture id and quoted words; no recorded area: 'not stated'. (The merged reading suggests that paragraph may not reach a plain R6B lot at all, backlog row DB-168; the work order's gap K3 is applied as written and the report says so.) (O18) A FACT THAT CONTRADICTS ANOTHER IS NOT RESOLVED HERE: where the evaluator inputs refuse today (two sources that disagree at the same rank), this piece does not run. THREE RULES FOR THIS KIND OF CODE, learned in task M5-T129 (each cost a round there): (L1) NO DEFAULT STANDS FOR A FACT: every input's 'not given', 'not read' or 'not stated' state is carried as such and holds the dependent result back; no truthiness test on a fact that may be unknown (`if x:` on a yes/no/unknown value reads unknown as 'no'); the report lists every place where a missing value is handled and what it does. (L2) ONE TEST PER INPUT STATE, WITH A TABLE: the builder goes through every input of its entry function and every state it can take; the report holds the table 'state, outcome, test that pins it'; each newly pinned branch is proved by one mutation outside the repository. (L3) TEXTS A USER MAY SEE ARE PLAIN AND TRUE: no internal name (a gap or reading number, 'the caller', 'milestone', 'reference case', 'packet', 'work order'), and no statement about which law text is captured, read or built into the repository; a guard test over a wide battery. ALSO CARRIED FROM THE REVIEWS OF M5-T129 (backlog row DB-172): the guard test of that task on the module's returned texts does not reach the branch 'one condition without a data source is recorded as present'; that test file is not edited here; instead this task's own guard test covers every text its entry function can return, that branch's texts included. A conversion or a mixed building: this piece has no fact for it and says so in the report (the piece that emits owns it). TESTS take their expected outcomes from outside the code: the work order's sentences (tests H2, H3, H4, H5, H9, H11 at the level of 'the engine's caller, given this lot, decides these ways'), the reference rows through the loader, and the recorded files. The benchmark lot is assembled from the recorded pack exactly as `services/api/tests/journey/test_215_16_northern_journey.py` assembles it (read it; do not edit it), offline. NOT IN THIS TASK: any edit to an existing file; any change to what the engine emits; contract 1.3.0 in any output; a route; the website; any rule file or register entry; any zoning number other than the one figure of reading O17.",
+  "business_reason": "The decision module (M5-T129) asks its caller for facts that nothing gathers today: the recorded conditions are read only as profile flags, the reach measurement is called by nothing, and the engine takes the overlay, the special district, the corner geometry and the density area as values typed in by its caller. Until the facts are gathered from the records, the three ways cannot be shown for a real lot. The owner's rules it serves: unknown stays unknown and a missing input stays unanswered (R229, R240); how the two area figures are used is decided and written down before any calculation uses them (R239, R257); a user's statement supports only a conditional result and is never stored as a fact (R255); 'not checked' is not 'confirmed' (R267, R268).",
+  "inputs": [
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md sections 0, 4, 5, 6, 8 (Part 0, tests H1 to H11) and 10",
+    "services/api/app/scenario/three_answers/result_ways.py, result_way_inputs.py, result_way_conditions.py (merged; READ ONLY) and project-control/reports/M5-T129-producer-report.md (the decision table; the table of input states)",
+    "docs/DISCOVERY_BACKLOG.md rows DB-168, DB-171 and DB-172",
+    "A read-only map of the call path made for the orchestrator (claims, not facts): /root/project/lanes-runtime/owner-docs/session-2026-10-07a/return-map-b1.txt",
+    "services/api/app/api/v1/study_inputs.py, services/api/app/contracts/evaluator_inputs.py, services/api/app/profile/hidden_issue_flags/map_based_rules.py, services/api/app/connectors/pluto_soda.py, services/api/app/spatial/lot_reach.py, services/api/app/spatial/site_geometry/ (outline.py, adapters.py, area.py): READ ONLY",
+    "services/api/tests/journey/test_215_16_northern_journey.py and the recorded pack services/api/tests/fixtures/benchmark_215_16_northern/: READ ONLY",
+    "docs/reference-cases/R6B/cases/step-p4-worked.json, cases/overlay-reading.json, cases/corner-reach.json, cases/real-lot.json and the loader services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py: READ ONLY",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R229, R239, R240, R255, R257, R267, R268; docs/CODE_MODULARITY_POLICY.md"
+  ],
+  "outputs": [
+    "services/api/app/contracts/recorded_conditions.py: the recorded city-record columns as sourced three-state facts (reading O14)",
+    "services/api/app/contracts/result_way_bridge.py (and further `result_way_bridge_*.py` modules if the size asks for it): the area comparison (O15), the overlay-support table (O16), the large-lot answer (O17), the building of `ResultWayInputs`, and ONE entry function that returns the ways with the gathered facts and their provenance",
+    "services/api/tests/contracts/test_recorded_conditions.py, services/api/tests/contracts/test_result_way_bridge.py and further `test_result_way_bridge_*.py` files: every state of every gathered fact; the recorded benchmark lot end to end; the overlay table against the reference rows; the area rule; the guard on texts; nothing under services/api/app imports the new modules",
+    "project-control/reports/M5-T130-producer-report.md: where each fact comes from (file, function, field); readings O14 to O18 and where each is applied; the table of input states; every place a missing value is handled; what the entry function returns for the benchmark lot, result by result, beside what the work order's test H2 expects; every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M5-T127",
+    "M5-T129",
+    "M4-T032"
+  ],
+  "allowed_paths": [
+    "services/api/app/contracts/recorded_conditions.py",
+    "services/api/app/contracts/result_way_bridge.py",
+    "services/api/app/contracts/result_way_bridge_*.py",
+    "services/api/tests/contracts/test_recorded_conditions.py",
+    "services/api/tests/contracts/test_result_way_bridge.py",
+    "services/api/tests/contracts/test_result_way_bridge_*.py",
+    "project-control/reports/M5-T130-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "every existing file under services/api/app/** (the engine, the evaluator inputs, the study inputs, the profile rules, the connectors, the spatial modules, the decision modules of M5-T129: read only)",
+    "every existing test; packages/** (no schema, generated file or fixture); apps/**; docs/**",
+    ".github/**; CLAUDE.md; .claude/**; tools/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "benchmark_lot_from_the_recorded_pack",
+      "input": "the recorded pack of the benchmark lot, assembled offline as the journey test assembles it; no user statement",
+      "expected": "the entry function returns: the overlay recorded as present (C2-2); the split-lot record recorded as absent; the reach 99.97 ft and 103.93 ft from the two street lines and 144.60 ft from the corner point (as the reach row of the corner-reach reference case records them); the two area figures 10,075 and 10,388 as disagreeing; the four conditions not checked. The ways: the heights conditional and never settled; the floor-area figures conditional (the recorded area; the four conditions); the lot coverage withheld (the lot reaches 103.93 ft from a street line); the rear yard withheld; the setback, the building option and the unit limits withheld; never a zero (work order test H2). The special-district, inclusionary, flood and landmark columns: as reading O14 decides, with the builder's proof; if they are 'not read', the affected results are withheld and the report says which and why"
+    },
+    {
+      "id": "S2",
+      "case": "each_recorded_column_in_each_state",
+      "input": "made-up profiles: each column recorded with a value; asked for and served empty; not asked for; no fetch record; a failed fetch",
+      "expected": "present, absent and 'not read' as reading O14 states; the overlay's code is carried; each fact names its dataset, column and lot; a column that was not read is never taken as none"
+    },
+    {
+      "id": "S3",
+      "case": "the_area_rule",
+      "input": "outline 10,075.4 against recorded 10,075; 10,388 against 10,075; no outline; no recorded area",
+      "expected": "agree; disagree, with both figures carried; could not be compared; no recorded area (the outline's area never stands in); the rule's words are returned with the result (O15)"
+    },
+    {
+      "id": "S4",
+      "case": "the_overlay_table_rests_on_the_reference_rows",
+      "input": "the table of reading O16 and the reference rows read through the loader",
+      "expected": "each entry names a current row; the test fails if a row is superseded, is 'not known', or carries a standing condition while the table says supported; the rear yard is not supported; another overlay code or another district supports nothing"
+    },
+    {
+      "id": "S5",
+      "case": "a_users_statement_is_not_a_fact",
+      "input": "the benchmark lot with a user's statement that the lot is not in a special density area; without it",
+      "expected": "with it: the statement is passed to the module as a statement and appears in none of the gathered fact records; without it: 'not given' (H9)"
+    },
+    {
+      "id": "S6",
+      "case": "missing_inputs_one_at_a_time",
+      "input": "no outline; no recorded area; no lot type; no district; no profile",
+      "expected": "each is carried as not given or not read and never filled; the ways that depend on it are withheld and the others unchanged (H5); the large-lot answer is 'not stated' without a recorded area (O17)"
+    },
+    {
+      "id": "S7",
+      "case": "every_input_state_has_a_test_and_texts_are_plain",
+      "input": "the report's table of input states; a wide battery of returned texts",
+      "expected": "every state the new code acts on is pinned by a named test; no returned text carries an internal name or says what is captured; each newly pinned branch has a mutation proof"
+    },
+    {
+      "id": "S8",
+      "case": "new_files_only_and_nothing_emitted_changes",
+      "input": "git show --name-status <the builder's commits>; a search of services/api/app for imports of the new modules; the full services/api suite",
+      "expected": "only allowed_paths, all added (the report replaces its placeholder); no existing file changed; nothing imports the new modules; the saved results, the DXF snapshots and every test that pins today's output pass untouched; ruff and the full suite pass at the wave's final candidate"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "An empty column taken as 'the lot has none' -> reading O14 and S2; if it cannot be told, everything is 'not read'",
+    "A tolerance invented without data -> reading O15: none is invented",
+    "The overlay table drifting from the reference rows -> S4, tied by test",
+    "The engine's own inputs and this piece's facts disagreeing for a while (the engine still runs on values typed by its caller) -> accepted and stated: nothing reads the ways yet and nothing emitted changes; the next piece reconciles",
+    "The three faults of M5-T129 repeated -> the three rules in the objective; the QA reviewer's sweep in its first review"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T16:00:28.703315+00:00",
+  "updated_at": "2026-10-07T16:00:29.059209+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R229",
+        "D-090-R239",
+        "D-090-R240",
+        "D-090-R255",
+        "D-090-R257",
+        "D-090-R267",
+        "D-090-R268"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T16:00:28.703509+00:00",
+  "path_notes": "PRODUCER = scenario-optimization-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). PART OF PARALLEL WAVE 5 with M5-T131 and M4-T033: the three share no file (see the wave's concurrency record). ADR-006 Tier B, 'Scenario calculation': the required review is data-contract plus QA: gate G3 by the data-contract-verifier, gate G4 by the qa-engineer. MODULARITY ANSWERS: new focused modules only; each new file stays under 600 source lines as tools/modularity_check.py counts them (split by topic before one grows past it); no existing file grows.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/contracts/test_recorded_conditions.py tests/contracts/test_result_way_bridge.py tests/scenario/three_answers",
+    "cd services/api && python -m pytest -q tests/contracts tests/journey tests/spatial tests/rules/reference_cases",
+    "python3 tools/modularity_check.py --check ; python3 scripts/lanes/check_lane_paths.py --coverage",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ]
+}
