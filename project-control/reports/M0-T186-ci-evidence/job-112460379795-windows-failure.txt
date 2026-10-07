@@ -1,0 +1,73 @@
+# Frozen CI evidence for M0-T186 (written by the orchestrator at contract time; read-only)
+run: 37519342596 (workflow CI, event pull_request, run attempt 1; nothing was rerun)
+job: 112460379795 - supervisor-bridge (pytest tools/test_agent_supervisor_*.py), windows-latest
+head: 1cdad2c07e825fff3a3344850466cad7d8accf18 (branch task/M4-T023-zoning-rule-review-register, pull request 452; that change touches no file under tools/)
+same head, push run 37519335445: the same job passed
+full log: 55895 bytes, sha256 5d21679450c65bb9a70775a9cbf12b469bba8e6de7e82c19b3439697f40a52f1 (downloaded 2026-10-06 through the jobs API)
+excerpt: log lines 490 to 554, unchanged
+----
+2026-10-06T19:35:01.7581077Z ================================== FAILURES ===================================
+2026-10-06T19:35:01.7582220Z ____________ TestLedger.test_parallel_requests_never_exceed_limits ____________
+2026-10-06T19:35:01.7582814Z 
+2026-10-06T19:35:01.7583511Z self = <test_agent_supervisor_mrl_subagent_contract.TestLedger object at 0x000001D15FA235C0>
+2026-10-06T19:35:01.7584968Z tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_parallel_requests_never_e0')
+2026-10-06T19:35:01.7586281Z 
+2026-10-06T19:35:01.7586684Z     def test_parallel_requests_never_exceed_limits(self, tmp_path):
+2026-10-06T19:35:01.7588189Z         led = msc.SubagentLedger.create(tmp_path / "l.json", _contract(max_concurrent=2, max_total=5),
+2026-10-06T19:35:01.7589185Z                                         primary_id="run-1.primary")
+2026-10-06T19:35:01.7589903Z         results = []
+2026-10-06T19:35:01.7590422Z     
+2026-10-06T19:35:01.7590925Z         def worker():
+2026-10-06T19:35:01.7591539Z             results.append(_req(led).allowed)
+2026-10-06T19:35:01.7592071Z     
+2026-10-06T19:35:01.7592715Z         threads = [threading.Thread(target=worker) for _ in range(8)]
+2026-10-06T19:35:01.7593399Z         for t in threads:
+2026-10-06T19:35:01.7593940Z             t.start()
+2026-10-06T19:35:01.7594430Z         for t in threads:
+2026-10-06T19:35:01.7595083Z             t.join()
+2026-10-06T19:35:01.7595980Z >       assert results.count(True) == 2 and results.count(False) == 6
+2026-10-06T19:35:01.7597088Z E       assert (2 == 2 and 5 == 6)
+2026-10-06T19:35:01.7599590Z E        +  where 2 = <built-in method count of list object at 0x000001D1622B6EC0>(True)
+2026-10-06T19:35:01.7601494Z E        +    where <built-in method count of list object at 0x000001D1622B6EC0> = [True, True, False, False, False, False, ...].count
+2026-10-06T19:35:01.7603271Z E        +  and   5 = <built-in method count of list object at 0x000001D1622B6EC0>(False)
+2026-10-06T19:35:01.7604990Z E        +    where <built-in method count of list object at 0x000001D1622B6EC0> = [True, True, False, False, False, False, ...].count
+2026-10-06T19:35:01.7606460Z 
+2026-10-06T19:35:01.7607493Z tools\test_agent_supervisor_mrl_subagent_contract.py:154: AssertionError
+2026-10-06T19:35:01.7608743Z ============================== warnings summary ===============================
+2026-10-06T19:35:01.7610594Z tools/test_agent_supervisor_mrl_subagent_contract.py::TestLedger::test_parallel_requests_never_exceed_limits
+2026-10-06T19:35:01.7613249Z   C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\site-packages\_pytest\threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-1830 (worker)
+2026-10-06T19:35:01.7615385Z   
+2026-10-06T19:35:01.7616016Z   Traceback (most recent call last):
+2026-10-06T19:35:01.7628030Z     File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\threading.py", line 1075, in _bootstrap_inner
+2026-10-06T19:35:01.7629784Z       self.run()
+2026-10-06T19:35:01.7630922Z     File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\threading.py", line 1012, in run
+2026-10-06T19:35:01.7632488Z       self._target(*self._args, **self._kwargs)
+2026-10-06T19:35:01.7634200Z     File "D:\a\nyc-buildability\nyc-buildability\tools\test_agent_supervisor_mrl_subagent_contract.py", line 147, in worker
+2026-10-06T19:35:01.7635737Z       results.append(_req(led).allowed)
+2026-10-06T19:35:01.7636549Z                      ^^^^^^^^^
+2026-10-06T19:35:01.7637946Z     File "D:\a\nyc-buildability\nyc-buildability\tools\test_agent_supervisor_mrl_subagent_contract.py", line 40, in _req
+2026-10-06T19:35:01.7639446Z       return ledger.request(**base)
+2026-10-06T19:35:01.7640189Z              ^^^^^^^^^^^^^^^^^^^^^^
+2026-10-06T19:35:01.7641686Z     File "D:\a\nyc-buildability\nyc-buildability\tools\agent_supervisor\mrl_subagent_contract.py", line 200, in request
+2026-10-06T19:35:01.7643175Z       with _exclusive(self.path):
+2026-10-06T19:35:01.7643896Z            ^^^^^^^^^^^^^^^^^^^^^
+2026-10-06T19:35:01.7645413Z     File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\contextlib.py", line 137, in __enter__
+2026-10-06T19:35:01.7646947Z       return next(self.gen)
+2026-10-06T19:35:01.7647537Z              ^^^^^^^^^^^^^^
+2026-10-06T19:35:01.7648990Z     File "D:\a\nyc-buildability\nyc-buildability\tools\agent_supervisor\mrl_subagent_contract.py", line 133, in _exclusive
+2026-10-06T19:35:01.7650677Z       fd = os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+2026-10-06T19:35:01.7651606Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-06T19:35:01.7653626Z   PermissionError: [Errno 13] Permission denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_parallel_requests_never_e0\\l.json.lock'
+2026-10-06T19:35:01.7655495Z   
+2026-10-06T19:35:01.7656264Z   Enable tracemalloc to get traceback where the object was allocated.
+2026-10-06T19:35:01.7657783Z   See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+2026-10-06T19:35:01.7659416Z     warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+2026-10-06T19:35:01.7660183Z 
+2026-10-06T19:35:01.7660737Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2026-10-06T19:35:01.7661793Z =========================== short test summary info ===========================
+2026-10-06T19:35:01.7663736Z FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestLedger::test_parallel_requests_never_exceed_limits - assert (2 == 2 and 5 == 6)
+2026-10-06T19:35:01.7666363Z  +  where 2 = <built-in method count of list object at 0x000001D1622B6EC0>(True)
+2026-10-06T19:35:01.7668011Z  +    where <built-in method count of list object at 0x000001D1622B6EC0> = [True, True, False, False, False, False, ...].count
+2026-10-06T19:35:01.7669798Z  +  and   5 = <built-in method count of list object at 0x000001D1622B6EC0>(False)
+2026-10-06T19:35:01.7671394Z  +    where <built-in method count of list object at 0x000001D1622B6EC0> = [True, True, False, False, False, False, ...].count
+2026-10-06T19:35:01.7673189Z ====== 1 failed, 3956 passed, 60 skipped, 1 warning in 275.11s (0:04:35) ======

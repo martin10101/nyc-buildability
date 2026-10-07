@@ -1,0 +1,146 @@
+{
+  "task_id": "M0-T186",
+  "title": "The sub-agent ledger's lock on windows-latest: an exclusive create that meets a lock file being removed raises PermissionError and reaches the caller unhandled; trace the cause, show it on Windows and repair the acquire path without skipping tests, weakening checks or adding retries for green (DB-157; D-090-R093/R094)",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "Trace and repair the cause of the Windows failure recorded as DB-157, under /deficit-convergence. On 2026-10-06 the supervisor-bridge job on windows-latest failed once (tools/test_agent_supervisor_mrl_subagent_contract.py::TestLedger::test_parallel_requests_never_exceed_limits: two requests admitted, five refused, and the eighth thread died with PermissionError [Errno 13] raised by os.open(lock, O_CREAT | O_EXCL | O_WRONLY) in `_exclusive()` of tools/agent_supervisor/mrl_subagent_contract.py); the push run on the same head passed the same job. `_exclusive()` retries only on FileExistsError, so on Windows an error of another kind at the exclusive create reaches the caller as an unhandled exception instead of a retry or the module's own fail-closed refusal. The working hypothesis, to be PROVED OR RULED OUT on windows-latest and never assumed: when one thread is removing the lock file at the instant another creates it, Windows reports the pending delete as access denied. The slot lock in review_slots.py already treats exactly this case as 'busy' (the earlier repair); this module does not. Make ONE bounded change to the acquire path of `_exclusive()` so that the proven transient Windows case is retried within the lock's own timeout and ends, if it never clears, in the module's own fail-closed refusal; an error that is not the proven transient case stays loud. No test is skipped, weakened or retried to obtain a green run, and the ledger's safety assertions (never more than the allowed concurrent and total sub-agents) are preserved.",
+  "business_reason": "Owner authorization D-090-R093 (a bounded repair of the recurring Windows supervisor-bridge failures in a separate pull request: find out whether the cause is test timing or a real defect, and fix the cause) and prohibition R094 (preserve the safety and concurrency assertions; no skipped test, weakened check or retry merely for green CI). QUALIFYING EVIDENCE under the supervisor freeze (.claude/rules/supervisor-freeze.md, AD-093): a reproduced defect - run 37519342596, job 112460379795, frozen under project-control/reports/M0-T186-ci-evidence/. Until it is repaired any run can fail this job at random, and a pull request merges only on a fully green run. Discovery row DB-157. A change under tools/agent_supervisor/** carries the recertification cost recorded for the earlier repair (M0-T184): a recorded cost, not a bar.",
+  "inputs": [
+    "project-control/reports/M0-T186-ci-evidence/job-112460379795-windows-failure.txt (frozen; read-only)",
+    "tools/agent_supervisor/mrl_subagent_contract.py (`_exclusive`, `_LOCK_TIMEOUT_S`, `_violation`, `SubagentLedger.request`) and tools/test_agent_supervisor_mrl_subagent_contract.py",
+    "tools/agent_supervisor/review_slots.py `_SlotLock.acquire` and its tests in tools/test_agent_supervisor_review_slots.py (how the earlier repair treats the Windows pending-delete case as busy, and how it is tested) - READ ONLY",
+    "project-control/reports/M0-T184-convergence-record.md and M0-T184-producer-report.md (the method and the Windows proof pattern of the earlier repair) - READ ONLY",
+    "docs/DISCOVERY_BACKLOG.md rows DB-150, DB-152, DB-153 and DB-157; .claude/rules/supervisor-freeze.md; the /deficit-convergence skill",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R093 and R094"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/mrl_subagent_contract.py: ONE bounded change to the acquire path of `_exclusive()`",
+    "tools/test_agent_supervisor_mrl_subagent_contract.py: new deterministic tests (additions only)",
+    "project-control/reports/M0-T186-convergence-record.md: the frozen evidence, the causal path traced, each candidate proved or ruled out with the evidence that decides it, the repair, the verification, ending VERIFIED_CLOSED or with ONE consolidated blocker report",
+    "project-control/reports/M0-T186-producer-report.md: files changed, every check with its DIRECT exit code, the Windows run ids, the siblings reported and not changed"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/mrl_subagent_contract.py",
+    "tools/test_agent_supervisor_mrl_subagent_contract.py",
+    "project-control/reports/M0-T186-producer-report.md",
+    "project-control/reports/M0-T186-convergence-record.md",
+    "project-control/reports/M0-T186-ci-evidence/**"
+  ],
+  "forbidden_paths": [
+    ".github/**",
+    "tools/agent_supervisor/** except mrl_subagent_contract.py",
+    "tools/test_agent_supervisor_*.py except test_agent_supervisor_mrl_subagent_contract.py",
+    "tools/supervisor_command_doc_check.py",
+    "services/**",
+    "apps/**",
+    "packages/**",
+    "docs/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json",
+    "project-control/blockers/**",
+    "project-control/gates/**",
+    "any pytest configuration (pytest.ini, pyproject, conftest) and any rerun/flaky plugin"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "frozen_evidence",
+      "input": "project-control/reports/M0-T186-ci-evidence/",
+      "expected": "the convergence record cites the frozen file (run id, attempt, job id, head, runner, full-log byte count and sha256) and quotes the failure from it; nothing is paraphrased from memory; the frozen file is unchanged"
+    },
+    {
+      "id": "S2",
+      "case": "causal_path",
+      "input": "the code of _exclusive() and SubagentLedger.request, and the frozen traceback",
+      "expected": "the complete path from the eight threads to the one unhandled exception is traced, and each candidate is PROVED or RULED OUT with the evidence that decides it: (a) the exclusive create meeting a lock file whose removal by another thread is pending (Windows reports access denied); (b) another process holding the file open (antivirus, indexer); (c) a fault of the test itself (shared tmp_path, thread start order); (d) test timing. The record says why the count was 2 admitted and 5 refused with one thread lost, and whether any request was admitted beyond the limits (it must not have been)"
+    },
+    {
+      "id": "S3",
+      "case": "mechanism_shown_on_windows",
+      "input": "a windows-latest run",
+      "expected": "the deciding Windows behaviour is DEMONSTRATED on windows-latest, never assumed from Linux or from memory of the Windows API: a deterministic test that is RED on a ci-exp/M0-T186-* branch before the repair (orchestrator-pushed from a producer-prepared commit holding the tests only), with its run and job ids in the record; or, if no deterministic reproduction is possible, the record says so plainly and what evidence stands in its place"
+    },
+    {
+      "id": "S4",
+      "case": "repair_removes_the_cause",
+      "input": "the diff of tools/agent_supervisor/mrl_subagent_contract.py",
+      "expected": "ONE bounded change to the acquire loop: the proven transient Windows case is treated as 'lock busy' and retried with the loop's own sleep until the lock's own deadline; when it never clears, the caller gets the module's own fail-closed refusal (the same kind as a held lock past the timeout), never an unhandled exception and never an admission; an OSError that is not the proven transient case is NOT swallowed (on POSIX a PermissionError at the create stays loud); no unbounded loop; the release path and every other function are unchanged unless S2 proves they are part of the cause"
+    },
+    {
+      "id": "S5",
+      "case": "tests_positive_negative_mutation",
+      "input": "tools/test_agent_supervisor_mrl_subagent_contract.py",
+      "expected": "new deterministic tests, runnable on any host: (i) the transient case - the create fails N times with the Windows error and then succeeds -> the request is served and the limits hold; (ii) the never-clears case -> bounded, fail-closed, the module's typed refusal, no admission; (iii) an error that is not the transient case -> not swallowed; (iv) a Windows-only test of the platform fact itself, skipped elsewhere with skipUnless. MUTATION PROOF in the report: with the repair reverted to the literal pre-fix code, (i) and (ii) fail"
+    },
+    {
+      "id": "S6",
+      "case": "no_weakening_R094",
+      "input": "git diff <claim-seam head>..<final head> -- tools/test_agent_supervisor_mrl_subagent_contract.py",
+      "expected": "additions only: no test deleted, skipped (except S5 iv), xfail-marked or renamed; no assertion loosened - test_parallel_requests_never_exceed_limits keeps 'exactly 2 allowed and 6 refused' and its limits; no retry or rerun of a TEST, no rerun plugin, no .github/** change, no timeout raised to hide the failure"
+    },
+    {
+      "id": "S7",
+      "case": "verified_at_the_frozen_candidate",
+      "input": "the final head",
+      "expected": "Linux local: `python -m pytest -q -p no:cacheprovider tools/test_agent_supervisor_mrl_subagent_contract.py` passes with direct exit code 0 (counts recorded); `python tools/supervisor_command_doc_check.py` and `python3 tools/modularity_check.py --check` pass; windows-latest: the supervisor-bridge job, which runs the whole supervisor suite, is green on the pull request head in both runs, with its counts recorded"
+    },
+    {
+      "id": "S8",
+      "case": "siblings_reported_not_changed",
+      "input": "every other exclusive create of a lock file in tools/agent_supervisor/ (locking.SingleInstanceLock.acquire; review_slots._SlotLock.acquire) and rows DB-152 and DB-153",
+      "expected": "REPORTED, NOT CHANGED: for each, whether it handles the same Windows case and how exposed it is, with the lines read; the earlier-recorded weaknesses DB-152 and DB-153 are weighed again in one paragraph each (repair now, later, or an operator note), with the reason; nothing outside allowed_paths is edited"
+    },
+    {
+      "id": "S9",
+      "case": "convergence_record_closes",
+      "input": "project-control/reports/M0-T186-convergence-record.md",
+      "expected": "ends with VERIFIED_CLOSED (cause named, shown on Windows, repair verified) or ONE consolidated blocker report naming the unprovable step; never 'fixed one thing, reran everything, stopped'"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Swallowing every PermissionError would hide a real permission fault and could turn a fail-closed path into a silent wait -> S4: only the proven transient case, bounded by the lock's own deadline, ending in the typed refusal",
+    "A green run obtained by a retry of the test instead of a repair -> S6 and R094",
+    "The cause assumed from the earlier repair instead of shown -> S2 and S3: proved or ruled out on windows-latest",
+    "The failure is rare (one failed job seen), so a green run alone proves little -> S3 and S5: a deterministic reproduction and a mutation proof, not repetition",
+    "A change under tools/agent_supervisor/** voids the supervisor's certification -> recorded as a cost in the convergence record, as for M0-T184"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T00:34:23.847931+00:00",
+  "updated_at": "2026-10-07T00:34:24.269776+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R093",
+        "D-090-R094"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T00:34:23.848219+00:00",
+  "path_notes": "PRODUCER = backend-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). Loads /deficit-convergence BEFORE editing. The orchestrator cherry-picks producer commits onto the task branch and pushes; a CI experiment branch (ci-exp/M0-T186-*) is orchestrator-pushed from a producer-prepared commit when S3 needs one. The frozen CI evidence is written by the orchestrator at contract time and is read-only for the producer. Separate pull request (D-090-R093). Not commissioning. QUALIFYING EVIDENCE (supervisor freeze, AD-093): a reproduced defect, run 37519342596, job 112460379795. MODULARITY ANSWERS: (1) owner of the change = the sub-agent ledger's exclusive section; (2) module = tools/agent_supervisor/mrl_subagent_contract.py (445 lines), function `_exclusive`; (3) the file stays under the 600-line warning threshold; (4) nothing extracted; (5) public interface unchanged (`SubagentLedger.request` and its refusal type); (6) focused test = tools/test_agent_supervisor_mrl_subagent_contract.py; (7) `python3 tools/modularity_check.py --check` passes before submission.",
+  "documented_test_commands": [
+    "python -m pytest -q -p no:cacheprovider tools/test_agent_supervisor_mrl_subagent_contract.py (Linux local, direct exit code)",
+    "the whole `tools/test_agent_supervisor_*.py` suite runs ONLY in the windows-latest supervisor-bridge CI job (never the whole glob on this Linux server)",
+    "python tools/supervisor_command_doc_check.py",
+    "python3 tools/modularity_check.py --check",
+    "CI: supervisor-bridge (windows-latest) on the pull request head; a ci-exp/M0-T186-* run when S3 uses one"
+  ]
+}
