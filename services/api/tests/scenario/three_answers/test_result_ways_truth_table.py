@@ -94,7 +94,7 @@ _TABLE = [
      WAY_W, "work_owed", ["special purpose district"], []),
     ("B4_special_purpose_not_read", lambda: plain_inputs(
         special_purpose_district=Recorded.NOT_READ, **k20(True)), "min_base_height",
-     WAY_W, "missing_information", ["not read"], []),
+     WAY_W, "missing_information", ["special-purpose-district column", "not read"], []),
     ("B5_split_present", lambda: plain_inputs(
         split_by_district_line=Recorded.PRESENT, **k20(True)), "min_base_height",
      WAY_W, "work_owed", ["split by a district line"], []),
@@ -124,13 +124,15 @@ _TABLE = [
      "min_base_height", WAY_S, None, [], []),
     # --- floor area ---
     ("FA1_no_area", lambda: plain_inputs(area=LotAreaFigures(None, None, None), **k20(True)),
-     "max_residential_far", WAY_W, "missing_information", ["No lot area is recorded"], []),
+     "max_residential_far", WAY_W, "missing_information",
+     ["No lot area is recorded", "floor area"], []),
     ("FA2_inclusionary_present", lambda: plain_inputs(
         inclusionary_housing_area=Recorded.PRESENT, **k20(True)),
      "max_residential_far", WAY_W, "work_owed", ["inclusionary housing area"], []),
     ("FA3_inclusionary_not_read", lambda: plain_inputs(
         inclusionary_housing_area=Recorded.NOT_READ, **k20(True)),
-     "max_residential_far", WAY_W, "missing_information", ["was not read"], []),
+     "max_residential_far", WAY_W, "missing_information",
+     ["inclusionary-housing-area column", "was not read"], []),
     ("FA4_settled", lambda: plain_inputs(**k20(True)), "max_residential_far", WAY_S, None, [], []),
     ("FA5_conditional_k20", lambda: plain_inputs(**k20(False)),
      "max_residential_far", WAY_C, None, [], []),
@@ -155,18 +157,19 @@ _TABLE = [
      "max_lot_coverage", WAY_W, "work_owed", ["different maximum lot coverage", "ZR 23-362"], []),
     ("C2_lot_type_none", lambda: plain_inputs(
         lot_type=None, reach=make_reach((("a", 40.0), ("b", 50.0)), 90.0, 50.0), **k20(True)),
-     "max_lot_coverage", WAY_W, "missing_information", ["lot type is not given"], []),
+     "max_lot_coverage", WAY_W, "missing_information", ["lot type is not given", "coverage"], []),
     ("C3_interior", lambda: plain_inputs(lot_type=LotType.INTERIOR, reach=None, **k20(True)),
      "max_lot_coverage", WAY_W, "work_owed", ["ZR 23-363"], []),
     ("C3b_through", lambda: plain_inputs(lot_type=LotType.THROUGH, reach=None, **k20(True)),
      "max_lot_coverage", WAY_W, "work_owed", ["ZR 23-363"], []),
     ("C4_no_outline", lambda: plain_inputs(reach=None, **k20(True)),
-     "max_lot_coverage", WAY_W, "missing_information", ["not measured"], []),
+     "max_lot_coverage", WAY_W, "missing_information", ["lot outline", "coverage"], []),
     ("C4b_street_reach_unknown", lambda: plain_inputs(reach=_street_reach_unknown(), **k20(True)),
-     "max_lot_coverage", WAY_W, "missing_information", ["not measured"], []),
+     "max_lot_coverage", WAY_W, "missing_information", ["lot outline", "coverage"], []),
     ("C5_reaches_beyond", lambda: plain_inputs(
         reach=make_reach((("a", 100.0), ("b", 150.0)), 90.0, 180.28), **k20(True)),
-     "max_lot_coverage", WAY_W, "work_owed", ["150 ft", "beyond the corner-lot portion"], []),
+     "max_lot_coverage", WAY_W, "work_owed", ["150 ft", "beyond the corner-lot portion"],
+     ["the whole lot is within 100 feet"]),
     ("C6_large_lot_none", lambda: plain_inputs(
         reach=make_reach((("a", 80.0), ("b", 60.0)), 90.0, 100.0),
         large_lot_threshold_met=None, **k20(True)),
@@ -181,16 +184,17 @@ _TABLE = [
     # --- rear yard (the repaired surface) ---
     ("RY1_lot_type_none", lambda: plain_inputs(
         lot_type=None, reach=make_reach((("a", 40.0), ("b", 50.0)), 90.0, 50.0), **k20(True)),
-     "rear_yard", WAY_W, "missing_information", ["lot type is not given"], []),
+     "rear_yard", WAY_W, "missing_information", ["lot type is not given", "rear yard"], []),
     ("RY2_interior", lambda: plain_inputs(lot_type=LotType.INTERIOR, reach=None, **k20(True)),
      "rear_yard", WAY_W, "work_owed",
      ["corner rear-yard waiver does not apply", "does not yet work out", "ZR 23-342"],
      ["which are not given"]),
     ("RY3_corner_none", lambda: plain_inputs(reach=None, **k20(True)),
-     "rear_yard", WAY_W, "missing_information", ["not measured"], []),
+     "rear_yard", WAY_W, "missing_information", ["lot outline", "rear yard"], []),
     ("RY4_reach_unknown", lambda: plain_inputs(
         reach=_corner_reach(50.0, 90.0, reach_known=False), **k20(True)),
-     "rear_yard", WAY_W, "missing_information", ["far corner's reach", "not measured"], []),
+     "rear_yard", WAY_W, "missing_information", ["far corner's reach", "not measured"],
+     ["the angle at which the two street lines meet is not measured"]),
     ("RY5_angle_unknown", lambda: plain_inputs(
         reach=_corner_reach(50.0, 90.0, angle_known=False), **k20(True)),
      "rear_yard", WAY_W, "missing_information", ["angle", "not measured"],
@@ -226,7 +230,8 @@ _TABLE = [
      "setback_above_base", WAY_W, "work_owed", ["not covered", "ZR 23-433"], []),
     # --- unit limit standard (the repaired surface) ---
     ("US1_no_area", lambda: plain_inputs(area=LotAreaFigures(None, None, None), **k20(True)),
-     "legal_unit_limit_standard", WAY_W, "missing_information", ["No lot area is recorded"], []),
+     "legal_unit_limit_standard", WAY_W, "missing_information",
+     ["No lot area is recorded", "legal dwelling-unit limit"], []),
     ("US2_user_statement", lambda: plain_inputs(
         special_density=DensityKnowledge.USER_STATEMENT_NOT_IN_ONE, **k20(True)),
      "legal_unit_limit_standard", WAY_C, None, [], []),
@@ -253,7 +258,7 @@ _TABLE = [
      ["not set by this formula", "ZR 23-52(a)(2)", "has not been checked"], ["separate rule"]),
     # --- building option ---
     ("BO1_option", lambda: plain_inputs(**k20(True)),
-     "achieved_zoning_floor_area", WAY_W, "work_owed", ["rear yard"], []),
+     "achieved_zoning_floor_area", WAY_W, "work_owed", ["building option", "rear yard"], []),
 ]
 
 
@@ -435,3 +440,123 @@ def test_senior_text_asserts_no_separate_rule_only_that_no_factor_is_set():
     assert "the rule for qualifying senior housing" not in way.resolved_by
     assert "sets no factor" in way.reason and "not set by this formula" in way.reason
     assert "has not been checked" in way.reason
+
+
+# ===== round 3 =====
+# G3 F1: the coverage 'reaches beyond' reason no longer asserts a condition that fails.
+def test_coverage_beyond_portion_does_not_assert_the_whole_lot_is_within():
+    """G3 F1. The coverage 'reaches beyond' reason names the EXTENT of the corner-lot portion
+    (the part within the legal measure of each intersecting street line), never asserting the
+    (false in this state) condition that the whole lot is within it."""
+    way = _focal(decide_result_ways(plain_inputs(
+        reach=make_reach((("street A", 100.0), ("street B", 150.0)), 90.0, 180.28), **k20(True))),
+        "max_lot_coverage")
+    assert isinstance(way, Withheld) and way.gap_kind == "work_owed"
+    assert "beyond the corner-lot portion" in way.reason
+    assert "the part within 100 ft of each intersecting street line" in way.reason
+    assert "the whole lot is within 100 feet" not in way.reason
+    assert "150 ft" in way.reason  # the failing reach, shown visibly beyond the 100 ft extent
+
+
+# G3 F2: a failing value at the limit prints visibly greater, never equal to the limit.
+def test_rear_yard_angle_just_over_the_limit_prints_visibly_greater():
+    """G3 F2. An angle just over 135 (135.04) is shown so 'more than 135 degrees' is visibly true;
+    it is never printed as '135.0 degrees,' so that it reads equal to the limit."""
+    way = _focal(decide_result_ways(plain_inputs(
+        reach=make_reach((("street A", 40.0), ("street B", 50.0)), 135.04, 90.0), **k20(True))),
+        "rear_yard")
+    assert isinstance(way, Withheld) and way.gap_kind == "work_owed"
+    assert "135.04 degrees" in way.reason
+    assert "135.0 degrees," not in way.reason
+
+
+def test_rear_yard_reach_just_over_the_limit_prints_visibly_beyond():
+    """G3 F2. A reach just over 100 ft (100.004) is shown so 'beyond' is visibly true; it is never
+    printed as '100.00 ft' so that it reads equal to the 100 ft limit."""
+    way = _focal(decide_result_ways(plain_inputs(
+        reach=make_reach((("street A", 40.0), ("street B", 50.0)), 90.0, 100.004), **k20(True))),
+        "rear_yard")
+    assert isinstance(way, Withheld) and way.gap_kind == "work_owed"
+    assert "100.004 ft" in way.reason
+    assert "100.00 ft" not in way.reason
+
+
+# ===== F6: the way (and kind) of EVERY result in EVERY state, pinned as data =====
+# Codes: S settled, C conditional, Wo withheld/work_owed, Wm withheld/missing_information; the 20
+# results are in `result_ways()` order. This is the claim-head signature (proven byte-identical to
+# the untouched module by an external diff), committed so "no way and no kind changed" is a
+# regression test and not a one-time script.
+_EXPECTED_WAY_SIGNATURE = {
+    "B1_district_none": "Wm Wm Wm Wm Wm Wm Wm Wm Wm Wm Wm Wo Wo Wo Wo Wm Wm Wm Wm Wm",
+    "B2_district_not_r6b": "Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "B3_special_purpose_present": "Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "B4_special_purpose_not_read": "Wm Wm Wm Wm Wm Wm Wm Wm Wm Wm Wm Wo Wo Wo Wo Wm Wm Wm Wm Wm",
+    "B5_split_present": "Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "B6_split_not_read": "Wm Wm Wm Wm Wm Wm Wm Wm Wm Wm Wm Wo Wo Wo Wo Wm Wm Wm Wm Wm",
+    "B7_k20_present": "Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "OB1_overlay_not_read": "Wm Wm Wm Wm Wm Wm Wm Wm Wm Wm Wm Wo Wo Wo Wo Wm Wo Wm Wo Wo",
+    "OB2_overlay_present_no_map": "Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "OB3_overlay_family_missing": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "OB5_overlay_not_supported_named": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "OB6_overlay_not_supported_fallback": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "OB4_overlay_supported": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "FA1_no_area": "Wm Wm Wm Wm S S S S S S Wo Wo Wo Wo Wo Wo Wo Wm Wo Wo",
+    "FA2_inclusionary_present": "Wo Wo Wo Wo S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "FA3_inclusionary_not_read": "Wm Wm Wm Wm S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "FA4_settled": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "FA5_conditional_k20": "C C C C C C C C C C Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "FA6_area_disagrees": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "FA7_area_could_not_compare": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "FA8_area_agreement_none": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "H1_flood_present": "S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "H2_flood_not_read": "S S S S Wm Wm Wm Wm Wm Wm Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "H3_settled": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "H4_conditional": "C C C C C C C C C C Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "C1_large_lot": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "C2_lot_type_none": "S S S S S S S S S S Wm Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "C3_interior": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "C3b_through": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "C4_no_outline": "S S S S S S S S S S Wm Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "C4b_street_reach_unknown": "S S S S S S S S S S Wm Wo Wo Wo Wo S Wo Wo Wo Wo",
+    "C5_reaches_beyond": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "C6_large_lot_none": "S S S S S S S S S S Wm Wo Wo Wo Wo S Wo Wo Wo Wo",
+    "C7_settled": "S S S S S S S S S S S Wo Wo Wo Wo S Wo Wo Wo Wo",
+    "C8_conditional": "C C C C C C C C C C C Wo Wo Wo Wo C Wo Wo Wo Wo",
+    "RY1_lot_type_none": "S S S S S S S S S S Wm Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "RY2_interior": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "RY3_corner_none": "S S S S S S S S S S Wm Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "RY4_reach_unknown": "S S S S S S S S S S S Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "RY5_angle_unknown": "S S S S S S S S S S S Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "RY6_both_unknown": "S S S S S S S S S S S Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "RY7_distance_fails": "S S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "RY8_angle_fails": "S S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "RY9_both_fail": "S S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "RY10_settled": "S S S S S S S S S S S Wo Wo Wo Wo S Wo Wo Wo Wo",
+    "RY11_conditional": "C C C C C C C C C C C Wo Wo Wo Wo C Wo Wo Wo Wo",
+    "SB1_setback": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "US1_no_area": "Wm Wm Wm Wm S S S S S S Wo Wo Wo Wo Wo Wo Wo Wm Wo Wo",
+    "US2_user_statement": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo C Wo Wo",
+    "US3_evidence_in_one": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "US4_not_given": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "US5_evidence_not_in_one": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "UA1_affordable": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "USR1_senior": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "BO1_option": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+}
+
+
+def _way_code(way):
+    if isinstance(way, Withheld):
+        return "Wo" if way.gap_kind == "work_owed" else "Wm"
+    if isinstance(way, Conditional):
+        return "C"
+    return "S"
+
+
+@pytest.mark.parametrize("row", _TABLE, ids=[r[0] for r in _TABLE])
+def test_the_way_and_kind_of_every_result_in_every_state_is_pinned(row):
+    """F6. For every state of the table the way (and kind) of ALL twenty results is pinned to the
+    claim-head signature, committed as data, so no way and no kind can change unnoticed."""
+    ways = decide_result_ways(row[1]())
+    sig = " ".join(_way_code(r.way) for r in ways.result_ways())
+    assert sig == _EXPECTED_WAY_SIGNATURE[row[0]], row[0]

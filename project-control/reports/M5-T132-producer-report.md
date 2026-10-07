@@ -343,3 +343,78 @@ Round-2 checks: a `ruff` exit 0; b `pytest tests/scenario/three_answers` 232 pas
 exit 0; c `pytest tests/contracts tests/journey tests/spatial/test_lot_reach.py` 572 passed, exit
 0; d `modularity_check --check` exit 0; mutation proofs (outside the repo, `mutate2.py`) — 4 of 4
 caught (RY5 resolved_by, WA2 resolved_by, senior "separate rule", US4 formula clause), exit 0.
+
+## 12. Round 3 (both independent reviews; same worktree, one more commit)
+
+No way and no kind changed (the full `(key, way_type, gap_kind)` signature across all states is
+still byte-identical to the claim head — external diff empty; and now a committed test, F6 below).
+
+### What the reviews found and the fixes
+- **G3 F1 (coverage C5 bracket).** `_coverage_way`'s "reaches beyond" reason printed
+  `CORNER_PORTION_WITHIN_100_FT.comparison` — "the whole lot is within 100 feet of each
+  intersecting street line" — a condition that is FALSE in this state (the lot reaches beyond) and
+  contradicts "beyond" in the same sentence. The same fault as the rear yard, missed in rounds 1–2
+  (C5 was marked PASS). Fixed: the bracket now describes the EXTENT of the corner-lot portion, the
+  figure taken from the legal measure, never typed —
+  before: "…beyond the corner-lot portion (the whole lot is within 100 feet of each intersecting
+  street line), …" → after: "…beyond the corner-lot portion (the part within 100 ft of each
+  intersecting street line), …".
+- **Sharper check (a) re-run over EVERY row** (does any clause — bracket or trailing — of the
+  reason or resolved_by state as true a condition that does not hold, especially where a
+  `.comparison` or a legal measure prints?). **One further row caught: C5** (above). The rear-yard
+  waiver texts already describe EXTENT ("the waiver covers the area within 100 ft of that point",
+  "within the waiver's limit of 135 degrees") rather than asserting the lot's state, so they pass.
+  No other `.comparison` is printed anywhere else; every other legal-measure print is a limit shown
+  as the limit. So the sharper check (a) caught exactly 1 further row.
+- **G3 F2 (limit prints without an apparent equality).** The rounded display could read as a
+  contradiction at the boundary (an angle in [135.0, 135.05) printed "135.0 degrees, more than …
+  135 degrees"; a reach in (100.0, 100.005) printed "100.00 ft … beyond … within 100 ft"). New
+  `format_ft_exceeding` / `format_angle_exceeding` (in `result_way_conditions.py`) show a FAILING
+  value with enough precision that "more than"/"beyond" is visibly true and never equal to the
+  limit; the HOLDING value keeps the normal display (a value at the limit is within, so an apparent
+  equality there is true). Example: 135.04° → "135.04 degrees" (was "135.0 degrees"); 100.004 ft →
+  "100.004 ft" (was "100.00 ft"). No numeric literal entered the three scanned files — the
+  precision lives only in format specs (`.2f`, `.1f`, `.6f`), which the guard test ignores.
+
+### G4 (the tests)
+- **Swap exercise** (would row A's test pass on another same-way-same-kind row's reason?). Tightened
+  **11 rows** so each asserts a token only its own condition has: the six the reviewer named —
+  B4 ("special-purpose-district column"), FA3 ("inclusionary-housing-area column"), C4 and C4b
+  ("lot outline" + "coverage"), RY3 ("lot outline" + "rear yard"), RY4 (must-NOT the angle phrase,
+  mirroring RY5) — plus five more the exercise caught: C2 (+"coverage") and RY1 (+"rear yard")
+  which share "lot type is not given" (F5); FA1 (+"floor area") and US1 (+"legal dwelling-unit
+  limit") which share "No lot area is recorded" (F5); and BO1 (+"building option"), whose
+  only-"rear yard" token would have passed on RY2's reason.
+- **F6**: committed `test_the_way_and_kind_of_every_result_in_every_state_is_pinned` — for every
+  state of the table it pins the way AND kind of ALL twenty results against the claim-head
+  signature, written into the test file as data (`_EXPECTED_WAY_SIGNATURE`), so "no way, no kind
+  changed" is a regression test, not a one-time script.
+- New tests by name: `test_coverage_beyond_portion_does_not_assert_the_whole_lot_is_within` (G3 F1);
+  `test_rear_yard_angle_just_over_the_limit_prints_visibly_greater` and
+  `test_rear_yard_reach_just_over_the_limit_prints_visibly_beyond` (G3 F2);
+  `test_the_way_and_kind_of_every_result_in_every_state_is_pinned` (F6). 290 cases now in
+  `tests/scenario/three_answers`.
+
+### F7 — which guard covers which family of texts
+- Decision-module texts (every withheld reason/resolved_by, every conditional assumption/settled_by,
+  every whole-answer reason/resolved_by): `test_no_returned_text_uses_an_internal_name_or_a_capture_claim`
+  (`test_result_ways_input_states.py`, `_wide_text_battery`) + the invariant guards over `_battery`
+  in `test_result_ways.py` (contract-validity, has-reason/kind/resolved, no "professional review").
+- `gather_result_ways` texts (the six facts statements × three states, the four area statements,
+  both large-lot statements, the overlay reading-owed, AND the two held-back strings):
+  `test_every_text_a_user_may_see_is_plain_and_true_s7` (`test_result_way_bridge.py`); the held-back
+  strings also by `test_the_two_held_back_strings_are_plain_db175_f`.
+- Meaning-bearing truth per row + the full way/kind signature: `test_result_ways_truth_table.py`.
+
+### F8 — corrected line counts
+`result_ways.py` is **635 physical / 574 source lines** (the round-2 report's "624 / 565" was
+stale and is corrected here); still below the 600-source-line warning threshold —
+`modularity_check --check` passes and does not list it (exit 0). No new module was needed; the two
+new display helpers live in `result_way_conditions.py` (466 physical / 391 source).
+
+### Round-3 checks (direct exit codes)
+a `ruff check .` — passed — 0; b `pytest -q tests/scenario/three_answers` — 290 passed, 2 skipped —
+0; c `pytest -q tests/contracts tests/journey tests/spatial/test_lot_reach.py` — 572 passed — 0;
+d `modularity_check --check` — 0; e (outside the repo, `mutate3.py`) — the four swap mutations
+(B4, FA3, C4 no_outline, RY4), the coverage-clause mutation and the two boundary mutations — 7 of
+7 CAUGHT; way-signature diff vs the claim head still empty — 0.

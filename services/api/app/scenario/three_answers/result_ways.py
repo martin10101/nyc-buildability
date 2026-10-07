@@ -36,7 +36,9 @@ from .result_way_conditions import (
     blanket_withhold,
     condition_withhold,
     format_angle,
+    format_angle_exceeding,
     format_ft,
+    format_ft_exceeding,
     k20_condition,
     no_lot_type,
     no_outline,
@@ -238,9 +240,9 @@ def _coverage_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
         return Withheld(
             label=label,
             reason=(
-                f"{beyond}, beyond the corner-lot portion "
-                f"({CORNER_PORTION_WITHIN_100_FT.comparison}), so there is no single whole-lot "
-                "coverage figure: the near part is a "
+                f"{beyond}, beyond the corner-lot portion (the part within "
+                f"{format_ft(CORNER_PORTION_WITHIN_100_FT.value)} of each intersecting street "
+                "line), so there is no single whole-lot coverage figure: the near part is a "
                 "corner-lot portion and the strip beyond is an interior-lot portion."
             ),
             gap_kind=WORK_OWED,
@@ -323,22 +325,31 @@ def _rear_yard_outside_waiver(
     fail, with the measured value, and never the condition that holds: the distance alone (the
     far corner is beyond the waiver area; the angle is within the limit), the angle alone (the
     measured angle exceeds the limit; the far corner is within the area), or both."""
-    far = format_ft(corner.reach.value)
+    # The FAILING value is shown so it is visibly beyond / over the limit (G3 F2); the HOLDING
+    # value is shown normally (a value at the limit is within, so an apparent equality is true).
+    far_over = format_ft_exceeding(corner.reach.value, REAR_YARD_WAIVER_WITHIN_100_FT.value)
+    far_within = format_ft(corner.reach.value)
     waiver_ft = format_ft(REAR_YARD_WAIVER_WITHIN_100_FT.value)
-    angle = format_angle(corner.angle.value)
+    angle_over = format_angle_exceeding(
+        corner.angle.value, REAR_YARD_WAIVER_MAX_ANGLE_135_DEG.value
+    )
+    angle_within = format_angle(corner.angle.value)
     limit = format_angle(REAR_YARD_WAIVER_MAX_ANGLE_135_DEG.value)
     beyond = (
-        f"the far corner is {far} from the point where the two street lines meet, beyond the "
+        f"the far corner is {far_over} from the point where the two street lines meet, beyond the "
         f"rear-yard waiver area (the waiver covers the area within {waiver_ft} of that point)"
     )
     over = (
-        f"the two street lines meet at {angle}, more than the rear-yard waiver's limit of {limit}"
+        f"the two street lines meet at {angle_over}, more than the rear-yard waiver's limit of "
+        f"{limit}"
     )
     within_dist = (
-        f"the far corner is {far} from the point where the two street lines meet, within "
+        f"the far corner is {far_within} from the point where the two street lines meet, within "
         f"{waiver_ft} of it"
     )
-    within_ang = f"the two street lines meet at {angle}, within the waiver's limit of {limit}"
+    within_ang = (
+        f"the two street lines meet at {angle_within}, within the waiver's limit of {limit}"
+    )
     if not within_point and not within_angle:
         clause = f"{beyond}, and {over}"
     elif not within_point:
