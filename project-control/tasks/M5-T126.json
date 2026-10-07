@@ -114,7 +114,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "A worked example read as a typical building -> S7: ratios belong to the examples only",
     "A made-up layout mistaken for a design -> S4: labelled made up and simple; the owner's goal excludes detailed apartment layouts and permit-ready plans",
@@ -124,7 +124,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T20:41:01.861739+00:00",
-  "updated_at": "2026-10-07T06:01:52.403377+00:00",
+  "updated_at": "2026-10-07T06:08:04.486115+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
