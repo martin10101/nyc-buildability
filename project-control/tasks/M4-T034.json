@@ -78,7 +78,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 70,
+  "progress_percent": 80,
   "risks": [
     "A section number taken from the reviewer's message instead of found on the site -> the targets are named by what they are; the builder reports what the site shows",
     "A term reported as not defined that sits under an inverted or combined title (seen in M4-T029) -> S1",
@@ -87,7 +87,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:42.747766+00:00",
-  "updated_at": "2026-10-07T21:36:39.042349+00:00",
+  "updated_at": "2026-10-07T21:43:56.300959+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -132,6 +132,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "INDEPENDENT REVIEW (a data-contract-verifier agent) at f2b446ec: GATE G3 PASS (the 23 captures: form, provenance and text). GATE G4 FAIL on TWO sentences of the builder's REPORT, findings F1 and F2; no capture needs a change. The reviewer fetched the official page of every one of the 23 captures itself (20 pages) and found each text equal to the page, tables cell by cell; the ZR 12-10 page it fetched has exactly the capture's pinned digest and byte count; the three section numbers the owner's reviewer names (35-31, 23-24, 25-811) are borne out as the report says; the fourteen parking, loading and bicycle captures are the sections that say whether a requirement applies; nothing existing changed; the copies are byte-identical; the report's list of the reviewer's statements of law draws no verdict. F1 (must-fix): the report says the Inner Transit Zone section (25-211) 'requires no residential parking at all'; the section removes the requirement only for dwelling units created after December 5, 2024 and keeps it for units created between 1950 and that date: an overstatement of what the text says. F2 (must-fix): the report attributes a reduction under 73-432 to section 25-231, whose text names only 73-433 and 74-52. Notes: F4 a section listed as 'found, not captured' is already captured (zr-36-64); F5 the children of the header 35-30 are given as a range; F6 the capture zr-25-231 faithfully keeps an anomaly of the official page (a missing word 'after') without flagging it. THE FAILED REVIEW IS RECORDED HERE BEFORE THE REWORK. Round 2 goes to the same builder (the report only); then the same reviewer confirms."
+    },
+    {
+      "at": "2026-10-07T21:43:56.300839+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "Round 2 by the same builder (commit 0229ccf9: the report only; no capture, synced copy or test) integrated: the two sentences the review faulted now give the sections' own words (25-211: no accessory off-street parking spaces required for dwelling units or rooming units created after December 5, 2024, and units created between July 20, 1950 and that date continue under Section 25-212; which reduction sections each of 25-211, 25-221 and 25-231 itself names); the builder's re-read of the whole report corrected five further paraphrases into quoted words (35-24; the two energy definitions; 25-80; 25-811); the notes applied (36-64 marked as already captured; the children of the four header sections listed one by one; the anomaly of the official page of 25-231 disclosed; the row on the dwelling-unit sections reworded by site title). The snapshot sync check: OK, 156 files, no capture changed. The same reviewer is asked to confirm at the new head."
     }
   ]
 }
