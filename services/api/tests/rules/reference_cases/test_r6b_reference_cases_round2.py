@@ -42,6 +42,9 @@ SUPERSEDED = [
     ("real-lot", "L12", ["step-p3-worked#real-lot-rear-yard-beyond-corner"]),
     ("overlay-reading", "section-35-633",
      ["step-p3-worked#zr-23-436-paragraphs", "step-p3-worked#zr-35-633-paragraphs"]),
+    ("overlay-reading", "floor-area-ratio", ["step-p4-worked#floor-area-ratio"]),
+    ("overlay-reading", "lot-coverage", ["step-p4-worked#lot-coverage"]),
+    ("overlay-reading", "rear-yard", ["step-p4-worked#rear-yard"]),
 ]
 
 FORBIDDEN_PRESENT_TENSE = (

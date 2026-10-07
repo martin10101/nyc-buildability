@@ -44,7 +44,7 @@ def test_everything_validates_clean():
 def test_each_case_has_a_data_file_and_a_page():
     assert lib.CASE_IDS == (
         "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
-        "overlay-reading", "step-p3-worked"
+        "overlay-reading", "step-p3-worked", "step-p4-worked"
     )
     for case_id in lib.CASE_IDS:
         assert lib.case_path(case_id).is_file(), f"missing data file for {case_id}"
@@ -263,10 +263,15 @@ def test_an_overlay_row_missing_a_reading_is_refused():
 
 
 def test_overlay_settled_changed_and_not_known_rows():
-    # FAR, coverage, units, heights, setback, rear yard: same as plain R6B
-    for rid in ("floor-area-ratio", "lot-coverage", "dwelling-units",
-                "base-and-building-height", "setback-above-base", "rear-yard"):
+    # heights, setback, dwelling units: same as plain R6B (still current rows)
+    for rid in ("dwelling-units", "base-and-building-height", "setback-above-base"):
         assert "same as plain R6B" in lib.load_row("overlay-reading", rid)["value"], rid
+    # FAR, coverage, rear yard: same as plain R6B, but now superseded by the step-P4
+    # rows that read ZR 34-22/34-23, so read the historical rows explicitly
+    for rid in ("floor-area-ratio", "lot-coverage", "rear-yard"):
+        assert "same as plain R6B" in lib.load_row(
+            "overlay-reading", rid, allow_superseded=True
+        )["value"], rid
     # street wall: changed by the overlay
     street_wall = lib.load_row("overlay-reading", "street-wall-location")
     assert "changed by the overlay" in street_wall["value"]
@@ -438,6 +443,7 @@ NOT_KNOWN = {
     "overlay-reading": {"section-35-633"},
     "step-p3-worked": {"real-lot-lot-width", "real-lot-rear-yard-beyond-corner",
                        "corner-150x100-rear-yard-beyond-corner", "base-plane-real-lot"},
+    "step-p4-worked": {"real-lot-prevailing-frontage", "zr-23-443-reach"},
 }
 
 

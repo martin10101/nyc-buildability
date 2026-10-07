@@ -32,11 +32,12 @@ Nothing in a case comes from a program run: not a value, not a column, not a sen
 | `cases/step-p1-worked.json` + `step-p1-worked.md` | The rows worked from the step-P1 captures (task M4-T027): the ZR 12-10 corner, interior, through and lot-area definitions, special density areas, ZR 23-342 and ZR 23-363. It covers three made-up corner lots (100 by 100, 150 by 100, 200 by 120), a 40-by-100 interior lot, a 40-by-200 through lot, and special density areas (section 5 gaps K1, K2, K4, K11). |
 | `cases/overlay-reading.json` + `overlay-reading.md` | The commercial-overlay reading worked from the step-P2 captures (task M4-T028): for the benchmark lot with its C2-2 overlay beside the same lot without the overlay, which district's bulk governs and by what route, floor area ratio, lot coverage, dwelling units, base and building heights, the setback, street-wall location, rear yard, which paragraphs of ZR 34-111, 34-24, 35-632 and 35-631 apply, what ZR 35-633 adds, and the sections and defined terms the overlay texts point to that are not captured (section 5 gap K9). |
 | `cases/step-p3-worked.json` + `step-p3-worked.md` | The readings worked from the law text captured by task M4-T029 and read independently in step P3 (task M4-T030): the ZR 12-10 lot-line, lot-width and lot-depth definitions for the real lot and a made-up interior lot; the rear yard beyond the corner (the real lot and a made-up 150-by-100 corner lot), the interior lot (ZR 23-342) and the through lot (the rear-yard equivalent of ZR 23-343); ZR 23-436 and ZR 35-633 for the real lot; ZR 34-21 and ZR 34-111 versus ZR 34-112; the Manhattan Core and the Special Downtown Brooklyn District; from what level heights are measured and the base plane; ZR 23-434 and the different maximum of ZR 23-362(b); the definition of "residence, or residential"; and the base of the floor-area shares in ZR 23-231 and ZR 23-232 (section 8; backlog row DB-170 item (a)). |
+| `cases/step-p4-worked.json` + `step-p4-worked.md` | The readings worked from the law text captured by task M4-T031 and read independently in step P4 (task M4-T032): ZR 34-22 and its sections 34-221 to 34-224, and ZR 34-23 and its sections 34-231 to 34-233, for a residential building in a C2-2 district mapped within R6B; with those read, whether the floor area ratio, the lot coverage and the rear yard are the same as plain R6B, and whether any captured overlay text speaks of lot coverage; ZR 35-22 and ZR 35-62, 35-63, 35-641, 35-642 and 35-643; the definitions of a mixed building, lot coverage, the five yards and the street wall, curb level and prevailing street wall frontage; what may stand in a required rear yard; large sites and qualifying residential sites; whether ZR 34-111's exceptions reach C2-2 within R6B; dwelling units and qualifying housing and the ZR 23-52 factors, with a worked unit count for a made-up 100-by-100 lot; and ZR 23-441, 23-442 and 23-443 (section 8; backlog row DB-170 item (a)). |
 
 Each case is kept twice from one source: a structured data file under `cases/` that a test can load, and
 a page rendered from it that a person can read. The helper returns are kept unchanged under
 `provenance/`: the two first-round returns, the two step-P1 readings, the two step-P2
-commercial-overlay readings and the two step-P3 readings.
+commercial-overlay readings, the two step-P3 readings and the two step-P4 readings.
 
 ## Law text: what steps P1 and P2 captured, and what the readers did not have
 
@@ -111,6 +112,45 @@ readers' folder (both had them; reading 7 did not read some of them), so they ar
 "did not have" list; the exact height and setback numbers stay not known for the undefined
 qualifying-housing terms above. As before, a text the readers did not have may be captured later;
 `docs/research/zr-snapshots/v1/` shows what is captured now.
+
+**Step P4** (task M4-T031) captured the law text the overlay and earlier readings waited for (38
+texts), and task M4-T032 read it independently (see `cases/step-p4-worked.json`). The step-P4 readers
+had, among the newly captured text: **ZR 34-22** and its sections **34-221** to **34-224**, and **ZR
+34-23** and its sections **34-231** to **34-233** (the floor-area and yard modifications the step-P2
+and step-P3 readers did not have); **ZR 35-22** and **ZR 35-62**, **35-63**, **35-641**, **35-642** and
+**35-643**; **ZR 23-44** and **ZR 23-441**, **23-442** and **23-443**; **ZR 23-341**, **23-311** and
+**23-312** (permitted obstructions); and the **ZR 12-10** definitions of a *mixed building*, *lot
+coverage*, the five *yards*, a *street wall*, *curb level*, a *prevailing street wall frontage*, a
+*large site*, a *qualifying residential site*, a *dwelling unit*, *qualifying affordable housing*,
+*qualifying senior housing* and *special density areas*. With that text the step-P4 rows settle that
+none of ZR 34-22 or 34-23 changes the floor area ratio, the lot coverage or the rear yard from plain
+R6B (so the three overlay-reading rows held subject to ZR 34-21 through 34-23 are superseded by the
+step-P4 rows), that no captured overlay text speaks of lot coverage, that of the Chapter-5 sections
+only ZR 35-63 reaches an all-residential building (height and setback), that neither ZR 34-111
+exception reaches C2-2 within R6B, that neither the real lot nor the made-up 100-by-100 lot is a large
+site and that a C2-2-in-R6B lot is not a qualifying residential site, and the ZR 23-52 dwelling-unit
+factors (680 standard, 680 qualifying affordable, none for qualifying senior), with a conditional
+worked count of 29 units for the made-up 100-by-100 lot.
+
+From both step-P4 readings' own summary of what they still did not have, the step-P4 readers lacked (an
+item is on this list only where BOTH readings name it): the definition of *floor area ratio* (needed to
+turn a ratio into a square-foot floor area, so the made-up lot's count is held conditional on it); the
+R6 or R6B *front-yard* and *side-yard* requirement sections (so whether the overlay's removal of the
+front and side yard changes plain R6B is not known); the defined term
+*transportation-infrastructure-adjacent frontage*; **Section 23-381**; **Section 23-62**; the *Greater
+Transit Zone* and *Outer Transit Zone* definitions (both note these are moot for the R6B reading); and
+the neighbouring buildings' street-wall data, the mapped street lines and any adjacent-district
+boundary for the real lot (so whether the lot has a prevailing street wall frontage, and whether ZR
+23-443(a), (b) or (d) reach it, stay not known); and the Chapter-5 scope or heading section (named by
+reading 9 in its Q4 and reading 10 in its list), needed to say whether ZR 35-22 or ZR 34-111 formally
+governs an all-residential building. The two readings differ on some pointers, so those are
+recorded as differences, not as the agreed list: reading 9 names that the full ZR 34-23 sub-section
+list is not confirmed by the folder and the defined terms *Limited Height District*, *aggregate width
+of street walls*, *block* and *short dimension of a block*; reading 10 names the defined terms
+*multiple dwelling residence*, *height factor* and *open space*. Most
+other texts the readings point to (including ZR 34-22 and 34-23 and all the definitions above) were in
+the step-P4 folder - all 110 pinned captures were - so they are NOT on the step-P4 "did not have" list;
+each reading also lists, separately, the texts that were in its folder and that it chose not to read.
 
 ## The rule for changing an expected value
 
