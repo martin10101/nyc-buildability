@@ -108,7 +108,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 70,
+  "progress_percent": 80,
   "risks": [
     "A text 'fixed' by changing what the result shows -> S6",
     "Only the two named states repaired and the same fault left elsewhere -> S5; the reviewers pick their own states",
@@ -117,7 +117,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:40.903384+00:00",
-  "updated_at": "2026-10-07T21:33:52.604838+00:00",
+  "updated_at": "2026-10-07T21:54:27.225519+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -171,6 +171,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "GATE G3 (data-contract-verifier) at f2b446ec: FAIL on ONE finding, F1. The two named faults are fixed; its own battery of about 62 input states, driven against the module at the claim head and at this head, shows no way and no kind changed for any result; 107 distinct texts carry no internal name; readings O19 and O20 are applied as stated and judged fair (O19 more cautious than the work order); scope and checks clean. BUT its own sweep found one explanation of the same kind left unrepaired, which the builder's table had marked as passing: for a corner lot that reaches beyond 100 feet from a street line, the lot-coverage reason says the lot reaches 'beyond the corner-lot portion' and then, in brackets, '(the whole lot is within 100 feet of each intersecting street line)', which is false in that state and contradicts the same sentence. It is the text shown for the benchmark lot (103.93 ft). Notes: F2 at the exact limit the rounded display can read '135.0 degrees, more than ... 135 degrees' or '100.00 ft ... beyond'; F3 the density-evidence states cannot be produced by the real path today. THE FAILED REVIEW IS RECORDED HERE BEFORE THE REWORK. Round 3 goes to the same builder with both reviews' findings (G3: F1, F2; G4: F1 to F6, F8); then the same two reviewers review again at the new head."
+    },
+    {
+      "at": "2026-10-07T21:54:27.225393+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "Round 3 by the same builder (commit 12d22e26) integrated: gate G3's finding F1 corrected (the lot-coverage reason now says 'beyond the corner-lot portion (the part within 100 ft of each intersecting street line)': the bracket names the extent of the portion and no longer asserts that the whole lot is within it; the builder's sharper re-check of every row for a clause that states a condition that does not hold caught no other row); G3's note F2 applied (a failing reach or angle just over its limit is printed with enough precision that 'beyond' or 'more than' is visibly true); gate G4's findings F1 to F4 corrected and its exercise repeated over every withheld row: eleven rows tightened so that each asserts a token only its own condition has (the six the reviewer named and five more the exercise caught); G4's note F6 applied: the way and the kind of all results in every state are now pinned by a committed test with the expectations written as data; four new tests. No way and no kind changed. The orchestrator's run at this head: tests/scenario/three_answers 290 passed, 2 skipped; tests/contracts, tests/journey, tests/spatial/test_lot_reach.py, tests/scenario and tests/rules together passed; ruff clean; modularity check exit 0. The same two reviewers are asked to review again at the new head."
     }
   ],
   "scope_corrections": [
