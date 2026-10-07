@@ -1,0 +1,47 @@
+{
+ "task_id": "M4-T025",
+ "material_commits": [
+  "475e2b84 (cherry-pick of the producer's commit cb8d2b2d, producer legal-corpus-engineer: 14 capture files, their 14 synced copies and the producer report) = material head"
+ ],
+ "claim_seam_head": "f21ea5bb",
+ "new_capture_ids": [
+  "zr-12-10-lot-corner",
+  "zr-12-10-lot-interior",
+  "zr-12-10-lot-through",
+  "zr-12-10-lot-area",
+  "zr-12-10-special-density-areas",
+  "zr-12-10-floor-area",
+  "zr-12-10-qualifying-exterior-wall-thickness",
+  "zr-23-23",
+  "zr-23-231",
+  "zr-23-232",
+  "zr-23-233",
+  "zr-23-234",
+  "zr-23-342",
+  "zr-23-363"
+ ],
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "scripts/sync_zr_snapshots.py --check: exit 0 (37 files byte-identical)",
+  "pytest tests/rules/test_zr_snapshot_bundle.py tests/rules/test_zoning_rule_review_register.py: exit 0, 50 passed",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "tools/modularity_check.py --check: exit 0",
+  "pytest -q (the FULL services/api suite, run alone at e67c1e3d): exit 0, 8075 passed, 8 skipped"
+ ],
+ "requirements": {
+  "D-090-R400": [
+   "Section 23-23 and its four subsections are captured as source text from the official Zoning Resolution site, each in a file of its own: docs/research/zr-snapshots/v1/zr-23-23.snapshot.json, zr-23-231, zr-23-232, zr-23-233 and zr-23-234 (field verbatim_excerpt; source.request_url is the section's page on zoningresolution.planning.nyc.gov; source.last_amended_display reads 12/5/2024 in all five). For each, the print/PDF channel answered (cross_check.http_status 200) and the builder records cross_check.result 'match' between the page text and the PDF.",
+   "What the captured text says on the owner's four points, quoted from the captures and not resolved here: ZR 23-231 (amenities) 'in an amount not to exceed five percent of the #residential floor area# of the #building#'; the list of amenities names 'laundry facilities' and the word 'qualifying' does not occur in the captured section; amenities 'shall be accessible to the residents of the #building#'; amenity space 'shall not include floor space for circulation'. ZR 23-232 (corridors): 'Fifty percent of the floor space of a corridor may be exempted' under paragraph (a) on one of three listed criteria, and again under paragraph (b) where the corridor's length 'does not exceed 100 linear feet'; 'Such provisions may be applied individually or in combination.' ZR 23-233 (refuse): 'not to exceed a maximum of three square feet per #dwelling unit# in the #building#'. ZR 23-234 (elevated ground floor units): 'up to 100 square feet of such entryways may be exempted ... for each foot of difference' and 'no more than a maximum of 500 square feet of floor space may be exempted ... for each #building#'.",
+   "The figures are recorded nowhere as law except in these captures: the commit adds capture files, their synced copies and the builder's report only (git show --name-status of the material commit: 28 added files, the report modified); no rule file, engine, register, reference case, plan or screen changes; the captures hold no derived value (none has the 'provisions' block that older captures use for derived values).",
+   "The synced copies under services/api/app/_zr_snapshots/v1/ are byte-identical to the captures (services/api/scripts/sync_zr_snapshots.py --check: exit 0, 37 files), and services/api/tests/rules/test_zr_snapshot_bundle.py recomputes each capture's content digest (exit 0).",
+   "NOT done by this task, and not claimed: the record that states each allowance with its conditions (the measurement-basis record) is task M5-T126. This task is the capture step only. Every capture is marked extraction_status 'extracted_draft' with raw_html_verified false: the text had not been re-read by a second agent when the builder committed; the independent re-read is the review of this task."
+  ],
+  "D-090-R403": [
+   "The ZR 12-10 definition of 'floor area' is captured in full in docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json (verbatim_excerpt, 8,884 bytes): the opening, the list of what floor area includes (twelve items, the last being 'any other floor space not specifically excluded') and, after 'However, the #floor area# of a #building# shall not include:', the list of seventeen exclusions. The short list is therefore not the source: the exclusions include item '(12) #qualifying exterior wall thickness#;' and item '(15) floor space within a #fully electrified building# or an #ultra low energy building# ...', and item (16) is the floor space 'provided in accordance with the provisions of Section 23-23, inclusive'.",
+   "The definition of 'qualifying exterior wall thickness' that the exclusion relies on is captured in docs/research/zr-snapshots/v1/zr-12-10-qualifying-exterior-wall-thickness.snapshot.json (the over-cladding and re-cladding cases, 'up to a maximum of 12 inches').",
+   "The other defined terms the exclusions name are listed in the floor-area capture's notes as NOT captured (among them 'fully electrified building', 'ultra low energy building' and 'qualifying rooftop greenhouse'), so nothing treats the capture as covering them.",
+   "Limits stated in the capture itself: the text was taken from the whole ZR 12-10 page (HTML); the print/PDF channel for that page returned HTTP 504 twice (cross_check.http_status 504), the documented fallback of the existing zr-12-10 capture; the list labels in this capture are positions in the page's markup, not confirmed printed labels (verbatim_excerpt_composition says so).",
+   "NOT done by this task, and not claimed: checking these exclusions where they bear on a result, and the record that says the short list is partial and names them, belong to the measurement-basis record (task M5-T126) and to the later result work. This task captures the text only."
+  ]
+ }
+}
