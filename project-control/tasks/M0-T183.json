@@ -3,10 +3,19 @@
   "title": "Clean-up after the one-time age exception (D-092): remove the source-map-js exclusion from apps/web/.npmrc and the exception entry from the web age gate, and bring the policy text back into line; not before 2026-10-07T14:08:09.382Z",
   "task_type": "frontend",
   "milestone_id": "M0",
-  "objective": "After source-map-js 1.2.2 reaches 604800 s (2026-10-07T14:08:09.382Z) the exception of M0-T182 can no longer apply. Remove what it left: the min-release-age-exclude line for source-map-js in apps/web/.npmrc, the exception entry (and, as the owner's 'only this 1 time' requires, any path that could admit another package without a new owner approval) in apps/web/scripts/dependency_age_gate.mjs with its tests adjusted, and the matching sentences of docs/DEPENDENCY_SECURITY_POLICY.md, keeping a dated record of the exception that was used. The exact pin of source-map-js 1.2.2 stays. Packet to be completed (paths, scenarios) before G0.",
-  "business_reason": "Owner directive D-092-R016: the installer exclusion is by package name and does not expire by itself, so a second reviewed change removes it; D-092-R013: the exception is used once.",
-  "inputs": [],
-  "outputs": [],
+  "objective": "The one-time age exception for source-map-js 1.2.2 (owner directive D-092, task M0-T182) stopped applying by itself at 2026-10-07T14:08:09.382Z, when the version reached 604800 s. This task removes what it left, as the owner approved ('The installer exclusion is by package name only and does not expire, so it needs a second reviewed change to remove it', D-092-R016): (1) the `min-release-age-exclude[]=source-map-js` line and its comment in apps/web/.npmrc; (2) the exception from the web age checker apps/web/scripts/dependency_age_gate.mjs. THE ORCHESTRATOR'S DECISION ON HOW (for the G5 security reviewer to judge): the whole mechanism is removed, not only its one entry: the frozen list, the matching function, the result kind `owner_age_exception`, its report line and its tests. With the list emptied those would be code in a security gate that can never run and that nothing tests against a real entry; and the owner's words 'only this 1 time' say that no standing permission remains (D-092-R013). A later exception, if the owner ever approves one, is again a reviewed change that adds its own rule and its own clean-up, as M0-T182 and this task did. THE MEASURE: apps/web/.npmrc, apps/web/scripts/dependency_age_gate.mjs and apps/web/scripts/tests/dependency_age_gate.test.mjs become byte-identical to their content at the commit before the exception was added (`git diff 8fe57ca0^ HEAD -- <the three files>` is empty: no other commit has touched them since). If any line that M0-T182 added is NOT part of the exception (an unrelated improvement), the builder keeps it, says so and shows the difference. (3) docs/DEPENDENCY_SECURITY_POLICY.md: the three passages that describe the checker's mechanism say again that neither machine gate holds an exception path (restore the earlier sentences); the table 'Exceptions on record' STAYS as the dated record of the exception that was used, with its clean-up marked as done by this task and the date; the row of the enforcement map loses the temporary exclusion; section 6 keeps the rule that only the owner can authorize an age exception, for one named version, never for an advisory, and adds one sentence: an approved exception is implemented by a reviewed change to the gate that carries its own expiry and is removed by a second reviewed change (as D-092 was). WHAT STAYS: the exact pin of source-map-js 1.2.2 in apps/web/package.json and the lockfile, untouched; every other check of the gate (advisory, integrity, host, the 604800-second boundary). No package is added, removed or updated; the lockfile workflow is not run.",
+  "business_reason": "Owner directive D-092-R016: the installer exclusion is by package name and does not expire by itself, so a second reviewed change removes it and the checker's exception entry. CLAUDE.md principle 15: every admitted version is at least 7 complete days old; the only exception is an owner-authorized, single-package, auto-expiring one. After this task no exception exists in either gate or in the installer setting.",
+  "inputs": [
+    "apps/web/.npmrc, apps/web/scripts/dependency_age_gate.mjs, apps/web/scripts/tests/dependency_age_gate.test.mjs, docs/DEPENDENCY_SECURITY_POLICY.md as they are, and as they were at `8fe57ca0^` (`git show 8fe57ca0^:<path>`); the change M0-T182 made to each (`git show 8fe57ca0 -- <path>`)",
+    "project-control/directives/D-092-one-time-age-exception-source-map-js-1-2-2/ (requirements.json rows R013 and R016; the sources)",
+    "docs/DEPENDENCY_SECURITY_POLICY.md sections 5 to 7; .claude/ORCHESTRATION_POLICY.md section G; .claude/rules/deployment.md",
+    "apps/web/package.json and apps/web/package-lock.json READ ONLY (the pin of source-map-js 1.2.2 and its integrity); .github/workflows/ci.yml READ ONLY (the jobs that run the gate and its tests)"
+  ],
+  "outputs": [
+    "apps/web/.npmrc, apps/web/scripts/dependency_age_gate.mjs, apps/web/scripts/tests/dependency_age_gate.test.mjs: the exception removed; byte-identical to `8fe57ca0^` unless the builder shows a line of M0-T182 that is not part of the exception",
+    "docs/DEPENDENCY_SECURITY_POLICY.md: the mechanism's description removed, the dated record kept and closed",
+    "project-control/reports/M0-T183-producer-report.md: what was removed; the three-file comparison with `8fe57ca0^`; the policy's changed passages, old and new; the live age-gate run on the committed lockfile with the registry time it read; every check with its DIRECT exit code"
+  ],
   "dependencies": [
     "M0-T182"
   ],
@@ -14,7 +23,8 @@
     "apps/web/.npmrc",
     "apps/web/scripts/dependency_age_gate.mjs",
     "apps/web/scripts/tests/dependency_age_gate.test.mjs",
-    "docs/DEPENDENCY_SECURITY_POLICY.md"
+    "docs/DEPENDENCY_SECURITY_POLICY.md",
+    "project-control/reports/M0-T183-producer-report.md"
   ],
   "forbidden_paths": [
     ".github/**",
@@ -28,9 +38,40 @@
     "CLAUDE.md",
     ".claude/**",
     "docs/** except docs/DEPENDENCY_SECURITY_POLICY.md",
-    "project-control/**"
+    "project-control/** except the producer report named in allowed_paths"
   ],
-  "acceptance_scenarios": [],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "no_exclusion_in_the_installer_setting",
+      "input": "apps/web/.npmrc",
+      "expected": "no `min-release-age-exclude` line and no comment about D-092; `min-release-age=7`, `save-exact=true` and `package-lock=true` unchanged; the file equals its content at 8fe57ca0^"
+    },
+    {
+      "id": "S2",
+      "case": "no_exception_path_in_the_checker",
+      "input": "apps/web/scripts/dependency_age_gate.mjs and apps/web/scripts/tests/dependency_age_gate.test.mjs",
+      "expected": "no `OWNER_AGE_EXCEPTIONS`, no `matchOwnerAgeException`, no result kind `owner_age_exception`, no 'OWNER AGE EXCEPTION' report line, no test of them; a search of the two files for 'exception', 'D-092' and 'source-map-js' finds nothing that admits a package; both files equal their content at 8fe57ca0^ (or the builder shows the kept line and why)"
+    },
+    {
+      "id": "S3",
+      "case": "the_ordinary_rule_decides",
+      "input": "the gate's unit tests (`node --test apps/web/scripts/tests/`), and the gate run live on the committed lockfile (`node scripts/dependency_age_gate.mjs package-lock.json` from apps/web)",
+      "expected": "the tests pass, among them the boundary tests (604800 s passes, 604799 s fails); the live run exits 0 with every package an ordinary pass and source-map-js 1.2.2 at an age of 604800 s or more by the registry's own time; no line of its output names an exception. A live run before 2026-10-07T14:08:09.382Z would FAIL for that package: that is the rule working, and the task is not started before then"
+    },
+    {
+      "id": "S4",
+      "case": "the_policy_matches_the_gates_and_keeps_the_record",
+      "input": "docs/DEPENDENCY_SECURITY_POLICY.md",
+      "expected": "the policy says that neither machine gate holds an exception path; it no longer describes `OWNER_AGE_EXCEPTIONS` as present; the table 'Exceptions on record' still holds the source-map-js 1.2.2 row with its authorization and expiry, and says that the clean-up was done by task M0-T183 on its date; the enforcement map no longer lists the temporary exclusion; the owner-only rule for any later exception stays, and nothing in the text lets an agent grant one"
+    },
+    {
+      "id": "S5",
+      "case": "nothing_else_changes",
+      "input": "git show --name-status <the builder's commit>",
+      "expected": "only the four files and the report; apps/web/package.json and package-lock.json byte-unchanged (source-map-js pinned at exactly 1.2.2 with the same integrity); no workflow file changed; the web checks pass on the Linux dev server (lint, typecheck, test, build) and CI on the pushed head is the final word"
+    }
+  ],
   "required_gates": [
     "G0",
     "G2",
@@ -46,7 +87,12 @@
   ],
   "status": "backlog",
   "progress_percent": 0,
-  "risks": [],
+  "risks": [
+    "The clean-up lands before the version is old enough and CI's age gate fails -> the task is not started before 2026-10-07T14:08:09.382Z; S3 reads the registry's own time",
+    "A change to a security gate that removes more than the exception -> S2: byte-identical to the content before the exception was added; G5 by the security-reviewer",
+    "The record of the exception that was used is lost -> S4: the table stays",
+    "The policy text and the gates disagree -> S4, read by both reviewers"
+  ],
   "blockers": [],
   "created_at": "2026-10-06T05:43:03.410751+00:00",
   "updated_at": "2026-10-06T05:47:04.930329+00:00",
@@ -60,5 +106,11 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-10-06T05:43:03.410953+00:00",
-  "path_notes": "BACKLOG. Not claimable before M0-T182 is merged and source-map-js 1.2.2 has reached 604800 s (2026-10-07T14:08:09.382Z). Inputs, outputs, acceptance scenarios and a report path are added before its G0. The exact pin of source-map-js 1.2.2 and the lockfile stay as M0-T182 leaves them."
+  "path_notes": "PRODUCER = frontend-engineer in an isolated worktree (show-toplevel guard; reset to the claim-seam head first). ADR-006 Tier B, 'Dependencies and lockfiles': the required review is dependency-security plus CI: gates G3 and G4 by the code-reviewer, gate G5 by the security-reviewer (.claude/ORCHESTRATION_POLICY.md section G: a change to the gate's behaviour needs a G5 review). NOT a dependency change: no package is added, removed or updated and the lockfile is not regenerated. MODULARITY ANSWERS: no file grows; the gate and its test shrink to their earlier size.",
+  "documented_test_commands": [
+    "cd apps/web && node --test scripts/tests/",
+    "cd apps/web && node scripts/dependency_age_gate.mjs package-lock.json   (live; reads the registry)",
+    "git diff --stat 8fe57ca0^ HEAD -- apps/web/.npmrc apps/web/scripts/dependency_age_gate.mjs apps/web/scripts/tests/dependency_age_gate.test.mjs   (expected: empty)",
+    "cd apps/web && npm run lint && npm run typecheck && npm run test && npm run build   (Linux dev server; lockfile packages only)"
+  ]
 }
