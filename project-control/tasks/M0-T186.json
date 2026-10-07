@@ -72,7 +72,7 @@
       "id": "S5",
       "case": "tests_positive_negative_mutation",
       "input": "tools/test_agent_supervisor_mrl_subagent_contract.py",
-      "expected": "new deterministic tests, runnable on any host: (i) the transient case - the create fails N times with the Windows error and then succeeds -> the request is served and the limits hold; (ii) the never-clears case -> bounded, fail-closed, the module's typed refusal, no admission; (iii) an error that is not the transient case -> not swallowed; (iv) a Windows-only test of the platform fact itself, skipped elsewhere with skipUnless. MUTATION PROOF in the report: with the repair reverted to the literal pre-fix code, (i) and (ii) fail"
+      "expected": "new deterministic tests, runnable on any host: (i) the transient case - the create fails N times with the Windows error and then succeeds -> the request is served and the limits hold; (ii) the never-clears case -> bounded, fail-closed, the module's typed refusal, no admission; (iii) an error that is not the transient case -> not swallowed; (iv) a test of the REAL race through the lock, run on every system: eight threads, bounded in time; nothing but the module's typed refusal escapes and never more than one thread is inside the section [ORCH-CORRECTED 2026-10-07; see scope_corrections: this replaces 'a Windows-only test of the platform fact itself, skipped elsewhere with skipUnless']. MUTATION PROOF in the report: with the repair reverted to the literal pre-fix code, (i) and (ii) fail"
     },
     {
       "id": "S6",
@@ -123,7 +123,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T00:34:23.847931+00:00",
-  "updated_at": "2026-10-07T01:45:13.086525+00:00",
+  "updated_at": "2026-10-07T01:58:14.511294+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -151,6 +151,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claim seam: G0 PASS at bc7ab67d; producer backend-engineer dispatched under /deficit-convergence; based on the integration head 523d6a28 (the reference-cases task merged)"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-07T01:58:14+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-07, after the builder's work and the independent code review, before acceptance] Scenario S5 item (iv) asked for 'a Windows-only test of the platform fact itself'. The packet presumed a fact that a single call can show: that an exclusive create raises PermissionError while the lock file's removal is pending. A designed experiment on windows-latest showed there is no such deterministic fact: with a file held open, in either of the two possible ways, the create does not raise PermissionError (frozen probe P2 and P3); the refusal appears only under the real race of threads creating and removing the file (P4: 1,468 of 61,758 attempts). The builder's first test of the presumed fact was wrong and failed on Windows; it was removed. Item (iv) is therefore a test of the real race through the lock, run on every system and not skipped anywhere; that it fails against the pre-repair code is shown on Windows by a second experiment (frozen under project-control/reports/M0-T186-ci-evidence/). The independent code reviewer judged the substitute to meet the scenario's purpose (its note F1, project-control/reports/M0-T186-G3G4.md). Scenario S3 already allows this case ('if no deterministic reproduction is possible, the record says so plainly'). No other scenario, gate, reviewer or path changed; the readiness gate is recorded again at the corrected head."
     }
   ]
 }
