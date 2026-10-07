@@ -6,6 +6,8 @@ orchestrator's reading quoted beside the test, never the module.
 
 from __future__ import annotations
 
+import re
+
 import pytest
 
 from app.scenario.three_answers.result_way_inputs import (
@@ -27,6 +29,7 @@ from app.scenario.three_answers.result_ways import decide_result_ways
 from .test_result_ways_lib import (
     base_inputs,
     c2_reach,
+    c3_reach,
     condition_kinds,
     is_conditional,
     is_settled,
@@ -34,6 +37,7 @@ from .test_result_ways_lib import (
     k20,
     make_reach,
     plain_inputs,
+    support_all,
 )
 
 
@@ -128,7 +132,8 @@ def test_f5_large_lot_threshold_withholds_coverage_work_owed():
         lot_type=LotType.CORNER, large_lot_threshold_met=True, **k20(True)))
     coverage = _coverage(ways)
     assert is_withheld(coverage) and coverage.way.gap_kind == "work_owed"
-    assert "large-lot" in coverage.way.reason
+    assert "different maximum lot coverage" in coverage.way.reason
+    assert "ZR 23-362" in coverage.way.reason
 
 
 # --------------------------------------------------------------------------- G4-F7
@@ -258,7 +263,7 @@ def test_o13_large_lot_not_stated_withholds_coverage_missing_information():
     """Reading O13 and the packet's rule that a fact is 'never filled by a default':
     large_lot_threshold_met=None is NOT read as 'no'. With a corner lot within the reaches and
     the K20 conditions absent, coverage would otherwise be settled; not stated -> coverage
-    withheld, missing information, the reason names what was not stated. Every other result is as
+    withheld, missing information, the reason names what was not done. Every other result is as
     with False."""
     none = decide_result_ways(plain_inputs(
         lot_type=LotType.CORNER, reach=c2_reach(), large_lot_threshold_met=None, **k20(True)))
@@ -266,7 +271,7 @@ def test_o13_large_lot_not_stated_withholds_coverage_missing_information():
         lot_type=LotType.CORNER, reach=c2_reach(), large_lot_threshold_met=False, **k20(True)))
     coverage = _coverage(none)
     assert is_withheld(coverage) and coverage.way.gap_kind == "missing_information"
-    assert "was not stated" in coverage.way.reason
+    assert "was not compared" in coverage.way.reason
     assert "recorded lot area" in coverage.way.reason
     # with False the lot is not a large lot, so coverage is shown (settled, K20 absent):
     assert is_settled(_coverage(false))
@@ -394,3 +399,96 @@ def test_each_k20_condition_present_withholds_every_result(field: str):
     assert not ways.permitted_envelope.is_available
     assert is_withheld(ways.rear_yard)
     assert "recorded as present" in _heights(ways)[0].way.reason
+
+
+# ======================= ROUND 6: the returned texts are true and plain =======================
+# The packet's rule: every reason says in plain words what is not known, why, and what would
+# resolve it. The forbidden list is the orchestrator's: a returned text (label, reason,
+# resolved_by, assumption, settled_by, whole-answer text) names no law-capture/read/build state,
+# no internal id (gap/reading number, "caller", "packet", "work order", "orchestrator",
+# "module") and no project word ("milestone", "reference case"). The separate gap-K7
+# "professional review" test stays.
+_FORBIDDEN_SUBSTRINGS = (
+    "not captured", "uncaptured", "is captured", "milestone", "reference case",
+    "caller", "gap-", "gap k", "packet", "work order", "orchestrator",
+)
+_GAP_OR_READING_ID = re.compile(r"\b[KO]\d+\b")
+
+
+def _wide_text_battery():
+    """One ResultWays per text-bearing branch, so the guard sees every returned text."""
+    cases = [
+        plain_inputs(district=None),
+        plain_inputs(district="R5"),
+        plain_inputs(special_purpose_district=Recorded.PRESENT),
+        plain_inputs(special_purpose_district=Recorded.NOT_READ),
+        plain_inputs(split_by_district_line=Recorded.PRESENT),
+        plain_inputs(split_by_district_line=Recorded.NOT_READ),
+        base_inputs(overlay_support=None),
+        base_inputs(overlay_support=support_all(True)),
+        base_inputs(overlay_support=support_all(False)),
+        base_inputs(commercial_overlay=Recorded.NOT_READ, overlay_support=None),
+        base_inputs(commercial_overlay=Recorded.PRESENT, commercial_overlay_code=None,
+                    overlay_support=None),
+        plain_inputs(inclusionary_housing_area=Recorded.PRESENT, **k20(True)),
+        plain_inputs(inclusionary_housing_area=Recorded.NOT_READ, **k20(True)),
+        plain_inputs(flood_zone=Recorded.PRESENT, **k20(True)),
+        plain_inputs(flood_zone=Recorded.NOT_READ, **k20(True)),
+        plain_inputs(lot_type=LotType.CORNER, reach=c2_reach(), large_lot_threshold_met=True,
+                     **k20(True)),
+        plain_inputs(lot_type=LotType.CORNER, reach=c2_reach(), large_lot_threshold_met=None,
+                     **k20(True)),
+        plain_inputs(lot_type=None, reach=c2_reach(), **k20(True)),
+        plain_inputs(lot_type=LotType.THROUGH, **k20(True)),
+        plain_inputs(lot_type=LotType.CORNER, reach=None, **k20(True)),
+        plain_inputs(lot_type=LotType.CORNER, reach=_reach(a_known=False), **k20(True)),
+        plain_inputs(lot_type=LotType.CORNER, reach=_reach(corner_known=False), **k20(True)),
+        plain_inputs(lot_type=LotType.CORNER, reach=make_reach(
+            (("street A", 40.0), ("street B", 50.0)), 140.0, 50.0), **k20(True)),
+        plain_inputs(lot_type=LotType.CORNER, reach=c3_reach(), **k20(True)),
+        plain_inputs(area=LotAreaFigures(10075.0, AreaAgreement.DISAGREES, 10388.0), **k20(True)),
+        plain_inputs(area=LotAreaFigures(10075.0, AreaAgreement.DISAGREES, None), **k20(True)),
+        plain_inputs(area=LotAreaFigures(10075.0, AreaAgreement.COULD_NOT_COMPARE, None),
+                     **k20(True)),
+        plain_inputs(area=LotAreaFigures(5000.0, None, None), **k20(True)),
+        plain_inputs(area=LotAreaFigures(None, None, None), **k20(True)),
+        plain_inputs(lot_type=LotType.INTERIOR,
+                     special_density=DensityKnowledge.USER_STATEMENT_NOT_IN_ONE, **k20(False)),
+        plain_inputs(lot_type=LotType.INTERIOR,
+                     special_density=DensityKnowledge.EVIDENCE_IN_ONE, **k20(True)),
+        plain_inputs(lot_type=LotType.INTERIOR,
+                     special_density=DensityKnowledge.EVIDENCE_NOT_IN_ONE, **k20(True)),
+        plain_inputs(**k20(False)),
+        plain_inputs(reach=c2_reach(), **k20(True)),
+    ]
+    return [decide_result_ways(c) for c in cases]
+
+
+def _returned_texts(ways):
+    texts = []
+    for row in ways.result_ways():
+        texts.append(row.label)
+        if is_withheld(row):
+            texts += [row.way.label, row.way.reason, row.way.resolved_by]
+        elif is_conditional(row):
+            for cond in row.way.conditions:
+                texts += [cond.assumption, cond.settled_by]
+    for answer in (ways.floor_area_allowance, ways.permitted_envelope, ways.building_option):
+        na = answer.whole_answer_not_available
+        if na is not None:
+            texts += [na.reason, na.resolved_by]
+    return texts
+
+
+def test_no_returned_text_uses_an_internal_name_or_a_capture_claim():
+    battery = _wide_text_battery()
+    assert len(battery) >= 30
+    seen = 0
+    for ways in battery:
+        for text in _returned_texts(ways):
+            seen += 1
+            low = text.lower()
+            for bad in _FORBIDDEN_SUBSTRINGS:
+                assert bad not in low, f"{bad!r} in a returned text: {text}"
+            assert not _GAP_OR_READING_ID.search(text), f"gap/reading id in a returned text: {text}"
+    assert seen > 0

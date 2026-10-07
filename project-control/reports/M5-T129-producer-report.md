@@ -300,6 +300,69 @@ xfailed. d `modularity_check --check` = 0 (failures 0, 29 warnings; `grep result
 after the commit; `git diff --name-status 0943f5de HEAD` = the three-answers test files and the
 report.
 
+## Round 6 (wording only: the returned texts are true and in plain words)
+
+No decision changed (which way, which gap kind, which conditions). Only the strings the module
+returns to a user were corrected for three faults the orchestrator found by collecting every
+returned text: (1) false statements about what is captured/read/built in the repository (the
+ZR 12-10 special-density-area definition and the qualifying-housing definitions ARE captured;
+the K11/K13 rows were written before those captures); (2) internal names ("gap-K3", "The
+caller"); (3) project words ("in this milestone", "reference case"). Rule applied: a returned
+text names no law-capture/read/build state, no internal id and no project word; it says what is
+not known about THIS lot or what the program does not work out yet, and what would resolve it.
+
+How many texts changed: 32 old returned texts replaced (30 distinct new; two old resolved_by
+lines collapsed into one shared "...checked against an independently worked example" wording).
+The five most important (old -> new):
+- qualifying affordable reason: "...is not set by the program in this milestone; the
+  qualifying-housing definitions are not captured." -> "The program does not work out the legal
+  dwelling-unit limit for qualifying affordable housing yet, so it is not known."
+- standard unit, no evidence, reason: "...the ZR 12-10 special-density-area definition is not
+  captured, so the legal unit limit is withheld..." -> "There is no evidence of whether this lot
+  is in a special density area, where the dwelling-unit formula does not apply, so the legal
+  dwelling-unit limit is not known; a user's statement would show it only as a conditional result."
+- setback reason: "The setback above the base (ZR 23-433) is captured but not built, so it is
+  not covered..." -> "The program does not work out the setback above the base (ZR 23-433) yet, so
+  it is not covered..." (keeps "not covered", K8).
+- large-lot (stated) coverage reason: "The caller states this lot meets the gap-K3 large-lot
+  threshold, where a different maximum applies that the program does not yet compute, so coverage
+  is withheld." -> "This lot is at or above the lot size at which a different maximum lot coverage
+  applies (ZR 23-362), and the program does not work out that maximum yet, so coverage is not
+  known."
+- building-option reason: "No building option is shown in this milestone: ... and has no
+  reference case, ..." -> "No building option is shown yet: ... and has not been checked against an
+  independently worked example, ...". (Kept: "not set by this formula" for qualifying senior, K13;
+  "ZR 23-363" for interior/through coverage, K2; the reach figures.)
+
+Guard test: `test_no_returned_text_uses_an_internal_name_or_a_capture_claim` in
+`test_result_ways_input_states.py`, over a battery of 34 input cases reaching every text-bearing
+branch (district, lot type, large lot, overlay, inclusionary, flood, density, reach and area
+states). It asserts no returned text contains (case-insensitive) "not captured", "uncaptured",
+"is captured", "milestone", "reference case", "caller", "gap-", "gap k", "packet", "work order",
+"orchestrator", or matches `\b[KO]\d+\b`. The list is the orchestrator's; the packet's rule is
+quoted beside it. The gap-K7 "professional review" test stays. Comments and docstrings keep the
+internal names (K3, O13); only user-visible texts were changed.
+
+No decision changed - proof: a script outside the repository scored a 53-case battery with the
+module at 70c765e1 (before) and at HEAD (after), taking each result's way (settled / conditional
+/ withheld), gap kind, zr-section set and condition kinds, and each whole-answer's gap/reason
+kind - NO text. The two signatures are byte-identical over all 53 cases. Tests whose asserted
+words changed were updated keeping each word tied to its work-order sentence (test_f5: the
+large-lot reason now asserts "different maximum lot coverage" / "ZR 23-362"; test_o13: "was not
+compared" / "recorded lot area").
+
+Source-line counts: `result_ways.py` 482, `result_way_inputs.py` 413, `result_way_conditions.py`
+328; tests `test_result_ways_input_states.py` 349, `test_result_ways.py` 211, others <= 135. All
+under 600.
+
+Checks (DIRECT exit codes, round 6): a `ruff check .` = 0. b `pytest tests/scenario/three_answers`
+= 0, 130 passed + 2 pre-existing skips (round 5 was 129; the guard test added). c `pytest
+tests/contracts tests/spatial` = 0, 887 passed, 3 xfailed. d `modularity_check --check` = 0
+(failures 0, 29 warnings; `grep result_way` = NONE); `check_lane_paths --coverage` = 0 (9134
+files). e the before/after decision comparison above (53 cases, identical). f git status empty
+after the commit; `git diff --name-status 70c765e1 HEAD` = the two module files, the input-states
+test file and the report.
+
 ## Interface
 
 Input records (`result_way_inputs.py`): `ResultWayInputs` holds `district`, `lot_type`

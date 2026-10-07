@@ -110,8 +110,8 @@ def k20_condition(inp: ResultWayInputs) -> Condition | None:
             + ", ".join(not_checked)
         ),
         settled_by=(
-            "Capturing and reading the governing law text for each, then confirming each "
-            "is absent for this lot"
+            "Finding a source for each of these conditions and confirming each is absent for "
+            "this lot"
         ),
     )
 
@@ -208,14 +208,16 @@ def blanket_withhold(inp: ResultWayInputs) -> Blanket | None:
             f"The rules connected so far are those of {WORK_ORDER_DISTRICT}; this lot's "
             f"district is {inp.district}, whose rules are owed, so every result is withheld.",
             WORK_OWED,
-            f"Connecting the rules for the {inp.district} district, then reference cases.",
+            f"Connecting the rules for the {inp.district} district and checking them against "
+            "independently worked examples.",
         )
     if inp.special_purpose_district is Recorded.PRESENT:
         return Blanket(
             "City records record a special purpose district for this lot; the program does "
             "not yet handle a special purpose district, so every result is withheld.",
             WORK_OWED,
-            "Capturing and building the special purpose district's rules, then a reference case.",
+            "Working out the special purpose district's rules and checking them against an "
+            "independently worked example.",
         )
     if inp.special_purpose_district is Recorded.NOT_READ:
         return Blanket(
@@ -229,7 +231,8 @@ def blanket_withhold(inp: ResultWayInputs) -> Blanket | None:
             "City records record this lot as split by a district line; no averaging rule "
             "exists in the program, so every result is withheld.",
             WORK_OWED,
-            "Building the split-lot averaging rules, then a reference case.",
+            "Working out the split-lot averaging rules and checking them against an "
+            "independently worked example.",
         )
     if inp.split_by_district_line is Recorded.NOT_READ:
         return Blanket(
@@ -246,7 +249,8 @@ def blanket_withhold(inp: ResultWayInputs) -> Blanket | None:
             + "); which results it can change is not established, so every zoning result is "
             "withheld.",
             WORK_OWED,
-            "Capturing and reading the law text for that condition, then building its rule.",
+            "Finding a source for that condition and working out its rule, then checking it "
+            "against an independently worked example.",
         )
     return None
 
@@ -282,8 +286,9 @@ def overlay_block(inp: ResultWayInputs, family: ResultFamily) -> Withheld | None
             ),
             gap_kind=WORK_OWED,
             resolved_by=(
-                "Capturing and reading the Article III sections that govern a residential "
-                "building in a commercial overlay, then a reference case."
+                "An independent reading of the Article III sections that govern a residential "
+                "building in a commercial overlay, checked against an independently worked "
+                "example."
             ),
         )
     if support.supported:
@@ -299,7 +304,10 @@ def overlay_block(inp: ResultWayInputs, family: ResultFamily) -> Withheld | None
             "result may be shown."
         ),
         gap_kind=WORK_OWED,
-        resolved_by="Capturing and reading " + owed + ", then a reference case.",
+        resolved_by=(
+            "An independent reading of the Article III sections that govern a residential "
+            "building in a commercial overlay, checked against an independently worked example."
+        ),
         zr_sections=support.zr_sections,
     )
 

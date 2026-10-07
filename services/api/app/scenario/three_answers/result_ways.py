@@ -131,7 +131,8 @@ def _floor_area_way(inp: ResultWayInputs, blanket: Blanket | None, key: str) -> 
             "not yet apply its floor-area bonus, so the floor-area results are withheld."
         ),
         present_resolved=(
-            "Building the inclusionary-housing floor-area rules, then a reference case."
+            "Working out the inclusionary-housing floor-area rule and checking it against an "
+            "independently worked example."
         ),
         not_read_reason=(
             "The inclusionary-housing-area column was not read; a column that was not read is "
@@ -170,7 +171,10 @@ def _height_way(inp: ResultWayInputs, blanket: Blanket | None, key: str) -> WayR
             "City records record a flood zone for this lot; the program does not yet apply "
             "the flood-zone height rules, so the height limits are withheld."
         ),
-        present_resolved="Building the flood-zone height rules, then a reference case.",
+        present_resolved=(
+            "Working out the flood-zone height rule and checking it against an independently "
+            "worked example."
+        ),
         not_read_reason=(
             "The flood-zone column was not read; a column that was not read is never taken as "
             "'none', so the height limits are withheld."
@@ -196,12 +200,15 @@ def _coverage_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
         return Withheld(
             label=label,
             reason=(
-                "The caller states this lot meets the gap-K3 large-lot threshold, where a "
-                "different maximum applies that the program does not yet compute, so coverage "
-                "is withheld."
+                "This lot is at or above the lot size at which a different maximum lot "
+                "coverage applies (ZR 23-362), and the program does not work out that maximum "
+                "yet, so coverage is not known."
             ),
             gap_kind=WORK_OWED,
-            resolved_by="Building the large-lot coverage rule, then a reference case.",
+            resolved_by=(
+                "Working out the larger-lot coverage rule and checking it against an "
+                "independently worked example."
+            ),
             zr_sections=zr,
         )
     if inp.lot_type is None:
@@ -210,11 +217,14 @@ def _coverage_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
         return Withheld(
             label=label,
             reason=(
-                "ZR 23-363, which may change the 80 percent interior/through-lot coverage, is "
-                "not yet read, so coverage is withheld."
+                "A further rule (ZR 23-363) may change the coverage for an interior or through "
+                "lot, and the program does not work that out yet, so coverage is not known."
             ),
             gap_kind=WORK_OWED,
-            resolved_by="Reading the captured ZR 23-363 and confirming it against this lot.",
+            resolved_by=(
+                "Working out the ZR 23-363 rule for this lot and checking it against an "
+                "independently worked example."
+            ),
             zr_sections=zr,
         )
     reaches_within = street_reaches_within(inp.reach)
@@ -245,13 +255,13 @@ def _coverage_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
         return Withheld(
             label=label,
             reason=(
-                "Whether this lot meets the gap-K3 large-lot threshold was not stated; it rests "
-                "on the recorded lot area, and a different maximum applies to such lots "
-                "(ZR 23-362), so coverage is not known."
+                "Whether this lot is at or above the lot size at which a different maximum lot "
+                "coverage applies is not known, because the recorded lot area was not compared "
+                "with that size (ZR 23-362), so coverage is not known."
             ),
             gap_kind=MISSING_INFORMATION,
             resolved_by=(
-                "The caller comparing the recorded lot area with the gap-K3 large-lot measure."
+                "Comparing the recorded lot area with the lot size named in ZR 23-362."
             ),
             zr_sections=zr,
         )
@@ -278,7 +288,10 @@ def _rear_yard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
                 "width, which are not given, so the rear yard is withheld."
             ),
             gap_kind=WORK_OWED,
-            resolved_by="Building the ordinary rear-yard rule, then a reference case.",
+            resolved_by=(
+                "Working out the ordinary rear-yard rule and checking it against an "
+                "independently worked example."
+            ),
             zr_sections=zr,
         )
     corner = inp.reach.corner if inp.reach is not None else None
@@ -296,8 +309,8 @@ def _rear_yard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
             ),
             gap_kind=WORK_OWED,
             resolved_by=(
-                "Building the ordinary rear-yard rule for the part beyond the corner area, "
-                "then a reference case."
+                "Working out the ordinary rear-yard rule for the part beyond the corner area "
+                "and checking it against an independently worked example."
             ),
             zr_sections=zr,
         )
@@ -312,11 +325,14 @@ def _setback_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
     return Withheld(
         label=label,
         reason=(
-            "The setback above the base (ZR 23-433) is captured but not built, so it is not "
-            "covered; the envelope drawing and any floor above the base height wait for it."
+            "The program does not work out the setback above the base (ZR 23-433) yet, so it is "
+            "not covered; the envelope drawing and any floor above the base height wait for it."
         ),
         gap_kind=WORK_OWED,
-        resolved_by="Building the ZR 23-433 setback rule, then a reference case.",
+        resolved_by=(
+            "Working out the ZR 23-433 setback rule and checking it against an independently "
+            "worked example."
+        ),
         zr_sections=("ZR 23-433",),
     )
 
@@ -346,8 +362,7 @@ def _unit_standard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayReco
             kind=KIND_USER_STATEMENT,
             assumption="If the lot is not in a special density area, as the user states",
             settled_by=(
-                "Evidence of the lot's special-density-area status, and capturing the ZR 12-10 "
-                "special-density-area definition"
+                "A sourced fact saying whether the lot is in a special density area"
             ),
         )
         rest = [c for c in (area_condition(inp), k20_condition(inp)) if c is not None]
@@ -357,11 +372,12 @@ def _unit_standard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayReco
             label=label,
             reason=(
                 "Evidence records this lot in a special density area, where the dwelling-unit "
-                "formula does not apply, so the legal unit limit is withheld."
+                "formula does not apply, so the legal dwelling-unit limit is not known."
             ),
             gap_kind=WORK_OWED,
             resolved_by=(
-                "Building the special-density-area dwelling-unit rule, then a reference case."
+                "Working out the special-density-area dwelling-unit rule and checking it "
+                "against an independently worked example."
             ),
             zr_sections=zr,
         )
@@ -369,15 +385,12 @@ def _unit_standard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayReco
     return Withheld(
         label=label,
         reason=(
-            "There is no evidence of whether the lot is in a special density area, and the "
-            "ZR 12-10 special-density-area definition is not captured, so the legal unit limit "
-            "is withheld; a user's statement would show it only as a conditional result."
+            "There is no evidence of whether this lot is in a special density area, where the "
+            "dwelling-unit formula does not apply, so the legal dwelling-unit limit is not "
+            "known; a user's statement would show it only as a conditional result."
         ),
         gap_kind=WORK_OWED,
-        resolved_by=(
-            "Capturing the ZR 12-10 special-density-area definition and evidence of the lot's "
-            "status."
-        ),
+        resolved_by="A sourced fact saying whether the lot is in a special density area.",
         zr_sections=zr,
     )
 
@@ -389,12 +402,13 @@ def _unit_qualifying_affordable_way(blanket: Blanket | None) -> WayRecord:
     return Withheld(
         label=label,
         reason=(
-            "The legal dwelling-unit limit for qualifying affordable housing is not set by the "
-            "program in this milestone; the qualifying-housing definitions are not captured."
+            "The program does not work out the legal dwelling-unit limit for qualifying "
+            "affordable housing yet, so it is not known."
         ),
         gap_kind=WORK_OWED,
         resolved_by=(
-            "Capturing the qualifying-affordable-housing definitions, then a reference case."
+            "Connecting the rule for qualifying affordable housing and checking it against an "
+            "independently worked example."
         ),
         zr_sections=("ZR 23-52",),
     )
@@ -407,11 +421,14 @@ def _unit_qualifying_senior_way(blanket: Blanket | None) -> WayRecord:
     return Withheld(
         label=label,
         reason=(
-            "For qualifying senior housing the dwelling-unit limit is not set by this formula "
-            "(ZR 23-52(a)(2) sets no factor), so it is not known in this milestone."
+            "The unit formula sets no factor for qualifying senior housing (ZR 23-52(a)(2)), so "
+            "the program gives no unit limit for it: it is not set by this formula."
         ),
         gap_kind=WORK_OWED,
-        resolved_by="Capturing the qualifying-senior-housing rule, then a reference case.",
+        resolved_by=(
+            "Connecting the rule for qualifying senior housing and checking it against an "
+            "independently worked example."
+        ),
         zr_sections=("ZR 23-52",),
     )
 
@@ -468,12 +485,15 @@ def decide_result_ways(inp: ResultWayInputs) -> ResultWays:
     option_withheld = Withheld(
         label="Building option",
         reason=(
-            "No building option is shown in this milestone: the building option is below the "
-            "minimum base height and has no reference case, and its footprint needs the rear "
-            "yard, which is not settled."
+            "No building option is shown yet: the building option is below the minimum base "
+            "height and has not been checked against an independently worked example, and its "
+            "footprint needs the rear yard, which is not settled."
         ),
         gap_kind=WORK_OWED,
-        resolved_by="Building the building-option generator and a reference case.",
+        resolved_by=(
+            "Working out the building-option generator and checking it against an "
+            "independently worked example."
+        ),
     )
     if _building_option_withheld():
         option_rows = [
