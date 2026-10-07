@@ -36,10 +36,11 @@ SNAPSHOT_DIR = REPO_ROOT / "docs" / "research" / "zr-snapshots" / "v1"
 # The cases, by the file stem of their data file and rendered page. The fifth
 # case (step-p1-worked) holds the rows worked from the step-P1 captures (M4-T027);
 # the sixth (overlay-reading) holds the commercial-overlay reading worked from the
-# step-P2 captures (M4-T028).
+# step-P2 captures (M4-T028); the seventh (step-p3-worked) holds the readings worked
+# from the law text captured by task M4-T029 and read independently in step P3 (M4-T030).
 CASE_IDS = (
     "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
-    "overlay-reading",
+    "overlay-reading", "step-p3-worked",
 )
 
 # The base ids every one of the work order's table rows must appear under (S1).
@@ -57,6 +58,16 @@ REQUIRED_BASE_IDS = {
         "bulk-regulations", "floor-area-ratio", "lot-coverage", "dwelling-units",
         "base-and-building-height", "setback-above-base", "street-wall-location",
         "rear-yard", "paragraphs-applicable", "section-35-633", "not-captured",
+    ],
+    "step-p3-worked": [
+        "real-lot-lot-lines", "real-lot-lot-depth", "real-lot-lot-width",
+        "interior-40x100", "through-40x200", "real-lot-rear-yard-beyond-corner",
+        "corner-150x100-rear-yard-beyond-corner", "zr-23-436", "zr-35-633",
+        "zr-34-21", "zr-34-111", "manhattan-core",
+        "special-downtown-brooklyn-district", "height-measured-from-base-plane",
+        "base-plane-real-lot", "zr-23-434", "zr-23-362b",
+        "residence-residential-definition", "floor-area-share-bases",
+        "sections-and-facts-not-had",
     ],
 }
 

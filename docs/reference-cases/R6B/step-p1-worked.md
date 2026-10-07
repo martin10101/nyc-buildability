@@ -132,7 +132,7 @@ Law relied on:
 
 Why the rule applies: Within 100 feet of the corner point no rear yard is required (ZR 23-344(a); 90 degrees is 135 or less). Beyond 100 feet of a street line the beyond-portion of a side lot line is treated as a rear lot line (ZR 23-344(c)), and whether a rear yard is then required there, and its depth under ZR 23-342, depends on the neighbouring lot lines, the building type and the lot width.
 
-Expected value: not known. Within 100 feet of the corner point no rear yard is required; beyond that the rear-yard outcome is not settled. It needs the neighbouring lot-line configuration (ZR 23-344(c)(1) versus (c)(3)) and, for any required depth, the building type and lot width (ZR 23-342), none of which are given, and the ZR 12-10 side-/rear-lot-line definitions are not captured. Both readings reach this same not-known result.
+Expected value: not known. Within 100 feet of the corner point no rear yard is required; beyond that the rear-yard outcome is not settled. It needs the neighbouring lot-line configuration (ZR 23-344(c)(1) versus (c)(3)) and, for any required depth, the building type and lot width (ZR 23-342), none of which are given; the step-P1 readers also did not have the ZR 12-10 side- and rear-lot-line definitions. Both step-P1 readings reach this same not-known result. Those definitions were since captured (task M4-T029) and read in step P3 (cases/step-p3-worked.json), where both step-P3 readings worked a made-up 150-by-100 corner lot the same way: beyond 100 feet of the street line a 50-foot stretch of the far side lot line is a deemed rear lot line, and whether a rear yard is required there is not known.
 
 Where this stands in the independent reading: return-independent-hand-calculation-3.md, Q3b (C2/C3: no rear yard within 100 ft of the corner; beyond, depth and requirement not known) and return-independent-hand-calculation-4.md, Q3b (same); both agree it is not known beyond the corner.
 
@@ -260,7 +260,7 @@ Expected value: not known. The two step-P1 readings do not settle the depth on t
 
 Where this stands in the independent reading: return-independent-hand-calculation-3.md, Q3b (40x100 interior: depth NOT KNOWN) and return-independent-hand-calculation-4.md, Q3b (40x100 interior: 20 ft at or below 75 ft, assuming 40 ft is the lot width); the two differ, so the row is not known.
 
-What this row does not establish: No rear-yard depth is settled; it would need the building type and a stated lot width. ZR 23-344(a)'s corner waiver does not apply to an interior lot (it has no two intersecting street lines) absent corner facts, and the ZR 12-10 lot-width and rear-lot-line definitions are not captured.
+What this row does not establish: No rear-yard depth is settled from the step-P1 readings; it would need the building type and a stated lot width. ZR 23-344(a)'s corner waiver does not apply to an interior lot (it has no two intersecting street lines) absent corner facts. The step-P1 readers did not have the ZR 12-10 lot-width and rear-lot-line definitions; these were captured by task M4-T029 and read in step P3 (cases/step-p3-worked.json), where both step-P3 readings read, taking the 40-foot dimension as the lot width, a rear yard of 20 feet at or below 75 feet of height and 30 feet above.
 
 ### through-40x200-coverage - Made-up through lot (40 ft wide, 200 ft between the two streets), R6B: maximum lot coverage
 
@@ -313,13 +313,13 @@ Law relied on:
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-363.
   - Quoted: "the #rear yard equivalent# modifications for shallow #through lots# set forth in Section 23-343"
 
-Why the rule applies: ZR 23-342 provides rear yards only on interior lots, not through lots. The through-lot requirement is the rear-yard equivalent of ZR 23-343, which the captured ZR 23-363 names, but ZR 23-343 is itself not captured.
+Why the rule applies: ZR 23-342 provides rear yards only on interior lots, not through lots. The through-lot requirement is the rear-yard equivalent of ZR 23-343, which the captured ZR 23-363 names. The step-P1 readers did not have ZR 23-343; it was captured by task M4-T029 and read in step P3 (cases/step-p3-worked.json).
 
-Expected value: not known. The captured text (ZR 23-342 and ZR 23-344) does not state a through lot's rear-yard requirement; the governing rule is the rear-yard equivalent of ZR 23-343, which is named by the captured ZR 23-363 but is itself not captured, so the requirement is not known. Both readings reach this same not-known result.
+Expected value: not known. The captured text the step-P1 readers had (ZR 23-342 and ZR 23-344) does not state a through lot's rear-yard requirement; the governing rule is the rear-yard equivalent of ZR 23-343, which is named by the captured ZR 23-363 but which the step-P1 readers did not have, so for readings 3 and 4 the requirement is not known. Both step-P1 readings reach this same not-known result. ZR 23-343 was since captured (task M4-T029) and read in step P3 (cases/step-p3-worked.json), where both step-P3 readings read a rear yard equivalent of minimum depth 40 feet at or below 75 feet of height and 60 feet above, located midway within 10 feet between the two street lines.
 
-Where this stands in the independent reading: return-independent-hand-calculation-3.md, Q3c (through lot: rear-yard equivalent of 23-343, not captured, NOT KNOWN) and return-independent-hand-calculation-4.md, Q3c (same); both agree it is not known.
+Where this stands in the independent reading: return-independent-hand-calculation-3.md, Q3c (through lot: rear-yard equivalent of 23-343, which the step-P1 readers did not have, NOT KNOWN) and return-independent-hand-calculation-4.md, Q3c (same); both agree it is not known.
 
-What this row does not establish: It gives no rear-yard-equivalent requirement for the through lot; that waits for ZR 23-343. ZR 23-344(a)'s corner waiver does not apply to a pure through lot (its two streets are opposite and parallel, not intersecting).
+What this row does not establish: It gives no rear-yard-equivalent requirement for the through lot from the step-P1 readings; the now-captured ZR 23-343 is read in cases/step-p3-worked.json. ZR 23-344(a)'s corner waiver does not apply to a pure through lot (its two streets are opposite and parallel, not intersecting).
 
 ### special-density-areas-list - What the ZR 12-10 definition of special density areas lists
 
@@ -370,11 +370,11 @@ Law relied on:
 
 Why the rule applies: The ZR 12-10 definition lists only the Manhattan Core and the Special Downtown Brooklyn District, both named for other boroughs; the benchmark lot's recorded facts place it in Queens with no special-district value, which both readings read as strongly implying it is in neither, but the captured text does not give the geographic boundaries of either listed area.
 
-Expected value: not known. The benchmark lot's recorded facts (borough Queens, no special-district field) and the two listed areas (the Manhattan Core, the Special Downtown Brooklyn District) strongly imply the lot is in neither, but the captured text does not give the geographic boundaries of those areas, so membership cannot be settled from the captured text. Both readings reach this same conclusion and neither settles it.
+Expected value: not known. The benchmark lot's recorded facts (borough Queens, no special-district field) and the two listed areas (the Manhattan Core, the Special Downtown Brooklyn District) strongly imply the lot is in neither, but the step-P1 readers did not have the geographic boundary definitions of those areas, so they could not settle membership. Both step-P1 readings reach this same conclusion. The Manhattan Core and Special Downtown Brooklyn District definitions were since captured (task M4-T029) and read in step P3 (cases/step-p3-worked.json), where both step-P3 readings read the lot as not in the Manhattan Core (Queens is not within Manhattan Community Districts 1 through 8) and outside the Special Downtown Brooklyn District on the recorded facts.
 
 Where this stands in the independent reading: return-independent-hand-calculation-3.md, Q4b and return-independent-hand-calculation-4.md, Q4b; both read the Queens location as strongly implying the lot is in neither area but say it cannot be closed without the captured boundary definitions.
 
-What this row does not establish: It does not place the lot inside or outside a special density area definitively; that needs the captured boundary definitions of the Manhattan Core and the Special Downtown Brooklyn District.
+What this row does not establish: It does not place the lot inside or outside a special density area from the step-P1 readings; the step-P1 readers did not have the Manhattan Core or Special Downtown Brooklyn District definitions. Those are now captured and read in cases/step-p3-worked.json.
 
 ## What this case does not establish
 
@@ -395,4 +395,5 @@ What this row does not establish: It does not place the lot inside or outside a 
 | Date | Change | By |
 |---|---|---|
 | 2026-10-07 | Case created (step P1, task M4-T027) from the two independent readings of the step-P1 sealed folder (provenance/return-independent-hand-calculation-3.md and -4.md). It holds the rows that waited for the law text captured by task M4-T025: the ZR 12-10 corner/interior/through/lot-area and special-density-areas definitions, ZR 23-342 and ZR 23-363. A value is recorded only where both readings agree on the same basis. | rules-engineer (M4-T027) |
+| 2026-10-07 | Rows interior-40x100-rear-yard, through-40x200-rear-yard, special-density-real-lot and corner-150x100-rear-yard: expected values unchanged (all stay not known). The law text these step-P1 rows waited for (the ZR 12-10 lot-line and lot-width definitions, ZR 23-343, and the Manhattan Core and Special Downtown Brooklyn District definitions) was captured by task M4-T029 and read independently in step P3 (cases/step-p3-worked.json); each row's wording is brought from 'not captured' into 'the readers did not have' form and points to the step-P3 reading, which both step-P3 readings support. Reason: corrected evidence - the text is now captured and read. | rules-engineer (M4-T030) |
 

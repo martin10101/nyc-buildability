@@ -58,8 +58,13 @@
   "change_log": [
     {
       "date": "2026-10-07",
-      "summary": "Case created (step P2, task M4-T028) from the two independent readings of the commercial-overlay sealed folder (provenance/return-independent-hand-calculation-5.md and -6.md). It records, for the benchmark lot with its C2-2 overlay beside the same lot without the overlay, a value or a yes/no only where both readings agree on the same basis; the row on what ZR 35-633 adds stays not known because Section 23-436 is not captured and the two readings differ on the corner-lot clause.",
+      "summary": "Case created (step P2, task M4-T028) from the two independent readings of the commercial-overlay sealed folder (provenance/return-independent-hand-calculation-5.md and -6.md). It records, for the benchmark lot with its C2-2 overlay beside the same lot without the overlay, a value or a yes/no only where both readings agree on the same basis; the row on what ZR 35-633 adds stays not known because the step-P2 readers did not have Section 23-436 and the two readings differ on the corner-lot clause.",
       "by": "rules-engineer (M4-T028)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Row section-35-633: expected value unchanged (not known). Section 23-436 was captured by task M4-T029 and read independently in step P3 (cases/step-p3-worked.json); the row's wording is brought from 'not captured' into 'the readers did not have' form and points to the step-P3 reading, which both step-P3 readings support (paragraph (c) binds along the wide Northern Boulevard via ZR 35-631; ZR 35-633(a) applies; ZR 35-633(b) stays not known). The row stays not known for the step-P2 readings, which did not have Section 23-436 and differ on the ZR 35-633(b) corner-lot clause. Reason: corrected evidence - the text is now captured and read.",
+      "by": "rules-engineer (M4-T030)"
     }
   ],
   "rows": [
@@ -989,16 +994,16 @@
           "table_assertion": null
         }
       ],
-      "why_applies": "ZR 35-633 brings in the additional height and setback regulations of Section 23-436, with the ZR 23-431 street-wall reference swapped for ZR 35-631 and a corner-lot street-wall clause. Section 23-436 is not captured, so what those additional provisions require, and whether any of them bind this building, cannot be read. Both readings reach this not-known result for the substance, and they differ on the corner-lot clause.",
+      "why_applies": "ZR 35-633 brings in the additional height and setback regulations of Section 23-436, with the ZR 23-431 street-wall reference swapped for ZR 35-631 and a corner-lot street-wall clause. The step-P2 readers (readings 5 and 6) did not have Section 23-436, so they could not read what those additional provisions require or whether any of them bind this building, and they differ on the corner-lot clause. Section 23-436 was since captured (task M4-T029) and read in step P3 (cases/step-p3-worked.json).",
       "arithmetic": [],
       "expected": {
         "kind": "not_known",
         "value": null,
         "unit": "",
-        "reason": "What ZR 35-633 adds cannot be settled: it imports the additional height and setback regulations of Section 23-436, which is not captured, so their substance and whether they bind this building are not known (both readings). The two readings also differ on the ZR 35-633(b) corner-lot street-wall clause: reading 1 (return-independent-hand-calculation-5.md Q3d) reads it as not known, because whether a Commercial District is mapped along the entire block frontage is not in the record; reading 2 (return-independent-hand-calculation-6.md Q3d) reads it as not biting on the recorded facts, because the clause is for a zoning lot bounded by only one street line and this lot has two street frontages. The row therefore stays not known and names both readings."
+        "reason": "What ZR 35-633 adds cannot be settled from the step-P2 readings: it imports the additional height and setback regulations of Section 23-436, which the step-P2 readers (readings 5 and 6) did not have, so their substance and whether they bind this building are not known (both step-P2 readings). The two step-P2 readings also differ on the ZR 35-633(b) corner-lot street-wall clause: reading 1 (return-independent-hand-calculation-5.md Q3d) reads it as not known, because whether a Commercial District is mapped along the entire block frontage is not in the record; reading 2 (return-independent-hand-calculation-6.md Q3d) reads it as not biting on the recorded facts, because the clause is for a zoning lot bounded by only one street line and this lot has two street frontages. The row therefore stays not known and names both readings. Section 23-436 was since captured (task M4-T029) and read in step P3 (cases/step-p3-worked.json), where both step-P3 readings read paragraph (c) as binding (the street wall along the wide Northern Boulevard, via ZR 35-631) and ZR 35-633(a) as applying, while ZR 35-633(b) stays not known."
       },
       "source_reference": "return-independent-hand-calculation-5.md Q3d and return-independent-hand-calculation-6.md Q3d; both read the Section 23-436 substance as not known, and they differ on the ZR 35-633(b) corner-lot clause (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).",
-      "does_not_establish": "It gives no additional height or setback requirement; that waits for the uncaptured Section 23-436. It says nothing complies."
+      "does_not_establish": "It gives no additional height or setback requirement from the step-P2 readings; Section 23-436 is the text the step-P2 readers did not have (now captured and read in cases/step-p3-worked.json). It says nothing complies."
     },
     {
       "row_id": "not-captured",

@@ -31,11 +31,12 @@ Nothing in a case comes from a program run: not a value, not a column, not a sen
 | `cases/suffix.json` + `suffix.md` | Whether the sections that list the R6 group reach the suffixed R6B district, through ZR 11-25 (table D: ZR 23-362, 23-52, 23-344, and ZR 23-22 and 23-432 which list R6B directly). |
 | `cases/step-p1-worked.json` + `step-p1-worked.md` | The rows worked from the step-P1 captures (task M4-T027): the ZR 12-10 corner, interior, through and lot-area definitions, special density areas, ZR 23-342 and ZR 23-363. It covers three made-up corner lots (100 by 100, 150 by 100, 200 by 120), a 40-by-100 interior lot, a 40-by-200 through lot, and special density areas (section 5 gaps K1, K2, K4, K11). |
 | `cases/overlay-reading.json` + `overlay-reading.md` | The commercial-overlay reading worked from the step-P2 captures (task M4-T028): for the benchmark lot with its C2-2 overlay beside the same lot without the overlay, which district's bulk governs and by what route, floor area ratio, lot coverage, dwelling units, base and building heights, the setback, street-wall location, rear yard, which paragraphs of ZR 34-111, 34-24, 35-632 and 35-631 apply, what ZR 35-633 adds, and the sections and defined terms the overlay texts point to that are not captured (section 5 gap K9). |
+| `cases/step-p3-worked.json` + `step-p3-worked.md` | The readings worked from the law text captured by task M4-T029 and read independently in step P3 (task M4-T030): the ZR 12-10 lot-line, lot-width and lot-depth definitions for the real lot and a made-up interior lot; the rear yard beyond the corner (the real lot and a made-up 150-by-100 corner lot), the interior lot (ZR 23-342) and the through lot (the rear-yard equivalent of ZR 23-343); ZR 23-436 and ZR 35-633 for the real lot; ZR 34-21 and ZR 34-111 versus ZR 34-112; the Manhattan Core and the Special Downtown Brooklyn District; from what level heights are measured and the base plane; ZR 23-434 and the different maximum of ZR 23-362(b); the definition of "residence, or residential"; and the base of the floor-area shares in ZR 23-231 and ZR 23-232 (section 8; backlog row DB-170 item (a)). |
 
 Each case is kept twice from one source: a structured data file under `cases/` that a test can load, and
 a page rendered from it that a person can read. The helper returns are kept unchanged under
-`provenance/`: the two first-round returns, the two step-P1 readings and the two step-P2
-commercial-overlay readings.
+`provenance/`: the two first-round returns, the two step-P1 readings, the two step-P2
+commercial-overlay readings and the two step-P3 readings.
 
 ## Law text: what steps P1 and P2 captured, and what the readers did not have
 
@@ -75,6 +76,34 @@ each such item and record the affected value as "not known" where the text is ne
   ZR 35-633 adds stays "not known". Also not among what the readers had: **ZR 23-41** (permitted obstructions, inside
   the mixed-building rule of ZR 35-53) and the defined terms *Manhattan Core*, *mixed building* and
   *prevailing street wall frontage*.
+
+**Step P3** (task M4-T029) captured the law text the earlier readings waited for (27 texts), and task
+M4-T030 read it independently (see `cases/step-p3-worked.json`). The step-P3 readers had, among the
+newly captured text: the **ZR 12-10** definitions of a *front*, *rear* and *side lot line*, *lot
+width*, *lot depth*, *street line* and *zoning lot*; **ZR 23-343** (the through-lot rear-yard
+equivalent); **ZR 23-436** and the way **ZR 35-633** brings it in; **ZR 34-21** and **ZR 34-112**; the
+**Manhattan Core** and **Special Downtown Brooklyn District** definitions; the **base plane**; **ZR
+23-434** (eligible sites); and the definition of *residence, or residential*. With that text the
+step-P3 rows settle the lot lines and lot depth of the real lot, the interior lot's width, depth and
+rear yard, the through lot's rear-yard equivalent, which paragraph of ZR 23-436 binds a new building on
+the real lot, ZR 35-633(a), ZR 34-21's routing, ZR 34-111 over ZR 34-112, the Manhattan Core (not in
+it), from what level heights are measured, and the ZR 23-434 and ZR 23-362(b) scope; others stay not
+known (the real lot's lot width and its rear yard beyond the corner, the base-plane elevation, ZR
+35-633(b)). The step-P3 readings' passing remark that the standard coverage for this corner lot is 100
+percent did not work the corner-lot-portion rule and is **not** a reading of whole-lot coverage, so the
+coverage rows (real-lot L5, corner-reach real-lot-coverage, and the corner-coverage rows of
+step-p1-worked) are unchanged.
+
+From both step-P3 readings' own summary of what they still did not have, the step-P3 readers lacked:
+**ZR 34-22** (modification of floor area) and **ZR 34-23** (modification of yards), both named by ZR
+34-21; the **ZR 23-34** (inclusive) provisions cross-referenced by ZR 23-342 and ZR 23-343; **ZR 36-64**
+(special-area height and setback) and **ZR 35-71** (the optional sky-exposure-plane envelope);
+**Article X, Chapter 1** (the Special Downtown Brooklyn District regulations); and the defined terms
+*large sites*, *transportation-infrastructure-adjacent frontage*, *residential floor area*, *short
+dimension of a block*, *curb level*, *street wall line level* and *rear wall line level*. They also did
+not have the adjoining zoning lots' lot-line types (needed for the rear yard beyond the corner) or the
+site's elevation and grade data (needed for the base plane). As before, a text the readers did not have
+may be captured later; `docs/research/zr-snapshots/v1/` shows what is captured now.
 
 ## The rule for changing an expected value
 
