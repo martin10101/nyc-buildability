@@ -86,7 +86,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "The clean-up lands before the version is old enough and CI's age gate fails -> the task is not started before 2026-10-07T14:08:09.382Z; S3 reads the registry's own time",
     "A change to a security gate that removes more than the exception -> S2: byte-identical to the content before the exception was added; G5 by the security-reviewer",
@@ -95,7 +95,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T05:43:03.410751+00:00",
-  "updated_at": "2026-10-07T15:26:28.595136+00:00",
+  "updated_at": "2026-10-07T15:27:03.735129+00:00",
   "directive_refs": [
     {
       "directive_id": "D-092",
