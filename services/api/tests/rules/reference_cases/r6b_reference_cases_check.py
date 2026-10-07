@@ -508,7 +508,9 @@ def validate_case(case_id: str, data: dict) -> list[str]:
     errs += readings_differ_errors(case_id, data)
     errs += step_p3.must_stay_not_known_errors(case_id, data)
     for row in data["rows"]:
-        if set(row) != lib.ROW_KEYS:
+        missing = lib.ROW_KEYS - set(row)
+        extra = set(row) - lib.ROW_KEYS - lib.OPTIONAL_ROW_KEYS
+        if missing or extra:
             errs.append(f"{case_id}/{row.get('row_id', '?')}: row keys differ from the fixed set")
             continue
         errs += citation_errors(case_id, row)
@@ -531,4 +533,5 @@ def validate_all() -> list[str]:
     errs += readme_errors()
     errs += provenance_errors()
     errs += step_p3.pinned_coverage_errors(lib.load_case)
+    errs += step_p3.superseded_by_errors(lib.load_case, lib.CASE_IDS)
     return errs

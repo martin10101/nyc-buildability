@@ -149,6 +149,73 @@ follow-up if wanted. Verified against the repo: of the sections these rows call 
 - I resolved no disagreement and added no reading of my own; every new value rests on both readings
   agreeing on the same basis, and every "not known" names both readings.
 
+Requested status after round 1: awaiting_gate. (Round 2 below follows the independent review.)
+
+## Round 2 (review findings F1, F2, F3)
+
+Base: one new commit on top of `364aeae9` (confirmed HEAD, clean). No reset.
+
+### F1 - the "not had" list corrected (row `step-p3-worked/sections-and-facts-not-had` + README)
+Rechecked every item against BOTH readings' Q9. Removed from the agreed "not had" list: **ZR 36-64**
+and **ZR 35-71** (reading 8 Q9 says "Sections 35-631, 35-632, 35-64, 36-64, 35-71 ARE in the folder";
+reading 7 says they were "present but not read" - both HAD them, so "not read by reading 7", never "not
+had") and **ZR 23-34 (inclusive)** (named only by reading 8; reading 7 names ZR 23-44 instead).
+Corrected list, both-named only: 34-22, 34-23; the terms large sites, transportation-infrastructure-
+adjacent frontage, short dimension of a block, residential floor area; curb level / street wall line
+level / rear wall line level; Article X Chapter 1; and the qualifying-housing terms (qualifying
+affordable housing, qualifying senior housing, UAP developments, Mandatory Inclusionary Housing areas,
+qualifying residential sites, Greater Transit Zone, residential equivalent); plus the facts (adjoining
+lot-line types; site elevation/grade data). The height/setback "not known" is now attributed to those
+qualifying-housing terms (both lacked), not to 36-64/35-71. The reading-only pointers (23-34 vs 23-44,
+etc.) are recorded as differences. README "Step P3" note brought into line.
+
+### F2 - one current expected answer per question (`superseded_by`)
+Form chosen and used everywhere: a list of `"<case_id>#<row_id>"`. Loader `load_row` now raises
+`RowSuperseded` (naming the current row(s)) unless `allow_superseded=True`; the checker validates every
+target exists, is not itself superseded, no self-supersession, and each case with a superseded row has a
+dated change-log entry recording it; the rendered page shows "Superseded by ...". Pairs examined:
+- `step-p1-worked/through-40x200-rear-yard` -> `step-p3-worked#through-40x200-rear-yard-equivalent`: SUPERSEDED (new row gives the current answer).
+- `step-p1-worked/interior-40x100-rear-yard` -> `#interior-40x100-rear-yard`: SUPERSEDED.
+- `step-p1-worked/special-density-real-lot` -> `#manhattan-core`, `#special-downtown-brooklyn-district`: SUPERSEDED.
+- `step-p1-worked/corner-150x100-rear-yard` -> `#corner-150x100-rear-yard-beyond-corner`: SUPERSEDED.
+- `corner-reach/real-lot-rear-yard` -> `#real-lot-rear-yard-beyond-corner`: SUPERSEDED.
+- `corner-reach/C3-rear-yard` -> `#corner-150x100-rear-yard-beyond-corner`: SUPERSEDED (C3 is the same made-up 150x100 corner lot; examined beyond the four named, same rule).
+- `real-lot/L12` -> `#real-lot-rear-yard-beyond-corner`: SUPERSEDED.
+- `overlay-reading/section-35-633` -> `#zr-23-436-paragraphs`, `#zr-35-633-paragraphs`: SUPERSEDED (step-P3 read the now-captured ZR 23-436).
+- LEFT (new row only adds / no matching current row): `corner-reach/C1-rear-yard` (40x100 corner, no step-P3 row), `real-lot/L14` (ordinary rear-yard depth; step-P3 only adds that the real lot's lot width is itself not known), `real-lot/L5` (per-portion coverage, Q7c remark is passing), and every `*-reach` row of `corner-reach` (read by `tests/spatial/test_lot_reach.py`, which is unchanged and passes).
+Two existing tests that read now-superseded rows were updated to pass `allow_superseded=True`.
+
+### F3 - sentences made time-true
+Reworded every present-tense "the repository does not hold" / "is not captured" / "uncaptured" in
+`overlay-reading.json` (case-level `what_it_is_worth` and `what_it_does_not_establish`; rows
+bulk-regulations, floor-area-ratio, lot-coverage, base-and-building-height, street-wall-location,
+rear-yard, paragraphs-applicable, and the `not-captured` row's quantity/why/value/source/does-not-
+establish) and in `step-p1-worked.json` rows `corner-200x120-rear-yard` and `through-40x200-coverage`,
+plus one historical M4-T027 change-log sentence in `corner-reach.json` that carried "are not captured",
+into "the step-P2/step-P1 readers did not have" form. The `not-captured` row's value is reworded keeping
+every item (noted in the value and change-log as a rewording). **Final search** of
+`docs/reference-cases/R6B/cases/` for "does not hold", "is not captured", "are not captured", "not
+captured", "uncaptured" finds 6 hits, ALL inside change-log entries that describe the rewording
+(step-p1-worked x2, overlay-reading x2, corner-reach x1, real-lot x1); NONE outside change_log. A new
+test (`test_present_tense_not_captured_wording_only_in_change_log`) enforces this.
+
+### No expected value or kind changed (comparison 364aeae9 -> new)
+KIND changes across all 7 cases: NONE. VALUE-TEXT changes: `step-p3-worked/sections-and-facts-not-had`
+(F1) and `overlay-reading/not-captured` (F3) - the two the review named; AND
+`overlay-reading/floor-area-ratio`, `/lot-coverage`, `/rear-yard` - whose VALUE contained the word
+"uncaptured" in a trailing caveat clause that F3's final-search required removing (the operative answer
+"same as plain R6B ..." is byte-identical except the two words "the uncaptured" are gone). This is the
+one place where F3 (which widens point 5) went beyond the bottom-note's "only ... not-captured" list;
+flagged here for the reviewer. No row's kind changed; no answer changed.
+
+### Round-2 checks (direct exit codes; from services/api, lanes venv)
+- `python -m ruff check .` -> `All checks passed!`; exit 0.
+- `python -m pytest -q -p no:cacheprovider tests/rules/reference_cases tests/spatial/test_lot_reach.py` -> `70 passed`; exit 0 (includes `test_lot_reach.py` unchanged).
+- renderer `--check` -> `reference-case check PASSED (no issues)`; exit 0.
+- `python3 tools/modularity_check.py --check` -> `failures 0; warnings 29` (none mine); exit 0.
+- Support files all < 600 lines: check 537, lib 297, render 298, step_p3 153, test_r6b 568, round2 121.
+- `git diff 364aeae9 HEAD --stat` is shown by the orchestrator at integration (new commit below).
+
 Requested status: awaiting_gate.
 
 END-OF-REPORT

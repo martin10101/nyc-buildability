@@ -45,6 +45,11 @@
       "date": "2026-10-07",
       "summary": "Rows interior-40x100-rear-yard, through-40x200-rear-yard, special-density-real-lot and corner-150x100-rear-yard: expected values unchanged (all stay not known). The law text these step-P1 rows waited for (the ZR 12-10 lot-line and lot-width definitions, ZR 23-343, and the Manhattan Core and Special Downtown Brooklyn District definitions) was captured by task M4-T029 and read independently in step P3 (cases/step-p3-worked.json); each row's wording is brought from 'not captured' into 'the readers did not have' form and points to the step-P3 reading, which both step-P3 readings support. Reason: corrected evidence - the text is now captured and read.",
       "by": "rules-engineer (M4-T030)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Round 2 (review findings F2, F3): rows interior-40x100-rear-yard, through-40x200-rear-yard, special-density-real-lot and corner-150x100-rear-yard are marked superseded_by the step-P3 rows that now hold the current answer to the same question (step-p3-worked#interior-40x100-rear-yard; #through-40x200-rear-yard-equivalent; #manhattan-core and #special-downtown-brooklyn-district; #corner-150x100-rear-yard-beyond-corner). They are kept as the record of what the step-P1 readers could settle, and the loader no longer hands them out as current. Separately (F3), the wording of rows through-40x200-coverage and corner-200x120-rear-yard is brought from 'not captured' into 'the step-P1 readers did not have' form. No expected value or kind changed. Reason: a corrected reading - one current expected answer per question, and wording made true whatever is captured later.",
+      "by": "rules-engineer (M4-T030)"
     }
   ],
   "rows": [
@@ -281,6 +286,7 @@
     },
     {
       "row_id": "corner-150x100-rear-yard",
+      "superseded_by": ["step-p3-worked#corner-150x100-rear-yard-beyond-corner"],
       "quantity": "Made-up corner lot C2 (150 by 100): rear yard",
       "facts_used": [
         {
@@ -482,7 +488,7 @@
         "kind": "not_known",
         "value": null,
         "unit": "",
-        "reason": "Within 100 feet of the corner point no rear yard is required; beyond that the rear-yard outcome is not settled. It needs the neighbouring lot-line configuration (ZR 23-344(c)(1) versus (c)(3)) and, for any required depth, the building type and lot width (ZR 23-342), none of which are given, and the ZR 12-10 side-/rear-lot-line definitions are not captured. Both readings reach this same not-known result."
+        "reason": "Within 100 feet of the corner point no rear yard is required; beyond that the rear-yard outcome is not settled. It needs the neighbouring lot-line configuration (ZR 23-344(c)(1) versus (c)(3)) and, for any required depth, the building type and lot width (ZR 23-342), none of which are given; the step-P1 readers also did not have the ZR 12-10 side- and rear-lot-line definitions. Both step-P1 readings reach this same not-known result."
       },
       "source_reference": "return-independent-hand-calculation-3.md, Q3b (C2/C3) and return-independent-hand-calculation-4.md, Q3b (C2/C3); both agree it is not known beyond the corner.",
       "does_not_establish": "A made-up rectangle. It does not settle the rear yard beyond 100 feet of the corner point, nor any depth."
@@ -557,6 +563,7 @@
     },
     {
       "row_id": "interior-40x100-rear-yard",
+      "superseded_by": ["step-p3-worked#interior-40x100-rear-yard"],
       "quantity": "Made-up interior lot (40 ft by 100 ft), R6B: rear yard",
       "facts_used": [
         {
@@ -689,10 +696,11 @@
         "reason": ""
       },
       "source_reference": "return-independent-hand-calculation-3.md, Q2c through lot ('23-362 base = 80%'; '23-363 does not change 80% on the bare facts') and return-independent-hand-calculation-4.md, Q2c through lot ('23-362(a) gives 80%'; not shallow at 200 ft; '23-363 does NOT change the 80%'); both agree 80 percent.",
-      "does_not_establish": "ZR 23-363 could raise the 80 percent under its triggers (a shallow through lot less than 190 feet deep, a portion within 100 feet of a qualifying corner, or a front lot line on the block's short dimension), but those facts are not given, so whether it would raise it is not known. It gives no through-lot rear yard (that is the separate ZR 23-343, not captured)."
+      "does_not_establish": "ZR 23-363 could raise the 80 percent under its triggers (a shallow through lot less than 190 feet deep, a portion within 100 feet of a qualifying corner, or a front lot line on the block's short dimension), but those facts are not given, so whether it would raise it is not known. It gives no through-lot rear yard (that is the separate ZR 23-343, which the step-P1 readers did not have)."
     },
     {
       "row_id": "through-40x200-rear-yard",
+      "superseded_by": ["step-p3-worked#through-40x200-rear-yard-equivalent"],
       "quantity": "Made-up through lot (40 by 200), R6B: rear yard",
       "facts_used": [
         {
@@ -808,6 +816,7 @@
     },
     {
       "row_id": "special-density-real-lot",
+      "superseded_by": ["step-p3-worked#manhattan-core", "step-p3-worked#special-downtown-brooklyn-district"],
       "quantity": "Whether the benchmark lot is in a special density area, from its recorded facts",
       "facts_used": [
         {

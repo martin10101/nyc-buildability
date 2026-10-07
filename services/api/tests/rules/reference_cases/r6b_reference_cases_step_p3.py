@@ -82,6 +82,57 @@ def must_stay_not_known_errors(case_id: str, data: dict) -> list[str]:
     return errs
 
 
+# A superseded row names the current row(s) as a list of "<case_id>#<row_id>".
+SUPERSEDED_BY_FORM = "<case_id>#<row_id>"
+
+
+def superseded_by_errors(load_case, case_ids) -> list[str]:
+    """Validate the ``superseded_by`` links (one current expected answer per
+    question): every target is a "<case_id>#<row_id>" that exists and is not itself
+    superseded, no row supersedes itself, and any case holding a superseded row
+    carries a dated change-log entry that records the supersession."""
+    errs: list[str] = []
+    flag: dict[tuple[str, str], bool] = {}
+    for cid in case_ids:
+        for row in load_case(cid)["rows"]:
+            flag[(cid, row["row_id"])] = bool(row.get("superseded_by"))
+    for cid in case_ids:
+        data = load_case(cid)
+        has_superseded = False
+        for row in data["rows"]:
+            sb = row.get("superseded_by")
+            if not sb:
+                continue
+            has_superseded = True
+            rid = row["row_id"]
+            if not isinstance(sb, list) or not all(isinstance(t, str) for t in sb) or not sb:
+                errs.append(f"{cid}/{rid}: superseded_by must be a non-empty list of "
+                            f"'{SUPERSEDED_BY_FORM}' strings")
+                continue
+            for target in sb:
+                if target.count("#") != 1:
+                    errs.append(f"{cid}/{rid}: superseded_by target {target!r} is not "
+                                f"'{SUPERSEDED_BY_FORM}'")
+                    continue
+                tcase, trow = target.split("#", 1)
+                if tcase not in case_ids:
+                    errs.append(f"{cid}/{rid}: superseded_by names an unknown case {tcase!r}")
+                elif (tcase, trow) not in flag:
+                    errs.append(f"{cid}/{rid}: superseded_by target {target!r} does not exist")
+                elif (tcase, trow) == (cid, rid):
+                    errs.append(f"{cid}/{rid}: a row cannot supersede itself")
+                elif flag[(tcase, trow)]:
+                    errs.append(f"{cid}/{rid}: superseded_by target {target!r} is "
+                                "itself superseded")
+        if has_superseded and not any(
+            "supersed" in str(entry.get("summary", "")).lower()
+            for entry in data.get("change_log", [])
+        ):
+            errs.append(f"{cid}: a superseded row needs a dated change-log entry that records "
+                        "the supersession")
+    return errs
+
+
 def pinned_coverage_errors(load_case) -> list[str]:
     """The four whole-lot corner-coverage rows must keep their "not known" kind and
     no value: the step-P3 readings' Q7c "100 percent for this corner lot" is a

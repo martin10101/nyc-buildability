@@ -189,7 +189,10 @@ def test_step_p1_settled_values_where_both_readings_agree():
             == "the area of a zoning lot")
     assert lib.load_row("step-p1-worked", "special-density-areas-list")["kind"] == "value"
     # the two readings differ on the 40x100 interior-lot rear-yard depth -> not known
-    assert lib.load_row("step-p1-worked", "interior-40x100-rear-yard")["kind"] == "not_known"
+    # (now superseded by the step-P3 row, so read the historical row explicitly)
+    assert lib.load_row(
+        "step-p1-worked", "interior-40x100-rear-yard", allow_superseded=True
+    )["kind"] == "not_known"
 
 
 def test_step_p1_case_rows_name_both_readings():
@@ -267,8 +270,11 @@ def test_overlay_settled_changed_and_not_known_rows():
     # street wall: changed by the overlay
     street_wall = lib.load_row("overlay-reading", "street-wall-location")
     assert "changed by the overlay" in street_wall["value"]
-    # what 35-633 adds: not known (23-436 not captured; the two readings differ)
-    assert lib.load_row("overlay-reading", "section-35-633")["kind"] == "not_known"
+    # what 35-633 adds: not known for the step-P2 readers (now superseded by the step-P3
+    # rows, so read the historical row explicitly)
+    assert lib.load_row(
+        "overlay-reading", "section-35-633", allow_superseded=True
+    )["kind"] == "not_known"
 
 
 def test_an_overlay_value_where_the_readings_differ_is_refused():

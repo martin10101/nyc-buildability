@@ -94,16 +94,23 @@ percent did not work the corner-lot-portion rule and is **not** a reading of who
 coverage rows (real-lot L5, corner-reach real-lot-coverage, and the corner-coverage rows of
 step-p1-worked) are unchanged.
 
-From both step-P3 readings' own summary of what they still did not have, the step-P3 readers lacked:
-**ZR 34-22** (modification of floor area) and **ZR 34-23** (modification of yards), both named by ZR
-34-21; the **ZR 23-34** (inclusive) provisions cross-referenced by ZR 23-342 and ZR 23-343; **ZR 36-64**
-(special-area height and setback) and **ZR 35-71** (the optional sky-exposure-plane envelope);
-**Article X, Chapter 1** (the Special Downtown Brooklyn District regulations); and the defined terms
-*large sites*, *transportation-infrastructure-adjacent frontage*, *residential floor area*, *short
-dimension of a block*, *curb level*, *street wall line level* and *rear wall line level*. They also did
-not have the adjoining zoning lots' lot-line types (needed for the rear yard beyond the corner) or the
-site's elevation and grade data (needed for the base plane). As before, a text the readers did not have
-may be captured later; `docs/research/zr-snapshots/v1/` shows what is captured now.
+From both step-P3 readings' own summary of what they still did not have, the step-P3 readers lacked (an
+item is on this list only where BOTH readings name it): **ZR 34-22** (modification of floor area) and
+**ZR 34-23** (modification of yards), both named by ZR 34-21; **Article X, Chapter 1** (the Special
+Downtown Brooklyn District regulations); and the defined terms *large sites*,
+*transportation-infrastructure-adjacent frontage*, *residential floor area*, *short dimension of a
+block*, *curb level*, *street wall line level*, *rear wall line level*, and the qualifying-housing terms
+(*qualifying affordable housing*, *qualifying senior housing*, *UAP developments*, *Mandatory
+Inclusionary Housing areas*, *residential equivalent*) that select the ZR 23-432 height columns. They
+also did not have the adjoining zoning lots' lot-line types (needed for the rear yard beyond the corner)
+or the site's elevation and grade data (needed for the base plane). The two readings differ on a few
+pointers, so those are recorded as differences, not as the agreed list: reading 8 names **ZR 23-34**
+(inclusive) and further defined terms; reading 7 names **ZR 23-44** (inclusive) and **ZR 23-341** /
+**23-311** / **23-312**. Reading 8 records that ZR 35-62, **35-64**, **35-71** and **36-64** were in the
+readers' folder (both had them; reading 7 did not read some of them), so they are NOT on the step-P3
+"did not have" list; the exact height and setback numbers stay not known for the undefined
+qualifying-housing terms above. As before, a text the readers did not have may be captured later;
+`docs/research/zr-snapshots/v1/` shows what is captured now.
 
 ## The rule for changing an expected value
 

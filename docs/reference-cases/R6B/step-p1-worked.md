@@ -138,6 +138,8 @@ Where this stands in the independent reading: return-independent-hand-calculatio
 
 What this row does not establish: A made-up rectangle. It does not settle the rear yard beyond 100 feet of the corner point, nor any depth.
 
+Superseded by: step-p3-worked#corner-150x100-rear-yard-beyond-corner (kept as the record of what the earlier readers could settle; the current answer is in the named row(s)).
+
 ### corner-200x120-coverage - Made-up corner lot C3 (200 ft on street A by 120 ft on street B): maximum lot coverage
 
 Facts used:
@@ -192,7 +194,7 @@ Law relied on:
 
 Why the rule applies: Within 100 feet of the corner point no rear yard is required (ZR 23-344(a)). Beyond 100 feet of a street line the beyond-portion of a side lot line is treated as a rear lot line (ZR 23-344(c)); along it, in R6 through R12 districts, no rear yard is required where it coincides with a neighbour's side lot line, but one is required where it coincides with a neighbour's rear lot line, and any depth is set by ZR 23-342.
 
-Expected value: not known. Within 100 feet of the corner point no rear yard is required; beyond that the rear-yard outcome is not settled. It needs the neighbouring lot-line configuration (ZR 23-344(c)(1) versus (c)(3)) and, for any required depth, the building type and lot width (ZR 23-342), none of which are given, and the ZR 12-10 side-/rear-lot-line definitions are not captured. Both readings reach this same not-known result.
+Expected value: not known. Within 100 feet of the corner point no rear yard is required; beyond that the rear-yard outcome is not settled. It needs the neighbouring lot-line configuration (ZR 23-344(c)(1) versus (c)(3)) and, for any required depth, the building type and lot width (ZR 23-342), none of which are given; the step-P1 readers also did not have the ZR 12-10 side- and rear-lot-line definitions. Both step-P1 readings reach this same not-known result.
 
 Where this stands in the independent reading: return-independent-hand-calculation-3.md, Q3b (C2/C3) and return-independent-hand-calculation-4.md, Q3b (C2/C3); both agree it is not known beyond the corner.
 
@@ -262,6 +264,8 @@ Where this stands in the independent reading: return-independent-hand-calculatio
 
 What this row does not establish: No rear-yard depth is settled from the step-P1 readings; it would need the building type and a stated lot width. ZR 23-344(a)'s corner waiver does not apply to an interior lot (it has no two intersecting street lines) absent corner facts. The step-P1 readers did not have the ZR 12-10 lot-width and rear-lot-line definitions; these were captured by task M4-T029 and read in step P3 (cases/step-p3-worked.json), where both step-P3 readings read, taking the 40-foot dimension as the lot width, a rear yard of 20 feet at or below 75 feet of height and 30 feet above.
 
+Superseded by: step-p3-worked#interior-40x100-rear-yard (kept as the record of what the earlier readers could settle; the current answer is in the named row(s)).
+
 ### through-40x200-coverage - Made-up through lot (40 ft wide, 200 ft between the two streets), R6B: maximum lot coverage
 
 Facts used:
@@ -292,7 +296,7 @@ Expected value: 80 percent
 
 Where this stands in the independent reading: return-independent-hand-calculation-3.md, Q2c through lot ('23-362 base = 80%'; '23-363 does not change 80% on the bare facts') and return-independent-hand-calculation-4.md, Q2c through lot ('23-362(a) gives 80%'; not shallow at 200 ft; '23-363 does NOT change the 80%'); both agree 80 percent.
 
-What this row does not establish: ZR 23-363 could raise the 80 percent under its triggers (a shallow through lot less than 190 feet deep, a portion within 100 feet of a qualifying corner, or a front lot line on the block's short dimension), but those facts are not given, so whether it would raise it is not known. It gives no through-lot rear yard (that is the separate ZR 23-343, not captured).
+What this row does not establish: ZR 23-363 could raise the 80 percent under its triggers (a shallow through lot less than 190 feet deep, a portion within 100 feet of a qualifying corner, or a front lot line on the block's short dimension), but those facts are not given, so whether it would raise it is not known. It gives no through-lot rear yard (that is the separate ZR 23-343, which the step-P1 readers did not have).
 
 ### through-40x200-rear-yard - Made-up through lot (40 by 200), R6B: rear yard
 
@@ -320,6 +324,8 @@ Expected value: not known. The captured text the step-P1 readers had (ZR 23-342 
 Where this stands in the independent reading: return-independent-hand-calculation-3.md, Q3c (through lot: rear-yard equivalent of 23-343, which the step-P1 readers did not have, NOT KNOWN) and return-independent-hand-calculation-4.md, Q3c (same); both agree it is not known.
 
 What this row does not establish: It gives no rear-yard-equivalent requirement for the through lot from the step-P1 readings; the now-captured ZR 23-343 is read in cases/step-p3-worked.json. ZR 23-344(a)'s corner waiver does not apply to a pure through lot (its two streets are opposite and parallel, not intersecting).
+
+Superseded by: step-p3-worked#through-40x200-rear-yard-equivalent (kept as the record of what the earlier readers could settle; the current answer is in the named row(s)).
 
 ### special-density-areas-list - What the ZR 12-10 definition of special density areas lists
 
@@ -376,6 +382,8 @@ Where this stands in the independent reading: return-independent-hand-calculatio
 
 What this row does not establish: It does not place the lot inside or outside a special density area from the step-P1 readings; the step-P1 readers did not have the Manhattan Core or Special Downtown Brooklyn District definitions. Those are now captured and read in cases/step-p3-worked.json.
 
+Superseded by: step-p3-worked#manhattan-core, step-p3-worked#special-downtown-brooklyn-district (kept as the record of what the earlier readers could settle; the current answer is in the named row(s)).
+
 ## What this case does not establish
 
 - The corner lots, the interior lot and the through lot are made up; they do not describe any real property.
@@ -396,4 +404,5 @@ What this row does not establish: It does not place the lot inside or outside a 
 |---|---|---|
 | 2026-10-07 | Case created (step P1, task M4-T027) from the two independent readings of the step-P1 sealed folder (provenance/return-independent-hand-calculation-3.md and -4.md). It holds the rows that waited for the law text captured by task M4-T025: the ZR 12-10 corner/interior/through/lot-area and special-density-areas definitions, ZR 23-342 and ZR 23-363. A value is recorded only where both readings agree on the same basis. | rules-engineer (M4-T027) |
 | 2026-10-07 | Rows interior-40x100-rear-yard, through-40x200-rear-yard, special-density-real-lot and corner-150x100-rear-yard: expected values unchanged (all stay not known). The law text these step-P1 rows waited for (the ZR 12-10 lot-line and lot-width definitions, ZR 23-343, and the Manhattan Core and Special Downtown Brooklyn District definitions) was captured by task M4-T029 and read independently in step P3 (cases/step-p3-worked.json); each row's wording is brought from 'not captured' into 'the readers did not have' form and points to the step-P3 reading, which both step-P3 readings support. Reason: corrected evidence - the text is now captured and read. | rules-engineer (M4-T030) |
+| 2026-10-07 | Round 2 (review findings F2, F3): rows interior-40x100-rear-yard, through-40x200-rear-yard, special-density-real-lot and corner-150x100-rear-yard are marked superseded_by the step-P3 rows that now hold the current answer to the same question (step-p3-worked#interior-40x100-rear-yard; #through-40x200-rear-yard-equivalent; #manhattan-core and #special-downtown-brooklyn-district; #corner-150x100-rear-yard-beyond-corner). They are kept as the record of what the step-P1 readers could settle, and the loader no longer hands them out as current. Separately (F3), the wording of rows through-40x200-coverage and corner-200x120-rear-yard is brought from 'not captured' into 'the step-P1 readers did not have' form. No expected value or kind changed. Reason: a corrected reading - one current expected answer per question, and wording made true whatever is captured later. | rules-engineer (M4-T030) |
 

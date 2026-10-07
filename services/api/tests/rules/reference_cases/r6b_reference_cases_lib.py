@@ -87,6 +87,10 @@ ROW_KEYS = {
     "row_id", "quantity", "facts_used", "citations", "why_applies",
     "arithmetic", "expected", "source_reference", "does_not_establish",
 }
+# Optional row keys: a row kept as the historical record of what an earlier pair of
+# readers could settle carries ``superseded_by`` (a list of "<case_id>#<row_id>"
+# naming the row(s) that hold the current answer). A row without it is current.
+OPTIONAL_ROW_KEYS = {"superseded_by"}
 EXPECTED_KEYS = {"kind", "value", "unit", "reason"}
 CITATION_KEYS = {
     "kind", "section", "title", "quote", "snapshot_id", "snapshot_file",
@@ -133,6 +137,12 @@ class RowNotFound(KeyError):
     """Raised when a reference-case row is asked for by an id that does not exist."""
 
 
+class RowSuperseded(RowNotFound):
+    """Raised when :func:`load_row` is asked for a superseded row without
+    ``allow_superseded=True``. The message names the current row(s) so the caller
+    reads the current answer, not the historical one."""
+
+
 def find_row_or_none(case_id: str, row_id: str) -> dict | None:
     """Return the full row dict for an id, or None. Used by the mutation tests,
     which deep-copy the row before changing it (no committed file is touched)."""
@@ -142,17 +152,29 @@ def find_row_or_none(case_id: str, row_id: str) -> dict | None:
     return None
 
 
-def load_row(case_id: str, row_id: str) -> dict:
+def load_row(case_id: str, row_id: str, *, allow_superseded: bool = False) -> dict:
     """Return a row's expected value, its kind and its source reference, by id.
 
     A later [LAW] test asks for ``load_row("real-lot", "L1")`` and reads the
     expected value and kind from it; it never reads a program run. Asking for a
     row (or a case) that does not exist fails loudly with :class:`RowNotFound`.
+
+    A row that has been superseded (it carries ``superseded_by``) is NOT handed out
+    as if it were current: it raises :class:`RowSuperseded`, naming the current
+    row(s), unless the caller passes ``allow_superseded=True`` to read the
+    historical row on purpose.
     """
     if case_id not in CASE_IDS:
         raise RowNotFound(f"no reference case {case_id!r} (have: {', '.join(CASE_IDS)})")
     for row in load_case(case_id)["rows"]:
         if row["row_id"] == row_id:
+            superseded = row.get("superseded_by") or []
+            if superseded and not allow_superseded:
+                raise RowSuperseded(
+                    f"row {row_id!r} in {case_id!r} is superseded; the current answer is in "
+                    f"{superseded}. Read that row, or pass allow_superseded=True for the "
+                    "historical row."
+                )
             exp = row["expected"]
             return {
                 "case_id": case_id,
@@ -163,6 +185,7 @@ def load_row(case_id: str, row_id: str) -> dict:
                 "unit": exp["unit"],
                 "reason": exp["reason"],
                 "source_reference": row["source_reference"],
+                "superseded_by": superseded,
             }
     raise RowNotFound(f"no row {row_id!r} in reference case {case_id!r}")
 

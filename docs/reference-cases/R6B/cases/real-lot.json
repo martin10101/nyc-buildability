@@ -111,6 +111,11 @@
       "date": "2026-10-07",
       "summary": "Row L12 (rear yard): expected value unchanged (not known beyond the corner). The ZR 12-10 side- and rear-lot-line definitions were captured by task M4-T029 and read independently in step P3 (cases/step-p3-worked.json); the row's wording is brought from 'not captured' into 'the readers did not have' form and records that both step-P3 readings again read the beyond-100-foot rear yard as not known. Row L5 (lot coverage) is unchanged and stays not known for its per-portion reason - the step-P3 readings' passing remark that the standard coverage for this corner lot is 100 percent did not work the corner-lot-portion rule and is not a reading of whole-lot coverage. Row L14 (ordinary rear-yard depth) is unchanged and stays not known (it carries no 'not captured' wording; the step-P3 readings also find the real lot's lot width itself not known). Reason: corrected evidence - the text is now captured and read.",
       "by": "rules-engineer (M4-T030)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Round 2 (review finding F2): row L12 (rear yard) is marked superseded_by step-p3-worked#real-lot-rear-yard-beyond-corner, the step-P3 row that holds the current reading of the real lot's rear yard beyond the corner; kept as the historical record, and the loader no longer hands it out as current. Rows L5 and L14 are left: no step-P3 row gives their current answer (L5's per-portion coverage is unchanged and the Q7c '100 percent' remark is a passing remark; L14's ordinary rear-yard depth only gains the finding that the real lot's lot width itself is not known). No expected value or kind changed. Reason: a corrected reading - one current expected answer per question.",
+      "by": "rules-engineer (M4-T030)"
     }
   ],
   "rows": [
@@ -705,6 +710,7 @@
     },
     {
       "row_id": "L12",
+      "superseded_by": ["step-p3-worked#real-lot-rear-yard-beyond-corner"],
       "quantity": "Rear yard",
       "facts_used": [
         {

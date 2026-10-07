@@ -3,9 +3,9 @@
   "title": "The commercial-overlay reading: a residential building on the benchmark lot, R6B with a C2-2 overlay, beside the same lot without the overlay",
   "work_order_table": "section 5 gap K9; section 9 table A (the overlay column that waited for step P2)",
   "summary": "An independent reading of the captured C2-2 commercial-overlay law text (step P2, task M4-T026) for the benchmark lot, 215-16 Northern Boulevard in Queens (BBL 4073340070). Each row compares the lot as recorded (district R6B with a C2-2 overlay) against the same lot without the overlay (plain R6B), for a new all-residential building. A value or a yes/no is recorded only where both step-P2 readings give it on the same basis; otherwise the row is 'not known' with the reason and both readings named. Every value comes from the law text and the lot's recorded facts, never from a program run.",
-  "what_it_is_worth": "Prepared by one AI helper and read again, independently, by a second AI, each working alone from the sealed step-P2 folder; their agreement alone is not proof. It is a draft reading of the law, not professionally reviewed, and is not a statement that anything complies. It reads the captured overlay text only; where the overlay text points to a section the repository does not hold, the row says what stays not known.",
+  "what_it_is_worth": "Prepared by one AI helper and read again, independently, by a second AI, each working alone from the sealed step-P2 folder; their agreement alone is not proof. It is a draft reading of the law, not professionally reviewed, and is not a statement that anything complies. It reads the captured overlay text only; where the overlay text points to a section the step-P2 readers did not have, the row says what stays not known.",
   "what_it_does_not_establish": [
-    "It reads the captured overlay sections only; where they point to an uncaptured section (for example Section 23-436, 36-64, 35-71 or 35-64) the affected point stays not known.",
+    "It reads the captured overlay sections only; where they point to a section the step-P2 readers did not have (for example Section 23-436, 36-64, 35-71 or 35-64) the affected point stays not known.",
     "It records a value or a yes/no only where both readings agree on the same basis; where they differ or do not settle a point, the row stays not known and names both readings.",
     "It asserts no whole-lot coverage percentage and no dwelling-unit count, and does not change any value in cases/real-lot.json (row L5 stays not known for its per-portion reason).",
     "It is not a professional or legal determination and does not say the lot complies with anything."
@@ -64,6 +64,11 @@
     {
       "date": "2026-10-07",
       "summary": "Row section-35-633: expected value unchanged (not known). Section 23-436 was captured by task M4-T029 and read independently in step P3 (cases/step-p3-worked.json); the row's wording is brought from 'not captured' into 'the readers did not have' form and points to the step-P3 reading, which both step-P3 readings support (paragraph (c) binds along the wide Northern Boulevard via ZR 35-631; ZR 35-633(a) applies; ZR 35-633(b) stays not known). The row stays not known for the step-P2 readings, which did not have Section 23-436 and differ on the ZR 35-633(b) corner-lot clause. Reason: corrected evidence - the text is now captured and read.",
+      "by": "rules-engineer (M4-T030)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Round 2 (review findings F2, F3): row section-35-633 is marked superseded_by step-p3-worked#zr-23-436-paragraphs and step-p3-worked#zr-35-633-paragraphs, the step-P3 rows that read the now-captured Section 23-436 and hold the current answer; kept as the historical record of what the step-P2 readers could settle, and the loader no longer hands it out as current. Separately (F3), every case-level and row sentence that said 'the repository does not hold' or 'not captured'/'uncaptured' in the present tense is brought into 'the step-P2 readers did not have' form, true whatever is captured later; the not-captured row's value is reworded keeping every item it lists - this is a rewording, not a change of what it names. No expected value or kind changed. Reason: a corrected reading - one current expected answer per question, and wording made true whatever is captured later.",
       "by": "rules-engineer (M4-T030)"
     }
   ],
@@ -154,7 +159,7 @@
         "reason": ""
       },
       "source_reference": "return-independent-hand-calculation-5.md Q1 (R6B bulk governs; neither 34-111(a) nor (b) applies) and return-independent-hand-calculation-6.md Q1 (same route, same result); both readings agree on the same basis (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).",
-      "does_not_establish": "ZR 34-11 also points to Sections 34-21 through 34-24 (exceptions to applicability of Residence District controls), of which only 34-24 is captured, so whether an uncaptured 34-21, 34-22 or 34-23 would modify the residential bulk is not known (reading 1 flags this residual; reading 2 reads the captured route as settled). It is not a professional determination and says nothing complies."
+      "does_not_establish": "ZR 34-11 also points to Sections 34-21 through 34-24 (exceptions to applicability of Residence District controls), of which the step-P2 readers had only 34-24, so whether a 34-21, 34-22 or 34-23 they did not have would modify the residential bulk is not known (reading 1 flags this residual; reading 2 reads the captured route as settled). It is not a professional determination and says nothing complies."
     },
     {
       "row_id": "floor-area-ratio",
@@ -232,12 +237,12 @@
       "arithmetic": [],
       "expected": {
         "kind": "value",
-        "value": "same as plain R6B: the captured overlay texts add no floor area ratio; the maximum residential floor area ratio is the R6B value of ZR 23-22 (2.00 for standard residences). This comparison holds subject to the uncaptured ZR 34-21 through 34-23, which ZR 34-11 names as exceptions ('except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of Residence District controls') and which neither reader had: reading 1 (return-independent-hand-calculation-5.md) raised that it cannot exclude an overlay-chapter modification of floor area, lot coverage or yards, while reading 2 (return-independent-hand-calculation-6.md) read the captured route as settled.",
+        "value": "same as plain R6B: the captured overlay texts add no floor area ratio; the maximum residential floor area ratio is the R6B value of ZR 23-22 (2.00 for standard residences). This comparison holds subject to ZR 34-21 through 34-23, which ZR 34-11 names as exceptions ('except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of Residence District controls') and which neither reader had: reading 1 (return-independent-hand-calculation-5.md) raised that it cannot exclude an overlay-chapter modification of floor area, lot coverage or yards, while reading 2 (return-independent-hand-calculation-6.md) read the captured route as settled.",
         "unit": "",
         "reason": ""
       },
       "source_reference": "return-independent-hand-calculation-5.md Q2a/Q2b ('NONE of the captured overlay texts states a FAR'; FAR = R6B 2.00 standard) and return-independent-hand-calculation-6.md Q2a/Q2b (same); both agree the overlay adds no floor area ratio (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).",
-      "does_not_establish": "The separate 2.40 ratio for qualifying affordable or senior housing needs a qualifying-housing fact not recorded, so the choice between 2.00 and 2.40 is not settled by the facts (both readings). Because ZR 34-11 also points to the uncaptured Sections 34-21 through 34-23 (its named exceptions), an overlay-chapter modification cannot be fully excluded - a caveat reading 1 raised and reading 2 did not, which is why the comparison is recorded subject to it rather than as settled. It asserts no floor-area figure and says nothing complies."
+      "does_not_establish": "The separate 2.40 ratio for qualifying affordable or senior housing needs a qualifying-housing fact not recorded, so the choice between 2.00 and 2.40 is not settled by the facts (both readings). Because ZR 34-11 also points to Sections 34-21 through 34-23 (its named exceptions, which the step-P2 readers did not have), an overlay-chapter modification cannot be fully excluded - a caveat reading 1 raised and reading 2 did not, which is why the comparison is recorded subject to it rather than as settled. It asserts no floor-area figure and says nothing complies."
     },
     {
       "row_id": "lot-coverage",
@@ -310,12 +315,12 @@
       "arithmetic": [],
       "expected": {
         "kind": "value",
-        "value": "same as plain R6B: the captured overlay texts add no lot-coverage rule; lot coverage is set by the R6B ZR 23-362. This comparison holds subject to the uncaptured ZR 34-21 through 34-23, which ZR 34-11 names as exceptions ('except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of Residence District controls') and which neither reader had: reading 1 (return-independent-hand-calculation-5.md) raised that it cannot exclude an overlay-chapter modification of floor area, lot coverage or yards, while reading 2 (return-independent-hand-calculation-6.md) read the captured route as settled.",
+        "value": "same as plain R6B: the captured overlay texts add no lot-coverage rule; lot coverage is set by the R6B ZR 23-362. This comparison holds subject to ZR 34-21 through 34-23, which ZR 34-11 names as exceptions ('except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of Residence District controls') and which neither reader had: reading 1 (return-independent-hand-calculation-5.md) raised that it cannot exclude an overlay-chapter modification of floor area, lot coverage or yards, while reading 2 (return-independent-hand-calculation-6.md) read the captured route as settled.",
         "unit": "",
         "reason": ""
       },
       "source_reference": "return-independent-hand-calculation-5.md Q2a/Q3 (overlay states no lot-coverage rule) and return-independent-hand-calculation-6.md Q2a (same); both agree the overlay adds no lot-coverage rule (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).",
-      "does_not_establish": "Both readings separately read the whole lot as a corner lot at 100 percent under ZR 23-362(a), but that single whole-lot figure is not settled: the per-portion reading in cases/real-lot.json row L5 and cases/step-p1-worked.json leaves the benchmark lot's coverage not known as a single whole-lot figure, because part of the lot lies beyond 100 feet of the 215 Place street line. This case therefore asserts no whole-lot coverage percentage and does not change row L5; it records only that the overlay adds no coverage rule. Because ZR 34-11 also points to the uncaptured Sections 34-21 through 34-23 (its named exceptions), an overlay-chapter modification cannot be fully excluded - a caveat reading 1 raised and reading 2 did not, which is why the comparison is recorded subject to it rather than as settled. It says nothing complies."
+      "does_not_establish": "Both readings separately read the whole lot as a corner lot at 100 percent under ZR 23-362(a), but that single whole-lot figure is not settled: the per-portion reading in cases/real-lot.json row L5 and cases/step-p1-worked.json leaves the benchmark lot's coverage not known as a single whole-lot figure, because part of the lot lies beyond 100 feet of the 215 Place street line. This case therefore asserts no whole-lot coverage percentage and does not change row L5; it records only that the overlay adds no coverage rule. Because ZR 34-11 also points to Sections 34-21 through 34-23 (its named exceptions, which the step-P2 readers did not have), an overlay-chapter modification cannot be fully excluded - a caveat reading 1 raised and reading 2 did not, which is why the comparison is recorded subject to it rather than as settled. It says nothing complies."
     },
     {
       "row_id": "dwelling-units",
@@ -483,7 +488,7 @@
         "reason": ""
       },
       "source_reference": "return-independent-hand-calculation-5.md Q3a/Q3b (35-632(a) -> 23-432 R6B row = 30/45/55; overlay effect none) and return-independent-hand-calculation-6.md Q3a/Q3b (same); both agree (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).",
-      "does_not_establish": "The 65-ft maximum building height applies only to qualifying affordable or senior housing, a fact not recorded (both readings). Height is measured from the base plane (ZR 35-63), whose definition is not captured, so absolute above-grade heights are not fixed. ZR 34-24(b)(2) points to the uncaptured Section 36-64 (special-area height and setback), so an extra-area modification cannot be read. It says nothing complies."
+      "does_not_establish": "The 65-ft maximum building height applies only to qualifying affordable or senior housing, a fact not recorded (both readings). Height is measured from the base plane (ZR 35-63), whose definition the step-P2 readers did not have, so absolute above-grade heights are not fixed. ZR 34-24(b)(2) points to Section 36-64 (special-area height and setback), which the step-P2 readers did not have, so an extra-area modification cannot be read. It says nothing complies."
     },
     {
       "row_id": "setback-above-base",
@@ -649,7 +654,7 @@
         "reason": ""
       },
       "source_reference": "return-independent-hand-calculation-5.md Q4a/Q4c (overlay CHANGES street wall: 23-431(a) line-up -> 35-631(b) percentage, flat 8 ft) and return-independent-hand-calculation-6.md Q4a/Q4c (same); both agree it is changed (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).",
-      "does_not_establish": "Whether a prevailing street wall frontage exists (a proviso in both regimes can use it to switch the applicable paragraph) is a defined term not captured and a fact not recorded, so the final street-wall line is not fixed. It says nothing complies."
+      "does_not_establish": "Whether a prevailing street wall frontage exists (a proviso in both regimes can use it to switch the applicable paragraph) is a defined term the step-P2 readers did not have and a fact not recorded, so the final street-wall line is not fixed. It says nothing complies."
     },
     {
       "row_id": "rear-yard",
@@ -732,12 +737,12 @@
       "arithmetic": [],
       "expected": {
         "kind": "value",
-        "value": "same as plain R6B for an all-residential building: the overlay's only rear-yard text, ZR 35-53, reaches only the residential portion of a mixed building, so it does not change the rear yard; within 100 feet of the corner no rear yard is required (ZR 23-344(a)). This comparison holds subject to the uncaptured ZR 34-21 through 34-23, which ZR 34-11 names as exceptions ('except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of Residence District controls') and which neither reader had: reading 1 (return-independent-hand-calculation-5.md) raised that it cannot exclude an overlay-chapter modification of floor area, lot coverage or yards, while reading 2 (return-independent-hand-calculation-6.md) read the captured route as settled.",
+        "value": "same as plain R6B for an all-residential building: the overlay's only rear-yard text, ZR 35-53, reaches only the residential portion of a mixed building, so it does not change the rear yard; within 100 feet of the corner no rear yard is required (ZR 23-344(a)). This comparison holds subject to ZR 34-21 through 34-23, which ZR 34-11 names as exceptions ('except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of Residence District controls') and which neither reader had: reading 1 (return-independent-hand-calculation-5.md) raised that it cannot exclude an overlay-chapter modification of floor area, lot coverage or yards, while reading 2 (return-independent-hand-calculation-6.md) read the captured route as settled.",
         "unit": "",
         "reason": ""
       },
       "source_reference": "return-independent-hand-calculation-5.md Q5a/Q5b (35-53 reaches only mixed buildings; overlay effect none for an all-residential building) and return-independent-hand-calculation-6.md Q5a/Q5b (same); both agree (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).",
-      "does_not_establish": "Beyond 100 feet of the corner the rear-yard outcome is not known (it needs the neighbouring lot-line configuration and, for any depth, the building type and lot width); that is the plain-R6B reading recorded in cases/real-lot.json row L12 and is unchanged here. The defined term mixed building is not captured. Because ZR 34-11 also points to the uncaptured Sections 34-21 through 34-23 (its named exceptions), an overlay-chapter modification cannot be fully excluded - a caveat reading 1 raised and reading 2 did not, which is why the comparison is recorded subject to it rather than as settled. It says nothing complies."
+      "does_not_establish": "Beyond 100 feet of the corner the rear-yard outcome is not known (it needs the neighbouring lot-line configuration and, for any depth, the building type and lot width); that is the plain-R6B reading recorded in cases/real-lot.json row L12 and is unchanged here. The defined term mixed building is one the step-P2 readers did not have. Because ZR 34-11 also points to Sections 34-21 through 34-23 (its named exceptions, which the step-P2 readers did not have), an overlay-chapter modification cannot be fully excluded - a caveat reading 1 raised and reading 2 did not, which is why the comparison is recorded subject to it rather than as settled. It says nothing complies."
     },
     {
       "row_id": "paragraphs-applicable",
@@ -930,10 +935,11 @@
         "reason": ""
       },
       "source_reference": "return-independent-hand-calculation-5.md Q1/Q3a/Q3b/Q4a and return-independent-hand-calculation-6.md Q1/Q3a/Q3b/Q4a; both read the same paragraphs as applying or not on the same basis (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).",
-      "does_not_establish": "The paragraph selection does not read the uncaptured sections those paragraphs point to (ZR 34-24(b)(2) Section 36-64, (b)(3) Section 35-71, ZR 35-632(b) Section 23-434 and (c) Section 23-435), and does not settle whether a prevailing street wall frontage exists. R6B's reach to the R6-through-R12 provisions is a reading of ZR 11-25, not an express naming of R6B. It says nothing complies."
+      "does_not_establish": "The paragraph selection does not read the sections those paragraphs point to that the step-P2 readers did not have (ZR 34-24(b)(2) Section 36-64, (b)(3) Section 35-71, ZR 35-632(b) Section 23-434 and (c) Section 23-435), and does not settle whether a prevailing street wall frontage exists. R6B's reach to the R6-through-R12 provisions is a reading of ZR 11-25, not an express naming of R6B. It says nothing complies."
     },
     {
       "row_id": "section-35-633",
+      "superseded_by": ["step-p3-worked#zr-23-436-paragraphs", "step-p3-worked#zr-35-633-paragraphs"],
       "quantity": "What ZR 35-633 adds",
       "facts_used": [
         {
@@ -1007,7 +1013,7 @@
     },
     {
       "row_id": "not-captured",
-      "quantity": "Every section and defined term the overlay texts point to that is not captured, and what stays not known",
+      "quantity": "Every section and defined term the overlay texts point to that the step-P2 readers did not have, and what stays not known",
       "facts_used": [],
       "citations": [
         {
@@ -1176,16 +1182,16 @@
           "table_assertion": null
         }
       ],
-      "why_applies": "The captured overlay texts point to sections and defined terms the repository does not hold; this row names each pointer and what stays not known because of it. Both readings name these as not captured.",
+      "why_applies": "The captured overlay texts point to sections and defined terms the step-P2 readers did not have; this row names each pointer and what stays not known because of it. Both readings name these as texts they did not have.",
       "arithmetic": [],
       "expected": {
         "kind": "value",
-        "value": "Not captured, pointed to by the overlay texts: Sections 34-21, 34-22 and 34-23 (ZR 34-11, exceptions to applicability of Residence District controls); Section 36-64 (ZR 34-24(b)(2), special-area height and setback); Section 35-71 (ZR 34-24(b)(3), the optional sky-exposure-plane envelope); Section 35-64 (ZR 35-63, additional height and setback); Section 23-434 (ZR 35-632(b), eligible-site height increase); Section 23-435 (ZR 35-632(c), towers); Section 23-436 (ZR 35-633, additional height and setback); Section 23-41 (ZR 35-53, permitted obstructions); and the defined terms Manhattan Core (ZR 35-631(a)), prevailing street wall frontage (ZR 35-631) and mixed building (ZR 35-53). What stays not known because of them: the substance of ZR 35-633 and Section 23-436 (the additional height and setback), any special-area modification under 36-64, the optional sky-plane envelope under 35-71, and - because ZR 34-11 points to the uncaptured 34-21 through 34-23 - whether an overlay-chapter exception modifies floor area, coverage or the rear yard.",
+        "value": "Pointed to by the overlay texts and not had by the step-P2 readers (this list is reworded from its earlier present-tense form and keeps every item): Sections 34-21, 34-22 and 34-23 (ZR 34-11, exceptions to applicability of Residence District controls); Section 36-64 (ZR 34-24(b)(2), special-area height and setback); Section 35-71 (ZR 34-24(b)(3), the optional sky-exposure-plane envelope); Section 35-64 (ZR 35-63, additional height and setback); Section 23-434 (ZR 35-632(b), eligible-site height increase); Section 23-435 (ZR 35-632(c), towers); Section 23-436 (ZR 35-633, additional height and setback); Section 23-41 (ZR 35-53, permitted obstructions); and the defined terms Manhattan Core (ZR 35-631(a)), prevailing street wall frontage (ZR 35-631) and mixed building (ZR 35-53). What stays not known because of them: the substance of ZR 35-633 and Section 23-436 (the additional height and setback), any special-area modification under 36-64, the optional sky-plane envelope under 35-71, and - because ZR 34-11 points to the 34-21 through 34-23 the step-P2 readers did not have - whether an overlay-chapter exception modifies floor area, coverage or the rear yard.",
         "unit": "",
         "reason": ""
       },
-      "source_reference": "return-independent-hand-calculation-5.md Q6 and return-independent-hand-calculation-6.md Q6; both name these sections and terms as not captured (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).",
-      "does_not_establish": "The list is of sections and terms the captured overlay texts name; it is not a claim that the repository holds no other related text. On these facts 36-64, 35-71, 23-434 and 23-435 do not change this lot's reading (they are inapplicable or optional), while Section 23-436 and Sections 34-21 through 34-23 leave the noted points not known. Reading 2 additionally names further uncaptured defined terms (base plane, residential equivalent, aggregate width of street walls, outer court, and the qualifying affordable or senior housing terms) that bound the fine application but do not change which rule governs; reading 1 does not list all of these, so they are noted here, not recorded as the agreed list. It says nothing complies."
+      "source_reference": "return-independent-hand-calculation-5.md Q6 and return-independent-hand-calculation-6.md Q6; both name these sections and terms as ones they did not have (return-independent-hand-calculation-5.md and return-independent-hand-calculation-6.md).",
+      "does_not_establish": "The list is of sections and terms the captured overlay texts name; it is not a claim that the repository holds no other related text. On these facts 36-64, 35-71, 23-434 and 23-435 do not change this lot's reading (they are inapplicable or optional), while Section 23-436 and Sections 34-21 through 34-23 leave the noted points not known. Reading 2 additionally names further defined terms it did not have (base plane, residential equivalent, aggregate width of street walls, outer court, and the qualifying affordable or senior housing terms) that bound the fine application but do not change which rule governs; reading 1 does not list all of these, so they are noted here, not recorded as the agreed list. It says nothing complies."
     }
   ]
 }
