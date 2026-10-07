@@ -88,7 +88,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 80,
   "risks": [
     "A table (heights, obstructions) captured with a cell wrong or missing -> S3 and S4: an independent re-read, cell by cell",
     "A defined term that is not where the packet assumes -> S1: the report says where it is and it is not captured from a guess",
@@ -96,7 +96,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T06:42:22.489953+00:00",
-  "updated_at": "2026-10-07T06:43:06.741155+00:00",
+  "updated_at": "2026-10-07T08:04:49.485917+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -122,6 +122,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed in wave 2 at the contract head 3a08b2c6 (integration head 4fc0d85c); builder legal-corpus-engineer in an isolated worktree; see project-control/reports/WAVE2-2026-10-07-concurrency-record.md."
+    },
+    {
+      "at": "2026-10-07T08:04:49.485767+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "Independent review (data-contract-verifier) at eba169c5, before submit: G3 FAIL and G4 FAIL on one finding, F1: the builder's report said ZR 12-10 does not define 'residential'; the official page defines it inside the article 'residence, or residential'. All 26 captures matched the official pages. Rework by the same builder (legal-corpus-engineer): commit 2e60a66e adds the capture zr-12-10-residence-or-residential and corrects the report (F1, F2, F3). Re-review by the same reviewer at 2e60a66e: G3 PASS, G4 PASS for all 27 captures. The failed review is kept unchanged in project-control/reports/M4-T029-G3G4.md."
     }
   ]
 }

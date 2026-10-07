@@ -1,0 +1,49 @@
+{
+ "task_id": "M4-T028",
+ "material_commits": [
+  "4b04689f (cherry-pick of the producer's commit 57a5d454, producer rules-engineer: the two overlay readings saved unchanged, the overlay case with its page, one corrected sentence, the README, the checker, loader and test, the producer report)",
+  "d23f6faf (cherry-pick of the same producer's round-2 commit 24401974: one reading's condition, subject to ZR 34-21 to 34-23, carried in the value and in the 'does not establish' text of the three rows that reading attaches it to; a second too-broad sentence corrected; after the reviewer's notes F1 to F3; no expected value kind and no existing expected value changed)",
+  "db11e7af (cherry-pick of the same producer's round-3 commit ea7cb5bf: README only; it says what the readers did not have, and that a capture changes no row until two independent readings of the new text are made; asked for by the orchestrator at integration)",
+  "material head: db11e7af"
+ ],
+ "claim_seam_head": "cc30ab18",
+ "overlay_case_rows": 11,
+ "row_kinds": [
+  "not_known",
+  "value"
+ ],
+ "readings": [
+  "return-independent-hand-calculation-5.md (reader 1, an official-source-researcher agent)",
+  "return-independent-hand-calculation-6.md (reader 2, a data-contract-verifier agent)"
+ ],
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/rules/reference_cases: exit 0 (count in the producer report)",
+  "r6b_reference_cases_render.py --check: exit 0 (pages byte-identical to the data); run by the builder",
+  "tools/modularity_check.py --check: exit 0",
+  "full services/api suite, run alone by the orchestrator at 2e60a66e with all three pieces and every correction integrated: exit 0, 8128 passed, 8 skipped (an earlier full run at eba169c5, before the last three small commits: the same counts)"
+ ],
+ "requirements": {
+  "D-090-R226": [
+   "The overlay rows are worked from the captured law text and the lot's recorded facts by two AI helpers, each alone, from a sealed folder without the program: their returns are in docs/reference-cases/R6B/provenance/ (return-independent-hand-calculation-5.md and -6.md), unchanged below their headers (services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_the_two_overlay_readings_are_present_unchanged pins their digests; test_a_changed_overlay_reading_is_caught proves a changed copy fails).",
+   "Each of the 11 rows of docs/reference-cases/R6B/cases/overlay-reading.json cites its sections with the quoted words, the capture's snapshot id and content digest; services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_every_citation_matches_the_live_capture compares each with the live capture.",
+   "What the repository cannot show: that the two helpers had not read the program's answer rests on the orchestrator's instructions to them, on its audit of their tool logs (no file under the repository opened; recorded in the session notes, outside the repository) and on their own statements at the top of each return."
+  ],
+  "D-090-R241": [
+   "No expected value comes from, or was changed to match, a saved program result: services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_no_program_result_in_any_case and test_support_code_imports_no_engine pass on all case files and support code. No expected value of an existing row changed in this task (row L5 of the real lot is still 'not known' with its per-portion reason); the changes to existing cases are a corrected sentence and a pointer, each with a dated change-log entry.",
+   "The builder's instructions forbade reading or running the program's rule and scenario code; its report says it did neither. That statement is the builder's; the import scan and the case files are what the repository shows."
+  ],
+  "D-090-R259": [
+   "The overlay reading is kept in files of its own under docs/reference-cases/R6B/, apart from any program output; the case says of itself: 'Agreement between two AI answers alone is not proof' (cases/overlay-reading.json, checked_by).",
+   "A value is recorded only where both readings give it on the same basis: services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_overlay_case_rows_name_both_readings, test_overlay_settled_changed_and_not_known_rows and test_an_overlay_value_where_the_readings_differ_is_refused. Where the readings differ the row is 'not known' with both named (row section-35-633: one reading leaves its corner-lot clause not known, the other reads it as not reaching a lot with two street frontages; both say the content of ZR 23-436 is not known from the captures they had)."
+  ],
+  "D-090-R291": [
+   "This task's share of step 3: the independent reading of the commercial-overlay text is saved as a reference case to test against. On the benchmark lot both readings find that the C2-2 overlay changes one thing, the street-wall location rule (from the R6B line-up rule of ZR 23-431(a) to ZR 35-631(b)), and that the floor area ratio, the dwelling-unit rule, the base and building heights, the setback and the rear-yard reading for an all-residential building are reached by a quoted route to the same R6B provisions.",
+   "NOT done by this task, and not claimed: no missing rule and no conflicting input is resolved; no result for a lot with an overlay is shown or changed; the work order's gap K9 is not closed by a reading alone. One reading keeps the floor area, coverage and rear-yard answers subject to ZR 34-21 to 34-23, which are named by ZR 34-11 and were not in the readers' folder; the case records that. Two AI readings that agree are not proof."
+  ],
+  "D-090-R318": [
+   "Interpretation of the overlay text is checked with independently worked, source-backed examples: the two readings were made before any comparison with the program, each row gives its law quotations with the captures, and docs/reference-cases/R6B/README.md keeps the rule that an expected value changes only with a recorded reason and never because the program disagrees.",
+   "The examples are two AI readings and an AI review; nothing here is a professional review, and the cases say so."
+  ]
+ }
+}

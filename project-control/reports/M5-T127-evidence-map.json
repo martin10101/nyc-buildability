@@ -1,0 +1,30 @@
+{
+ "task_id": "M5-T127",
+ "material_commits": [
+  "6a977805 (cherry-pick of the producer's commit e45d32bb, producer geospatial-engineer: the module, its test, the producer report)",
+  "5ce12d90 (cherry-pick of the same producer's round-2 commit 5d6dcc9d: the carried angle stated plainly, two tests for guard branches, three comments, after the reviewer's notes F1 to F3; no measurement changed) = material head"
+ ],
+ "claim_seam_head": "cc30ab18",
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/spatial/test_lot_reach.py: exit 0, 14 passed",
+  "pytest tests/spatial tests/rules/reference_cases: exit 0 (run by the builder and by the reviewer: 449 passed before the wave's other pieces)",
+  "tools/modularity_check.py --check: exit 0 (the module is under 250 lines)",
+  "full services/api suite, run alone by the orchestrator at 2e60a66e with all three pieces and every correction integrated: exit 0, 8128 passed, 8 skipped (an earlier full run at eba169c5, before the last three small commits: the same counts)"
+ ],
+ "requirements": {
+  "D-090-R227": [
+   "Each measurement of the new module has a test whose expected value comes from outside the program: services/api/tests/spatial/test_lot_reach.py::test_real_benchmark_lot_matches_the_reference_case and test_made_up_corner_lots_match_the_reference_case read their expected numbers from the reference case docs/reference-cases/R6B/cases/corner-reach.json (rows real-lot-reach, C1-reach, C2-reach, C3-reach) through the loader, and test_expected_values_are_read_from_the_reference_case_not_the_module checks that no expected number is typed into the test or taken from the module.",
+   "The reference rows were worked by two independent AI readers from the recorded outline without the program and re-worked by an independent reviewer (tasks M4-T024 and M4-T027, merged). For the benchmark lot the module returns 99.97 ft from the Northern Boulevard street line, 103.93 ft from the 215 Place street line and 144.60 ft from the corner point, each equal to its reference value within 0.01 ft; the independent reviewer of this task re-derived all of them with its own geometry.",
+   "Not compared with a reference number: the angle between the two street lines. The module carries it from the existing site geometry's corner relation, and its docstring says so and says when it is exact; the reference rows hold no angle."
+  ],
+  "D-090-R229": [
+   "A measurement the module cannot make is unknown with a plain reason, never a zero or a default: services/api/tests/spatial/test_lot_reach.py::test_refused_outline_leaves_every_reach_unknown_never_zero, test_outline_present_but_geometry_refused_leaves_everything_unknown, test_uncertain_frontage_reach_is_unknown, test_bending_frontage_reach_is_unknown, test_interior_lot_gives_its_one_reach_and_no_corner, test_through_lot_gives_both_reaches_but_no_corner and test_more_than_two_confirmed_streets_give_reaches_but_no_corner.",
+   "NOT done by this task, and not claimed: nothing is shown on the website, a drawing or a PDF. The module is called by nothing yet (a test proves it); showing 'not known' on a screen is the later results work."
+  ],
+  "D-090-R238": [
+   "This task supplies the geometry that row asks for and states no coverage figure: services/api/app/spatial/lot_reach.py measures how far the lot reaches from each street line and from the corner point and holds no legal distance, no word about coverage or yards and no rule (services/api/tests/spatial/test_lot_reach.py::test_measurements_only_no_law_in_the_module).",
+   "NOT done by this task, and not claimed: no result and no test of the engine is changed, so nothing yet stops the engine's present whole-lot corner answer; using these measurements to withhold or split a coverage result is the next part of the work order's Part 0."
+  ]
+ }
+}
