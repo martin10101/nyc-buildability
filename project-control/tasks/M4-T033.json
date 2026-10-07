@@ -76,7 +76,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 70,
+  "progress_percent": 95,
   "risks": [
     "A term reported as not defined that sits under an inverted or combined title (seen in M4-T029) -> S1",
     "A section number guessed instead of found -> the targets are named by what they are; the builder reports the number the site shows",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:30.664338+00:00",
-  "updated_at": "2026-10-07T17:04:32.386256+00:00",
+  "updated_at": "2026-10-07T17:36:06.649958+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -125,6 +125,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "INDEPENDENT REVIEW (a data-contract-verifier agent) at 99845581: G3 PASS and G4 PASS with ONE required correction that blocks acceptance until applied. The reviewer fetched the official pages itself: all ten pages byte-identical to the pinned ones; the text of all 23 captures equals the official text; the two disclosed limits are real and disclosed; the page of ZR 34-23 lists exactly 34-231, 34-232 and 34-233 and nothing beyond; no existing capture changed. Required correction F1: the builder's REPORT gives the amendment date of the definition 'open space' as 12/15/1961; the official page and the capture itself say 7/8/2025. The capture is right; one line of the report is wrong. It goes back to the same builder; the same reviewer then confirms."
+    },
+    {
+      "at": "2026-10-07T17:36:06.649775+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "Round 2 by the same builder (the report only: the amendment date of 'open space' corrected to 7/8/2025; every date and page number in the report compared with the capture files, no other mismatch) integrated as 9ec94043. The same reviewer confirmed G3 PASS and G4 PASS at 9ec94043: the required correction F1 is closed; no capture changed. The full api suite at d1e6683c: 8384 passed, 8 skipped. Evidence map written; ready to submit."
     }
   ]
 }

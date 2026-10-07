@@ -107,7 +107,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 70,
+  "progress_percent": 95,
   "risks": [
     "An empty column taken as 'the lot has none' -> reading O14 and S2; if it cannot be told, everything is 'not read'",
     "A tolerance invented without data -> reading O15: none is invented",
@@ -117,7 +117,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:28.703315+00:00",
-  "updated_at": "2026-10-07T17:11:31.278650+00:00",
+  "updated_at": "2026-10-07T17:36:06.038490+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -171,6 +171,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "TWO INDEPENDENT REVIEWS at 1ed440c4. GATE G3 (data-contract-verifier): PASS, no must-fix, seven notes. It tested reading O14 at the root and confirmed it: the connector requests the whole city record, a profile exists only for a successful fetch, so a column missing from the served row is empty in the city's record, and 'City records list no ...' is what the record shows and what the work order's gap K10 requires; it drove the entry function on the recorded benchmark lot (every fact matches the recorded files; the ways match the work order's test H2; nothing settled) and read 721 returned texts (none internal or untrue); readings O15 to O18 applied as stated. Its note F1, for the orchestrator: two earlier modules read the same empty columns as 'none or unknown: check needed', while this one reads 'recorded as absent' as the work order directs: the orchestrator confirms that this is intended and records it in the backlog. GATE G4 (qa-engineer): FAIL. Scenarios S1 to S6 and S8 met, 24 of 26 tests independent of the code, 10 of 13 of its mutations caught; but scenario S7 is NOT met: two branches of the new code act on input states that no test pins, each shown by a mutation that passed every test: (F1) a reach measurement or an angle that is UNKNOWN (made into 0.0: no test failed; that would show a coverage or a rear yard on an unknown measurement); (F2) the lot types 'interior' and 'through' (removed from the mapping: no test failed). The builder's table said both were pinned; they were not. Notes: F3 marking one of the four conditions as 'checked and absent' fails no test; F4 seven returnable texts are outside the text guard's battery. The code was found correct by both reviews; the defect is in the tests and the report's table. It goes back to the same builder for a tests-only round; the same QA reviewer reviews again; the G3 reviewer confirms that the modules did not change."
+    },
+    {
+      "at": "2026-10-07T17:36:06.038357+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "Round 2 by the same builder (tests and report only; the three modules and the two guard tests byte-unchanged) integrated as d1e6683c. SECOND REVIEWS at d1e6683c: GATE G3 (data-contract-verifier) PASS: the modules byte-identical to what it reviewed; the report accurate; the orchestrator's answers to its notes leave no must-fix. GATE G4 (qa-engineer) PASS: its findings F1 to F4 closed by tests whose expected outcomes come from outside the code; all 18 of its mutations caught, the three that had passed silently included; by its own sweep no input state the new code acts on is unpinned; the report's rewritten table true line by line. One note, not applied: two short strings the entry function returns in its list of held-back points are not run through the text guard, and one of them says 'this piece' (recorded for the piece that emits). The full api suite at d1e6683c, run alone by the orchestrator: 8384 passed, 8 skipped. Evidence map written; ready to submit."
     }
   ],
   "scope_corrections": [
