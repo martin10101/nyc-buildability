@@ -121,24 +121,44 @@ Never a zero: no way carries a number (asserted — no `value` key in any `to_va
 
 ## Input-state table (L2 — state → outcome → test that pins it)
 
+Rewritten from the round-2 sweep (section below). A test is named only if it SUPPLIES that state
+and ASSERTS the outcome. Two round-1 lines were overstated (lot type interior/through; the reach's
+unknown-preservation) and are corrected here; the tests that now supply those states are named.
+
 | Input | State | Outcome | Test |
 |---|---|---|---|
 | recorded column | served empty + fetch | ABSENT | test_every_column_served_empty… |
 | recorded column | no profile / no fetch source | NOT_READ | test_no_profile…, test_served_empty_without_a_recorded_fetch… |
 | recorded column | served value | PRESENT (+ overlay code) | test_recorded_values_are_present… |
-| recorded column | served-but-untrusted | NOT_READ | test_a_served_but_untrusted_value… |
+| recorded column | served-but-untrusted | NOT_READ | test_a_served_but_untrusted_value…, test_one_untrusted_column… |
 | splitzone | false / true | ABSENT / PRESENT | test_split_zone_false… |
-| flag column | false / zero | ABSENT | test_a_falsy_flag_is_absent… |
+| flag column (mih/firm) | false / zero | ABSENT | test_a_falsy_flag_is_absent… |
 | area | outline rounds to recorded | AGREES | test_area_rule_s3 |
 | area | differ | DISAGREES (both carried) | test_area_rule_s3 |
-| area | no outline | COULD_NOT_COMPARE | test_area_rule_s3 |
+| area | no outline | COULD_NOT_COMPARE | test_area_rule_s3, test_outline_missing_while_geometry_present |
 | area | no recorded area | outline never stands in | test_area_rule_s3, test_missing_inputs… |
 | large lot | ≥ / < 30,000 / None | True / False / not stated | test_large_lot_answer_o17 |
 | density | None / states-not-in-one / states-in-one | not given / conditional / held back | test_user_statement…, test_density_statement_that_claims_in_one… |
-| lot type | corner / interior / through / other / absent | mapped / None (held back) | test_benchmark…, test_read_site_inputs_states, test_missing_inputs… |
+| lot type | corner | CORNER | test_benchmark_lot_s1, test_read_site_inputs_states |
+| lot type | interior / through | INTERIOR / THROUGH, nothing held; coverage withheld (K2) | test_interior_and_through_lot_types_are_mapped_f2, test_interior_and_through_lots_withhold_coverage_per_k2_f2 |
+| lot type | unrecognised / absent | not given (held back) | test_read_site_inputs_states, test_missing_inputs… |
+| reach | known (benchmark) | measured, carried | test_benchmark_lot_s1 |
+| reach | unknown street / corner / angle | stays unknown, never a zero | test_adapt_reach_keeps_an_unknown_measurement_unknown_f1 |
+| reach | geometry present, a frontage/corner unknown | coverage + rear yard withheld (missing info), no zero | test_unknown_reach_withholds_coverage_and_rear_yard_f1 |
+| outline / geometry | outline None, geometry present | area could-not-compare; no street-line reach | test_outline_missing_while_geometry_present |
+| outline / geometry | outline present, geometry refused | reach unknown; coverage + rear yard withheld | test_outline_present_while_geometry_refused |
+| outline / geometry | both None | reach None; area could-not-compare | test_missing_inputs… (no outline) |
 | district | absent | blanket withhold | test_missing_inputs… |
-| overlay support | supported / not / mismatch | shown / withheld / all withheld | test_result_way_bridge_overlay, test_missing_inputs… |
-| texts battery (incl. one K20 condition present) | — | no internal name / capture claim | test_every_text_a_user_may_see_is_plain… |
+| district | other than R6B (through entry) | every result withheld | test_district_other_than_r6b_withholds_every_result |
+| evaluator_inputs | None / no "inputs" key / "inputs" not a list | every value not given | test_evaluator_inputs_shape_states |
+| lot area value | not a number | not given | test_non_numeric_lot_area_is_carried_as_not_given |
+| K20 conditions | always NOT_CHECKED (no parameter can change) | conditional naming all four | test_benchmark_conditional_names_all_four_unchecked_conditions_f3 |
+| overlay support | overlay present, C2-2 within R6B | per-family table consulted | test_benchmark_lot_s1, test_result_way_bridge_overlay |
+| overlay support | overlay present, code ≠ C2-2 | None → every residential result withheld | test_overlay_code_other_than_c2_2_withholds_residential_results |
+| overlay support | overlay absent / not read | not consulted / blanket | test_missing_inputs… (no profile) |
+| overlay code | PRESENT always carries a code | — (PRESENT-without-code cannot arise through the bridge; `_code_of` returns the served value) | n/a — reported, not a bridge branch |
+| housing_kind | any / None | pass-through, no branch | test_benchmark_lot_s1 (no distinct branch) |
+| texts battery | every returnable text (incl. K20-present) | no internal name / capture claim | test_every_text_a_user_may_see_is_plain… |
 
 ## Points the packet / work order did not decide (held back)
 
@@ -195,3 +215,104 @@ three new files + the 2 renamed guard tests = 27. Mutation proofs: 8, all caught
 - `compare_lot_area` rounds the outline area with Python `round` (banker's rounding at exactly N.5);
   O15 says "rounded to the whole square foot" and the benchmark/tests have no N.5 case, so this does
   not bite, but it is noted.
+
+## Round 2 (G4 FAIL on test coverage; tests and the report only — no module change)
+
+G3 (data-contract) PASSed at head `1ed440c4` and CONFIRMED reading O14 at the root; G4 (QA) FAILed
+on two MUST-FIX coverage gaps (F1, F2) with two NOTEs (F3, F4): live branches of the new code were
+pinned by no test, proven by silent mutations (the module behaviour was found correct). This round
+adds the missing tests and rewrites the input-state table; the three module files and the two guard
+tests are byte-unchanged (`git diff --stat daad5efb HEAD -- services/api/app services/api/tests/spatial
+services/api/tests/scenario/three_answers/test_result_ways.py` empty). Only `test_result_way_bridge.py`
+changed.
+
+Source-line counts now (`wc -l`): app unchanged (facts 291, bridge 375, overlay 102); tests
+`test_result_way_facts.py` 159, `test_result_way_bridge.py` 591, `test_result_way_bridge_overlay.py`
+84 (all under the 600 **source-line** modularity threshold — `wc -l` counts blanks/comments; the
+modularity checker names none of them, exit 0).
+
+Added per finding (name : state pinned):
+- **F1 (MUST-FIX) adapt_reach unknown-preservation.** `test_adapt_reach_keeps_an_unknown_measurement_unknown_f1`
+  (an unknown street-line reach, an unknown corner reach and an unknown angle each stay None — None
+  in, None out; a known one is carried verbatim; packet item (c) quoted) and
+  `test_unknown_reach_withholds_coverage_and_rear_yard_f1` (a lot with site geometry present but an
+  uncertain frontage, built as `tests/spatial/test_lot_reach.py::test_uncertain_frontage_reach_is_unknown`
+  builds it → coverage and rear yard withheld as missing information, never a zero; work order gap
+  K12 quoted).
+- **F2 (MUST-FIX) interior/through mapping.** `test_interior_and_through_lot_types_are_mapped_f2`
+  (read_site_inputs of "interior" → LotType.INTERIOR, of "through" → LotType.THROUGH, nothing held;
+  anchored on the LotType member names, not the mapping dict) and
+  `test_interior_and_through_lots_withhold_coverage_per_k2_f2` (through gather_result_ways both get
+  coverage withheld (ZR 23-363, work owed) with the floor area unchanged — conditional; packet item
+  (b) and gap K2 quoted).
+- **F3 (NOTE) the four unchecked conditions.** `test_benchmark_conditional_names_all_four_unchecked_conditions_f3`
+  (the benchmark floor-area conditional assumption names ALL FOUR conditions — the four names taken
+  from gap K20, quoted — and the entry function has NO parameter that could mark one as checked).
+- **F4 (NOTE) the texts battery.** `test_every_text_a_user_may_see_is_plain_and_true_s7` extended so
+  its battery reaches every returnable text: the PRESENT statements of all six recorded conditions,
+  all four area-statement variants (agree / disagree / could-not-compare / no-recorded-area), both
+  large-lot statements, plus the decision module's way texts (K20-present included). The battery
+  reaches ≥ 40 distinct texts (asserted).
+
+Sweep (point 5) — every input of `gather_result_ways` and the functions it calls, each state it can
+take, now has a named test or is reported as not-a-branch: added
+`test_evaluator_inputs_shape_states` (None / no "inputs" key / "inputs" not a list → every value not
+given), `test_non_numeric_lot_area_is_carried_as_not_given`,
+`test_district_other_than_r6b_withholds_every_result`, `test_outline_missing_while_geometry_present`,
+`test_outline_present_while_geometry_refused`,
+`test_overlay_code_other_than_c2_2_withholds_residential_results`. The one state with no distinct
+bridge branch: an overlay recorded PRESENT with no code cannot arise through the bridge (the facts
+module's `_code_of` returns the served value whenever the overlay is PRESENT), so it is reported, not
+tested here (the decision module pins the code-None path separately). Sweep result: ~26 input-state
+clusters; all reach the new code except housing_kind (pass-through) and the overlay-present-no-code
+state; the 2 clusters overstated in round 1 (interior/through; the reach's unknown-preservation) are
+now genuinely pinned.
+
+Point 7 (a state whose outcome is NOT what the packet/work order says): NONE found. Every swept
+state behaved as the packet and the work order state; no module change is proposed or made.
+
+Round-2 mutation proofs (each a single-line change to a COPY outside the repository; the repo files
+are never touched; the newly pinned behaviour is checked to move). 7/7 CAUGHT:
+- **M9** (reviewer's silent) `waterfront=Checked.NOT_CHECKED` → `Checked.ABSENT` → FAILS
+  `test_benchmark_conditional_names_all_four_unchecked_conditions_f3` ("waterfront rules" drops out of
+  the assumption). (Round 1 it passed every test.)
+- **M10a** (reviewer's silent M10) adapt_reach `ReachValue(line.reach.value)` → `… or 0.0` → FAILS
+  `test_adapt_reach_keeps_an_unknown_measurement_unknown_f1` (Street A reach becomes 0.0).
+- **M10b** adapt_reach corner `ReachValue(measured.corner.reach.value)` → `… or 0.0` → FAILS the same
+  test (corner reach becomes 0.0).
+- **M11** (reviewer's silent) drop "interior"/"through" from `_LOT_TYPE_BY_NAME` → FAILS
+  `test_interior_and_through_lot_types_are_mapped_f2` (interior → None).
+- **M-NEW1** invert the `evaluator_inputs` Mapping guard → FAILS `test_read_site_inputs_states`
+  (district → None).
+- **M-NEW2** outline-None area branch `else None` → `else 0.0` → FAILS
+  `test_outline_missing_while_geometry_present` (agreement becomes DISAGREES, not could-not-compare).
+- **M-NEW3** non-numeric area guard admits `str` → FAILS
+  `test_non_numeric_lot_area_is_carried_as_not_given` (a string area is no longer not-given).
+F4 needs no new mutation: its texts are static strings (no branch); the round-1 F-check already proved
+the guard non-vacuous (injecting a forbidden token into a reached text fails it).
+
+Tests: 36 in the three new files (round 1: 25; +11) + the 2 guard tests (unchanged) = 38.
+
+Known limits recorded from the G3 review (no code change):
+- **G3 F2** — `result_way_facts._read_column` detects a served-empty column by exact-matching the
+  sentence the shared reader emits (`PLUTO has no <column> value for this lot.`). If that reader
+  sentence ever changed, a served-empty column would fall to the UNTRUSTED branch → NOT_READ — the
+  SAFE direction (it withholds, never over-claims "recorded as absent"). Noted; no change.
+- **G3 F4** — `compare_lot_area` uses Python `round` (half-to-even); O15 does not specify the half
+  rule and no half-square-foot case occurs, so immaterial (the module computes no zoning number).
+- G3 also raised F6 (the claim-head→HEAD diff is contaminated by peer-task commits riding the branch;
+  the gate is recorded against this task's own commit) and F7 (minor: `isinstance(area_value,(int,float))`
+  admits bool, record-truthiness) — both immaterial; noted for the orchestrator.
+
+Round-2 checks (DIRECT exit codes; lanes venv python, `-p no:cacheprovider`, `PYTHONDONTWRITEBYTECODE=1`,
+from `services/api` unless noted):
+- **a** `python -m ruff check .` → **exit 0**.
+- **b** `python -m pytest -q tests/scenario/three_answers tests/spatial/test_lot_reach.py` →
+  **exit 0**, 180 passed, 2 skipped (round 1: 169; +11 new). New this round: 11 (all in
+  `test_result_way_bridge.py`).
+- **c** (repo root) `python3 tools/modularity_check.py --check` → **exit 0** (grep `result_way` =
+  NONE). `python3 scripts/lanes/check_lane_paths.py --coverage` → **exit 0**, 9187 files.
+- **d** the 7 round-2 mutations above — all CAUGHT.
+- **e** `git status --porcelain` empty after the commit; `git diff --name-status daad5efb HEAD` =
+  `test_result_way_bridge.py` and this report only; the module files, the spatial tests and
+  `test_result_ways.py` byte-unchanged.
