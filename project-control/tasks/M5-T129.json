@@ -25,6 +25,7 @@
   "allowed_paths": [
     "services/api/app/scenario/three_answers/result_ways.py",
     "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/app/scenario/three_answers/result_way_*.py",
     "services/api/tests/scenario/three_answers/test_result_ways.py",
     "services/api/tests/scenario/three_answers/test_result_ways_*.py",
     "project-control/reports/M5-T129-producer-report.md"
@@ -104,7 +105,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "A decision that shows more than the work order allows (a result settled by silence; a district's limit shown as the property's) -> S1, S6 and the reviewers' line-by-line check of the decision table against section 5",
     "A point the work order leaves open filled in silently -> the readings O1 to O10 are named in the packet; O10 withholds everything else and lists it",
@@ -114,7 +115,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T11:39:26.898326+00:00",
-  "updated_at": "2026-10-07T11:39:52.245839+00:00",
+  "updated_at": "2026-10-07T12:33:35.206888+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -150,6 +151,20 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed in wave 4 at the contract head 7f5a97ba (integration head 65338f6d); builder scenario-optimization-engineer in an isolated worktree; see project-control/reports/WAVE4-2026-10-07-concurrency-record.md."
+    },
+    {
+      "at": "2026-10-07T12:33:35.206725+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Builder's commit 85bca681 integrated as 1d3d6964 (8 files, allowed paths only, all new or placeholders replaced; focused tests with the other piece on the branch: 650 passed, 2 skipped, 3 expected failures). BEFORE REVIEW the orchestrator found two points and sent the piece back to its builder: (1) result_ways.py is 664 source lines, above the 600-line threshold the packet's own modularity answer promised to stay under; the builder had said so and that the packet allowed only two modules. Scope correction recorded in the packet: a third focused module is allowed. (2) For a recorded lot area that could not be compared with the outline's area the module used the condition kind 'contradicted_record', whose contract description is 'a recorded figure that another recorded figure contradicts': nothing contradicts it in that case. The orchestrator's reading O4 is completed: that case uses 'unchecked_condition' and says what was not checked. Both are for the reviewers to judge. No review has been made yet."
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-07T12:33:35+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-07, after the builder's first commit and before any review] (1) ALLOWED PATHS: `services/api/app/scenario/three_answers/result_way_*.py` added. The packet allowed two modules and promised that each new file stays under the 600-line warning threshold of the modularity policy; the builder's decision module came to 664 source lines and the builder reported that it could not split further inside the allowed paths. A third focused module in the same package (same prefix, new file only) is allowed so that every new file stays under the threshold; `result_ways.py` keeps the one public function. Nothing else about the scope changes: still new files only, nothing calls the module, no existing file changes. (2) READING O4 COMPLETED (the orchestrator's reading, for the reviewers to judge): where the recorded lot area could not be compared with the outline's area, the condition's kind is `unchecked_condition` (the comparison was not made), not `contradicted_record`, whose contract description is 'a recorded figure that another recorded figure contradicts'; the assumption says what was not checked. Where the two figures disagree the kind stays `contradicted_record`."
     }
   ]
 }

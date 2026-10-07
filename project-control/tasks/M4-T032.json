@@ -90,7 +90,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the cases say agreement is not proof (R259); each row is followable",
     "A row that records as agreed something only one reading says (seen in M4-T030) -> S2",
@@ -99,7 +99,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T11:39:27.802047+00:00",
-  "updated_at": "2026-10-07T11:39:52.504703+00:00",
+  "updated_at": "2026-10-07T12:33:34.879236+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -130,6 +130,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed in wave 4 at the contract head 7f5a97ba (integration head 65338f6d); builder rules-engineer in an isolated worktree; see project-control/reports/WAVE4-2026-10-07-concurrency-record.md."
+    },
+    {
+      "at": "2026-10-07T12:33:34.879120+00:00",
+      "agent": "rules-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Builder's commit 183ee4ff integrated as 48aa0de8 (14 files, allowed paths only; the orchestrator's comparison with 5f8b78ce: no existing row's expected kind, value or reason changed; three rows of the overlay case marked superseded_by; the reach rows byte-equal; the two provenance files end with the readings as received, compared byte for byte). INDEPENDENT REVIEW (code-reviewer) at 48aa0de8: G3 PASS, G4 PASS, two notes, none must-fix. F1: the row sections-and-facts-not-had and the README place 'the Chapter-5 scope section' among what only reading 10 names, though reading 9 names it too, in its Q4 (an understatement of the agreed list). F2: the special-density clause of row dwelling-unit-factors is explicit in reading 9 and implicit in reading 10; no change asked. F1 goes back to the same builder for the smallest correction; the same reviewer then reads the change."
     }
   ]
 }
