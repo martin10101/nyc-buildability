@@ -120,8 +120,8 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A case value quietly taken from the program would make every later [LAW] test circular -> S3 and S4: values are traced to the helper's returns, and the checker cannot import the engine",
     "The work order's tables and the helper's returns may differ in a detail -> S4: every difference is reported, none is resolved silently",
@@ -132,7 +132,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T20:37:42.971519+00:00",
-  "updated_at": "2026-10-06T23:54:18.488444+00:00",
+  "updated_at": "2026-10-07T00:09:18.268399+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -174,5 +174,7 @@
       "status": "in_progress",
       "message": "Claim seam: G0 PASS at c374dae2 (recorded again after the scope correction); producer rules-engineer dispatched; based on the integration head 50c542fa (the research corrections and the three contracts merged)"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T00:09:18.268129+00:00"
 }

@@ -3,7 +3,7 @@
  "directive_id": "D-090",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-090-BOOTSTRAP at capture; tasks cite them through directive_refs. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": "2026-10-06T19:59:11+00:00",
+ "verified_at": "2026-10-07T00:09:17+00:00",
  "task_verifications": [
   {
    "directive_id": "D-090",
@@ -670,34 +670,61 @@
     "D-090-R291"
    ],
    "producer": "rules-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "bec106d1c0a2d05f80f3d6ced137dc9106e00798",
+   "reviewed_manifest_sha256": "770acec0dc794da1154b1f4db9c16a960026dc16eda6f92f6577f75f1b4bf9c0",
    "requirements": [
     {
      "id": "D-090-R226",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source traced: source-032-amendment.md message 76 item 5 \"Include independently calculated, law-based test examples.\" is the exact owner text; row text and classification \"harness\" match.",
+      "Four case files (docs/reference-cases/R6B/cases/{real-lot,interior-lots,corner-reach,suffix}.json) each carry per-row facts+source, quoted law with section + snapshot id + content digest, why_applies, step arithmetic and expected value; I independently recomputed and the focused suite passed 31/31 (test_all_arithmetic_recomputes, test_each_row_is_followable).",
+      "Values trace to a blind hand-calculation, not the program: provenance/return-independent-hand-calculation-1.md and -2.md (present unchanged, each ends END-OF-REPORT) state the helper worked only from a sealed folder with no program access; I verified L1=20150 (2.00x10,075), L6=29 (20,150/680), L7=35 (24,180/680), interior P3=15, P5=16 all appear in those returns; each row's source_reference points at the return.",
+      "\"Each example cites its section\" verified at primary evidence: I reloaded 7 captured citations in real-lot.json and confirmed content_digest == live docs/research/zr-snapshots/v1/*.snapshot.json content_digest_sha256, request_url match, and quote is a substring of verbatim_excerpt (all True).",
+      "Engine-free: grep + the AST import-scan test (test_support_code_imports_no_engine) confirm the checker/renderer/loader/test import nothing from app.* .",
+      "Verifier's carry-forward condition met at bec106d1: every file under the task's allowed paths has the blob it had at the verified head 76f2b8ac (content identity 770acec0); CLAUDE.md, .claude/rules/, services/api/app/ (the rule files and the engine), the law captures, the work order, the D-090 requirement rows and manifest, the sources 032, 033, 035, 039 and 047, and the four gate records are unchanged; the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). Pull request 454 is OPEN with head 76f2b8ac on GitHub. DCV report: project-control/reports/M4-T024-DCV.md."
+     ],
+     "reviewed_sha": "bec106d1c0a2d05f80f3d6ced137dc9106e00798"
     },
     {
      "id": "D-090-R241",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source traced: source-033-amendment.md message 77 \"Matching an old saved result is not proof that it is correct.\" is the exact owner text; classification \"evidence\" matches.",
+      "No test accepts a value because it equals a saved program result: I read the whole test file; every numeric check recomputes from the row's own operands (decimal, r6b_reference_cases_lib.compute_step) or checks a law capture; there is no comparison to any saved program output anywhere.",
+      "No case file holds a program result: test_no_program_result_in_any_case passes on all four files, and the two mutation proofs (a program_today field / a \"program today\" sentence) fail as required; the work order's \"Program today\"/\"First screen\" columns are not copied in.",
+      "The L7 \"not known\"->35 change was made for a recorded, program-independent reason: project-control/reports/M4-T024-L7-ruling.md grounds 35 on helper return line 46 ([C] 24,180/680=35.56->35); in work order table A line 450 the \"Program today\" column for L7 reads \"not available\" and the \"First screen\" column reads \"not known (K13)\", so the case's recorded independent value 35 matches NEITHER program column, confirming it was not fixed to agree with the program; the reason is recorded in the case change log and scope_corrections[2].",
+      "README section \"The rule for changing an expected value\" states a program disagreement is never alone a reason and is \"investigated on both sides\" (test_readme_states_the_change_rule passes).",
+      "Verifier's carry-forward condition met at bec106d1: every file under the task's allowed paths has the blob it had at the verified head 76f2b8ac (content identity 770acec0); CLAUDE.md, .claude/rules/, services/api/app/ (the rule files and the engine), the law captures, the work order, the D-090 requirement rows and manifest, the sources 032, 033, 035, 039 and 047, and the four gate records are unchanged; the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). Pull request 454 is OPEN with head 76f2b8ac on GitHub. DCV report: project-control/reports/M4-T024-DCV.md."
+     ],
+     "reviewed_sha": "bec106d1c0a2d05f80f3d6ced137dc9106e00798"
     },
     {
      "id": "D-090-R259",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source traced: source-035-amendment.md message 79 \"Keep independently worked reference cases separate from program output.\" \"AI can help prepare them, but agreement between AI answers alone isn't proof.\" exact owner text; classification \"evidence\" matches.",
+      "Cases live in their own files under docs/reference-cases/R6B/, apart from program output; test support under services/api/tests/rules/reference_cases/ is never read by the program at run time (no services/api/app/** changed; import-scan test).",
+      "Each case is followable and its page is byte-identical to its data: I ran r6b_reference_cases_render.py --check directly -> exit 0, \"reference-case check PASSED\".",
+      "\"Agreement alone is not proof\" is stated in README (\"That agreement, between two AI answers, is not on its own proof of anything\") and in every case what_it_is_worth (\"prepared by an AI helper\", \"recomputed by a second AI\", \"not proof\", \"not professionally reviewed\") - test_each_case_says_what_it_is_worth passes.",
+      "Change rule + a per-case change_log whose first entry is the dated creation, dates ordered (test_change_log_starts_with_creation_and_is_ordered passes).",
+      "Verifier's carry-forward condition met at bec106d1: every file under the task's allowed paths has the blob it had at the verified head 76f2b8ac (content identity 770acec0); CLAUDE.md, .claude/rules/, services/api/app/ (the rule files and the engine), the law captures, the work order, the D-090 requirement rows and manifest, the sources 032, 033, 035, 039 and 047, and the four gate records are unchanged; the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). Pull request 454 is OPEN with head 76f2b8ac on GitHub. DCV report: project-control/reports/M4-T024-DCV.md."
+     ],
+     "reviewed_sha": "bec106d1c0a2d05f80f3d6ced137dc9106e00798"
     },
     {
      "id": "D-090-R291",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source traced: source-039-amendment.md message 88 step 3 \"Check the R6B answers.\" \"Resolve missing rules and conflicting inputs, and save independently calculated examples to test against.\" exact owner text; classification \"sequencing\".",
+      "Share MET by this task (step R0): the independently calculated examples are saved as files to test against (four case JSONs + loader lib.load_row, tests S11 pass); each gap the reading could not settle is shown \"not known\" with a reason and no number (real-lot L5,L8,L12,L14,L15 and corner-reach cells; test_the_named_rows_are_not_known_with_a_reason_and_no_number passes).",
+      "Share NOT met and NOT claimed: resolving missing rules (capturing ZR 12-10 lot defs, 23-342, 23-363 -> step P1 / task M4-T025) and resolving conflicting inputs (the two area figures; shown/flagged on L1 does_not_establish, but \"which applies\" deferred). The not-captured sections are listed in README as waiting for step P1.",
+      "Records are honest: evidence-map R291 states verbatim \"NOT done by this task, and not claimed: no missing rule is resolved, no conflicting input is resolved... This task covers only the saving of the examples as files.\" The task objective scopes it to step R0. No overstatement found.",
+      "Verifier's carry-forward condition met at bec106d1: every file under the task's allowed paths has the blob it had at the verified head 76f2b8ac (content identity 770acec0); CLAUDE.md, .claude/rules/, services/api/app/ (the rule files and the engine), the law captures, the work order, the D-090 requirement rows and manifest, the sources 032, 033, 035, 039 and 047, and the four gate records are unchanged; the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producers were rules-engineer agents). Pull request 454 is OPEN with head 76f2b8ac on GitHub. DCV report: project-control/reports/M4-T024-DCV.md."
+     ],
+     "reviewed_sha": "bec106d1c0a2d05f80f3d6ced137dc9106e00798"
     }
    ]
   },
