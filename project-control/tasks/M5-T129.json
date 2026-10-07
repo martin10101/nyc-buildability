@@ -97,14 +97,14 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "scenario-optimization-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "A decision that shows more than the work order allows (a result settled by silence; a district's limit shown as the property's) -> S1, S6 and the reviewers' line-by-line check of the decision table against section 5",
     "A point the work order leaves open filled in silently -> the readings O1 to O10 are named in the packet; O10 withholds everything else and lists it",
@@ -114,7 +114,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T11:39:26.898326+00:00",
-  "updated_at": "2026-10-07T11:39:27.286337+00:00",
+  "updated_at": "2026-10-07T11:39:52.245839+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -141,5 +141,15 @@
     "cd services/api && python -m pytest -q tests/rules/reference_cases tests/contracts",
     "python3 tools/modularity_check.py --check ; python3 scripts/lanes/check_lane_paths.py --coverage",
     "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ],
+  "worktree": "/root/project/w-wave4",
+  "progress_log": [
+    {
+      "at": "2026-10-07T11:39:52.245711+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed in wave 4 at the contract head 7f5a97ba (integration head 65338f6d); builder scenario-optimization-engineer in an isolated worktree; see project-control/reports/WAVE4-2026-10-07-concurrency-record.md."
+    }
   ]
 }

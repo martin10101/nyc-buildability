@@ -84,13 +84,13 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "rules-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the cases say agreement is not proof (R259); each row is followable",
     "A row that records as agreed something only one reading says (seen in M4-T030) -> S2",
@@ -99,7 +99,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T11:39:27.802047+00:00",
-  "updated_at": "2026-10-07T11:39:28.182001+00:00",
+  "updated_at": "2026-10-07T11:39:52.504703+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -121,5 +121,15 @@
     "the renderer's check mode (pages byte-identical to the data)",
     "python3 tools/modularity_check.py --check",
     "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ],
+  "worktree": "/root/project/w-wave4",
+  "progress_log": [
+    {
+      "at": "2026-10-07T11:39:52.504611+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed in wave 4 at the contract head 7f5a97ba (integration head 65338f6d); builder rules-engineer in an isolated worktree; see project-control/reports/WAVE4-2026-10-07-concurrency-record.md."
+    }
   ]
 }
