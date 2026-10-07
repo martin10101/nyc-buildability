@@ -14,6 +14,8 @@ import json
 from functools import lru_cache
 from importlib import resources
 
+from app.contracts.results_way_rules import results_way_violations
+
 __all__ = ["ResultsContractError", "validate_results_document"]
 
 _SCHEMA_PACKAGE = "app._contract_schemas.v1"
@@ -91,4 +93,16 @@ def validate_results_document(document: dict) -> None:
             f"results document failed canonical schema validation at {location}: "
             f"{first.message}",
             location=location,
+        )
+
+    # After the schema: a 1.3.0 document must also honor the way-layer rule the schema
+    # cannot express (one shared rule; no copy here - see app.contracts.results_way_rules).
+    violations = results_way_violations(document)
+    if violations:
+        first_way = violations[0]
+        detail = "; ".join(violation.detail for violation in violations)
+        raise ResultsContractError(
+            "results document declares contract 1.3.0 but breaks the value-state way "
+            f"rule: {detail}",
+            location=f"answers/{first_way.answer}/value_states/{first_way.key}",
         )
