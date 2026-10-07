@@ -10,28 +10,38 @@ This is a draft reading of the law and a guideline by an AI; it is not professio
 
 ## The building in this example
 
-A made-up six-storey R6B elevator building: five typical residential floors (three apartments each) over a ground floor with a lobby, an amenity/laundry room, a refuse room, a building mechanical room and a bike/parking room, plus a cellar used only for storage. Some ZR 23-23 conditions are shown and the allowances are taken; one corridor condition and the parking condition are NOT met, so those spaces count.
+A made-up five-storey R6B elevator building: four identical typical residential floors (three apartments each, reached off a corridor) over a ground floor that holds the lobby, an amenity/laundry room, a refuse room, a building mechanical room, a bike/parking room and one apartment, plus a partial cellar used only for storage. The stair and the elevator pass through the ground floor and every typical floor. Some ZR 23-23 conditions are shown and the allowances are taken; the corridor's daylighting criterion and the parking condition are NOT shown, so those spaces count. On every floor the components, the exterior wall ring among them, add up to exactly the floor's stated outline (ground and typical 40 x 66 = 2,640 sq ft; cellar 40 x 50 = 2,000 sq ft). This made-up layout places 13 dwelling units by design.
 
-Design choices are made up and editable; the allowances shown here are illustrative, not validated.
+Design choices are made up and editable; the allowances shown here are illustrative, not validated. The five above-grade floors are drawn as equal floorplates for simplicity; a real R6B building (45 ft maximum base height, 55 ft maximum building height) would set back the floors above the base height, so equal floors are an assumption.
+
+## The floors and the fit (every floor adds up to its outline)
+
+| Floor | Count | Outside outline (sq ft) | Components on the floor (sq ft) | Difference |
+|---|---|---|---|---|
+| Partial cellar (storage only, not used for dwelling) | 1 | 2,000 | 2,000 | 0 |
+| Ground floor (lobby, services and one apartment) | 1 | 2,640 | 2,640 | 0 |
+| Typical residential floor (one of four identical) | 4 | 2,640 | 2,640 | 0 |
+
+On every floor the components listed in the schedule - the exterior wall ring among them - add up to exactly the floor's stated outside outline (difference zero), so the building fits.
 
 ## One area schedule (measured from the layout)
 
 | Component | Portion | Measured area (sq ft) | How measured | Under zoning floor area | Under HPD dwelling-unit area |
 |---|---|---|---|---|---|
-| Apartment net interior floor (rooms within the units) | residential | 6,600 | Finished room areas within the demising walls, from the stated room sizes. | Counts in full (ZR 12-10 floor area (gross floor space used for dwelling)) | Counts (inside a dwelling unit) - Measured within the perimeter walls to the finished face; this is the unit area. |
-| Interior partitions within the apartments (non-demising) | residential | 200 | Footprint of the non-demising partition walls inside the units. | Counts in full (ZR 12-10 floor area (gross floor space)) | Counts (inside a dwelling unit) - Internal partitions sit inside the measured perimeter and are included; the model must not subtract all apartment walls. |
-| Demising / party-wall thickness (between units and unit-to-corridor) | residential | 150 | Footprint of the demising wall thickness. | Counts in full (ZR 12-10 floor area (measured to exterior/centre lines; gross)) | Excluded - Integral components of demising partitions are excluded from unit area (measured to the finished face). |
-| Exterior wall thickness (perimeter ring) | residential | 750 | Outer footprint minus the inner (clear) footprint, over the stated floors. | Counts in full (ZR 12-10 floor area (measured from the exterior faces of exterior walls)) | Excluded - Integral components of exterior walls are excluded from unit area. |
-| Shared corridors | residential | 2,200 | Corridor width times length, over the stated floors. | Excluded only if the stated condition is shown (ZR 23-23 / ZR 23-232 (corridor floor-area provisions); ZR 12-10 exclusion); condition: 50% may be exempted with the termination/daylighting/outdoor-access criteria; another 50% where the corridor is no more than 100 ft; the provisions may combine [shown] | Excluded - Circulation between units; not within a dwelling unit. |
+| Apartment net interior floor (rooms within the units) | residential | 7,420 | Finished room areas within the demising walls, from the stated room sizes. | Counts in full (ZR 12-10 floor area (gross floor space used for dwelling)) | Counts (inside a dwelling unit) - Measured within the perimeter walls to the finished face; this is the unit area. |
+| Interior partitions within the apartments (non-demising) | residential | 360 | Footprint of the non-demising partition walls inside the units. | Counts in full (ZR 12-10 floor area (gross floor space)) | Counts (inside a dwelling unit) - Internal partitions sit inside the measured perimeter and are included; the model must not subtract all apartment walls. |
+| Demising / party-wall thickness (between units and unit-to-corridor) | residential | 528 | Footprint of the demising wall thickness. | Counts in full (ZR 12-10 floor area (measured to exterior/centre lines; gross)) | Excluded - Integral components of demising partitions are excluded from unit area (measured to the finished face). |
+| Exterior wall thickness (perimeter ring) | residential | 1,040 | Outer footprint minus the inner (clear) footprint, over the stated floors. | Counts in full (ZR 12-10 floor area (measured from the exterior faces of exterior walls)) | Excluded - Integral components of exterior walls are excluded from unit area. |
+| Shared corridors | residential | 1,120 | Corridor width times length, over the stated floors. | Excluded only if the stated condition is shown (ZR 23-23 / ZR 23-232 (corridor floor-area provisions); ZR 12-10 exclusion); condition: 50% may be exempted with the termination/daylighting/outdoor-access criteria; another 50% where the corridor is no more than 100 ft; the provisions may combine [shown] | Excluded - Circulation between units; not within a dwelling unit. |
 | Stairs / stairwells | residential | 960 | Stair footprint over the stated floors. | Counts in full (ZR 12-10 floor area (stairwells at each floor, except as excluded)) | Excluded - Shared vertical circulation; not within a dwelling unit. |
-| Elevator shaft | residential | 336 | Shaft footprint over the levels it passes. | Counts in full (ZR 12-10 floor area (elevator shafts at each floor, except as excluded)) | Excluded - Shared vertical circulation; not within a dwelling unit. |
-| Mechanical and plumbing chases | residential | 60 | Chase footprint, counted across the floors. | Counts in full (ZR 12-10 floor area (gross floor space; not accessory-mechanical rooms)) | Excluded - All mechanical and plumbing chases are excluded from unit area. |
-| Ground-floor lobby / entry | residential | 500 | Lobby footprint. | Counts in full (ZR 12-10 floor area; ZR 23-231 (amenity exclusion does NOT cover circulation)) | Excluded - Shared entry/circulation; not within a dwelling unit. |
-| Amenity and laundry room (residents) | residential | 480 | Room footprint on the ground floor. | Excluded only if the stated condition is shown (ZR 23-23 / ZR 23-231 (amenity floor-area provisions)); condition: accessible to residents and not circulation; capped at 5% of the building's residential floor area [shown] | Excluded - A shared amenity; not within a dwelling unit. |
-| Refuse storage / disposal room | residential | 80 | Room footprint on the ground floor. | Excluded only if the stated condition is shown (ZR 23-23 / ZR 23-233 (refuse floor-area provisions)); condition: up to three square feet per dwelling unit (15 units here = 45 sq ft cap) [shown] | Excluded - A shared service room; not within a dwelling unit. |
-| Building mechanical room | residential | 300 | Room footprint on the ground floor. | Excluded only if the stated condition is shown (ZR 12-10 floor area (accessory mechanical equipment)); condition: the room is accessory mechanical-equipment floor space, plus the minimum access [shown] | Excluded - Not within a dwelling unit. |
+| Elevator shaft | residential | 280 | Shaft footprint over the levels it passes. | Counts in full (ZR 12-10 floor area (elevator shafts at each floor, except as excluded)) | Excluded - Shared vertical circulation; not within a dwelling unit. |
+| Mechanical and plumbing chases | residential | 120 | Chase footprint, counted across the floors. | Counts in full (ZR 12-10 floor area (gross floor space; not accessory-mechanical rooms)) | Excluded - All mechanical and plumbing chases are excluded from unit area. |
+| Ground-floor lobby / entry | residential | 300 | Lobby footprint. | Counts in full (ZR 12-10 floor area; ZR 23-231 (amenity exclusion does NOT cover circulation)) | Excluded - Shared entry/circulation; not within a dwelling unit. |
+| Amenity and laundry room (residents) | residential | 360 | Room footprint on the ground floor. | Excluded only if the stated condition is shown (ZR 23-23 / ZR 23-231 (amenity floor-area provisions)); condition: accessible to residents and not circulation; capped at 5% of the building's residential floor area [shown] | Excluded - A shared amenity; not within a dwelling unit. |
+| Refuse storage / disposal room | residential | 72 | Room footprint on the ground floor. | Excluded only if the stated condition is shown (ZR 23-23 / ZR 23-233 (refuse floor-area provisions)); condition: up to three square feet per dwelling unit (15 units here = 45 sq ft cap) [shown] | Excluded - A shared service room; not within a dwelling unit. |
+| Building mechanical room | residential | 240 | Room footprint on the ground floor. | Excluded only if the stated condition is shown (ZR 12-10 floor area (accessory mechanical equipment)); condition: the room is accessory mechanical-equipment floor space, plus the minimum access [shown] | Excluded - Not within a dwelling unit. |
 | Cellar storage (not used for dwelling) | residential | 2,000 | Cellar footprint. | Excluded only if the stated condition is shown (ZR 12-10 floor area (cellar space, unless used for dwelling)); condition: the cellar is not used for dwelling purposes [shown] | Excluded - Not within a dwelling unit. |
-| Bike/parking room (does not meet the parking exclusion) | residential | 600 | Room footprint on the ground floor. | Excluded only if the stated condition is shown (ZR 12-10 floor area (accessory off-street parking exclusion)); condition: accessory group parking not more than 23 ft above curb level [NOT shown -> the space counts] | Excluded - Not within a dwelling unit. |
+| Bike/parking room (does not meet the parking exclusion) | residential | 400 | Room footprint on the ground floor. | Excluded only if the stated condition is shown (ZR 12-10 floor area (accessory off-street parking exclusion)); condition: accessory group parking not more than 23 ft above curb level [NOT shown -> the space counts] | Excluded - Not within a dwelling unit. |
 
 Each component appears once. The residential zoning floor area and the HPD dwelling-unit area are summed from this one schedule, each on its own.
 
@@ -101,45 +111,49 @@ Each component appears once. The residential zoning floor area and the HPD dwell
 
 ## The two areas, worked out separately, then reconciled
 
-- Residential zoning floor area (sum of what counts under zoning): 11,291 sq ft.
-- Total HPD dwelling-unit area (sum of what counts under HPD): 6,800 sq ft.
+- Residential zoning floor area (sum of what counts under zoning): 12,001 sq ft.
+- Total HPD dwelling-unit area (sum of what counts under HPD): 7,780 sq ft.
 
 Reconciliation - every square foot of the difference, by component (nothing is deducted twice):
 
 | From | Component | Amount (sq ft) |
 |---|---|---|
-| Residential zoning floor area | (start) | 11,291 |
-| - counts for zoning but not HPD | demising-partitions | -150 |
-| - counts for zoning but not HPD | exterior-walls | -750 |
-| - counts for zoning but not HPD | corridor | -1,100 |
+| Residential zoning floor area | (start) | 12,001 |
+| - counts for zoning but not HPD | demising-partitions | -528 |
+| - counts for zoning but not HPD | exterior-walls | -1,040 |
+| - counts for zoning but not HPD | corridor | -560 |
 | - counts for zoning but not HPD | stair | -960 |
-| - counts for zoning but not HPD | elevator | -336 |
-| - counts for zoning but not HPD | chases | -60 |
-| - counts for zoning but not HPD | lobby | -500 |
-| - counts for zoning but not HPD | refuse | -35 |
-| - counts for zoning but not HPD | parking-room | -600 |
-| = Total HPD dwelling-unit area | (end) | 6,800 |
+| - counts for zoning but not HPD | elevator | -280 |
+| - counts for zoning but not HPD | chases | -120 |
+| - counts for zoning but not HPD | lobby | -300 |
+| - counts for zoning but not HPD | refuse | -33 |
+| - counts for zoning but not HPD | parking-room | -400 |
+| = Total HPD dwelling-unit area | (end) | 7,780 |
 
-Ratio for this example = total HPD-measured dwelling-unit area (6,800) / residential zoning floor area (11,291) = 0.6022.
+Ratio for this example = total HPD-measured dwelling-unit area (7,780) / residential zoning floor area (12,001) = 0.6483.
 
 This ratio belongs to THIS made-up example only. Two or three examples cannot establish a typical figure; no percentage is validated here.
 
+## Shared floor area between the uses (ZR 23-20)
+
+A single-use residential building: no floor area is shared between uses, so the ZR 23-20 proportional attribution does not apply here.
+
 ## The legal unit cap (a separate figure)
 
-- Maximum residential floor area allowed: 12,000 sq ft (ZR 23-52).
-- Divided by the dwelling-unit factor 680: 17.6471 -> 17 dwelling units (ZR 23-52 rounding).
-- The density ceiling is a separate figure, not derived from the physical estimate. The measured residential zoning floor area (11,291 sq ft) differs from the 12,000 sq ft the FAR would allow.
+- Maximum residential floor area allowed: 13,000 sq ft (ZR 23-52).
+- Divided by the dwelling-unit factor 680: 19.1176 -> 19 dwelling units (ZR 23-52 rounding).
+- The density ceiling is a separate figure, not derived from the physical estimate. The measured residential zoning floor area (12,001 sq ft) differs from the 13,000 sq ft the stated FAR would allow.
 
 ## What this example shows
 
-- ZR 23-23 allowances are conditional: amenity and refuse allowances are taken only because their conditions are shown; the parking room counts because its condition is not met; the corridor's length allowance is not met so only 50% is exempt.
+- ZR 23-23 allowances are conditional: the amenity and refuse allowances are taken only because their conditions are shown; the parking room counts because its condition is not met; the corridor is 56 ft so only the length-based 50 percent is exempt.
 - Spaces already out of zoning (mechanical room, cellar) are not deducted again for HPD - nothing is deducted twice.
-- The two areas are summed separately from one schedule and reconciled line by line.
+- Every floor fits: on each floor the components, the exterior wall ring among them, add up to exactly the floor's stated outside outline.
 
 ## What this example does not show
 
 - It does not establish a typical ratio or validate any percentage.
-- The exact legal base for the amenity 5% is an open point, flagged for the owner.
+- The withdrawn 0.6022 ratio of the earlier version was computed on an 'outer ring proxy' with no stated floor outline; this rebuilt version states every floor and gives 0.6483.
 - It is not a legal or professional determination.
 
 ## Sources
@@ -152,4 +166,5 @@ This ratio belongs to THIS made-up example only. Two or three examples cannot es
 | Date | Change | By |
 |---|---|---|
 | 2026-10-07 | Example created for the measurement basis record. | scenario-optimization-engineer |
+| 2026-10-07 | Rebuilt so that every floor has a stated outside outline and the components on each floor add up to it exactly (the earlier version used an 'outer ring proxy' and stated no floor outline, so its fit could not be checked). The ratio changes as a consequence: the earlier 0.6022 is WITHDRAWN; the rebuilt building gives residential zoning floor area 12,001, HPD 7,780, ratio 0.6483. | scenario-optimization-engineer |
 

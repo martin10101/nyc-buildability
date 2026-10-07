@@ -4,8 +4,8 @@
   "mixed_use": true,
   "made_up_note": "This layout is made up - a deliberately simple example, not a real property and not a detailed or permit-ready design. Every dimension is stated so each area can be recomputed. The maximum floor area the law allows is used only as a limit to check the layout against, never as the measured space.",
   "standing_label": "This is a draft reading of the law and a guideline by an AI; it is not professionally reviewed and is not a legal or professional determination. Each statistic links to its source text (ADR-007).",
-  "building": "A made-up five-storey mixed-use building: a retail ground floor (sales floor, its own walls and a back room) with four residential floors above (two apartments each), served by a shared stair, elevator and a residential lobby. The apartment estimate uses only the RESIDENTIAL portion's zoning floor area, including the counted residential circulation; the retail floor is not added to it.",
-  "assumptions_note": "Design choices are made up and editable. Shared-space allocation between the retail and residential portions is itself an open point.",
+  "building": "A made-up five-storey mixed-use building: a retail ground floor (sales floor, a back room and the retail's own walls) beside a residential lobby, a shared utility room and the residential core, with four identical residential floors above (two apartments each, reached off a corridor). The stair and the elevator pass through the ground floor and every residential floor. The apartment estimate uses only the RESIDENTIAL portion's zoning floor area, including the counted residential circulation; the retail floor is not added to it, and the shared utility room is attributed under ZR 23-20 rather than added. On every floor the components, the exterior wall ring among them, add up to exactly the floor's stated outline (ground 44 x 70 = 3,080 sq ft; residential 44 x 58 = 2,552 sq ft).",
+  "assumptions_note": "Design choices are made up and editable. Each component is marked exclusive to one use (residential or commercial) or shared; how the mixed building combines its residential and commercial floor areas is itself a question of law not settled here.",
   "components": [
     {
       "component_id": "apartment-interior",
@@ -14,9 +14,9 @@
       "how_measured": "Finished room areas within the demising walls, from the stated room sizes.",
       "area_parts": [
         {
-          "label": "apartment rooms, 4 floors",
+          "label": "apartment rooms, 4 residential floors",
           "sign": "add",
-          "width_ft": 28,
+          "width_ft": 43,
           "depth_ft": 40,
           "count": 4
         }
@@ -68,10 +68,16 @@
             "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
           }
         ],
-        "counted_area": 4480
+        "counted_area": 6880
       },
       "notes": "The apartments' own usable floor.",
-      "measured_area": 4480
+      "measured_area": 6880,
+      "floor_areas": [
+        {
+          "floor_id": "typical-res",
+          "area": 1720
+        }
+      ]
     },
     {
       "component_id": "interior-partitions",
@@ -80,10 +86,10 @@
       "how_measured": "Footprint of the non-demising partition walls inside the units.",
       "area_parts": [
         {
-          "label": "interior partitions, 4 floors",
+          "label": "interior partitions, 4 residential floors",
           "sign": "add",
           "width_ft": 1,
-          "depth_ft": 35,
+          "depth_ft": 60,
           "count": 4
         }
       ],
@@ -134,10 +140,16 @@
             "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
           }
         ],
-        "counted_area": 140
+        "counted_area": 240
       },
       "notes": "Shows that apartment-internal partitions stay in HPD unit area.",
-      "measured_area": 140
+      "measured_area": 240,
+      "floor_areas": [
+        {
+          "floor_id": "typical-res",
+          "area": 60
+        }
+      ]
     },
     {
       "component_id": "demising-partitions",
@@ -146,10 +158,10 @@
       "how_measured": "Footprint of the demising wall thickness.",
       "area_parts": [
         {
-          "label": "demising partitions, 4 floors",
+          "label": "demising partitions, 4 residential floors",
           "sign": "add",
-          "width_ft": 1,
-          "depth_ft": 25,
+          "width_ft": 2,
+          "depth_ft": 48,
           "count": 4
         }
       ],
@@ -203,7 +215,13 @@
         "counted_area": 0
       },
       "notes": "A zoning-only component.",
-      "measured_area": 100
+      "measured_area": 384,
+      "floor_areas": [
+        {
+          "floor_id": "typical-res",
+          "area": 96
+        }
+      ]
     },
     {
       "component_id": "exterior-walls",
@@ -212,17 +230,24 @@
       "how_measured": "Outer footprint minus the inner (clear) footprint, over the stated floors.",
       "area_parts": [
         {
+          "label": "residential-core perimeter wall run, ground floor",
+          "sign": "add",
+          "width_ft": 2,
+          "depth_ft": 52,
+          "count": 1
+        },
+        {
           "label": "outer footprint, 4 residential floors",
           "sign": "add",
-          "width_ft": 30,
-          "depth_ft": 42,
+          "width_ft": 44,
+          "depth_ft": 58,
           "count": 4
         },
         {
-          "label": "inner (clear) footprint, 4 floors",
+          "label": "inner (clear) footprint, 4 residential floors",
           "sign": "subtract",
-          "width_ft": 28,
-          "depth_ft": 40,
+          "width_ft": 42,
+          "depth_ft": 56,
           "count": 4
         }
       ],
@@ -276,7 +301,17 @@
         "counted_area": 0
       },
       "notes": "The largest zoning-only item; it must NOT be deducted from HPD a second time if a qualifying-wall exclusion were later taken under zoning.",
-      "measured_area": 560
+      "measured_area": 904,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 104
+        },
+        {
+          "floor_id": "typical-res",
+          "area": 200
+        }
+      ]
     },
     {
       "component_id": "corridor",
@@ -285,10 +320,10 @@
       "how_measured": "Corridor width times length, over the stated floors.",
       "area_parts": [
         {
-          "label": "residential corridor 4 ft x 50 ft, 4 floors",
+          "label": "residential corridor 5 ft x 44 ft, 4 floors",
           "sign": "add",
-          "width_ft": 4,
-          "depth_ft": 50,
+          "width_ft": 5,
+          "depth_ft": 44,
           "count": 4
         }
       ],
@@ -304,13 +339,13 @@
               "label": "50 percent of the corridor floor space",
               "operation": "multiply",
               "operands": [
-                "800",
+                "880",
                 "0.50"
               ],
-              "result": 400
+              "result": 440
             }
           ],
-          "note": "The corridor is 50 ft (no more than 100 ft), so 50% is exempt; the daylighting criterion is not shown, so the other 50% counts."
+          "note": "The corridor is 44 ft - no more than 100 ft - so the length-based 50 percent (ZR 23-232(b)) is exempt; the daylighting criterion of ZR 23-232(a) is not shown, so that other 50 percent counts."
         },
         "citations": [
           {
@@ -370,7 +405,7 @@
             "status_note": ""
           }
         ],
-        "excluded_area": 400
+        "excluded_area": 440
       },
       "hpd": {
         "treatment": "exclude",
@@ -393,8 +428,14 @@
         ],
         "counted_area": 0
       },
-      "notes": "The corridor is 50 ft (no more than 100 ft), so 50% is exempt; the daylighting criterion is not shown, so the other 50% counts.",
-      "measured_area": 800
+      "notes": "The corridor is 44 ft - no more than 100 ft - so the length-based 50 percent is exempt; the daylighting criterion is not shown, so the other 50 percent counts.",
+      "measured_area": 880,
+      "floor_areas": [
+        {
+          "floor_id": "typical-res",
+          "area": 220
+        }
+      ]
     },
     {
       "component_id": "stair",
@@ -403,11 +444,11 @@
       "how_measured": "Stair footprint over the stated floors.",
       "area_parts": [
         {
-          "label": "residential stair, 4 floors",
+          "label": "residential stair, ground + 4 residential floors",
           "sign": "add",
-          "width_ft": 11,
-          "depth_ft": 15,
-          "count": 4
+          "width_ft": 10,
+          "depth_ft": 18,
+          "count": 5
         }
       ],
       "zoning": {
@@ -460,7 +501,17 @@
         "counted_area": 0
       },
       "notes": "A zoning-only component.",
-      "measured_area": 660
+      "measured_area": 900,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 180
+        },
+        {
+          "floor_id": "typical-res",
+          "area": 180
+        }
+      ]
     },
     {
       "component_id": "elevator",
@@ -469,9 +520,9 @@
       "how_measured": "Shaft footprint over the levels it passes.",
       "area_parts": [
         {
-          "label": "elevator shaft, 5 levels",
+          "label": "elevator shaft, ground + 4 residential levels",
           "sign": "add",
-          "width_ft": 6,
+          "width_ft": 7,
           "depth_ft": 8,
           "count": 5
         }
@@ -526,7 +577,17 @@
         "counted_area": 0
       },
       "notes": "A zoning-only component.",
-      "measured_area": 240
+      "measured_area": 280,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 56
+        },
+        {
+          "floor_id": "typical-res",
+          "area": 56
+        }
+      ]
     },
     {
       "component_id": "chases",
@@ -535,11 +596,11 @@
       "how_measured": "Chase footprint, counted across the floors.",
       "area_parts": [
         {
-          "label": "chases, 4 floors",
+          "label": "chases, ground + 4 residential floors",
           "sign": "add",
           "width_ft": 2,
-          "depth_ft": 5,
-          "count": 4
+          "depth_ft": 10,
+          "count": 5
         }
       ],
       "zoning": {
@@ -592,7 +653,17 @@
         "counted_area": 0
       },
       "notes": "Uses the precise HPD term 'mechanical and plumbing chases'.",
-      "measured_area": 40
+      "measured_area": 100,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 20
+        },
+        {
+          "floor_id": "typical-res",
+          "area": 20
+        }
+      ]
     },
     {
       "component_id": "lobby",
@@ -672,7 +743,99 @@
         "counted_area": 0
       },
       "notes": "Shows an amenity-type space that does NOT qualify (it is circulation).",
-      "measured_area": 300
+      "measured_area": 300,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 300
+        }
+      ]
+    },
+    {
+      "component_id": "shared-utility",
+      "name": "Shared utility / service room (serves both the shop and the residences)",
+      "portion": "shared",
+      "how_measured": "Ground-floor room footprint.",
+      "area_parts": [
+        {
+          "label": "shared utility room",
+          "sign": "add",
+          "width_ft": 10,
+          "depth_ft": 12,
+          "count": 1
+        }
+      ],
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 120
+        }
+      ],
+      "zoning": {
+        "treatment": "not_residential_portion",
+        "provision": "Shared floor area; ZR 23-20 proportional attribution",
+        "condition": "shared between the residential and commercial uses; attributed proportionately under ZR 23-20, not added to the residential exclusive zoning floor area here",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "Shared floor area is not part of the residential EXCLUSIVE zoning floor area; it is attributed proportionately under ZR 23-20 and carried on the reconciliation as a separate, conditional line."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "23-20",
+            "title": "Floor area regulations",
+            "quote": "Where floor area in a building is shared by multiple uses, the floor area for such shared portion shall be attributed to each use proportionately, based on the percentage each use occupies of the total floor area of the zoning lot, less any shared floor area",
+            "snapshot_id": "zr-23-20",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-20.snapshot.json",
+            "content_digest": "0685a2e4e7002830a1c007dea23ac68c5c441f1a32eeb2e37b78000c5765d7cc",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-20",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          },
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "measured from the exterior faces of exterior walls or from the center lines of walls separating two buildings",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "exclude",
+        "reason": "A shared service room; not within a dwelling unit.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Dwelling unit area is measured within the perimeter walls, from the finished face of all exterior walls and demising partitions",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 0
+      },
+      "notes": "The one small SHARED component: its 120 sq ft is split between the uses under ZR 23-20 (see the reconciliation's shared-floor-area line), not added to the residential exclusive floor area.",
+      "measured_area": 120
     },
     {
       "component_id": "retail-sales",
@@ -684,7 +847,7 @@
           "label": "retail sales floor",
           "sign": "add",
           "width_ft": 40,
-          "depth_ft": 50,
+          "depth_ft": 40,
           "count": 1
         }
       ],
@@ -738,7 +901,13 @@
         "counted_area": 0
       },
       "notes": "Shows the residential estimate uses the residential portion only.",
-      "measured_area": 2000
+      "measured_area": 1600,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 1600
+        }
+      ]
     },
     {
       "component_id": "retail-walls",
@@ -747,10 +916,10 @@
       "how_measured": "Retail wall footprint.",
       "area_parts": [
         {
-          "label": "retail walls",
+          "label": "retail storefront, demising wall to the core, back-room partition",
           "sign": "add",
-          "width_ft": 1.5,
-          "depth_ft": 100,
+          "width_ft": 2,
+          "depth_ft": 150,
           "count": 1
         }
       ],
@@ -804,7 +973,13 @@
         "counted_area": 0
       },
       "notes": "Commercial, excluded from the residential estimate.",
-      "measured_area": 150
+      "measured_area": 300,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 300
+        }
+      ]
     },
     {
       "component_id": "retail-back",
@@ -870,16 +1045,22 @@
         "counted_area": 0
       },
       "notes": "Commercial, excluded from the residential estimate.",
-      "measured_area": 400
+      "measured_area": 400,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 400
+        }
+      ]
     }
   ],
   "legal_unit_cap": {
-    "max_residential_floor_area": 7500,
+    "max_residential_floor_area": 11000,
     "factor": "680",
-    "raw_quotient": "11.0294",
-    "units_cap": 11,
+    "raw_quotient": "16.1765",
+    "units_cap": 16,
     "provision": "ZR 23-52",
-    "note": "The residential density ceiling is a separate figure, not derived from the physical estimate, and uses only the residential floor area; the retail floor area is not added.",
+    "note": "The residential density ceiling is a separate figure, not derived from the physical estimate, and uses only the residential floor area; the retail floor area is not added. The measured residential zoning floor area (10,428 sq ft) differs from the 11,000 sq ft the stated FAR would allow.",
     "citations": [
       {
         "kind": "captured",
@@ -899,12 +1080,13 @@
   },
   "what_it_shows": [
     "A mixed-use estimate uses the residential portion's zoning floor area, including the counted residential circulation and support space - not the whole building's and not the shop floor's.",
-    "The retail components appear in the one schedule but do not count toward the residential zoning floor area.",
-    "The two residential areas are summed separately and reconciled."
+    "Every component is marked exclusive to one use or shared; the one shared component (the utility room) is attributed proportionately under ZR 23-20 on a separate reconciliation line.",
+    "Every floor fits: on each floor the components, the exterior wall ring among them, add up to exactly the floor's stated outside outline."
   ],
   "what_it_does_not_show": [
     "It does not establish a typical ratio or validate any percentage.",
-    "It does not settle how shared stairs/elevators are allocated between the portions.",
+    "It does not settle how the mixed building combines its residential and commercial floor areas: the shared-space attribution's effect on the residential figure is withheld until the mixed-building text (ZR 35-31) is captured and read.",
+    "The withdrawn 0.6676 ratio of the earlier version was computed on a floor that did not fit (1,743 sq ft of components on a 1,260 sq ft outline); this rebuilt version gives 0.6828.",
     "It is not a legal or professional determination."
   ],
   "sources": [
@@ -916,41 +1098,46 @@
       "date": "2026-10-07",
       "summary": "Example created for the measurement basis record.",
       "by": "scenario-optimization-engineer"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Rebuilt so that every floor has a stated outside outline and the components on each floor add up to it exactly. The earlier version listed 1,743 sq ft of components on an upper floor whose stated outline was 1,260 sq ft (the apartment rooms alone filled the inside outline) and stated no ground-floor outline. The earlier 0.6676 ratio is WITHDRAWN; the rebuilt building gives residential exclusive zoning floor area 10,428, HPD 7,120, ratio 0.6828. A shared utility room and the ZR 23-20 attribution line were added.",
+      "by": "scenario-optimization-engineer"
     }
   ],
   "reconciliation": {
-    "residential_zoning_floor_area": 6920,
-    "total_hpd_dwelling_unit_area": 4620,
+    "residential_zoning_floor_area": 10428,
+    "total_hpd_dwelling_unit_area": 7120,
     "bridge": [
       {
         "component_id": "demising-partitions",
         "direction": "subtract",
-        "area": 100
+        "area": 384
       },
       {
         "component_id": "exterior-walls",
         "direction": "subtract",
-        "area": 560
+        "area": 904
       },
       {
         "component_id": "corridor",
         "direction": "subtract",
-        "area": 400
+        "area": 440
       },
       {
         "component_id": "stair",
         "direction": "subtract",
-        "area": 660
+        "area": 900
       },
       {
         "component_id": "elevator",
         "direction": "subtract",
-        "area": 240
+        "area": 280
       },
       {
         "component_id": "chases",
         "direction": "subtract",
-        "area": 40
+        "area": 100
       },
       {
         "component_id": "lobby",
@@ -959,9 +1146,63 @@
       }
     ],
     "ratio": {
-      "numerator": 4620,
-      "denominator": 6920,
-      "value": "0.6676"
+      "numerator": 7120,
+      "denominator": 10428,
+      "value": "0.6828"
     }
+  },
+  "floors": [
+    {
+      "floor_id": "ground",
+      "label": "Ground floor (retail, residential lobby, shared utility, core)",
+      "count": 1,
+      "outline_parts": [
+        {
+          "width_ft": 44,
+          "depth_ft": 70
+        }
+      ]
+    },
+    {
+      "floor_id": "typical-res",
+      "label": "Typical residential floor (one of four identical)",
+      "count": 4,
+      "outline_parts": [
+        {
+          "width_ft": 44,
+          "depth_ft": 58
+        }
+      ]
+    }
+  ],
+  "shared_floor_area": {
+    "present": true,
+    "shared_component_ids": [
+      "shared-utility"
+    ],
+    "shared_total": 120,
+    "residential_exclusive_floor_area": 10428,
+    "commercial_exclusive_floor_area": 2300,
+    "total_floor_area_zoning_lot": 12848,
+    "attribution_base": 12728,
+    "residential_share_value": "0.8193",
+    "attributed_to_residential": "98.32",
+    "attributed_to_commercial": "21.68",
+    "capture": {
+      "kind": "captured",
+      "section": "23-20",
+      "title": "Floor area regulations",
+      "quote": "Where floor area in a building is shared by multiple uses, the floor area for such shared portion shall be attributed to each use proportionately, based on the percentage each use occupies of the total floor area of the zoning lot, less any shared floor area",
+      "snapshot_id": "zr-23-20",
+      "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-20.snapshot.json",
+      "content_digest": "0685a2e4e7002830a1c007dea23ac68c5c441f1a32eeb2e37b78000c5765d7cc",
+      "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-20",
+      "last_amended": "2024-12-05",
+      "edition": "",
+      "date_read": "",
+      "status_note": ""
+    },
+    "conditional_note": "CONDITIONAL. ZR 23-20 gives the proportional attribution quoted above. How a mixed building in a Commercial District then COMBINES its residential and commercial floor areas is governed by the mixed-building floor-area rules (the reviewer names ZR 35-31), which are not captured yet, so the effect of this 98.32 sq ft on the residential figure is withheld. The ratio below uses the residential EXCLUSIVE floor area (10,428 sq ft) only; the attribution is shown but not added.",
+    "note": "One small component (the 120 sq ft shared utility room) is shared between the shop and the residences. Under ZR 23-20 its floor area is attributed to each use by that use's share of the total floor area of the zoning lot, less the shared floor area."
   }
 }

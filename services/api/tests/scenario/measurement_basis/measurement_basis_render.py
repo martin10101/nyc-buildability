@@ -80,12 +80,67 @@ def render_page(data: dict) -> str:
     lines.append("")
     lines.append(data["assumptions_note"])
     lines.append("")
+    lines.extend(_render_floors(data))
     lines.extend(_render_schedule(data))
     lines.extend(_render_law(data))
     lines.extend(_render_reconciliation(data))
+    lines.extend(_render_shared(data))
     lines.extend(_render_legal_cap(data))
     lines.extend(_render_lists(data))
     return "\n".join(lines) + "\n"
+
+
+def _render_floors(data: dict) -> list[str]:
+    lines = ["## The floors and the fit (every floor adds up to its outline)", ""]
+    lines.append("| Floor | Count | Outside outline (sq ft) | Components on the floor (sq ft) "
+                 "| Difference |")
+    lines.append("|---|---|---|---|---|")
+    for floor in data["floors"]:
+        outline = lib.outline_area(floor)
+        total = lib.floor_component_total(data, floor["floor_id"])
+        lines.append(
+            f"| {_esc(floor['label'])} | {floor['count']} | {_num(outline)} | {_num(total)} | "
+            f"{_num(total - outline)} |"
+        )
+    lines.append("")
+    lines.append("On every floor the components listed in the schedule - the exterior wall ring "
+                 "among them - add up to exactly the floor's stated outside outline (difference "
+                 "zero), so the building fits.")
+    lines.append("")
+    return lines
+
+
+def _render_shared(data: dict) -> list[str]:
+    shared = data["shared_floor_area"]
+    lines = ["## Shared floor area between the uses (ZR 23-20)", ""]
+    if not shared["present"]:
+        lines.append(shared["note"])
+        lines.append("")
+        return lines
+    lines.append(shared["note"])
+    lines.append("")
+    lines.append(f"- Residential exclusive zoning floor area: "
+                 f"{_num(shared['residential_exclusive_floor_area'])} sq ft.")
+    lines.append(f"- Commercial exclusive floor area: "
+                 f"{_num(shared['commercial_exclusive_floor_area'])} sq ft.")
+    lines.append(f"- Shared floor area: {_num(shared['shared_total'])} sq ft "
+                 f"({', '.join(shared['shared_component_ids'])}).")
+    lines.append(f"- Total floor area of the zoning lot: "
+                 f"{_num(shared['total_floor_area_zoning_lot'])} sq ft; less the shared floor "
+                 f"area, the attribution base is {_num(shared['attribution_base'])} sq ft.")
+    lines.append(f"- Residential share = residential exclusive / base = "
+                 f"{shared['residential_share_value']}.")
+    lines.append(f"- Attributed to the residential use (ZR 23-20): "
+                 f"{shared['attributed_to_residential']} sq ft; to the commercial use: "
+                 f"{shared['attributed_to_commercial']} sq ft.")
+    lines.append("")
+    cite = shared["capture"]
+    lines.append(f"Quoted (ZR {cite['section']}, capture `{cite['snapshot_id']}`, digest "
+                 f"`{cite['content_digest']}`): \"{cite['quote']}\"")
+    lines.append("")
+    lines.append(shared["conditional_note"])
+    lines.append("")
+    return lines
 
 
 def _render_schedule(data: dict) -> list[str]:

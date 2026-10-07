@@ -10,9 +10,17 @@ This is a draft reading of the law and a guideline by an AI; it is not professio
 
 ## The building in this example
 
-A made-up four-storey R6B walk-up: a 40 ft x 50 ft floor plate on each of four floors, two apartments per floor, one stair, no elevator, no lobby, no cellar and no parking. No ZR 23-23 allowance condition is shown, so every above-grade component counts in full under zoning.
+A made-up four-storey R6B walk-up: four identical 40 ft x 50 ft floors, two apartments per floor reached off a shared corridor, one stair that passes through every floor, no elevator, no lobby, no cellar and no parking. No ZR 23-23 allowance condition is shown, so every above-grade component counts in full under zoning. On each floor the components, the exterior wall ring among them, add up to exactly the 2,000 sq ft outline.
 
-Design choices (floor plate, number of floors, room sizes) are made up for this example and are editable; they are not validated here.
+Design choices (floor plate, number of floors, room sizes) are made up for this example and are editable; they are not validated here. The per-floor statement lets the fit be checked floor by floor.
+
+## The floors and the fit (every floor adds up to its outline)
+
+| Floor | Count | Outside outline (sq ft) | Components on the floor (sq ft) | Difference |
+|---|---|---|---|---|
+| Typical residential floor (one of four identical) | 4 | 2,000 | 2,000 | 0 |
+
+On every floor the components listed in the schedule - the exterior wall ring among them - add up to exactly the floor's stated outside outline (difference zero), so the building fits.
 
 ## One area schedule (measured from the layout)
 
@@ -89,6 +97,10 @@ Ratio for this example = total HPD-measured dwelling-unit area (6,032) / residen
 
 This ratio belongs to THIS made-up example only. Two or three examples cannot establish a typical figure; no percentage is validated here.
 
+## Shared floor area between the uses (ZR 23-20)
+
+A single-use residential building: no floor area is shared between uses, so the ZR 23-20 proportional attribution does not apply here.
+
 ## The legal unit cap (a separate figure)
 
 - Maximum residential floor area allowed: 9,000 sq ft (ZR 23-52).
@@ -117,4 +129,5 @@ This ratio belongs to THIS made-up example only. Two or three examples cannot es
 | Date | Change | By |
 |---|---|---|
 | 2026-10-07 | Example created for the measurement basis record. | scenario-optimization-engineer |
+| 2026-10-07 | Added the per-floor statement (four identical 40x50 floors) so the fit can be checked; the components on each floor add up to the 2,000 sq ft outline. No area or ratio changed (residential zoning floor area 8,000; HPD 6,032; ratio 0.7540). | scenario-optimization-engineer |
 
