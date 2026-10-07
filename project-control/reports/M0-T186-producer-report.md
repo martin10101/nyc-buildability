@@ -59,8 +59,8 @@ Python = `/root/project/lanes-runtime/venv/bin/python` (3.12.3), `PYTHONDONTWRIT
 | commit A alone `685ca1f3` (ci-exp/red) | 37554194212 / 112576500175 (log 60574 B, sha256 `70317417…334408`) | `test_transient_…` and `test_persistent_…` RED — `PermissionError: [Errno 13]` escapes at `_exclusive` line 133; 3 failed (the 3rd = the wrong platform-fact test, WinError 32 at its unlink), 3959 passed, 60 skipped |
 | A+B+C `6d5899ce` | 37554223543 / 112576591960 (push); 37554228069 / 112576606545 (pr) | the four injected tests GREEN; only the wrong platform-fact test failed (WinError 32 at unlink); 1 failed, 3961 passed, 60 skipped each |
 | probe P `e3b5417f` (ci-exp/probe) | 37555462888 / 112580543291 (log 72219 B, sha256 `1010705a…1ae6db`) | P1–P5 (see §3); 6 failed (intentional `pytest.fail`), 3961 passed, 60 skipped |
-| commit D final head | — | `[ORCHESTRATOR TO SUPPLY: final-head runs]` — expect the supervisor-bridge job GREEN in both runs (the race test + the four branch tests green, the wrong test gone; ≥ 1165 tests, 0 failures) |
-| commit X (experiment) | — | `[ORCHESTRATOR TO SUPPLY]` — expect `test_real_race_through_exclusive_holds_mutual_exclusion` RED on Windows against the pre-fix loop (a PermissionError escapes) |
+| commit X `968b49ec` (ci-exp/red2; pre-fix loop, NEVER merged) | 37557306466 / 112586391779 (log 69079 B, sha256 `b325f790…e990df5`) | `test_real_race_through_exclusive_holds_mutual_exclusion` RED — `AssertionError: an exception other than the typed refusal escaped: ['PermissionError(errno=13)', …]` (26 escaped) — with the two branch tests; 3 failed, 3959 passed, 60 skipped |
+| final head `1e77daeb` (A+B+C+D+E) | 37557648832 / 112587475709 (push; log 49957 B, sha256 `25fc47ec…1a8a64`); 37557652598 / 112587488007 (pr; log 50655 B, sha256 `002eb872…95991a`) | both runs conclusion success; all 50 tests of this file pass; 3962 passed, 60 skipped each |
 
 ## 3. Mutation proof — two layers
 
@@ -117,16 +117,22 @@ acquire-side crash. Recertification: alters the `tools/agent_supervisor/` tree h
 ## 7. Classification and status
 
 - Classification: **real supervisor defect** in `_exclusive()`'s acquire loop. (a) the RACE is PROVED
-  (probe P4: 1,468/61,758 create `PermissionError` errno 13, no external process), the kernel reason
-  NOT ESTABLISHED (`os.open` gives no winerror; P2 and P3 do not reproduce the create failure). (b)
-  RULED OUT as a necessary cause (P4 reproduces it with no external process; P2/P3 cannot exclude an
-  external handle ever having contributed). (c) RULED OUT (P4 is raw-`os` in isolated tmp_path; the
+  (probe P4: 1,468/61,758 create `PermissionError` errno 13, the test holding no other handle), the
+  kernel reason NOT ESTABLISHED (`os.open` gives no winerror; P2 and P3 do not reproduce the create
+  failure). (b) NOT SUPPORTED by the evidence as the cause: the probe cannot observe whether another
+  process touched the file; a held handle does NOT deny the create (P2 create succeeds; P3 create
+  raises FileExistsError), and in P4 no unlink failed (0 of 21,197), which a plain external handle
+  would cause — so an ordinary external handle is not the mechanism; a filter driver acting without an
+  ordinary handle cannot be excluded. (c) RULED OUT (P4 is raw-`os` in isolated tmp_path; the
   production exception is in `_exclusive`). (d) RULED OUT (a real OS outcome, not a timing threshold).
 - Round-1 statements withdrawn: "os.open shares delete on Windows" and the platform-fact test that
   rested on it (false — the unlink raised WinError 32); candidate (a) "PROVED" as delete-pending
-  (downgraded: race proven, kernel reason not); candidate (b) "fully excluded" (corrected to
-  unnecessary).
-- STATUS: **NOT VERIFIED_CLOSED.** Closing condition (convergence record §8): commit D's final-head
-  windows-latest job GREEN in both runs AND the commit-X experiment showing the race test RED on
-  Windows against the pre-fix loop. Still open: those two Windows runs (the producer cannot run Windows
-  here). The module-comment wording is now corrected (commit E). No blocker.
+  (downgraded: race proven, kernel reason not); candidate (b) "ruled out / no external process"
+  (corrected to NOT SUPPORTED by the evidence — see above and convergence record §2.2).
+- STATUS: **VERIFIED_CLOSED** (convergence record §8). Both closing conditions MET against the frozen
+  files: the final head `1e77daeb` is GREEN in both windows-latest runs (jobs 112587475709 /
+  112587488007, 3962 passed / 60 skipped each, all 50 tests of this file pass), and commit X (pre-fix
+  loop) turned the race test RED on Windows (job 112586391779: `an exception other than the typed
+  refusal escaped: ['PermissionError(errno=13)', …]`, 3 failed). The kernel-level reason stays
+  unestablished and is stated as such; not repaired by this task: DB-160, DB-152, DB-153 (siblings,
+  §6) and DB-163 (a separate windows-latest flake in another test file). No blocker.
