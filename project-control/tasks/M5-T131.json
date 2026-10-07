@@ -26,12 +26,13 @@
     "services/api/app/scenario/three_answers/contract.py",
     "services/api/app/contracts/study_contracts.py",
     "services/api/tests/contracts/test_results_way_rules.py",
+    "services/api/tests/contracts/test_contract_serializers.py",
     "project-control/reports/M5-T131-producer-report.md"
   ],
   "forbidden_paths": [
     "packages/** (no schema, generated file or fixture changes); services/api/app/_contract_schemas/**",
     "every other file under services/api/app/** (no engine, route or drawing edit); the decision modules of M5-T129 and the new modules of M5-T130",
-    "services/api/tests/contracts/test_results_three_ways_slot.py and every other existing test; apps/**; docs/**",
+    "services/api/tests/contracts/test_results_three_ways_slot.py and every other existing test except the one guard test named in the scope correction; apps/**; docs/**",
     ".github/**; CLAUDE.md; .claude/**; tools/**; any dependency file",
     "project-control/** except the producer report named in allowed_paths"
   ],
@@ -100,7 +101,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:29.581528+00:00",
-  "updated_at": "2026-10-07T16:00:54.221545+00:00",
+  "updated_at": "2026-10-07T16:06:11.956509+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -128,6 +129,20 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed in wave 5 at the contract head 83a592df (integration head 596c034f, the merge of task M0-T183); builder backend-engineer in an isolated worktree; see project-control/reports/WAVE5-2026-10-07-concurrency-record.md."
+    },
+    {
+      "at": "2026-10-07T16:06:11.956358+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Scope correction at the claim seam, before any builder was started: an existing guard test pins the set of modules of services/api/app/contracts/ and failed on this task's seeded placeholder; the placeholder was removed by the orchestrator and that one test function is added to the allowed paths (the builder adds the new module's name after showing that it does not reach the serializer)."
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-07T16:04:44+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-07, at the claim seam, before any builder was started] An existing guard, `services/api/tests/contracts/test_contract_serializers.py::test_study_contracts_is_the_proven_non_serializer_submodule`, pins the exact set of modules of `services/api/app/contracts/` that never reach the provenance serializer; the seeded placeholder of this task's new module `results_way_rules.py` made it fail at the claim head (found by the orchestrator's own run). The placeholder was removed by the orchestrator, and that ONE test is added to the allowed paths: the builder adds the new module's name to the set in that test, and only that, after showing that the module does not reach the serializer (which is what the test means). Nothing else in that file changes."
     }
   ]
 }
