@@ -35,7 +35,8 @@ from app.scenario.three_answers.result_ways import (
 from .test_result_ways_lib import base_inputs, k20, plain_inputs, support_all
 
 _APP_ROOT = pathlib.Path(rw.__file__).resolve().parents[2]  # services/api/app
-_MODULE_FILES = ("result_ways.py", "result_way_inputs.py")
+# The module is three files in one package (result_ways re-exports the records):
+_MODULE_FILES = ("result_ways.py", "result_way_inputs.py", "result_way_conditions.py")
 
 
 # --------------------------------------------------------------------------- a battery of cases
@@ -63,12 +64,13 @@ def _battery() -> list[ResultWays]:
 
 # --------------------------------------------------------------------------- S9: new files only
 def test_nothing_under_app_imports_the_module_yet():
-    """S9: a test proves that nothing under services/api/app imports the module."""
+    """S9: a test proves that nothing under services/api/app imports the module. The three
+    module files may reference each other (result_ways imports the other two); no OTHER app
+    file names any of them."""
     offenders = [
         str(path) for path in _APP_ROOT.rglob("*.py")
         if path.name not in _MODULE_FILES
-        and ("result_ways" in path.read_text(encoding="utf-8")
-             or "result_way_inputs" in path.read_text(encoding="utf-8"))
+        and "result_way" in path.read_text(encoding="utf-8")
     ]
     assert offenders == [], f"these modules already reference the result-way module: {offenders}"
 

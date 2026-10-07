@@ -5,14 +5,31 @@ files that nothing calls yet; it computes no zoning number. Contract/claim-seam 
 `5f8b78ce452b4a214cceeb314372f6968373acf6`. Worktree:
 `/root/project/nyc-buildability/.claude/worktrees/agent-a0f3c57f1810681dc`.
 
-Files (all NEW / placeholder-replacing; no existing file changed):
-- `services/api/app/scenario/three_answers/result_way_inputs.py` - the records: input records
-  (enums + `ResultWayInputs`), the reach records (mirroring M5-T127, NOT importing it), the two
-  legal measures of reading O9, the result vocabulary (keys, labels, gap/condition kinds) and
-  the way (output) records.
-- `services/api/app/scenario/three_answers/result_ways.py` - the decision logic and the ONE
-  public function; re-exports the records (a compatibility facade), so its public interface is
-  complete.
+## Round 2 (before any review; one commit on top of 85bca681)
+
+Two orchestrator points, both scope corrections: (1) SIZE - `result_ways.py` was 664 source
+lines; the allowed paths now also permit `result_way_*.py`, so the cross-result rules were
+split into a new module `result_way_conditions.py`. After the split every new file is under the
+600-line warning threshold and `tools/modularity_check.py --check` names none of them. (2) The
+condition kind for "could not be compared" (open question 3) is completed as reading O4:
+`unchecked_condition`, not `contradicted_record` (nothing contradicts the figure; the
+comparison was not made). No other behaviour changed; the other three open questions stand.
+
+Files (all NEW / placeholder-replacing; no existing file changed), with source-line counts as
+`tools/modularity_check.py` counts them:
+- `services/api/app/scenario/three_answers/result_way_inputs.py` (409 SLOC) - the records:
+  input records (enums + `ResultWayInputs`), the reach records (mirroring M5-T127, NOT importing
+  it), the two legal measures of reading O9, the result vocabulary (keys, labels, gap/condition
+  kinds) and the way (output) records.
+- `services/api/app/scenario/three_answers/result_way_conditions.py` (292 SLOC; NEW in round 2)
+  - the cross-result rules: the K20 unchecked condition, the area condition (reading O4), the
+  blanket withholding, the commercial-overlay block and the shared withhold builders and reach
+  helpers. Imported only by `result_ways.py`; it computes no zoning number and holds no table of
+  what a reading supports.
+- `services/api/app/scenario/three_answers/result_ways.py` (448 SLOC) - the per-result deciders,
+  the assembly and the ONE public function `decide_result_ways`; imports the records and the
+  cross-result rules, and re-exports the records (a compatibility facade), so its public
+  interface is unchanged (every test import still resolves).
 - `services/api/tests/scenario/three_answers/test_result_ways_lib.py` - shared test builders
   (reads the reach rows through the loader; no test functions).
 - `test_result_ways.py` (invariants: S7, S9, H7), `test_result_ways_benchmark.py` (S1, S6),
@@ -81,9 +98,11 @@ deterministic: no I/O, clock, randomness, rule evaluation or zoning number.
 - **O3** a result computed from a withheld result is withheld and names it; from a conditional it
   carries the conditions: `building_option` (footprint from the withheld rear yard) is always
   withheld and names the rear yard; the floor-area/unit conditions add up.
-- **O4** recorded area with no outline to compare -> conditional on the recorded figure (never
-  settled); no recorded area -> withheld; outline never substituted: `_area_condition`,
-  `_floor_area_way`, `_unit_standard_way`.
+- **O4** (COMPLETED round 2) recorded area the outline could not be compared with -> conditional
+  on the recorded figure, kind `unchecked_condition` (the comparison was not made; nothing
+  contradicts it, so `contradicted_record` does not fit); figures that DISAGREE stay
+  `contradicted_record`; no recorded area -> withheld; outline never substituted. In
+  `result_way_conditions.area_condition`, `result_ways._floor_area_way`, `_unit_standard_way`.
 - **O5** overlay: the caller states per family whether a reading supports it; the module holds NO
   table: `_overlay_block` + `OverlayResultSupport`. A test scans the source for overlay-chapter
   section numbers (none present).
@@ -111,15 +130,15 @@ deterministic: no I/O, clock, randomness, rule evaluation or zoning number.
    way in this milestone (one-district milestone, R6B; `housing_kind` is a design choice, rule 2).
    A district-less lot is not decided by the work order; the module does not specially withhold on
    it. Listed for reviewer confirmation.
-3. **`AreaAgreement.COULD_NOT_COMPARE` condition kind.** The work order makes it conditional on the
-   recorded figure (O4, section 6) but section 0 lists only three conditional kinds, none of which
-   is "could not be compared". The module uses `contradicted_record` (the only recorded-figure
-   kind) with honest wording ("the tax-map outline area could not be computed to compare it").
-   Reviewers to confirm the kind choice.
-4. **Commercial overlay NOT read.** The work order names the not-read rule for the special-district
+3. **Commercial overlay NOT read.** The work order names the not-read rule for the special-district
    column (K10) but not explicitly for the overlay column. The module WITHHOLDS every residential
    result as missing information (K10 generalised + section 10 / R240: a column not read is never
    taken as 'none'). Listed for reviewer confirmation.
+
+RESOLVED in round 2 (was open question 3): the `AreaAgreement.COULD_NOT_COMPARE` condition kind is
+now `unchecked_condition` by the orchestrator's completed reading O4 (the comparison was not made;
+nothing contradicts the figure). The test `test_s5_figure_that_could_not_be_compared_is_an_
+unchecked_condition_o4` quotes both the reading and the contract's description of the kinds.
 
 ## The two legal measures (reading O9) with their capture ids
 
@@ -154,44 +173,38 @@ A test proves the ONLY numeric literals in both module files are `100.0` and `13
 
 ## Modularity answers
 
-- New focused modules only; no existing file grows. `result_way_inputs.py` = 409 SLOC;
-  `result_ways.py` = 664 SLOC. The input records, reach records, two legal measures, result
-  vocabulary and way records were extracted into `result_way_inputs.py` and the tests split into
-  four files to keep each under the thresholds.
-- `result_ways.py` sits in the 600-750 band (WARNING, not the hard limit; the modularity check
-  passes, failures 0). **Cohesion justification:** it is one responsibility - decide the way of
-  each result - and `allowed_paths` for this task permits exactly two app modules
-  (`result_ways.py`, `result_way_inputs.py`), so it cannot be split into a third module without
-  leaving scope; everything that is data/record has already been moved to the records module, and
-  the remaining lines are decision logic plus the per-result reason / resolved_by text the contract
-  requires. Flagged for the reviewers.
+- New focused modules only; no existing file grows. After the round-2 split EVERY file is under
+  the 600-line warning threshold as `tools/modularity_check.py` counts source lines:
+  `result_way_inputs.py` = 409 SLOC, `result_way_conditions.py` = 292 SLOC, `result_ways.py` =
+  448 SLOC; the four test files are each well under the threshold.
+- `tools/modularity_check.py --check` prints NO warning for any of these files (failures 0; a
+  `grep result_way` over its output returns nothing). The split follows a real responsibility
+  seam: the records (inputs, measures, vocabulary, way records) in `result_way_inputs.py`; the
+  cross-result rules (K20/area/blanket/overlay + shared builders) in `result_way_conditions.py`;
+  the per-result deciders and the public function in `result_ways.py`. `result_ways.py` re-exports
+  the records so every test import still resolves (a compatibility facade).
 
-## Checks (DIRECT exit codes)
+## Checks (DIRECT exit codes; round-2 re-run)
 
 - **a** `python -m ruff check .` (from services/api): **exit 0** - All checks passed.
 - **b** `python -m pytest -q -p no:cacheprovider tests/scenario/three_answers`: **exit 0** - 98
   passed, 2 skipped (both pre-existing skips in test_competitor_error_guards_lane_a.py, unrelated).
-- **c** `python -m pytest -q -p no:cacheprovider tests/contracts tests/spatial
-  tests/rules/reference_cases`: **exit 0** - 943 passed, 3 xfailed. (Confirms the existing
-  `tests/spatial/test_lot_reach.py::test_nothing_imports_the_module_yet` still passes - the module
-  does NOT import or name `lot_reach`, which is why it defines its own reach records.)
-- **d** `python3 tools/modularity_check.py --check` (repo root): **exit 0** - failures 0, 30
-  warnings (incl. the `result_ways.py` warn-band signal above). `python3
-  scripts/lanes/check_lane_paths.py --coverage`: **exit 0** - 9127 files, each owned by one lane.
-- **e** two mutation proofs, run against a mutated COPY outside the repository (a pytest plugin
-  injects the mutant under the real module name; the repo files are never touched):
-  - (1) make a not-checked K20 condition count as checked (`_is_unchecked` -> False): **exit 1**,
-    13 failed. Meaningful behavioural failures: test_s6_not_checked_makes_every_zoning_result_
-    conditional_not_settled, test_s1a/test_s1b, test_h3_c1/test_h3_c2, test_h4_interior...,
-    test_h9_statement..., test_s5_figures_that_agree..., test_s8_supported... (conditional results
-    became settled). (3 further failures are incidental: the invariant tests read the module via
-    `rw.__file__`, which the injection points at the scratchpad copy.)
-  - (2) make a result that depends on a withheld result be shown (`_building_option_withheld` ->
-    False): **exit 1**, 6 failed. Meaningful: test_s8_a_dependent_result_names_what_it_depends_on,
-    test_s1a, test_s1b (building option became available). (3 incidental, as above.)
-- **f** `git status --porcelain` and `git diff --name-status <contract-head> HEAD` - run after the
-  single commit; the result (only the allowed paths, all added except the report which replaces a
-  placeholder; working tree clean) is reported in the producer return.
+- **c** `python -m pytest -q -p no:cacheprovider tests/contracts tests/spatial`: **exit 0** - 887
+  passed, 3 xfailed. (tests/rules/reference_cases NOT run in this worktree per the round-2
+  instruction; another task changed those files on the branch. Confirms the existing
+  `tests/spatial/test_lot_reach.py::test_nothing_imports_the_module_yet` still passes - no module
+  names `lot_reach`, which is why the reach records are the module's own.)
+- **d** `python3 tools/modularity_check.py --check` (repo root): **exit 0** - failures 0, 29
+  warnings; `grep result_way` over the output returns NOTHING (no warning names any of the three
+  modules). `python3 scripts/lanes/check_lane_paths.py --coverage`: **exit 0** - 9132 files, each
+  owned by one lane.
+- **e (round 1, recorded for the history)** two mutation proofs against a mutated COPY outside the
+  repository (a pytest plugin injects the mutant; the repo files are never touched): (1) a
+  not-checked K20 condition counted as checked -> exit 1 (conditional results became settled, S1/
+  S6/H3/H4/H9/S5/S8 failed); (2) a withheld-dependent building option shown -> exit 1 (S8-dependent
+  /S1 failed). Round 2 did not re-run the mutation proofs (check e this round is git status/diff).
+- **f** `git status --porcelain` empty after the commit and `git diff --name-status 85bca681 HEAD`
+  shows only the allowed paths - reported in the producer return.
 
 ## Assumptions, limitations, doubts
 
@@ -199,8 +212,7 @@ A test proves the ONLY numeric literals in both module files are `100.0` and `13
   the orchestrator's reading, named in the code; the M5-T128 illustrative document used
   `missing_information` for the coverage example - that document is not the decision and O1 governs
   here. Reviewers to confirm.
-- The four O10 combinations above are withheld, never guessed; they are the open questions.
-- `result_ways.py` is in the modularity warning band (664 SLOC) for the reason recorded above; a
-  reviewer decision on whether a path-exact exception or a different split is wanted.
+- Three O10 combinations stay open (special-density evidence-not-in-one; district/housing-kind not
+  given; overlay column not read); the fourth (could-not-compare kind) is resolved as reading O4.
 - No reason, assumption, resolved_by or settled_by text contains "professional review" (H7/K7),
-  proven by a test over every emitted way and a source scan.
+  proven by a test over every emitted way and a source scan across all three module files.

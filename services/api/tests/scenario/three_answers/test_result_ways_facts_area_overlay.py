@@ -122,13 +122,21 @@ def test_s5_figures_that_disagree_name_both_figures_and_make_no_choice():
     assert "survey" in area_cond.settled_by.lower()
 
 
-def test_s5_figure_that_could_not_be_compared_is_conditional_on_the_recorded_figure():
+def test_s5_figure_that_could_not_be_compared_is_an_unchecked_condition_o4():
+    # Reading O4 (completed by the orchestrator, round 2): where the recorded lot area COULD
+    # NOT be compared with the outline's area, the condition's kind is 'unchecked_condition'
+    # (the comparison was not made), NOT 'contradicted_record' - which the contract describes
+    # as "a recorded figure that another recorded figure contradicts" (results.schema.json
+    # value_condition.kind), and here nothing contradicts the recorded figure. The assumption
+    # says in plain words what was not checked.
     ways = decide_result_ways(plain_inputs(
         area=LotAreaFigures(10075.0, AreaAgreement.COULD_NOT_COMPARE, None), **k20(True)))
     value = ways.floor_area_allowance.values[0]
     assert is_conditional(value)
-    area_cond = next(c for c in value.way.conditions if c.kind == "contradicted_record")
-    assert "could not be computed to compare" in area_cond.assumption
+    assert condition_kinds(value) == {"unchecked_condition"}
+    area_cond = next(c for c in value.way.conditions if c.kind == "unchecked_condition")
+    assert "not compared with the tax-map outline's area" in area_cond.assumption
+    assert area_cond.settled_by  # what would settle it
 
 
 def test_s5_no_recorded_area_is_withheld_and_the_outline_never_stands_in():
