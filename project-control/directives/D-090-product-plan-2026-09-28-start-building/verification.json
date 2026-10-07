@@ -3,7 +3,7 @@
  "directive_id": "D-090",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-090-BOOTSTRAP at capture; tasks cite them through directive_refs. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": "2026-10-07T04:49:45+00:00",
+ "verified_at": "2026-10-07T06:25:35+00:00",
  "task_verifications": [
   {
    "directive_id": "D-090",
@@ -796,130 +796,215 @@
     "D-090-R437"
    ],
    "producer": "scenario-optimization-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da",
+   "reviewed_manifest_sha256": "1d617a09359a7501bec54d673aefd6a4379e05b4bab7161c1ed1e41c0a716370",
    "requirements": [
     {
      "id": "D-090-R357",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "docs/measurement-basis/MEASUREMENT_BASIS.md \u00a71c (lines 145-151) states the zoning and HPD bases \"measure different things\" and are \"never mixed\"; HCR's common-space percentage is named as a third basis and \"is not used here\".",
+      "Each schedule row (MEASUREMENT_BASIS.md \u00a72 table, lines 163-183; each example page) names the component's treatment under BOTH systems separately, so no figure combines the two bases.",
+      "Double-deduction is prevented by construction: reconciliation lists each differing component once; test_mutation_proof_e_a_duplicated_bridge_step_fails and _a_component_deducted_under_both_systems_fails (test file lines 195-214) reproduce that a second deduction fails the check.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R358",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md orders definitions (\u00a71 \"The two areas, each defined by its source\", line 26) BEFORE the ratio formula (\u00a74, line 211). I confirmed the text position: \"floor area\" definition precedes \"total HPD-measured dwelling-unit area\".",
+      "Reproduced by test_record_defines_each_area_before_the_formula (test file lines 63-68): asserts text.find(\"floor area\") < text.find(\"total hpd-measured dwelling-unit area\") \u2014 passes.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R359",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a78 \"Open points for the owner\" (lines 275-320) assembles the three return parts for the coming owner update: the proposed starting values as unapproved assumptions (points 1-3: ratio, 700 sq ft, editable inputs), the evidence/basis for each (\"*Basis:*\" on each point), and the uncertainty (\"unvalidated\", \"not sure\", \"not known\").",
+      "The fourth part (how the count moves) is present only as DIRECTION, not a numeric table: \u00a78 closing paragraph (lines 322-327) states directions only and explicitly \"no count is computed in this record\".",
+      "LEFT / owed: R359's harness (\"the owner update holds the four parts, the last as a worked table\") is a post-acceptance owner update; the literal showing to the owner has not happened at this head (task status awaiting_gate), and a numeric worked table of count movement cannot exist until an estimator does. This task does its share (prepares the content); the owner update is named as the remaining step. Not a blocker for a RECORD task.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R387",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task IS the reviewed measurement-basis record that resolves which area the estimate starts from, which area an apartment is measured as, and how they relate (MEASUREMENT_BASIS.md \u00a71, \u00a73, \u00a74). No estimator is built: `git show --name-only 0a3ffed3 dbffb46b` (the two material commits) touch ONLY docs/measurement-basis/**, services/api/tests/scenario/measurement_basis/** and project-control/reports/M5-T126-producer-report.md \u2014 nothing under services/api/app/**.",
+      "Record header (lines 3-4, 18): \"No estimator is built by this record and no program code is changed.\" Forbidden_paths in the packet bar services/api/app/**; the diff honours it.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R388",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a73 line 205: \"No generic gross-to-net loss percentage is applied to zoning floor area (R388, R397).\" I searched the record and all three examples for any multiplication of zoning floor area by a generic figure (grep for gross-to-net / \"% of zoning\" / \"times 0.\" / 25% / 75%): the ONLY hit is that negative statement; no such arithmetic exists.",
+      "The method is inclusion-based: measurement_basis_lib.residential_zoning_floor_area and total_hpd_dwelling_unit_area (lib lines 236-241) each SUM the components that count; neither multiplies by a loss factor.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R389",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The written step-by-step conversion exists: MEASUREMENT_BASIS.md \u00a72 (one schedule, each component's zoning vs HPD treatment with its governing provision) and \u00a73 (two separate calculations then reconcile), each component carrying its law text (ZR 12-10 / 23-23x) or the HPD guideline quote.",
+      "A worked example accompanies it: example-a/-b/-c pages show the schedule, both totals computed separately, and a line-by-line reconciliation; test_both_areas_summed_separately_and_reconciled and test_the_bridge_accounts_for_every_square_foot_of_the_difference (test lines 147-170) reproduce that nothing is deducted twice.",
+      "Each space zoning already leaves out is named and NOT re-deducted (schedule rows for cellar, mechanical room; test_nothing_already_out_of_zoning_is_deducted_again, lines 120-128). LEFT: the act of showing the owner is the orchestrator's post-acceptance step.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R392",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a75 (lines 225-234): the legal unit cap is a \"separate figure\", \"not derived from the physical estimate (and the physical estimate is not derived from it) - R392, R404\".",
+      "Rounding is applied ONLY to the legal cap: measurement_basis_lib.legal_unit_cap_units (lines 252-259) applies the ZR 23-52 three-quarters rule to max residential floor area / 680; the physical areas (residential_zoning_floor_area, total_hpd_dwelling_unit_area) stay exact decimals with no unit-rounding.",
+      "Each example shows a distinct units_cap (A=13, B=17, C=11) alongside its measured areas; test_legal_cap_is_separate_and_recomputes (lines 281-288) asserts the measured area differs from the max allowed.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R396",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a74 line 215: \"ratio = total HPD-measured dwelling-unit area / residential zoning floor area\", with line 218 \"nothing else enters the ratio (R396)\". Matches the owner's exact words in source-043 (message 94).",
+      "Reproduced in data: every example's reconciliation.ratio has numerator == total HPD dwelling-unit area and denominator == residential zoning floor area; test_ratio_numerator_and_denominator_are_named (test lines 291-295) asserts this.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R397",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a72 (lines 157-187) lists, per component, the spaces zoning already excludes (cellar, accessory mechanical room, qualifying parking/balconies) with treatment \"excluded only if a stated condition is shown\"; an unmet condition COUNTS the space (example A corridor, example B parking-room).",
+      "No allowance is taken for a space already out of zoning: test_nothing_already_out_of_zoning_is_deducted_again (lines 120-128) shows mechanical-room and cellar have bridge_contribution 0 and never appear in the reconciliation bridge; check.bridge_errors (check.py lines 348-351) refuses any bridge step for a component not in the residential zoning floor area.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R407",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a76 (lines 238-244): a mixed-use estimate uses the residential portion's zoning floor area, \"not the whole building's and not a shop floor's\"; shared-space allocation and combined-FAR are named as checks/open points.",
+      "example-c-mixed-use shows the residential area used (6,920 sq ft) and where each component comes from; the three retail (non_residential) components count 0 toward the residential zoning floor area and 0 for HPD; test_mixed_use_uses_the_residential_portion_only (test lines 263-275) reproduces this and confirms residential lobby/circulation IS counted.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R413",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a71b (lines 120-135) quotes the HPD rule verbatim: \"Structural members that are integral components of exterior walls or demising partitions, as well as all mechanical and plumbing chases, are excluded ... All other structural members - including freestanding columns and columns attached to interior partitions - are included\", and concludes \"The model must therefore not subtract all apartment walls (owner directive R413).\" This matches the owner's own HPD description in source-043 message 94.",
+      "Reproduced in data: in every example the interior-partitions component has hpd.treatment == \"count\" while demising/exterior walls and chases are \"exclude\"; test_hpd_keeps_partitions_and_uses_mechanical_and_plumbing_chases (test lines 84-92) asserts partitions stay in.",
+      "I verified the HPD quote is internally pinned (lib HPD_SOURCE: official nyc.gov URL, pdf_sha256 309d1863..., pdf_page 28, date_read 2026-10-07) and that guideline citations in the examples are substrings of that embedded text (check._guideline_citation_errors). I could NOT re-fetch the live PDF (no network); see \"could not check\".",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R428",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No apartment count is presented anywhere in the record as an accurate feasibility result \u2014 the record computes no count (MEASUREMENT_BASIS.md \u00a78 closing, line 327: \"no count is computed in this record\").",
+      "The four things the owner requires resolved are each named as OPEN for the owner: \u00a78 lists the zoning-area conversion/ratio (points 1,7), mixed-use allocation (point 6), applicable exclusions (point 7), and physical layout / \"not known without a layout\" (point 4). \u00a78 point 8 states the estimator is built only after points 1-7 settle (R387, R428).",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R430",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a73 (lines 191-203): from ONE schedule, residential zoning floor area and total HPD dwelling-unit area are each computed on their own (step 1 and step 2), then reconciled (step 3); \"Neither is derived from the other.\"",
+      "Reproduced in code: measurement_basis_lib.residential_zoning_floor_area sums zoning_counted; total_hpd_dwelling_unit_area sums hpd_counted (lib lines 214-241) \u2014 two independent inclusion sums over the same component list. The bridge is a reconciliation check, not a derivation. test_both_areas_summed_separately_and_reconciled passes with the hand-verified oracle totals (test EXPECTED, lines 31-38).",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R431",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a73 line 193-195 records the withdrawal: \"do not reach apartment area by subtracting walls and shafts from zoning floor area (that risks deducting, a second time, space zoning already excluded - R431).\"",
+      "No record/formula/code derives apartment area by subtraction: HPD area is an independent inclusion sum (lib hpd_counted). check.bridge_errors (check.py lines 321-366) fails closed if any bridge step deducts a component already out of zoning; test_mutation_proof_e (test lines 195-206) reproduces that adding a cellar subtraction (a double deduction) is rejected with \"not in the residential zoning floor area\".",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R432",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a73 steps 1-2 and \u00a74 follow the reviewer's table exactly: residential zoning floor area = measured physical residential space minus applicable zoning exclusions; total HPD dwelling-unit area = the same measured space minus everything excluded under HPD's rules; ratio = HPD / zoning.",
+      "\u00a72 schedule header (lines 155-162) and the example schedules show each area \"starts from the measured physical residential space and takes its own deductions\". Reproduced by the lib functions and the reconciliation/ratio tests.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R433",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a72 is one area-schedule table with one row per component (apartments, interior partitions, demising/exterior walls, qualifying wall thickness, chases, corridors, stairs, lifts, lobby, elevated-access, refuse, amenity/laundry, mechanical room, cellar, parking, balconies, energy) and a column for each system (zoning | HPD).",
+      "Each example's JSON has a components list with unique component_id and both a \"zoning\" and an \"hpd\" block per component; check.component_shape_errors enforces one row per component with both treatments; test_one_schedule_two_treatments (test lines 74-82) asserts no duplicate ids and valid treatments under both systems.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R434",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The precise HPD term \"mechanical and plumbing chases\" is used for the chase component throughout (MEASUREMENT_BASIS.md \u00a71b line 133, \u00a72 line 171; each example's \"chases\" component name and HPD reason). record_errors (check.py line 458) requires the exact phrase in the record.",
+      "Other shafts are named for what they are and treated by their own rule: elevators/lift shafts and stairs/stairwells are separate components under ZR 12-10 (schedule lines 172-174; example \"Elevator shaft\" rows). I grepped every \"shaft\" occurrence: all are either the ZR 12-10 zoning quote \"elevator shafts or stairwells\" or the lift/stair components \u2014 none puts \"shafts\" where HPD's rule says chases. The single \u00a73 \"walls and shafts\" phrase (line 194) describes the WITHDRAWN subtraction method, quoting the owner's own prior wording.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R435",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a73 line 206-207: \"The measured physical space comes from a proposed building layout, never from the maximum floor area the law allows (R435).\"",
+      "Every example labels its made_up_note \"The maximum floor area the law allows is used only as a limit to check the layout against, never as the measured space\" (example pages line 7); areas are recomputed from stated dimensions, and each example's legal_unit_cap.max_residential_floor_area differs from its measured residential zoning floor area. Reproduced by test_areas_come_from_the_stated_dimensions (test lines 134-141) and test_legal_cap_is_separate_and_recomputes (asserts measured != max).",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R436",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a77 \"What they do not show\" (lines 266-271): the three ratios (0.7540, 0.6022, 0.6676) \"differ ... precisely because each depends on its own made-up layout\"; \"Correct arithmetic is not support for an assumption\"; \"Example A's ratio happening to land near 75 percent proves nothing about any 75 percent ratio.\"",
+      "Each example page carries \"This ratio belongs to THIS made-up example only. Two or three examples cannot establish a typical figure; no percentage is validated here.\" No percentage is presented as typical of R6B. test_examples_do_not_present_a_typical_percentage and test_the_worked_ratios_are_example_specific_and_differ (test lines 155-159, 249-257) reproduce the three distinct ratios and the disclaimer.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     },
     {
      "id": "D-090-R437",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md \u00a76 line 240-241 uses the exact owner-required input: \"the estimate uses the residential portion's zoning floor area, including any counted residential circulation and support space\". example-c uses the same wording.",
+      "The forbidden phrase is absent: grep across docs/measurement-basis for \"area actually given to apartments\" / \"actually given\" returns nothing; the input is consistently called \"the residential portion's zoning floor area\" (matches R437's harness).",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 1d617a09); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a scenario-optimization-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M5-T126-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     }
    ]
   },
@@ -963,6 +1048,119 @@
       "Verifier's carry-forward condition met at c136fabf: every file under the task's allowed paths (the module, its test, the two reports, the frozen CI evidence) has the blob it had at the verified head 9df713a7 (content identity 7e00f47a); every file under tools/ and .github/, CLAUDE.md, .claude/rules/, docs/DISCOVERY_BACKLOG.md, the D-090 requirement rows and manifest, source-048 and the five gate records are unchanged; the later commits touch only project-control/ (the verifier's report and this verification). Gates G0/G2/G3/G4/G5 PASS at that content identity (G3/G4 independent code-reviewer, G5 independent security-reviewer; the producer was a backend-engineer agent). Pull request 456 is OPEN with head 9df713a7 on GitHub. DCV report: project-control/reports/M0-T186-DCV.md."
      ],
      "reviewed_sha": "c136fabff5d9501492374dd7b24221773605e9a9"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M4-T026",
+   "applicable_requirement_ids": [
+    "D-090-R291"
+   ],
+   "producer": "legal-corpus-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da",
+   "reviewed_manifest_sha256": "2a36addf6b76cdda89df249d7862bbfccd9fd6208c3b98448a90dfbdc67b2d6d",
+   "requirements": [
+    {
+     "id": "D-090-R291",
+     "state": "PASS",
+     "evidence": [
+      "docs/research/zr-snapshots/v1/ holds all 8 named captures (zr-34-11/34-111/34-24/35-53/35-63/35-631/35-632/35-633); each extraction_status=\"extracted_draft\"; I recomputed sha256(verbatim_excerpt) for all 8 and each equals the stored content_digest_sha256.",
+      "Independent live fetch reproduced two pins: GET .../article-iii/chapter-4/34-24 (75612 bytes) sha256 077ad8f1\u2026 equals source.raw_html_sha256 in zr-34-24.snapshot.json; GET .../chapter-5/35-63 (86164 bytes) sha256 2244240970\u2026 equals zr-35-63's pin \u2014 captured text matches the official page today.",
+      "Source-text-only: each capture's notes state \"it encodes no rule, no reading of the text for any lot, and no number derived from it\"; name-status of material commit 7729a959 shows only capture files, their byte-identical synced copies (all 8 verified sha256-equal) and project-control/reports/M4-T026-producer-report.md \u2014 no rule/engine/register/reference-case/plan/screen.",
+      "No overclaim: M4-T026-producer-report.md \u00a710 states \"No value is shown anywhere because of a capture\"; the 34-24(b)(1) item is a capture-level existence finding (EXISTS as named; confirmed in the live verbatim \"\u2026set forth in Section 35-63, inclusive, shall be applied;\"), not a rule resolved for a lot.",
+      "Share only: the \"resolve missing rules and conflicting inputs / check the R6B answers\" part of step 3 is left to later work.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity 2a36addf); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent data-contract-verifier; the producer was a legal-corpus-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M4-T026-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M4-T027",
+   "applicable_requirement_ids": [
+    "D-090-R226",
+    "D-090-R238",
+    "D-090-R241",
+    "D-090-R259",
+    "D-090-R291",
+    "D-090-R318"
+   ],
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da",
+   "reviewed_manifest_sha256": "f44bb27f09a281f94f63cfbfaaf77335f22ad89fe4616ab72c7c9305681f1d68",
+   "requirements": [
+    {
+     "id": "D-090-R226",
+     "state": "PASS",
+     "evidence": [
+      "step-p1-worked.json records each value with hand arithmetic and facts_used sourced to the benchmark lot's recorded facts; all tests/rules/reference_cases recompute (43 passed).",
+      "Values trace to two independent readings: source_reference names both return-independent-hand-calculation-3.md and -4.md (\"both agree\"); I confirmed each reading body is byte-identical to the orchestrator's received return (sha256 18744b88\u2026 / ae733f6c\u2026).",
+      "Sealed-folder builder (build_sealed_packet.py) excludes the program: law snapshots minus producer notes, recorded lot facts, \"Floor-area-ratio fields \u2026 left out on purpose\", no program output \u2014 supports \"worked from captured law text and the lot's sourced facts by readers who had not read the program's answer.\"",
+      "Caveat (what I could not reproduce): reader isolation is a process guarantee; I verify it by the sealed-folder design, the readings' own compliance statements, and their observed disagreement on one row \u2014 not by re-executing the readers.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity f44bb27f); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a rules-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M4-T027-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
+    },
+    {
+     "id": "D-090-R238",
+     "state": "PASS",
+     "evidence": [
+      "Every whole-lot 100% coverage figure is geometry-backed: corner-reach C1-coverage and C2-coverage and step-p1-worked corner-100x100-coverage each tie to a reach row showing the whole lot is within 100 ft of each street line (C1 100\u00d740, C2 80\u00d760, 100\u00d7100 reaches only 100 ft) \u2014 why_applies states \"the whole lot is the corner-lot portion\".",
+      "Where geometry does not support it, coverage is \"not known\" per portion: corner-reach real-lot-coverage (reaches 103.93 ft from 215 Place), C3-coverage (150 ft, 50-ft strip beyond), step-p1-worked corner-150x100-coverage and corner-200x120-coverage \u2014 all kind=not_known, value=None, with a per-portion reason.",
+      "Interior/through 80% figures (interior-lots interior-coverage; step-p1-worked interior-40x100 / through-40x200) are the ZR 23-362 interior maximum on wholly-interior lots, not a corner-rule whole-lot 100% figure, so R238 is not engaged.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity f44bb27f); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a rules-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M4-T027-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
+    },
+    {
+     "id": "D-090-R241",
+     "state": "PASS",
+     "evidence": [
+      "My own scan of all 5 case files for program-result field names (program/actual/first_screen) and sentences (\"program today\",\"the program gives\",\u2026): zero hits.",
+      "Every expected value's source_reference points at the two readings, never a program run; the 2026-10-07 change_log entries give law-based reasons (\"ZR X is now captured \u2026 a captured citation is added\"; values \"unchanged\"); none says \"changed to match the program\".",
+      "README line 67: \"A disagreement between a case and the program is never, on its own, a reason to change the case.\"",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity f44bb27f); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a rules-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M4-T027-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
+    },
+    {
+     "id": "D-090-R259",
+     "state": "PASS",
+     "evidence": [
+      "The two readings are kept in their own files under docs/reference-cases/R6B/provenance/ (\u2026-3.md, \u2026-4.md), apart from program output; I recomputed full-file sha256 8e0fb09e\u2026 / 5bf5ab28\u2026 \u2014 both equal the digests pinned in r6b_reference_cases_check.STEP_P1_READINGS.",
+      "Agreement-is-not-proof is stated: README line 15 \"That agreement, between two AI answers, is not on its own proof of anything\"; step-p1-worked what_it_is_worth and checked_by repeat it.",
+      "Disagreement preserved, not resolved: interior-40x100-rear-yard is kind=not_known because reading 3 said NOT KNOWN and reading 4 said 20 ft; readings_differ_errors enforces this (test passes).",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity f44bb27f); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a rules-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M4-T027-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
+    },
+    {
+     "id": "D-090-R291",
+     "state": "PASS",
+     "evidence": [
+      "Saved examples exist as files: step-p1-worked.json (12 rows) plus updated citations in real-lot/corner-reach/interior-lots, rendered to pages, all under docs/reference-cases/R6B/.",
+      "Resolves no missing rule: name-status of c2f72cdb touches no services/api/app/rules/** (only case data, pages, provenance, engine-free test support); test_support_code_imports_no_engine confirms no import from app; README still names the not-captured sections (23-343, 23-434).",
+      "Share only: checking the R6B answers against the program and resolving the missing rules remain later work.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity f44bb27f); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a rules-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M4-T027-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
+    },
+    {
+     "id": "D-090-R318",
+     "state": "PASS",
+     "evidence": [
+      "Same reference files as R226/R259: I independently re-checked all 78 captured citations across the cases \u2014 every one's content_digest equals the live capture and every quote is a substring of the capture's verbatim_excerpt.",
+      "Reference examples kept as files under docs/reference-cases/R6B/, worked from the captured law text by two sealed-folder agents; R318 restates rule 5 (R259) and its M4-T027 share is met by those files.",
+      "Same reader-isolation caveat as R226.",
+      "Verifier's carry-forward condition met at 50fc61df: every file under this task's allowed paths has the blob it had at the verified head edcddf71 (content identity f44bb27f); CLAUDE.md, .claude/rules/, services/api/app/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (G3/G4 independent code-reviewer; the producer was a rules-engineer agent). Pull request 459 is OPEN with head edcddf71 on GitHub. DCV report: project-control/reports/M4-T027-DCV.md."
+     ],
+     "reviewed_sha": "50fc61dffea540b7b916d4632869cb85989277da"
     }
    ]
   }

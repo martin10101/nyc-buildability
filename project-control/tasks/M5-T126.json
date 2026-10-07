@@ -108,13 +108,13 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "scenario-optimization-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A worked example read as a typical building -> S7: ratios belong to the examples only",
     "A made-up layout mistaken for a design -> S4: labelled made up and simple; the owner's goal excludes detailed apartment layouts and permit-ready plans",
@@ -124,7 +124,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-06T20:41:01.861739+00:00",
-  "updated_at": "2026-10-06T20:59:38.996753+00:00",
+  "updated_at": "2026-10-07T06:25:36.468171+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -167,5 +167,17 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-06, before any claim] the test-support folder moves from services/api/tests/measurement_basis/ to services/api/tests/scenario/measurement_basis/. The repository's ownership map (docs/lanes/OWNERSHIP.yaml) has no owner for a new folder directly under services/api/tests/, and the ownership check failed on the seeded placeholder (pull request 453, control-plane job, runs 37529527410 and 37529531704). The new folder is inside a glob the map already assigns to the engine lane. No scenario, gate, reviewer or other path changed; the readiness gate is recorded again at the corrected head."
     }
-  ]
+  ],
+  "worktree": "/root/project/w-wave1",
+  "progress_log": [
+    {
+      "at": "2026-10-07T05:06:06.901135+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed in wave 1 at the contract head d1074dd8 (integration head a5c6c2f0); builder scenario-optimization-engineer in an isolated worktree; see project-control/reports/WAVE1-2026-10-07-concurrency-record.md."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T06:25:36.468004+00:00"
 }

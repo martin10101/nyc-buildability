@@ -1,0 +1,98 @@
+{
+ "task_id": "M5-T126",
+ "material_commits": [
+  "0a3ffed3 (cherry-pick of the producer's commit d908a523, producer scenario-optimization-engineer: the record, three worked examples as data files and rendered pages, the checker, renderer and test, the producer report)",
+  "dbffb46b (cherry-pick of the same producer's round-2 commit 91fc535b: in example B the base of the amenity cap tied to two figures the example states, after the reviewer's note F1; no total changed) = material head"
+ ],
+ "claim_seam_head": "8dd39c9f",
+ "examples": [
+  "example-a-standard-residential",
+  "example-b-allowances-conditions-shown",
+  "example-c-mixed-use"
+ ],
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/scenario/measurement_basis: exit 0, 27 passed (27 test functions)",
+  "measurement_basis_render.py --check: exit 0 (pages byte-identical to the data); run by the builder and by the reviewer",
+  "tools/modularity_check.py --check: exit 0",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "pytest -q (the FULL services/api suite, run alone at c2f72cdb with all three pieces of the wave integrated): exit 0, 8108 passed, 8 skipped"
+ ],
+ "requirements": {
+  "D-090-R357": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 1c ('These bases are different and are never mixed') names the three measuring bases and says the third (HCR's common-space percentage) 'is **not** used here'; every area in the record and in the three examples is labelled with its basis.",
+   "Section 3 builds each total by inclusion from one schedule and reconciles them 'so **nothing is deducted twice**'; services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py recomputes every reconciliation line of docs/measurement-basis/examples/example-a-standard-residential.json, docs/measurement-basis/examples/example-b-allowances-conditions-shown.json and docs/measurement-basis/examples/example-c-mixed-use.json with exact decimal arithmetic, and one of its tests proves that a component already out of zoning floor area, added as a deduction in a copy, makes the reconciliation fail."
+  ],
+  "D-090-R358": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 1 opens 'The definitions come first, before any formula.': section 1a quotes the ZR 12-10 definition of floor area from the capture zr-12-10-floor-area (what it includes and what it does not), section 1b quotes HPD's unit-area rule with its address, edition and date read; the ratio is defined only in section 4.",
+   "No formula for an apartment count is proposed anywhere in the record: it defines a ratio and says no count is computed."
+  ],
+  "D-090-R359": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 8 ('Open points for the owner') lists eight points, each with a recommendation and its basis and with what is not sure, and ends with 'How changing an assumption would change an estimated count' (directions only; the record computes no count because no starting value is approved).",
+   "The record says of the starting values (700 sq ft, 25 percent, 10 ft, 15 ft) that they 'remain **unapproved assumptions**' and proposes none as a default.",
+   "NOT done by this task, and not claimed: the record has not been put to the owner yet. That happens after this task is accepted; the owner update is where this row's remaining part is met. The row's 'worked table' of how the count moves is not in the record: the record gives directions and says why no number is computed."
+  ],
+  "D-090-R387": [
+   "This task is the record that resolves the measurement basis (docs/measurement-basis/MEASUREMENT_BASIS.md: which area the estimate starts from, section 1a and 3; which area an apartment is measured as, section 1b; how the two relate, sections 3 and 4). It builds no estimator: the commit adds documents and test support only (git show --name-status of the material commit: nothing under services/api/app, apps or packages).",
+   "The record's section 8, point 8, recommends building the estimator only after the owner settles the open points. Whether the basis counts as resolved is the owner's to say after reading the record; this task does not claim it."
+  ],
+  "D-090-R388": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 3: 'No generic gross-to-net loss percentage is applied to zoning floor area'. In the three examples each total is the sum of measured components; no example multiplies zoning floor area by a percentage.",
+   "The three ratios are reported as results of the examples (0.7540, 0.6022, 0.6676), not as inputs, and section 7 says 'They do **not** establish a typical ratio.'"
+  ],
+  "D-090-R389": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md sections 2 and 3 give the written conversion: one schedule with one row per component and its treatment under each system with the governing provision, then residential zoning floor area and total HPD dwelling-unit area each summed from that schedule, then a reconciliation that names every component whose two treatments differ.",
+   "The three worked examples (docs/measurement-basis/examples/example-a-standard-residential.md, docs/measurement-basis/examples/example-b-allowances-conditions-shown.md, docs/measurement-basis/examples/example-c-mixed-use.md, each rendered from its data file) show the steps with every dimension stated; the spaces zoning already leaves out in an example (for instance a cellar not used for dwelling, an accessory mechanical room) appear as excluded under both and are never deducted again.",
+   "NOT done by this task, and not claimed: the record has not been put to the owner yet. That happens after this task is accepted; the owner update is where this row's remaining part is met."
+  ],
+  "D-090-R392": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 5: 'The legal maximum number of dwelling units is a **separate** figure.' It states the ZR 23-52 rule (the factor 680 where it applies; a fraction of three-quarters or more counts as one) only for the legal limit, and says neither figure is derived from the other.",
+   "Each example shows its legal limit as a number apart from its measured areas; no example computes a count of apartments that fit."
+  ],
+  "D-090-R396": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 4: 'ratio = **total HPD-measured dwelling-unit area** / **residential zoning floor area**' and 'nothing else enters the ratio'. Each example names the same numerator and denominator beside its ratio."
+  ],
+  "D-090-R397": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 2: the schedule lists what zoning floor area leaves out (for example a cellar not used for dwelling, accessory mechanical space, accessory parking within the limits, a balcony within the enclosure limit) and says 'a space zoning has already excluded is never subtracted again'.",
+   "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py holds a mutation proof: a component already excluded from zoning floor area, added as a deduction in a copy of an example, fails the reconciliation check."
+  ],
+  "D-090-R407": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 6 and docs/measurement-basis/examples/example-c-mixed-use.json: the mixed-use example works the residential portion only (residential-portion zoning floor area 6,920 sq ft; HPD dwelling-unit area 4,620 sq ft in the made-up layout) and does not add the shop floor to it.",
+   "How shared stairs, lifts and lobby are split between the portions is NOT settled by the record: it is open point 6 for the owner. The combined floor-area rules for a mixed building are not captured law in the repository and are not checked here."
+  ],
+  "D-090-R413": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 1b quotes HPD's rule (measured 'from the finished face of all exterior walls and demising partitions'); section 2's schedule excludes exterior and demising wall thickness and 'Mechanical and plumbing chases' under HPD and keeps 'Interior partitions within an apartment' and free-standing columns in the unit area.",
+   "The examples follow the schedule: wall thickness and chases are separate components left out of the HPD total; partitions inside apartments stay in it."
+  ],
+  "D-090-R428": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md presents no apartment count at all, so none is presented as an accurate result. Section 8 names as open: the ratio and the average size (points 1 and 2), what stays not known without a layout (point 4), the mixed-use split (point 6) and which exclusions to model (point 7).",
+   "The opening of the record says it 'builds no estimator, approves no default, and validates no percentage'."
+  ],
+  "D-090-R430": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 3 ('two separate calculations from one schedule, then reconcile'): each of the two areas is taken from the same measured space with its own exclusions; neither is derived from the other.",
+   "Each example data file holds ONE schedule; services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py recomputes both totals from that schedule and every line of the reconciliation."
+  ],
+  "D-090-R431": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 3: 'do **not** reach apartment area by subtracting walls and shafts from zoning floor area'. In the examples the HPD total is a sum of the apartments' measured interior areas, not a subtraction from the zoning total; the reconciliation only explains the difference afterwards."
+  ],
+  "D-090-R432": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 3, steps 1 to 3, follow the reviewer's table: residential zoning floor area = measured physical residential space less the zoning exclusions that apply; total HPD dwelling-unit area = the same measured space less what HPD's rules leave out; the ratio (section 4) is the second divided by the first."
+  ],
+  "D-090-R433": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 2 is the area-schedule form: one row per component (apartment interior, partitions, columns, demising and exterior walls, qualifying exterior wall thickness, mechanical and plumbing chases, corridors, stairs, lifts, lobby, access to raised ground-floor units, refuse room, amenity and laundry room, mechanical room, cellar, parking, balconies, the energy exclusion) with a column for each system and the provision that governs it. Each example carries its own schedule in that form."
+  ],
+  "D-090-R434": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 2 uses HPD's words 'Mechanical and plumbing chases' for that row and names stairs, lifts and the refuse room in rows of their own with their own treatment."
+  ],
+  "D-090-R435": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 3: the measured space comes from a proposed layout, 'never from the maximum floor area the law allows'. Each example states a made-up layout with every dimension and measures from it; the maximum floor area allowed appears in an example only as a limit beside the measured figure.",
+   "Section 8, point 4: without a layout the physical apartment count is reported as not known."
+  ],
+  "D-090-R436": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 7, beside the table of the three examples: 'They do **not** establish a typical ratio.', the three ratios 'belong to those examples only', and correct arithmetic 'is **not** support for an assumption'. No percentage is presented as typical of R6B buildings."
+  ],
+  "D-090-R437": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 6 uses the words 'the **residential portion's** zoning floor area, including any counted residential circulation and support space'. The words 'area actually given to apartments' do not occur in the record (checked by this script)."
+  ]
+ }
+}

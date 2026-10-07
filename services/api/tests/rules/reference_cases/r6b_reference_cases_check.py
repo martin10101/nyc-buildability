@@ -34,6 +34,7 @@ _HERE = pathlib.Path(__file__).resolve().parent
 if str(_HERE) not in sys.path:
     sys.path.insert(0, str(_HERE))
 
+import hashlib  # noqa: E402
 import json  # noqa: E402
 
 import r6b_reference_cases_lib as lib  # noqa: E402
@@ -45,9 +46,16 @@ FORBIDDEN_VALUE_PHRASES = (
     "program today", "first screen", "the program gives", "program's answer",
     "program result", "as the program", "what the program",
 )
-# The sections the cases rely on that are NOT captured (named in the README as
-# waiting for step P1).
-NOT_CAPTURED_SECTIONS = ("12-10", "23-342", "23-363")
+# The sections the cases still rely on that are NOT captured (named in the
+# README). Step P1 (task M4-T025) captured ZR 12-10 (the lot-type and
+# special-density definitions), ZR 23-342 and ZR 23-363; these remain uncaptured.
+NOT_CAPTURED_SECTIONS = ("23-343", "23-434")
+
+# The step-P1 case (M4-T027), and the one row whose two readings disagree, which
+# must therefore stay "not known" (S2): a value may be recorded only where both
+# readings agree on the same basis.
+STEP_P1_CASE_ID = "step-p1-worked"
+READINGS_DIFFER = {"interior-40x100-rear-yard"}
 
 
 # --------------------------------------------------------------------------
@@ -314,7 +322,7 @@ def readme_errors() -> list[str]:
         ("corrected reading", "the change rule: a corrected reading"),
         ("change in the law", "the change rule: a change in the law"),
         ("investigated on both sides", "a disagreement with the program is investigated both ways"),
-        ("step p1", "the not-captured sections wait for step P1"),
+        ("step p1", "the README names step P1 (its text is now captured and worked here)"),
     ]
     for needle, what in required:
         if needle not in low:
@@ -338,6 +346,19 @@ PROVENANCE_RETURNS = {
         "FOLLOW-UP",
 }
 
+# The two step-P1 readings (task M4-T027), each saved unchanged below a short
+# header. The digest pins the whole saved file so a later edit is caught (S1).
+STEP_P1_READINGS = {
+    "return-independent-hand-calculation-3.md": {
+        "marker": "ONE-HARD-RULE COMPLIANCE",
+        "digest": "8e0fb09e6d7f4fa946fdf1e4bd5ef8a2c5847fa6ff981779a84a91aff40ff64b",
+    },
+    "return-independent-hand-calculation-4.md": {
+        "marker": "ONE HARD RULE",
+        "digest": "5bf5ab28a65af7635e4ea72808e609f4559cfa1f695bcbaf2150164c03f6d639",
+    },
+}
+
 
 def provenance_errors() -> list[str]:
     errs: list[str] = []
@@ -351,6 +372,68 @@ def provenance_errors() -> list[str]:
             errs.append(f"provenance file {name} does not carry the helper's return")
         if "END-OF-REPORT" not in text:
             errs.append(f"provenance file {name} is not the return in full (no END-OF-REPORT)")
+    errs += step_p1_reading_errors()
+    return errs
+
+
+def step_p1_reading_errors() -> list[str]:
+    """The two step-P1 readings are present unchanged: each carries its marker and
+    its END-OF-REPORT, says it was made from the sealed folder, and hashes to the
+    recorded digest, so any later edit to a saved reading is caught (S1)."""
+    errs: list[str] = []
+    for name, spec in STEP_P1_READINGS.items():
+        path = lib.PROVENANCE_DIR / name
+        if not path.is_file():
+            errs.append(f"step-P1 reading missing: {name}")
+            continue
+        raw = path.read_bytes()
+        text = raw.decode("utf-8")
+        if spec["marker"] not in text:
+            errs.append(f"step-P1 reading {name} does not carry the reading's return")
+        if "END-OF-REPORT" not in text:
+            errs.append(f"step-P1 reading {name} is not the return in full (no END-OF-REPORT)")
+        if "sealed folder" not in text:
+            errs.append(f"step-P1 reading {name} does not say it was made from the sealed folder")
+        got = hashlib.sha256(raw).hexdigest()
+        if got != spec["digest"]:
+            errs.append(
+                f"step-P1 reading {name} digest changed: {got} != recorded {spec['digest']} "
+                "(the saved reading must stay byte-for-byte unchanged)"
+            )
+    return errs
+
+
+# --------------------------------------------------------------------------
+# S2 (step-P1 case): a value only where both readings agree on the same basis
+# --------------------------------------------------------------------------
+def both_readings_errors(case_id: str, row: dict) -> list[str]:
+    """In the step-P1 case, every row must name BOTH readings in its source
+    reference, so a value rests on both and a 'not known' names both (S2)."""
+    if case_id != STEP_P1_CASE_ID:
+        return []
+    ref = str(row.get("source_reference", ""))
+    needed = ("return-independent-hand-calculation-3", "return-independent-hand-calculation-4")
+    if any(name not in ref for name in needed):
+        return [f"{case_id}/{row.get('row_id', '?')}: source reference must name both step-P1 "
+                "readings (a value needs both readings to agree)"]
+    return []
+
+
+def readings_differ_errors(case_id: str, data: dict) -> list[str]:
+    """In the step-P1 case, a row whose two readings disagree (or where one says
+    not known) must stay 'not known': a value is recorded only where both readings
+    agree on the same basis (S2). Giving such a row a value is refused."""
+    if case_id != STEP_P1_CASE_ID:
+        return []
+    errs: list[str] = []
+    for row in data.get("rows", []):
+        if row.get("row_id") in READINGS_DIFFER:
+            kind = row.get("expected", {}).get("kind")
+            if kind != "not_known":
+                errs.append(
+                    f"{case_id}/{row.get('row_id')}: the two readings differ here, so it must be "
+                    f"'not known', not {kind!r} (a value needs both readings to agree)"
+                )
     return errs
 
 
@@ -365,6 +448,7 @@ def validate_case(case_id: str, data: dict) -> list[str]:
         return errs  # deeper checks assume the fixed shape
     errs += change_log_errors(case_id, data)
     errs += coverage_errors(case_id, data)
+    errs += readings_differ_errors(case_id, data)
     for row in data["rows"]:
         if set(row) != lib.ROW_KEYS:
             errs.append(f"{case_id}/{row.get('row_id', '?')}: row keys differ from the fixed set")
@@ -373,6 +457,7 @@ def validate_case(case_id: str, data: dict) -> list[str]:
         errs += facts_used_errors(case_id, row)
         errs += arithmetic_shape_errors(case_id, row)
         errs += expected_errors(case_id, row)
+        errs += both_readings_errors(case_id, row)
         errs += lib.recompute_row_errors(case_id, row)
     return errs
 

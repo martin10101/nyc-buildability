@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-07T03:58:16+00:00",
+ "updated_at": "2026-10-07T05:05:17+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -513,10 +513,15 @@
   "D-090-R489",
   "D-090-R490",
   "D-090-R491",
-  "D-090-R492"
+  "D-090-R492",
+  "D-090-R493",
+  "D-090-R494",
+  "D-090-R495",
+  "D-090-R496",
+  "D-090-R497"
  ],
- "requirements_id_digest_sha256": "e8d10b5087e0d42346e21a7aff9d6d3f25ab7cf43927049a23323b48ae1721dd",
- "requirements_content_digest_sha256": "a2ee0d318fc3164dbe388eb43fc231fa2ab943448a994c001910d88e3007c0de",
+ "requirements_id_digest_sha256": "07b4abc83d7eaaf3619255ef62abf6d802e4b7335bde29e5cb5a099a13a4b298",
+ "requirements_content_digest_sha256": "406b3472bbcbf9bdfde5ecb0e62efebc87187534b8d336a40fd7e609509cd40c",
  "sources": [
   {
    "file": "source-001.md",
@@ -924,6 +929,14 @@
    "recorded_at": "2026-10-07T03:58:16+00:00",
    "content_digest_sha256": "a6015d4f4fe0bf797330ef4b7ec3a5cfd353e5a976395ba2541ec8488ef08adb",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-052-amendment.md",
+   "kind": "amendment",
+   "sequence": 52,
+   "recorded_at": "2026-10-07T05:05:14+00:00",
+   "content_digest_sha256": "cc01bdb05816433a3b3f38db4178518cc3fb7bc0f98bc4922596e3b0192bc660",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -976,7 +989,8 @@
   "source-048-amendment.md",
   "source-049-amendment.md",
   "source-050-amendment.md",
-  "source-051-amendment.md"
+  "source-051-amendment.md",
+  "source-052-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -992,7 +1006,9 @@
   "M4-T024",
   "M4-T025",
   "M5-T126",
-  "M0-T186"
+  "M0-T186",
+  "M4-T026",
+  "M4-T027"
  ],
  "affected_prs": [
   262,
@@ -1369,6 +1385,24 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-051 (session 013RaGmC message 106, 2026-10-07: are the rules entered in the review register; no early simple PDF, do the work in order) and requirements D-090-R490..R492, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-07T05:05:14+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-052 (session 013RaGmC messages 107 and 108, 2026-10-07: run several independent parts at once, about five helpers, never on the same file) and requirements D-090-R493..R497, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-07T05:05:16+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M4-T026 (law-text captures, work-order step P2: the Article III sections for a residential building in a commercial overlay) to R291 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-07T05:05:17+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M4-T027 (the R6B reference cases worked from the text captured in step P1: corner portion and coverage, ZR 23-363, the rear yard of ZR 23-342, special density areas) to R226, R238, R241, R259, R291, R318 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }

@@ -1,0 +1,46 @@
+{
+ "task_id": "M4-T027",
+ "material_commits": [
+  "c2f72cdb (cherry-pick of the producer's commit 68ae076d, producer rules-engineer: the two readings saved unchanged, a new case with its page, three updated cases and pages, the README, the checker, loader and test, the producer report) = material head"
+ ],
+ "claim_seam_head": "8dd39c9f",
+ "readings": [
+  "return-independent-hand-calculation-3.md (reader 1, an official-source-researcher agent)",
+  "return-independent-hand-calculation-4.md (reader 2, a geospatial-engineer agent)"
+ ],
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/rules/reference_cases: exit 0, 37 passed",
+  "r6b_reference_cases_render.py --check: exit 0 (pages byte-identical to the data); run by the builder",
+  "tools/modularity_check.py --check: exit 0",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "pytest -q (the FULL services/api suite, run alone at c2f72cdb with all three pieces of the wave integrated): exit 0, 8108 passed, 8 skipped"
+ ],
+ "requirements": {
+  "D-090-R226": [
+   "The new and updated expected values are worked from the captured law text and the lot's recorded facts by two AI helpers, each alone, from a sealed folder without the program: their two returns are in docs/reference-cases/R6B/provenance/ (return-independent-hand-calculation-3.md and -4.md), unchanged below their headers (services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_the_two_step_p1_readings_are_present_unchanged pins their digests; test_a_changed_step_p1_reading_is_caught proves a changed copy fails).",
+   "Each row of docs/reference-cases/R6B/cases/step-p1-worked.json (12 rows) and each updated row of real-lot.json, corner-reach.json and interior-lots.json cites its section with the quoted words, the capture's snapshot id and content digest; services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_every_citation_matches_the_live_capture compares each with the live capture and test_all_arithmetic_recomputes recomputes each arithmetic step.",
+   "What the repository cannot show: that the two helpers had not read the program's answer rests on the orchestrator's instructions to them, on its audit of their tool logs (no file under the repository opened; recorded in the session notes, outside the repository) and on their own statements at the top of each return."
+  ],
+  "D-090-R238": [
+   "No row states a coverage figure for a whole lot unless the row's geometry shows the corner provision covers the whole lot: docs/reference-cases/R6B/cases/real-lot.json row L5 stays 'not known' ('No single whole-lot coverage figure': the lot reaches 103.93 ft from one street line, so a strip of about 390 sq ft is outside the corner-lot portion) and records the per-portion reading (100 percent on the corner-lot portion, 80 percent on the rest) in its reason only.",
+   "In docs/reference-cases/R6B/cases/step-p1-worked.json the 100 ft by 100 ft made-up corner lot has the value '100 percent' because its two 100-ft offset lines coincide with its far edges (the whole lot is the corner-lot portion); the 150 by 100 and 200 by 120 lots are 'not known' as a whole-lot figure, with the per-portion reading in the reason."
+  ],
+  "D-090-R241": [
+   "No expected value comes from, or was changed to match, a saved program result: services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_no_program_result_in_any_case and test_support_code_imports_no_engine pass on all case files and support code; every change-log entry added by this task names 'newly captured text' as its reason, and the existing expected values did not change (rows went from not-captured to captured citations; 'not known' stayed 'not known').",
+   "The builder's instructions forbade reading or running the program's rule and scenario code; its report says it did neither. That statement is the builder's; the import scan and the case files are what the repository shows."
+  ],
+  "D-090-R259": [
+   "The cases stay in files of their own under docs/reference-cases/R6B/, apart from any program output; the new case says of itself: 'Agreement between two AI answers alone is not proof' (cases/step-p1-worked.json, checked_by) and each case's what_it_is_worth says it is a draft reading, not professionally reviewed.",
+   "A value is recorded only where both readings give it on the same basis: services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_step_p1_settled_values_where_both_readings_agree, test_step_p1_case_rows_name_both_readings and test_a_step_p1_value_where_the_readings_differ_is_refused. Where the readings differ the row is 'not known' with both named (the rear-yard depth of the 40 by 100 interior lot: one reading leaves it not known, the other gives 20 ft on an assumption about which side is the lot width)."
+  ],
+  "D-090-R291": [
+   "This task's share of step 3: independently calculated examples are saved as files to test against, now including the rows that waited for the text captured in step P1 (the corner-lot portion, coverage per portion, the rear yard near and beyond the corner, ZR 23-363, the special density areas list).",
+   "NOT done by this task, and not claimed: no missing rule and no conflicting input is resolved, and no program result is compared with a case. What stays 'not known' is listed in the README and the producer report (among them: the whole-lot coverage and the rear yard beyond the corner for the real lot, the operative lot-area figure of 10,075 or about 10,388 sq ft, special-density membership, and everything that needs text not captured: ZR 23-343, ZR 23-434, the lot-line and lot-width definitions, the commercial-overlay reading)."
+  ],
+  "D-090-R318": [
+   "Interpretation is checked with independently worked, source-backed examples: the two readings were made before any comparison with the program, each row gives its law quotation with the capture and its arithmetic, and docs/reference-cases/R6B/README.md keeps the rule that an expected value changes only with a recorded reason and never because the program disagrees.",
+   "The examples are two AI readings and an AI review; nothing here is a professional review, and the cases say so."
+  ]
+ }
+}

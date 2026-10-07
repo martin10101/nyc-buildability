@@ -29,21 +29,32 @@ Nothing in a case comes from a program run: not a value, not a column, not a sen
 | `cases/interior-lots.json` + `interior-lots.md` | Four made-up interior lots, chosen to show the floor-area arithmetic and the dwelling-unit rounding threshold, plus the interior-lot coverage reading (table B: P1, P3, P4, P5 and the interior-coverage reading). |
 | `cases/corner-reach.json` + `corner-reach.md` | How far a corner lot reaches from each street line and from the corner point: the real lot and three made-up rectangles C1, C2 and C3 (table C). |
 | `cases/suffix.json` + `suffix.md` | Whether the sections that list the R6 group reach the suffixed R6B district, through ZR 11-25 (table D: ZR 23-362, 23-52, 23-344, and ZR 23-22 and 23-432 which list R6B directly). |
+| `cases/step-p1-worked.json` + `step-p1-worked.md` | The rows worked from the step-P1 captures (task M4-T027): the ZR 12-10 corner, interior, through and lot-area definitions, special density areas, ZR 23-342 and ZR 23-363. It covers three made-up corner lots (100 by 100, 150 by 100, 200 by 120), a 40-by-100 interior lot, a 40-by-200 through lot, and special density areas (section 5 gaps K1, K2, K4, K11). |
 
 Each case is kept twice from one source: a structured data file under `cases/` that a test can load, and
-a page rendered from it that a person can read. The two helper returns are kept unchanged under
-`provenance/`.
+a page rendered from it that a person can read. The helper returns are kept unchanged under
+`provenance/`: the two first-round returns and the two step-P1 readings.
 
-## Law text that is not yet captured
+## Law text: what step P1 captured, and what is still not captured
 
-Some readings rely on law text that is not captured in the repository. These cases name each such
-section, give the official page and the date it was read, and record the affected value as "not known"
-where the text is needed for a number. They wait for **step P1** (capturing the missing text):
+**Step P1** (task M4-T025) captured the law text these cases waited for, and task M4-T027 worked the
+rows from it (see `cases/step-p1-worked.json`): the ZR 12-10 definitions of a corner, interior and
+through lot and of lot area; the ZR 12-10 definition of special density areas; **ZR 23-342** (rear
+yard requirements); and **ZR 23-363** (special coverage rules for some interior and through lots). The
+rows that were "not known" for want of that text now cite the captured snapshots.
 
-- **ZR 12-10** lot-type and corner-lot-portion definitions (the repository capture of ZR 12-10 holds
-  only the wide-street and narrow-street definitions).
-- **ZR 23-342** rear-yard requirements (the ordinary rear-yard depth).
-- **ZR 23-363** special coverage rules for some interior and through lots.
+Some readings still rely on law text that is not captured. These cases name each such item and record
+the affected value as "not known" where the text is needed for a number:
+
+- **ZR 23-343** (rear yard equivalent requirements) - the rear yard for a through lot.
+- **ZR 23-434** (eligible sites) - the 65/50-percent lot-coverage branch of ZR 23-362(b).
+- The **ZR 12-10** definitions of *front lot line*, *rear lot line*, *side lot line* and *lot width* -
+  needed to identify a rear lot line and to set a rear-yard depth.
+- The geographic **boundary definitions** of the *Manhattan Core* and the *Special Downtown Brooklyn
+  District* - needed to place a lot in or out of a special density area.
+- The **base plane** and height-measurement rule for R6 through R12 districts.
+- The **commercial-overlay** sections of **step P2** (the C2-2 overlay and the Article III use and bulk
+  rules) - these cases read the residential rules only.
 
 ## The rule for changing an expected value
 

@@ -3,7 +3,7 @@
   "title": "The real lot: 215-16 Northern Boulevard, Queens (BBL 4073340070)",
   "work_order_table": "A",
   "summary": "An independent, by-hand reading of the R6B zoning limits for one real lot, 215-16 Northern Boulevard in Queens (BBL 4073340070). A C2-2 commercial overlay is recorded; the overlay's own rules are not read here. Every value below comes from the law text and the lot's recorded facts, never from a program run.",
-  "what_it_is_worth": "Prepared by an AI helper and recomputed by a second AI; their agreement alone is not proof. It is a draft reading of the law, not professionally reviewed, and is not a statement that anything complies. It is one lot. Most sections were read from the same captures the rules were written from, so an error in a capture would be shared; four sections (ZR 23-22, 23-432, 23-362 and 23-52) were also read on the official page on 2026-10-06. The corner-lot definition it uses is not captured.",
+  "what_it_is_worth": "Prepared by an AI helper and recomputed by a second AI; their agreement alone is not proof. It is a draft reading of the law, not professionally reviewed, and is not a statement that anything complies. It is one lot. Most sections were read from the same captures the rules were written from, so an error in a capture would be shared; four sections (ZR 23-22, 23-432, 23-362 and 23-52) were also read on the official page on 2026-10-06. The corner-lot definition it uses (ZR 12-10) and ZR 23-342 are now captured (task M4-T025) and were read independently by two step-P1 readings (see cases/step-p1-worked.json).",
   "what_it_does_not_establish": [
     "It does not read the C2-2 commercial overlay; every residential figure here is the residential reading only.",
     "It does not prove the zoning lot; it is a tax-lot-only reading.",
@@ -15,6 +15,7 @@
   "sources": [
     "The independent hand-calculation, first round: provenance/return-independent-hand-calculation-1.md",
     "The independent hand-calculation, follow-up (tables C and D): provenance/return-independent-hand-calculation-2.md",
+    "The two step-P1 readings that confirm the corner, coverage and rear-yard rows from the newly captured text: provenance/return-independent-hand-calculation-3.md and provenance/return-independent-hand-calculation-4.md.",
     "The sealed folder given to the helper: the pinned ZR captures (without the notes describing how the program encoded them) and the lot's recorded official facts, with no program access.",
     "The law captures under docs/research/zr-snapshots/v1/, each pinned by its content digest."
   ],
@@ -80,6 +81,26 @@
       "date": "2026-10-06",
       "summary": "Row L7 (maximum dwelling units, qualifying affordable housing) changed from not known to 35, a value that holds only if the housing qualifies, as rows L2 and L4 are (24,180 / 680 = 35.56, a fraction below three-quarters dropped, so 35). Reason: a corrected reading. The helper's return (Task 1(g)) and the work order's independent value both give 35; the 'not known' sits in the program's first-screen column, which these cases do not copy. Ruled by an independent reviewer (project-control/reports/M4-T024-L7-ruling.md).",
       "by": "rules-engineer (M4-T024)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Row L9 (lot type): expected value unchanged (corner). The ZR 12-10 corner-lot definition is now captured (task M4-T025), so the citation changes from not-captured to the captured snapshot zr-12-10-lot-corner, and both step-P1 readings (return-independent-hand-calculation-3.md and -4.md, Q1a) independently confirm the corner classification. Reason: newly captured text.",
+      "by": "rules-engineer (M4-T027)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Row L5 (maximum lot coverage): expected value unchanged (not known as a single whole-lot figure). The ZR 12-10 corner-lot-portion definition is now captured (task M4-T025); the citation changes from not-captured to the captured snapshot zr-12-10-lot-corner, and the reason now records that both step-P1 readings read the lot as a corner-lot portion (100 percent) plus a remaining interior-lot portion (80 percent), with no single whole-lot figure. Reason: newly captured text.",
+      "by": "rules-engineer (M4-T027)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Row L12 (rear yard): expected value unchanged (not known). ZR 23-342 is now captured (task M4-T025); a captured ZR 23-342 citation is added and the reason records that both step-P1 readings read no rear yard within 100 feet of the corner (ZR 23-344(a)) and the beyond-100-feet outcome and its depth as not known. Reason: newly captured text.",
+      "by": "rules-engineer (M4-T027)"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Row L14 (ordinary rear-yard depth): expected value unchanged (not known). ZR 23-342 is now captured (task M4-T025), so the citation changes from not-captured to the captured snapshot zr-23-342; the reason now records that the depth ZR 23-342 sets depends on the building type and lot width, which are not given, so the depth for this lot is still not known. Reason: newly captured text.",
+      "by": "rules-engineer (M4-T027)"
     }
   ],
   "rows": [
@@ -345,31 +366,31 @@
           "table_assertion": null
         },
         {
-          "kind": "not_captured",
+          "kind": "captured",
           "section": "12-10",
-          "title": "Definitions",
-          "quote": "that portion bounded by the intersecting street line and lines parallel to and 100 feet from each intersecting street line",
-          "snapshot_id": "",
-          "snapshot_file": "",
-          "content_digest": "",
-          "official_url": "https://zr.planning.nyc.gov/article-i/chapter-2/12-10",
-          "captured_on": "",
-          "last_amended": "",
-          "date_read": "2026-10-06",
-          "status_note": "The repository capture of ZR 12-10 holds only the wide-street and narrow-street definitions; the lot-type and corner-lot-portion definitions are not captured and wait for step P1.",
+          "title": "Definitions (lot, corner)",
+          "quote": "that portion bounded by the intersecting #street line# and lines parallel to and 100 feet from each intersecting #street line#",
+          "snapshot_id": "zr-12-10-lot-corner",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-lot-corner.snapshot.json",
+          "content_digest": "86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+          "captured_on": "2026-10-07",
+          "last_amended": "1965-05-20",
+          "date_read": "",
+          "status_note": "",
           "table_assertion": null
         }
       ],
-      "why_applies": "ZR 23-362(a) gives corner lots 100 percent and interior or through lots 80 percent; the ZR 12-10 corner-lot definition limits the 100-percent corner-lot rule to the portion within 100 feet of each street line. Part of this lot lies beyond 100 feet of the 215 Place street line.",
+      "why_applies": "ZR 23-362(a) gives corner lots 100 percent and interior or through lots 80 percent; the captured ZR 12-10 corner-lot definition limits the 100-percent corner-lot rule to the portion within 100 feet of each street line. Part of this lot lies beyond 100 feet of the 215 Place street line, so it is a corner-lot portion plus a remaining interior-lot portion.",
       "arithmetic": [],
       "expected": {
         "kind": "not_known",
         "value": null,
         "unit": "",
-        "reason": "The corner-lot 100-percent rule covers only the part of the lot within 100 feet of each street line; this lot reaches 103.93 feet from the 215 Place street line (a strip about 3.93 feet wide, about 390 square feet), so the whole lot is not the corner-lot portion and no single coverage figure applies. The ZR 12-10 corner-lot-portion definition is not captured."
+        "reason": "No single whole-lot coverage figure. The corner-lot 100-percent rule covers only the part of the lot within 100 feet of each street line; this lot reaches 103.93 feet from the 215 Place street line (a strip about 3.93 feet wide, about 390 square feet), so the whole lot is not the corner-lot portion. Both step-P1 readings read it per portion: the corner-lot portion has a maximum residential lot coverage of 100 percent and the remaining interior-lot portion 80 percent."
       },
-      "source_reference": "return-independent-hand-calculation-1.md, Task 1(e), and return-independent-hand-calculation-2.md, Q1(a)-(b).",
-      "does_not_establish": "It gives no whole-lot coverage percentage and does not partition the lot to the square foot."
+      "source_reference": "return-independent-hand-calculation-1.md, Task 1(e), and return-independent-hand-calculation-2.md, Q1(a)-(b); the per-portion reading is confirmed by both step-P1 readings (return-independent-hand-calculation-3.md and -4.md, Q2a).",
+      "does_not_establish": "It gives no whole-lot coverage percentage and does not settle the corner-lot portion to the square foot (the two step-P1 readings give about 9,998 and 9,997.6 square feet for the corner portion, resting on the approximate outline and a one-foot street-line tolerance)."
     },
     {
       "row_id": "L6",
@@ -561,22 +582,22 @@
       ],
       "citations": [
         {
-          "kind": "not_captured",
+          "kind": "captured",
           "section": "12-10",
-          "title": "Definitions",
-          "quote": "a zoning lot which adjoins the point of intersection of two or more streets and in which the interior angle formed by the extensions of the street lines ... forms an angle of 135 degrees or less",
-          "snapshot_id": "",
-          "snapshot_file": "",
-          "content_digest": "",
-          "official_url": "https://zr.planning.nyc.gov/article-i/chapter-2/12-10",
-          "captured_on": "",
-          "last_amended": "",
-          "date_read": "2026-10-06",
-          "status_note": "The repository capture of ZR 12-10 holds only the wide-street and narrow-street definitions; the lot-type and corner-lot-portion definitions are not captured and wait for step P1.",
+          "title": "Definitions (lot, corner)",
+          "quote": "a #zoning lot# which adjoins the point of intersections of two or more #streets# and in which the interior angle formed by the extensions of the #street lines#",
+          "snapshot_id": "zr-12-10-lot-corner",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-lot-corner.snapshot.json",
+          "content_digest": "86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+          "captured_on": "2026-10-07",
+          "last_amended": "1965-05-20",
+          "date_read": "",
+          "status_note": "",
           "table_assertion": null
         }
       ],
-      "why_applies": "The lot adjoins the intersection of two streets and the interior angle formed by the street lines is 89.7 degrees, which is 135 degrees or less, so under the ZR 12-10 definition it is a corner lot. That definition is not captured.",
+      "why_applies": "The lot adjoins the intersection of two streets and the interior angle formed by the street lines is 89.7 degrees, which is 135 degrees or less, so under the captured ZR 12-10 corner-lot definition it is a corner lot.",
       "arithmetic": [],
       "expected": {
         "kind": "value",
@@ -584,8 +605,8 @@
         "unit": "",
         "reason": ""
       },
-      "source_reference": "return-independent-hand-calculation-1.md, Task 1(a): 'LOT TYPE = CORNER LOT ... 89.7 deg <= 135 deg -> corner lot confirmed'.",
-      "does_not_establish": "The classification uses the approximate tax-map outline and a definition that is not captured. The PLUTO lottype code is not relied on, because its meaning is not given in the sealed folder."
+      "source_reference": "return-independent-hand-calculation-1.md, Task 1(a): 'LOT TYPE = CORNER LOT ... 89.7 deg <= 135 deg -> corner lot confirmed'; both step-P1 readings confirm the corner classification (return-independent-hand-calculation-3.md and -4.md, Q1a).",
+      "does_not_establish": "The classification uses the approximate tax-map outline. The PLUTO lottype code is not relied on, because its meaning is not given in the sealed folder."
     },
     {
       "row_id": "L10",
@@ -702,18 +723,33 @@
           "date_read": "",
           "status_note": "",
           "table_assertion": null
+        },
+        {
+          "kind": "captured",
+          "section": "23-342",
+          "title": "Rear yard requirements",
+          "quote": "shall be provided on #interior lots# in accordance with this Section",
+          "snapshot_id": "zr-23-342",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-342.snapshot.json",
+          "content_digest": "1fece34420276aae6ca35f83b23929cea060b6cfee8871dbcea95edf44fb69c6",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-342",
+          "captured_on": "2026-10-07",
+          "last_amended": "2024-12-05",
+          "date_read": "",
+          "status_note": "",
+          "table_assertion": null
         }
       ],
-      "why_applies": "ZR 23-344(a) requires no rear yard within 100 feet of the point where two street lines meet at 135 degrees or less (here 89.7 degrees); that waiver covers only the area within 100 feet of the corner point. Part of this lot lies beyond 100 feet, and what is required there is not settled by the captured text.",
+      "why_applies": "ZR 23-344(a) requires no rear yard within 100 feet of the point where two street lines meet at 135 degrees or less (here 89.7 degrees); that waiver covers only the area within 100 feet of the corner point. ZR 23-342 requires a rear yard only on the interior-lot portion, and part of this lot lies beyond 100 feet of the corner, so what is required there is not settled by the captured text.",
       "arithmetic": [],
       "expected": {
         "kind": "not_known",
         "value": null,
         "unit": "",
-        "reason": "Within 100 feet of the corner point no rear yard is required (ZR 23-344(a)); but the far corner of the lot is 144.60 feet from the corner point, so part of the lot lies beyond that 100-foot reach, and whether a rear yard is required there is not settled. ZR 23-342 (rear-yard depth) and the ZR 12-10 side-/rear-lot-line definitions are not captured."
+        "reason": "Within 100 feet of the corner point no rear yard is required (ZR 23-344(a)); but the far corner of the lot is 144.60 feet from the corner point, so part of the lot lies beyond that 100-foot reach, and whether a rear yard is required there is not settled. ZR 23-342 is now captured, but the depth it sets depends on the building type and lot width (not given), and the ZR 12-10 side-/rear-lot-line definitions are not captured; both step-P1 readings read it the same way (no rear yard within 100 feet of the corner; beyond, not known)."
       },
-      "source_reference": "return-independent-hand-calculation-1.md, Task 1(f), and return-independent-hand-calculation-2.md, Q1(c).",
-      "does_not_establish": "It gives no rear-yard requirement for the part of the lot beyond 100 feet of the corner; that needs neighbouring lot-line data and the uncaptured sections."
+      "source_reference": "return-independent-hand-calculation-1.md, Task 1(f), and return-independent-hand-calculation-2.md, Q1(c); confirmed by both step-P1 readings (return-independent-hand-calculation-3.md and -4.md, Q3a).",
+      "does_not_establish": "It gives no rear-yard requirement for the part of the lot beyond 100 feet of the corner; that needs neighbouring lot-line data, the building type and lot width, and the uncaptured ZR 12-10 lot-line definitions."
     },
     {
       "row_id": "L13",
@@ -764,37 +800,52 @@
       "facts_used": [
         {
           "name": "Governing section",
-          "value": "ZR 23-342",
-          "source": "not captured"
+          "value": "ZR 23-342 (now captured, task M4-T025)",
+          "source": "docs/research/zr-snapshots/v1/zr-23-342.snapshot.json"
         }
       ],
       "citations": [
         {
-          "kind": "not_captured",
+          "kind": "captured",
           "section": "23-342",
-          "title": "",
-          "quote": "not less than 20 feet",
-          "snapshot_id": "",
-          "snapshot_file": "",
-          "content_digest": "",
+          "title": "Rear yard requirements",
+          "quote": "shall be provided on #interior lots# in accordance with this Section",
+          "snapshot_id": "zr-23-342",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-342.snapshot.json",
+          "content_digest": "1fece34420276aae6ca35f83b23929cea060b6cfee8871dbcea95edf44fb69c6",
           "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-342",
-          "captured_on": "",
-          "last_amended": "",
-          "date_read": "2026-10-06",
-          "status_note": "ZR 23-342 (rear yard requirements) is not captured; it waits for step P1.",
+          "captured_on": "2026-10-07",
+          "last_amended": "2024-12-05",
+          "date_read": "",
+          "status_note": "",
+          "table_assertion": null
+        },
+        {
+          "kind": "captured",
+          "section": "23-342",
+          "title": "Rear yard requirements",
+          "quote": "for #zoning lots# with a #lot width# of less than 40 feet, a #rear yard# with a depth of not less than 30 feet",
+          "snapshot_id": "zr-23-342",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-342.snapshot.json",
+          "content_digest": "1fece34420276aae6ca35f83b23929cea060b6cfee8871dbcea95edf44fb69c6",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-342",
+          "captured_on": "2026-10-07",
+          "last_amended": "2024-12-05",
+          "date_read": "",
+          "status_note": "",
           "table_assertion": null
         }
       ],
-      "why_applies": "The ordinary rear-yard depth is set by ZR 23-342, which is not in the captured text.",
+      "why_applies": "The ordinary rear-yard depth for an interior lot is set by ZR 23-342 (now captured); it is not less than 20 feet or not less than 30 feet depending on the building type (detached or zero-lot-line, or semi-detached or attached) and the lot width (less than 40 feet, or 40 feet or greater).",
       "arithmetic": [],
       "expected": {
         "kind": "not_known",
         "value": null,
         "unit": "",
-        "reason": "ZR 23-342 (rear yard requirements) sets the ordinary rear-yard depth and is not captured, so the depth is not known. The live official page was read on 2026-10-06 and shows a 20-foot minimum, but that page is not captured and this reading does not rely on it."
+        "reason": "ZR 23-342 is now captured, but the ordinary rear-yard depth it sets depends on the building type and the lot width, which are not given for this lot, so the depth is not known. Both step-P1 readings read the captured ZR 23-342 the same way (20 or 30 feet depending on building type and lot width, not given)."
       },
-      "source_reference": "return-independent-hand-calculation-1.md, Task 1(f) and Task 3 item 4: 'ZR 23-342 is NOT in the packet; baseline depth NOT KNOWN from captured text'.",
-      "does_not_establish": "It gives no rear-yard depth; that waits for step P1 (capturing ZR 23-342)."
+      "source_reference": "return-independent-hand-calculation-1.md, Task 1(f) and Task 3 item 4: 'ZR 23-342 is NOT in the packet; baseline depth NOT KNOWN from captured text'; with ZR 23-342 now captured, both step-P1 readings (return-independent-hand-calculation-3.md and -4.md, Q3) read the depth as 20 or 30 feet depending on building type and lot width, not given.",
+      "does_not_establish": "It gives no rear-yard depth for this lot; the captured ZR 23-342 sets 20 or 30 feet by building type and lot width, which are not given."
     },
     {
       "row_id": "L15",

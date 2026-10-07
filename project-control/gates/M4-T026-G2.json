@@ -1,0 +1,12 @@
+{
+  "task_id": "M4-T026",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M4-T026-producer-report.md",
+  "reviewed_at": "2026-10-07T06:01:52.712696+00:00",
+  "content_manifest_sha256": "2a36addf6b76cdda89df249d7862bbfccd9fd6208c3b98448a90dfbdc67b2d6d",
+  "reviewed_sha": "361cedf8e159e002b3555759190820425b35c8a2",
+  "updated_at": "2026-10-07T06:01:52.900404+00:00"
+}

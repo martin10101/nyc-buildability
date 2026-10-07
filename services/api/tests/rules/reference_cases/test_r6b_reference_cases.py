@@ -11,6 +11,7 @@ edited. They cover the acceptance scenarios S1 to S12.
 from __future__ import annotations
 
 import copy
+import hashlib
 import pathlib
 import sys
 
@@ -39,8 +40,10 @@ def test_everything_validates_clean():
 # --------------------------------------------------------------------------
 # S1 - four cases, each with one data file and one page; every table row present
 # --------------------------------------------------------------------------
-def test_four_cases_each_with_a_data_file_and_a_page():
-    assert lib.CASE_IDS == ("real-lot", "interior-lots", "corner-reach", "suffix")
+def test_each_case_has_a_data_file_and_a_page():
+    assert lib.CASE_IDS == (
+        "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked"
+    )
     for case_id in lib.CASE_IDS:
         assert lib.case_path(case_id).is_file(), f"missing data file for {case_id}"
         assert lib.page_path(case_id).is_file(), f"missing page for {case_id}"
@@ -145,6 +148,73 @@ def test_the_two_returns_are_present_unchanged():
 
 
 # --------------------------------------------------------------------------
+# S1 (step P1) - the two step-P1 readings are present unchanged (digest pinned)
+# --------------------------------------------------------------------------
+def test_the_two_step_p1_readings_are_present_unchanged():
+    assert check.step_p1_reading_errors() == []
+    for name, spec in check.STEP_P1_READINGS.items():
+        raw = (lib.PROVENANCE_DIR / name).read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == spec["digest"], name
+        text = raw.decode("utf-8")
+        assert "sealed folder" in text, name
+        assert text.rstrip().endswith("END-OF-REPORT"), name
+    three = (lib.PROVENANCE_DIR / "return-independent-hand-calculation-3.md").read_text()
+    four = (lib.PROVENANCE_DIR / "return-independent-hand-calculation-4.md").read_text()
+    assert three != four
+
+
+def test_a_changed_step_p1_reading_is_caught(monkeypatch):
+    bad = {
+        "return-independent-hand-calculation-3.md": {
+            "marker": "ONE-HARD-RULE COMPLIANCE", "digest": "0" * 64,
+        },
+        "return-independent-hand-calculation-4.md":
+            check.STEP_P1_READINGS["return-independent-hand-calculation-4.md"],
+    }
+    monkeypatch.setattr(check, "STEP_P1_READINGS", bad)
+    errs = check.step_p1_reading_errors()
+    assert errs and any("digest changed" in m for m in errs), errs
+
+
+# --------------------------------------------------------------------------
+# S2 (step P1) - a value only where both readings agree on the same basis
+# --------------------------------------------------------------------------
+def test_step_p1_settled_values_where_both_readings_agree():
+    assert lib.load_row("step-p1-worked", "corner-100x100-coverage")["value"] == "100 percent"
+    assert lib.load_row("step-p1-worked", "interior-40x100-coverage")["value"] == "80 percent"
+    assert lib.load_row("step-p1-worked", "through-40x200-coverage")["value"] == "80 percent"
+    assert (lib.load_row("step-p1-worked", "lot-area-definition")["value"]
+            == "the area of a zoning lot")
+    assert lib.load_row("step-p1-worked", "special-density-areas-list")["kind"] == "value"
+    # the two readings differ on the 40x100 interior-lot rear-yard depth -> not known
+    assert lib.load_row("step-p1-worked", "interior-40x100-rear-yard")["kind"] == "not_known"
+
+
+def test_step_p1_case_rows_name_both_readings():
+    data = CASES["step-p1-worked"]
+    for row in data["rows"]:
+        assert check.both_readings_errors("step-p1-worked", row) == [], row["row_id"]
+
+
+def test_a_step_p1_row_missing_a_reading_is_refused():
+    row = copy.deepcopy(lib.find_row_or_none("step-p1-worked", "corner-100x100-coverage"))
+    row["source_reference"] = "return-independent-hand-calculation-3.md only"
+    errs = check.both_readings_errors("step-p1-worked", row)
+    assert errs and any("both step-P1 readings" in m for m in errs), errs
+
+
+def test_a_step_p1_value_where_the_readings_differ_is_refused():
+    data = copy.deepcopy(CASES["step-p1-worked"])
+    for row in data["rows"]:
+        if row["row_id"] == "interior-40x100-rear-yard":
+            row["expected"]["kind"] = "value"
+            row["expected"]["value"] = "20 feet"
+            row["expected"]["reason"] = ""
+    errs = check.readings_differ_errors("step-p1-worked", data)
+    assert errs and any("interior-40x100-rear-yard" in m for m in errs), errs
+
+
+# --------------------------------------------------------------------------
 # S5 - arithmetic recomputed exactly (positive + the required worked numbers)
 # --------------------------------------------------------------------------
 def test_all_arithmetic_recomputes():
@@ -210,6 +280,10 @@ NOT_KNOWN = {
     "real-lot": {"L5", "L8", "L12", "L14", "L15"},
     "corner-reach": {"real-lot-coverage", "real-lot-rear-yard", "C1-rear-yard",
                      "C3-coverage", "C3-rear-yard"},
+    "step-p1-worked": {"corner-150x100-coverage", "corner-150x100-rear-yard",
+                       "corner-200x120-coverage", "corner-200x120-rear-yard",
+                       "interior-40x100-rear-yard", "through-40x200-rear-yard",
+                       "special-density-real-lot"},
 }
 
 

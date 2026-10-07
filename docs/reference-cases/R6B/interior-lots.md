@@ -256,24 +256,30 @@ Law relied on:
   - Content digest: `f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9`.
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362.
   - Quoted: "the maximum residential lot coverage for interior lots or through lots shall be 80 percent and the maximum residential lot coverage for corner lots shall be 100 percent"
+- ZR 23-363 (Special rules for certain interior or through lots) - captured.
+  - Capture: snapshot `zr-23-363`, file `docs/research/zr-snapshots/v1/zr-23-363.snapshot.json`.
+  - Content digest: `7ff320d2f18feec7cc53f609c066d09ac349a714b83c6dbd014e2cb51932ab34`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-363.
+  - Quoted: "may be increased in accordance with the provisions of this Section"
 
-Why the rule applies: ZR 23-362(a) gives interior and through lots a maximum residential lot coverage of 80 percent.
+Why the rule applies: ZR 23-362(a) gives interior and through lots a maximum residential lot coverage of 80 percent; the captured ZR 23-363 may only increase that maximum under its triggers, never decrease it.
 
 Expected value: 80 percent
 
-Where this stands in the independent reading: return-independent-hand-calculation-1.md, Task 2 ('80% -> 4,000 sf' for the interior probe), and the work order's table B note that the independent reading gives 80 percent from ZR 23-362(a).
+Where this stands in the independent reading: return-independent-hand-calculation-1.md, Task 2 ('80% -> 4,000 sf' for the interior probe), and the work order's table B note that the independent reading gives 80 percent from ZR 23-362(a); both step-P1 readings read ZR 23-363 as only able to increase the 80 percent and as not changing it on the bare facts (return-independent-hand-calculation-3.md and -4.md, Q2c).
 
-What this row does not establish: ZR 23-363 may change the 80 percent for some interior and through lots and is not captured; a different maximum also applies to lots of 30,000 sq ft or more.
+What this row does not establish: ZR 23-363 is now captured and may only increase the 80 percent for some interior and through lots - to 90 percent for a shallow lot, or 100 percent for a portion within 100 feet of a qualifying corner or where the front lot line is on the block's short dimension - never decrease it, and does not change the 80 percent on the bare facts; a different maximum also applies to lots of 30,000 sq ft or more.
 
 ## What this case does not establish
 
 - These lots are made up; they do not describe any real property.
-- The 80-percent coverage may be changed by ZR 23-363 (not captured) and does not apply to lots of 30,000 sq ft or more.
+- The 80-percent coverage may be increased (never decreased) by ZR 23-363 (now captured, task M4-T025) under its triggers, and does not apply to lots of 30,000 sq ft or more.
 - It is not a professional or legal determination.
 
 ## Sources
 
 - The independent hand-calculation, first round: provenance/return-independent-hand-calculation-1.md
+- The two step-P1 readings that confirm the interior-coverage reading of ZR 23-363 from the newly captured text: provenance/return-independent-hand-calculation-3.md and provenance/return-independent-hand-calculation-4.md.
 - The sealed folder given to the helper: the pinned ZR captures (without the notes describing how the program encoded them) and the lot's recorded official facts, with no program access.
 - The law captures under docs/research/zr-snapshots/v1/, each pinned by its content digest.
 
@@ -282,4 +288,5 @@ What this row does not establish: ZR 23-363 may change the 80 percent for some i
 | Date | Change | By |
 |---|---|---|
 | 2026-10-06 | Case created from the independent hand-calculation returns (step R0). | rules-engineer (M4-T024) |
+| 2026-10-07 | Row interior-coverage: expected value unchanged (80 percent). ZR 23-363 is now captured (task M4-T025); a captured ZR 23-363 citation is added and the 'does not establish' note records that ZR 23-363 may only increase the 80 percent (to 90 percent for a shallow lot, or 100 percent near a corner or on the block's short dimension) under conditions, never decrease it, and does not change the 80 percent on the bare facts. Both step-P1 readings read it the same way (return-independent-hand-calculation-3.md and -4.md, Q2c). Reason: newly captured text. | rules-engineer (M4-T027) |
 

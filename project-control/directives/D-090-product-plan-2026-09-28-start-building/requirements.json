@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 492,
+ "requirement_count": 497,
  "producer": "orchestrator",
- "updated_at": "2026-10-07T03:58:16+00:00",
+ "updated_at": "2026-10-07T05:05:17+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -7645,7 +7645,8 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M4-T024"
+     "M4-T024",
+     "M4-T027"
     ],
     "task_types": [],
     "milestones": [],
@@ -8047,7 +8048,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M4-T027"
     ],
     "task_types": [],
     "milestones": [],
@@ -8149,7 +8151,8 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M4-T024"
+     "M4-T024",
+     "M4-T027"
     ],
     "task_types": [],
     "milestones": [],
@@ -8753,7 +8756,8 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M4-T024"
+     "M4-T024",
+     "M4-T027"
     ],
     "task_types": [],
     "milestones": [],
@@ -9832,7 +9836,9 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M4-T024"
+     "M4-T024",
+     "M4-T026",
+     "M4-T027"
     ],
     "task_types": [],
     "milestones": [],
@@ -10722,7 +10728,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M4-T027"
     ],
     "task_types": [],
     "milestones": [],
@@ -16670,6 +16677,187 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-07 (message 106).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R493",
+   "text": "'Why dont u run a few difrint parts of the program at once to speed it up': the owner is told why several parts were not being run at once, what can safely run at once and what stays one at a time. ORCHESTRATOR'S READING: the answer names the limits that were in force (the owner's own one-helper and one-piece-at-a-time instructions, R211, R308, R314 and R316) and the limits that remain for practical reasons (heavy test runs, merging, pieces that depend on each other), in plain words and without a table (R474, R475).",
+   "source_ref": "source-052-amendment.md#owner-message-107-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R211",
+    "D-090-R308",
+    "D-090-R314",
+    "D-090-R316",
+    "D-090-R474",
+    "D-090-R475"
+   ],
+   "required_harness": "The reply that follows the two messages says why, what can overlap and what cannot, and has no table.",
+   "required_evidence": "The session transcript (the reply to messages 107 and 108).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 107).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R494",
+   "text": "'run a few difrint parts of the program at once to speed it up': several independent parts of the program may be worked on at the same time. ORCHESTRATOR'S READING: the words are a question, and with message 108 they are the owner's own proposal to raise concurrency, which is the approval that R316 requires. It changes R308 ('Finish one implementation piece at a time and obtain independent review') in one respect only: more than one piece may be in work at once; each piece is still finished with its own independent review, and producer and reviewer stay different agents. The owner was told this reading in the reply and asked to say if something different was meant.",
+   "source_ref": "source-052-amendment.md#owner-message-107-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R308",
+    "D-090-R315",
+    "D-090-R316",
+    "D-090-R488"
+   ],
+   "required_harness": "No two pieces in work at the same time depend on each other's unmerged result; each piece has its own independent review record.",
+   "required_evidence": "The ledger, the concurrency record written before each parallel wave, and the review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 107).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R495",
+   "text": "'obviously not anything that will collide with each other or work on the same file': pieces that run at the same time never collide and never work on the same file. ORCHESTRATOR'S READING: it restates R317. Before each parallel wave the orchestrator writes down, per piece, its files, what it depends on and its place in the merge order (the orchestration policy's concurrency record), and pieces that share a file are sequenced instead. The orchestrator's own bookkeeping files (the ledger and the registry) are written by the orchestrator alone, one command at a time.",
+   "source_ref": "source-052-amendment.md#owner-message-107-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R317",
+    "D-090-R485"
+   ],
+   "required_harness": "The concurrency record of each wave shows no file in two pieces' allowed paths; no builder's commit touches a file outside its own piece.",
+   "required_evidence": "The concurrency record and the builders' commits.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 107).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R496",
+   "text": "'Like spine up 5 subagents': about five helpers may run at the same time. ORCHESTRATOR'S READING: 'spine up' is 'spin up'; five is the owner's example of the scale, taken as the upper bound: at most five helpers at once, of which at most three build at the same time and at most four review (the limits of the orchestration policy, section B, which this message does not change). It replaces the limit of R211 and R314 (one helper at a time) and widens R488 (one builder with one research helper). Unchanged: no more than five without a new owner answer; no helper is added merely to look fast; the security, production and merge restrictions; no new paid service or access (R328: the same work is done sooner, which uses the plan's allowance faster, as the owner was told).",
+   "source_ref": "source-052-amendment.md#owner-message-108-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R211",
+    "D-090-R314",
+    "D-090-R316",
+    "D-090-R328",
+    "D-090-R488"
+   ],
+   "required_harness": "At no time do more than five helpers run, more than three of them building or more than four reviewing.",
+   "required_evidence": "The session transcripts and notes (which helpers ran when).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 108).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R497",
+   "text": "'Like spine up 5 subagents ': what the two messages do not change stays as recorded. ORCHESTRATOR'S READING: heavy test runs stay one at a time on the development server (R313); merging stays one pull request at a time, in the recorded order, on a fully green run (R492); nothing is built on unmerged work; the early simple PDF stays declined (R491); no open choice (the starting figures, the order of the options, the instruction-file question) is answered by these messages (R283).",
+   "source_ref": "source-052-amendment.md#owner-message-108-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R313",
+    "D-090-R491",
+    "D-090-R492"
+   ],
+   "required_harness": "No two heavy runs overlap on the server; no merge happens out of order or on a run that is not fully green; no record treats another open choice as answered.",
+   "required_evidence": "The session notes, the pull requests and the ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 108).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
