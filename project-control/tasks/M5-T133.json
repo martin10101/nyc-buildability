@@ -107,7 +107,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 65,
+  "progress_percent": 70,
   "risks": [
     "An example repaired by changing the stated outline to match the sum without a building that makes sense (rooms with no corridor to reach them) -> the reviewers read the layout, not only the sum",
     "A statement of law written from the reviewer's message or from memory -> S8",
@@ -116,7 +116,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:41.852253+00:00",
-  "updated_at": "2026-10-07T21:11:19.582457+00:00",
+  "updated_at": "2026-10-07T21:26:04.084672+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -168,6 +168,13 @@
       "percent": 65,
       "status": "in_progress",
       "message": "Round 2 by the same builder (commit 3c160edc: the record and the report only; no example or test file) integrated as cacac6aa: item 4 of section 8b removed (it repeated the orchestrator's misreading of the reviewer's link to ZR 23-22); section 8b now holds three questions of law. The orchestrator's run at 3736a22d: tests/scenario/measurement_basis within 2754 passed, 2 skipped (tests/rules, tests/scenario, tests/contracts, tests/journey, tests/spatial/test_lot_reach.py); ruff clean. Gate G4 (qa-engineer) was started at a329cee4, before round 2; it is asked to confirm at the round-2 head that the examples and the test files are unchanged. Gate G3 (data-contract-verifier) is started at the round-2 content."
+    },
+    {
+      "at": "2026-10-07T21:26:04.084554+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "TWO INDEPENDENT REVIEWS. GATE G4 (qa-engineer) at a329cee4: PASS, no must-fix, three notes; its verdict stands at f2b446ec (the example files and the test files are byte-unchanged since 38efb977). It repeated the red proof against the examples as they were at the claim head (Example C: 1,743 against 1,260 sq ft, 483 too much; Example B: no floor outline; Example A passes), ran 14 mutations of its own (13 caught; the one not caught, a stair that skips a floor it serves with the floor's areas rebalanced, is outside what an area check sees: its note F2), and confirmed that the check compares each floor with exact decimal arithmetic and never computes the outline from the components. Notes: F1 the check stops at a floor without an outline and so does not also report an overflow on another floor in the same run (the example still fails); F3 one list of support files is built from a pattern that could in principle match nothing. GATE G3 (data-contract-verifier) at f2b446ec: FAIL on ONE finding, F1, a false statement: in Example B the refuse room's condition text says '15 units here = 45 sq ft cap' while the rebuilt layout has 13 dwelling units and the exemption applied is 39 sq ft; the stale text also stands in the rendered page. No area and no ratio is affected. Everything else passed in its review: it added up every floor of Examples B and C itself (every difference zero), recomputed the three reconciliations and ratios, found all 52 citations of the examples and every quote of the record in the capture each names, with genuine digests, confirmed that the record rests on no capture added by task M4-T034 (those texts appear only as 'not captured yet'), and found the two lists of section 8 clean (no choice written as decided; no question of law put to the owner as a preference). Two notes (quote-mark glyphs; the cellar of Example B shows no stair). THE FAILED REVIEW IS RECORDED HERE BEFORE THE REWORK. Round 3 goes to the same builder: the one text and its rendered page, a sweep of every free-text field of the three examples for figures left over from the old layouts, a test that ties such a figure to the data, and the two small notes F1 and F3 of gate G4; then the same two reviewers confirm at the new head."
     }
   ]
 }
