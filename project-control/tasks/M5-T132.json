@@ -117,7 +117,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:40.903384+00:00",
-  "updated_at": "2026-10-07T21:31:44.559306+00:00",
+  "updated_at": "2026-10-07T21:33:52.604838+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -164,6 +164,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "GATE G4 (qa-engineer) at f2b446ec: FAIL. The two named faults and the whole repaired surface are pinned well (its red proof: the tests for the four corner and density states fail on the module at the claim head, with exactly the two documented faults; 15 of its 15 mutations are caught; no state the code acts on is without a test; no test that cannot fail). BUT the task's own measure, that every row of the table has a test that would catch a wrong text, is not met for six rows that were not repaired: the reviewer swapped each row's reason for another state's reason of the same way and kind, and the row's test and the whole suite still passed. Must-fix F1 to F4: the row for the special-purpose-district column not read and the row for the inclusionary-housing column not read assert only the words 'not read'; the three rows that show the text for 'no outline' assert only 'not measured'; the row for a corner reach that is not measured does not assert that the known angle is NOT called unmeasured. Notes F5 to F8: two pairs of rows share one condition and do not pin the result-specific wording; the way of every state is pinned for the focal result only, and the 'no way changed' comparison over all results is the builder's one-time script, not a committed test; the two text guards cover all families only together; two line counts in the report are stale. THE FAILED REVIEW IS RECORDED HERE BEFORE THE REWORK. The correction (tests and report only) goes to the same builder once gate G3's review of the texts has returned, so that both reviews' findings are corrected in one round."
+    },
+    {
+      "at": "2026-10-07T21:33:52.604734+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "GATE G3 (data-contract-verifier) at f2b446ec: FAIL on ONE finding, F1. The two named faults are fixed; its own battery of about 62 input states, driven against the module at the claim head and at this head, shows no way and no kind changed for any result; 107 distinct texts carry no internal name; readings O19 and O20 are applied as stated and judged fair (O19 more cautious than the work order); scope and checks clean. BUT its own sweep found one explanation of the same kind left unrepaired, which the builder's table had marked as passing: for a corner lot that reaches beyond 100 feet from a street line, the lot-coverage reason says the lot reaches 'beyond the corner-lot portion' and then, in brackets, '(the whole lot is within 100 feet of each intersecting street line)', which is false in that state and contradicts the same sentence. It is the text shown for the benchmark lot (103.93 ft). Notes: F2 at the exact limit the rounded display can read '135.0 degrees, more than ... 135 degrees' or '100.00 ft ... beyond'; F3 the density-evidence states cannot be produced by the real path today. THE FAILED REVIEW IS RECORDED HERE BEFORE THE REWORK. Round 3 goes to the same builder with both reviews' findings (G3: F1, F2; G4: F1 to F6, F8); then the same two reviewers review again at the new head."
     }
   ],
   "scope_corrections": [
