@@ -100,7 +100,7 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
+  "status": "awaiting_gate",
   "progress_percent": 85,
   "risks": [
     "A change that is not additive breaks a present reader (the engine's validator, the drawings, the website's fixtures) -> S1, S2, S8, S9 and the compatibility part of the independent review",
@@ -110,7 +110,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T08:45:33.285633+00:00",
-  "updated_at": "2026-10-07T10:20:07.497387+00:00",
+  "updated_at": "2026-10-07T10:20:25.059528+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
