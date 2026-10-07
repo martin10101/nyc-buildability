@@ -92,8 +92,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A valid document of today refused -> S6: every fixture through both validators",
     "The two validators drifting -> S7: one shared rule",
@@ -102,7 +102,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:29.581528+00:00",
-  "updated_at": "2026-10-07T17:38:14.541231+00:00",
+  "updated_at": "2026-10-07T19:53:51.884427+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -171,5 +171,7 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-07, after the builder's first return (BLOCKED) and before integration or review] THE PACKET WAS WRONG ON ONE POINT, found by the builder. It said that the three tests `test_KNOWN_LIMIT_...` of `services/api/tests/contracts/test_results_three_ways_slot.py` 'stay as they are, because they test the SCHEMA alone'. They pass their documents through the study validator and are marked as strict expected failures that fail the day the validator refuses such a document: that day is this task. Backlog row DB-171 says those tests are then turned to assert refusal. `services/api/tests/contracts/test_results_three_ways_slot.py` is added to the allowed paths for those THREE tests only: the expected-failure mark is removed so that each asserts that the validator refuses its document; each is renamed and its comment rewritten to say what it now proves; nothing else in the file changes. That the bare SCHEMA still accepts each of the three documents (its descriptions say so and do not change) is pinned by a test in this task's own new test file. ALSO: the builder showed that the schema already refuses an available answer whose every value is withheld (an empty values list); point F4 of row DB-171 therefore needs no rule of its own, and the test of scenario S4 tests the schema's refusal through both validators, as the scenario allows."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T19:53:51.884230+00:00"
 }

@@ -106,8 +106,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "An empty column taken as 'the lot has none' -> reading O14 and S2; if it cannot be told, everything is 'not read'",
     "A tolerance invented without data -> reading O15: none is invented",
@@ -117,7 +117,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:28.703315+00:00",
-  "updated_at": "2026-10-07T17:38:13.570111+00:00",
+  "updated_at": "2026-10-07T19:53:47.185048+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -186,5 +186,7 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-07, at the claim seam, before any builder was started] Found by the orchestrator's own run of tests/contracts at the claim head (one test failed). (1) WHERE THE NEW MODULES LIVE: in `services/api/app/scenario/three_answers/` (`result_way_facts.py` for the recorded conditions; `result_way_bridge.py` and `result_way_bridge_*.py`), with their tests in `services/api/tests/scenario/three_answers/`, NOT in `services/api/app/contracts/`: an existing guard (`services/api/tests/contracts/test_contract_serializers.py`) pins the exact set of modules of that folder, and another task of this wave writes there. The seeded placeholders were moved by the orchestrator. (2) TWO EXISTING GUARD TESTS MUST CHANGE, and only they: `services/api/tests/scenario/three_answers/test_result_ways.py::test_nothing_under_app_imports_the_module_yet` (task M5-T129) and `services/api/tests/spatial/test_lot_reach.py::test_nothing_imports_the_module_yet` (task M5-T127) each prove today that NOTHING under services/api/app names the decision modules or the lot-reach module. This task is the first caller of both, so 'nothing calls it yet' stops being true by design. Each test is changed in its one function only: this task's new modules become the only permitted callers, named in a literal list; the test still fails when any other app file names the module (proved by a mutation); its name says what it now proves. Nothing else in either file changes. The packet's 'new files only' and 'edits no existing file' are read with this one exception; no existing file under services/api/app changes."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T19:53:47.184842+00:00"
 }

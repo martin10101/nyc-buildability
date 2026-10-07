@@ -75,8 +75,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A term reported as not defined that sits under an inverted or combined title (seen in M4-T029) -> S1",
     "A section number guessed instead of found -> the targets are named by what they are; the builder reports the number the site shows",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T16:00:30.664338+00:00",
-  "updated_at": "2026-10-07T17:38:15.395014+00:00",
+  "updated_at": "2026-10-07T19:53:52.805763+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -133,5 +133,7 @@
       "status": "in_progress",
       "message": "Round 2 by the same builder (the report only: the amendment date of 'open space' corrected to 7/8/2025; every date and page number in the report compared with the capture files, no other mismatch) integrated as 9ec94043. The same reviewer confirmed G3 PASS and G4 PASS at 9ec94043: the required correction F1 is closed; no capture changed. The full api suite at d1e6683c: 8384 passed, 8 skipped. Evidence map written; ready to submit."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T19:53:52.805612+00:00"
 }
