@@ -107,8 +107,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 95,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "A text 'fixed' by changing what the result shows -> S6",
     "Only the two named states repaired and the same fault left elsewhere -> S5; the reviewers pick their own states",
@@ -117,7 +117,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T20:17:40.903384+00:00",
-  "updated_at": "2026-10-07T22:05:17.527217+00:00",
+  "updated_at": "2026-10-07T22:06:55.912040+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
