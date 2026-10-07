@@ -1,0 +1,134 @@
+# CI experiment evidence for M0-T186 - supervisor-bridge job 112576500175 (run 37554194212, attempt 1, event push); written by the orchestrator, read-only
+# Head 685ca1f374128a17967e10da46605bd5fb754134 = commit A of M0-T186 (the new tests only, NO repair), branch ci-exp/M0-T186-red; job conclusion: failure; runner: Microsoft Windows Server 2025; Image: windows-2025-vs2026
+# Full job log: 60574 bytes, sha256 7031741736ceefd101700bd541cc8baf5a8e20fa2f5b57d64f9c4e71ff334408
+# Source: gh api repos/martin10101/nyc-buildability/actions/jobs/112576500175/logs. Excerpt = this test file's progress line, then the FAILURES section through the summary line, timestamps stripped, otherwise unchanged.
+# FAILED lines found in the excerpt: 3
+#   tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsDeletePending::test_persistent_windows_permission_error_times_out_fail_closed
+#   tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsDeletePending::test_transient_windows_permission_error_waits_then_succeeds
+#   tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsDeletePending::test_windows_delete_pending_create_raises_permission_error_platform_fact
+
+tools\test_agent_supervisor_mrl_subagent_contract.py ................... [ 55%]
+........FF..F..................                                          [ 56%]
+
+================================== FAILURES ===================================
+_ TestExclusiveWindowsDeletePending.test_transient_windows_permission_error_waits_then_succeeds _
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestExclusiveWindowsDeletePending object at 0x000001E5CF93E600>
+ledger = <tools.agent_supervisor.mrl_subagent_contract.SubagentLedger object at 0x000001E5D27B9550>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001E5D27B8860>
+
+    def test_transient_windows_permission_error_waits_then_succeeds(self, ledger, monkeypatch):
+        # S5(i): the create fails twice with the Windows delete-pending error, then
+        # succeeds -> the request is SERVED and the limits are intact (exactly one
+        # issued, nothing lost). RED pre-repair: the PermissionError reaches the caller
+        # unhandled instead of being waited out, so this line raises before the assert.
+        monkeypatch.setattr(msc, "_is_windows", lambda: True, raising=False)
+        fake_open, state = _failing_lock_open(
+            PermissionError(errno.EACCES, "delete pending"), fail_times=2)
+        monkeypatch.setattr(msc.os, "open", fake_open)
+>       decision = _req(ledger)
+                   ^^^^^^^^^^^^
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:220: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\test_agent_supervisor_mrl_subagent_contract.py:42: in _req
+    return ledger.request(**base)
+           ^^^^^^^^^^^^^^^^^^^^^^
+tools\agent_supervisor\mrl_subagent_contract.py:200: in request
+    with _exclusive(self.path):
+         ^^^^^^^^^^^^^^^^^^^^^
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+tools\agent_supervisor\mrl_subagent_contract.py:133: in _exclusive
+    fd = os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_transient_windows_permiss0\\ledger.json.lock'
+flags = 1281, args = (), kwargs = {}
+
+    def fake_open(path, flags, *args, **kwargs):  # type: ignore[no-untyped-def]
+        if str(path).endswith(".lock"):
+            state["calls"] += 1
+            if state["calls"] <= fail_times:
+>               raise error
+E               PermissionError: [Errno 13] delete pending
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:187: PermissionError
+_ TestExclusiveWindowsDeletePending.test_persistent_windows_permission_error_times_out_fail_closed _
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestExclusiveWindowsDeletePending object at 0x000001E5CF93C1D0>
+ledger = <tools.agent_supervisor.mrl_subagent_contract.SubagentLedger object at 0x000001E5D1E677A0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001E5D2358440>
+
+    def test_persistent_windows_permission_error_times_out_fail_closed(self, ledger, monkeypatch):
+        # S5(ii): a delete-pending PermissionError that NEVER clears is bounded by the
+        # lock's own deadline and ends in the module's typed fail-closed refusal
+        # (ContractError '...fail closed'), never an admission and never an unbounded
+        # loop. RED pre-repair: the raw PermissionError reaches the caller instead of
+        # the typed refusal, so pytest.raises(ContractError) does not match it.
+        monkeypatch.setattr(msc, "_is_windows", lambda: True, raising=False)
+        monkeypatch.setattr(msc, "_LOCK_TIMEOUT_S", 0.2)
+        fake_open, state = _failing_lock_open(
+            PermissionError(errno.EACCES, "delete pending"), fail_times=10 ** 9)
+        monkeypatch.setattr(msc.os, "open", fake_open)
+        with pytest.raises(ContractError, match="fail closed"):
+>           _req(ledger)
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:237: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\test_agent_supervisor_mrl_subagent_contract.py:42: in _req
+    return ledger.request(**base)
+           ^^^^^^^^^^^^^^^^^^^^^^
+tools\agent_supervisor\mrl_subagent_contract.py:200: in request
+    with _exclusive(self.path):
+         ^^^^^^^^^^^^^^^^^^^^^
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+tools\agent_supervisor\mrl_subagent_contract.py:133: in _exclusive
+    fd = os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_persistent_windows_permis0\\ledger.json.lock'
+flags = 1281, args = (), kwargs = {}
+
+    def fake_open(path, flags, *args, **kwargs):  # type: ignore[no-untyped-def]
+        if str(path).endswith(".lock"):
+            state["calls"] += 1
+            if state["calls"] <= fail_times:
+>               raise error
+E               PermissionError: [Errno 13] delete pending
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:187: PermissionError
+_ TestExclusiveWindowsDeletePending.test_windows_delete_pending_create_raises_permission_error_platform_fact _
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestExclusiveWindowsDeletePending object at 0x000001E5CF40F440>
+tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_windows_delete_pending_cr0')
+
+    @pytest.mark.skipif(
+        os.name != "nt",
+        reason="Windows-only platform fact: on POSIX an O_EXCL create never raises "
+        "PermissionError for a delete race, so the mechanism cannot be exercised there. "
+        "This pins the Win32 behaviour the repair rests on; DEMONSTRATED on "
+        "windows-latest, never assumed from memory of the API.")
+    def test_windows_delete_pending_create_raises_permission_error_platform_fact(self, tmp_path):
+        # S5(iv) / S3: a file that another handle (opened the way os.open opens it,
+        # sharing delete) still holds open AFTER an unlink is delete-pending; an O_EXCL
+        # create on that name raises PermissionError and does NOT create the file.
+        # This is candidate (a)'s mechanism, proven on the platform.
+        lock = tmp_path / "l.json.lock"
+        fd = os.open(str(lock), os.O_CREAT | os.O_WRONLY)   # os.open shares delete on Windows
+        try:
+>           os.unlink(str(lock))                            # delete-pending while fd is open
+            ^^^^^^^^^^^^^^^^^^^^
+E           PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_windows_delete_pending_cr0\\l.json.lock'
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:281: PermissionError
+=========================== short test summary info ===========================
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsDeletePending::test_transient_windows_permission_error_waits_then_succeeds - PermissionError: [Errno 13] delete pending
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsDeletePending::test_persistent_windows_permission_error_times_out_fail_closed - PermissionError: [Errno 13] delete pending
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsDeletePending::test_windows_delete_pending_create_raises_permission_error_platform_fact - PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_windows_delete_pending_cr0\\l.json.lock'
+=========== 3 failed, 3959 passed, 60 skipped in 532.44s (0:08:52) ============
