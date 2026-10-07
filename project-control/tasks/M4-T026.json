@@ -94,8 +94,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A capture that silently omits a paragraph or a table row would mislead every later reading -> S3 and S4: an independent re-read and whole sections",
     "A paragraph label taken from memory or from the rule file's note instead of the page -> S4: the report states what the page shows",
@@ -103,7 +103,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T05:05:15.349573+00:00",
-  "updated_at": "2026-10-07T06:08:05.327909+00:00",
+  "updated_at": "2026-10-07T06:25:37.382254+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -130,5 +130,7 @@
       "status": "in_progress",
       "message": "Claimed in wave 1 at the contract head d1074dd8 (integration head a5c6c2f0); builder legal-corpus-engineer in an isolated worktree; see project-control/reports/WAVE1-2026-10-07-concurrency-record.md."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T06:25:37.382079+00:00"
 }

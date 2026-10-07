@@ -95,8 +95,8 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Two AI readings that agree are not proof -> the cases say so (R259); each row is followable by a person with the law text and a calculator",
     "A reading that fills a gap the text does not settle -> S2: a value only where both readings agree on the same basis, otherwise 'not known' with the reason",
@@ -105,7 +105,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T05:05:16.386586+00:00",
-  "updated_at": "2026-10-07T06:08:06.161576+00:00",
+  "updated_at": "2026-10-07T06:25:38.293906+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -138,5 +138,7 @@
       "status": "in_progress",
       "message": "Claimed in wave 1 at the contract head d1074dd8 (integration head a5c6c2f0); builder rules-engineer in an isolated worktree; see project-control/reports/WAVE1-2026-10-07-concurrency-record.md."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T06:25:38.293714+00:00"
 }
