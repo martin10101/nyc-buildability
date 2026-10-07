@@ -105,7 +105,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 85,
+  "progress_percent": 88,
   "risks": [
     "A decision that shows more than the work order allows (a result settled by silence; a district's limit shown as the property's) -> S1, S6 and the reviewers' line-by-line check of the decision table against section 5",
     "A point the work order leaves open filled in silently -> the readings O1 to O10 are named in the packet; O10 withholds everything else and lists it",
@@ -115,7 +115,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-07T11:39:26.898326+00:00",
-  "updated_at": "2026-10-07T13:41:21.751766+00:00",
+  "updated_at": "2026-10-07T13:49:43.246272+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -179,6 +179,13 @@
       "percent": 85,
       "status": "in_progress",
       "message": "Round 4 by the same builder (tests only; the three modules byte-unchanged since df7060ee) integrated as bcf44969: the test for the lot type not given (QA finding F9), and 14 more after the builder went through every input field and state against the tests (its table is in the report): each of the four conditions without a data source recorded as present, an unknown street-line reach, corner reach and angle, an angle above 135 degrees, the overlay's code given and not given, and others; 128 tests pass in the folder. AT INTEGRATION THE ORCHESTRATOR FOUND ONE POINT, which the builder had flagged as an observation: the module takes the answer to 'is the lot 30,000 sq ft or more' (gap K3) from its caller, and where the caller does not state it the module reads that as 'no' and can show the coverage; a new test of this round pins exactly that. That is a default standing for a fact, which the packet forbids ('never filled by a default'). Ruling (third scope-correction entry, reading O13): not stated -> coverage withheld as missing information. One more round by the same builder (one branch and its test); then the G3 reviewer reviews that change and the QA reviewer reviews rounds 4 and 5 together."
+    },
+    {
+      "at": "2026-10-07T13:49:43.246151+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 88,
+      "status": "in_progress",
+      "message": "Round 5 by the same builder integrated as d96fb0b8 (reading O13: where the large-lot question is not stated the coverage is withheld as missing information; one more test for an overlay family missing from what the caller states). AT INTEGRATION THE ORCHESTRATOR READ EVERY TEXT THE MODULE CAN RETURN (109 distinct texts, collected by script) and found three kinds of fault in words a user would later see: (1) two reasons say that a law text 'is not captured' (the ZR 12-10 definition of special density areas; the qualifying-housing definitions): both were captured by earlier tasks (M4-T025, M4-T031), so the sentences are false; they were copied from the work order, which was written before those captures; (2) three texts name internal things ('gap-K3', 'the caller'); (3) several use project words ('in this milestone', 'a reference case', 'captured but not built'). The G3 reviewer's check of the words looked for forbidden claims, not for these. One more round by the same builder, wording only, with a test that guards it; then both reviewers review rounds 4 to 6 together."
     }
   ],
   "scope_corrections": [
