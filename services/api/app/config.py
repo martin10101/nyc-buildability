@@ -18,6 +18,7 @@ from collections.abc import Mapping
 __all__ = [
     "INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED_ENV_VAR",
     "INTERNAL_PARITY_READ_ENABLED_ENV_VAR",
+    "INTERNAL_RESULTS_ENABLED_ENV_VAR",
     "INTERNAL_RULE_EVAL_ENABLED_ENV_VAR",
     "INTERNAL_SCENARIO_ENABLED_ENV_VAR",
     "INTERNAL_STUDY_READ_ENABLED_ENV_VAR",
@@ -25,6 +26,7 @@ __all__ = [
     "LANE_FLAG_ENV_VARS",
     "internal_hidden_issue_flags_read_enabled",
     "internal_parity_read_enabled",
+    "internal_results_enabled",
     "internal_rule_eval_enabled",
     "internal_scenario_enabled",
     "internal_study_read_enabled",
@@ -90,6 +92,24 @@ INTERNAL_STUDY_READ_ENABLED_ENV_VAR = "INTERNAL_STUDY_READ_ENABLED"
 INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED_ENV_VAR = "INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED"
 INTERNAL_TRANSIT_PARKING_READ_ENABLED_ENV_VAR = "INTERNAL_TRANSIT_PARKING_READ_ENABLED"
 INTERNAL_PARITY_READ_ENABLED_ENV_VAR = "INTERNAL_PARITY_READ_ENABLED"
+
+# Env var gating the internal POST /properties/{bbl}/results route (R6B results
+# connection work order, Part A; task M5-T138). This route runs the accepted engine
+# chain for one lot and returns the emitted contract-1.3.0 three-way results document.
+# A DISTINCT name so this surface is enabled independently of every other internal
+# read; same fail-safe posture as every flag here (absent/empty/unknown -> disabled).
+# It gates REACHABILITY only. The engine's own Lane A gate (LANE_A_ENABLED) stays
+# separate and is also off in production, so production (neither flag set) keeps the
+# route a generic 404 and turns no zoning computation on.
+#
+# ENABLEMENT CHECKLIST (before this route serves real traffic in production, all
+# REQUIRED; until they exist this flag stays OFF in production - security review):
+#   1. Authentication / authorization on the route (blocker B-001: the API ships with
+#      no auth; this internal route must not be reachable unauthenticated).
+#   2. The live study-inputs path (the default provider already carries the route-local
+#      rate limit here and the resilient PLUTO fetcher), never an unguarded connector.
+#   3. A review of the live default once the website half (Part B) binds it.
+INTERNAL_RESULTS_ENABLED_ENV_VAR = "INTERNAL_RESULTS_ENABLED"
 
 # One flag per parallel-build lane (task M0-T164, D-090; docs/lanes/PARALLEL_BUILD_PLAN.md §7).
 # New lane behavior ships behind its lane's flag; production never sets these until the owner
@@ -165,6 +185,15 @@ def internal_parity_read_enabled(env: Mapping[str, str] | None = None) -> bool:
     (fail safe), so the route is a generic 404 unless explicitly turned on.
     """
     return _flag_enabled(INTERNAL_PARITY_READ_ENABLED_ENV_VAR, env)
+
+
+def internal_results_enabled(env: Mapping[str, str] | None = None) -> bool:
+    """Whether the internal results route is enabled (R6B work order Part A, M5-T138).
+
+    Returns True ONLY for an explicit true token; absent/empty/unknown -> False
+    (fail safe), so the route is a generic 404 unless explicitly turned on.
+    """
+    return _flag_enabled(INTERNAL_RESULTS_ENABLED_ENV_VAR, env)
 
 
 def lane_enabled(lane: str, env: Mapping[str, str] | None = None) -> bool:
