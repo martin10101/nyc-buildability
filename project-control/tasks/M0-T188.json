@@ -1,0 +1,171 @@
+{
+  "task_id": "M0-T188",
+  "title": "Repair the ledger's seal: refuse a glob/pattern entry in a task's allowed_paths at contract time, claim and submit so every new packet binds literal tracked paths and the content identity covers what the packet declares; add the CI static catch and a frozen grandfather allowlist for the pre-existing pattern-carrying tasks; produce a look-back report of accepted tasks whose identities bound less than their packets said; this task does NOT expand patterns at identity time, does NOT rewrite any old task/gate/directive record, and does NOT change any workflow or touch .claude/** [backlog DB-181; owner D-090-R557; D-001-R146, D-001-R110]",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "Close backlog row DB-181: the registry builds a task's content identity from LITERAL git paths, so an allowed_paths entry written as a glob/pattern binds no file, and a task whose paths are all patterns is bound only by its literal report once the report placeholder is tracked. FACTS TODAY, with file and line. (1) tools/directive_registry.py:_run_git (line ~1307) runs git with GIT_LITERAL_PATHSPECS=1, so every pathspec is matched literally; _ls_tree_entries (line ~1373) and git_tree_manifest (line ~1404) therefore resolve a pattern to zero tracked objects. (2) frozen_git_identity (line ~1605) hashes those entries plus the control-plane material entries; its empty-identity guard (line ~1673) refuses ONLY when BOTH components are empty, so a task that carries a literal report under project-control/reports/ passes even when every real-code entry is a pattern. (3) tools/project_control.py:_task_git_identity (line ~375) is the single identity function submit (line ~523), gate and accept (_directive_accept_reasons, line ~552/563) all call; accept recompares the live identity to the frozen report's content_manifest_sha256. (4) tools/validate_directive_compliance.py:_validate_empty_identity (c17, line ~273) recomputes git_tree_manifest at HEAD but only checks EMPTINESS; the validator never recomputes-and-compares an accepted task's full identity (c10 compares stored sha to stored sha). (5) scripts/lanes/check_lane_paths.py does NOT read task allowed_paths (it checks diff paths against lane patterns), and no hook under .claude/hooks/ reads allowed_paths. VERIFIED NUMBERS (reproduce them read-only against the checkout before editing and record them): 'docs/measurement-basis/**' resolves to 0 tracked files, 'docs/measurement-basis' resolves to 7; 'docs/measurement-basis/*' and 'result_way_bridge_*.py' resolve to 0. CHOSEN REPAIR = OPTION B (refuse a pattern, do NOT expand it at identity time). STEP 1 - add one shared detector in tools/directive_registry.py, pattern_allowed_paths(allowed_paths) -> list of offending entries, placed beside path_free_opt_in so the CLI and the validator can never diverge (D-001-R152 precedent). An entry is a non-binding PATTERN when it contains '*' or '?' or begins with ':' (pathspec magic). An entry is NOT a pattern merely because it contains '[' or ']': the repository tracks one legitimate literal bracket path (apps/web/src/app/survey/review/[documentId]/page.tsx, a Next.js dynamic route that binds correctly under literal pathspecs); state the bracket-only char-range residual as a documented limitation rather than false-flagging that route. STEP 2 - add one frozen grandfather allowlist constant in tools/directive_registry.py, built by running your own look-back script at the claim-seam head over project-control/tasks/*.json: the exact set of task ids that already carry at least one pattern entry (accepted AND in-flight). These packets are NOT rewritten (forbidden); the allowlist exempts exactly them so the refusal bites only NEW packets and so validate_directive_compliance.py --check stays exit 0. STEP 3 - wire the refusal: tools/project_control.py claim (beside _directive_claim_check, line ~854) and submit (before/at _task_git_identity, line ~523) fail closed naming the offending entry and the fix ('name the folder or the existing file literally') UNLESS the task id is in the frozen allowlist; tools/validate_directive_compliance.py adds a new static check (model it on c17) that flags a pattern entry in any in-regime, non-grandfathered task packet. Do NOT modify the empty-identity guard, the identity algorithm, _ls_tree_entries, git_tree_manifest or GIT_LITERAL_PATHSPECS. ORCHESTRATOR READINGS (take as given, do not re-derive): D-090-R557 obliges the repair; D-001-R146/R110 define the identity this task protects; the empty-identity guard already catches the all-pattern-no-literal case, so the only gap is the insidious patterns-plus-literal-report case. TESTS (one per input state, with a table in the producer report): write the RED proof FIRST - a task whose allowed_paths are all patterns is accepted at contract/claim today and REFUSED after the change (run it against the pre-change code and show it fails to refuse). Then one test per state: a literal existing file (accepted), a literal existing folder (accepted), a 'folder/**' entry (refused), a 'name_*.py' entry (refused), a literal path that does not exist yet (NOT refused as a pattern - emptiness is a separate guard), a mix of literal and pattern (refused, naming the pattern entry), an empty allowed_paths list (the detector is a no-op; the existing path-free/empty-identity guard is unchanged), and the bracket route apps/web/src/app/survey/review/[documentId]/page.tsx (NOT refused). MIGRATION PROOF: run python tools/validate_directive_compliance.py --check with a DIRECT exit code BEFORE and AFTER the change and show it exits 0 both times (it runs in ~49s here); state exactly what recomputation acceptance and the validator perform on old tasks (accept recomputes the full identity only at the moment a task is accepted, never re-run on an already-accepted task; the validator recomputes only emptiness and never compares an accepted task's full identity), and that Option B changes no identity value so no accepted task's recorded identity moves. MUTATION PROOF: with the refusal reverted to the literal pre-change code, the red proof and the three refusal-state tests fail. NO-WEAKENING: no existing test deleted, skipped, xfailed or loosened; no existing check weakened; the empty-identity guard, c17, and the identity algorithm are byte-unchanged. WINDOWS: state that path handling is posix-string comparison with no OS call and is Windows-safe, but do NOT claim it tested on Windows (no Windows run here). Run python tools/modularity_check.py --check and record its exit code; directive_registry.py is already 1790 lines - keep the addition small and cohesive and record a cohesion justification if the check flags it, do NOT split the file in this task. NOT IN THIS TASK: expanding patterns at identity time (Option A, rejected - it would reintroduce the glob/pathspec expansion that GIT_LITERAL_PATHSPECS=1 deliberately removed as G5 hardening, would silently bind files a typo names, and would change the identity a pattern produces); rewriting, re-accepting, or re-validating any old task, gate, verification or directive record; rewriting the in-flight pattern-carrying packets; changing any workflow, CI lane check, or hook; touching .claude/** ; running tools/test_directive_compliance.py as a whole (hours) - run only the named focused tests.",
+  "business_reason": "Owner directive D-090-R557 (message 113, 2026-10-07): the ledger-sealing defect in the content identity stays tracked until repaired and a repair task is contracted. Until it is repaired a packet can declare code scope with a pattern that binds nothing, so the hash that submission, the gates and acceptance compare can cover far less than the packet claims - the seal the whole control plane leans on. The repair also permanently enforces DB-181's interim rule (every packet names its folders and existing files literally) and serves D-001-R146 and D-001-R110, which require the reviewed identity to cover the task's declared content.",
+  "inputs": [
+    "docs/DISCOVERY_BACKLOG.md row DB-181 (read in full; the status cells and the three 2026-10-07 and 2026-10-08 sweep notes)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json row D-090-R557 (text, required_harness, required_evidence)",
+    "project-control/directives/D-001-owner-directive-compliance-system/requirements.json rows D-001-R146, D-001-R110, D-001-R145, D-001-R152 (read-only, the identity definition this task protects)",
+    "tools/directive_registry.py (_run_git, _ls_tree_entries, git_tree_manifest, frozen_git_identity, the empty-identity guard, path_free_opt_in, PATH_FREE_MARKER)",
+    "tools/project_control.py (_task_git_identity line ~375, claim line ~823, submit line ~1028/_directive_submit path line ~523, _directive_accept_reasons line ~532)",
+    "tools/validate_directive_compliance.py (_validate_empty_identity / c17 line ~273, _EMPTY_IDENTITY_GRANDFATHERED line ~78)",
+    "tools/test_project_control.py (the existing lifecycle tests to extend)",
+    "scripts/lanes/check_lane_paths.py (read-only, to confirm it does not read task allowed_paths)"
+  ],
+  "outputs": [
+    "tools/directive_registry.py: a shared pattern_allowed_paths() detector plus a frozen grandfather allowlist constant of the pre-existing pattern-carrying task ids",
+    "tools/project_control.py: fail-closed refusal of a pattern allowed_paths entry at claim and at submit, with the grandfather exemption",
+    "tools/validate_directive_compliance.py: a new static check flagging a pattern entry in an in-regime, non-grandfathered task packet",
+    "tools/test_project_control.py: additive lifecycle refusal tests (the red proof and the claim/submit states)",
+    "tools/test_ledger_seal_literal_paths.py: new focused tests for the detector (one per input state), the grandfather allowlist, the validator static catch, and the before/after validator exit-0 migration proof",
+    "project-control/reports/M0-T188-producer-report.md: files changed, every check with its DIRECT exit code, the reproduced DB-181 numbers, the per-state test table, the mutation proof, the Windows statement (not claimed tested)",
+    "project-control/reports/M0-T188-lookback-pattern-allowed-paths.md: the look-back - the script used verbatim, its output, the count of accepted tasks with at least one pattern entry, and the full id list with each task's pattern entries"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py",
+    "tools/test_project_control.py",
+    "tools/test_ledger_seal_literal_paths.py",
+    "project-control/reports/M0-T188-producer-report.md",
+    "project-control/reports/M0-T188-lookback-pattern-allowed-paths.md"
+  ],
+  "forbidden_paths": [
+    "Any file under project-control/tasks/** (no old task packet is rewritten)",
+    "Any file under project-control/gates/** (no gate record is rewritten)",
+    "Any file under project-control/directives/** (no directive or verification record is rewritten)",
+    "project-control/state.json and project-control/blockers/**",
+    ".claude/** (no rule, hook, or config is touched)",
+    ".github/** and scripts/lanes/** (no workflow or CI lane check is changed)",
+    "The identity algorithm itself in tools/directive_registry.py: _ls_tree_entries, git_tree_manifest, frozen_git_identity's hashing, the empty-identity guard, and GIT_LITERAL_PATHSPECS stay byte-unchanged (Option A is rejected)",
+    "services/**, apps/**, packages/**, docs/** (except the two named report files)"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "red_proof_pattern_only_packet_refused",
+      "input": "a task packet whose allowed_paths are all patterns (for example ['services/api/app/scenario/**'] plus a literal report path)",
+      "expected": "RED first: against the pre-change code, claim/submit accept the packet (no refusal) - the test asserting a refusal fails. After the change: claim and submit fail closed naming the pattern entry and instructing to name the folder or existing file literally"
+    },
+    {
+      "id": "S2",
+      "case": "literal_existing_file_accepted",
+      "input": "allowed_paths ['tools/directive_registry.py']",
+      "expected": "pattern_allowed_paths returns []; claim and submit are not refused on account of the detector"
+    },
+    {
+      "id": "S3",
+      "case": "literal_existing_folder_accepted",
+      "input": "allowed_paths ['docs/measurement-basis']",
+      "expected": "pattern_allowed_paths returns []; the entry resolves to its 7 tracked files, no refusal"
+    },
+    {
+      "id": "S4",
+      "case": "double_star_pattern_refused",
+      "input": "allowed_paths ['docs/measurement-basis/**']",
+      "expected": "pattern_allowed_paths returns ['docs/measurement-basis/**']; claim/submit/validator flag it (resolves to 0 tracked files)"
+    },
+    {
+      "id": "S5",
+      "case": "star_in_filename_refused",
+      "input": "allowed_paths ['services/api/app/scenario/three_answers/result_way_bridge_*.py']",
+      "expected": "pattern_allowed_paths returns the entry; refused (resolves to 0 tracked files)"
+    },
+    {
+      "id": "S6",
+      "case": "nonexistent_literal_path_not_a_pattern",
+      "input": "allowed_paths ['tools/a_new_file_not_yet_created.py']",
+      "expected": "pattern_allowed_paths returns [] - a literal path that does not exist is a valid future file, NOT a pattern; emptiness remains the separate empty-identity guard's concern"
+    },
+    {
+      "id": "S7",
+      "case": "mixed_literal_and_pattern_refused_naming_pattern",
+      "input": "allowed_paths ['tools/project_control.py', 'services/api/**']",
+      "expected": "pattern_allowed_paths returns ['services/api/**'] only; refusal names exactly the pattern entry, not the literal one"
+    },
+    {
+      "id": "S8",
+      "case": "empty_list_detector_noop",
+      "input": "allowed_paths []",
+      "expected": "pattern_allowed_paths returns []; the detector is a no-op; the existing path-free / empty-identity guard is reached unchanged"
+    },
+    {
+      "id": "S9",
+      "case": "bracket_route_literal_not_refused",
+      "input": "allowed_paths ['apps/web/src/app/survey/review/[documentId]/page.tsx']",
+      "expected": "pattern_allowed_paths returns [] - the one tracked Next.js bracket route binds correctly under literal pathspecs and must not be false-flagged; the bracket-only char-range residual is recorded as a documented limitation"
+    },
+    {
+      "id": "S10",
+      "case": "all_accepted_tasks_still_validate",
+      "input": "python tools/validate_directive_compliance.py --check, direct exit code, before and after the change",
+      "expected": "exit 0 both times; the frozen grandfather allowlist covers every pre-existing pattern-carrying task id so no accepted or in-flight task is newly flagged; the report states what acceptance and the validator recompute on old tasks and that Option B moves no identity value"
+    },
+    {
+      "id": "S11",
+      "case": "lookback_report_lists_accepted_pattern_tasks",
+      "input": "the look-back script over project-control/tasks/*.json at the claim-seam head",
+      "expected": "the report records the count of accepted tasks with at least one pattern entry and the full id list with each task's pattern entries; it is a REPORT, no old record is rewritten"
+    },
+    {
+      "id": "S12",
+      "case": "no_weakening_and_mutation",
+      "input": "git diff of the test and tool files",
+      "expected": "additions only; no existing test deleted, skipped, xfailed or loosened; the identity algorithm and c17 byte-unchanged; with the refusal reverted to the pre-change code, S1, S4, S5 and S7 fail (mutation proof recorded)"
+    },
+    {
+      "id": "S13",
+      "case": "modularity_and_windows_safe_stated",
+      "input": "python tools/modularity_check.py --check; the detector code",
+      "expected": "modularity check exit code recorded (a cohesion justification recorded if directive_registry.py is flagged; the file is not split in this task); the report states the path handling is posix-string comparison with no OS call and is Windows-safe but is NOT claimed tested on Windows"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The detector false-flags a legitimate literal bracket route -> S9 and the explicit rule: flag only '*', '?', or a leading ':'; never '[' / ']' alone; the one tracked bracket route is a test",
+    "The refusal retroactively breaks an already-contracted pattern-carrying task's lifecycle (77 accepted + 11 in-flight) -> the frozen grandfather allowlist built from the look-back exempts exactly those ids; S10 proves validate --check stays exit 0",
+    "Option A silently changes identities and reintroduces removed pathspec/glob expansion -> rejected; the identity algorithm and GIT_LITERAL_PATHSPECS are in forbidden_paths and byte-unchanged (S12)",
+    "A green run obtained by weakening a check -> S12 no-weakening + mutation proof; the whole directive-compliance suite is CI's job, not a weakening",
+    "directive_registry.py is already 1790 lines -> keep the addition small and cohesive, record the modularity exit code and a cohesion justification; do not split in this task (S13)"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T01:34:58.731195+00:00",
+  "updated_at": "2026-10-08T01:34:59.073986+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R557"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T01:34:58.731419+00:00",
+  "path_notes": "PRODUCER = backend-engineer in an isolated worktree (show-toplevel guard; git reset --hard to the claim-seam head first). The CLI refusal lives at tools/project_control.py claim (~854) and submit (~523); the shared detector and the frozen allowlist live at tools/directive_registry.py beside path_free_opt_in; the CI static catch lives at tools/validate_directive_compliance.py modelled on c17 (~273). READ-ONLY: the identity algorithm (_ls_tree_entries, git_tree_manifest, frozen_git_identity hashing, empty-identity guard, GIT_LITERAL_PATHSPECS), scripts/lanes/check_lane_paths.py, all .claude/** and .github/**. MODULARITY: directive_registry.py 1790 lines, project_control.py 1430, validate_directive_compliance.py 596 - all small additive changes; run modularity_check --check and record a cohesion justification if flagged; no split in this task. The frozen grandfather allowlist is generated by the builder's own look-back script at the claim-seam head (the ledger may change) and recorded verbatim in the look-back report. INTEGRATION ORDER (the orchestrator's): this task changes the ledger's own tools, so its commits are integrated onto the wave's branch LAST, after the two other tasks of the wave have been submitted and gated with the unchanged tools; the grandfather list is regenerated at that head. THE ORCHESTRATOR'S READING on the repair: the draft's option B (refuse a pattern entry at contract time, at claim and at submit; no pattern is expanded when an identity is built; no accepted task's recorded identity changes) is the option contracted; the reviewers confirm or correct it. PART OF PARALLEL WAVE 7 with the two other tasks of the wave (M5-T134, M4-T035, M0-T188): the three share no file (project-control/reports/WAVE7-2026-10-08-concurrency-record.md). ALLOWED PATHS are literal files or literal folders: the registry builds a task's content identity from literal paths only and a pattern binds nothing (backlog row DB-181); a file a builder adds beyond them is added literally by the orchestrator when it integrates it.",
+  "documented_test_commands": [
+    "/root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tools/test_ledger_seal_literal_paths.py",
+    "/root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tools/test_project_control.py (the extended lifecycle refusal tests; run the whole file - it is fast - but NEVER tools/test_directive_compliance.py as a whole)",
+    "/root/project/lanes-runtime/venv/bin/python tools/validate_directive_compliance.py --check ; echo EXIT=$?  (run before and after the change; expect exit 0 both times, ~49s)",
+    "/root/project/lanes-runtime/venv/bin/python -m ruff check tools/directive_registry.py tools/project_control.py tools/validate_directive_compliance.py tools/test_ledger_seal_literal_paths.py tools/test_project_control.py",
+    "/root/project/lanes-runtime/venv/bin/python tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave7"
+}

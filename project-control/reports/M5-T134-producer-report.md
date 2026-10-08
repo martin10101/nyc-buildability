@@ -1,0 +1,1 @@
+Placeholder - the producer writes this report (the smallest-shape justification for the outline seam, the table of input states, the byte-identity result, the import-guard mutation proof, and every check with its direct exit code).

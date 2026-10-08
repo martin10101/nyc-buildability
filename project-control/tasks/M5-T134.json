@@ -1,0 +1,196 @@
+{
+  "task_id": "M5-T134",
+  "title": "Wire the carriers: surface the built property profile, the site geometry and the prepared outline on the real Python-object path and hand them, with the evaluator-inputs document, to gather_result_ways through one new thin adapter that returns the ways beside the engine's result; nothing is emitted (the results document stays contract 1.2.0, no route, no screen, no production switch, no new fixture) (work order Part 0; backlog rows DB-171 F6-carry, DB-172 b/c/d, DB-173; owner rows R229, R240, R255, R257, R267, R268, R531)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "WIRE THE CARRIERS (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, Part 0; the third of the engine pieces, after task M5-T130 carried the facts and task M5-T131 added the validators). Today no server route reaches the engine, and the entry function that decides how each result appears, gather_result_ways (services/api/app/scenario/three_answers/result_way_bridge.py:307), is called by nothing under services/api/app. The three Python objects it needs on the real path are produced and then dropped: the built property profile is a local of assemble_study_inputs (services/api/app/api/v1/study_inputs.py:286) and is not a field of StudyInputs (:112-128); the SiteGeometry passed in at :236 is threaded into the site facts (:322-323) and then dropped; and the prepared outline (PreparedOutline) has NO source at all today, because the geometry seam (GeometryProvider, study_inputs.py:177; live_geometry_provider, services/api/app/api/v1/study_live_geometry.py:96-142) returns only a SiteGeometry and SiteGeometry does not carry its outline (services/api/app/spatial/site_geometry/results.py:152-171). This task surfaces those three objects on the real path and hands them, with the evaluator-inputs document the builders already produce (services/api/app/contracts/evaluator_inputs.py:335), to gather_result_ways through one new thin adapter, and returns the ways BESIDE the engine's result. NOTHING IS EMITTED: the results document the engine emits stays byte-for-byte what it is (contract 1.2.0); no route returns the ways; no screen changes; no production switch is turned on; no new results fixture is added. STEP 1, SURFACE AND CARRY (no behaviour change yet). (1a) Add the built property profile, the site geometry and the prepared outline to StudyInputs (study_inputs.py:112-128) and set them in assemble_study_inputs from the values it already holds (the profile at :286, the geometry from its argument, the outline from the geometry seam of reading O21). The additions are optional fields; the study-read route builds its study_setup document from lot_choice, site and site_facts only, so the route's JSON output and the study_setup / study contracts do not change. (1b) Carry the three objects onto ThreeAnswerInputs (services/api/app/scenario/three_answers/inputs.py:95-142) as optional fields, filled by build_three_answer_inputs (evaluator_inputs.py:425) from new optional arguments; the fields are additive and INERT - the engine reads none of them and the emitted document is unchanged (the byte-identity proof, scenario S13). Use TYPE_CHECKING or an untyped field so inputs.py takes on no import cycle. None of inputs.py, evaluator_inputs.py or study_inputs.py may contain the text 'result_way' (the import guard, scenario S12). STEP 2, THE ADAPTER. Add one new module, services/api/app/scenario/three_answers/result_way_engine_bridge.py. It imports gather_result_ways (from result_way_bridge) and the engine's generate_results / ThreeAnswersResult (from engine, which it does NOT edit), and it imports nothing from the api layer and nothing from lot_reach. Given the carried profile, outline and geometry, the evaluator-inputs document, the housing kind (the option) and an optional user statement about the special density area, it runs the engine and gather_result_ways and returns ONE new wrapper object holding the engine's ThreeAnswersResult beside the GatheredResult (the ways and the gathered facts). When no outline is produced it passes outline as absent and the reach stays unknown; nothing is invented (reading O21). This is the ONLY new file under services/api/app that names the decision module, so it is the one new caller added to the import guard. THE ORCHESTRATOR'S READINGS (the orchestrator's, said so in the code and the report, for the reviewers to confirm or correct; they continue the numbering of tasks M5-T129, M5-T130 and M5-T132). (O21) THE OUTLINE GETS A REAL SOURCE. The geometry seam surfaces the prepared outline alongside the site geometry, ADDITIVELY: every existing provider, caller and test double keeps working (unchanged, or updated inside the allowed paths); the builder proposes the SMALLEST shape that does this (for example a second optional provider, or an optional second return) and justifies it in the report. When no outline is produced, outline is passed as absent and the reach stays unknown; nothing is invented. (O22) THE ATTACH POINT IS AN EXTERNAL WRAPPER. engine.py is not edited and gets no field typed by the decision module; the new adapter returns the engine's result beside the gathered ways; the import guard gains exactly that one new caller. (O23) NOTHING IS EMITTED. The results document stays byte-for-byte what it is (contract 1.2.0); no route returns the ways; no screen changes; no production switch is turned on; no new results fixture is added (a new one would be picked up by the DXF and kit snapshot suites). (O24) THE WIRING IS AT THE PYTHON-OBJECT SEAM. Its tests assemble the benchmark lot offline from the recorded replay pack exactly as task M5-T130's bridge test does (services/api/tests/scenario/three_answers/test_result_way_bridge.py benchmark_geom: lot_outline_from_mappluto, street_data_from_pages, derive_site_geometry, prepare_outline, build_property_profile over the recorded replay sources of services/api/tests/spatial/_northern_replay.py), never through a live call and never through the HTTP route. (O25) DB-172 (b), (c) AND (d) ARE VERIFY-AT-WIRING SCENARIOS. (b) the overlay-support statement rests on the MERGED reference rows, with a test tied to those rows; (c) the large-lot answer of gap K3 is computed from the recorded lot area and is 'not stated' with no recorded area; (d) a conversion or a mixed building is withheld. Each already lives in result_way_bridge / result_way_bridge_overlay and is exercised here THROUGH the adapter, not re-implemented. DB-172 (a) - one more case in the _wide_text_battery guard of tests/scenario/three_answers/test_result_ways_input_states.py - is NOT in this task: that file is not in the allowed paths, and the branch is already covered by task M5-T130's own guard and task M5-T132's truth table. TESTS. One test per input state of the wiring, each state listed in a table in the report ('state, what is handed to gather_result_ways, test id'); a red proof for the import-guard change and for the byte-identity proof (each shown to fail before the change / when the carriers are mutated); one mutation proof outside the repository for each newly pinned branch. The expected outcomes come from outside the code: task M5-T130's benchmark ways (work order test H2), the merged reference rows through the test-only loader, and the recorded files; never from the module under test. THREE RULES FOR THIS KIND OF CODE, learned in task M5-T129 (each cost a round there): (L1) NO DEFAULT STANDS FOR A FACT: every input's 'not given', 'not read' or 'not stated' state is carried as such; no truthiness test on a fact that may be unknown. (L2) ONE TEST PER INPUT STATE, WITH A TABLE: the report holds the table 'state, outcome, test that pins it'; each newly pinned branch is proved by one mutation outside the repository. (L3) TEXTS A USER MAY SEE ARE PLAIN AND TRUE: no internal name (a gap or reading number, 'the caller', 'milestone', 'reference case', 'packet', 'work order'), and no statement about which law text is captured, read or built into the repository; the guard test's battery covers every text. NOT IN THIS TASK: contract 1.3.0 or any change to what the engine emits; a server route or any route that returns the ways; any screen or any file under apps/; any change to the results schema, its runtime copy, the generated types, any results fixture or any DXF or kit snapshot; any edit to engine.py or to the six decision-module files (result_ways.py, result_way_inputs.py, result_way_conditions.py, result_way_facts.py, result_way_bridge.py, result_way_bridge_overlay.py) or to their texts; any zoning number; the website reader repair of owner row R556 / backlog row DB-171 F6 and the unit-estimate decision of DB-171 F5 (both belong to the piece that emits); turning on any production switch; the area tolerance of backlog row DB-173 (the benchmark figures disagree and the floor-area results are conditional on the recorded area, which is correct and not a blocker).",
+  "business_reason": "The decision module and its validators are built and merged, but nothing feeds them from a real lot: the profile is dropped, the site geometry is dropped and the prepared outline has no source, so the three ways cannot be produced for the benchmark lot from the recorded data. The owner allows exactly this integration/wiring to continue while nothing is exposed (R531). The owner's rules it serves: unknown stays unknown and a missing input stays unanswered (R229, R240); a user's statement supports only a conditional result and is never stored as a fact (R255); conflicting area figures give conditional results, never an automatic choice (R257); 'not checked' is never 'confirmed', and an unchecked condition keeps unaffected answers visible, makes defensible ones conditional and withholds the rest (R267, R268).",
+  "inputs": [
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md sections 0, 3, 4, 5 and 8 (Part 0)",
+    "services/api/app/scenario/three_answers/result_way_bridge.py, result_way_facts.py, result_way_bridge_overlay.py, result_ways.py, result_way_inputs.py, result_way_conditions.py (READ ONLY)",
+    "services/api/app/api/v1/study_inputs.py, services/api/app/api/v1/study_live_geometry.py, services/api/app/scenario/three_answers/inputs.py, services/api/app/scenario/three_answers/engine.py, services/api/app/contracts/evaluator_inputs.py (READ; engine.py and the decision modules READ ONLY)",
+    "services/api/app/spatial/lot_reach.py, services/api/app/spatial/site_geometry/outline.py, services/api/app/spatial/site_geometry/results.py (READ ONLY)",
+    "services/api/tests/scenario/three_answers/test_result_way_bridge.py, services/api/tests/journey/test_215_16_northern_journey.py, services/api/tests/contracts/test_study_setup_bridge.py, services/api/tests/api/test_study_geometry.py, services/api/tests/spatial/_northern_replay.py (the offline assembly model; READ for the pattern)",
+    "docs/DISCOVERY_BACKLOG.md rows DB-171, DB-172, DB-173",
+    "project-control/reports/M5-T130-producer-report.md (the benchmark ways and the table of input states)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R229, R240, R255, R257, R267, R268, R531; docs/CODE_MODULARITY_POLICY.md"
+  ],
+  "outputs": [
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py: the thin adapter and the wrapper object that holds the engine's result beside the gathered ways",
+    "services/api/app/api/v1/study_inputs.py, services/api/app/api/v1/study_live_geometry.py, services/api/app/scenario/three_answers/inputs.py, services/api/app/contracts/evaluator_inputs.py: the surfacing (O21) and the additive, inert carry-through, within the allowed paths",
+    "services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py and services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py (new); services/api/tests/scenario/three_answers/test_result_ways.py, services/api/tests/api/test_study_geometry.py, services/api/tests/api/test_study_inputs_live.py, services/api/tests/contracts/test_evaluator_inputs.py (modified)",
+    "project-control/reports/M5-T134-producer-report.md: the smallest-shape justification for the outline seam (O21); the table of input states; every place a missing value is handled (L1); the byte-identity result; the import-guard mutation proof; every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M5-T129",
+    "M5-T130",
+    "M5-T131",
+    "M5-T132"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/study_inputs.py",
+    "services/api/app/api/v1/study_live_geometry.py",
+    "services/api/app/scenario/three_answers/inputs.py",
+    "services/api/app/contracts/evaluator_inputs.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/tests/scenario/three_answers/test_result_ways.py",
+    "services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py",
+    "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+    "services/api/tests/api/test_study_geometry.py",
+    "services/api/tests/api/test_study_inputs_live.py",
+    "services/api/tests/contracts/test_evaluator_inputs.py",
+    "project-control/reports/M5-T134-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/three_answers/engine.py and the six decision-module files (result_ways.py, result_way_inputs.py, result_way_conditions.py, result_way_facts.py, result_way_bridge.py, result_way_bridge_overlay.py) and their texts: read only",
+    "every other existing file under services/api/app not in the allowed paths (the spatial modules, the connectors, the rules): read only",
+    "packages/** - the results schema, its runtime copy, the generated types, and every results fixture and every DXF or kit snapshot",
+    "apps/** - the website, including the three-answers reader",
+    "services/api/tests/spatial/test_lot_reach.py and every other existing test not in the allowed paths",
+    ".github/**, CLAUDE.md, .claude/**, tools/**, render.yaml, any dependency file",
+    "project-control/** except the producer report named in the allowed paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "benchmark_lot_carriers_populated_no_statement",
+      "input": "the benchmark lot assembled offline from the recorded replay pack; the profile, prepared outline and site geometry carried; no user statement",
+      "expected": "the adapter reaches gather_result_ways with all three carried objects and the evaluator-inputs document and returns the ways BESIDE the engine's ThreeAnswersResult; the ways equal task M5-T130's benchmark (coverage, rear yard, setback, building option and unit limits withheld; heights and floor-area figures conditional); never a zero"
+    },
+    {
+      "id": "S2",
+      "case": "geometry_present_outline_absent",
+      "input": "a lot whose geometry is present but no prepared outline is produced (O21)",
+      "expected": "outline is passed as absent, the reach stays unknown, and every reach-dependent way (coverage, rear yard) is withheld; nothing is invented"
+    },
+    {
+      "id": "S3",
+      "case": "geometry_absent",
+      "input": "a lot with no site geometry at all",
+      "expected": "outline and geometry are both absent; the reach is None and the reach-dependent ways are withheld"
+    },
+    {
+      "id": "S4",
+      "case": "profile_with_recorded_lot_area",
+      "input": "a profile carrying a recorded lot area and an outline area",
+      "expected": "the area comparison runs on the two real figures and the large-lot answer of gap K3 is computed from the recorded area"
+    },
+    {
+      "id": "S5",
+      "case": "profile_without_recorded_lot_area",
+      "input": "a profile with no recorded lot area",
+      "expected": "the large-lot answer is 'not stated' and the area rule says no lot area is recorded; the outline area never stands in (O25 c)"
+    },
+    {
+      "id": "S6",
+      "case": "profile_absent",
+      "input": "no profile carried",
+      "expected": "every recorded city-record column is 'not read' and the results that depend on them are withheld; a column that was not read is never taken as none"
+    },
+    {
+      "id": "S7",
+      "case": "overlay_present_with_supporting_reference_row",
+      "input": "a recorded commercial overlay whose family is supported by the merged reference rows",
+      "expected": "the overlay-support statement is built from those rows and the supported family's result is not withheld for the overlay; a test is tied to the merged rows (O25 b)"
+    },
+    {
+      "id": "S8",
+      "case": "overlay_present_family_not_supported",
+      "input": "a recorded overlay whose rear-yard family carries a standing condition in the reference rows",
+      "expected": "the rear yard is withheld as work owed (O25 b)"
+    },
+    {
+      "id": "S9",
+      "case": "user_density_statement_not_in_one",
+      "input": "the benchmark lot with a user's statement that the lot is not in a special density area; and without it",
+      "expected": "with it: the statement is handed to the module as a statement, appears in NO gathered fact record, and the unit limit is conditional on it; without it: the unit limit is withheld (owner rule R255)"
+    },
+    {
+      "id": "S10",
+      "case": "conversion_or_mixed_building",
+      "input": "a conversion or a mixed building",
+      "expected": "the case is withheld; this piece has no input that changes it (O25 d)"
+    },
+    {
+      "id": "S11",
+      "case": "lane_switch_off",
+      "input": "LANE_A_ENABLED off",
+      "expected": "the engine emits the lane-off document unchanged and the adapter returns the gathered ways beside it; no production switch is turned on"
+    },
+    {
+      "id": "S12",
+      "case": "import_guard_gains_exactly_one_new_caller",
+      "input": "the import-guard test test_only_task_m5_t130_bridge_and_facts_modules_import_the_decision_module in tests/scenario/three_answers/test_result_ways.py and a search of services/api/app for the text 'result_way'",
+      "expected": "the adapter result_way_engine_bridge.py is the only new app file naming the decision module and is added to the permitted set in that one test function; any OTHER app file that names it still fails the guard (a mutation proof); engine.py, inputs.py, evaluator_inputs.py and study_inputs.py do not name it; the lot_reach guard in tests/spatial/test_lot_reach.py is unchanged and still passes"
+    },
+    {
+      "id": "S13",
+      "case": "nothing_emitted_changes_byte_for_byte",
+      "input": "the benchmark inputs with the carriers populated, run through generate_results",
+      "expected": "the emitted results document equals the committed fixture packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json byte-for-byte; the journey test, test_three_answers_benchmark.py, and the DXF and kit snapshot suites pass untouched; no new results fixture is added"
+    },
+    {
+      "id": "S14",
+      "case": "no_default_stands_for_a_fact",
+      "input": "each not-read / not-stated / absent-outline state of the wiring, one at a time",
+      "expected": "each is carried as such and holds back its dependent way; no truthiness test reads an unknown as 'no'; each newly pinned branch has a mutation proof outside the repository (L1, L2)"
+    },
+    {
+      "id": "S15",
+      "case": "modularity_and_focused_suites_pass",
+      "input": "the focused test commands, ruff, and the modularity check",
+      "expected": "ruff clean; python tools/modularity_check.py --check exits 0 and the new adapter and every grown file stay under the warning threshold; tests/scenario/three_answers, the study-inputs/geometry/bridge set, and tests/contracts/test_evaluator_inputs.py plus tests/journey and tests/spatial/test_lot_reach.py all pass; only the allowed paths changed"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The outline seam breaks an existing geometry provider or test double -> O21 additive; every double keeps working; test_study_geometry.py is in the allowed paths",
+    "A carried field changes the emitted document -> the byte-identity scenario S13; the journey, benchmark and DXF/kit tests stay green untouched",
+    "engine.py or a carrier file names the decision module and trips the import guard -> only the adapter names it; the carriers hold typed objects (Mapping, PreparedOutline, SiteGeometry), not the decision module; scenario S12",
+    "The adapter imports the api layer or lot_reach and trips a guard or a layering rule -> the adapter imports only gather_result_ways and the engine result type",
+    "An import cycle from inputs.py carrying spatial types -> TYPE_CHECKING or an untyped field",
+    "A new results fixture is added and the snapshot suites redden -> no new fixture is added (O23)"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T01:34:50.709238+00:00",
+  "updated_at": "2026-10-08T01:34:51.071533+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R229",
+        "D-090-R240",
+        "D-090-R255",
+        "D-090-R257",
+        "D-090-R267",
+        "D-090-R268",
+        "D-090-R531"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T01:34:50.709444+00:00",
+  "path_notes": "PRODUCER = scenario-optimization-engineer in an isolated worktree (show-toplevel guard; reset to the claim-seam head first). Wave membership is the orchestrator's; this task shares no file with a parallel task. ADR-006 Tier B, 'Scenario calculation': the required review is data-contract (G3) plus QA (G4); no owner approval; no production switch turned on. MODULARITY: current SLOC as tools/modularity_check.py counts them - study_inputs.py 385, evaluator_inputs.py 425, inputs.py ~200, study_live_geometry.py ~120; all well under the 600 warning threshold; engine.py (231) and result_way_bridge.py (306) are READ ONLY. The new adapter is a focused module under 600 SLOC and imports only gather_result_ways and the engine result type (never the api layer, never lot_reach). READ-ONLY: the decision modules, the engine, the spatial modules, the results schema, every fixture and snapshot, the website. PART OF PARALLEL WAVE 7 with the two other tasks of the wave (M5-T134, M4-T035, M0-T188): the three share no file (project-control/reports/WAVE7-2026-10-08-concurrency-record.md). ALLOWED PATHS are literal files or literal folders: the registry builds a task's content identity from literal paths only and a pattern binds nothing (backlog row DB-181); a file a builder adds beyond them is added literally by the orchestrator when it integrates it.",
+  "documented_test_commands": [
+    "cd services/api && /root/project/lanes-runtime/venv/bin/python -m ruff check .",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/scenario/three_answers",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/api/test_study_inputs_live.py tests/api/test_study_geometry.py tests/contracts/test_study_setup_bridge.py",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/contracts/test_evaluator_inputs.py tests/journey/test_215_16_northern_journey.py tests/spatial/test_lot_reach.py",
+    "python3 tools/modularity_check.py --check   (from the repository root)",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ],
+  "worktree": "/root/project/w-wave7"
+}

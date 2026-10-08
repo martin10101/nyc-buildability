@@ -1,0 +1,155 @@
+{
+  "task_id": "M4-T035",
+  "title": "The independent reading of the 46 newly captured Zoning Resolution texts into the R6B reference cases (mixed-building floor area ZR 35-30 to 35-33, with 35-31's paragraph on floor area shared by several uses; the definition of floor area ratio; ZR 23-24 and ZR 34-23; the ZR 12-10 definitions 'fully electrified building', 'ultra low energy building', 'building' and 'story'; and fourteen sections on whether parking, loading berths and bicycle parking are required), plus the benchmark lot's rear yard read from ZR 23-342 and 23-344; with one mixed building worked by hand and a parking/loading/bicycle line per development option; it writes reference rows and worked examples only and changes NO rule file, NO engine code, NO result, NO register entry and NO capture, and enters NO human verdict anywhere [DB-184 first piece; DB-185 (b); D-090 R291, R513, R516, R526, R548]",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Read independently the 46 official Zoning Resolution texts captured by tasks M4-T033 and M4-T034 (docs/research/zr-snapshots/v1/) that no reference case has yet read, and write what the two readings settle into the R6B reference cases as a new step-P5 case. Backlog row DB-184 (first piece) and DB-185 (b) name what is owed. The six text groups to read: (1) the mixed-building floor-area sections ZR 35-30, 35-31, 35-32 and 35-33, where 35-31 itself holds the paragraph on floor area shared by several uses ('the #floor area# for such shared portion shall be attributed to each #use# proportionately'), together with the ZR 12-10 definition of floor area ratio (zr-12-10-floor-area-ratio); (2) the ZR 12-10 energy definitions 'fully electrified building', 'ultra low energy building', 'building' and 'story'; (3) ZR 23-24 (special provisions for certain areas) and ZR 34-23 (modification of yard regulations, with its sub-section list zr-34-23-contents); (4) the fourteen sections on whether parking, loading berths and bicycle parking are REQUIRED (zr-25-02, zr-25-20, zr-25-211, zr-25-221, zr-25-231, zr-25-80, zr-25-81, zr-25-811, zr-36-21, zr-36-31, zr-36-62, zr-36-70, zr-36-71, zr-36-711); (5) one mixed building worked by hand; (6) the benchmark lot's rear yard read from ZR 23-342 and 23-344 (DB-185 (b)). INPUT MADE BY THE ORCHESTRATOR BEFORE THE BUILDER STARTS: two readings by two different AI helpers that took no part in writing the program's rules, each working alone from a sealed folder (all pinned law captures without their notes, the benchmark lot's recorded official facts and outline, and made-up lots, with no access to the program, the repository or the web). STEP 1: save the two returns unchanged under docs/reference-cases/R6B/provenance/ as return-independent-hand-calculation-11.md and return-independent-hand-calculation-12.md, each with a short header, and pin each file's digest. STEP 2: write the step-P5 reading into docs/reference-cases/R6B/cases/step-p5-worked.json (and its rendered page step-p5-worked.md), following the form of cases/step-p4-worked.json. Record a value or a yes/no ONLY where BOTH readings give it on the same basis; everywhere else record 'not sure'/'not known' with the reason and both readings named, and name what would settle it. Where one reading attaches a condition the other does not, state that condition in the value. Where a new row gives the current answer to a question an older row holds, mark the older row superseded_by the new row and never leave two current answers for one question; the known candidates are cases/step-p4-worked.json row made-up-100x100-units (held by both step-P4 readings subject to the floor-area-ratio definition they did not have, which is now captured) and cases/step-p3-worked.json row real-lot-rear-yard-beyond-corner (the current head of the benchmark rear-yard chain). Change an existing row's expected value or kind only where both readings support it, with a dated change-log entry. Say 'the readers did not have' a text outside their folder and 'not read by reading N' for a text in the folder a reader chose not to read; never 'not captured'. Update docs/reference-cases/R6B/README.md with a step-P5 section and its 'did not have' list; re-render the pages; extend the test support only as the new rows need (new modules r6b_reference_cases_step_p5.py and test_r6b_reference_cases_step_p5.py, modelled on the step-P4 pair; add 'step-p5-worked' to r6b_reference_cases_lib.py CASE_IDS and REQUIRED_BASE_IDS and wire the step-P5 guards into r6b_reference_cases_check.py; r6b_reference_cases_render.py only if a new row shape needs it). THE MIXED BUILDING WORKED BY HAND (group 5): one made-up mixed building (residential plus a commercial or community-facility use), worked from ZR 35-31's own words to show how the floor areas of the uses combine and how shared floor area is attributed proportionately; said to be made up; no value from a program run. THE PARKING, LOADING AND BICYCLE LINE PER OPTION (group 4): for each development option, state from the captured text what the line MAY say (either the applicability resolved from a captured provision, or 'not yet checked'/'not sure' naming the missing fact, e.g. the lot's transit zone, which the captured residential sections 25-211/221/231 turn on) and what it MAY NOT say (it may not declare an option feasible, may not state a count, and may not turn a question of law into the owner's preference). THE REAR-YARD READING OF THE BENCHMARK LOT (group 6): state the conditions of the waiver from the captured text of ZR 23-344(a) (no rear yard required within 100 feet of the point where two street lines meet at 135 degrees or less) and ZR 23-342 (the interior-lot rear-yard requirement beyond that), and apply them to the recorded measurements (the street lines meet at about 89.7 degrees and the lot reaches 144.60 ft from the corner point). Say which of the two existing engine answers the text supports: the older engine's geometry outputs 'not_required' (services/api/tests/scenario/three_answers/test_three_answers_benchmark.py, lines 176 to 178) while the decision module WITHHOLDS the rear yard (services/api/tests/scenario/three_answers/test_result_ways_benchmark.py: the lot reaches 144.60 ft from the corner point). Read the fixtures READ-ONLY; state plainly where the hand reading differs from what the program outputs today, and change NO program code and NO fixture: matching the program's saved output is not proof. THE OWNER'S STANDARDS this reading carries: every statement of what the law says quotes the captured text with its file and content digest; the reading is labelled an unreviewed draft with a link to the source text; where the text does not settle a point the reading says 'not sure' and names what would settle it; a figure from one dataset is a benchmark, not a rule; a missing fact stays unknown; legal limits are kept apart from practical estimates; a question of law is never turned into the owner's preference; and each worked example is worked by hand from the text, not matched to a program run. THE ZONING-RULE REVIEW REGISTER: this task changes no rule file and no program behaviour, so it adds no register entry and moves no revision. The register's GUIDE (docs/zoning-rule-review/GUIDE.md) covers the 23 implemented rule-definition files and moves a revision only on a change to a rule's interpretation, applicability, implementation or evidence; a reading written only into reference cases is none of these, and the human-verdict field is filled only by a named human and is not touched here. TESTS REQUIRED: one acceptance test per input state, with a table in the producer report; a red proof that a changed reading is caught; and one mutation proof per pinned branch (an unsettled row given a value is refused; a value where the two readings differ is refused; the older rows are superseded and the new targets stay current). NOT IN THIS TASK: the follow-up of the measurement-basis record (docs/measurement-basis/MEASUREMENT_BASIS.md still says 'not captured yet' for the mixed-building rule and the energy exclusion's eligibility, and its section 8a should record the owner's decisions of 2026-10-07) is a separate later task (DB-184 second piece); the parking/loading/bicycle LINE on the option display, the option comparison and the website (DB-180, R526/R548 display half); emitting contract 1.3.0 and carrying the legal unit limits into the results document (DB-185 a, c, d; DB-171, DB-172, DB-173, DB-175); adding a machine-readable condition field to reference rows (DB-175 a) and the consuming overlay-support test, which touches the scenario engine's tests and is deferred; any change to a rule file, the rule or scenario engine, a result, a capture, the review register or a plan; correcting the too-broad '30,000 sq ft' sentence in cases/interior-lots.json (DB-168 F1); and entering a human verdict anywhere.",
+  "business_reason": "The owner's step 3 (R291) is to check the R6B answers with independently worked, source-backed examples. Forty-six official texts were captured by tasks M4-T033 and M4-T034 and have not been read into any reference case (DB-184): the mixed-building floor-area rule the owner's reviewer named (R513), the energy-exclusion eligibility definitions (R516), and the sections that decide whether parking, loading and bicycle parking apply to an option (R526, R548). Until these are read, the measurement-basis record stays out of date and no option can carry a resolved parking/loading/bicycle line. On the benchmark lot, one engine says the rear yard is not required and the decision module withholds it (DB-185 (b)); which is right is a reading of ZR 23-342 and 23-344, not a preference, and must be settled before any rear yard is shown.",
+  "inputs": [
+    "The two independent readings (returns saved by the orchestrator and given to the builder with its instructions; the builder does not write them)",
+    "docs/reference-cases/R6B/ and services/api/tests/rules/reference_cases/ as wave 6 (task M4-T034) left them: the step-P4 case, the superseded_by field, the loader that refuses a superseded row, the step-P4 guards, the renderer and the checker",
+    "The 46 captures under docs/research/zr-snapshots/v1/ made by tasks M4-T033 and M4-T034, and the earlier captures the rows cite (zr-23-342, zr-23-344 among them), each pinned by its content digest",
+    "services/api/tests/scenario/three_answers/test_three_answers_benchmark.py (lines 176 to 178) and test_result_ways_benchmark.py (the 144.60 ft rear-yard withhold): read-only, for the rear-yard divergence",
+    "project-control/reports/M4-T033-producer-report.md and M4-T034-producer-report.md (the exact list of the 46 captured files and the disclosed limits)",
+    "docs/DISCOVERY_BACKLOG.md rows DB-168, DB-175, DB-180, DB-183, DB-184, DB-185; docs/zoning-rule-review/GUIDE.md",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R291, R513, R516, R517, R526, R548"
+  ],
+  "outputs": [
+    "docs/reference-cases/R6B/provenance/: the two new returns (11 and 12), unchanged, each with a short header, digests pinned",
+    "docs/reference-cases/R6B/cases/step-p5-worked.json and its rendered step-p5-worked.md: the step-P5 readings as rows; a value only where both readings agree; older rows a new row answers marked superseded_by with a dated change-log entry",
+    "docs/reference-cases/R6B/README.md brought up to date with the step-P5 section and its 'did not have' list",
+    "services/api/tests/rules/reference_cases/: the new step-P5 support module and test file, and the checker, loader and renderer extended only as the new rows need",
+    "project-control/reports/M4-T035-producer-report.md with the per-input-state table"
+  ],
+  "dependencies": [
+    "M4-T032",
+    "M4-T033",
+    "M4-T034"
+  ],
+  "allowed_paths": [
+    "docs/reference-cases/R6B",
+    "services/api/tests/rules/reference_cases",
+    "project-control/reports/M4-T035-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/** - no rule file, no rule or scenario engine, no registry, no review register and no capture copy changes",
+    "docs/research/** - no capture is edited, re-fetched or added (the captures are inputs, read-only)",
+    "docs/zoning-rule-review/** - the review register is not updated (this task changes no rule file and no program behaviour) and no human verdict is entered anywhere",
+    "docs/measurement-basis/** - the follow-up of the measurement-basis record is a separate later task (DB-184 second piece)",
+    "docs/plans/** - no plan changes",
+    "services/api/tests/scenario/** and every benchmark fixture (test_three_answers_benchmark.py, test_result_ways_benchmark.py) are read-only; the rear-yard reading states which engine answer the text supports but changes no fixture and no program code",
+    "cases/interior-lots.json, cases/real-lot.json, cases/corner-reach.json, cases/suffix.json, cases/step-p1-worked.json, cases/overlay-reading.json - not changed by this reading (the overlay rows are already at their step-P3/step-P4 heads)",
+    "every other test file; apps/**; packages/**; .github/**; tools/**; CLAUDE.md; .claude/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths",
+    "every existing file under docs/reference-cases/R6B/ and services/api/tests/rules/reference_cases/ other than those the path notes name"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "group_mixed_building_floor_area_read",
+      "input": "the captures zr-35-30, zr-35-31, zr-35-32, zr-35-33 and zr-12-10-floor-area-ratio",
+      "expected": "the step-P5 rows state, quoting the captured text with file and digest, how the floor areas of the uses of a mixed building combine (ZR 35-31 to 35-33) and that ZR 35-31 attributes shared floor area to each use proportionately; the floor-area-ratio definition is read for turning a ratio into a square-foot floor area; a value is recorded only where both readings agree, otherwise 'not sure' with what would settle it (for example the exclusive-use floor areas that the allocation needs)"
+    },
+    {
+      "id": "S2",
+      "case": "group_energy_definitions_read",
+      "input": "the captures zr-12-10-fully-electrified-building, zr-12-10-ultra-low-energy-building, zr-12-10-building, zr-12-10-story",
+      "expected": "the rows state the specific conditions of eligibility from the two energy definitions (fully electrified = a building existing on December 6, 2023 meeting Local Law 154; ultra low energy = the performance and professional-verification standard) with 'building' and 'story'; a user's statement supports only a conditional result and never establishes eligibility; where a definition rests on a fact the readers did not have, the row says 'not sure' and names it"
+    },
+    {
+      "id": "S3",
+      "case": "group_23_24_and_34_23_read",
+      "input": "the captures zr-23-24 and zr-34-23 / zr-34-23-contents",
+      "expected": "the rows state what ZR 23-24 (special provisions for certain areas) and ZR 34-23 (modification of yard regulations) say and whether either reaches an R6B or C2-2-in-R6B lot, quoting the captured text; where the reach turns on a fact the readers did not have, the row is 'not sure' with that fact named; both readings are named"
+    },
+    {
+      "id": "S4",
+      "case": "group_parking_loading_bicycle_applicability_read",
+      "input": "the fourteen captures zr-25-02, zr-25-20, zr-25-211, zr-25-221, zr-25-231, zr-25-80, zr-25-81, zr-25-811, zr-36-21, zr-36-31, zr-36-62, zr-36-70, zr-36-71, zr-36-711",
+      "expected": "the rows state, quoting the captured text, whether and when a parking, loading-berth or bicycle requirement applies (for example no accessory off-street parking required for dwelling units created after December 5, 2024 in the Inner Transit Zone per 25-211); where applicability turns on a fact the readers did not have (for example the lot's transit zone), the row says 'not sure' and names it; the reading draws no conclusion the text does not state"
+    },
+    {
+      "id": "S5",
+      "case": "one_mixed_building_worked_by_hand",
+      "input": "one made-up mixed building (residential plus a commercial or community-facility use), said to be made up",
+      "expected": "a worked example computes, from ZR 35-31's own words, how the use floor areas combine and how shared floor area is attributed to each use proportionately, step by step with the arithmetic shown; no value comes from a program run; a value is recorded only where both readings agree on the same basis"
+    },
+    {
+      "id": "S6",
+      "case": "parking_loading_bicycle_line_per_option",
+      "input": "each development option",
+      "expected": "the reading states what each option's parking, loading and bicycle line MAY say - the applicability resolved from a captured provision, or 'not yet checked'/'not sure' naming the missing fact - and what it MAY NOT say: it may not declare the option feasible, may not state a count, and may not turn a question of law into the owner's preference"
+    },
+    {
+      "id": "S7",
+      "case": "benchmark_rear_yard_read_from_23_342_and_23_344",
+      "input": "the captures zr-23-344 and zr-23-342 and the recorded benchmark measurements (89.7 degrees; 144.60 ft from the corner point)",
+      "expected": "the row quotes ZR 23-344(a) (no rear yard within 100 feet of a corner point where the street lines meet at 135 degrees or less) and ZR 23-342, applies them to the measurements, and says which existing engine answer the text supports - the 'not_required' output (test_three_answers_benchmark.py lines 176 to 178) or the withhold (test_result_ways_benchmark.py, 144.60 ft) - stating plainly where the hand reading differs from the program's output today and changing no fixture and no program code; where the text does not settle the part beyond 100 feet, the row says 'not sure' and names what would settle it"
+    },
+    {
+      "id": "S8",
+      "case": "no_rule_engine_result_register_or_capture_changes",
+      "input": "git show --name-status <the builder's commit>",
+      "expected": "only allowed_paths changed; no file under services/api/app/, docs/research/, docs/zoning-rule-review/, docs/measurement-basis/, docs/plans/ or services/api/tests/scenario/ changed; no case file holds a program result and the support code imports nothing from the rule or scenario engine; ruff and the full services/api pytest pass at the wave's final candidate; the rendered pages are byte-identical to the renderer's output"
+    },
+    {
+      "id": "S9",
+      "case": "quotes_checked_against_captures_by_digest",
+      "input": "each added or changed row",
+      "expected": "every cited law quote carries its capture id and content digest, the checker confirms each cited digest equals the live capture file and that the quoted words are present in the capture, and the data-contract-verifier re-fetches each official page and finds the capture equal to it"
+    },
+    {
+      "id": "S10",
+      "case": "both_readings_agree_else_not_sure_and_one_current_answer",
+      "input": "every added or changed row and every case file",
+      "expected": "a value or yes/no is recorded only where both readings give it on the same basis; otherwise 'not known'/'not sure' with the reason and both readings named, and the 'did not have' list holds only what both readings name; a condition one reading attaches is stated in the value; no question has two current answers (step-p4-worked#made-up-100x100-units and step-p3-worked#real-lot-rear-yard-beyond-corner are superseded where a step-P5 row answers them, with a dated change-log entry, and the step-P5 targets stay current); an unsettled row given a value is refused and a value where the readings differ is refused; no human verdict is entered"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A legal reading presented as settled because two AI readings agree -> the case states that agreement is not proof; every row is followable and quotes its capture; 'not sure' where the text does not settle it (S1-S4, S10)",
+    "Matching the program's saved output taken as proof, especially for the rear yard -> each worked example is worked by hand from the text; the builder states where it differs and changes no fixture or program code (S5, S7, S8)",
+    "Two current answers for one question (the FAR-conditional unit count; the benchmark rear-yard chain) -> the older row is marked superseded_by with a dated change-log entry; the checker refuses two current answers (S10)",
+    "A value recorded where only one reading says it -> the both-readings guard and the must-stay-not-known guard in the step-P5 module refuse it (S10)",
+    "Scope creep into the option display, the measurement-basis record, contract 1.3.0 or an engine fix -> the NOT IN THIS TASK paragraph and forbidden_paths; the benchmark fixtures are read-only (S6, S8)",
+    "Growing the main test module past its focus threshold -> the step-P5 rows and tests go into new focused modules (r6b_reference_cases_step_p5.py and test_r6b_reference_cases_step_p5.py), mirroring step-P4; run modularity_check before growing any file"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T01:34:57.932655+00:00",
+  "updated_at": "2026-10-08T01:34:58.237029+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R291",
+        "D-090-R513",
+        "D-090-R516",
+        "D-090-R526",
+        "D-090-R548"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T01:34:57.932818+00:00",
+  "path_notes": "PRODUCER = rules-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first), started only after the orchestrator holds BOTH independent readings (returns 11 and 12). If run in a parallel wave, it shares no file with its peers. MODULARITY: no handwritten production source changes (services/api/app/** is untouched); documents and test support only. The main test file test_r6b_reference_cases.py is about 600 lines and the checker r6b_reference_cases_check.py about 537, so the new step-P5 rows and tests go into new focused modules r6b_reference_cases_step_p5.py and test_r6b_reference_cases_step_p5.py (mirroring the step-P4 pair); r6b_reference_cases_lib.py gets 'step-p5-worked' added to CASE_IDS and REQUIRED_BASE_IDS, r6b_reference_cases_check.py gets the step-P5 guards wired in, and r6b_reference_cases_render.py changes only if a new row shape needs it. Run python tools/modularity_check.py --check before substantially growing any file. READ-ONLY: services/api/app/**, the benchmark fixtures test_three_answers_benchmark.py and test_result_ways_benchmark.py, and every capture under docs/research/zr-snapshots/v1/. ALLOWED PATHS (the orchestrator's adjustment of the draft): the two folders are named literally as folders. The files the task is expected to add or change are: docs/reference-cases/R6B/cases/step-p5-worked.json; docs/reference-cases/R6B/step-p5-worked.md; docs/reference-cases/R6B/provenance/return-independent-hand-calculation-11.md; docs/reference-cases/R6B/provenance/return-independent-hand-calculation-12.md; docs/reference-cases/R6B/README.md; docs/reference-cases/R6B/cases/step-p3-worked.json; docs/reference-cases/R6B/cases/step-p4-worked.json; services/api/tests/rules/reference_cases/r6b_reference_cases_step_p5.py; services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p5.py; services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py; services/api/tests/rules/reference_cases/r6b_reference_cases_check.py; services/api/tests/rules/reference_cases/r6b_reference_cases_render.py; and the rendered page of every case file it changes. Every other existing file of the two folders stays byte-identical (scenario S8; the reviewer checks the diff). THE TWO INDEPENDENT READINGS (returns 11 and 12) are obtained by the orchestrator from two different helpers working alone from a sealed folder; the builder starts only when both are in and saves them unchanged under provenance/. PART OF PARALLEL WAVE 7 with the two other tasks of the wave (M5-T134, M4-T035, M0-T188): the three share no file (project-control/reports/WAVE7-2026-10-08-concurrency-record.md). ALLOWED PATHS are literal files or literal folders: the registry builds a task's content identity from literal paths only and a pattern binds nothing (backlog row DB-181); a file a builder adds beyond them is added literally by the orchestrator when it integrates it.",
+  "documented_test_commands": [
+    "cd services/api && /root/project/lanes-runtime/venv/bin/python -m ruff check .",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/rules/reference_cases",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python tests/rules/reference_cases/r6b_reference_cases_render.py --check",
+    "python tools/modularity_check.py --check",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ],
+  "worktree": "/root/project/w-wave7"
+}
