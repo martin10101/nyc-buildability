@@ -33,11 +33,13 @@ Nothing in a case comes from a program run: not a value, not a column, not a sen
 | `cases/overlay-reading.json` + `overlay-reading.md` | The commercial-overlay reading worked from the step-P2 captures (task M4-T028): for the benchmark lot with its C2-2 overlay beside the same lot without the overlay, which district's bulk governs and by what route, floor area ratio, lot coverage, dwelling units, base and building heights, the setback, street-wall location, rear yard, which paragraphs of ZR 34-111, 34-24, 35-632 and 35-631 apply, what ZR 35-633 adds, and the sections and defined terms the overlay texts point to that are not captured (section 5 gap K9). |
 | `cases/step-p3-worked.json` + `step-p3-worked.md` | The readings worked from the law text captured by task M4-T029 and read independently in step P3 (task M4-T030): the ZR 12-10 lot-line, lot-width and lot-depth definitions for the real lot and a made-up interior lot; the rear yard beyond the corner (the real lot and a made-up 150-by-100 corner lot), the interior lot (ZR 23-342) and the through lot (the rear-yard equivalent of ZR 23-343); ZR 23-436 and ZR 35-633 for the real lot; ZR 34-21 and ZR 34-111 versus ZR 34-112; the Manhattan Core and the Special Downtown Brooklyn District; from what level heights are measured and the base plane; ZR 23-434 and the different maximum of ZR 23-362(b); the definition of "residence, or residential"; and the base of the floor-area shares in ZR 23-231 and ZR 23-232 (section 8; backlog row DB-170 item (a)). |
 | `cases/step-p4-worked.json` + `step-p4-worked.md` | The readings worked from the law text captured by task M4-T031 and read independently in step P4 (task M4-T032): ZR 34-22 and its sections 34-221 to 34-224, and ZR 34-23 and its sections 34-231 to 34-233, for a residential building in a C2-2 district mapped within R6B; with those read, whether the floor area ratio, the lot coverage and the rear yard are the same as plain R6B, and whether any captured overlay text speaks of lot coverage; ZR 35-22 and ZR 35-62, 35-63, 35-641, 35-642 and 35-643; the definitions of a mixed building, lot coverage, the five yards and the street wall, curb level and prevailing street wall frontage; what may stand in a required rear yard; large sites and qualifying residential sites; whether ZR 34-111's exceptions reach C2-2 within R6B; dwelling units and qualifying housing and the ZR 23-52 factors, with a worked unit count for a made-up 100-by-100 lot; and ZR 23-441, 23-442 and 23-443 (section 8; backlog row DB-170 item (a)). |
+| `cases/step-p5-worked.json` + `step-p5-worked.md` | The readings worked from the 46 texts captured by tasks M4-T033 and M4-T034 and read independently in step P5 (task M4-T035): the mixed-building floor-area sections ZR 35-30 to 35-33 (with ZR 35-31's shared-floor-area rule) and the floor-area-ratio definition, worked for a made-up mixed building of shops below standard residences; ZR 23-24 and the ZR 34-23 page (ZR 34-231 to 34-233); the ZR 12-10 definitions of a fully electrified building, an ultra-low-energy building, a building and a story; the fourteen parking, loading-berth and bicycle-parking sections and what each of seven development options' parking, loading and bicycle line may say; and the benchmark lot's rear yard read from ZR 23-342 and ZR 23-344 (backlog rows DB-184 first piece and DB-185 (b)). |
 
 Each case is kept twice from one source: a structured data file under `cases/` that a test can load, and
 a page rendered from it that a person can read. The helper returns are kept unchanged under
 `provenance/`: the two first-round returns, the two step-P1 readings, the two step-P2
-commercial-overlay readings, the two step-P3 readings and the two step-P4 readings.
+commercial-overlay readings, the two step-P3 readings, the two step-P4 readings and the two step-P5
+readings.
 
 ## Law text: what steps P1 and P2 captured, and what the readers did not have
 
@@ -151,6 +153,40 @@ of street walls*, *block* and *short dimension of a block*; reading 10 names the
 other texts the readings point to (including ZR 34-22 and 34-23 and all the definitions above) were in
 the step-P4 folder - all 110 pinned captures were - so they are NOT on the step-P4 "did not have" list;
 each reading also lists, separately, the texts that were in its folder and that it chose not to read.
+
+**Step P5** (tasks M4-T033 and M4-T034) captured the 46 texts the mixed-building, energy and
+parking readings waited for, and task M4-T035 read them independently (see `cases/step-p5-worked.json`).
+The step-P5 readers had, among the newly captured text: the mixed-building floor-area sections **ZR
+35-30**, **35-31**, **35-32** and **35-33** (with ZR 35-31's shared-floor-area rule) and the **ZR
+12-10** definition of *floor area ratio*; the **ZR 12-10** energy definitions *fully electrified
+building* and *ultra-low-energy building* with *building* and *story*; **ZR 23-24** and the **ZR 34-23**
+contents (ZR 34-231 to 34-233); the fourteen parking, loading-berth and bicycle-parking sections (**ZR
+25-02**, **25-20**, **25-211**, **25-221**, **25-231**, **25-80**, **25-81**, **25-811**, **36-21**,
+**36-31**, **36-62**, **36-70**, **36-71**, **36-711**); and **ZR 23-342** and **ZR 23-344** for the
+benchmark lot's rear yard. With that text the step-P5 rows settle that ZR 35-31 governs the made-up
+mixed building's floor area (not ZR 35-32 or 35-33), how the use floor areas combine and how the 400
+shared square feet split, the residential floor area ratio and floor area (2.00 and 20,000 square
+feet), that the ZR 34-23 page carries only the front-yard, side-yard and change-of-use subsections
+(none a rear yard, with the ZR 34-23 contents capture now read as the complete list - which supersedes
+the step-P4 row zr-34-23-sections), the two energy definitions and the 5-percent floor-area exclusion,
+and that within 100 feet of the benchmark lot's roughly 89.7-degree corner no rear yard is required.
+
+From both step-P5 readings' own summary of what they still did not have, the step-P5 readers lacked (an
+item is on this list only where BOTH readings name it): **Article III, Chapter 3** (the commercial-
+district maximum floor area ratio, e.g. ZR 33-12 / 33-121 - so the made-up building's commercial floor
+area ratio and whole-building maximum stay not known); the **ZR 23-24 subsections** (ZR 23-241 and
+following - so ZR 23-24's reach stays not known); **ZR 25-222** and **ZR 25-232** (the dwelling-unit
+parking numbers - so the residential parking counts stay not known); the **Use Group tables** (so the
+commercial and community-facility parking, loading and bicycle rates stay not known); the parking
+waivers **ZR 36-23**, **36-24** and **36-25**; **Section 66-11**, **APPENDIX I** and the **ZoLa**
+boundary (so the transit zone cannot be confirmed from the law); and **Local Law 154 of 2021** with the
+New York City Energy Conservation Code and Building Code (so the energy requirements' substance stays
+not known). As facts, not law, both readers also lacked the adjoining zoning lots' lot-line types (so
+the benchmark lot's rear yard beyond the corner stays not known) and the block's bounding dimensions.
+Each reading also lists, separately, the folder texts it chose not to read: reading 11 did not read the
+ZR 12-10 lot-coverage capture (not needed for the rear-yard question), and reading 12 read every capture
+each question named. A text the readers did not have may be captured later; `docs/research/zr-snapshots/v1/`
+shows what is captured now.
 
 ## The rule for changing an expected value
 
