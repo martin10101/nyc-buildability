@@ -182,7 +182,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 80,
+  "progress_percent": 90,
   "risks": [
     "BIGGEST RISK: the proven chain (the journey test) TYPES IN the four unsourced engine booleans (overlay_present, special_district_present, within_100_ft, angle) and builds the study_setup with a test helper; no server-side derivation of these booleans from evidence is proven today. If the route must build that derivation, Part A is larger than a thin wiring task. CONTROL: the task sources overlay/special-district from the property profile and within-100-ft/angle from the geometry reach (the same evidence the decision layer reads), never the caller; if a helper to derive them does not exist, the orchestrator decides whether to add it here or split (see path_notes split line). The emitted document's WAYS come from the decision layer's evidence regardless, so a boolean the engine uses for a raw 1.2.0 number is overridden by the transform where the result is withheld/conditional - the tests pin the ways, not the raw booleans.",
     "The route needs a study_setup document to feed study_from_study_setup; study_read builds it with a private _build_document. CONTROL: extract that builder into services/api/app/api/v1/study_setup_document.py and import it from both routes (no fork, modularity law); study_read.py edit is import-only, its tests must stay green.",
@@ -195,7 +195,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T11:40:32.397319+00:00",
-  "updated_at": "2026-10-08T13:12:19.137300+00:00",
+  "updated_at": "2026-10-08T13:18:58.571547+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -261,6 +261,13 @@
       "percent": 80,
       "status": "in_progress",
       "message": "Reviews G3 (data-contract-verifier), G4 (qa-engineer) and G5 (security-reviewer) all returned PASS at the frozen head f8c238f4, no blocking finding, ten notes; no review of this task failed. Three notes closed at once by the same builder in one small commit, integrated as f0f67244 (results_request.py, test_results_read_api.py, the report): a floor-to-floor height that is not finite is now a typed 422 (the security review found NaN and Infinity became a 500); tests pin 'rate limit before the BBL check' and the specific codes of three refused values. Its checks: tests/api 1126 passed; three_answers, journey and contracts 909 passed 2 skipped. Each reviewer is asked to confirm this delta before any gate is recorded."
+    },
+    {
+      "at": "2026-10-08T13:18:58.571429+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Each of the three reviewers confirmed the post-review commit at the frozen head c3f58843 (G3, G4 and G5 delta: confirmed); their six returns are kept unchanged in project-control/reports/M5-T138-G3G4G5.md. No blocking finding; no review of this task failed; what the ten notes leave open goes to backlog row DB-204. Orchestrator's runs: at f8c238f4 the full api suite 8639 passed 8 skipped, website lint, typecheck, 2429 unit tests, build and 153 browser tests; at c3f58843 the full api suite again, 8647 passed 8 skipped. Evidence map written (eighteen rows)."
     }
   ],
   "scope_corrections": [
