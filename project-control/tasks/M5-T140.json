@@ -238,8 +238,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Two things could disagree: 'Zoning maximum' on the status strip vs R269 -> keep the document's text verbatim (retype nothing) and add a test that no value label or headline reads 'maximum for this property' (question D-wording).",
     "A withheld value falling back to another value -> the reader's headline-withheld branch is proven by a red/green test (R556).",
@@ -255,7 +255,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T15:25:44.973890+00:00",
-  "updated_at": "2026-10-08T17:47:56.823577+00:00",
+  "updated_at": "2026-10-08T17:47:59.205212+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
