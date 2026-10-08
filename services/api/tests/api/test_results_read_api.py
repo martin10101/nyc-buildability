@@ -311,6 +311,21 @@ def test_t9_rate_limit_before_any_other_work(enabled, monkeypatch) -> None:
     assert loosened.status_code == 422
 
 
+def test_t9_rate_limit_precedes_the_bbl_check(enabled, monkeypatch) -> None:
+    """The limiter runs BEFORE the BBL check: an over-limit caller with a MALFORMED BBL still gets
+    the 429, never the 422 the BBL would earn, and the provider is never reached."""
+    app = create_app()
+    app.dependency_overrides[get_results_study_inputs_provider] = lambda: _spy()
+    limiter = mod.get_rate_limiter()
+    monkeypatch.setattr(limiter, "max_requests", 0)  # refuse every caller
+    limiter.reset()
+    response = TestClient(app).post(
+        "/api/v1/properties/not-a-bbl/results", json={"housing_program": "standard_residence"}
+    )
+    assert response.status_code == 429
+    assert response.json()["state"] == "rate_limited"
+
+
 # =========================================================================== T10
 @pytest.mark.parametrize(
     "field,value",
@@ -348,20 +363,51 @@ def test_t10_example_and_lot_fact_fields_are_refused(enabled, field, value) -> N
     assert calls == []
 
 
-def test_t10_bad_housing_program_and_bad_optional_values_are_422(enabled) -> None:
-    app = app_with(benchmark_provider())
-    for body in (
-        {},  # missing housing program
-        {"housing_program": "luxury"},  # not in the vocabulary
-        {"housing_program": "standard_residence", "floor_to_floor_ft": 0},
-        {"housing_program": "standard_residence", "floor_to_floor_ft": "ten"},
-        {"housing_program": "standard_residence", "special_density_statement": "yes"},
-    ):
-        response = TestClient(app).post(
-            f"/api/v1/properties/{NORTHERN_BBL}/results", json=body
-        )
-        assert response.status_code == 422, body
-        assert response.json()["state"] == "validation_error"
+@pytest.mark.parametrize(
+    "body,code,field",
+    [
+        ({}, "housing_program_required", "housing_program"),
+        ({"housing_program": "luxury"}, "housing_program_invalid", "housing_program"),
+        (
+            {"housing_program": "standard_residence", "floor_to_floor_ft": 0},
+            "floor_to_floor_ft_invalid", "floor_to_floor_ft",
+        ),
+        (
+            {"housing_program": "standard_residence", "floor_to_floor_ft": "ten"},
+            "floor_to_floor_ft_invalid", "floor_to_floor_ft",
+        ),
+        (
+            {"housing_program": "standard_residence", "special_density_statement": "yes"},
+            "special_density_statement_invalid", "special_density_statement",
+        ),
+    ],
+)
+def test_t10_bad_values_carry_their_specific_code_and_field(enabled, body, code, field) -> None:
+    """Each bad-value refusal carries its SPECIFIC detail.code (and field): a housing program
+    outside the vocabulary, a bad floor-to-floor value, a bad density statement."""
+    response = TestClient(app_with(_spy())).post(
+        f"/api/v1/properties/{NORTHERN_BBL}/results", json=body
+    )
+    assert response.status_code == 422
+    detail = response.json()["detail"]
+    assert detail["code"] == code
+    assert detail["field"] == field
+
+
+@pytest.mark.parametrize("token", ["NaN", "Infinity", "-Infinity"])
+def test_t10_non_finite_floor_to_floor_is_422_not_500(enabled, token) -> None:
+    """A floor-to-floor height sent as a raw JSON NaN / Infinity / -Infinity token is a typed 422
+    (floor_to_floor_ft_invalid) at the body gate - never a 500 - and the provider is never reached.
+    The JSON parser admits these tokens, so the body gate must reject them with math.isfinite."""
+    raw = '{"housing_program": "standard_residence", "floor_to_floor_ft": ' + token + "}"
+    response = TestClient(app_with(_spy())).post(
+        f"/api/v1/properties/{NORTHERN_BBL}/results", content=raw
+    )
+    assert response.status_code == 422
+    detail = response.json()["detail"]
+    assert detail["code"] == "floor_to_floor_ft_invalid"
+    assert detail["field"] == "floor_to_floor_ft"
+    assert response.json()["state"] == "validation_error"
 
 
 def test_t10_non_object_body_is_422(enabled) -> None:

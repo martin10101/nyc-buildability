@@ -29,6 +29,7 @@ type checked explicitly, so an absent optional value is distinct from a present 
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from app.scenario.three_answers import DEFAULT_FLOOR_TO_FLOOR_FT
@@ -135,10 +136,14 @@ def read_results_request(body: object) -> ResultsRequest:
     floor_to_floor_ft: float | None = None
     if "floor_to_floor_ft" in body:
         raw = body["floor_to_floor_ft"]
-        if not _is_number(raw) or raw <= 0:
+        # Reject non-numbers, non-finite values (the JSON parser admits the tokens NaN, Infinity
+        # and -Infinity) and non-positive values. NO upper limit is imposed on a finite value: a
+        # limit on a design choice is a product decision not made here, so a large finite height
+        # is accepted.
+        if not _is_number(raw) or not math.isfinite(raw) or raw <= 0:
             raise ResultsRequestError(
                 "floor_to_floor_ft_invalid",
-                "the floor-to-floor height must be a positive number of feet",
+                "the floor-to-floor height must be a positive, finite number of feet",
                 field="floor_to_floor_ft",
             )
         floor_to_floor_ft = float(raw)

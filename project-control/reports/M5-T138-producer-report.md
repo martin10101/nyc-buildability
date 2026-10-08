@@ -80,12 +80,15 @@ same body value and the engine PRINTS in the scope (owner R256; verified in T6).
 |---|---|---|---|
 | switch off / non-true token | 404 | `{"detail":"Not Found"}` (no state, no correlation id) | T1 |
 | more calls than the limit | 429 | `rate_limited` | T9 |
+| over-limit caller + malformed BBL (rate limit runs BEFORE the BBL check) | 429 | `rate_limited` (not the 422) | test_t9_rate_limit_precedes_the_bbl_check |
 | malformed BBL (provider never called) | 422 | `validation_error` (BBL code) | T2 |
 | body not an object | 422 | `validation_error` (`invalid_body`) | T10 (non-object) |
 | a refused field (lot area / lot type / overlay / special district / corner / geometry / attested provenance / bbl) | 422 | `validation_error` (`field_not_accepted`, names the field) | T10 (8 cases) |
-| missing housing program / program not in vocab | 422 | `validation_error` | T10 (bad) |
-| bad floor-to-floor value (≤0 or non-number) | 422 | `validation_error` (`floor_to_floor_ft_invalid`) | T10 (bad) |
-| bad density statement (not boolean) | 422 | `validation_error` (`special_density_statement_invalid`) | T10 (bad) |
+| missing housing program | 422 | `validation_error` (`housing_program_required`, field housing_program) | test_t10_bad_values_carry_their_specific_code_and_field |
+| housing program outside the vocabulary | 422 | `validation_error` (`housing_program_invalid`, field housing_program) | test_t10_bad_values_carry_their_specific_code_and_field |
+| bad floor-to-floor value (≤0 or non-number) | 422 | `validation_error` (`floor_to_floor_ft_invalid`, field floor_to_floor_ft) | test_t10_bad_values_carry_their_specific_code_and_field |
+| floor-to-floor NOT finite (NaN / Infinity / -Infinity raw JSON tokens) | 422 | `validation_error` (`floor_to_floor_ft_invalid`); never a 500; provider not reached | test_t10_non_finite_floor_to_floor_is_422_not_500 |
+| bad density statement (not boolean) | 422 | `validation_error` (`special_density_statement_invalid`, field special_density_statement) | test_t10_bad_values_carry_their_specific_code_and_field |
 | body not valid JSON | 422 | `validation_error` (`invalid_json`) | test_invalid_json_body_is_422 |
 | body over the size limit (64 KiB) | 422 | `validation_error` (`body_too_large`) | test_body_over_the_size_limit_is_422 |
 | provider cannot produce inputs (`StudyInputsUnavailableError`) | 503 | `inputs_unavailable` | test_s14_provider_cannot_produce_inputs_is_a_typed_503 |
@@ -105,7 +108,13 @@ failure by monkeypatching the ROUTE module's own name (`mod.study_from_study_set
 the status, the typed state, that no results-document part (`answers` / `contract_version` / `scope`)
 is in the answer, and that the marker, a file path and "Traceback" are NOT in the response text.
 
-Every pair is in `RESULTS_READ_STATUS_STATE_MATRIX`. The rate limit runs before any other work; the
+Non-finite floor-to-floor (security note): the body gate rejects `NaN`/`Infinity`/`-Infinity` (which
+the JSON parser admits) with `math.isfinite`, so they are a typed 422 at the gate, never a 500. NO
+upper limit is imposed on a FINITE value: a very large finite floor-to-floor height stays accepted —
+a limit on a design choice is a product decision not made here.
+
+Every pair is in `RESULTS_READ_STATUS_STATE_MATRIX`. The rate limit runs before any other work (the
+`test_t9_rate_limit_precedes_the_bbl_check` pins that it precedes even the BBL 422); the
 BBL check before any body read or I/O; the body before the provider. Note (route vs the entry-level
 S14 wording): through the route the single `StudyInputs.site_geometry` carries BOTH the lot-type
 classification and the corner reach — "no outline" (reach unknown, lot type known) is the 200 case;
@@ -218,14 +227,14 @@ option comparison and the PDF stay owed.
 
 ## Checks (direct exit codes)
 
-Both commits were run; the figures below are at the follow-up commit (the corrections applied).
+All three commits were run; the figures below are at the final (third) commit.
 
 - (a) `python -m ruff check .` (services/api) — **exit 0**, "All checks passed!".
-- (b) `pytest -q tests/api` — **exit 0**, **1118 passed** (claim-seam baseline 1067; +51 new:
-  the original 45 plus the 6 error-path tests of this follow-up).
+- (b) `pytest -q tests/api` — **exit 0**, **1126 passed** (claim-seam baseline 1067; +59 new:
+  45 in the first commit, 6 error-path tests in the second, and 8 in the third — the bad-value
+  test split into 5 parametrized cases (+4), 3 non-finite tests, and the rate-limit-before-BBL test).
 - (c) `pytest -q tests/scenario/three_answers tests/journey tests/contracts` — **exit 0**,
-  **909 passed, 2 skipped** (the import guard now permits `results_read.py`; the +1 vs the first
-  commit's 908 is that formerly-failing guard, now green).
+  **909 passed, 2 skipped** (the import guard permits `results_read.py`).
 - (d) `tools/modularity_check.py --check` — **exit 0** (only pre-existing `tools/agent_supervisor`
   warnings; no new file flagged). `.github/scripts/validate_contracts.py` — **exit 0**, 23 schemas,
   0 failures (no new schema). `scripts/lanes/check_lane_paths.py --coverage` — **exit 0**,
