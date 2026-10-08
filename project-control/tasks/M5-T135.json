@@ -154,8 +154,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "A quote or digest written from memory or copied from this packet rather than read from the capture file -> T3 checks each quote is verbatim in its capture and each digest equals content_digest_sha256; read digests from the capture file itself (M5-T133 FAILED G3 on a stale figure).",
     "An owner recommendation or an orchestrator reading written as if it were the owner's decision -> quote only the verbatim owner fragments of source-057 with their row ids; the reviewer checks each against the owner's words.",
@@ -166,7 +166,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T03:57:03.974050+00:00",
-  "updated_at": "2026-10-08T05:14:24.952749+00:00",
+  "updated_at": "2026-10-08T05:14:43.520551+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
