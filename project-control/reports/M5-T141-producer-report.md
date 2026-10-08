@@ -198,3 +198,14 @@ special_density_statement (`[]`, `{}`, "yes", 1, 0, 1.5).
 No harness file, no browser spec, no Playwright configuration, no other server file, no CI file, no
 dependency file; `build_option` and the valid-body behaviour of the reader are untouched. Only
 `results_request.py`, `test_results_read_api.py` and this report.
+
+## Third commit (tests only): validation tables completed
+
+Both reviews passed; the tests review named two gaps, closed in `test_results_read_api.py` only: the
+density-statement table now also probes the WORDS `"true"` and `"false"` (reader + route), and both
+optional fields now probe an explicit JSON `null` (reader + route; S7 names it). The reader refuses
+`null` with `floor_to_floor_ft_invalid` / `special_density_statement_invalid` and the words
+`"true"`/`"false"` with `special_density_statement_invalid` (the stated answers; the reader was not
+changed). Mutation proof: with the reader temporarily made to accept the words `"true"`/`"false"`,
+the four new statement rows went red, then the reader was reverted byte-for-byte. Checks: ruff
+exit 0; `pytest tests/api/test_results_read_api.py` exit 0, 105 passed (97 + 8 new).

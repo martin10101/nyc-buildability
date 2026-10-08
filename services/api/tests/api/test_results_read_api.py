@@ -608,10 +608,13 @@ _STD = "standard_residence"
 _WRONG_HOUSING_PROGRAM = [[], {}, [_STD], {"a": 1}, 1, 1.5, True, False, None]
 # A parsed body that is not a JSON object.
 _NON_OBJECT_BODIES = [[1, 2, 3], "a string", 123, 1.5, True, False, None]
-# Wrong KIND for the optional floor-to-floor height (true/false are numbers to Python; refused).
-_WRONG_FLOOR_TO_FLOOR = [[], {}, "ten", True, False]
-# Wrong KIND for the optional density statement (anything but a real boolean; 1/0 are not booleans).
-_WRONG_DENSITY_STATEMENT = [[], {}, "yes", 1, 0, 1.5]
+# Wrong KIND for the optional floor-to-floor height (true/false are numbers to Python; an explicit
+# null is refused too - S7 names it - never silently treated as "absent").
+_WRONG_FLOOR_TO_FLOOR = [[], {}, "ten", True, False, None]
+# Wrong KIND for the optional density statement: anything but a real boolean. The WORDS "true" and
+# "false" are refused (a reader that read them as booleans would pass every other row); 1/0 are not
+# booleans; an explicit null is refused too (S7), never read as "no statement".
+_WRONG_DENSITY_STATEMENT = [[], {}, "yes", "true", "false", 1, 0, 1.5, None]
 
 
 def _reader_refuses(body, *, code, field) -> None:
