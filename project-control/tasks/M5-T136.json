@@ -214,7 +214,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 70,
+  "progress_percent": 90,
   "risks": [
     "SIZE / BLAST RADIUS is the top risk: one behavioural change but ~30 files across services/api, packages, saved drawings, apps/web and the register -> mitigate by keeping engine.py/geometry.py/answers.py read-only (all new logic in the one transform module), changing no schema/copy/generated type, running the heavy suites one at a time, and reviewing each regenerated saved file line by line against section 5",
     "the committed journey fixture is SHARED by server and web and the web harness globs every results fixture -> the reader-safety fix (R556) and the web tests are in the same change; without them CI is red (named open question A, for the orchestrator)",
@@ -226,7 +226,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T07:03:36.355713+00:00",
-  "updated_at": "2026-10-08T08:08:02.473417+00:00",
+  "updated_at": "2026-10-08T08:30:13.980568+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -282,6 +282,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "Builder's one commit integrated by cherry-pick as 8ad287f5 (tree identical to the builder's 8a4c74ef; 22 files, all inside the allowed paths; one saved drawing deleted because its content is now withheld). Builder's checks, by its report: three_answers 324 passed 2 skipped; journey and three-ways slot 50; cad and drawings 1359 passed 6 skipped; website lint, typecheck, 2429 unit tests and build green. One scope correction recorded (scenario S4: the benchmark rear yard carries the decision module's own reason, the open point of the overlay reading; backlog row DB-198). Next: G3 and G4 reviews at the frozen head; the full api suite and the website checks with the browser tests by the orchestrator."
+    },
+    {
+      "at": "2026-10-08T08:30:13.980471+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Both independent reviews returned at the frozen head 4ab2238b and passed on their first reading: G3 (data-contract-verifier) fourteen checks confirmed, three notes; G4 (qa-engineer) eleven checks, thirteen mutations, four notes; no blocking finding; no review of this task failed. Both judged the correction of scenario S4 right. The two returns are kept unchanged in project-control/reports/M5-T136-G3G4.md. Orchestrator's runs at the same head: website lint, typecheck, 2429 unit tests, build, 153 browser tests; full api suite 8562 passed, 8 skipped. Evidence map written (eighteen rows)."
     }
   ],
   "scope_corrections": [
