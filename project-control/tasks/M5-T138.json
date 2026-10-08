@@ -182,7 +182,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "BIGGEST RISK: the proven chain (the journey test) TYPES IN the four unsourced engine booleans (overlay_present, special_district_present, within_100_ft, angle) and builds the study_setup with a test helper; no server-side derivation of these booleans from evidence is proven today. If the route must build that derivation, Part A is larger than a thin wiring task. CONTROL: the task sources overlay/special-district from the property profile and within-100-ft/angle from the geometry reach (the same evidence the decision layer reads), never the caller; if a helper to derive them does not exist, the orchestrator decides whether to add it here or split (see path_notes split line). The emitted document's WAYS come from the decision layer's evidence regardless, so a boolean the engine uses for a raw 1.2.0 number is overridden by the transform where the result is withheld/conditional - the tests pin the ways, not the raw booleans.",
     "The route needs a study_setup document to feed study_from_study_setup; study_read builds it with a private _build_document. CONTROL: extract that builder into services/api/app/api/v1/study_setup_document.py and import it from both routes (no fork, modularity law); study_read.py edit is import-only, its tests must stay green.",
@@ -195,7 +195,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T11:40:32.397319+00:00",
-  "updated_at": "2026-10-08T13:19:00.482460+00:00",
+  "updated_at": "2026-10-08T13:19:02.785659+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
