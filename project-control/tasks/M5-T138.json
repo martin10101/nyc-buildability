@@ -1,0 +1,235 @@
+{
+  "task_id": "M5-T138",
+  "title": "Part A of the R6B results-connection work order: a new internal server route POST /api/v1/properties/{bbl}/results that, behind a NEW default-off switch INTERNAL_RESULTS_ENABLED, reads one lot's facts from the server (never the caller), runs the existing accepted chain (study-inputs provider -> study_from_study_setup -> build_evaluator_inputs -> run_engine_and_result_ways_from_evidence, the entry of task M5-T137 that takes evidence and derives the lot's conditions itself), validates the emitted contract-1.3.0 three-way results document with the existing results validator, and returns THAT emitted document verbatim; it does NOT return the engine's inner 1.2.0 document, build no website file, turn no production switch on, touch render.yaml, or change the engine, the decision modules, the three-way transform or the results schema (serves R167, R213, R228, R229, R240, R255, R256, R257, R258, R263, R267, R268, R269, R292, R570, R582, R584, R588; backlog DB-190 a, DB-201, DB-202 a and b).",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "UPDATED BY THE ORCHESTRATOR AFTER TASK M5-T137 (merged as 08b17a74). The draft below was written before that task; where it differs from this paragraph, THIS PARAGRAPH RULES. (R1) THE ROUTE CALLS ONLY THE ENTRY THAT TAKES EVIDENCE: run_engine_and_result_ways_from_evidence (services/api/app/scenario/three_answers/result_way_engine_bridge.py), with the evaluator-inputs document, the study document, the result's id and time, the housing program, the property profile, the prepared outline and the site geometry the provider produced, the user's optional statement about the density area and the design choices. It NEVER calls build_three_answer_inputs or the older entry run_engine_and_result_ways, and it NEVER supplies a condition of the lot itself (overlay, special purpose district, within 100 ft, the corner angle, density area): the entry derives them from the evidence. A test pins that the new route files name neither build_three_answer_inputs nor the older entry. Wherever the draft says 'run_engine_and_result_ways' or 'SOURCE the engine conditions', read this ruling instead. (R2) THE OPTION DOCUMENT. study_from_study_setup needs ONE option document (packages/contracts/schemas/v1/study.schema.json, #/$defs/option: option_id, name, addon_selection, goal, program, floor_to_floor_heights, assumptions, existing_building_plan), a study id and a revision; the provider and the study setup carry none of them. The route builds the option from the checked body: the housing program and the floor-to-floor height are the user's; every other field takes the smallest valid neutral value (nothing selected, no add-on, no goal beyond what the schema requires). PUT A TABLE IN THE REPORT: every field of the option and of the minted identity (option id, study id, revision, results id, time), its value, and why; none of them may be a fact about the lot; read how the tests' option (_TEST_ONLY_OPTION in services/api/tests/api/test_study_read_api.py) is shaped and say where yours differs. READING for the reviewers. (R3) THE BODY carries ONLY: the housing program (the closed vocabulary the engine accepts), the floor-to-floor height (optional; when absent the engine's stated starting value is used and is printed in the result), and the user's optional statement about the special density area (yes, no, or absent; a statement, never a fact). ANY other field is refused with a typed 422: so no lot area, frontage, depth, lot type, district, overlay, special district, corner condition, geometry, or attested fact can be sent. That is what the work order's test T10 can honestly assert here: the example-value guard (real_property_guard.py) has nothing to check in such a body; say so in the report. (R4) A LOT THAT IS NOT A CORNER LOT GOES THROUGH THE ROUTE (backlog row DB-202 a): at least one made-up interior lot WITH its geometry is driven through the route and the entry; its two corner lines read 'Not applicable'; a mutation that treats it as a corner lot inside the entry must make one of YOUR tests fail (run it in a copy outside the repository; the entry's file is read-only here). (R5) WHAT THE ROUTE ANSWERS WHEN EVIDENCE IS MISSING. A missing outline or geometry, or no statement, is a NORMAL request (200): the dependent results are withheld and named (work order test T7). When the provider cannot produce the lot's inputs: the typed 503 the sibling route uses. When the provider produces inputs WITHOUT a property profile and the entry refuses (it raises an error when the study records an overlay that the missing profile cannot confirm; backlog row DB-202 b): a typed 503 with a plain reason, never a 500 and never a made-up document; READING for the reviewers; list every exception the chain can raise and the answer each gets, in a table. (R6) THE MOUNT TEST: if the pattern of services/api/tests/api/test_read_router_mounts.py fits a POST route, add the new route to its set; if it does not, make the same assertions in the new test file and say why. (R7) REVIEWS: a new HTTP surface is security-relevant even when it is off by default: gate G5 by a security reviewer is added (the switch, the rate limit, the body's validation, what an error reveals, that nothing of the engine's inner document can be returned). THE DRAFT FOLLOWS. Build ONE internal server route that returns the already-accepted emitted results document for one lot, behind a new default-off switch, and wire the stale documents. Read the work order docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md sections 0, 1, 5, 6, 8 (Part A, tests T1-T11), 10, 11, 12 first.\n\nTHE FACTS TODAY (orchestrator readings from the review copy at head 9d12e40e1fa70b17c9ee66ab7f7362281322a6bd; verify each in source):\n- The adapter run_engine_and_result_ways (services/api/app/scenario/three_answers/result_way_engine_bridge.py:64) takes a ThreeAnswerInputs, the evaluator_inputs document, an optional special_density_statement and an optional engine env/registry, runs generate_results (engine stays contract 1.2.0), runs the pure transform emit_three_way_document, and returns EngineResultWays(engine_result, gathered, document) where document is the contract-1.3.0 three-way document (result_way_engine_bridge.py:99-100). READING: the route returns .document only.\n- The whole chain is proven end-to-end offline in services/api/tests/journey/test_215_16_northern_journey.py:151-293: entry BBL -> recorded study read -> study_from_study_setup (app/contracts/study_setup_bridge.py) -> build_evaluator_inputs (app/contracts/evaluator_inputs.py:339) -> build_three_answer_inputs (evaluator_inputs.py:429) -> run_engine_and_result_ways -> validate_results_document (app/contracts/study_contracts.py:198). The route replicates THAT chain. READING: in that test the four unsourced engine booleans and the study_setup are TYPED IN by test helpers; the route must replace both with server-sourced values (see STEP 2 and the open question).\n- build_three_answer_inputs (evaluator_inputs.py:429-531) REQUIRES, from the caller, housing_program, overlay_present, special_district_present, within_100_ft_of_street_line_intersection, street_line_intersection_angle_degrees, special_density_area, plus results_id and computed_at; the lot area, front, depth, lot type and district come from the evaluator_inputs document (server facts).\n- The decision layer gather_result_ways (app/scenario/three_answers/result_way_bridge.py:307) reads the recorded commercial overlay, special-purpose district, split-by-district-line, inclusionary/flood/landmark conditions from the property profile and the reach from the prepared outline + site geometry (result_way_bridge.py:329-365), and treats the four no-source conditions (waterfront, airport, transit easement, near-district-line) as NOT CHECKED always, so every zoning result is conditional per K20. The emitted document's ways come from this layer's evidence, not from the engine booleans.\n- Switch pattern (app/config.py): one env var name constant + one reader per flag; only an explicit true token enables; absent/empty/unknown -> disabled (config.py:106-140). The sibling internal read GET /api/v1/properties/{bbl}/study (app/api/v1/study_read.py:420) shows the posture to copy: flag-off generic 404 byte-identical to an unmounted path (study_read.py:435), per-caller rate limit 429 before any work (study_read.py:444; limiter 30/60 s, study_read.py:126-133), BBL normalize 422 before any I/O (study_read.py:449), an injected provider seam for offline tests (study_read.py:173), a contract guard before send, a single STATUS_STATE matrix (study_read.py:160), include_in_schema=False, mounted in main.py:235.\n- The reported switch list is a fixed allowlist in app/api/v1/build_info.py:56-72 (FLAG_ENV_VARS), pinned by tests/api/test_build_info_api.py EXPECTED_FLAGS (:33-49) and the owner-reader drift test (:255-291).\n- The BBL/real-property guard is app/api/v1/real_property_guard.py (lot_bbl_present, guard_real_property_request), gated by LANE_C_ENABLED; it checks CALLER-supplied lot geometry and attested facts.\n- The results contract (packages/contracts/schemas/v1/results.schema.json) requires 27 top-level blocks and an optional scope; validate_results_document checks the emitted document and the 1.3.0 way-layer rule.\n\nSTEP 1 - the plumbing. Add a new default-off switch INTERNAL_RESULTS_ENABLED to app/config.py (D1 recommendation): a new INTERNAL_RESULTS_ENABLED_ENV_VAR constant and an internal_results_enabled(env=None) reader, in __all__, same fail-safe wording as the siblings. Report it in app/api/v1/build_info.py FLAG_ENV_VARS and update tests/api/test_build_info_api.py EXPECTED_FLAGS and _OWNER_READERS so the pinned list and the drift test cover it. Write app/api/v1/results_read.py: a router with POST /api/v1/properties/{bbl}/results, include_in_schema=False, the study-read posture (flag-off 404 FIRST, then per-caller 429, then BBL normalize 422), an injected provider seam (get_results_study_inputs_provider) so tests run offline, and a single RESULTS_READ_STATUS_STATE_MATRIX. Mount it in app/main.py in the study-read comment posture. Tests: T1 (flag off/non-true-token -> 404 byte-identical to a path that does not exist AND absent from the public route list - reuse the tests/api/test_read_router_mounts.py pattern), T9 (429 before any other work), T11 (switch defaults off, the change does not touch render.yaml), plus the build-info pin.\n\nSTEP 2 - the body and the chain. Write app/api/v1/results_request.py (kept apart so the route stays small): read and check a small JSON body carrying ONLY the user's option (housing_program, the closed vocabulary standard_residence | qualifying_affordable_housing | qualifying_senior_housing), the design choices (floor_to_floor_ft, optional, the stated editable 10 ft starting value when absent), and the user's optional statement about the lot (special_density_statement, boolean or absent). READING (D3): validate this body INLINE, like the sibling POST /api/v1/max-envelope (app/api/v1/max_envelope_api.py), which uses NO contract schema; a new contract schema is the alternative, see the open question. The route NEVER accepts lot area, frontage, depth, lot type, district, overlay, special district, within-100-ft or angle from the caller (R255, work order section 4 item 2). In results_read.py, after the guards: call the injected study-inputs provider (recorded benchmark pack in tests; the live default stays flag-gated and off) to get StudyInputs; build the study_setup document (use the shared builder extracted from study_read, see path_notes); study_from_study_setup -> build_evaluator_inputs -> build_three_answer_inputs -> run_engine_and_result_ways(inputs, evaluator_inputs=doc, special_density_statement=..., env=None) -> validate_results_document(emitted.document) -> return emitted.document verbatim. The route mints results_id and computed_at (section 4 item 9). SOURCE the engine conditions from evidence, never the caller: overlay_present and special_district_present from the server-read property profile (the same evidence gather_result_ways reads), within_100_ft and angle from the derived geometry reach, special_density_area from the user's statement only (absent -> the decision layer withholds the unit limit). Map every failure to the typed matrix: malformed BBL 422 (T2, data source never called); too many calls 429 (T9); inputs not producible 503 inputs_unavailable, nothing fabricated; a built document that fails its contract 500 internal_contract_error. EVERY TOP-LEVEL BLOCK (check a): the route returns the 27 required blocks (contract_version, results_id, study_id, option_id, revision, computed_at, out_of_date, out_of_date_reason, depends_on_fact_ids, lot_selection_statement, with_approvals_label, answers, remaining_floor_area, shortfall, addon_gains, best_combination, completeness_line, status_strip, notices_count, floor_by_floor, floor_stack, existing_building, unit_estimate, geometry, rule_versions, draft, street_width_case) and the optional scope EXACTLY as the adapter emitted them; it adds, removes and changes NO block; the inner 1.2.0 engine document (which still carries a legal unit figure and withheld counts) is discarded and never returned (a test pins document.contract_version == '1.3.0', that the route output equals emitted.document, and that no field of emitted.engine_result.document leaks). Tests T3 (route output equals run_engine_and_result_ways output for the same inputs, apart from id and time; not compared to a saved file), T4 (the recorded lot through the route: same expectations as H1/H2/H11 - heights conditional naming K20, never settled or the property maximum; floor-area conditional naming the recorded-area condition; coverage/rear-yard/building-option/unit-limit withheld; no zero), T5 (made-up lots of tables B and C: same as H3/H4), T6 (a changed input changes every dependent result and nothing else), T7 (a fact not given -> 200, dependent results withheld and named, the rest shown, no zero), T8 (a caller statement contradicting a recorded fact does not override it; the answer names both and withholds the dependent results), T10 (example values in a real-property request refused, S13 - see open question on applicability). Every expected value comes from the reference cases under docs/reference-cases/R6B/cases/, never the program's saved output; mark T3/T11 WIRING, T4-T6 LAW, T7/T8 LAW+WIRING. One test per input state with a table in the report; one red proof per behaviour; one mutation proof per pinned branch (the 404, the 422, the 429, each way entry, the no-zero scan, the emitted-not-inner assertion).\n\nDB-190 (a): add services/api/tests/api/test_study_live_outline_provider.py - one direct test of app/api/v1/study_live_geometry.live_outline_provider over a recorded response (it has no direct test today and mounting the route is its WATCH trigger). DB-190 (b), the double-fetch when both live seams are bound, is a study_live_geometry.py / study_inputs.py change and is flagged as an open scope question, not included here (the route keeps the live-spatial switch off, so the double-fetch is not reached by this task).\n\nUpdate the three stale documents (section 12), no behaviour: docs/lanes/queues/C.md line 16 (C-08: there is no test that asserts the route stays unmounted; the 'golden record' block is replaced by the standing label + the per-number law section + 'not known', ADR-007), docs/lanes/status/C.md (the C-08 golden-record references), docs/plans/JOURNEY_215_16_NORTHERN_2026-10-04.md (the golden-record / adapter-fails-closed references; the bridge is merged).\n\nNOT IN THIS TASK: no website file (no apps/web change; the results client, the website switch, the panel and the browser journeys are Part B); no production switch turned on (INTERNAL_RESULTS_ENABLED, LANE_A/B/C, LIVE_SPATIAL_PROVIDER_ENABLED all stay off in production); no render.yaml, no CI configuration, no dependency file, no new package; no change to the engine (engine.py), the decision modules (result_way_*.py), the three-way transform (three_way_document.py) or the results schema (results.schema.json); the realistic apartment estimate, development options, building shapes, the option comparison and the PDF are later milestones and stay owed. Legal readings are named and never decided by the builder's preference; texts a user may see are plain and say nothing about which law text is captured or built.",
+  "business_reason": "The owner's next build step is the R6B results connected to the website, in the order results -> report -> PDF (R213, R582). This route is the server half of that step: it makes the one emitted results document reachable for a lot so the website (Part B), the drawings and the PDF can all read the same result (R228). It keeps unknown values unknown (R229, R240), keeps facts and eligibility coming from evidence (R255), never presents an unchecked condition as confirmed (R267, R268, R269), and turns nothing on in production (R584, R263). It is a finished piece, not the report; the full report and every option stay owed (R167, R588).",
+  "inputs": [
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md",
+    "docs/plans/FEASIBILITY_REPORT_SECTION_MAP_2026-10-06.md",
+    "docs/reference-cases/R6B/cases/",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/inputs.py",
+    "services/api/app/contracts/evaluator_inputs.py",
+    "services/api/app/contracts/study_setup_bridge.py",
+    "services/api/app/contracts/study_contracts.py",
+    "services/api/app/api/v1/study_read.py",
+    "services/api/app/api/v1/study_inputs.py",
+    "services/api/app/api/v1/study_live_geometry.py",
+    "services/api/app/api/v1/max_envelope_api.py",
+    "services/api/app/api/v1/real_property_guard.py",
+    "services/api/app/api/v1/build_info.py",
+    "services/api/app/config.py",
+    "services/api/app/main.py",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "services/api/tests/api/test_build_info_api.py",
+    "services/api/tests/api/test_read_router_mounts.py",
+    "services/api/tests/api/test_study_read_api.py",
+    "packages/contracts/schemas/v1/results.schema.json",
+    "docs/DISCOVERY_BACKLOG.md"
+  ],
+  "outputs": [
+    "services/api/app/api/v1/results_read.py",
+    "services/api/app/api/v1/results_request.py",
+    "services/api/app/api/v1/study_setup_document.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "services/api/tests/api/test_results_read_law_examples.py",
+    "services/api/tests/api/test_study_live_outline_provider.py",
+    "project-control/reports/M5-T138-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T136",
+    "M5-T137"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/results_read.py",
+    "services/api/app/api/v1/results_request.py",
+    "services/api/app/api/v1/study_setup_document.py",
+    "services/api/app/api/v1/study_read.py",
+    "services/api/app/api/v1/build_info.py",
+    "services/api/app/config.py",
+    "services/api/app/main.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "services/api/tests/api/test_results_read_law_examples.py",
+    "services/api/tests/api/test_study_live_outline_provider.py",
+    "services/api/tests/api/test_build_info_api.py",
+    "services/api/tests/api/test_read_router_mounts.py",
+    "docs/lanes/queues/C.md",
+    "docs/lanes/status/C.md",
+    "docs/plans/JOURNEY_215_16_NORTHERN_2026-10-04.md",
+    "project-control/reports/M5-T138-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "Do not edit the engine services/api/app/scenario/three_answers/engine.py.",
+    "Do not edit the decision modules services/api/app/scenario/three_answers/result_way_*.py or result_ways.py.",
+    "Do not edit the three-way transform services/api/app/scenario/three_answers/three_way_document.py.",
+    "Do not edit the results contract packages/contracts/schemas/v1/results.schema.json or any fixture under packages/contracts/fixtures/.",
+    "Do not add or edit any file under apps/web (the whole website, Part B).",
+    "Do not edit render.yaml, any workflow under .github, any file under tools/ or .claude/, or any dependency/lockfile.",
+    "Do not change study_read.py behaviour: only extract its study_setup document builder into the shared helper and import it back, so its tests stay green.",
+    "Do not change the rule tables, any production setting, or turn any switch on.",
+    "Do not edit services/api/app/scenario/three_answers/engine_conditions.py or result_way_engine_bridge.py (task M5-T137): the route only calls the entry that takes evidence.",
+    "Do not edit services/api/app/contracts/evaluator_inputs.py, engine_disclosures.py or study_setup_bridge.py, nor services/api/app/api/v1/study_inputs.py or study_live_geometry.py (the new test of the live outline provider reads it; DB-190 b, the outline fetched twice, is not in this task)."
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "switch_off_is_a_plain_404",
+      "input": "INTERNAL_RESULTS_ENABLED unset or set to a non-true token; POST /api/v1/properties/4073340070/results",
+      "expected": "404 body byte-identical to a path that does not exist; the route is absent from the public OpenAPI route list (T1)."
+    },
+    {
+      "id": "S2",
+      "case": "malformed_bbl_is_422_no_io",
+      "input": "switch on; POST with a malformed BBL in the path",
+      "expected": "typed 422; the injected study-inputs provider is never called (T2)."
+    },
+    {
+      "id": "S3",
+      "case": "route_equals_adapter_output",
+      "input": "switch on; recorded benchmark provider; a valid body",
+      "expected": "the route's document equals the document of run_engine_and_result_ways_from_evidence for the same evidence, apart from the result's id and time; it is not compared with any saved file; nothing of the engine's inner document (contract 1.2.0, which still holds a legal unit figure and numbers of withheld results) is returned; the route files name neither build_three_answer_inputs nor the older entry run_engine_and_result_ways (T3; ruling R1)"
+    },
+    {
+      "id": "S4",
+      "case": "recorded_lot_three_ways",
+      "input": "switch on; recorded 215-16 Northern provider; option standard_residence",
+      "expected": "heights conditional, naming the unchecked K20 conditions, never settled nor the property maximum; floor area conditional naming the recorded-area condition; coverage, rear yard, building option and the legal unit limit withheld (not known); no zero anywhere (T4; values from docs/reference-cases/R6B)."
+    },
+    {
+      "id": "S5",
+      "case": "made_up_lots_tables_b_and_c",
+      "input": "switch on; injected providers for tables B and C lots",
+      "expected": "same expectations as engine tests H3 and H4 through the route (T5)."
+    },
+    {
+      "id": "S6",
+      "case": "changed_input_changes_only_its_dependents",
+      "input": "switch on; lot area 5,355 sq ft; then a changed floor_to_floor_ft; with the density statement",
+      "expected": "the floor area of row P5 and its conditional unit limit appear; a changed floor-to-floor height changes no law limit (T6)."
+    },
+    {
+      "id": "S7",
+      "case": "fact_not_given_is_a_normal_request",
+      "input": "switch on; a provider whose study has an unknown fact a result depends on",
+      "expected": "200; the dependent results withheld and named; the rest shown; no fact prefilled; no zero (T7)."
+    },
+    {
+      "id": "S8",
+      "case": "caller_statement_cannot_override_a_recorded_fact",
+      "input": "switch on; a special_density_statement that contradicts a recorded fact",
+      "expected": "the recorded fact stands; the answer names both; the results that depend on it are withheld; the statement is never stored as a fact (T8)."
+    },
+    {
+      "id": "S9",
+      "case": "rate_limit_before_any_work",
+      "input": "switch on; more calls than the per-caller limit",
+      "expected": "typed 429 before any validation or provider work (T9)."
+    },
+    {
+      "id": "S10",
+      "case": "example_values_refused",
+      "input": "switch on, LANE_C on; a real-property request carrying example-site values",
+      "expected": "a body carrying any field beyond the housing program, the floor-to-floor height and the density statement is refused with a typed 422, one case each for a lot area, a lot type, an overlay flag, a corner condition, a geometry and an attested fact; the report says that the example-value guard has nothing to check in this body (T10 as it can honestly be asserted; ruling R3)"
+    },
+    {
+      "id": "S11",
+      "case": "nothing_changes_in_production",
+      "input": "the built change",
+      "expected": "INTERNAL_RESULTS_ENABLED defaults off; render.yaml is not touched; build-info reports the flag false by default (T11)."
+    },
+    {
+      "id": "S12",
+      "case": "live_outline_provider_has_a_direct_test",
+      "input": "a recorded outline response",
+      "expected": "live_outline_provider returns the prepared outline from the recorded response and returns nothing on error (DB-190 a)."
+    },
+    {
+      "id": "S13",
+      "case": "interior_lot_through_the_route_and_the_entry",
+      "input": "a made-up interior lot of 5,355 sq ft WITH its geometry, through the route (injected provider)",
+      "expected": "the floor area is 10,710 as docs/reference-cases/R6B/cases/interior-lots.json row P5-floor-area; the two corner lines of the scope read 'Not applicable'; with the user's statement the legal unit limit is the conditional value 16 (row P5-units); MUTATION PROOF outside the repository: the entry treating the lot as a corner lot makes a test of this task fail (backlog DB-202 a; ruling R4)"
+    },
+    {
+      "id": "S14",
+      "case": "missing_evidence_is_answered_plainly",
+      "input": "the provider yields inputs with no prepared outline; with no site geometry; with no property profile; and the provider cannot produce inputs at all",
+      "expected": "no outline or no geometry: 200, the coverage and the rear yard withheld and named, the floor area shown; no property profile where the entry refuses: a typed 503 with a plain reason, never a 500 and never a document; inputs not producible: the typed 503 of the sibling route; the report holds the table of every exception of the chain and its answer (backlog DB-202 b; ruling R5)"
+    },
+    {
+      "id": "S15",
+      "case": "the_option_is_built_from_the_body_only",
+      "input": "the option document the route hands to study_from_study_setup, for each housing program and with and without a floor-to-floor height",
+      "expected": "it validates against the option definition of the study schema; the housing program and the floor-to-floor height are the body's; every other field is the neutral value the report's table names; no field is a fact about the lot; the floor-to-floor value used is printed in the result (ruling R2; owner row R256)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "BIGGEST RISK: the proven chain (the journey test) TYPES IN the four unsourced engine booleans (overlay_present, special_district_present, within_100_ft, angle) and builds the study_setup with a test helper; no server-side derivation of these booleans from evidence is proven today. If the route must build that derivation, Part A is larger than a thin wiring task. CONTROL: the task sources overlay/special-district from the property profile and within-100-ft/angle from the geometry reach (the same evidence the decision layer reads), never the caller; if a helper to derive them does not exist, the orchestrator decides whether to add it here or split (see path_notes split line). The emitted document's WAYS come from the decision layer's evidence regardless, so a boolean the engine uses for a raw 1.2.0 number is overridden by the transform where the result is withheld/conditional - the tests pin the ways, not the raw booleans.",
+    "The route needs a study_setup document to feed study_from_study_setup; study_read builds it with a private _build_document. CONTROL: extract that builder into services/api/app/api/v1/study_setup_document.py and import it from both routes (no fork, modularity law); study_read.py edit is import-only, its tests must stay green.",
+    "D3 body validation approach is a choice. CONTROL: recommend inline validation like max_envelope (no contract schema). IF the orchestrator chooses a results_request.schema.json instead, it also needs the _contract_schemas/v1 bundle copy (sync_contract_schemas.py), a valid and an invalid fixture, and it is then globbed by services/api/tests/contracts/test_closed_contracts.py and checked by .github/scripts/validate_contracts.py (KNOWN_KEYWORDS) - more files and a .github touch, so NOT taken here.",
+    "Mounting the route must not change any sibling route. CONTROL: copy the study-read mount posture exactly; sweep tests/api/test_read_router_mounts.py and tests/api/test_study_read_api.py read-only and keep them green.",
+    "A saved result could be mistaken for proof. CONTROL: every LAW test value comes from docs/reference-cases/R6B; T3 compares to the adapter output, not a saved file; no [WIRING]/[UNCHANGED] comparison counts as correctness (R241).",
+    "the route supplies a condition of the lot itself, or calls the older entry with typed values -> ruling R1 and the import pin of scenario S3",
+    "an option field carries a hidden default that changes a result -> the option table of ruling R2 and scenario S15; the one design choice is printed in the result",
+    "a missing profile surfaces as a server error -> ruling R5 and scenario S14"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T11:40:32.397319+00:00",
+  "updated_at": "2026-10-08T11:40:32.765981+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R167",
+        "D-090-R213",
+        "D-090-R228",
+        "D-090-R229",
+        "D-090-R240",
+        "D-090-R255",
+        "D-090-R256",
+        "D-090-R257",
+        "D-090-R258",
+        "D-090-R263",
+        "D-090-R267",
+        "D-090-R268",
+        "D-090-R269",
+        "D-090-R292",
+        "D-090-R570",
+        "D-090-R582",
+        "D-090-R584",
+        "D-090-R588"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T11:40:32.397541+00:00",
+  "path_notes": "ONE producer (backend-engineer) in an isolated worktree, reset to the claim head. READ-ONLY: engine.py, the result_way_*/result_ways/three_way_document modules, results.schema.json and its fixtures, study_inputs.py, study_live_geometry.py, max_envelope_api.py, real_property_guard.py, the journey test. MODULARITY: results_read.py is the route only (guards + chain + typed matrix); results_request.py is body reading/validation only; study_setup_document.py is the shared study_setup builder (new, small). config.py (181 lines), build_info.py (107 lines) and main.py (~270 lines) grow by a few lines each; study_read.py (544 lines) only loses its private builder to the shared module; run python tools/modularity_check.py --check before growing any file. IF the engine-boolean sourcing proves to need new evidence-reading code that touches study_inputs.py or evaluator_inputs.py, SPLIT: task A1 sources the engine conditions from evidence (study_inputs.py / evaluator_inputs.py, reviewed as a Part-0-style change), then task A2 is this route unchanged - do not fold A1 into this packet silently. THE ORCHESTRATOR'S RULINGS (2026-10-08, after task M5-T137 merged as 08b17a74) are the first paragraph of the objective (R1 to R7) and close the draft's open questions: the conditions come from the entry that takes evidence (the draft's question 1; the split it named has happened: M5-T137 was that first half); the study-setup builder is extracted to the shared module (question 2); the example-value guard has nothing to check and the body refuses every other field (question 3); the outline fetched twice stays for the piece that turns the live seam on (question 4). Added by the orchestrator: gate G5 (a security reviewer), the mount-test file among the allowed paths, scenarios S13 to S15, owner row R256. Baselines at the claim base 08b17a74 (figures of the reviewed head of wave 10, whose code is identical): tests/api 1067 passed (the drafting helper's run at the wave-9 head); tests/scenario/three_answers 350 passed 2 skipped; tests/journey with tests/contracts and the lot-reach test 573 passed; the full api suite 8,588 passed 8 skipped. ONE PIECE, NO PARALLEL BUILDER: project-control/reports/WAVE11-2026-10-08-concurrency-record.md.",
+  "documented_test_commands": [
+    "cd services/api && /root/project/lanes-runtime/venv/bin/python -m ruff check .",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/api",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/journey tests/contracts",
+    "python3 tools/modularity_check.py --check and python3 .github/scripts/validate_contracts.py   (from the repository root)",
+    "python3 scripts/lanes/check_lane_paths.py --coverage   (from the repository root)",
+    "the FULL api suite and the website checks with the browser tests: the orchestrator runs them once at the final candidate (no website file changes in this task)"
+  ],
+  "worktree": "/root/project/w-wave11"
+}
