@@ -3457,7 +3457,8 @@
    "task_id": "M5-T141",
    "applicable_requirement_ids": [
     "D-090-R292",
-    "D-090-R584"
+    "D-090-R584",
+    "D-090-R630"
    ],
    "producer": "backend-engineer",
    "verifier": "",
@@ -3473,6 +3474,12 @@
     },
     {
      "id": "D-090-R584",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R630",
      "state": "pending",
      "evidence": [],
      "reviewed_sha": null

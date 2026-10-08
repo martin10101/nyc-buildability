@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 625,
+ "requirement_count": 636,
  "producer": "orchestrator",
- "updated_at": "2026-10-08T18:13:49+00:00",
+ "updated_at": "2026-10-08T18:43:36+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -21314,6 +21314,362 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-08 (message 122).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R626",
+   "text": "'The review confirms real product progress and substantial repeated process work.': the owner reports what the review of the status report of 2026-10-08 found: real product progress, and much repeated process work. It is the ground of rows R633 to R635.",
+   "source_ref": "source-063-amendment.md#owner-message-124-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [],
+   "required_harness": "None: a statement of the owner.",
+   "required_evidence": "The source file.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 124).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R627",
+   "text": "'Continue the results screen.': the work on the results screen goes on.",
+   "source_ref": "source-063-amendment.md#owner-message-124-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R292"
+   ],
+   "required_harness": "The wave that holds the results screen merges on a fully green run.",
+   "required_evidence": "The merge commit and its checks.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 124).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R628",
+   "text": "'Give me a working test preview when ready, clearly identifying recorded versus live inputs and what remains before activation.': when the results screen is ready the owner is given a test preview that works, which says plainly which of its inputs are recorded and which are live, and what remains to be done before the screen may be switched on. ORCHESTRATOR'S READING: a preview in the test setup, with every switch of production left off.",
+   "source_ref": "source-063-amendment.md#owner-message-124-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R584"
+   ],
+   "required_harness": "The preview is given with a note that lists the recorded inputs, the live parts and what remains.",
+   "required_evidence": "The note's path and the owner update that hands it over.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 124).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R629",
+   "text": "'Existing activation restrictions remain.': every existing restriction on switching anything on stays in force; the preview and the screen's merge change none of them.",
+   "source_ref": "source-063-amendment.md#owner-message-124-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R584"
+   ],
+   "required_harness": "No production setting and no default of a switch changes in the wave.",
+   "required_evidence": "The wave's diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 124).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R630",
+   "text": "'Also check results_request.py: housing_program=[] or {} currently raises TypeError during set membership.' 'Add focused validation coverage and fix it within the appropriate existing work.': the request reader of the results route is checked for the reported fault (a list or an object given as the housing program raises a TypeError where a refused value is owed), focused tests of its validation are added and the fault is fixed inside work that is already open, not as a separate piece. ORCHESTRATOR'S READING: inside the open repair task of the same wave, M5-T141, by a scope correction; the reader's other fields are checked for the same kind of fault.",
+   "source_ref": "source-063-amendment.md#owner-message-124-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [],
+   "required_harness": "Tests: a list, an object and every other non-string given as the housing program are a typed refusal through the reader and a 422 through the route, never a 500; the same for the other fields.",
+   "required_evidence": "The test file and the review of task M5-T141.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 124).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R631",
+   "text": "'For this audit, stop expanding narrative notes.' 'Use existing records and one-sentence purpose notes only where needed.': for the audit of this session no further narrative notes are written; existing records are used and a purpose note is one sentence, written only where the records do not say why.",
+   "source_ref": "source-063-amendment.md#owner-message-124-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R597"
+   ],
+   "required_harness": "The session notes after this message hold one-sentence notes only.",
+   "required_evidence": "The session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 124).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R632",
+   "text": "'Finish the final audit at the normal handoff; no additional status report now.': the audit report is finished at the normal handoff; no further status report is written now.",
+   "source_ref": "source-063-amendment.md#owner-message-124-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R597"
+   ],
+   "required_harness": "One audit report, at the handoff.",
+   "required_evidence": "The report's path at the handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 124).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R633",
+   "text": "'Afterward, prioritize one bounded simplification: reduce repeated evidence writing, intermediate administrative pushes and demonstrably duplicate full test runs.': after the results screen work, one bounded simplification comes first: less repeated writing of the same evidence, fewer intermediate pushes that only carry administration, and no full test run that demonstrably duplicates another.",
+   "source_ref": "source-063-amendment.md#owner-message-124-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [],
+   "required_harness": "The simplification is named, bounded and carried out; what changed is on record.",
+   "required_evidence": "The record of the change and the first wave run under it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 124).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R634",
+   "text": "'Preserve independent correctness review and required security checks.': the simplification keeps the independent review of correctness and every required security check.",
+   "source_ref": "source-063-amendment.md#owner-message-124-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R579"
+   ],
+   "required_harness": "The first wave under the simplification still has its independent reviews and security checks.",
+   "required_evidence": "That wave's review records and checks.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 124).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R635",
+   "text": "'Reuse existing tools; do not create another administrative framework.': the simplification reuses the tools that exist; no further administrative framework is built.",
+   "source_ref": "source-063-amendment.md#owner-message-124-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [],
+   "required_harness": "No new administrative tool or framework is added by the simplification.",
+   "required_evidence": "The change's diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 124).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R636",
+   "text": "'Keep ordinary updates to three short bullets with one evidence link or file location.': an ordinary update is three short bullets and carries one link to evidence or one file location. It narrows row R623 (three to five bullets).",
+   "source_ref": "source-063-amendment.md#owner-message-124-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R623"
+   ],
+   "required_harness": "Updates after this message have three short bullets and one evidence link or file location.",
+   "required_evidence": "The session's updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 124).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

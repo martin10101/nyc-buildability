@@ -29,6 +29,8 @@
   "allowed_paths": [
     "apps/web/e2e/harness/fixture_api.py",
     "services/api/tests/api/test_e2e_harness_results_inputs.py",
+    "services/api/app/api/v1/results_request.py",
+    "services/api/tests/api/test_results_read_api.py",
     "project-control/reports/M5-T141-producer-report.md"
   ],
   "forbidden_paths": [
@@ -72,6 +74,12 @@
       "case": "nothing_else_moves",
       "input": "The diff of the task.",
       "expected": "Only the harness file, the new test file and the report; `tests/api` and `tests/journey` pass with the normal path."
+    },
+    {
+      "id": "S7",
+      "case": "a_housing_program_that_is_not_a_string_is_refused",
+      "input": "A request body whose housing program is a list, an object, a number, true, or null; the same kinds of wrong value for the floor-to-floor height and for the statement; a body that is not an object.",
+      "expected": "Through the reader each is a typed refusal with the field's own code; through the route each is a 422 and the provider is not called; none raises a TypeError and none becomes a 500. A red proof: before the fix a list given as the housing program raises TypeError."
     }
   ],
   "required_gates": [
@@ -102,7 +110,8 @@
       "directive_id": "D-090",
       "requirement_ids": [
         "D-090-R292",
-        "D-090-R584"
+        "D-090-R584",
+        "D-090-R630"
       ]
     }
   ],
@@ -124,6 +133,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted and claimed. The defect is reproduced by the orchestrator at the claim head in the way CI starts the harness (only the server's app package on the Python path): 'ModuleNotFoundError: No module named tests' at fixture_api.py line 642. Next: one builder (backend-engineer) in an isolated worktree reset to the claim-seam head."
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-08T18:43:36+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-08, after the builder's first commit, BEFORE any review] TWO ALLOWED PATHS AND ONE SCENARIO ADDED, ONE OWNER ROW BOUND. The owner's message 124 (D-090 source-063, row R630) reports that the request reader of the results route raises a TypeError when the housing program is a list or an object (`housing_program not in HOUSING_PROGRAMS`, a set membership test on an unhashable value), and asks for focused validation tests and the fix 'within the appropriate existing work'. The orchestrator reproduced it at the claim head (read_results_request with [] and with {}: TypeError; with 5 and with None: the typed refusal). It is taken into this open repair task: allowed paths services/api/app/api/v1/results_request.py and services/api/tests/api/test_results_read_api.py added (now 5); scenario S7 added; row D-090-R630 bound. The task's title and first objective are unchanged; the builder is told by message."
     }
   ]
 }
