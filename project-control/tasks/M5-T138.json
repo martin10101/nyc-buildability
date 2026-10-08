@@ -60,7 +60,8 @@
     "docs/lanes/queues/C.md",
     "docs/lanes/status/C.md",
     "docs/plans/JOURNEY_215_16_NORTHERN_2026-10-04.md",
-    "project-control/reports/M5-T138-producer-report.md"
+    "project-control/reports/M5-T138-producer-report.md",
+    "services/api/tests/scenario/three_answers/test_result_ways.py"
   ],
   "forbidden_paths": [
     "Do not edit the engine services/api/app/scenario/three_answers/engine.py.",
@@ -181,7 +182,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "BIGGEST RISK: the proven chain (the journey test) TYPES IN the four unsourced engine booleans (overlay_present, special_district_present, within_100_ft, angle) and builds the study_setup with a test helper; no server-side derivation of these booleans from evidence is proven today. If the route must build that derivation, Part A is larger than a thin wiring task. CONTROL: the task sources overlay/special-district from the property profile and within-100-ft/angle from the geometry reach (the same evidence the decision layer reads), never the caller; if a helper to derive them does not exist, the orchestrator decides whether to add it here or split (see path_notes split line). The emitted document's WAYS come from the decision layer's evidence regardless, so a boolean the engine uses for a raw 1.2.0 number is overridden by the transform where the result is withheld/conditional - the tests pin the ways, not the raw booleans.",
     "The route needs a study_setup document to feed study_from_study_setup; study_read builds it with a private _build_document. CONTROL: extract that builder into services/api/app/api/v1/study_setup_document.py and import it from both routes (no fork, modularity law); study_read.py edit is import-only, its tests must stay green.",
@@ -194,7 +195,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T11:40:32.397319+00:00",
-  "updated_at": "2026-10-08T11:41:57.508944+00:00",
+  "updated_at": "2026-10-08T12:34:09.206533+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -239,6 +240,25 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed at the contract head; the builder starts in an isolated worktree reset to the claim-seam head. Baselines at the claim base 08b17a74: tests/api 1067 passed (the drafting helper's run at the wave-9 head); three_answers 350 passed 2 skipped; journey, contracts and lot reach 573 passed; full api suite 8,588 passed 8 skipped (the reviewed head of wave 10, identical code)."
+    },
+    {
+      "at": "2026-10-08T12:34:09.206220+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Builder's first commit integrated by cherry-pick as 9e0ba21b (tree identical to the builder's 7f78f5e5; 15 files, all inside the allowed paths). Read by the orchestrator before any review; three corrections sent back to the same builder for one more commit: the import guard must permit the route file (one allowed path added by scope correction); four answers of the route have no test; one error text must be true for both of its causes. Recorded: scenario S14 corrected for a lot without geometry (a typed 503; backlog row DB-203). Reviews start after the correcting commit."
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-08T12:34:09+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-08, at the integration of the builder's first commit, BEFORE any review] ONE ALLOWED PATH ADDED: services/api/tests/scenario/three_answers/test_result_ways.py. The route file services/api/app/api/v1/results_read.py must import the entry run_engine_and_result_ways_from_evidence from the module result_way_engine_bridge (ruling R1), and the import guard of that test file refuses any file under services/api/app that holds the text 'result_way' and is not on its literal list; the builder reported the one failing test and did not edit the file. The packet's draft and the orchestrator's check of it both missed the guard. The builder adds 'results_read.py' to the guard's list and changes nothing else in that file; results_request.py must still not name it. The packet now has 17 allowed paths."
+    },
+    {
+      "at": "2026-10-08T12:34:09+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-08, the same moment] SCENARIO S14 AND RULING R5, A LOT WITHOUT ANY GEOMETRY. The packet expects 'no outline or no geometry: 200, the coverage and the rear yard withheld and named, the floor area shown'. Through the route this holds for a missing prepared OUTLINE only. The provider's one site-geometry object carries BOTH the lot type and the reach; with no geometry at all there is no lot type, and build_evaluator_inputs / the engine's inputs require the lot type (evaluator_inputs.py, _REQUIRED_ENGINE_KEYS: lot area, lot type, zoning district) and are read-only in this task. CORRECTED EXPECTATION: no prepared outline -> 200 with the reach-dependent results withheld; no site geometry -> a typed 503 with a plain reason, never a guessed lot type, never a 500. WHAT STAYS OWED (backlog row DB-203): the work order's test T7 asks that a request with a fact not given be answered normally with only the dependent results withheld; the floor-area figures do not depend on the lot type in law, so a lot without geometry should one day get its floor area and have the rest withheld. That needs the engine's inputs to accept an unknown lot type and is not in this task."
     }
   ]
 }
