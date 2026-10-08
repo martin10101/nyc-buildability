@@ -239,7 +239,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 82,
+  "progress_percent": 90,
   "risks": [
     "Two things could disagree: 'Zoning maximum' on the status strip vs R269 -> keep the document's text verbatim (retype nothing) and add a test that no value label or headline reads 'maximum for this property' (question D-wording).",
     "A withheld value falling back to another value -> the reader's headline-withheld branch is proven by a red/green test (R556).",
@@ -255,7 +255,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T15:25:44.973890+00:00",
-  "updated_at": "2026-10-08T17:24:52.185913+00:00",
+  "updated_at": "2026-10-08T17:47:56.823577+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -329,6 +329,13 @@
       "percent": 82,
       "status": "claimed",
       "message": "The builder's third commit integrated by cherry-pick as f7a1a1b1 (the builder's 7c65bf1a; 4 files, all allowed paths; every allowed-path blob identical to the builder's head): a test that a height of 500 is accepted and sent, with its red proof (the G4 review's blocking finding); the website's check now refuses a document in which an available answer has no states, a shown value has no stated way, or a conditional entry names no condition (the G3 review's note F1, widened by the orchestrator); the notices for a timeout and an unexpected response tested in the panel; the text guard over the whole panel. Builder's checks: lint, typecheck, build exit 0; 2491 unit tests in 116 files. Only three files under apps/web/src and the report changed since the head the full api suite ran on (8655 passed, 8 skipped at ec228eae). Next: the orchestrator's website runs at the new frozen head; both reviewers asked to review this commit."
+    },
+    {
+      "at": "2026-10-08T17:47:56.823435+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "At the frozen head b3e84b3d: G3 (data-contract-verifier) confirmed the last commit (its PASS stands); G4 (qa-engineer), which had FAILED at ec228eae on one missing test, re-reviewed and PASSED (the upper-limit mutation and three new ones each caught; no assertion weakened), on the condition that the orchestrator's runs complete green. They did, in a second run: the first run's pictures and browser tests could not start because a website test server left by the orchestrator's own picture script held port 3001; after that leftover was stopped, with no repository file changed: 155 browser tests passed; the full api suite 8655 passed, 8 skipped. The walkthrough of the running screen (human-journey-reviewer) judged all nine journeys clear with five advisory findings; its first verdict was FAIL on the red run file it had been pointed to, and PASS after the second run. All six returns are kept unchanged in project-control/reports/M5-T140-G3G4.md and M5-T140-HJ.md. Evidence map written (seventeen rows)."
     }
   ]
 }
