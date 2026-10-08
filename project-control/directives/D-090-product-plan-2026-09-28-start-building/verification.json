@@ -2189,54 +2189,90 @@
     "D-090-R531"
    ],
    "producer": "scenario-optimization-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "8801d990f9047055c522ef192d527b772ac508d0",
+   "reviewed_manifest_sha256": "05d93b2c501ba8163ba20a1ca582a3e5cfa59261a64f13cd56fa8150a00e6830",
    "requirements": [
     {
      "id": "D-090-R229",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "A value the wiring lacks reaches the decision module as missing, never a zero/default: the adapter run_engine_and_result_ways forwards inputs.property_profile/prepared_outline/site_geometry verbatim, None included, with zero branching (result_way_engine_bridge.py:86-95).",
+      "My drive: profile=None -> every recorded column NOT_READ and all ways Withheld; outline=None -> reach street_lines empty, every way's to_value_state() carries no \"value\" (never a zero) \u2014 reproduced, matching tests test_s6/test_s2/test_s1.",
+      "STAYS OPEN: the \"shown as not known on the website, drawings and PDF\" half \u2014 this task emits nothing to a user; the row stays bound to M5-T127/128/129/130/131 for that.",
+      "Verifier's carry-forward condition met at 8801d990: the task's allowed-path files are identical to those verified at 3c0a1b64 (content identity 05d93b2c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (14 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T134-DCV.md."
+     ],
+     "reviewed_sha": "8801d990f9047055c522ef192d527b772ac508d0"
     },
     {
      "id": "D-090-R240",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "An input not given stays unanswered and only its dependents are held back: my drive with area=None gave large_lot.met=None and \"not stated\"; geometry=None gave reach=None with coverage/rear_yard Withheld (tests test_s5/test_s3).",
+      "No default fills a missing input: the added production lines contain no `or {}`/`or []`/`.get(`/`if not` on a fact (G4 CHECK 6, which I re-read in the diff; only `is None`/`is not None` guards present).",
+      "STAYS OPEN: the user-facing \"results show not known / user not forced to answer\" behaviour belongs to the emitting piece, not this wiring.",
+      "Verifier's carry-forward condition met at 8801d990: the task's allowed-path files are identical to those verified at 3c0a1b64 (content identity 05d93b2c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (14 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T134-DCV.md."
+     ],
+     "reviewed_sha": "8801d990f9047055c522ef192d527b772ac508d0"
     },
     {
      "id": "D-090-R255",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "A user's special-density statement is handed as a statement and enters no fact record: my drive with special_density_statement=True made legal_unit_limit_standard Conditional carrying a KIND_USER_STATEMENT condition, and no gathered fact mentions \"density\"; with None it was Withheld (test_s9).",
+      "The statement is a bare adapter argument, never written onto the profile or any Recorded fact (result_way_engine_bridge.py:93).",
+      "STAYS OPEN: the user-facing conditional labelling on the website is future emitting work.",
+      "Verifier's carry-forward condition met at 8801d990: the task's allowed-path files are identical to those verified at 3c0a1b64 (content identity 05d93b2c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (14 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T134-DCV.md."
+     ],
+     "reviewed_sha": "8801d990f9047055c522ef192d527b772ac508d0"
     },
     {
      "id": "D-090-R257",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The two real area figures are compared and neither is chosen: my drive gave recorded 10,075 sq ft vs outline ~10,388 sq ft, agreement DISAGREES, floor-area ways Conditional (test_s1/test_s4).",
+      "With no recorded area the outline never substitutes: large_lot.met=None, large_lot statement \"not stated\", area_statement \"never used in its place\" (test_s5); outline absent -> AreaAgreement.COULD_NOT_COMPARE (test_s2).",
+      "STAYS OPEN: presenting the defensible-conditional / withheld area results to a user is not in this task.",
+      "Verifier's carry-forward condition met at 8801d990: the task's allowed-path files are identical to those verified at 3c0a1b64 (content identity 05d93b2c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (14 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T134-DCV.md."
+     ],
+     "reviewed_sha": "8801d990f9047055c522ef192d527b772ac508d0"
     },
     {
      "id": "D-090-R267",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The adapter adds no judgement that could turn unchecked into confirmed: it is a pure pass-through (zero branching) and on the benchmark lot the ways equal the decision module's own benchmark set \u2014 coverage/rear-yard/setback/building-option/three unit limits Withheld, floor-area/heights Conditional (my drive, test_s1).",
+      "A missing profile yields all-Withheld, never a confirmed answer carrying a disclaimer (my drive, test_s6).",
+      "STAYS OPEN: \"a disclaimer does not make it confirmed\" as a user-visible presentation rule lives in the emitting piece.",
+      "Verifier's carry-forward condition met at 8801d990: the task's allowed-path files are identical to those verified at 3c0a1b64 (content identity 05d93b2c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (14 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T134-DCV.md."
+     ],
+     "reviewed_sha": "8801d990f9047055c522ef192d527b772ac508d0"
     },
     {
      "id": "D-090-R268",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The three-way split survives the wiring unchanged: under a recorded C2-2 overlay the FLOOR_AREA family (OVERLAY_SUPPORT_ROWS supported=True) stays Conditional (far not withheld), while REAR_YARD (supported=False, zr_sections present) is Withheld as gap_kind \"work_owed\" (my drive, test_s7/test_s8).",
+      "An answer the condition cannot change stays visible and only unsupportable answers are withheld \u2014 reproduced, tied to the merged reference rows via result_way_bridge_overlay, not to new logic here.",
+      "STAYS OPEN: the user-facing rendering of visible/conditional/withheld answers is not emitted by this task.",
+      "Verifier's carry-forward condition met at 8801d990: the task's allowed-path files are identical to those verified at 3c0a1b64 (content identity 05d93b2c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (14 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T134-DCV.md."
+     ],
+     "reviewed_sha": "8801d990f9047055c522ef192d527b772ac508d0"
     },
     {
      "id": "D-090-R531",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task IS the allowed integration/wiring and exposes nothing: `git grep result_way` over services/api/app/api and apps/web/src returns nothing; run_engine_and_result_ways has no caller under services/api/app (only its own definition); no production switch is flipped (the diff only reads LIVE_SPATIAL_PROVIDER_ENABLED, default OFF).",
+      "The three prerequisite repairs are accepted in the ledger before this task was contracted (created 2026-10-08T01:34): M5-T133 (measurement-basis/worked example), M5-T132 (the two explanations), M4-T034 (law-text captures) all status=accepted, merged at the integration base 85500b94 (PR #466).",
+      "STAYS OPEN: the sequencing bar on approving/contracting the apartment estimator and on exposing results to a user governs future waves; this task neither approves that estimator nor emits results.",
+      "Verifier's carry-forward condition met at 8801d990: the task's allowed-path files are identical to those verified at 3c0a1b64 (content identity 05d93b2c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (14 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T134-DCV.md."
+     ],
+     "reviewed_sha": "8801d990f9047055c522ef192d527b772ac508d0"
     }
-   ]
+   ],
+   "verified_at": "2026-10-08T02:52:40+00:00"
   },
   {
    "directive_id": "D-090",
