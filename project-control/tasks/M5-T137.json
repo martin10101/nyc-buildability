@@ -168,7 +168,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 70,
+  "progress_percent": 75,
   "risks": [
     "a stand-in in the wrong direction lets a figure through -> the direction of each stand-in is proved from the rule file and pinned by a mutation proof; scenario S11 forbids any shown result resting on one",
     "the decision step shows a result while a condition it reads is not known -> the builder stops and reports the state; nothing is papered over in the transform",
@@ -179,7 +179,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T09:24:50.315328+00:00",
-  "updated_at": "2026-10-08T10:20:37.851744+00:00",
+  "updated_at": "2026-10-08T10:35:05.298433+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -225,6 +225,20 @@
       "percent": 70,
       "status": "in_progress",
       "message": "Builder's one commit integrated by cherry-pick as 1aacada9 (tree identical to the builder's 11e73825; 11 files, all inside the allowed paths). On the benchmark the answers and the geometry of the regenerated journey result are identical to the claim head; the five scope lines now state the record or the measurement (the density area: not known, with what the calculation took and what it withholds) and two rule versions are no longer listed. Builder's checks, by its report: three_answers 349 passed 2 skipped; journey, contracts and lot reach 573; cad and drawings 1359 passed 6 skipped; website 2429 unit tests; 9 of 9 mutations caught; no state broke the invariant. Next: G3 and G4 reviews at the frozen head; the website checks, the browser tests and the full api suite by the orchestrator."
+    },
+    {
+      "at": "2026-10-08T10:35:05.298310+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 75,
+      "status": "in_progress",
+      "message": "One correction BEFORE any review, of the orchestrator's own reading O36: a scope line of a condition that is not known showed the value taken for the calculation ('Special density area Yes assumed ...' on the regenerated drawing); it now shows the words 'Not known' (and 'Not applicable' for the corner conditions of a lot that is not a corner lot). The same builder made the correcting commit, integrated as b6aab84a (7 files, all inside the allowed paths; its checks: three_answers 350 passed 2 skipped; journey, contracts and lot reach 573; cad and drawings 1359 passed 6 skipped; website 2429). The packet's scope_corrections holds the corrected reading. Reviews start at the next commit."
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-08T10:35:05+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-08, after the builder's first commit (1aacada9) and BEFORE any review] READING O36, THE VALUE OF A SCOPE LINE WHOSE CONDITION IS NOT KNOWN. The packet said: 'its value is the stand-in and its basis assumed'. The builder followed it. Reading the regenerated drawings, the orchestrator found the result: 'Special density area Yes assumed Whether the lot is in a special density area is not known; ...': a reader sees 'Yes' for something that is not known, a substitute shown in place of an unknown (owner rows R229, R570). CORRECTED READING: in the scope line of a condition that is not known the value is the words 'Not known' (the schema's value may be a string) and the unit is null; the statement still says that it is not known, what was taken for the calculation and what is withheld; the basis stays 'assumed' (the schema has no other; backlog row DB-196). In the same way, for a lot that is not a corner lot the two corner conditions show the words 'Not applicable' instead of a made-up value. The value handed to the ENGINE is unchanged. Scenarios S3, S5, S6, S9 and S10 are read with this correction. The same builder made the correcting commit (b6aab84a on the branch) after reading every reader of the scope lines. The fault was the orchestrator's ruling, not the builder's work."
     }
   ]
 }
