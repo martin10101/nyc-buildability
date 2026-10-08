@@ -78,15 +78,21 @@ from app.config import internal_study_read_enabled
 from app.connectors.bbl import BBLValidationError, normalize_bbl
 from app.contracts.study_contracts import StudyContractError, validate_site_fact_document
 from app.resilience.rate_limit import SlidingWindowRateLimiter, caller_key
-from app.spatial.multi_lot_site import LotSelectionError, study_lot_selection, study_lots
+from app.spatial.multi_lot_site import LotSelectionError
 from app.spatial.multi_lot_site.parameters import MAX_SELECTED_LOTS
 
 from .study_inputs import (
-    StudyInputs,
     StudyInputsProvider,
     StudyInputsUnavailableError,
     default_study_inputs_provider,
 )
+from .study_setup_document import build_study_setup_document
+
+# Compatibility facade (M5-T138): the study-setup builder moved to study_setup_document so the
+# results route can reuse it (no fork; modularity law). study_read's behaviour is unchanged - it
+# calls the shared builder - and this alias preserves the former private import path that an
+# existing contract test uses, so that test stays green with no edit to its expectations.
+_build_document = build_study_setup_document
 
 __all__ = [
     "RATE_LIMIT_MAX_KEYS",
@@ -101,8 +107,6 @@ __all__ = [
 logger = logging.getLogger("app.api.v1.study_read")
 
 router = APIRouter(prefix="/api/v1", tags=["study_read"])
-
-DOCUMENT_KIND = "study_setup"
 
 # Defense-in-depth length cap for the reflected raw_value repr in a 422 detail
 # (the condo-records / proposal bounded-repr class). The repr is already
@@ -365,23 +369,6 @@ def _assert_json_safe(document: dict) -> None:
     json.dumps(document, ensure_ascii=False, allow_nan=False).encode("utf-8")
 
 
-def _build_document(canonical_bbl: str, inputs: StudyInputs) -> dict:
-    """Shape the study-setup document from the domain inputs. Lots and
-    lot_selection come VERBATIM from B-07's adapters; the facts are carried as
-    emitted by B-02. Nothing is computed here."""
-    lots = study_lots(inputs.lot_choice, inputs.site.selected_bbls)
-    lot_selection = study_lot_selection(inputs.site)
-    facts = [dict(fact) for fact in inputs.site_facts]
-    return {
-        "document_kind": DOCUMENT_KIND,
-        "bbl": canonical_bbl,
-        "property": {"bbl": canonical_bbl, "address": inputs.address},
-        "lots": lots,
-        "lot_selection": lot_selection,
-        "site": {"facts": facts},
-    }
-
-
 def _contract_guard(document: dict) -> None:
     """Validate the study-setup document against the contract before send. Every
     site fact against site_fact.schema.json; every lot and the lot_selection
@@ -526,7 +513,7 @@ def get_study(
     # 3. Shape the document, contract-guard it, and guard its serialisation
     #    before send. A built document that fails the contract is a typed 500.
     try:
-        document = _build_document(canonical, inputs)
+        document = build_study_setup_document(canonical, inputs)
         _contract_guard(document)
         _assert_json_safe(document)
     except StudyContractError:

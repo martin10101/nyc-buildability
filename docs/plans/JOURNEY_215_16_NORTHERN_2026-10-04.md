@@ -156,7 +156,8 @@ summary.
   known lot type and (where supplied) frontage. The non-site flags (overlay present,
   within-100-ft, angle) still need a sourced origin — the plan is silent on where several
   of these come from for a live lot, so they stay named assumptions until a source is
-  decided. **Depends on:** link 4 (C-07), golden record M1-05 for final acceptance.
+  decided. **Depends on:** link 4 (C-07); acceptance is by ADR-007 (the standing label + per-stat
+  law link + "not known"), not a golden-record match.
 
 ### Link 6 — Actual screen
 
@@ -167,15 +168,16 @@ summary.
   are not reviewed yet"). `DevelopmentLimits.tsx` renders "Remaining development capacity:
   Not confirmed" (e2e-pinned, `development-limits.spec.ts`). The D-03 single-page dashboard
   and its §5a passes are merged.
-- **Missing / stubbed (INCOMPLETE):** **no mounted route serves the Northern three-answer
-  document to a browser** — `three_answers` is library-only (its docstring: "The engine is
-  library-only; Lane C mounts any route later."). The only CI screenshot
+- **Missing / stubbed (INCOMPLETE):** the SERVER route now exists — `POST /api/v1/properties/
+  {bbl}/results` (M5-T138, Part A), behind the default-off `INTERNAL_RESULTS_ENABLED` flag, returns
+  the emitted contract-1.3.0 results document for one lot — but **no browser yet reads it** (the
+  results client, the website switch and the panel are Part B, still owed). The only CI screenshot
   (`ci-development-limits-not-confirmed.png`, run 37165881685) is pilot BBL **1000010010**,
   not the Northern lot. D-02 (single-page dashboard as default entry) is blocked on Q4.
-- **Smallest task (C-08, queue row):** mount a results route behind flags (flip the tests
-  that assert it stays unmounted), send the lot BBL and lines; then point the D-05 panel at
-  the live route. **Depends on:** A-04 (done), C-07 (link 4); **owner-blocked** on golden
-  record M1-05 (Q1 pilot + Q12 reviewer).
+- **Smallest task (C-08, queue row):** the server route is built (behind flags; no test asserts it
+  stays unmounted — the flag-off route is a generic 404 proven by its own suite); next, point the
+  D-05 panel at it (Part B). **Depends on:** A-04 (done), C-07 (link 4); acceptance is by ADR-007
+  (the standing label + per-stat law link + "not known"), not a golden-record match.
 
 ### Link 7 — Available exports
 
@@ -333,8 +335,11 @@ code — but any Lane A merge still needs the owner's yes per PR, e.g. item 5):*
 **Wave 2 — rule + mount + exports (several owner-gated; do not start the gated ones):**
 7. [A] A-07 existing-buildings §5b draft rule — **needs PR #382 merged (owner's yes) and
    G6/Q12**; do not start the rule before the snapshots merge.
-8. [C] **C-08 mount results route — OWNER-BLOCKED on golden record M1-05 (Q1 / Q12). Do not
-   start.** This is the one link that puts the Northern numbers on a real screen.
+8. [C] **C-08 mount results route** — the golden-record / reviewer owner-block is RETIRED by
+   ADR-007 (the standing label + per-stat law link + "not known" replace it). The server half is
+   built as M5-T138 (R6B results route, Part A: a default-off internal route returning the emitted
+   results document); the browser half (Part B) that puts the Northern numbers on a real screen is
+   still owed.
 9. [E] E-02 PDF converter trial — the trial may run, but the converter admission needs the
    dependency-security gate and a **Render runtime decision (owner)**; do not pick/admit a
    converter without it.
@@ -343,12 +348,12 @@ code — but any Lane A merge still needs the owner's yes per PR, e.g. item 5):*
 12. [C] C-11 recorded-fixture CI journey (address → lots → results → export) — after C-08
     and E-04; this is the test that would prove the whole journey end to end.
 
-**Do not start (owner / human gates):** C-08 and the golden record (M1-05 / Q1 / Q12);
-A-07 rule and PR #382 merge (owner's yes + G6); A-05 merge (#369); C-06 slice 2 and E-04
-(durable storage B-001 token / Q7); D-02 (Q4); E-02 converter choice (Render runtime);
-and the qualified legal review of every draft rule.
+**Do not start (owner / human gates):** A-07 rule and PR #382 merge (owner's yes + G6); A-05
+merge (#369); C-06 slice 2 and E-04 (durable storage B-001 token / Q7); D-02 (Q4); E-02 converter
+choice (Render runtime). C-08's golden-record / reviewer block is retired by ADR-007; the standing
+label + per-stat law link + "not known" replace the qualified legal review as a merge gate.
 
 The honest shortest path to the journey the owner asked for runs through Wave-1 steps 1-6
-(which are unblocked and join address-less lot/fact/study/engine), then is **gated at the
-screen** by the golden record M1-05 (C-08) and at the rules by G6 — neither of which an
-agent can clear.
+(which are unblocked and join address-less lot/fact/study/engine); the screen half (C-08 Part B)
+is still owed, and ADR-007 (label + per-stat law link + "not known") replaces the former
+golden-record / reviewer gate.

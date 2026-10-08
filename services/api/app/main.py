@@ -38,6 +38,7 @@ from app.api.v1.parity_read import router as parity_read_v1_router
 from app.api.v1.properties import router as properties_v1_router
 from app.api.v1.proposal_checks_api import router as proposal_checks_v1_router
 from app.api.v1.proposal_validation import router as proposal_validation_v1_router
+from app.api.v1.results_read import router as results_read_v1_router
 from app.api.v1.rule_evaluation import router as rule_evaluation_v1_router
 from app.api.v1.scenario import router as scenario_v1_router
 from app.api.v1.scenario_analysis import router as scenario_analysis_v1_router
@@ -257,6 +258,18 @@ def create_app() -> FastAPI:
     # and a "Not confirmed" capacity line only, no valuation; production keeps it a 404. See
     # app.api.v1.parity_read.
     application.include_router(parity_read_v1_router)
+    # Internal, feature-flag-gated RESULTS route (R6B results-connection work order, Part A; task
+    # M5-T138). SAME posture as the study-read / lane C reads above - ALWAYS registered but a
+    # generic 404 (no OpenAPI entry) unless the NEW default-off INTERNAL_RESULTS_ENABLED flag is an
+    # explicit true token; absent/unknown -> disabled (fail safe). It runs the accepted engine chain
+    # for one lot (study-inputs provider -> study-setup bridge -> evaluator inputs -> the entry that
+    # takes evidence) and returns the emitted contract-1.3.0 three-way results document, never the
+    # engine's inner 1.2.0 document. Self-gated at the handler (flag-off 404 -> per-caller 429 ->
+    # BBL 422 -> body 422 -> 503 when inputs are unavailable or a recorded condition cannot be
+    # confirmed -> 500 on a built-document contract failure). The engine's own Lane A gate stays
+    # separate and off in production, so production (neither flag set) keeps the route a 404 and
+    # turns no zoning computation on. See app.api.v1.results_read.
+    application.include_router(results_read_v1_router)
     # Read-only build-info record (queue C-02, plan M1-02). Ungated like health: it returns
     # only the deployed commit SHA, API_VERSION and a fixed allowlist of flags as booleans,
     # and reads no other env var. See app.api.v1.build_info.

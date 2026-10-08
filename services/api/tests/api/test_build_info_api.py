@@ -37,6 +37,7 @@ EXPECTED_FLAGS = [
     "INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED",
     "INTERNAL_TRANSIT_PARKING_READ_ENABLED",
     "INTERNAL_PARITY_READ_ENABLED",
+    "INTERNAL_RESULTS_ENABLED",
     "SITE_DEFINITION_WRITE_ENABLED",
     "DXF_IMPORT_ENABLED",
     "LIVE_SPATIAL_PROVIDER_ENABLED",
@@ -263,6 +264,7 @@ _OWNER_READERS = {
         config.internal_transit_parking_read_enabled
     ),
     config.INTERNAL_PARITY_READ_ENABLED_ENV_VAR: config.internal_parity_read_enabled,
+    config.INTERNAL_RESULTS_ENABLED_ENV_VAR: config.internal_results_enabled,
     site_definition.SITE_DEFINITION_WRITE_ENABLED_ENV_VAR: (
         site_definition.site_definition_write_enabled
     ),
