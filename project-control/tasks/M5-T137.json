@@ -167,8 +167,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "a stand-in in the wrong direction lets a figure through -> the direction of each stand-in is proved from the rule file and pinned by a mutation proof; scenario S11 forbids any shown result resting on one",
     "the decision step shows a result while a condition it reads is not known -> the builder stops and reports the state; nothing is papered over in the transform",
@@ -179,7 +179,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T09:24:50.315328+00:00",
-  "updated_at": "2026-10-08T11:03:58.997323+00:00",
+  "updated_at": "2026-10-08T11:04:01.080877+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
