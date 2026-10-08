@@ -95,7 +95,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 75,
+  "progress_percent": 82,
   "risks": [
     "The repaired harness quietly serves different inputs than the tests' provider -> the equality test (S3).",
     "The import comes back later (it works on every build machine) -> the guard test (S2), which runs in the server suite in CI.",
@@ -104,7 +104,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T18:13:48.746448+00:00",
-  "updated_at": "2026-10-08T18:52:57.835154+00:00",
+  "updated_at": "2026-10-08T19:15:42.818754+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -140,6 +140,13 @@
       "percent": 75,
       "status": "claimed",
       "message": "Two builder commits integrated by cherry-pick (4111dd16: the harness replays the recorded pack by path with imports from app only; a guard, an equality test and the other-lot case. 6dbca388: the request reader refuses a housing program that is not a string with its typed code; 55 focused validation tests; before, a list or an object raised TypeError and the route answered 500). Every allowed-path file identical to the builder's head. Builder's checks: ruff exit 0; tests/api and tests/journey 1194 passed; the two results browser specs passed when started the way CI starts the harness. Next: push the frozen head; READ CI ON IT before any gate; the orchestrator's runs; the reviews."
+    },
+    {
+      "at": "2026-10-08T19:15:42.818631+00:00",
+      "agent": "backend-engineer",
+      "percent": 82,
+      "status": "claimed",
+      "message": "At c310936d: CI green on both runs (read before any gate: 21 of 21 jobs each, the browser-test job among them); the orchestrator's runs green (155 browser tests started the way CI starts the harness; the full api suite 8716 passed, 8 skipped); G3 PASS, G4 PASS (three notes), the route's security reviewer confirmed the reader's fix. Two of G4's notes closed by a third, tests-only commit integrated as 3b8f3617 (the words true and false as a statement; null for the two optional fields). Next: push the new frozen head; read CI on it; delta confirmations by G3 and G4; then the gates."
     }
   ],
   "scope_corrections": [
