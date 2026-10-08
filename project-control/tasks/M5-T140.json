@@ -239,7 +239,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 60,
+  "progress_percent": 75,
   "risks": [
     "Two things could disagree: 'Zoning maximum' on the status strip vs R269 -> keep the document's text verbatim (retype nothing) and add a test that no value label or headline reads 'maximum for this property' (question D-wording).",
     "A withheld value falling back to another value -> the reader's headline-withheld branch is proven by a red/green test (R556).",
@@ -255,7 +255,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T15:25:44.973890+00:00",
-  "updated_at": "2026-10-08T16:48:43.277652+00:00",
+  "updated_at": "2026-10-08T16:56:11.623564+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -308,6 +308,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "The builder's first commit integrated by cherry-pick as 1226da47 (tree identical to the builder's 06650cfe; 26 files, all the allowed paths). Builder's checks: lint, typecheck, build exit 0; 2484 unit tests in 116 files; 155 browser tests; tests/api and tests/journey 1133 passed; modularity exit 0 with one new symbol-count warning for three-answers.ts (a signal, not a failure). Read by the orchestrator BEFORE any review (the report, the panel, the form, the harness change). Sent back to the same builder for one more commit: three sentences the website writes are not strictly true or claim a cause it does not know (the 404 card says no results were requested; the inputs-unavailable notice names a cause; the lot-conditions notice repeats its body), and the browser journey proves the form's program name against the returned line for one program only. Reviews NOT started."
+    },
+    {
+      "at": "2026-10-08T16:56:11.623435+00:00",
+      "agent": "frontend-engineer",
+      "percent": 75,
+      "status": "claimed",
+      "message": "The builder's correcting commit integrated by cherry-pick as f42a2a23 (the builder's a650956d; 4 files, all allowed paths; every allowed-path blob identical to the builder's head): the 404 card now says 'The results service is not available on this server. No results were shown.'; the inputs-unavailable notice says only 'Trying again is safe.'; the lot-conditions notice says 'Trying again will give the same answer until that record can be read.'; the browser journey proves all three program names against the returned line. Builder's checks: lint, typecheck, build exit 0; 2486 unit tests in 116 files; the two results browser specs passed. Next: the orchestrator's full runs and the independent reviews at the frozen head."
     }
   ]
 }
