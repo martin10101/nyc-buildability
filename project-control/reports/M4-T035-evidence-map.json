@@ -1,0 +1,33 @@
+{
+ "task_id": "M4-T035",
+ "material_commits": [
+  "e6e9ac79 (the builder's one commit, 9839b113 in its own worktree, cherry-picked onto the branch: the new case and its page, the two readings as provenance files 11 and 12, the test support, the README, one older row superseded, the producer report) = material head"
+ ],
+ "claim_seam_head": "b416cf0d154400ebf1dcaaabc199da4f4e25bc40",
+ "the_two_readings": "Two AI helpers of different kinds (an official-source-researcher and a data-contract-verifier) each worked alone on 2026-10-08 from a sealed folder (156 pinned captures without their notes; the benchmark lot's recorded facts and outline; two made-up lots and one made-up mixed building), without the program, the repository or the web. The orchestrator audited each reader's tool log: no path under the repository, no site, neither opened the other's folder. Draft readings by AI helpers, not professionally reviewed.",
+ "what_changes_nothing": "No rule file, engine file, capture, result, review-register entry or plan changed.",
+ "requirements": {
+  "D-090-R291": [
+   "Independently worked examples are saved as files to test against: docs/reference-cases/R6B/cases/step-p5-worked.json (28 rows) with its rendered page docs/reference-cases/R6B/step-p5-worked.md and the two readings unchanged under docs/reference-cases/R6B/provenance/ (return-independent-hand-calculation-11.md and -12.md; services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p5.py::test_the_two_step_p5_readings_are_present_unchanged pins their digests).",
+   "A value is recorded only where both readings give it on the same basis; the reviewer checked all 28 rows against both readings and found none that breaks the rule (project-control/reports/M4-T035-G3G4.md); services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p5.py::test_a_step_p5_value_where_the_readings_differ_is_refused and ::test_a_step_p5_unsettled_row_given_a_value_is_refused guard it.",
+   "Conflicting inputs and missing rules are named, not resolved by choice: the rows 'made-up-mixed-commercial-far', 'made-up-mixed-whole-building-max', 'zr-23-24-reach' and 'benchmark-rear-yard-23-342-23-344' are 'not known', each with what is missing; the row 'sections-and-facts-not-had' lists what both readers did not have."
+  ],
+  "D-090-R513": [
+   "The provisions on floor area shared by several uses are read independently from the captures of ZR 23-20 and ZR 35-31: row 'shared-floor-area-rule' quotes the sentence with its capture id and digest and states the base of the proportion as the text words it (each use's share of the total floor area less the shared floor area).",
+   "One mixed building is worked by hand by both readers with the same figures: row 'made-up-mixed-shared-attribution' (of 400 sq ft shared: 316.42 to the residences and 83.58 to the shop, on a base of 20,100 sq ft).",
+   "The reviewer compared the quoted sentence of ZR 35-31 with the official page on 2026-10-08: the words match. The follow-up of the measurement-basis record, which states the rule for the estimate, is a later task and stays owed (backlog row DB-184)."
+  ],
+  "D-090-R516": [
+   "The specific conditions of eligibility are read from the captured definitions: rows 'fully-electrified-building-definition' (a building existing on December 6, 2023), 'ultra-low-energy-building-definition' (materials at plan approval; a performance requirement; a registered design professional's verification; a report before the final certificate of occupancy), 'energy-floor-area-exclusion' (5 percent of floor area) and 'proposed-building-energy-eligibility' (a building that is only proposed cannot be a fully electrified building; it can be put forward as an ultra low energy building at plan approval and is confirmed only after construction).",
+   "The reviewer could not open the official page of ZR 12-10 for these four quotes (the page is too large for its fetch); the quoted words are in the pinned captures, which the capture tasks' own reviews compared with the official pages. The exterior-wall exclusion of the same row is not part of this reading and stays owed with the measurement-basis follow-up."
+  ],
+  "D-090-R526": [
+   "The provisions on whether parking, loading berths and bicycle parking are required are read before any result depends on them: row 'parking-loading-bicycle-sections' (section by section, quoted), seven option rows (standard residences; qualifying affordable housing; qualifying senior housing; shops below residences; residences with a community facility; a community facility alone; rooming units) and row 'parking-loading-bicycle-line-per-option', which states what each option's line may say today and what it may not say (no 'none required' unless both readings say so; no count; nothing that reads as feasible).",
+   "Where the readings need a text they did not have (the amounts of ZR 25-222 and 25-232; the Use Group tables; the waivers of ZR 36-23 to 36-25; the transit-zone map), the answer is 'not known' or 'not yet checked' with the missing text named. No option is presented as feasible by this task: it shows nothing to a user."
+  ],
+  "D-090-R548": [
+   "The owner's own wording of the same rule is served by the same rows: the applicability is read for each kind of building, and the row 'parking-loading-bicycle-line-per-option' forbids presenting an option as feasible on these readings.",
+   "What stays open: the line on every option's display and the report section with the counts belong to later pieces (backlog row DB-180); the captures the readings name as missing are queued for a capture task."
+  ]
+ }
+}

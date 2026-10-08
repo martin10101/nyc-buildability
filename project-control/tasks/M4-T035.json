@@ -117,7 +117,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the case states that agreement is not proof; every row is followable and quotes its capture; 'not sure' where the text does not settle it (S1-S4, S10)",
     "Matching the program's saved output taken as proof, especially for the rear yard -> each worked example is worked by hand from the text; the builder states where it differs and changes no fixture or program code (S5, S7, S8)",
@@ -128,7 +128,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T01:34:57.932655+00:00",
-  "updated_at": "2026-10-08T01:40:47.566184+00:00",
+  "updated_at": "2026-10-08T02:57:25.288233+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -159,6 +159,20 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Contracted and claimed in wave 7 on the branch task/wave7-wiring-reading-seal from the integration head 85500b94, whose own run (37713341355) completed with every job a success before any builder's commit is integrated."
+    },
+    {
+      "at": "2026-10-08T02:57:25.288112+00:00",
+      "agent": "rules-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Two independent readings obtained from two different helpers working alone from a sealed folder (their tool logs audited). Builder's commit 9839b113 (parent = the claim head; 13 files, all under the two allowed folders and its report) integrated as e6e9ac79. Independent review at e6e9ac79: G3 PASS and G4 PASS (data-contract-verifier); no review failed; four notes. One forced line in test_r6b_reference_cases.py recorded as a scope correction. Evidence map written. Next: submit, producer self-check gate, the review gates, the rule check."
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-08T02:57:12+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-08, at integration] The path notes named the files the task was expected to add or change inside its two allowed folders. The builder changed one more file there: services/api/tests/rules/reference_cases/test_r6b_reference_cases.py, ONE line (the frozen tuple of case ids gains 'step-p5-worked'), which adding the case forces (the same edit was made when the step-P4 case was added). The file is inside the folder named literally in allowed_paths, so the content identity binds it; the independent reviewer confirmed the line is forced and that nothing else in the file changed. No allowed path, gate, reviewer, scenario or row changed."
     }
   ]
 }
