@@ -3461,30 +3461,46 @@
     "D-090-R630"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "3d560457ddb72c920730cd05c3f03498ce628bd2",
+   "reviewed_manifest_sha256": "a1b4ed8ccfff07dc3bc85e01fa4f20d39df53ee7d8eabb12c9121313a630db82",
    "requirements": [
     {
      "id": "D-090-R292",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task's share is narrow: make the browser journey that proves a changed input changes its result actually run in CI. I confirmed via `gh` that the web-e2e job went from failure on the claim-seam head 5cc65d65 (run 37822868870) to success on the reviewed head 6d6fb2df (push run 37830623228 job completed 19:21:18Z; PR run 37830629100 job completed 19:23:27Z) and on c310936d (18:59:59Z).",
+      "I independently grepped apps/web/e2e/harness: one file (fixture_api.py), no line matching `^(from|import)\\s+tests`, and no importlib/__import__/runpy/exec/eval/sys.path; the committed guard+equality+other-lot tests passed (6 of the 6 in test_e2e_harness_results_inputs.py), the equality test comparing the harness provider to the test tree's benchmark_provider() with only the named non-vacuous wall-clock field excluded.",
+      "Stays open: authoring the option-to-screen connection and the correctness of the specs' input\u2192result assertions are M5-T140's scope; R292 remains pending in the registry and bound to D-090-BOOTSTRAP, M5-T138, M5-T140, M5-T141.",
+      "Verifier's carry-forward condition met at 3d560457: the task's allowed-path files are identical to those verified at d26214f6 (content identity a1b4ed8c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a delta confirmation by the independent security-reviewer of the route; producer backend-engineer is neither). DCV report: project-control/reports/M5-T141-DCV.md."
+     ],
+     "reviewed_sha": "3d560457ddb72c920730cd05c3f03498ce628bd2"
     },
     {
      "id": "D-090-R584",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No production switch default, mount or setting changed: `git diff --stat 5cc65d65 d26214f6 -- apps/web/src apps/web/playwright.config.ts packages .github tools render.yaml services/api/app/config.py services/api/app/main.py services/api/app/api/v1/results_read.py` is empty.",
+      "The harness change touches only its import block and results-provider region; it sets the server's switches for its own test process only, and no server application file is in the task diff (all changed files are the 5 allowed-path files plus control-plane records).",
+      "Stays open: R584 binds the whole wave (M5-T136..T141) and remains pending in the registry; the route's standing no-auth / switch-stays-off note is unchanged, on record.",
+      "Verifier's carry-forward condition met at 3d560457: the task's allowed-path files are identical to those verified at d26214f6 (content identity a1b4ed8c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a delta confirmation by the independent security-reviewer of the route; producer backend-engineer is neither). DCV report: project-control/reports/M5-T141-DCV.md."
+     ],
+     "reviewed_sha": "3d560457ddb72c920730cd05c3f03498ce628bd2"
     },
     {
      "id": "D-090-R630",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "results_request.py line 134 is now `if not isinstance(housing_program, str) or housing_program not in HOUSING_PROGRAMS:` (diff 4111dd16..6dbca388 is this one behaviour line + comment); the type check precedes the set-membership test, so an unhashable value no longer raises TypeError.",
+      "The focused S7 tests in test_results_read_api.py drive `_WRONG_HOUSING_PROGRAM=[[],{},[std],{a:1},1,1.5,True,False,None]` (plus parallel tables for floor_to_floor, density statement, non-object body) through `_reader_refuses` (pytest.raises(ResultsRequestError) \u2014 a TypeError would fail the test) and `_route_refuses` (status 422, state validation_error, code housing_program_invalid, spy provider `calls == []`, never a 500), with an explicit reported-fault regression test; my run of the three focused files = 113 passed, exit 0.",
+      "Fixed inside already-open work (M5-T141, by the packet's scope_corrections and the registry binding), as the row requires; R630 is bound only to M5-T141 + BOOTSTRAP, so nothing of it is left for another task (it stays pending in the registry until this verification is recorded).",
+      "Verifier's carry-forward condition met at 3d560457: the task's allowed-path files are identical to those verified at d26214f6 (content identity a1b4ed8c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a delta confirmation by the independent security-reviewer of the route; producer backend-engineer is neither). DCV report: project-control/reports/M5-T141-DCV.md."
+     ],
+     "reviewed_sha": "3d560457ddb72c920730cd05c3f03498ce628bd2"
     }
-   ]
+   ],
+   "verified_at": "2026-10-08T19:35:31+00:00"
   }
  ]
 }

@@ -94,8 +94,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The repaired harness quietly serves different inputs than the tests' provider -> the equality test (S3).",
     "The import comes back later (it works on every build machine) -> the guard test (S2), which runs in the server suite in CI.",
@@ -104,7 +104,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T18:13:48.746448+00:00",
-  "updated_at": "2026-10-08T19:26:43.378500+00:00",
+  "updated_at": "2026-10-08T19:35:32.561553+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -162,5 +162,7 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-08, after the builder's first commit, BEFORE any review] TWO ALLOWED PATHS AND ONE SCENARIO ADDED, ONE OWNER ROW BOUND. The owner's message 124 (D-090 source-063, row R630) reports that the request reader of the results route raises a TypeError when the housing program is a list or an object (`housing_program not in HOUSING_PROGRAMS`, a set membership test on an unhashable value), and asks for focused validation tests and the fix 'within the appropriate existing work'. The orchestrator reproduced it at the claim head (read_results_request with [] and with {}: TypeError; with 5 and with None: the typed refusal). It is taken into this open repair task: allowed paths services/api/app/api/v1/results_request.py and services/api/tests/api/test_results_read_api.py added (now 5); scenario S7 added; row D-090-R630 bound. The task's title and first objective are unchanged; the builder is told by message."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-08T19:35:32.561348+00:00"
 }
