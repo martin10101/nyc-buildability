@@ -2847,6 +2847,94 @@ def test_s12_empty_identity_guard() -> None:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
+def test_s13_pattern_allowed_paths_seal() -> None:
+    """Backlog DB-181 / D-090-R557 (S1 red proof + claim/submit states): claim and submit
+    refuse an in-regime packet whose allowed_paths carry a glob/pattern entry -- which binds
+    NO tracked file under GIT_LITERAL_PATHSPECS=1, so the reviewed content identity would
+    cover less than the packet declares even though a tracked literal report keeps the
+    empty-identity guard green (the insidious patterns-plus-literal-report case). A
+    literal-only packet is accepted; a mixed list is refused naming ONLY the pattern entry.
+
+    RED PROOF: against the pre-change CLI, claim and submit ACCEPT the pattern packet
+    (returncode 0), so every refusal assertion here fails -- that is the recorded red."""
+    tmpdir = tempfile.mkdtemp(prefix="pc-seal-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        task_ids = ["M9-T900", "M9-T901", "M9-T902", "M9-T903"]
+        make_directive(pc, "D-900", "seal", task_ids=task_ids, task_types=[], milestones=[],
+                       req_specs=[("D-900-R001", task_ids)])
+
+        def mk(tid, allowed):
+            r = run(tmp, "new-task", "--task-id", tid, "--title", "t", "--task-type",
+                    "research", "--milestone", "M0", "--objective", "o", "--gates", "G0,G3",
+                    "--reviewers", "reviewer-v,reviewer-z", "--directive-refs", "D-900:ALL")
+            assert r.returncode == 0, f"new-task {tid}: {r.stderr}"
+            rep = f"project-control/reports/{tid}-report.md"
+            (tmp / rep).parent.mkdir(parents=True, exist_ok=True)
+            (tmp / rep).write_text(f"# {tid}\n", encoding="utf-8")  # tracked literal report
+            edit_task(tmp, tid, allowed_paths=allowed)
+
+        pat = "services/api/app/scenario/**"
+        mk("M9-T900", [pat, "project-control/reports/M9-T900-report.md"])   # claim probe
+        mk("M9-T901", [pat, "project-control/reports/M9-T901-report.md"])   # submit probe
+        mk("M9-T902", ["probe.txt", "project-control/reports/M9-T902-report.md"])  # literal control
+        mk("M9-T903", ["probe.txt", pat, "project-control/reports/M9-T903-report.md"])  # mixed
+        (tmp / "probe.txt").write_text("real\n", encoding="utf-8")
+        head = git_commit_all(tmp, "scaffold seal tasks")
+
+        # ---- S1 RED PROOF (claim) ----
+        write_report(tmp, "g0.json", '{"g":0}')
+        run(tmp, "gate", "--task-id", "M9-T900", "--gate-id", "G0", "--reviewer",
+            "orchestrator", "--result", "PASS", "--report", "project-control/reports/g0.json")
+        r = run(tmp, "claim", "--task-id", "M9-T900", "--agent", "producer-x", "--worktree", "wt")
+        out = r.stdout + r.stderr
+        assert r.returncode != 0 and pat in out and "literal" in out.lower(), \
+            f"claim must refuse a pattern allowed_paths entry, naming it: {out}"
+
+        # ---- S1 RED PROOF (submit) ----
+        edit_task(tmp, "M9-T901", status="in_progress", producer_agent="producer-x")
+        write_report(tmp, "M9-T901-final.json", '{"r":"x"}')
+        write_report(tmp, "M9-T901-emap.json", json.dumps({"requirements": {"D-900-R001": ["e"]}}))
+        r = run(tmp, "submit", "--task-id", "M9-T901", "--agent", "producer-x", "--report",
+                "project-control/reports/M9-T901-final.json", "--requested-status",
+                "awaiting_gate", "--evidence-map", "project-control/reports/M9-T901-emap.json",
+                "--sha", head)
+        out = r.stdout + r.stderr
+        assert r.returncode != 0 and pat in out, f"submit must refuse a pattern entry: {out}"
+
+        # ---- positive control: a LITERAL-only in-regime packet claims AND submits ----
+        write_report(tmp, "g0b.json", '{"g":0}')
+        run(tmp, "gate", "--task-id", "M9-T902", "--gate-id", "G0", "--reviewer",
+            "orchestrator", "--result", "PASS", "--report", "project-control/reports/g0b.json")
+        r = run(tmp, "claim", "--task-id", "M9-T902", "--agent", "producer-x", "--worktree", "wt")
+        assert r.returncode == 0, f"a literal-only packet must claim: {r.stdout} {r.stderr}"
+        run(tmp, "progress", "--task-id", "M9-T902", "--agent", "producer-x", "--percent",
+            "40", "--status", "in_progress", "--message", "x")
+        write_report(tmp, "M9-T902-final.json", '{"r":"x"}')
+        write_report(tmp, "M9-T902-emap.json", json.dumps({"requirements": {"D-900-R001": ["e"]}}))
+        r = run(tmp, "submit", "--task-id", "M9-T902", "--agent", "producer-x", "--report",
+                "project-control/reports/M9-T902-final.json", "--requested-status",
+                "awaiting_gate", "--evidence-map", "project-control/reports/M9-T902-emap.json",
+                "--sha", head)
+        assert r.returncode == 0, f"a literal-only packet must submit: {r.stdout} {r.stderr}"
+
+        # ---- S7: a MIXED list is refused naming ONLY the pattern, never the literal ----
+        write_report(tmp, "g0c.json", '{"g":0}')
+        run(tmp, "gate", "--task-id", "M9-T903", "--gate-id", "G0", "--reviewer",
+            "orchestrator", "--result", "PASS", "--report", "project-control/reports/g0c.json")
+        r = run(tmp, "claim", "--task-id", "M9-T903", "--agent", "producer-x", "--worktree", "wt")
+        out = r.stdout + r.stderr
+        assert r.returncode != 0 and pat in out and "'probe.txt'" not in out, \
+            f"a mixed list must be refused naming only the pattern entry: {out}"
+        print("OK: S13 literal-allowed-paths seal (claim+submit refuse patterns; literal accepted; "
+              "mixed names only the pattern)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
 ALL_TESTS = [
     test_original_workflow,
     test_s1_transitions,
@@ -2871,6 +2959,7 @@ ALL_TESTS = [
     test_s11_missing_producer_identity_fails_closed,
     test_s11_no_special_casing_source_proofs,
     test_s12_empty_identity_guard,
+    test_s13_pattern_allowed_paths_seal,
 ]
 
 

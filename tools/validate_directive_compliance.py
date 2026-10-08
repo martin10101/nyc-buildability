@@ -331,6 +331,44 @@ def _validate_empty_identity(tasks_dir: Path) -> list:
     return errors
 
 
+def _validate_pattern_allowed_paths(tasks_dir: Path) -> list:
+    """c18 (backlog DB-181; D-090-R557): the CI static catch for the literal-allowed-paths
+    seal. A task whose allowed_paths carry a glob/pattern entry ('folder/**', 'name_*.py',
+    ':(exclude)x') binds NO tracked file under GIT_LITERAL_PATHSPECS=1, so the reviewed
+    content identity covers less than the packet declares -- the exact defect the shared
+    identity path in project_control.py now fails closed on at claim and submit.
+
+    For every in-regime task file: a pattern entry is an error UNLESS the task id is in the
+    frozen grandfather allowlist (the pre-existing pattern-carrying packets, which are NOT
+    rewritten). The detector and the allowlist are the SAME ones the CLI uses
+    (dr.pattern_allowed_paths / dr.PATTERN_ALLOWED_PATHS_GRANDFATHERED) so the validator and
+    the CLI can never diverge. Pure string comparison; no git needed. Read-only."""
+    errors: list = []
+    if not tasks_dir.exists():
+        return errors
+    for tp in sorted(tasks_dir.glob("*.json")):
+        try:
+            task = _load_json(tp)
+        except (ValueError, OSError):
+            continue
+        tid = task.get("task_id") or tp.stem
+        in_regime = bool(task.get("directive_regime_version")) or bool(task.get("directive_refs"))
+        if not in_regime:
+            continue
+        if tid in dr.PATTERN_ALLOWED_PATHS_GRANDFATHERED:
+            continue  # frozen pre-existing pattern-carrying packet; not rewritten (DB-181)
+        offenders = dr.pattern_allowed_paths(task.get("allowed_paths") or [])
+        if offenders:
+            shown = ", ".join(repr(o) for o in offenders)
+            errors.append(
+                f"c18 in-regime task {tid} allowed_paths carry glob/pattern entr"
+                f"{'y' if len(offenders) == 1 else 'ies'} that bind no tracked file under "
+                f"literal git pathspecs ({shown}); the content identity would cover less than "
+                f"the packet declares. Name the folder or the existing file literally "
+                f"(backlog DB-181; D-090-R557).")
+    return errors
+
+
 def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) -> list:
     """Return a list of human-readable error strings ([] == valid)."""
     errors: list = []
@@ -360,6 +398,10 @@ def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) 
     # files (empty-set content identity) unless it validly opts in as path-free (D-011
     # item 6; M0-T057).
     errors.extend(_validate_empty_identity(tasks_dir))
+    # c18 literal-allowed-paths seal: refuse a NEW in-regime task that declares a glob/
+    # pattern allowed_paths entry (which binds no tracked file). The pre-existing pattern-
+    # carrying packets are frozen-grandfathered (backlog DB-181; D-090-R557).
+    errors.extend(_validate_pattern_allowed_paths(tasks_dir))
 
     # c16: multiple directives are handled independently; iterate each.
     for did, d in sorted(reg.directives.items()):

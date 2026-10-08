@@ -491,6 +491,38 @@ def _directive_claim_check(t: dict, agent: str):
     return None
 
 
+def _pattern_allowed_paths_check(t: dict, task_id: str):
+    """Fail-closed guard (backlog DB-181; D-090-R557): refuse a NEW in-regime packet whose
+    allowed_paths declare a glob/pattern entry. Under GIT_LITERAL_PATHSPECS=1 such an entry
+    binds NO tracked file, so the reviewed content identity would cover less than the packet
+    declares. Returns an error string naming the offending entries, or None.
+
+    Delegates detection and the frozen grandfather allowlist to the shared read-only
+    tools/directive_registry.py so claim, submit and validate_directive_compliance.py can
+    never diverge. A pre-existing pattern-carrying task (in the frozen allowlist) is exempt;
+    its packet is not rewritten by this change. Not-in-regime tasks are not checked here (an
+    enabled regime refuses to claim a not-in-regime task before this point, and the
+    validator's static catch is likewise regime-scoped)."""
+    if not _task_in_regime(t):
+        return None
+    reg_mod = _resolver()
+    if reg_mod is None:
+        return ("directive resolver/registry unavailable; an in-regime task's allowed_paths "
+                "cannot be checked for non-binding pattern entries (fail closed).")
+    if task_id in getattr(reg_mod, "PATTERN_ALLOWED_PATHS_GRANDFATHERED", frozenset()):
+        return None
+    offenders = reg_mod.pattern_allowed_paths(t.get("allowed_paths") or [])
+    if offenders:
+        shown = ", ".join(repr(o) for o in offenders)
+        return (f"allowed_paths contain glob/pattern entr{'y' if len(offenders) == 1 else 'ies'} "
+                f"that bind NO tracked file under literal git pathspecs ({shown}); the reviewed "
+                f"content identity would cover less than the packet declares (backlog DB-181). "
+                f"Name the folder or the existing file literally (e.g. 'docs/measurement-basis', "
+                f"not 'docs/measurement-basis/**') so the identity binds the content the packet "
+                f"declares (fail closed; D-090-R557).")
+    return None
+
+
 def _directive_submit_check(t: dict, evidence_map_arg, sha_arg):
     """For in-regime tasks: require an evidence map covering every applicable
     requirement, and stamp the frozen content-manifest identity. Returns (error, extra)
@@ -520,6 +552,9 @@ def _directive_submit_check(t: dict, evidence_map_arg, sha_arg):
     missing = sorted(applicable - covered)
     if missing:
         return (f"evidence map does not cover applicable requirement(s): {', '.join(missing)}", {})
+    pperr = _pattern_allowed_paths_check(t, t.get("task_id"))
+    if pperr:
+        return (pperr, {})
     identity, resolved_sha, ierr = _task_git_identity(reg_mod, t, reviewed_sha=sha_arg)
     if ierr:
         return (f"in-regime submit content identity (fail closed): {ierr}", {})
@@ -854,6 +889,9 @@ def claim(a):
     dcerr = _directive_claim_check(t, a.agent)
     if dcerr:
         return fail(f"Cannot claim {a.task_id}: {dcerr}")
+    pperr = _pattern_allowed_paths_check(t, a.task_id)
+    if pperr:
+        return fail(f"Cannot claim {a.task_id}: {pperr}")
     t.update({"producer_agent": a.agent, "worktree": a.worktree,
               "status": "claimed", "progress_percent": 10})
     save(p, t)
