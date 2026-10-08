@@ -127,7 +127,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T03:57:02.876435+00:00",
-  "updated_at": "2026-10-08T04:43:36.716833+00:00",
+  "updated_at": "2026-10-08T05:33:44.349654+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -164,6 +164,13 @@
       "percent": 60,
       "status": "in_progress",
       "message": "Builder's commit e215cf88 (parent = the claim head; 58 files ADDED under the two capture folders: 29 captures and their 29 synced copies; its report) integrated as 9663a523. The integration branch's own run on 39e7f2d2 had completed with every job a success before this (run 37725077746). Orchestrator's checks on the branch: the sync check passes (185 files); no existing capture modified; ruff clean; the capture bundle, reference-case and measurement-basis tests 119 passed; lane coverage passes. NOT YET INDEPENDENTLY REVIEWED: the session was handed over (owner's /session-handoff at 04:38 UTC) before a reviewer was started; the next session starts the review (a data-contract-verifier that fetches every official page itself) from the prepared instructions."
+    },
+    {
+      "at": "2026-10-08T05:33:44.349563+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "INDEPENDENT REVIEW (a data-contract-verifier agent) at 6526d902: GATE G3 FAIL on ONE capture, finding F1; GATE G4 PASS. F1: in zr-36-233 (and its synced copy) the line '#Motels# or #tourist cabins' has an opening mark for a defined term with no closing mark (17 marks, an odd number) and seven zero-width characters before it; the words equal the official page; neither point is disclosed in the capture or in the report. Note F2 (not blocking): 'on the# zoning lot#' in zr-36-231. The reviewer fetched 22 of the 29 official pages itself: the words of each capture equal its page, the nine tables cell by cell; every named section exists and is captured; nothing existing changed; 78 focused tests pass. FOUND BY THE ORCHESTRATOR AFTER THE REVIEW, not yet ruled on: the official page of 36-233 itself prints the literal mark and the zero-width characters (the builder's saved page equals the pinned digest); and all 29 new captures record a retrieval time of 15:30 UTC on 2026-10-08, about eleven hours after the commit that added them (the saved pages' file times are 04:13 to 04:23 UTC). The review record project-control/reports/M4-T036-G3G4.md holds the full return. THIS FAILURE IS RECORDED BEFORE ANY REWORK. Next: a new builder (the first cannot be resumed) makes one correcting commit; the reviewer confirms at the corrected head."
     }
   ]
 }
