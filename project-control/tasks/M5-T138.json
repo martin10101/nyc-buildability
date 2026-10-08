@@ -182,7 +182,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 60,
+  "progress_percent": 75,
   "risks": [
     "BIGGEST RISK: the proven chain (the journey test) TYPES IN the four unsourced engine booleans (overlay_present, special_district_present, within_100_ft, angle) and builds the study_setup with a test helper; no server-side derivation of these booleans from evidence is proven today. If the route must build that derivation, Part A is larger than a thin wiring task. CONTROL: the task sources overlay/special-district from the property profile and within-100-ft/angle from the geometry reach (the same evidence the decision layer reads), never the caller; if a helper to derive them does not exist, the orchestrator decides whether to add it here or split (see path_notes split line). The emitted document's WAYS come from the decision layer's evidence regardless, so a boolean the engine uses for a raw 1.2.0 number is overridden by the transform where the result is withheld/conditional - the tests pin the ways, not the raw booleans.",
     "The route needs a study_setup document to feed study_from_study_setup; study_read builds it with a private _build_document. CONTROL: extract that builder into services/api/app/api/v1/study_setup_document.py and import it from both routes (no fork, modularity law); study_read.py edit is import-only, its tests must stay green.",
@@ -195,7 +195,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T11:40:32.397319+00:00",
-  "updated_at": "2026-10-08T12:34:09.206533+00:00",
+  "updated_at": "2026-10-08T12:44:28.098647+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -247,6 +247,13 @@
       "percent": 60,
       "status": "in_progress",
       "message": "Builder's first commit integrated by cherry-pick as 9e0ba21b (tree identical to the builder's 7f78f5e5; 15 files, all inside the allowed paths). Read by the orchestrator before any review; three corrections sent back to the same builder for one more commit: the import guard must permit the route file (one allowed path added by scope correction); four answers of the route have no test; one error text must be true for both of its causes. Recorded: scenario S14 corrected for a lot without geometry (a typed 503; backlog row DB-203). Reviews start after the correcting commit."
+    },
+    {
+      "at": "2026-10-08T12:44:28.098516+00:00",
+      "agent": "backend-engineer",
+      "percent": 75,
+      "status": "in_progress",
+      "message": "The same builder's correcting commit integrated as 6b60c9e2 (5 files, all inside the 17 allowed paths): six tests for the answers of the route that had none (a body that is not JSON; a body over 64 KiB; the bridged study failing its contract; the emitted document failing its contract and not delivered; the bridge refusing; an unexpected exception), the import guard permits the route file, and one error text made true for both of its causes. Its checks: tests/api 1118 passed; three_answers, journey and contracts 909 passed 2 skipped; lint, modularity, contract validation and ownership exit 0. Reviews G3, G4 and G5 start at the next commit."
     }
   ],
   "scope_corrections": [
