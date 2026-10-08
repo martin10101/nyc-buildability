@@ -214,7 +214,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 70,
   "risks": [
     "SIZE / BLAST RADIUS is the top risk: one behavioural change but ~30 files across services/api, packages, saved drawings, apps/web and the register -> mitigate by keeping engine.py/geometry.py/answers.py read-only (all new logic in the one transform module), changing no schema/copy/generated type, running the heavy suites one at a time, and reviewing each regenerated saved file line by line against section 5",
     "the committed journey fixture is SHARED by server and web and the web harness globs every results fixture -> the reader-safety fix (R556) and the web tests are in the same change; without them CI is red (named open question A, for the orchestrator)",
@@ -226,7 +226,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T07:03:36.355713+00:00",
-  "updated_at": "2026-10-08T07:05:11.199642+00:00",
+  "updated_at": "2026-10-08T08:08:02.473417+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -275,6 +275,20 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed at the contract head; the builder starts in an isolated worktree reset to the claim-seam head. Baselines at the claim base 1adaf7f4: three_answers 305 passed 2 skipped; journey + three-ways slot 50 passed; cad + drawings 1366 passed 6 skipped."
+    },
+    {
+      "at": "2026-10-08T08:08:02.473308+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Builder's one commit integrated by cherry-pick as 8ad287f5 (tree identical to the builder's 8a4c74ef; 22 files, all inside the allowed paths; one saved drawing deleted because its content is now withheld). Builder's checks, by its report: three_answers 324 passed 2 skipped; journey and three-ways slot 50; cad and drawings 1359 passed 6 skipped; website lint, typecheck, 2429 unit tests and build green. One scope correction recorded (scenario S4: the benchmark rear yard carries the decision module's own reason, the open point of the overlay reading; backlog row DB-198). Next: G3 and G4 reviews at the frozen head; the full api suite and the website checks with the browser tests by the orchestrator."
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-08T08:08:02+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-08, at the integration of the builder's one commit (8ad287f5), before the reviews] SCENARIO S4 AND READING O29: THE REASON OF THE BENCHMARK LOT'S REAR YARD. The packet says the rear yard is withheld 'with the independent reading (144.60 ft from the corner point ...)' and that geometry.yards carries 'that reason'. That is not what the merged decision module returns for this lot, and the module is read-only in this task: under the recorded C2-2 overlay it withholds the rear yard FIRST on the open point of the overlay reading (the overlay-support table of result_way_bridge_overlay.py, which rests on the reference row step-p4-worked#rear-yard and its standing caveat), so the reason it returns is 'This lot has a recorded commercial overlay (C2-2); an independent reading of the commercial-overlay rear-yard rule for an all-residential building is owed before this result may be shown.' The transform decides nothing and carries the module's reason unchanged. Both reasons are true of this lot (backlog row DB-175 e). CORRECTED EXPECTATION OF S4: on the benchmark the rear yard is a withheld way entry of the envelope answer carrying the module's reason unchanged; geometry.yards is not available with the same reason; the older whole-lot 'not required' appears nowhere in the document or the saved drawings; the reach reason (144.60 ft from the corner point; beyond 100 ft it depends on the adjoining lots' lot-line types) is carried, unchanged, for a corner lot with the same reach and no recorded overlay. WHAT STAYS OWED (backlog row DB-198): naming EVERY standing reason of a withheld result, so that the benchmark's rear yard also states its reach; it is a change of the decision module and is not in this task. The packet's draft and the orchestrator's check of it both missed that the module's benchmark reason under the wired overlay table is the overlay one."
     }
   ]
 }
