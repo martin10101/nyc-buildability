@@ -161,14 +161,14 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "scenario-optimization-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "a stand-in in the wrong direction lets a figure through -> the direction of each stand-in is proved from the rule file and pinned by a mutation proof; scenario S11 forbids any shown result resting on one",
     "the decision step shows a result while a condition it reads is not known -> the builder stops and reports the state; nothing is papered over in the transform",
@@ -179,7 +179,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T09:24:50.315328+00:00",
-  "updated_at": "2026-10-08T09:24:50.736638+00:00",
+  "updated_at": "2026-10-08T09:26:15.784663+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -210,5 +210,14 @@
     "cd apps/web && npx --yes npm@11.18.0 ci --no-audit --no-fund (once in the worktree), then npm run lint, npm run typecheck, npm run test, npm run build, one at a time",
     "the FULL api suite and the browser tests (CI=true npm run test:e2e): the orchestrator runs them once at the final candidate"
   ],
-  "worktree": "/root/project/w-wave10"
+  "worktree": "/root/project/w-wave10",
+  "progress_log": [
+    {
+      "at": "2026-10-08T09:26:15.784553+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed at the contract head; the builder starts in an isolated worktree reset to the claim-seam head. Baselines at the claim base 42d85651 (figures of the reviewed head of wave 9, whose code is identical): three_answers 324 passed 2 skipped; journey with contracts 559 passed; cad with drawings 1359 passed 6 skipped; website 2,429 unit tests; full api suite 8,562 passed 8 skipped."
+    }
+  ]
 }
