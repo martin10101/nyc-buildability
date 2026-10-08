@@ -2285,42 +2285,70 @@
     "D-090-R548"
    ],
    "producer": "rules-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "8784980de088616d5f4a1c41ddf5895df09ebfdb",
+   "reviewed_manifest_sha256": "253b4b8b3b5db5de1585949a474141dd6a7d34dcb30ebea9b2104f9af0fb2abe",
    "requirements": [
     {
      "id": "D-090-R291",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently worked examples are saved as files a test reads: docs/reference-cases/R6B/cases/step-p5-worked.json (28 rows) plus provenance/return-independent-hand-calculation-11.md and -12.md; the two saved readings are byte-identical to the orchestrator-received returns return-reading-P5-1/2.txt except a 6-line header (diff shows only \"0a1,6\").",
+      "The both-must-agree rule is enforced by tests I reproduced: test_the_two_step_p5_readings_are_present_unchanged (digest-pins the readings), test_a_step_p5_value_where_the_readings_differ_is_refused and test_a_step_p5_unsettled_row_given_a_value_is_refused (72 passed).",
+      "Conflicting/missing items are named, not chosen: rows made-up-mixed-commercial-far, made-up-mixed-whole-building-max, zr-23-24-reach and benchmark-rear-yard-23-342-23-344 are not_known, and sections-and-facts-not-had lists what both readers lacked.",
+      "Open for later: the wider \"check the R6B answers / resolve missing rules\" step and the still-missing texts (Article III Ch 3, 25-222, Use-Group tables, LL154) remain work owed.",
+      "Verifier's carry-forward condition met at 8784980d: the task's allowed-path files are identical to those verified at 109d48c0 (content identity 253b4b8b), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 and G4 an independent data-contract-verifier that was neither reader; producer rules-engineer is neither). DCV report: project-control/reports/M4-T035-DCV.md."
+     ],
+     "reviewed_sha": "8784980de088616d5f4a1c41ddf5895df09ebfdb"
     },
     {
      "id": "D-090-R513",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The shared-floor-area provision is read from the captured text of ZR 35-31 (content_digest 65e29c68\u2026, digest match + quote present in verbatim_excerpt) and ZR 23-20 (0685a2e4\u2026, match), stating the base as \"total floor area of the zoning lot LESS any shared floor area\" \u2014 row shared-floor-area-rule.",
+      "It is worked on one mixed building (row made-up-mixed-shared-attribution): base 20,500\u2212400=20,100; 400 split 83.58 commercial / 316.42 residential; both readings reach these exact figures on the same basis (reading 11 L44-49; reading 12 L40-46).",
+      "It frames allocation as a required calculation and uses not_known where exclusive-use areas/commercial FAR are missing, consistent with \"result stays unknown/conditional\".",
+      "Open for later: wiring the allocation into the live estimate as a non-switchable step and the measurement-basis follow-up (DB-184) are not done here.",
+      "Verifier's carry-forward condition met at 8784980d: the task's allowed-path files are identical to those verified at 109d48c0 (content identity 253b4b8b), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 and G4 an independent data-contract-verifier that was neither reader; producer rules-engineer is neither). DCV report: project-control/reports/M4-T035-DCV.md."
+     ],
+     "reviewed_sha": "8784980de088616d5f4a1c41ddf5895df09ebfdb"
     },
     {
      "id": "D-090-R516",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The specific eligibility of both energy definitions is stated from the captures: fully-electrified-building-definition (a building EXISTING on December 6, 2023 + LL154; digest 2ea4afe2\u2026 match) and ultra-low-energy-building-definition (LL154, net-zero \u22643 stories or \u226515% better, registered-design-professional verification, inspection/commissioning/airtightness plans, final-CO report; digest 8a1d6418\u2026 match, quote present).",
+      "A user's statement supports only a conditional result: proposed-building-energy-eligibility records fully-electrified = NO for a new building, ultra-low-energy = provisional at plan approval; both readings agree (reading 11 L130-131; reading 12 L151-152).",
+      "Open for later: the row's exterior/qualifying-WALL exclusion is explicitly NOT read in this task, and the measurement-basis record stays owed (stated in the case and evidence map).",
+      "Verifier's carry-forward condition met at 8784980d: the task's allowed-path files are identical to those verified at 109d48c0 (content identity 253b4b8b), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 and G4 an independent data-contract-verifier that was neither reader; producer rules-engineer is neither). DCV report: project-control/reports/M4-T035-DCV.md."
+     ],
+     "reviewed_sha": "8784980de088616d5f4a1c41ddf5895df09ebfdb"
     },
     {
      "id": "D-090-R526",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Applicability of parking, loading and bicycle requirements is read for each kind of building BEFORE any result depends on it: parking-loading-bicycle-sections (14 sections quoted) plus seven option rows; I confirmed two kinds against both readings \u2014 standard residences parking REQUIRED (25-221, amount not known) and rooming units parking NOT REQUIRED (25-221 after 2016-03-22; digest 21327ea6\u2026 match).",
+      "Nothing is presented as feasible: parking-loading-bicycle-line-per-option states a line may say \"required/not yet checked\" and MAY NOT give a count, declare feasibility, or turn law into preference; the task shows nothing to a user (reading-only, forbidden_paths bar engine/result/display).",
+      "Open for later: the option-comparison/website line and the report section with counts (DB-180) and the missing texts (25-222, Use-Group tables) are later pieces.",
+      "Verifier's carry-forward condition met at 8784980d: the task's allowed-path files are identical to those verified at 109d48c0 (content identity 253b4b8b), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 and G4 an independent data-contract-verifier that was neither reader; producer rules-engineer is neither). DCV report: project-control/reports/M4-T035-DCV.md."
+     ],
+     "reviewed_sha": "8784980de088616d5f4a1c41ddf5895df09ebfdb"
     },
     {
      "id": "D-090-R548",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This is R526 in the owner's own words and is served by the same rows; applicability is read per building kind and parking-loading-bicycle-line-per-option explicitly forbids calling any option feasible on these readings.",
+      "No option is presented as feasible and no count is stated anywhere in the case (every row carries \"It says nothing complies\"); this task changes no result and no display.",
+      "Open for later: the display line on every option and the counts belong to later pieces (DB-180).",
+      "Verifier's carry-forward condition met at 8784980d: the task's allowed-path files are identical to those verified at 109d48c0 (content identity 253b4b8b), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 and G4 an independent data-contract-verifier that was neither reader; producer rules-engineer is neither). DCV report: project-control/reports/M4-T035-DCV.md."
+     ],
+     "reviewed_sha": "8784980de088616d5f4a1c41ddf5895df09ebfdb"
     }
-   ]
+   ],
+   "verified_at": "2026-10-08T03:09:02+00:00"
   },
   {
    "directive_id": "D-090",
