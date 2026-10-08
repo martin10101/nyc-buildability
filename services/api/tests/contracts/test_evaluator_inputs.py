@@ -610,6 +610,33 @@ def test_missing_required_engine_input_is_rejected() -> None:
         _three_answer_inputs(doc)
 
 
+def test_three_answer_inputs_carry_the_scenario_objects_inert() -> None:
+    # M5-T134: build_three_answer_inputs carries the property profile, the prepared tax-map outline
+    # and the site geometry onto ThreeAnswerInputs VERBATIM as additive, INERT carriers; omitting
+    # them leaves each None (not produced; no default stands for a fact). The engine reads none of
+    # them - the byte-identity proof lives in test_wiring_emits_nothing.py.
+    doc = build_evaluator_inputs(_study(_benchmark_city_facts()), _OPTION_ID)
+    sentinel_profile = {"identity": {"bbl": "4073340070"}}
+    sentinel_outline = object()
+    sentinel_geometry = object()
+    carried = build_three_answer_inputs(
+        doc, results_id="res-evi-carry", computed_at="2026-10-03T00:00:00Z",
+        housing_program="standard_residence", overlay_present=True,
+        special_district_present=False, within_100_ft_of_street_line_intersection=True,
+        street_line_intersection_angle_degrees=90.0, special_density_area=False,
+        property_profile=sentinel_profile, prepared_outline=sentinel_outline,
+        site_geometry=sentinel_geometry,
+    )
+    assert carried.property_profile is sentinel_profile
+    assert carried.prepared_outline is sentinel_outline
+    assert carried.site_geometry is sentinel_geometry
+    # omitted (every existing caller) -> each carrier is None
+    default = _three_answer_inputs(doc)
+    assert default.property_profile is None
+    assert default.prepared_outline is None
+    assert default.site_geometry is None
+
+
 # --------------------------------------------------------------------------
 # contract: the documented invalid shapes fail validation
 # --------------------------------------------------------------------------

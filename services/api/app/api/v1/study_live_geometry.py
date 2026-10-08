@@ -42,7 +42,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 
-from app.api.v1.study_inputs import GeometryProvider
+from app.api.v1.study_inputs import GeometryProvider, OutlineProvider
 from app.connectors.bbl import BBLValidationError
 from app.connectors.dcm_street_centerline_arcgis import (
     DCMConnectorError,
@@ -61,8 +61,9 @@ from app.spatial.site_geometry import (
     lot_outline_from_mappluto,
     street_data_for_lot,
 )
+from app.spatial.site_geometry.outline import PreparedOutline, prepare_outline
 
-__all__ = ["live_geometry_provider"]
+__all__ = ["live_geometry_provider", "live_outline_provider"]
 
 logger = logging.getLogger("app.api.v1.study_live_geometry")
 
@@ -134,6 +135,59 @@ def live_geometry_provider(
         except _GEOMETRY_UNAVAILABLE_ERRORS as exc:
             logger.info(
                 "study_live_geometry unavailable error_type=%s correlation_id=%s",
+                type(exc).__name__,
+                correlation_id,
+            )
+            return None
+
+    return provide
+
+
+def live_outline_provider(
+    *,
+    fetch_lot: LotGeometryFetch = _default_fetch_lot,
+) -> OutlineProvider:
+    """A live :data:`~app.api.v1.study_inputs.OutlineProvider` (M5-T134, reading O21).
+
+    Returns a ``(canonical_bbl, correlation_id) -> PreparedOutline | None`` callable that, for one
+    lot, fetches the MapPLUTO lot geometry through ``fetch_lot``, converts it to a
+    :class:`~app.spatial.site_geometry.LotOutline` via the accepted
+    :func:`~app.spatial.site_geometry.lot_outline_from_mappluto` adapter, and prepares it with
+    :func:`~app.spatial.site_geometry.outline.prepare_outline` (the EPSG:2263 CRS gate and validity
+    checks). No street data is fetched - the prepared outline needs none. Any typed connector /
+    outline error, an outline the adapter refuses, or an outline ``prepare_outline`` refuses yields
+    ``None`` (no usable outline, so the reach stays unknown) - never a fabricated outline and never
+    a 500. The failure CLASS is logged, never the payload.
+
+    This seam is SEPARATE from and additive to :func:`live_geometry_provider`, so every existing
+    geometry provider and test double is unchanged. ``fetch_lot`` is an injection seam: the
+    production default is the live connector fetch; tests and the e2e harness inject a
+    fixture-backed double so the whole seam runs offline on the recorded 215-16 Northern pack.
+    """
+
+    def provide(canonical_bbl: str, correlation_id: str) -> PreparedOutline | None:
+        try:
+            lot_result = fetch_lot(canonical_bbl, correlation_id)
+            lot, refusal = lot_outline_from_mappluto(lot_result)
+            if lot is None:
+                logger.info(
+                    "study_live_outline unavailable reason=lot_outline_refused "
+                    "correlation_id=%s",
+                    correlation_id,
+                )
+                return None
+            prepared, reason = prepare_outline(lot)
+            if prepared is None:
+                logger.info(
+                    "study_live_outline unavailable reason=outline_not_measurable "
+                    "correlation_id=%s",
+                    correlation_id,
+                )
+                return None
+            return prepared
+        except _GEOMETRY_UNAVAILABLE_ERRORS as exc:
+            logger.info(
+                "study_live_outline unavailable error_type=%s correlation_id=%s",
                 type(exc).__name__,
                 correlation_id,
             )
