@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-08T11:40:32+00:00",
+ "updated_at": "2026-10-08T13:54:18+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -649,7 +649,7 @@
   "D-090-R625"
  ],
  "requirements_id_digest_sha256": "e8043d52ee184b0b9f20d69d0123f6a5ef1e1c9266968f4b0aeec5bcb5bee75c",
- "requirements_content_digest_sha256": "c7d29e266ba81bfcf42ff5feb6dfd9497a7662335a32968d59b05f9cc764ded9",
+ "requirements_content_digest_sha256": "bde8cfa55a52de7bcb4c029e1b0b9341897b69a35ab36da09197018da2ad15e3",
  "sources": [
   {
    "file": "source-001.md",
@@ -1248,7 +1248,8 @@
   "M5-T135",
   "M5-T136",
   "M5-T137",
-  "M5-T138"
+  "M5-T138",
+  "M5-T139"
  ],
  "affected_prs": [
   262,
@@ -1835,6 +1836,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T138 (The server route that returns the emitted results document (work order Part A)) to R167, R213, R228, R229, R240, R255, R256, R257, R258, R263, R267, R268, R269, R292, R570, R582, R584, R588 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-08T13:54:18+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T139 (A choice the user made is said to be the user's choice (two scope lines)) to R256, R582, R584, R588 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }

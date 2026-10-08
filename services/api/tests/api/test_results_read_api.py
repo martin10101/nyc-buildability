@@ -37,6 +37,8 @@ from app.contracts.study_contracts import StudyContractError, validate_study_doc
 from app.contracts.study_setup_bridge import StudySetupBridgeError, study_from_study_setup
 from app.main import create_app
 from app.scenario.three_answers.result_way_engine_bridge import (
+    FLOOR_TO_FLOOR_KEY,
+    HOUSING_PROGRAM_KEY,
     run_engine_and_result_ways_from_evidence,
 )
 from app.spatial.site_geometry import (
@@ -224,13 +226,19 @@ def _reference_document(provider, body: dict) -> dict:
         if req.floor_to_floor_ft is not None
         else BuildingDefaults()
     )
+    # Mirror the route's user_choices exactly (M5-T139): the housing program always, the
+    # floor-to-floor height only when the body carried one. Without this the reference would differ
+    # from the route on the two design-choice scope lines.
+    choices = {HOUSING_PROGRAM_KEY}
+    if req.floor_to_floor_ft is not None:
+        choices.add(FLOOR_TO_FLOOR_KEY)
     emitted = run_engine_and_result_ways_from_evidence(
         evaluator_inputs=doc, study=study, results_id="res-ref",
         computed_at="2026-10-08T00:00:00Z", housing_program=req.housing_program,
         property_profile=inputs.property_profile, prepared_outline=inputs.prepared_outline,
         site_geometry=inputs.site_geometry,
         special_density_statement=req.special_density_statement,
-        building_defaults=defaults, env=None,
+        building_defaults=defaults, user_choices=frozenset(choices), env=None,
     )
     return emitted.document
 

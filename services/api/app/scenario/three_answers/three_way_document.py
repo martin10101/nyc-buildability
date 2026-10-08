@@ -63,8 +63,13 @@ __all__ = [
     "BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION",
     "CONTRACT_VERSION_THREE_WAY",
     "FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION",
+    "FLOOR_TO_FLOOR_KEY",
+    "HOUSING_PROGRAM_KEY",
     "RESERVED_UNIT_ESTIMATE_REASON",
     "SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION",
+    "USER_CHOICE_KEYS",
+    "USER_ENTERED_FLOOR_TO_FLOOR_STATEMENT",
+    "USER_SELECTED_HOUSING_PROGRAM_STATEMENT",
     "emit_three_way_document",
 ]
 
@@ -143,6 +148,35 @@ _WORDS_VALUE_BY_SOURCE = {
     Source.NOT_KNOWN: _NOT_KNOWN_VALUE,
     Source.NOT_APPLICABLE: _NOT_APPLICABLE_VALUE,
 }
+
+
+# ---------------------------------------------------------------------------
+# The two scope rows that carry a DESIGN CHOICE the user may make (M5-T139, DB-204 a). The engine's
+# disclosure builder (read-only here) writes BOTH as "the default" (basis 'default'). When the
+# caller's request CARRIED the choice, the transform rewrites only the row's basis (to 'entered')
+# and its statement; the VALUE and UNIT are never touched. The keys match each scope row's `key`.
+# ---------------------------------------------------------------------------
+HOUSING_PROGRAM_KEY = "housing_program"
+FLOOR_TO_FLOOR_KEY = "floor_to_floor_ft"
+#: The two design-choice scope keys the user may make; the transform rewrites only these.
+USER_CHOICE_KEYS = frozenset({HOUSING_PROGRAM_KEY, FLOOR_TO_FLOOR_KEY})
+
+# Plain-words housing-program labels (study.schema.json vocabulary, closed): the document's own
+# presentation labels. An unknown key falls back to itself so the sentence is never empty.
+_HOUSING_PROGRAM_DISPLAY = {
+    "standard_residence": "Standard residence",
+    "qualifying_affordable_housing": "Qualifying affordable housing",
+    "qualifying_senior_housing": "Qualifying senior housing",
+}
+
+# The two sentences the transform WRITES when the user made the choice (plain and true: no internal
+# name, no task id, never 'professional review', never 'the default'). The guard test renders both.
+USER_ENTERED_FLOOR_TO_FLOOR_STATEMENT = (
+    "A {height}-foot floor-to-floor height was entered for this run."
+)
+USER_SELECTED_HOUSING_PROGRAM_STATEMENT = (
+    "{program} was selected for this run as the housing program."
+)
 
 
 def _fmt_feet(value: float) -> str:
@@ -226,35 +260,56 @@ def _scope_statement(key: str, derived: Derived) -> str:
     )
 
 
-def _rewrite_scope_lines(doc: dict, condition_sources: dict[str, Derived]) -> None:
-    """Rewrite the scope rows of the five conditions from the per-condition sources the evidence
-    entry derived. Only the five keys the entry hands are rewritten; the other assumption rows (the
-    zoning district, lot type, frontage, depth, housing program, floor-to-floor height) stay as the
-    engine made them. Does nothing when the document carries no scope block."""
+def _user_choice_statement(key: str, value: object) -> str:
+    """The plain-words scope line for a design choice the user made (M5-T139): the floor-to-floor
+    height entered, or the housing program selected. ``value`` is read for the sentence only."""
+    if key == FLOOR_TO_FLOOR_KEY:
+        return USER_ENTERED_FLOOR_TO_FLOOR_STATEMENT.format(height=f"{float(value):g}")
+    display = _HOUSING_PROGRAM_DISPLAY.get(value, value)
+    return USER_SELECTED_HOUSING_PROGRAM_STATEMENT.format(program=display)
+
+
+def _rewrite_scope_lines(
+    doc: dict,
+    condition_sources: dict[str, Derived] | None,
+    user_choices: frozenset[str] | None,
+) -> None:
+    """Rewrite the scope rows the evidence entry can say more about: the five engine conditions from
+    ``condition_sources`` (M5-T137), and the two design-choice rows (housing program, floor-to-floor
+    height) named in ``user_choices`` when the user chose them (M5-T139). Every other row, and a
+    design choice the user did NOT make, stays as the engine made it. Does nothing with no scope."""
     scope = doc.get("scope")
     if not isinstance(scope, dict):
         return
     assumptions = scope.get("assumptions")
     if not isinstance(assumptions, list):
         return
+    sources = condition_sources if condition_sources is not None else {}
+    choices = user_choices if user_choices is not None else frozenset()
     for row in assumptions:
         if not isinstance(row, dict):
             continue
-        derived = condition_sources.get(row.get("key"))
-        if derived is None:
+        key = row.get("key")
+        derived = sources.get(key)
+        if derived is not None:
+            row["basis"] = _SCOPE_BASIS_BY_SOURCE[derived.source]
+            row["statement"] = _scope_statement(key, derived)
+            words = _WORDS_VALUE_BY_SOURCE.get(derived.source)
+            if words is not None:
+                # Not known / not applicable: show the words, never the stand-in the engine
+                # received; the unit is null (the stand-in does not reach the document).
+                row["value"] = words
+                row["unit"] = None
+            else:
+                # Recorded, measured or the user's statement: the real value (and its unit, as the
+                # engine set it - degrees for the angle, null for the flags).
+                row["value"] = derived.engine_value
             continue
-        row["basis"] = _SCOPE_BASIS_BY_SOURCE[derived.source]
-        row["statement"] = _scope_statement(row["key"], derived)
-        words = _WORDS_VALUE_BY_SOURCE.get(derived.source)
-        if words is not None:
-            # Not known / not applicable: show the words, never the stand-in the engine received;
-            # the unit is null (the stand-in does not reach the document).
-            row["value"] = words
-            row["unit"] = None
-        else:
-            # Recorded, measured or the user's statement: the real value (and its unit, as the
-            # engine set it - degrees for the angle, null for the flags).
-            row["value"] = derived.engine_value
+        if key in choices and key in USER_CHOICE_KEYS:
+            # A design choice the user made: basis 'entered' and a sentence that says so. The value
+            # and the unit are NOT touched - only the basis and the statement move.
+            row["basis"] = "entered"
+            row["statement"] = _user_choice_statement(key, row["value"])
 
 
 # ---------------------------------------------------------------------------
@@ -460,7 +515,9 @@ def _apply_geometry(doc: dict, ways: ResultWays, *, building_option_withheld: bo
 # the one public transform
 # ---------------------------------------------------------------------------
 def emit_three_way_document(
-    document: dict, ways: ResultWays, *, condition_sources: dict[str, Derived] | None = None,
+    document: dict, ways: ResultWays, *,
+    condition_sources: dict[str, Derived] | None = None,
+    user_choices: frozenset[str] | None = None,
 ) -> dict:
     """Transform the engine's assembled results ``document`` into the contract-1.3.0 three-way
     document, given the decision-module ``ways``. Pure: it mutates a deep copy, computes no zoning
@@ -471,7 +528,13 @@ def emit_three_way_document(
     scope lines (value, basis, statement) so the scope block says, in plain words, recorded /
     measured / the user's statement / not known / not applicable. When None (the older
     ``run_engine_and_result_ways`` entry, which holds engine inputs already) the scope lines stay as
-    the engine made them. The engine, the disclosure builder and the schema stay read-only."""
+    the engine made them.
+
+    ``user_choices`` (M5-T139, DB-204 a), when given, names which of the two design-choice scope
+    rows the caller's request carried (:data:`USER_CHOICE_KEYS`); the transform rewrites those rows
+    to basis 'entered' and a sentence saying the value is the user's choice, touching no value. When
+    None or empty, both stay as the engine made them. The engine, disclosure builder and schema stay
+    read-only."""
     doc = copy.deepcopy(document)
     doc["contract_version"] = CONTRACT_VERSION_THREE_WAY
 
@@ -515,9 +578,10 @@ def emit_three_way_document(
         _apply_building_option_dependents(doc)
     _apply_geometry(doc, ways, building_option_withheld=building_option_withheld)
 
-    # (O36) rewrite the five scope lines from the per-condition sources the evidence entry derived.
-    if condition_sources is not None:
-        _rewrite_scope_lines(doc, condition_sources)
+    # (O36) rewrite the five scope lines from the per-condition sources the evidence entry derived;
+    # (M5-T139) rewrite the two design-choice lines the user made. Both read the scope block.
+    if condition_sources is not None or user_choices is not None:
+        _rewrite_scope_lines(doc, condition_sources, user_choices)
 
     _assert_no_qualifying_unit_value(doc)
     validate_results_document(doc)

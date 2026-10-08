@@ -3170,6 +3170,69 @@
     }
    ],
    "verified_at": "2026-10-08T13:30:58+00:00"
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T139",
+   "applicable_requirement_ids": [
+    "D-090-R256",
+    "D-090-R582",
+    "D-090-R584",
+    "D-090-R588"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "e12c788a4236655667c1798da98454f91c3f7d22",
+   "reviewed_manifest_sha256": "93bb7074c894a9146de464a0ac76b59a27e3618f42c7d169973dbe0fe5331e15",
+   "requirements": [
+    {
+     "id": "D-090-R256",
+     "state": "PASS",
+     "evidence": [
+      "Entered height is said to be entered: test_t139_s1 drives the real POST route with floor_to_floor_ft 14 and asserts the floor_to_floor_ft scope row has value 14, unit feet, basis \"entered\", statement \"A 14-foot floor-to-floor height was entered for this run.\", and \"default\" absent \u2014 reproduced green.",
+      "Starting value still called the default: test_t139_s2 (no height) keeps value 10.0, basis \"default\", engine sentence \"A 10-foot floor-to-floor height is used as the default.\" unchanged; test_t139_s3 for all three programs gives basis \"entered\", \"<Display> was selected for this run as the housing program.\", never \"the default housing program\", value == program.",
+      "No value applied unseen: the transform's user-choice branch sets only basis+statement (reads row[\"value\"] for the sentence only); S5 test deep-copies the whole document and asserts _blanked(d1)==_blanked(d0) with value/unit unchanged \u2014 nothing else moves.",
+      "Stays open: R256 covers the visible/editable starting values and every design choice program-wide; only this task's two scope lines are closed here; the row stays applicable to BOOTSTRAP/M5-T137/M5-T138 for the rest.",
+      "Verifier's carry-forward condition met at e12c788a: the task's allowed-path files are identical to those verified at 4f7e818d (content identity 93bb7074), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer backend-engineer is neither). DCV report: project-control/reports/M5-T139-DCV.md."
+     ],
+     "reviewed_sha": "e12c788a4236655667c1798da98454f91c3f7d22"
+    },
+    {
+     "id": "D-090-R582",
+     "state": "PASS",
+     "evidence": [
+      "This task is a small correction inside the already-merged \"emit results document\" piece (wave 11 merged as 10607b0e per the backlog sweep); it adds no website file and builds only on merged work, so no merge is lightened and nothing is built on unmerged work.",
+      "The agreed results display (website panel) is recorded as the NEXT piece, not built here (DISCOVERY_BACKLOG sweep 2026-10-08 wave 12; evidence map R582).",
+      "Stays open: the whole ordering obligation (finish/merge wave 8, then emit, then connect the display) keeps binding later tasks; this task only shows its one fix respected the order.",
+      "Verifier's carry-forward condition met at e12c788a: the task's allowed-path files are identical to those verified at 4f7e818d (content identity 93bb7074), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer backend-engineer is neither). DCV report: project-control/reports/M5-T139-DCV.md."
+     ],
+     "reviewed_sha": "e12c788a4236655667c1798da98454f91c3f7d22"
+    },
+    {
+     "id": "D-090-R584",
+     "state": "PASS",
+     "evidence": [
+      "Whole-tree diff 5ed7b4c8..HEAD shows app/main.py, app/config.py, render.yaml and .github byte-identical (empty diff): no mount, switch default or deployment setting moved.",
+      "The route stays behind INTERNAL_RESULTS_ENABLED (off by default; config.py unchanged); the material commit adds no switch and turns none on (route tests must call _enable to exercise it).",
+      "Stays open: the activation hold (all production switches off, no hidden feature on) keeps binding M5-T136/137/138 and future work; this task only shows it changed no activation surface.",
+      "Verifier's carry-forward condition met at e12c788a: the task's allowed-path files are identical to those verified at 4f7e818d (content identity 93bb7074), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer backend-engineer is neither). DCV report: project-control/reports/M5-T139-DCV.md."
+     ],
+     "reviewed_sha": "e12c788a4236655667c1798da98454f91c3f7d22"
+    },
+    {
+     "id": "D-090-R588",
+     "state": "PASS",
+     "evidence": [
+      "The change edits only two scope lines and drops nothing from the report; the backlog sweep records what stays owed (DB-204 points b\u2013f OPEN; website panel next; three_way_document.py must split before growing), so scope is not narrowed.",
+      "No step or update narrows the goal to the results screen or to one option (task packet objective and evidence map keep the full report and all options in scope).",
+      "Stays open: keeping the full report and every promised option in scope is a standing program-wide obligation; this task only demonstrates it dropped no scope.",
+      "Verifier's carry-forward condition met at e12c788a: the task's allowed-path files are identical to those verified at 4f7e818d (content identity 93bb7074), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer backend-engineer is neither). DCV report: project-control/reports/M5-T139-DCV.md."
+     ],
+     "reviewed_sha": "e12c788a4236655667c1798da98454f91c3f7d22"
+    }
+   ],
+   "verified_at": "2026-10-08T14:54:10+00:00"
   }
  ]
 }

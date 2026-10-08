@@ -1,0 +1,159 @@
+{
+  "task_id": "M5-T139",
+  "title": "A choice the user made is said to be the user's choice: in the results document the route returns, the scope line of the housing program and the scope line of the floor-to-floor height say 'selected' or 'entered' when the user chose them, and 'the default' only when the starting value was used; the value shown is the one used. Today the older engine's line calls an ENTERED floor-to-floor height 'the default' and calls a SELECTED standard residence 'the default housing program'. The engine and its disclosure builder are NOT changed: the entry that takes evidence learns which choices the user made and the transform rewrites those two lines. It does NOT change any value, any way, the committed journey result, any schema or any website file, and turns on NO switch. [backlog row DB-204 a; owner rows R256, R582, R584, R588]",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "A CHOICE THE USER MADE IS SAID TO BE THE USER'S CHOICE (backlog row DB-204 a; the G3 reviewer's note F1 of task M5-T138). THE FACTS TODAY (read by the orchestrator at head 10607b0e; VERIFY EACH in the source). (1) The scope lines of the results document are built by build_scope_inputs (services/api/app/contracts/engine_disclosures.py). For the floor-to-floor height it writes ALWAYS the basis 'default' and the statement 'A <n>-foot floor-to-floor height is used as the default.' (about lines 374 to 379). For the housing program it writes, for standard residence, the basis 'default' and 'Standard residence is used as the default housing program.', and for the other two programs the basis 'entered' and '<program> was selected as the housing program.' (_housing_program_disclosure, about lines 245 to 257). (2) The route POST /api/v1/properties/{bbl}/results (services/api/app/api/v1/results_read.py, about lines 370 to 386) REQUIRES the housing program in the body and takes the floor-to-floor height when the user gives one; it hands them to the entry run_engine_and_result_ways_from_evidence (services/api/app/scenario/three_answers/result_way_engine_bridge.py, about line 140) as housing_program and building_defaults. The entry cannot tell an entered height from the starting value. (3) So through the route, a user who enters 14 ft gets back 'A 14-foot floor-to-floor height is used as the default.', and a user who selects standard residence gets back 'Standard residence is used as the default housing program.' The values are right; the two sentences are not. (4) The transform (services/api/app/scenario/three_answers/three_way_document.py, _rewrite_scope_lines, about lines 229 to 250) already rewrites five scope lines from what the entry hands it (task M5-T137). (5) The committed journey result is produced through the entry by a test that makes no user choice; its two lines read 'the default' and are true there. THE READINGS (the orchestrator's; for the reviewers to confirm or correct). (O37) THE ENTRY LEARNS WHICH CHOICES THE USER MADE. Give the entry ONE new keyword-only parameter that names which of the two choices (the housing program; the floor-to-floor height) the user made; when it is not given, the entry behaves exactly as today. Propose the smallest shape and justify it in three lines in the report. No default may stand for a fact about a lot: this parameter is not a fact about a lot, it says what the caller's own request contained. (O38) THE TRANSFORM REWRITES THOSE TWO LINES ONLY WHEN THE USER MADE THE CHOICE: basis 'entered' (a value the schema allows) and a plain sentence that says the value is the user's choice, for example that the floor-to-floor height of <n> feet was entered by the user, and that <program> was selected by the user; the VALUE of the line is not touched. When the user did not make the choice the line stays as the engine made it. engine_disclosures.py is NOT edited. (O39) THE ROUTE passes: the housing program as the user's choice ALWAYS (the body requires it); the floor-to-floor height as the user's choice only when the body carried one. STEPS. STEP 1: the red proof: a test through the route with an entered height fails on today's code because the line says 'the default'. STEP 2: the entry's parameter and the transform's two lines. STEP 3: the route passes the choices. STEP 4: the tests. NOTHING ELSE CHANGES: the committed journey result, its saved drawings and every other saved file stay byte-identical (if one changes, STOP and report); no value, no way, no other scope line changes. MODULARITY: three_way_document.py is 535 lines and the warning threshold is 600; keep the change small; if it cannot stay under the threshold, STOP and report instead of growing the file past it. TESTS: one per state with a table 'state, outcome, test id' (the height entered and not entered; each of the three housing programs through the route; the entry called without the new parameter; the older entry); every text the transform writes is plain and covered by the existing guard test or a new case of it; a mutation proof per branch, in a copy outside the repository. NOT IN THIS TASK: any change of engine_disclosures.py, evaluator_inputs.py, the engine, the decision modules or engine_conditions.py; any schema, fixture or saved drawing; any website file; an upper limit for the floor-to-floor height (backlog row DB-204 c); any switch.",
+  "business_reason": "The owner's rule: design choices may have visible, editable starting values and no value is applied unseen (D-090 row R256). The website panel, the next piece (R582), shows the results beside the inputs the user just changed; a line that calls the user's own 14 ft 'the default' on that screen would contradict the input above it. An independent review of the route found it (backlog row DB-204 a). It is the same kind of fault as backlog row DB-200, for a design choice, and is closed the same way: the entry is told and the transform says it truly.",
+  "inputs": [
+    "docs/DISCOVERY_BACKLOG.md rows DB-200, DB-204",
+    "services/api/app/contracts/engine_disclosures.py (build_scope_inputs, _housing_program_disclosure): READ ONLY",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py and services/api/app/scenario/three_answers/three_way_document.py (the two files of task M5-T137 that this one extends)",
+    "services/api/app/api/v1/results_read.py and results_request.py (the route of task M5-T138)",
+    "packages/contracts/schemas/v1/results.schema.json (scope_assumption: the allowed basis values): READ ONLY",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py (the scope-line tests and the text guard of task M5-T137); services/api/tests/api/test_results_read_api.py and test_results_read_law_examples.py (how the route is driven offline)",
+    "project-control/reports/M5-T138-G3G4G5.md (the G3 reviewer's note F1)"
+  ],
+  "outputs": [
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py: the entry takes which choices the user made",
+    "services/api/app/scenario/three_answers/three_way_document.py: the two lines say 'selected' or 'entered' when the user made the choice",
+    "services/api/app/api/v1/results_read.py: the route passes the choices",
+    "the tests in services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py and services/api/tests/api/test_results_read_api.py or test_results_read_law_examples.py",
+    "project-control/reports/M5-T139-producer-report.md: the table of states with test ids; the shape of the parameter in three lines; every text written; the red and mutation proofs; every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M5-T137",
+    "M5-T138"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/api/v1/results_read.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "services/api/tests/api/test_results_read_law_examples.py",
+    "project-control/reports/M5-T139-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/contracts/engine_disclosures.py and evaluator_inputs.py: read only",
+    "the engine, the decision modules and services/api/app/scenario/three_answers/engine_conditions.py: read only",
+    "services/api/app/api/v1/results_request.py: read only (the body and its checks do not change)",
+    "every schema, schema copy, generated type, fixture and saved drawing: no change; the committed journey result stays byte-identical",
+    "apps/web: no file; app/main.py, app/config.py, render.yaml, CI files, dependency files, tools/**, .claude/**",
+    "project-control/** except the producer report"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "entered_height_is_said_to_be_entered",
+      "input": "the recorded benchmark lot through the route with a floor-to-floor height of 14 in the body",
+      "expected": "the floor-to-floor line of the returned document has the value 14, the basis 'entered' and a sentence saying the height was entered by the user; the word 'default' is not in that sentence; RED PROOF: on today's code the sentence is 'A 14-foot floor-to-floor height is used as the default.'"
+    },
+    {
+      "id": "S2",
+      "case": "starting_value_is_still_called_the_default",
+      "input": "the same lot through the route with no floor-to-floor height in the body",
+      "expected": "the line has the engine's stated starting value, the basis 'default' and the engine's own sentence, unchanged"
+    },
+    {
+      "id": "S3",
+      "case": "housing_program_is_the_users_selection",
+      "input": "the same lot through the route, once for each of the three housing programs the body accepts",
+      "expected": "the housing-program line has the basis 'entered' and a sentence saying the program was selected by the user, for standard residence as for the other two; never 'the default housing program'"
+    },
+    {
+      "id": "S4",
+      "case": "entry_without_the_parameter_is_unchanged",
+      "input": "the entry that takes evidence called as the journey test calls it (no user choice named), and the older entry",
+      "expected": "both lines are exactly as the engine made them; the committed journey result equals the entry's output byte for byte, as before"
+    },
+    {
+      "id": "S5",
+      "case": "nothing_else_moves",
+      "input": "the returned document with and without the user's choices, for the same lot and the same values",
+      "expected": "only the basis and the statement of the two lines differ; every value, every way entry, every other scope line and every other block are identical"
+    },
+    {
+      "id": "S6",
+      "case": "no_saved_file_changes_and_read_only_files_untouched",
+      "input": "the repository after the change",
+      "expected": "no fixture and no saved drawing changed; engine_disclosures.py, evaluator_inputs.py, results_request.py, the engine, the decision modules, engine_conditions.py, every schema and every website file are byte-identical to the claim head; no switch, no mount changed"
+    },
+    {
+      "id": "S7",
+      "case": "texts_plain_and_checks_pass",
+      "input": "the two sentences the transform writes; ruff, the modularity check, the focused suites",
+      "expected": "each sentence is plain and true, with no internal name; the text guard covers both; ruff clean; modularity exit 0 with three_way_document.py still under the warning threshold; tests/scenario/three_answers, tests/api, tests/journey and tests/contracts pass"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "the new parameter becomes a hidden default -> when it is not given the entry behaves exactly as today, pinned by scenario S4 and the unchanged journey result",
+    "the transform changes a value or another line -> scenario S5 compares the two documents block by block",
+    "three_way_document.py passes the size threshold -> the builder stops and reports; no silent growth"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T13:54:17.975356+00:00",
+  "updated_at": "2026-10-08T14:54:44.351674+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R256",
+        "D-090-R582",
+        "D-090-R584",
+        "D-090-R588"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T13:54:17.975608+00:00",
+  "path_notes": "PRODUCER = backend-engineer in an isolated worktree (show-toplevel guard; reset to the claim-seam head first). This packet is the orchestrator's own draft, written from an independent reviewer's note and the orchestrator's reads of the code at the claim base. THE ORCHESTRATOR'S RULINGS: the engine's disclosure builder is not changed; the entry is told which choices the user made and the transform rewrites two lines; through the route the housing program is always the user's selection, because the body requires it. Baselines at the claim base 10607b0e (figures of the reviewed head of wave 11, whose code is identical): tests/api 1126 passed; tests/scenario/three_answers with tests/journey and tests/contracts 909 passed 2 skipped; the full api suite 8,647 passed 8 skipped. ALLOWED PATHS are literal files.",
+  "documented_test_commands": [
+    "cd services/api && /root/project/lanes-runtime/venv/bin/python -m ruff check .",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/api",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/journey tests/contracts",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/cad tests/drawings   (no saved drawing may change)",
+    "python3 tools/modularity_check.py --check   (from the repository root)",
+    "the FULL api suite: the orchestrator runs it once at the final candidate"
+  ],
+  "worktree": "/root/project/w-wave12",
+  "progress_log": [
+    {
+      "at": "2026-10-08T13:55:26.705204+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed at the contract head; the builder starts in an isolated worktree reset to the claim-seam head. Baselines at the claim base 10607b0e (the reviewed head of wave 11, identical code): tests/api 1126 passed; three_answers, journey and contracts 909 passed 2 skipped; full api suite 8,647 passed 8 skipped."
+    },
+    {
+      "at": "2026-10-08T14:25:06.981071+00:00",
+      "agent": "backend-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Builder's one commit integrated by cherry-pick as b8bcbb74 (tree identical to the builder's 00833a0e; 7 files, all the allowed paths). The entry takes user_choices (a set of the two scope-line keys; not given: as before); the transform rewrites the basis and the sentence of the two lines when the user chose; the route passes the housing program always and the height when the body carried one. Builder's checks: tests/api 1131 passed; three_answers, journey and contracts 912 passed 2 skipped; cad and drawings 1359 passed 6 skipped (no saved file changed); modularity exit 0 with three_way_document.py at 599 lines, one under the warning threshold. Next: G3 and G4 reviews at the frozen head; the full api suite by the orchestrator."
+    },
+    {
+      "at": "2026-10-08T14:45:03.243927+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Both independent reviews returned at the frozen head 82c32742 and passed on their first reading: G3 (data-contract-verifier) eight checks confirmed, three notes; G4 (qa-engineer) eight checks, eleven mutations all caught, three notes; no blocking finding; no correction asked; no review of this task failed. Both returns are kept unchanged in project-control/reports/M5-T139-G3G4.md. Orchestrator's run at the same head: full api suite 8655 passed, 8 skipped. Evidence map written (four rows)."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-08T14:54:44.351544+00:00"
+}
