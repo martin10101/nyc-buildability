@@ -115,8 +115,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A section number taken from DB-188 or the draft addresses instead of found on the site -> the targets are named by what they are and the addresses are 2026-10-08 leads; the builder re-reads each page and reports the number/title the site shows (S11).",
     "Appendix I captured as if it were text when it is fifteen map images -> S4 requires the capture and report to say the maps are images and cannot be captured as text, and that a transit-zone value is a recorded value, not a reading.",
@@ -127,7 +127,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T03:57:02.876435+00:00",
-  "updated_at": "2026-10-08T05:50:41.115570+00:00",
+  "updated_at": "2026-10-08T06:07:11.166303+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -193,5 +193,7 @@
       "status": "in_progress",
       "message": "THE SAME REVIEWER'S DELTA CONFIRMATION at the corrected head a6072e1e (05:48 UTC): G3 PASS and G4 PASS, no new finding; only the two retrieval times and the appended notes differ in each of the 29 captures; no text, table, map block, pin or digest changed; none of the 156 older captures touched; it compared the new times of eleven captures with the saved files itself. Kept unchanged in project-control/reports/M4-T036-G3G4.md with the two earlier returns. The full api suite at a6072e1e, run alone: 8550 passed, 8 skipped, exit 0. Evidence map written for the three rows of D-090 bound to this task (project-control/reports/M4-T036-evidence-map.json)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-08T06:07:11.166121+00:00"
 }

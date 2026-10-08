@@ -2387,30 +2387,49 @@
     "D-090-R526"
    ],
    "producer": "legal-corpus-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "0b796ca4c93cc023126f8feb3e680dc6568f2839",
+   "reviewed_manifest_sha256": "cbd2b57f1b9069e636927ecec6f14fb41ac4ed72a29072751699b3fd215384c9",
    "requirements": [
     {
      "id": "D-090-R291",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Row text (sequencing): \"step 3: the R6B answers are checked: missing rules and conflicting inputs are resolved, and independently calculated examples are saved as files to test against.\"",
+      "This capture task's only share is adding source law-text files that feed later rule-resolution; it added 29 ZR captures as files under docs/research/zr-snapshots/v1 and saved none that resolve a rule or compute an example \u2014 `git diff` over services/api/app/rules, docs/reference-cases, docs/zoning-rule-review between claim head and frozen head is empty.",
+      "No capture or the report states what a text means for a lot (searched all 29 + report; the sole \"is resolved\" hit in zr-33-12 is a structural heading-only/intro note, not a rule verdict).",
+      "The substance of the row \u2014 checking the R6B answers, resolving conflicts, and saving independently calculated examples \u2014 is not done by a capture task and stays OPEN in the registry (row still applies to M4-T024..T035 and D-090-BOOTSTRAP).",
+      "Verifier's carry-forward condition met at 0b796ca4: the task's allowed-path files are identical to those verified at 698de7ca (content identity cbd2b57f), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 and G4 an independent data-contract-verifier; producer legal-corpus-engineer (two agents: the builder and the builder of the correcting commit) is neither). DCV report: project-control/reports/M4-T036-DCV.md."
+     ],
+     "reviewed_sha": "0b796ca4c93cc023126f8feb3e680dc6568f2839"
     },
     {
      "id": "D-090-R517",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Row text (external_fact): each statement of law in the owner's message is checked at its official source before a record is changed because of it, and a difference is told to the owner first.",
+      "The task supplies the official source texts so statements can be checked: the producer report records the builder fetching all 29 pages (one HTTPS GET of the canonical HTML + the section's own print/PDF as a text cross-check), and the review record states the independent data-contract-verifier re-fetched 22 of the 29 official pages itself and compared word-for-word (the other 7 \u2014 33-11, 33-12, 36-232, 36-24, 36-25, 25-22, 25-23 \u2014 from capture text only).",
+      "No record was changed because of these captures (rules/reference-cases/register unchanged, confirmed by diff), and I independently recomputed sha256(verbatim_excerpt)==content_digest_sha256 for all 29.",
+      "The full row \u2014 checking every statement of law in the message (shared-space, amenity base, the two energy routes, wall exclusion, R6B base/heights, dwelling-unit factors, bicycle, imagery, PDF behaviour) \u2014 exceeds a capture task and stays OPEN; I could not re-fetch live pages, so the capture-to-live-page correspondence rests on the reviewer's recorded 22-page re-fetch.",
+      "Verifier's carry-forward condition met at 0b796ca4: the task's allowed-path files are identical to those verified at 698de7ca (content identity cbd2b57f), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 and G4 an independent data-contract-verifier; producer legal-corpus-engineer (two agents: the builder and the builder of the correcting commit) is neither). DCV report: project-control/reports/M4-T036-DCV.md."
+     ],
+     "reviewed_sha": "0b796ca4c93cc023126f8feb3e680dc6568f2839"
     },
     {
      "id": "D-090-R526",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Row text (prohibition): no option is presented as feasible while parking/loading/bicycle applicability is unresolved; until then results say not yet checked; the report section may come later.",
+      "A capture task can only violate this by asserting feasibility/resolution; I searched all 29 captures and the report and found no sentence saying an option is feasible, needs/does not need parking, loading or bicycle spaces, or that a rule is resolved \u2014 the parking/loading/bicycle words present are official section titles and a table-content description (\"a PRC column and NO loading requirement category column\").",
+      "The task instead captures the provisions R526 needs read first (25-212, 25-22, 25-23, 36-231/232, 36-30, 73-432/433, 74-52, 75-31, 32-131/161) as source text only; every capture's notes repeat \"no reading of the text for any lot\".",
+      "The prohibition's live scope \u2014 the option comparison, the website display, and the report \u2014 is enforced by the computational/UI tasks and stays OPEN in the registry.",
+      "Verifier's carry-forward condition met at 0b796ca4: the task's allowed-path files are identical to those verified at 698de7ca (content identity cbd2b57f), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 and G4 an independent data-contract-verifier; producer legal-corpus-engineer (two agents: the builder and the builder of the correcting commit) is neither). DCV report: project-control/reports/M4-T036-DCV.md."
+     ],
+     "reviewed_sha": "0b796ca4c93cc023126f8feb3e680dc6568f2839"
     }
-   ]
+   ],
+   "verified_at": "2026-10-08T06:07:10+00:00"
   },
   {
    "directive_id": "D-090",
