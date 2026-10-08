@@ -116,8 +116,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the case states that agreement is not proof; every row is followable and quotes its capture; 'not sure' where the text does not settle it (S1-S4, S10)",
     "Matching the program's saved output taken as proof, especially for the rear yard -> each worked example is worked by hand from the text; the builder states where it differs and changes no fixture or program code (S5, S7, S8)",
@@ -128,7 +128,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T01:34:57.932655+00:00",
-  "updated_at": "2026-10-08T01:39:53.546191+00:00",
+  "updated_at": "2026-10-08T01:40:47.566184+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -151,5 +151,14 @@
     "python tools/modularity_check.py --check",
     "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
   ],
-  "worktree": "/root/project/w-wave7"
+  "worktree": "/root/project/w-wave7",
+  "progress_log": [
+    {
+      "at": "2026-10-08T01:40:47.566098+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted and claimed in wave 7 on the branch task/wave7-wiring-reading-seal from the integration head 85500b94, whose own run (37713341355) completed with every job a success before any builder's commit is integrated."
+    }
+  ]
 }

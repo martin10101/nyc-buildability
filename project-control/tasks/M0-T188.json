@@ -131,14 +131,14 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "The detector false-flags a legitimate literal bracket route -> S9 and the explicit rule: flag only '*', '?', or a leading ':'; never '[' / ']' alone; the one tracked bracket route is a test",
     "The refusal retroactively breaks an already-contracted pattern-carrying task's lifecycle (77 accepted + 11 in-flight) -> the frozen grandfather allowlist built from the look-back exempts exactly those ids; S10 proves validate --check stays exit 0",
@@ -148,7 +148,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T01:34:58.731195+00:00",
-  "updated_at": "2026-10-08T01:39:52.207585+00:00",
+  "updated_at": "2026-10-08T01:40:47.827340+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -173,6 +173,15 @@
       "at": "2026-10-08T01:40:35+00:00",
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-08, before any claim] task_type 'backend' -> 'governance'. The ledger refuses to claim a task whose allowed paths touch its own tools unless the task is of the governance type and cites a directive whose scope covers governance tasks (the claim guard, D-001-R118); directive D-090, which this task cites for row R557, has that scope. No path, gate, reviewer, scenario or row changed. Gate G0 is recorded again after this correction."
+    }
+  ],
+  "progress_log": [
+    {
+      "at": "2026-10-08T01:40:47.827252+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted and claimed in wave 7 on the branch task/wave7-wiring-reading-seal from the integration head 85500b94, whose own run (37713341355) completed with every job a success before any builder's commit is integrated."
     }
   ]
 }
