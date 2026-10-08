@@ -167,8 +167,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "a stand-in in the wrong direction lets a figure through -> the direction of each stand-in is proved from the rule file and pinned by a mutation proof; scenario S11 forbids any shown result resting on one",
     "the decision step shows a result while a condition it reads is not known -> the builder stops and reports the state; nothing is papered over in the transform",
@@ -179,7 +179,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T09:24:50.315328+00:00",
-  "updated_at": "2026-10-08T11:16:11.444873+00:00",
+  "updated_at": "2026-10-08T11:16:14.266828+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -254,5 +254,7 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-08, after the builder's first commit (1aacada9) and BEFORE any review] READING O36, THE VALUE OF A SCOPE LINE WHOSE CONDITION IS NOT KNOWN. The packet said: 'its value is the stand-in and its basis assumed'. The builder followed it. Reading the regenerated drawings, the orchestrator found the result: 'Special density area Yes assumed Whether the lot is in a special density area is not known; ...': a reader sees 'Yes' for something that is not known, a substitute shown in place of an unknown (owner rows R229, R570). CORRECTED READING: in the scope line of a condition that is not known the value is the words 'Not known' (the schema's value may be a string) and the unit is null; the statement still says that it is not known, what was taken for the calculation and what is withheld; the basis stays 'assumed' (the schema has no other; backlog row DB-196). In the same way, for a lot that is not a corner lot the two corner conditions show the words 'Not applicable' instead of a made-up value. The value handed to the ENGINE is unchanged. Scenarios S3, S5, S6, S9 and S10 are read with this correction. The same builder made the correcting commit (b6aab84a on the branch) after reading every reader of the scope lines. The fault was the orchestrator's ruling, not the builder's work."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-08T11:16:14.266612+00:00"
 }

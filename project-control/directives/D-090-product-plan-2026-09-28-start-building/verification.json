@@ -2823,72 +2823,123 @@
     "D-090-R588"
    ],
    "producer": "scenario-optimization-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "74bc23aa64da3b68f266cdef483bf5c4a1feabb1",
+   "reviewed_manifest_sha256": "7f0ad3da126fe3915290af438119ca517fd45748ea0da85f26318d66c9a4b125",
    "requirements": [
     {
      "id": "D-090-R139",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The journey and wiring tests now call `run_engine_and_result_ways_from_evidence` (new entry in `result_way_engine_bridge.py`); `git diff 7b5938e4 HEAD -- tests/journey/test_215_16_northern_journey.py` removes the five typed values (`overlay_present=True`, `special_district_present=False`, `within_100\u2026=True`, `angle=90.0`, `special_density_area=False`) and the `build_three_answer_inputs` call.",
+      "The new entry gathers the decision facts first, then derives all five conditions from that same `gathered` object (lines 178\u2013221); no condition is typed in anywhere on the journey path.",
+      "Stays open in the registry: the full bridge-scope obligation and D-090-BOOTSTRAP are broader than this one engine-condition piece.",
+      "Verifier's carry-forward condition met at 74bc23aa: the task's allowed-path files are identical to those verified at 3e92599c (content identity 7f0ad3da), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T137-DCV.md."
+     ],
+     "reviewed_sha": "74bc23aa64da3b68f266cdef483bf5c4a1feabb1"
     },
     {
      "id": "D-090-R229",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "In the committed fixture the density line reads value `\"Not known\"`, unit null, basis `assumed`, statement naming what was taken and that the unit limit is withheld; the stand-in value is never shown as the row value (`three_way_document.py` `_WORDS_VALUE_BY_SOURCE`, lines 140\u2013145, 248\u2013253).",
+      "`tests/.../test_three_answers_three_way_emit.py::test_s137_not_known_lines_show_words_never_a_boolean_or_number` passed; G4 mutation (n) (a not-known line carrying a value) is caught by six tests.",
+      "Stays open: \"shown on the website, the drawings and the PDF\" across all outputs \u2014 the website reader and PDF are later pieces; this share is the emitted document and its two drawings only.",
+      "Verifier's carry-forward condition met at 74bc23aa: the task's allowed-path files are identical to those verified at 3e92599c (content identity 7f0ad3da), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T137-DCV.md."
+     ],
+     "reviewed_sha": "74bc23aa64da3b68f266cdef483bf5c4a1feabb1"
     },
     {
      "id": "D-090-R240",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`engine_conditions.within_100_and_angle` returns NOT_KNOWN when there is no corner measurement, and the invariant test `test_s137_invariant_over_the_benchmark_states` holds that with no geometry only the dependent results are withheld while the floor-area figures (20,150 / 24,180) stay shown.",
+      "`test_corner_without_a_measurement_is_not_known` passed in my run (352 passed, 2 skipped, exit 0).",
+      "Stays open: the general missing-input obligation across the product is broader than this piece.",
+      "Verifier's carry-forward condition met at 74bc23aa: the task's allowed-path files are identical to those verified at 3e92599c (content identity 7f0ad3da), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T137-DCV.md."
+     ],
+     "reviewed_sha": "74bc23aa64da3b68f266cdef483bf5c4a1feabb1"
     },
     {
      "id": "D-090-R241",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`test_wiring_emits_nothing.py` module docstring and `test_s12_entry_emits_the_committed_three_way_fixture` are explicitly labelled an \"UNCHANGED/WIRING proof only \u2026 NOT that any value is correct \u2014 the correctness of each way comes from the reference cases\" (lines 1\u201314, 102).",
+      "G4 check 2 reproduced that the expected measured figures load from `docs/reference-cases/R6B/cases/*.json` (144.60, 100.00, 180.28; FAR 20150/24180), not from program output.",
+      "Stays open: the row also covers several M4 tasks; this share is only this task's test list.",
+      "Verifier's carry-forward condition met at 74bc23aa: the task's allowed-path files are identical to those verified at 3e92599c (content identity 7f0ad3da), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T137-DCV.md."
+     ],
+     "reviewed_sha": "74bc23aa64da3b68f266cdef483bf5c4a1feabb1"
     },
     {
      "id": "D-090-R255",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`engine_conditions.special_density` maps the user's statement to `USER_STATEMENT`; the scope line (`three_way_document.py` lines 218\u2013222) says \"it is a statement, not a recorded fact\", basis `entered`; no statement \u2192 NOT_KNOWN, never recorded as a fact.",
+      "`test_density_user_statement_not_in_one_is_no_as_a_statement` and `test_density_no_statement_uses_the_inside_one_stand_in` passed.",
+      "Stays open: the broad \"facts and eligibility from evidence\" obligation spans the whole product; this share is the density condition and its labelling.",
+      "Verifier's carry-forward condition met at 74bc23aa: the task's allowed-path files are identical to those verified at 3e92599c (content identity 7f0ad3da), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T137-DCV.md."
+     ],
+     "reviewed_sha": "74bc23aa64da3b68f266cdef483bf5c4a1feabb1"
     },
     {
      "id": "D-090-R256",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Every value the engine is given for a condition is printed in that condition's scope line: measured figures (144.60 ft, 89.7\u00b0), the recorded overlay code (C2-2), and for the one stand-in the statement names the value taken (\"it is taken to be in one for the calculation\") \u2014 nothing is applied unseen.",
+      "`test_s137_scope_lines_say_where_each_condition_comes_from` and `test_s137_scope_texts_are_plain_and_true` passed; the unit-limit label prints formula/factor/rounding (work-order H10).",
+      "Stays open: visible, editable starting values for design choices (floor height, apartment size) are other pieces; this share is the five engine conditions.",
+      "Verifier's carry-forward condition met at 74bc23aa: the task's allowed-path files are identical to those verified at 3e92599c (content identity 7f0ad3da), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T137-DCV.md."
+     ],
+     "reviewed_sha": "74bc23aa64da3b68f266cdef483bf5c4a1feabb1"
     },
     {
      "id": "D-090-R570",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The regenerated fixture carries NO number for any withheld result: `legal_unit_limit_standard/_affordable/_senior`, `max_lot_coverage`, `rear_yard`, `setback_above_base` are `way:\"withheld\"` entries (label/reason/gap_kind/resolved_by only), and `building_option` is whole-answer not_available; no `\"value\": 16` appears anywhere.",
+      "The O36 correction is in place: a not-known line shows the words \"Not known\", not the stand-in substitute; the invariant test confirms no shown result rests on a basis-`assumed` value; G4 mutations (a)\u2013(e) each caught.",
+      "Stays open: \"stays withheld on the screen and in an export\" \u2014 the screen and exports are later pieces; this share is the emitted document and drawings.",
+      "Verifier's carry-forward condition met at 74bc23aa: the task's allowed-path files are identical to those verified at 3e92599c (content identity 7f0ad3da), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T137-DCV.md."
+     ],
+     "reviewed_sha": "74bc23aa64da3b68f266cdef483bf5c4a1feabb1"
     },
     {
      "id": "D-090-R582",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This is the piece before the server route (the connect-the-display chain), built on merged work: the claim base 42d85651 is the wave-9 merge; `docs/DISCOVERY_BACKLOG.md` DB-201 states the route waits for M5-T137.",
+      "What stays owed is on record: DB-200 (the contradiction this task removes) is QUEUED(task M5-T137) and DB-201 (the route) is OPEN.",
+      "Stays open: the wave-8-finished-and-merged-under-the-checks ordering is proven by the wave-8 merge record and contract dates, which are outside this task's diff; that part remains in the registry.",
+      "Verifier's carry-forward condition met at 74bc23aa: the task's allowed-path files are identical to those verified at 3e92599c (content identity 7f0ad3da), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T137-DCV.md."
+     ],
+     "reviewed_sha": "74bc23aa64da3b68f266cdef483bf5c4a1feabb1"
     },
     {
      "id": "D-090-R584",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`git diff 7b5938e4 HEAD --name-only` touches no file under `services/api/app/api/`, not `app/main.py`, `app/config.py`, `render.yaml`, nor `.github/`; the material commits change only the three modules, the fixture, two drawings, four tests and the report.",
+      "G3 check 1 independently confirmed app/api, main.py, config.py, render.yaml and the website source are byte-identical to the claim-seam head; no route, mount or switch.",
+      "Stays open: the restriction also binds the later display piece.",
+      "Verifier's carry-forward condition met at 74bc23aa: the task's allowed-path files are identical to those verified at 3e92599c (content identity 7f0ad3da), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T137-DCV.md."
+     ],
+     "reviewed_sha": "74bc23aa64da3b68f266cdef483bf5c4a1feabb1"
     },
     {
      "id": "D-090-R588",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No section or option is dropped; the diff adds derivation + scope honesty only. What stays owed is recorded: DB-196 (no \"not known\" basis in the contract), DB-198 (the benchmark rear yard still names one of its two reasons), DB-199 and DB-201 \u2014 none removes a part of the report.",
+      "The task packet and evidence map keep the full report in scope (the engine, schema, website untouched).",
+      "Stays open: the standing \"keep the full report in scope\" obligation binds every later packet/update.",
+      "Verifier's carry-forward condition met at 74bc23aa: the task's allowed-path files are identical to those verified at 3e92599c (content identity 7f0ad3da), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T137-DCV.md."
+     ],
+     "reviewed_sha": "74bc23aa64da3b68f266cdef483bf5c4a1feabb1"
     }
-   ]
+   ],
+   "verified_at": "2026-10-08T11:16:13+00:00"
   }
  ]
 }
