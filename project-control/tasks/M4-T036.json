@@ -127,7 +127,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T03:57:02.876435+00:00",
-  "updated_at": "2026-10-08T05:33:44.349654+00:00",
+  "updated_at": "2026-10-08T05:36:45.719451+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -171,6 +171,13 @@
       "percent": 60,
       "status": "in_progress",
       "message": "INDEPENDENT REVIEW (a data-contract-verifier agent) at 6526d902: GATE G3 FAIL on ONE capture, finding F1; GATE G4 PASS. F1: in zr-36-233 (and its synced copy) the line '#Motels# or #tourist cabins' has an opening mark for a defined term with no closing mark (17 marks, an odd number) and seven zero-width characters before it; the words equal the official page; neither point is disclosed in the capture or in the report. Note F2 (not blocking): 'on the# zoning lot#' in zr-36-231. The reviewer fetched 22 of the 29 official pages itself: the words of each capture equal its page, the nine tables cell by cell; every named section exists and is captured; nothing existing changed; 78 focused tests pass. FOUND BY THE ORCHESTRATOR AFTER THE REVIEW, not yet ruled on: the official page of 36-233 itself prints the literal mark and the zero-width characters (the builder's saved page equals the pinned digest); and all 29 new captures record a retrieval time of 15:30 UTC on 2026-10-08, about eleven hours after the commit that added them (the saved pages' file times are 04:13 to 04:23 UTC). The review record project-control/reports/M4-T036-G3G4.md holds the full return. THIS FAILURE IS RECORDED BEFORE ANY REWORK. Next: a new builder (the first cannot be resumed) makes one correcting commit; the reviewer confirms at the corrected head."
+    },
+    {
+      "at": "2026-10-08T05:36:45.719332+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "THE SAME REVIEWER'S ADDENDUM at 6526d902 (05:35 UTC), after it read the saved bytes of the official page of 36-233 (equal to the capture's pins): the page itself prints a literal mark before 'tourist cabins' and carries the seven zero-width characters; the capture reproduces the page. FINDING F1 WITHDRAWN; GATE G3 CORRECTED FROM FAIL TO PASS; G4 PASS. Three notes: add a disclosure to zr-36-233; the retrieval time in all 29 captures (15:30 UTC) is impossible (later than the fetches and than the commit) though the pins and digests are right; F2. No file of the task changed between the two returns. ORCHESTRATOR'S DECISION, recorded before the rework: the notes go back for ONE correcting commit by a new builder (the first cannot be resumed): the two retrieval times of each of the 29 captures set to the time its saved response was written, with a note; the disclosure in zr-36-233; the report corrected; no word, table cell, pin or digest changes. The same reviewer then confirms by its stated delta check; the gates are recorded after that. The record project-control/reports/M4-T036-G3G4.md holds both returns unchanged."
     }
   ]
 }
