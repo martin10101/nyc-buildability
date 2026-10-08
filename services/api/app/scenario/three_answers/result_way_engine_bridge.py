@@ -9,18 +9,21 @@ wiring of this task - together with the evaluator-inputs document the builders a
 ways BESIDE the engine's :class:`~app.scenario.three_answers.engine.ThreeAnswersResult` in one
 wrapper of its own.
 
-NOTHING IS EMITTED (reading O23). The engine still emits exactly the results document it does today
-(contract 1.2.0, byte-for-byte); this adapter adds no field to that document, turns on no production
-switch, and is called by no route. ``engine.py`` is NOT edited and gets no field typed by the
-decision module (reading O22): the wrapper holds the engine's result beside the gathered ways, as an
-EXTERNAL attach point.
+IT EMITS THE THREE-WAY DOCUMENT (task M5-T136, reading O26). The engine still assembles exactly the
+document it does today (contract 1.2.0), and this adapter then runs the pure transform
+(:func:`~app.scenario.three_answers.three_way_document.emit_three_way_document`) over that document
+and the gathered ways, and returns the contract-1.3.0 three-way document BESIDE the ways. It turns
+on no production switch and is called by no route. ``engine.py`` is NOT edited and gets no field
+typed by the decision module (reading O22): the emitting is done by the transform, outside the
+engine; the engine's own ``ThreeAnswersResult`` still carries its unchanged document.
 
-IMPORTS (reading O22 / scenario S12). It imports ONLY
-:func:`~app.scenario.three_answers.result_way_bridge.gather_result_ways` and the engine's
-``generate_results`` / ``ThreeAnswersResult``. It imports nothing from the api layer and nothing
-from the spatial lot-reach module (the reach is measured inside ``gather_result_ways``). It is
-therefore the one new file under ``services/api/app`` that names the decision module, so it is the
-one new caller the import guard permits.
+IMPORTS (reading O22 / O26). It imports
+:func:`~app.scenario.three_answers.result_way_bridge.gather_result_ways`, the engine's
+``generate_results`` / ``ThreeAnswersResult`` and the transform
+:func:`~app.scenario.three_answers.three_way_document.emit_three_way_document`. It imports nothing
+from the api layer and nothing from the spatial lot-reach module (the reach is measured inside
+``gather_result_ways``). It names the decision module (through the transform and the bridge), so it
+is one of the new app files the import guard permits.
 
 NO DEFAULT STANDS FOR A FACT (rule L1, reading O21). When no prepared outline was produced the
 outline is passed as absent and the reach stays unknown; when no profile was read every recorded
@@ -36,6 +39,7 @@ from typing import TYPE_CHECKING, Any
 from .engine import ThreeAnswersResult, generate_results
 from .inputs import ThreeAnswerInputs
 from .result_way_bridge import GatheredResult, gather_result_ways
+from .three_way_document import emit_three_way_document
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
     from app.rules.registry import RuleRegistry
@@ -45,16 +49,16 @@ __all__ = ["EngineResultWays", "run_engine_and_result_ways"]
 
 @dataclass(frozen=True)
 class EngineResultWays:
-    """The engine's result beside the gathered decision ways (reading O22).
-
-    An EXTERNAL wrapper: ``engine.py`` is not edited and its ``ThreeAnswersResult`` carries no
-    decision-module field; this adapter is the only place the two objects sit together. ``gathered``
-    holds the decision ways, the module input, the recorded facts and their provenance, the area
-    statement, the large-lot answer and the held-back strings.
+    """The engine's result, the gathered decision ways, and the emitted three-way document (reading
+    O26). ``engine.py`` is not edited and its ``ThreeAnswersResult`` carries its own unchanged
+    document; ``document`` here is the contract-1.3.0 three-way document the transform emits from
+    that document and the ways. ``gathered`` holds the decision ways, the module input, the recorded
+    facts and their provenance, the area statement, the large-lot answer and the held-back strings.
     """
 
     engine_result: ThreeAnswersResult
     gathered: GatheredResult
+    document: dict
 
 
 def run_engine_and_result_ways(
@@ -80,9 +84,9 @@ def run_engine_and_result_ways(
     nothing is invented and no default stands for a fact (rule L1). A user's statement is passed on
     as a statement and never enters a gathered fact record (owner rule R255).
 
-    Returns :class:`EngineResultWays`: the engine's ``ThreeAnswersResult`` beside the
-    ``GatheredResult``. NOTHING IS EMITTED - the engine's document is unchanged and no caller of
-    this adapter is wired to a route in this task."""
+    Returns :class:`EngineResultWays`: the engine's ``ThreeAnswersResult``, the ``GatheredResult``
+    and the emitted contract-1.3.0 three-way ``document`` (reading O26). No caller of this adapter
+    is wired to a route in this task; no production switch is turned on."""
     engine_result = generate_results(inputs, registry=registry, env=env)
     gathered = gather_result_ways(
         evaluator_inputs=evaluator_inputs,
@@ -92,4 +96,5 @@ def run_engine_and_result_ways(
         housing_kind=inputs.housing_program,
         special_density_statement=special_density_statement,
     )
-    return EngineResultWays(engine_result=engine_result, gathered=gathered)
+    document = emit_three_way_document(engine_result.document, gathered.ways)
+    return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)

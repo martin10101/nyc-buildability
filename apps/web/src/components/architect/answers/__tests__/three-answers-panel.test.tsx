@@ -365,3 +365,95 @@ describe("fixture-specific behaviour", () => {
     expect(screen.queryByTestId("three-answers-draft-tag")).toBeNull();
   });
 });
+
+describe("the three-way value-states layer (results contract 1.3.0; S14, R556, R570)", () => {
+  function threeWayProbe(): Results {
+    // A 1.3.0 probe from the all-available fixture: the floor-area headline is conditional and a
+    // withheld value (a legal unit limit, not shown in values[]) carries only its reason.
+    const base = loadResultsFixture(ALL_AVAILABLE);
+    const answer = base.answers.floor_area_allowance;
+    if (answer.status !== "available") throw new Error("fixture changed: allowance not available");
+    return {
+      ...base,
+      contract_version: "1.3.0",
+      answers: {
+        ...base.answers,
+        floor_area_allowance: {
+          ...answer,
+          value_states: {
+            max_residential_floor_area: {
+              way: "conditional",
+              conditions: [
+                {
+                  kind: "unchecked_condition",
+                  assumption: "If the recorded lot area is confirmed",
+                  settled_by: "A survey or deed dimensions",
+                },
+              ],
+            },
+            legal_unit_limit_standard: {
+              way: "withheld",
+              label: "Legal dwelling-unit limit, standard residences",
+              reason: "There is no evidence of a special density area, so it is not known.",
+              gap_kind: "work_owed",
+              resolved_by: "Sourced evidence of the special density area",
+            },
+          },
+        },
+      },
+    };
+  }
+
+  it("shows a conditional value's 'If <assumption>' and a withheld value's reason, no number", () => {
+    const doc = threeWayProbe();
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const allowance = card("floor_area_allowance");
+    // the conditional headline shows its assumption line
+    const condition = within(allowance).getByTestId("answer-condition");
+    expect(condition.textContent).toBe("If the recorded lot area is confirmed");
+    // the withheld value shows its reason with "Not known" and no number of its own
+    const withheld = within(allowance).getByTestId("answer-withheld-value");
+    expect(withheld.textContent).toContain("Legal dwelling-unit limit, standard residences");
+    expect(withheld.textContent).toContain("Not known");
+    expect(withheld.textContent).toContain(
+      "There is no evidence of a special density area, so it is not known.",
+    );
+    // the withheld value never shows a number, and its reason carries no internal snake_case code
+    const reason = within(withheld).getByTestId("answer-withheld-reason");
+    expect(reason.textContent ?? "").not.toMatch(SNAKE_CASE);
+  });
+
+  it("a withheld HEADLINE key shows its reason, never the first value (R556)", () => {
+    const base = loadResultsFixture(ALL_AVAILABLE);
+    const envelope = base.answers.permitted_envelope;
+    if (envelope.status !== "available") throw new Error("fixture changed: envelope not available");
+    const without = envelope.values.filter(value => value.key !== "max_building_height");
+    const probe: Results = {
+      ...base,
+      contract_version: "1.3.0",
+      answers: {
+        ...base.answers,
+        permitted_envelope: {
+          ...envelope,
+          values: without,
+          value_states: {
+            max_building_height: {
+              way: "withheld",
+              label: "Maximum building height",
+              reason: "The height depends on a rule the program has not built yet.",
+              gap_kind: "work_owed",
+              resolved_by: "Building the rule and checking it against a worked example",
+            },
+          },
+        },
+      },
+    };
+    render(<ThreeAnswersPanel results={probe} showDraftValues />);
+    const card_ = card("permitted_envelope");
+    // the headline is the withheld reason, not a number from a different value
+    expect(within(card_).queryByTestId("answer-headline")).toBeNull();
+    const headlineWithheld = within(card_).getByTestId("answer-headline-withheld");
+    expect(headlineWithheld.textContent).toContain("Maximum building height");
+    expect(headlineWithheld.textContent).toContain("Not known");
+  });
+});

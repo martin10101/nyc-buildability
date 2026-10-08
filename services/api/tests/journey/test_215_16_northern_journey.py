@@ -5,9 +5,14 @@ R138 address-street assumption and R139 scope auto-fill).
 The one primary test chains the whole product path, each link consuming the PREVIOUS
 link's output object (no re-typed intermediate literals):
 
-    entry (BBL) -> recorded study read -> bridge -> evaluator inputs -> engine results
-    document (contract 1.2.0: scope + the R6B height note) -> exports (site-plan SVG +
-    results DXF) -> committed fixture
+    entry (BBL) -> recorded study read -> bridge -> evaluator inputs -> engine +
+    the three-way emit (contract 1.3.0: scope + the value_states way-layer, coverage,
+    rear yard and the building option withheld, the estimate reserved) -> exports
+    (site-plan SVG + results DXF) -> committed fixture
+
+    The emitted document is produced by the M5-T136 adapter
+    (``run_engine_and_result_ways``), which runs the engine and then the pure three-way
+    transform over the engine's document and the decision ways; engine.py is unchanged.
 
 A second short test proves the REAL address->BBL leg on the Geoclient User Guide
 documented example (314 W 100 St -> BBL 1018887502), so the module shows both legs
@@ -50,8 +55,15 @@ from app.contracts.study_contracts import (
 )
 from app.contracts.study_setup_bridge import study_from_study_setup
 from app.drawings.kit import Drawing, render_site_plan
-from app.scenario.three_answers import generate_results
+from app.profile.builder import build_property_profile
+from app.scenario.three_answers.result_way_engine_bridge import run_engine_and_result_ways
 from app.scenario.three_answers.scope import ASSUMPTION_KEYS
+from app.spatial.site_geometry import (
+    derive_site_geometry,
+    lot_outline_from_mappluto,
+    street_data_from_pages,
+)
+from app.spatial.site_geometry.outline import prepare_outline
 from tests.api.test_address_resolution_recorded_geoclient import (
     DUMMY_KEY,
     G01,
@@ -75,6 +87,12 @@ from tests.contracts.test_study_setup_bridge import (
     _northern_setup,
 )
 from tests.drawings.kit.kit_support import parse, pieces
+from tests.spatial._northern_replay import (
+    DCM_ENVELOPE,
+    replay_dcm_page,
+    replay_lot_geometry,
+    replay_pluto,
+)
 
 # The exports render with Lane E on (the drawing-kit lane); the engine gate is Lane A.
 _KIT_ENV = {"LANE_E_ENABLED": "1"}
@@ -117,6 +135,19 @@ def _benchmark_identity_bbl() -> str:
     return doc["identity"]["bbls"][0]
 
 
+def _carriers():
+    """The recorded benchmark lot's property profile, prepared tax-map outline and site
+    geometry, built offline through the real connectors from the recorded pack (no network).
+    They carry the recorded columns and the lot reach the decision module reads at the emit
+    step; the engine reads none of them (task M5-T134)."""
+    lot, _unused = lot_outline_from_mappluto(replay_lot_geometry())
+    streets = street_data_from_pages([replay_dcm_page()], envelope=DCM_ENVELOPE)
+    geometry = derive_site_geometry(lot, streets)
+    prepared, _reason = prepare_outline(lot)
+    profile = build_property_profile(replay_pluto())
+    return profile, prepared, geometry
+
+
 def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch) -> None:
     # 1. ENTRY by the disclosed BBL from the benchmark pack identity. The recorded study
     # read below is keyed on this same lot, so the BBL entry and the read agree.
@@ -157,7 +188,10 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
         assert record["value"] == fact["value"], engine_key
         assert record["fact_id"] == fact["fact_id"], engine_key
 
-    # 4. build_three_answer_inputs auto-fills the scope from the bridge (R139: study passed).
+    # 4. build_three_answer_inputs auto-fills the scope from the bridge (R139: study passed) and
+    # carries the property profile, the prepared outline and the site geometry the decision module
+    # reads at the emit step (M5-T134); the engine reads none of them.
+    profile, prepared, geometry = _carriers()
     inputs = build_three_answer_inputs(
         doc,
         results_id=_RESULTS_ID,
@@ -169,18 +203,26 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
         street_line_intersection_angle_degrees=90.0,
         special_density_area=False,
         study=study,
+        property_profile=profile,
+        prepared_outline=prepared,
+        site_geometry=geometry,
     )
     assert inputs.scope_inputs is not None
     assert inputs.lot_front_ft == float(northern["value"])
     assert inputs.lot_type == _fact(study, "lot_type")["value"]
 
-    # 5. ENGINE: the real engine runs end to end with every Lane flag off except Lane A, and
-    # emits the scope document, and the R6B height note binds 1.2.0 (#388, #422).
-    # It is validated against the bundled results schema.
-    result = generate_results(inputs, env=_LANE_ON)
-    document = result.document
+    # 5. ENGINE + THREE-WAY EMIT (M5-T136): the real engine runs with every Lane flag off except
+    # Lane A, and the adapter then runs the pure transform over the engine's document and the
+    # decision ways, emitting the contract-1.3.0 three-way document. It is validated against the
+    # bundled results schema and the way-layer rule.
+    emitted = run_engine_and_result_ways(
+        inputs, evaluator_inputs=doc, special_density_statement=False, env=_LANE_ON
+    )
+    document = emitted.document
     validate_results_document(document)
-    assert document["contract_version"] == "1.2.0"  # scope + the R6B height note (#388, #422)
+    assert document["contract_version"] == "1.3.0"
+    # engine.py is unchanged: its own inner document still declares the pre-three-way version.
+    assert emitted.engine_result.document["contract_version"] == "1.2.0"
 
     scope = document["scope"]
     assert scope["lot"]["bbl"] == study["property"]["bbl"] == entry_bbl
@@ -199,11 +241,28 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     assert place_215["street"] in front_row["statement"]
     assert f"{float(place_215['value']):g}" in front_row["statement"]
 
-    # The golden allowance equals the benchmark pack's recorded value, not a new number.
+    # The golden allowance equals the benchmark pack's recorded value, not a new number, and now
+    # carries its way-layer: the shown floor-area value is conditional (M5-T136).
     allowance = document["answers"]["floor_area_allowance"]
     assert allowance["status"] == "available"
     area = next(v for v in allowance["values"] if v["key"] == "max_residential_floor_area")
     assert area["value"] == _benchmark_value("max_residential_floor_area") == 20150
+    assert allowance["value_states"]["max_residential_floor_area"]["way"] == "conditional"
+
+    # The three-way honesty on the benchmark: coverage and the rear yard are withheld (no value
+    # object, a withheld way entry), the building option is a whole not-available answer, and the
+    # estimate block is reserved. These are the ways the M5-T136 transform emits; the expected
+    # outcomes come from the reference cases (docs/reference-cases/R6B), never the saved output.
+    envelope = document["answers"]["permitted_envelope"]
+    assert all(v["key"] != "max_lot_coverage" for v in envelope["values"])
+    assert envelope["value_states"]["max_lot_coverage"]["way"] == "withheld"
+    assert envelope["value_states"]["rear_yard"]["way"] == "withheld"
+    assert document["answers"]["building_option"]["status"] == "not_available"
+    assert document["unit_estimate"]["status"] == "not_available"
+    assert document["unit_estimate"]["reason"].startswith("Not known")
+    # No withheld result carries a number anywhere in the emitted document.
+    assert document["geometry"]["yards"]["status"] == "not_available"
+    assert "not_required" not in json.dumps(document["geometry"]["yards"])
 
     # 6. EXPORTS from the SAME document object. The scope label and the front-lot-line
     # assumption statement appear on the site-plan SVG and in the results DXF notes.

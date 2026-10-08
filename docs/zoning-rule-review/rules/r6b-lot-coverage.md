@@ -8,7 +8,7 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Family: residential_lot_coverage
 - Rule version: 0.1.0-draft
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 1 (last changed 2026-10-06)
+- Revision: 2 (last changed 2026-10-08)
 
 ## Law
 
@@ -29,7 +29,7 @@ R6B districts, standard lots, keyed by lot type (corner, interior or through).
 
 ## How the program reads it
 
-The program reports the maximum residential lot coverage from ZR 23-362(a): 100 percent on a corner lot, 80 percent on an interior or through lot. R6B inherits ZR 23-362 through the suffix provision ZR 11-25.
+The program reports the maximum residential lot coverage from ZR 23-362(a): 100 percent on a corner lot, 80 percent on an interior or through lot. R6B inherits ZR 23-362 through the suffix provision ZR 11-25. In the results document's three-way form (M5-T136) a corner lot whose recorded outline reaches beyond 100 feet of a street line (as the benchmark lot does) has no single whole-lot coverage figure, so coverage is carried as withheld (not known) there rather than shown as a percentage.
 
 ## Example
 

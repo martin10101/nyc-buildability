@@ -8,7 +8,7 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Family: residential_rear_yard_corner_waiver
 - Rule version: 0.1.0-draft
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 1 (last changed 2026-10-06)
+- Revision: 2 (last changed 2026-10-08)
 
 ## Law
 
@@ -28,7 +28,7 @@ R6B districts, for the rear-yard waiver near a corner: whether a point is within
 
 ## How the program reads it
 
-The program reports that no rear yard is required within 100 feet of the point where two street lines meet at 135 degrees or less (ZR 23-344(a)); within that area the required rear yard is 0. R6B inherits ZR 23-344 through the suffix provision ZR 11-25.
+The program reports that no rear yard is required within 100 feet of the point where two street lines meet at 135 degrees or less (ZR 23-344(a)); within that area the required rear yard is 0. R6B inherits ZR 23-344 through the suffix provision ZR 11-25. In the results document's three-way form (M5-T136) the rear yard is carried as a value-state: on the benchmark lot, where a commercial overlay is recorded, it is withheld (not known) pending an independent reading of the overlay rear-yard rule, and the rear-yard drawing note follows the withheld result rather than stating that no rear yard is required.
 
 ## Example
 

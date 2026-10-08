@@ -2116,7 +2116,7 @@
         "The qualifying-affordable-housing dividend uses a different floor-area basis that the program sends for professional review.",
         "A special district sends the result for professional review."
       ],
-      "interpretation": "The program divides the maximum residential floor area by the dwelling-unit factor of 680 (ZR 23-52(b)) to get a dwelling-unit count, then rounds: a remaining fraction of three-quarters or more counts as one unit, otherwise it is dropped. R6B inherits ZR 23-52 through the suffix provision ZR 11-25.",
+      "interpretation": "The program divides the maximum residential floor area by the dwelling-unit factor of 680 (ZR 23-52(b)) to get a dwelling-unit count, then rounds: a remaining fraction of three-quarters or more counts as one unit, otherwise it is dropped. R6B inherits ZR 23-52 through the suffix provision ZR 11-25. In the results document's three-way form (M5-T136) this legal dwelling-unit limit is carried beside the floor-area answer as a value-state: it is shown with its formula when the lot's special-density-area answer is given, and withheld (not known) otherwise; the preliminary apartment-capacity estimate is kept as a separate reserved block that carries no legal figure.",
       "example": {
         "description": "A made-up R6B case: a 5,000 sq ft lot with 10,000 sq ft of residential floor area (not a real address).",
         "inputs": {
@@ -2179,8 +2179,8 @@
         },
         "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 1,
-      "last_changed": "2026-10-06",
+      "revision": 2,
+      "last_changed": "2026-10-08",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -2356,7 +2356,7 @@
         "Special rules for parts of interior or through lots are not captured.",
         "A commercial overlay is not captured, and a special district sends the result for professional review."
       ],
-      "interpretation": "The program reports the maximum residential lot coverage from ZR 23-362(a): 100 percent on a corner lot, 80 percent on an interior or through lot. R6B inherits ZR 23-362 through the suffix provision ZR 11-25.",
+      "interpretation": "The program reports the maximum residential lot coverage from ZR 23-362(a): 100 percent on a corner lot, 80 percent on an interior or through lot. R6B inherits ZR 23-362 through the suffix provision ZR 11-25. In the results document's three-way form (M5-T136) a corner lot whose recorded outline reaches beyond 100 feet of a street line (as the benchmark lot does) has no single whole-lot coverage figure, so coverage is carried as withheld (not known) there rather than shown as a percentage.",
       "example": {
         "description": "A made-up interior R6B lot with no overlay and no special district (not a real address).",
         "inputs": {
@@ -2416,8 +2416,8 @@
         },
         "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 1,
-      "last_changed": "2026-10-06",
+      "revision": 2,
+      "last_changed": "2026-10-08",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -2580,7 +2580,7 @@
         "The waiver only covers the area within 100 feet of the intersection; it says nothing about the rest of the lot.",
         "A commercial overlay is not captured, and a special district sends the result for professional review."
       ],
-      "interpretation": "The program reports that no rear yard is required within 100 feet of the point where two street lines meet at 135 degrees or less (ZR 23-344(a)); within that area the required rear yard is 0. R6B inherits ZR 23-344 through the suffix provision ZR 11-25.",
+      "interpretation": "The program reports that no rear yard is required within 100 feet of the point where two street lines meet at 135 degrees or less (ZR 23-344(a)); within that area the required rear yard is 0. R6B inherits ZR 23-344 through the suffix provision ZR 11-25. In the results document's three-way form (M5-T136) the rear yard is carried as a value-state: on the benchmark lot, where a commercial overlay is recorded, it is withheld (not known) pending an independent reading of the overlay rear-yard rule, and the rear-yard drawing note follows the withheld result rather than stating that no rear yard is required.",
       "example": {
         "description": "A made-up R6B corner lot where two street lines meet at about 89.7 degrees, a point within 100 feet of that corner (not a real address).",
         "inputs": {
@@ -2642,8 +2642,8 @@
         },
         "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 1,
-      "last_changed": "2026-10-06",
+      "revision": 2,
+      "last_changed": "2026-10-08",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -2872,6 +2872,33 @@
       "event": "created",
       "summary": "Backfilled into the register from the rule file, the captured law text and the tests.",
       "by": "backfill"
+    },
+    {
+      "seq": 24,
+      "date": "2026-10-08",
+      "entry_id": "r6b-dwelling-units",
+      "revision": 2,
+      "event": "implementation_changed",
+      "summary": "The results document's three-way form carries the legal dwelling-unit limit as a value-state and reserves the apartment-capacity estimate block (M5-T136); the rule's reading of the law is unchanged.",
+      "by": "rules-engineer (M5-T136)"
+    },
+    {
+      "seq": 25,
+      "date": "2026-10-08",
+      "entry_id": "r6b-lot-coverage",
+      "revision": 2,
+      "event": "implementation_changed",
+      "summary": "The results document's three-way form withholds coverage where a corner lot reaches beyond the 100-foot corner portion (M5-T136); the rule's reading of the law is unchanged.",
+      "by": "rules-engineer (M5-T136)"
+    },
+    {
+      "seq": 26,
+      "date": "2026-10-08",
+      "entry_id": "r6b-rear-yard-corner-waiver",
+      "revision": 2,
+      "event": "implementation_changed",
+      "summary": "The results document's three-way form carries the rear yard as a withheld value-state on the benchmark lot and makes the drawing note follow it (M5-T136); the rule's reading of the law is unchanged.",
+      "by": "rules-engineer (M5-T136)"
     }
   ]
 }

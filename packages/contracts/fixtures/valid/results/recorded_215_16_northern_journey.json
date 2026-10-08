@@ -1,5 +1,5 @@
 {
-  "contract_version": "1.2.0",
+  "contract_version": "1.3.0",
   "results_id": "res-215-16-northern-journey",
   "study_id": "study-215-16-northern-journey",
   "option_id": "opt-test",
@@ -96,6 +96,99 @@
       "measurement": {
         "rank": "approximate_tax_map",
         "label": "Approximate — tax map"
+      },
+      "value_states": {
+        "max_residential_far": {
+          "way": "conditional",
+          "conditions": [
+            {
+              "kind": "contradicted_record",
+              "assumption": "If the recorded lot area of 10,075 sq ft is confirmed (the recorded figure and the tax-map outline area of 10,387.99 sq ft disagree; neither is chosen automatically)",
+              "settled_by": "A survey, or deed dimensions, naming the document"
+            },
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
+              "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
+            }
+          ]
+        },
+        "max_residential_floor_area": {
+          "way": "conditional",
+          "conditions": [
+            {
+              "kind": "contradicted_record",
+              "assumption": "If the recorded lot area of 10,075 sq ft is confirmed (the recorded figure and the tax-map outline area of 10,387.99 sq ft disagree; neither is chosen automatically)",
+              "settled_by": "A survey, or deed dimensions, naming the document"
+            },
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
+              "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
+            }
+          ]
+        },
+        "max_residential_far_qualifying_affordable_or_senior": {
+          "way": "conditional",
+          "conditions": [
+            {
+              "kind": "contradicted_record",
+              "assumption": "If the recorded lot area of 10,075 sq ft is confirmed (the recorded figure and the tax-map outline area of 10,387.99 sq ft disagree; neither is chosen automatically)",
+              "settled_by": "A survey, or deed dimensions, naming the document"
+            },
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
+              "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
+            }
+          ]
+        },
+        "max_residential_floor_area_qualifying_affordable_or_senior": {
+          "way": "conditional",
+          "conditions": [
+            {
+              "kind": "contradicted_record",
+              "assumption": "If the recorded lot area of 10,075 sq ft is confirmed (the recorded figure and the tax-map outline area of 10,387.99 sq ft disagree; neither is chosen automatically)",
+              "settled_by": "A survey, or deed dimensions, naming the document"
+            },
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
+              "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
+            }
+          ]
+        },
+        "legal_unit_limit_standard": {
+          "way": "withheld",
+          "label": "Legal dwelling-unit limit, standard residences (new all-residential building)",
+          "reason": "There is no evidence of whether this lot is in a special density area, where the dwelling-unit formula does not apply, and how the legal dwelling-unit limit is shown once that is known has not been worked out and checked against an independently worked example, so the legal dwelling-unit limit is not known; a user's statement that the lot is not in a special density area would show it only as a conditional result.",
+          "gap_kind": "work_owed",
+          "resolved_by": "Working out how the legal dwelling-unit limit is shown from sourced evidence of the special density area and checking it against an independently worked example; a user's statement that the lot is not in a special density area would show it as a conditional result.",
+          "zr_sections": [
+            "ZR 23-52",
+            "ZR 12-10"
+          ]
+        },
+        "legal_unit_limit_qualifying_affordable": {
+          "way": "withheld",
+          "label": "Legal dwelling-unit limit, qualifying affordable housing",
+          "reason": "The program does not work out the legal dwelling-unit limit for qualifying affordable housing yet, so it is not known.",
+          "gap_kind": "work_owed",
+          "resolved_by": "Connecting the rule for qualifying affordable housing and checking it against an independently worked example.",
+          "zr_sections": [
+            "ZR 23-52"
+          ]
+        },
+        "legal_unit_limit_qualifying_senior": {
+          "way": "withheld",
+          "label": "Legal dwelling-unit limit, qualifying senior housing",
+          "reason": "The dwelling-unit formula sets no factor for qualifying senior housing (ZR 23-52(a)(2)), so this formula gives no unit limit for it; whether any other provision limits the number of units has not been checked, so the legal dwelling-unit limit for it is not known: it is not set by this formula.",
+          "gap_kind": "work_owed",
+          "resolved_by": "Checking whether any other provision limits the number of units for qualifying senior housing and checking the result against an independently worked example.",
+          "zr_sections": [
+            "ZR 23-52"
+          ]
+        }
       }
     },
     "permitted_envelope": {
@@ -196,132 +289,113 @@
             }
           ],
           "exception_label": null
-        },
-        {
-          "key": "max_lot_coverage",
-          "label": "Maximum lot coverage",
-          "value": 100.0,
-          "unit": "percent",
-          "zr_sections": [
-            "ZR 23-362",
-            "ZR 11-25"
-          ],
-          "sources": [
-            {
-              "kind": "rule_table",
-              "ref": "r6b-lot-coverage@0.1.0-draft"
-            }
-          ],
-          "exception_label": null
         }
       ],
       "measurement": {
         "rank": "approximate_tax_map",
         "label": "Approximate — tax map"
+      },
+      "value_states": {
+        "min_base_height": {
+          "way": "conditional",
+          "conditions": [
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
+              "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
+            }
+          ]
+        },
+        "max_base_height": {
+          "way": "conditional",
+          "conditions": [
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
+              "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
+            }
+          ]
+        },
+        "max_building_height": {
+          "way": "conditional",
+          "conditions": [
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
+              "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
+            }
+          ]
+        },
+        "min_base_height_qualifying_affordable_or_senior": {
+          "way": "conditional",
+          "conditions": [
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
+              "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
+            }
+          ]
+        },
+        "max_base_height_qualifying_affordable_or_senior": {
+          "way": "conditional",
+          "conditions": [
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
+              "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
+            }
+          ]
+        },
+        "max_building_height_qualifying_affordable_or_senior": {
+          "way": "conditional",
+          "conditions": [
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
+              "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
+            }
+          ]
+        },
+        "max_lot_coverage": {
+          "way": "withheld",
+          "label": "Maximum lot coverage",
+          "reason": "The lot reaches 103.93 ft from the 215 Place street line, beyond the corner-lot portion (the part within 100 ft of each intersecting street line), so there is no single whole-lot coverage figure: the near part is a corner-lot portion and the strip beyond is an interior-lot portion.",
+          "gap_kind": "work_owed",
+          "resolved_by": "Computing coverage per portion (the corner-lot portion and the remaining interior-lot portion).",
+          "zr_sections": [
+            "ZR 23-362",
+            "ZR 12-10"
+          ]
+        },
+        "rear_yard": {
+          "way": "withheld",
+          "label": "Rear yard",
+          "reason": "This lot has a recorded commercial overlay (C2-2); an independent reading of the commercial-overlay rear-yard rule for an all-residential building is owed before this result may be shown.",
+          "gap_kind": "work_owed",
+          "resolved_by": "An independent reading of the Article III sections that govern a residential building in a commercial overlay, checked against an independently worked example.",
+          "zr_sections": [
+            "ZR 34-23",
+            "ZR 23-344"
+          ]
+        },
+        "setback_above_base": {
+          "way": "withheld",
+          "label": "Setback above the base",
+          "reason": "The program does not work out the setback above the base (ZR 23-433) yet, so it is not covered; the envelope drawing and any floor above the base height wait for it.",
+          "gap_kind": "work_owed",
+          "resolved_by": "Working out the ZR 23-433 setback rule and checking it against an independently worked example.",
+          "zr_sections": [
+            "ZR 23-433"
+          ]
+        }
       }
     },
     "building_option": {
-      "status": "available",
-      "values": [
-        {
-          "key": "achieved_zoning_floor_area",
-          "label": "Achieved zoning floor area (building option)",
-          "value": 20150.0,
-          "unit": "square_feet",
-          "zr_sections": [
-            "ZR 23-22"
-          ],
-          "sources": [
-            {
-              "kind": "zoning_resolution",
-              "ref": "ZR 23-22"
-            }
-          ],
-          "exception_label": null
-        },
-        {
-          "key": "building_floors",
-          "label": "Floors (building option)",
-          "value": 2.0,
-          "unit": "stories",
-          "zr_sections": [
-            "ZR 23-432",
-            "ZR 23-22"
-          ],
-          "sources": [
-            {
-              "kind": "zoning_resolution",
-              "ref": "ZR 23-432"
-            }
-          ],
-          "exception_label": null
-        },
-        {
-          "key": "building_height",
-          "label": "Building height (building option)",
-          "value": 20.0,
-          "unit": "feet",
-          "zr_sections": [
-            "ZR 23-432"
-          ],
-          "sources": [
-            {
-              "kind": "zoning_resolution",
-              "ref": "ZR 23-432"
-            }
-          ],
-          "exception_label": null
-        },
-        {
-          "key": "floor_plate_area",
-          "label": "Floor plate (building option)",
-          "value": 10075.0,
-          "unit": "square_feet",
-          "zr_sections": [
-            "ZR 23-362",
-            "ZR 11-25"
-          ],
-          "sources": [
-            {
-              "kind": "zoning_resolution",
-              "ref": "ZR 23-362"
-            }
-          ],
-          "exception_label": null
-        }
-      ],
-      "measurement": {
-        "rank": "assumed",
-        "label": "Assumed"
-      },
-      "notes": [
-        {
-          "text": "Built height 20 ft is below the 30 ft minimum base height. No captured provision requires the building to rise to it: the setback rule (ZR 23-432, ZR 23-433) applies only to street-wall portions above the 45 ft maximum base height; where a street wall must extend to the minimum base height (ZR 23-431 (b)/(c)) it extends to the building height when that is lower (\"whichever is less\"); the R6B line-up rule (ZR 23-431 (a)) states no minimum height. Draft reading of the captured text (snapshots zr-23-431, zr-23-432, zr-23-433); which paragraph of ZR 23-431 governs this lot and the legal effect wait for qualified review.",
-          "kind": "minimum_base_height",
-          "computed_from": [
-            "building_height",
-            "min_base_height",
-            "max_base_height"
-          ],
-          "values": {
-            "building_height": 20.0,
-            "min_base_height": 30.0,
-            "max_base_height": 45.0
-          },
-          "zr_sections": [
-            "ZR 23-431",
-            "ZR 23-432",
-            "ZR 23-433"
-          ],
-          "snapshot_ids": [
-            "zr-23-431",
-            "zr-23-432",
-            "zr-23-433"
-          ],
-          "draft": true,
-          "register": "draft reading of the captured text"
-        }
-      ]
+      "status": "not_available",
+      "reason": "Every value of this answer is withheld: No building option is shown yet: the building option is below the minimum base height and has not been checked against an independently worked example, and its footprint needs the rear yard, which is not settled.",
+      "reason_kind": "rule_not_implemented",
+      "gap_kind": "work_owed",
+      "resolved_by": "Working out the building-option generator and checking it against an independently worked example."
     }
   },
   "remaining_floor_area": {
@@ -330,7 +404,9 @@
     "reason_kind": "missing_input"
   },
   "shortfall": {
-    "status": "none"
+    "status": "not_available",
+    "reason": "The gap to the allowance is not known: it is worked out from the building option, which is not known for this lot.",
+    "reason_kind": "rule_not_implemented"
   },
   "addon_gains": [
     {
@@ -343,10 +419,9 @@
         "A development containing qualifying affordable housing (ZR 23-22, ZR 23-432) - a separate legal determination this app does not make."
       ],
       "gain": {
-        "status": "available",
-        "floor_area_sf": 4030.0,
-        "height_ft": 10.0,
-        "floors": 1
+        "status": "not_available",
+        "reason": "This gain is not known: it is worked out from building options, which are not known for this lot.",
+        "reason_kind": "rule_not_implemented"
       }
     },
     {
@@ -359,10 +434,9 @@
         "A development containing qualifying senior housing (ZR 23-22, ZR 23-432) - a separate legal determination this app does not make."
       ],
       "gain": {
-        "status": "available",
-        "floor_area_sf": 4030.0,
-        "height_ft": 10.0,
-        "floors": 1
+        "status": "not_available",
+        "reason": "This gain is not known: it is worked out from building options, which are not known for this lot.",
+        "reason_kind": "rule_not_implemented"
       }
     },
     {
@@ -427,37 +501,9 @@
     }
   ],
   "best_combination": {
-    "status": "available",
-    "goal": {
-      "kind": "most_residential_floor_area",
-      "text": null
-    },
-    "selected_addon_ids": [
-      "qualifying_affordable_housing"
-    ],
-    "excluded": [
-      {
-        "addon_id": "qualifying_senior_housing",
-        "reason": "Conflicts with 'Qualifying affordable housing (City of Yes)' (both set housing_program); only one applies."
-      },
-      {
-        "addon_id": "community_facility_floor_area",
-        "reason": "No reviewed Lane A rule for 'Community-facility floor area' in this slice (task A-12); not a guessed number."
-      },
-      {
-        "addon_id": "choice_of_bulk_rules",
-        "reason": "No reviewed Lane A rule for 'Choice of bulk rules (Quality Housing vs height factor)' in this slice (task A-12); not a guessed number."
-      },
-      {
-        "addon_id": "ground_floor_commercial",
-        "reason": "No reviewed Lane A rule for 'Ground-floor commercial space' in this slice (task A-12); not a guessed number."
-      },
-      {
-        "addon_id": "certification_transfer",
-        "reason": "No reviewed Lane A rule for 'Transfer by certification (e.g. from a nearby landmark)' in this slice (task A-12); not a guessed number."
-      }
-    ],
-    "goal_value_sf": 24180.0
+    "status": "not_available",
+    "reason": "The best combination is not known: it is worked out from building options, which are not known for this lot.",
+    "reason_kind": "rule_not_implemented"
   },
   "completeness_line": {
     "text": "Not yet covered: Community-facility floor area, Choice of bulk rules (Quality Housing vs height factor), Ground-floor commercial space, Transfer by certification (e.g. from a nearby landmark), A neighbor's unused floor area (estimate; needs an agreement), Approval with a text maximum ('up to X with approval').",
@@ -482,65 +528,11 @@
     }
   ],
   "notices_count": 1,
-  "floor_by_floor": [
-    {
-      "floor": 1,
-      "floor_label": "Ground floor",
-      "gross_sf": 10075.0,
-      "deductions_sf": 0.0,
-      "zoning_floor_area_sf": 10075.0,
-      "height_ft": 10.0,
-      "use": "residential"
-    },
-    {
-      "floor": 2,
-      "floor_label": "Floor 2",
-      "gross_sf": 10075.0,
-      "deductions_sf": 0.0,
-      "zoning_floor_area_sf": 10075.0,
-      "height_ft": 10.0,
-      "use": "residential"
-    }
-  ],
+  "floor_by_floor": [],
   "floor_stack": {
-    "status": "available",
-    "floors_fit": 5,
-    "height_limit_ft": 55.0,
-    "levels": [
-      {
-        "floor": 1,
-        "floor_to_floor_ft": 10.0,
-        "top_of_floor_ft": 10.0,
-        "allowable_area_sf": 10075.0
-      },
-      {
-        "floor": 2,
-        "floor_to_floor_ft": 10.0,
-        "top_of_floor_ft": 20.0,
-        "allowable_area_sf": 10075.0
-      },
-      {
-        "floor": 3,
-        "floor_to_floor_ft": 10.0,
-        "top_of_floor_ft": 30.0,
-        "allowable_area_sf": 10075.0
-      },
-      {
-        "floor": 4,
-        "floor_to_floor_ft": 10.0,
-        "top_of_floor_ft": 40.0,
-        "allowable_area_sf": 10075.0
-      },
-      {
-        "floor": 5,
-        "floor_to_floor_ft": 10.0,
-        "top_of_floor_ft": 50.0,
-        "allowable_area_sf": 10075.0
-      }
-    ],
-    "zr_sections": [
-      "ZR 23-432"
-    ]
+    "status": "not_available",
+    "reason": "The floor stack is not known: it is worked out from the building option and the lot coverage, and neither is known for this lot.",
+    "reason_kind": "rule_not_implemented"
   },
   "existing_building": {
     "status": "not_available",
@@ -548,19 +540,9 @@
     "reason_kind": "missing_input"
   },
   "unit_estimate": {
-    "status": "available",
-    "value": 29,
-    "formula": "20,150 ÷ 680 = 29.63",
-    "factor": {
-      "value": 680.0,
-      "unit": "square_feet_per_dwelling_unit"
-    },
-    "rounding_rule": "rounds up only at .75 or more",
-    "zr_sections": [
-      "ZR 23-52",
-      "ZR 23-52(b)",
-      "ZR 11-25"
-    ]
+    "status": "not_available",
+    "reason": "Not known. The Preliminary capacity estimate (a practical estimate of how many apartments might fit) is not built yet.",
+    "reason_kind": "rule_not_implemented"
   },
   "geometry": {
     "status": "available",
@@ -596,18 +578,9 @@
     ],
     "streets": [],
     "yards": {
-      "status": "available",
-      "entries": [
-        {
-          "kind": "rear",
-          "status": "not_required",
-          "reason": "No rear yard is required within 100 ft of the corner (two street lines intersecting at 135 degrees or less).",
-          "zr_sections": [
-            "ZR 23-344(a)",
-            "ZR 11-25"
-          ]
-        }
-      ]
+      "status": "not_available",
+      "reason": "This lot has a recorded commercial overlay (C2-2); an independent reading of the commercial-overlay rear-yard rule for an all-residential building is owed before this result may be shown.",
+      "reason_kind": "rule_not_implemented"
     },
     "setback_lines_per_level": {
       "status": "not_available",
@@ -615,100 +588,14 @@
       "reason_kind": "rule_not_implemented"
     },
     "envelope": {
-      "status": "available",
-      "tiers": [
-        {
-          "bottom_ft": 0.0,
-          "top_ft": 55.0,
-          "outline": [
-            [
-              [
-                0.0,
-                0.0
-              ],
-              [
-                102.30303025815022,
-                0.0
-              ],
-              [
-                102.30303025815022,
-                98.48193132282462
-              ],
-              [
-                0.0,
-                98.48193132282462
-              ],
-              [
-                0.0,
-                0.0
-              ]
-            ]
-          ]
-        }
-      ]
+      "status": "not_available",
+      "reason": "The lot reaches 103.93 ft from the 215 Place street line, beyond the corner-lot portion (the part within 100 ft of each intersecting street line), so there is no single whole-lot coverage figure: the near part is a corner-lot portion and the strip beyond is an interior-lot portion.",
+      "reason_kind": "rule_not_implemented"
     },
     "floor_plates": {
-      "status": "available",
-      "entries": [
-        {
-          "floor": 1,
-          "outline": [
-            [
-              [
-                0.0,
-                0.0
-              ],
-              [
-                102.30303025815022,
-                0.0
-              ],
-              [
-                102.30303025815022,
-                98.48193132282462
-              ],
-              [
-                0.0,
-                98.48193132282462
-              ],
-              [
-                0.0,
-                0.0
-              ]
-            ]
-          ],
-          "gross_sf": 10075.0,
-          "use": "residential"
-        },
-        {
-          "floor": 2,
-          "outline": [
-            [
-              [
-                0.0,
-                0.0
-              ],
-              [
-                102.30303025815022,
-                0.0
-              ],
-              [
-                102.30303025815022,
-                98.48193132282462
-              ],
-              [
-                0.0,
-                98.48193132282462
-              ],
-              [
-                0.0,
-                0.0
-              ]
-            ]
-          ],
-          "gross_sf": 10075.0,
-          "use": "residential"
-        }
-      ]
+      "status": "not_available",
+      "reason": "No building option is shown yet: the building option is below the minimum base height and has not been checked against an independently worked example, and its footprint needs the rear yard, which is not settled.",
+      "reason_kind": "rule_not_implemented"
     }
   },
   "rule_versions": [
