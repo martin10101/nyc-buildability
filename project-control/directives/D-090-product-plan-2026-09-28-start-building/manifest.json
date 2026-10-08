@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-08T18:43:36+00:00",
+ "updated_at": "2026-10-08T23:23:07+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -657,10 +657,14 @@
   "D-090-R633",
   "D-090-R634",
   "D-090-R635",
-  "D-090-R636"
+  "D-090-R636",
+  "D-090-R637",
+  "D-090-R638",
+  "D-090-R639",
+  "D-090-R640"
  ],
- "requirements_id_digest_sha256": "27deb608a30ea65d08a8d7e56a1f74c367a3800cc82958f3ac829988ce7f5398",
- "requirements_content_digest_sha256": "0880832f74d77cabbcffd547653df30878fe431b88412bcd63452f0e148d98e2",
+ "requirements_id_digest_sha256": "ef998e36448ee46aa2ac117357e281d229c1902bcab5244f9122ca2b74b04226",
+ "requirements_content_digest_sha256": "9fec348ed8eed6c33601c254d31f2bf13781a017133f67feec51910352167ce7",
  "sources": [
   {
    "file": "source-001.md",
@@ -1164,6 +1168,14 @@
    "recorded_at": "2026-10-08T18:43:36+00:00",
    "content_digest_sha256": "2bcc3b152a98c5a246379591155d3a3be7b307d115580455e216b06f1c94fc68",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-064-amendment.md",
+   "kind": "amendment",
+   "sequence": 64,
+   "recorded_at": "2026-10-08T23:23:07+00:00",
+   "content_digest_sha256": "2d34fb08e190e1f229da6d02d2f65dcde901a7d84c835aa50c17872024250d8f",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1228,7 +1240,8 @@
   "source-060-amendment.md",
   "source-061-amendment.md",
   "source-062-amendment.md",
-  "source-063-amendment.md"
+  "source-063-amendment.md",
+  "source-064-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1888,6 +1901,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T141 to R630 (the request reader's fault) via applicability.task_ids at the row's creation; the task's provisional verification row extended by that row (pending); requirements content digest resynced in the same commit; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-08T23:23:07+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-064 (session 013RaGmC: the owner's answer to the orchestrator's question and message 125, 2026-10-08: two lines of the coding rules may be changed; focused local tests, full-suite and security checks in CI for the exact code, independent review and merge protections stay) and requirements D-090-R637 to R640, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
