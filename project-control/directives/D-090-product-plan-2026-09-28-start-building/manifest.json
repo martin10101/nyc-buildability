@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-08T01:35:00+00:00",
+ "updated_at": "2026-10-08T03:57:05+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -588,7 +588,7 @@
   "D-090-R564"
  ],
  "requirements_id_digest_sha256": "60b693c3aba831459421ce26fbcec3621ca5292351c2799288331d17d40928eb",
- "requirements_content_digest_sha256": "63cba9e95c2887a6f53688ffdbeadbf21ea825e7382594373f7e3a24f0eccacf",
+ "requirements_content_digest_sha256": "444a33204fe8125dd132dc698d49c91f6af2745d87c96b766efa107f29bbbab5",
  "sources": [
   {
    "file": "source-001.md",
@@ -1146,7 +1146,9 @@
   "M4-T034",
   "M5-T134",
   "M4-T035",
-  "M0-T188"
+  "M0-T188",
+  "M4-T036",
+  "M5-T135"
  ],
  "affected_prs": [
   262,
@@ -1679,6 +1681,18 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M0-T188 (Repair the ledger seal: refuse pattern allowed_paths (literal-only), with CI catch, grandfather allowlist and look-back) to R557 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-08T03:57:04+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M4-T036 (DB-188 law-text captures (groups 1-6): source text only) to R291, R517, R526 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-08T03:57:05+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T135 (Bring the measurement-basis record up to date (owner decisions, captured mixed-building and energy texts, questions of law)) to R513, R516, R519, R534, R539, R540, R541, R542, R543, R544, R545 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }

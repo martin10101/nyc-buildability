@@ -1,0 +1,153 @@
+{
+  "task_id": "M4-T036",
+  "title": "Capture, as official NYC Zoning Resolution source text only, the law texts the two independent step-P5 readings named as not had (backlog DB-188): the Article III Chapter 3 commercial and community-facility floor-area-ratio sections that ZR 35-31 points to for a C1 or C2 district mapped within a residence district; the three sub-sections of ZR 23-24; the by-transit-zone dwelling-unit parking amounts and the commercial parking waivers; the mass-transit-station definitions of ZR 66-11 and the transit-zone maps of Appendix I; the parking reduction and removal sections 73-432, 73-433, 74-52 and 75-31; and the Use Group tables that give the parking (and, where the site carries it, loading) requirement category of a local retail shop and the common community facilities - adding capture files only, re-fetching no existing capture, reading nothing for any lot and drawing no conclusion (DB-188; D-090 R291, R517, R526).",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Capture, as source text only, the official NYC Zoning Resolution texts that the two independent step-P5 readings named as not had (backlog row DB-188), each in a file of its own under docs/research/zr-snapshots/v1/ in the exact form of the existing captures (model files: docs/research/zr-snapshots/v1/zr-35-31.snapshot.json, zr-25-221.snapshot.json, and the table capture zr-23-434.snapshot.json), with the byte-identical synced copy under services/api/app/_zr_snapshots/v1/ produced by services/api/scripts/sync_zr_snapshots.py. This is an AI builder's capture, not a professional or legal review. SOURCE TEXT ONLY: no statement of what any text means for any lot, no verdict on whether a reading is right, no rule, reference case, register entry, record or result changed. The section numbers and addresses below were read from the official site on 2026-10-08 by the orchestrator's drafting agent and are a LEAD; the builder re-reads each page itself and reports the number, title and page the site shows, and where the site differs it says so. STEP 1 - CONFIRM: start in an isolated worktree, show-toplevel guard (STOP if primary checkout), git reset --hard to the claim-seam head; re-fetch each target page from zoningresolution.planning.nyc.gov only (one request per page, a pause between requests; do NOT fetch any utm_source-tagged link); for each target record the section number, the title as printed, whether the page is a heading-only parent or a leaf, and whether it holds a table. STEP 2 - CAPTURE: write one capture file per section, run the sync script to copy each into services/api/app/_zr_snapshots/v1/, then write the report. CHANNEL RULE (the accepted M4-T031/T033/T034 method): the authoritative, sha256-and-byte-pinned channel is the section's own canonical HTML field--name-body (record raw_html_sha256 and response_bytes); the section's own print/PDF render (HTTP 200) is used ONLY as a text check (cross_check) and its PDF bytes are NOT pinned (the portal regenerates the PDF per request - M4-T025 F4 / DB-167). FALLBACK: for a very large page where the whole-page print/PDF times out (HTTP 504) or a per-term PDF is blocked (HTTP 403) - the documented DB-167 fallback, seen for the \u00a712-10 page - the HTML stays authoritative and the capture discloses that the PDF glyph cross-check was unavailable; where pdftotext drops styled table cells (seen for zr-36-21) the HTML is authoritative and the capture discloses the partial cross-check. TABLES ARE CAPTURED CELL BY CELL from the HTML into the table/tables block whose shape matches zr-23-434 (caption/columns/header_structure/row_count/rows; cells with text/header/colspan/rowspan). DIGEST RULE: pin raw_html_sha256 and response_bytes for the HTML channel and record content_digest_sha256; do not pin the PDF sha256. THE TARGETS (addresses are 2026-10-08 leads; the builder confirms each): GROUP (1) Article III, Chapter 3 - the maximum floor area ratio of commercial and community-facility uses in commercial districts that ZR 35-31 (existing capture zr-35-31) points to, as far as a C1 or C2 district mapped within a residence district needs it: 33-10 'FLOOR AREA REGULATIONS' (/article-iii/chapter-3/33-10, heading-only); 33-11 'Definitions' (node 17720); 33-12 'Maximum Floor Area Ratio' (node 17721, parent - confirm heading-only vs. intro body, capture the child list); 33-121 'In districts with bulk governed by Residence District bulk regulations' (node 17722 - THIS is the C1/C2-mapped-within-a-residence-district FAR, holds a table); 33-122 'Commercial buildings in all other Commercial Districts' (node 17723, table); 33-123 'Community facility buildings or buildings used for both community facility and commercial uses in all other Commercial Districts' (node 17724, table). (33-124 'Existing public amenities for which floor area bonuses have been received' node 17725, and the bonus sections 33-13/33-14/33-15, are listed in the report as found-not-captured.) GROUP (2) the three sub-sections of ZR 23-24 (the header zr-23-24 is already captured; its children carry the provisions): 23-241 'Special tower provisions'; 23-242 'Special provisions for certain community districts'; 23-243 'Existing public amenities for which floor area bonuses have been received' (all under /article-ii/chapter-3; the builder records each node id). GROUP (3) the AMOUNT of dwelling-unit parking by transit zone (Article II, Chapter 5) and the commercial parking waivers (Article III, Chapter 6): 25-212 'Existing parking requirements in the Inner Transit Zone' (node 22797, table); 25-22 'Required Parking in the Outer Transit Zone' (node 17544, heading-only); 25-222 'Requirements for developments or enlargements in the Outer Transit Zone' (node 22799, table); 25-23 'Required Parking Beyond the Greater Transit Zone' (node 22800, heading-only); 25-232 'Requirements for developments or enlargements beyond the Greater Transit Zone' (node 22801, table); 36-23 'Waiver of Requirements for Spaces Below Minimum Number' (node 17905) - this is a HEADING-ONLY parent whose waiver provisions live in its children 36-231 'In districts with high, medium or low parking requirements', 36-232 'In districts with very low parking requirements' and 36-233 'Exceptions to application of waiver provisions': capture the 36-23 header (with its child list) AND each child the site shows; 36-24 'Waiver of Requirements for All Zoning Lots Where Access Would Be Forbidden' (node 17909, leaf); 36-25 'Waiver for Certain Small Zoning Lots or Establishments' (node 17912, leaf); 36-30 'REQUIRED ACCESSORY OFF-STREET PARKING SPACES FOR RESIDENCES WHEN PERMITTED IN COMMERCIAL DISTRICTS' (node 17913) - it IS a page of its own (DB-188 asked), heading-only; its child 36-31 is already captured (zr-36-31), so capture only the 36-30 header with its child list. GROUP (4) the mass-transit-station definitions and the transit zones: 66-11 'Definitions' (/article-vi/chapter-6/66-11, node 21928) which defines 'mass transit station' - the builder also searches, three ways, for 'select mass transit station' and reports whether 66-11 or \u00a712-10 defines it; and APPENDIX I (/appendix-i, node 21238, Last Amended 11/21/2024) - the builder MUST say in the report and the capture what form Appendix I takes on the site: it is a list of FIFTEEN transit-zone MAP IMAGES (PNG/JPG, Maps 1-15) plus ONE textual boundary paragraph ('The boundaries shown on the maps in this APPENDIX include: all of Manhattan Community Districts 9, 10, 11 and 12; all of Bronx Community Districts 1, 2, 4, 5, 6 and 7; and all of Brooklyn Community Districts 1, 2, 3, 4, 6, 7, 8, 9 and 16'). Capture the textual paragraph verbatim and the list of the fifteen maps (their captions and image URLs); state explicitly that the transit-zone BOUNDARIES themselves are map images that CANNOT be captured as text, so a lot's 'Inner/Outer/Greater Transit Zone' value is a recorded value, not a reading (the ZR 12-10 transit-zone definitions also route the boundary to the Department of City Planning's ZoLa 'Transit Zones Parking Geographies' layer, with the text controlling on conflict). GROUP (5) the reductions and removals of required parking the parking texts point to: 73-432 'Reduction of existing parking spaces for income-restricted housing units' (node 18852, parent 73-43 'Reduction of Parking Spaces'); 73-433 'Reduction of existing parking spaces for qualifying senior housing' (node 18853); 74-52 'Special Permit to Remove Required Parking' (/article-vii/chapter-4/74-52, parent 74-50 'OFF-STREET PARKING ESTABLISHMENTS'); 75-31 'Authorization to Remove Required Parking' (/article-vii/chapter-5/75-31, parent 75-30 'PARKING AUTHORIZATIONS'). GROUP (6) the Use Group tables, the SMALLEST set that gives the parking (and, where present, loading) requirement category of (i) a local retail shop and (ii) the common community facilities: 32-161 'Use Group VI - general use allowances' (/article-iii/chapter-2/32-161, node 22487, Last Amended 6/6/2024 - two tables 'USE GROUP VI - RETAIL TRADE ESTABLISHMENTS' and 'USE GROUP VI - SERVICE ESTABLISHMENTS', about fifty-plus use rows, columns Uses (NAICS) | C1 C2 C3 C4 C5 C6 C7 C8 | PRC) for the local retail shop; 32-131 'Use Group III - general use allowances' (/article-iii/chapter-2/32-131, node 22456 - two tables A and B, about twenty use rows, columns Uses | C1..C8 | PRC) for the common community facilities (houses of worship, schools, libraries, ambulatory health-care). Today's reads show the Use Group tables carry a PRC (Parking Requirement Category) column but NO loading requirement category column; the builder confirms by reading and the report states exactly whether any loading category appears in the use tables, and points to the existing captures that hold the rest: the PRC letter-to-ratio tables are in 36-21 (existing zr-36-21) and the required loading berths are in 36-62 (existing zr-36-62). HOW TO HANDLE A MISSING OR MOVED NUMBER: where a section number named above is not on the site or has moved, report exactly what was searched and what the site shows and capture NOTHING under a guessed number. THE REPORT (project-control/reports/M4-T036-producer-report.md): per target, found-or-not with the searches, the section number and title the site shows, the page address, whether the page is heading-only or a leaf, whether it holds a table, the channel used and the capture id; the full list of every NEW capture and, for each, what it itself points to that is still not captured; every self-check command with its DIRECT exit code. THE REPORT-SENTENCE RULE (the lesson of M4-T034, whose G4 failed on two report sentences that said more than the text - 'the Inner Transit Zone requires no residential parking at all' overstated 25-211, and 73-432 was mis-attributed to 25-231): every sentence of the report that says what a section REQUIRES or ALLOWS must be borne out WORD FOR WORD by the captured text (quote it), or the report says only 'captured'; no paraphrase that adds, drops or shifts a condition; no verdict on any lot. NOT IN THIS TASK: reading these captures into the R6B reference cases (a later task with two independent readings); the facts about neighbouring lots (DB-188 point 6 - the lot-line types of the lots adjoining the benchmark lot and the block's dimensions under ZR 23-344(b) and (c)); Local Law 154 of 2021 and the energy code (DB-188 point 7 - external to the Zoning Resolution; the two ZR energy definitions were already captured by M4-T034, which recorded that Local Law 154 is an external statute).",
+  "business_reason": "The owner's step 3 (D-090 R291) is not finished while answers of the R6B reference cases wait for law text nobody has captured: the two independent step-P5 readings (M4-T035) each left reference rows 'not known' and listed, in backlog row DB-188, exactly these missing texts - the commercial/community-facility FAR behind a mixed building, the special-area sub-sections of 23-24, the amount of dwelling-unit parking by transit zone, the waivers and reductions, the mass-transit and transit-zone definitions, and the use-group parking/loading categories of a shop and a community facility. The owner's rule is that a statement of law is checked at its official source before a record changes (R517) and that no option is shown as feasible while parking, loading and bicycle requirements are unresolved (R526). Capturing these texts is the first, source-only half; the independent reading of them follows in a later task.",
+  "inputs": [
+    "docs/DISCOVERY_BACKLOG.md (row DB-188: the texts and facts the two step-P5 readings named as not had)",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-11.md and return-independent-hand-calculation-12.md (the two step-P5 readings, each at the row that lists what it did not have)",
+    "docs/reference-cases/R6B/cases/step-p5-worked.json (row sections-and-facts-not-had)",
+    "project-control/reports/M4-T035-producer-report.md (the step-P5 reading builder's report)",
+    "docs/research/zr-snapshots/v1/ (the existing captures: the file form, the fields, the digests, which targets are already there; model files zr-35-31.snapshot.json, zr-25-221.snapshot.json, zr-23-434.snapshot.json, zr-23-432.snapshot.json) and project-control/reports/M4-T034-producer-report.md (how the last captures were made, the channels, the limits disclosed, and the node ids it already found for 25-212/222/232, 36-23/24/25, 73-432/433/74-52)",
+    "services/api/scripts/sync_zr_snapshots.py and services/api/tests/rules/test_zr_snapshot_bundle.py",
+    "The official site zoningresolution.planning.nyc.gov (the only source)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R291, R517, R526"
+  ],
+  "outputs": [
+    "New capture files under docs/research/zr-snapshots/v1/ and their byte-identical synced copies under services/api/app/_zr_snapshots/v1/",
+    "project-control/reports/M4-T036-producer-report.md: per target found-or-not with the searches, the section number and title the site shows, the page address, heading-only vs leaf, whether it holds a table, the channel and the capture id; what each new capture itself still points to that is not captured; the Appendix I form statement; every self-check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M4-T034",
+    "M4-T035"
+  ],
+  "allowed_paths": [
+    "docs/research/zr-snapshots/v1",
+    "services/api/app/_zr_snapshots/v1",
+    "project-control/reports/M4-T036-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "every EXISTING capture file (none is edited or re-fetched in place) - including zr-23-24, zr-35-30/31/32/33, zr-36-21, zr-36-31, zr-36-62, zr-36-64 and zr-25-211/221/231",
+    "services/api/tests/rules/test_zr_snapshot_bundle.py (NOT edited: it discovers captures by directory glob and names no capture id, so adding files needs no change to it)",
+    "docs/reference-cases/**, docs/zoning-rule-review/**, docs/plans/**, docs/measurement-basis/**",
+    "services/api/app/** except the synced copies under services/api/app/_zr_snapshots/v1/; every test",
+    "apps/**; packages/**; .github/**; CLAUDE.md; .claude/**; tools/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "group1_article_iii_chapter_3_far_captured",
+      "input": "the Article III Chapter 3 FAR sections 33-10, 33-11, 33-12, 33-121, 33-122, 33-123",
+      "expected": "each is captured in a file of its own or the report says exactly what was searched and what the site shows; 33-121 is identified as the FAR for a C1 or C2 district mapped within a residence district; the FAR tables (33-121/122/123) are captured cell by cell; a heading-only page (33-10, and 33-12 if heading-only) holds its child list; no verdict about any lot"
+    },
+    {
+      "id": "S2",
+      "case": "group2_subsections_of_23_24_captured",
+      "input": "23-241, 23-242, 23-243",
+      "expected": "each child of 23-24 is captured in its own file with the title the site shows; the existing header capture zr-23-24 is NOT edited or re-fetched"
+    },
+    {
+      "id": "S3",
+      "case": "group3_parking_amounts_and_waivers_captured",
+      "input": "25-212, 25-22, 25-222, 25-23, 25-232 and 36-23 (with its children 36-231/232/233), 36-24, 36-25, 36-30",
+      "expected": "the amount sections 25-212/222/232 are captured with their tables cell by cell; the heading-only parents 25-22, 25-23, 36-23 and 36-30 hold their child lists; the waiver provisions of 36-23 are captured in its children; 36-24 and 36-25 are captured; 36-30's already-captured child 36-31 is not duplicated; nothing says what a requirement means for any lot"
+    },
+    {
+      "id": "S4",
+      "case": "group4_transit_definitions_and_appendix_i_form",
+      "input": "66-11 and Appendix I",
+      "expected": "66-11 is captured with the 'mass transit station' definition and the report states whether 'select mass transit station' is defined in 66-11 or \u00a712-10 (three-way search shown); Appendix I is captured as far as it is text (the one boundary paragraph verbatim and the list of the fifteen map images with captions and URLs) and the capture AND report state explicitly that the transit-zone boundaries are map images that cannot be captured as text, so a lot's transit-zone value is a recorded value, not a reading"
+    },
+    {
+      "id": "S5",
+      "case": "group5_parking_reductions_and_removals_captured",
+      "input": "73-432, 73-433, 74-52, 75-31",
+      "expected": "each is captured in its own file with the title the site shows (73-432 income-restricted; 73-433 qualifying senior; 74-52 special permit; 75-31 authorization); no verdict on when a reduction applies to any lot"
+    },
+    {
+      "id": "S6",
+      "case": "group6_use_group_parking_loading_categories_captured",
+      "input": "32-161 (Use Group VI, retail) and 32-131 (Use Group III, community facilities)",
+      "expected": "both are captured cell by cell from the HTML; the report names the columns the site shows and states exactly whether the use tables carry a loading requirement category column; where they do not, the report points to the existing captures that hold the PRC letter-to-ratio tables (zr-36-21) and the required loading berths (zr-36-62); the smallest set that answers (i) a local retail shop and (ii) the common community facilities, with the page's table/row size recorded"
+    },
+    {
+      "id": "S7",
+      "case": "every_capture_equals_the_official_page",
+      "input": "each new capture and the official page it came from",
+      "expected": "the verbatim text equals the official page's text for that section or article, whole, and every table cell by cell; raw_html_sha256 and response_bytes are pinned and content_digest_sha256 recorded; a reviewer re-fetching the page finds the same digest and byte count and the same words; a disclosed limit where a channel did not answer"
+    },
+    {
+      "id": "S8",
+      "case": "no_existing_capture_changed",
+      "input": "git show --name-status of the builder's commit",
+      "expected": "only ADDED files under docs/research/zr-snapshots/v1/ and services/api/app/_zr_snapshots/v1/ plus the producer report (modified from its seeded placeholder); no existing capture modified or re-fetched in place; the bundle test not edited"
+    },
+    {
+      "id": "S9",
+      "case": "synced_copies_byte_identical",
+      "input": "python scripts/sync_zr_snapshots.py --check and the bundle test",
+      "expected": "sync --check exits 0 (the app/_zr_snapshots/v1 copies are byte-identical to the docs source, same membership) and tests/rules/test_zr_snapshot_bundle.py passes"
+    },
+    {
+      "id": "S10",
+      "case": "report_sentences_borne_out_word_for_word",
+      "input": "every sentence of the producer report that says what a section requires or allows",
+      "expected": "each such sentence quotes the captured text word for word, or the report says only 'captured'; no paraphrase adds, drops or shifts a condition (the M4-T034 F1/F2 lesson: no 'requires no parking at all' overstatement, no reduction section attributed to a section whose text does not name it); no verdict about any lot"
+    },
+    {
+      "id": "S11",
+      "case": "a_named_section_that_does_not_exist_as_named",
+      "input": "any section number from the objective that the site does not show at that number or that has moved",
+      "expected": "the report says exactly what was searched and what the site shows at or near that number, and nothing is captured under a guessed number"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A section number taken from DB-188 or the draft addresses instead of found on the site -> the targets are named by what they are and the addresses are 2026-10-08 leads; the builder re-reads each page and reports the number/title the site shows (S11).",
+    "Appendix I captured as if it were text when it is fifteen map images -> S4 requires the capture and report to say the maps are images and cannot be captured as text, and that a transit-zone value is a recorded value, not a reading.",
+    "A heading-only page (33-10, 25-22, 25-23, 36-23, 36-30) captured as if it held provisions -> header pages hold only the child list; the provisions are in the children (36-23 -> 36-231/232/233) (S1, S3).",
+    "The report overstating what a section requires or allows (the M4-T034 G4 failure) -> S10 and the word-for-word report-sentence rule.",
+    "A large table page's styled cells dropped by pdftotext (seen for zr-36-21) -> the HTML is authoritative, tables are captured cell by cell, and the partial cross-check is disclosed (S6, S7).",
+    "A capture duplicating an already-captured section (zr-23-24, zr-36-31, zr-36-21, zr-36-62) -> the objective and forbidden_paths name the existing captures; only new sections are added (S8)."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T03:57:02.876435+00:00",
+  "updated_at": "2026-10-08T03:57:03.294184+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R291",
+        "D-090-R517",
+        "D-090-R526"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T03:57:02.876611+00:00",
+  "path_notes": "PRODUCER = legal-corpus-engineer in an isolated worktree (show-toplevel guard; git reset --hard to the claim-seam head first). ALLOWED PATHS name the two capture FOLDERS literally (docs/research/zr-snapshots/v1 and services/api/app/_zr_snapshots/v1) plus the producer report, because the registry builds a task's content identity from literal paths and both folders already hold tracked files (156 captures each), so G0 does not fail on zero tracked files and no per-file seeding is needed; the new capture files land inside the named folders. The bundle test services/api/tests/rules/test_zr_snapshot_bundle.py is NOT in allowed paths: reading it today confirms it discovers captures by a directory glob (*.snapshot.json) and names no capture id, so adding files needs no edit to it. MODULARITY: no handwritten production source changes; data files only (the modularity check passes trivially). Everything else is read-only. PART OF PARALLEL WAVE 8 with the other task of the wave (M4-T036, M5-T135): the two share no file (project-control/reports/WAVE8-2026-10-08-concurrency-record.md). ALLOWED PATHS are literal files or literal folders: the registry builds a task's content identity from literal paths only and a pattern binds nothing (backlog row DB-181); a file a builder adds beyond them is added literally by the orchestrator when it integrates it.",
+  "documented_test_commands": [
+    "cd services/api && /root/project/lanes-runtime/venv/bin/python -m ruff check .",
+    "cd services/api && /root/project/lanes-runtime/venv/bin/python scripts/sync_zr_snapshots.py --check",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/rules/test_zr_snapshot_bundle.py",
+    "python3 scripts/lanes/check_lane_paths.py --coverage   (from the repository root)",
+    "/root/project/lanes-runtime/venv/bin/python tools/modularity_check.py --check   (from the repository root; data-only, expected to pass)",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ],
+  "worktree": "/root/project/w-wave8"
+}
