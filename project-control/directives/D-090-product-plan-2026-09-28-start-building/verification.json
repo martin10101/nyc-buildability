@@ -2429,78 +2429,134 @@
     "D-090-R545"
    ],
    "producer": "scenario-optimization-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "d7af908133c709223edc52fb90bfc2cf0051f7a7",
+   "reviewed_manifest_sha256": "b25ce3302982631124170c819e4eb7dcdd0164312a46de55eb04080d8ee19087",
    "requirements": [
     {
      "id": "D-090-R513",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Record section 6 (lines 344-362) states shared floor area as \"a required calculation, not a switch and not an optional allowance (R513)\", quotes ZR 23-20 verbatim with digest 0685a2e4\u2026, says it \"does not necessarily increase the residential figure\", and leaves a missing-area result \"not known\"/conditional.",
+      "I read each capture file: digests cited for zr-23-20, zr-35-30/31/32/33, zr-12-10-mixed-building all equal the file's content_digest_sha256, and each quoted sentence (markup stripped) is a verbatim substring of its verbatim_excerpt; test_every_new_law_quote_stands_in_its_capture passes.",
+      "The row still binds M5-T133, M4-T034, M4-T035 (the capture/read work); it stays pending in the registry for the whole directive, this task satisfying only the record's statement of the rule.",
+      "Verifier's carry-forward condition met at d7af9081: the task's allowed-path files are identical to those verified at 6645a320 (content identity b25ce330), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T135-DCV.md."
+     ],
+     "reviewed_sha": "d7af908133c709223edc52fb90bfc2cf0051f7a7"
     },
     {
      "id": "D-090-R516",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Section 1d (lines 176-224) states eligibility from captures: fully-electrified = a building existing 12/6/2023 (so a new building cannot be one, digest 2ea4afe2\u2026), ultra-low-energy provisional at plan approval and confirmed post-construction (8a1d6418\u2026), wall exclusion = thickness added to an existing building not new ordinary walls (119324c8\u2026), energy exclusion 15 of zr-12-10-floor-area (e14ecafc\u2026) \u2014 all digests verified equal to the capture files.",
+      "It says a user statement \"supports only a conditional result; it never establishes eligibility\", there is no general \"confirm it applies\" switch, no example takes the energy exclusion, and Local Law 154 / the energy code are named not-captured (DB-188 item 7).",
+      "The row also binds M5-T133/M4-T034/M4-T035 for the capture work and stays pending registry-wide.",
+      "Verifier's carry-forward condition met at d7af9081: the task's allowed-path files are identical to those verified at 6645a320 (content identity b25ce330), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T135-DCV.md."
+     ],
+     "reviewed_sha": "d7af908133c709223edc52fb90bfc2cf0051f7a7"
     },
     {
      "id": "D-090-R519",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Section 8c (lines 550-580) states floors above R6B's 45-ft maximum base height are set back and smaller, cites the ZR 23-432 table and ZR 23-433 setback, and labels a floors\u00d7floorplate count an assumption; the diff shows 8c body unchanged by this task.",
+      "What this task added is section 8a item 3 (line 491-492): the owner's 10/15-ft floor heights are \"subject to the actual building envelope\" and \"not a licence to count equal floors above the maximum base height (R519, section 8c)\"; examples B and C assumption-notes call equal floors an assumption.",
+      "The part this task cannot satisfy \u2014 the program computing the actual setback \u2014 is still open (8c says \"The program does not work out the setback yet\"); that is engine work beyond this document task and the row stays pending for it.",
+      "Verifier's carry-forward condition met at d7af9081: the task's allowed-path files are identical to those verified at 6645a320 (content identity b25ce330), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T135-DCV.md."
+     ],
+     "reviewed_sha": "d7af908133c709223edc52fb90bfc2cf0051f7a7"
     },
     {
      "id": "D-090-R534",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "M5-T135 is a contracted ledger packet (producer scenario-optimization-engineer); gate records G3 (data-contract-verifier) and G4 (qa-engineer) are PASS at one content identity (content_manifest_sha256 b25ce330\u2026), both agents different from the producer; producer \u2260 verifier holds.",
+      "Example C's two now-false statements were corrected: a correct JSON diff of example-c vs claim head shows exactly two changed string fields (what_it_does_not_show[1], shared_floor_area.conditional_note) plus an added dated change_log[2]; all 141 numeric values identical (ratio 0.6828, 98.32/21.68 unchanged).",
+      "Section 8 keeps the owner's choices (8a) apart from the questions of law (8b), its intro stating law is \"never put to the owner as a preference\"; R534's other sub-corrections are shared with prior tasks and stay pending registry-wide.",
+      "Verifier's carry-forward condition met at d7af9081: the task's allowed-path files are identical to those verified at 6645a320 (content identity b25ce330), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T135-DCV.md."
+     ],
+     "reviewed_sha": "d7af908133c709223edc52fb90bfc2cf0051f7a7"
     },
     {
      "id": "D-090-R539",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Section 8a (lines 469-474) records the choices as DECIDED BY THE OWNER on 2026-10-07 and quotes \"approved as preliminary, editable assumptions.\"; I confirmed this fragment is a byte-exact substring of source-057-amendment.md and of the record (whitespace-normalised for wrapping).",
+      "The intro and section 7 call the starting values \"preliminary, editable assumptions\"; test_section_8a_records_the_owners_decisions requires the needle and the R539 id and passes.",
+      "The row also binds D-090-BOOTSTRAP and stays pending registry-wide pending this verification being recorded.",
+      "Verifier's carry-forward condition met at d7af9081: the task's allowed-path files are identical to those verified at 6645a320 (content identity b25ce330), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T135-DCV.md."
+     ],
+     "reviewed_sha": "d7af908133c709223edc52fb90bfc2cf0051f7a7"
     },
     {
      "id": "D-090-R540",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Section 8a item 1 (lines 476-480) quotes \"Use 0.60\u20130.75 as an unvalidated sensitivity range.\" with the U+2013 en-dash preserved (byte-exact vs source-057) and carries it as unvalidated, editable, \"never a validated or expected range\".",
+      "T1 requires \"0.60 to 0.75\" and \"unvalidated sensitivity range\"; the record states them and no sentence calls the range realistic/expected/validated (grep of every \"validate\" occurrence \u2014 all are denials).",
+      "Non-blocking NOTE (reviewers' G3-F1): the intro and section 7 keep a legacy \"25 percent allowance\" shorthand not in the owner's words; it is labelled an unvalidated assumption, does not inflate the approval, and is a pre-existing phrase this task did not introduce \u2014 it does not defeat this row's share, which is stated correctly in 8a.",
+      "Verifier's carry-forward condition met at d7af9081: the task's allowed-path files are identical to those verified at 6645a320 (content identity b25ce330), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T135-DCV.md."
+     ],
+     "reviewed_sha": "d7af908133c709223edc52fb90bfc2cf0051f7a7"
     },
     {
      "id": "D-090-R541",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Section 8a item 2 (lines 482-486) quotes \"Use 700 sq ft as the chosen starting apartment size, on the HPD measurement basis.\" (byte-exact vs source-057), editable and \"not a measured or typical average\".",
+      "T1 requires \"700 sq ft\" and \"hpd measurement basis\"; the G4 mutation 700\u2192750 fails the test, which I reproduced as passing at the head.",
+      "The row also binds BOOTSTRAP and stays pending registry-wide.",
+      "Verifier's carry-forward condition met at d7af9081: the task's allowed-path files are identical to those verified at 6645a320 (content identity b25ce330), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T135-DCV.md."
+     ],
+     "reviewed_sha": "d7af908133c709223edc52fb90bfc2cf0051f7a7"
     },
     {
      "id": "D-090-R542",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Section 8a item 3 (lines 488-492) quotes \"Use 10 ft residential floors and 15 ft shop ground floors as starting assumptions.\" (byte-exact), editable and subject to the building envelope.",
+      "T1 requires both floor heights and the R542 id; the test passes at the head.",
+      "The row ties forward to R519/8c (covered above) and stays pending registry-wide.",
+      "Verifier's carry-forward condition met at d7af9081: the task's allowed-path files are identical to those verified at 6645a320 (content identity b25ce330), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T135-DCV.md."
+     ],
+     "reviewed_sha": "d7af908133c709223edc52fb90bfc2cf0051f7a7"
     },
     {
      "id": "D-090-R543",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Section 8a item 4 (lines 494-499) quotes the owner's sentence with both curly-quoted labels \"Not known\" and \"Preliminary capacity estimate.\" (U+201C/U+201D preserved, byte-exact vs source-057).",
+      "T1 requires both labels as the owner words them; the G4 mutation to \"capacity figure\" fails it.",
+      "No screen is built by this document task, so the display behaviour the row also describes stays open for the estimator/UI work; the row stays pending registry-wide.",
+      "Verifier's carry-forward condition met at d7af9081: the task's allowed-path files are identical to those verified at 6645a320 (content identity b25ce330), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T135-DCV.md."
+     ],
+     "reviewed_sha": "d7af908133c709223edc52fb90bfc2cf0051f7a7"
     },
     {
      "id": "D-090-R544",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Sections 4 (lines 293-299), 5 (lines 326-331) and 8a (lines 506-511) quote \"Use the residential floor area the proposed building actually accommodates.\" and \"Keep the legal ceiling separate.\" (both byte-exact vs source-057); the formula is unchanged (no numeric edit in the record diff).",
+      "test_legal_cap_is_separate_and_recomputes and test_mixed_use_uses_the_residential_portion_only pass; T1 requires the R544 id.",
+      "The row also binds BOOTSTRAP and stays pending registry-wide.",
+      "Verifier's carry-forward condition met at d7af9081: the task's allowed-path files are identical to those verified at 6645a320 (content identity b25ce330), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T135-DCV.md."
+     ],
+     "reviewed_sha": "d7af908133c709223edc52fb90bfc2cf0051f7a7"
     },
     {
      "id": "D-090-R545",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The record states in the intro (line 22-23), section 7 (line 452) and 8a (lines 472-474) that the owner's approval \"validates neither the assumptions nor the worked examples\" and quotes \"This approval does not validate the assumptions or the worked examples.\" (byte-exact).",
+      "I grepped every \"validate\" occurrence in the record and in all three example JSONs: each is a denial; no sentence says or implies the approval validates a value or example.",
+      "LIMIT (reviewers' G4-F2, which I confirm): T1 asserts the no-validation sentence is present, not that a contradicting sentence is absent; the delivered record holds no contradicting sentence, so this is a non-blocking robustness gap, not a violation \u2014 a backlog item.",
+      "Verifier's carry-forward condition met at d7af9081: the task's allowed-path files are identical to those verified at 6645a320 (content identity b25ce330), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer scenario-optimization-engineer is neither). DCV report: project-control/reports/M5-T135-DCV.md."
+     ],
+     "reviewed_sha": "d7af908133c709223edc52fb90bfc2cf0051f7a7"
     }
-   ]
+   ],
+   "verified_at": "2026-10-08T05:28:36+00:00"
   }
  ]
 }
