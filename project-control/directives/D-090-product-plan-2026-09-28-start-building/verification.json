@@ -2357,18 +2357,26 @@
     "D-090-R557"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "891d034d20d92d4177610944450fee98b7e7a449",
+   "reviewed_manifest_sha256": "f347be2e9f6598d3a94ac5a2ea660f31634a065b723d8d469ea54318feb282c9",
    "requirements": [
     {
      "id": "D-090-R557",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "A repair task IS contracted and built: packet project-control/tasks/M0-T188.json (task_type governance); gates G0 PASS (orchestrator, administrative), G2 PASS (orchestrator, self_check), G3/G4 PASS (code-reviewer), G5 PASS (security-reviewer); G2\u2013G5 all carry the one content identity f347be2e9f65\u2026; the two review records M0-T188-G3G4.md and M0-T188-G5.md each hold two returns (reading 1 at ccc3f0ae, reading 2 at eb83be8d), both PASS, no reading failed.",
+      "The repair does what it says: I drove tools/directive_registry.py:pattern_allowed_paths(1379) myself \u2014 a literal file, a literal folder, and a plain not-yet-existing path pass; a/**, a/*.py, a/{b,c}.py, leading ':', absolute, '..', backslash, non-list value and non-string entry are all refused; the tracked [documentId] route passes; a mixed list names only the pattern entry; the guard is wired at project_control.py claim(:910)/submit(:566)/accept(:602) and validator c18(:334), exempting the frozen map per (task,entry).",
+      "Nothing accepted breaks / no old record rewritten: validate_directive_compliance.py --check exited 0 (direct); tools/test_ledger_seal_literal_paths.py = 9 passed; the net diff claim-head\u2192HEAD has ZERO deletions in all three tool files, so the identity algorithm, GIT_LITERAL_PATHSPECS, the empty-identity guard and c17 are byte-unchanged, and I recomputed the live task identity at HEAD = f347be2e (= the gates' manifest, err None); the two material commits touch only the 7 allowed paths.",
+      "Defect stays tracked / interim rule enforced: backlog row DB-181 is OPEN at this head; my own sweep of every task packet reproduces PATTERN_ALLOWED_PATHS_GRANDFATHERED exactly (91 tasks / 249 pairs, zero discrepancy, zero new offender outside it); the three wave-7 packets (M0-T188, M5-T134, M4-T035) carry zero non-binding entries, and c18 + the CLI guards enforce literal naming for any later packet.",
+      "What stays open: R557 is NOT closed by this task alone \u2014 the owner required DB-181 stay OPEN until repaired, and the reports/evidence map state plainly that the 12 in-flight listed tasks keep non-binding entries until accepted or made literal, a plain path that never comes to exist still binds nothing (caught by the unchanged empty-identity guard), and nothing was run on Windows.",
+      "Verifier's carry-forward condition met at 891d034d: the task's allowed-path files are identical to those verified at 4b3048fc (content identity f347be2e), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4, G5 PASS at that content identity (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer backend-engineer is neither). DCV report: project-control/reports/M0-T188-DCV.md."
+     ],
+     "reviewed_sha": "891d034d20d92d4177610944450fee98b7e7a449"
     }
-   ]
+   ],
+   "verified_at": "2026-10-08T03:25:40+00:00"
   }
  ]
 }

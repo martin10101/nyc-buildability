@@ -137,8 +137,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The detector false-flags a legitimate literal bracket route -> S9 and the explicit rule: flag only '*', '?', or a leading ':'; never '[' / ']' alone; the one tracked bracket route is a test",
     "The refusal retroactively breaks an already-contracted pattern-carrying task's lifecycle (77 accepted + 11 in-flight) -> the frozen grandfather allowlist built from the look-back exempts exactly those ids; S10 proves validate --check stays exit 0",
@@ -148,7 +148,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T01:34:58.731195+00:00",
-  "updated_at": "2026-10-08T03:12:39.504427+00:00",
+  "updated_at": "2026-10-08T03:25:41.745213+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -204,5 +204,7 @@
       "status": "in_progress",
       "message": "Both reviewers confirmed the correcting commit: G3 PASS, G4 PASS (code-reviewer) and G5 PASS (security-reviewer) at eb83be8d as a whole; every note of the first reading closed; freezing the existing entries of three further tasks judged right by both. The two commits integrated LAST of the wave as 23459ba3 and 816e4daa, after the two other tasks were submitted, gated and accepted with the unchanged tools. At the integration head: the seven files have the blob ids the reviewers passed; a fresh regeneration of the refused pairs of task and entry equals the frozen data (91 tasks, 249 pairs; no in-regime offending entry outside it; the three tasks of this wave have none); the registry validator exits 0 with the new check; the two focused test files: 34 passed. Evidence map written. Next: submit, producer self-check gate, the review gates, the rule check."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-08T03:25:41.745039+00:00"
 }
