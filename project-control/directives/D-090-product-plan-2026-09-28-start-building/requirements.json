@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 564,
+ "requirement_count": 566,
  "producer": "orchestrator",
- "updated_at": "2026-10-08T03:57:05+00:00",
+ "updated_at": "2026-10-08T04:51:17+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -19205,6 +19205,73 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-08 (message 114).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R565",
+   "text": "'/session-handoff': the session is handed over: the handoff file is written, checked by a different agent, put on a pull request and merged, and the next session's start prompt is printed. ORCHESTRATOR'S READING: the command carried no text, so no reason for the handover is recorded. It arrived while the next wave was in flight (one builder and two reviewers running): they finish their bounded work, their results are recorded, and no further helper is started for the work.",
+   "source_ref": "source-059-amendment.md#owner-message-115-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R500"
+   ],
+   "required_harness": "docs/SESSION_HANDOFF.md of the next sequence number is merged after an independent check, and the start prompt is printed.",
+   "required_evidence": "The handoff's pull request and its independent check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 115).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R566",
+   "text": "'/session-handoff': the handover follows the procedure as it stands. ORCHESTRATOR'S READING: the owner has not yet answered the proposal for lighter handoffs (rows R560 to R563), so this handover changes nothing in the procedure, in the instruction files or in what a handoff must hold; the one thing done differently lies inside the existing rules: the session does not end a turn while the handoff's checks run, it reads them by hand.",
+   "source_ref": "source-059-amendment.md#owner-message-115-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R560",
+    "D-090-R563"
+   ],
+   "required_harness": "No instruction file and no handoff requirement is changed by the handover; the time from the command to the printed start prompt is recorded in the handoff.",
+   "required_evidence": "The diff of the handoff's branch; the handoff file's time section.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 115).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
