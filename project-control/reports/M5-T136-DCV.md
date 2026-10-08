@@ -10,7 +10,7 @@ Required corrections, in the verifier's words: - None.
 Its carry-forward condition (item 4) is the rule for stamping this verdict at a later head; the orchestrator's script checks it at the live head before writing the verification row.
 What it could not check itself is its item 6.
 
-Transmission: the verifier's return arrived in one part, received 2026-10-08 08:43 UTC, ending with its own line END-OF-REPORT. It follows unchanged (copied from the session transcript by script).
+Transmission: the verifier's return arrived in one part, received 2026-10-08 08:41 UTC, ending with its own line END-OF-REPORT. It follows unchanged (copied from the session transcript by script).
 
 ---
 
