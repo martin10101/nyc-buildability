@@ -99,7 +99,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "the new parameter becomes a hidden default -> when it is not given the entry behaves exactly as today, pinned by scenario S4 and the unchanged journey result",
     "the transform changes a value or another line -> scenario S5 compares the two documents block by block",
@@ -107,7 +107,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T13:54:17.975356+00:00",
-  "updated_at": "2026-10-08T14:45:05.274093+00:00",
+  "updated_at": "2026-10-08T14:45:07.032958+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
