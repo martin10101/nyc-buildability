@@ -1,0 +1,214 @@
+{
+  "task_id": "M5-T137",
+  "title": "The five conditions of a lot that the older engine takes from its caller (a commercial overlay is present; a special purpose district is present; the whole lot lies within 100 ft of the corner point; the angle at which the two street lines meet; the lot lies in a special density area) come from the SAME evidence the decision step gathers, never from a typed-in value and never from the user as a fact; where the evidence is not known the engine is given a stand-in in the direction that withholds, no shown result ever rests on a stand-in, and the emitted document's scope lines say for each condition where it comes from (recorded, measured, the user's statement, or not known); the committed journey result and its saved drawings are regenerated through this path. It does NOT mount a route, does NOT touch the website's source, does NOT change the engine, the decision modules, the disclosure builder or any schema, and turns on NO switch. [the piece before the server route of work order Part A; owner rows R139, R229, R240, R241, R255, R256, R570, R582, R584, R588]",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "THE ENGINE'S FIVE CONDITIONS COME FROM EVIDENCE (the piece before the server route of docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, Part A). THE FACTS TODAY (read at head 42d85651 by a research helper and in part by the orchestrator; VERIFY EACH in the source before you rely on it). (1) build_three_answer_inputs (services/api/app/contracts/evaluator_inputs.py, about line 429) REQUIRES from its caller five plain values: overlay_present, special_district_present, within_100_ft_of_street_line_intersection, street_line_intersection_angle_degrees, special_density_area. NO code under services/api/app calls it; the tests type the five values in (for example tests/scenario/three_answers/test_three_answers_three_way_emit.py, about lines 118 to 126, and tests/journey/test_215_16_northern_journey.py). (2) The engine reads them in inputs.py (height, coverage, rear-yard and dwelling-unit inputs, about lines 180 to 215): special district present makes every rule ask for review, so the engine gives no height, coverage, rear yard or unit figure; within 100 ft together with an angle of 135 degrees or less makes the rear yard 'not required'; special density area makes the dwelling-unit rule not applicable; overlay present adds a note only. (3) The decision step gather_result_ways (result_way_bridge.py, about line 307) reads its OWN evidence and never the five values: the recorded commercial overlay and special purpose district of the property profile (result_way_facts.py, about lines 276 to 281: present, absent or not read), the reach and the corner angle measured from the prepared outline and the site geometry (a measured figure or unknown), and the user's statement about the density area. (4) So today the two halves of one document can disagree. On the committed journey result the test typed 'within 100 ft: yes' and 'angle 90', and its scope block says 'The lot is assumed to lie within 100 feet of a street-line intersection' and 'No special purpose district is assumed to apply; this run does not read the special-district layer', while the same document withholds the coverage and the rear yard BECAUSE the measured lot reaches 103.93 ft and 144.60 ft, and while the program does read the recorded special-district columns. Measured by the research helper: with the typed special-district value flipped, all six shown heights disappear; so today's shown heights rest on a typed-in value. (5) The scope lines are built by build_scope_inputs (services/api/app/contracts/engine_disclosures.py, about lines 273 to 391) from the typed values, always with basis 'assumed' for four of the five; it cross-checks overlay_present against the recorded overlay fact and fails closed when they disagree (about line 222). The schema's scope_assumption (packages/contracts/schemas/v1/results.schema.json, about lines 568 to 593) needs key, value, unit, basis, statement; value is a string, a number or a boolean and CANNOT be null; basis is one of assumed, entered, fixture, city_records, survey_entered, approximate_tax_map, default: there is no 'not known' basis. THE READINGS (the orchestrator's; marked as readings for the reviewers to confirm or correct, continuing the numbering). (O33) ONE NEW ENTRY THAT TAKES EVIDENCE, NOT CONDITIONS. Add an entry beside run_engine_and_result_ways that takes what the server holds (the evaluator-inputs document, the study document, the option's housing program, the design choices, the property profile, the prepared outline, the site geometry, the user's optional statement about the density area, the result's id and time) and (a) gathers the decision step's facts FIRST, (b) derives the five conditions from those SAME facts, (c) builds the engine's inputs with build_three_answer_inputs, runs the engine, decides the ways and emits the document. The existing entry run_engine_and_result_ways keeps its behaviour for a caller that already holds engine inputs. Propose the SMALLEST shape that passes the import guards (tests/scenario/three_answers/test_result_ways.py: which files may name the decision module; tests/spatial/test_lot_reach.py: who may import the reach module) and makes no import cycle; justify it in five lines in the report. (O34) THE DERIVATION, in ONE new focused module services/api/app/scenario/three_answers/engine_conditions.py that takes PLAIN states (it does not import the decision modules, so the guard's list need not grow for it) and returns, for each of the five, the value for the engine AND where it comes from. Overlay: recorded present -> yes; recorded absent -> no; not read -> not known. Special purpose district: the same three. Within 100 ft and the angle: from the measured reach from the corner point and the measured angle; no outline or geometry -> not known; a lot that is not a corner lot -> not applicable. READING TO CONFIRM FROM THE RULE AND THE MODULE, not from this sentence: the engine's one yes/no means 'the whole lot lies within 100 ft of the point where the two street lines meet' (work order gap K4; the comparison text of REAR_YARD_WAIVER_WITHIN_100_FT in result_way_inputs.py). Density area: there is no evidence source today; the user's statement, when given, is used AS A STATEMENT; no statement -> not known. (O35) A STAND-IN ONLY IN THE DIRECTION THAT WITHHOLDS. The engine cannot take 'not known', and the engine is not changed here. Where a condition is not known the engine is given a stand-in chosen so that the engine itself gives no figure for what depends on it (special district: present; density area: inside one; within 100 ft: no). For each stand-in, PROVE the direction from the rule file, not from this sentence, and say so in the report (a stand-in in the wrong direction is the defect this task exists to remove). THE INVARIANT, tested over every input state: NO SHOWN RESULT (settled or conditional) OF THE EMITTED DOCUMENT RESTS ON A STAND-IN; wherever the decision step shows a result, every condition that result reads is recorded, measured or the user's statement, and equals what the decision step itself used. If you find a state where the decision step shows a result while a condition it reads is not known, STOP and report it: do not paper over it in the transform and do not change the decision module. (O36) THE SCOPE LINES TELL THE TRUTH. In the emitted document the scope line of each of the five conditions says where it comes from, in plain words: recorded (basis city_records, naming what is recorded); measured from the tax-map outline (the basis the geometry's own rank gives, with the measured figure); the user's statement (basis entered, saying it is a statement and not a recorded fact); not known (the line says it is not known and why, names the stand-in the calculation used and says that every result that depends on it is withheld; its value is the stand-in and its basis 'assumed', because the schema has no other way and the schema is read-only here; READING for the reviewers). No scope line of an emitted document may say that the program does not read something it reads, and none may contradict a reason given elsewhere in the same document. THE ORCHESTRATOR'S RULING ON WHERE: the lines are rewritten by the transform (three_way_document.py) from the per-condition sources the new entry hands it; engine_disclosures.py and evaluator_inputs.py stay byte-identical. When the transform is called without the sources (the older entry) the scope lines stay as the engine made them. STEPS. STEP 1: the table of input states and the red proofs (see the builder's brief). STEP 2: engine_conditions.py and its tests. STEP 3: the new entry and the scope lines. STEP 4: regenerate the committed journey result THROUGH THE NEW ENTRY (no typed-in condition), then its saved DXF and its site-plan drawing by the repository's own way; the massing drawing stays absent; read each regenerated file line by line and report every line that changed and why. Expected on the benchmark lot, from docs/reference-cases/R6B/cases/corner-reach.json row real-lot-reach and real-lot.json (never from the program's saved output): the overlay recorded (C2-2); no special purpose district recorded; the lot NOT wholly within 100 ft of the corner point (it reaches 144.60 ft); the street lines meeting at about 89.7 degrees; no statement about the density area. The shown values (the floor-area figures and the six heights, all conditional) and the set of withheld results must NOT change; what changes is the scope lines, and whatever the engine listed only because of the typed values (for example a rule version): name each such change. STEP 5: repoint the journey test and the wiring test to the new entry. STEP 6: if the review-register entry r6b-rear-yard-corner-waiver describes how the waiver's two inputs are obtained, bring it in line through register.json and the renderer (docs/zoning-rule-review/GUIDE.md); no human verdict. TESTS: one per input state with a table 'state, outcome, test id'; every expected value from the reference cases; a red proof on today's code for the contradiction of fact (4); one mutation proof per stand-in (flip its direction: a test must fail) and per derivation branch; a guard over every text the transform writes. NOT IN THIS TASK: any route, mount or switch; any website SOURCE file (only three website test files may change, and only if the regenerated result makes them fail); the engine (engine.py, inputs.py, answers.py, geometry.py, building_option.py, dwelling_units.py, rule_access.py, scope.py), the decision modules (result_way_*.py except the adapter), engine_disclosures.py, evaluator_inputs.py; any schema, schema copy or generated type; any rule-table value; the reason of the benchmark's rear yard (backlog row DB-198 stays owed); a NEW way of saying 'not known' in the contract (backlog row DB-196).",
+  "business_reason": "The owner's rules: no fact about a lot is filled by a default or a guess; a fact that is not given withholds only what depends on it; what a user states supports only a conditional result; no value is applied without being shown; a withheld result shows no substitute (D-090 rows R229, R240, R255, R256, R570). The results document merged in wave 9 is honest about each result's way, but the older engine under it still takes five facts of the lot as typed-in values, and the document's scope lines repeat them as assumptions that contradict the document's own reasons. A server route cannot type them in and may not take them from the user as facts. This piece makes the five come from the evidence the program already gathers, so that the route (the next piece) and then the results screen (R582) can be built on a document that tells one story.",
+  "inputs": [
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md sections 0, 4, 5, 6, 7, 8 (Part 0 tests H5, H10; Part A), 10",
+    "services/api/app/contracts/evaluator_inputs.py (build_three_answer_inputs) and services/api/app/contracts/engine_disclosures.py (build_scope_inputs): READ ONLY",
+    "services/api/app/scenario/three_answers/inputs.py, engine.py, rule_access.py, scope.py and the rule files services/api/app/rules/rulesets/r6b_height.rule.json, r6b_lot_coverage.rule.json, r6b_rear_yard_corner_waiver.rule.json, r6b_dwelling_units.rule.json: READ ONLY (which result reads which condition, and in which direction)",
+    "services/api/app/scenario/three_answers/result_way_bridge.py, result_way_facts.py, result_way_inputs.py, result_ways.py, result_way_bridge_overlay.py: READ ONLY (the evidence and its states)",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py and three_way_document.py (the two files of the last piece that this one extends)",
+    "packages/contracts/schemas/v1/results.schema.json (scope, scope_assumption): READ ONLY",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py, test_wiring_emits_nothing.py, test_result_ways.py, test_result_way_bridge.py; services/api/tests/journey/test_215_16_northern_journey.py; services/api/tests/spatial/test_lot_reach.py (the second import guard)",
+    "docs/reference-cases/R6B/README.md and cases/real-lot.json, corner-reach.json, interior-lots.json, step-p5-worked.json",
+    "docs/DISCOVERY_BACKLOG.md rows DB-196, DB-198, DB-199",
+    "apps/web/src/components/architect/answers/ScopeSummary.tsx (READ ONLY) and the three website tests named in the allowed paths",
+    "docs/zoning-rule-review/GUIDE.md and rules/r6b-rear-yard-corner-waiver.md; services/api/app/rules/review_register/register.json",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-08c/return-research-route-conditions-part1.txt and -part2.txt (one research helper's facts; claims to verify, not proof)"
+  ],
+  "outputs": [
+    "services/api/app/scenario/three_answers/engine_conditions.py: the five conditions from plain evidence states, each with where it comes from; the stand-ins and their direction",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py: one new entry that takes evidence and emits the document; the older entry unchanged in behaviour",
+    "services/api/app/scenario/three_answers/three_way_document.py: the scope lines of the five conditions say where each comes from",
+    "services/api/tests/scenario/three_answers/test_engine_conditions.py (new) and the extended services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py, test_wiring_emits_nothing.py, services/api/tests/journey/test_215_16_northern_journey.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json regenerated through the new entry; its saved DXF and site-plan drawing regenerated",
+    "the review-register entry r6b-rear-yard-corner-waiver brought in line if it describes the inputs (no verdict)",
+    "project-control/reports/M5-T137-producer-report.md: the table of input states with test ids; the direction of each stand-in proved from its rule file; the shape of the new entry in five lines; every changed line of each regenerated file; every text written; the red and mutation proofs; every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M5-T134",
+    "M5-T136"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/engine_conditions.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/tests/scenario/three_answers/test_engine_conditions.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+    "services/api/tests/scenario/three_answers/test_result_ways.py",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "apps/web/src/components/architect/answers/__tests__/scope-summary.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "services/api/app/rules/review_register/register.json",
+    "docs/zoning-rule-review/REGISTER.md",
+    "docs/zoning-rule-review/HISTORY.md",
+    "docs/zoning-rule-review/rules/r6b-rear-yard-corner-waiver.md",
+    "project-control/reports/M5-T137-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "the engine: services/api/app/scenario/three_answers/engine.py, inputs.py, answers.py, geometry.py, building_option.py, dwelling_units.py, rule_access.py, scope.py: read only; engine.py never contains the text 'result_way'",
+    "the decision modules services/api/app/scenario/three_answers/result_ways.py, result_way_inputs.py, result_way_conditions.py, result_way_facts.py, result_way_bridge.py, result_way_bridge_overlay.py: read only",
+    "services/api/app/contracts/engine_disclosures.py and services/api/app/contracts/evaluator_inputs.py: read only (the orchestrator's ruling, reading O36)",
+    "packages/contracts/schemas/** and services/api/app/_contract_schemas/** and packages/contracts/generated/**: no change; every rule file: no change",
+    "any NEW results fixture; every other fixture and saved drawing: read only; the journey lot's massing drawing stays absent",
+    "apps/web: no source file; only the three named test files, and only if the regenerated result makes them fail (if any OTHER website file fails, STOP and report)",
+    "services/api/app/api/**, app/main.py, app/config.py: no route, no mount, no switch; render.yaml, CI files, dependency files, tools/**, .claude/**",
+    "project-control/** except the producer report; no human verdict in the review register"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "benchmark_conditions_come_from_evidence",
+      "input": "the benchmark lot (BBL 4073340070) assembled offline from the recorded replay pack, through the new entry, with no typed-in condition",
+      "expected": "the engine is given: overlay present (the recorded C2-2); no special purpose district (none recorded); NOT wholly within 100 ft of the corner point (the lot reaches 144.60 ft, corner-reach.json row real-lot-reach); the measured angle of about 89.7 degrees (step-p5-worked.json row benchmark-rear-yard-23-342-23-344, facts used); the density area not known (no statement); each with its source; expected values from the reference cases, never from the program's saved output"
+    },
+    {
+      "id": "S2",
+      "case": "shown_values_and_withheld_set_unchanged_on_the_benchmark",
+      "input": "the emitted benchmark document through the new entry, against the reference cases",
+      "expected": "the floor-area figures (ratios 2.0 and 2.4; 20,150 and 24,180 sq ft) and the six heights are shown as conditional exactly as before; the coverage, the rear yard, the setback, the building option and the three legal unit limits are withheld exactly as before; no number of a withheld result anywhere (the checks of the last piece still pass)"
+    },
+    {
+      "id": "S3",
+      "case": "scope_lines_say_where_each_condition_comes_from",
+      "input": "the scope block of the emitted benchmark document",
+      "expected": "the five lines say: the overlay is recorded; no special purpose district is recorded; the lot is not wholly within 100 ft of the corner point, with the measured reach; the measured angle; the density area is not known, with the stand-in the calculation used and that the legal unit limit is withheld; NO line says 'this run does not read'; no line contradicts a reason elsewhere in the document; RED PROOF: today's committed result says 'assumed to lie within 100 feet' while the same document's reasons give a reach of 144.60 ft"
+    },
+    {
+      "id": "S4",
+      "case": "recorded_special_district_withholds_everything_it_touches",
+      "input": "a made-up profile that records a special purpose district",
+      "expected": "the engine is given 'present' from the record; every result the decision step ties to it is withheld and names it (work order test H5); no height, coverage, rear yard or unit figure anywhere"
+    },
+    {
+      "id": "S5",
+      "case": "special_district_not_read_uses_a_withholding_stand_in",
+      "input": "a profile whose special-district columns were not read, and separately no profile at all",
+      "expected": "the condition is not known; the engine is given the stand-in 'present' (the direction proved from the rule files); every result that depends on it is withheld in the emitted document; the scope line says not known, names the stand-in and what it withholds; MUTATION PROOF: with the stand-in flipped a test fails"
+    },
+    {
+      "id": "S6",
+      "case": "no_outline_or_geometry_reach_not_known",
+      "input": "the benchmark with no prepared outline, and separately with no site geometry",
+      "expected": "within 100 ft and the angle are not known; the engine is given the stand-in that makes its rear-yard rule give nothing; the coverage and the rear yard are withheld; the floor-area figures are still shown; the two scope lines say not known"
+    },
+    {
+      "id": "S7",
+      "case": "corner_lot_wholly_within_100_ft_measured",
+      "input": "the made-up corner lot C2 (60 x 80) of corner-reach.json with the conditions supplied as checked and absent",
+      "expected": "within 100 ft: yes, measured; the angle measured; the rear yard 'none required anywhere' is shown and rests on the measured values (corner-reach.json rows C2-rear-yard, C2-coverage); the scope lines give the measured figures"
+    },
+    {
+      "id": "S8",
+      "case": "corner_lot_reaching_beyond_100_ft_measured",
+      "input": "the made-up corner lot C3 (150 x 100) of corner-reach.json",
+      "expected": "within 100 ft: no, measured; the rear yard and the coverage are withheld as corner-reach.json rows C3-rear-yard and C3-coverage say"
+    },
+    {
+      "id": "S9",
+      "case": "interior_lot_has_no_corner_conditions",
+      "input": "the made-up interior lot of 5,355 sq ft",
+      "expected": "within 100 ft and the angle are not applicable (no corner), said so in their scope lines; the floor area is 10,710 as interior-lots.json row P5-floor-area; nothing is invented for a corner"
+    },
+    {
+      "id": "S10",
+      "case": "density_statement_is_a_statement",
+      "input": "the made-up interior lot with the user's statement 'not in a special density area', without any statement, and with the statement 'in a special density area'",
+      "expected": "with 'not in': the engine is given 'no' from the statement, the standard legal unit limit is the conditional value 16 naming the statement (interior-lots.json row P5-units) and the scope line says it is the user's statement, not a recorded fact; without: not known, stand-in 'inside one', the limit withheld and 16 nowhere; with 'in': whatever the decision step decides, never a number"
+    },
+    {
+      "id": "S11",
+      "case": "no_shown_result_rests_on_a_stand_in",
+      "input": "every row of the table of input states",
+      "expected": "for every state: each result the emitted document shows (settled or conditional) reads only conditions that are recorded, measured or the user's statement, and the value the engine was given for each equals what the decision step used; a state that breaks this is reported, not hidden"
+    },
+    {
+      "id": "S12",
+      "case": "older_entry_unchanged",
+      "input": "run_engine_and_result_ways called with engine inputs the caller already holds, as the tests of the last piece call it",
+      "expected": "its behaviour is unchanged (the tests of the last piece pass without edits to their expectations); the transform called without condition sources leaves the scope lines as the engine made them"
+    },
+    {
+      "id": "S13",
+      "case": "regenerated_saved_files_through_the_new_entry",
+      "input": "the regenerated committed journey result, its DXF and its site-plan drawing",
+      "expected": "the committed result equals the new entry's output byte for byte (a wiring proof only, not evidence that any value is right); the saved drawings are regenerated by the repository's own way; the massing drawing stays absent; no OTHER saved file changes; every changed line is listed in the report with its reason"
+    },
+    {
+      "id": "S14",
+      "case": "nothing_is_activated_and_read_only_files_untouched",
+      "input": "the repository after the change",
+      "expected": "no route, no mount, no switch; the engine files, the decision modules except the adapter, engine_disclosures.py, evaluator_inputs.py, every schema and every rule file are byte-identical to the claim head; no website source file changed"
+    },
+    {
+      "id": "S15",
+      "case": "texts_plain_and_checks_pass",
+      "input": "every text the transform writes into a scope line; ruff, the modularity check, the focused suites, the website checks",
+      "expected": "each text is plain and true: no internal name (no gap number, reading number, task id, 'module', 'stand-in' as a word of the program, 'reference case'), nothing about which law text is captured or built, never 'professional review'; a guard test covers every such text; ruff clean; modularity exit 0; the three_answers, journey, contracts, cad and drawings suites pass; website lint, typecheck, unit tests and build pass"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "a stand-in in the wrong direction lets a figure through -> the direction of each stand-in is proved from the rule file and pinned by a mutation proof; scenario S11 forbids any shown result resting on one",
+    "the decision step shows a result while a condition it reads is not known -> the builder stops and reports the state; nothing is papered over in the transform",
+    "the engine and the decision step measure 'within 100 ft' differently -> the meaning is taken from the rule and the module's own comparison text, and scenario S11 compares the two for every state",
+    "a scope line says more than is known -> the four kinds of source are fixed (recorded, measured, the user's statement, not known) and a guard test reads every text",
+    "the regenerated result changes something a reader depends on -> every changed line of the fixture and the drawings is listed and explained; the website tests run; any other failing file stops the work",
+    "an import cycle or a tripped import guard -> the derivation takes plain states; the builder proposes the smallest shape and justifies it"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T09:24:50.315328+00:00",
+  "updated_at": "2026-10-08T09:24:50.736638+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R139",
+        "D-090-R229",
+        "D-090-R240",
+        "D-090-R241",
+        "D-090-R255",
+        "D-090-R256",
+        "D-090-R570",
+        "D-090-R582",
+        "D-090-R584",
+        "D-090-R588"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T09:24:50.315583+00:00",
+  "path_notes": "PRODUCER = scenario-optimization-engineer in an isolated worktree (show-toplevel guard; reset to the claim-seam head first). ONE PIECE, NO PARALLEL BUILDER (project-control/reports/WAVE10-2026-10-08-concurrency-record.md). This packet is the orchestrator's own draft. WHY THIS PIECE EXISTS: a helper's draft of the server route (session folder session-2026-10-08c, drafts/spec-route.json) left open how the route gets the engine's five conditions; a second read-only helper laid out the facts (return-research-route-conditions-part1.txt and -part2.txt); the orchestrator ruled: the route waits for this piece. THE ORCHESTRATOR'S RULINGS: (1) the engine is not changed; the conditions are derived from the decision step's own facts; (2) a condition that is not known gets a stand-in only in the direction that withholds, and no shown result may rest on one; (3) the scope lines are rewritten by the transform; engine_disclosures.py stays as it is; (4) 'not known' in a scope line is said in its statement, with the stand-in as its value and 'assumed' as its basis, because the schema has no other way (backlog row DB-196 holds the contract question). MODULARITY: three_way_document.py is 370 lines and result_way_engine_bridge.py about 100 at the claim base; both stay well under the threshold; the new module is small and focused. Baselines at the claim base 42d85651 (the merge of wave 9; figures of the reviewed head, whose code is identical): tests/scenario/three_answers 324 passed 2 skipped; tests/journey with tests/contracts 559 passed; tests/cad with tests/drawings 1359 passed 6 skipped; the website's 2,429 unit tests; the full api suite 8,562 passed 8 skipped. ALLOWED PATHS are literal files; a file the builder finds it must add is reported, not hidden.",
+  "documented_test_commands": [
+    "cd services/api && /root/project/lanes-runtime/venv/bin/python -m ruff check .",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/scenario/three_answers",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/journey tests/contracts tests/spatial/test_lot_reach.py",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/cad tests/drawings",
+    "python3 tools/modularity_check.py --check and python3 .github/scripts/validate_contracts.py   (from the repository root)",
+    "python services/api/app/rules/review_register/render_review_register.py --check   (if the register changed)",
+    "cd apps/web && npx --yes npm@11.18.0 ci --no-audit --no-fund (once in the worktree), then npm run lint, npm run typecheck, npm run test, npm run build, one at a time",
+    "the FULL api suite and the browser tests (CI=true npm run test:e2e): the orchestrator runs them once at the final candidate"
+  ],
+  "worktree": "/root/project/w-wave10"
+}
