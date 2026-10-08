@@ -312,7 +312,13 @@ def test_shared_floor_area_attribution_is_a_required_step_not_a_switch():
     assert Decimal(str(shared["residential_share_value"])) == want_share
     assert Decimal(str(shared["attributed_to_residential"])) == \
         lib.shared_attributed_to_residential(shared)
-    assert "not captured yet" in shared["conditional_note"].lower()
+    # M5-T135: ZR 35-31 is now captured and read; the note no longer calls it 'not captured
+    # yet' but still marks the outcome withheld/conditional on the commercial FAR / question of law.
+    note = shared["conditional_note"].lower()
+    assert "not captured yet" not in note
+    assert "withheld" in note or "conditional" in note
+    assert ("article iii" in note or "question of law" in note
+            or "commercial floor area ratio" in note)
     # single-use examples: no shared floor area, attribution does not apply
     for example_id in ("example-a-standard-residential",
                        "example-b-allowances-conditions-shown"):
@@ -527,3 +533,28 @@ def test_no_program_result_in_any_example():
 def test_loader_fails_loudly_on_a_missing_component():
     data = EXAMPLES["example-a-standard-residential"]
     assert lib.find_component(data, "no-such-component") is None
+
+
+# --------------------------------------------------------------------------
+# M5-T135 - the owner's decisions of 2026-10-07 and the law now read from captures
+# --------------------------------------------------------------------------
+def test_section_8a_records_the_owners_decisions():  # T1
+    assert check.section_8a_decisions_errors() == []
+    # the check bites: a decided value changed in the record fails it
+    mutated = lib.RECORD_PATH.read_text().replace("0.60 to 0.75", "0.50 to 0.90")
+    assert check.section_8a_decisions_errors(mutated), "a changed decided value must fail"
+
+
+def test_no_now_read_text_is_marked_not_captured():  # T2
+    assert check.stale_not_captured_errors() == []
+    # the check bites: a 'not captured yet' put back beside ZR 35-31 fails it
+    mutated = lib.RECORD_PATH.read_text() + "\n\nZR 35-31 is not captured yet.\n"
+    assert check.stale_not_captured_errors(mutated), "a now-read text marked not-captured must fail"
+
+
+def test_every_new_law_quote_stands_in_its_capture():  # T3
+    assert check.new_law_quote_errors() == []
+    # the check bites: a changed cited digest fails it
+    mutated = lib.RECORD_PATH.read_text().replace(
+        "65e29c688be2f04b8963b87bc564afb16539c497b19b1219f58a0cf8edad80fe", "0" * 64)
+    assert check.new_law_quote_errors(mutated), "a changed law digest must fail"
