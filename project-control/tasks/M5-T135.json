@@ -148,14 +148,14 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "scenario-optimization-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "A quote or digest written from memory or copied from this packet rather than read from the capture file -> T3 checks each quote is verbatim in its capture and each digest equals content_digest_sha256; read digests from the capture file itself (M5-T133 FAILED G3 on a stale figure).",
     "An owner recommendation or an orchestrator reading written as if it were the owner's decision -> quote only the verbatim owner fragments of source-057 with their row ids; the reviewer checks each against the owner's words.",
@@ -166,7 +166,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T03:57:03.974050+00:00",
-  "updated_at": "2026-10-08T03:57:04.392573+00:00",
+  "updated_at": "2026-10-08T03:57:58.074946+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -195,5 +195,14 @@
     "python3 scripts/lanes/check_lane_paths.py --coverage",
     "python tools/modularity_check.py --check"
   ],
-  "worktree": "/root/project/w-wave8"
+  "worktree": "/root/project/w-wave8",
+  "progress_log": [
+    {
+      "at": "2026-10-08T03:57:58.074832+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted and claimed in wave 8 on the branch task/wave8-captures-measurement-basis from the integration head 39e7f2d2 (the merge of wave 7); that head's own run is read as complete and successful before any builder's commit is integrated."
+    }
+  ]
 }
