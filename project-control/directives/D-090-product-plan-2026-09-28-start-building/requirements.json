@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 636,
+ "requirement_count": 640,
  "producer": "orchestrator",
- "updated_at": "2026-10-08T18:43:36+00:00",
+ "updated_at": "2026-10-08T23:23:07+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -21670,6 +21670,140 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-08 (message 124).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R637",
+   "text": "'Approve changing those two lines only.': the two lines of `.claude/rules/CODING_RULES.md` named in the orchestrator's question (the rule on the web checks before pushing, and the rule on the full pytest before any api pull request) may be reworded. Nothing else in any instruction file is approved for change by this; the hold of row R572 stands for the rest.",
+   "source_ref": "source-064-amendment.md#owner-message-125-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R572",
+    "D-090-R633"
+   ],
+   "required_harness": "The change's diff shows exactly those two rules changed in that one file and no other instruction text.",
+   "required_evidence": "The diff of the commit that changes them.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 125).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R638",
+   "text": "'Keep focused local tests during development.': focused tests on the build machine stay part of development.",
+   "source_ref": "source-064-amendment.md#owner-message-125-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R633"
+   ],
+   "required_harness": "The reworded rules still tell the builder to run the focused checks locally.",
+   "required_evidence": "The reworded lines.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 125).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R639",
+   "text": "'All required full-suite and security checks must pass in CI for the exact code being accepted or merged; later code changes must receive the relevant checks again.': every required full test suite and every required security check passes in CI for exactly the code that is accepted or merged; code changed afterwards gets the relevant checks again. ORCHESTRATOR'S READING: the CI runs on the exact head are read before a gate or an acceptance is recorded and before a merge; a run on an earlier head does not count for later code.",
+   "source_ref": "source-064-amendment.md#owner-message-125-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R633",
+    "D-090-R634"
+   ],
+   "required_harness": "For each accepted or merged head the CI runs on that exact head are green and were read first.",
+   "required_evidence": "The run numbers and times in the task's review record and the pull request.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 125).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R640",
+   "text": "'Keep independent review and existing merge protections.': the independent reviews and the existing protections of a merge stay as they are.",
+   "source_ref": "source-064-amendment.md#owner-message-125-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R634"
+   ],
+   "required_harness": "The first wave under the changed rules still has its independent reviews, its pre-merge check and the fail-closed merge.",
+   "required_evidence": "That wave's records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 125).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
