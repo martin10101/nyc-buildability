@@ -1,0 +1,343 @@
+{
+  "task_id": "M5-T140",
+  "title": "Part B of the R6B results connection: a results panel on the website behind its own off-by-default website switch that POSTs to the already-accepted route /api/v1/properties/{bbl}/results for one lot, shows each result settled / conditional / withheld (a withheld value shows its reason and never a number, an older value or a substitute), offers the design choices as visible editable starting values and the special-density statement as a statement the user may make (never pre-filled, never a fact), and handles switch-off / loading / each typed server answer / network failure / a document that fails the website's own check; it changes NO server file, turns NO production switch on, and adds NO report page, PDF, estimator or option comparison (serves D-090-R228/R229/R240/R255/R256/R258/R267-R269/R292/R548/R556/R569/R570/R582/R584/R588 and ADR-007; acts on DB-180, DB-196(c), DB-199(e), DB-202(f); stands on M5-T139 for the entered height; leaves DB-199(d), DB-203 and DB-204(b)(c) to server tasks)",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Build the results panel on the website. It is the first screen that shows the results. It changes NO server file and turns NO production switch on.\n\nREADINGS (a drafting helper read the code at head d1b488cb; the orchestrator checked them at the claim base; each is a reading: verify it in the source before relying on it). Reading: the three server pieces are merged - the results document in its three-way form (packages/contracts/schemas/v1/results.schema.json, contract 1.3.0), the lot's five conditions come from evidence (M5-T137), and the route POST /api/v1/properties/{bbl}/results behind INTERNAL_RESULTS_ENABLED, off by default (services/api/app/api/v1/results_read.py:264). Reading: the display layer already exists and already renders settled / conditional / withheld - the reader apps/web/src/lib/architect/three-answers.ts (answerView at :232 shows a conditional value's 'If ...' line via conditionLine at :225, and a withheld value as its reason via WithheldValueView at :183, NEVER falling back to another value - the headline-withheld branch at :276) and the cards apps/web/src/components/architect/answers/AnswerCard.tsx (WithheldLine at :116 prints 'Not known - <reason>' and no number; ConditionNote at :133), ThreeAnswersPanel.tsx (:39), ScopeSummary.tsx, ResultsStatusStrip.tsx. Reading: a dashboard tool is added as a member of DASHBOARD_TOOLS with a TOOL_LABELS and TOOL_DESCRIPTIONS entry (apps/web/src/components/architect/workspace/types.ts:3-36), a case in DashboardTools.tsx (:68) that returns the real panel when its boolean prop is set else <PlannedView/>, the boolean threaded through LoadedDashboard and DashboardEntry (apps/web/src/components/architect/workspace/DashboardEntry.tsx:34,115) and read on the server page apps/web/src/app/property/workspace/page.tsx:25 (NOT src/app/property/page.tsx - that is the ArchitectEntry surface; this is a reading to confirm). Reading: an opener button is offered in DashboardPanels.tsx gated by the same boolean (pattern of proposalEditorEnabled at :201). Reading: a website switch is a server-read, default-off flag reader like apps/web/src/lib/architect/proposal-editor-flag.ts (TRUE_TOKENS, never NEXT_PUBLIC_, read once on the server page and passed down as a plain boolean); the name is INTERNAL_RESULTS_UI_ENABLED (ruling R1), DISTINCT from the server's INTERNAL_RESULTS_ENABLED; the existing readers of the same kind are apps/web/src/lib/architect/parity-panel-ui-flag.ts and hidden-issue-flags-ui-flag.ts. Reading: a typed client copies apps/web/src/lib/study/study-setup-api.ts (fetchStudySetup returns a discriminated union of outcomes; fetchImpl injection; a timeout; 404->not_available, 422->validation_error, 503->inputs_unavailable, 500->internal_*, network/timeout/abort/unexpected); the results route adds ONE more 503 state, lot_conditions_unconfirmed (results_read.py:123 RESULTS_READ_STATUS_STATE_MATRIX). Reading: the browser harness apps/web/e2e/harness/fixture_api.py mounts the REAL route offline by injecting its provider (get_results_study_inputs_provider) and setting INTERNAL_RESULTS_ENABLED + LANE_A_ENABLED for the harness process only (the study-read pattern at fixture_api.py:515); no response byte is hand-written. Reading: the flag-on journey runs against the :3001 server in apps/web/playwright.config.ts (chromium-flag-on project); the website switch env is set there. Reading: component tests load the committed document through apps/web/src/test-support/results-fixtures.ts (loadResultsFixture). Reading: the committed journey document is packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json.\n\nSTEP 1 - the client and the switch. Write apps/web/src/lib/results-api.ts: a typed POST client fetchResults(bbl, body, {fetchImpl, timeoutMs}) returning a discriminated union of outcomes, one per row of the server matrix - success(document) for 200, not_available for 404, validation_error (carry code + field) for 422 validation_error, rate_limited for 429, inputs_unavailable for 503 inputs_unavailable, lot_conditions_unconfirmed for 503 lot_conditions_unconfirmed, internal_error / internal_contract_error for the two 500 states, plus network_error, client_timeout, aborted, unexpected_response, and validation_failure when the 200 body fails the website's own check (a handwritten check in its own module, apps/web/src/lib/results-contract-checks.ts, by the pattern of apps/web/src/lib/hidden-issue-flags-contract-checks.ts and of validateStudySetupDocument in apps/web/src/lib/study/study-setup-api.ts; ruling R9; no new package). The body carries only {housing_program, floor_to_floor_ft?, special_density_statement?} (results_request.py:47-55). Write apps/web/src/lib/architect/results-ui-flag.ts: the default-off website switch reader (proposal-editor-flag.ts shape; ruling R1).\n\nSTEP 2 - the panel and the wiring. Write apps/web/src/components/architect/ResultsPanel.tsx: it offers the design choices and the statement (the form is its own file, apps/web/src/components/architect/ResultsForm.tsx), asks the server ONLY when the user presses the button (ruling R2), shows the state, then renders the existing ThreeAnswersPanel over the returned document (showDraftValues on - this is a lane-flag surface). The form: (i) housing program - the three the server accepts (standard_residence | qualifying_affordable_housing | qualifying_senior_housing), shown as the user's choice of option; (ii) floor-to-floor height - an editable field that is empty at the start (ruling R3); (iii) the special-density statement - an optional statement the user may make, NEVER pre-filled and NEVER shown as a fact, with text that it is the user's statement. A request made without an entered height and without the statement carries housing_program only: floor_to_floor_ft and special_density_statement are OMITTED (the server then uses its starting height and the returned document's line shows it and calls it the default). Thread the website switch: add 'results' to types.ts (DASHBOARD_TOOLS + a TOOL_LABELS 'Results' + a TOOL_DESCRIPTIONS line), add a case 'results' in DashboardTools.tsx (props.resultsUiEnabled ? <ResultsPanel bbl={bbl}/> : <PlannedView label={TOOL_LABELS.results}/>), thread resultsUiEnabled through DashboardEntry.tsx and DashboardPanels.tsx (add a 'Results' opener button gated by the flag), and read the flag on apps/web/src/app/property/workspace/page.tsx. The new prop is OPTIONAL wherever it is added and is false when absent (as parityUiEnabled is in DashboardPanels.tsx), so no existing caller and no existing test changes; the pages apps/web/src/app/property/page.tsx, compare/page.tsx and confirm/page.tsx, ArchitectEntry.tsx and ArchitectShell.tsx are NOT touched. Update the one tool-set test apps/web/src/components/architect/workspace/__tests__/floating-workspace-window.test.tsx. Add the browser harness wiring to apps/web/e2e/harness/fixture_api.py and the :3001 env to apps/web/playwright.config.ts.\n\nEVERY TOP-LEVEL BLOCK OF THE RESULTS DOCUMENT AND WHAT THE PANEL SHOWS (schema required[]+generated type; confirmed field-by-field). The panel's reader consumes exactly the Pick in three-answers.ts:35 (out_of_date, out_of_date_reason, lot_selection_statement, with_approvals_label, answers, remaining_floor_area, shortfall, completeness_line, status_strip, notices_count, draft, street_width_case, scope); it renders no other block. Table (block | shown):\ncontract_version | not shown; the client requires 1.3.0 for the three-way layer (internal).\nresults_id / study_id / option_id / revision / computed_at / depends_on_fact_ids | not shown (internal ids/time).\nout_of_date + out_of_date_reason | shown in the status-strip details ('Out of date - <reason>') when true; fixture false -> nothing.\nlot_selection_statement | shown in the status-strip details (the 'Based on the lots you selected ...' line).\nwith_approvals_label | shown in the strip details when non-null; fixture null -> nothing.\nanswers.floor_area_allowance | the Floor-area allowance card: headline + rows with each conditional 'If ...' line; the three legal_unit_limit_* shown as withheld reasons (no number).\nanswers.permitted_envelope | the Permitted envelope card: six heights conditional; max_lot_coverage, rear_yard, setback_above_base shown as withheld reasons.\nanswers.building_option | 'Not available - <reason>' (whole not_available answer; reason only, no number).\nremaining_floor_area | supplement row under the allowance card: 'Remaining development capacity: Not confirmed' + reason (fixture not_available).\nshortfall | block under the building-option card: 'Not available - <reason>' (fixture not_available).\naddon_gains | NOT shown (carries engine internal words 'task A-12','this slice'; DB-199(e)); the completeness_line already names the uncovered add-ons in plain words.\nbest_combination | NOT shown.\ncompleteness_line | shown: completeness_line.text as the completeness paragraph.\nstatus_strip | shown as the document has it, unchanged: up to three items + overflow in details; its first item reads 'Zoning maximum' (the server's words; ruling R5).\nnotices_count | shown: 'Notes (N)' in the strip details when > 0.\nfloor_by_floor | NOT shown (empty in fixture; a later-milestone table).\nfloor_stack | NOT shown.\nexisting_building | NOT shown (carries internal 'task M2-08').\nunit_estimate | NOT shown (the realistic apartment estimate is a later milestone; R569 - the legal limit is shown separately as a withheld/conditional value under the allowance).\ngeometry | NOT shown by this numbers panel (drawings are a later milestone).\nrule_versions | NOT shown as a list (DB-202(f): it still names the coverage rule while coverage is withheld, so it must not be shown as 'the rules behind the shown results'); per-value zr_sections still show under 'Rule sections'.\ndraft | consumed, not displayed: draft true + showDraftValues controls whether numbers show (lane-flag surface shows them under the 'internal preview, rules not reviewed' tag).\nstreet_width_case | shown in the strip details as plain lines when present; fixture null -> nothing.\nscope | shown via ScopeSummary: label, lot display, 12 assumption rows (key/value/basis/statement), whole-site statement, remaining-capacity label + reason.\nNo block is left out.\n\nTHE STATES AND WHAT THE USER SEES (one test each). switch off (website flag off): no call is made, the tool shows the plain 'not available' view. switch on, before the user asks: the form and its button; no result; no call. loading (after the button): a working/busy state. a result shown and an input changed since: the line of ruling R3. success (200): the panel renders. 404: 'not available' / not connected (route switched off on the server). 422 validation_error: 'the request could not be understood' and, for a form-field code, the field's message (codes: invalid_body, field_not_accepted, housing_program_required/invalid, floor_to_floor_ft_invalid, special_density_statement_invalid, body_too_large, invalid_json; plus a malformed BBL). 429 rate_limited: 'too many requests - try again shortly' + retry. 503 inputs_unavailable: 'the results could not be loaded right now; safe to retry' + retry. 503 lot_conditions_unconfirmed: the server's plain reason, NOT labelled safe to retry. 500 internal_error / internal_contract_error: a plain 'something went wrong' (no stack, no path). network failure: 'could not reach the server' + retry. a document that fails the website's own check: a 'could not be loaded' state; no partial or garbled document is rendered.\n\nTHE RULES THE DISPLAY MUST KEEP (each with a test). A withheld value shows its reason and never a number, an older value or a substitute (R556, R570; red/green on the reader's headline-withheld branch). A withheld value says whether it is missing information or work still owed (R258 - gap_kind in plain words; the reader must carry gap_kind into the withheld view and the card must print it; ruling R6). A legal limit and an estimated apartment count never share a label (R569 - the legal limit shows under 'Legal dwelling-unit limit'; the unit_estimate block is not shown). A conditional result shows its conditions (R268). Nothing is called the maximum for the property and no height is settled while the K20 conditions are not checked (R269, R267). No option is presented as feasible and a line reads 'parking, loading and bicycle requirements: not yet checked for this option' (R548; DB-180). The standing not-reviewed label is on the screen exactly once (ADR-007; the dashboard already renders StandingReviewLabel once - the panel must NOT add a second copy).\n\nTHE INPUTS. housing program: the three above; a visible choice (the user's option). floor-to-floor height: an editable field, empty at the start, with its helper line (feet; a positive finite number; rulings R3 and R4). special-density statement: an optional statement (true = 'the lot is NOT in a special density area'); never pre-filled; shown with text that it is the user's statement, not a fact; sent only when made.\n\nBACKLOG ROWS. ACT ON: DB-180 (add the parking/loading/bicycle 'not yet checked' line - a display line; capturing the provisions is owed research, not this task). DB-196(c) (blocks worked out from conditional results must be labelled conditional or not shown - this task does NOT show addon_gains / best_combination / floor_stack / geometry / unit_estimate, so none appears without its conditions; a test asserts they are absent). DB-199(d) ('Zoning maximum' on the strip - ruling R5; keep the document's text verbatim, add a test that NO value label or headline reads 'maximum for this property'). DB-199(e) (engine internal-word texts must not reach the screen - this task does not render the blocks that carry them; add a text-guard test that none of 'this slice','Lane A','task A-12','not encoded','not_available','rule_not' appears in the rendered panel). DB-202(f) (do not present rule_versions as 'the rules behind the shown results' - not shown). DONE ON THE SERVER BEFORE THIS TASK: DB-204(a) (task M5-T139: through the route an entered height's line says 'A 14-foot floor-to-floor height was entered for this run.', a selected program's line says '... was selected for this run as the housing program.', and the starting height is still called the default). NEEDS A SERVER CHANGE, NOT IN THIS TASK: DB-199(d) (the wording of the status strip's first item), DB-203 (a lot with no geometry gets a 503 - fine for the benchmark lot which has geometry, but real lots need the server fix), DB-204(b) (no sign-in protection; the switch stays off until sign-in exists - blocker B-001), DB-204(c) (no upper limit on the height - a product decision not made; the website invents none: ruling R4).\n\nTHE BROWSER AND COMPONENT TESTS. W-1 (results-api.test.ts, WIRING): each server answer maps to its outcome (success, not_available, validation_error+code, rate_limited, inputs_unavailable, lot_conditions_unconfirmed, internal_error, internal_contract_error, network_error, client_timeout, aborted, unexpected_response, validation_failure) via an injected fetchImpl. W-2 (results-panel.test.tsx, WIRING): load the committed journey document through loadResultsFixture; walk EVERY settled value, EVERY conditional 'If ...' line and EVERY 'not known' on the cards and assert each equals the document; nothing retyped. W-3 (results-panel.test.tsx, WIRING): the states above - loading; switch off (no call); a fact not given (its results withheld, the rest shown, no fact pre-filled); before the user asks (the form, no call); the housing program visible with its starting choice and editable; the height field empty at the start with its helper line, and editable; the special-density statement empty by default; a result shown and an input changed since (ruling R3); each server error. W-4 (results-panel.test.tsx, WIRING): the standing label appears once on the surface. W-5 (results.flag-on.spec.ts, LAW): the flag-on browser journey - open the lot (BBL 4073340070), open the Results tool, press the button, observe the REAL POST to :8000 returning 200; the height's line calls the starting height the default; entering 14 and pressing again returns the line that says a 14-foot height was entered, and the housing-program line names the program the form shows, in the form's own words (ruling R3); the heights appear as the district's limits with the values of reference-case Table A (base 30/45, building 55; qualifying 65), conditional, naming the unchecked conditions, and NOWHERE called the maximum for the property; the floor-area figures (20,150 / 24,180 sq ft) appear conditional naming the recorded-area condition; coverage, rear yard and building option read 'not known'; making the density statement makes the standard legal unit limit (reference-case L6: 29) appear as a conditional result naming that statement, never settled. EXPECTED VALUES COME FROM docs/reference-cases/R6B/cases/ (step R0), not from the recorded answer. results.spec.ts: the flag-off default - no opener, no call, the plain 'not available' view. W-6 (results-panel.test.tsx / the flag-on spec, WIRING): keyboard + screen-reader checks as the existing tool suite does (Escape closes the window and returns focus to the opener; the panel has an accessible name). Every test is marked [LAW] or [WIRING]; a withheld result has a test it reads 'not known'; a conditional result has a test it is labelled and names its assumption; one red/green proof on the withheld-no-fallback guard; one mutation proof per pinned branch (e.g. flip the density statement and prove ONLY the unit limit's way changes - R292).\n\nFILES OUTSIDE apps/web: none. The e2e harness (apps/web/e2e/harness/fixture_api.py) and the Playwright config (apps/web/playwright.config.ts) are both under apps/web. The harness imports from services/api and reads the committed fixture under packages/ READ-ONLY; it edits neither. If the orchestrator finds the website switch needs a server file, a schema, a packages/ fixture, a dependency file, tools/, .github/, .claude/ or render.yaml, that is a QUESTION and must not go in the paths; a new package is out of the question.\n\nNOT IN THIS TASK: no server file change (no route, no engine, no contract, no schema, no fixture under packages/); no production switch turned on (the website switch and INTERNAL_RESULTS_ENABLED stay off by default); no report page; no PDF; no realistic apartment-count estimator; no option comparison; no drawing or 3D; no change to the rule tables, render.yaml, CI config or dependency files. The DB-203 lot-without-geometry fix, sign-in (DB-204(b)), a height upper limit (DB-204(c)) and the rewording of the status strip's first item on the server (DB-199(d)) are separate tasks.\n\nRULINGS OF THE ORCHESTRATOR. They settle the draft's open questions. None is the builder's to change; a ruling that cannot be built as written is a STOP and a report, not a different choice.\n\nR1 THE WEBSITE SWITCH. Name: INTERNAL_RESULTS_UI_ENABLED. Reader: resultsUiEnabled() in apps/web/src/lib/architect/results-ui-flag.ts, the shape of proposal-editor-flag.ts: only an explicit true token turns it on; absent, empty or unknown is off; never prefixed NEXT_PUBLIC_; read once on the server page apps/web/src/app/property/workspace/page.tsx and passed down as a plain boolean. In apps/web/playwright.config.ts it is set ONLY on the :3001 server. The harness sets the SERVER's switches for its own process only, as it does for the study read.\n\nR2 NO REQUEST BEFORE THE USER ASKS. With the switch on and the tool open the panel shows the form and ONE button, 'Show results'. It makes no call on mount, on open or when an input changes. It calls when the user presses the button: one request, built from the form as it stands. Reason: the returned document says the housing program 'was selected for this run'; that is true only of a run the user asked for. A newer request aborts an older one still in flight; an older answer is never shown after a newer one (one test).\n\nR3 THE TWO DESIGN CHOICES AND WHAT THE SCREEN SAYS OF THEM. Housing program: the three the server accepts, in the words the server's own line uses ('Standard residence', and the two others as the returned line prints them: read them from the server's transform, services/api/app/scenario/three_answers/three_way_document.py, and prove in the flag-on journey that the form's label of the chosen program is the name in the returned line); standard residence is the visible starting choice. Floor-to-floor height: the field is EMPTY at the start, with the helper line 'Leave empty to use the program's starting height. The height used is shown with the results.' The website holds NO copy of the server's starting height: no constant, no placeholder number. An entered height is sent, in feet. After a result is shown, the document's own two lines (the scope summary) say which program and which height were used and on what basis; the form must never contradict them. So: when any input differs from the inputs the shown result was asked with, a plain line stands above the result: 'You changed an input. These results are for the earlier inputs. Press Show results to update.' (one test: change an input after a result; the line appears; the shown numbers do not change until the button is pressed).\n\nR4 THE HEIGHT'S CHECK MIRRORS THE SERVER: a positive, finite number. The website invents NO upper limit (backlog row DB-204 c). A value the form refuses is not sent; its message: 'Enter a height in feet greater than zero.' A value the server refuses shows the server's own field message.\n\nR5 THE STATUS STRIP IS SHOWN AS THE DOCUMENT HAS IT. The website does not hide, reorder, replace or restyle an item of it; its first item reads 'Zoning maximum'. Those are the server's words (services/api/app/scenario/three_answers/explanations.py, build_status_strip) and the product plan's label for this kind of answer; whether they stay beside conditional values is a server question on record (backlog row DB-199 d), owed before the website switch is turned on anywhere, and NOT this task's. This task's share of rows R267 and R269: every conditional value shows its 'If ...' line; no value label, headline or line the WEBSITE writes calls a value the maximum for the property, a confirmed maximum, or feasible (one test over the whole rendered panel; the settled words 'Remaining development capacity: Not confirmed' are the document's and stay as they are).\n\nR6 THE KIND OF GAP (row R258). A withheld value, and a whole answer that is not available and carries a gap_kind, say which of the two kinds they are, after the reason, in these words: missing_information -> 'Missing information about this property.'; work_owed -> 'Not built yet: this part of the program is still owed.' The words live in ONE place (apps/web/src/lib/architect/three-answers.ts), keyed by the document's gap_kind. A gap_kind that is absent, null or unknown to the website shows NO kind line and never a machine word. The withheld view (WithheldValueView) carries the kind; apps/web/src/components/architect/answers/AnswerCard.tsx prints it. The reader's own test apps/web/src/lib/architect/__tests__/three-answers.test.ts compares the withheld view by exact equality (its line 180) and is among the allowed paths for that reason. The blocks that use the shared not-available shape without a gap_kind (remaining_floor_area, shortfall) show none (backlog row DB-196).\n\nR7 THE PARKING LINE (row R548, backlog row DB-180), exact words: 'Parking, loading and bicycle requirements are not yet checked for this option. It is not shown as feasible.' It is shown whenever a result is shown.\n\nR8 THE STANDING LABEL: the dashboard renders it once; the panel adds none (one test counts it on the surface with the tool open).\n\nR9 WHERE THE CODE GOES. apps/web/src/lib/results-api.ts (the typed client; the pattern of apps/web/src/lib/study/study-setup-api.ts). apps/web/src/lib/results-contract-checks.ts (the website's own check of a returned document, handwritten, no new package): at least contract_version 1.3.0; every field the reader consumes present and of its kind; every value_states entry one of the three ways with its required fields; and it REFUSES a document in which a key is withheld in value_states and also present among the answer's values (so a number can never be shown for a withheld result even if a server erred; one test). apps/web/src/lib/architect/results-ui-flag.ts. apps/web/src/components/architect/ResultsPanel.tsx (asks, states, result) and ResultsForm.tsx (the three inputs and the button). apps/web/src/components/architect/results-panel.css (layout of the form and the states only; use the existing global classes first: card, section-note, primary-button, secondary-button, architect-eyebrow). The threading test: apps/web/src/components/architect/workspace/__tests__/dashboard-results-flag.test.tsx (switch off or absent: no opener, the tool shows the plain not-available view, no call is made; switch on: the opener is there and the tool shows the form), by the pattern of dashboard-proposal-flag.test.tsx.\n\nR10 THE REPORT LISTS EVERY TEXT THE WEBSITE WRITES for this panel, each with the state that shows it. Each is plain and true: no internal name, no machine word, no pull-request or task number, nothing about which law text is captured or built, never 'professional review', never 'unsupported'.\n\nCOULD TWO THINGS ON THIS SCREEN DISAGREE? The builder answers this in the report for: the form against the shown result (R3); the form's program label against the returned line (R3); a withheld value against any number elsewhere on the panel (R9's refusal; the reader's guard); the kind-of-gap words against the reason beside them (R6); the status strip against the conditional values (R5: stated, not solved here).",
+  "business_reason": "The owner's goal is the full feasibility report with reliable numbers (R588). Step 4 of the owner's sequence is to connect one option to the screen and prove that a changed input changes every result that depends on it (R292), after the pieces that emit the results document are merged (R582). This task is that first screen: it shows the results the server already works out, each as settled, conditional or withheld, behind a website switch that is off by default; it turns no production switch on (R584).",
+  "inputs": [
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md",
+    "packages/contracts/schemas/v1/results.schema.json",
+    "packages/contracts/generated/results.ts",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/app/api/v1/results_read.py",
+    "services/api/app/api/v1/results_request.py",
+    "services/api/app/config.py",
+    "apps/web/src/lib/architect/three-answers.ts",
+    "apps/web/src/components/architect/answers/AnswerCard.tsx",
+    "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+    "apps/web/src/components/architect/answers/ScopeSummary.tsx",
+    "apps/web/src/components/architect/answers/ResultsStatusStrip.tsx",
+    "apps/web/src/lib/study/study-setup-api.ts",
+    "apps/web/src/lib/architect/proposal-editor-flag.ts",
+    "apps/web/src/components/architect/workspace/types.ts",
+    "apps/web/src/components/architect/workspace/DashboardTools.tsx",
+    "apps/web/src/components/architect/workspace/DashboardEntry.tsx",
+    "apps/web/src/components/architect/workspace/DashboardPanels.tsx",
+    "apps/web/src/app/property/workspace/page.tsx",
+    "apps/web/src/components/architect/StandingReviewLabel.tsx",
+    "apps/web/src/test-support/results-fixtures.ts",
+    "apps/web/e2e/harness/fixture_api.py",
+    "apps/web/e2e/parity.flag-on.spec.ts",
+    "apps/web/playwright.config.ts",
+    "docs/reference-cases/R6B/cases/",
+    "docs/DISCOVERY_BACKLOG.md"
+  ],
+  "outputs": [
+    "apps/web/src/lib/results-api.ts",
+    "apps/web/src/lib/__tests__/results-api.test.ts",
+    "apps/web/src/lib/architect/results-ui-flag.ts",
+    "apps/web/src/lib/architect/__tests__/results-ui-flag.test.ts",
+    "apps/web/src/components/architect/ResultsPanel.tsx",
+    "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "apps/web/e2e/results.spec.ts",
+    "apps/web/src/lib/results-contract-checks.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "apps/web/src/components/architect/ResultsForm.tsx",
+    "apps/web/src/components/architect/results-panel.css",
+    "apps/web/src/components/architect/workspace/__tests__/dashboard-results-flag.test.tsx"
+  ],
+  "dependencies": [
+    "M5-T136",
+    "M5-T137",
+    "M5-T138",
+    "M5-T139"
+  ],
+  "allowed_paths": [
+    "apps/web/src/lib/results-api.ts",
+    "apps/web/src/lib/__tests__/results-api.test.ts",
+    "apps/web/src/lib/architect/results-ui-flag.ts",
+    "apps/web/src/lib/architect/__tests__/results-ui-flag.test.ts",
+    "apps/web/src/components/architect/ResultsPanel.tsx",
+    "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "apps/web/e2e/results.spec.ts",
+    "apps/web/src/components/architect/workspace/types.ts",
+    "apps/web/src/components/architect/workspace/DashboardTools.tsx",
+    "apps/web/src/components/architect/workspace/DashboardEntry.tsx",
+    "apps/web/src/components/architect/workspace/DashboardPanels.tsx",
+    "apps/web/src/components/architect/workspace/__tests__/floating-workspace-window.test.tsx",
+    "apps/web/src/app/property/workspace/page.tsx",
+    "apps/web/src/lib/architect/three-answers.ts",
+    "apps/web/src/components/architect/answers/AnswerCard.tsx",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/e2e/harness/fixture_api.py",
+    "apps/web/playwright.config.ts",
+    "apps/web/src/lib/results-contract-checks.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "apps/web/src/components/architect/ResultsForm.tsx",
+    "apps/web/src/components/architect/results-panel.css",
+    "apps/web/src/components/architect/workspace/__tests__/dashboard-results-flag.test.tsx",
+    "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+    "project-control/reports/M5-T140-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "Any file under services/api (no route, engine, request reader, config or contract change).",
+    "Any schema or fixture under packages/contracts (read-only).",
+    "render.yaml, .github/, .claude/, tools/, and any dependency file (package.json, package-lock.json).",
+    "Any production environment or switch default (INTERNAL_RESULTS_ENABLED and the new website switch stay off by default).",
+    "The rule tables and the CI configuration.",
+    "apps/web/src/app/globals.css, apps/web/src/app/property/page.tsx, apps/web/src/app/property/compare/page.tsx, apps/web/src/app/property/confirm/page.tsx, apps/web/src/components/architect/ArchitectEntry.tsx and ArchitectShell.tsx (the results tool lives on the workspace page only).",
+    "apps/web/src/components/architect/answers/ResultsStatusStrip.tsx and ScopeSummary.tsx (read only: the strip and the scope lines are shown as the document has them)."
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "switch_off_no_call",
+      "input": "The website switch is off; the user opens the Results tool.",
+      "expected": "The plain 'not available' view shows; the client makes no network call (asserted by an injected fetchImpl that is never invoked)."
+    },
+    {
+      "id": "S2",
+      "case": "loading_state",
+      "input": "The switch is on; the user pressed 'Show results'; the request is in flight.",
+      "expected": "A working/busy state is shown; no numbers and no error. Before the button is pressed: the form, no result and NO call (ruling R2)."
+    },
+    {
+      "id": "S3",
+      "case": "success_renders_document",
+      "input": "The route returns 200 with the committed journey document.",
+      "expected": "ThreeAnswersPanel renders; every settled value, every conditional 'If ...' line and every 'not known' equals the document (W-2)."
+    },
+    {
+      "id": "S4",
+      "case": "withheld_shows_reason_not_number",
+      "input": "A withheld value (max_lot_coverage).",
+      "expected": "'Not known - <reason>' with no percentage and no fallback to another value; red/green proof on the headline-withheld branch (R556, R570)."
+    },
+    {
+      "id": "S5",
+      "case": "withheld_gap_kind_shown",
+      "input": "A withheld value with gap_kind work_owed and one with missing_information.",
+      "expected": "Each shows, in plain words, whether it is missing information or work still owed (R258)."
+    },
+    {
+      "id": "S6",
+      "case": "conditional_names_assumption",
+      "input": "A conditional height limit (K20 unchecked).",
+      "expected": "The value shows with its 'If none of these (not checked) ...' line; it is never called settled or the property's maximum (R267, R268, R269)."
+    },
+    {
+      "id": "S7",
+      "case": "density_statement_optional_not_prefilled",
+      "input": "The switch is on; the tool is open; the user has pressed nothing; then presses the button without making the statement.",
+      "expected": "Before the button: no call. The statement control is empty (no statement made). The request carries no special_density_statement; the standard legal unit limit is withheld."
+    },
+    {
+      "id": "S8",
+      "case": "density_statement_makes_conditional",
+      "input": "The user states the lot is not in a special density area.",
+      "expected": "A fresh request sends special_density_statement=true; the standard unit limit (reference-case L6: 29) shows as a conditional result naming that statement, never settled; ONLY the unit-limit result changes (mutation proof, R292, R255)."
+    },
+    {
+      "id": "S9",
+      "case": "height_empty_at_start_entered_is_sent",
+      "input": "The floor-to-floor field: left empty; then 14 entered.",
+      "expected": "Empty at the start with its helper line and no number of the website's own; a request made with it empty carries no floor_to_floor_ft and the returned line calls the height used the default; with 14 entered the request carries 14 and the returned line says a 14-foot height was entered; zero, a negative, a non-number are not sent and show the form's message; the website refuses no large value (rulings R3, R4; R256)."
+    },
+    {
+      "id": "S10",
+      "case": "fact_not_given_withholds_only_dependents",
+      "input": "A document in which a fact is not given.",
+      "expected": "The results that depend on it read 'not known' and name it; the rest show unchanged; no fact is pre-filled; no zero (R229, R240)."
+    },
+    {
+      "id": "S11",
+      "case": "typed_server_errors",
+      "input": "Each of 404, 422(+code), 429, 503 inputs_unavailable, 503 lot_conditions_unconfirmed, 500 internal_error, 500 internal_contract_error.",
+      "expected": "Each maps to its outcome and its plain message; inputs_unavailable offers retry as safe, lot_conditions_unconfirmed shows the server reason and is not labelled safe to retry; no stack or path is shown (W-1)."
+    },
+    {
+      "id": "S12",
+      "case": "network_and_bad_document",
+      "input": "A network failure; and a 200 body that fails the website's own shape check.",
+      "expected": "network_error shows 'could not reach the server' + retry; validation_failure shows 'could not be loaded' and renders no partial document."
+    },
+    {
+      "id": "S13",
+      "case": "feasibility_and_estimate_lines",
+      "input": "The rendered panel.",
+      "expected": "No option is shown as feasible; a 'parking, loading and bicycle requirements: not yet checked' line is present (R548, DB-180); the realistic apartment estimate (unit_estimate) is not shown and the legal limit is under its own legal label (R569)."
+    },
+    {
+      "id": "S14",
+      "case": "no_internal_words_on_screen",
+      "input": "The whole rendered panel over the journey document.",
+      "expected": "A text guard finds none of 'this slice','Lane A','task A-12','not encoded','not_available','rule_not', and no snake_case machine code (DB-199(e)); no value label, headline or line the website writes calls a value the maximum for the property, a confirmed maximum or feasible (ruling R5; R267, R269)."
+    },
+    {
+      "id": "S15",
+      "case": "standing_label_once",
+      "input": "The dashboard with the Results tool open.",
+      "expected": "Exactly one standing not-reviewed label is on the screen (ADR-007); the panel adds no second copy (W-4)."
+    },
+    {
+      "id": "S16",
+      "case": "flag_on_browser_journey",
+      "input": "The :3001 flag-on server; open BBL 4073340070, open Results, press 'Show results'.",
+      "expected": "A REAL 200 from :8000; heights are the district's limits (Table A values) conditional and never the property's maximum; floor-area figures conditional; coverage/rear-yard/building option 'not known'; expected values from docs/reference-cases/R6B/cases/ (W-5). Then 14 ft entered and the button pressed again: the returned line says the height was entered; the form's program label is the name in the returned line."
+    },
+    {
+      "id": "S17",
+      "case": "flag_off_default_browser",
+      "input": "The :3000 flag-off server; the Results tool.",
+      "expected": "No opener, no call, the plain 'not available' view (results.spec.ts); the default site shows nothing new except that view behind a direct tool link."
+    },
+    {
+      "id": "S18",
+      "case": "keyboard_and_screen_reader",
+      "input": "The open Results window.",
+      "expected": "Escape closes it and returns focus to the opener; the panel has an accessible name (W-6)."
+    },
+    {
+      "id": "S19",
+      "case": "stale_inputs_line",
+      "input": "A result is shown; the user changes an input and does not press the button.",
+      "expected": "The line 'You changed an input. These results are for the earlier inputs. Press Show results to update.' appears; the shown numbers do not change; pressing the button removes the line (R3)."
+    },
+    {
+      "id": "S20",
+      "case": "switch_threading",
+      "input": "The dashboard tool switch with resultsUiEnabled absent, false and true.",
+      "expected": "Absent or false: no opener; the tool shows the plain not-available view; no call. True: the opener is there; the tool shows the form. No existing caller or test of the dashboard changes (R1, R9)."
+    },
+    {
+      "id": "S21",
+      "case": "document_with_a_number_for_a_withheld_key_is_refused",
+      "input": "A 200 body in which a key is withheld in value_states and also present among the answer's values.",
+      "expected": "The website's check refuses it: the outcome is validation_failure; nothing of it is rendered (R9; R556, R570)."
+    },
+    {
+      "id": "S22",
+      "case": "newer_request_wins",
+      "input": "Two presses; the first answer arrives after the second.",
+      "expected": "The first request is aborted or its answer discarded; the panel shows the second answer only (R2)."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Two things could disagree: 'Zoning maximum' on the status strip vs R269 -> keep the document's text verbatim (retype nothing) and add a test that no value label or headline reads 'maximum for this property' (question D-wording).",
+    "A withheld value falling back to another value -> the reader's headline-withheld branch is proven by a red/green test (R556).",
+    "Engine internal-word texts reaching the screen -> do not render the blocks that carry them (addon_gains, existing_building, geometry reasons, unit_estimate) and add a text-guard test (DB-199(e)).",
+    "Showing a block worked out from conditional results without its conditions -> this task shows none of those blocks; a test asserts their absence (DB-196(c)).",
+    "Adding 'results' to DASHBOARD_TOOLS touches shared wiring -> only floating-workspace-window.test.tsx asserts the tool set; it is in allowed paths; run the full web suite and route any other red consumer to the orchestrator.",
+    "R258 gap_kind is not shown by the current reader -> this task adds the gap-kind line to three-answers.ts + AnswerCard.tsx (display only); their tests (three-answers-panel.test.tsx) are in the allowed paths and the full suite is run.",
+    "The form and the shown result disagree after an input is changed -> the line of ruling R3 and its test.",
+    "The website's program names drift from the server's -> the flag-on journey compares the form's label with the returned line.",
+    "A website copy of the server's starting height goes stale -> the website holds none (ruling R3); a test greps the form for a numeric placeholder or default.",
+    "The withheld view's shape changes under an exact-equality test -> three-answers.test.ts is among the allowed paths; apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx, scope-summary.test.tsx and building-option-notes.test.tsx also render the cards: run them; if one must change, STOP and report (they are not among the allowed paths).",
+    "The harness file apps/web/e2e/harness/fixture_api.py is imported by an api test (services/api/tests/api/test_address_resolution_recorded_geoclient.py) and by the journey test's collection -> the full api suite is run by the orchestrator at the frozen head; the builder runs `python -m pytest -q -p no:cacheprovider tests/api tests/journey` from services/api."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T15:25:44.973890+00:00",
+  "updated_at": "2026-10-08T18:00:41.752086+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R228",
+        "D-090-R229",
+        "D-090-R240",
+        "D-090-R255",
+        "D-090-R256",
+        "D-090-R258",
+        "D-090-R267",
+        "D-090-R268",
+        "D-090-R269",
+        "D-090-R292",
+        "D-090-R548",
+        "D-090-R556",
+        "D-090-R569",
+        "D-090-R570",
+        "D-090-R582",
+        "D-090-R584",
+        "D-090-R588"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T15:25:44.974169+00:00",
+  "path_notes": "One producer (frontend-engineer) in an isolated worktree reset to the claim head. Everything under services/api and packages/ is READ-ONLY. Sizes at the claim base by the project's own counter (tools/modularity_check.py source_lines; the warning starts at 600): three-answers.ts 384, AnswerCard.tsx 243, DashboardPanels.tsx 212, DashboardEntry.tsx 136; study-setup-api.ts, the client's model, is 340. Keep each new module under 400. Baselines: before the seeds 2429 unit tests in 111 files and 153 browser tests; at the claim head, with the seeded placeholders, 2434 unit tests in 116 files (run by the orchestrator: lint, typecheck and unit tests exit 0) and two placeholder browser tests more; the full api suite 8655 passed and 8 skipped. The impact query (python tools/code_graph/query.py --no-regen impact <path>) at the start, for types.ts, DashboardTools.tsx, DashboardPanels.tsx, DashboardEntry.tsx, three-answers.ts and AnswerCard.tsx: name in the report every consumer it lists and whether it needed a change; a consumer outside the allowed paths that must change is a STOP and a report.",
+  "documented_test_commands": [
+    "cd apps/web && npx --yes npm@11.18.0 ci --no-audit --no-fund",
+    "cd apps/web && npm run lint",
+    "cd apps/web && npm run typecheck",
+    "cd apps/web && npm run test",
+    "cd apps/web && npm run build",
+    "cd apps/web && CI=true npm run test:e2e   # lanes venv first on PATH, PYTHONPATH=<checkout>/services/api (the harness imports app.*)",
+    "python tools/modularity_check.py --check   # from the repository root",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/api tests/journey   # the harness file is imported there"
+  ],
+  "worktree": "/root/project/w-wave13",
+  "progress_log": [
+    {
+      "at": "2026-10-08T15:31:12.401449+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted and claimed. The packet is a drafting helper's draft, read against the code by the orchestrator and changed (ten rulings; the reader's own test added to the paths; four rows about the orchestrator's own updates removed). Seeds checked at the contract commit: website lint, typecheck and 2434 unit tests in 116 files, exit 0; ownership, modularity and the directive validator exit 0. Next: one builder (frontend-engineer) in an isolated worktree reset to the claim-seam head."
+    },
+    {
+      "at": "2026-10-08T16:48:43.277508+00:00",
+      "agent": "frontend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "The builder's first commit integrated by cherry-pick as 1226da47 (tree identical to the builder's 06650cfe; 26 files, all the allowed paths). Builder's checks: lint, typecheck, build exit 0; 2484 unit tests in 116 files; 155 browser tests; tests/api and tests/journey 1133 passed; modularity exit 0 with one new symbol-count warning for three-answers.ts (a signal, not a failure). Read by the orchestrator BEFORE any review (the report, the panel, the form, the harness change). Sent back to the same builder for one more commit: three sentences the website writes are not strictly true or claim a cause it does not know (the 404 card says no results were requested; the inputs-unavailable notice names a cause; the lot-conditions notice repeats its body), and the browser journey proves the form's program name against the returned line for one program only. Reviews NOT started."
+    },
+    {
+      "at": "2026-10-08T16:56:11.623435+00:00",
+      "agent": "frontend-engineer",
+      "percent": 75,
+      "status": "claimed",
+      "message": "The builder's correcting commit integrated by cherry-pick as f42a2a23 (the builder's a650956d; 4 files, all allowed paths; every allowed-path blob identical to the builder's head): the 404 card now says 'The results service is not available on this server. No results were shown.'; the inputs-unavailable notice says only 'Trying again is safe.'; the lot-conditions notice says 'Trying again will give the same answer until that record can be read.'; the browser journey proves all three program names against the returned line. Builder's checks: lint, typecheck, build exit 0; 2486 unit tests in 116 files; the two results browser specs passed. Next: the orchestrator's full runs and the independent reviews at the frozen head."
+    },
+    {
+      "at": "2026-10-08T17:14:50.341935+00:00",
+      "agent": "frontend-engineer",
+      "percent": 78,
+      "status": "claimed",
+      "message": "The two independent reviews returned at the frozen head ec228eae. G3 (data-contract-verifier): PASS, ten checks confirmed, three notes. G4 (qa-engineer): FAIL, one blocking finding: no test proves the form accepts a large height (ruling R4, scenario S9; a mutation that adds an upper limit is caught by nothing); the shipped code is correct, a test is missing; five notes. The orchestrator's runs at ec228eae: website lint, typecheck, 2486 unit tests in 116 files, build, 155 browser tests: all exit 0. Sent back to the same builder for one more commit: the missing test with its red proof; and three notes closed at the same time (the website's check refuses a document in which a shown value has no stated way or a conditional entry has no condition; the notices for a timeout and an unexpected response tested in the panel; the text guard over the whole panel). Both reviewers will be asked to review that commit at the new head. No gate is recorded on the failed review's head."
+    },
+    {
+      "at": "2026-10-08T17:24:52.185778+00:00",
+      "agent": "frontend-engineer",
+      "percent": 82,
+      "status": "claimed",
+      "message": "The builder's third commit integrated by cherry-pick as f7a1a1b1 (the builder's 7c65bf1a; 4 files, all allowed paths; every allowed-path blob identical to the builder's head): a test that a height of 500 is accepted and sent, with its red proof (the G4 review's blocking finding); the website's check now refuses a document in which an available answer has no states, a shown value has no stated way, or a conditional entry names no condition (the G3 review's note F1, widened by the orchestrator); the notices for a timeout and an unexpected response tested in the panel; the text guard over the whole panel. Builder's checks: lint, typecheck, build exit 0; 2491 unit tests in 116 files. Only three files under apps/web/src and the report changed since the head the full api suite ran on (8655 passed, 8 skipped at ec228eae). Next: the orchestrator's website runs at the new frozen head; both reviewers asked to review this commit."
+    },
+    {
+      "at": "2026-10-08T17:47:56.823435+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "At the frozen head b3e84b3d: G3 (data-contract-verifier) confirmed the last commit (its PASS stands); G4 (qa-engineer), which had FAILED at ec228eae on one missing test, re-reviewed and PASSED (the upper-limit mutation and three new ones each caught; no assertion weakened), on the condition that the orchestrator's runs complete green. They did, in a second run: the first run's pictures and browser tests could not start because a website test server left by the orchestrator's own picture script held port 3001; after that leftover was stopped, with no repository file changed: 155 browser tests passed; the full api suite 8655 passed, 8 skipped. The walkthrough of the running screen (human-journey-reviewer) judged all nine journeys clear with five advisory findings; its first verdict was FAIL on the red run file it had been pointed to, and PASS after the second run. All six returns are kept unchanged in project-control/reports/M5-T140-G3G4.md and M5-T140-HJ.md. Evidence map written (seventeen rows)."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-08T18:00:41.751844+00:00"
+}

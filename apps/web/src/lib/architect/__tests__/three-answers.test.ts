@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  GAP_KIND_LINES,
   NOT_AVAILABLE,
   RULES_NOT_REVIEWED_REASON,
   STRIP_MAX_ITEMS,
   answerView,
   displayQuantity,
+  gapKindLine,
   notAvailableText,
   quantityText,
   remainingFloorAreaView,
@@ -100,6 +102,7 @@ describe("answerView — the draft gate and the headline", () => {
     expect(answerView(doc, "floor_area_allowance", false)).toEqual({
       kind: "not_available",
       text: `Not available — ${RULES_NOT_REVIEWED_REASON}`,
+      gapKindLine: null,
     });
     const shown = answerView(doc, "floor_area_allowance", true);
     expect(shown.kind).toBe("available");
@@ -110,6 +113,7 @@ describe("answerView — the draft gate and the headline", () => {
     expect(answerView(doc, "permitted_envelope", false)).toEqual({
       kind: "not_available",
       text: "Not available — height rules for this district are not built yet.",
+      gapKindLine: null,
     });
   });
 
@@ -182,6 +186,7 @@ describe("answerView — the draft gate and the headline", () => {
         key: "legal_unit_limit_standard",
         label: "Legal dwelling-unit limit",
         reason: "There is no evidence of a special density area, so it is not known.",
+        gapKindLine: "Not built yet: this part of the program is still owed.",
       },
     ]);
     // The withheld key never appears among the shown values (R570).
@@ -241,6 +246,57 @@ describe("answerView — the draft gate and the headline", () => {
     const view = answerView(probe, "building_option", true);
     expect(view.kind).toBe("not_available");
     if (view.kind === "not_available") expect(view.text.startsWith("Not available — ")).toBe(true);
+  });
+});
+
+describe("gapKindLine — the kind of gap in plain words (R258, ruling R6)", () => {
+  it("S5: names the two kinds in the fixed words, in ONE place", () => {
+    expect(gapKindLine("work_owed")).toBe("Not built yet: this part of the program is still owed.");
+    expect(gapKindLine("missing_information")).toBe("Missing information about this property.");
+    expect(GAP_KIND_LINES.work_owed).toBe("Not built yet: this part of the program is still owed.");
+    expect(GAP_KIND_LINES.missing_information).toBe("Missing information about this property.");
+  });
+
+  it("shows NO kind line and never a machine word when the gap_kind is absent, null or unknown", () => {
+    expect(gapKindLine(null)).toBeNull();
+    expect(gapKindLine(undefined)).toBeNull();
+    expect(gapKindLine("some_future_kind")).toBeNull();
+  });
+
+  it("a withheld value carries the kind line; a missing_information value shows the other words", () => {
+    const doc = loadResultsFixture("synthetic_all_answers_available");
+    const answer = doc.answers.floor_area_allowance;
+    if (answer.status !== "available") throw new Error("fixture changed: allowance not available");
+    const probe: Results = {
+      ...doc,
+      contract_version: "1.3.0",
+      answers: {
+        ...doc.answers,
+        floor_area_allowance: {
+          ...answer,
+          value_states: {
+            missing_fact: {
+              way: "withheld",
+              label: "A value that needs a fact",
+              reason: "The fact this rests on is not recorded.",
+              gap_kind: "missing_information",
+              resolved_by: "Recording the fact",
+            },
+          },
+        },
+      },
+    };
+    const view = answerView(probe, "floor_area_allowance", true);
+    if (view.kind !== "available") throw new Error("expected an available view");
+    expect(view.withheld[0].gapKindLine).toBe("Missing information about this property.");
+  });
+
+  it("a whole not-available answer that carries a gap_kind says which kind (building_option)", () => {
+    const doc = loadResultsFixture("recorded_215_16_northern_journey");
+    expect(doc.answers.building_option.status).toBe("not_available");
+    const view = answerView(doc, "building_option", true);
+    if (view.kind !== "not_available") throw new Error("expected a not_available view");
+    expect(view.gapKindLine).toBe("Not built yet: this part of the program is still owed.");
   });
 });
 

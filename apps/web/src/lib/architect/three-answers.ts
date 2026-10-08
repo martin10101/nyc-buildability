@@ -14,6 +14,7 @@
 import type {
   AnswerValue,
   ExceptionLabel,
+  GapKind,
   MeasurementKnown,
   Results,
   Scope,
@@ -65,6 +66,22 @@ export const ANSWER_TITLES: Readonly<Record<AnswerKey, string>> = {
 };
 
 export const NOT_AVAILABLE = "Not available";
+
+/**
+ * The two kinds of gap in plain words, keyed by the document's `gap_kind` (D-090-R258,
+ * ruling R6). The ONE place these words live. A `gap_kind` that is absent, null or unknown
+ * to the website shows NO kind line and never a machine word.
+ */
+export const GAP_KIND_LINES: Readonly<Record<string, string>> = {
+  missing_information: "Missing information about this property.",
+  work_owed: "Not built yet: this part of the program is still owed.",
+};
+
+/** The plain-words gap-kind line for a document `gap_kind`, or null when it is absent, null or
+ * a kind this build does not know (presence tested with `!= null`, never a truthiness test). */
+export function gapKindLine(gapKind: GapKind | string | null | undefined): string | null {
+  return gapKind != null ? GAP_KIND_LINES[gapKind] ?? null : null;
+}
 
 /** Reason shown for an available answer computed from rules that are not reviewed yet. */
 export const RULES_NOT_REVIEWED_REASON = "the rules for this answer are not reviewed yet";
@@ -184,6 +201,9 @@ export interface WithheldValueView {
   key: string;
   label: string;
   reason: string;
+  /** Which kind of gap this is, in plain words (D-090-R258, ruling R6), after the reason; null
+   * when the document carries no gap_kind the website knows. */
+  gapKindLine: string | null;
 }
 
 /** A shown value and, when its way is conditional, the "If <assumption>" line to show with it. */
@@ -208,7 +228,13 @@ export type AnswerView =
       withheld: readonly WithheldValueView[];
       measurementLabel: string;
     }
-  | { kind: "not_available"; text: string };
+  | {
+      kind: "not_available";
+      text: string;
+      /** Which kind of gap a whole not-available answer is, in plain words (ruling R6), after its
+       * reason; null for the draft gate, a valueless answer, or an answer with no gap_kind. */
+      gapKindLine: string | null;
+    };
 
 const IF_PREFIX = "If ";
 
@@ -236,14 +262,23 @@ export function answerView(
 ): AnswerView {
   const answer = results.answers[key];
   if (answer.status !== "available") {
-    return { kind: "not_available", text: notAvailableText(answer.reason, key) };
+    // A whole not-available answer that carries a gap_kind says which kind it is (ruling R6).
+    return {
+      kind: "not_available",
+      text: notAvailableText(answer.reason, key),
+      gapKindLine: gapKindLine(answer.gap_kind),
+    };
   }
   if (results.draft && !showDraftValues) {
-    return { kind: "not_available", text: `${NOT_AVAILABLE} — ${RULES_NOT_REVIEWED_REASON}` };
+    return {
+      kind: "not_available",
+      text: `${NOT_AVAILABLE} — ${RULES_NOT_REVIEWED_REASON}`,
+      gapKindLine: null,
+    };
   }
   const values = answer.values;
   if (values.length === 0) {
-    return { kind: "not_available", text: `${NOT_AVAILABLE} — ${NO_VALUE_REASON}` };
+    return { kind: "not_available", text: `${NOT_AVAILABLE} — ${NO_VALUE_REASON}`, gapKindLine: null };
   }
   const states = valueStates(answer);
   const shownKeys = new Set(values.map(value => value.key));
@@ -258,7 +293,12 @@ export function answerView(
   const withheld: WithheldValueView[] = [];
   for (const [stateKey, state] of Object.entries(states)) {
     if (state.way === "withheld" && !shownKeys.has(stateKey)) {
-      withheld.push({ key: stateKey, label: state.label, reason: state.reason });
+      withheld.push({
+        key: stateKey,
+        label: state.label,
+        reason: state.reason,
+        gapKindLine: gapKindLine(state.gap_kind),
+      });
     }
   }
 
@@ -276,7 +316,12 @@ export function answerView(
   } else if (headlineState && headlineState.way === "withheld") {
     headline = {
       kind: "withheld",
-      withheld: { key: headlineKey, label: headlineState.label, reason: headlineState.reason },
+      withheld: {
+        key: headlineKey,
+        label: headlineState.label,
+        reason: headlineState.reason,
+        gapKindLine: gapKindLine(headlineState.gap_kind),
+      },
     };
     headlineKeyShown = headlineKey;
   } else {

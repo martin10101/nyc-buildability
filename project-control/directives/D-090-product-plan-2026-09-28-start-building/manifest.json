@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-08T13:54:18+00:00",
+ "updated_at": "2026-10-08T18:43:36+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -646,10 +646,21 @@
   "D-090-R622",
   "D-090-R623",
   "D-090-R624",
-  "D-090-R625"
+  "D-090-R625",
+  "D-090-R626",
+  "D-090-R627",
+  "D-090-R628",
+  "D-090-R629",
+  "D-090-R630",
+  "D-090-R631",
+  "D-090-R632",
+  "D-090-R633",
+  "D-090-R634",
+  "D-090-R635",
+  "D-090-R636"
  ],
- "requirements_id_digest_sha256": "e8043d52ee184b0b9f20d69d0123f6a5ef1e1c9266968f4b0aeec5bcb5bee75c",
- "requirements_content_digest_sha256": "bde8cfa55a52de7bcb4c029e1b0b9341897b69a35ab36da09197018da2ad15e3",
+ "requirements_id_digest_sha256": "27deb608a30ea65d08a8d7e56a1f74c367a3800cc82958f3ac829988ce7f5398",
+ "requirements_content_digest_sha256": "0880832f74d77cabbcffd547653df30878fe431b88412bcd63452f0e148d98e2",
  "sources": [
   {
    "file": "source-001.md",
@@ -1145,6 +1156,14 @@
    "recorded_at": "2026-10-08T06:52:47+00:00",
    "content_digest_sha256": "0d00374803ec155c8fefbdd8a37a6eeace580db06135fc366ac451b3074e7a9d",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-063-amendment.md",
+   "kind": "amendment",
+   "sequence": 63,
+   "recorded_at": "2026-10-08T18:43:36+00:00",
+   "content_digest_sha256": "2bcc3b152a98c5a246379591155d3a3be7b307d115580455e216b06f1c94fc68",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1208,7 +1227,8 @@
   "source-059-amendment.md",
   "source-060-amendment.md",
   "source-061-amendment.md",
-  "source-062-amendment.md"
+  "source-062-amendment.md",
+  "source-063-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1249,7 +1269,9 @@
   "M5-T136",
   "M5-T137",
   "M5-T138",
-  "M5-T139"
+  "M5-T139",
+  "M5-T140",
+  "M5-T141"
  ],
  "affected_prs": [
   262,
@@ -1842,6 +1864,30 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T139 (A choice the user made is said to be the user's choice (two scope lines)) to R256, R582, R584, R588 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-08T15:25:45+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T140 (Results panel on the website behind an off-by-default switch) to R228, R229, R240, R255, R256, R258, R267, R268, R269, R292, R548, R556, R569, R570, R582, R584, R588 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-08T18:13:49+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T141 (The browser-test harness without the server's test tree (repair of wave 13)) to R292, R584 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-08T18:43:36+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-063 (session 013RaGmC message 124, 2026-10-08: continue the results screen and give a test preview; fix the request reader's fault; no more narrative notes for the audit; one bounded simplification afterward; updates of three short bullets) and requirements D-090-R626 to R636, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-08T18:43:36+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T141 to R630 (the request reader's fault) via applicability.task_ids at the row's creation; the task's provisional verification row extended by that row (pending); requirements content digest resynced in the same commit; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }

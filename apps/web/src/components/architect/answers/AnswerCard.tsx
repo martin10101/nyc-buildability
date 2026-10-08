@@ -45,6 +45,11 @@ export function AnswerCard({
         <p className="ta-not-available" data-testid="answer-not-available">
           {view.text}
         </p>
+        {view.gapKindLine !== null ? (
+          <p className="ta-gap-kind" data-testid="answer-gap-kind">
+            {view.gapKindLine}
+          </p>
+        ) : null}
       </section>
     );
   }
@@ -112,7 +117,9 @@ export function AnswerCard({
   );
 }
 
-/** A withheld value: its reason, never a number (R556, R570). As a headline (no dt) or a row. */
+/** A withheld value: its reason, never a number (R556, R570), then — when the document carries
+ * one — the plain-words kind of gap (missing information or work still owed; R258, ruling R6).
+ * As a headline (no dt) or a row. */
 function WithheldLine({
   entry,
   testid,
@@ -121,10 +128,20 @@ function WithheldLine({
   testid?: string;
 }) {
   return (
-    <span className="ta-withheld-reason" data-testid={testid ?? "answer-withheld-reason"}>
-      {testid ? `${entry.label}: ` : null}
-      {NOT_KNOWN} — {entry.reason}
-    </span>
+    <>
+      <span className="ta-withheld-reason" data-testid={testid ?? "answer-withheld-reason"}>
+        {testid ? `${entry.label}: ` : null}
+        {NOT_KNOWN} — {entry.reason}
+      </span>
+      {entry.gapKindLine !== null ? (
+        <>
+          {" "}
+          <span className="ta-gap-kind" data-testid="answer-gap-kind">
+            {entry.gapKindLine}
+          </span>
+        </>
+      ) : null}
+    </>
   );
 }
 
