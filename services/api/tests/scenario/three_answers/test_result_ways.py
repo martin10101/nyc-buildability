@@ -75,16 +75,20 @@ def _battery() -> list[ResultWays]:
 
 # --------------------------------------------------------------------------- S9 / M5-T130 callers
 def test_only_task_m5_t130_bridge_and_facts_modules_import_the_decision_module():
-    """Task M5-T130 is the first caller of the decision module; task M5-T134 adds exactly ONE more,
-    the engine-bridge adapter. Only the three module files, task M5-T130's bridge and facts modules,
-    and M5-T134's result_way_engine_bridge.py (a literal list) may name it; any OTHER file under
+    """Task M5-T130 is the first caller of the decision module; task M5-T134 added the engine-bridge
+    adapter and task M5-T136 adds exactly ONE more, the three-way transform. Only the three module
+    files, task M5-T130's bridge and facts modules, M5-T134's result_way_engine_bridge.py and
+    M5-T136's three_way_document.py (a literal list) may name it; any OTHER file under
     services/api/app that names it is an offender (proved by a mutation outside the repository)."""
     permitted = set(_MODULE_FILES) | {
         "result_way_facts.py", "result_way_bridge.py", "result_way_bridge_overlay.py",
-        # M5-T134: the thin adapter that runs the engine and gathers the ways beside it. It is the
-        # ONLY new app file that names the decision module; the carriers (study_inputs.py,
-        # study_live_geometry.py, inputs.py, evaluator_inputs.py) and engine.py never name it.
+        # M5-T134: the thin adapter that runs the engine and gathers the ways beside it; and
+        # M5-T136: the pure transform that emits the three-way document from the engine's document
+        # and the ways. These are the only new app files that name the decision module; the carriers
+        # (study_inputs.py, study_live_geometry.py, inputs.py, evaluator_inputs.py) and engine.py
+        # never name it (engine.py must never contain 'result_way').
         "result_way_engine_bridge.py",
+        "three_way_document.py",
     }
     offenders = [
         str(path) for path in _APP_ROOT.rglob("*.py")

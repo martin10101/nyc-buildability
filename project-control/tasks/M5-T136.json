@@ -1,0 +1,310 @@
+{
+  "task_id": "M5-T136",
+  "title": "Emit the results document in its three-way form: run the merged decision module beside the engine and transform the engine's output into a contract-1.3.0 document that carries, on each available answer, a value_states way-layer (settled / conditional / withheld) for every shown value; place the rear yard and the setback above the base with the permitted-envelope results and the three legal dwelling-unit limits with the floor-area results (owner row R567); reserve the apartment-estimate block for the preliminary capacity estimate so it no longer carries the legal figure (R568); withdraw from values[] every result the module withholds (coverage, rear yard, setback, the whole building option on the benchmark) so no withheld result carries a number anywhere; make the rear-yard drawing note follow the withheld result (144.60 ft from the corner, not the older 'not required'); make the floor table, the floor stack, the shortfall, the add-on gains and the best combination follow a withheld building option; regenerate the committed journey fixture and its saved DXF and kit drawings; teach the website reader the value_states layer so a withheld value shows its reason and never falls back to the first value (R556, forced because the committed fixture is shared and the web test harness renders every results fixture); update the zoning-rule review register. It does NOT mount a route, does NOT add the website results panel / client / switch / dashboard tool / browser journey, does NOT build the apartment estimator, turns on NO production switch, and changes NO rule-table value. [backlog DB-171 (F5, F6), DB-172(a), DB-175(b)(d)(e)(g), DB-185(a)(c)(d), DB-189; owner rows R567-R570, R583, R584, R588, R229, R240, R255, R257, R258, R267-R269, R543, R556]",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "EMIT THE RESULTS DOCUMENT IN ITS THREE-WAY FORM (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, Part 0; the fourth and last engine piece, after M5-T130 carried the facts, M5-T131 added the validators, and M5-T134 wired the carriers and built the adapter). THE FACTS TODAY (each with file and line at head c6f33bb73eaeff53afe96b7563ee473ef199d3b4). (1) The engine entry generate_results (services/api/app/scenario/three_answers/engine.py:210) assembles a results document that on the benchmark declares contract 1.2.0 (engine.py:256, notes slot) and SHOWS a number for every answer value, including max_lot_coverage (answers.py:297-306) and the whole building option (engine.py:274); its geometry draws the rear yard as 'not_required' (geometry.py:100-114); its unit_estimate block carries the LEGAL dwelling-unit limit under the name 'estimate' (dwelling_units.py:51-58, value 29 on the benchmark). (2) The merged decision module decide_result_ways (result_ways.py) returns a ResultWays object (result_way_inputs.py:456-481) with an AnswerWays for each of the three answers (value ways settled/conditional/withheld) plus five standalone ResultWays: rear_yard, setback_above_base, legal_unit_limit_standard, legal_unit_limit_qualifying_affordable, legal_unit_limit_qualifying_senior. (3) The adapter run_engine_and_result_ways (result_way_engine_bridge.py:60) runs the engine and gathers the ways BESIDE the document and changes nothing emitted (its docstring says NOTHING IS EMITTED). (4) Contract 1.3.0 is ALREADY in the schema (packages/contracts/schemas/v1/results.schema.json:40, value_states :352, version binding :284/:319): it is byte-identical in the runtime copy services/api/app/_contract_schemas/v1/results.schema.json and the generated web type packages/contracts/generated/results.ts already declares ValueState/ValueStates (:14-23, :104, :112) - SO NO SCHEMA, SCHEMA-COPY, OR TYPEGEN CHANGE IS NEEDED. (5) The way-layer validator app/contracts/results_way_rules.py:58 (called by both validators, contract.py:100 and study_contracts) already refuses a 1.3.0 document with a shown value that has no way entry, a key both shown and withheld, or a settled/conditional entry for no shown value, and the schema's withheld branch (results.schema.json:384-407) has no number field - SO NO NEW VALIDATOR RULE IS NEEDED; the three limits are pinned refused in services/api/tests/contracts/test_results_three_ways_slot.py (read-only confirmation). (6) On the benchmark lot the module's decision is fixed by its tests (test_result_ways_benchmark.py): with the wired overlay support (result_way_bridge_overlay.py: floor area, heights, coverage, setback and dwelling-unit supported; REAR YARD not supported) the floor-area values and the six heights are CONDITIONAL (on the recorded-area condition and the four unchecked K20 conditions), while coverage (reaches 103.93 ft from the 215 Place street line), the rear yard (144.60 ft from the corner point), the setback, the whole building option, and all three unit limits are WITHHELD. THE READINGS (the orchestrator's; marked as readings for the reviewers to confirm or correct, continuing the numbering of M5-T129/130/132/134). (O26) THE EMITTER IS THE ADAPTER PATH, NOT engine.py. engine.py must stay read-only and must never contain the text 'result_way' (the import guard, tests/scenario/three_answers/test_result_ways.py). Add ONE new focused module services/api/app/scenario/three_answers/three_way_document.py that imports the decision-module way records (result_way_inputs) and transforms an assembled results document, given a ResultWays, into the 1.3.0 three-way document; it is the SECOND new app file that names the decision module, so add it to the permitted set in the one import-guard test (exactly as M5-T134 added the adapter). (O27) THE TRANSFORM IS A PURE document -> document FUNCTION given the ways. For each of the three answers: attach a value_states map with one entry for every value key the module decided; for a settled/conditional value keep its value object in values[] and record its way (a conditional entry names each Condition's kind, the assumption in words, and what would settle it); for a withheld value REMOVE it from values[] and record a withheld entry (label, reason, gap_kind, resolved_by, and the law section where one applies, carrying no number); when EVERY value of an answer is withheld make the whole answer not_available with the additive 1.3.0 resolved_by/gap_kind fields (DB-171 F4). Place the five standalone results per owner row R567: rear_yard and setback_above_base as value_states entries of permitted_envelope; the three legal unit limits as value_states entries of floor_area_allowance; on the benchmark all five are withheld, so none appears in any values[] array. Set contract_version to 1.3.0. Reserve the apartment estimate (see O28). Make the geometry follow the withheld results (see O29). Then validate the finished document with the existing app.contracts results validator (the way-rule runs after the schema). (O28) THE APARTMENT-ESTIMATE BLOCK IS RESERVED IN THE EMITTED DOCUMENT (owner R568, R543; backlog DB-185 a). THE ORCHESTRATOR'S RULING on the draft's second question. In every document the adapter emits, the top-level unit_estimate block is the reserved block: it carries no legal figure, no formula and no factor. It is the shared not-available shape (status, reason, reason_kind): that block has NO gap_kind and NO resolved_by field in the schema, and the schema is read-only in this task. Its reason begins with the owner's words 'Not known', names the 'Preliminary capacity estimate', and says in plain words that the estimate is not built yet (owed work; never the word 'unsupported', R258). reason_kind is rule_not_implemented (THE ORCHESTRATOR'S READING of the schema's five kinds: the estimator is a calculation that does not exist yet; missing_input would say that a fact of the lot is missing, which R258 keeps apart; the reviewers confirm or correct it). THE RESERVATION IS MADE BY THE TRANSFORM, NOT IN THE ENGINE: services/api/app/scenario/three_answers/dwelling_units.py and engine.py stay READ-ONLY and byte-identical. Reasons, each checked at the claim head: (i) the decision module's way records carry no number (result_way_inputs.py, Settled / Conditional), so when the standard legal unit limit is shown, its figure, formula, factor, rounding rule and law sections must come from the rule the engine evaluates (r6b-dwelling-units), which the engine's inner unit_estimate block holds; (ii) tests/scenario/three_answers/test_three_answers_rule_access.py imports build_unit_estimate and pins its output, and the draft did not list that file; (iii) nothing but the adapter calls generate_results under services/api/app, so the engine's inner result reaches no surface: ADD A TEST that pins this (no other caller under services/api/app). (O32) THE STANDARD LEGAL UNIT LIMIT WHEN IT IS SHOWN. When the module's way for legal_unit_limit_standard is settled or conditional, the transform adds ONE value object to floor_area_allowance.values[]: key legal_unit_limit_standard, the figure of the engine's inner unit_estimate block (never recomputed in the transform), unit dwelling_units, that block's law sections, sources naming the rule table (r6b-dwelling-units at its version) and the law section, and a label that prints the formula, the factor and the rounding rule in words (the value object has no field for them; work order test H10: no value used in a calculation goes unprinted) - together with its way entry. When the way is withheld, or the engine's inner block is not available, NO value object is added and the figure appears nowhere in the document. The limits for qualifying affordable and qualifying senior housing are always withheld by the module (it works out no figure for them): they are way entries only. test_three_answers_benchmark.py is NOT edited: its lines 123 and 146 (backlog DB-185 c) keep testing the engine's INNER result, which stays at 1.2.0; the emitted document's version, law sections and estimate block are tested in the new test file. An answer has ONE measurement label (DB-185 d): say in the report what label the floor-area answer carries once a unit count sits beside square feet and ratios, and that it is still true of each value. (O29) THE DRAWINGS FOLLOW THE DOCUMENT (owner R228 in the work order; backlog DB-189). In the emitted 1.3.0 document the geometry block follows the ways: the rear yard is withheld, so geometry.yards is not_available with the independent reading's reason (the far corner is 144.60 ft from the corner point; beyond 100 ft a rear yard depends on the unrecorded lot-line types of the adjoining lots, which nobody has recorded, so it is NOT KNOWN there - from the reference reading, NEVER the older whole-lot 'not required'); the building option is withheld, so geometry.floor_plates is not_available; coverage is withheld, so the envelope tier is not_available; the lot_outline stays. The transform rewrites these layers (engine.py and geometry.py stay read-only). (O31) EVERY BLOCK WORKED OUT FROM A WITHHELD RESULT FOLLOWS IT (owner R570; work order Part 0, test H2: 'building option, floor plates, floor stack and floor table are withheld'). The draft followed the withheld results into the geometry block only. The engine's document also carries: floor_by_floor (the option's floor table), floor_stack (the floors that fit, with the allowable area of each level, which needs the coverage), shortfall (a statement about the option), addon_gains (each gain is the difference of two recomputed building options: services/api/app/scenario/addons/recalculation.py lines 146-148 and 209-212) and best_combination (chosen from those gains). On the committed benchmark document these hold numbers today (two floor rows of 10,075 sq ft; floors_fit 5 with 10,075 sq ft a level; shortfall 'none'; gains of 4,030 sq ft, 10 ft and 1 floor; a best combination). IN THE EMITTED DOCUMENT: when the building option is withheld, floor_by_floor is empty, and floor_stack, shortfall, best_combination and every add-on gain the engine shows as available are 'not available' (the shared shape) with a plain reason that names the withheld result they are worked out from; when the coverage is withheld, floor_stack and the geometry envelope are not available; the add-ons' names, groups and 'requires' lines stay. NO BLOCK OF THE EMITTED DOCUMENT CARRIES A NUMBER WORKED OUT FROM A WITHHELD RESULT. A block worked out only from shown (settled or conditional) results stays as the engine made it; that such a block has no way entries of its own is NOT repaired here (the contract has no slot for it): LIST every such block in the report, for the display piece. IF the emitted document cannot be expressed in the 1.3.0 schema as it stands, STOP and report the exact point; change no schema and drop no value silently. (O30) THE SHOWN VALUES' NUMBERS ARE NOT INVENTED HERE. The floor-area and height numbers carried as conditional are exactly the engine's existing rule-table outputs; the expected values a TEST asserts come from the reference cases (docs/reference-cases/R6B/cases/), never from the engine's saved output (rule 3; owner rule 5). STEPS. STEP 1: add three_way_document.py and its transform; add it to the import-guard permitted set. STEP 2: extend the adapter run_engine_and_result_ways (result_way_engine_bridge.py) so it gathers the ways then calls the transform and returns the 1.3.0 document beside the ways (its docstring changes from NOTHING IS EMITTED to the emitting behaviour). STEP 3: in the transform, reserve unit_estimate (O28), place the standard legal unit limit when it is shown (O32) and make every block worked out from a withheld result follow it (O31); dwelling_units.py is not edited. STEP 4: regenerate the committed journey fixture packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json from the adapter's emitted document, and regenerate the saved DXF (tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf) and kit drawings (tests/drawings/kit/snapshots/recorded_215_16_northern_journey.massing.svg and .site_plan.svg) that read it; review each regenerated file line by line against section 5 of the work order (rule 3). STEP 5: repoint the server journey test (tests/journey/test_215_16_northern_journey.py) and rewrite the wiring test (tests/scenario/three_answers/test_wiring_emits_nothing.py, whose name is now a misnomer) to the adapter path and 1.3.0. STEP 6: teach the website reader the value_states layer (apps/web/src/lib/architect/three-answers.ts answerView: a withheld value is rendered from its value_states entry as its reason and NEVER by falling back to values[0]; a conditional value shows 'If <assumption>') and AnswerCard.tsx, and update the web tests that read the fixture (the test harness apps/web/src/test-support/results-fixtures.ts globs the results fixtures directory and the panel test renders every fixture, so a withheld value in any fixture reaches the reader - R556). STEP 7: update the zoning-rule review register (authored source services/api/app/rules/review_register/register.json, re-rendered to docs/zoning-rule-review/, per docs/zoning-rule-review/GUIDE.md) for entries r6b-rear-yard-corner-waiver (now withheld on the benchmark, not 'not required'), r6b-lot-coverage (withheld on the benchmark, the reach reason) and r6b-dwelling-units (the legal limit now carried as a value-state, the estimate reserved); NO human verdict is entered (D-090-R379, ADR-007). TESTS (one per input state, each expected value from a reference case; the report holds the table 'state, outcome, test id'; a red proof on today's code; one mutation proof per pinned branch). Cover: the benchmark 1.3.0 document validates and carries the value_states; the five results placed per R567; coverage withdrawn from values[] with its reach reason; the rear yard withheld with the independent reading (not 'not required'); a document-wide scan finds NO withheld result's number anywhere; unit_estimate carries no legal figure and reads Not known; each conditional value names its assumption with no 'professional review' phrase; the user density-statement path makes the standard unit limit conditional (and a contradicting statement is refused); a made-up interior lot (step-p5, 5,355 sq ft -> 10,710) and a made-up corner lot (corner-reach C2/C3) through the emit path; a fact not given withholds only its dependents and never a zero; the regenerated fixture equals the engine output (proves nothing about correctness, rule 3); the drawings omit the withheld results and say so; the website reader renders a withheld value as its reason and never the first value. Where the law reading is 'not known' (the overlay reading owed for the rear yard; qualifying-senior 'not set by this formula'; K20 unchecked), the test asserts 'withheld' or 'conditional', never a settled value. NOT IN THIS TASK: any edit of engine.py, dwelling_units.py, geometry.py, answers.py or building_option.py; any schema, schema-copy or generated-type change; the server route that returns the document (Part A); the full website results display (a new ResultsPanel, a results-api client, a results-flag website switch, a dashboard tool, a browser journey, any page that mounts the panel) beyond the minimal reader-safety fix forced by the shared fixture; the realistic apartment estimator and any Preliminary-capacity-estimate number; turning on any production switch; any production setting or render.yaml; any rule-table value; the area tolerance of backlog DB-173 (the benchmark figures disagree and the floor-area results are conditional on the recorded area, which is correct); capturing or reading any new law text; any human verdict in the review register.",
+  "business_reason": "The decision module, its validators and the carriers are built and merged, but the engine's document still shows a number for every value and the ways sit beside it, unused: the benchmark document shows coverage, a rear yard, a building option and a legal unit 'estimate' that the independent readings do not support. The owner settled on 2026-10-08 (D-090 source-060) where the five results are carried (R567), that the estimate block is reserved for the preliminary capacity estimate (R568), that legal limits and estimated counts are kept apart (R569), and that a withheld value stays withheld everywhere (R570), and released the piece to be built (R583) with every activation restriction kept (R584) and the full report and all options in scope (R588). Emitting the three-way document makes the one results document honest - unknown stays unknown (R229, R240), a user's statement is only conditional (R255), conflicting areas are conditional (R257), not-checked is never confirmed and a base height is never the property's maximum (R267-R269) - which is the foundation every later surface (the route, the website, the drawings and the PDF) reads from.",
+  "inputs": [
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md sections 0, 5, 6, 8 (Part 0), 10, 11",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R567-R570, R582-R584, R588, R229, R240, R255, R257, R258, R267-R269, R543, R556 and source-060-amendment.md",
+    "services/api/app/scenario/three_answers/engine.py, answers.py, geometry.py, dwelling_units.py, building_option.py (READ; engine/geometry/answers stay read-only)",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py, result_way_bridge.py, result_way_inputs.py, result_ways.py, result_way_bridge_overlay.py (READ; the decision modules except the adapter stay read-only)",
+    "services/api/app/contracts/results_way_rules.py, services/api/app/scenario/three_answers/contract.py (READ; the validator already handles 1.3.0)",
+    "packages/contracts/schemas/v1/results.schema.json, packages/contracts/generated/results.ts (READ; already carry 1.3.0 - do not change)",
+    "services/api/tests/scenario/three_answers/test_result_ways_benchmark.py, test_result_ways_corner_interior.py, test_three_answers_benchmark.py, test_wiring_emits_nothing.py; services/api/tests/journey/test_215_16_northern_journey.py; services/api/tests/contracts/test_results_three_ways_slot.py (READ for the pinned ways and the expected shape)",
+    "docs/reference-cases/R6B/README.md and cases/real-lot.json, interior-lots.json, step-p5-worked.json, corner-reach.json, overlay-reading.json (the expected values; an expected value in a test comes from here, never from the engine)",
+    "docs/DISCOVERY_BACKLOG.md rows DB-171, DB-172, DB-175, DB-185, DB-189",
+    "docs/zoning-rule-review/GUIDE.md and rules/r6b-lot-coverage.md, r6b-rear-yard-corner-waiver.md, r6b-dwelling-units.md; services/api/app/rules/review_register/register.json",
+    "apps/web/src/lib/architect/three-answers.ts, apps/web/src/components/architect/answers/AnswerCard.tsx, apps/web/src/test-support/results-fixtures.ts (the reader that the shared fixture forces this piece to repair)"
+  ],
+  "outputs": [
+    "services/api/app/scenario/three_answers/three_way_document.py: the pure transform from an assembled document + the ways to the 1.3.0 three-way document (value_states, withdrawn withheld values, whole-answer not_available, the five results placed, the reserved estimate, the withheld geometry layers, the blocks that follow a withheld result, the standard legal unit limit when it is shown)",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py: the adapter now emits the 1.3.0 document beside the ways",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json: regenerated at contract 1.3.0; services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf and services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.massing.svg and .site_plan.svg: regenerated to follow it",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py (new) and the updated test_wiring_emits_nothing.py, test_result_ways.py (import guard), tests/journey/test_215_16_northern_journey.py",
+    "apps/web reader + card + the web tests that read the shared fixture (the minimal R556 reader-safety fix; NOT the full display)",
+    "docs/zoning-rule-review/ (re-rendered from register.json) with the three entries updated and no human verdict",
+    "project-control/reports/M5-T136-producer-report.md: the table of input states with the test ids, the reference-case source of every expected value, the red proofs, the mutation proofs, the line-by-line review of each regenerated saved file against section 5, and every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M5-T129",
+    "M5-T130",
+    "M5-T131",
+    "M5-T134"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+    "services/api/tests/scenario/three_answers/test_result_ways.py",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.massing.svg",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "apps/web/src/lib/architect/three-answers.ts",
+    "apps/web/src/components/architect/answers/AnswerCard.tsx",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/scope-summary.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/building-option-notes.test.tsx",
+    "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+    "apps/web/src/lib/architect/__tests__/building-option-notes-view.test.ts",
+    "services/api/app/rules/review_register/register.json",
+    "docs/zoning-rule-review/REGISTER.md",
+    "docs/zoning-rule-review/HISTORY.md",
+    "docs/zoning-rule-review/rules/r6b-lot-coverage.md",
+    "docs/zoning-rule-review/rules/r6b-rear-yard-corner-waiver.md",
+    "docs/zoning-rule-review/rules/r6b-dwelling-units.md",
+    "docs/zoning-rule-review/evidence/r6b-lot-coverage.txt",
+    "docs/zoning-rule-review/evidence/r6b-rear-yard-corner-waiver.txt",
+    "docs/zoning-rule-review/evidence/r6b-dwelling-units.txt",
+    "project-control/reports/M5-T136-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/three_answers/dwelling_units.py and services/api/tests/scenario/three_answers/test_three_answers_benchmark.py: read only (the orchestrator's ruling, reading O28)",
+    "services/api/app/scenario/three_answers/engine.py, geometry.py, answers.py, building_option.py and the decision modules result_ways.py, result_way_inputs.py, result_way_conditions.py, result_way_facts.py, result_way_bridge.py, result_way_bridge_overlay.py and their texts: read only (the transform is a new module; engine.py must never contain 'result_way')",
+    "packages/contracts/schemas/** and services/api/app/_contract_schemas/** and packages/contracts/generated/**: the schema already carries 1.3.0 and the copies are in sync - do not change them; apps/web/src/lib/contract.ts is a property-profile gate, not a results gate - do not change it",
+    "any NEW results fixture, and every other DXF or kit snapshot not keyed to the journey lot: read only",
+    "apps/web beyond the reader, the card and the named tests: NO new ResultsPanel, results-api client, results-flag switch, DashboardTools entry, browser journey, or page mount",
+    "app/api/v1/** and app/main.py and app/config.py: no route, no mount, no switch",
+    "render.yaml, CI config, any dependency file, tools/**, .claude/**",
+    "project-control/** except the producer report named in the allowed paths; no human verdict in the review register"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "benchmark_emits_contract_1_3_0",
+      "input": "the benchmark lot (BBL 4073340070) assembled offline from the recorded replay pack, run through the adapter",
+      "expected": "the emitted document validates and declares contract_version 1.3.0; floor_area_allowance and permitted_envelope are available and each carries a value_states map; remaining_floor_area is still 'Not confirmed' (unchanged); the shown floor-area and height numbers equal docs/reference-cases/R6B/cases/real-lot.json (20,150 / 24,180; 30/45/55 and 30/45/65), never the engine's saved output"
+    },
+    {
+      "id": "S2",
+      "case": "five_results_placed_per_owner_decision",
+      "input": "the benchmark document",
+      "expected": "rear_yard and setback_above_base appear ONLY as value_states entries of permitted_envelope; legal_unit_limit_standard, _qualifying_affordable and _qualifying_senior appear ONLY as value_states entries of floor_area_allowance; none of the five appears in any answer's values[] array (all withheld on the benchmark); this matches owner row R567"
+    },
+    {
+      "id": "S3",
+      "case": "coverage_withdrawn_with_its_reach_reason",
+      "input": "the benchmark document",
+      "expected": "max_lot_coverage is absent from permitted_envelope.values[] and present as a withheld value_states entry whose reason carries the measured reach (103.93 ft from the 215 Place street line, corner-reach.json); no coverage number appears anywhere"
+    },
+    {
+      "id": "S4",
+      "case": "rear_yard_withheld_not_not_required",
+      "input": "the benchmark document and its geometry block",
+      "expected": "the rear yard is a withheld value_states entry with the independent reading (144.60 ft from the corner point; beyond 100 ft it depends on the unrecorded adjoining lot-line types, so NOT KNOWN there); geometry.yards is not_available with that reason, NEVER the older whole-lot 'not required' (DB-189); the drawing shows no rear yard"
+    },
+    {
+      "id": "S5",
+      "case": "no_withheld_result_carries_a_number_anywhere",
+      "input": "the full emitted document, scanned",
+      "expected": "no withheld result (coverage, rear yard, setback, building option, the three unit limits) carries a number ANYWHERE in the emitted document: not in values[], value_states, unit_estimate or geometry, and not in floor_by_floor, floor_stack, shortfall, addon_gains or best_combination; on the benchmark floor_by_floor is empty, floor_stack, shortfall and best_combination are not available, every add-on gain is not available, and each says in plain words which withheld result it is worked out from; the numbers 10,075 (a floor's area), 29 (the unit figure) and 100 (the coverage percent) appear nowhere as a result; RED PROOF: leaving any one of those blocks as the engine made it makes its number reappear and the test fails (one proof per block)"
+    },
+    {
+      "id": "S6",
+      "case": "unit_estimate_holds_no_legal_figure",
+      "input": "the benchmark document's unit_estimate block",
+      "expected": "in the EMITTED document unit_estimate carries no legal dwelling-unit number, no formula, no factor and no ZR 23-52 figure; it is the shared not-available shape whose reason begins 'Not known', names the 'Preliminary capacity estimate' and says the estimate is not built yet, never 'unsupported' (R543, R568, R258); reason_kind is rule_not_implemented; the block has no gap_kind field (the schema has none there); RED PROOF: the engine's inner document, which nothing but the adapter reads, still holds value 29 and '20,150 / 680 = 29.63', and passing it through unchanged fails the test"
+    },
+    {
+      "id": "S7",
+      "case": "conditional_values_name_their_assumptions",
+      "input": "the benchmark floor-area and height values",
+      "expected": "each shown value carries a conditional value_states entry naming its assumption(s) (the unchecked K20 conditions, and for floor area the recorded-area condition) with 'settled_by'; the height limits are labelled the district's limits and nowhere 'the maximum for this property'; no reason or label contains the phrase 'professional review' (R267-R269)"
+    },
+    {
+      "id": "S8",
+      "case": "user_density_statement_is_conditional_only",
+      "input": "the benchmark lot with a user's statement that the lot is not in a special density area, and without it, and with a statement that contradicts a recorded fact",
+      "expected": "with it: legal_unit_limit_standard is a conditional value_states entry naming that statement (and the recorded-area condition), never settled, and the statement appears in no sourced fact; without it: withheld; a contradicting statement is refused as a conflict (R255)"
+    },
+    {
+      "id": "S9",
+      "case": "made_up_interior_lot_shown_floor_area",
+      "input": "a made-up interior R6B lot of 5,355 sq ft through the emit path, with and without the density statement",
+      "expected": "the floor-area value is 10,710 shown with its way (conditional unless the K20 conditions are supplied checked-and-absent, then settled); the legal unit limit is withheld without density evidence, or conditional with the user's statement (16); expected values from docs/reference-cases/R6B/cases/step-p5-worked.json / interior-lots.json"
+    },
+    {
+      "id": "S10",
+      "case": "made_up_corner_lot_coverage_from_reach",
+      "input": "made-up corner lots C2 (60x80) and C3 (150x100) with the K20 conditions supplied checked-and-absent",
+      "expected": "C2: coverage 100 percent settled and the rear yard 'none required anywhere'; C3: coverage withheld (no single figure) and the rear yard withheld; expected values from docs/reference-cases/R6B/cases/corner-reach.json; with the K20 conditions not checked the same values are conditional"
+    },
+    {
+      "id": "S11",
+      "case": "a_fact_not_given_withholds_only_its_dependents",
+      "input": "the emit path with no property profile (recorded columns not read) and separately with no site geometry (reach unknown)",
+      "expected": "only the dependent results are withheld and name the missing fact; the other results are unchanged; a column not read is never taken as 'none'; never a zero (R229, R240)"
+    },
+    {
+      "id": "S12",
+      "case": "regenerated_fixture_equals_engine_output",
+      "input": "the regenerated committed journey fixture and the adapter's emitted document",
+      "expected": "they are byte-for-byte equal; this is an UNCHANGED/wiring proof only and is NOT counted as evidence any value is correct (work order rule 3)"
+    },
+    {
+      "id": "S13",
+      "case": "drawings_follow_the_document",
+      "input": "the regenerated DXF and kit snapshots",
+      "expected": "they omit the withheld rear yard, building option and envelope and say so; no drawing shows a result the document withholds; each regenerated file was reviewed line by line against section 5 (R228)"
+    },
+    {
+      "id": "S14",
+      "case": "website_reader_never_falls_back_to_the_first_value",
+      "input": "the website panel rendering every results fixture (via the glob) and the journey fixture",
+      "expected": "a withheld value is rendered as its value_states reason and NEVER by falling back to values[0]; a conditional value shows 'If <assumption>'; no number appears for a withheld result on a card; W1 (panel over every fixture) and W8 (journey) pass; RED PROOF: today's reader returns values[0] for a withheld headline key (R556, R570)"
+    },
+    {
+      "id": "S15",
+      "case": "validator_refuses_a_number_in_a_withheld_result",
+      "input": "the emitted document and a hand-built document that shows a withheld key",
+      "expected": "the already-merged way-rule (results_way_rules.py) and the schema refuse a shown value marked withheld and a withheld entry carrying a number; NO new validator rule is added; the document-wide invariant test asserts it on the emitted document"
+    },
+    {
+      "id": "S16",
+      "case": "nothing_is_activated",
+      "input": "the repository after the change",
+      "expected": "no production switch is turned on; no route is mounted; app/main.py, app/config.py and render.yaml are untouched; engine.py, dwelling_units.py, geometry.py, answers.py and building_option.py are byte-identical to the claim head; the engine's inner result still declares 1.2.0 and a test finds NO caller of generate_results under services/api/app other than the adapter (R584)"
+    },
+    {
+      "id": "S17",
+      "case": "register_updated_no_human_verdict",
+      "input": "the three review-register entries",
+      "expected": "r6b-rear-yard-corner-waiver, r6b-lot-coverage and r6b-dwelling-units are re-rendered from register.json to describe what the program emits now; every rule still reads 'Not reviewed'; no human verdict is entered (D-090-R379, ADR-007)"
+    },
+    {
+      "id": "S18",
+      "case": "modularity_and_focused_suites_pass",
+      "input": "ruff, the modularity check, the focused api suites, and the web checks",
+      "expected": "ruff clean; python tools/modularity_check.py --check exits 0 and three_way_document.py and every grown file stay under the warning threshold; the three_answers, journey, cad and drawings/kit suites pass; the web lint, typecheck, unit tests and build pass; only the allowed paths changed"
+    },
+    {
+      "id": "S19",
+      "case": "standard_unit_limit_shown_with_its_formula",
+      "input": "the made-up interior lot of 5,355 sq ft through the emit path with the user's statement that the lot is not in a special density area",
+      "expected": "floor_area_allowance.values[] holds ONE value with key legal_unit_limit_standard, value 16, unit dwelling_units, the law section of the dwelling-unit rule, the rule table among its sources, and a label that prints the formula (10,710 over 680 = 15.75), the factor and the rounding rule; its way entry is conditional and names the statement; unit_estimate stays the reserved block; the expected value comes from docs/reference-cases/R6B/cases/step-p5-worked.json or interior-lots.json, never from the engine's saved output; without the statement no such value object exists and 16 appears nowhere"
+    },
+    {
+      "id": "S20",
+      "case": "engine_switched_off_emits_no_number",
+      "input": "the emit path with the engine's lane switch off",
+      "expected": "the emitted document validates, carries no number of any result and invents no way entry for a value that is not shown; unit_estimate is the reserved block or the engine's own not-available block, never a figure"
+    },
+    {
+      "id": "S21",
+      "case": "overlay_support_tied_to_the_reference_rows_at_the_adapter",
+      "input": "the benchmark lot (a C2-2 overlay is recorded) through the emit path",
+      "expected": "for each result family the emitted way agrees with what the reference rows of docs/reference-cases/R6B/cases/overlay-reading.json support under a recorded commercial overlay (rear yard not supported: withheld); the test reads the reference rows and runs the ADAPTER, not only the overlay table (backlog DB-190 c)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "scenario-optimization-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "SIZE / BLAST RADIUS is the top risk: one behavioural change but ~30 files across services/api, packages, saved drawings, apps/web and the register -> mitigate by keeping engine.py/geometry.py/answers.py read-only (all new logic in the one transform module), changing no schema/copy/generated type, running the heavy suites one at a time, and reviewing each regenerated saved file line by line against section 5",
+    "the committed journey fixture is SHARED by server and web and the web harness globs every results fixture -> the reader-safety fix (R556) and the web tests are in the same change; without them CI is red (named open question A, for the orchestrator)",
+    "a shown value marked withheld, an empty value_states map, or a withheld entry carrying a number -> the already-merged way-rule validator refuses all three and the transform is built to satisfy it; the document-wide invariant test catches a slip",
+    "the rear-yard reading could be decided by preference -> it is NOT: the module withholds it and the reference reading (M4-T035) supports withheld; the reason text is taken from the reference case, no law is decided here",
+    "a regenerated saved drawing silently hides a wrong result -> each regenerated file is reviewed line by line against section 5 and the drawings read the one document (R228)",
+    "engine.py or a carrier file names the decision module and trips the import guard -> only the transform and the adapter name it; both are added to the one guard test",
+    "a block outside the three answers keeps a number of a withheld result (the floor table, the floor stack, the shortfall, an add-on gain, the best combination) -> reading O31 and scenario S5 name each block; the document-wide scan and one red proof per block control it"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T07:03:36.355713+00:00",
+  "updated_at": "2026-10-08T08:41:55.830681+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R228",
+        "D-090-R229",
+        "D-090-R240",
+        "D-090-R255",
+        "D-090-R257",
+        "D-090-R258",
+        "D-090-R267",
+        "D-090-R268",
+        "D-090-R269",
+        "D-090-R543",
+        "D-090-R556",
+        "D-090-R567",
+        "D-090-R568",
+        "D-090-R569",
+        "D-090-R570",
+        "D-090-R583",
+        "D-090-R584",
+        "D-090-R588"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T07:03:36.356022+00:00",
+  "path_notes": "PRODUCER = scenario-optimization-engineer in an isolated worktree (show-toplevel guard; reset to the claim-seam head first). ADR-006 Tier B 'Scenario calculation': the required review is data-contract (G3) + QA (G4); a frontend reviewer may be added for the web reader subset; no owner approval; no production switch on. This is NOT a parallel-wave task - it touches the shared journey fixture and the web reader, so it shares files with any display work and must run alone or strictly before the display piece. MODULARITY (SLOC as tools/modularity_check.py counts, head c6f33bb7): engine.py ~290, geometry.py ~140, dwelling_units.py ~60, result_way_engine_bridge.py ~95, all well under the 600 warning threshold; the new three_way_document.py is a focused module under 600 and is the ONLY file that grows substantially. READ-ONLY: engine.py, geometry.py, answers.py, the decision modules except the adapter, the results schema and its copies and generated types, every fixture and snapshot not keyed to the journey lot, every route and switch. ALLOWED PATHS are literal files (the ledger refuses patterns, DB-181); if running the snapshot suites reveals another literal snapshot keyed to the journey lot, the orchestrator adds that one literal path at integration. New test file test_three_answers_three_way_emit.py lives under services/api/tests/scenario/three_answers, a folder the ownership check already covers. THE ORCHESTRATOR'S RULINGS on the draft's three questions and its corrections, after reading the draft against the code at the claim base 1adaf7f4 (2026-10-08). QUESTION 1: the eight website files stay in this packet (checked: apps/web/src/test-support/results-fixtures.ts loads every file of packages/contracts/fixtures/valid/results, so the regenerated journey fixture reaches the reader in the same change). QUESTION 2: the estimate block is reserved in every document the adapter emits, by the transform; dwelling_units.py and test_three_answers_benchmark.py were REMOVED from the allowed paths (reading O28). QUESTION 3: the four saved files named are the only files of the journey results document (checked: git ls-files; the two map snapshots of that lot read a different fixture); if the snapshot suites change another saved file the builder STOPS and reports it, and the orchestrator adds that one literal path. CORRECTIONS of the draft: (a) the top-level unit_estimate block cannot carry gap_kind (scenario S6 rewritten; reading O28); (b) the draft followed withheld results into the geometry only: the floor table, the floor stack, the shortfall, the add-on gains and the best combination also carry the withheld building option's numbers (reading O31; scenario S5 widened); (c) the standard legal unit limit, when shown, needs a value object with its formula printed (reading O32; scenario S19); (d) the engine switched off (scenario S20); (e) row R228 bound (the drawings follow the document). Baselines at the claim base, read by the orchestrator: tests/scenario/three_answers 305 passed 2 skipped; the journey test and tests/contracts/test_results_three_ways_slot.py 50 passed; tests/cad and tests/drawings 1366 passed 6 skipped. ONE PIECE, NO PARALLEL BUILDER: project-control/reports/WAVE9-2026-10-08-concurrency-record.md.",
+  "documented_test_commands": [
+    "cd services/api && /root/project/lanes-runtime/venv/bin/python -m ruff check .",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/scenario/three_answers",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/journey/test_215_16_northern_journey.py tests/contracts/test_results_three_ways_slot.py",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/cad tests/drawings",
+    "python3 tools/modularity_check.py --check   (from the repository root)",
+    "python services/api/app/rules/review_register/render_review_register.py --check   (after re-rendering the register with --write)",
+    "cd apps/web && npm run lint && npm run typecheck && npm run test && npm run build   (the lanes venv first on PATH, PYTHONPATH=<checkout>/services/api; one at a time)",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider   (the FULL api suite, once, at the final candidate; the orchestrator runs it)",
+    "cd apps/web && npx --yes npm@11.18.0 ci --no-audit --no-fund   (ONCE in the builder's worktree, before the web checks; lockfile packages only)",
+    "CI=true npm run test:e2e in apps/web   (the orchestrator runs it once at the final candidate, with the full api suite)"
+  ],
+  "worktree": "/root/project/w-wave9",
+  "progress_log": [
+    {
+      "at": "2026-10-08T07:05:11.199525+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed at the contract head; the builder starts in an isolated worktree reset to the claim-seam head. Baselines at the claim base 1adaf7f4: three_answers 305 passed 2 skipped; journey + three-ways slot 50 passed; cad + drawings 1366 passed 6 skipped."
+    },
+    {
+      "at": "2026-10-08T08:08:02.473308+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Builder's one commit integrated by cherry-pick as 8ad287f5 (tree identical to the builder's 8a4c74ef; 22 files, all inside the allowed paths; one saved drawing deleted because its content is now withheld). Builder's checks, by its report: three_answers 324 passed 2 skipped; journey and three-ways slot 50; cad and drawings 1359 passed 6 skipped; website lint, typecheck, 2429 unit tests and build green. One scope correction recorded (scenario S4: the benchmark rear yard carries the decision module's own reason, the open point of the overlay reading; backlog row DB-198). Next: G3 and G4 reviews at the frozen head; the full api suite and the website checks with the browser tests by the orchestrator."
+    },
+    {
+      "at": "2026-10-08T08:30:13.980471+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Both independent reviews returned at the frozen head 4ab2238b and passed on their first reading: G3 (data-contract-verifier) fourteen checks confirmed, three notes; G4 (qa-engineer) eleven checks, thirteen mutations, four notes; no blocking finding; no review of this task failed. Both judged the correction of scenario S4 right. The two returns are kept unchanged in project-control/reports/M5-T136-G3G4.md. Orchestrator's runs at the same head: website lint, typecheck, 2429 unit tests, build, 153 browser tests; full api suite 8562 passed, 8 skipped. Evidence map written (eighteen rows)."
+    },
+    {
+      "at": "2026-10-08T08:41:38.500154+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "awaiting_gate",
+      "message": "Rule check (directive-compliance-verifier, an AI agent that produced none of the work) at the gates head 99044e56: PASS for each of the eighteen rows, each for this task's share; binding B1 to B5 confirmed; no correction required; its carry-forward condition is stated in project-control/reports/M5-T136-DCV.md."
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-08T08:08:02+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-08, at the integration of the builder's one commit (8ad287f5), before the reviews] SCENARIO S4 AND READING O29: THE REASON OF THE BENCHMARK LOT'S REAR YARD. The packet says the rear yard is withheld 'with the independent reading (144.60 ft from the corner point ...)' and that geometry.yards carries 'that reason'. That is not what the merged decision module returns for this lot, and the module is read-only in this task: under the recorded C2-2 overlay it withholds the rear yard FIRST on the open point of the overlay reading (the overlay-support table of result_way_bridge_overlay.py, which rests on the reference row step-p4-worked#rear-yard and its standing caveat), so the reason it returns is 'This lot has a recorded commercial overlay (C2-2); an independent reading of the commercial-overlay rear-yard rule for an all-residential building is owed before this result may be shown.' The transform decides nothing and carries the module's reason unchanged. Both reasons are true of this lot (backlog row DB-175 e). CORRECTED EXPECTATION OF S4: on the benchmark the rear yard is a withheld way entry of the envelope answer carrying the module's reason unchanged; geometry.yards is not available with the same reason; the older whole-lot 'not required' appears nowhere in the document or the saved drawings; the reach reason (144.60 ft from the corner point; beyond 100 ft it depends on the adjoining lots' lot-line types) is carried, unchanged, for a corner lot with the same reach and no recorded overlay. WHAT STAYS OWED (backlog row DB-198): naming EVERY standing reason of a withheld result, so that the benchmark's rear yard also states its reach; it is a change of the decision module and is not in this task. The packet's draft and the orchestrator's check of it both missed that the module's benchmark reason under the wired overlay table is the overlay one."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-08T08:41:55.830486+00:00"
+}

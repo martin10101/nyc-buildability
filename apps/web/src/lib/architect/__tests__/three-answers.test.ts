@@ -119,8 +119,10 @@ describe("answerView — the draft gate and the headline", () => {
     if (answer.status !== "available") throw new Error("fixture changed: allowance not available");
     const view = answerView(doc, "floor_area_allowance", true);
     if (view.kind !== "available") throw new Error("expected an available view");
-    expect(view.headline.key).toBe("max_residential_floor_area");
-    expect([view.headline, ...view.rows]).toHaveLength(answer.values.length);
+    if (view.headline.kind !== "value") throw new Error("expected a value headline");
+    expect(view.headline.shown.value.key).toBe("max_residential_floor_area");
+    expect(1 + view.rows.length).toBe(answer.values.length);
+    expect(view.withheld).toEqual([]);
 
     const withoutKey: AnswerValue[] = answer.values.filter(
       value => value.key !== "max_residential_floor_area",
@@ -131,7 +133,101 @@ describe("answerView — the draft gate and the headline", () => {
     };
     const fallback = answerView(probe, "floor_area_allowance", true);
     if (fallback.kind !== "available") throw new Error("expected an available view");
-    expect(fallback.headline).toBe(withoutKey[0]);
+    if (fallback.headline.kind !== "value") throw new Error("expected a value headline");
+    // No value_states on this 1.0.0 fixture: an absent headline key falls back to the first value.
+    expect(fallback.headline.shown.value).toBe(withoutKey[0]);
+  });
+
+  it("S14: a conditional value shows 'If <assumption>' and a withheld value shows its reason", () => {
+    // A 1.3.0 probe built from the all-available fixture: mark the floor-area headline conditional
+    // and add a withheld value_states entry for a key not shown in values[].
+    const doc = loadResultsFixture("synthetic_all_answers_available");
+    const answer = doc.answers.floor_area_allowance;
+    if (answer.status !== "available") throw new Error("fixture changed: allowance not available");
+    const probe: Results = {
+      ...doc,
+      contract_version: "1.3.0",
+      answers: {
+        ...doc.answers,
+        floor_area_allowance: {
+          ...answer,
+          value_states: {
+            max_residential_floor_area: {
+              way: "conditional",
+              conditions: [
+                {
+                  kind: "unchecked_condition",
+                  assumption: "If the recorded lot area is confirmed",
+                  settled_by: "A survey or deed dimensions",
+                },
+              ],
+            },
+            legal_unit_limit_standard: {
+              way: "withheld",
+              label: "Legal dwelling-unit limit",
+              reason: "There is no evidence of a special density area, so it is not known.",
+              gap_kind: "work_owed",
+              resolved_by: "Sourced evidence of the special density area",
+            },
+          },
+        },
+      },
+    };
+    const view = answerView(probe, "floor_area_allowance", true);
+    if (view.kind !== "available") throw new Error("expected an available view");
+    if (view.headline.kind !== "value") throw new Error("expected a value headline");
+    expect(view.headline.shown.condition).toBe("If the recorded lot area is confirmed");
+    expect(view.withheld).toEqual([
+      {
+        key: "legal_unit_limit_standard",
+        label: "Legal dwelling-unit limit",
+        reason: "There is no evidence of a special density area, so it is not known.",
+      },
+    ]);
+    // The withheld key never appears among the shown values (R570).
+    expect(view.rows.every(row => row.value.key !== "legal_unit_limit_standard")).toBe(true);
+  });
+
+  it("S14 RED PROOF: a withheld HEADLINE key is shown as its reason, never the first value (R556)", () => {
+    // Build a permitted_envelope whose designated headline key (max_building_height) is WITHHELD
+    // and removed from values[], with other heights shown. Today's reader returned values[0] (a
+    // different value) as the headline; the fixed reader shows the withheld reason instead.
+    const doc = loadResultsFixture("synthetic_all_answers_available");
+    const envelope = doc.answers.permitted_envelope;
+    if (envelope.status !== "available") throw new Error("fixture changed: envelope not available");
+    const without = envelope.values.filter(value => value.key !== "max_building_height");
+    expect(without.length).toBeGreaterThan(0);
+    const probe: Results = {
+      ...doc,
+      contract_version: "1.3.0",
+      answers: {
+        ...doc.answers,
+        permitted_envelope: {
+          ...envelope,
+          values: without,
+          value_states: {
+            max_building_height: {
+              way: "withheld",
+              label: "Maximum building height",
+              reason: "The height depends on a rule the program has not built yet.",
+              gap_kind: "work_owed",
+              resolved_by: "Building the rule and checking it against a worked example",
+            },
+          },
+        },
+      },
+    };
+    const view = answerView(probe, "permitted_envelope", true);
+    if (view.kind !== "available") throw new Error("expected an available view");
+    // The fixed reader: the headline is the withheld reason, NOT the first shown value.
+    expect(view.headline.kind).toBe("withheld");
+    if (view.headline.kind !== "withheld") throw new Error("expected a withheld headline");
+    expect(view.headline.withheld.key).toBe("max_building_height");
+    expect(view.headline.withheld.reason).toContain("not built yet");
+    // Every originally shown value is kept as a row (none is promoted into the headline slot).
+    expect(view.rows.map(row => row.value.key).sort()).toEqual(
+      without.map(value => value.key).sort(),
+    );
   });
 
   it("an available answer with no value is not available, never a blank number", () => {

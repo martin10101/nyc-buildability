@@ -8,7 +8,7 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Family: residential_dwelling_units
 - Rule version: 0.1.0-draft
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 1 (last changed 2026-10-06)
+- Revision: 2 (last changed 2026-10-08)
 
 ## Law
 
@@ -30,7 +30,7 @@ R6B districts, for a building with multiple dwelling residences, where there is 
 
 ## How the program reads it
 
-The program divides the maximum residential floor area by the dwelling-unit factor of 680 (ZR 23-52(b)) to get a dwelling-unit count, then rounds: a remaining fraction of three-quarters or more counts as one unit, otherwise it is dropped. R6B inherits ZR 23-52 through the suffix provision ZR 11-25.
+The program divides the maximum residential floor area by the dwelling-unit factor of 680 (ZR 23-52(b)) to get a dwelling-unit count, then rounds: a remaining fraction of three-quarters or more counts as one unit, otherwise it is dropped. R6B inherits ZR 23-52 through the suffix provision ZR 11-25. In the results document's three-way form (M5-T136) this legal dwelling-unit limit is carried beside the floor-area answer as a value-state: it is shown with its formula when the lot's special-density-area answer is given, and withheld (not known) otherwise; the preliminary apartment-capacity estimate is kept as a separate reserved block that carries no legal figure.
 
 ## Example
 

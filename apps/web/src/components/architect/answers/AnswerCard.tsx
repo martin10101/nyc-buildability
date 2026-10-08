@@ -6,18 +6,26 @@ import {
   quantityText,
   uniqueSections,
   type AnswerKey,
+  type AnswerValue,
   type AnswerView,
   type BuildingOptionNoteView,
   type ExceptionLabel,
   type ShortfallView,
+  type ShownValueView,
   type SupplementView,
   type Unit,
+  type WithheldValueView,
 } from "@/lib/architect/three-answers";
+
+/** Leading words shown for a withheld value (results contract 1.3.0): it is not known, with the
+ * reason, and NEVER a number falling back from another value (R556, R570). */
+const NOT_KNOWN = "Not known";
 
 /**
  * One of the three answers (queue D-05; plan §5). Available: the headline number, large, then
- * the answer's other values; rule sections and the measurement label sit behind "Rule sections"
- * (plan §5a items 4 and 5). Not available: the one line "Not available — <reason>" and nothing
+ * the answer's other values and any withheld value shown as its reason; rule sections and the
+ * measurement label sit behind "Rule sections" (plan §5a items 4 and 5). A conditional value shows
+ * its "If <assumption>" line. Not available: the one line "Not available — <reason>" and nothing
  * else — no number, no exception tag, no details (plan §5, §5a item 3).
  */
 export function AnswerCard({
@@ -30,48 +38,107 @@ export function AnswerCard({
   /** Extra rows shown only while the answer itself is shown (remaining area, shortfall). */
   children?: ReactNode;
 }) {
-  return (
-    <section className="ta-answer" data-testid={`answer-${answerKey}`}>
-      <h3 className="ta-answer-title">{ANSWER_TITLES[answerKey]}</h3>
-      {view.kind === "not_available" ? (
+  if (view.kind === "not_available") {
+    return (
+      <section className="ta-answer" data-testid={`answer-${answerKey}`}>
+        <h3 className="ta-answer-title">{ANSWER_TITLES[answerKey]}</h3>
         <p className="ta-not-available" data-testid="answer-not-available">
           {view.text}
         </p>
+      </section>
+    );
+  }
+  const shownValues: AnswerValue[] =
+    view.headline.kind === "value"
+      ? [view.headline.shown.value, ...view.rows.map(row => row.value)]
+      : view.rows.map(row => row.value);
+  return (
+    <section className="ta-answer" data-testid={`answer-${answerKey}`}>
+      <h3 className="ta-answer-title">{ANSWER_TITLES[answerKey]}</h3>
+      {view.headline.kind === "value" ? (
+        <p className="ta-headline" data-testid="answer-headline">
+          <span className="ta-headline-label">{view.headline.shown.value.label}</span>{" "}
+          <HeadlineValue
+            value={view.headline.shown.value.value}
+            unit={view.headline.shown.value.unit}
+          />
+          <ExceptionTag label={view.headline.shown.value.exception_label} />
+          <ConditionNote condition={view.headline.shown.condition} />
+        </p>
       ) : (
-        <>
-          <p className="ta-headline" data-testid="answer-headline">
-            <span className="ta-headline-label">{view.headline.label}</span>{" "}
-            <HeadlineValue value={view.headline.value} unit={view.headline.unit} />
-            <ExceptionTag label={view.headline.exception_label} />
-          </p>
-          {view.rows.length > 0 ? (
-            <dl className="ta-rows">
-              {view.rows.map((row, index) => (
-                <div className="ta-row" key={`${row.key}-${index}`} data-testid="answer-value">
-                  <dt>{row.label}</dt>
-                  <dd>
-                    {quantityText(displayQuantity(row.value, row.unit))}
-                    <ExceptionTag label={row.exception_label} />
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          ) : null}
-          {children}
-          <details className="ta-details" data-testid="answer-details">
-            <summary>Rule sections</summary>
-            <ul className="ta-sections">
-              {[view.headline, ...view.rows].map((value, index) => (
-                <li key={`${value.key}-${index}`} data-testid="answer-section">
-                  {value.label}: {uniqueSections(value.zr_sections).join(", ")}
-                </li>
-              ))}
-            </ul>
-            <p className="ta-measurement">Measurements: {view.measurementLabel}</p>
-          </details>
-        </>
+        <WithheldLine entry={view.headline.withheld} testid="answer-headline-withheld" />
       )}
+      {view.rows.length > 0 ? (
+        <dl className="ta-rows">
+          {view.rows.map((row, index) => (
+            <div className="ta-row" key={`${row.value.key}-${index}`} data-testid="answer-value">
+              <dt>{row.value.label}</dt>
+              <dd>
+                {quantityText(displayQuantity(row.value.value, row.value.unit))}
+                <ExceptionTag label={row.value.exception_label} />
+                <ConditionNote condition={row.condition} />
+              </dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
+      {view.withheld.length > 0 ? (
+        <dl className="ta-withheld" data-testid="answer-withheld">
+          {view.withheld.map((entry, index) => (
+            <div className="ta-row" key={`${entry.key}-${index}`} data-testid="answer-withheld-value">
+              <dt>{entry.label}</dt>
+              <dd>
+                <WithheldLine entry={entry} />
+              </dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
+      {children}
+      {shownValues.length > 0 ? (
+        <details className="ta-details" data-testid="answer-details">
+          <summary>Rule sections</summary>
+          <ul className="ta-sections">
+            {shownValues.map((value, index) => (
+              <li key={`${value.key}-${index}`} data-testid="answer-section">
+                {value.label}: {uniqueSections(value.zr_sections).join(", ")}
+              </li>
+            ))}
+          </ul>
+          <p className="ta-measurement">Measurements: {view.measurementLabel}</p>
+        </details>
+      ) : null}
     </section>
+  );
+}
+
+/** A withheld value: its reason, never a number (R556, R570). As a headline (no dt) or a row. */
+function WithheldLine({
+  entry,
+  testid,
+}: {
+  entry: WithheldValueView;
+  testid?: string;
+}) {
+  return (
+    <span className="ta-withheld-reason" data-testid={testid ?? "answer-withheld-reason"}>
+      {testid ? `${entry.label}: ` : null}
+      {NOT_KNOWN} — {entry.reason}
+    </span>
+  );
+}
+
+/** The "If <assumption>" line for a conditional value (results contract 1.3.0), set apart from the
+ * settled results; nothing is drawn for a settled value. */
+function ConditionNote({ condition }: { condition: ShownValueView["condition"] }) {
+  if (!condition) return null;
+  return (
+    <>
+      {" "}
+      <span className="ta-condition" data-testid="answer-condition">
+        {condition}
+      </span>
+    </>
   );
 }
 

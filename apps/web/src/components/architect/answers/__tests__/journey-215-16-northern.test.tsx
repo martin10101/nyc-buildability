@@ -79,4 +79,36 @@ describe("journey cards leg: 215-16 Northern recorded-data scope (D-090-R137)", 
     render(<ThreeAnswersPanel results={doc} />);
     expect(screen.getByTestId("three-answers-scope").textContent ?? "").not.toMatch(SNAKE_CASE);
   });
+
+  it("renders the committed journey fixture at contract 1.3.0 with the three-way layer", () => {
+    const { doc } = journey();
+    expect(doc.contract_version).toBe("1.3.0");
+    // the building option is a whole not-available answer; coverage and the rear yard are withheld.
+    expect(doc.answers.building_option.status).toBe("not_available");
+    const env = doc.answers.permitted_envelope;
+    if (env.status !== "available" || !env.value_states) throw new Error("fixture changed");
+    expect(env.value_states.max_lot_coverage?.way).toBe("withheld");
+    expect(env.value_states.rear_yard?.way).toBe("withheld");
+  });
+
+  it("W8: on a lane-flag surface a withheld value shows its reason and never a number", () => {
+    // The journey fixture is a draft; the lane-flag surface shows the numbers. A withheld value
+    // (coverage) is rendered as its reason, never a number falling back from another value (R556).
+    const { doc } = journey();
+    const env = doc.answers.permitted_envelope;
+    if (env.status !== "available" || !env.value_states) throw new Error("fixture changed");
+    const coverageReason = env.value_states.max_lot_coverage;
+    if (!coverageReason || coverageReason.way !== "withheld") throw new Error("fixture changed");
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const card = screen.getByTestId("answer-permitted_envelope");
+    const withheld = within(card).queryAllByTestId("answer-withheld-value");
+    const texts = withheld.map(row => row.textContent ?? "");
+    // coverage shows its reason, with "Not known" and no percentage
+    const coverageRow = texts.find(text => text.includes(coverageReason.reason));
+    expect(coverageRow).toBeDefined();
+    expect(coverageRow).toContain("Not known");
+    expect(coverageRow).not.toMatch(/\d+%/);
+    // no headline number is the coverage figure (it never falls back to a shown value)
+    expect(within(card).queryAllByTestId("answer-withheld-value").length).toBeGreaterThanOrEqual(2);
+  });
 });

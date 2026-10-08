@@ -20,6 +20,7 @@ import type {
   ScopeAssumption,
   StreetWidthCase,
   Unit,
+  ValueState,
 } from "../../../../../packages/contracts/generated/results";
 import { NOT_CONFIRMED, REMAINING_CAPACITY_LABEL, REMAINING_CAPACITY_REASON } from "./tax-lot-scope";
 
@@ -174,14 +175,59 @@ const HEADLINE_KEYS: Readonly<Record<AnswerKey, string>> = {
   building_option: "achieved_zoning_floor_area",
 };
 
+/**
+ * A value_states entry a value appears withheld in (results contract 1.3.0, work order §0): the
+ * key, its human label and the reason it is not known. A withheld value carries NO number and is
+ * shown as its reason, NEVER by falling back to another value (R556, R570).
+ */
+export interface WithheldValueView {
+  key: string;
+  label: string;
+  reason: string;
+}
+
+/** A shown value and, when its way is conditional, the "If <assumption>" line to show with it. */
+export interface ShownValueView {
+  value: AnswerValue;
+  /** "If <assumption>" when the value's way is conditional (work order §0); null when settled. */
+  condition: string | null;
+}
+
+/** The big headline of an available answer: a shown value, or - when the designated headline key is
+ * withheld - the withheld entry rendered as its reason (never a different value in its place). */
+export type HeadlineView =
+  | { kind: "value"; shown: ShownValueView }
+  | { kind: "withheld"; withheld: WithheldValueView };
+
 export type AnswerView =
   | {
       kind: "available";
-      headline: AnswerValue;
-      rows: readonly AnswerValue[];
+      headline: HeadlineView;
+      rows: readonly ShownValueView[];
+      /** Withheld values shown as their reason (never a number), apart from the shown values. */
+      withheld: readonly WithheldValueView[];
       measurementLabel: string;
     }
   | { kind: "not_available"; text: string };
+
+const IF_PREFIX = "If ";
+
+/** The value_states map of an available answer (results contract 1.3.0), or an empty map. */
+function valueStates(
+  answer: Extract<ThreeAnswersResults["answers"][AnswerKey], { status: "available" }>,
+): Record<string, ValueState> {
+  const states = answer.value_states;
+  return states ? (states as Record<string, ValueState>) : {};
+}
+
+/** The "If <assumption>" line for a value whose way is conditional, else null. More than one
+ * assumption is joined so each reads on the card; nothing is retyped (read from the document). */
+function conditionLine(state: ValueState | undefined): string | null {
+  if (!state || state.way !== "conditional") return null;
+  const assumptions = state.conditions.map(condition => condition.assumption.trim());
+  const text = assumptions.join(" ");
+  return text.startsWith(IF_PREFIX) ? text : `${IF_PREFIX}${text}`;
+}
 
 export function answerView(
   results: ThreeAnswersResults,
@@ -199,11 +245,50 @@ export function answerView(
   if (values.length === 0) {
     return { kind: "not_available", text: `${NOT_AVAILABLE} — ${NO_VALUE_REASON}` };
   }
-  const headline = values.find(value => value.key === HEADLINE_KEYS[key]) ?? values[0];
+  const states = valueStates(answer);
+  const shownKeys = new Set(values.map(value => value.key));
+  const shownView = (value: AnswerValue): ShownValueView => ({
+    value,
+    condition: conditionLine(states[value.key]),
+  });
+
+  // The withheld values: every value_states entry whose way is 'withheld' and that is NOT shown in
+  // values[] (a withheld value carries no number, so it is never a values[] entry). Shown as its
+  // reason, never a number.
+  const withheld: WithheldValueView[] = [];
+  for (const [stateKey, state] of Object.entries(states)) {
+    if (state.way === "withheld" && !shownKeys.has(stateKey)) {
+      withheld.push({ key: stateKey, label: state.label, reason: state.reason });
+    }
+  }
+
+  // The headline: the shown value for the designated headline key; if that key is WITHHELD, the
+  // headline is its reason (never values[0] - R556); if the key is simply absent (e.g. a 1.0.0
+  // document), the first shown value is the headline, as before.
+  const headlineKey = HEADLINE_KEYS[key];
+  const headlineValue = values.find(value => value.key === headlineKey);
+  const headlineState = states[headlineKey];
+  let headline: HeadlineView;
+  let headlineKeyShown: string;
+  if (headlineValue) {
+    headline = { kind: "value", shown: shownView(headlineValue) };
+    headlineKeyShown = headlineValue.key;
+  } else if (headlineState && headlineState.way === "withheld") {
+    headline = {
+      kind: "withheld",
+      withheld: { key: headlineKey, label: headlineState.label, reason: headlineState.reason },
+    };
+    headlineKeyShown = headlineKey;
+  } else {
+    headline = { kind: "value", shown: shownView(values[0]) };
+    headlineKeyShown = values[0].key;
+  }
+
   return {
     kind: "available",
     headline,
-    rows: values.filter(value => value !== headline),
+    rows: values.filter(value => value.key !== headlineKeyShown).map(shownView),
+    withheld: withheld.filter(entry => entry.key !== headlineKeyShown),
     measurementLabel: answer.measurement.label,
   };
 }

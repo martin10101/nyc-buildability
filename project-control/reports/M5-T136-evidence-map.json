@@ -1,0 +1,140 @@
+{
+ "task_id": "M5-T136",
+ "material_commits": [
+  "8ad287f5 (the builder's one commit, parent = the claim-seam head, cherry-picked with an identical tree: one new module, the adapter, five server test files, the journey fixture, its DXF and site-plan drawing regenerated and its massing drawing removed, the website reader, the answer card and three website tests, the review register's source and five rendered files, the producer report; 22 files)"
+ ],
+ "claim_seam_head": "99647cb66911d468816b90ccbb0e3f77c9b8f61e",
+ "files_changed": [
+  "apps/web/src/components/architect/answers/AnswerCard.tsx",
+  "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+  "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+  "apps/web/src/lib/architect/three-answers.ts",
+  "docs/zoning-rule-review/HISTORY.md",
+  "docs/zoning-rule-review/REGISTER.md",
+  "docs/zoning-rule-review/rules/r6b-dwelling-units.md",
+  "docs/zoning-rule-review/rules/r6b-lot-coverage.md",
+  "docs/zoning-rule-review/rules/r6b-rear-yard-corner-waiver.md",
+  "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+  "project-control/reports/M5-T136-producer-report.md",
+  "services/api/app/rules/review_register/register.json",
+  "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+  "services/api/app/scenario/three_answers/three_way_document.py",
+  "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+  "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.massing.svg",
+  "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+  "services/api/tests/journey/test_215_16_northern_journey.py",
+  "services/api/tests/scenario/three_answers/test_result_ways.py",
+  "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+  "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py"
+ ],
+ "what_did_not_change": "engine.py, dwelling_units.py, geometry.py, answers.py and building_option.py; every decision-module file except the adapter; every schema, schema copy and generated type; every other fixture and saved drawing; no route, no switch, no page, no production setting. The engine's inner result still declares 1.2.0 and is read by nothing but the adapter.",
+ "known_limits": [
+  "The benchmark lot's rear yard carries the decision module's own reason (the open point of the overlay reading), not the reach of 144.60 ft; both are true of the lot (scope correction of scenario S4; backlog row DB-198).",
+  "The top-level estimate block cannot carry a gap kind, an answer value has no field for a formula, and a block worked out from conditional results has no way entries (backlog row DB-196).",
+  "Nothing new is visible on a screen: no route returns the document and no page shows it."
+ ],
+ "checks_at_material_head": [
+  "builder at its commit: ruff clean; three_answers 324 passed 2 skipped; journey and three-ways slot 50 passed; cad and drawings 1359 passed 6 skipped; modularity and contract validation exit 0; register check passed; website lint, typecheck, 2429 unit tests and build exit 0",
+  "orchestrator at 4ab2238b (the material commit plus one ledger commit): website lint, typecheck, 2429 unit tests, build and 153 browser tests exit 0; the full api suite 8562 passed, 8 skipped, exit 0; CI on the pushed head: all three workflows success",
+  "G3 reviewer at 4ab2238b: contract validation 23 schemas 0 failures; the app's validator passes the committed result; three_answers 324 passed 2 skipped; its own script on the made-up interior lot",
+  "G4 reviewer at 4ab2238b: three_answers 324 passed 2 skipped; journey and contracts 559 passed; cad and drawings 1359 passed 6 skipped; thirteen mutations in a copy outside the repository"
+ ],
+ "requirements": {
+  "D-090-R228": [
+   "The saved DXF and the saved site-plan drawing of the journey lot were regenerated from the one emitted document, and the saved massing drawing was removed because what it drew (the envelope and the floor plates) is withheld; the snapshot suites under services/api/tests/cad and services/api/tests/drawings compare each saved file with what the renderer makes from the committed fixture packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json.",
+   "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py::test_s12_adapter_emits_the_committed_three_way_fixture: the committed fixture equals the adapter's emitted document byte for byte (a wiring proof only; it is not counted as evidence that any value is correct).",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), check 9: the DXF holds no envelope, yard or floor-plate layer, the site plan no withheld geometry, 'not required' appears in neither, and no other saved file changed.",
+   "Share: the document and its saved drawings agree. This task's share is the emitted document, the saved journey result and its drawings, and the website reader's handling of the way entries; the results display, the route and the PDF are later pieces and stay bound to this row."
+  ],
+  "D-090-R229": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s5_no_withheld_result_carries_a_number_anywhere: no withheld result carries a number anywhere in the emitted document; the floor table is empty and the floor stack, the shortfall, the best combination and every add-on gain are 'not available' with a reason.",
+   "In packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json each withheld result is a way entry with a label, a reason, a gap kind and what would resolve it, and has no entry among the shown values; the estimate block reads 'Not known'.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), check 3: walked block by block against the claim head, no number of a withheld result remains; the G4 reviewer (qa-engineer; project-control/reports/M5-T136-G3G4.md), check 3: every mutation that would put such a number back is caught."
+  ],
+  "D-090-R240": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s11_a_fact_not_given_withholds_only_its_dependents: with no site geometry, and separately with no property profile, only the results that depend on the missing fact are withheld and name it; never a zero.",
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s20_engine_switched_off_emits_no_number: with the engine switched off the emitted document carries no number and invents no way entry.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), check 8: with no profile every answer is not available and no result is a zero; with no geometry only the coverage is withheld and the floor area stays conditional."
+  ],
+  "D-090-R255": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s8_user_density_statement_is_conditional_only: with the user's statement the standard legal unit limit is conditional and names the statement; without it, withheld; a contradicting statement is held back and the result stays withheld.",
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s19_standard_unit_limit_shown_with_its_formula: on the made-up interior lot the limit of 16 is shown only with the statement, as a conditional value; without it 16 appears nowhere.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), check 7, from its own script: with the statement one conditional value of 16 naming it; without it no value and 16 nowhere; check 8: a contradicting statement is held back and the limit stays withheld."
+  ],
+  "D-090-R257": [
+   "In packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json each of the four floor-area values has a conditional way entry whose conditions include one of kind contradicted_record (the two recorded lot-area figures disagree); no figure is chosen automatically.",
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s7_conditional_values_name_their_assumptions: each shown floor-area value names the recorded-area condition and the unchecked conditions.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), check 5: the conditions of the floor-area values name the recorded lot area of 10,075 sq ft and that the figures disagree."
+  ],
+  "D-090-R258": [
+   "The reserved estimate block of packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json says 'Not known. The Preliminary capacity estimate (a practical estimate of how many apartments might fit) is not built yet.': owed work said as owed work, never 'unsupported'.",
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s6_unit_estimate_holds_no_legal_figure and services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_every_text_the_transform_writes_is_plain_and_true (no text the transform writes holds 'unsupported').",
+   "A limit, stated: the schema gives this block no gap-kind field, so 'owed work' is in the reason text only (backlog row DB-196 a). The withheld way entries do carry their gap kind.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), check 4: 'rule_not_implemented' is the truthful kind for the reserved block (a calculation that is not built, not a missing fact of the lot); check 13: no text the transform writes says 'unsupported'."
+  ],
+  "D-090-R267": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s7_conditional_values_name_their_assumptions: with the conditions not checked, no shown value of the benchmark is settled; each is conditional and names them.",
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s9_made_up_interior_lot_shown_floor_area and services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s10_made_up_corner_lot_coverage_from_reach: a value is settled only when the conditions are supplied as checked and absent; not checked gives conditional.",
+   "the G4 reviewer (qa-engineer; project-control/reports/M5-T136-G3G4.md), check 3, mutation (h): writing a settled entry where the decision is conditional fails the test of scenario S7."
+  ],
+  "D-090-R268": [
+   "In packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json the floor-area figures and the six heights stay visible as conditional values; the coverage, the rear yard, the setback, the building option and the three unit limits are withheld with their reasons.",
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s1_benchmark_emits_contract_1_3_0 and services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s3_coverage_withdrawn_with_its_reach_reason.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), checks 3 and 5: the shown figures equal the reference case of the real lot (rows L1 to L4); each withheld result has its reason."
+  ],
+  "D-090-R269": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s7_conditional_values_name_their_assumptions: the heights are conditional and no label or reason says 'the maximum for this property'.",
+   "In packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json the six height values carry conditional way entries of kind unchecked_condition.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), check 5: 'the maximum for this property' appears nowhere in the committed result."
+  ],
+  "D-090-R543": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s6_unit_estimate_holds_no_legal_figure: the estimate block's reason begins 'Not known' and names the 'Preliminary capacity estimate', the owner's two labels.",
+   "Share: the block reads 'Not known'; the estimate itself, and its label once an option has floors and a shape, belong to the estimator, which is not built.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), check 4: the block's reason is 'Not known. The Preliminary capacity estimate ... not built yet.'"
+  ],
+  "D-090-R556": [
+   "apps/web/src/lib/architect/three-answers.ts: the reader no longer falls back to the first value when the value it looks for is absent; a withheld value is shown from its way entry as its reason.",
+   "apps/web/src/lib/architect/__tests__/three-answers.test.ts: 'S14 RED PROOF: a withheld HEADLINE key is shown as its reason, never the first value (R556)'; apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx: 'a withheld HEADLINE key shows its reason, never the first value (R556)'; apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx: 'W8: on a lane-flag surface a withheld value shows its reason and never a number'.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), check 10: the reader shows a withheld headline from its way entry and uses the first value only when the key is in neither list (a document of an older contract version), never when it is withheld; the G4 reviewer (qa-engineer; project-control/reports/M5-T136-G3G4.md), check 7: each website test fails on the behaviour it guards.",
+   "Share: the reader and the answer card. This task's share is the emitted document, the saved journey result and its drawings, and the website reader's handling of the way entries; the results display, the route and the PDF are later pieces and stay bound to this row."
+  ],
+  "D-090-R567": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s2_five_results_placed_per_owner_decision: the rear yard and the setback above the base are way entries of the envelope answer only; the three legal unit limits are way entries of the floor-area answer only.",
+   "In packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json that is where the five results are (all withheld on this lot, so none is among the shown values).",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), check 4: the rear yard and the setback are way entries of the envelope answer only, the three unit limits of the floor-area answer only, none among any shown values."
+  ],
+  "D-090-R568": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s6_unit_estimate_holds_no_legal_figure: the emitted estimate block carries no legal figure, no formula and no factor.",
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s19_standard_unit_limit_shown_with_its_formula: when the standard legal limit is shown it is a value of the floor-area answer and the estimate block stays reserved.",
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s16_nothing_is_activated: nothing but the adapter calls the engine, so the engine's inner block, which still holds the legal figure, reaches no surface.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), check 4: the block holds no value, formula or factor; check 7: the shown limit's figure is read from the engine's block and the estimate block stays reserved."
+  ],
+  "D-090-R569": [
+   "In the emitted document a legal limit is a value named 'Legal dwelling-unit limit, standard residences ...' inside the floor-area answer, and the estimate block holds no count: the two never share a place or a label.",
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s19_standard_unit_limit_shown_with_its_formula and services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s6_unit_estimate_holds_no_legal_figure.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), check 7: the shown limit is one value labelled as the legal dwelling-unit limit with its formula; the estimate block holds no count.",
+   "Share: the document. The labels on the screen and in exports are the display piece's."
+  ],
+  "D-090-R570": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s5_no_withheld_result_carries_a_number_anywhere (the whole emitted document) and services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s15_validator_refuses_a_number_in_a_withheld_result (the merged validator refuses a shown value marked withheld and a withheld entry carrying a number).",
+   "The saved drawings draw no envelope, no floor plate and no rear-yard note; the website reader shows a withheld value's reason and no number (the website tests named under row R556).",
+   "the G4 reviewer (qa-engineer; project-control/reports/M5-T136-G3G4.md), checks 3 and 4: thirteen mutations; each block has its own check that fails when the block is left as the engine made it. A limit, stated (its note F1): the scan of scenario S5 walks named blocks, so a new block would need its own check.",
+   "Share: the document, its saved drawings and the reader. This task's share is the emitted document, the saved journey result and its drawings, and the website reader's handling of the way entries; the results display, the route and the PDF are later pieces and stay bound to this row."
+  ],
+  "D-090-R583": [
+   "The piece that first emits the results document was contracted as task M5-T136 and built under the normal gates: G0, the builder's self-check G2, an independent data-contract review G3, an independent test review G4, and this rule check.",
+   "project-control/reports/M5-T136-G3G4.md: the two reviews, unchanged."
+  ],
+  "D-090-R584": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s16_nothing_is_activated: engine.py is byte-identical and never names the decision module; nothing but the adapter calls the engine.",
+   "The commit changes no file under services/api/app/api, not app/main.py, app/config.py or render.yaml, and no workflow: no route is mounted and no switch is turned on.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), checks 1 and 12: nothing under app/api, main.py, config.py, render.yaml or the workflows changed; the only caller of the engine is the adapter."
+  ],
+  "D-090-R588": [
+   "Nothing of the report is dropped: every result this piece withholds stays in the document as 'not known' with its reason and with what would resolve it, and the estimate block is kept for the estimate.",
+   "What stays owed is on record: backlog rows DB-196 and DB-198; the display, the route, the estimator and the PDF are the next pieces of the work order.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T136-G3G4.md), note F2 and the G4 reviewer (qa-engineer; project-control/reports/M5-T136-G3G4.md): nothing this task could carry was lost; what stays owed is named (row DB-198)."
+  ]
+ }
+}

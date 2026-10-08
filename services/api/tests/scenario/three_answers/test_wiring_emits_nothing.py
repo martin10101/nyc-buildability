@@ -1,13 +1,17 @@
-"""Populating the carriers emits NOTHING: the results document is byte-for-byte unchanged (S13).
+"""The adapter emits the three-way document that equals the committed journey fixture (S12).
 
-Task M5-T134 surfaces the property profile, the prepared tax-map outline and the site geometry onto
-ThreeAnswerInputs as INERT carriers and hands them, through one new adapter, to the scenario
-decision step. The engine reads NONE of them. This test proves that: the benchmark inputs are built
-EXACTLY as tests/journey/test_215_16_northern_journey.py builds them, the three carriers are
-populated, the real engine runs, and the emitted document equals the committed journey fixture
-byte-for-byte (the SAME fixture the journey pins, read never written here). No new results fixture
-is added. The red direction (an engine that read a carrier would move these bytes) is a mutation
-proof outside the repository, recorded in the producer report.
+Task M5-T136 makes the adapter run the engine and then the pure three-way transform over the
+engine's document and the decision ways, emitting the contract-1.3.0 three-way document. This file
+(whose name is now a misnomer: the adapter DOES emit, as of M5-T136) proves the emit path on the
+benchmark lot: the benchmark inputs are built EXACTLY as the recorded 215-16 Northern journey test
+builds them, the three carriers are populated, the adapter runs, and the emitted document equals
+the committed journey fixture byte-for-byte (the SAME fixture the journey pins, read not written).
+
+This is an UNCHANGED/WIRING proof only (work order rule 3): equality with the saved fixture proves
+the parts are connected and the bytes carried, NOT that any value is correct - the correctness of
+each way comes from the reference cases, checked in test_three_answers_three_way_emit.py. The engine
+itself is unchanged: engine.py never names the decision module and its own inner document still
+declares the pre-three-way version.
 """
 
 from __future__ import annotations
@@ -23,7 +27,7 @@ from app.contracts.evaluator_inputs import build_evaluator_inputs, build_three_a
 from app.contracts.study_contracts import validate_results_document
 from app.contracts.study_setup_bridge import study_from_study_setup
 from app.profile.builder import build_property_profile
-from app.scenario.three_answers import generate_results
+from app.scenario.three_answers.result_way_engine_bridge import run_engine_and_result_ways
 from app.spatial.site_geometry import (
     derive_site_geometry,
     lot_outline_from_mappluto,
@@ -87,22 +91,24 @@ def _benchmark_inputs_with_carriers(monkeypatch):
         street_line_intersection_angle_degrees=90.0, special_density_area=False, study=study,
         property_profile=profile, prepared_outline=prepared, site_geometry=geometry,
     )
-    return inputs
+    return inputs, doc
 
 
-def test_s13_carriers_populated_emit_the_identical_document(monkeypatch):
-    """S13: with the three carriers populated, generate_results emits the EXACT committed journey
-    fixture, byte-for-byte. Populating the carriers changes nothing emitted; no new fixture."""
-    inputs = _benchmark_inputs_with_carriers(monkeypatch)
-    # the carriers are really populated (so the proof is non-vacuous)
+def test_s12_adapter_emits_the_committed_three_way_fixture(monkeypatch):
+    """S12: with the carriers populated, the adapter emits the EXACT committed journey fixture,
+    byte-for-byte, at contract 1.3.0. This is a wiring/unchanged proof, never evidence a value is
+    correct (work order rule 3)."""
+    inputs, doc = _benchmark_inputs_with_carriers(monkeypatch)
     assert inputs.property_profile is not None
     assert inputs.prepared_outline is not None
     assert inputs.site_geometry is not None
 
-    result = generate_results(inputs, env=_LANE_ON)
-    document = result.document
+    emitted = run_engine_and_result_ways(
+        inputs, evaluator_inputs=doc, special_density_statement=False, env=_LANE_ON
+    )
+    document = emitted.document
     validate_results_document(document)
-    assert document["contract_version"] == "1.2.0"  # scope + the R6B height note, as the journey
+    assert document["contract_version"] == "1.3.0"  # the three-way document (M5-T136)
 
     serialized = (json.dumps(document, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
     assert _FIXTURE_PATH.exists(), f"no committed fixture {_FIXTURE_PATH.name}"
@@ -110,10 +116,27 @@ def test_s13_carriers_populated_emit_the_identical_document(monkeypatch):
     assert serialized == _FIXTURE_PATH.read_bytes().replace(b"\r\n", b"\n")
 
 
-def test_carriers_add_no_top_level_key_to_the_document(monkeypatch):
-    """The carriers are INERT: the emitted document gains no key named after them (nothing leaks
-    the profile, the outline or the geometry into the results document)."""
-    inputs = _benchmark_inputs_with_carriers(monkeypatch)
-    document = generate_results(inputs, env=_LANE_ON).document
+def test_engine_inner_document_is_unchanged(monkeypatch):
+    """engine.py is read-only: the engine's own ThreeAnswersResult still assembles its unchanged
+    document (declaring the pre-three-way 1.2.0 version on this lot - scope + the height note); only
+    the adapter's transform emits 1.3.0."""
+    inputs, doc = _benchmark_inputs_with_carriers(monkeypatch)
+    emitted = run_engine_and_result_ways(
+        inputs, evaluator_inputs=doc, special_density_statement=False, env=_LANE_ON
+    )
+    assert emitted.engine_result.document["contract_version"] == "1.2.0"
+    # The engine's inner block still carries the legal unit figure; only the EMITTED document
+    # reserves it (reading O28). Nothing but the adapter reads the engine's inner document.
+    assert emitted.engine_result.document["unit_estimate"]["status"] == "available"
+    assert emitted.document["unit_estimate"]["status"] == "not_available"
+
+
+def test_emitted_document_leaks_no_carrier_key(monkeypatch):
+    """The carriers are INERT in the engine and never leak into the emitted document (no top-level
+    key named after the profile, the outline or the geometry)."""
+    inputs, doc = _benchmark_inputs_with_carriers(monkeypatch)
+    document = run_engine_and_result_ways(
+        inputs, evaluator_inputs=doc, special_density_statement=False, env=_LANE_ON
+    ).document
     for leaked in ("property_profile", "prepared_outline", "site_geometry", "lot_outline"):
         assert leaked not in document, leaked
