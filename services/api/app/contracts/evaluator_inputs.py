@@ -71,8 +71,12 @@ runs on the live read with the scope present and no test-only inputs.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-from typing import Any
+from collections.abc import Mapping, Sequence
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:  # pragma: no cover - typing only
+    from app.spatial.site_geometry.outline import PreparedOutline
+    from app.spatial.site_geometry.results import SiteGeometry
 
 from app.contracts.engine_disclosures import (
     build_scope_inputs,
@@ -435,6 +439,9 @@ def build_three_answer_inputs(
     special_density_area: bool,
     building_defaults: BuildingDefaults | None = None,
     study: dict | None = None,
+    property_profile: Mapping[str, Any] | None = None,
+    prepared_outline: PreparedOutline | None = None,
+    site_geometry: SiteGeometry | None = None,
 ) -> ThreeAnswerInputs:
     """Build :class:`ThreeAnswerInputs` from a validated evaluator_inputs document.
 
@@ -454,7 +461,14 @@ def build_three_answer_inputs(
     input. When ``study`` is None (every existing caller) the result is byte-identical to
     before - ``scope_inputs`` is None and the engine stays on the 1.0.0 shape. May raise
     :class:`~app.contracts.engine_disclosures.EngineDisclosureError`, naming the key, when
-    a required disclosure cannot be derived."""
+    a required disclosure cannot be derived.
+
+    ``property_profile``, ``prepared_outline`` and ``site_geometry`` (M5-T134, reading O21,
+    D-090-R531) are additive and INERT: when given, they are carried VERBATIM onto the returned
+    :class:`~app.scenario.three_answers.ThreeAnswerInputs` so a later piece can hand them, with the
+    evaluator-inputs document, to the scenario decision step. The engine reads none of them and the
+    emitted results document is UNCHANGED. Each defaults to None (not produced - no default stands
+    for a fact), so every existing caller is byte-identical."""
     validate_evaluator_inputs_document(evaluator_inputs)
 
     by_key = {record["key"]: record for record in evaluator_inputs["inputs"]}
@@ -511,4 +525,7 @@ def build_three_answer_inputs(
         lot_area_fact_id=lot_area["fact_id"],
         site_measurement_rank=evaluator_inputs["site_measurement_rank"],
         scope_inputs=scope_inputs,
+        property_profile=property_profile,
+        prepared_outline=prepared_outline,
+        site_geometry=site_geometry,
     )

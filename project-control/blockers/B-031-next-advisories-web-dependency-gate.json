@@ -1,7 +1,7 @@
 {
  "blocker_id": "B-031",
  "title": "next 15.5.24 advisories GHSA-4jqv-mc3x-m676 and GHSA-mcj8-r9mp-w47p (medium; fixed in 15.5.27) fail the web-dependency-security gate on every new run since the night of 2026-10-07 to 2026-10-08; the fixed version already meets the 7-day age rule",
- "status": "open",
+ "status": "resolved",
  "created_at": "2026-10-08T00:33:38+00:00",
  "created_by": "orchestrator",
  "affects": [
@@ -17,5 +17,17 @@
  "workaround_in_effect": "None. No waiver exists; nothing merges with a red check or on a run that predates the advisories.",
  "candidate_followup": "Ledger task for the repair, contracted in the same commit as this record on the branch of the waiting pull request (one ledger-touching branch at a time); this blocker is resolved after the merge with the green run ids as evidence.",
  "scope_corrections": [],
- "history_note": "Found on 2026-10-08 at about 00:27 UTC: the integration run after pull request 467 merged failed this one check. Its state and log were read before anything else; nothing was rerun. Pull request 467's own runs had finished green at 22:53 UTC on 2026-10-07 with the same lock, because the audit service had not yet begun to report the advisories."
+ "history_note": "Found on 2026-10-08 at about 00:27 UTC: the integration run after pull request 467 merged failed this one check. Its state and log were read before anything else; nothing was rerun. Pull request 467's own runs had finished green at 22:53 UTC on 2026-10-07 with the same lock, because the audit service had not yet begun to report the advisories.",
+ "resolved_at": "2026-10-08T01:39:27+00:00",
+ "resolution": {
+  "summary": "Resolved by the fixed version under the normal dependency policy; no waiver and no exception. The ledger task contracted with this record (ACCEPTED) moved the pin of next to exactly 15.5.27. The lock was regenerated and validated by the generate-lockfile workflow and committed by the workflow itself; only next, @next/env and the eight @next/swc-* packages moved (397 entries before and after, none added or removed; the root entry's dependency on next follows the pin); npm audit reports 0 at every severity; every moved package was more than 604800 s old. Gates G0/G2/G3/G4/G5 PASS (G3/G4 independent code-reviewer, G5 independent security-reviewer; agent reviews, not human reviews); directive check PASS for D-009-R017. Resolved when the integration branch's own run after the merge had completed with every job a success.",
+  "evidence": [
+   "PR #466 merged 2026-10-08 as 85500b94; 48 of 48 checks success on its final head fb56f692 (runs 37711431547 and 37711436779, 21 of 21 jobs each; scheduled-web-audit run 37711436829); its pull-request run tested the merge with the integration head 52e34649",
+   "generate-lockfile run 37709673533 success; bot lock commit 01ff4065",
+   "integration branch CI at 85500b94: run 37713341355 success on its first attempt, 21 of 21 jobs (web-dependency-security job 113104090263 green)",
+   "project-control/reports/M0-T187-G3G4.md, M0-T187-G5.md, M0-T187-DCV.md; the independent pre-merge check of the final head returned MERGE-READY",
+   "the three corrections that waited on the same branch merged in the same pull request, on that fresh all-green run and not on their run of 2026-10-07 22:37 UTC"
+  ],
+  "follow_up": "None for these advisories. Seen on the way and recorded as backlog row DB-186: a pull request that was green and reviewed waited through a handoff and lost its merge window when the advisories arrived."
+ }
 }

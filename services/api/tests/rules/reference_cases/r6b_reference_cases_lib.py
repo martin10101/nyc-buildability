@@ -44,7 +44,7 @@ SNAPSHOT_DIR = REPO_ROOT / "docs" / "research" / "zr-snapshots" / "v1"
 # large-site, qualifying-residential-site, dwelling-unit and qualifying-housing definitions.
 CASE_IDS = (
     "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
-    "overlay-reading", "step-p3-worked", "step-p4-worked",
+    "overlay-reading", "step-p3-worked", "step-p4-worked", "step-p5-worked",
 )
 
 # The base ids every one of the work order's table rows must appear under (S1).
@@ -81,6 +81,21 @@ REQUIRED_BASE_IDS = {
         "large-site", "qualifying-residential-site", "zr-34-111-exceptions",
         "dwelling-unit-and-qualifying-housing-definitions", "dwelling-unit-factors",
         "made-up-100x100-units", "zr-23-441-reach", "zr-23-442-reach", "zr-23-443-reach",
+        "sections-and-facts-not-had",
+    ],
+    "step-p5-worked": [
+        "mixed-use-sections", "mixed-use-floor-area-combination", "shared-floor-area-rule",
+        "made-up-mixed-shared-attribution", "made-up-mixed-residential-far",
+        "made-up-mixed-commercial-far", "made-up-mixed-whole-building-max",
+        "floor-area-ratio-definition", "floor-area-ratio-made-up-100x100", "zr-23-24-reach",
+        "zr-34-23-page", "benchmark-rear-yard-23-342-23-344",
+        "fully-electrified-building-definition", "ultra-low-energy-building-definition",
+        "energy-floor-area-exclusion", "proposed-building-energy-eligibility",
+        "building-and-story-definitions", "parking-loading-bicycle-sections", "transit-zone-value",
+        "option-standard-residences", "option-qualifying-affordable-housing",
+        "option-qualifying-senior-housing", "option-shops-below-residences",
+        "option-residences-with-community-facility", "option-community-facility-alone",
+        "option-rooming-units", "parking-loading-bicycle-line-per-option",
         "sections-and-facts-not-had",
     ],
 }

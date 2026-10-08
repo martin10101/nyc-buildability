@@ -95,10 +95,12 @@ from app.spatial.multi_lot_site import (
     site_lot_from_sources,
 )
 from app.spatial.site_geometry import SiteGeometry
+from app.spatial.site_geometry.outline import PreparedOutline
 
 __all__ = [
     "ExistingFloorAreaProvider",
     "GeometryProvider",
+    "OutlineProvider",
     "PlutoFetcher",
     "StudyInputs",
     "StudyInputsProvider",
@@ -126,6 +128,16 @@ class StudyInputs:
     site: MultiLotSite
     site_facts: tuple[dict, ...]
     address: str | None = None
+    # Additive, INERT scenario carriers (M5-T134, D-090-R531): the three Python objects a later
+    # piece hands, with the evaluator-inputs document, to the scenario decision step. They are
+    # produced here already and were dropped before; surfacing them changes NO route output and no
+    # contract (the study-read route builds its study_setup from ``lot_choice``/``site``/
+    # ``site_facts`` only). ``property_profile`` is the built property profile; ``site_geometry``
+    # is the derived single-lot geometry; ``prepared_outline`` is the prepared tax-map outline from
+    # the outline seam (reading O21). Each is None when not produced - no default stands for a fact.
+    property_profile: Mapping[str, object] | None = None
+    site_geometry: SiteGeometry | None = None
+    prepared_outline: PreparedOutline | None = None
 
 
 class StudyInputsUnavailableError(Exception):
@@ -175,6 +187,17 @@ PlutoFetcher = Callable[[str, str], PlutoFetchResult]
 # so geometry stays None in production and the study read is byte-identical to the
 # pre-geometry slice.
 GeometryProvider = Callable[[str, str], "SiteGeometry | None"]
+
+# (canonical_bbl, correlation_id) -> prepared tax-map outline, or None when no usable outline is
+# produced for this lot. The INJECTED outline seam (M5-T134, reading O21). It is SEPARATE from and
+# additive to the geometry seam, so EVERY existing geometry provider and test double is unchanged
+# (none knows about the outline); a caller that wants the prepared outline binds this provider too.
+# Tests and the e2e harness bind a fixture-backed provider; the LIVE default binds
+# ``app.api.v1.study_live_geometry.live_outline_provider`` ONLY behind
+# ``LIVE_SPATIAL_PROVIDER_ENABLED`` (default OFF, see _live_study_inputs_provider), so the outline
+# stays None in production and the study read is byte-identical to the pre-wiring slice. A prepared
+# outline is pure DATA (a PreparedOutline); the fetch that builds it is the provider's own I/O.
+OutlineProvider = Callable[[str, str], "PreparedOutline | None"]
 
 # (canonical_bbl, correlation_id) -> B-05 ExistingFloorAreaEvidence, or None when no
 # DOB-filing / certificate / stated-assumption evidence is available for this lot (the
@@ -234,6 +257,7 @@ def assemble_study_inputs(
     version_probe: VersionProbe | None = None,
     correlation_id: str | None = None,
     site_geometry: SiteGeometry | None = None,
+    prepared_outline: PreparedOutline | None = None,
     existing_floor_area: ExistingFloorAreaEvidence | None = None,
 ) -> StudyInputs:
     """Build :class:`StudyInputs` from a successful PLUTO fetch result.
@@ -321,11 +345,18 @@ def assemble_study_inputs(
     # carry none (they are not a versioned city dataset here). None -> unchanged.
     if site_geometry is not None:
         site_facts = thread_site_geometry(site_facts, site_geometry)
+    # Surface the three objects already in hand (M5-T134): the built ``profile``, the
+    # ``site_geometry`` argument (threaded above, then carried), and the ``prepared_outline`` from
+    # the outline seam (reading O21). INERT carriers - the study_setup the route emits is unchanged.
+    # Each stays None when not produced; no default stands for a fact.
     return StudyInputs(
         lot_choice=choice,
         site=site,
         site_facts=site_facts,
         address=address,
+        property_profile=profile,
+        site_geometry=site_geometry,
+        prepared_outline=prepared_outline,
     )
 
 
@@ -336,6 +367,7 @@ def pluto_study_inputs_provider(
     env: Mapping[str, str] | None = None,
     version_probe: VersionProbe | None = None,
     geometry_provider: GeometryProvider | None = None,
+    outline_provider: OutlineProvider | None = None,
     existing_floor_area_provider: ExistingFloorAreaProvider | None = None,
 ) -> StudyInputsProvider:
     """A :data:`StudyInputsProvider` over a PLUTO ``fetcher``.
@@ -355,6 +387,14 @@ def pluto_study_inputs_provider(
     ``LIVE_SPATIAL_PROVIDER_ENABLED`` is off) means no geometry is threaded and the
     facts are byte-identical to the pre-geometry slice. A geometry fetch is the
     provider's I/O, never the route's or assembly's.
+
+    ``outline_provider`` is the INJECTED outline seam (M5-T134, reading O21),
+    SEPARATE from the geometry seam so every existing geometry provider is
+    unchanged: when given, it is called ``(canonical_bbl, correlation_id) ->
+    PreparedOutline | None`` and its result surfaces on :class:`StudyInputs` as the
+    INERT ``prepared_outline`` carrier (nothing is emitted from it). None (the
+    default, and the live default while ``LIVE_SPATIAL_PROVIDER_ENABLED`` is off)
+    means the outline stays absent. An outline fetch is the provider's I/O.
 
     ``existing_floor_area_provider`` is the INJECTED B-05 existing-floor-area seam
     (journey wave 1 item 3): when given, it is called ``(canonical_bbl,
@@ -386,6 +426,11 @@ def pluto_study_inputs_provider(
             if geometry_provider is not None
             else None
         )
+        prepared_outline = (
+            outline_provider(canonical_bbl, correlation_id)
+            if outline_provider is not None
+            else None
+        )
         existing_floor_area = _existing_evidence(
             existing_floor_area_provider, canonical_bbl, correlation_id
         )
@@ -397,6 +442,7 @@ def pluto_study_inputs_provider(
             version_probe=version_probe,
             correlation_id=correlation_id,
             site_geometry=site_geometry,
+            prepared_outline=prepared_outline,
             existing_floor_area=existing_floor_area,
         )
 
@@ -447,16 +493,22 @@ def _live_study_inputs_provider() -> StudyInputsProvider:
     e2e harness inject a fixture-backed evidence provider built from the recorded
     benchmark pack (through B-05's own readers) to exercise the seam offline."""
     from app.api.v1.properties import get_pluto_fetcher
-    from app.api.v1.study_live_geometry import live_geometry_provider
+    from app.api.v1.study_live_geometry import (
+        live_geometry_provider,
+        live_outline_provider,
+    )
     from app.spatial.live_provider import live_spatial_provider_enabled
 
-    geometry_provider = (
-        live_geometry_provider() if live_spatial_provider_enabled() else None
-    )
+    live_spatial = live_spatial_provider_enabled()
+    geometry_provider = live_geometry_provider() if live_spatial else None
+    # The outline seam (M5-T134, reading O21) is bound behind the SAME flag as geometry: OFF in
+    # production, so the prepared_outline carrier stays absent and the live study read is unchanged.
+    outline_provider = live_outline_provider() if live_spatial else None
     return pluto_study_inputs_provider(
         get_pluto_fetcher(),
         version_probe=cached_default_version_probe(),
         geometry_provider=geometry_provider,
+        outline_provider=outline_provider,
     )
 
 

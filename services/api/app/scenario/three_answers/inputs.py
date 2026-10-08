@@ -19,6 +19,9 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover - typing only, avoids an inputs<->scope cycle
+    from app.spatial.site_geometry.outline import PreparedOutline
+    from app.spatial.site_geometry.results import SiteGeometry
+
     from .scope import ScopeInputs
 
 # Default residential floor-to-floor height (ft). STATED and EDITABLE: the architect
@@ -140,6 +143,18 @@ class ThreeAnswerInputs:
     # byte-identical to the 1.0.0 shape. Additive and optional, so every existing caller is
     # unchanged. See three_answers/scope.py for ScopeInputs and the builder.
     scope_inputs: ScopeInputs | None = None
+
+    # --- additive, INERT scenario carriers (M5-T134, D-090-R531) ---
+    # The built property profile, the prepared tax-map outline and the derived site geometry that a
+    # later piece hands, with the evaluator-inputs document, to the scenario decision step. The
+    # generator reads NONE of them and the emitted document is UNCHANGED (the byte-identity proof):
+    # they are optional and default to None, so every existing caller is byte-identical. Typed under
+    # TYPE_CHECKING (and left unevaluated by ``from __future__ import annotations``) so this module
+    # takes on no import cycle with the spatial package. None means not produced - no default stands
+    # for a fact.
+    property_profile: Mapping[str, object] | None = None
+    prepared_outline: PreparedOutline | None = None
+    site_geometry: SiteGeometry | None = None
 
     def far_inputs(self) -> dict:
         """Inputs for the standard residential-FAR rule (r6-r12-residential-far)."""

@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-08T00:35:11+00:00",
+ "updated_at": "2026-10-08T01:35:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -588,7 +588,7 @@
   "D-090-R564"
  ],
  "requirements_id_digest_sha256": "60b693c3aba831459421ce26fbcec3621ca5292351c2799288331d17d40928eb",
- "requirements_content_digest_sha256": "250c664396639491f6c170f948645fcea66f4d2255c4a99609e49b40bde187ab",
+ "requirements_content_digest_sha256": "63cba9e95c2887a6f53688ffdbeadbf21ea825e7382594373f7e3a24f0eccacf",
  "sources": [
   {
    "file": "source-001.md",
@@ -1143,7 +1143,10 @@
   "M4-T033",
   "M5-T132",
   "M5-T133",
-  "M4-T034"
+  "M4-T034",
+  "M5-T134",
+  "M4-T035",
+  "M0-T188"
  ],
  "affected_prs": [
   262,
@@ -1658,6 +1661,24 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-058 (session 013RaGmC message 114, 2026-10-08: resume, and make session handoffs go more smoothly) and requirements D-090-R560 to R564, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-08T01:34:59+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T134 (Wire the carriers: the real inputs reach the decision module beside the engine; nothing emitted changes) to R229, R240, R255, R257, R267, R268, R531 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-08T01:34:59+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M4-T035 (Step-P5: independent reading of the 46 captured ZR texts into the R6B reference cases) to R291, R513, R516, R526, R548 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-08T01:35:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T188 (Repair the ledger seal: refuse pattern allowed_paths (literal-only), with CI catch, grandfather allowlist and look-back) to R557 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }

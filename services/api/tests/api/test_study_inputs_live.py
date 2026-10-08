@@ -129,6 +129,26 @@ def test_default_provider_delegates_to_properties_get_pluto_fetcher(monkeypatch)
     )
 
 
+def test_default_live_provider_surfaces_the_profile_carrier_inert(monkeypatch) -> None:
+    """M5-T134: the built property profile is surfaced on StudyInputs as an additive, INERT carrier
+    even on the live default path. With LIVE_SPATIAL_PROVIDER_ENABLED off (the production default)
+    the geometry and outline seams are unbound, so both stay absent; nothing is emitted from any of
+    the three and the live study read is byte-identical to the pre-wiring slice."""
+    monkeypatch.setenv("LANE_B_ENABLED", "1")
+    monkeypatch.delenv("LIVE_SPATIAL_PROVIDER_ENABLED", raising=False)
+    monkeypatch.setattr(properties, "get_pluto_fetcher", lambda: _fetcher_over(_northern_body()))
+    monkeypatch.setattr(study_inputs, "cached_default_version_probe", lambda: _f09_probe)
+    study_inputs._live_study_inputs_provider.cache_clear()
+    try:
+        inputs = default_study_inputs_provider(NORTHERN_BBL, "cid-carrier")
+    finally:
+        study_inputs._live_study_inputs_provider.cache_clear()
+    assert isinstance(inputs.property_profile, dict)
+    assert "identity" in inputs.property_profile  # the built profile is surfaced
+    assert inputs.site_geometry is None  # the live geometry seam is off in production
+    assert inputs.prepared_outline is None  # the live outline seam is off in production
+
+
 def test_default_provider_is_cached_once(monkeypatch) -> None:
     """The live provider is built once (lru_cache), so the process-wide resilient
     fetcher's cache/breaker/LKG state is shared across requests."""

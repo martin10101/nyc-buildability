@@ -331,6 +331,56 @@ def _validate_empty_identity(tasks_dir: Path) -> list:
     return errors
 
 
+def _validate_pattern_allowed_paths(tasks_dir: Path) -> list:
+    """c18 (backlog DB-181; D-090-R557): the CI static catch for the literal-allowed-paths
+    seal. A task whose allowed_paths carry an entry that binds NO tracked file under
+    GIT_LITERAL_PATHSPECS=1 (a glob/pattern, an absolute/traversal/backslash/control entry, or
+    an unusual-char entry not tracked at HEAD -- the complete rule in dr.pattern_allowed_paths)
+    makes the reviewed content identity cover less than the packet declares -- the exact defect
+    the shared identity path in project_control.py now fails closed on at claim, submit and
+    accept.
+
+    For every in-regime task file: an offending entry is an error UNLESS it is in the task's
+    FROZEN entry set (reviewers' note 3 -- entries, not ids: a NEW offending entry on a listed
+    task is still flagged). A non-list allowed_paths is itself an error (note 4). The detector
+    and the frozen map are the SAME the CLI uses (dr.pattern_allowed_paths /
+    dr.PATTERN_ALLOWED_PATHS_GRANDFATHERED) so the validator and the CLI can never diverge.
+    The unusual-char arm needs git (tracked-at-HEAD); when this checkout is not a git work tree
+    it is skipped and the CLI guard remains the fail-closed backstop (mirrors c17). Read-only."""
+    errors: list = []
+    _, gerr = dr.git_work_tree_root(ROOT)
+    commit = None
+    if gerr is None:
+        commit, cerr = dr.resolve_commit(ROOT, None)
+        if cerr is not None:
+            commit = None
+    if commit is None:
+        return errors  # defer to the CLI guard; mirrors c17's no-git behavior
+    if not tasks_dir.exists():
+        return errors
+    for tp in sorted(tasks_dir.glob("*.json")):
+        try:
+            task = _load_json(tp)
+        except (ValueError, OSError):
+            continue
+        tid = task.get("task_id") or tp.stem
+        in_regime = bool(task.get("directive_regime_version")) or bool(task.get("directive_refs"))
+        if not in_regime:
+            continue
+        offenders = dr.pattern_allowed_paths(task.get("allowed_paths"), root=ROOT, commit=commit)
+        frozen = dr.PATTERN_ALLOWED_PATHS_GRANDFATHERED.get(tid, frozenset())
+        new_offenders = [o for o in offenders if o not in frozen]
+        if new_offenders:
+            shown = ", ".join(repr(o) for o in new_offenders)
+            errors.append(
+                f"c18 in-regime task {tid} allowed_paths entr"
+                f"{'y' if len(new_offenders) == 1 else 'ies'} bind no tracked file under literal "
+                f"git pathspecs ({shown}); the content identity would cover less than the packet "
+                f"declares. Name the folder or the existing file literally (backlog DB-181; "
+                f"D-090-R557).")
+    return errors
+
+
 def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) -> list:
     """Return a list of human-readable error strings ([] == valid)."""
     errors: list = []
@@ -360,6 +410,10 @@ def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) 
     # files (empty-set content identity) unless it validly opts in as path-free (D-011
     # item 6; M0-T057).
     errors.extend(_validate_empty_identity(tasks_dir))
+    # c18 literal-allowed-paths seal: refuse a NEW in-regime task that declares a glob/
+    # pattern allowed_paths entry (which binds no tracked file). The pre-existing pattern-
+    # carrying packets are frozen-grandfathered (backlog DB-181; D-090-R557).
+    errors.extend(_validate_pattern_allowed_paths(tasks_dir))
 
     # c16: multiple directives are handled independently; iterate each.
     for did, d in sorted(reg.directives.items()):

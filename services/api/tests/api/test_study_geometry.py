@@ -31,6 +31,7 @@ from fastapi.testclient import TestClient
 
 from app.api.v1.study_inputs import (
     GeometryProvider,
+    OutlineProvider,
     assemble_study_inputs,
     pluto_study_inputs_provider,
 )
@@ -42,8 +43,10 @@ from app.main import create_app
 from app.spatial.site_geometry import (
     LABEL_TAX_MAP,
     derive_site_geometry_from_sources,
+    lot_outline_from_mappluto,
     refused_site_geometry,
 )
+from app.spatial.site_geometry.outline import prepare_outline
 from app.spatial.site_geometry.results import (
     LOT_TYPE_CORNER,
     STATUS_COMPLETE,
@@ -88,6 +91,21 @@ def _geometry_provider(geometry) -> GeometryProvider:
         return geometry
 
     return provide
+
+
+def _outline_provider(outline) -> OutlineProvider:
+    def provide(canonical_bbl: str, correlation_id: str):
+        return outline
+
+    return provide
+
+
+def _benchmark_outline():
+    """The recorded 215-16 Northern prepared tax-map outline, built offline through the real
+    adapter + prepare_outline (the SAME object the bridge benchmark uses)."""
+    lot, _unused = lot_outline_from_mappluto(replay_lot_geometry())
+    prepared, _reason = prepare_outline(lot)
+    return prepared
 
 
 def _provider(geometry_provider: GeometryProvider | None = None):
@@ -279,3 +297,59 @@ def test_full_study_with_geometry_passes_contract(monkeypatch) -> None:
         fact["key"] == "lot_type" and fact["value"] == LOT_TYPE_CORNER
         for fact in body["site"]["facts"]
     )
+
+
+# ---------------------------------------------------------------------------
+# (M5-T134) The three objects are surfaced on StudyInputs as additive, inert carriers.
+# ---------------------------------------------------------------------------
+def test_assemble_surfaces_the_profile_and_geometry_carriers() -> None:
+    """M5-T134: assemble_study_inputs surfaces the built property profile (its own local) and the
+    site_geometry it already holds; the prepared outline is None when no outline is passed. The
+    carriers are additive and INERT - the site_facts are byte-identical to the pre-wiring assembly
+    (the geometry no-op test pins that)."""
+    geometry = _benchmark_geometry()
+    baseline = assemble_study_inputs(
+        _northern_fetcher(NORTHERN_BBL, "cid"), clock=FIXED_CLOCK, env=LANE_B_ON,
+    )
+    with_geometry = assemble_study_inputs(
+        _northern_fetcher(NORTHERN_BBL, "cid"), clock=FIXED_CLOCK, env=LANE_B_ON,
+        site_geometry=geometry,
+    )
+    # the built profile is surfaced (never None once assembled), the geometry is the argument
+    assert isinstance(with_geometry.property_profile, dict)
+    assert "identity" in with_geometry.property_profile
+    assert with_geometry.site_geometry is geometry
+    assert with_geometry.prepared_outline is None  # no outline passed to assemble
+    # INERT: surfacing the carriers leaves the emitted site facts byte-identical
+    assert with_geometry.site_facts == thread_only_facts(baseline, geometry)
+
+
+def thread_only_facts(baseline, geometry):
+    """The baseline site facts threaded with the geometry, so the carrier test compares against the
+    pre-wiring fact output (the carriers must not touch it)."""
+    from app.api.v1.study_geometry import thread_site_geometry
+
+    return thread_site_geometry(baseline.site_facts, geometry)
+
+
+def test_outline_provider_surfaces_the_prepared_outline_and_none_is_absent() -> None:
+    """M5-T134 (reading O21): an injected outline provider surfaces the prepared outline on
+    StudyInputs; with no outline provider (the default) the outline stays absent (None), never
+    fabricated. The outline seam is SEPARATE from the geometry seam, so the geometry carrier is
+    unaffected either way."""
+    geometry = _benchmark_geometry()
+    outline = _benchmark_outline()
+    with_outline = pluto_study_inputs_provider(
+        _northern_fetcher, clock=FIXED_CLOCK, env=LANE_B_ON,
+        geometry_provider=_geometry_provider(geometry),
+        outline_provider=_outline_provider(outline),
+    )(NORTHERN_BBL, "cid")
+    assert with_outline.prepared_outline is outline
+    assert with_outline.site_geometry is geometry
+
+    no_outline = pluto_study_inputs_provider(
+        _northern_fetcher, clock=FIXED_CLOCK, env=LANE_B_ON,
+        geometry_provider=_geometry_provider(geometry),
+    )(NORTHERN_BBL, "cid")
+    assert no_outline.prepared_outline is None  # absent, not fabricated
+    assert no_outline.site_geometry is geometry

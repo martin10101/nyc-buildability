@@ -1,0 +1,14 @@
+{
+  "task_id": "M0-T188",
+  "producer_agent": "backend-engineer",
+  "report_file": "project-control/reports/M0-T188-producer-report.md",
+  "submitted_at": "2026-10-08T03:12:36.598768+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T188-evidence-map.json",
+  "content_manifest_sha256": "f347be2e9f6598d3a94ac5a2ea660f31634a065b723d8d469ea54318feb282c9",
+  "reviewed_sha": "e64ec80bb5770437045e4e9c9a0d8e78175ef064",
+  "applicable_requirements": [
+    "D-090-R557"
+  ],
+  "updated_at": "2026-10-08T03:12:37.210574+00:00"
+}

@@ -1,0 +1,48 @@
+{
+ "task_id": "M5-T134",
+ "material_commits": [
+  "25d95eb0 (the builder's one commit, 7181ef6b in its own worktree, cherry-picked onto the branch: the four changed server modules, the new adapter, six test files, the producer report) = material head"
+ ],
+ "claim_seam_head": "b416cf0d154400ebf1dcaaabc199da4f4e25bc40",
+ "modules": [
+  "services/api/app/api/v1/study_inputs.py (StudyInputs carries the profile, the site geometry and the prepared outline)",
+  "services/api/app/api/v1/study_live_geometry.py (a second, optional outline provider; off unless the existing live-spatial switch is on)",
+  "services/api/app/contracts/evaluator_inputs.py and services/api/app/scenario/three_answers/inputs.py (the three objects carried as optional, inert fields)",
+  "services/api/app/scenario/three_answers/result_way_engine_bridge.py (the one new adapter)"
+ ],
+ "entry_function": "run_engine_and_result_ways -> EngineResultWays(engine_result, gathered)",
+ "nothing_emitted": "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py::test_s13_carriers_populated_emit_the_identical_document compares the engine's document, with the three carriers populated, byte for byte with the committed fixture packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json (contract 1.2.0); no route returns the ways; no fixture, snapshot, schema or screen file changed.",
+ "checks_at_material_head": [
+  "orchestrator on the branch at 25d95eb0: ruff clean; tests/scenario/three_answers + the study-inputs, geometry, evaluator-inputs and journey tests: 354 passed, 2 skipped",
+  "G4 reviewer at 25d95eb0: tests/scenario/three_answers 305 passed, 2 skipped; the wider focused set 1955 passed, 6 skipped; seven mutations, each caught"
+ ],
+ "requirements": {
+  "D-090-R229": [
+   "A value the wiring does not have is handed on as missing, never as a zero, a default or a guess: the adapter services/api/app/scenario/three_answers/result_way_engine_bridge.py (run_engine_and_result_ways) passes the carried profile, outline and geometry exactly as they are, None included, with no branch and no default.",
+   "One test per missing state: services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py::test_s2_geometry_present_outline_absent (no outline: the reach stays unknown), ::test_s3_geometry_absent, ::test_s6_profile_absent (every recorded column is 'not read'), ::test_s14_no_default_stands_for_a_fact.",
+   "The G4 reviewer's mutation (d), a default put where a missing profile should stay missing, is caught by test_s6 and test_s14; its search of the added production lines found no 'or {}', 'or []', 'or 0', 'if not' or '.get(' standing for a fact."
+  ],
+  "D-090-R240": [
+   "An input that is not given stays unanswered and the results that depend on it are withheld: services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py::test_s5_profile_without_recorded_lot_area (no recorded lot area: the lot-size question is 'not stated' and the outline's area is never used in its place); ::test_s2_geometry_present_outline_absent and ::test_s3_geometry_absent (the results that need the reach are withheld; the others are unchanged).",
+   "The G3 reviewer drove the adapter itself with no outline, no profile and no geometry and lists the way of every result in each state (project-control/reports/M5-T134-G3G4.md)."
+  ],
+  "D-090-R255": [
+   "A user's statement about the special density area is passed as a statement and enters no gathered fact record: services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py::test_s9_user_density_statement (with the statement the legal unit limit for standard residences is conditional; without it, withheld; no fact record mentions it).",
+   "The G4 reviewer's mutation (c), the adapter dropping the statement, is caught by that test; the G3 reviewer found no gathered fact that mentions the statement."
+  ],
+  "D-090-R257": [
+   "With the real outline carried, the two area figures of the benchmark lot (10,075 sq ft recorded; about 10,388 sq ft by the outline) are compared and neither is picked: the floor-area results are conditional on the recorded area: services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py::test_s4_profile_with_recorded_lot_area and ::test_s1_benchmark_carriers_reach_gather_through_adapter.",
+   "When the outline is absent the comparison cannot be made and is reported as such (the G3 reviewer's state (ii): 'could not compare')."
+  ],
+  "D-090-R267": [
+   "Nothing the wiring hands on turns an unchecked condition into a confirmed result: the adapter adds no judgement of its own (the G3 reviewer: zero branching), and on the benchmark lot the ways are those the decision module's own benchmark test expects (services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py::test_s1_benchmark_carriers_reach_gather_through_adapter): lot coverage, rear yard, setback, building option and the three unit limits withheld; floor area and heights conditional."
+  ],
+  "D-090-R268": [
+   "The ways reach the engine's side from the real objects unchanged: an answer the unchecked conditions cannot change stays as it is, a defensible assumption gives a conditional result, the rest is withheld: services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py::test_s7_overlay_present_with_supporting_reference_row (the floor area ratio stays conditional under the recorded overlay) and ::test_s8_overlay_present_family_not_supported (the rear yard is withheld as owed work); ::test_s11_lane_switch_off (with the lane off the engine emits its lane-off document and the ways are still gathered beside it)."
+  ],
+  "D-090-R531": [
+   "This is the piece that wires the decision module into the real path, which the owner allowed to continue; it exposes nothing: no route, screen or export reaches the ways (services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py::test_s13_carriers_populated_emit_the_identical_document; ::test_carriers_add_no_top_level_key_to_the_document; the import guard in services/api/tests/scenario/three_answers/test_result_ways.py permits exactly one new caller, the adapter).",
+   "The three repairs the same row asks for first (the worked example, the rule on shared floor area, the two explanations) merged before this task was contracted (pull request 466, merge commit 85500b94)."
+  ]
+ }
+}
