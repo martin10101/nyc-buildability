@@ -116,7 +116,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "A section number taken from DB-188 or the draft addresses instead of found on the site -> the targets are named by what they are and the addresses are 2026-10-08 leads; the builder re-reads each page and reports the number/title the site shows (S11).",
     "Appendix I captured as if it were text when it is fifteen map images -> S4 requires the capture and report to say the maps are images and cannot be captured as text, and that a transit-zone value is a recorded value, not a reading.",
@@ -127,7 +127,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T03:57:02.876435+00:00",
-  "updated_at": "2026-10-08T03:57:57.799027+00:00",
+  "updated_at": "2026-10-08T04:43:36.716833+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -157,6 +157,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Contracted and claimed in wave 8 on the branch task/wave8-captures-measurement-basis from the integration head 39e7f2d2 (the merge of wave 7); that head's own run is read as complete and successful before any builder's commit is integrated."
+    },
+    {
+      "at": "2026-10-08T04:43:36.716688+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Builder's commit e215cf88 (parent = the claim head; 58 files ADDED under the two capture folders: 29 captures and their 29 synced copies; its report) integrated as 9663a523. The integration branch's own run on 39e7f2d2 had completed with every job a success before this (run 37725077746). Orchestrator's checks on the branch: the sync check passes (185 files); no existing capture modified; ruff clean; the capture bundle, reference-case and measurement-basis tests 119 passed; lane coverage passes. NOT YET INDEPENDENTLY REVIEWED: the session was handed over (owner's /session-handoff at 04:38 UTC) before a reviewer was started; the next session starts the review (a data-contract-verifier that fetches every official page itself) from the prepared instructions."
     }
   ]
 }
