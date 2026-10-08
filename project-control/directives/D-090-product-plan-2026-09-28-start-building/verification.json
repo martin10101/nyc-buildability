@@ -3257,114 +3257,200 @@
     "D-090-R588"
    ],
    "producer": "frontend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb",
+   "reviewed_manifest_sha256": "e9a7ed51fb19c7180079572870af977a23d35408340f46d438c7853a672971d2",
    "requirements": [
     {
      "id": "D-090-R228",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "W-2 in results-panel.test.tsx (green in my run) compares every settled value, conditional \"If \u2026\" line and \"Not known\" against the committed journey document; nothing is retyped.",
+      "results-api.ts/results-contract-checks.ts render a 200 body only after the client's own shape check; new sources hold only client constants (HTTP codes, timeout 12000, version \"1.3.0\") \u2014 no server height, result or reason is hardcoded (confirmed by reading both modules).",
+      "Stays open: agreement of the drawings and the PDF with the same result is later-milestone work; this task covers only the website numbers.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R229",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "results-contract-checks.ts lines 164-169 refuse a document whose key is withheld in value_states and also a shown value; three-answers.ts shows a withheld value as its reason, never a number; AnswerCard WithheldLine prints \"Not known \u2014 reason\" with no digit; S4/S21 tests green.",
+      "buildRequest omits an unentered height and statement (parseHeight treats \"0\" as invalid, not sent; densityStatement only when === true) \u2014 no zero, default or guess is introduced.",
+      "Stays open: the same \"unknown stays unknown\" rule on drawings and PDF.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R240",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "ResultsForm starts the height field empty with its helper line and the density box unchecked; ResultsPanel makes no call on mount/open/change (submit only via the button/retry), so an input not given stays unanswered and nothing is forced.",
+      "A first press sends housing_program only (buildRequest; S7/S9 green); dependents the server withholds render \"Not known\" with their reason.",
+      "Stays open: the full set of inputs across the report; this task carries three.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R255",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "ResultsForm density helper reads \"This is your statement about the lot, not a recorded fact \u2026 any result it produces is shown as conditional on your statement\"; it is never pre-filled and sent only when made.",
+      "The flag-on spec (read statically; proven green by the orchestrator's 155-e2e run) asserts the statement yields the standard unit limit (reference L6 = 29) as a conditional result naming the statement, never settled.",
+      "Stays open: facts/eligibility on every other surface and input; verified only for this one assumption here.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R256",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Housing program is a visible editable choice starting at standard_residence; the height is a visible editable field empty at start; the website holds no starting number (three-answers/ResultsForm read; G3 check 8).",
+      "When the field is empty the server's starting height is shown and called the default (flag-on spec asserts \"10-foot \u2026 used as the default\"); 14 entered returns \"A 14-foot \u2026 was entered\"; a large height is now accepted (G4 re-review mutation (q) caught) \u2014 no value is applied unshown.",
+      "Stays open: other design choices (e.g. average apartment size) and their surfaces.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R258",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "three-answers.ts GAP_KIND_LINES holds the two plain sentences in one place; gapKindLine returns null for absent/null/unknown (`!= null`, never truthiness); AnswerCard prints the gap-kind span after the reason; S5 tests green.",
+      "A withheld value or whole not-available answer tells missing information apart from work still owed; the S14 guard and R10 wording keep \"unsupported\"/machine words off the screen.",
+      "Stays open: feature-vs-missing tracking across the whole report (backlog).",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R267",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No line the website writes calls a value confirmed/the property's maximum/feasible: the flag-on spec asserts innerText never contains \"maximum for this property\"; the S14 panel guard enforces it.",
+      "The strip's first item \"Zoning maximum\" is the server's words shown verbatim (ruling R5); its rewording is owed on the server (DB-199 d) before the switch is turned on anywhere and is stated plainly in the records and the walkthrough's advisory F3 \u2014 it is not this task's.",
+      "Stays open: the DB-199 d server wording and every rule whose \"not checked \u2192 confirmed\" risk lives off this screen.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R268",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The reader carries the document's three-way layer faithfully: conditional values keep their \"If \u2026\" lines (conditionLine), withheld values show reasons, unaffected answers stay visible; the flag-on spec shows heights conditional naming the unchecked conditions, coverage/rear-yard \"Not known\", building option \"Not available\".",
+      "Which answer is settled/conditional/withheld is the server's determination (M5-T136/T137); this task displays it.",
+      "Stays open: the server-side classification and the other options.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R269",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The R6B heights appear as the district's limits, conditional, naming the unchecked conditions, and nowhere are called the property's maximum by a website-written line (flag-on spec; S14).",
+      "Same caveat as R267: the server's \"Zoning maximum\" strip text is shown as the document has it; its rewording is DB-199 d, on the server, on record.",
+      "Stays open: DB-199 d and the full set of height rules checked before any \"maximum\" claim.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R292",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The flag-on spec observes a REAL cross-origin POST to :8000 returning 200 and proves a changed input changes its dependent result: 14 ft \u2192 the entered-height line; the statement \u2192 the unit limit appears conditional; each program \u2192 its program line.",
+      "LIMIT confirmed by G4's note (F1/F2): \"only the unit limit changes\" exclusivity and \"every affected result\" completeness are engine properties, not asserted on the screen; this task changes no server file.",
+      "Stays open: the exclusivity/completeness proof and step 4 for every other option.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R548",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "ResultsPanel renders PARKING_LINE (\"Parking, loading and bicycle requirements are not yet checked for this option. It is not shown as feasible.\") inside results-document whenever a success document shows; S13 green; the S14 guard confirms no value is called feasible.",
+      "Capturing the actual parking/loading/bicycle provisions is owed research (DB-180), not this display line.",
+      "Stays open: the provisions and the counts section.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R556",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "three-answers.ts headline branch (lines 316-326) shows a withheld headline's reason, never values[0]; three-answers.test.ts red/green proof green; mutation (k) reddens it.",
+      "results-contract-checks.ts additionally refuses any document that carries a number for a withheld key (S21 green), so a server error cannot surface an older/substitute value.",
+      "Stays open: the same guarantee on drawings/PDF/exports.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R569",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The estimated apartment count (unit_estimate) is not in the reader's Pick, so it is never shown; the legal dwelling-unit limit appears under its own legal label in the floor-area answer (three-answers.ts; S13; walkthrough journey 5).",
+      "On this screen only the legal limit is present, under its own name, so the two cannot be confused.",
+      "Stays open: exports (PDF) and the case once the apartment estimate exists.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R570",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "A value the document withholds stays withheld on the screen \u2014 no number, older or substitute value (same reader guard as R556 plus the S21 refusal); S4/S21 green.",
+      "Evidence reproduced in results-contract-checks.ts and three-answers.ts at the frozen head.",
+      "Stays open: the \"everywhere it is carried\" guarantee in exports.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R582",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This display connects after the emitting pieces: the packet's dependencies are M5-T136/T137/T138/T139 and the diff changes no services/api or packages file (confirmed empty).",
+      "The branch base is candidate/D-024-mrl-option-b at 6d024fc8; this task emits nothing on the server.",
+      "Stays open: that wave 8 and the emitting tasks were actually merged under the checks is verified by their own gates, outside this task's diff.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R584",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "results-ui-flag.ts: INTERNAL_RESULTS_UI_ENABLED is off unless an explicit true token is set; distinct from the server's INTERNAL_RESULTS_ENABLED; never NEXT_PUBLIC_.",
+      "playwright.config.ts sets INTERNAL_RESULTS_UI_ENABLED=\"1\" only on the :3001 server (line 120); config.py (server flag) is unchanged and default-off; render.yaml/.github not in the diff; the flag-off spec proves no opener and zero requests on :3000.",
+      "Stays open: production activation stays held until sign-in (DB-204 b) and the owed server items; nothing here turns a production switch on.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     },
     {
      "id": "D-090-R588",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The packet is scoped as Part B (one screen, one option) and explicitly records what stays owed (DB-199 d, DB-203, DB-204 b/c, DB-206); it does not drop any section or declare the report finished.",
+      "The task title, objective and evidence map keep the full report and all options in view.",
+      "Stays open: the master plan/backlog carry the remaining sections and options; this task does not narrow the goal, but the program-level scope is tracked elsewhere.",
+      "Verifier's carry-forward condition met at 2a93eddf: the task's allowed-path files are identical to those verified at 19fbded5 (content identity e9a7ed51), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T140-DCV.md."
+     ],
+     "reviewed_sha": "2a93eddf45cae0f45f785a5232725687076c4efb"
     }
-   ]
+   ],
+   "verified_at": "2026-10-08T18:00:40+00:00"
   }
  ]
 }
