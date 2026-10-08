@@ -99,7 +99,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 70,
+  "progress_percent": 90,
   "risks": [
     "the new parameter becomes a hidden default -> when it is not given the entry behaves exactly as today, pinned by scenario S4 and the unchanged journey result",
     "the transform changes a value or another line -> scenario S5 compares the two documents block by block",
@@ -107,7 +107,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T13:54:17.975356+00:00",
-  "updated_at": "2026-10-08T14:25:06.981211+00:00",
+  "updated_at": "2026-10-08T14:45:03.244067+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -145,6 +145,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "Builder's one commit integrated by cherry-pick as b8bcbb74 (tree identical to the builder's 00833a0e; 7 files, all the allowed paths). The entry takes user_choices (a set of the two scope-line keys; not given: as before); the transform rewrites the basis and the sentence of the two lines when the user chose; the route passes the housing program always and the height when the body carried one. Builder's checks: tests/api 1131 passed; three_answers, journey and contracts 912 passed 2 skipped; cad and drawings 1359 passed 6 skipped (no saved file changed); modularity exit 0 with three_way_document.py at 599 lines, one under the warning threshold. Next: G3 and G4 reviews at the frozen head; the full api suite by the orchestrator."
+    },
+    {
+      "at": "2026-10-08T14:45:03.243927+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Both independent reviews returned at the frozen head 82c32742 and passed on their first reading: G3 (data-contract-verifier) eight checks confirmed, three notes; G4 (qa-engineer) eight checks, eleven mutations all caught, three notes; no blocking finding; no correction asked; no review of this task failed. Both returns are kept unchanged in project-control/reports/M5-T139-G3G4.md. Orchestrator's run at the same head: full api suite 8655 passed, 8 skipped. Evidence map written (four rows)."
     }
   ]
 }
