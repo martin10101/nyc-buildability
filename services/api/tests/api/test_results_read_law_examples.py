@@ -338,7 +338,10 @@ def test_s14_no_lot_type_geometry_fails_closed_503(monkeypatch) -> None:
         {"housing_program": "standard_residence"},
     )
     assert response.status_code == 503
-    assert response.json()["state"] == "lot_conditions_unconfirmed"
+    body = response.json()
+    assert body["state"] == "lot_conditions_unconfirmed"
+    # the SAME one reason serves this cause (no lot outline -> no lot type) too
+    assert "lot outline" in body["message"] and "city record" in body["message"]
 
 
 def test_s14_missing_profile_is_a_typed_503_never_a_document(monkeypatch) -> None:
@@ -355,6 +358,12 @@ def test_s14_missing_profile_is_a_typed_503_never_a_document(monkeypatch) -> Non
     body = response.json()
     assert body["state"] == "lot_conditions_unconfirmed"
     assert "answers" not in body  # never a document
+    # the one reason is true for BOTH causes (missing city record OR missing lot outline), names
+    # neither an internal module nor a captured law text, and does not claim "safe to retry"
+    message = body["message"]
+    assert "city record" in message and "lot outline" in message
+    assert "safe to retry" not in message
+    assert "result_way" not in message and "professional review" not in message
 
 
 def test_s14_provider_cannot_produce_inputs_is_a_typed_503(monkeypatch) -> None:

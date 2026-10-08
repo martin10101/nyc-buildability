@@ -24,22 +24,26 @@ provider are not edited. `study_read.py` is edited only to import the extracted 
 - `services/api/tests/api/test_build_info_api.py` — `EXPECTED_FLAGS` + `_OWNER_READERS` pin.
 - `docs/lanes/queues/C.md`, `docs/lanes/status/C.md`, `docs/plans/JOURNEY_215_16_NORTHERN_2026-10-04.md`
   — the stale golden-record / "flip the tests that assert it stays unmounted" lines (no behaviour).
+- `services/api/tests/scenario/three_answers/test_result_ways.py` — the follow-up commit's ONE
+  change (orchestrator scope correction): `results_read.py` added to the import-guard permitted set
+  + docstring list. See "Import-guard scope correction".
 
 `services/api/tests/api/test_read_router_mounts.py` (allowed) is LEFT UNCHANGED: its GET-parametrized
 `ALL_ROUTES` pattern does not fit a POST route (a GET to a POST path is 405, not 404), so per ruling
 R6 the same mount assertions (flag-off 404 byte-identical, OpenAPI absence in both states, flag-on
 reachability) are made in `test_results_read_api.py` instead (T1).
 
-## FILE BEYOND THE 16 ALLOWED (route to orchestrator — not edited here)
+## Import-guard scope correction (recorded by the orchestrator; applied in the follow-up commit)
 
 `services/api/tests/scenario/three_answers/test_result_ways.py`
 (`test_only_task_m5_t130_bridge_and_facts_modules_import_the_decision_module`) scans every
 `services/api/app/**.py` for the literal `result_way` and permits a fixed list. The route MUST name
 the evidence entry `run_engine_and_result_ways_from_evidence` (ruling R1), whose name contains the
-substring `result_way`, so `results_read.py` is flagged as an offender (confirmed: it is the ONLY
-offender; `results_request.py` has 0 occurrences). Required one-line fix, OUT OF SCOPE here: add
-`"results_read.py"` to the permitted set (the route is the intended new consumer of the evidence
-entry). This is the single failure in check (c).
+substring `result_way`, so `results_read.py` must be in the permitted set (confirmed: it is the ONLY
+offender; `results_request.py` has 0 occurrences). The orchestrator added this one file to the task's
+allowed paths for ONE change; the follow-up commit adds `"results_read.py"` to the permitted set
+(with a comment) and updates that test's docstring list. `results_request.py` still does not name it,
+and nothing else in that file changed. Check (c) is now exit 0.
 
 ## Table (a) — the option document and the minted identity (ruling R2)
 
@@ -82,15 +86,24 @@ same body value and the engine PRINTS in the scope (owner R256; verified in T6).
 | missing housing program / program not in vocab | 422 | `validation_error` | T10 (bad) |
 | bad floor-to-floor value (≤0 or non-number) | 422 | `validation_error` (`floor_to_floor_ft_invalid`) | T10 (bad) |
 | bad density statement (not boolean) | 422 | `validation_error` (`special_density_statement_invalid`) | T10 (bad) |
-| body too large / not valid JSON | 422 | `validation_error` (`body_too_large` / `invalid_json`) | (guarded; reasoned) |
-| provider cannot produce inputs (`StudyInputsUnavailableError`) | 503 | `inputs_unavailable` | S14 |
-| inputs without a property profile → the entry refuses (`EngineDisclosureError`: overlay flag can't be confirmed) | 503 | `lot_conditions_unconfirmed` (plain reason, never a document) | S14 |
-| inputs with no lot-type geometry (`EvaluatorInputsError`: required engine input missing / ambiguous) | 503 | `lot_conditions_unconfirmed` | S14 (no-lot-type note) |
+| body not valid JSON | 422 | `validation_error` (`invalid_json`) | test_invalid_json_body_is_422 |
+| body over the size limit (64 KiB) | 422 | `validation_error` (`body_too_large`) | test_body_over_the_size_limit_is_422 |
+| provider cannot produce inputs (`StudyInputsUnavailableError`) | 503 | `inputs_unavailable` | test_s14_provider_cannot_produce_inputs_is_a_typed_503 |
+| inputs without a property profile → the entry refuses (`EngineDisclosureError`: overlay flag can't be confirmed) | 503 | `lot_conditions_unconfirmed` (plain reason, never a document) | test_s14_missing_profile_is_a_typed_503_never_a_document |
+| inputs with no lot-type geometry (`EvaluatorInputsError`: required engine input missing / ambiguous) | 503 | `lot_conditions_unconfirmed` | test_s14_no_lot_type_geometry_fails_closed_503 |
 | inputs with no prepared outline (reach unknown, lot type known) | 200 | (reach-dependents withheld) | T7 |
-| the bridged study fails its contract (`StudyContractError`) | 500 | `internal_contract_error` | (reasoned) |
-| the emitted document fails its contract (`StudyContractError`) | 500 | `internal_contract_error` | (reasoned) |
-| the bridge refuses (`StudySetupBridgeError`) / any other exception | 500 | `internal_error` | (reasoned) |
+| the bridged study fails its contract (`StudyContractError`) | 500 | `internal_contract_error`; no document | test_bridged_study_contract_failure_is_500_contract_error |
+| the emitted document fails its contract (`StudyContractError`) | 500 | `internal_contract_error`; NOT delivered | test_emitted_document_contract_failure_is_500_and_not_delivered |
+| the bridge refuses (`StudySetupBridgeError`) | 500 | `internal_error`; no document | test_bridge_refusal_is_500_internal_error |
+| any other unexpected exception | 500 | `internal_error`; no document | test_unexpected_exception_is_500_internal_error |
 | success | 200 | the emitted 1.3.0 document (no `state`) | T3, T4, T5, T6, S13 |
+
+The size limit is 64 KiB (`MAX_BODY_BYTES = 64 * 1024`), enforced in `results_read.post_results` by
+`if len(raw) > MAX_BODY_BYTES` BEFORE the body is parsed. The six new 422/500 tests each inject the
+failure by monkeypatching the ROUTE module's own name (`mod.study_from_study_setup`,
+`mod.validate_results_document`, `mod.build_option`) with a distinctive path-like marker, and assert
+the status, the typed state, that no results-document part (`answers` / `contract_version` / `scope`)
+is in the answer, and that the marker, a file path and "Traceback" are NOT in the response text.
 
 Every pair is in `RESULTS_READ_STATUS_STATE_MATRIX`. The rate limit runs before any other work; the
 BBL check before any body read or I/O; the body before the provider. Note (route vs the entry-level
@@ -163,9 +176,12 @@ a corner lot turns its two corner scope lines from "Not applicable" into "Not kn
   request body is larger than this route accepts", "the request body is not valid JSON".
 - 503 inputs_unavailable: "the results are not available for this property right now; nothing was
   fabricated and this is safe to retry".
-- 503 lot_conditions_unconfirmed: "the results are not available for this property right now: the
-  city records needed to confirm the lot's conditions could not be read. Nothing was fabricated and
-  this is safe to retry".
+- 503 lot_conditions_unconfirmed (one sentence, true for BOTH causes — no profile to confirm a
+  recorded overlay, or no outline to work out the lot type): "the results are not available for this
+  property right now: a recorded fact needed to work out this lot's results - its city record or its
+  lot outline - could not be read. Nothing was fabricated." "Safe to retry" is DROPPED here: the
+  provider already produced inputs, so the same request would not succeed on a retry (contrast
+  inputs_unavailable, where the provider failed and retry may help, which keeps "safe to retry").
 - 500 internal_error / internal_contract_error: generic "see server logs by correlation id" texts.
 
 None names an internal module, a law section captured/built, an environment value, a stack trace, or
@@ -202,19 +218,21 @@ option comparison and the PDF stay owed.
 
 ## Checks (direct exit codes)
 
+Both commits were run; the figures below are at the follow-up commit (the corrections applied).
+
 - (a) `python -m ruff check .` (services/api) — **exit 0**, "All checks passed!".
-- (b) `pytest -q tests/api` — **exit 0**, **1112 passed** (claim-seam baseline 1067; +45 new).
-- (c) `pytest -q tests/scenario/three_answers tests/journey tests/contracts` — **exit 1**,
-  **908 passed, 2 skipped, 1 failed**. The ONE failure is the OUT-OF-SCOPE import guard
-  `test_result_ways.py::test_only_task_m5_t130_bridge_and_facts_modules_import_the_decision_module`
-  (needs `results_read.py` added to its permitted set — see "FILE BEYOND THE 16 ALLOWED"). No other
-  change; the figure is otherwise unchanged from the baseline.
+- (b) `pytest -q tests/api` — **exit 0**, **1118 passed** (claim-seam baseline 1067; +51 new:
+  the original 45 plus the 6 error-path tests of this follow-up).
+- (c) `pytest -q tests/scenario/three_answers tests/journey tests/contracts` — **exit 0**,
+  **909 passed, 2 skipped** (the import guard now permits `results_read.py`; the +1 vs the first
+  commit's 908 is that formerly-failing guard, now green).
 - (d) `tools/modularity_check.py --check` — **exit 0** (only pre-existing `tools/agent_supervisor`
   warnings; no new file flagged). `.github/scripts/validate_contracts.py` — **exit 0**, 23 schemas,
   0 failures (no new schema). `scripts/lanes/check_lane_paths.py --coverage` — **exit 0**,
   9527 files, each owned by exactly one lane.
 - (e) the red proofs and the mutation proofs above.
-- (f) `git diff --name-status 2eb714ab… HEAD` lists only the 14 edited allowed paths (+ this report);
-  no forbidden file touched.
+- (f) `git diff --name-status 2eb714ab… HEAD` (across both commits) lists only edited allowed paths:
+  the 14 code/doc files, this report, and (added by the orchestrator's scope correction)
+  `tests/scenario/three_answers/test_result_ways.py`; no forbidden file touched.
 
 END-OF-REPORT

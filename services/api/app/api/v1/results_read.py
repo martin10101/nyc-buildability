@@ -201,18 +201,20 @@ def _inputs_unavailable_503(correlation_id: str) -> JSONResponse:
 
 
 def _lot_conditions_unconfirmed_503(correlation_id: str) -> JSONResponse:
-    """The lot's recorded conditions could not be confirmed from the evidence the server holds
-    (for example, a recorded commercial overlay with no property profile to confirm it), so the
-    engine chain fails closed rather than guess. A plain reason; never a fabricated document and
-    never a 500."""
+    """A recorded fact the engine chain needs to work out this lot's results could not be read:
+    either the lot's city record (so a recorded condition such as a commercial overlay cannot be
+    confirmed) or the lot outline (so the lot type cannot be worked out). The chain fails closed
+    rather than guess. One plain reason true for BOTH causes; never a fabricated document and never
+    a 500. The provider DID produce inputs here, so the same request would not succeed on a retry -
+    the reason says what is missing, not "safe to retry"."""
     return _json(
         503,
         {
             "state": "lot_conditions_unconfirmed",
             "message": (
-                "the results are not available for this property right now: the city records "
-                "needed to confirm the lot's conditions could not be read. Nothing was "
-                "fabricated and this is safe to retry"
+                "the results are not available for this property right now: a recorded "
+                "fact needed to work out this lot's results - its city record or its lot "
+                "outline - could not be read. Nothing was fabricated."
             ),
             "correlation_id": correlation_id,
         },

@@ -33,8 +33,8 @@ from app.api.v1.study_inputs import assemble_study_inputs
 from app.api.v1.study_setup_document import build_study_setup_document
 from app.config import INTERNAL_RESULTS_ENABLED_ENV_VAR
 from app.contracts.evaluator_inputs import build_evaluator_inputs
-from app.contracts.study_contracts import validate_study_document
-from app.contracts.study_setup_bridge import study_from_study_setup
+from app.contracts.study_contracts import StudyContractError, validate_study_document
+from app.contracts.study_setup_bridge import StudySetupBridgeError, study_from_study_setup
 from app.main import create_app
 from app.scenario.three_answers.result_way_engine_bridge import (
     run_engine_and_result_ways_from_evidence,
@@ -420,3 +420,121 @@ def test_s15_option_built_from_the_body_validates_and_carries_no_lot_fact(progra
         revision={"number": 1, "created_at": "2026-10-08T00:00:00Z", "parent": None},
     )
     validate_study_document(study)  # reaching here = the option is contract-valid in a study
+
+
+# =========================================================================== body-shape errors
+def _spy():
+    def provide(bbl, correlation_id, *, selected=None):
+        raise AssertionError("provider must not be reached")
+
+    return provide
+
+
+def _assert_no_document_or_leak(body: dict, marker: str, response_text: str) -> None:
+    """A failure answer carries NO part of a results document, and never the injected exception's
+    own text, a file path or a traceback."""
+    assert "answers" not in body
+    assert "contract_version" not in body
+    assert "scope" not in body
+    assert marker not in response_text
+    assert "Traceback" not in response_text
+
+
+def test_invalid_json_body_is_422(enabled) -> None:
+    """A body that is not valid JSON -> a typed 422 (validation_error, code invalid_json); the
+    provider is never reached."""
+    response = TestClient(app_with(_spy())).post(
+        f"/api/v1/properties/{NORTHERN_BBL}/results", content="{not valid json"
+    )
+    assert response.status_code == 422
+    payload = response.json()
+    assert payload["state"] == "validation_error"
+    assert payload["detail"]["code"] == "invalid_json"
+    assert "answers" not in payload
+
+
+def test_body_over_the_size_limit_is_422(enabled) -> None:
+    """A raw body larger than MAX_BODY_BYTES (64 KiB) -> a typed 422 (validation_error, code
+    body_too_large) BEFORE the body is parsed; the provider is never reached."""
+    big = b'{"housing_program":"standard_residence","pad":"' + b"a" * mod.MAX_BODY_BYTES + b'"}'
+    assert len(big) > mod.MAX_BODY_BYTES
+    response = TestClient(app_with(_spy())).post(
+        f"/api/v1/properties/{NORTHERN_BBL}/results", content=big
+    )
+    assert response.status_code == 422
+    payload = response.json()
+    assert payload["state"] == "validation_error"
+    assert payload["detail"]["code"] == "body_too_large"
+    assert "answers" not in payload
+
+
+def test_bridged_study_contract_failure_is_500_contract_error(enabled, monkeypatch) -> None:
+    """The bridged study failing its contract -> 500 internal_contract_error; no document is sent
+    and the exception's own text is not leaked. Injected by monkeypatching the route module's own
+    study_from_study_setup name (the bridge module itself is read-only)."""
+    _no_network(monkeypatch)
+    marker = "SECRET-TRACE-/private/study/leak"
+
+    def boom(*a, **k):
+        raise StudyContractError(marker, contract="study", location="x")
+
+    monkeypatch.setattr(mod, "study_from_study_setup", boom)
+    response = _post(app_with(benchmark_provider()), {"housing_program": "standard_residence"})
+    assert response.status_code == 500
+    payload = response.json()
+    assert payload["state"] == "internal_contract_error"
+    assert (500, "internal_contract_error") in RESULTS_READ_STATUS_STATE_MATRIX
+    _assert_no_document_or_leak(payload, marker, response.text)
+
+
+def test_emitted_document_contract_failure_is_500_and_not_delivered(enabled, monkeypatch) -> None:
+    """The emitted results document failing its contract before send -> 500 internal_contract_error
+    and the document is NOT delivered (an invalid 200 is impossible). Injected by monkeypatching the
+    route module's own validate_results_document name (the validator module is read-only)."""
+    _no_network(monkeypatch)
+    marker = "SECRET-TRACE-/private/results/leak"
+
+    def boom(document):
+        raise StudyContractError(marker, contract="results", location="x")
+
+    monkeypatch.setattr(mod, "validate_results_document", boom)
+    response = _post(app_with(benchmark_provider()), {"housing_program": "standard_residence"})
+    assert response.status_code == 500
+    payload = response.json()
+    assert payload["state"] == "internal_contract_error"
+    _assert_no_document_or_leak(payload, marker, response.text)
+
+
+def test_bridge_refusal_is_500_internal_error(enabled, monkeypatch) -> None:
+    """A StudySetupBridgeError (the server-built study_setup is malformed) -> 500 internal_error; no
+    document and no leak. Injected via the route module's own study_from_study_setup name."""
+    _no_network(monkeypatch)
+    marker = "SECRET-TRACE-/private/bridge/leak"
+
+    def boom(*a, **k):
+        raise StudySetupBridgeError(marker)
+
+    monkeypatch.setattr(mod, "study_from_study_setup", boom)
+    response = _post(app_with(benchmark_provider()), {"housing_program": "standard_residence"})
+    assert response.status_code == 500
+    payload = response.json()
+    assert payload["state"] == "internal_error"
+    assert (500, "internal_error") in RESULTS_READ_STATUS_STATE_MATRIX
+    _assert_no_document_or_leak(payload, marker, response.text)
+
+
+def test_unexpected_exception_is_500_internal_error(enabled, monkeypatch) -> None:
+    """Any other unexpected exception in the prepare stage -> a generic 500 internal_error; no
+    document and no leak. Injected via the route module's own build_option name."""
+    _no_network(monkeypatch)
+    marker = "SECRET-TRACE-/private/unexpected/leak"
+
+    def boom(*a, **k):
+        raise RuntimeError(marker)
+
+    monkeypatch.setattr(mod, "build_option", boom)
+    response = _post(app_with(benchmark_provider()), {"housing_program": "standard_residence"})
+    assert response.status_code == 500
+    payload = response.json()
+    assert payload["state"] == "internal_error"
+    _assert_no_document_or_leak(payload, marker, response.text)

@@ -75,11 +75,13 @@ def _battery() -> list[ResultWays]:
 
 # --------------------------------------------------------------------------- S9 / M5-T130 callers
 def test_only_task_m5_t130_bridge_and_facts_modules_import_the_decision_module():
-    """Task M5-T130 is the first caller of the decision module; task M5-T134 added the engine-bridge
-    adapter and task M5-T136 adds exactly ONE more, the three-way transform. Only the three module
-    files, task M5-T130's bridge and facts modules, M5-T134's result_way_engine_bridge.py and
-    M5-T136's three_way_document.py (a literal list) may name it; any OTHER file under
-    services/api/app that names it is an offender (proved by a mutation outside the repository)."""
+    """Task M5-T130 is the first caller of the decision module; task M5-T134 added the
+    engine-bridge adapter, task M5-T136 added the three-way transform, and task M5-T138 added the
+    server route that calls the adapter's evidence entry. Only the three module files, task
+    M5-T130's bridge and facts modules, M5-T134's result_way_engine_bridge.py, M5-T136's
+    three_way_document.py and M5-T138's results_read.py (a literal list) may name it; any OTHER
+    file under services/api/app that names it is an offender (proved by a mutation outside the
+    repository)."""
     permitted = set(_MODULE_FILES) | {
         "result_way_facts.py", "result_way_bridge.py", "result_way_bridge_overlay.py",
         # M5-T134: the thin adapter that runs the engine and gathers the ways beside it; and
@@ -89,6 +91,10 @@ def test_only_task_m5_t130_bridge_and_facts_modules_import_the_decision_module()
         # never name it (engine.py must never contain 'result_way').
         "result_way_engine_bridge.py",
         "three_way_document.py",
+        # M5-T138: the results route calls ONLY the adapter's evidence entry
+        # run_engine_and_result_ways_from_evidence (ruling R1), whose name contains 'result_way';
+        # its body reader (results_request.py) still never names it.
+        "results_read.py",
     }
     offenders = [
         str(path) for path in _APP_ROOT.rglob("*.py")
