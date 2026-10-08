@@ -459,3 +459,73 @@ def test_benchmark_provider_carries_the_scenario_objects(monkeypatch) -> None:
     # dropping a carrier is honoured (used by the missing-evidence states)
     dropped = dataclasses.replace(inputs, site_geometry=None)
     assert dropped.site_geometry is None
+
+
+# =========================================================================== M5-T139 (choices)
+# A choice the user made is said to be the user's choice: through the route the floor-to-floor
+# height a user ENTERED and the housing program a user SELECTED say so, never "the default"
+# (DB-204 a). The values shown are unchanged; only the basis and the sentence of the two lines move.
+def _scope_row(doc: dict, key: str) -> dict:
+    return next(a for a in doc["scope"]["assumptions"] if a["key"] == key)
+
+
+def test_t139_s1_entered_floor_to_floor_height_is_said_to_be_entered(monkeypatch) -> None:
+    """S1 (RED PROOF then GREEN): the benchmark lot through the route WITH a floor-to-floor height
+    of 14 in the body. The floor-to-floor scope line carries the value 14, the basis 'entered' and a
+    sentence saying it was entered for this run; the word 'default' is gone. On today's code the
+    line reads 'A 14-foot floor-to-floor height is used as the default.' (basis 'default') - this
+    assertion fails there, which is the red proof."""
+    _enable(monkeypatch)
+    _no_network(monkeypatch)
+    response = _post(
+        app_with(benchmark_provider()),
+        {"housing_program": "standard_residence", "floor_to_floor_ft": 14},
+    )
+    assert response.status_code == 200
+    doc = response.json()
+    row = _scope_row(doc, "floor_to_floor_ft")
+    assert row["value"] == 14  # the value shown is the one entered, unchanged
+    assert row["unit"] == "feet"
+    assert row["basis"] == "entered"
+    assert "entered" in row["statement"]
+    assert "default" not in row["statement"].lower()
+    assert "A 14-foot floor-to-floor height was entered for this run." == row["statement"]
+
+
+def test_t139_s2_starting_floor_to_floor_height_is_still_called_the_default(monkeypatch) -> None:
+    """S2: the SAME lot through the route with NO floor-to-floor height in the body. The line keeps
+    the engine's stated starting value (10 ft), the basis 'default' and the engine's own sentence,
+    unchanged - the user made no choice there, so nothing is rewritten."""
+    _enable(monkeypatch)
+    _no_network(monkeypatch)
+    response = _post(app_with(benchmark_provider()), {"housing_program": "standard_residence"})
+    assert response.status_code == 200
+    row = _scope_row(response.json(), "floor_to_floor_ft")
+    assert row["value"] == 10.0
+    assert row["basis"] == "default"
+    assert row["statement"] == "A 10-foot floor-to-floor height is used as the default."
+
+
+@pytest.mark.parametrize(
+    "program,display",
+    [
+        ("standard_residence", "Standard residence"),
+        ("qualifying_affordable_housing", "Qualifying affordable housing"),
+        ("qualifying_senior_housing", "Qualifying senior housing"),
+    ],
+)
+def test_t139_s3_housing_program_is_the_users_selection(monkeypatch, program, display) -> None:
+    """S3: the SAME lot through the route, once for each of the three housing programs the body
+    accepts. The housing-program scope line carries the basis 'entered' and a sentence saying the
+    program was selected for this run - for standard residence as for the other two; never 'the
+    default housing program'. On today's code standard residence reads 'Standard residence is used
+    as the default housing program.' (basis 'default'), which this fails."""
+    _enable(monkeypatch)
+    _no_network(monkeypatch)
+    response = _post(app_with(benchmark_provider()), {"housing_program": program})
+    assert response.status_code == 200
+    row = _scope_row(response.json(), "housing_program")
+    assert row["value"] == program  # the value shown is the program chosen, unchanged
+    assert row["basis"] == "entered"
+    assert row["statement"] == f"{display} was selected for this run as the housing program."
+    assert "default housing program" not in row["statement"]

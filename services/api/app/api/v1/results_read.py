@@ -60,6 +60,8 @@ from app.contracts.study_setup_bridge import StudySetupBridgeError, study_from_s
 from app.resilience.rate_limit import SlidingWindowRateLimiter, caller_key
 from app.scenario.three_answers import BuildingDefaults
 from app.scenario.three_answers.result_way_engine_bridge import (
+    FLOOR_TO_FLOOR_KEY,
+    HOUSING_PROGRAM_KEY,
     run_engine_and_result_ways_from_evidence,
 )
 
@@ -372,6 +374,13 @@ async def post_results(
         if req.floor_to_floor_ft is not None
         else BuildingDefaults()
     )
+    # Which of the two design-choice scope lines the caller's request carried (M5-T139, DB-204 a):
+    # the housing program ALWAYS (the body requires it); the floor-to-floor height only when the
+    # body carried one (presence tested with `is not None`, never a truthiness test). The transform
+    # says the user's choice on those rows; a choice the body did not carry stays the engine's.
+    user_choices = {HOUSING_PROGRAM_KEY}
+    if req.floor_to_floor_ft is not None:
+        user_choices.add(FLOOR_TO_FLOOR_KEY)
     try:
         emitted = run_engine_and_result_ways_from_evidence(
             evaluator_inputs=evaluator_inputs,
@@ -384,6 +393,7 @@ async def post_results(
             site_geometry=inputs.site_geometry,
             special_density_statement=req.special_density_statement,
             building_defaults=building_defaults,
+            user_choices=frozenset(user_choices),
             env=None,
         )
     except EngineDisclosureError:

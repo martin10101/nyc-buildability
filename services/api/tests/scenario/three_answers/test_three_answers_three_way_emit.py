@@ -55,9 +55,12 @@ from app.scenario.three_answers.three_way_document import (
     ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION,
     BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION,
     FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION,
+    FLOOR_TO_FLOOR_KEY,
+    HOUSING_PROGRAM_KEY,
     RESERVED_UNIT_ESTIMATE_REASON,
     SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION,
     _scope_statement,
+    _user_choice_statement,
     emit_three_way_document,
 )
 from app.spatial.site_geometry import (
@@ -688,6 +691,14 @@ def test_every_text_the_transform_writes_is_plain_and_true(benchmark):
     label = _value(shown["answers"]["floor_area_allowance"], "legal_unit_limit_standard")["label"]
     authored.append(label)
 
+    # the two design-choice sentences the transform writes when the user made the choice (M5-T139):
+    # the floor-to-floor height entered, and each of the three housing programs selected
+    authored.append(_user_choice_statement(FLOOR_TO_FLOOR_KEY, 14.0))
+    for program in (
+        "standard_residence", "qualifying_affordable_housing", "qualifying_senior_housing",
+    ):
+        authored.append(_user_choice_statement(HOUSING_PROGRAM_KEY, program))
+
     id_re = re.compile(r"\b[KO]\d+\b|\bM\d+-T\d+\b")
     forbidden = (
         "professional review", "unsupported", "the caller", "reference case", "work order",
@@ -784,7 +795,8 @@ def evidence_benchmark():
     return res
 
 
-def _evidence(mp, *, special_density_statement=None, geometry_on=True, env=None):
+def _evidence(mp, *, special_density_statement=None, geometry_on=True, env=None,
+              user_choices=None):
     def _blocked(*_a, **_k):
         raise AssertionError("network I/O attempted in a recorded-data test")
 
@@ -803,6 +815,7 @@ def _evidence(mp, *, special_density_statement=None, geometry_on=True, env=None)
         prepared_outline=prepared if geometry_on else None,
         site_geometry=geometry if geometry_on else None,
         special_density_statement=special_density_statement,
+        user_choices=user_choices,
         env=_LANE_ON if env is None else env,
     )
 
@@ -1039,3 +1052,84 @@ def test_s137_scope_texts_are_plain_and_true():
             assert token not in low, (token, text)
         assert not id_re.search(text), text
         assert not snake.search(text), text
+
+
+# =========================================================================== M5-T139
+# A choice the user made is said to be the user's choice (DB-204 a). The evidence entry learns which
+# of the two design-choice scope rows the caller's request carried, and the transform rewrites those
+# rows to say so (basis 'entered'); the value is never touched. When no choice is named, both rows
+# stay exactly as the engine made them (the committed journey result is unchanged).
+def test_t139_entry_without_user_choices_leaves_the_two_lines_as_the_engine_made_them(
+    evidence_benchmark, benchmark
+):
+    """S4: the evidence entry called with NO user choice named, and the older entry
+    (run_engine_and_result_ways), both leave the housing-program and floor-to-floor scope lines
+    exactly as the engine's disclosure builder made them - basis 'default' and the engine's own
+    'the default' sentences. Only a named choice rewrites them."""
+    for doc in (evidence_benchmark.document, benchmark.document):
+        rows = _scope_rows(doc)
+        hp = rows[HOUSING_PROGRAM_KEY]
+        f2f = rows[FLOOR_TO_FLOOR_KEY]
+        assert hp["basis"] == "default"
+        assert hp["statement"] == "Standard residence is used as the default housing program."
+        assert f2f["basis"] == "default"
+        assert f2f["statement"] == "A 10-foot floor-to-floor height is used as the default."
+
+
+def test_t139_transform_rewrites_only_the_named_design_choice(evidence_benchmark):
+    """O38: the transform rewrites a design-choice row ONLY when its key is named in user_choices.
+    Naming the floor-to-floor height rewrites that row (basis 'entered', the entered sentence) and
+    leaves the housing-program row at 'default'; naming the housing program does the reverse. The
+    row's VALUE is never touched in either case."""
+    engine_doc = evidence_benchmark.engine_result.document
+    ways = evidence_benchmark.gathered.ways
+
+    only_f2f = emit_three_way_document(
+        engine_doc, ways, user_choices=frozenset({FLOOR_TO_FLOOR_KEY})
+    )
+    rows = _scope_rows(only_f2f)
+    assert rows[FLOOR_TO_FLOOR_KEY]["basis"] == "entered"
+    assert rows[FLOOR_TO_FLOOR_KEY]["value"] == 10.0  # value untouched
+    assert rows[FLOOR_TO_FLOOR_KEY]["statement"] == (
+        "A 10-foot floor-to-floor height was entered for this run."
+    )
+    assert rows[HOUSING_PROGRAM_KEY]["basis"] == "default"  # not named -> unchanged
+
+    only_hp = emit_three_way_document(
+        engine_doc, ways, user_choices=frozenset({HOUSING_PROGRAM_KEY})
+    )
+    rows2 = _scope_rows(only_hp)
+    assert rows2[HOUSING_PROGRAM_KEY]["basis"] == "entered"
+    assert rows2[HOUSING_PROGRAM_KEY]["value"] == "standard_residence"  # value untouched
+    assert rows2[HOUSING_PROGRAM_KEY]["statement"] == (
+        "Standard residence was selected for this run as the housing program."
+    )
+    assert rows2[FLOOR_TO_FLOOR_KEY]["basis"] == "default"  # not named -> unchanged
+
+
+def test_t139_only_the_two_choice_lines_differ_with_user_choices(evidence_benchmark):
+    """S5: the SAME lot and values through the evidence entry, with and without the user's choices.
+    Only the basis and the statement of the housing-program and floor-to-floor rows differ; every
+    value, unit, other scope line and other block of the document stay the same."""
+    with pytest.MonkeyPatch.context() as mp:
+        chosen = _evidence(mp, user_choices=frozenset({HOUSING_PROGRAM_KEY, FLOOR_TO_FLOOR_KEY}))
+    d0 = evidence_benchmark.document
+    d1 = chosen.document
+    rows0 = _scope_rows(d0)
+    rows1 = _scope_rows(d1)
+    for key in (HOUSING_PROGRAM_KEY, FLOOR_TO_FLOOR_KEY):
+        assert rows1[key]["value"] == rows0[key]["value"]  # value unchanged
+        assert rows1[key]["unit"] == rows0[key]["unit"]  # unit unchanged
+        assert rows0[key]["basis"] == "default"
+        assert rows1[key]["basis"] == "entered"
+        assert rows1[key]["statement"] != rows0[key]["statement"]
+
+    def _blanked(doc: dict) -> dict:
+        copy = json.loads(json.dumps(doc))
+        for row in copy["scope"]["assumptions"]:
+            if row["key"] in (HOUSING_PROGRAM_KEY, FLOOR_TO_FLOOR_KEY):
+                row["basis"] = "<blanked>"
+                row["statement"] = "<blanked>"
+        return copy
+
+    assert _blanked(d1) == _blanked(d0)  # nothing else moved

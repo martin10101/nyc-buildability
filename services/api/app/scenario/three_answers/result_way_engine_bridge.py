@@ -44,7 +44,12 @@ from .engine_conditions import DensityStatement, Presence
 from .inputs import BuildingDefaults, ThreeAnswerInputs
 from .result_way_bridge import GatheredResult, gather_result_ways
 from .result_way_inputs import DensityKnowledge, LotType, Recorded
-from .three_way_document import emit_three_way_document
+from .three_way_document import (
+    FLOOR_TO_FLOOR_KEY,
+    HOUSING_PROGRAM_KEY,
+    USER_CHOICE_KEYS,
+    emit_three_way_document,
+)
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
     from app.rules.registry import RuleRegistry
@@ -52,6 +57,9 @@ if TYPE_CHECKING:  # pragma: no cover - typing only
     from app.spatial.site_geometry.results import SiteGeometry
 
 __all__ = [
+    "FLOOR_TO_FLOOR_KEY",
+    "HOUSING_PROGRAM_KEY",
+    "USER_CHOICE_KEYS",
     "EngineResultWays",
     "run_engine_and_result_ways",
     "run_engine_and_result_ways_from_evidence",
@@ -149,6 +157,7 @@ def run_engine_and_result_ways_from_evidence(
     site_geometry: SiteGeometry | None,
     special_density_statement: bool | None = None,
     building_defaults: BuildingDefaults | None = None,
+    user_choices: frozenset[str] | None = None,
     registry: RuleRegistry | None = None,
     env: Mapping[str, str] | None = None,
 ) -> EngineResultWays:
@@ -169,6 +178,13 @@ def run_engine_and_result_ways_from_evidence(
     (c) builds the engine inputs with :func:`build_three_answer_inputs` using the DERIVED values,
         runs the engine, decides the ways and emits the three-way document - with the five scope
         lines rewritten to say where each condition comes from (reading O36).
+
+    ``user_choices`` (M5-T139, DB-204 a) names which of the two design-choice scope rows the
+    caller's request carried - the housing program and/or the floor-to-floor height
+    (:data:`USER_CHOICE_KEYS`). It is NOT a fact about the lot: it records what the caller's own
+    request contained. It is passed to the transform, which rewrites those rows to say the user's
+    choice. When not given, nothing changes: the scope lines and the committed journey result are
+    exactly as today.
 
     ``build_three_answer_inputs`` cross-checks ``overlay_present`` against the study's recorded
     commercial-overlay fact and fails closed if they disagree; the overlay value derived here comes
@@ -216,6 +232,7 @@ def run_engine_and_result_ways_from_evidence(
     )
     engine_result = generate_results(inputs, registry=registry, env=env)
     document = emit_three_way_document(
-        engine_result.document, gathered.ways, condition_sources=conditions,
+        engine_result.document, gathered.ways,
+        condition_sources=conditions, user_choices=user_choices,
     )
     return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)
