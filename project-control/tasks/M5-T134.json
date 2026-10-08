@@ -154,8 +154,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "The outline seam breaks an existing geometry provider or test double -> O21 additive; every double keeps working; test_study_geometry.py is in the allowed paths",
     "A carried field changes the emitted document -> the byte-identity scenario S13; the journey, benchmark and DXF/kit tests stay green untouched",
@@ -166,7 +166,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T01:34:50.709238+00:00",
-  "updated_at": "2026-10-08T02:40:31.210920+00:00",
+  "updated_at": "2026-10-08T02:40:33.483422+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
