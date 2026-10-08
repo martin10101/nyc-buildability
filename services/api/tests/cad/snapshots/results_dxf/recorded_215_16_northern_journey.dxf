@@ -323,7 +323,7 @@ A-ANNO-NOTE
 40
 2.046061
 1
-Commercial overlay present Yes city_records A commercial overlay (C2-2) is recorded for this lot in city data.
+Commercial overlay present Yes city_records A commercial overlay (C2-2) is recorded for this lot in the city's records.
 0
 TEXT
 8
@@ -337,7 +337,7 @@ A-ANNO-NOTE
 40
 2.046061
 1
-Special purpose district No assumed No special purpose district is assumed to apply; this run does not read the special-district layer.
+Special purpose district No city_records The city's records list no special purpose district for this lot.
 0
 TEXT
 8
@@ -351,7 +351,7 @@ A-ANNO-NOTE
 40
 2.046061
 1
-Special density area No assumed The lot is assumed not to lie in a special density area; this run does not read the special-density layer.
+Special density area Yes assumed Whether the lot is in a special density area is not known; it is taken to be in one for the calculation, so the legal dwelling-unit limit that depends on it is withheld.
 0
 TEXT
 8
@@ -421,7 +421,7 @@ A-ANNO-NOTE
 40
 2.046061
 1
-Within 100 ft of a street-line intersection Yes assumed The lot is assumed to lie within 100 feet of a street-line intersection.
+Within 100 ft of a street-line intersection No approximate_tax_map Measured from the tax-map outline, the lot's farthest point is 144.60 feet from the corner where its two street lines meet, more than 100 feet from it.
 0
 TEXT
 8
@@ -435,7 +435,7 @@ A-ANNO-NOTE
 40
 2.046061
 1
-Street-line intersection angle 90 degrees assumed The street lines are assumed to meet at a 90-degree angle.
+Street-line intersection angle 89.7 degrees approximate_tax_map Measured from the tax-map outline, the lot's two street lines meet at about 89.7 degrees.
 0
 TEXT
 8

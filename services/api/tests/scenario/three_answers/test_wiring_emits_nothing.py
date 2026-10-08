@@ -23,11 +23,13 @@ from pathlib import Path
 
 import pytest
 
-from app.contracts.evaluator_inputs import build_evaluator_inputs, build_three_answer_inputs
+from app.contracts.evaluator_inputs import build_evaluator_inputs
 from app.contracts.study_contracts import validate_results_document
 from app.contracts.study_setup_bridge import study_from_study_setup
 from app.profile.builder import build_property_profile
-from app.scenario.three_answers.result_way_engine_bridge import run_engine_and_result_ways
+from app.scenario.three_answers.result_way_engine_bridge import (
+    run_engine_and_result_ways_from_evidence,
+)
 from app.spatial.site_geometry import (
     derive_site_geometry,
     lot_outline_from_mappluto,
@@ -76,7 +78,10 @@ def _carriers():
     return profile, prepared, geometry
 
 
-def _benchmark_inputs_with_carriers(monkeypatch):
+def _emit_from_evidence(monkeypatch):
+    """Run the EVIDENCE entry on the recorded benchmark lot (M5-T137): the five engine conditions
+    come from the SAME evidence the decision step gathers, built exactly as the journey test builds
+    them."""
     profile, prepared, geometry = _carriers()
     setup = _northern_setup(monkeypatch, geometry=True)
     setup["property"]["address"] = _benchmark_identity_address()
@@ -84,31 +89,21 @@ def _benchmark_inputs_with_carriers(monkeypatch):
         setup, _TEST_ONLY_OPTION, study_id=_STUDY_ID, revision=_REVISION
     )
     doc = build_evaluator_inputs(study, _OPTION_ID)
-    inputs = build_three_answer_inputs(
-        doc, results_id=_RESULTS_ID, computed_at=_COMPUTED_AT,
-        housing_program="standard_residence", overlay_present=True,
-        special_district_present=False, within_100_ft_of_street_line_intersection=True,
-        street_line_intersection_angle_degrees=90.0, special_density_area=False, study=study,
-        property_profile=profile, prepared_outline=prepared, site_geometry=geometry,
+    return run_engine_and_result_ways_from_evidence(
+        evaluator_inputs=doc, study=study, results_id=_RESULTS_ID, computed_at=_COMPUTED_AT,
+        housing_program="standard_residence", property_profile=profile, prepared_outline=prepared,
+        site_geometry=geometry, special_density_statement=None, env=_LANE_ON,
     )
-    return inputs, doc
 
 
-def test_s12_adapter_emits_the_committed_three_way_fixture(monkeypatch):
-    """S12: with the carriers populated, the adapter emits the EXACT committed journey fixture,
-    byte-for-byte, at contract 1.3.0. This is a wiring/unchanged proof, never evidence a value is
-    correct (work order rule 3)."""
-    inputs, doc = _benchmark_inputs_with_carriers(monkeypatch)
-    assert inputs.property_profile is not None
-    assert inputs.prepared_outline is not None
-    assert inputs.site_geometry is not None
-
-    emitted = run_engine_and_result_ways(
-        inputs, evaluator_inputs=doc, special_density_statement=False, env=_LANE_ON
-    )
+def test_s12_entry_emits_the_committed_three_way_fixture(monkeypatch):
+    """S12/S13: with the carriers populated, the evidence entry emits the EXACT committed journey
+    fixture, byte-for-byte, at contract 1.3.0. This is a wiring/unchanged proof, never evidence a
+    value is correct (work order rule 3)."""
+    emitted = _emit_from_evidence(monkeypatch)
     document = emitted.document
     validate_results_document(document)
-    assert document["contract_version"] == "1.3.0"  # the three-way document (M5-T136)
+    assert document["contract_version"] == "1.3.0"  # the three-way document
 
     serialized = (json.dumps(document, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
     assert _FIXTURE_PATH.exists(), f"no committed fixture {_FIXTURE_PATH.name}"
@@ -119,24 +114,18 @@ def test_s12_adapter_emits_the_committed_three_way_fixture(monkeypatch):
 def test_engine_inner_document_is_unchanged(monkeypatch):
     """engine.py is read-only: the engine's own ThreeAnswersResult still assembles its unchanged
     document (declaring the pre-three-way 1.2.0 version on this lot - scope + the height note); only
-    the adapter's transform emits 1.3.0."""
-    inputs, doc = _benchmark_inputs_with_carriers(monkeypatch)
-    emitted = run_engine_and_result_ways(
-        inputs, evaluator_inputs=doc, special_density_statement=False, env=_LANE_ON
-    )
+    the entry's transform emits 1.3.0, and the EMITTED unit_estimate is always reserved (reading
+    O28). On this lot the special density area is not known, so the engine is given the in-one
+    stand-in and its dwelling-unit rule is not applicable - the inner estimate is not computed, an
+    honest consequence of deriving the condition from evidence rather than a typed-in value."""
+    emitted = _emit_from_evidence(monkeypatch)
     assert emitted.engine_result.document["contract_version"] == "1.2.0"
-    # The engine's inner block still carries the legal unit figure; only the EMITTED document
-    # reserves it (reading O28). Nothing but the adapter reads the engine's inner document.
-    assert emitted.engine_result.document["unit_estimate"]["status"] == "available"
     assert emitted.document["unit_estimate"]["status"] == "not_available"
 
 
 def test_emitted_document_leaks_no_carrier_key(monkeypatch):
     """The carriers are INERT in the engine and never leak into the emitted document (no top-level
     key named after the profile, the outline or the geometry)."""
-    inputs, doc = _benchmark_inputs_with_carriers(monkeypatch)
-    document = run_engine_and_result_ways(
-        inputs, evaluator_inputs=doc, special_density_statement=False, env=_LANE_ON
-    ).document
+    document = _emit_from_evidence(monkeypatch).document
     for leaked in ("property_profile", "prepared_outline", "site_geometry", "lot_outline"):
         assert leaked not in document, leaked

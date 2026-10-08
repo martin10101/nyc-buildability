@@ -618,16 +618,6 @@
       "rule_id": "r6b-lot-coverage",
       "version": "0.1.0-draft",
       "status": "needs_review"
-    },
-    {
-      "rule_id": "r6b-rear-yard-corner-waiver",
-      "version": "0.1.0-draft",
-      "status": "needs_review"
-    },
-    {
-      "rule_id": "r6b-dwelling-units",
-      "version": "0.1.0-draft",
-      "status": "needs_review"
     }
   ],
   "draft": true,
@@ -664,21 +654,21 @@
         "value": true,
         "unit": null,
         "basis": "city_records",
-        "statement": "A commercial overlay (C2-2) is recorded for this lot in city data."
+        "statement": "A commercial overlay (C2-2) is recorded for this lot in the city's records."
       },
       {
         "key": "special_district_present",
         "value": false,
         "unit": null,
-        "basis": "assumed",
-        "statement": "No special purpose district is assumed to apply; this run does not read the special-district layer."
+        "basis": "city_records",
+        "statement": "The city's records list no special purpose district for this lot."
       },
       {
         "key": "special_density_area",
-        "value": false,
+        "value": true,
         "unit": null,
         "basis": "assumed",
-        "statement": "The lot is assumed not to lie in a special density area; this run does not read the special-density layer."
+        "statement": "Whether the lot is in a special density area is not known; it is taken to be in one for the calculation, so the legal dwelling-unit limit that depends on it is withheld."
       },
       {
         "key": "lot_type",
@@ -710,17 +700,17 @@
       },
       {
         "key": "within_100_ft_of_street_line_intersection",
-        "value": true,
+        "value": false,
         "unit": null,
-        "basis": "assumed",
-        "statement": "The lot is assumed to lie within 100 feet of a street-line intersection."
+        "basis": "approximate_tax_map",
+        "statement": "Measured from the tax-map outline, the lot's farthest point is 144.60 feet from the corner where its two street lines meet, more than 100 feet from it."
       },
       {
         "key": "street_line_intersection_angle_degrees",
-        "value": 90.0,
+        "value": 89.7,
         "unit": "degrees",
-        "basis": "assumed",
-        "statement": "The street lines are assumed to meet at a 90-degree angle."
+        "basis": "approximate_tax_map",
+        "statement": "Measured from the tax-map outline, the lot's two street lines meet at about 89.7 degrees."
       },
       {
         "key": "housing_program",
