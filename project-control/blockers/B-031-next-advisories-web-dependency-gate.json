@@ -1,0 +1,21 @@
+{
+ "blocker_id": "B-031",
+ "title": "next 15.5.24 advisories GHSA-4jqv-mc3x-m676 and GHSA-mcj8-r9mp-w47p (medium; fixed in 15.5.27) fail the web-dependency-security gate on every new run since the night of 2026-10-07 to 2026-10-08; the fixed version already meets the 7-day age rule",
+ "status": "open",
+ "created_at": "2026-10-08T00:33:38+00:00",
+ "created_by": "orchestrator",
+ "affects": [
+  "Every open and future pull request into candidate/D-024-mrl-option-b: the web-dependency-security step 'npm audit --audit-level=low' fails with 1 moderate finding (first seen on the integration run after pull request 467: run 37707415626, job 113084984518, 2026-10-08 about 00:23 UTC).",
+  "The reviewed corrections waiting to merge (pull request 466): their checks passed at 22:37 UTC on 2026-10-07, before the check began to report the advisories; they do not merge until a fresh run is green after the fix.",
+  "The integration branch's own run at head 52e34649 failed in its web-dependency-security job only; its build and browser-test jobs and every other job passed (20 of 21); the merged change (a handoff document) did not cause it."
+ ],
+ "detail": "Advisories GHSA-4jqv-mc3x-m676 (CVE-2026-94543, 'Next.js has cache poisoning of SSG and ISR pages in self-hosted applications') and GHSA-mcj8-r9mp-w47p (CVE-2026-94484, 'Next.js has cache poisoning in SSG/ISR rendering that leads to cross-user content substitution and persistent denial of service'), each of severity medium (npm audit prints 'moderate'), each affecting next >= 15.0.0, < 15.5.27 (and >= 16.0.0, < 16.3.8), first patched in 15.5.27. The maintainer published them on 2026-09-30 at 16:14:22Z and 16:14:19Z (api.github.com/repos/vercel/next.js/security-advisories/<id>); they entered GitHub's advisory database on 2026-10-07 at 20:32:06Z and 20:31:13Z (api.github.com/advisories/<id>). The dependency check newly picked them up between 2026-10-07 22:53 UTC (the last run in which the same lock passed: the runs of pull request 467) and 2026-10-08 00:23 UTC. apps/web/package.json pins next at exactly 15.5.24 and apps/web/package-lock.json locks next, @next/env and eight @next/swc-* packages at 15.5.24. Registry facts read by the orchestrator on 2026-10-08 at 00:31 UTC from registry.npmjs.org: next 15.5.27 published 2026-09-30T16:19:50.862Z; @next/env 15.5.27 published 2026-09-30T16:08:30.736Z; the eight @next/swc-* platform packages at 15.5.27 published 2026-09-30 between 16:04:32Z and 16:06:50Z; every one more than 604800 seconds old at that reading (the youngest, next itself, 634307 s). Compared with 15.5.24, next 15.5.27 changes only the versions of @next/env and of the eight @next/swc-* packages it names (15.5.24 -> 15.5.27) and the range of its optional dependency sharp ('^0.34.3 || ^0.35.3' -> '^0.34.3 || ^0.35.4'), which the locked sharp 0.35.5 (an exact override) already meets; its peer dependencies and its engines entry are unchanged. No package name is new to the lock. GitHub's advisory database lists no advisory for next 15.5.27 at that reading. So the repair needs no exception: CLAUDE.md principle 15 is met by an exact pin to 15.5.27 and a lock regenerated and proven by the generate-lockfile workflow.",
+ "needs": [
+  "Through the dependency-security process: move the next pin to exactly 15.5.27, regenerate and prove the lock through .github/workflows/generate-lockfile.yml (never locally), a security review of the change (gate G5), a green web-dependency-security run.",
+  "Then a fresh green run on the waiting pull request before it merges."
+ ],
+ "workaround_in_effect": "None. No waiver exists; nothing merges with a red check or on a run that predates the advisories.",
+ "candidate_followup": "Ledger task for the repair, contracted in the same commit as this record on the branch of the waiting pull request (one ledger-touching branch at a time); this blocker is resolved after the merge with the green run ids as evidence.",
+ "scope_corrections": [],
+ "history_note": "Found on 2026-10-08 at about 00:27 UTC: the integration run after pull request 467 merged failed this one check. Its state and log were read before anything else; nothing was rerun. Pull request 467's own runs had finished green at 22:53 UTC on 2026-10-07 with the same lock, because the audit service had not yet begun to report the advisories."
+}

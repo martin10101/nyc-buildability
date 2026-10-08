@@ -35,11 +35,15 @@ from .result_way_conditions import (
     blanket_way,
     blanket_withhold,
     condition_withhold,
+    format_angle,
+    format_angle_exceeding,
     format_ft,
+    format_ft_exceeding,
     k20_condition,
     no_lot_type,
     no_outline,
     overlay_block,
+    rear_yard_unmeasured,
     relabel,
     shown,
     street_reaches_within,
@@ -67,6 +71,7 @@ from .result_way_inputs import (
     AnswerWays,
     Condition,
     Conditional,
+    CornerReach,
     DensityKnowledge,
     LegalMeasure,
     LotType,
@@ -235,9 +240,9 @@ def _coverage_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
         return Withheld(
             label=label,
             reason=(
-                f"{beyond}, beyond the corner-lot portion "
-                f"({CORNER_PORTION_WITHIN_100_FT.comparison}), so there is no single whole-lot "
-                "coverage figure: the near part is a "
+                f"{beyond}, beyond the corner-lot portion (the part within "
+                f"{format_ft(CORNER_PORTION_WITHIN_100_FT.value)} of each intersecting street "
+                "line), so there is no single whole-lot coverage figure: the near part is a "
                 "corner-lot portion and the strip beyond is an interior-lot portion."
             ),
             gap_kind=WORK_OWED,
@@ -284,8 +289,8 @@ def _rear_yard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
             label=label,
             reason=(
                 "The corner rear-yard waiver does not apply to an interior or through lot, and "
-                "the ordinary rear-yard depth (ZR 23-342) needs the building type and lot "
-                "width, which are not given, so the rear yard is withheld."
+                "the program does not yet work out the ordinary rear-yard depth (ZR 23-342), so "
+                "the rear yard is not known."
             ),
             gap_kind=WORK_OWED,
             resolved_by=(
@@ -295,27 +300,75 @@ def _rear_yard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
             zr_sections=zr,
         )
     corner = inp.reach.corner if inp.reach is not None else None
-    if corner is None or not corner.reach.known or not corner.angle.known:
+    if corner is None:
         return no_outline(label, "the rear yard", zr)
+    if not corner.reach.known or not corner.angle.known:
+        # (O20) the corner is present but a measurement is missing; name exactly which, never a
+        # measurement that is present. A known reach is never reported as unmeasured.
+        return rear_yard_unmeasured(
+            label, reach_known=corner.reach.known, angle_known=corner.angle.known, zr=zr,
+        )
     within_point = within(corner.reach.value, REAR_YARD_WAIVER_WITHIN_100_FT)
     within_angle = within(corner.angle.value, REAR_YARD_WAIVER_MAX_ANGLE_135_DEG)
-    if not (within_point and within_angle):
-        return Withheld(
-            label=label,
-            reason=(
-                f"The far corner is {format_ft(corner.reach.value)} from the corner point, "
-                f"beyond the rear-yard waiver area ({REAR_YARD_WAIVER_WITHIN_100_FT.comparison}"
-                "); what the ordinary rear yard requires beyond it is not settled."
-            ),
-            gap_kind=WORK_OWED,
-            resolved_by=(
-                "Working out the ordinary rear-yard rule for the part beyond the corner area "
-                "and checking it against an independently worked example."
-            ),
-            zr_sections=zr,
-        )
+    if not within_point or not within_angle:
+        return _rear_yard_outside_waiver(label, corner, within_point, within_angle, zr)
     k20 = k20_condition(inp)
     return shown([k20] if k20 is not None else [])
+
+
+def _rear_yard_outside_waiver(
+    label: str, corner: CornerReach, within_point: bool, within_angle: bool,
+    zr: tuple[str, ...],
+) -> Withheld:
+    """(O20) The corner reach and angle are both measured and at least one of the rear-yard
+    waiver's two conditions fails. Each of the three states names the condition(s) that really
+    fail, with the measured value, and never the condition that holds: the distance alone (the
+    far corner is beyond the waiver area; the angle is within the limit), the angle alone (the
+    measured angle exceeds the limit; the far corner is within the area), or both."""
+    # The FAILING value is shown so it is visibly beyond / over the limit (G3 F2); the HOLDING
+    # value is shown normally (a value at the limit is within, so an apparent equality is true).
+    far_over = format_ft_exceeding(corner.reach.value, REAR_YARD_WAIVER_WITHIN_100_FT.value)
+    far_within = format_ft(corner.reach.value)
+    waiver_ft = format_ft(REAR_YARD_WAIVER_WITHIN_100_FT.value)
+    angle_over = format_angle_exceeding(
+        corner.angle.value, REAR_YARD_WAIVER_MAX_ANGLE_135_DEG.value
+    )
+    angle_within = format_angle(corner.angle.value)
+    limit = format_angle(REAR_YARD_WAIVER_MAX_ANGLE_135_DEG.value)
+    beyond = (
+        f"the far corner is {far_over} from the point where the two street lines meet, beyond the "
+        f"rear-yard waiver area (the waiver covers the area within {waiver_ft} of that point)"
+    )
+    over = (
+        f"the two street lines meet at {angle_over}, more than the rear-yard waiver's limit of "
+        f"{limit}"
+    )
+    within_dist = (
+        f"the far corner is {far_within} from the point where the two street lines meet, within "
+        f"{waiver_ft} of it"
+    )
+    within_ang = (
+        f"the two street lines meet at {angle_within}, within the waiver's limit of {limit}"
+    )
+    if not within_point and not within_angle:
+        clause = f"{beyond}, and {over}"
+    elif not within_point:
+        clause = f"{beyond}; {within_ang}"
+    else:
+        clause = f"{over}; {within_dist}"
+    return Withheld(
+        label=label,
+        reason=(
+            f"The rear-yard waiver does not apply: {clause}. What the ordinary rear yard requires "
+            "where the waiver does not apply is not settled."
+        ),
+        gap_kind=WORK_OWED,
+        resolved_by=(
+            "Working out the ordinary rear-yard rule for the part the waiver does not cover and "
+            "checking it against an independently worked example."
+        ),
+        zr_sections=zr,
+    )
 
 
 def _setback_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
@@ -381,16 +434,48 @@ def _unit_standard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayReco
             ),
             zr_sections=zr,
         )
-    # NOT_GIVEN, and EVIDENCE_NOT_IN_ONE (not decided by the work order, reading O10): withheld.
+    if density is DensityKnowledge.EVIDENCE_NOT_IN_ONE:
+        # (O19) evidence records the lot OUTSIDE a special density area. The work order decides
+        # nothing for this state (reading O10), so it stays withheld as owed work. The reason
+        # states the evidence the state already holds; the 'resolved by' names the owed work and
+        # never asks for a fact the state has.
+        return Withheld(
+            label=label,
+            reason=(
+                "Evidence records this lot outside a special density area; how the legal "
+                "dwelling-unit limit is shown on that evidence has not been worked out and "
+                "checked against an independently worked example, so the legal dwelling-unit "
+                "limit is not known."
+            ),
+            gap_kind=WORK_OWED,
+            resolved_by=(
+                "Working out how the legal dwelling-unit limit is shown for a lot recorded "
+                "outside a special density area and checking it against an independently worked "
+                "example."
+            ),
+            zr_sections=zr,
+        )
+    # NOT_GIVEN: no evidence either way. Withheld as owed work (its kind); a user's statement
+    # that the lot is not in a special density area would show it only as a conditional result.
+    # The reason does not claim the lot is in such an area, and the 'resolved by' names the owed
+    # work, not a bare fact (R258 keeps missing information and owed work apart).
     return Withheld(
         label=label,
         reason=(
             "There is no evidence of whether this lot is in a special density area, where the "
-            "dwelling-unit formula does not apply, so the legal dwelling-unit limit is not "
-            "known; a user's statement would show it only as a conditional result."
+            "dwelling-unit formula does not apply, and how the legal dwelling-unit limit is "
+            "shown once that is known has not been worked out and checked against an "
+            "independently worked example, so the legal dwelling-unit limit is not known; a "
+            "user's statement that the lot is not in a special density area would show it only "
+            "as a conditional result."
         ),
         gap_kind=WORK_OWED,
-        resolved_by="A sourced fact saying whether the lot is in a special density area.",
+        resolved_by=(
+            "Working out how the legal dwelling-unit limit is shown from sourced evidence of the "
+            "special density area and checking it against an independently worked example; a "
+            "user's statement that the lot is not in a special density area would show it as a "
+            "conditional result."
+        ),
         zr_sections=zr,
     )
 
@@ -421,13 +506,15 @@ def _unit_qualifying_senior_way(blanket: Blanket | None) -> WayRecord:
     return Withheld(
         label=label,
         reason=(
-            "The unit formula sets no factor for qualifying senior housing (ZR 23-52(a)(2)), so "
-            "the program gives no unit limit for it: it is not set by this formula."
+            "The dwelling-unit formula sets no factor for qualifying senior housing (ZR "
+            "23-52(a)(2)), so this formula gives no unit limit for it; whether any other "
+            "provision limits the number of units has not been checked, so the legal "
+            "dwelling-unit limit for it is not known: it is not set by this formula."
         ),
         gap_kind=WORK_OWED,
         resolved_by=(
-            "Connecting the rule for qualifying senior housing and checking it against an "
-            "independently worked example."
+            "Checking whether any other provision limits the number of units for qualifying "
+            "senior housing and checking the result against an independently worked example."
         ),
         zr_sections=("ZR 23-52",),
     )
@@ -443,14 +530,36 @@ def _answer(answer: str, rows: list[ResultWay]) -> AnswerWays:
         withheld = [row.way for row in rows if isinstance(row.way, Withheld)]
         gap = WORK_OWED if any(w.gap_kind == WORK_OWED for w in withheld) else MISSING_INFORMATION
         first = next(iter(withheld))
+        # Name every distinct reason, not just the first: an answer whose values are withheld for
+        # different reasons must not present the first value's reason as if it were the only one.
+        # (round 2) the same for the 'resolved by': name every distinct 'resolved by', in value
+        # order, when they differ; a single text when they are all the same.
+        distinct_reasons: list[str] = []
+        distinct_resolved: list[str] = []
+        for w in withheld:
+            if w.reason not in distinct_reasons:
+                distinct_reasons.append(w.reason)
+            if w.resolved_by not in distinct_resolved:
+                distinct_resolved.append(w.resolved_by)
+        if all(reason == first.reason for reason in distinct_reasons):
+            whole_reason = f"Every value of this answer is withheld: {first.reason}"
+        else:
+            whole_reason = (
+                "Every value of this answer is withheld, for more than one reason: "
+                + " ".join(distinct_reasons)
+            )
+        if all(text == first.resolved_by for text in distinct_resolved):
+            whole_resolved = first.resolved_by
+        else:
+            whole_resolved = " ".join(distinct_resolved)
         return AnswerWays(
             answer=answer,
             values=tuple(rows),
             whole_answer_not_available=WholeAnswerNotAvailable(
-                reason=f"Every value of this answer is withheld: {first.reason}",
+                reason=whole_reason,
                 reason_kind=REASON_KIND_BY_GAP[gap],
                 gap_kind=gap,
-                resolved_by=first.resolved_by,
+                resolved_by=whole_resolved,
             ),
         )
     return AnswerWays(answer=answer, values=tuple(rows))

@@ -1,0 +1,58 @@
+{
+ "task_id": "M5-T132",
+ "material_commits": [
+  "c675c469 M5-T132: the decision module's explanations name the condition that really fails (cherry-pick of the builder's 795c29ee)",
+  "56546a26 M5-T132 round 2 (cherry-pick of 14809d57)",
+  "ecdfb8f8 M5-T132 round 3 (cherry-pick of 12d22e26)",
+  "material head: ecdfb8f8"
+ ],
+ "claim_seam_head": "d8ad46a8",
+ "scope_corrections": 1,
+ "table_rows": 63,
+ "builder_rounds": 3,
+ "failed_reviews": [
+  "G3 at f2b446ec (one false clause left)",
+  "G4 at f2b446ec (six rows with tests too loose)"
+ ],
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/scenario/three_answers: exit 0",
+  "pytest tests/contracts tests/journey tests/spatial/test_lot_reach.py: exit 0",
+  "tools/modularity_check.py --check: exit 0",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "pytest (the FULL services/api suite, run alone at fedd6ca1, the final content of all three tasks): 8519 passed, 8 skipped, exit 0"
+ ],
+ "requirements": {
+  "D-090-R258": [
+   "Missing information and owed work are kept apart state by state: the builder's table (project-control/reports/M5-T132-producer-report.md, section 2: 63 rows, one per input state of every result of decide_result_ways and per text of gather_result_ways) has a column for the kind and a check that the kind fits the state; no kind changed (section 3, 'Kinds changed: NONE'), and the texts were brought into line with their kinds where they disagreed.",
+   "Examples in services/api/app/scenario/three_answers/result_ways.py: the rear yard of an interior or through lot said its inputs 'are not given' while its kind is owed work; it now says the program does not yet work out the ordinary rear-yard depth. A corner measurement that is missing is missing information and says exactly which measurement (services/api/app/scenario/three_answers/result_way_conditions.py, rear_yard_unmeasured).",
+   "Pinned by services/api/tests/scenario/three_answers/test_result_ways_truth_table.py (test_every_input_state_of_every_result asserts the way and the kind of every row; test_us4_not_given_resolved_by_names_owed_work_not_a_bare_fact).",
+   "Share of this task: the texts of the decision module and of the modules that carry facts to it. No promised feature is counted as finished by being labelled; every owed result stays withheld as owed work."
+  ],
+  "D-090-R521": [
+   "services/api/app/scenario/three_answers/result_ways.py, _unit_standard_way: the state 'evidence records the lot outside a special density area' has a text of its own: 'Evidence records this lot outside a special density area; how the legal dwelling-unit limit is shown on that evidence has not been worked out and checked against an independently worked example ...'; its 'resolved by' text names that work and no fact about the density area.",
+   "Test services/api/tests/scenario/three_answers/test_result_ways_truth_table.py::test_s1_evidence_not_in_one_names_the_evidence_not_the_absence_of_it asserts the meaning (names the evidence; does not say 'no evidence'; does not ask for a sourced fact). It fails on the module as it was at the claim head d8ad46a8 (red proof, project-control/reports/M5-T132-producer-report.md section 4).",
+   "The result stays withheld (the orchestrator's reading O19 in the packet): whether the limit should be SHOWN on such evidence is an open question, listed in the report (section 9) and not decided."
+  ],
+  "D-090-R522": [
+   "services/api/app/scenario/three_answers/result_ways.py, _rear_yard_outside_waiver: three failing states, each with its own text built from the measured values and the two legal-measure records: the distance only, the angle only (the measured angle and the 135-degree limit are named; the far corner is said to be within 100 ft), and both.",
+   "Tests in services/api/tests/scenario/three_answers/test_result_ways_truth_table.py: test_s2_corner_angle_fails_distance_holds_names_the_angle_not_the_distance (fails on the module at the claim head: red proof), test_s3_corner_distance_fails_angle_holds_names_the_distance_not_the_angle, test_s4_corner_both_fail_names_both_conditions; each asserts the condition named and the absence of the wording for the condition that holds.",
+   "No number is typed a second time: the guard test_module_holds_no_zoning_number_only_the_two_legal_measures still allows only 100.0 and 135.0 in the decision module's files."
+  ],
+  "D-090-R523": [
+   "Texts only: the task's commits change three files under services/api/app, all in services/api/app/scenario/three_answers/ (result_way_bridge.py, result_way_conditions.py, result_ways.py); the way and the kind of ALL results in every state of the table are pinned by a committed test whose expectations are written as data (services/api/tests/scenario/three_answers/test_result_ways_truth_table.py::test_the_way_and_kind_of_every_result_in_every_state_is_pinned), and they are what they were at the claim head (the builder's before/after signature is identical; the reviewer of gate G3 compared its own battery of 64 states against the module at the claim head: no difference).",
+   "Both results the reviewer named stay withheld; no result changes the way it appears.",
+   "Nothing under services/api/app/api or apps/web/src names the module (git grep, empty): no route or screen shows these texts today, so the correction is in place before the module reaches users. KEEPING that order (this correction merged before the piece that lets a route or screen show the texts) is the orchestrator's share at the next wave; the row stays open for it."
+  ],
+  "D-090-R524": [
+   "The inventory came before the repair: project-control/reports/M5-T132-producer-report.md section 2 holds the complete table (63 rows) with, per state, the way, the reason, the 'resolved by' text, the kind and three checks; 12 rows failed a check and were repaired in one change (section 3), the two the reviewer named among them (the others: a corner measurement not taken reported with the text for 'no outline'; the whole-answer sentence that gave only the first value's reason; the senior-housing text; the rear yard of an interior or through lot; a 'resolved by' text that asked for a bare fact; two texts of the fact-carrying modules).",
+   "One test case per row: services/api/tests/scenario/three_answers/test_result_ways_truth_table.py::test_every_input_state_of_every_result (parametrised over the table) and the named tests beside it.",
+   "The orchestrator's own reading of the diff, before any review, found three more texts of the same kind (a 'resolved by' text that asked for a measurement the state already holds; the whole-answer 'resolved by' text; a rule asserted for senior housing that nothing establishes); the same builder corrected them in a second commit (report section 11; progress log).",
+   "The two independent reviewers were each asked to sweep the input states themselves and not to rely on the builder's table, and each FAILED the task once on it: gate G3 found one more false clause, in a row the table had marked as passing (the lot-coverage reason for a corner lot that reaches beyond 100 feet said in brackets that the whole lot is within 100 feet); gate G4 found six rows whose tests still passed on another state's reason. Both failed reviews are in the progress log; the same builder's third commit corrected the clause, repeated the swap exercise over every withheld row (eleven rows tightened) and added test_coverage_beyond_portion_does_not_assert_the_whole_lot_is_within; both reviewers then passed the task (review record)."
+  ],
+  "D-090-R532": [
+   "This correction is reported as finished nowhere on the builder's word: the task's progress log records the builder's statements as the builder's; the owner update of 2026-10-07 calls it in progress on a branch, not merged.",
+   "The independent reviews are the gate records G3 (data-contract-verifier) and G4 (qa-engineer) at a named commit and the review record project-control/reports/M5-T132-G3G4.md, recorded after this map; the directive-compliance check follows them. Until those exist the status is 'not finished'."
+  ]
+ }
+}

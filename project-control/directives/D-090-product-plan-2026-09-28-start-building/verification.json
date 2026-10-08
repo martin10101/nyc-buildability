@@ -3,7 +3,7 @@
  "directive_id": "D-090",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-090-BOOTSTRAP at capture; tasks cite them through directive_refs. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": "2026-10-07T19:53:43+00:00",
+ "verified_at": "2026-10-07T22:34:42+00:00",
  "task_verifications": [
   {
    "directive_id": "D-090",
@@ -1843,6 +1843,336 @@
       "Verifier's carry-forward condition met at a7ad56a6: every file under this task's allowed paths has the blob it had at the verified head db5020be (content identity 88ae0c41); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier; the producer was a legal-corpus-engineer agent). Pull request 464 is OPEN with head db5020be on GitHub. DCV report: project-control/reports/M4-T033-DCV.md."
      ],
      "reviewed_sha": "a7ad56a6edd0131266f68b746305b93141825ba5"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T132",
+   "applicable_requirement_ids": [
+    "D-090-R258",
+    "D-090-R521",
+    "D-090-R522",
+    "D-090-R523",
+    "D-090-R524",
+    "D-090-R532"
+   ],
+   "producer": "scenario-optimization-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc",
+   "reviewed_manifest_sha256": "47faffdfbc8ed90f326f3d21b41305c3a3c5d90fd918c1fe6d4fd2c8c6c5972c",
+   "requirements": [
+    {
+     "id": "D-090-R258",
+     "state": "PASS",
+     "evidence": [
+      "I drove the module myself (scratch via stdin, no files written): every withheld/conditional state carries a kind that keeps \"missing information\" apart from \"work owed\" - e.g. B4 special-purpose-district NOT_READ -> missing_information (\"a column that was not read is never taken as 'none'\"); the density rule, senior housing, per-portion coverage -> work_owed with resolved_by naming the owed work, never settled/finished.",
+      "services/api/app/scenario/three_answers/result_ways.py and report section 3 (\"Kinds changed: NONE\") show no owed feature is labelled finished; a promised-but-unbuilt rule stays work_owed (e.g. _unit_qualifying_senior_way lines 502-520: \"not known: it is not set by this formula\", kind work_owed).",
+      "My 85-state before/after battery (current vs claim head d8ad46a8) found 0 gap_kind changes, confirming the kind of each state is deliberate and unchanged.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 47faffdf); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T132-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R521",
+     "state": "PASS",
+     "evidence": [
+      "I drove decide_result_ways on special_density=EVIDENCE_NOT_IN_ONE: unit_limit_standard reason = \"Evidence records this lot outside a special density area; how the legal dwelling-unit limit is shown on that evidence has not been worked out ...\" and resolved_by = \"Working out how the legal dwelling-unit limit is shown for a lot recorded outside a special density area ...\" - it does NOT say \"no evidence\" and does NOT ask for a density-area fact the state already holds (result_ways.py lines 437-457).",
+      "I loaded the claim-head module (git show d8ad46a8) and drove the same state: old reason = \"There is no evidence of whether this lot is in a special density area ...\", old resolved_by = \"A sourced fact saying whether the lot is in a special density area.\" - reproducing exactly the fault O19/the harness name, so the fix is real and the pinning test fails on the old code.",
+      "The distinct NOT_GIVEN state still correctly says \"There is no evidence ...\" - the two states are separated, not merged.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 47faffdf); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T132-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R522",
+     "state": "PASS",
+     "evidence": [
+      "I drove the three corner states myself. Angle-only (reach 90 ft, angle 140 deg): reason = \"... the two street lines meet at 140 degrees, more than the rear-yard waiver's limit of 135 degrees; the far corner is 90 ft ..., within 100 ft of it.\" - names the angle as failing, says the distance holds, never \"beyond\" (result_ways.py _rear_yard_outside_waiver lines 319-371, else-branch line 357).",
+      "Distance-only (corner 144.6 ft, angle 90 deg): reason names \"the far corner is 144.60 ft ..., beyond the rear-yard waiver area ...; the two street lines meet at 90 degrees, within the waiver's limit of 135 degrees.\" - distance fails, angle holds.",
+      "Both (144.6 ft, 140 deg): names both conditions.",
+      "I drove the claim-head module on the angle-only state: old reason = \"The far corner is 90 ft from the corner point, beyond the rear-yard waiver area (the whole lot is within 100 feet ...)\" - reproducing the fault (blames distance when the angle fails); the fix is genuine.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 47faffdf); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T132-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R523",
+     "state": "PASS",
+     "evidence": [
+      "Texts-only confirmed: my 85-input-state battery comparing (key, way-type, gap_kind) of every result between the claim head d8ad46a8 (loaded via git show into a synthetic package) and HEAD returned 0 mismatches - no result changed the way it appears, no kind changed.",
+      "No consumer shows the module's texts yet: grep across services/api/app/api and apps/web/src finds no reference; no file in services/api/app outside the three_answers package imports decide_result_ways or gather_result_ways. So \"before the module reaches users\" holds trivially today.",
+      "Still left to later pieces: wiring decide_result_ways/gather_result_ways into the engine, any route, screen or PDF export (explicitly NOT IN THIS TASK); the truth-table test pins US5, RY8, RY9 (and every withheld state) as still withheld.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 47faffdf); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T132-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R524",
+     "state": "PASS",
+     "evidence": [
+      "The report (project-control/reports/M5-T132-producer-report.md section 2) tables every input state (blanket, overlay, floor-area, heights, coverage, rear yard, setback, unit limits, building option, whole-answer, gather texts) with way, kind, checks a/b/c, verdict and a test id.",
+      "I picked ten states the packet does not name (B4 spd-not-read, B7 K20-present, OB1 overlay-not-read, OB3 overlay-family-missing, FA3 inclusionary-not-read, FA7 area-could-not-compare, H2 flood-not-read, C4b street-reach-unknown, C6 large-lot-not-stated, US3 evidence-in-one, plus UA1) and drove each: every reason names the condition that really fails and no resolved_by asks for a held fact; each matches its table row.",
+      "Same fault left anywhere: I re-drove the coverage \"reaches beyond\" state and the benchmark lot (103.93 ft) - both now read \"beyond the corner-lot portion (the part within 100 ft of each intersecting street line)\" with no false \"whole lot is within 100 feet\" clause (the G3 F1 fix), so that same-class fault is gone.",
+      "services/api/tests/scenario/three_answers/test_result_ways_truth_table.py: a 55-row parametrized _TABLE with per-row must_contain/must_not_contain token assertions, plus a 55-key _EXPECTED_WAY_SIGNATURE test pinning the way+kind of ALL results per state - one test per state, and the two reviewer cases became regression tests (test_s1_..., test_s2_...).",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 47faffdf); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T132-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R532",
+     "state": "PASS",
+     "evidence": [
+      "Independent gate records at a named commit: project-control/gates/M5-T132-G3.json (reviewer data-contract-verifier) and M5-T132-G4.json (reviewer qa-engineer), both result PASS, reviewed_sha 2670f454, content_manifest_sha256 47faffdf..., report_file M5-T132-G3G4.md; G2 recorded by reviewer \"orchestrator\" (not the producer).",
+      "Both first reviews FAILED and are recorded before the rework: the task progress_log 70% entries record \"GATE G4 ... at f2b446ec: FAIL\" and \"GATE G3 ... at f2b446ec: FAIL on ONE finding, F1\", each ending \"THE FAILED REVIEW IS RECORDED HERE BEFORE THE REWORK\"; the 95% entry records both second reviews PASS at fedd6ca1.",
+      "project-control/reports/M5-T132-G3G4.md holds every reviewer return verbatim (both FAIL reports at f2b446ec and both PASS reports at fedd6ca1, each ending END-OF-REPORT), with an identity note that the blobs under allowed paths are unchanged between fedd6ca1 and the gate head 2670f454. Findings close on the independent second review, never on the builder's report; no record says a finding is \"addressed/closed\" from the builder's own report.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 47faffdf); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T132-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T133",
+   "applicable_requirement_ids": [
+    "D-090-R435",
+    "D-090-R436",
+    "D-090-R509",
+    "D-090-R510",
+    "D-090-R511",
+    "D-090-R512",
+    "D-090-R513",
+    "D-090-R514",
+    "D-090-R515",
+    "D-090-R516",
+    "D-090-R519",
+    "D-090-R532",
+    "D-090-R534"
+   ],
+   "producer": "scenario-optimization-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc",
+   "reviewed_manifest_sha256": "94433ad75b32b6f02a0582f6e55b050a42b7c8c109d8bd4ff8a24c648431936a",
+   "requirements": [
+    {
+     "id": "D-090-R435",
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md section 3 line 258: \"The measured physical space comes from a proposed building layout, never from the maximum floor area the law allows (R435).\"",
+      "Section 4 lines 271-278: estimate starts from the proposed building's residential zoning floor area, \"never from the 'allowed' or maximum permitted floor area\"; \"The maximum permitted floor area is a separate figure, a limit to check the proposal against.\"",
+      "Each example measures a stated layout (components with dimensioned area_parts), and section 5 keeps the legal cap as a distinct number; no schedule starts from max FAR. Source words verified at source-044-amendment.md line 39.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R436",
+     "state": "PASS",
+     "evidence": [
+      "Section 4 line 288: \"The ratios computed in the examples below belong to those examples only (R436).\"",
+      "Section 7 lines 390-394: the three ratios differ (0.7540, 0.6483, 0.6828) \"precisely because each depends on its own made-up layout\"; \"Correct arithmetic is not support for an assumption\"; no percentage presented as typical of R6B.",
+      "Section 3 line 252-254 states the reconciliation \"so nothing is deducted twice\"; source words verified at source-044-amendment.md lines 41-43.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R509",
+     "state": "PASS",
+     "evidence": [
+      "Section 4 lines 264-278 states the formula in words exactly as the owner required: estimated apartments = (proposed building's residential zoning floor area x assumed apartment-area ratio) / assumed HPD-measured apartment size; \"No count is computed in this record.\"",
+      "grep of the whole record for \"allowed/permitted floor area\" returns only negations (lines 273-274, 296: \"no sentence starts the estimate from the allowed or permitted floor area\"); the owner's flagged \"opening formula still says allowed floor area\" is resolved.",
+      "Line 276-278 preserves \"Where a detailed layout already measures the apartments ... used directly.\" Source verified source-055-amendment.md lines 49-56.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R510",
+     "state": "PASS",
+     "evidence": [
+      "I independently added up Example C upper floor (typical-res) from example-c-mixed-use.json dimensions: apartment-interior 1720 + interior-partitions 60 + demising 96 + exterior-walls 200 + corridor 220 + stair 180 + elevator 56 + chases 20 = 2552; stated outline 44x58 = 2552; difference 0.",
+      "I independently added up Example B typical floor from example-b json: 1680+80+120+208+280+192+56+24 = 2640; outline 40x66 = 2640; difference 0. Example A typical 2000 = 40x50 outline.",
+      "Every component reconciles internally (sum of area_parts == measured_area; sum(floor_area x floor count) == measured_area) for all three examples, checked with exact Fraction arithmetic. Example C now supplies a complete ground floor (44x70=3080, sum 3080) that the claim-head file lacked.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R511",
+     "state": "PASS",
+     "evidence": [
+      "Calling fit.fit_errors in-memory on the repaired examples returns [] for all three (they genuinely fit).",
+      "The check bites: I broke one dimension (B apartment rooms depth 42->43) -> 1 error (per-floor footprints 7420 vs schedule 7580); I removed C typical-res outline -> error \"the floor has no stated outside outline\"; I built a synthetic old-C floor (rooms 1120 fill inside outline 1120, ring 140, extras to 1743 vs outline 1260) -> both the overflow \"difference 483\" and the rooms-fill message fired, reproducing the owner's exact figures.",
+      "RED PROOF: running the committed fit check against the claim-head examples (git show d8ad46a8:...) fails for all three (structural: no floors/floor_areas keys in the pre-repair files); the producer's report reproduces the owner's exact overflow (C 1743 vs 1260 = 483; B no outline; A passes) by restating the old floors with old dimensions. The preserved tests include test_fit_check_bites_no_outline / _dimension_changed_by_a_foot / _rooms_fill_inside_outline / _on_a_real_example_mutation / _when_a_floor_outline_is_removed; all 38 pass.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R512",
+     "state": "PASS",
+     "evidence": [
+      "MEASUREMENT_BASIS.md line 290-296: \"The worked examples establish no realistic range\"; if adopted 0.60-0.75 is \"a chosen sensitivity range, labelled unvalidated\"; line 295-296: \"No sentence in this record calls 0.60 to 0.75 realistic, expected or validated.\"",
+      "Section 8a item 1 (lines 412-416): ratio carried as \"sensitivity range labelled unvalidated - never a validated or expected range\"; reviewer recommendation noted but \"NOT decided until the owner says so.\"",
+      "Withdrawn ratios named: section 7 line 380 and both change_logs name \"earlier Example B ratio 0.6022\" and \"earlier Example C ratio 0.6676\" as WITHDRAWN with the reason. grep for realistic/expected/validated shows only negations.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R513",
+     "state": "PASS",
+     "evidence": [
+      "Section 6 lines 322-326 quotes ZR 23-20: the words match the capture zr-23-20 verbatim_excerpt exactly (\"Where #floor area# in a #building# is shared by multiple #uses#, ... less any shared #floor area#\"), the only difference being the ZR #defined-term# delimiters (markup, not words) stripped; cited digest 0685a2e4... equals the capture's content_digest_sha256.",
+      "No on/off choice: lines 319, 335-336 state it is \"a required calculation, not a switch and not an optional allowance\" and \"never offered as a choice or a 'confirm it applies' switch\"; grep for switch/optional/confirm/\"off unless\" in the record yields only negations.",
+      "Example C carries the attribution: example-c json shared_floor_area present=true, one shared component (shared-utility 120 sq ft); I recomputed 10428/12728=0.8193 share, 120x0.8193=98.32 to residential, 21.68 to commercial, labelled conditional (\"not captured yet\"); ratio uses residential-exclusive 10428 only.",
+      "The mixed-building section (ZR 35-31) is \"not captured yet\" (section 6 lines 339-347; section 8b item 2); its reading is later work carried by backlog DB-184. Honest for this task's share.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R514",
+     "state": "PASS",
+     "evidence": [
+      "Section 1d lines 155-168 quotes the amenity rule; the words match capture zr-23-231 verbatim_excerpt exactly (#markup stripped): base named \"the residential floor area of the building\"; \"amenity space shall not include floor space for circulation ... corridors or vertical circulation spaces\"; \"accessible to the residents of the building\"; cited digest 81eb95e8... equals the capture's content_digest_sha256.",
+      "Line 166-167: \"never an automatic 5 percent added to apartment space.\"",
+      "The old open point 5 no longer asks the base: section 8b item 1 states the base is settled by ZR 23-231 and only the ORDER remains a question of law (not a preference). Source verified source-055-amendment.md lines 68-69.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R515",
+     "state": "PASS",
+     "evidence": [
+      "Section 8 is split into 8a \"Choices for the owner\" (design assumptions/display only: ratio, 700 sq ft size, floor heights, what-stays-not-known/naming, what the user sees) and 8b \"Questions of law (settled by capturing and reading the text, never by preference)\".",
+      "No question of law in 8a and no choice presented as decided: each 8a item carries \"NOT decided until the owner says so\"; 8b items (amenity order, mixed-building combination, energy/wall eligibility) are all legal questions, none put as a preference. The G3 reviewer independently confirmed the two lists are clean.",
+      "Source verified source-055-amendment.md line 69 (\"resolved through research, rather than handed to you as a preference\").",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R516",
+     "state": "PASS",
+     "evidence": [
+      "Section 1d lines 174-186 quotes the exterior-wall exclusion from capture zr-12-10-qualifying-exterior-wall-thickness (digest 119324c8..., matches); states it applies to wall thickness \"added to a building existing on December 6, 2023\" (over-cladding/re-cladding), \"not a licence to subtract the ordinary exterior walls of a new building\"; every example counts full exterior wall thickness.",
+      "Lines 188-202: the energy exclusion's two terms \"fully electrified building\" and \"ultra low energy building\" are \"not captured yet (M4-T034 captures them)\"; eligibility \"withheld and no example takes it\"; \"A user's statement ... supports only a conditional result; it never establishes eligibility\"; \"no general 'confirm it applies' switch.\"",
+      "I confirmed the record cites neither zr-12-10-fully-electrified-building nor zr-12-10-ultra-low-energy-building (both files now present on the branch via M4-T034 but written as \"not captured yet\"; follow-up carried by DB-184). Honest for this task's share.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R519",
+     "state": "PASS",
+     "evidence": [
+      "Section 8c lines 480-502 states floors above the maximum base height are set back and smaller; \"A count of floors times one floorplate is therefore an assumption, and is labelled as one.\"",
+      "I opened the capture zr-23-432 structured table R6B row and verified: min base 30 ft, standard max base 45 ft, standard max building 55 ft, qualifying max base 45 ft, qualifying max building 65 ft - exactly as the record states (digest 9fab7be8... matches); the setback-trigger quote matches the capture verbatim_excerpt.",
+      "The setback depths quoted from zr-23-433 (digest 4fecf4d2... matches): \"depth of at least 10 feet ... wide street ... at least 15 feet ... narrow street\"; line 500 states \"The program does not work out the setback yet\" - the later-work part is honestly flagged.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R532",
+     "state": "PASS",
+     "evidence": [
+      "Two independent reviews recorded, both by agents other than the builder (producer = scenario-optimization-engineer): gate G3 reviewer = data-contract-verifier, G4 = qa-engineer (gates/M5-T133-G3.json, G4.json, result PASS at reviewed_sha 2670f454, manifest 94433ad7...).",
+      "The FAILED first review is recorded before the rework: task progress_log entry at 2026-10-07T21:26:04 (65->70%) records \"GATE G3 ... at f2b446ec: FAIL on ONE finding F1 ... THE FAILED REVIEW IS RECORDED HERE BEFORE THE REWORK\", ahead of the round-3 rework entry at 21:33:52; and it is preserved unchanged in reports/M5-T133-G3G4.md (line 5 \"G3 FAILED at f2b446ec ... PASSED at 7c67cbea\", lines 177-233 the full FAIL record).",
+      "No \"addressed/closed on the builder's word\": the progress log says finding F1 is \"closed\" only after the data-contract-verifier's independent second PASS at 7c67cbea; the G3G4 report ties the close to the one-line data diff verified by the reviewer.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R534",
+     "state": "PASS",
+     "evidence": [
+      "The record and examples are corrected by a contracted task of their own (packet project-control/tasks/M5-T133.json, directive_refs D-090 with these 13 rows) covering the formula (C1/R509), examples+test (R510/R511), range (R512), allocation (R513), amenity (R514), eligibility (R516), unequal floors (R519), and section 8 rewritten into owner-choices + questions-of-law (R515).",
+      "Independently reviewed before re-presentation: G3 (data-contract recompute of every floor/ratio and every quote-vs-capture) and G4 (fit test, 14 mutations, red proof) both PASS at 7c67cbea; I reproduced the fit, the arithmetic and the citation/digest checks myself.",
+      "The owner update (\"put to the owner again\") is NEXT ACTION item 3 of source-055 and is a later orchestrator step, not inside this task's allowed paths; correctly left to later work.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 94433ad7); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier (G3) and qa-engineer (G4); the producer was a scenario-optimization-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M5-T133-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M4-T034",
+   "applicable_requirement_ids": [
+    "D-090-R291",
+    "D-090-R513",
+    "D-090-R516",
+    "D-090-R517",
+    "D-090-R526"
+   ],
+   "producer": "legal-corpus-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc",
+   "reviewed_manifest_sha256": "6bdccc05fdc4d0ab7016fdfdeb9957882b3abfe40e85e09470e54d05d9c9aa65",
+   "requirements": [
+    {
+     "id": "D-090-R291",
+     "state": "PASS",
+     "evidence": [
+      "M4-T034's share of step 3 is the law-text captures the R6B/mixed-building check rests on; all 23 new captures carry extraction_status=extracted_draft (source text only) - verified by reading every one; none states a rule, a reading, or a reference-case result.",
+      "The report (project-control/reports/M4-T034-producer-report.md) draws no conclusion: \"No reading of any text for any lot; no verdict on the reviewer's statements.\" - so the task resolves no rule and claims no independently-calculated example (those belong to other M4 tasks); it does not over-claim its share.",
+      "git show --name-status of the material commits 3736a22d (46 A + report M) and b35cacfb (report M only) shows only added captures/synced copies and the report - no reference-case or rule file touched.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 6bdccc05); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier; the producer was a legal-corpus-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M4-T034-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R513",
+     "state": "PASS",
+     "evidence": [
+      "I fetched https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-31 myself: live sha256 = 8842ac0b0e262c6c72c258bb8ce1a45f5e31e1e031ab961b2108c96b15033b0b, byte-identical to zr-35-31.snapshot.json source.raw_html_sha256 and response_bytes 86986.",
+      "On that live page I extracted the shared-floor-area text verbatim: \"... shared by multiple uses, the floor area for such shared portion shall be attributed to each use proportionately, based on the percentage each use occupies of the total floor area of the zoning lot less any shared floor area.\" - equal to the capture's verbatim_excerpt; the allocation provision the reviewer names is captured from the official source.",
+      "The task's share is capture-only: the report states no on/off switch and draws no reading; the \"record states the rule\" half is M5-T133's share, correctly not claimed here.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 6bdccc05); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier; the producer was a legal-corpus-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M4-T034-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R516",
+     "state": "PASS",
+     "evidence": [
+      "I fetched the ZR 12-10 page myself: live sha256 = 3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc, byte-identical to the source.raw_html_sha256 pinned in zr-12-10-fully-electrified-building and zr-12-10-ultra-low-energy-building.",
+      "On that live page I confirmed the eligibility conditions: \"existing on December 6, 2023\" (present), \"Local Law 154 of 2021\" (present, both definitions), \"ultra-low-energy building\" and \"net-zero energy\" (present) - matching the captures' verbatim_excerpt (\"a building existing on December 6, 2023 which complies with Local Law 154 of 2021 ...\" and the ultra-low-energy performance/verification text). The terms building and story the definitions rest on are also captured (zr-12-10-building, zr-12-10-story).",
+      "Capture-only: each is extracted_draft; the report quotes the conditions and offers no \"confirm it applies\" switch and no reading; the ultra-low-energy label caveat (PDF channel 504/403) is disclosed, text kept verbatim.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 6bdccc05); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier; the producer was a legal-corpus-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M4-T034-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R517",
+     "state": "PASS",
+     "evidence": [
+      "The report section (5) lists each reviewer statement of law with the section the site shows and the capture id holding it, and states \"No verdict is drawn on whether any statement is correct.\" - no verdict given.",
+      "I independently fetched five official pages and all live sha256 match the captures exactly: 35-31 (8842ac0b...), 25-811 (60f4d916...), 23-24 (4bb1fda5...), 25-211 (aadce9a6...), 12-10 (3c719702...); the texts those statements rest on are present on the live pages.",
+      "Differences between the site and the reviewer's lead are reported plainly: the \"small-lot/small-number waiver\" expectation is not in the residential sections (named in 25-30 non-residential, listed not captured); the 25-231 page omits \"after\" (disclosed as Doubt 6, kept verbatim). The orchestrator's own earlier R517 misreading (23-22 vs 23-52) is corrected in the row with the dwelling-unit statement mapped to 23-22 (FAR by housing kind) and 23-52 (dwelling-unit factor), matching the captures.",
+      "No existing capture modified: git diff --diff-filter=M over docs/research and services/api/app/_zr_snapshots across both commits is empty; b35cacfb changed only the report.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 6bdccc05); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier; the producer was a legal-corpus-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M4-T034-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
+    },
+    {
+     "id": "D-090-R526",
+     "state": "PASS",
+     "evidence": [
+      "The task captures the sections that say WHETHER parking/loading/bicycle requirements apply (group 4, 14 captures <= 20): 25-02, 25-20, 25-211/221/231, 25-80, 25-81/811, 36-21, 36-31, 36-62, 36-70/71/711 - I verified the applicability wording in zr-25-211/221/231 (e.g. 25-231 reduction via 73-433 or 74-52; 25-211 via 73-432 or 75-31; 25-211 \"created after December 5, 2024 ... 25-212\").",
+      "Capture-only: the report presents no option as feasible and draws no reading; the \"every display carries a line / no option called feasible\" binding is the display task's, correctly not claimed here. The report's F1 (25-211 overstatement) and F2 (73-432 wrongly tied to 25-231) were corrected in round 2 to the captured words - I confirmed both against the captures.",
+      "Verifier's carry-forward condition met at 0ee75cd7: every file under this task's allowed paths has the blob it had at the verified head c8b90324 (content identity 6bdccc05); CLAUDE.md, .claude/rules/, .github/, services/api/app/, services/api/tests/scenario/, packages/contracts/, apps/web/src/, docs/research/, the reference cases, the measurement basis, the review register, the work order, the D-090 requirement rows and manifest, the sources the rows trace to and source-052, and the wave's gate records are unchanged; the later commits touch only project-control/ and docs/DISCOVERY_BACKLOG.md. Gates G0/G2/G3/G4 PASS at that content identity (independent review: data-contract-verifier; the producer was a legal-corpus-engineer agent). Pull request 466 is OPEN with head c8b90324 on GitHub. DCV report: project-control/reports/M4-T034-DCV.md."
+     ],
+     "reviewed_sha": "0ee75cd734691ee5744e1088737c09007e4b56cc"
     }
    ]
   }

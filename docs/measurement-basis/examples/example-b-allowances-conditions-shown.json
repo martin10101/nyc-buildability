@@ -4,8 +4,8 @@
   "mixed_use": false,
   "made_up_note": "This layout is made up - a deliberately simple example, not a real property and not a detailed or permit-ready design. Every dimension is stated so each area can be recomputed. The maximum floor area the law allows is used only as a limit to check the layout against, never as the measured space.",
   "standing_label": "This is a draft reading of the law and a guideline by an AI; it is not professionally reviewed and is not a legal or professional determination. Each statistic links to its source text (ADR-007).",
-  "building": "A made-up six-storey R6B elevator building: five typical residential floors (three apartments each) over a ground floor with a lobby, an amenity/laundry room, a refuse room, a building mechanical room and a bike/parking room, plus a cellar used only for storage. Some ZR 23-23 conditions are shown and the allowances are taken; one corridor condition and the parking condition are NOT met, so those spaces count.",
-  "assumptions_note": "Design choices are made up and editable; the allowances shown here are illustrative, not validated.",
+  "building": "A made-up five-storey R6B elevator building: four identical typical residential floors (three apartments each, reached off a corridor) over a ground floor that holds the lobby, an amenity/laundry room, a refuse room, a building mechanical room, a bike/parking room and one apartment, plus a partial cellar used only for storage. The stair and the elevator pass through the ground floor and every typical floor. Some ZR 23-23 conditions are shown and the allowances are taken; the corridor's daylighting criterion and the parking condition are NOT shown, so those spaces count. On every floor the components, the exterior wall ring among them, add up to exactly the floor's stated outline (ground and typical 40 x 66 = 2,640 sq ft; cellar 40 x 50 = 2,000 sq ft). This made-up layout places 13 dwelling units by design.",
+  "assumptions_note": "Design choices are made up and editable; the allowances shown here are illustrative, not validated. The five above-grade floors are drawn as equal floorplates for simplicity; a real R6B building (45 ft maximum base height, 55 ft maximum building height) would set back the floors above the base height, so equal floors are an assumption.",
   "components": [
     {
       "component_id": "apartment-interior",
@@ -14,11 +14,18 @@
       "how_measured": "Finished room areas within the demising walls, from the stated room sizes.",
       "area_parts": [
         {
-          "label": "apartment rooms, 5 floors",
+          "label": "ground-floor apartment rooms",
           "sign": "add",
-          "width_ft": 30,
-          "depth_ft": 44,
-          "count": 5
+          "width_ft": 20,
+          "depth_ft": 35,
+          "count": 1
+        },
+        {
+          "label": "apartment rooms, 4 typical floors",
+          "sign": "add",
+          "width_ft": 40,
+          "depth_ft": 42,
+          "count": 4
         }
       ],
       "zoning": {
@@ -68,10 +75,20 @@
             "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
           }
         ],
-        "counted_area": 6600
+        "counted_area": 7420
       },
       "notes": "The apartments' own usable floor.",
-      "measured_area": 6600
+      "measured_area": 7420,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 700
+        },
+        {
+          "floor_id": "typical",
+          "area": 1680
+        }
+      ]
     },
     {
       "component_id": "interior-partitions",
@@ -80,11 +97,18 @@
       "how_measured": "Footprint of the non-demising partition walls inside the units.",
       "area_parts": [
         {
-          "label": "interior partitions, 5 floors",
+          "label": "interior partitions, ground floor",
           "sign": "add",
-          "width_ft": 4,
-          "depth_ft": 10,
-          "count": 5
+          "width_ft": 1,
+          "depth_ft": 40,
+          "count": 1
+        },
+        {
+          "label": "interior partitions, 4 typical floors",
+          "sign": "add",
+          "width_ft": 2,
+          "depth_ft": 40,
+          "count": 4
         }
       ],
       "zoning": {
@@ -134,10 +158,20 @@
             "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
           }
         ],
-        "counted_area": 200
+        "counted_area": 360
       },
       "notes": "Shows that apartment-internal partitions stay in HPD unit area.",
-      "measured_area": 200
+      "measured_area": 360,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 40
+        },
+        {
+          "floor_id": "typical",
+          "area": 80
+        }
+      ]
     },
     {
       "component_id": "demising-partitions",
@@ -146,11 +180,18 @@
       "how_measured": "Footprint of the demising wall thickness.",
       "area_parts": [
         {
-          "label": "demising partitions, 5 floors",
+          "label": "demising partitions, ground floor",
           "sign": "add",
-          "width_ft": 3,
-          "depth_ft": 10,
-          "count": 5
+          "width_ft": 1,
+          "depth_ft": 48,
+          "count": 1
+        },
+        {
+          "label": "demising partitions, 4 typical floors",
+          "sign": "add",
+          "width_ft": 2,
+          "depth_ft": 60,
+          "count": 4
         }
       ],
       "zoning": {
@@ -203,7 +244,17 @@
         "counted_area": 0
       },
       "notes": "A zoning-only component.",
-      "measured_area": 150
+      "measured_area": 528,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 48
+        },
+        {
+          "floor_id": "typical",
+          "area": 120
+        }
+      ]
     },
     {
       "component_id": "exterior-walls",
@@ -212,18 +263,32 @@
       "how_measured": "Outer footprint minus the inner (clear) footprint, over the stated floors.",
       "area_parts": [
         {
-          "label": "outer ring proxy, 5 floors",
+          "label": "outer footprint, ground floor",
           "sign": "add",
-          "width_ft": 3,
-          "depth_ft": 50,
-          "count": 5
+          "width_ft": 40,
+          "depth_ft": 66,
+          "count": 1
         },
         {
-          "label": "(no inner subtraction)",
+          "label": "inner (clear) footprint, ground floor",
           "sign": "subtract",
-          "width_ft": 0,
-          "depth_ft": 0,
+          "width_ft": 38,
+          "depth_ft": 64,
           "count": 1
+        },
+        {
+          "label": "outer footprint, 4 typical floors",
+          "sign": "add",
+          "width_ft": 40,
+          "depth_ft": 66,
+          "count": 4
+        },
+        {
+          "label": "inner (clear) footprint, 4 typical floors",
+          "sign": "subtract",
+          "width_ft": 38,
+          "depth_ft": 64,
+          "count": 4
         }
       ],
       "zoning": {
@@ -276,7 +341,17 @@
         "counted_area": 0
       },
       "notes": "The largest zoning-only item; it must NOT be deducted from HPD a second time if a qualifying-wall exclusion were later taken under zoning.",
-      "measured_area": 750
+      "measured_area": 1040,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 208
+        },
+        {
+          "floor_id": "typical",
+          "area": 208
+        }
+      ]
     },
     {
       "component_id": "corridor",
@@ -285,11 +360,11 @@
       "how_measured": "Corridor width times length, over the stated floors.",
       "area_parts": [
         {
-          "label": "corridor 4 ft x 110 ft, 5 floors",
+          "label": "corridor 5 ft x 56 ft, 4 typical floors",
           "sign": "add",
-          "width_ft": 4,
-          "depth_ft": 110,
-          "count": 5
+          "width_ft": 5,
+          "depth_ft": 56,
+          "count": 4
         }
       ],
       "zoning": {
@@ -304,13 +379,13 @@
               "label": "50 percent of the corridor floor space",
               "operation": "multiply",
               "operands": [
-                "2200",
+                "1120",
                 "0.50"
               ],
-              "result": 1100
+              "result": 560
             }
           ],
-          "note": "The daylighting/termination criterion is shown, so 50% is exempt; the corridor is 110 ft (over 100 ft), so the length allowance is NOT met and that 50% counts."
+          "note": "The corridor is 56 ft - no more than 100 ft - so the length-based 50 percent (ZR 23-232(b)) is exempt; the termination / daylighting / outdoor-access criterion of ZR 23-232(a) is not shown, so that other 50 percent counts."
         },
         "citations": [
           {
@@ -370,7 +445,7 @@
             "status_note": ""
           }
         ],
-        "excluded_area": 1100
+        "excluded_area": 560
       },
       "hpd": {
         "treatment": "exclude",
@@ -393,8 +468,14 @@
         ],
         "counted_area": 0
       },
-      "notes": "The daylighting/termination criterion is shown, so 50% is exempt; the corridor is 110 ft (over 100 ft), so the length allowance is NOT met and that 50% counts.",
-      "measured_area": 2200
+      "notes": "The corridor is 56 ft - no more than 100 ft - so the length-based 50 percent is exempt; the daylighting criterion is not shown, so the other 50 percent counts.",
+      "measured_area": 1120,
+      "floor_areas": [
+        {
+          "floor_id": "typical",
+          "area": 280
+        }
+      ]
     },
     {
       "component_id": "stair",
@@ -403,7 +484,7 @@
       "how_measured": "Stair footprint over the stated floors.",
       "area_parts": [
         {
-          "label": "stair 12 ft x 16 ft, 5 floors",
+          "label": "stair 12 ft x 16 ft, ground + 4 typical floors",
           "sign": "add",
           "width_ft": 12,
           "depth_ft": 16,
@@ -460,7 +541,17 @@
         "counted_area": 0
       },
       "notes": "A zoning-only component.",
-      "measured_area": 960
+      "measured_area": 960,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 192
+        },
+        {
+          "floor_id": "typical",
+          "area": 192
+        }
+      ]
     },
     {
       "component_id": "elevator",
@@ -469,11 +560,11 @@
       "how_measured": "Shaft footprint over the levels it passes.",
       "area_parts": [
         {
-          "label": "elevator shaft, 6 levels",
+          "label": "elevator shaft, ground + 4 typical levels",
           "sign": "add",
           "width_ft": 7,
           "depth_ft": 8,
-          "count": 6
+          "count": 5
         }
       ],
       "zoning": {
@@ -526,7 +617,17 @@
         "counted_area": 0
       },
       "notes": "A zoning-only component.",
-      "measured_area": 336
+      "measured_area": 280,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 56
+        },
+        {
+          "floor_id": "typical",
+          "area": 56
+        }
+      ]
     },
     {
       "component_id": "chases",
@@ -535,10 +636,10 @@
       "how_measured": "Chase footprint, counted across the floors.",
       "area_parts": [
         {
-          "label": "chases, 5 floors",
+          "label": "chases, ground + 4 typical floors",
           "sign": "add",
           "width_ft": 2,
-          "depth_ft": 6,
+          "depth_ft": 12,
           "count": 5
         }
       ],
@@ -592,7 +693,17 @@
         "counted_area": 0
       },
       "notes": "Uses the precise HPD term 'mechanical and plumbing chases'.",
-      "measured_area": 60
+      "measured_area": 120,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 24
+        },
+        {
+          "floor_id": "typical",
+          "area": 24
+        }
+      ]
     },
     {
       "component_id": "lobby",
@@ -601,9 +712,9 @@
       "how_measured": "Lobby footprint.",
       "area_parts": [
         {
-          "label": "ground-floor lobby",
+          "label": "ground-floor lobby/entry",
           "sign": "add",
-          "width_ft": 20,
+          "width_ft": 12,
           "depth_ft": 25,
           "count": 1
         }
@@ -672,7 +783,13 @@
         "counted_area": 0
       },
       "notes": "Shows an amenity-type space that does NOT qualify (it is circulation).",
-      "measured_area": 500
+      "measured_area": 300,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 300
+        }
+      ]
     },
     {
       "component_id": "amenity-laundry",
@@ -683,8 +800,8 @@
         {
           "label": "amenity/laundry room",
           "sign": "add",
-          "width_ft": 20,
-          "depth_ft": 24,
+          "width_ft": 18,
+          "depth_ft": 20,
           "count": 1
         }
       ],
@@ -697,25 +814,25 @@
           "method": "min_of",
           "candidates": [
             {
-              "label": "5 percent of this example's measured residential zoning floor area (11,291 sq ft)",
+              "label": "5 percent of this example's measured residential zoning floor area (12,001 sq ft)",
               "operation": "multiply",
               "operands": [
-                "11291",
+                "12001",
                 "0.05"
               ],
-              "result": 564.55
+              "result": 600.05
             },
             {
-              "label": "5 percent of this example's stated maximum residential floor area (12,000 sq ft)",
+              "label": "5 percent of this example's stated maximum residential floor area (13,000 sq ft)",
               "operation": "multiply",
               "operands": [
-                "12000",
+                "13000",
                 "0.05"
               ],
-              "result": 600
+              "result": 650
             }
           ],
-          "note": "Shown only to illustrate the cap's arithmetic. The 480 sq ft amenity room is within the 5% cap on every figure this example states: 564.55 sq ft (5% of the 11,291 sq ft measured residential zoning floor area) and 600 sq ft (5% of the 12,000 sq ft stated maximum). So the cap does not bind and no base need be chosen. Which figure the law's 'residential floor area' means for this cap is not sure (open point 5 of the record); this record does not decide it."
+          "note": "Shown only to illustrate the cap's arithmetic. The 360 sq ft amenity room is within the 5 percent cap on every figure this example states: 600.05 sq ft (5 percent of the 12,001 sq ft measured residential zoning floor area) and 650 sq ft (5 percent of the 13,000 sq ft stated maximum). So the cap does not bind and the whole room is exempt. ZR 23-231 names the base as 'the residential floor area of the building'; which figure that denotes for a cap that actually binds is a question of law, not an owner's preference."
         },
         "citations": [
           {
@@ -747,7 +864,7 @@
             "status_note": ""
           }
         ],
-        "excluded_area": 480
+        "excluded_area": 360
       },
       "hpd": {
         "treatment": "exclude",
@@ -770,8 +887,14 @@
         ],
         "counted_area": 0
       },
-      "notes": "Shows a conditional amenity allowance taken, with the cap checked and not binding.",
-      "measured_area": 480
+      "notes": "Shows a conditional amenity allowance taken, with the ZR 23-231 cap checked and not binding.",
+      "measured_area": 360,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 360
+        }
+      ]
     },
     {
       "component_id": "refuse",
@@ -783,29 +906,29 @@
           "label": "refuse room",
           "sign": "add",
           "width_ft": 8,
-          "depth_ft": 10,
+          "depth_ft": 9,
           "count": 1
         }
       ],
       "zoning": {
         "treatment": "exclude_if_condition",
         "provision": "ZR 23-23 / ZR 23-233 (refuse floor-area provisions)",
-        "condition": "up to three square feet per dwelling unit (15 units here = 45 sq ft cap)",
+        "condition": "up to three square feet per dwelling unit (13 units here = 39 sq ft cap)",
         "condition_shown": true,
         "exclusion": {
           "method": "min_of",
           "candidates": [
             {
-              "label": "three square feet per dwelling unit x 15 units",
+              "label": "three square feet per dwelling unit x 13 dwelling units",
               "operation": "multiply",
               "operands": [
                 "3",
-                "15"
+                "13"
               ],
-              "result": 45
+              "result": 39
             }
           ],
-          "note": "The 3 sq ft/DU cap (45 sq ft) BINDS: 45 sq ft is exempt and the remaining 35 sq ft of the 80 sq ft room counts under zoning."
+          "note": "The 3 sq ft/DU cap BINDS: this made-up layout places 13 dwelling units (three on each of the four typical floors and one on the ground floor), so 39 sq ft is exempt and the remaining 33 sq ft of the 72 sq ft room counts under zoning."
         },
         "citations": [
           {
@@ -837,7 +960,7 @@
             "status_note": ""
           }
         ],
-        "excluded_area": 45
+        "excluded_area": 39
       },
       "hpd": {
         "treatment": "exclude",
@@ -860,8 +983,14 @@
         ],
         "counted_area": 0
       },
-      "notes": "Shows a capped allowance where the cap binds.",
-      "measured_area": 80
+      "notes": "Shows a capped allowance where the cap binds (13 dwelling units by design -> 39 sq ft).",
+      "measured_area": 72,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 72
+        }
+      ]
     },
     {
       "component_id": "mechanical-room",
@@ -872,7 +1001,7 @@
         {
           "label": "mechanical room",
           "sign": "add",
-          "width_ft": 15,
+          "width_ft": 12,
           "depth_ft": 20,
           "count": 1
         }
@@ -903,7 +1032,7 @@
             "status_note": ""
           }
         ],
-        "excluded_area": 300
+        "excluded_area": 240
       },
       "hpd": {
         "treatment": "exclude",
@@ -927,7 +1056,13 @@
         "counted_area": 0
       },
       "notes": "A space excluded under BOTH systems; it never enters the bridge.",
-      "measured_area": 300
+      "measured_area": 240,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 240
+        }
+      ]
     },
     {
       "component_id": "cellar",
@@ -993,7 +1128,13 @@
         "counted_area": 0
       },
       "notes": "A space excluded under BOTH systems; the classic 'do not deduct twice' case.",
-      "measured_area": 2000
+      "measured_area": 2000,
+      "floor_areas": [
+        {
+          "floor_id": "cellar",
+          "area": 2000
+        }
+      ]
     },
     {
       "component_id": "parking-room",
@@ -1002,10 +1143,10 @@
       "how_measured": "Room footprint on the ground floor.",
       "area_parts": [
         {
-          "label": "parking room",
+          "label": "bike/parking room",
           "sign": "add",
-          "width_ft": 20,
-          "depth_ft": 30,
+          "width_ft": 16,
+          "depth_ft": 25,
           "count": 1
         }
       ],
@@ -1059,16 +1200,22 @@
         "counted_area": 0
       },
       "notes": "Shows a condition NOT met: the space counts under zoning.",
-      "measured_area": 600
+      "measured_area": 400,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 400
+        }
+      ]
     }
   ],
   "legal_unit_cap": {
-    "max_residential_floor_area": 12000,
+    "max_residential_floor_area": 13000,
     "factor": "680",
-    "raw_quotient": "17.6471",
-    "units_cap": 17,
+    "raw_quotient": "19.1176",
+    "units_cap": 19,
     "provision": "ZR 23-52",
-    "note": "The density ceiling is a separate figure, not derived from the physical estimate. The measured residential zoning floor area (11,291 sq ft) differs from the 12,000 sq ft the FAR would allow.",
+    "note": "The density ceiling is a separate figure, not derived from the physical estimate. The measured residential zoning floor area (12,001 sq ft) differs from the 13,000 sq ft the stated FAR would allow.",
     "citations": [
       {
         "kind": "captured",
@@ -1087,13 +1234,13 @@
     ]
   },
   "what_it_shows": [
-    "ZR 23-23 allowances are conditional: amenity and refuse allowances are taken only because their conditions are shown; the parking room counts because its condition is not met; the corridor's length allowance is not met so only 50% is exempt.",
+    "ZR 23-23 allowances are conditional: the amenity and refuse allowances are taken only because their conditions are shown; the parking room counts because its condition is not met; the corridor is 56 ft so only the length-based 50 percent is exempt.",
     "Spaces already out of zoning (mechanical room, cellar) are not deducted again for HPD - nothing is deducted twice.",
-    "The two areas are summed separately from one schedule and reconciled line by line."
+    "Every floor fits: on each floor the components, the exterior wall ring among them, add up to exactly the floor's stated outside outline."
   ],
   "what_it_does_not_show": [
     "It does not establish a typical ratio or validate any percentage.",
-    "The exact legal base for the amenity 5% is an open point, flagged for the owner.",
+    "The withdrawn 0.6022 ratio of the earlier version was computed on an 'outer ring proxy' with no stated floor outline; this rebuilt version states every floor and gives 0.6483.",
     "It is not a legal or professional determination."
   ],
   "sources": [
@@ -1105,26 +1252,31 @@
       "date": "2026-10-07",
       "summary": "Example created for the measurement basis record.",
       "by": "scenario-optimization-engineer"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Rebuilt so that every floor has a stated outside outline and the components on each floor add up to it exactly (the earlier version used an 'outer ring proxy' and stated no floor outline, so its fit could not be checked). The ratio changes as a consequence: the earlier 0.6022 is WITHDRAWN; the rebuilt building gives residential zoning floor area 12,001, HPD 7,780, ratio 0.6483.",
+      "by": "scenario-optimization-engineer"
     }
   ],
   "reconciliation": {
-    "residential_zoning_floor_area": 11291,
-    "total_hpd_dwelling_unit_area": 6800,
+    "residential_zoning_floor_area": 12001,
+    "total_hpd_dwelling_unit_area": 7780,
     "bridge": [
       {
         "component_id": "demising-partitions",
         "direction": "subtract",
-        "area": 150
+        "area": 528
       },
       {
         "component_id": "exterior-walls",
         "direction": "subtract",
-        "area": 750
+        "area": 1040
       },
       {
         "component_id": "corridor",
         "direction": "subtract",
-        "area": 1100
+        "area": 560
       },
       {
         "component_id": "stair",
@@ -1134,33 +1286,83 @@
       {
         "component_id": "elevator",
         "direction": "subtract",
-        "area": 336
+        "area": 280
       },
       {
         "component_id": "chases",
         "direction": "subtract",
-        "area": 60
+        "area": 120
       },
       {
         "component_id": "lobby",
         "direction": "subtract",
-        "area": 500
+        "area": 300
       },
       {
         "component_id": "refuse",
         "direction": "subtract",
-        "area": 35
+        "area": 33
       },
       {
         "component_id": "parking-room",
         "direction": "subtract",
-        "area": 600
+        "area": 400
       }
     ],
     "ratio": {
-      "numerator": 6800,
-      "denominator": 11291,
-      "value": "0.6022"
+      "numerator": 7780,
+      "denominator": 12001,
+      "value": "0.6483"
     }
+  },
+  "floors": [
+    {
+      "floor_id": "cellar",
+      "label": "Partial cellar (storage only, not used for dwelling)",
+      "count": 1,
+      "outline_parts": [
+        {
+          "width_ft": 40,
+          "depth_ft": 50
+        }
+      ]
+    },
+    {
+      "floor_id": "ground",
+      "label": "Ground floor (lobby, services and one apartment)",
+      "count": 1,
+      "outline_parts": [
+        {
+          "width_ft": 40,
+          "depth_ft": 66
+        }
+      ]
+    },
+    {
+      "floor_id": "typical",
+      "label": "Typical residential floor (one of four identical)",
+      "count": 4,
+      "outline_parts": [
+        {
+          "width_ft": 40,
+          "depth_ft": 66
+        }
+      ]
+    }
+  ],
+  "shared_floor_area": {
+    "present": false,
+    "shared_component_ids": [],
+    "shared_total": 0,
+    "residential_exclusive_floor_area": 12001,
+    "commercial_exclusive_floor_area": 0,
+    "total_floor_area_zoning_lot": 12001,
+    "attribution_base": 12001,
+    "residential_share_value": "1.0000",
+    "attributed_to_residential": "0.00",
+    "attributed_to_commercial": "0.00",
+    "capture": null,
+    "conditional_note": "",
+    "note": "A single-use residential building: no floor area is shared between uses, so the ZR 23-20 proportional attribution does not apply here."
   }
 }

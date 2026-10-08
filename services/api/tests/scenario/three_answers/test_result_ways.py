@@ -32,7 +32,7 @@ from app.scenario.three_answers.result_ways import (
     decide_result_ways,
 )
 
-from .test_result_ways_lib import base_inputs, k20, plain_inputs, support_all
+from .test_result_ways_lib import base_inputs, k20, make_reach, plain_inputs, support_all
 
 _APP_ROOT = pathlib.Path(rw.__file__).resolve().parents[2]  # services/api/app
 # The module is three files in one package (result_ways re-exports the records):
@@ -63,6 +63,13 @@ def _battery() -> list[ResultWays]:
         decide_result_ways(plain_inputs(district="R5")),  # O11 district not the work order's
         decide_result_ways(plain_inputs(large_lot_threshold_met=True)),  # K3 coverage withheld
         decide_result_ways(plain_inputs(special_density=DensityKnowledge.EVIDENCE_IN_ONE)),
+        # M5-T132: the two states the claim-head battery missed (the two wrong texts got through
+        # here) - evidence the lot is NOT in a special density area, and a corner whose angle fails
+        decide_result_ways(plain_inputs(special_density=DensityKnowledge.EVIDENCE_NOT_IN_ONE)),
+        decide_result_ways(plain_inputs(
+            lot_type=LotType.CORNER,
+            reach=make_reach((("street A", 40.0), ("street B", 50.0)), 140.0, 90.0),
+        )),
     ]
 
 

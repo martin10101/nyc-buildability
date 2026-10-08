@@ -34,7 +34,8 @@
   "superseded_by": null,
   "affected_tasks": [
     "M0-T019",
-    "M0-T185"
+    "M0-T185",
+    "M0-T187"
   ],
   "affected_prs": [],
   "affected_branches": [],
@@ -63,7 +64,7 @@
   "verification_file": "verification.json",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
-  "requirements_content_digest_sha256": "33a3e8469c909868a3f124b07787de163a60c4fd311d080bfb884e70ce62da5d",
+  "requirements_content_digest_sha256": "2d2e9435506326ef117a4d755a3daf3c5ea41cb4c50adf6fb70b474265d92a07",
   "requirements_id_digest_sha256": "8e6161eb186b0476b239f25d37442b3b9a567c1745609973b1f9f38668db0d37",
   "enforcement_pointers": {
     "tasks": [
@@ -112,7 +113,7 @@
     "D-009-R021"
   ],
   "created_at": "2026-08-05T03:35:52+00:00",
-  "updated_at": "2026-10-06T15:24:03+00:00",
+  "updated_at": "2026-10-08T00:33:38+00:00",
   "audit_log": [
     {
       "at": "2026-08-05T03:35:52+00:00",
@@ -129,6 +130,12 @@
       "actor": "orchestrator",
       "action": "applicability_bound",
       "note": "Bound task M0-T185 (sharp 0.35.4 -> 0.35.5, advisory GHSA-wq5f-xc86-pv6w, under the normal policy, no exception) to D-009-R017 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+    },
+    {
+      "at": "2026-10-08T00:33:38+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bound",
+      "note": "Bound task M0-T187 (next 15.5.24 -> 15.5.27, advisories GHSA-4jqv-mc3x-m676 and GHSA-mcj8-r9mp-w47p, under the normal policy, no exception) to D-009-R017 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
     }
   ]
 }

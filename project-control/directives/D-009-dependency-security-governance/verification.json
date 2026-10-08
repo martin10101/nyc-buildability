@@ -219,7 +219,37 @@
         }
       ],
       "verified_at": "2026-10-06T16:27:09+00:00"
+    },
+    {
+      "directive_id": "D-009",
+      "task_id": "M0-T187",
+      "applicable_requirement_ids": [
+        "D-009-R017"
+      ],
+      "producer": "frontend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": "0ce78b1c9cd2eb2096fb276dd6b592c8e59f7ccd",
+      "reviewed_manifest_sha256": "4ca28f767d07083b52f793c19dc718e5c64098ba92bc9a7b0df3528d6d12ff62",
+      "requirements": [
+        {
+          "id": "D-009-R017",
+          "state": "PASS",
+          "evidence": [
+            "The only commit touching apps/web/package-lock.json in 1763e505..HEAD is 01ff4065a, whose author AND committer are github-actions[bot] with parent 2b8e59f2c, and the lock blob at HEAD (f2c107923913be5d6d300b9b2e18cee09ea418a5) is byte-identical to the blob that bot commit wrote, so the lock was produced by CI and not by hand.",
+            "The producer pin commit 2b8e59f2 left the lock blob at the base value 7f5dd06b (it changed only package.json \"next\":\"15.5.24\"->\"15.5.27\", one line), proving no human hand wrote the lock.",
+            ".github/workflows/generate-lockfile.yml is byte-identical at claim head, bot commit and HEAD (blob 8f89e966) and orders npm ci integrity (L50-51), blocking npm audit --audit-level=low (L52-53), audit JSON total==0 (L56-69), FE-S9 committed-lock age gate (L70-71) and FE-S11 npm CLI advisory (L72-73) ALL before the single commit step (L74-85).",
+            "In captured run 37709673533 / job 113092375556 (dispatched on 2b8e59f2) each validation passed before the commit: npm ci \"added 314 packages\" (log L148), \"found 0 vulnerabilities\" (L156), \"total vulnerabilities == 0 across all severities\" (L172), age-gate header \"== package-lock.json (392 unique registry packages) ==\" (L178) with \"RESULT: PASS \u2014 every committed registry package is >= 7 days old and integrity-verified\" (L572), and \"RESULT: PASS \u2014 no advisory affects npm@11.18.0\" (L578); the bot commit/push 2b8e59f2..01ff406 is step 11 (L591-594).",
+            "The age gate PASSed next@15.5.27 at L481 \"uploaded=2026-09-30T16:19:50.862Z age=635356s (7.35d)\" (> 604800 s), and @next/env and the eight @next/swc-* at 15.5.27 at L288-296 (~636000 s / 7.36 d each).",
+            "My own entry comparison of the base lock (7f5dd06b; identical to the captured base and to candidate/D-024) vs the head lock (f2c10792): 397 package entries each side, zero added, zero removed, exactly 11 changed \u2014 the root \"\" entry's dependency on next, node_modules/next, node_modules/@next/env and the eight node_modules/@next/swc-* (all 15.5.24->15.5.27); the only extra delta is the sharp range ^0.35.3->^0.35.4 inside next's own optionalDependencies (upstream metadata that the already-locked sharp 0.35.5 satisfies). Nothing outside the next family changed.",
+            "Both CI runs at the frozen head report web-dependency-security = success: pull_request run 37710422241 and push run 37710417807 (headSha ba16974b), alongside web and web-e2e success.",
+            "Verifier's carry-forward condition met at 0ce78b1c: the four allowed-path blobs (apps/web/package.json, apps/web/package-lock.json and the two reports) are identical to those verified at ba16974b (content identity 4ca28f76), .github/workflows/generate-lockfile.yml and apps/web/.npmrc are unchanged, the text of the row and its binding are unchanged, and every later commit touches only project-control/ (8 files: gate and review records, the verification report). Gates G0/G2/G3/G4/G5 PASS at that content identity (G3/G4 independent code-reviewer, G5 independent security-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M0-T187-DCV.md."
+          ],
+          "reviewed_sha": "0ce78b1c9cd2eb2096fb276dd6b592c8e59f7ccd"
+        }
+      ],
+      "verified_at": "2026-10-08T01:07:23+00:00"
     }
   ],
-  "updated_at": "2026-10-06T16:27:09+00:00"
+  "updated_at": "2026-10-08T01:07:23+00:00"
 }

@@ -1,0 +1,199 @@
+{
+  "task_id": "M5-T132",
+  "title": "The decision module's explanations name the condition that really fails: a table of every input state with its reason and 'resolved by' text, then one repair of every wrong text, one test per state; texts only, no result changes the way it appears (backlog row DB-176; D-090 R258, R521, R522, R523, R524, R532)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "THE EXPLANATIONS ARE TRUE FOR EVERY INPUT STATE. The owner's reviewer found, by direct checks of the merged module that decides how each result appears, two withheld results whose stated reason is wrong (project-control/directives/D-090-product-plan-2026-09-28-start-building/source-055-amendment.md; docs/DISCOVERY_BACKLOG.md row DB-176): (1) `_unit_standard_way` in `services/api/app/scenario/three_answers/result_ways.py`: when evidence establishes that the lot is OUTSIDE a special density area, the legal dwelling-unit limit is withheld with the text written for 'not given': it says there is no evidence, and names as what would resolve it a sourced fact that the state already holds. (2) `_rear_yard_way`: when the corner reach is within 100 feet and the angle is over 135 degrees, the text says the far corner is 'beyond the rear-yard waiver area' and gives the distance; the failing condition is the angle. No test pins either text: the existing tests check that a withheld way HAS a reason, not that the reason is true of its state. STEP 1, THE INVENTORY, BEFORE ANY EDIT (the repository's rule on related failures: CLAUDE.md principle 17). For EVERY result that `decide_result_ways` decides, and for every text that the entry function `gather_result_ways` of task M5-T130 can return (`result_way_facts.py`, `result_way_bridge.py`, `result_way_bridge_overlay.py`: the statements of facts, the area statement, the held-back points), the builder lists every input state: every value of every input, with 'not given', 'not read', 'not stated' and 'unknown' among them, and every combination in which two conditions can fail together. For each state the table gives: the way (settled, conditional, withheld); the reason; the 'resolved by' text; the kind (missing information or owed work); and three checks: (a) the reason names the condition that really fails in that state, with the measured value where one exists, and names no condition that holds; (b) the 'resolved by' text asks for nothing the state already holds and for nothing that could not resolve it; (c) the kind fits: information missing for this lot against work the program owes (the owner's rule R258). The table goes into the report, complete, before the repair. CANDIDATES the orchestrator saw by reading; each is a claim to test, the builder's table decides: the corner branch when the reach is known and the angle is not (it gets the text for 'no outline'); the answer-level sentence that repeats the FIRST withheld value's reason for a whole answer whose values are withheld for different reasons; the unit limit for qualifying senior housing, whose reason says the formula sets no factor while its kind and its 'resolved by' text say work is owed; the rear yard of an interior or through lot, whose reason says inputs 'are not given' while its kind says owed work; the two short held-back strings of backlog row DB-175 (f). STEP 2, ONE REPAIR. Every row that fails a check is corrected in one change. TEXTS ONLY: for every input state the way of every result is what it is at the claim head (a test pins the way of every state of the table; the builder takes the 'before' column from the untouched module by script, outside the repository, and puts it in the report); no zoning number is added; no input is added; `decide_result_ways` and `gather_result_ways` keep their signatures. A KIND changes only where the table shows the kind itself is wrong for that state; each such change is listed in the report with its reason, for the reviewers to judge, because the kind is part of what the user is told. THE ORCHESTRATOR'S READINGS (the orchestrator's, said so in the code and the report, for the reviewers to confirm or correct; they continue the numbering of tasks M5-T129 and M5-T130): (O19) EVIDENCE THAT THE LOT IS OUTSIDE A SPECIAL DENSITY AREA. The work order decides what follows from no evidence and from a user's statement, and nothing for this state, so the result stays withheld as owed work (reading O10). The reason says that evidence records the lot outside a special density area and that how the legal dwelling-unit limit is shown on that evidence has not been worked out and checked against an independently worked example; the 'resolved by' text names that work, never a fact about the density area. Whether the limit should be SHOWN in this state is an open question; the report lists it; it is not decided here. (O20) THE CORNER BRANCH has three failing states, each with its own text: the distance only (the far corner is beyond 100 feet; the angle is within the limit), the angle only (the text gives the measured angle and the 135-degree limit and says the far corner is within 100 feet), and both (both are named). The two measures come from the legal-measure records the module already holds; no number is typed a second time. THREE RULES FOR THIS KIND OF CODE, learned in task M5-T129 (each cost a round there): (L1) NO DEFAULT STANDS FOR A FACT: every input's 'not given', 'not read' or 'not stated' state is carried as such; no truthiness test on a fact that may be unknown. (L2) ONE TEST PER INPUT STATE, WITH A TABLE: the report holds the table 'state, outcome, test that pins it'; each newly pinned branch is proved by one mutation outside the repository. (L3) TEXTS A USER MAY SEE ARE PLAIN AND TRUE: no internal name (a gap or reading number, 'the caller', 'milestone', 'reference case', 'packet', 'work order'), and no statement about which law text is captured, read or built into the repository; the guard test's battery covers every text. TESTS. One test per row of the table (parametrised cases are fine; each row is one case with its own id). Each asserts the way, the kind, and the meaning-bearing parts of the reason and of the 'resolved by' text: the condition named, the measured value, and the ABSENCE of the words of a condition that holds; not the whole sentence, so a later polish of wording does not weaken the check. RED PROOF: the tests for the two states the reviewer named are run against the untouched module first and fail; the output is in the report. One mutation proof outside the repository per corrected branch. The guard test's battery of texts covers every text of the table. NOT IN THIS TASK: calling the module from the engine; emitting anything; the contract, a schema or a fixture; a route; the website; a rule file; the review register (no zoning-rule behaviour changes: the ways are unchanged; the reviewers confirm it).",
+  "business_reason": "A withheld result tells the user why it is withheld and what would resolve it. A wrong reason sends the user after evidence that is already given, or after the wrong measurement. The owner's reviewer requires the two explanations fixed before the module reaches users (R523); two faults of one kind in twenty results, found from outside, mean the same fault may sit in other states, so the whole table is checked before anything is fixed (R524). The owner's rule that missing information and owed work are kept apart (R258) is checked state by state.",
+  "inputs": [
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/source-055-amendment.md (the reviewer's two cases, under 'Two explanations still need fixing')",
+    "docs/DISCOVERY_BACKLOG.md rows DB-175 and DB-176",
+    "services/api/app/scenario/three_answers/result_ways.py, result_way_conditions.py, result_way_inputs.py, result_way_facts.py, result_way_bridge.py, result_way_bridge_overlay.py",
+    "services/api/tests/scenario/three_answers/test_result_ways*.py, test_result_way_*.py and their helper test_result_ways_lib.py",
+    "project-control/reports/M5-T129-producer-report.md and M5-T130-producer-report.md (their tables of input states: claims to check, not to copy)",
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md sections 5 and 6 (the gaps K1 to K20; what each state shows)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R258, R521, R522, R523, R524, R532; docs/CODE_MODULARITY_POLICY.md"
+  ],
+  "outputs": [
+    "Corrected texts in the modules under services/api/app/scenario/three_answers/ named in allowed_paths (a new focused module `result_way_*.py` only if a file would otherwise cross the modularity policy's warning threshold)",
+    "Tests under services/api/tests/scenario/three_answers/: one case per input state of the table; the way of every state pinned; the guard battery extended",
+    "project-control/reports/M5-T132-producer-report.md: the complete table (state, way, reason, 'resolved by', kind, checks a/b/c, verdict, test id) BEFORE and AFTER; the red proof; every kind that changed with its reason; the open question of reading O19; the mutation proofs; every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M5-T129",
+    "M5-T130"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/result_way_conditions.py",
+    "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/app/scenario/three_answers/result_way_facts.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_bridge_overlay.py",
+    "services/api/app/scenario/three_answers/result_way_*.py",
+    "services/api/tests/scenario/three_answers/test_result_ways.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_benchmark.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_corner_interior.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_facts_area_overlay.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_input_states.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_lib.py",
+    "services/api/tests/scenario/three_answers/test_result_way_bridge.py",
+    "services/api/tests/scenario/three_answers/test_result_way_bridge_overlay.py",
+    "services/api/tests/scenario/three_answers/test_result_way_facts.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_truth_table.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_*.py",
+    "services/api/tests/scenario/three_answers/test_result_way_*.py",
+    "project-control/reports/M5-T132-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "every other file under services/api/app/** (the engine, the evaluator inputs, the contracts, the rules, the spatial modules: read only)",
+    "every other test; packages/** (no schema, generated file or fixture); apps/**; docs/**",
+    ".github/**; CLAUDE.md; .claude/**; tools/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "evidence_that_the_lot_is_outside_a_special_density_area",
+      "input": "a recorded lot area; the density knowledge 'evidence: not in one'; no user statement",
+      "expected": "the standard unit limit is withheld; the reason says evidence records the lot outside a special density area and does not say there is no evidence; the 'resolved by' text does not ask for a fact about the density area; this test FAILS on the module as it is at the claim head"
+    },
+    {
+      "id": "S2",
+      "case": "corner_angle_fails_distance_holds",
+      "input": "a corner lot; the far corner 90 ft from the corner point; the angle 140 degrees",
+      "expected": "the rear yard is withheld; the reason names the angle (140 degrees against the 135-degree limit) and does not say the far corner is beyond the 100-foot area; this test FAILS on the module as it is at the claim head"
+    },
+    {
+      "id": "S3",
+      "case": "corner_distance_fails_angle_holds",
+      "input": "a corner lot; the far corner 144.6 ft from the corner point; the angle 90 degrees",
+      "expected": "the rear yard is withheld; the reason names the distance and does not blame the angle"
+    },
+    {
+      "id": "S4",
+      "case": "corner_both_fail",
+      "input": "a corner lot; the far corner beyond 100 ft; the angle over 135 degrees",
+      "expected": "the rear yard is withheld; the reason names both conditions"
+    },
+    {
+      "id": "S5",
+      "case": "the_table_is_complete_and_every_row_is_tested",
+      "input": "the report's table; the test ids",
+      "expected": "every input state of every result of `decide_result_ways` and every text `gather_result_ways` can return has a row with its three checks and a test; a reviewer who picks ten states the packet does not name finds each in the table with a true reason"
+    },
+    {
+      "id": "S6",
+      "case": "no_result_changes_the_way_it_appears",
+      "input": "the whole battery of input states, before (claim head) and after",
+      "expected": "the way of every result in every state is unchanged; every changed kind is listed in the report with its reason"
+    },
+    {
+      "id": "S7",
+      "case": "texts_plain_and_true",
+      "input": "every text of the table through the guard battery",
+      "expected": "no internal name; no statement about which law text is captured or built in; the two held-back strings of row DB-175 (f) are in the battery"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "scenario-optimization-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "A text 'fixed' by changing what the result shows -> S6",
+    "Only the two named states repaired and the same fault left elsewhere -> S5; the reviewers pick their own states",
+    "Tests that pin whole sentences and break on a later polish, or that pin nothing of the meaning -> the tests assert the condition named and the absence of the wrong one",
+    "A file over the modularity warning threshold (result_ways.py is 526 lines) -> a new focused module in the same package"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T20:17:40.903384+00:00",
+  "updated_at": "2026-10-07T22:34:46.087143+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R258",
+        "D-090-R521",
+        "D-090-R522",
+        "D-090-R523",
+        "D-090-R524",
+        "D-090-R532"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T20:17:40.903546+00:00",
+  "path_notes": "PRODUCER = scenario-optimization-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). PART OF PARALLEL WAVE 6 with the two other tasks of the wave (M5-T132, M5-T133, M4-T034): the three share no file. ALLOWED PATHS: every folder and every existing file is named literally, because the registry builds a task's content identity from literal paths only and a pattern binds nothing (backlog row DB-181); the pattern entries beside them say the same for readers and cover files not yet created, which the orchestrator adds literally when it integrates them. MODULARITY ANSWERS: the texts stay with the deciders that own them; a new module only for size, same package, imported by the decision module and by nothing else.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/scenario/three_answers",
+    "cd services/api && python -m pytest -q tests/contracts tests/journey tests/spatial/test_lot_reach.py",
+    "python3 tools/modularity_check.py --check",
+    "python3 scripts/lanes/check_lane_paths.py --coverage",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ],
+  "worktree": "/root/project/w-wave6",
+  "progress_log": [
+    {
+      "at": "2026-10-07T20:19:14.791643+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed in wave 6 at the contract head 4ce89144 (integration head f111b927, the merge of wave 5); builder scenario-optimization-engineer in an isolated worktree; see project-control/reports/WAVE6-2026-10-07-concurrency-record.md. The integration branch's own run on f111b927 is read as complete and successful before any builder's commit is integrated."
+    },
+    {
+      "at": "2026-10-07T21:11:05.832735+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Builder's two commits 795c29ee and 14809d57 integrated as c675c469 and 56546a26 (three modules: result_ways.py, result_way_conditions.py, result_way_bridge.py; tests: test_result_ways.py, test_result_way_bridge.py and the NEW test_result_ways_truth_table.py, added literally to the allowed paths; the report). ROUND 1: the builder's table has 63 rows (57 input states of the results of decide_result_ways, 6 texts of gather_result_ways); 12 rows failed a check and were repaired, the two states the owner's reviewer named among them; no way and no kind changed (the builder's before/after signature is identical); the tests for the two named states fail on the module at the claim head. BEFORE ANY REVIEW the orchestrator read the diff and sent three texts back (ROUND 2, same builder): the 'resolved by' text for a corner measurement that is missing was one text for three states and asked for the reach when the reach was known; the whole-answer 'resolved by' named the first value's text only; the senior-housing text said 'the separate rule ... is not worked out yet', which asserts a rule that nothing in the repository establishes. Round 2 corrected the three and put back one clause. The orchestrator's run at 3736a22d (all three pieces): tests/rules, tests/scenario, tests/contracts, tests/journey and tests/spatial/test_lot_reach.py together 2754 passed, 2 skipped; ruff clean; modularity check exit 0; the ownership check passed. Gates G3 and G4 are started at this head."
+    },
+    {
+      "at": "2026-10-07T21:31:44.559166+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "GATE G4 (qa-engineer) at f2b446ec: FAIL. The two named faults and the whole repaired surface are pinned well (its red proof: the tests for the four corner and density states fail on the module at the claim head, with exactly the two documented faults; 15 of its 15 mutations are caught; no state the code acts on is without a test; no test that cannot fail). BUT the task's own measure, that every row of the table has a test that would catch a wrong text, is not met for six rows that were not repaired: the reviewer swapped each row's reason for another state's reason of the same way and kind, and the row's test and the whole suite still passed. Must-fix F1 to F4: the row for the special-purpose-district column not read and the row for the inclusionary-housing column not read assert only the words 'not read'; the three rows that show the text for 'no outline' assert only 'not measured'; the row for a corner reach that is not measured does not assert that the known angle is NOT called unmeasured. Notes F5 to F8: two pairs of rows share one condition and do not pin the result-specific wording; the way of every state is pinned for the focal result only, and the 'no way changed' comparison over all results is the builder's one-time script, not a committed test; the two text guards cover all families only together; two line counts in the report are stale. THE FAILED REVIEW IS RECORDED HERE BEFORE THE REWORK. The correction (tests and report only) goes to the same builder once gate G3's review of the texts has returned, so that both reviews' findings are corrected in one round."
+    },
+    {
+      "at": "2026-10-07T21:33:52.604734+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "GATE G3 (data-contract-verifier) at f2b446ec: FAIL on ONE finding, F1. The two named faults are fixed; its own battery of about 62 input states, driven against the module at the claim head and at this head, shows no way and no kind changed for any result; 107 distinct texts carry no internal name; readings O19 and O20 are applied as stated and judged fair (O19 more cautious than the work order); scope and checks clean. BUT its own sweep found one explanation of the same kind left unrepaired, which the builder's table had marked as passing: for a corner lot that reaches beyond 100 feet from a street line, the lot-coverage reason says the lot reaches 'beyond the corner-lot portion' and then, in brackets, '(the whole lot is within 100 feet of each intersecting street line)', which is false in that state and contradicts the same sentence. It is the text shown for the benchmark lot (103.93 ft). Notes: F2 at the exact limit the rounded display can read '135.0 degrees, more than ... 135 degrees' or '100.00 ft ... beyond'; F3 the density-evidence states cannot be produced by the real path today. THE FAILED REVIEW IS RECORDED HERE BEFORE THE REWORK. Round 3 goes to the same builder with both reviews' findings (G3: F1, F2; G4: F1 to F6, F8); then the same two reviewers review again at the new head."
+    },
+    {
+      "at": "2026-10-07T21:54:27.225393+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "Round 3 by the same builder (commit 12d22e26) integrated: gate G3's finding F1 corrected (the lot-coverage reason now says 'beyond the corner-lot portion (the part within 100 ft of each intersecting street line)': the bracket names the extent of the portion and no longer asserts that the whole lot is within it; the builder's sharper re-check of every row for a clause that states a condition that does not hold caught no other row); G3's note F2 applied (a failing reach or angle just over its limit is printed with enough precision that 'beyond' or 'more than' is visibly true); gate G4's findings F1 to F4 corrected and its exercise repeated over every withheld row: eleven rows tightened so that each asserts a token only its own condition has (the six the reviewer named and five more the exercise caught); G4's note F6 applied: the way and the kind of all results in every state are now pinned by a committed test with the expectations written as data; four new tests. No way and no kind changed. The orchestrator's run at this head: tests/scenario/three_answers 290 passed, 2 skipped; tests/contracts, tests/journey, tests/spatial/test_lot_reach.py, tests/scenario and tests/rules together passed; ruff clean; modularity check exit 0. The same two reviewers are asked to review again at the new head."
+    },
+    {
+      "at": "2026-10-07T22:05:17.527090+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "SECOND REVIEWS at fedd6ca1 (the content of the builder's third commit, ecdfb8f8). GATE G3 (data-contract-verifier): PASS; its finding F1 is closed (the coverage reason for the benchmark lot now reads '... beyond the corner-lot portion (the part within 100 ft of each intersecting street line) ...'); over its 64 states no way and no kind changed against the claim head; 101 distinct texts carry no internal name; a failing reach or angle is printed visibly over its limit; one note, F4: a failing value closer to its limit than about five ten-millionths would still print as the limit (carried in backlog row DB-183). GATE G4 (qa-engineer): PASS; its four swap mutations are now caught; its own exercise over 872 ordered pairs of withheld rows leaves eight that pass, six of them rows that share one text by design and two that are its new note F9 (carried in the backlog); the signature test pins the way and kind of all results as literals and fails on a non-focal change; each new test fails when its fix is reverted; its 15 first mutations are still caught; the tests for the two named states still fail on the module at the claim head. The task is reviewed at its final content (material commits c675c469, 56546a26, ecdfb8f8). The full services/api suite, run alone at fedd6ca1: 8519 passed, 8 skipped, exit 0. Evidence map written."
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-07T21:11:05+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-07, at the integration of the builder's commits, before any review] ALLOWED PATHS: `services/api/tests/scenario/three_answers/test_result_ways_truth_table.py` added by its literal name. The builder created this test file (one case per input state of its table); it matches the pattern entry `test_result_ways_*.py` that the packet already allowed. It is named literally because the registry builds the task's content identity from literal paths only (backlog row DB-181), so that the gates' identity binds it. Nothing else about the scope changes."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T22:34:46.086945+00:00"
+}

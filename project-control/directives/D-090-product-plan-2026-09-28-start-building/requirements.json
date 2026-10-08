@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 535,
+ "requirement_count": 564,
  "producer": "orchestrator",
- "updated_at": "2026-10-07T19:34:08+00:00",
+ "updated_at": "2026-10-08T00:35:11+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -8746,7 +8746,8 @@
     "task_ids": [
      "D-090-BOOTSTRAP",
      "M5-T128",
-     "M5-T129"
+     "M5-T129",
+     "M5-T132"
     ],
     "task_types": [],
     "milestones": [],
@@ -9879,7 +9880,8 @@
      "M4-T030",
      "M4-T031",
      "M4-T032",
-     "M4-T033"
+     "M4-T033",
+     "M4-T034"
     ],
     "task_types": [],
     "milestones": [],
@@ -14694,7 +14696,8 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M5-T126"
+     "M5-T126",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -14729,7 +14732,8 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M5-T126"
+     "M5-T126",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17287,7 +17291,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17321,7 +17326,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17354,7 +17360,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17387,7 +17394,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17421,7 +17429,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133",
+     "M4-T034"
     ],
     "task_types": [],
     "milestones": [],
@@ -17455,7 +17465,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17488,7 +17499,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17521,7 +17533,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133",
+     "M4-T034"
     ],
     "task_types": [],
     "milestones": [],
@@ -17549,13 +17563,14 @@
   },
   {
    "id": "D-090-R517",
-   "text": "'I checked the repository as well as the official sources.' '[Zoning Resolution](https://zr.planning.nyc.gov/article-ii/chapter-3/23-22?utm_source=chatgpt.com)': each statement of law in the message (shared-space allocation; the amenity base; the two energy routes; the wall exclusion; the R6B base and overall heights; the dwelling-unit factors by option; the bicycle requirements; the imagery terms; the PDF tool's behaviour) is checked at its official source before a record is changed because of it, and a difference between the source and the message is told to the owner first. ORCHESTRATOR'S READING: seen at this capture, to be confirmed by the capture task: the message links the dwelling-unit rule at section 23-22 while the repository's capture of the current text has it at ZR 23-52 (last amended 2024-12-05); the link addresses in the message end in a tracking tag and are not copied into any record.",
+   "text": "'I checked the repository as well as the official sources.' '[Zoning Resolution](https://zr.planning.nyc.gov/article-ii/chapter-3/23-22?utm_source=chatgpt.com)': each statement of law in the message (shared-space allocation; the amenity base; the two energy routes; the wall exclusion; the R6B base and overall heights; the dwelling-unit factors by option; the bicycle requirements; the imagery terms; the PDF tool's behaviour) is checked at its official source before a record is changed because of it, and a difference between the source and the message is told to the owner first. ORCHESTRATOR'S READING: the link addresses in the message end in a tracking tag and are not copied into any record. CORRECTED 2026-10-07 at the contract seam of wave 6: this row first said, as a difference seen at the capture, that the message links the dwelling-unit rule at section 23-22 while the repository has it at ZR 23-52. That was the orchestrator's misreading, made before the captures were opened: ZR 23-22 holds the floor area ratios for R6 to R12 districts by kind of housing (capture zr-23-22), which is what the sentence it is linked from rests on, and the dwelling-unit factor is in ZR 23-52 (capture zr-23-52). No difference between the message and the source was found there. The sentence of source-055 that repeats it ('Seen so far ...') and point (g) of backlog row DB-178 are wrong in the same way; the source file is append-only and stays as written.",
    "source_ref": "source-055-amendment.md#owner-message-111-verbatim",
    "classification": "external_fact",
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M4-T034"
     ],
     "task_types": [],
     "milestones": [],
@@ -17622,7 +17637,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -17690,7 +17706,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T132"
     ],
     "task_types": [],
     "milestones": [],
@@ -17723,7 +17740,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T132"
     ],
     "task_types": [],
     "milestones": [],
@@ -17756,7 +17774,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T132"
     ],
     "task_types": [],
     "milestones": [],
@@ -17790,7 +17809,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T132"
     ],
     "task_types": [],
     "milestones": [],
@@ -17857,7 +17877,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M4-T034"
     ],
     "task_types": [],
     "milestones": [],
@@ -18060,7 +18081,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T132",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -18129,7 +18152,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T133"
     ],
     "task_types": [],
     "milestones": [],
@@ -18186,6 +18210,974 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-07 (message 111).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R536",
+   "text": "'give me a quick update where we stand in the build': the owner is given a short update, at once, on where the build stands: what is merged and tested, what is on a branch and in review, what is planned and not started, what is still to build, and what waits on the owner. ORCHESTRATOR'S READING: 'quick' asks for a short answer; it is in plain words and without a table (R474, R475), says of each part whether it is merged, on a branch or planned (R323), and gives the time as a first guess (R326).",
+   "source_ref": "source-056-amendment.md#owner-message-112-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R323",
+    "D-090-R326",
+    "D-090-R474",
+    "D-090-R475"
+   ],
+   "required_harness": "The reply that follows the message is short, has no table, and says for each part whether it is merged and tested, on a branch in review, planned, or waiting on the owner.",
+   "required_evidence": "The session transcript (the reply to message 112).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 112).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R537",
+   "text": "'where we stand in the build': the message asks where the work stands and decides nothing. ORCHESTRATOR'S READING: every open choice stays open after it; the four decisions asked of the owner in the update before it (the apartment-estimate choices, the order of the options, the six further sections, the list of instruction-file moves) are still asked; no estimator is contracted on it.",
+   "source_ref": "source-056-amendment.md#owner-message-112-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R533"
+   ],
+   "required_harness": "No record treats an open choice as answered because of this message.",
+   "required_evidence": "The session notes, the ledger and the handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 112).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R538",
+   "text": "'/session-handoff': the session is handed over: the handoff file is written, checked by a different agent, put on a pull request and merged, and the next session's start prompt is printed. ORCHESTRATOR'S READING: the command's text is the owner's decisions and instructions (rows R539 to R559); it gives no other reason for the handover. The helpers already running finish their work; no new work is started in the landing session.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R500"
+   ],
+   "required_harness": "docs/SESSION_HANDOFF.md at the integration head is seq 149 and an independent audit of it is PASS.",
+   "required_evidence": "docs/SESSION_HANDOFF.md; the handoff's pull request and its checks; the auditor's return in the session folder of 2026-10-07b.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R539",
+   "text": "'Here are my decisions:' '1. Apartment estimate: approved as preliminary, editable assumptions.': the owner DECIDES the open choices on the realistic apartment estimate: its starting values are approved as preliminary assumptions that a user can see and change (rows R540 to R543). ORCHESTRATOR'S READING: this answers, in the owner's own words, the choices that rows R480, R499, R518 and R533 kept open; they are open no longer and are not asked again. It approves starting values and labels; it does not order the estimator built now (R546).",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R283",
+    "D-090-R518",
+    "D-090-R533"
+   ],
+   "required_harness": "The handoff and the measurement-basis record list these four choices as decided by the owner on 2026-10-07 and no longer as open.",
+   "required_evidence": "docs/SESSION_HANDOFF.md; docs/measurement-basis/MEASUREMENT_BASIS.md after its next revision; the estimator's task packet when it is contracted.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R540",
+   "text": "'Use 0.60\u20130.75 as an unvalidated sensitivity range.': the share of floor area inside apartments is shown as a range from 0.60 to 0.75, labelled as an unvalidated sensitivity range and editable; it is never presented as a realistic, expected or validated range (R512).",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R512",
+    "D-090-R539"
+   ],
+   "required_harness": "Wherever the range appears (the estimator, a screen, the report) it carries the label 'unvalidated' and the two ends can be changed by the user.",
+   "required_evidence": "The estimator's tests and the display's tests when they exist.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R541",
+   "text": "'Use 700 sq ft as the chosen starting apartment size, on the HPD measurement basis.': the starting apartment size is 700 sq ft, shown as a chosen starting value measured as HPD measures an apartment, editable by the user; it is not described as a measured or typical average (R350, R351).",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R350",
+    "D-090-R539"
+   ],
+   "required_harness": "The value is shown with the words 'chosen starting value' and its measurement basis, and can be changed.",
+   "required_evidence": "The estimator's tests and the display's tests when they exist.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R542",
+   "text": "'Use 10 ft residential floors and 15 ft shop ground floors as starting assumptions.': the starting floor heights are 10 ft for a residential floor and 15 ft for a ground floor with shops, shown as starting assumptions and editable. ORCHESTRATOR'S READING: they act within the actual building envelope, floor by floor (R519): they are not a licence to count equal floors above the maximum base height.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R519",
+    "D-090-R539"
+   ],
+   "required_harness": "The two heights are visible and editable starting values; a count of floors that uses them respects the base height and the setback above it or says it is an assumption.",
+   "required_evidence": "The estimator's tests and the display's tests when they exist.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R543",
+   "text": "'Show \u201cNot known\u201d until the option has floors and a shape, then label it \u201cPreliminary capacity estimate.\u201d': the realistic count shows 'Not known' until an option has floors and a shape; once it has, the result is labelled 'Preliminary capacity estimate'. The two labels are used as the owner words them.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R539"
+   ],
+   "required_harness": "A test with an option that has no shape (the count is 'Not known') and one with floors and a shape (the label is 'Preliminary capacity estimate').",
+   "required_evidence": "The estimator's tests and the display's tests when they exist.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R544",
+   "text": "'Use the residential floor area the proposed building actually accommodates.' 'Keep the legal ceiling separate.': the estimate starts from the residential floor area the proposed building actually accommodates, never from the maximum the law permits, and the legal ceiling on the number of apartments stays a separate figure. It confirms rows R509 and R392 in the owner's own words.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R392",
+    "D-090-R509"
+   ],
+   "required_harness": "The estimator takes its floor area from the option's shape and floors; a test shows that changing the permitted maximum alone does not change the estimate; the legal ceiling is a separate value in the results.",
+   "required_evidence": "The estimator's tests when it exists; the measurement-basis record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R545",
+   "text": "'This approval does not validate the assumptions or the worked examples.': no record, screen or update says or implies that the owner's approval validates the starting values or the worked examples: they stay unvalidated assumptions and made-up examples that check a method.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R436",
+    "D-090-R539"
+   ],
+   "required_harness": "A search of the records and updates written after this message finds no sentence that calls the values or the examples validated or confirmed by the owner's approval.",
+   "required_evidence": "docs/measurement-basis/; docs/SESSION_HANDOFF.md; the session transcripts.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R546",
+   "text": "'Complete and independently review the corrections before building the estimator.': the estimator is built only after the corrections asked for by the owner's reviewer are complete and independently reviewed. ORCHESTRATOR'S READING: 'the corrections' are the three tasks of wave 6 (the explanations, the measurement-basis record and examples, the law-text captures) and what they leave open for the estimate: the reading of the newly captured mixed-building and energy texts into the record (backlog row DB-184). No estimator task is contracted before wave 6 is merged.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R531",
+    "D-090-R534"
+   ],
+   "required_harness": "The merge of wave 6 precedes the contract commit of any estimator task; that task's packet names what of DB-184 it waits for.",
+   "required_evidence": "The integration branch's history; the ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R547",
+   "text": "'2. Eleven options: approve the proposed order.': the owner approves the order of the eleven development options as proposed. ORCHESTRATOR'S READING: the proposed order is the one put to the owner in the reply to message 109 (part B): standard residences; qualifying affordable housing; qualifying senior housing; the 'more, smaller apartments' variant; ground-floor shops with residences above; residences with a community facility; a community facility alone; a split lot with two buildings; shared housing and its parking-waiver variant; all programs combined, last. It is an order of building; all eleven stay promised.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R525"
+   ],
+   "required_harness": "The plan and the handoff carry this order as decided; a change of order needs a new owner message.",
+   "required_evidence": "docs/SESSION_HANDOFF.md; the plan of the options when written.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R548",
+   "text": "'Parking, loading and bicycle requirements must be addressed before an option is presented as feasible, even if their report section comes later.': no option is presented as feasible before the parking, loading and bicycle requirements are addressed for it; the report section with the counts may come later. It confirms row R526 in the owner's own words.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R526"
+   ],
+   "required_harness": "Every display of an option carries a line on parking, loading and bicycle requirements that is resolved from a captured provision or says 'not yet checked'; no text calls an option feasible without it.",
+   "required_evidence": "The display task's fixtures and tests; the option comparison's records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R549",
+   "text": "'3. Six extra sections: keep all six in scope.': all six sections beyond the nine contents stay in scope: comparable sales nearby; the block description; parking, loading and bicycle counts; aerial and street photographs; tax abatement eligibility; financial inputs (on hold: R550). ORCHESTRATOR'S READING: the six are the ones named in the reply to message 109 (part C); their timing follows the proposal there unless the owner says otherwise.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R527"
+   ],
+   "required_harness": "No plan drops one of the six; each has a place in the order of work.",
+   "required_evidence": "docs/plans/; docs/SESSION_HANDOFF.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R550",
+   "text": "'Financial inputs remain on hold.': the owner's hold on the financial inputs stays; no task touches them until the owner lifts it.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R549"
+   ],
+   "required_harness": "No task is contracted for the financial inputs; the expansion hold is unchanged.",
+   "required_evidence": "The ledger; .claude/rules/expansion-agent-dispatch-hold.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R551",
+   "text": "'Imagery must follow the licensing corrections already identified.': aerial and street imagery in the report follows the licensing corrections already recorded: no Street View picture in a saved report (licensed street photographs or a link instead); Esri imagery only within what its agreement allows, with attribution; both sets of terms read at their official pages before anything is built (R528).",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R528"
+   ],
+   "required_harness": "The plan of the imagery section carries these points; no task embeds a Street View image in a saved report.",
+   "required_evidence": "docs/DISCOVERY_BACKLOG.md row DB-179; the plan of the PDF step when written.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R552",
+   "text": "'4. Instruction files: yes, prepare the exact proposed list of moves for my review.': the orchestrator may prepare, and owes the owner, the exact list of what would move out of the always-loaded instruction files, where each item would go, and the instruction that says when each moved item must be read (R530).",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R530"
+   ],
+   "required_harness": "A document with the list of moves is put to the owner; it changes no instruction file.",
+   "required_evidence": "The proposal document when written; git history of CLAUDE.md and .claude/rules/.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R553",
+   "text": "'Do not move or remove anything yet.': nothing is moved out of or removed from the instruction files until the owner approves the list.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R552"
+   ],
+   "required_harness": "git history shows no move or removal in CLAUDE.md or .claude/rules/ before a new owner message approves the list.",
+   "required_evidence": "git history of CLAUDE.md and .claude/rules/.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R554",
+   "text": "'Continue the corrections and the already-authorized integration work after the required checks pass.': the corrections (wave 6) and the integration work already authorized (the piece that wires the decision module into the real path and emits the results contract; the reading of the captured texts; the website's display) continue, each step only after its required checks have passed. ORCHESTRATOR'S READING: it grants no new authority: the merge rules, the review gates and every stop stay as they are.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R531"
+   ],
+   "required_harness": "Each merge follows a fully green run and an independent pre-merge check; no step starts on unmerged work.",
+   "required_evidence": "The integration branch's history; the pull requests' check lists.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R555",
+   "text": "'Bring me a concrete recommendation for where the rear yard, setback and three unit limits belong in the results document.': the owner is given a concrete recommendation, with its basis and the alternatives, for where the rear yard, the setback above the base and the three legal unit limits are carried in the results document, which has no place for them today (backlog row DB-171 point F5; the read-only study of the next engine piece). ORCHESTRATOR'S READING: a recommendation to bring, then the owner settles it; nothing is built on it before.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R506"
+   ],
+   "required_harness": "An owner update or a short document states the recommendation, what it changes in the contract, and what each alternative would cost.",
+   "required_evidence": "The session transcript or the document; docs/DISCOVERY_BACKLOG.md row DB-171.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R556",
+   "text": "'Ensure a withheld result cannot cause the website to display an older or substitute value.': when a result is withheld the website shows it as withheld: it never shows an older value in its place and never falls back to another value. ORCHESTRATOR'S READING: found in the read-only study: the website's reader takes the first value of an answer when the value it looks for is absent (apps/web/src/lib/architect/three-answers.ts); this is repaired in the same piece that first emits withheld values, and a saved or cached earlier result is never shown as the current one.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R506"
+   ],
+   "required_harness": "Tests on the website's reader and panel: an answer whose expected value is withheld shows 'not known' with its reason, not the first or any other value; a stale result is not shown after a withheld one arrives.",
+   "required_evidence": "The display task's tests; the wire-and-emit task's review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R557",
+   "text": "'Keep the ledger-sealing defect tracked for repair.': the defect in the ledger's content identity (it binds literally named files only; a pattern binds nothing) stays tracked until it is repaired: backlog row DB-181 stays OPEN, every new packet names its folders and files literally meanwhile, and a repair task is contracted.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [],
+   "required_harness": "Row DB-181 is OPEN or QUEUED into a task; no packet contracted after this message relies on a pattern alone.",
+   "required_evidence": "docs/DISCOVERY_BACKLOG.md row DB-181; the task packets.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R558",
+   "text": "'Existing restrictions on activating hidden features remain in place.': every restriction on switching on a hidden feature stays: all production switches off, the lane flags, the internal route flags, the owner gate on the supervisor. This message lifts none.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R484"
+   ],
+   "required_harness": "No switch is turned on and no flag default changes because of this message.",
+   "required_evidence": "The deployment configuration and the code's flag defaults; the ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R559",
+   "text": "'Your next update should distinguish what is merged, connected, tested and actually visible.': the next owner update says, for each piece, four things apart: whether it is merged, whether it is connected (called by the real path), whether it is tested, and whether a user can actually see it on a screen.",
+   "source_ref": "source-057-amendment.md#owner-message-113-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-07"
+   },
+   "dependencies": [
+    "D-090-R475",
+    "D-090-R323"
+   ],
+   "required_harness": "The next owner update holds those four statements for each piece, in plain words and without a table.",
+   "required_evidence": "The session transcript (the next owner update).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R560",
+   "text": "'I also,want to work that session hamdoffs should go more smoothly': session handoffs are to go more smoothly: a handoff takes less of the owner's waiting time and less writing and checking, and the next session still starts safely from it. ORCHESTRATOR'S READING: 'hamdoffs' is 'handoffs'; 'I also want' makes this work beside the resumed work, not instead of it.",
+   "source_ref": "source-058-amendment.md#owner-message-114-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [],
+   "required_harness": "A later handoff takes measurably less time and text than the one of 2026-10-07 (seq 149), and the session that starts from it passes its start checks.",
+   "required_evidence": "The measured cost of the seq 149 handoff and of a later one (the session notes; the pull requests' times).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 114).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R561",
+   "text": "'because it seems each handoff requires so much test to upstate and downstairs' 'since we have to do it often it keeps interrupting the workflow': the reason the owner gives: each handoff needs a great deal done, handoffs are frequent, and so they interrupt the work. ORCHESTRATOR'S READING: the words 'so much test to upstate and downstairs' are kept as typed; they are read as 'so much text to update' (or 'so much testing, up and down'); in either reading it is the amount of writing and checking at each handoff that is to come down. What one handoff costs today is stated from the records (the time from the command to the printed start prompt, the steps, the size of the file and of the start prompt), so a later handoff can be compared with it.",
+   "source_ref": "source-058-amendment.md#owner-message-114-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R560"
+   ],
+   "required_harness": "The proposal gives the cost of the seq 149 handoff from the session notes and the pull request's times, not from memory.",
+   "required_evidence": "The proposal shown to the owner.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 114).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R562",
+   "text": "'I also,want to work that session hamdoffs should go more smoothly': the owner is brought a concrete proposal with a recommendation: what a handoff costs today, which steps and which text would go, stay or move, and which earlier instruction of the owner each change touches. ORCHESTRATOR'S READING: this follows the owner's working guidance (research the decision, bring a recommendation with its basis, move once it is settled); it joins the list of instruction-file moves already owed (R552).",
+   "source_ref": "source-058-amendment.md#owner-message-114-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R552",
+    "D-090-R560"
+   ],
+   "required_harness": "The owner receives the proposal in plain words without a table.",
+   "required_evidence": "The session transcript (the reply that carries the proposal).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 114).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R563",
+   "text": "'move or remove nothing in the instruction files before the owner approves the list': the handoff procedure lives in instruction files (the handoff command's text, CLAUDE.md, the injected rule files), and several of its parts are earlier requirements of the owner (the handoff that leaves a finished seam; the section on what 'finished' means, kept in every handoff; the wording rules; tmux before the session starts). ORCHESTRATOR'S READING: none of them is changed, moved or dropped to make a handoff lighter before the owner approves the proposal; where the proposal conflicts with an earlier requirement, the conflict is pointed out and the owner decides.",
+   "source_ref": "source-058-amendment.md#owner-message-114-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R552",
+    "D-090-R553"
+   ],
+   "required_harness": "No instruction file and no earlier handoff requirement is changed in the same change as the proposal.",
+   "required_evidence": "The diff of the branch that carries this record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 114).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R564",
+   "text": "'Resume as the NYC Buildability orchestrator' 'NEXT ACTION, in order': the rest of the message is the start prompt that the previous session printed at the handover, pasted back by the owner: the session resumes from the repository's evidence in the order it gives (the main line's own run; the corrections to a merge; what is owed to the owner; the next wave; the update). ORCHESTRATOR'S READING: it is orientation and adds no requirement of its own; each stop it lists is already a recorded row; the ledger wins where it and the prompt differ.",
+   "source_ref": "source-058-amendment.md#owner-message-114-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R500"
+   ],
+   "required_harness": "The session's first actions follow that order; a difference is reported, not assumed.",
+   "required_evidence": "The session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 114).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

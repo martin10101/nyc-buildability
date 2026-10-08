@@ -46,12 +46,16 @@ __all__ = [
     "blanket_way",
     "blanket_withhold",
     "condition_withhold",
+    "format_angle",
+    "format_angle_exceeding",
     "format_ft",
+    "format_ft_exceeding",
     "format_sq_ft",
     "k20_condition",
     "no_lot_type",
     "no_outline",
     "overlay_block",
+    "rear_yard_unmeasured",
     "relabel",
     "shown",
     "street_reaches_within",
@@ -83,6 +87,38 @@ def format_sq_ft(value: float) -> str:
 def format_ft(value: float) -> str:
     whole = int(round(value))
     return f"{whole} ft" if float(whole) == float(value) else f"{value:.2f} ft"
+
+
+def format_angle(value: float) -> str:
+    """A measured angle in degrees, whole where the value is whole (mirrors format_ft)."""
+    whole = int(round(value))
+    return f"{whole} degrees" if float(whole) == float(value) else f"{value:.1f} degrees"
+
+
+def format_ft_exceeding(value: float, limit: float) -> str:
+    """Display a reach that EXCEEDS a whole-foot ``limit`` so the printed number is visibly
+    greater than the limit, never rounding a failing value down so it looks equal (G3 F2). A
+    whole value prints whole; otherwise two decimals, or more where two would read as the limit.
+    No numeric literal enters this file: the precision is carried only in format specs."""
+    whole = int(round(value))
+    if float(whole) == float(value):
+        return f"{whole} ft"
+    body = f"{value:.2f}"
+    if float(body) <= limit:
+        body = f"{value:.6f}".rstrip("0").rstrip(".")
+    return f"{body} ft"
+
+
+def format_angle_exceeding(value: float, limit: float) -> str:
+    """Display an angle that EXCEEDS a whole-degree ``limit`` so the printed number is visibly
+    greater than the limit (G3 F2); mirrors :func:`format_ft_exceeding` with one decimal."""
+    whole = int(round(value))
+    if float(whole) == float(value):
+        return f"{whole} degrees"
+    body = f"{value:.1f}"
+    if float(body) <= limit:
+        body = f"{value:.6f}".rstrip("0").rstrip(".")
+    return f"{body} degrees"
 
 
 # ---------------------------------------------------------------------------
@@ -371,6 +407,43 @@ def no_outline(label: str, what: str, zr: tuple[str, ...]) -> Withheld:
     )
 
 
+def rear_yard_unmeasured(
+    label: str, *, reach_known: bool, angle_known: bool, zr: tuple[str, ...],
+) -> Withheld:
+    """The corner reach records exist but a measurement the rear-yard waiver needs is missing:
+    the far corner's reach, the angle at which the two street lines meet, or both. Names exactly
+    the measurement that is missing and never one that is present, so a known reach is never
+    reported as unmeasured (missing information, not owed work)."""
+    if not reach_known and not angle_known:
+        what = (
+            "the far corner's reach from the point where the two street lines meet and the "
+            "angle at which they meet are not measured"
+        )
+        need = "the far corner's reach and the angle at which the two street lines meet"
+    elif not reach_known:
+        what = (
+            "the far corner's reach from the point where the two street lines meet is not "
+            "measured"
+        )
+        need = "the far corner's reach from the point where the two street lines meet"
+    else:
+        what = "the angle at which the two street lines meet is not measured"
+        need = "the angle at which the two street lines meet"
+    return Withheld(
+        label=label,
+        reason=(
+            f"For this corner lot {what}, so whether the rear-yard waiver applies cannot be "
+            "decided and the rear yard is not known."
+        ),
+        gap_kind=MISSING_INFORMATION,
+        # The 'resolved by' names only the measurement(s) that are missing in this state, never
+        # one the state already holds (round 2): the reach when only the reach is missing, the
+        # angle when only the angle is missing, both when both are missing.
+        resolved_by=f"Measuring {need}, from the recorded outline and its street lines.",
+        zr_sections=zr,
+    )
+
+
 def street_reaches_within(reach: ReachMeasurements | None) -> bool | None:
     """True when every street-line reach is known and within 100 ft; False when some reach is
     beyond; None when there is nothing to measure (no outline)."""
@@ -385,7 +458,8 @@ def street_reaches_within(reach: ReachMeasurements | None) -> bool | None:
 
 def streets_beyond(reach: ReachMeasurements) -> str:
     beyond = [
-        f"{format_ft(line.reach.value)} from the {line.street_name} street line"
+        f"{format_ft_exceeding(line.reach.value, CORNER_PORTION_WITHIN_100_FT.value)} from the "
+        f"{line.street_name} street line"
         for line in reach.street_lines
         if line.reach.known and not within(line.reach.value, CORNER_PORTION_WITHIN_100_FT)
     ]

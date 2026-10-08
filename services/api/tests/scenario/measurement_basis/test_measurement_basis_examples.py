@@ -13,6 +13,7 @@ from __future__ import annotations
 import ast
 import copy
 import pathlib
+import re
 import sys
 from decimal import Decimal
 
@@ -21,6 +22,7 @@ if str(_HERE) not in sys.path:
     sys.path.insert(0, str(_HERE))
 
 import measurement_basis_check as check  # noqa: E402
+import measurement_basis_fit as fit  # noqa: E402
 import measurement_basis_lib as lib  # noqa: E402
 import measurement_basis_render as render  # noqa: E402
 
@@ -28,13 +30,15 @@ EXAMPLES = lib.load_all()
 SUPPORT_FILES = sorted(_HERE.glob("*.py"))
 
 # The hand-verified totals (the oracle that pins the method independently of the engine).
+# M5-T133: Examples B and C were rebuilt so that every floor fits; their ratios change and the
+# earlier 0.6022 (B) and 0.6676 (C) are withdrawn. Example A is unchanged.
 EXPECTED = {
     "example-a-standard-residential": {"zoning": 8000, "hpd": 6032, "ratio": "0.7540",
                                        "mixed_use": False, "units_cap": 13},
-    "example-b-allowances-conditions-shown": {"zoning": 11291, "hpd": 6800, "ratio": "0.6022",
-                                              "mixed_use": False, "units_cap": 17},
-    "example-c-mixed-use": {"zoning": 6920, "hpd": 4620, "ratio": "0.6676",
-                            "mixed_use": True, "units_cap": 11},
+    "example-b-allowances-conditions-shown": {"zoning": 12001, "hpd": 7780, "ratio": "0.6483",
+                                              "mixed_use": False, "units_cap": 19},
+    "example-c-mixed-use": {"zoning": 10428, "hpd": 7120, "ratio": "0.6828",
+                            "mixed_use": True, "units_cap": 16},
 }
 
 
@@ -111,10 +115,10 @@ def test_conditional_allowances_taken_only_when_shown_and_capped():
     b = EXAMPLES["example-b-allowances-conditions-shown"]
     corridor = lib.find_component(b, "corridor")
     assert corridor["zoning"]["condition_shown"] is True
-    assert Decimal(str(corridor["zoning"]["excluded_area"])) == 1100  # 50% of 2,200
+    assert Decimal(str(corridor["zoning"]["excluded_area"])) == 560  # 50% of 1,120
     refuse = lib.find_component(b, "refuse")
-    assert Decimal(str(refuse["zoning"]["excluded_area"])) == 45  # 3 sq ft x 15 DU cap binds
-    assert lib.zoning_counted(refuse) == 35  # 80 - 45
+    assert Decimal(str(refuse["zoning"]["excluded_area"])) == 39  # 3 sq ft x 13 DU cap binds
+    assert lib.zoning_counted(refuse) == 33  # 72 - 39
 
 
 def test_nothing_already_out_of_zoning_is_deducted_again():
@@ -273,6 +277,203 @@ def test_mixed_use_uses_the_residential_portion_only():
     # the residential lobby/circulation IS counted in the residential zoning floor area
     lobby = lib.find_component(c, "lobby")
     assert lib.zoning_counted(lobby) == lib.component_area(lobby)
+    # the shared component counts zero toward the residential EXCLUSIVE zoning floor area and
+    # never enters the bridge: it is attributed separately under ZR 23-20 (C3)
+    shared = [comp for comp in c["components"] if comp["portion"] == "shared"]
+    assert shared, "the mixed-use example must include a shared component"
+    for comp in shared:
+        assert lib.zoning_counted(comp) == 0
+        assert lib.hpd_counted(comp) == 0
+        assert comp["component_id"] not in bridge_ids
+
+
+def test_every_component_is_marked_exclusive_or_shared():
+    # C3: each component is exclusive to one use (residential / non-residential) or shared.
+    for example_id, data in EXAMPLES.items():
+        for comp in data["components"]:
+            assert comp["portion"] in lib.PORTIONS, f"{example_id}/{comp['component_id']}"
+    # the single-use examples carry no shared or commercial component
+    for example_id in ("example-a-standard-residential",
+                       "example-b-allowances-conditions-shown"):
+        portions = {c["portion"] for c in EXAMPLES[example_id]["components"]}
+        assert portions == {"residential"}, example_id
+
+
+def test_shared_floor_area_attribution_is_a_required_step_not_a_switch():
+    # C3: Example C applies the ZR 23-20 attribution and labels the outcome conditional on the
+    # mixed-building text not captured yet; it is never offered as an owner choice or a switch.
+    c = EXAMPLES["example-c-mixed-use"]
+    shared = c["shared_floor_area"]
+    assert shared["present"] is True
+    assert shared["capture"]["snapshot_id"] == "zr-23-20"
+    # the attribution recomputes exactly from the stated totals (the fit check enforces this too)
+    assert fit.shared_floor_area_errors("example-c-mixed-use", c) == []
+    want_share = lib.residential_share(shared).quantize(Decimal("0.0001"))
+    assert Decimal(str(shared["residential_share_value"])) == want_share
+    assert Decimal(str(shared["attributed_to_residential"])) == \
+        lib.shared_attributed_to_residential(shared)
+    assert "not captured yet" in shared["conditional_note"].lower()
+    # single-use examples: no shared floor area, attribution does not apply
+    for example_id in ("example-a-standard-residential",
+                       "example-b-allowances-conditions-shown"):
+        assert EXAMPLES[example_id]["shared_floor_area"]["present"] is False
+        assert fit.shared_floor_area_errors(example_id, EXAMPLES[example_id]) == []
+
+
+# --------------------------------------------------------------------------
+# M5-T133 (B) - the FIT check: every floor fits; the check bites (S1, S2, S3)
+# --------------------------------------------------------------------------
+def test_every_floor_of_every_example_fits():
+    # S2: on each floor the components (the exterior wall ring among them) add up to exactly
+    # the stated outside outline, by exact decimal arithmetic.
+    for example_id, data in EXAMPLES.items():
+        assert fit.fit_errors(example_id, data) == [], example_id
+        for floor in data["floors"]:
+            outline = lib.outline_area(floor)
+            total = lib.floor_component_total(data, floor["floor_id"])
+            assert total == outline, f"{example_id}/{floor['floor_id']}: {total} != {outline}"
+
+
+def _nonfitting_doc(mode: str) -> dict:
+    """A small made-up document (not a real example) used to prove the fit check bites."""
+    doc = {
+        "floors": [
+            {"floor_id": "f1", "label": "the only floor", "count": 1,
+             "outline_parts": [{"width_ft": 20, "depth_ft": 20}]},  # outline 400
+        ],
+        "shared_floor_area": {"present": False, "shared_component_ids": [], "shared_total": 0,
+                              "residential_exclusive_floor_area": 320,
+                              "commercial_exclusive_floor_area": 0,
+                              "total_floor_area_zoning_lot": 320, "attribution_base": 320,
+                              "residential_share_value": "1.0000",
+                              "attributed_to_residential": "0.00",
+                              "attributed_to_commercial": "0.00", "capture": None,
+                              "conditional_note": "", "note": "n/a"},
+        "components": [
+            {"component_id": "exterior-walls", "portion": "residential",
+             "area_parts": [
+                 {"label": "ring", "sign": "add", "width_ft": 20, "depth_ft": 20, "count": 1},
+                 {"label": "inner", "sign": "subtract", "width_ft": 18, "depth_ft": 18, "count": 1},
+             ],
+             "floor_areas": [{"floor_id": "f1", "area": 76}]},  # 400 - 324
+            {"component_id": "apartment-interior", "portion": "residential",
+             "area_parts": [
+                 {"label": "rooms", "sign": "add", "width_ft": 18, "depth_ft": 16, "count": 1},
+             ],
+             "floor_areas": [{"floor_id": "f1", "area": 288}]},  # 18x16
+            {"component_id": "corridor", "portion": "residential",
+             "area_parts": [
+                 {"label": "corridor", "sign": "add", "width_ft": 2, "depth_ft": 18, "count": 1},
+             ],
+             "floor_areas": [{"floor_id": "f1", "area": 36}]},  # 2x18
+        ],
+    }
+    # as built: 76 + 288 + 36 = 400 = outline (it fits; inside 324, rooms 288 < 324)
+    if mode == "no_outline":
+        doc["floors"][0]["outline_parts"] = []
+    elif mode == "dimension_changed_by_a_foot":
+        # one apartment dimension 18 -> 19 ft: measured_area no longer matches the per-floor sum
+        doc["components"][1]["area_parts"][0]["width_ft"] = 19
+    elif mode == "rooms_fill_inside_outline":
+        # rooms fill the whole inside outline (324) while a corridor is still listed on top
+        doc["components"][1]["floor_areas"][0]["area"] = 324
+        doc["components"][1]["area_parts"][0] = {"label": "rooms", "sign": "add",
+                                                 "width_ft": 18, "depth_ft": 18, "count": 1}
+    return doc
+
+
+def test_fit_check_bites_no_outline():
+    errs = fit.geometry_fit_errors("made-up", _nonfitting_doc("no_outline"))
+    assert any("no stated outside outline" in m for m in errs), errs
+
+
+def test_fit_check_bites_dimension_changed_by_a_foot():
+    errs = fit.geometry_fit_errors("made-up", _nonfitting_doc("dimension_changed_by_a_foot"))
+    assert any("per-floor" in m and "schedule" in m for m in errs), errs
+
+
+def test_fit_check_bites_rooms_fill_inside_outline():
+    errs = fit.geometry_fit_errors("made-up", _nonfitting_doc("rooms_fill_inside_outline"))
+    assert any("already fill the inside outline" in m for m in errs), errs
+
+
+def test_fit_check_bites_on_a_real_example_mutation():
+    # one dimension of one component changed by a foot on a real example -> the fit check bites
+    data = copy.deepcopy(EXAMPLES["example-c-mixed-use"])
+    comp = lib.find_component(data, "apartment-interior")
+    comp["area_parts"][0]["width_ft"] += 1  # 43 -> 44
+    errs = fit.fit_errors("example-c-mixed-use", data)
+    assert errs, "a changed dimension must break the fit"
+
+
+def test_fit_check_bites_when_a_floor_outline_is_removed():
+    data = copy.deepcopy(EXAMPLES["example-b-allowances-conditions-shown"])
+    data["floors"][1]["outline_parts"] = []  # drop the ground-floor outline
+    errs = fit.fit_errors("example-b-allowances-conditions-shown", data)
+    assert any("no stated outside outline" in m for m in errs), errs
+
+
+def test_fit_reports_every_floor_not_just_the_first_problem():
+    # G4 note F1 (round 3): a floor missing its outline must NOT hide an overflow on another
+    # floor; both are reported in the same run.
+    doc = {
+        "floors": [
+            {"floor_id": "f1", "label": "no-outline floor", "count": 1, "outline_parts": []},
+            {"floor_id": "f2", "label": "overflowing floor", "count": 1,
+             "outline_parts": [{"width_ft": 20, "depth_ft": 20}]},  # 400
+        ],
+        "components": [
+            {"component_id": "apartment-interior", "portion": "residential",
+             "area_parts": [
+                 {"label": "a", "sign": "add", "width_ft": 10, "depth_ft": 10, "count": 1},
+                 {"label": "b", "sign": "add", "width_ft": 25, "depth_ft": 20, "count": 1},
+             ],
+             "floor_areas": [{"floor_id": "f1", "area": 100}, {"floor_id": "f2", "area": 500}]},
+        ],
+    }
+    errs = fit.geometry_fit_errors("two-floor", doc)
+    assert any("no stated outside outline" in m for m in errs), errs  # f1
+    assert any("add up to 500" in m for m in errs), errs  # f2 overflow, same run
+
+
+# --------------------------------------------------------------------------
+# round 3 - a figure stated in a cap condition must match the data (would have caught F1)
+# --------------------------------------------------------------------------
+def test_cap_figures_in_a_condition_match_the_data():
+    # F1: the dwelling-unit count and the resulting cap named in a refuse-type condition must
+    # equal the schedule's own exemption candidate (count, and three times it). A leftover
+    # from an old layout (e.g. "15 units here = 45 sq ft cap") must not stand.
+    pat = re.compile(r"\((\d+) units here = (\d+) sq ft cap\)")
+    checked = 0
+    for example_id, data in EXAMPLES.items():
+        for comp in data["components"]:
+            match = pat.search(str(comp["zoning"].get("condition", "")))
+            if not match:
+                continue
+            checked += 1
+            stated_units, stated_cap = int(match.group(1)), int(match.group(2))
+            cand = comp["zoning"]["exclusion"]["candidates"][0]
+            du = int(cand["operands"][1])
+            cap = int(lib.candidate_value(cand))  # 3 sq ft per DU x du
+            tag = f"{example_id}/{comp['component_id']}"
+            assert stated_units == du, f"{tag}: condition says {stated_units} units, data has {du}"
+            assert stated_cap == cap, f"{tag}: condition says {stated_cap} cap, data has {cap}"
+            assert cap == 3 * du, f"{tag}: cap {cap} is not 3 x {du}"
+    assert checked >= 1, "the refuse cap condition must be present and checked"
+
+
+def test_support_files_list_is_not_empty_and_names_the_known_modules():
+    # G4 note F3: SUPPORT_FILES is built from a glob; guard that it found the real modules.
+    names = {p.name for p in SUPPORT_FILES}
+    assert SUPPORT_FILES, "SUPPORT_FILES is empty (the glob matched nothing)"
+    for expected in (
+        "measurement_basis_lib.py",
+        "measurement_basis_check.py",
+        "measurement_basis_render.py",
+        "measurement_basis_fit.py",
+        "test_measurement_basis_examples.py",
+    ):
+        assert expected in names, f"SUPPORT_FILES is missing {expected}"
 
 
 # --------------------------------------------------------------------------

@@ -35,6 +35,7 @@ if str(_HERE) not in sys.path:
 import json  # noqa: E402
 from decimal import Decimal  # noqa: E402
 
+import measurement_basis_fit as fit  # noqa: E402
 import measurement_basis_lib as lib  # noqa: E402
 
 # Field names / phrases that would smuggle a program result into an example.
@@ -426,6 +427,7 @@ def validate_example(example_id: str, data: dict) -> list[str]:
     if not errs:
         errs += reconciliation_errors(example_id, data)
         errs += legal_cap_errors(example_id, data)
+        errs += fit.fit_errors(example_id, data)  # M5-T133: every floor must fit
     return errs
 
 
@@ -463,6 +465,20 @@ def record_errors() -> list[str]:
         ("open points", "the open points for the owner"),
         ("legal unit", "that the legal unit cap stays separate"),
         ("total hpd-measured dwelling-unit area", "the ratio's exact definition"),
+        # M5-T133 C1 to C7
+        ("apartment-area ratio", "the estimate's formula in words (C1)"),
+        ("maximum permitted floor area", "that the maximum permitted floor area stays apart (C1)"),
+        ("sensitivity range", "that 0.60 to 0.75 is only a chosen sensitivity range (C2)"),
+        ("23-20", "the shared-floor-area attribution of ZR 23-20 (C3)"),
+        ("shared by multiple uses", "the ZR 23-20 shared-floor-area sentence (C3)"),
+        ("not captured yet", "what is not captured yet (C3, C5)"),
+        ("fully electrified", "the energy exclusion's definitions, not captured yet (C5)"),
+        ("ultra low energy", "the energy exclusion's definitions, not captured yet (C5)"),
+        ("23-432", "the R6B base/building height table for unequal floors (C6)"),
+        ("23-433", "the setback provision for unequal floors (C6)"),
+        ("choices for the owner", "section 8's first list, the owner's choices (C7)"),
+        ("questions of law", "section 8's second list, the questions of law (C7)"),
+        ("preliminary capacity estimate", "the name for the result once a shape exists (C7)"),
     ]
     for needle, what in required:
         if needle not in low:

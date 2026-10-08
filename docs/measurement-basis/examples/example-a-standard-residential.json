@@ -4,8 +4,8 @@
   "mixed_use": false,
   "made_up_note": "This layout is made up - a deliberately simple example, not a real property and not a detailed or permit-ready design. Every dimension is stated so each area can be recomputed. The maximum floor area the law allows is used only as a limit to check the layout against, never as the measured space.",
   "standing_label": "This is a draft reading of the law and a guideline by an AI; it is not professionally reviewed and is not a legal or professional determination. Each statistic links to its source text (ADR-007).",
-  "building": "A made-up four-storey R6B walk-up: a 40 ft x 50 ft floor plate on each of four floors, two apartments per floor, one stair, no elevator, no lobby, no cellar and no parking. No ZR 23-23 allowance condition is shown, so every above-grade component counts in full under zoning.",
-  "assumptions_note": "Design choices (floor plate, number of floors, room sizes) are made up for this example and are editable; they are not validated here.",
+  "building": "A made-up four-storey R6B walk-up: four identical 40 ft x 50 ft floors, two apartments per floor reached off a shared corridor, one stair that passes through every floor, no elevator, no lobby, no cellar and no parking. No ZR 23-23 allowance condition is shown, so every above-grade component counts in full under zoning. On each floor the components, the exterior wall ring among them, add up to exactly the 2,000 sq ft outline.",
+  "assumptions_note": "Design choices (floor plate, number of floors, room sizes) are made up for this example and are editable; they are not validated here. The per-floor statement lets the fit be checked floor by floor.",
   "components": [
     {
       "component_id": "apartment-interior",
@@ -71,7 +71,13 @@
         "counted_area": 5888
       },
       "notes": "The apartments' own usable floor.",
-      "measured_area": 5888
+      "measured_area": 5888,
+      "floor_areas": [
+        {
+          "floor_id": "typical",
+          "area": 1472
+        }
+      ]
     },
     {
       "component_id": "interior-partitions",
@@ -137,7 +143,13 @@
         "counted_area": 144
       },
       "notes": "Shows that apartment-internal partitions stay in HPD unit area.",
-      "measured_area": 144
+      "measured_area": 144,
+      "floor_areas": [
+        {
+          "floor_id": "typical",
+          "area": 36
+        }
+      ]
     },
     {
       "component_id": "demising-partitions",
@@ -203,7 +215,13 @@
         "counted_area": 0
       },
       "notes": "A zoning-only component.",
-      "measured_area": 96
+      "measured_area": 96,
+      "floor_areas": [
+        {
+          "floor_id": "typical",
+          "area": 24
+        }
+      ]
     },
     {
       "component_id": "exterior-walls",
@@ -276,7 +294,13 @@
         "counted_area": 0
       },
       "notes": "The largest zoning-only item; it must NOT be deducted from HPD a second time if a qualifying-wall exclusion were later taken under zoning.",
-      "measured_area": 704
+      "measured_area": 704,
+      "floor_areas": [
+        {
+          "floor_id": "typical",
+          "area": 176
+        }
+      ]
     },
     {
       "component_id": "corridor",
@@ -384,7 +408,13 @@
         "counted_area": 0
       },
       "notes": "No corridor exclusion condition is shown, so the corridor counts in full (ZR 23-23 allowances are conditional, not automatic).",
-      "measured_area": 480
+      "measured_area": 480,
+      "floor_areas": [
+        {
+          "floor_id": "typical",
+          "area": 120
+        }
+      ]
     },
     {
       "component_id": "stair",
@@ -450,7 +480,13 @@
         "counted_area": 0
       },
       "notes": "A zoning-only component.",
-      "measured_area": 640
+      "measured_area": 640,
+      "floor_areas": [
+        {
+          "floor_id": "typical",
+          "area": 160
+        }
+      ]
     },
     {
       "component_id": "chases",
@@ -516,7 +552,13 @@
         "counted_area": 0
       },
       "notes": "Uses the precise HPD term 'mechanical and plumbing chases'.",
-      "measured_area": 48
+      "measured_area": 48,
+      "floor_areas": [
+        {
+          "floor_id": "typical",
+          "area": 12
+        }
+      ]
     }
   ],
   "legal_unit_cap": {
@@ -562,6 +604,11 @@
       "date": "2026-10-07",
       "summary": "Example created for the measurement basis record.",
       "by": "scenario-optimization-engineer"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Added the per-floor statement (four identical 40x50 floors) so the fit can be checked; the components on each floor add up to the 2,000 sq ft outline. No area or ratio changed (residential zoning floor area 8,000; HPD 6,032; ratio 0.7540).",
+      "by": "scenario-optimization-engineer"
     }
   ],
   "reconciliation": {
@@ -599,5 +646,33 @@
       "denominator": 8000,
       "value": "0.7540"
     }
+  },
+  "floors": [
+    {
+      "floor_id": "typical",
+      "label": "Typical residential floor (one of four identical)",
+      "count": 4,
+      "outline_parts": [
+        {
+          "width_ft": 40,
+          "depth_ft": 50
+        }
+      ]
+    }
+  ],
+  "shared_floor_area": {
+    "present": false,
+    "shared_component_ids": [],
+    "shared_total": 0,
+    "residential_exclusive_floor_area": 8000,
+    "commercial_exclusive_floor_area": 0,
+    "total_floor_area_zoning_lot": 8000,
+    "attribution_base": 8000,
+    "residential_share_value": "1.0000",
+    "attributed_to_residential": "0.00",
+    "attributed_to_commercial": "0.00",
+    "capture": null,
+    "conditional_note": "",
+    "note": "A single-use residential building: no floor area is shared between uses, so the ZR 23-20 proportional attribution does not apply here."
   }
 }

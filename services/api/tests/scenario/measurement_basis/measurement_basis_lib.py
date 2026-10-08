@@ -44,7 +44,11 @@ EXAMPLE_IDS = (
     "example-c-mixed-use",
 )
 
-PORTIONS = ("residential", "non_residential")
+# A component is either exclusive to one use (residential or non-residential/commercial)
+# or SHARED between the uses. "shared" floor area is attributed proportionately under ZR
+# 23-20; it is NOT part of either use's exclusive zoning floor area (so it counts zero in
+# the residential total and is carried separately on the reconciliation - M5-T133 C3).
+PORTIONS = ("residential", "non_residential", "shared")
 ZONING_TREATMENTS = ("count", "exclude", "exclude_if_condition", "not_residential_portion")
 HPD_TREATMENTS = ("count", "exclude")
 CITATION_KINDS = ("captured", "guideline")
@@ -88,14 +92,33 @@ HPD_UNIT_AREA_CALCULATION = (
 # Fixed key sets (strict: a stray or missing field is a defect, not a silent pass).
 EXAMPLE_KEYS = {
     "example_id", "title", "mixed_use", "made_up_note", "standing_label", "building",
-    "assumptions_note", "components", "reconciliation", "legal_unit_cap",
-    "what_it_shows", "what_it_does_not_show", "sources", "change_log",
+    "assumptions_note", "floors", "components", "reconciliation", "legal_unit_cap",
+    "shared_floor_area", "what_it_shows", "what_it_does_not_show", "sources", "change_log",
 }
 COMPONENT_KEYS = {
     "component_id", "name", "portion", "how_measured", "area_parts", "measured_area",
-    "zoning", "hpd", "notes",
+    "floor_areas", "zoning", "hpd", "notes",
 }
 AREA_PART_KEYS = {"label", "sign", "width_ft", "depth_ft", "count"}
+# A floor is one stated OUTSIDE outline (a list of rectangles) carried `count` times, plus
+# the components that lie on it. The fit check (measurement_basis_fit) proves, per floor,
+# that the components - the exterior wall ring among them - add up to the outline exactly.
+FLOOR_KEYS = {"floor_id", "label", "count", "outline_parts"}
+OUTLINE_PART_KEYS = {"width_ft", "depth_ft"}
+FLOOR_AREA_KEYS = {"floor_id", "area"}
+# The shared-floor-area attribution (ZR 23-20). Exclusive single-use examples carry it with
+# present=False; a mixed building carries the proportional split and a capture citation.
+SHARED_FLOOR_AREA_KEYS = {
+    "present", "shared_component_ids", "shared_total",
+    "residential_exclusive_floor_area", "commercial_exclusive_floor_area",
+    "total_floor_area_zoning_lot", "attribution_base", "residential_share_value",
+    "attributed_to_residential", "attributed_to_commercial", "capture",
+    "conditional_note", "note",
+}
+# Component ids the fit check treats specially (documented convention, not a new field):
+# the perimeter wall ring, and the apartment net interior (the "rooms").
+EXTERIOR_WALL_ID = "exterior-walls"
+APARTMENT_INTERIOR_ID = "apartment-interior"
 ZONING_KEYS = {
     "treatment", "provision", "condition", "condition_shown", "excluded_area",
     "exclusion", "citations",
@@ -171,6 +194,67 @@ def component_area(component: dict) -> Decimal:
         rect = _dec(part["width_ft"]) * _dec(part["depth_ft"]) * _dec(part["count"])
         total += rect if part["sign"] == "add" else -rect
     return total
+
+
+# --------------------------------------------------------------------------
+# floors (the fit model: every floor has one stated outside outline)
+# --------------------------------------------------------------------------
+def floors_by_id(example: dict) -> dict[str, dict]:
+    return {f["floor_id"]: f for f in example.get("floors", [])}
+
+
+def outline_area(floor: dict) -> Decimal:
+    """The gross outside-outline area of ONE floor of this type (sum of its rectangles)."""
+    total = Decimal("0")
+    for part in floor["outline_parts"]:
+        total += _dec(part["width_ft"]) * _dec(part["depth_ft"])
+    return total
+
+
+def component_floor_area(component: dict, floor_id: str) -> Decimal:
+    """The component's net footprint on ONE floor of the given type (0 if it is not there)."""
+    total = Decimal("0")
+    for entry in component.get("floor_areas", []):
+        if entry["floor_id"] == floor_id:
+            total += _dec(entry["area"])
+    return total
+
+
+def component_floor_area_total(component: dict, floors: dict[str, dict]) -> Decimal:
+    """Sum of the component's per-floor footprints times each floor type's count.
+
+    This must equal the component's measured_area: it ties the per-floor statement to the
+    schedule so the two cannot drift (a changed dimension breaks it - the fit check bites)."""
+    total = Decimal("0")
+    for entry in component.get("floor_areas", []):
+        floor = floors.get(entry["floor_id"])
+        if floor is None:
+            continue
+        total += _dec(entry["area"]) * _dec(floor["count"])
+    return total
+
+
+def floor_component_total(example: dict, floor_id: str) -> Decimal:
+    """Sum of every component's footprint on ONE floor of the given type."""
+    return sum(
+        (component_floor_area(c, floor_id) for c in example["components"]),
+        Decimal("0"),
+    )
+
+
+def residential_share(shared: dict) -> Decimal:
+    """ZR 23-20 proportional share for the residential use: residential exclusive floor
+    area divided by (total floor area of the zoning lot LESS any shared floor area)."""
+    base = _dec(shared["attribution_base"])
+    if base == 0:
+        return Decimal("0")
+    return _dec(shared["residential_exclusive_floor_area"]) / base
+
+
+def shared_attributed_to_residential(shared: dict) -> Decimal:
+    """The shared floor area attributed to the residential use (ZR 23-20), to 2 dp."""
+    attributed = _dec(shared["shared_total"]) * residential_share(shared)
+    return attributed.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
 
 def candidate_value(candidate: dict) -> Decimal:

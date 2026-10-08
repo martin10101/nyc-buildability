@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-07T19:34:08+00:00",
+ "updated_at": "2026-10-08T00:35:11+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -556,10 +556,39 @@
   "D-090-R532",
   "D-090-R533",
   "D-090-R534",
-  "D-090-R535"
+  "D-090-R535",
+  "D-090-R536",
+  "D-090-R537",
+  "D-090-R538",
+  "D-090-R539",
+  "D-090-R540",
+  "D-090-R541",
+  "D-090-R542",
+  "D-090-R543",
+  "D-090-R544",
+  "D-090-R545",
+  "D-090-R546",
+  "D-090-R547",
+  "D-090-R548",
+  "D-090-R549",
+  "D-090-R550",
+  "D-090-R551",
+  "D-090-R552",
+  "D-090-R553",
+  "D-090-R554",
+  "D-090-R555",
+  "D-090-R556",
+  "D-090-R557",
+  "D-090-R558",
+  "D-090-R559",
+  "D-090-R560",
+  "D-090-R561",
+  "D-090-R562",
+  "D-090-R563",
+  "D-090-R564"
  ],
- "requirements_id_digest_sha256": "f0a2b6679faaf2f8438636bd56152fb3c450405a272d4fc2aec94b05e58a4460",
- "requirements_content_digest_sha256": "14c21546b932ea9996f079bf1237f37a49671d30286d905d8e4eb4b36cbc62b6",
+ "requirements_id_digest_sha256": "60b693c3aba831459421ce26fbcec3621ca5292351c2799288331d17d40928eb",
+ "requirements_content_digest_sha256": "250c664396639491f6c170f948645fcea66f4d2255c4a99609e49b40bde187ab",
  "sources": [
   {
    "file": "source-001.md",
@@ -999,6 +1028,30 @@
    "recorded_at": "2026-10-07T19:34:08+00:00",
    "content_digest_sha256": "84766169ec3545652c0f364660496a72f029f6e88e3c9e07b758c168791cdd81",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-056-amendment.md",
+   "kind": "amendment",
+   "sequence": 56,
+   "recorded_at": "2026-10-07T22:04:38+00:00",
+   "content_digest_sha256": "a0319db2e048347e9cf384f50e10845aa98b3e900980f7c648e38e811b60b719",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-057-amendment.md",
+   "kind": "amendment",
+   "sequence": 57,
+   "recorded_at": "2026-10-07T22:35:21+00:00",
+   "content_digest_sha256": "102c2fe91d872d9af77d64ab13b4bcd7e3ce4d4a0b25df20d866c46768f2108b",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-058-amendment.md",
+   "kind": "amendment",
+   "sequence": 58,
+   "recorded_at": "2026-10-08T00:35:11+00:00",
+   "content_digest_sha256": "b761c8cc47e6f2ddc9ef6e8739483c9552b70a4f04ce59a3e7316a19486ee7ea",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1055,7 +1108,10 @@
   "source-052-amendment.md",
   "source-053-amendment.md",
   "source-054-amendment.md",
-  "source-055-amendment.md"
+  "source-055-amendment.md",
+  "source-056-amendment.md",
+  "source-057-amendment.md",
+  "source-058-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1084,7 +1140,10 @@
   "M4-T032",
   "M5-T130",
   "M5-T131",
-  "M4-T033"
+  "M4-T033",
+  "M5-T132",
+  "M5-T133",
+  "M4-T034"
  ],
  "affected_prs": [
   262,
@@ -1557,6 +1616,48 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-054 (session 013RaGmC message 110, 2026-10-07: /session-handoff) with requirement D-090-R500, and source-055 (message 111, 2026-10-07: the seq 148 start prompt and the owner's reviewer's check of the open recommendations, the worked examples and the decision module's explanations) with requirements D-090-R501 to R535, all pending. Texts extracted by script from the transcripts; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-07T20:17:43+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T132 (the decision module's explanations name the condition that really fails: the table of every input state, one repair, one test per state; texts only) to R258, R521, R522, R523, R524, R532 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-07T20:17:43+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T133 (the measurement-basis record and its worked examples corrected after the owner's reviewer's check: examples that fit and a test of the fit; the formula; shared floor area as a required step; the amenity base; eligibility; unequal floors; two lists of open points) to R435, R436, R509, R510, R511, R512, R513, R514, R515, R516, R519, R532, R534 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-07T20:17:44+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M4-T034 (law-text captures behind the owner's reviewer's check: the mixed-building floor-area section, the two energy definitions, the section ZR 23-20 points to, and the sections on whether parking, loading and bicycle parking are required; source text only) to R291, R513, R516, R517, R526 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-07T20:17:45+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Row D-090-R517: the orchestrator's reading corrected (it had called the reviewer's link to ZR 23-22 a difference from the repository; ZR 23-22 is the floor-area-ratio section and is captured as zr-23-22; no difference was found). The owner's quoted words, the classification, the harness and the evidence are unchanged; the row was pending and bound to no accepted task. Requirements content digest resynced in the same commit. Source-055 is append-only and is not edited; backlog row DB-178 carries a note."
+  },
+  {
+   "at": "2026-10-07T22:04:38+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-056 (session 013RaGmC message 112, 2026-10-07: a quick update on where the build stands) and requirements D-090-R536 and R537, both pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-07T22:35:21+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-057 (session 013RaGmC message 113, 2026-10-07: the owner's decisions on the open choices, sent as the text of a /session-handoff command) and requirements D-090-R538 to R559, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-08T00:35:11+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-058 (session 013RaGmC message 114, 2026-10-08: resume, and make session handoffs go more smoothly) and requirements D-090-R560 to R564, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

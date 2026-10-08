@@ -345,6 +345,7 @@ def _texts_of(res) -> list[str]:
     texts = [f.statement for f in res.recorded.facts()]
     texts.append(res.area_statement)
     texts.append(res.large_lot.statement)
+    texts.extend(res.held_back)  # DB-175 (f): the held-back strings go through the guard too
     texts.extend(_way_texts(res.ways))
     return texts
 
@@ -407,7 +408,38 @@ def _all_returnable_texts(benchmark_geom) -> list[str]:
     texts.extend(_way_texts(decide_result_ways(plain_inputs(
         commercial_overlay=Recorded.PRESENT, commercial_overlay_code="C2-2",
         overlay_support=support_all(False)))))
+    # DB-175 (f): the two held-back strings (an unrecognised lot type; a statement that the lot IS
+    # in a special density area) reach the battery through _texts_of.
+    texts.extend(_held_back_strings(benchmark_geom))
     return texts
+
+
+def _held_back_strings(benchmark_geom) -> tuple[str, ...]:
+    """The entry function's two held-back strings: an unrecognised recorded lot type, and a user's
+    statement that the lot IS in a special density area (DB-175 f, M5-T132)."""
+    profile, prepared, geometry = benchmark_geom
+    res = gather_result_ways(
+        evaluator_inputs=_eval_doc(lot_type="duplex"), profile=profile, outline=prepared,
+        geometry=geometry, housing_kind="standard_residence", special_density_statement=False,
+    )
+    return res.held_back
+
+
+def test_the_two_held_back_strings_are_plain_db175_f(benchmark_geom):
+    """DB-175 (f) / rule L3: the entry function's two held-back strings carry no internal name
+    ('this piece' is gone) and are plain, true sentences; the guard battery (S7) covers them."""
+    held = _held_back_strings(benchmark_geom)
+    assert len(held) == 2
+    joined = " ".join(held)
+    assert "this piece" not in joined
+    assert "held back" not in joined.lower()
+    assert "duplex" in joined  # the unrecognised recorded lot type is named plainly
+    assert "special density area" in joined
+    for text in held:
+        low = text.lower()
+        for token in _FORBIDDEN:
+            assert token not in low, (token, text)
+        assert not _ID_RE.search(text), text
 
 
 def test_every_text_a_user_may_see_is_plain_and_true_s7(benchmark_geom):
