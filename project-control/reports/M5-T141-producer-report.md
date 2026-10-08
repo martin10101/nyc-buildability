@@ -124,3 +124,77 @@ left running).
 No file under `apps/web/src`; no browser spec; no Playwright configuration; no server application
 file (`services/api/app/**`); no existing test or fixture; no CI file; no dependency file. Only the
 one harness file, the one new server test file, and this report.
+
+---
+
+# Scope correction (second commit, on top of ee355bd5): the results request reader
+
+The owner reported a fault in the request reader of the results route; the orchestrator recorded a
+scope correction adding two allowed paths (`services/api/app/api/v1/results_request.py`,
+`services/api/tests/api/test_results_read_api.py`) and scenario S7. No server was started and no
+browser test was run for this commit.
+
+## Red proof (at ee355bd5, before the fix)
+
+```
+READER housing_program=[]: TypeError: unhashable type: 'list'
+READER housing_program={}: TypeError: unhashable type: 'dict'
+ROUTE status: 500    ROUTE text: Internal Server Error    provider calls: []
+```
+
+`read_results_request` tested `housing_program not in HOUSING_PROGRAMS` (a frozenset) before it knew
+the value was a string, so an unhashable value raised `TypeError`. That TypeError is not a
+`ResultsRequestError`, so the route did not map it: it answered a generic **500 Internal Server
+Error** (no typed `state`), and the injected provider was never reached. A number or null was
+already refused properly (`housing_program_invalid`).
+
+## The fix (smallest that is right)
+
+In `results_request.py`, the housing-program branch now checks the type first:
+`if not isinstance(housing_program, str) or housing_program not in HOUSING_PROGRAMS:`. A non-string
+(list, object, number, bool, null) is refused with the EXISTING code `housing_program_invalid` and
+its existing message; no new code name. The short-circuit means the unhashable `in` is never
+evaluated.
+
+## Step 3 - the same kind of fault elsewhere
+
+The same class of fault (an operation applied before the type is known) exists ONLY for
+housing_program. Verified against every listed wrong-kind value through the reader:
+
+- Body not an object (list, string, number, true, false, null): already refused `invalid_body` by
+  `not isinstance(body, dict)`. Unchanged (deliberate).
+- `floor_to_floor_ft` as a list, object, string, true or false: already refused
+  `floor_to_floor_ft_invalid`. `_is_number` tests `isinstance(int|float) and not isinstance(bool)`
+  FIRST, so `true`/`false` are refused (never read as 1/0) and a list/object never reaches
+  `math.isfinite`. Unchanged (deliberate).
+- `special_density_statement` as a list, object, string or number (incl. 1 and 0): already refused
+  `special_density_statement_invalid` by `not isinstance(raw, bool)` (1/0 are not booleans).
+  Unchanged (deliberate).
+
+No answer for a valid body changed (min body, entered height, true/false statement, and a
+non-positive height still behave exactly as before).
+
+## Tests added (`test_results_read_api.py`, section S7)
+
+One table of wrong-kind values per field, each run THROUGH THE READER (a typed `ResultsRequestError`
+with the field's code - `pytest.raises(ResultsRequestError)` so a `TypeError` would fail the test)
+AND THROUGH THE ROUTE (422 `validation_error` with that code, the spy provider never called, never a
+500), plus a named regression guard for the reported `{"housing_program": []}` fault:
+housing_program (`[]`, `{}`, `[std]`, `{a:1}`, 1, 1.5, true, false, null), non-object body
+(`[1,2,3]`, string, number, true, false, null), floor_to_floor_ft (`[]`, `{}`, "ten", true, false),
+special_density_statement (`[]`, `{}`, "yes", 1, 0, 1.5).
+
+## Checks for the second commit (direct exit codes)
+
+- `python -m ruff check .` (services/api): exit 0.
+- `python -m pytest -q -p no:cacheprovider tests/api tests/journey` (services/api): exit 0,
+  1194 passed (1139 after the first commit + 55 new).
+- `python3 tools/modularity_check.py --check` (repo root): exit 0.
+- `git status --porcelain` empty after the commit; `git diff --name-status ee355bd5 HEAD` = only
+  `results_request.py`, `test_results_read_api.py` and this report.
+
+## What did not change (second commit)
+
+No harness file, no browser spec, no Playwright configuration, no other server file, no CI file, no
+dependency file; `build_option` and the valid-body behaviour of the reader are untouched. Only
+`results_request.py`, `test_results_read_api.py` and this report.

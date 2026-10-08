@@ -28,7 +28,7 @@ from app.api.v1.results_read import (
     RESULTS_READ_STATUS_STATE_MATRIX,
     get_results_study_inputs_provider,
 )
-from app.api.v1.results_request import build_option, read_results_request
+from app.api.v1.results_request import ResultsRequestError, build_option, read_results_request
 from app.api.v1.study_inputs import assemble_study_inputs
 from app.api.v1.study_setup_document import build_study_setup_document
 from app.config import INTERNAL_RESULTS_ENABLED_ENV_VAR
@@ -592,3 +592,117 @@ def test_unexpected_exception_is_500_internal_error(enabled, monkeypatch) -> Non
     payload = response.json()
     assert payload["state"] == "internal_error"
     _assert_no_document_or_leak(payload, marker, response.text)
+
+
+# =========================================================================== S7 (wrong-kind values)
+# M5-T141 scope correction: a value of the WRONG KIND for a field is refused with that field's typed
+# code - through the reader (a typed ResultsRequestError, NEVER another exception: an unhashable
+# housing program used to raise TypeError, and the route then answered a generic 500) and through
+# the route (a 422 validation_error carrying that code; the provider is never reached; never a 500).
+# Only housing_program was fixed; floor_to_floor_ft, special_density_statement and the not-an-object
+# body were already refused correctly and deliberately (explicit isinstance / number checks), and
+# these tests lock that behaviour. No answer for a valid body changes.
+
+_STD = "standard_residence"
+# Wrong KIND for the housing program: unhashable (the reported fault), and the other non-strings.
+_WRONG_HOUSING_PROGRAM = [[], {}, [_STD], {"a": 1}, 1, 1.5, True, False, None]
+# A parsed body that is not a JSON object.
+_NON_OBJECT_BODIES = [[1, 2, 3], "a string", 123, 1.5, True, False, None]
+# Wrong KIND for the optional floor-to-floor height (true/false are numbers to Python; refused).
+_WRONG_FLOOR_TO_FLOOR = [[], {}, "ten", True, False]
+# Wrong KIND for the optional density statement (anything but a real boolean; 1/0 are not booleans).
+_WRONG_DENSITY_STATEMENT = [[], {}, "yes", 1, 0, 1.5]
+
+
+def _reader_refuses(body, *, code, field) -> None:
+    """``read_results_request(body)`` raises a typed ResultsRequestError (never another exception,
+    e.g. TypeError) carrying ``code`` and ``field``."""
+    with pytest.raises(ResultsRequestError) as excinfo:
+        read_results_request(body)
+    assert excinfo.value.code == code
+    assert excinfo.value.field == field
+
+
+def _route_refuses(*, code, field, json_body=None, content=None) -> None:
+    """POST ``json_body`` (or raw ``content``) with a SPY provider: a 422 validation_error carrying
+    ``code``/``field``, the provider never reached, and never a 500."""
+    calls: list[str] = []
+
+    def spy(bbl, correlation_id, *, selected=None):
+        calls.append(bbl)
+        raise AssertionError("provider must not be reached on a refused body")
+
+    client = TestClient(app_with(spy))
+    url = f"/api/v1/properties/{NORTHERN_BBL}/results"
+    response = client.post(url, content=content) if content is not None else client.post(
+        url, json=json_body
+    )
+    assert response.status_code == 422, response.text
+    payload = response.json()
+    assert payload["state"] == "validation_error"
+    assert (422, "validation_error") in RESULTS_READ_STATUS_STATE_MATRIX
+    assert payload["detail"]["code"] == code
+    if field is None:
+        assert "field" not in payload["detail"]
+    else:
+        assert payload["detail"]["field"] == field
+    assert calls == []
+
+
+# --------------------------------------------------------------------------- housing_program
+@pytest.mark.parametrize("value", _WRONG_HOUSING_PROGRAM)
+def test_s7_reader_refuses_wrong_kind_housing_program(value) -> None:
+    _reader_refuses({"housing_program": value}, code="housing_program_invalid",
+                    field="housing_program")
+
+
+@pytest.mark.parametrize("value", _WRONG_HOUSING_PROGRAM)
+def test_s7_route_refuses_wrong_kind_housing_program(enabled, value) -> None:
+    _route_refuses(json_body={"housing_program": value}, code="housing_program_invalid",
+                   field="housing_program")
+
+
+# --------------------------------------------------------------------------- not an object
+@pytest.mark.parametrize("value", _NON_OBJECT_BODIES)
+def test_s7_reader_refuses_non_object_body(value) -> None:
+    _reader_refuses(value, code="invalid_body", field=None)
+
+
+@pytest.mark.parametrize("value", _NON_OBJECT_BODIES)
+def test_s7_route_refuses_non_object_body(enabled, value) -> None:
+    _route_refuses(content=json.dumps(value), code="invalid_body", field=None)
+
+
+# --------------------------------------------------------------------------- floor_to_floor_ft
+@pytest.mark.parametrize("value", _WRONG_FLOOR_TO_FLOOR)
+def test_s7_reader_refuses_wrong_kind_floor_to_floor(value) -> None:
+    _reader_refuses({"housing_program": _STD, "floor_to_floor_ft": value},
+                    code="floor_to_floor_ft_invalid", field="floor_to_floor_ft")
+
+
+@pytest.mark.parametrize("value", _WRONG_FLOOR_TO_FLOOR)
+def test_s7_route_refuses_wrong_kind_floor_to_floor(enabled, value) -> None:
+    _route_refuses(json_body={"housing_program": _STD, "floor_to_floor_ft": value},
+                   code="floor_to_floor_ft_invalid", field="floor_to_floor_ft")
+
+
+# --------------------------------------------------------------------------- density statement
+@pytest.mark.parametrize("value", _WRONG_DENSITY_STATEMENT)
+def test_s7_reader_refuses_wrong_kind_density_statement(value) -> None:
+    _reader_refuses({"housing_program": _STD, "special_density_statement": value},
+                    code="special_density_statement_invalid", field="special_density_statement")
+
+
+@pytest.mark.parametrize("value", _WRONG_DENSITY_STATEMENT)
+def test_s7_route_refuses_wrong_kind_density_statement(enabled, value) -> None:
+    _route_refuses(json_body={"housing_program": _STD, "special_density_statement": value},
+                   code="special_density_statement_invalid", field="special_density_statement")
+
+
+def test_s7_reported_fault_is_now_a_typed_422_not_a_500(enabled) -> None:
+    """The exact reported fault: a list as the housing program no longer raises TypeError / a 500 -
+    the reader refuses it typed and the route answers a 422 validation_error (regression guard)."""
+    _reader_refuses({"housing_program": []}, code="housing_program_invalid",
+                    field="housing_program")
+    _route_refuses(json_body={"housing_program": []}, code="housing_program_invalid",
+                   field="housing_program")

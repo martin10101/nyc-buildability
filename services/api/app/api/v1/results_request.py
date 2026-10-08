@@ -126,7 +126,12 @@ def read_results_request(body: object) -> ResultsRequest:
             field="housing_program",
         )
     housing_program = body["housing_program"]
-    if housing_program not in HOUSING_PROGRAMS:
+    # The type is checked explicitly BEFORE the set-membership test: a non-string value (a list or
+    # object is unhashable) would otherwise raise TypeError from ``in`` and the route would answer a
+    # generic 500 instead of this typed 422. A number, bool or null is already not a member, but is
+    # refused on the same branch so the behaviour is uniform - the existing out-of-vocabulary code
+    # and message, never a new code.
+    if not isinstance(housing_program, str) or housing_program not in HOUSING_PROGRAMS:
         raise ResultsRequestError(
             "housing_program_invalid",
             "the housing program is not one the program offers",
