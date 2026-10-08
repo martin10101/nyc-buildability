@@ -9,12 +9,12 @@
   passing test. Empty python test files are fine.
 - DO keep every seeded placeholder line <= 100 chars — ruff E501 lints app/ placeholders and is
   the api CI job's first step (wave-10 seam 06db6449 reddened CI until 580d1125).
-- DO run the web checks on the Linux dev server before pushing (owner D-090-R170/R171): in
-  `apps/web`, `npx --yes npm@11.18.0 ci --no-audit --no-fund` (once per checkout or worktree), then
-  `npm run lint`, `typecheck`, `test`, `build`, and `CI=true npm run test:e2e` with the lanes venv
-  first on PATH and `PYTHONPATH=<checkout>/services/api`. Lockfile packages only; CI on the pushed
-  head stays the final word; never mark web behavior verified from reasoning alone. NEVER on the
-  owner's PC (thin client).
+- DO run focused web checks on the Linux dev server while developing (owner D-090-R170/R171, R639):
+  in `apps/web`, `npx --yes npm@11.18.0 ci --no-audit --no-fund` (once per worktree), `npm run lint`,
+  `typecheck`, touched tests; e2e with ONLY `services/api/app` on `PYTHONPATH` (DB-207). Full suites
+  + security checks must PASS IN CI on the exact head accepted or merged; later code changes need
+  them again. Lockfile packages only; never mark web behavior verified from reasoning alone. NEVER
+  on the owner's PC (thin client).
 - DO run `python -m ruff check services/api` before any api checkpoint/commit — it is the api
   CI job's first step; a lint miss costs a CI round.
 - DON'T read jsdom `getContext`/WebGL console noise as the failure (MapLibre components spam
@@ -47,8 +47,8 @@
 - DO expect `@eslint/js` recommended, when first enabled, to flag intentional control-char regexes (`no-control-regex`), a
   literal U+FEFF in a regex (`no-irregular-whitespace`) and double spaces in test regexes — fix behavior-identically
   (line-scoped justified disable, `\uFEFF`, ` {2}`), never by weakening the config (M0-T180 S3).
-- DO run the FULL `pytest -q` from services/api before any api PR: a new fixture in a shared
-  `packages/contracts/fixtures/valid/<schema>/` dir is globbed by the Lane D/E snapshot suites (tests/cad,
-  tests/drawings) and needs an approved snapshot per fixture (#387 F1: 3 red tests a subset run missed).
+- DO have the FULL `pytest -q` of services/api PASS IN CI on the exact head accepted or merged (R639);
+  locally: ruff + touched folders, plus tests/cad and tests/drawings when a shared
+  `packages/contracts/fixtures/valid/<schema>/` fixture changes (snapshot per fixture; #387 F1).
 - DO run `python .github/scripts/validate_contracts.py` + `pytest .github/scripts/tests` before pushing a
   contract schema: it fails closed on any keyword outside KNOWN_KEYWORDS (M5-T128: `minProperties`).
