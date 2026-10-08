@@ -113,6 +113,11 @@ export default defineConfig({
         // the default (both windows hidden, no fetch) keeps being proven.
         INTERNAL_HIDDEN_ISSUE_FLAGS_UI_ENABLED: "1",
         INTERNAL_PARITY_UI_ENABLED: "1",
+        // M5-T140 (ruling R1): the results panel is behind this server-read, default-off website
+        // switch (distinct from the API read-route flag INTERNAL_RESULTS_ENABLED, which the fixture
+        // harness turns on for itself). Set ONLY on this :3001 server; the :3000 server stays
+        // flag-OFF so the default (the Results tool hidden, no call) keeps being proven.
+        INTERNAL_RESULTS_UI_ENABLED: "1",
       },
     },
   ],

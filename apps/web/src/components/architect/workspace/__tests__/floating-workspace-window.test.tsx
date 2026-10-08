@@ -270,6 +270,12 @@ describe("FloatingWorkspaceWindow", () => {
 });
 
 describe("tool window descriptions (plan §5a item 5)", () => {
+  it("includes the Results tool with its plain label and description (M5-T140)", () => {
+    expect(DASHBOARD_TOOLS).toContain("results");
+    expect(TOOL_LABELS.results).toBe("Results");
+    expect(TOOL_DESCRIPTIONS.results.length).toBeGreaterThan(0);
+  });
+
   it("gives every tool a plain, code-free one-line description", () => {
     for (const tool of DASHBOARD_TOOLS) {
       const description = TOOL_DESCRIPTIONS[tool];

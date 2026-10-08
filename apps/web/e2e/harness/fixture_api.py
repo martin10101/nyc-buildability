@@ -66,6 +66,7 @@ from app.api.v1.parity_read import (
     get_dof_transport,
 )
 from app.api.v1.properties import get_pluto_fetcher
+from app.api.v1.results_read import get_results_study_inputs_provider
 from app.api.v1.rule_evaluation import get_spatial_substrate_provider
 from app.api.v1.study_inputs import pluto_study_inputs_provider
 from app.api.v1.study_read import get_study_inputs_provider
@@ -76,6 +77,7 @@ from app.api.v1.transit_parking_read import (
 from app.config import (
     INTERNAL_HIDDEN_ISSUE_FLAGS_READ_ENABLED_ENV_VAR,
     INTERNAL_PARITY_READ_ENABLED_ENV_VAR,
+    INTERNAL_RESULTS_ENABLED_ENV_VAR,
     INTERNAL_RULE_EVAL_ENABLED_ENV_VAR,
     INTERNAL_SCENARIO_ENABLED_ENV_VAR,
     INTERNAL_STUDY_READ_ENABLED_ENV_VAR,
@@ -620,6 +622,54 @@ def harness_parity_dof_transport():
     return transport
 
 
+def harness_results_inputs_provider():
+    """The results route's study-inputs provider over the recorded 215-16 Northern benchmark pack
+    (M5-T140 Part B). It mirrors the accepted results-route test's ``benchmark_provider``:
+    ``assemble_study_inputs`` builds the property profile from the recorded PLUTO body and threads
+    the recorded B-03 site geometry, the prepared tax-map outline and the benchmark pack's confirmed
+    identity address (a corner lot needs it to pick the front lot line). Built offline through the
+    REAL connectors from the recorded packs - no response byte is hand-written. Served for the
+    Northern subject only; any other BBL is the route's fail-safe 503 (never a fabricated document).
+    The ``tests.*`` imports are the canonical recorded-Northern replay (the journey/results suites
+    use them); importing them inside the function keeps module import decoupled from the test tree."""
+    from app.api.v1.study_inputs import StudyInputsUnavailableError, assemble_study_inputs
+    from app.spatial.site_geometry import (
+        derive_site_geometry,
+        lot_outline_from_mappluto,
+        street_data_from_pages,
+    )
+    from app.spatial.site_geometry.outline import prepare_outline
+    from tests.contracts.test_evaluator_inputs import _benchmark_identity_address
+    from tests.spatial._northern_replay import (
+        DCM_ENVELOPE,
+        replay_dcm_page,
+        replay_lot_geometry,
+        replay_pluto,
+    )
+
+    lot, _unused = lot_outline_from_mappluto(replay_lot_geometry())
+    streets = street_data_from_pages([replay_dcm_page()], envelope=DCM_ENVELOPE)
+    geometry = derive_site_geometry(lot, streets)
+    prepared, _reason = prepare_outline(lot)
+    address = _benchmark_identity_address()
+
+    def provide(bbl: str, correlation_id: str, *, selected=None):
+        if bbl != NORTHERN_STUDY_BBL:
+            raise StudyInputsUnavailableError(
+                "the recorded harness serves the Northern benchmark lot only",
+                reason="not_served",
+            )
+        return assemble_study_inputs(
+            replay_pluto(),
+            env={"LANE_B_ENABLED": "1"},
+            address=address,
+            site_geometry=geometry,
+            prepared_outline=prepared,
+        )
+
+    return provide
+
+
 def build_app():
     # M4-T005: enable the internal rule-evaluation endpoint's SERVER flag for
     # this test process only (independent of the frontend flag). The no-call
@@ -667,6 +717,20 @@ def build_app():
         harness_study_fetcher, clock=FIXED_CLOCK, version_probe=harness_version_probe
     )
     app.dependency_overrides[get_study_inputs_provider] = lambda: study_inputs_provider
+    # M5-T140 Part B: the results route (POST /api/v1/properties/{bbl}/results), mounted in
+    # app.main (self-gated, default off). Enable its reachability flag INTERNAL_RESULTS_ENABLED
+    # and the engine's Lane A gate LANE_A_ENABLED FOR THIS HARNESS PROCESS ONLY, and inject a
+    # recorded-Northern study-inputs provider that threads the B-03 site geometry, the prepared
+    # tax-map outline and the confirmed identity address the engine chain needs (the results route
+    # derives the lot's five conditions from that evidence). Route / engine chain / contract guard
+    # are the production code paths and no response byte is hand-written. Production sets neither
+    # flag, so the route stays a generic 404. Served for the Northern subject only; any other BBL
+    # is the route's fail-safe 503. The website switch INTERNAL_RESULTS_UI_ENABLED is set on the
+    # :3001 Next server only (playwright.config.ts), never here.
+    os.environ[INTERNAL_RESULTS_ENABLED_ENV_VAR] = "1"
+    os.environ[LANE_FLAG_ENV_VARS["A"]] = "1"
+    results_inputs_provider = harness_results_inputs_provider()
+    app.dependency_overrides[get_results_study_inputs_provider] = lambda: results_inputs_provider
     # W5: the three W2/W3/W4 internal reads, mounted in app.main (self-gated and
     # default off). Enable each flag FOR THIS PROCESS ONLY and inject the one
     # provider per route from a recorded official pack, so route/connector/builder/
@@ -696,8 +760,10 @@ def build_app():
             "http://127.0.0.1:3000", "http://localhost:3000",
             "http://127.0.0.1:3001", "http://localhost:3001",
         ],
-        allow_methods=["GET"],
-        allow_headers=["Accept"],
+        # GET for the read routes; POST for the M5-T140 results route, whose JSON body makes the
+        # browser send a Content-Type the preflight must allow.
+        allow_methods=["GET", "POST"],
+        allow_headers=["Accept", "Content-Type"],
         expose_headers=["X-Correlation-ID"],
     )
     return app

@@ -1,1 +1,52 @@
-/* Placeholder (task M5-T140): layout of the results panel's form and states. */
+/* Results panel layout (task M5-T140). Layout of the form and the states only; the shown
+ * results use the existing three-answers cards and global classes (card, section-note,
+ * primary-button, architect-eyebrow). No colour carries meaning; the state is in the text. */
+
+.results-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.results-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.results-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.results-field > label {
+  font-weight: 600;
+}
+
+.results-field select,
+.results-field input[type="text"] {
+  max-width: 24rem;
+  padding: 0.4rem 0.5rem;
+  font: inherit;
+}
+
+.results-density > label {
+  font-weight: 400;
+  display: inline;
+}
+
+.results-field-error {
+  color: inherit;
+  font-weight: 600;
+}
+
+.results-stale {
+  font-weight: 600;
+}
+
+.results-document {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}

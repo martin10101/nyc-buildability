@@ -7,6 +7,7 @@ import {
   RULES_NOT_REVIEWED_REASON,
   STRIP_MAX_ITEMS,
   displayQuantity,
+  gapKindLine,
   notAvailableText,
   quantityText,
   type AnswerKey,
@@ -128,7 +129,7 @@ for (const { name, doc } of FIXTURES) {
       }
     });
 
-    it("shows a not-available answer as exactly 'Not available — <reason>' and nothing else", () => {
+    it("shows a not-available answer as 'Not available — <reason>', with only its kind-of-gap line", () => {
       render(<ThreeAnswersPanel results={doc} showDraftValues />);
       for (const key of ANSWER_KEYS) {
         const answer = doc.answers[key];
@@ -138,9 +139,18 @@ for (const { name, doc } of FIXTURES) {
         expect(expected.startsWith("Not available — ")).toBe(true);
         const line = within(cardEl).getByTestId("answer-not-available");
         expect(line.textContent).toBe(expected);
-        // The card holds its title and that one line: no number, no caution tag, no details.
-        expect(cardEl.textContent).toBe(`${ANSWER_TITLES[key]}${expected}`);
-        expect(without(cardEl.textContent ?? "", expected)).not.toMatch(/\d/);
+        // An answer that carries a gap_kind also shows the plain-words kind line (ruling R6); a
+        // not-available answer with no gap_kind shows none.
+        const gapLine = gapKindLine(answer.gap_kind);
+        if (gapLine) {
+          expect(within(cardEl).getByTestId("answer-gap-kind").textContent).toBe(gapLine);
+        } else {
+          expect(within(cardEl).queryByTestId("answer-gap-kind")).toBeNull();
+        }
+        // The card holds its title, that one line and (if any) its kind line: no number, no
+        // caution tag, no details.
+        expect(cardEl.textContent).toBe(`${ANSWER_TITLES[key]}${expected}${gapLine ?? ""}`);
+        expect(without(cardEl.textContent ?? "", expected, gapLine ?? "")).not.toMatch(/\d/);
         expect(within(cardEl).queryByTestId("answer-headline")).toBeNull();
         expect(within(cardEl).queryAllByTestId("answer-value")).toHaveLength(0);
         expect(within(cardEl).queryAllByTestId("answer-exception")).toHaveLength(0);
@@ -161,9 +171,11 @@ for (const { name, doc } of FIXTURES) {
               ? `Not available — ${RULES_NOT_REVIEWED_REASON}`
               : null;
         if (expected === null) continue;
+        // Only a natively not-available answer carries its own gap_kind line; the draft gate adds none.
+        const gapLine = answer.status === "not_available" ? gapKindLine(answer.gap_kind) : null;
         expect(within(cardEl).getByTestId("answer-not-available").textContent).toBe(expected);
-        expect(cardEl.textContent).toBe(`${ANSWER_TITLES[key]}${expected}`);
-        expect(without(cardEl.textContent ?? "", expected)).not.toMatch(/\d/);
+        expect(cardEl.textContent).toBe(`${ANSWER_TITLES[key]}${expected}${gapLine ?? ""}`);
+        expect(without(cardEl.textContent ?? "", expected, gapLine ?? "")).not.toMatch(/\d/);
       }
       if (doc.draft) {
         expect(screen.queryAllByTestId("answer-headline")).toHaveLength(0);
@@ -421,6 +433,25 @@ describe("the three-way value-states layer (results contract 1.3.0; S14, R556, R
     // the withheld value never shows a number, and its reason carries no internal snake_case code
     const reason = within(withheld).getByTestId("answer-withheld-reason");
     expect(reason.textContent ?? "").not.toMatch(SNAKE_CASE);
+  });
+
+  it("S5: a withheld value shows its kind-of-gap line beside its reason (journey fixture, R6)", () => {
+    const doc = loadResultsFixture("recorded_215_16_northern_journey");
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const envelope = card("permitted_envelope");
+    const gapLines = within(envelope)
+      .getAllByTestId("answer-gap-kind")
+      .map(element => element.textContent);
+    // Coverage, rear yard and the setback are withheld as work still owed on this lot.
+    expect(gapLines.length).toBeGreaterThanOrEqual(3);
+    for (const line of gapLines) {
+      expect(line).toBe("Not built yet: this part of the program is still owed.");
+    }
+    // The building option is a whole not-available answer carrying the same kind line.
+    const option = card("building_option");
+    expect(within(option).getByTestId("answer-gap-kind").textContent).toBe(
+      "Not built yet: this part of the program is still owed.",
+    );
   });
 
   it("a withheld HEADLINE key shows its reason, never the first value (R556)", () => {
