@@ -1,0 +1,17 @@
+{
+  "task_id": "M5-T139",
+  "producer_agent": "backend-engineer",
+  "report_file": "project-control/reports/M5-T139-producer-report.md",
+  "submitted_at": "2026-10-08T14:45:03.786963+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T139-evidence-map.json",
+  "content_manifest_sha256": "93bb7074c894a9146de464a0ac76b59a27e3618f42c7d169973dbe0fe5331e15",
+  "reviewed_sha": "091860aa936a40129b374b79050806bed92b50d3",
+  "applicable_requirements": [
+    "D-090-R256",
+    "D-090-R582",
+    "D-090-R584",
+    "D-090-R588"
+  ],
+  "updated_at": "2026-10-08T14:45:04.533990+00:00"
+}
