@@ -127,7 +127,7 @@ One small component (the 120 sq ft shared utility room) is shared between the sh
 
 Quoted (ZR 23-20, capture `zr-23-20`, digest `0685a2e4e7002830a1c007dea23ac68c5c441f1a32eeb2e37b78000c5765d7cc`): "Where floor area in a building is shared by multiple uses, the floor area for such shared portion shall be attributed to each use proportionately, based on the percentage each use occupies of the total floor area of the zoning lot, less any shared floor area"
 
-CONDITIONAL. ZR 23-20 gives the proportional attribution quoted above. How a mixed building in a Commercial District then COMBINES its residential and commercial floor areas is governed by the mixed-building floor-area rules (the reviewer names ZR 35-31), which are not captured yet, so the effect of this 98.32 sq ft on the residential figure is withheld. The ratio below uses the residential EXCLUSIVE floor area (10,428 sq ft) only; the attribution is shown but not added.
+CONDITIONAL. ZR 23-20 gives the proportional attribution quoted above; ZR 35-31 is now captured and read (M4-T035 step P5) and carries the same attribution plus a separate maximum floor area ratio for each use and one combined whole-lot cap. The effect of this 98.32 sq ft on the residential figure stays WITHHELD because the maximum commercial floor area ratio (Article III, Chapter 3) is still not captured (DB-188), so the whole-building maximum cannot be read, and whether the attributed shared floor area is ADDED to the residential figure the estimate uses is a question of law, not an owner's preference. The ratio below uses the residential EXCLUSIVE floor area (10,428 sq ft) only; the attribution is shown but not added.
 
 ## The legal unit cap (a separate figure)
 
@@ -144,7 +144,7 @@ CONDITIONAL. ZR 23-20 gives the proportional attribution quoted above. How a mix
 ## What this example does not show
 
 - It does not establish a typical ratio or validate any percentage.
-- It does not settle how the mixed building combines its residential and commercial floor areas: the shared-space attribution's effect on the residential figure is withheld until the mixed-building text (ZR 35-31) is captured and read.
+- It does not settle how the mixed building combines its residential and commercial floor areas: ZR 35-31 is now captured and read (M4-T035 step P5), but the shared-space attribution's effect on the residential figure stays withheld because the maximum commercial floor area ratio (Article III, Chapter 3) is still not captured (DB-188) and whether the attributed shared floor area is added to the residential figure is a question of law.
 - The withdrawn 0.6676 ratio of the earlier version was computed on a floor that did not fit (1,743 sq ft of components on a 1,260 sq ft outline); this rebuilt version gives 0.6828.
 - It is not a legal or professional determination.
 
@@ -159,4 +159,5 @@ CONDITIONAL. ZR 23-20 gives the proportional attribution quoted above. How a mix
 |---|---|---|
 | 2026-10-07 | Example created for the measurement basis record. | scenario-optimization-engineer |
 | 2026-10-07 | Rebuilt so that every floor has a stated outside outline and the components on each floor add up to it exactly. The earlier version listed 1,743 sq ft of components on an upper floor whose stated outline was 1,260 sq ft (the apartment rooms alone filled the inside outline) and stated no ground-floor outline. The earlier 0.6676 ratio is WITHDRAWN; the rebuilt building gives residential exclusive zoning floor area 10,428, HPD 7,120, ratio 0.6828. A shared utility room and the ZR 23-20 attribution line were added. | scenario-optimization-engineer |
+| 2026-10-08 | Corrected two now-false statements after ZR 35-31 was captured and read (M4-T035 step P5, a dependency of M5-T135): what_it_does_not_show[1] and shared_floor_area.conditional_note no longer say ZR 35-31 is 'not captured yet' or withheld until it is captured. They now state the effect on the residential figure stays withheld/conditional because the maximum commercial floor area ratio (Article III, Chapter 3) is still not captured (DB-188) and whether the attributed shared floor area is added to the residential figure is a question of law. NO figure changed: the ratio stays 0.6828 and the attribution stays 98.32 sq ft residential / 21.68 commercial. | scenario-optimization-engineer |
 

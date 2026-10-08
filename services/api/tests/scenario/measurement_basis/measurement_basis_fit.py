@@ -227,9 +227,17 @@ def shared_floor_area_errors(example_id: str, example: dict) -> list[str]:
             errs.append(f"{example_id}: attributed_to_commercial recomputes to {want_comm}")
         if not isinstance(shared["capture"], dict):
             errs.append(f"{example_id}: a shared attribution must cite a capture (ZR 23-20)")
-        if "not captured yet" not in str(shared["conditional_note"]).lower():
-            errs.append(f"{example_id}: the shared attribution must say the mixed-building "
-                        "combination text is not captured yet (conditional)")
+        note = str(shared["conditional_note"]).lower()
+        if "not captured yet" in note:
+            errs.append(f"{example_id}: the shared attribution note must not call ZR 35-31 "
+                        "'not captured yet' (M4-T035 captured and read it)")
+        if "withheld" not in note and "conditional" not in note:
+            errs.append(f"{example_id}: the shared attribution outcome must stay withheld or "
+                        "conditional")
+        if ("article iii" not in note and "question of law" not in note
+                and "commercial floor area ratio" not in note):
+            errs.append(f"{example_id}: the shared attribution must stay conditional on the "
+                        "commercial floor area ratio or the question of law")
     else:
         if ids_marked_shared:
             errs.append(f"{example_id}: no component may be marked 'shared' when "

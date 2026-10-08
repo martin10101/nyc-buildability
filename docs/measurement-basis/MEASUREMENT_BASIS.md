@@ -18,8 +18,10 @@ separate; and, through three made-up worked examples, checks that the method rec
 **What this record does not do.** It builds no estimator, approves no default, and
 validates no percentage. The starting values discussed elsewhere - 700 sq ft per
 apartment, a 25 percent allowance, 10 ft residential floors and a 15 ft ground floor -
-remain **unapproved assumptions**; this record validates none of them. Two or three
-examples cannot establish a typical figure.
+are **preliminary, editable assumptions** the owner approved only as a starting point on
+2026-10-07 (section 8a); this record validates none of them, and the owner's approval
+validates neither the assumptions nor the worked examples (R545). Two or three examples
+cannot establish a typical figure.
 
 ---
 
@@ -185,21 +187,41 @@ over-cladding and re-cladding of existing-building walls and grandfathered walls
 **not** a licence to subtract the ordinary exterior walls of a new building. Every worked
 example therefore **counts** the full exterior wall thickness under zoning.
 
-**The energy exclusion's eligibility is not captured yet (R516).** ZR 12-10 excludes:
+**The energy exclusion's eligibility, now read from the captures (R516).** ZR 12-10 excludes:
 
 > "floor space within a fully electrified building or an ultra low energy building, of an
-> amount equivalent to five percent of the floor area"
+> amount equivalent to five percent of the floor area located within such building, and
+> exclusive of any floor space otherwise excluded from floor area"
 
 (capture `zr-12-10-floor-area`, digest
-`e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9`). The two defined terms
-this rests on - **"fully electrified building"** and **"ultra low energy building"** - are
-**not captured yet** (M4-T034 captures them); their conditions (which route concerns
-buildings existing on December 6, 2023, and which performance and professional-verification
-requirements a new building must meet) are not read here. So the energy exclusion's
-**eligibility is withheld and no example takes it**. A user's statement that a building
-qualifies would support only a **conditional** result; it never establishes eligibility.
-There is **no general "confirm it applies" switch** for the energy, wall or amenity
-provisions anywhere in this record.
+`e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9`, exclusion (15)). The two
+defined terms this rests on are now captured and read - this is a **draft reading of the law
+by an AI, not professionally reviewed**:
+
+- A **"fully electrified building"** is "a building existing on December 6, 2023" that
+  complies with Local Law 154 of 2021 (capture `zr-12-10-fully-electrified-building`, digest
+  `2ea4afe29ec1037695e8df5e6d90bd313e611b3db2949b61cc9e115ceac9321c`). Because it must already
+  exist on that date, a new, only-proposed building **cannot** be a fully electrified building.
+- An **"ultra low energy building"** is put forward at plan approval and confirmed only after
+  construction: "At time of application for plan approval to the Commissioner of Buildings,
+  materials shall be submitted demonstrating" compliance with Local Law 154 of 2021, a
+  reduced-energy design (net-zero for buildings of three stories or less, or at least 15
+  percent better than the New York City Energy Conservation Code model) and a registered
+  design professional's verification; and "No final certificate of occupancy shall be issued
+  for such a building until a report prepared by a registered design professional has been
+  submitted to the Commissioner of Buildings" (capture `zr-12-10-ultra-low-energy-building`,
+  digest `8a1d64182201fb1085b90b07b6ba35daa1c675388499ab5530e49420f0380203`). So a proposed
+  building **can** be put forward as an ultra low energy building at plan approval, but is
+  confirmed only after construction; the reviewer's point that new construction can qualify
+  through the ultra-low-energy route (R516) is borne out by a captured text.
+
+**What is still not sure.** Local Law 154 of 2021 and the New York City Energy Conservation
+Code, on which both definitions rest, are **not captured yet** (backlog row DB-188 item 7,
+which is outside the Zoning Resolution). So the eligibility is stated only as far as the
+captured ZR 12-10 definitions bear it out. A user's statement that a building qualifies
+supports only a **conditional** result; it never establishes eligibility. There is **no
+general "confirm it applies" switch** for the energy, wall or amenity provisions anywhere in
+this record, and **no example takes the energy exclusion**.
 
 ---
 
@@ -272,7 +294,9 @@ The estimate starts from the **proposed building's** residential zoning floor ar
 floor area a real layout or massing can accommodate once setbacks, yards and the building's
 shape are taken into account - **never** from the "allowed" or maximum permitted floor area
 (R435, R509). The **maximum permitted floor area is a separate figure**, a limit to check
-the proposal against, and it is never the area the estimate starts from. Where a detailed
+the proposal against, and it is never the area the estimate starts from. This is the owner's
+decision of 2026-10-07 (R544): "Use the residential floor area the proposed building actually
+accommodates." Where a detailed
 layout already measures the apartments themselves, that measured dwelling-unit area is used
 **directly**, in place of floor area times the ratio. **No count is computed in this
 record.**
@@ -303,7 +327,8 @@ The legal maximum number of dwelling units is a **separate** figure. Under ZR 23
 the maximum residential floor area divided by the dwelling-unit factor (680, where it
 applies), with a fraction of three-quarters or more counting as one unit. This is a density
 **ceiling**, not proof that that many apartments physically fit, and it is not derived from
-the physical estimate (and the physical estimate is not derived from it) - R392, R404. The
+the physical estimate (and the physical estimate is not derived from it) - R392, R404. This
+is the owner's decision of 2026-10-07 (R544): "Keep the legal ceiling separate." The
 cap's worked values live in the R6B reference cases (`docs/reference-cases/R6B/`). Each
 example below shows its legal cap as a distinct number from its measured
 areas.
@@ -336,22 +361,55 @@ never offered as a choice or a "confirm it applies" switch. It does **not** nece
 increase the residential figure. Where the areas the attribution needs are missing, the
 result that depends on it stays **"not known"** or explicitly conditional.
 
-**What is not settled.** How a mixed building in a Commercial District then **combines** its
-residential and commercial floor areas - the mixed-building floor-area rules the reviewer
-names as ZR 35-31 - is **not captured yet** (another task of this wave, M4-T034, captures
-it). That text is not read here, so how the attributed shared floor area feeds the
-residential figure for a commercial-district mixed building is **withheld** until the text
-is captured and read. (The ZR 12-10 definition of a "mixed building" **is** captured:
-"A 'mixed building' is a building in a Commercial District used partly for residential use
-and partly for community facility or commercial use" - capture `zr-12-10-mixed-building`,
-digest `6eb9a38952df680333bf54add4cd40a9428e338c1177e1dfe7ee35f35c9727e0`.)
+**How a mixed building combines its floor areas (now read from the captures).** The
+mixed-building floor-area sections for a Commercial District are now captured and read
+(dependencies M4-T034 and M4-T035; the step-P5 reading
+`docs/reference-cases/R6B/cases/step-p5-worked.json`). This is a **draft reading of the law
+by an AI, not professionally reviewed**. ZR 35-30 is a title-only umbrella heading ("35-30
+APPLICABILITY OF FLOOR AREA AND OPEN SPACE REGULATIONS"; capture `zr-35-30`, digest
+`b1102df91cae9eaeced5f6a7bae0519c9e8db24a2c2df64654cbaa086fce2def`). ZR 35-31 (capture
+`zr-35-31`, digest `65e29c688be2f04b8963b87bc564afb16539c497b19b1219f58a0cf8edad80fe`)
+governs the floor area of a commercial-district zoning lot: it sets a **separate maximum
+floor area ratio for each use** - "The maximum floor area ratio permitted for a commercial
+or community facility use shall be as set forth in Article III, Chapter 3, and the maximum
+floor area ratio permitted for a residential use shall be as set forth in Article II,
+Chapter 3" - **and one combined whole-lot cap** - "The total of all such floor area ratios
+shall not exceed the greatest floor area ratio permitted for any such use on the zoning lot,
+except where explicitly stated otherwise." The shared-floor-area attribution quoted above
+appears in ZR 35-31 as well as ZR 23-20; the two differ only in punctuation (ZR 35-31 has no
+comma before "less": "based on the percentage each use occupies of the total floor area of
+the zoning lot less any shared floor area"). ZR 35-32 (capture `zr-35-32`, digest
+`d1aad127c4ea150d3d6c388dbb40b5699c46912673f97c3a2b4723273e03c42a`) does not reach a C2-2
+overlay mapped within R6B - "On qualifying residential sites, subject to the individual
+maximum floor area ratios for commercial, community facility and residential uses, the
+maximum floor area ratio for a zoning lot with buildings containing residential and
+non-residential uses, shall be as set forth in this Section." - it applies on qualifying
+residential sites only. ZR 35-33 (capture `zr-35-33`, digest
+`de947f0a4270dafcc9a34c4f8e8728b5365e88520e23946efce8fd45c86ef8e4`) does not reach it either
+- "In C1 and C2 Districts mapped within R6 Districts without a letter suffix, and in R7-1
+Districts, the provisions of this Section shall apply to any zoning lot where residential and
+community facility uses are located within the same building." - R6B carries the 'B' suffix
+and the building has commercial, not community-facility, use. (The ZR 12-10 definition of a
+"mixed building" is captured: "A 'mixed building' is a building in a Commercial District used
+partly for residential use and partly for community facility or commercial use" - capture
+`zr-12-10-mixed-building`, digest
+`6eb9a38952df680333bf54add4cd40a9428e338c1177e1dfe7ee35f35c9727e0`.)
+
+**What is still not sure.** The maximum **commercial** floor area ratio is set by Article
+III, Chapter 3, which is **not captured yet** (backlog row DB-188 item 1); so where the
+step-P5 reading records "not known" for the commercial ratio and the whole-building maximum,
+this record says **"not sure"** and names Article III, Chapter 3 as the missing text.
+Whether the attributed shared floor area is **added** to the residential floor area the
+estimate uses is itself a **question of law** (section 8b), not an owner's preference (R515),
+and the worked examples' figures do not depend on it.
 
 **Example C shows the step.** The mixed-use worked example marks every component as exclusive
 to one use (residential or commercial) or **shared**, and carries the ZR 23-20 attribution as
 a line of its reconciliation. It has one small shared component (a 120 sq ft utility room);
 the attribution is applied exactly as the captured sentence words it, and its effect on the
-residential figure is labelled **conditional** on the mixed-building text not yet read, so
-the example's ratio uses the residential **exclusive** floor area only.
+residential figure stays **conditional** - the ratio uses the residential **exclusive** floor
+area only - because the commercial floor area ratio is still missing and the
+add-to-residential question of law is unsettled.
 
 ---
 
@@ -390,56 +448,67 @@ component exclusive or shared, carrying the ZR 23-20 attribution as a reconcilia
 **What they do not show.** They do **not** establish a typical ratio. The three ratios
 differ (0.7540, 0.6483, 0.6828) precisely because each depends on its own made-up layout.
 Correct arithmetic is **not** support for an assumption: 700 sq ft, 25 percent, 10 ft and
-15 ft remain unapproved assumptions, and these examples validate none of them. Example A's
-ratio happening to land near 75 percent proves nothing about any 75 percent ratio.
+15 ft remain preliminary, editable assumptions, and these examples validate none of them
+(the owner's approval validates neither the assumptions nor the worked examples, R545).
+Example A's ratio happening to land near 75 percent proves nothing about any 75 percent
+ratio.
 
 ---
 
-## 8. Open points for the owner - the owner's choices, and the questions of law
+## 8. The owner's decisions on the design assumptions, and the questions of law
 
-Nothing below is decided. The open points are now kept in **two separate lists**. The first
-holds only **design assumptions and what is displayed** - the owner's own choices. The second
-holds **questions of law**, which are settled by capturing and reading the official text, not
-by preference (R515): a question of what the law says is never put to the owner as a
-preference.
+These were the **open points** raised before building the estimator, now kept in **two
+separate lists**. The first holds the **choices for the owner** - design assumptions and what
+is displayed - which the owner **decided on 2026-10-07** (section 8a). The second holds the
+**questions of law**, settled by capturing and reading the official text, not by preference
+(R515): a question of what the law says is never put to the owner as a preference, and an
+owner's choice is never written as law.
 
-### 8a. Choices for the owner (design assumptions and what is displayed)
+### 8a. The owner's decisions (design assumptions and what is displayed)
 
-Each of these is a design assumption or a display choice. The owner's reviewer gave a
-recommendation on each on 2026-10-07; the recommendation is noted, but **nothing here is
-decided until the owner says so**. No starting value is approved by this record.
+These were the choices for the owner. The owner **decided them on 2026-10-07** (D-090, owner
+message 113), approving them only as starting points. In the owner's own words (R539):
+"approved as preliminary, editable assumptions." The owner also stated plainly (R545): "This
+approval does not validate the assumptions or the worked examples." So each value below is a
+**preliminary, editable assumption**; the owner's approval validates neither the assumptions
+nor the worked examples, and this record validates none of them.
 
-1. **The apartment-area ratio.** One figure, or a low and a high carried as a **sensitivity
-   range labelled unvalidated** - never a validated or expected range. *Recommended by the
-   owner's reviewer on 2026-10-07 (permit 0.60 to 0.75 as an editable sensitivity assumption,
-   not a validated expected range); NOT decided until the owner says so.* The ratio stays an
-   editable assumption shown to the user, never a fixed 75 percent (R398, R436).
+1. **The apartment-area ratio.** DECIDED BY THE OWNER on 2026-10-07 (R540): "Use 0.60–0.75 as
+   an unvalidated sensitivity range." So 0.60 to 0.75 is carried as an **unvalidated
+   sensitivity range** - a span shown to the user to show how sensitive a count is to the
+   assumption - editable, and never a validated or expected range. No sentence calls it
+   realistic, expected or validated; the ratio is never a fixed 75 percent (R398, R436).
 
-2. **The average apartment size (700 sq ft).** Carried as an explicitly chosen starting
-   assumption, editable, measured on the HPD basis and labelled "not an HPD-measured,
-   R6B-specific average". *Recommended by the owner's reviewer on 2026-10-07 (reasonable as a
-   chosen starting assumption, explicitly measured on the HPD basis); NOT decided until the
-   owner says so.* The RentCafe figures are one dataset's benchmarks with an unspecified
-   measuring convention (R399, R419).
+2. **The average apartment size.** DECIDED BY THE OWNER on 2026-10-07 (R541): "Use 700 sq ft
+   as the chosen starting apartment size, on the HPD measurement basis." So 700 sq ft is the
+   owner's chosen starting apartment size, measured on the HPD basis, editable - not a
+   measured or typical average, and labelled "not an HPD-measured, R6B-specific average". The
+   RentCafe figures are one dataset's benchmarks with an unspecified convention (R399, R419).
 
-3. **The floor heights (10 ft residential, 15 ft ground).** Carried as editable starting
-   assumptions, subject to the actual building envelope. *Recommended by the owner's reviewer
-   on 2026-10-07 (reasonable editable starting assumptions, subject to the actual building
-   envelope); NOT decided until the owner says so.* These remain unapproved assumptions.
+3. **The floor heights.** DECIDED BY THE OWNER on 2026-10-07 (R542): "Use 10 ft residential
+   floors and 15 ft shop ground floors as starting assumptions." So 10 ft residential floors
+   and 15 ft shop ground floors are the owner's starting assumptions, editable and subject to
+   the actual building envelope. They are not a licence to count equal floors above the
+   maximum base height (R519, section 8c): those floors are set back and smaller.
 
-4. **What stays "not known", and what the result is called.** Without a proposed shape and
-   floors, report the physical apartment count as **not known** (the ratio and average size
-   have no layout to act on); show only the legal cap, labelled as a ceiling. Once an option
-   has a shape and floors, call the result a **preliminary capacity estimate**. *Recommended
-   by the owner's reviewer on 2026-10-07 (yes - and call it a preliminary capacity estimate
-   even then); NOT decided until the owner says so.* The measured physical space must come
-   from a layout (R435); a missing fact stays not known.
+4. **What stays "Not known", and what the result is called.** DECIDED BY THE OWNER on
+   2026-10-07 (R543): Show “Not known” until the option has floors and a shape, then label it
+   “Preliminary capacity estimate.” So without a proposed shape and floors the physical
+   apartment count is shown as **"Not known"** (the ratio and average size have no layout to
+   act on) and only the legal cap is shown, labelled as a ceiling; once an option has a shape
+   and floors, the result is called a **"Preliminary capacity estimate."** A missing fact
+   stays not known; the measured physical space must come from a layout (R435).
 
-5. **What a user must see and be able to change.** Expose the ratio, the average unit size,
-   the unit mix and the floor heights as visible, editable assumptions, each with its basis
-   and uncertainty. *Recommended by the owner's reviewer on 2026-10-07 (consistent with the
-   choices above); NOT decided until the owner says so.* The owner requires design
-   assumptions to be visible and editable, and no default approved (R359, R361).
+5. **What a user must see and be able to change.** The apartment-area ratio, the average unit
+   size, the unit mix and the floor heights stay **visible, editable assumptions**, each with
+   its basis and uncertainty (R539, "editable"; R359, R361). No default is approved.
+
+**Which floor area the estimate uses, and the legal ceiling separate.** DECIDED BY THE OWNER
+on 2026-10-07 (R544): "Use the residential floor area the proposed building actually
+accommodates." and "Keep the legal ceiling separate." The estimate uses the residential floor
+area the proposed building actually accommodates - never the maximum permitted floor area
+(sections 3 and 4) - and the legal unit ceiling stays a separate figure (section 5). The
+formula is unchanged.
 
 ### 8b. Questions of law (settled by capturing and reading the text, never by preference)
 
@@ -454,20 +523,29 @@ doubt. None is put to the owner as a preference (R515).
    provisions, not by preference.
 
 2. **How a mixed building combines its residential and commercial floor areas.** The
-   proportional attribution of **shared** floor area is settled and required (ZR 23-20,
-   section 6; capture `zr-23-20`). What is **not captured yet** is the mixed-building
-   floor-area rule for a Commercial District (the reviewer names ZR 35-31), captured by
-   M4-T034. Until it is captured and read, how the attributed shared floor area feeds the
-   residential figure is **withheld**; the dependent result stays conditional or not known.
+   proportional attribution of **shared** floor area is settled and required (ZR 23-20, and
+   ZR 35-31 in almost the same words; section 6; capture `zr-23-20`). The now-captured
+   mixed-building floor-area sections are read in section 6: ZR 35-30 is a title-only
+   umbrella; ZR 35-31 gives a per-use maximum floor area ratio plus one combined whole-lot
+   cap and carries the shared-floor-area attribution; ZR 35-32 and ZR 35-33 do not reach a
+   C2-2 overlay mapped within R6B. What stays **not sure** is narrowed: the maximum
+   commercial floor area ratio, set by Article III, Chapter 3, is **still not captured**
+   (DB-188 item 1), so the whole-building maximum cannot be read; and whether the attributed
+   shared floor area is **added** to the residential floor area the estimate uses is a
+   **question of law**, not an owner's preference (R515).
 
 3. **The eligibility of the energy and exterior-wall exclusions.** The exterior-wall
    exclusion applies to thickness added to a building existing on December 6, 2023, not to a
    new building's ordinary walls (section 1d; capture
    `zr-12-10-qualifying-exterior-wall-thickness`), so no example takes it. The energy
-   exclusion rests on two defined terms - "fully electrified building" and "ultra low energy
-   building" - that are **not captured yet** (M4-T034); its eligibility is **withheld** and no
-   example takes it. A user's statement supports only a conditional result; it never
-   establishes eligibility. There is no general "confirm it applies" choice.
+   exclusion's two defined terms are now captured and read (section 1d): a fully electrified
+   building must already exist on December 6, 2023, and an ultra low energy building is put
+   forward at plan approval and confirmed only after construction. What stays **not sure** is
+   Local Law 154 of 2021 and the New York City Energy Conservation Code, on which both
+   definitions rest and which are **still not captured** (DB-188 item 7, outside the Zoning
+   Resolution). A user's statement supports only a conditional result; it never establishes
+   eligibility. There is no general "confirm it applies" choice, and no example takes the
+   energy exclusion.
 
 ### 8c. How an assumption changes the count, and why floors are not equal (R519)
 
@@ -515,10 +593,15 @@ separate from the legal cap (R387, R428).
 - ZR law captures under `docs/research/zr-snapshots/v1/`, each pinned by its content
   digest: `zr-12-10-floor-area`, `zr-12-10-qualifying-exterior-wall-thickness`,
   `zr-12-10-mixed-building`, `zr-23-20`, `zr-23-23`, `zr-23-231`, `zr-23-232`, `zr-23-233`,
-  `zr-23-234`, `zr-23-432`, `zr-23-433`, `zr-23-52`. Not captured yet (captured by M4-T034,
-  not read here): the mixed-building floor-area combination rule the reviewer names as ZR
-  35-31, and the ZR 12-10 definitions of "fully electrified building" and "ultra low energy
-  building".
+  `zr-23-234`, `zr-23-432`, `zr-23-433`, `zr-23-52`, the mixed-building floor-area sections
+  `zr-35-30`, `zr-35-31`, `zr-35-32`, `zr-35-33`, and the energy definitions
+  `zr-12-10-fully-electrified-building` and `zr-12-10-ultra-low-energy-building` (the last six
+  read into this record from the step-P5 reading, M4-T035).
+
+- **Still owed, not captured yet** (named by backlog row DB-188): the maximum commercial
+  floor area ratio of Article III, Chapter 3 (DB-188 item 1), and so the whole-building
+  maximum of a mixed building; and Local Law 154 of 2021 with the New York City Energy
+  Conservation Code (DB-188 item 7, outside the Zoning Resolution).
 - HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION and
   APPLICABILITY, read 2026-10-07 at the official HPD site (URL, sha256 and date above).
 - The legal cap's worked values: `docs/reference-cases/R6B/`.

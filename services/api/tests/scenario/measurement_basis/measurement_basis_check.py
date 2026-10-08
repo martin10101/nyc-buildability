@@ -33,6 +33,7 @@ if str(_HERE) not in sys.path:
     sys.path.insert(0, str(_HERE))
 
 import json  # noqa: E402
+import re  # noqa: E402
 from decimal import Decimal  # noqa: E402
 
 import measurement_basis_fit as fit  # noqa: E402
@@ -471,9 +472,9 @@ def record_errors() -> list[str]:
         ("sensitivity range", "that 0.60 to 0.75 is only a chosen sensitivity range (C2)"),
         ("23-20", "the shared-floor-area attribution of ZR 23-20 (C3)"),
         ("shared by multiple uses", "the ZR 23-20 shared-floor-area sentence (C3)"),
-        ("not captured yet", "what is not captured yet (C3, C5)"),
-        ("fully electrified", "the energy exclusion's definitions, not captured yet (C5)"),
-        ("ultra low energy", "the energy exclusion's definitions, not captured yet (C5)"),
+        ("not captured yet", "what is still owed (Article III Ch 3; LL 154 / the energy code)"),
+        ("fully electrified", "the fully-electrified-building definition, now read (C5)"),
+        ("ultra low energy", "the ultra-low-energy-building definition, now read (C5)"),
         ("23-432", "the R6B base/building height table for unequal floors (C6)"),
         ("23-433", "the setback provision for unequal floors (C6)"),
         ("choices for the owner", "section 8's first list, the owner's choices (C7)"),
@@ -491,4 +492,105 @@ def record_errors() -> list[str]:
     for example_id in lib.EXAMPLE_IDS:
         if example_id not in text:
             errs.append(f"MEASUREMENT_BASIS.md does not list the example {example_id!r}")
+    return errs
+
+
+# M5-T135: the owner's 2026-10-07 decisions (section 8a) and the law now read from the
+# captures (sections 1d, 6, 8b, 9). record_text is override-able for the mutation proofs;
+# markdown wraps, so needles and quotes are matched on whitespace-normalised text.
+OWNER_DECISION_NEEDLES: tuple[str, ...] = (
+    "decided by the owner on 2026-10-07", "r539", "preliminary, editable assumptions",
+    "r540", "unvalidated sensitivity range", "0.60 to 0.75", "r541", "700 sq ft",
+    "hpd measurement basis", "r542", "10 ft residential floors and 15 ft shop ground floors",
+    "r543", "not known", "preliminary capacity estimate", "r544", "r545",
+    "does not validate the assumptions or the worked examples",
+)
+# T2 identifiers are PROSE names/terms; 'not captured yet' may still name a missing text.
+NOW_READ_IDENTIFIERS: tuple[str, ...] = (
+    "zr 35-30", "zr 35-31", "zr 35-32", "zr 35-33",
+    "fully electrified building", "ultra low energy building",
+)
+NOT_CAPTURED_PHRASES: tuple[str, ...] = ("not captured yet", "not yet captured", "not yet read")
+NEW_LAW_QUOTES: tuple[tuple[str, str], ...] = (
+    ("zr-35-30", "35-30 APPLICABILITY OF FLOOR AREA AND OPEN SPACE REGULATIONS"),
+    ("zr-35-31", "The maximum floor area ratio permitted for a commercial or community "
+     "facility use shall be as set forth in Article III, Chapter 3, and the maximum floor "
+     "area ratio permitted for a residential use shall be as set forth in Article II, Chapter 3"),
+    ("zr-35-31", "The total of all such floor area ratios shall not exceed the greatest floor "
+     "area ratio permitted for any such use on the zoning lot, except where explicitly stated "
+     "otherwise."),
+    ("zr-35-31", "based on the percentage each use occupies of the total floor area of the "
+     "zoning lot less any shared floor area"),
+    ("zr-35-32", "On qualifying residential sites, subject to the individual maximum floor "
+     "area ratios for commercial, community facility and residential uses, the maximum floor "
+     "area ratio for a zoning lot with buildings containing residential and non-residential "
+     "uses, shall be as set forth in this Section."),
+    ("zr-35-33", "In C1 and C2 Districts mapped within R6 Districts without a letter suffix, "
+     "and in R7-1 Districts, the provisions of this Section shall apply to any zoning lot "
+     "where residential and community facility uses are located within the same building."),
+    ("zr-12-10-floor-area", "floor space within a fully electrified building or an ultra low "
+     "energy building, of an amount equivalent to five percent of the floor area located "
+     "within such building, and exclusive of any floor space otherwise excluded from floor area"),
+    ("zr-12-10-fully-electrified-building", "a building existing on December 6, 2023"),
+    ("zr-12-10-ultra-low-energy-building", "At time of application for plan approval to the "
+     "Commissioner of Buildings, materials shall be submitted demonstrating"),
+    ("zr-12-10-ultra-low-energy-building", "No final certificate of occupancy shall be issued "
+     "for such a building until a report prepared by a registered design professional has been "
+     "submitted to the Commissioner of Buildings"),
+)
+
+
+_BLOCKQUOTE = re.compile(r"(?m)^\s*>\s?")
+
+
+def _norm(text: str) -> str:
+    """Drop markdown blockquote markers and collapse whitespace runs to single spaces."""
+    return " ".join(_BLOCKQUOTE.sub("", text).split())
+
+
+def _record(record_text: str | None) -> str:
+    return record_text if record_text is not None else lib.RECORD_PATH.read_text()
+
+
+def section_8a_decisions_errors(record_text: str | None = None) -> list[str]:
+    """T1: section 8a records each 2026-10-07 owner decision in the owner's words + row id."""
+    low = _norm(_record(record_text)).lower()
+    errs = [f"MEASUREMENT_BASIS.md section 8a does not record the needle {n!r}"
+            for n in OWNER_DECISION_NEEDLES if n not in low]
+    if "not decided until the owner says so" in low:
+        errs.append("MEASUREMENT_BASIS.md still marks a section-8a choice 'NOT decided'")
+    return errs
+
+
+def stale_not_captured_errors(record_text: str | None = None) -> list[str]:
+    """T2: no paragraph that names a now-read text pairs it with a not-captured phrase."""
+    errs: list[str] = []
+    for para in _record(record_text).split("\n\n"):
+        low = _norm(para).lower()
+        phrase = next((ph for ph in NOT_CAPTURED_PHRASES if ph in low), None)
+        if phrase is None:
+            continue
+        errs += [f"MEASUREMENT_BASIS.md pairs now-read {ident!r} with {phrase!r} in one "
+                 "paragraph; it is captured and read"
+                 for ident in NOW_READ_IDENTIFIERS if ident in low]
+    return errs
+
+
+def new_law_quote_errors(record_text: str | None = None) -> list[str]:
+    """T3: every NEW law quote stands verbatim in its capture, with the cited digest."""
+    text = _norm(_record(record_text))
+    errs: list[str] = []
+    for snapshot_id, quote in NEW_LAW_QUOTES:
+        snap_path = lib.SNAPSHOT_DIR / f"{snapshot_id}.snapshot.json"
+        if not snap_path.is_file():
+            errs.append(f"capture file missing: {snapshot_id}")
+            continue
+        snap = json.loads(snap_path.read_text())
+        digest = snap["content_digest_sha256"]
+        if quote not in text:
+            errs.append(f"MEASUREMENT_BASIS.md lacks the {snapshot_id} quote {quote[:40]!r}")
+        if digest not in text:
+            errs.append(f"MEASUREMENT_BASIS.md lacks the {snapshot_id} digest {digest}")
+        if _strip_markup(quote) not in _strip_markup(_norm(snap["verbatim_excerpt"])):
+            errs.append(f"the {snapshot_id} quote is not verbatim in the capture excerpt")
     return errs

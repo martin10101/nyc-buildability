@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 564,
+ "requirement_count": 588,
  "producer": "orchestrator",
- "updated_at": "2026-10-08T01:35:00+00:00",
+ "updated_at": "2026-10-08T06:07:32+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -9888,7 +9888,8 @@
      "M4-T032",
      "M4-T033",
      "M4-T034",
-     "M4-T035"
+     "M4-T035",
+     "M4-T036"
     ],
     "task_types": [],
     "milestones": [],
@@ -17439,7 +17440,8 @@
      "D-090-BOOTSTRAP",
      "M5-T133",
      "M4-T034",
-     "M4-T035"
+     "M4-T035",
+     "M5-T135"
     ],
     "task_types": [],
     "milestones": [],
@@ -17544,7 +17546,8 @@
      "D-090-BOOTSTRAP",
      "M5-T133",
      "M4-T034",
-     "M4-T035"
+     "M4-T035",
+     "M5-T135"
     ],
     "task_types": [],
     "milestones": [],
@@ -17579,7 +17582,8 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M4-T034"
+     "M4-T034",
+     "M4-T036"
     ],
     "task_types": [],
     "milestones": [],
@@ -17647,7 +17651,8 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M5-T133"
+     "M5-T133",
+     "M5-T135"
     ],
     "task_types": [],
     "milestones": [],
@@ -17888,7 +17893,8 @@
     "task_ids": [
      "D-090-BOOTSTRAP",
      "M4-T034",
-     "M4-T035"
+     "M4-T035",
+     "M4-T036"
     ],
     "task_types": [],
     "milestones": [],
@@ -18164,7 +18170,8 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M5-T133"
+     "M5-T133",
+     "M5-T135"
     ],
     "task_types": [],
     "milestones": [],
@@ -18340,7 +18347,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T135"
     ],
     "task_types": [],
     "milestones": [],
@@ -18375,7 +18383,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T135"
     ],
     "task_types": [],
     "milestones": [],
@@ -18409,7 +18418,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T135"
     ],
     "task_types": [],
     "milestones": [],
@@ -18443,7 +18453,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T135"
     ],
     "task_types": [],
     "milestones": [],
@@ -18477,7 +18488,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T135"
     ],
     "task_types": [],
     "milestones": [],
@@ -18510,7 +18522,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T135"
     ],
     "task_types": [],
     "milestones": [],
@@ -18544,7 +18557,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T135"
     ],
     "task_types": [],
     "milestones": [],
@@ -19191,6 +19205,811 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-08 (message 114).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R565",
+   "text": "'/session-handoff': the session is handed over: the handoff file is written, checked by a different agent, put on a pull request and merged, and the next session's start prompt is printed. ORCHESTRATOR'S READING: the command carried no text, so no reason for the handover is recorded. It arrived while the next wave was in flight (one builder and two reviewers running): they finish their bounded work, their results are recorded, and no further helper is started for the work.",
+   "source_ref": "source-059-amendment.md#owner-message-115-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R500"
+   ],
+   "required_harness": "docs/SESSION_HANDOFF.md of the next sequence number is merged after an independent check, and the start prompt is printed.",
+   "required_evidence": "The handoff's pull request and its independent check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 115).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R566",
+   "text": "'/session-handoff': the handover follows the procedure as it stands. ORCHESTRATOR'S READING: the owner has not yet answered the proposal for lighter handoffs (rows R560 to R563), so this handover changes nothing in the procedure, in the instruction files or in what a handoff must hold; the one thing done differently lies inside the existing rules: the session does not end a turn while the handoff's checks run, it reads them by hand.",
+   "source_ref": "source-059-amendment.md#owner-message-115-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R560",
+    "D-090-R563"
+   ],
+   "required_harness": "No instruction file and no handoff requirement is changed by the handover; the time from the command to the printed start prompt is recorded in the handoff.",
+   "required_evidence": "The diff of the handoff's branch; the handoff file's time section.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 115).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R567",
+   "text": "'1. Results file: proceed as recommended.' 'Put the rear yard and setback with the envelope results, and the three legal unit limits with the floor-area results.': the owner DECIDES where the five results are carried in the results document (it answers row R555): the rear yard and the setback are carried with the envelope results; the three legal unit limits are carried with the floor-area results. ORCHESTRATOR'S READING: 'as recommended' is the recommendation sent on 2026-10-08 and asked again the same day: the two as values of the permitted-envelope answer, the three as values of the floor-area answer, and the document steps from version 1.2.0 to the already-built version 1.3.0 (settled, conditional, withheld). The alternative, a section of their own for the limits, is not chosen. It is open no longer and is not asked again.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R555"
+   ],
+   "required_harness": "The task that first emits the results document carries the five results where this row says; its contract test and its saved example show them there and nowhere else.",
+   "required_evidence": "The emitted results document of the benchmark lot; the contract test.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R568",
+   "text": "'Reserve the apartment-estimate section for the preliminary capacity estimate.': the section of the results document that holds the apartment estimate is reserved for the owner's 'Preliminary capacity estimate' (row R543). ORCHESTRATOR'S READING: that section is the block now named `unit_estimate`, which today carries the LEGAL unit limit under the name 'estimate' (backlog row DB-185): it stops carrying the legal figure, and until the estimator exists it says that the estimate is not known; it never shows a legal limit as an estimate.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R543",
+    "D-090-R567"
+   ],
+   "required_harness": "In the emitted document the apartment-estimate section holds no legal limit; a test fails if the legal figure appears there.",
+   "required_evidence": "The emitted results document; the test.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R569",
+   "text": "'Keep the legal limits and estimated apartment counts clearly distinguished on the screen and in exports.': wherever both appear, a legal limit on the number of dwelling units and an estimated apartment count are clearly told apart: on the screen and in every export (the PDF and any other file a user can take away). ORCHESTRATOR'S READING: each carries its own label and its own place; neither is shown under the other's name; it holds for every option.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R567",
+    "D-090-R568"
+   ],
+   "required_harness": "A screen test and an export test each find the legal limit and the estimate under different labels; no element shows one as the other.",
+   "required_evidence": "The website's tests; the export's tests when an export exists.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R570",
+   "text": "'A withheld value must remain withheld.': a value the results document withholds stays withheld everywhere it is carried or shown: no number, no older value and no substitute value appears in its place in the document, on the screen or in an export. It confirms row R556 in the owner's own words.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R556"
+   ],
+   "required_harness": "For each withheld result of the benchmark lot, the document, the screen and each export show it as withheld with its reason; a test fails if any of them shows a number for it.",
+   "required_evidence": "The emitted document; the website reader's tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R571",
+   "text": "'2. Instruction files: paste the exact numbered list of proposed moves here, including each destination and when it must be read.': the owner is given, in the conversation itself, the exact numbered list of the proposed moves out of the always-loaded instruction files: for each move what moves, where it goes, and when the moved text must be read. ORCHESTRATOR'S READING: the list sent earlier as a file does not count as seen; it is pasted, numbered, in plain words.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R552"
+   ],
+   "required_harness": "The reply to this message carries the numbered list with a destination and a when-to-read for every item.",
+   "required_evidence": "The session transcript (the reply).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R572",
+   "text": "'I am not approving an unseen list.': no approval is given for the instruction-file moves: nothing is moved, shortened or removed in any instruction file until the owner has seen the pasted list and approves it, in whole or item by item (row R553 stays in force).",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R552",
+    "D-090-R553",
+    "D-090-R571"
+   ],
+   "required_harness": "No always-loaded instruction file changes on any branch before the owner's approval of the pasted list is recorded.",
+   "required_evidence": "The diffs of the branches made after this message.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R573",
+   "text": "'This should not delay the already-authorized report work.': the instruction-file list does not hold up the report work that is already authorized: the list is pasted, and the report work goes on without waiting for the owner's answer to it.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R571"
+   ],
+   "required_harness": "The report work of this session continues while the list is with the owner.",
+   "required_evidence": "The session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R574",
+   "text": "'Yes to a read-only script that gathers the current facts.': approved (from the handoff proposal, rows R560 to R563): a script that gathers the current facts for a handoff. ORCHESTRATOR'S READING: read-only is a condition: it reads the ledger, git and the checks and writes nothing in the repository; it does not replace the independent check of the handoff's judgements.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R560",
+    "D-090-R562",
+    "D-090-R563"
+   ],
+   "required_harness": "The script changes no repository file and no remote state when run; the handoff built with it is still independently checked.",
+   "required_evidence": "The script; its test; the next handoff's record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R575",
+   "text": "'Yes to a short start prompt that points to the authoritative records and requires reading them.': approved: a short start prompt for the next session. ORCHESTRATOR'S READING: two conditions in the owner's words: it points to the authoritative records, and it requires reading them; the start checks that come before any change, and tmux before the session, stay.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R560",
+    "D-090-R562",
+    "D-090-R563"
+   ],
+   "required_harness": "The short prompt names the records to read and tells the session to read them before acting; a session started from it passes the start checks.",
+   "required_evidence": "The next handoff's start prompt; the next session's notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R576",
+   "text": "'Yes to waiting for existing checks during the active session, without automatic reruns or unattended merges.': approved: during an active session the session may wait for checks that already exist to finish, instead of stopping. Two limits in the owner's words: no automatic rerun, and no unattended merge. ORCHESTRATOR'S READING: this narrows the stop on timers and watchers for this one use only: a wait that returns to the session, which then reads each check's real state itself and merges by hand; nothing reruns a job, nothing merges by itself, and nothing keeps running after the session ends. Every other use of a timer or watcher stays forbidden.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R560",
+    "D-090-R562",
+    "D-090-R563"
+   ],
+   "required_harness": "The wait starts no rerun and no merge; after it returns the session reads the checks and runs the fail-closed merge step itself.",
+   "required_evidence": "The procedure's text; the session notes of the first use.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R577",
+   "text": "'Yes to one fixed, version-controlled home for the long requirements lists, with mandatory references from the handoff.': approved: the long requirements lists get one fixed home in a version-controlled file, and each handoff must refer to it instead of repeating them. ORCHESTRATOR'S READING: the long lists are the section on what 'finished' means and the list of standing restrictions; this changes the earlier instruction that the section on what 'finished' means be kept in every handoff (row R173): it is kept in the fixed file, in the owner's words unchanged, and every handoff carries a reference to it that the next session must follow.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R173",
+    "D-090-R560",
+    "D-090-R563"
+   ],
+   "required_harness": "The fixed file holds the lists unchanged; a handoff without the reference fails its check.",
+   "required_evidence": "The fixed file; the handoff procedure; the next handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R578",
+   "text": "'Keep current blockers, decisions and next actions in the handoff itself.': what is current stays in the handoff file itself and is not moved to the fixed home: the blockers, the decisions (made and pending) and the next actions.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R577"
+   ],
+   "required_harness": "Each later handoff file states its blockers, decisions and next actions in its own text.",
+   "required_evidence": "The next handoff file.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R579",
+   "text": "'No blanket approval for fewer checks.': running fewer checks for some kinds of change is NOT approved: every change, the handoff file's included, keeps all the existing checks until the owner approves a specific proposal.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R562",
+    "D-090-R563"
+   ],
+   "required_harness": "No workflow, expected-check list or merge step is changed to skip a check; every merge after this message shows the full set of checks.",
+   "required_evidence": "The merges' recorded check lists; the diffs of `.github/` and of the merge tool.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R580",
+   "text": "'Show exactly which checks would be omitted, which would remain, and which files qualify.': before the owner decides on fewer checks, the owner is shown exactly: which checks would be left out, which would still run, and which files would qualify for the lighter set.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R579"
+   ],
+   "required_harness": "The proposal names each check by its name in both lists and each qualifying file or folder literally.",
+   "required_evidence": "The proposal shown to the owner.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R581",
+   "text": "'A law capture, test fixture, instruction or security policy is not harmless merely because it is stored as text.': no file qualifies for fewer checks merely because it is stored as text: a law capture, a test fixture, an instruction file and a security policy are each named by the owner as not harmless for that reason. ORCHESTRATOR'S READING: any proposal under row R580 classes a file by what it does, not by its format, and leaves these four kinds under the full checks.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R579",
+    "D-090-R580"
+   ],
+   "required_harness": "The proposal's list of qualifying files holds no law capture, test fixture, instruction file or security policy.",
+   "required_evidence": "The proposal shown to the owner.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R582",
+   "text": "'Finish wave 8 under the existing checks, then proceed with emitting the results document and connecting the agreed results display.': the order of the next work: first wave 8 is finished and merged under the checks as they exist today; then the piece that emits the results document; then the agreed results display is connected to it. ORCHESTRATOR'S READING: none of the handoff changes approved in this message is used to lighten wave 8's merge; nothing is built on unmerged work.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R567"
+   ],
+   "required_harness": "Wave 8 merges on a full, fresh set of checks after an independent pre-merge check; the emitting piece is contracted after that merge.",
+   "required_evidence": "The merge record of wave 8; the ledger's contract dates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R583",
+   "text": "'then proceed with emitting the results document and connecting the agreed results display': with the placement decided (row R567), the piece that first emits the results document and the piece that connects the results display may be contracted and built under the normal gates; the wait on the owner that held them ends.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R555",
+    "D-090-R567",
+    "D-090-R582"
+   ],
+   "required_harness": "The two pieces are contracted as ledger tasks that cite this row and row R567.",
+   "required_evidence": "The task packets.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R584",
+   "text": "'Keep the existing activation restrictions.': every existing restriction on activation stays: all production switches stay off and no hidden feature is turned on by the emitting piece or the display (row R558).",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R558"
+   ],
+   "required_harness": "No switch default changes and no production setting is touched by these pieces; their reviews check it.",
+   "required_evidence": "The diffs and the review records of the pieces.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R585",
+   "text": "'In the next update, explain what became usable toward the report': the next update to the owner explains what became usable toward the report.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [],
+   "required_harness": "The next update has a part that says, in plain words, what became usable toward the report.",
+   "required_evidence": "The session transcript (the update).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R586",
+   "text": "'what remains before the results screen works': the next update to the owner explains what remains to be done before the results screen works.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R585"
+   ],
+   "required_harness": "The next update lists what remains before the results screen works.",
+   "required_evidence": "The session transcript (the update).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R587",
+   "text": "'and the next concrete deliverable': the next update to the owner names the next concrete deliverable.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R585"
+   ],
+   "required_harness": "The next update names one concrete next deliverable.",
+   "required_evidence": "The session transcript (the update).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R588",
+   "text": "'Keep the full report and all promised options in scope.': the full report and every promised development option stay in scope: no step of the work, and no update, narrows the goal to the results screen or to one option.",
+   "source_ref": "source-060-amendment.md#owner-message-119-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [],
+   "required_harness": "No plan, packet or update after this message drops a section of the report or a promised option.",
+   "required_evidence": "The plans, the packets and the updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 119).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

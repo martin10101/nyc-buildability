@@ -1,0 +1,231 @@
+{
+  "task_id": "M5-T135",
+  "title": "Bring the measurement-basis record up to date without building an estimator or changing any program code: record section 8a's five choices as DECIDED BY THE OWNER on 2026-10-07 in the owner's own words with their row ids and framed as preliminary editable assumptions; state the mixed-building floor-area rule and the energy-exclusion eligibility FROM the now-captured ZR texts (each quote with its capture id and digest, labelled a draft reading, not professionally reviewed), saying 'not sure' and naming what is still missing (the commercial floor area ratio of Article III Chapter 3; Local Law 154 and the energy code) where the step-P5 reading leaves doubt; bring the questions-of-law list in line and add the DB-188 items; correct the two now-false statements in Example C and leave every other example and figure unchanged; and extend the tests, with a red proof (backlog rows DB-184, DB-188; owner rows R539 to R545, R513, R516, R519, R534)",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "UPDATE THE WRITTEN RECORD docs/measurement-basis/MEASUREMENT_BASIS.md AND, ONLY WHERE A STATEMENT IS NOW FALSE, ITS WORKED EXAMPLES. No estimator is built; no program code, no rule file, no reference case, no capture changes; the only code touched is the examples' own test files under services/api/tests/scenario/measurement_basis/. The record stays a draft reading by an AI, not professionally reviewed (ADR-007); the standing label is kept. FACTS TODAY, with file and line: (i) Section 8a of the record (lines 406-442) still lists its five choices as 'Recommended by the owner's reviewer on 2026-10-07 ... NOT decided until the owner says so'. (ii) Section 1d (lines 188-202) says the energy exclusion's eligibility 'is not captured yet (R516)'; section 6 (lines 339-347) and section 8b item 2 (lines 456-461) say the mixed-building floor-area rule 'ZR 35-31' is 'not captured yet (another task of this wave, M4-T034, captures it)'; section 9 (lines 518-521) lists the mixed-building combination rule and the two energy definitions as 'Not captured yet'. (iii) Example C (docs/measurement-basis/examples/example-c-mixed-use.json) carries two statements that are now false: field what_it_does_not_show[1] says the shared-space effect is 'withheld until the mixed-building text (ZR 35-31) is captured and read', and field shared_floor_area.conditional_note says the mixed-building rules '(the reviewer names ZR 35-31), which are not captured yet' -- and both render into example-c-mixed-use.md (lines 130 and 147). THE TEXTS ARE NOW CAPTURED AND READ (dependencies M4-T034 and M4-T035, both accepted): the snapshots are under docs/research/zr-snapshots/v1/ at the claim head, and the independent reading is in docs/reference-cases/R6B/cases/step-p5-worked.json. STEP 1 -- RECORD SECTION 8a AS DECIDED BY THE OWNER. Rewrite section 8a so each of the five choices is DECIDED BY THE OWNER on 2026-10-07, quoted in the owner's own words with its row id from project-control/directives/D-090-product-plan-2026-09-28-start-building/source-057-amendment.md, and framed exactly as the owner framed it -- a preliminary, editable assumption, not a validation. Use these verbatim owner fragments and no more: 'approved as preliminary, editable assumptions.' (R539); 'Use 0.60-0.75 as an unvalidated sensitivity range.' (R540); 'Use 700 sq ft as the chosen starting apartment size, on the HPD measurement basis.' (R541); 'Use 10 ft residential floors and 15 ft shop ground floors as starting assumptions.' (R542); 'Show \"Not known\" until the option has floors and a shape, then label it \"Preliminary capacity estimate.\"' (R543); 'Use the residential floor area the proposed building actually accommodates.' and 'Keep the legal ceiling separate.' (R544); 'This approval does not validate the assumptions or the worked examples.' (R545). The two labels 'Not known' and 'Preliminary capacity estimate' are used as the owner words them. Do NOT turn an approval of editable starting assumptions into a validation: state R545 plainly (the approval validates neither the assumptions nor the worked examples). Keep the display/edit requirement (the ratio, the average size, the unit mix and the floor heights stay visible, editable assumptions, each with its basis and uncertainty). Confirm sections 4 and 5 already say the estimate uses the residential floor area the proposed building accommodates and keeps the legal ceiling separate (R544), and align their wording to the owner's decided words; change no formula. STEP 2 -- STATE THE MIXED-BUILDING RULE AND THE ENERGY ELIGIBILITY FROM THE CAPTURES. Every statement of law quotes a capture that exists under docs/research/zr-snapshots/v1/ at the claim head, with its capture id and its content_digest_sha256 read FROM the capture file itself (never retyped from this packet or from memory; a stale digest fails review -- see RISKS), and each remains a draft reading, not professionally reviewed. MIXED-BUILDING (sections 6 and 8b-2; backlog row DB-184): replace 'not captured yet' with the reading, in agreement with docs/reference-cases/R6B/cases/step-p5-worked.json rows mixed-use-sections, mixed-use-floor-area-combination, shared-floor-area-rule, made-up-mixed-shared-attribution, made-up-mixed-residential-far, made-up-mixed-commercial-far and made-up-mixed-whole-building-max: ZR 35-30 is a title-only umbrella heading (capture zr-35-30); ZR 35-31 (capture zr-35-31, digest 65e29c688be2f04b8963b87bc564afb16539c497b19b1219f58a0cf8edad80fe) governs floor area for a commercial-district zoning lot and sets a separate maximum floor area ratio for each use PLUS one combined whole-lot cap ('The total of all such #floor area ratios# shall not exceed the greatest #floor area ratio# permitted for any such #use# on the #zoning lot#, except where explicitly stated otherwise.'); the shared-floor-area attribution appears in ZR 35-31 as well as ZR 23-20 ('Where #floor area# in a #building# is shared by multiple #uses#, the #floor area# for such shared portion shall be attributed to each #use# proportionately, based on the percentage each #use# occupies of the total #floor area# of the #zoning lot# less any shared #floor area#.' -- note ZR 35-31 has no comma before 'less' while ZR 23-20 does); ZR 35-32 (capture zr-35-32) does not reach a C2-2 overlay mapped within R6B (qualifying residential sites only); ZR 35-33 (capture zr-35-33) does not reach it (C1/C2 within R6 WITHOUT a letter suffix, and residential-plus-community-facility only). WHERE THE STEP-P5 ROW SAYS 'not known' THE RECORD SAYS 'not sure' AND NAMES WHAT IS MISSING: the maximum commercial floor area ratio (Article III, Chapter 3 -- not captured; backlog row DB-188 item 1) and therefore the whole-building maximum. Whether the attributed shared floor area is ADDED to the residential figure the estimate uses is a question of law, not an owner's preference (R515). ENERGY ELIGIBILITY (section 1d and 8b-3; R516): state it from capture zr-12-10-floor-area (exclusion 15: 'floor space within a #fully electrified building# or an #ultra low energy building#, of an amount equivalent to five percent of the #floor area# located within such #building#, and exclusive of any floor space otherwise excluded from #floor area#', digest e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9), capture zr-12-10-fully-electrified-building (digest 2ea4afe29ec1037695e8df5e6d90bd313e611b3db2949b61cc9e115ceac9321c: 'a #building# existing on December 6, 2023' plus Local Law 154 compliance -- so a new, only-proposed building CANNOT be a fully electrified building) and capture zr-12-10-ultra-low-energy-building (digest 8a1d64182201fb1085b90b07b6ba35daa1c675388499ab5530e49420f0380203: materials submitted at plan approval, Local Law 154 compliance, net-zero for buildings of three stories or less or at least 15 percent better than the New York City Energy Conservation Code model, a registered design professional's verification, and a post-construction report before the final certificate of occupancy -- so a proposed building CAN be put forward as ultra low energy at plan approval but is only finally confirmed after construction; R516's reviewer point that new construction can qualify through the ultra-low-energy route is thereby borne out by a captured text). SAY 'not sure' AND NAME WHAT IS MISSING: Local Law 154 of 2021 and the New York City Energy Conservation Code, on which the two definitions rest, are NOT captured (backlog row DB-188 item 7, which the record notes is outside the Zoning Resolution). A user's statement supports only a conditional result and never establishes eligibility; there is no general 'confirm it applies' switch; and NO EXAMPLE TAKES THE ENERGY EXCLUSION (unchanged). WALL EXCLUSION (R516): it is already captured (zr-12-10-qualifying-exterior-wall-thickness, digest 119324c8b82348cd82b354565a36468bb60e5f3680d19143f7bccfb4d16bc7bf) and already stated as applying to thickness added to a building existing on December 6, 2023 and not to a new building's ordinary walls; state the reviewer's point only as far as that captured text bears it out, otherwise as an open question of law -- change its substance only if a captured text now requires it (ORCHESTRATOR'S READING: it does not; the wall statement already matches the capture, so the wall paragraph needs no new quote). STEP 3 -- BRING THE QUESTIONS-OF-LAW LIST (section 8b) IN LINE AND ADD DB-188. What the step-P5 reading settled leaves the list: 8b-2's 'not captured yet' for the mixed-building combination is replaced by the reading above, with the residual 'not sure' narrowed to the commercial floor area ratio / whole-building maximum and the add-to-residential question of law; 8b-3's energy 'not captured yet' is replaced by the captured conditions, with the residual 'not sure' narrowed to Local Law 154 and the energy code. ADD to the questions-of-law list the DB-188 items this record depends on: the commercial floor area ratio of Article III, Chapter 3 (DB-188 item 1) and Local Law 154 of 2021 with the energy code (DB-188 item 7), each named as not captured. Section 8b-1 (the order of the amenity 5 percent) is unchanged (the base is settled; the order when the cap binds stays 'not sure'). Update section 9's 'Not captured yet' list to remove the mixed-building combination rule and the two energy definitions (now captured and read) and to keep only what is still owed (the commercial floor area ratio; Local Law 154 and the energy code). STEP 4 -- CORRECT THE TWO NOW-FALSE EXAMPLE-C STATEMENTS, AND NOTHING ELSE. In docs/measurement-basis/examples/example-c-mixed-use.json, correct what_it_does_not_show[1] and shared_floor_area.conditional_note so they no longer say ZR 35-31 is 'not captured yet' / 'until the mixed-building text (ZR 35-31) is captured and read'; state the current basis instead: ZR 35-31 is now captured and read (M4-T035 step P5), and the effect on the residential figure stays withheld/conditional because the commercial floor area ratio (Article III, Chapter 3) is still not captured (DB-188) and whether the attributed shared area is added to the residential estimate is a question of law. CHANGE NO FIGURE: the ratio stays 0.6828, the attribution stays 98.32 sq ft residential / 21.68 commercial, the schedule and reconciliation are untouched. Re-render example-c-mixed-use.md with the existing renderer so the page is byte-identical to the renderer. Add a dated change_log entry in Example C naming the two corrected statements and the reason, and that no figure changed. Examples A and B have no now-false statement (the orchestrator's reading found none); leave them unchanged. If the builder's own reading finds a further false statement in any example, correct only that statement, with its reason, in the change log, and change a figure only with its reason (M5-T133 lesson). STEP 5 -- THE TESTS, WITH A RED PROOF (write the tests first; run them against the record and examples as they are at the claim head; keep the failing output in the report; only then make the changes). Add to services/api/tests/scenario/measurement_basis/ (extending test_measurement_basis_examples.py and the checker in measurement_basis_check.py; no new file is required): (T1) a test that each decided value and label of section 8a equals the recorded decision -- the record states 0.60 to 0.75 as an unvalidated sensitivity range (R540), 700 sq ft on the HPD basis (R541), 10 ft and 15 ft starting floor heights (R542), the labels 'Not known' and 'Preliminary capacity estimate' (R543), each attributed to the owner's decision of 2026-10-07 with its row id, and the record states the approval validates neither the assumptions nor the worked examples (R545). This fails on the record as it stands (section 8a still says 'NOT decided'). (T2) a test that NO 'not captured yet' (or equivalent 'not yet captured' / 'not yet read') remains for a text that IS captured: for each now-captured snapshot the record quotes (zr-35-30, zr-35-31, zr-35-32, zr-35-33, zr-12-10-fully-electrified-building, zr-12-10-ultra-low-energy-building, zr-12-10-floor-area-ratio), the record does not pair it with 'not captured yet'; 'not captured yet' may remain only for a genuinely-missing text (the commercial floor area ratio / Article III Chapter 3; Local Law 154 and the energy code). This fails on the record as it stands (ZR 35-31 and the energy definitions are marked 'not captured yet'). (T3) extend the quote-against-capture coverage to the record's NEW law quotes: for each new quote the record carries, confirm the record text contains the quote and the capture's digest, and confirm the quote (with # markup stripped) is a verbatim substring of that capture's verbatim_excerpt and that the cited digest equals the capture's content_digest_sha256. This fails on the record as it stands (the new quotes are absent). ALSO UPDATE THE KNOWN RED CONSUMERS so no known-red test is left silent: measurement_basis_check.py record_errors() has a required needle ('not captured yet', 'what is not captured yet (C3, C5)') at the (C3, C5) context -- re-aim it so it no longer requires ZR 35-31 / the energy definitions to be 'not captured yet' (keep 'fully electrified' and 'ultra low energy' needles, which still appear with their captures); and test_measurement_basis_examples.py line ~315 asserts \"'not captured yet' in shared['conditional_note'].lower()\" -- update it to assert the note no longer claims ZR 35-31 is 'not captured yet' and still marks the outcome withheld/conditional on the commercial floor area ratio (or the question of law). RECORD IN THE PRODUCER REPORT a table of every sentence changed in the record and in Example C (old text, new text, source capture id + digest or owner row id), the red-proof output with DIRECT exit codes, and every check command with its DIRECT exit code. NOT IN THIS TASK: building the apartment estimator or any part of it; any screen or display; the reference cases (docs/reference-cases/**, read only); the captures (docs/research/zr-snapshots/v1/**, read only); the captures still owed by DB-188 (the commercial floor area ratio of Article III Chapter 3; Local Law 154 and the energy code) -- name them, do not capture them; where the rear yard, the setback or the three legal unit limits are placed in the results document (that is DB-185 / R555, a separate recommendation); any program code, rule file, or any file outside the allowed paths.",
+  "business_reason": "The owner decided the open apartment-estimate choices on 2026-10-07 (R539 to R545) and authorized continuing the corrections before any estimator (R534, R546), with each correction finished only after an independent agent verifies it (R532). The measurement-basis record is what the owner is asked to rely on, and it is out of date in three ways: its section 8a still asks choices the owner has now decided; it marks the mixed-building rule and the energy eligibility 'not captured yet' when those texts are now captured and read (R513, R516); and its questions-of-law list and Example C still describe the earlier state. Bringing it up to date -- with the owner's decisions in the owner's own words, the law stated from the captures, what is still missing named (DB-188), and the examples left unchanged unless a statement is false -- keeps the record truthful before the estimator is built.",
+  "inputs": [
+    "docs/measurement-basis/MEASUREMENT_BASIS.md (the record, in full)",
+    "docs/measurement-basis/examples/ (all six files: example-a/b/c JSON and Markdown)",
+    "services/api/tests/scenario/measurement_basis/ (measurement_basis_check.py, measurement_basis_fit.py, measurement_basis_lib.py, measurement_basis_render.py, test_measurement_basis_examples.py)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/source-057-amendment.md (owner message 113, the decisions; the verbatim owner fragments and the row mapping R538 to R559)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R435, R436, R509 to R519, R532, R534, R538 to R545 (READ ONLY)",
+    "docs/reference-cases/R6B/cases/step-p5-worked.json rows mixed-use-sections, mixed-use-floor-area-combination, shared-floor-area-rule, made-up-mixed-shared-attribution, made-up-mixed-residential-far, made-up-mixed-commercial-far, made-up-mixed-whole-building-max, floor-area-ratio-definition, fully-electrified-building-definition, ultra-low-energy-building-definition, energy-floor-area-exclusion, proposed-building-energy-eligibility (READ ONLY)",
+    "docs/research/zr-snapshots/v1/: zr-35-30, zr-35-31, zr-35-32, zr-35-33, zr-23-20, zr-12-10-floor-area, zr-12-10-floor-area-ratio, zr-12-10-fully-electrified-building, zr-12-10-ultra-low-energy-building, zr-12-10-qualifying-exterior-wall-thickness, zr-12-10-mixed-building, zr-23-22 (READ ONLY; read the content_digest_sha256 and verbatim_excerpt from each file itself)",
+    "docs/DISCOVERY_BACKLOG.md rows DB-178, DB-182, DB-184, DB-185, DB-188",
+    "project-control/tasks/M5-T133.json, project-control/reports/M5-T133-producer-report.md, project-control/reports/M5-T133-G3G4.md (the last task on this record as the model; it FAILED one review on a stale figure -- carry that lesson)"
+  ],
+  "outputs": [
+    "docs/measurement-basis/MEASUREMENT_BASIS.md updated (section 8a decided; section 1d and 6 mixed-building and energy from the captures; section 8b questions of law in line with DB-188 added; section 9 'not captured yet' list trimmed to what is still owed)",
+    "docs/measurement-basis/examples/example-c-mixed-use.json (two now-false statements corrected, a change_log entry, no figure changed) and example-c-mixed-use.md (re-rendered byte-identical to the renderer)",
+    "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py and measurement_basis_check.py (the three new checks T1-T3; the two red consumers re-aimed)",
+    "project-control/reports/M5-T135-producer-report.md (the sentence-by-sentence change table with sources; the red-proof output; every check command with its DIRECT exit code)"
+  ],
+  "dependencies": [
+    "M5-T133",
+    "M4-T034",
+    "M4-T035"
+  ],
+  "allowed_paths": [
+    "docs/measurement-basis/MEASUREMENT_BASIS.md",
+    "docs/measurement-basis/examples/example-a-standard-residential.json",
+    "docs/measurement-basis/examples/example-a-standard-residential.md",
+    "docs/measurement-basis/examples/example-b-allowances-conditions-shown.json",
+    "docs/measurement-basis/examples/example-b-allowances-conditions-shown.md",
+    "docs/measurement-basis/examples/example-c-mixed-use.json",
+    "docs/measurement-basis/examples/example-c-mixed-use.md",
+    "services/api/tests/scenario/measurement_basis/measurement_basis_check.py",
+    "services/api/tests/scenario/measurement_basis/measurement_basis_fit.py",
+    "services/api/tests/scenario/measurement_basis/measurement_basis_lib.py",
+    "services/api/tests/scenario/measurement_basis/measurement_basis_render.py",
+    "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py",
+    "project-control/reports/M5-T135-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/** and every other program source (no estimator, no rule file, no engine)",
+    "docs/research/zr-snapshots/v1/** and services/api/app/_zr_snapshots/** (captures are read only)",
+    "docs/reference-cases/** (the step-P5 reading and every reference case are read only)",
+    "docs/DISCOVERY_BACKLOG.md, docs/zoning-rule-review/**, docs/plans/**, and every other docs file",
+    "apps/**, packages/**, .github/**, tools/**, CLAUDE.md, .claude/**, any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "the_range_is_decided_and_unvalidated",
+      "input": "the record's section 8a",
+      "expected": "0.60 to 0.75 is stated as DECIDED BY THE OWNER on 2026-10-07 (R540) in the owner's words 'an unvalidated sensitivity range', editable; no sentence calls it realistic, expected or validated"
+    },
+    {
+      "id": "S2",
+      "case": "the_apartment_size_and_its_basis",
+      "input": "the record's section 8a",
+      "expected": "700 sq ft is stated as the owner's chosen starting apartment size on the HPD measurement basis (R541), editable, not described as a measured or typical average"
+    },
+    {
+      "id": "S3",
+      "case": "the_floor_heights",
+      "input": "the record's section 8a",
+      "expected": "10 ft residential and 15 ft shop ground floors are stated as the owner's starting assumptions (R542), editable and subject to the building envelope; they are not a licence to count equal floors above the maximum base height (R519, section 8c)"
+    },
+    {
+      "id": "S4",
+      "case": "the_label_and_when_it_appears",
+      "input": "the record's section 8a",
+      "expected": "the result is 'Not known' until an option has floors and a shape, then 'Preliminary capacity estimate' (R543), the two labels used as the owner words them"
+    },
+    {
+      "id": "S5",
+      "case": "which_floor_area_the_estimate_uses",
+      "input": "the record's sections 4 and 8a",
+      "expected": "the estimate uses the residential floor area the proposed building actually accommodates (R544), never the maximum permitted floor area; the formula is unchanged"
+    },
+    {
+      "id": "S6",
+      "case": "the_legal_ceiling_stays_separate",
+      "input": "the record's sections 5 and 8a",
+      "expected": "the legal ceiling on apartments is kept a separate figure (R544), not derived from the physical estimate"
+    },
+    {
+      "id": "S7",
+      "case": "what_the_approval_does_not_validate",
+      "input": "the record's section 8a",
+      "expected": "the record states the owner's approval does not validate the assumptions or the worked examples (R545); no sentence implies the approval is a validation"
+    },
+    {
+      "id": "S8",
+      "case": "the_mixed_building_rule_from_the_captures",
+      "input": "the record's sections 6 and 8b-2",
+      "expected": "ZR 35-30 is a title-only umbrella; ZR 35-31 gives a per-use maximum floor area ratio plus a combined whole-lot cap and carries the shared-floor-area attribution (also in ZR 23-20); ZR 35-32 and ZR 35-33 do not reach a C2-2 overlay within R6B; the commercial floor area ratio (Article III Chapter 3) and the whole-building maximum are 'not sure' and named missing (DB-188 item 1); each quote carries its capture id and digest and is a draft reading"
+    },
+    {
+      "id": "S9",
+      "case": "the_energy_eligibility_from_the_captures",
+      "input": "the record's sections 1d and 8b-3",
+      "expected": "a fully electrified building must exist on December 6, 2023 (so a new building cannot be one); an ultra low energy building may be put forward provisionally at plan approval and is confirmed only after construction; both rest on Local Law 154 and the energy code, which are named as not captured (DB-188 item 7, outside the Zoning Resolution); no example takes the energy exclusion; no general 'confirm it applies' switch; each quote carries its capture id and digest"
+    },
+    {
+      "id": "S10",
+      "case": "the_wall_exclusion_only_as_far_as_the_capture_bears_out",
+      "input": "the record's section 1d",
+      "expected": "the exterior-wall exclusion is stated as applying to thickness added to a building existing on December 6, 2023 and not to a new building's ordinary walls, matching capture zr-12-10-qualifying-exterior-wall-thickness; nothing beyond the captured text is asserted"
+    },
+    {
+      "id": "S11",
+      "case": "the_questions_of_law_list_in_line",
+      "input": "the record's section 8b and section 9",
+      "expected": "8b-2 and 8b-3 no longer say 'not captured yet' for ZR 35-31 or the energy definitions; the list adds the commercial floor area ratio of Article III Chapter 3 and Local Law 154 with the energy code (DB-188); 8b-1 (amenity order) is unchanged; no question of what the law says is put to the owner as a preference (R515)"
+    },
+    {
+      "id": "S12",
+      "case": "examples_unchanged_unless_shown_false",
+      "input": "the three examples before and after",
+      "expected": "only Example C changes: what_it_does_not_show[1] and shared_floor_area.conditional_note no longer say ZR 35-31 is 'not captured yet'; the ratio 0.6828 and the attribution 98.32/21.68 are unchanged; a change_log entry names the two statements and the reason; Examples A and B are byte-unchanged"
+    },
+    {
+      "id": "S13",
+      "case": "every_new_quote_stands_in_its_capture",
+      "input": "every new law quote in the record",
+      "expected": "each quote (with # markup stripped) is a verbatim substring of its named capture's verbatim_excerpt, and the cited digest equals that capture's content_digest_sha256; nothing is stated from a text that is not captured"
+    },
+    {
+      "id": "S14",
+      "case": "no_code_or_other_document_changed",
+      "input": "git show --name-status of the builder's commits",
+      "expected": "only the record, the Example C JSON and Markdown (and, if the builder found a further false statement, only the stated example files), the five measurement_basis test files and the producer report change; no program source, no capture, no reference case, no other docs file"
+    },
+    {
+      "id": "S15",
+      "case": "the_new_tests_fail_on_the_record_as_it_is",
+      "input": "T1, T2 and T3 run at the claim head before any change",
+      "expected": "T1 fails (section 8a says 'NOT decided'), T2 fails (ZR 35-31 and the energy definitions are marked 'not captured yet'), T3 fails (the new quotes are absent); the failing output with DIRECT exit codes is in the report; after the changes all three pass and the known red consumers (record_errors() needle; the conditional_note assertion) pass"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "scenario-optimization-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "A quote or digest written from memory or copied from this packet rather than read from the capture file -> T3 checks each quote is verbatim in its capture and each digest equals content_digest_sha256; read digests from the capture file itself (M5-T133 FAILED G3 on a stale figure).",
+    "An owner recommendation or an orchestrator reading written as if it were the owner's decision -> quote only the verbatim owner fragments of source-057 with their row ids; the reviewer checks each against the owner's words.",
+    "Overstating the approval as a validation of the assumptions or the worked examples -> R545 is stated plainly and S7 checks it.",
+    "An example figure changed -> no figure changes in Example C (S12); a change only with its reason in the change log; A and B stay byte-unchanged.",
+    "A known-red consumer left silent after the behaviour change -> the record_errors() 'not captured yet' needle and the conditional_note assertion at test line ~315 are re-aimed in the same change; the full measurement_basis suite is run green at the candidate head.",
+    "Claiming the mixed-building combination or the energy eligibility is fully settled -> the record says 'not sure' and names the still-missing commercial floor area ratio (Article III Chapter 3) and Local Law 154 / the energy code (DB-188)."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T03:57:03.974050+00:00",
+  "updated_at": "2026-10-08T05:28:36.954658+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R513",
+        "D-090-R516",
+        "D-090-R519",
+        "D-090-R534",
+        "D-090-R539",
+        "D-090-R540",
+        "D-090-R541",
+        "D-090-R542",
+        "D-090-R543",
+        "D-090-R544",
+        "D-090-R545"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T03:57:03.974280+00:00",
+  "path_notes": "PRODUCER = scenario-optimization-engineer in an isolated worktree, reset to the claim-seam head first (show-toplevel guard; STOP if in the primary checkout). The three measurement_basis test modules are focused test helpers, not program source; no handwritten production source changes. ALL PATHS ARE LITERAL because the ledger builds a task's content identity from literal paths only and a pattern binds nothing (backlog row DB-181). The captures, the reference cases and DISCOVERY_BACKLOG.md are READ ONLY. No new allowed-path file is created (the new tests extend the existing test file and checker), so no placeholder seeding is needed. THE ORCHESTRATOR'S READING on the one point the draft could not settle: whether the shared floor area attributed to the residences is ADDED to the residential floor area the estimate uses is a question of law, not a design choice: the record lists it among the questions of law with what would settle it, and the examples' figures do not move. PART OF PARALLEL WAVE 8 with the other task of the wave (M4-T036, M5-T135): the two share no file (project-control/reports/WAVE8-2026-10-08-concurrency-record.md). ALLOWED PATHS are literal files or literal folders: the registry builds a task's content identity from literal paths only and a pattern binds nothing (backlog row DB-181); a file a builder adds beyond them is added literally by the orchestrator when it integrates it.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/scenario/measurement_basis",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/scenario",
+    "python3 scripts/lanes/check_lane_paths.py --coverage",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave8",
+  "progress_log": [
+    {
+      "at": "2026-10-08T03:57:58.074832+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted and claimed in wave 8 on the branch task/wave8-captures-measurement-basis from the integration head 39e7f2d2 (the merge of wave 7); that head's own run is read as complete and successful before any builder's commit is integrated."
+    },
+    {
+      "at": "2026-10-08T04:43:37.034473+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Builder's commit c8988873 (parent = the claim head; 7 files, all allowed) integrated by fast-forward. The integration branch's own run on 39e7f2d2 had completed with every job a success before this (run 37725077746). Orchestrator's checks on the branch: ruff clean; the measurement-basis and reference-case tests pass. Independent reviews started at c8988873 before the handoff command: G3 (data-contract-verifier) and G4 (qa-engineer); their results are recorded when they return."
+    },
+    {
+      "at": "2026-10-08T04:51:17.563184+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Independent reviews at c8988873, both on their first reading: G3 PASS (data-contract-verifier; one note) and G4 PASS (qa-engineer; six notes); no review failed. Their returns are committed unchanged in project-control/reports/M5-T135-G3G4.md. THE SESSION WAS HANDED OVER HERE (owner's /session-handoff, 04:38 UTC): the task is NOT yet submitted. Still to do, by the next session: the evidence map (eleven rows), submit, gate G2, the gate records G3 and G4 from that file (the task's files must still have the blob ids of c8988873), the rule check, acceptance. For the backlog at the acceptance sweep: the introduction's 'a 25 percent allowance' is an older shorthand that the owner's decision (the range 0.60 to 0.75) does not use."
+    },
+    {
+      "at": "2026-10-08T05:14:24.952656+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Evidence map written for the eleven rows of D-090 bound to this task (project-control/reports/M5-T135-evidence-map.json). The thirteen allowed-path files still have the blob ids of the reviewed commit c8988873. Orchestrator's checks at the branch head 6526d902 in a new session: ruff clean; tests/scenario/measurement_basis 41 passed; the page check passed. The record names the commercial floor area ratio of Article III Chapter 3 as not captured yet: true at the claim head; the wave's other task captures those sections as source text and nothing has read them, so the phrase is brought in line when they are read (a backlog row at the acceptance sweep)."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-08T05:28:36.954489+00:00"
+}
