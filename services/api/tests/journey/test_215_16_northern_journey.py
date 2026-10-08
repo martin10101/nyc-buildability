@@ -250,6 +250,8 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     assert "does not read" not in district["statement"]
     density = rows["special_density_area"]
     assert density["statement"].startswith("Whether the lot is in a special density area is not")
+    # not known shows the words, never the stand-in the engine received (no "Yes" on the drawings)
+    assert density["value"] == "Not known" and density["unit"] is None
     angle = rows["street_line_intersection_angle_degrees"]
     assert angle["basis"] == "approximate_tax_map" and "89.7 degrees" in angle["statement"]
     coverage_reason = document["answers"]["permitted_envelope"]["value_states"][

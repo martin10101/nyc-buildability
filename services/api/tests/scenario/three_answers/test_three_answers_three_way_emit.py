@@ -858,6 +858,9 @@ def test_s137_scope_lines_say_where_each_condition_comes_from(evidence_benchmark
     assert "89.7 degrees" in angle["statement"]
     density = rows["special_density_area"]
     assert density["statement"].lower().startswith("whether the lot is in a special density area")
+    # a not-known condition shows the WORDS, never the stand-in the engine received (no "Yes")
+    assert density["value"] == "Not known" and density["unit"] is None
+    assert not isinstance(density["value"], bool)
     # no scope line claims the program does not read something it reads
     for row in doc["scope"]["assumptions"]:
         assert "does not read" not in row["statement"]
@@ -885,9 +888,15 @@ def test_s137_invariant_over_the_benchmark_states(evidence_benchmark):
         no_geom = _evidence(mp, geometry_on=False)
     _assert_no_shown_result_rests_on_a_stand_in(no_geom.document)
     rows = _scope_rows(no_geom.document)
-    # the reach is not known, so within-100 and the angle say not known; the rear yard is withheld
-    assert rows["within_100_ft_of_street_line_intersection"]["basis"] == "assumed"
-    assert "not known" in rows["within_100_ft_of_street_line_intersection"]["statement"].lower()
+    # the reach is not known, so within-100 and the angle SHOW the words 'Not known' (never the
+    # stand-in the engine received), and the rear yard is withheld
+    within = rows["within_100_ft_of_street_line_intersection"]
+    angle = rows["street_line_intersection_angle_degrees"]
+    assert within["basis"] == "assumed" and within["value"] == "Not known"
+    assert within["unit"] is None
+    assert angle["value"] == "Not known" and angle["unit"] is None
+    assert not isinstance(within["value"], bool) and not isinstance(angle["value"], (int, float))
+    assert "not known" in within["statement"].lower()
     assert _states(no_geom.document["answers"]["permitted_envelope"])["rear_yard"]["way"] == (
         "withheld"
     )
@@ -912,10 +921,14 @@ def test_s137_invariant_special_district_not_read_withholds_everything():
     assert _shown_result_keys(emitted) == set()
     _assert_no_shown_result_rests_on_a_stand_in(emitted)
     rows = _scope_rows(emitted)
-    assert rows["special_district_present"]["basis"] == "assumed"
-    assert "not known" in rows["special_district_present"]["statement"].lower()
-    assert rows["overlay_present"]["basis"] == "assumed"
-    assert "not known" in rows["overlay_present"]["statement"].lower()
+    district = rows["special_district_present"]
+    overlay = rows["overlay_present"]
+    assert district["basis"] == "assumed" and district["value"] == "Not known"
+    assert "not known" in district["statement"].lower()
+    assert overlay["basis"] == "assumed" and overlay["value"] == "Not known"
+    assert "not known" in overlay["statement"].lower()
+    # the words, never the stand-in the engine received (no 'Yes'/'No')
+    assert not isinstance(district["value"], bool) and not isinstance(overlay["value"], bool)
 
 
 def test_s137_interior_lot_scope_says_not_applicable():
@@ -936,11 +949,35 @@ def test_s137_interior_lot_scope_says_not_applicable():
     )
     emitted = emit_three_way_document(engine_doc, ways, condition_sources=conditions)
     rows = _scope_rows(emitted)
-    within = rows["within_100_ft_of_street_line_intersection"]["statement"]
-    angle = rows["street_line_intersection_angle_degrees"]["statement"]
-    assert "not a corner lot" in within and "does not apply" in within
-    assert "not a corner lot" in angle and "does not apply" in angle
+    within = rows["within_100_ft_of_street_line_intersection"]
+    angle = rows["street_line_intersection_angle_degrees"]
+    assert "not a corner lot" in within["statement"] and "does not apply" in within["statement"]
+    assert "not a corner lot" in angle["statement"] and "does not apply" in angle["statement"]
+    # a not-applicable corner condition SHOWS the words, never the made-up value (no 136 degrees)
+    assert within["value"] == "Not applicable" and within["unit"] is None
+    assert angle["value"] == "Not applicable" and angle["unit"] is None
     _assert_no_shown_result_rests_on_a_stand_in(emitted)
+
+
+def test_s137_not_known_lines_show_words_never_a_boolean_or_number(evidence_benchmark):
+    """A scope line of a condition that is not known (or does not apply) SHOWS the words 'Not known'
+    / 'Not applicable', never the stand-in the engine received. Over every such line of the
+    benchmark (density not known) and the no-geometry benchmark (reach not known), the value is one
+    of those two strings and is never a boolean or a number - a reader never sees a substitute (e.g.
+    'Yes') for something not known. This test FAILS if the transform shows the stand-in value."""
+    docs = [evidence_benchmark.document]
+    with pytest.MonkeyPatch.context() as mp:
+        docs.append(_evidence(mp, geometry_on=False).document)
+    seen_not_known = False
+    for doc in docs:
+        for row in doc["scope"]["assumptions"]:
+            if row["key"] in _CONDITION_DEPENDENTS and row["basis"] == "assumed":
+                seen_not_known = True
+                assert row["value"] in ("Not known", "Not applicable"), row
+                assert not isinstance(row["value"], bool), row
+                assert not isinstance(row["value"], (int, float)), row
+                assert row["unit"] is None, row
+    assert seen_not_known  # the states above do carry a not-known condition (non-vacuous)
 
 
 def test_s137_older_entry_leaves_the_scope_lines_as_the_engine_made_them(benchmark):

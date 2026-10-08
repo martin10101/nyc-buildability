@@ -206,7 +206,49 @@ the adapter `result_way_engine_bridge.py`), `engine_disclosures.py`, `evaluator_
 schema and every rule file are byte-identical to the claim head (`git diff --name-only` vs the base
 lists only the 10 files above).
 
-## Checks (direct exit codes)
+## Correction (orchestrator, O36) — second commit on top of 11e738250
+
+The orchestrator corrected reading O36: a scope line of a condition that is NOT KNOWN (or not
+applicable) must SHOW the words, not the stand-in value the engine received. My first commit put the
+stand-in into the scope row's `value` (as O36 then said), so the regenerated drawings printed
+"Special density area **Yes** ...". A reader must not see a substitute (`Yes`) for something not
+known.
+
+- Change: in `three_way_document._rewrite_scope_lines`, a not-known line now sets `value` to the
+  string `"Not known"` and `unit` to `null`; a not-applicable line sets `value` to `"Not applicable"`
+  and `unit` to `null`. The `basis` stays `assumed`; the statement is unchanged. Recorded / measured
+  / the user's-statement lines keep the real value and unit. **The value handed to the ENGINE does
+  not change** (`engine_conditions` is untouched) - only what the emitted document shows.
+- `unit`: the schema's `scope_assumption.unit` is `non_empty_string | null`, so I set it `null` for
+  a words value (the stand-in - e.g. the angle's `136` with unit `degrees` - does not reach the
+  document; without this the angle line would read "Not known degrees").
+- Readers of `scope.assumptions`, READ ONLY, confirmed to handle a string value + null unit: the
+  kit (`app/drawings/kit/scope.py` `_value_parts`) prints an unmapped string verbatim and omits a
+  null unit (DXF via `results_dxf_notes.py`, SVG via `adapter.py`); `apps/web .../three-answers.ts`
+  `scopeAssumptionValueText` returns the string unchanged (no unit); `ScopeSummary.tsx` shows
+  `valueText`; `CalculationEvidence.tsx` / `ReportView.tsx` delegate to it; `tests/drawings/kit/
+  test_scope.py` only closed-checks `housing_program`/`site_measurement_rank` values and an unknown
+  KEY. None would fail or print wrong. I did not edit any of them. No STOP.
+- The regenerated **density line now prints, exactly** (DXF, and the same words on the site-plan
+  drawing): `Special density area Not known assumed Whether the lot is in a special density area is
+  not known; it is taken to be in one for the calculation, so the legal dwelling-unit limit that
+  depends on it is withheld.`
+- The two **not-applicable** lines (an interior lot; not in the committed benchmark fixture, which
+  is a corner lot) now read: value `Not applicable`, unit null, statements "This lot is not a corner
+  lot, so whether it lies within 100 feet of a street-line corner does not apply." and "This lot is
+  not a corner lot, so the angle at which two street lines meet does not apply." (previously they
+  carried the made-up value `false` / `136 degrees`).
+- Regenerated files, changed lines: the fixture's `special_density_area` row `value` `true` ->
+  `"Not known"` (the only not-known condition on the benchmark; within-100 and the angle stay the
+  measured `false` / `89.7`); the DXF prints `Not known` in place of `Yes`; the site-plan SVG prints
+  `Not known` in place of `Yes`. No other line changed from the first commit.
+- New test: `test_s137_not_known_lines_show_words_never_a_boolean_or_number` (plus value assertions
+  in the benchmark, no-geometry, interior and special-district-not-read tests) FAILS if a not-known
+  line's value is a boolean or a number. MUTATION PROOF (outside the repo,
+  `scratchpad/mutation_not_known_value.py`): emptying the transform's words map makes the line show
+  the stand-in `True` again - CAUGHT (the committed `value == "Not known"` assertion fails).
+
+## Checks (direct exit codes) — first commit
 
 | Check | Command | Result | Exit |
 |---|---|---|---|
@@ -231,6 +273,24 @@ Exit codes were read from `$?` directly for ruff/the glob validator, and from `$
 (the test/npm command's own exit, before any display pipe) for the suites. The full api suite and the
 browser tests (`test:e2e`) were NOT run (the orchestrator runs them at the final candidate).
 
+## Checks (direct exit codes) — second commit (the O36 correction)
+
+| Check | Result | Exit |
+|---|---|---|
+| a `ruff check .` (services/api) | All checks passed | 0 |
+| b `pytest tests/scenario/three_answers` | 350 passed, 2 skipped (one new test) | 0 |
+| c `pytest tests/journey tests/contracts tests/spatial/test_lot_reach.py` | 573 passed | 0 |
+| d `pytest tests/cad tests/drawings` | 1359 passed, 6 skipped | 0 |
+| e `tools/modularity_check.py --check` | exit 0 | 0 |
+| e `.github/scripts/validate_contracts.py` | 23 schemas, 0 failures | 0 |
+| g `npm run typecheck` | tsc --noEmit clean | 0 |
+| g `npm run test` | 2429 passed (no web test changed) | 0 |
+| g `npm run build` | build succeeded | 0 |
+| mutation (scratchpad) | not-known-shows-words CAUGHT | 0 |
+
+Exit codes read from `$?` for ruff/the validator and `${PIPESTATUS[0]}` / a `>log; echo $?` capture
+for the suites. The full api suite and the browser tests were not run (the orchestrator runs them).
+
 ## Requested status
 
-awaiting_gate. One commit remains (the orchestrator records the ledger). No blocker.
+awaiting_gate. No blocker. Both commits are in the worktree; the orchestrator records the ledger.

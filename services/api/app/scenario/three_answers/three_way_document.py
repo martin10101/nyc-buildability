@@ -131,6 +131,19 @@ _SCOPE_BASIS_BY_SOURCE = {
     Source.NOT_APPLICABLE: "assumed",
 }
 
+# The WORDS a scope line SHOWS for a condition that is not known or does not apply. The value the
+# engine was given (the stand-in) is never shown as the scope row's value - a reader must not see a
+# substitute figure for something not known (orchestrator correction of reading O36). The schema's
+# scope_assumption value may be a string, and the unit is null for these words (the stand-in the
+# engine received does not reach the emitted document). The statement still says it is not known /
+# does not apply, what was taken for the calculation, and what is withheld.
+_NOT_KNOWN_VALUE = "Not known"
+_NOT_APPLICABLE_VALUE = "Not applicable"
+_WORDS_VALUE_BY_SOURCE = {
+    Source.NOT_KNOWN: _NOT_KNOWN_VALUE,
+    Source.NOT_APPLICABLE: _NOT_APPLICABLE_VALUE,
+}
+
 
 def _fmt_feet(value: float) -> str:
     return f"{value:.2f} feet"
@@ -230,9 +243,18 @@ def _rewrite_scope_lines(doc: dict, condition_sources: dict[str, Derived]) -> No
         derived = condition_sources.get(row.get("key"))
         if derived is None:
             continue
-        row["value"] = derived.engine_value
         row["basis"] = _SCOPE_BASIS_BY_SOURCE[derived.source]
         row["statement"] = _scope_statement(row["key"], derived)
+        words = _WORDS_VALUE_BY_SOURCE.get(derived.source)
+        if words is not None:
+            # Not known / not applicable: show the words, never the stand-in the engine received;
+            # the unit is null (the stand-in does not reach the document).
+            row["value"] = words
+            row["unit"] = None
+        else:
+            # Recorded, measured or the user's statement: the real value (and its unit, as the
+            # engine set it - degrees for the angle, null for the flags).
+            row["value"] = derived.engine_value
 
 
 # ---------------------------------------------------------------------------
