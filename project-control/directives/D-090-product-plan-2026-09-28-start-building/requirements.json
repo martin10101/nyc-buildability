@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 588,
+ "requirement_count": 590,
  "producer": "orchestrator",
- "updated_at": "2026-10-08T06:07:32+00:00",
+ "updated_at": "2026-10-08T06:29:47+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -20010,6 +20010,77 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-08 (message 119).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R589",
+   "text": "'/session-handoff': the session is handed over: the handoff file is written, checked by a different agent, put on a pull request and merged, and the next session's start prompt is printed. ORCHESTRATOR'S READING: the command carried no text, so no reason for the handover is recorded. It arrived about nine minutes after the owner's answers to the three pending decisions (source-060), while the pull request of wave 8 was running its checks at its final head (both its tasks accepted) and one read-only helper was drafting the next packet. The wave's merge is completed first if its independent pre-merge check passes; the helper finishes its bounded draft; no new work and no further helper for the work is started.",
+   "source_ref": "source-061-amendment.md#owner-message-120-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R500",
+    "D-090-R582"
+   ],
+   "required_harness": "docs/SESSION_HANDOFF.md of the next sequence number is merged after an independent check, and the start prompt is printed.",
+   "required_evidence": "The handoff's pull request and its independent check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 120).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R590",
+   "text": "'/session-handoff': the handover follows the procedure as it stands. ORCHESTRATOR'S READING: the owner approved four changes to the procedure a few minutes earlier (rows R574 to R578). Three of them need something built (the script, the short start prompt, the fixed home for the long lists) and are not built yet, so they are not used here: this handoff still carries the long lists in its own text, its start prompt is the long one, and no script writes its facts. The fourth needs nothing built and is used within the owner's limits: inside the active session the session waits for checks that already exist, starts no rerun, then reads each check itself and merges by hand. Fewer checks are not approved (row R579): this handoff's pull request gets every existing check and an independent check.",
+   "source_ref": "source-061-amendment.md#owner-message-120-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R574",
+    "D-090-R575",
+    "D-090-R576",
+    "D-090-R577",
+    "D-090-R579"
+   ],
+   "required_harness": "No instruction file and no handoff requirement is changed by the handover; the handoff's pull request shows the full set of checks; the time from the command to the printed start prompt is recorded in the handoff.",
+   "required_evidence": "The diff of the handoff's branch; its recorded check list; the handoff file's time section.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 120).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
