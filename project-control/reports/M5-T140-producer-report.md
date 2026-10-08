@@ -31,11 +31,11 @@ MUST change is inside the allowed paths; no forbidden/out-of-scope consumer must
 | loading | LoadingCard "Working out the results for this property…" (`results-loading`), button `aria-busy` | results-panel.test.tsx "S2 … loading state" |
 | result shown, input changed since | "You changed an input. These results are for the earlier inputs. Press Show results to update." (`results-stale`) | results-panel.test.tsx "S19 … stale line" |
 | success (200) | `three-answers-panel` renders + parking line (`results-parking`) | results-panel.test.tsx W-2; results.flag-on.spec.ts |
-| 404 | NotConnectedCard "Results are not connected yet" (`results-unavailable`) | results-panel.test.tsx "S11 … 404 not connected" |
+| 404 | NotConnectedCard "Results are not connected yet" + "The results service is not available on this server. No results were shown." (`results-unavailable`) | results-panel.test.tsx "S11 … 404 not connected" and "S11 … say exactly true words" |
 | 422 validation_error | FailureNoticeCard "The request could not be understood" + server field message (`results-failure-notice`) | results-panel.test.tsx S11; results-api.test.ts W-1 |
 | 429 rate_limited | "Too many requests" + "Try again shortly." + retry | results-panel.test.tsx S11; results-api.test.ts W-1 |
-| 503 inputs_unavailable | "The results could not be loaded right now" + "…Trying again is safe." + retry | results-panel.test.tsx S11; results-api.test.ts W-1 |
-| 503 lot_conditions_unconfirmed | "The results are not available for this lot" + server reason, NO safe-to-retry line | results-panel.test.tsx S11; results-api.test.ts W-1 |
+| 503 inputs_unavailable | "The results could not be loaded right now" + server message + recovery "Trying again is safe." + retry | results-panel.test.tsx S11 (+ "say exactly true words"); results-api.test.ts W-1 |
+| 503 lot_conditions_unconfirmed | "The results are not available for this lot" + server reason + recovery "Trying again will give the same answer until that record can be read.", NO retry (never safe) | results-panel.test.tsx S11 (+ "say exactly true words"); results-api.test.ts W-1 |
 | 500 internal_error / internal_contract_error | "Something went wrong" + "…Nothing was shown." (no stack/path) | results-panel.test.tsx S11; results-api.test.ts W-1 |
 | network failure | "Could not reach the server" + retry | results-panel.test.tsx "S12 … network"; results-api.test.ts W-1 |
 | bad document (200 fails website check) | "The results could not be loaded" + no partial document | results-panel.test.tsx "S12/S21 … fails the website's own check"; results-contract-checks.test.ts S21; results-api.test.ts W-1 |
@@ -61,14 +61,13 @@ conditional on your statement."; button "Show results". Field message (refused h
 height in feet greater than zero."
 
 States: loading "Working out the results for this property…"; 404 "Results are not connected yet" +
-"The results service is not switched on for this build. No results were requested or shown."; stale
+"The results service is not available on this server. No results were shown."; stale
 "You changed an input. These results are for the earlier inputs. Press Show results to update.";
 success parking line "Parking, loading and bicycle requirements are not yet checked for this option.
 It is not shown as feasible." Failure titles/recovery: "The request could not be understood" /
 "Check the form and try again."; "Too many requests" / "Try again shortly."; "The results could not
-be loaded right now" / "The official source did not return the inputs yet. Trying again is safe.";
-"The results are not available for this lot" / "A recorded fact needed to work out this lot's
-results could not be read."; "Something went wrong" / "The app hit an unexpected problem while
+be loaded right now" / "Trying again is safe."; "The results are not available for this lot" /
+"Trying again will give the same answer until that record can be read."; "Something went wrong" / "The app hit an unexpected problem while
 loading the results. Nothing was shown."; "The results could not be loaded" (bad document);
 "Could not reach the server"; "The results took too long"; "Unexpected response from the server";
 shared "The property you entered is fine. Trying again is safe." / "This needs the platform team.
@@ -192,6 +191,16 @@ conditions and no engine internal word reaches the screen (DB-196(c), DB-199(e),
   not-available with gap_kind `work_owed`, so its card now also shows the kind line. The packet
   table's "reason only, no number" for building_option is preserved (the kind line is plain words,
   not a number). I updated the two allowed card tests accordingly; no not-allowed card test changed.
+- Second commit (orchestrator corrections, on top of 06650cfe): made three sentences true — the
+  404 card now reads "The results service is not available on this server. No results were shown."
+  (a request WAS made; "this build" was inner language); the 503 inputs_unavailable recovery is now
+  just "Trying again is safe." (the website does not know the cause and makes no "yet" promise); the
+  503 lot_conditions_unconfirmed recovery is now "Trying again will give the same answer until that
+  record can be read." (true by the route's `_lot_conditions_unconfirmed_503` contract; stays
+  not-retryable). The flag-on journey now also selects each of the two other programs and asserts
+  the returned housing-program line names the label read from the form's selected option (not
+  retyped). A unit test ("say exactly true words") pins the three corrected sentences. Nothing else
+  changed.
 - No ruling was impossible to build as written; nothing was chosen differently.
 - The code-graph impact query was unusable (stale cache, `--no-regen`); I verified every consumer in
   source instead (§1). The harness imports the canonical recorded-Northern replay helpers from

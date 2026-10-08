@@ -130,6 +130,24 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     await expect(allowance).toContainText(`${UNIT_LIMIT_STANDARD} units`);
     await expect(allowance).toContainText("special density area");
 
+    // The program-name drift guard for the two OTHER programs: select each, press, and assert the
+    // returned housing-program line names the label the form shows — read from the form's selected
+    // option in the page, never retyped here (R3).
+    const programSelect = dialog.getByTestId("results-housing-program");
+    for (const value of ["qualifying_affordable_housing", "qualifying_senior_housing"]) {
+      await programSelect.selectOption(value);
+      const label = await programSelect.evaluate(
+        (element) => (element as HTMLSelectElement).selectedOptions[0]?.textContent?.trim() ?? "",
+      );
+      const response = waitResults(page);
+      await dialog.getByTestId("results-show").click();
+      await response;
+      await expect(dialog.getByTestId("three-answers-panel")).toBeVisible();
+      await expect(dialog.getByTestId("three-answers-scope")).toContainText(
+        `${label} was selected for this run as the housing program.`,
+      );
+    }
+
     // Keyboard: the window closes on Escape and returns focus to its opener (W-6).
     await dialog.getByRole("button", { name: `Close ${WINDOW_NAME} window` }).focus();
     await page.keyboard.press("Escape");

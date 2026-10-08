@@ -115,7 +115,7 @@ export function resultsFailureNotice(
       return {
         title: "The results could not be loaded right now",
         body: outcome.message,
-        recovery: "The official source did not return the inputs yet. Trying again is safe.",
+        recovery: "Trying again is safe.",
         retryable: true,
         technical: referenceRow(outcome.correlationId),
       };
@@ -125,7 +125,7 @@ export function resultsFailureNotice(
       return {
         title: "The results are not available for this lot",
         body: outcome.message,
-        recovery: "A recorded fact needed to work out this lot's results could not be read.",
+        recovery: "Trying again will give the same answer until that record can be read.",
         retryable: false,
         technical: referenceRow(outcome.correlationId),
       };
@@ -192,7 +192,7 @@ function NotConnectedCard() {
     <section className="card architect-empty" data-testid="results-unavailable">
       <p className="architect-eyebrow">Development results</p>
       <h2>Results are not connected yet</h2>
-      <p>The results service is not switched on for this build. No results were requested or shown.</p>
+      <p>The results service is not available on this server. No results were shown.</p>
     </section>
   );
 }

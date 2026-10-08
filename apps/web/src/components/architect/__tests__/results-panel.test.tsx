@@ -242,6 +242,31 @@ describe("ResultsPanel — W-3 server error states (plain, no stack or path)", (
     });
   }
 
+  it("S11: the 404 card and the two not-available notices say exactly true words", async () => {
+    // 404: a request WAS made and "this build" is inner language — plain, true words instead.
+    render(<ResultsPanel bbl={BBL} fetchImpl={(async () => jsonResponse({ detail: "Not Found" }, 404)) as typeof fetch} />);
+    await pressShow();
+    expect((await screen.findByTestId("results-unavailable")).textContent).toContain(
+      "The results service is not available on this server. No results were shown.",
+    );
+    cleanup();
+    // 503 inputs_unavailable: the website does not know the cause and makes no promise beyond "safe".
+    render(<ResultsPanel bbl={BBL} fetchImpl={(async () => jsonResponse({ state: "inputs_unavailable", message: "not available right now" }, 503)) as typeof fetch} />);
+    await pressShow();
+    const inputsNotice = await screen.findByTestId("results-failure-notice");
+    expect(within(inputsNotice).getByTestId("results-failure-title").textContent).toBe("The results could not be loaded right now");
+    expect(inputsNotice.textContent).toContain("Trying again is safe.");
+    expect(inputsNotice.textContent).not.toContain("did not return the inputs yet");
+    cleanup();
+    // 503 lot_conditions_unconfirmed: never called safe to retry; the recovery states the contract truth.
+    render(<ResultsPanel bbl={BBL} fetchImpl={(async () => jsonResponse({ state: "lot_conditions_unconfirmed", message: "a recorded fact could not be read" }, 503)) as typeof fetch} />);
+    await pressShow();
+    const lotNotice = await screen.findByTestId("results-failure-notice");
+    expect(within(lotNotice).getByTestId("results-failure-title").textContent).toBe("The results are not available for this lot");
+    expect(lotNotice.textContent).toContain("Trying again will give the same answer until that record can be read.");
+    expect(within(lotNotice).queryByTestId("results-failure-retry")).toBeNull();
+  });
+
   it("S12: a network failure shows a plain 'could not reach' notice with retry", async () => {
     const fetchImpl = (async () => {
       throw new TypeError("Failed to fetch");
