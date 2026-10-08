@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-08T06:07:32+00:00",
+ "updated_at": "2026-10-08T06:29:47+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -609,10 +609,12 @@
   "D-090-R585",
   "D-090-R586",
   "D-090-R587",
-  "D-090-R588"
+  "D-090-R588",
+  "D-090-R589",
+  "D-090-R590"
  ],
- "requirements_id_digest_sha256": "a9720637d506db4f6e2a397d1080f6ae1ac362ca8c1721a743f3791c5270a5a0",
- "requirements_content_digest_sha256": "5ebb07452909b0f2953a46d3d5b3b3a77e428e7c86945d4a1314bdf3e7d80586",
+ "requirements_id_digest_sha256": "8cd317f3951c7527c3d0004ffeb30007e2b89397f9b28f6a52f31437b1a05492",
+ "requirements_content_digest_sha256": "ed17b98e0c443775f26261ad98773681bf2836deddf7e794469f0924315f2ddf",
  "sources": [
   {
    "file": "source-001.md",
@@ -1092,6 +1094,14 @@
    "recorded_at": "2026-10-08T06:07:32+00:00",
    "content_digest_sha256": "065790bc41a160837640d4dc7facdd2a54ef9d3513a43b4f9db894119e8b8640",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-061-amendment.md",
+   "kind": "amendment",
+   "sequence": 61,
+   "recorded_at": "2026-10-08T06:29:47+00:00",
+   "content_digest_sha256": "21ac7db9b88ff7fb410629640a654c3badfc503823a865eca2a929509efe6751",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1153,7 +1163,8 @@
   "source-057-amendment.md",
   "source-058-amendment.md",
   "source-059-amendment.md",
-  "source-060-amendment.md"
+  "source-060-amendment.md",
+  "source-061-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1747,6 +1758,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-060 (session 013RaGmC message 119, 2026-10-08: the owner's answers to the three pending decisions - the placement in the results document decided as recommended; the instruction-file list not approved until seen; four handoff changes approved and fewer checks not approved - and the order of the next work) and requirements D-090-R567 to R588, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-08T06:29:47+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-061 (session 013RaGmC message 120, 2026-10-08: /session-handoff) and requirements D-090-R589 and R590, both pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
