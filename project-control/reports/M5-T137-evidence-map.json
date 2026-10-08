@@ -1,0 +1,83 @@
+{
+ "task_id": "M5-T137",
+ "material_commits": [
+  "1aacada9 (the builder's first commit, parent = the claim-seam head, cherry-picked with an identical tree: the new module, the new entry, the scope lines, the tests, the regenerated journey result and its two drawings, the report; 11 files)",
+  "b6aab84a (the same builder's correcting commit, asked by the orchestrator before any review: a scope line of a condition that is not known shows the words 'Not known', a condition that does not apply the words 'Not applicable'; 7 files) = material head"
+ ],
+ "claim_seam_head": "7b5938e4cba7c27c4d8c58db70d297816de00d2d",
+ "files_changed": [
+  "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+  "project-control/reports/M5-T137-producer-report.md",
+  "services/api/app/scenario/three_answers/engine_conditions.py",
+  "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+  "services/api/app/scenario/three_answers/three_way_document.py",
+  "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+  "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+  "services/api/tests/journey/test_215_16_northern_journey.py",
+  "services/api/tests/scenario/three_answers/test_engine_conditions.py",
+  "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+  "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py"
+ ],
+ "what_did_not_change": "The engine (engine.py, inputs.py, answers.py, geometry.py, building_option.py, dwelling_units.py, rule_access.py, scope.py), the decision modules except the adapter, engine_disclosures.py, evaluator_inputs.py, every schema, schema copy, generated type and rule file, the review register, every website file, every other fixture and saved drawing. No route, no switch, no page. On the benchmark the answers, the way entries, the geometry and every side block of the committed result are identical to the claim head; only the five scope lines and the list of rule versions changed.",
+ "known_limits": [
+  "A lot that is not a corner lot is not tested end to end through the new entry (the G4 reviewer's note F1): to be pinned before the route lands.",
+  "With no property profile while the study records an overlay the new entry raises an error and emits nothing (the G3 reviewer's note F1): fail closed; the route must handle it.",
+  "A not-known scope line still has the basis 'assumed': the schema has no other (backlog row DB-196).",
+  "The benchmark rear yard still names one of its two reasons (backlog row DB-198); nothing new is visible on a screen."
+ ],
+ "checks_at_material_head": [
+  "builder at b6aab84a (its second commit): ruff clean; three_answers 350 passed 2 skipped; journey, contracts and lot reach 573 passed; cad and drawings 1359 passed 6 skipped; modularity and contract validation exit 0; website typecheck, 2429 unit tests and build exit 0",
+  "orchestrator at 3f540bb3 (the material head plus ledger commits): website lint, typecheck, 2429 unit tests, build and 153 browser tests exit 0; the full api suite 8588 passed, 8 skipped, exit 0; CI on the pushed head: all three workflows success",
+  "G3 reviewer at 3f540bb3: the same three focused suites reproduced; its own script over eleven states",
+  "G4 reviewer at 3f540bb3: the three focused suites reproduced; sixteen mutations in a copy outside the repository, fifteen caught; the red proof reproduced at the claim-seam head"
+ ],
+ "requirements": {
+  "D-090-R139": [
+   "The journey's result is now produced by the entry run_engine_and_result_ways_from_evidence (services/api/app/scenario/three_answers/result_way_engine_bridge.py), which takes the study, the profile, the outline and the geometry and derives the five conditions itself; the journey test and the wiring test no longer type them in.",
+   "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py::test_s12_entry_emits_the_committed_three_way_fixture: the committed result equals that entry's output byte for byte (a wiring proof only).",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T137-G3G4.md), check 11: the journey test and the wiring test go through the new entry; typed-in conditions remain only in older tests and never regenerate the committed result.",
+   "This task's share is the engine's five conditions, the entry that takes evidence, the scope lines of the emitted document and the regenerated journey result; the route, the results display and the exports are later pieces and stay bound to this row."
+  ],
+  "D-090-R229": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s137_not_known_lines_show_words_never_a_boolean_or_number: a scope line of a condition that is not known shows the words 'Not known', never a boolean or a number.",
+   "services/api/tests/scenario/three_answers/test_engine_conditions.py::test_special_district_not_read_uses_the_present_stand_in and services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s137_invariant_special_district_not_read_withholds_everything: with the special-district record not read, every result that depends on it is withheld.",
+   "In packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json the density-area line reads 'Not known' and says what the calculation took and what is withheld.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T137-G3G4.md), check 8: a not-known line has the value 'Not known', a null unit and a statement naming what was taken and what is withheld; the drawings print 'Not known'. the G4 reviewer (qa-engineer; project-control/reports/M5-T137-G3G4.md), mutation (n): a not-known line carrying a value fails six tests."
+  ],
+  "D-090-R240": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s137_invariant_over_the_benchmark_states: over the benchmark's states (no geometry, no outline, no statement) only the results that depend on the missing fact are withheld; the floor-area figures stay shown.",
+   "services/api/tests/scenario/three_answers/test_engine_conditions.py::test_corner_without_a_measurement_is_not_known: a corner lot without a measurement gives 'not known' for the two corner conditions, never a figure.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T137-G3G4.md), check 7: with no geometry the two corner conditions are not known and the rear yard is withheld while the floor area stays shown."
+  ],
+  "D-090-R241": [
+   "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py::test_s12_entry_emits_the_committed_three_way_fixture is labelled a wiring proof only and is not counted as evidence that any value is right; the expected values of the other tests come from the reference cases (docs/reference-cases/R6B/cases/corner-reach.json, interior-lots.json, real-lot.json, step-p5-worked.json).",
+   "the G4 reviewer (qa-engineer; project-control/reports/M5-T137-G3G4.md), checks 2 and 8: the expected figures come from the reference cases through the loader; the fixture-equality test is labelled a wiring proof."
+  ],
+  "D-090-R255": [
+   "services/api/tests/scenario/three_answers/test_engine_conditions.py::test_density_user_statement_not_in_one_is_no_as_a_statement: the user's statement 'not in a special density area' reaches the engine as a statement and its scope line says it is a statement, not a recorded fact; services/api/tests/scenario/three_answers/test_engine_conditions.py::test_density_no_statement_uses_the_inside_one_stand_in: without a statement the condition is not known.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T137-G3G4.md), check 7: with the statement the limit is shown on the statement, whose line has the basis 'entered'; without it the condition is not known and the limit is withheld."
+  ],
+  "D-090-R256": [
+   "Every value taken for the calculation where a condition is not known is printed in that condition's scope line (what was taken and what is withheld because of it); nothing is applied unseen.",
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s137_scope_lines_say_where_each_condition_comes_from and services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s137_scope_texts_are_plain_and_true.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T137-G3G4.md), check 8: the statement of a not-known line names the value taken for the calculation and what is withheld; no line says the program does not read something it reads."
+  ],
+  "D-090-R570": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s137_invariant_over_the_benchmark_states and services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s137_invariant_special_district_not_read_withholds_everything: no result the emitted document shows rests on a value taken only for the calculation.",
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_s137_shown_values_and_withheld_set_unchanged_through_evidence: the shown values and the set of withheld results of the benchmark are unchanged; the checks of the last piece (no number of a withheld result anywhere) still pass.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T137-G3G4.md), check 7, its own script over eleven states: a condition whose line has the basis 'assumed' never had a shown dependent. the G4 reviewer (qa-engineer; project-control/reports/M5-T137-G3G4.md), mutations (a) to (e): each flipped value is caught. A limit, stated (G4 note F1): a lot that is not a corner lot is not tested end to end through the entry."
+  ],
+  "D-090-R582": [
+   "The piece is a step of connecting the results display: the server route of the work order's Part A cannot supply the engine's five conditions honestly without it (backlog rows DB-200 and DB-201).",
+   "Share: the conditions and the scope lines. The route and the website panel are the next two pieces."
+  ],
+  "D-090-R584": [
+   "The two commits change no file under services/api/app/api, not app/main.py, app/config.py or render.yaml, and no workflow: no route is mounted and no switch is turned on.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T137-G3G4.md), check 1: app/api, main.py, config.py, render.yaml and the website's source are byte-identical to the claim-seam head."
+  ],
+  "D-090-R588": [
+   "Nothing of the report is dropped. What stays owed is on record: backlog rows DB-196 (the contract has no way to say 'not known' in a basis), DB-198 (the benchmark rear yard names one of its two reasons), DB-199, DB-201 (the route).",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T137-G3G4.md) notes F1 to F3 and the G4 reviewer (qa-engineer; project-control/reports/M5-T137-G3G4.md) notes F1 to F4 name what stays owed; none removes a part of the report."
+  ]
+ }
+}

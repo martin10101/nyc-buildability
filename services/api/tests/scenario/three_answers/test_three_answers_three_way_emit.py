@@ -32,12 +32,23 @@ from app.scenario.three_answers import (
     generate_results,
     validate_results_document,
 )
-from app.scenario.three_answers.result_way_engine_bridge import run_engine_and_result_ways
+from app.scenario.three_answers.engine_conditions import (
+    DensityStatement,
+    Derived,
+    Presence,
+    Source,
+    derive_conditions,
+)
+from app.scenario.three_answers.result_way_engine_bridge import (
+    run_engine_and_result_ways,
+    run_engine_and_result_ways_from_evidence,
+)
 from app.scenario.three_answers.result_way_inputs import (
     AreaAgreement,
     DensityKnowledge,
     LotAreaFigures,
     LotType,
+    Recorded,
 )
 from app.scenario.three_answers.result_ways import decide_result_ways
 from app.scenario.three_answers.three_way_document import (
@@ -46,6 +57,7 @@ from app.scenario.three_answers.three_way_document import (
     FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION,
     RESERVED_UNIT_ESTIMATE_REASON,
     SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION,
+    _scope_statement,
     emit_three_way_document,
 )
 from app.spatial.site_geometry import (
@@ -75,6 +87,10 @@ from .test_three_answers_benchmark import _ON, _benchmark_inputs
 
 _REPO_ROOT = Path(__file__).resolve().parents[5]
 _CASES = _REPO_ROOT / "docs" / "reference-cases" / "R6B" / "cases"
+_JOURNEY_FIXTURE = (
+    _REPO_ROOT / "packages" / "contracts" / "fixtures" / "valid" / "results"
+    / "recorded_215_16_northern_journey.json"
+)
 
 _STUDY_ID = "study-215-16-northern-journey"
 _RESULTS_ID = "res-215-16-northern-journey"
@@ -683,3 +699,343 @@ def test_every_text_the_transform_writes_is_plain_and_true(benchmark):
             assert token not in low, (token, text)
         assert not id_re.search(text), text
         assert emit.document is not None  # the adapter path is exercised (non-vacuous)
+
+
+# =========================================================================== M5-T137
+# The engine's five conditions come from evidence (not a typed-in value). The committed journey
+# result is regenerated THROUGH the new entry below; these tests pin its honesty.
+def _scope_rows(doc: dict) -> dict:
+    return {a["key"]: a for a in doc["scope"]["assumptions"]}
+
+
+def test_s137_red_committed_within_100_scope_line_agrees_with_the_measured_reach():
+    """S3 RED PROOF: the committed journey result's within-100 scope line must not say the lot is
+    (assumed) within 100 feet while the SAME document's coverage reason says the lot reaches BEYOND
+    the 100-ft corner-lot portion. Before the fix the scope says 'assumed to lie within 100 feet'
+    (value True, basis assumed) - the contradiction this task removes; after it the line is the
+    measured corner reach (144.60 ft, more than 100 feet)."""
+    doc = json.loads(_JOURNEY_FIXTURE.read_text("utf-8"))
+    coverage_reason = doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"][
+        "reason"
+    ]
+    assert "beyond the corner-lot portion" in coverage_reason  # the document's own reach reason
+    within = _scope_rows(doc)["within_100_ft_of_street_line_intersection"]
+    assert within["value"] is False, within  # not (assumed) within 100 feet
+    assert "assumed to lie within 100 feet" not in within["statement"]
+    assert within["basis"] != "assumed"  # a measured basis, not a bare assumption
+    assert "144.60 feet" in within["statement"]  # the measured corner reach
+
+
+# The dependency map (research Q1a): which shown results each engine condition can affect. A
+# stand-in on any of them forbids a shown dependent (owner R229/R240; scenario S11). None means the
+# condition feeds the engine's whole-document gate (special district -> review; overlay not-read ->
+# every residential result withheld by the decision step), so NOTHING may be shown.
+_CONDITION_DEPENDENTS: dict[str, set[str] | None] = {
+    "special_district_present": None,
+    "overlay_present": None,
+    "within_100_ft_of_street_line_intersection": {"rear_yard"},
+    "street_line_intersection_angle_degrees": {"rear_yard"},
+    "special_density_area": {"legal_unit_limit_standard"},
+}
+
+
+def _shown_result_keys(doc: dict) -> set[str]:
+    """Every result the emitted document SHOWS (settled or conditional): the value_states entries
+    whose way is settled/conditional, plus the rear yard when it is shown in geometry.yards (a
+    settled rear yard carries no number, so it is not a value_states entry)."""
+    shown: set[str] = set()
+    for name in ("floor_area_allowance", "permitted_envelope", "building_option"):
+        answer = doc["answers"].get(name, {})
+        if answer.get("status") != "available":
+            continue
+        for key, state in answer.get("value_states", {}).items():
+            if state.get("way") in ("settled", "conditional"):
+                shown.add(key)
+    geometry = doc.get("geometry")
+    yards = geometry.get("yards") if isinstance(geometry, dict) else None
+    if isinstance(yards, dict) and yards.get("status") == "available":
+        shown.add("rear_yard")
+    return shown
+
+
+def _assert_no_shown_result_rests_on_a_stand_in(doc: dict) -> None:
+    """S11 / reading O35: no shown result (settled or conditional) rests on a stand-in. A condition
+    is a stand-in exactly when its scope row's basis is 'assumed' (recorded -> city_records,
+    measured -> approximate_tax_map, the user's statement -> entered; only not known / not
+    applicable carry the stand-in with basis 'assumed'). Wherever a condition is a stand-in, every
+    result that depends on it must be withheld."""
+    rows = {a["key"]: a for a in doc["scope"]["assumptions"]}
+    shown = _shown_result_keys(doc)
+    for key, dependents in _CONDITION_DEPENDENTS.items():
+        if rows[key]["basis"] != "assumed":
+            continue  # a real source (recorded / measured / the user's statement): no stand-in
+        if dependents is None:
+            assert not shown, (key, shown)  # a stand-in on an all-affecting condition shows nothing
+        else:
+            assert not (dependents & shown), (key, dependents & shown)
+
+
+@pytest.fixture(scope="module")
+def evidence_benchmark():
+    """The benchmark lot emitted once through the EVIDENCE entry (the five conditions derived from
+    the recorded pack, offline), with no statement about the special density area."""
+    with pytest.MonkeyPatch.context() as mp:
+        res = _evidence(mp)
+    return res
+
+
+def _evidence(mp, *, special_density_statement=None, geometry_on=True, env=None):
+    def _blocked(*_a, **_k):
+        raise AssertionError("network I/O attempted in a recorded-data test")
+
+    mp.setattr(http.client.HTTPConnection, "connect", _blocked)
+    mp.setattr(http.client.HTTPSConnection, "connect", _blocked)
+    mp.setattr(socket, "create_connection", _blocked)
+
+    profile, prepared, geometry = _carriers()
+    setup = _northern_setup(mp, geometry=True)
+    setup["property"]["address"] = _benchmark_identity_address()
+    study = study_from_study_setup(setup, _TEST_ONLY_OPTION, study_id=_STUDY_ID, revision=_REVISION)
+    doc = build_evaluator_inputs(study, _OPTION_ID)
+    return run_engine_and_result_ways_from_evidence(
+        evaluator_inputs=doc, study=study, results_id=_RESULTS_ID, computed_at=_COMPUTED_AT,
+        housing_program="standard_residence", property_profile=profile,
+        prepared_outline=prepared if geometry_on else None,
+        site_geometry=geometry if geometry_on else None,
+        special_density_statement=special_density_statement,
+        env=_LANE_ON if env is None else env,
+    )
+
+
+def test_s137_shown_values_and_withheld_set_unchanged_through_evidence(evidence_benchmark):
+    """S1/S2: through the evidence entry the shown floor-area figures and heights equal the
+    reference cases exactly as before, and the coverage, rear yard, building option and unit limits
+    are withheld exactly as before - nothing that is shown changed, only where each condition comes
+    from. Expected figures from docs/reference-cases/R6B/cases/real-lot.json, never the saved
+    output."""
+    doc = evidence_benchmark.document
+    validate_results_document(doc)
+    assert doc["contract_version"] == "1.3.0"
+    fa = doc["answers"]["floor_area_allowance"]
+    env = doc["answers"]["permitted_envelope"]
+    assert _ref_value("real-lot", "L1") == 20150
+    assert _value(fa, "max_residential_floor_area")["value"] == 20150
+    assert _value(
+        fa, "max_residential_floor_area_qualifying_affordable_or_senior"
+    )["value"] == _ref_value("real-lot", "L2") == 24180
+    for key, ft in (("min_base_height", 30.0), ("max_base_height", 45.0),
+                    ("max_building_height", 55.0),
+                    ("max_building_height_qualifying_affordable_or_senior", 65.0)):
+        assert _value(env, key)["value"] == ft
+        assert _states(env)[key]["way"] == "conditional"
+    # the withheld set is unchanged
+    assert _states(env)["max_lot_coverage"]["way"] == "withheld"
+    assert _states(env)["rear_yard"]["way"] == "withheld"
+    assert _states(fa)["legal_unit_limit_standard"]["way"] == "withheld"
+    assert doc["answers"]["building_option"]["status"] == "not_available"
+    assert doc["unit_estimate"]["status"] == "not_available"
+
+
+def test_s137_scope_lines_say_where_each_condition_comes_from(evidence_benchmark):
+    """S3 (green): the five scope lines of the emitted benchmark document say where each condition
+    comes from - overlay recorded, no special purpose district recorded, the lot not wholly within
+    100 feet with the measured reach, the measured angle, the density not known. No line says 'this
+    run does not read', and the within-100 line agrees with the coverage reason (no contradiction).
+    """
+    doc = evidence_benchmark.document
+    rows = _scope_rows(doc)
+    overlay_row = rows["overlay_present"]
+    assert overlay_row["value"] is True and overlay_row["basis"] == "city_records"
+    assert "recorded" in overlay_row["statement"].lower() and "C2-2" in overlay_row["statement"]
+    district = rows["special_district_present"]
+    assert district["value"] is False and district["basis"] == "city_records"
+    assert "no special purpose district" in district["statement"].lower()
+    within = rows["within_100_ft_of_street_line_intersection"]
+    assert within["value"] is False and within["basis"] == "approximate_tax_map"
+    assert "144.60 feet" in within["statement"] and "more than 100 feet" in within["statement"]
+    angle = rows["street_line_intersection_angle_degrees"]
+    assert angle["value"] == 89.7 and angle["basis"] == "approximate_tax_map"
+    assert "89.7 degrees" in angle["statement"]
+    density = rows["special_density_area"]
+    assert density["statement"].lower().startswith("whether the lot is in a special density area")
+    # a not-known condition shows the WORDS, never the stand-in the engine received (no "Yes")
+    assert density["value"] == "Not known" and density["unit"] is None
+    assert not isinstance(density["value"], bool)
+    # no scope line claims the program does not read something it reads
+    for row in doc["scope"]["assumptions"]:
+        assert "does not read" not in row["statement"]
+    # no contradiction: the within-100 line and the coverage reason agree the lot reaches beyond 100
+    coverage_reason = doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"][
+        "reason"
+    ]
+    assert "beyond the corner-lot portion" in coverage_reason
+    _assert_no_shown_result_rests_on_a_stand_in(doc)
+
+
+def test_s137_invariant_over_the_benchmark_states(evidence_benchmark):
+    """S11: no shown result rests on a stand-in, over the benchmark states the evidence entry
+    produces - the benchmark (density not known), the benchmark with the user's density statement,
+    and the benchmark with no site geometry (the corner reach not known)."""
+    _assert_no_shown_result_rests_on_a_stand_in(evidence_benchmark.document)
+    with pytest.MonkeyPatch.context() as mp:
+        with_stmt = _evidence(mp, special_density_statement=True)
+    _assert_no_shown_result_rests_on_a_stand_in(with_stmt.document)
+    # the density is now the user's statement, so the unit limit may be shown (conditional)
+    fa = with_stmt.document["answers"]["floor_area_allowance"]
+    assert _states(fa)["legal_unit_limit_standard"]["way"] == "conditional"
+    assert _scope_rows(with_stmt.document)["special_density_area"]["basis"] == "entered"
+    with pytest.MonkeyPatch.context() as mp:
+        no_geom = _evidence(mp, geometry_on=False)
+    _assert_no_shown_result_rests_on_a_stand_in(no_geom.document)
+    rows = _scope_rows(no_geom.document)
+    # the reach is not known, so within-100 and the angle SHOW the words 'Not known' (never the
+    # stand-in the engine received), and the rear yard is withheld
+    within = rows["within_100_ft_of_street_line_intersection"]
+    angle = rows["street_line_intersection_angle_degrees"]
+    assert within["basis"] == "assumed" and within["value"] == "Not known"
+    assert within["unit"] is None
+    assert angle["value"] == "Not known" and angle["unit"] is None
+    assert not isinstance(within["value"], bool) and not isinstance(angle["value"], (int, float))
+    assert "not known" in within["statement"].lower()
+    assert _states(no_geom.document["answers"]["permitted_envelope"])["rear_yard"]["way"] == (
+        "withheld"
+    )
+
+
+def test_s137_invariant_special_district_not_read_withholds_everything():
+    """S5/S11: when the special-district column was not read, the engine is given the present
+    stand-in and the decision step withholds EVERY result, so the emitted document shows nothing
+    that rests on the stand-in; the scope lines say the overlay and the special district are not
+    known."""
+    engine_doc = generate_results(
+        _benchmark_inputs(special_district_present=True, overlay_present=False), env=_ON
+    ).document
+    ways = decide_result_ways(plain_inputs(special_purpose_district=Recorded.NOT_READ))
+    conditions = derive_conditions(
+        overlay_presence=Presence.NOT_READ, overlay_code=None,
+        special_district_presence=Presence.NOT_READ,
+        is_corner=True, reach_ft=None, angle_deg=None,
+        density_statement=DensityStatement.NONE,
+    )
+    emitted = emit_three_way_document(engine_doc, ways, condition_sources=conditions)
+    assert _shown_result_keys(emitted) == set()
+    _assert_no_shown_result_rests_on_a_stand_in(emitted)
+    rows = _scope_rows(emitted)
+    district = rows["special_district_present"]
+    overlay = rows["overlay_present"]
+    assert district["basis"] == "assumed" and district["value"] == "Not known"
+    assert "not known" in district["statement"].lower()
+    assert overlay["basis"] == "assumed" and overlay["value"] == "Not known"
+    assert "not known" in overlay["statement"].lower()
+    # the words, never the stand-in the engine received (no 'Yes'/'No')
+    assert not isinstance(district["value"], bool) and not isinstance(overlay["value"], bool)
+
+
+def test_s137_interior_lot_scope_says_not_applicable():
+    """S9: a made-up interior lot has no corner, so the within-100 and angle scope lines say they do
+    not apply (no corner); nothing invented for a corner, and the rear yard is withheld."""
+    engine_doc = generate_results(
+        _benchmark_inputs(lot_type="interior", overlay_present=False), env=_ON
+    ).document
+    ways = decide_result_ways(plain_inputs(
+        lot_type=LotType.INTERIOR, reach=None,
+        area=LotAreaFigures(5355.0, AreaAgreement.AGREES, 5355.0), **k20(True),
+    ))
+    conditions = derive_conditions(
+        overlay_presence=Presence.ABSENT, overlay_code=None,
+        special_district_presence=Presence.ABSENT,
+        is_corner=False, reach_ft=None, angle_deg=None,
+        density_statement=DensityStatement.NONE,
+    )
+    emitted = emit_three_way_document(engine_doc, ways, condition_sources=conditions)
+    rows = _scope_rows(emitted)
+    within = rows["within_100_ft_of_street_line_intersection"]
+    angle = rows["street_line_intersection_angle_degrees"]
+    assert "not a corner lot" in within["statement"] and "does not apply" in within["statement"]
+    assert "not a corner lot" in angle["statement"] and "does not apply" in angle["statement"]
+    # a not-applicable corner condition SHOWS the words, never the made-up value (no 136 degrees)
+    assert within["value"] == "Not applicable" and within["unit"] is None
+    assert angle["value"] == "Not applicable" and angle["unit"] is None
+    _assert_no_shown_result_rests_on_a_stand_in(emitted)
+
+
+def test_s137_not_known_lines_show_words_never_a_boolean_or_number(evidence_benchmark):
+    """A scope line of a condition that is not known (or does not apply) SHOWS the words 'Not known'
+    / 'Not applicable', never the stand-in the engine received. Over every such line of the
+    benchmark (density not known) and the no-geometry benchmark (reach not known), the value is one
+    of those two strings and is never a boolean or a number - a reader never sees a substitute (e.g.
+    'Yes') for something not known. This test FAILS if the transform shows the stand-in value."""
+    docs = [evidence_benchmark.document]
+    with pytest.MonkeyPatch.context() as mp:
+        docs.append(_evidence(mp, geometry_on=False).document)
+    seen_not_known = False
+    for doc in docs:
+        for row in doc["scope"]["assumptions"]:
+            if row["key"] in _CONDITION_DEPENDENTS and row["basis"] == "assumed":
+                seen_not_known = True
+                assert row["value"] in ("Not known", "Not applicable"), row
+                assert not isinstance(row["value"], bool), row
+                assert not isinstance(row["value"], (int, float)), row
+                assert row["unit"] is None, row
+    assert seen_not_known  # the states above do carry a not-known condition (non-vacuous)
+
+
+def test_s137_older_entry_leaves_the_scope_lines_as_the_engine_made_them(benchmark):
+    """S12: the older entry (run_engine_and_result_ways), called with engine inputs the caller
+    already holds and no condition sources, leaves the scope lines as the engine made them - the
+    'assumed' flag disclosures, unchanged. Only the evidence entry rewrites them."""
+    within = _scope_rows(benchmark.document)["within_100_ft_of_street_line_intersection"]
+    assert within["basis"] == "assumed"
+    assert within["statement"] == (
+        "The lot is assumed to lie within 100 feet of a street-line intersection."
+    )
+
+
+def test_s137_scope_texts_are_plain_and_true():
+    """S15 / rule L3: every scope line the transform writes for the five conditions is plain and
+    true - no internal name (no gap or reading number, no task id, no 'module', 'reference case',
+    'stand-in'), never 'professional review', and no machine code (snake_case). Every branch of the
+    composer is covered."""
+    battery: dict[str, list[Derived]] = {
+        "overlay_present": [
+            Derived(True, Source.RECORDED, code="C2-2"),
+            Derived(False, Source.RECORDED),
+            Derived(False, Source.NOT_KNOWN),
+        ],
+        "special_district_present": [
+            Derived(True, Source.RECORDED),
+            Derived(False, Source.RECORDED),
+            Derived(True, Source.NOT_KNOWN),
+        ],
+        "within_100_ft_of_street_line_intersection": [
+            Derived(False, Source.MEASURED, figure=144.60),
+            Derived(True, Source.MEASURED, figure=100.00),
+            Derived(False, Source.NOT_APPLICABLE),
+            Derived(False, Source.NOT_KNOWN),
+        ],
+        "street_line_intersection_angle_degrees": [
+            Derived(89.7, Source.MEASURED, figure=89.7),
+            Derived(90.0, Source.MEASURED, figure=90.0),
+            Derived(136.0, Source.NOT_APPLICABLE),
+            Derived(136.0, Source.NOT_KNOWN),
+        ],
+        "special_density_area": [
+            Derived(False, Source.USER_STATEMENT),
+            Derived(True, Source.NOT_KNOWN),
+        ],
+    }
+    texts = [_scope_statement(key, d) for key, variants in battery.items() for d in variants]
+    id_re = re.compile(r"\b[KO]\d+\b|\bM\d+-T\d+\b")
+    snake = re.compile(r"\b[a-z0-9]+(?:_[a-z0-9]+)+\b")
+    forbidden = (
+        "professional review", "unsupported", "the caller", "reference case", "work order",
+        "orchestrator", "not captured", "is captured", "captured text", "gap k", "gap-",
+        "stand-in", "module",
+    )
+    assert len(texts) == 16
+    for text in texts:
+        low = text.lower()
+        for token in forbidden:
+            assert token not in low, (token, text)
+        assert not id_re.search(text), text
+        assert not snake.search(text), text

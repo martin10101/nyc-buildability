@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T137",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T137-G0.md",
+  "reviewed_at": "2026-10-08T09:26:14.128165+00:00",
+  "content_manifest_sha256": "9d4c7afb5f14d3be3de9c2ae8a3e6b482f0e620670ef68af27094f7f428d07d7",
+  "reviewed_sha": "86f4ac7309962d74c496d67a5909aef7e3b1bf17",
+  "updated_at": "2026-10-08T09:26:14.708481+00:00"
+}

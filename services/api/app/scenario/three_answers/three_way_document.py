@@ -44,6 +44,7 @@ from __future__ import annotations
 import copy
 
 from .contract import validate_results_document
+from .engine_conditions import Derived, Source
 from .result_way_inputs import (
     COVERAGE_KEY,
     LABELS,
@@ -102,6 +103,158 @@ ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION = (
 # reason_kind of the reserved estimate and the follow-on blocks: the estimator and the building
 # option are calculations the program has not built yet (work owed), not a missing fact.
 _WORK_OWED_REASON_KIND = "rule_not_implemented"
+
+
+# ---------------------------------------------------------------------------
+# The scope lines of the five conditions the engine takes (M5-T137, reading O36). When the evidence
+# entry hands the per-condition sources, the transform rewrites each of the five scope rows to say,
+# in plain words, where the condition comes from: recorded, measured from the tax-map outline, the
+# user's statement, or not known / not applicable. The engine's own scope block
+# (``build_scope_inputs``) and the schema stay read-only; the transform only rewrites the row's
+# value, basis and statement from the source the entry derived. When the entry hands no sources
+# (the older ``run_engine_and_result_ways`` entry) the scope lines stay as the engine made them.
+#
+# Every statement here is one of the transform's texts (plain and true: no internal name, no gap or
+# reading number, no task id, never 'professional review'). The guard test over the transform's
+# texts covers them; they are pasted into the producer report.
+# ---------------------------------------------------------------------------
+
+# The results scope_assumption basis each source maps to. There is NO "not known" basis in the
+# schema, so a not-known / not-applicable value carries the stand-in it was given with basis
+# 'assumed', because the schema has no other way and the schema is read-only here; the STATEMENT
+# says it is not known / not applicable (reading O36; DB-196 holds the contract question).
+_SCOPE_BASIS_BY_SOURCE = {
+    Source.RECORDED: "city_records",
+    Source.MEASURED: "approximate_tax_map",
+    Source.USER_STATEMENT: "entered",
+    Source.NOT_KNOWN: "assumed",
+    Source.NOT_APPLICABLE: "assumed",
+}
+
+# The WORDS a scope line SHOWS for a condition that is not known or does not apply. The value the
+# engine was given (the stand-in) is never shown as the scope row's value - a reader must not see a
+# substitute figure for something not known (orchestrator correction of reading O36). The schema's
+# scope_assumption value may be a string, and the unit is null for these words (the stand-in the
+# engine received does not reach the emitted document). The statement still says it is not known /
+# does not apply, what was taken for the calculation, and what is withheld.
+_NOT_KNOWN_VALUE = "Not known"
+_NOT_APPLICABLE_VALUE = "Not applicable"
+_WORDS_VALUE_BY_SOURCE = {
+    Source.NOT_KNOWN: _NOT_KNOWN_VALUE,
+    Source.NOT_APPLICABLE: _NOT_APPLICABLE_VALUE,
+}
+
+
+def _fmt_feet(value: float) -> str:
+    return f"{value:.2f} feet"
+
+
+def _fmt_degrees(value: float) -> str:
+    whole = int(round(value))
+    return f"{whole} degrees" if float(whole) == float(value) else f"{value:.1f} degrees"
+
+
+def _scope_statement(key: str, derived: Derived) -> str:
+    """The plain-words scope line for one of the five conditions, saying where it comes from."""
+    source = derived.source
+    if key == "overlay_present":
+        if source is Source.RECORDED:
+            if derived.engine_value:
+                code = f" ({derived.code})" if derived.code else ""
+                return f"A commercial overlay{code} is recorded for this lot in the city's records."
+            return "The city's records list no commercial overlay for this lot."
+        return (
+            "Whether a commercial overlay applies to this lot is not known; every result that "
+            "depends on it is withheld."
+        )
+    if key == "special_district_present":
+        if source is Source.RECORDED:
+            if derived.engine_value:
+                return "A special purpose district is recorded for this lot in the city's records."
+            return "The city's records list no special purpose district for this lot."
+        return (
+            "Whether a special purpose district applies to this lot is not known; a special "
+            "purpose district is taken for the calculation, so every result that depends on it is "
+            "withheld."
+        )
+    if key == "within_100_ft_of_street_line_intersection":
+        if source is Source.MEASURED:
+            reach = _fmt_feet(derived.figure)
+            if derived.engine_value:
+                return (
+                    f"Measured from the tax-map outline, the lot's farthest point is {reach} from "
+                    "the corner where its two street lines meet, within 100 feet of it."
+                )
+            return (
+                f"Measured from the tax-map outline, the lot's farthest point is {reach} from the "
+                "corner where its two street lines meet, more than 100 feet from it."
+            )
+        if source is Source.NOT_APPLICABLE:
+            return (
+                "This lot is not a corner lot, so whether it lies within 100 feet of a street-line "
+                "corner does not apply."
+            )
+        return (
+            "Whether the lot lies within 100 feet of the corner where two street lines meet is not "
+            "known; it is taken as not within 100 feet for the calculation, so the rear yard that "
+            "depends on it is withheld."
+        )
+    if key == "street_line_intersection_angle_degrees":
+        if source is Source.MEASURED:
+            return (
+                "Measured from the tax-map outline, the lot's two street lines meet at about "
+                f"{_fmt_degrees(derived.figure)}."
+            )
+        if source is Source.NOT_APPLICABLE:
+            return (
+                "This lot is not a corner lot, so the angle at which two street lines meet does "
+                "not apply."
+            )
+        return (
+            "The angle at which the lot's two street lines meet is not known; the rear yard that "
+            "depends on it is withheld."
+        )
+    # special_density_area
+    if source is Source.USER_STATEMENT:
+        return (
+            "The lot is taken to be outside a special density area because that was stated for "
+            "this run; it is a statement, not a recorded fact."
+        )
+    return (
+        "Whether the lot is in a special density area is not known; it is taken to be in one for "
+        "the calculation, so the legal dwelling-unit limit that depends on it is withheld."
+    )
+
+
+def _rewrite_scope_lines(doc: dict, condition_sources: dict[str, Derived]) -> None:
+    """Rewrite the scope rows of the five conditions from the per-condition sources the evidence
+    entry derived. Only the five keys the entry hands are rewritten; the other assumption rows (the
+    zoning district, lot type, frontage, depth, housing program, floor-to-floor height) stay as the
+    engine made them. Does nothing when the document carries no scope block."""
+    scope = doc.get("scope")
+    if not isinstance(scope, dict):
+        return
+    assumptions = scope.get("assumptions")
+    if not isinstance(assumptions, list):
+        return
+    for row in assumptions:
+        if not isinstance(row, dict):
+            continue
+        derived = condition_sources.get(row.get("key"))
+        if derived is None:
+            continue
+        row["basis"] = _SCOPE_BASIS_BY_SOURCE[derived.source]
+        row["statement"] = _scope_statement(row["key"], derived)
+        words = _WORDS_VALUE_BY_SOURCE.get(derived.source)
+        if words is not None:
+            # Not known / not applicable: show the words, never the stand-in the engine received;
+            # the unit is null (the stand-in does not reach the document).
+            row["value"] = words
+            row["unit"] = None
+        else:
+            # Recorded, measured or the user's statement: the real value (and its unit, as the
+            # engine set it - degrees for the angle, null for the flags).
+            row["value"] = derived.engine_value
 
 
 # ---------------------------------------------------------------------------
@@ -306,11 +459,19 @@ def _apply_geometry(doc: dict, ways: ResultWays, *, building_option_withheld: bo
 # ---------------------------------------------------------------------------
 # the one public transform
 # ---------------------------------------------------------------------------
-def emit_three_way_document(document: dict, ways: ResultWays) -> dict:
+def emit_three_way_document(
+    document: dict, ways: ResultWays, *, condition_sources: dict[str, Derived] | None = None,
+) -> dict:
     """Transform the engine's assembled results ``document`` into the contract-1.3.0 three-way
     document, given the decision-module ``ways``. Pure: it mutates a deep copy, computes no zoning
     number, and returns a strictly schema-valid document (the way-layer rule runs after the schema).
-    """
+
+    ``condition_sources`` (M5-T137, reading O36), when the evidence entry hands it, says for each of
+    the engine's five lot conditions where it comes from; the transform then rewrites those five
+    scope lines (value, basis, statement) so the scope block says, in plain words, recorded /
+    measured / the user's statement / not known / not applicable. When None (the older
+    ``run_engine_and_result_ways`` entry, which holds engine inputs already) the scope lines stay as
+    the engine made them. The engine, the disclosure builder and the schema stay read-only."""
     doc = copy.deepcopy(document)
     doc["contract_version"] = CONTRACT_VERSION_THREE_WAY
 
@@ -353,6 +514,10 @@ def emit_three_way_document(document: dict, ways: ResultWays) -> dict:
     if building_option_was_available and building_option_withheld:
         _apply_building_option_dependents(doc)
     _apply_geometry(doc, ways, building_option_withheld=building_option_withheld)
+
+    # (O36) rewrite the five scope lines from the per-condition sources the evidence entry derived.
+    if condition_sources is not None:
+        _rewrite_scope_lines(doc, condition_sources)
 
     _assert_no_qualifying_unit_value(doc)
     validate_results_document(doc)

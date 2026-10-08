@@ -36,15 +36,52 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
+from app.contracts.evaluator_inputs import build_three_answer_inputs
+
+from . import engine_conditions
 from .engine import ThreeAnswersResult, generate_results
-from .inputs import ThreeAnswerInputs
+from .engine_conditions import DensityStatement, Presence
+from .inputs import BuildingDefaults, ThreeAnswerInputs
 from .result_way_bridge import GatheredResult, gather_result_ways
+from .result_way_inputs import DensityKnowledge, LotType, Recorded
 from .three_way_document import emit_three_way_document
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
     from app.rules.registry import RuleRegistry
+    from app.spatial.site_geometry.outline import PreparedOutline
+    from app.spatial.site_geometry.results import SiteGeometry
 
-__all__ = ["EngineResultWays", "run_engine_and_result_ways"]
+__all__ = [
+    "EngineResultWays",
+    "run_engine_and_result_ways",
+    "run_engine_and_result_ways_from_evidence",
+]
+
+# The recorded three-state (the decision step's own ``Recorded``) mapped to the plain presence the
+# derivation module takes. Kept here, in a file the import guard already permits to name the
+# decision module, so the derivation module (``engine_conditions``) stays free of that coupling.
+_PRESENCE_BY_RECORDED = {
+    Recorded.PRESENT: Presence.PRESENT,
+    Recorded.ABSENT: Presence.ABSENT,
+    Recorded.NOT_READ: Presence.NOT_READ,
+}
+
+
+def _is_corner(lot_type: LotType | None) -> bool | None:
+    """True for a corner lot, False for an interior or through lot (no corner), None when the lot
+    type was not read (then the corner conditions are not known, not 'no')."""
+    if lot_type is None:
+        return None
+    return lot_type is LotType.CORNER
+
+
+def _density_statement(knowledge: DensityKnowledge) -> DensityStatement:
+    """The decision step's density knowledge mapped to the user's plain statement: the user's
+    statement that the lot is not in a special density area, or no statement (every other state -
+    none given, or a statement the program does not yet act on - carries no usable statement)."""
+    if knowledge is DensityKnowledge.USER_STATEMENT_NOT_IN_ONE:
+        return DensityStatement.NOT_IN_ONE
+    return DensityStatement.NONE
 
 
 @dataclass(frozen=True)
@@ -97,4 +134,88 @@ def run_engine_and_result_ways(
         special_density_statement=special_density_statement,
     )
     document = emit_three_way_document(engine_result.document, gathered.ways)
+    return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)
+
+
+def run_engine_and_result_ways_from_evidence(
+    *,
+    evaluator_inputs: Mapping[str, Any],
+    study: Mapping[str, Any],
+    results_id: str,
+    computed_at: str,
+    housing_program: str,
+    property_profile: Mapping[str, Any] | None,
+    prepared_outline: PreparedOutline | None,
+    site_geometry: SiteGeometry | None,
+    special_density_statement: bool | None = None,
+    building_defaults: BuildingDefaults | None = None,
+    registry: RuleRegistry | None = None,
+    env: Mapping[str, str] | None = None,
+) -> EngineResultWays:
+    """Run the engine and the three-way emit for a lot whose five engine conditions come from the
+    SAME evidence the decision step gathers, never from a typed-in value (M5-T137, reading O33).
+
+    This is the entry a server route uses: it takes what the server holds - the evaluator-inputs
+    document, the study document, the option's housing program, the built property profile, the
+    prepared tax-map outline, the site geometry, the user's optional statement about the special
+    density area, and the result's id and time - and:
+
+    (a) gathers the decision step's facts FIRST (:func:`gather_result_ways` over the same evidence);
+    (b) derives the engine's five lot conditions from those SAME facts
+        (:mod:`app.scenario.three_answers.engine_conditions`): the recorded commercial overlay and
+        special purpose district, the corner reach and angle measured from the outline and geometry,
+        and the user's density statement. Where a condition is not known the engine is given a
+        value ONLY in the direction that withholds (``engine_conditions`` proves each from a rule);
+    (c) builds the engine inputs with :func:`build_three_answer_inputs` using the DERIVED values,
+        runs the engine, decides the ways and emits the three-way document - with the five scope
+        lines rewritten to say where each condition comes from (reading O36).
+
+    ``build_three_answer_inputs`` cross-checks ``overlay_present`` against the study's recorded
+    commercial-overlay fact and fails closed if they disagree; the overlay value derived here comes
+    from the SAME recorded data, so they agree. The engine, the decision modules, the disclosure
+    builder and every schema stay read-only; no production switch is turned on and no route is
+    wired here."""
+    gathered = gather_result_ways(
+        evaluator_inputs=evaluator_inputs,
+        profile=property_profile,
+        outline=prepared_outline,
+        geometry=site_geometry,
+        housing_kind=housing_program,
+        special_density_statement=special_density_statement,
+    )
+    recorded = gathered.recorded
+    reach = gathered.inputs.reach
+    conditions = engine_conditions.derive_conditions(
+        overlay_presence=_PRESENCE_BY_RECORDED[recorded.commercial_overlay.state],
+        overlay_code=recorded.commercial_overlay.code,
+        special_district_presence=_PRESENCE_BY_RECORDED[recorded.special_purpose_district.state],
+        is_corner=_is_corner(gathered.inputs.lot_type),
+        reach_ft=reach.corner.reach.value if reach is not None else None,
+        angle_deg=reach.corner.angle.value if reach is not None else None,
+        density_statement=_density_statement(gathered.inputs.special_density),
+    )
+    inputs = build_three_answer_inputs(
+        dict(evaluator_inputs),
+        results_id=results_id,
+        computed_at=computed_at,
+        housing_program=housing_program,
+        overlay_present=conditions["overlay_present"].engine_value,
+        special_district_present=conditions["special_district_present"].engine_value,
+        within_100_ft_of_street_line_intersection=(
+            conditions["within_100_ft_of_street_line_intersection"].engine_value
+        ),
+        street_line_intersection_angle_degrees=(
+            conditions["street_line_intersection_angle_degrees"].engine_value
+        ),
+        special_density_area=conditions["special_density_area"].engine_value,
+        building_defaults=building_defaults,
+        study=dict(study),
+        property_profile=property_profile,
+        prepared_outline=prepared_outline,
+        site_geometry=site_geometry,
+    )
+    engine_result = generate_results(inputs, registry=registry, env=env)
+    document = emit_three_way_document(
+        engine_result.document, gathered.ways, condition_sources=conditions,
+    )
     return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)

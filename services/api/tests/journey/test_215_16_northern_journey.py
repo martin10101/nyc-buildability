@@ -47,7 +47,7 @@ import pytest
 from app.cad.results_dxf import ResultsDxf, render_results_dxf
 from app.cad.results_dxf_notes import ascii_text
 from app.connectors.geoclient_address import SOURCE_ID, resolve_address
-from app.contracts.evaluator_inputs import build_evaluator_inputs, build_three_answer_inputs
+from app.contracts.evaluator_inputs import build_evaluator_inputs
 from app.contracts.study_contracts import (
     validate_evaluator_inputs_document,
     validate_results_document,
@@ -56,7 +56,9 @@ from app.contracts.study_contracts import (
 from app.contracts.study_setup_bridge import study_from_study_setup
 from app.drawings.kit import Drawing, render_site_plan
 from app.profile.builder import build_property_profile
-from app.scenario.three_answers.result_way_engine_bridge import run_engine_and_result_ways
+from app.scenario.three_answers.result_way_engine_bridge import (
+    run_engine_and_result_ways_from_evidence,
+)
 from app.scenario.three_answers.scope import ASSUMPTION_KEYS
 from app.spatial.site_geometry import (
     derive_site_geometry,
@@ -188,35 +190,26 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
         assert record["value"] == fact["value"], engine_key
         assert record["fact_id"] == fact["fact_id"], engine_key
 
-    # 4. build_three_answer_inputs auto-fills the scope from the bridge (R139: study passed) and
-    # carries the property profile, the prepared outline and the site geometry the decision module
-    # reads at the emit step (M5-T134); the engine reads none of them.
+    # 4+5. ENGINE + THREE-WAY EMIT from EVIDENCE (M5-T137): the five engine conditions (overlay,
+    # special district, within 100 ft of the corner, the corner angle, special density area) come
+    # from the SAME evidence the decision step gathers, never from a typed-in value. The entry
+    # gathers the decision facts, derives the five conditions, builds the engine inputs with those
+    # derived values, runs the engine (every Lane flag off except Lane A) and emits the three-way
+    # document with the five scope lines saying where each condition comes from. The property
+    # profile, the prepared outline and the site geometry carry the recorded columns and the lot
+    # reach; the engine reads none of them.
     profile, prepared, geometry = _carriers()
-    inputs = build_three_answer_inputs(
-        doc,
+    emitted = run_engine_and_result_ways_from_evidence(
+        evaluator_inputs=doc,
+        study=study,
         results_id=_RESULTS_ID,
         computed_at=_COMPUTED_AT,
         housing_program="standard_residence",
-        overlay_present=True,  # the C2-2 commercial overlay recorded for this lot
-        special_district_present=False,
-        within_100_ft_of_street_line_intersection=True,
-        street_line_intersection_angle_degrees=90.0,
-        special_density_area=False,
-        study=study,
         property_profile=profile,
         prepared_outline=prepared,
         site_geometry=geometry,
-    )
-    assert inputs.scope_inputs is not None
-    assert inputs.lot_front_ft == float(northern["value"])
-    assert inputs.lot_type == _fact(study, "lot_type")["value"]
-
-    # 5. ENGINE + THREE-WAY EMIT (M5-T136): the real engine runs with every Lane flag off except
-    # Lane A, and the adapter then runs the pure transform over the engine's document and the
-    # decision ways, emitting the contract-1.3.0 three-way document. It is validated against the
-    # bundled results schema and the way-layer rule.
-    emitted = run_engine_and_result_ways(
-        inputs, evaluator_inputs=doc, special_density_statement=False, env=_LANE_ON
+        special_density_statement=None,  # no statement about the special density area was made
+        env=_LANE_ON,
     )
     document = emitted.document
     validate_results_document(document)
@@ -240,6 +233,31 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     ]
     assert place_215["street"] in front_row["statement"]
     assert f"{float(place_215['value']):g}" in front_row["statement"]
+
+    # M5-T137: the five engine conditions come from evidence, and the scope lines say so (reading
+    # O36). No scope line says the program does not read something it reads, and none contradicts a
+    # reason elsewhere. The within-100 line is the MEASURED corner reach (144.60 ft, more than 100
+    # feet), not a bare assumption; the special-district line reads the city record (no "does not
+    # read the special-district layer"); the special density area is not known (the user made no
+    # statement). The measured reach agrees with the coverage reason, removing the contradiction.
+    rows = {a["key"]: a for a in scope["assumptions"]}
+    within = rows["within_100_ft_of_street_line_intersection"]
+    assert within["value"] is False and within["basis"] == "approximate_tax_map"
+    assert "144.60 feet" in within["statement"] and "more than 100 feet" in within["statement"]
+    assert "assumed" not in within["statement"]
+    district = rows["special_district_present"]
+    assert district["value"] is False and district["basis"] == "city_records"
+    assert "does not read" not in district["statement"]
+    density = rows["special_density_area"]
+    assert density["statement"].startswith("Whether the lot is in a special density area is not")
+    # not known shows the words, never the stand-in the engine received (no "Yes" on the drawings)
+    assert density["value"] == "Not known" and density["unit"] is None
+    angle = rows["street_line_intersection_angle_degrees"]
+    assert angle["basis"] == "approximate_tax_map" and "89.7 degrees" in angle["statement"]
+    coverage_reason = document["answers"]["permitted_envelope"]["value_states"][
+        "max_lot_coverage"
+    ]["reason"]
+    assert "beyond the corner-lot portion" in coverage_reason  # no contradiction with the scope
 
     # The golden allowance equals the benchmark pack's recorded value, not a new number, and now
     # carries its way-layer: the shown floor-area value is conditional (M5-T136).
